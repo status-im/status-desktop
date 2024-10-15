@@ -67,7 +67,7 @@ StatusListView {
         implicitHeight: 48
         implicitWidth: root.width
         title: model.chainName
-        iconUrl: Style.svg(model.iconUrl)
+        iconUrl: Theme.svg(model.iconUrl)
         showIndicator: (multiSelection && root.showCheckboxes) || (!multiSelection && root.showRadioButtons)
         multiSelection: !root.singleSelection.enabled
                 

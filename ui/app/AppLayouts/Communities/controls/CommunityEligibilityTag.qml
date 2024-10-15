@@ -15,7 +15,7 @@ Rectangle {
     property bool isEditMode
     property bool isDirty
 
-    implicitWidth: hintRow.implicitWidth + 2*Style.current.padding
+    implicitWidth: hintRow.implicitWidth + 2*Theme.padding
     implicitHeight: 40
     color: Theme.palette.baseColor2
     radius: height/2

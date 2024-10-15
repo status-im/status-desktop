@@ -1,5 +1,5 @@
-﻿import QtQuick 2.13
-import QtQuick.Layouts 1.13
+﻿import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -84,7 +84,8 @@ Item {
                 elide: Text.ElideRight
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
-                text: qsTr("Your Balances").toUpperCase()
+                text: qsTr("Your Balances")
+                font.capitalization: Font.AllUppercase
             }
             Repeater {
                 id: fromNetworksRepeater
@@ -104,7 +105,7 @@ Item {
                     primaryText: model.chainName
                     secondaryText: (model.tokenBalance.amount === 0 && root.amountToSend > 0) ?
                                     qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, d.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
-                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: ") + root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol)
+                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: %1").arg(root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol))
                     locked: model.locked
                     preCalculatedAdvancedText: {
                         if(locked && model.lockedAmount) {
@@ -116,7 +117,7 @@ Item {
                     maxAdvancedValue: tokenBalance.amount
                     state: (model.tokenBalance.amount === 0 && root.amountToSend > 0) || !model.hasGas ? "unavailable" :
                            (root.errorMode || !advancedInput.valid) && advancedInputCurrencyAmount > 0 ? "error" : "default"
-                    cardIcon.source: Style.svg(model.iconUrl)
+                    cardIcon.source: Theme.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText: qsTr("Disable")
                     enableText: qsTr("Enable")
@@ -185,7 +186,7 @@ Item {
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || store.showUnPreferredChains ? 1 : 0
-                    cardIcon.source: Style.svg(model.iconUrl)
+                    cardIcon.source: Theme.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText:  qsTr("Disable")
                     enableText: qsTr("Enable")

@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -33,7 +33,7 @@ ActivityNotificationBase {
             asset.letterSize: width / 2.4
             asset.isImage: true
             Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
         }
 
         StatusBaseText {
@@ -80,10 +80,10 @@ ActivityNotificationBase {
         id: visitComponent
 
         StyledTextEdit {
-            text: Utils.getLinkStyle(qsTr("Visit Community"), hoveredLink, Style.current.blue)
+            text: Utils.getLinkStyle(qsTr("Visit Community"), hoveredLink, Theme.palette.primaryColor1)
             readOnly: true
             textFormat: Text.RichText
-            color: Style.current.blue
+            color: Theme.palette.primaryColor1
             font.pixelSize: 13
             onLinkActivated: {
                 root.store.setActiveCommunity(notification.communityId)

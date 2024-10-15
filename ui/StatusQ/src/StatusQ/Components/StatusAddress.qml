@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,7 +13,7 @@ StatusBaseText {
     readonly property real actualWidth: implicitWidth
     property real maxWidth: width
 
-    font.family: Theme.palette.monoFont.name
+    font.family: Theme.monoFont.name
     font.pixelSize: 13
     elide: Text.ElideMiddle
     color: Theme.palette.baseColor1

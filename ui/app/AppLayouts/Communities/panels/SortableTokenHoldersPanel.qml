@@ -6,7 +6,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups 0.1
 
 import utils 1.0
@@ -68,7 +68,7 @@ Control {
             Layout.fillWidth: true
 
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
 
             text: qsTr("%1 token hodlers").arg(root.tokenName)
@@ -95,7 +95,7 @@ Control {
             Layout.topMargin: 12
 
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
 
             visible: searcher.text.length > 0
@@ -108,7 +108,7 @@ Control {
             id: infoBoxPanel
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             visible: root.empty
             title: qsTr("No hodlers just yet")
@@ -134,7 +134,7 @@ Control {
                 if (mouse.button !== Qt.RightButton)
                     return
 
-                const entry = ModelUtils.get(proxyModel, index)
+                const entry = SQUtils.ModelUtils.get(proxyModel, index)
 
                 menu.contactId = entry.contactId
                 menu.name = entry.name

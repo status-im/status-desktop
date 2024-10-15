@@ -33,7 +33,7 @@ StatusListView {
 //        subTitle: qsTr("%n token(s) · Last updated %1 @%2",
 //                       "",
 //                       model.tokensCount).arg(LocaleUtils.formatDate(model.updatedAt * 1000)).arg(LocaleUtils.formatTime(model.updatedAt, Locale.ShortFormat))
-        statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
+        statusListItemSubTitle.font.pixelSize: Theme.additionalTextSize
         asset.name: model.image
         asset.isImage: true
         border.width: 1

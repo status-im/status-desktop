@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -38,7 +38,7 @@ Control {
             StatusBaseText {
                 Layout.fillWidth: true
                 wrapMode: Text.Wrap
-                font.pixelSize: Style.current.primaryTextFontSize
+                font.pixelSize: Theme.primaryTextFontSize
                 color: Theme.palette.dangerColor1
                 font.bold: true
                 text: qsTr("Conflicts with existing permission:")
@@ -49,7 +49,7 @@ Control {
             Layout.leftMargin: root.spacing + d.iconSize
             Layout.fillWidth: true
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             font.bold: true
             text: qsTr("\"Anyone who holds %1 can %2 in %3\"").arg(root.holdings).arg(root.permissions).arg(root.channels)
         }
@@ -58,7 +58,7 @@ Control {
             Layout.leftMargin: root.spacing + d.iconSize
             Layout.fillWidth: true
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("Edit permissions to resolve a conflict.")
         }
     }

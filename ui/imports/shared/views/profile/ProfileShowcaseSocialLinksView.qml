@@ -34,9 +34,9 @@ Item {
         id: webView
 
         anchors.fill: parent
-        topMargin: Style.current.bigPadding
-        bottomMargin: Style.current.bigPadding
-        leftMargin: Style.current.bigPadding
+        topMargin: Theme.bigPadding
+        bottomMargin: Theme.bigPadding
+        leftMargin: Theme.bigPadding
 
         visible: count
 
@@ -45,8 +45,8 @@ Item {
         delegate: InfoCard {
             id: socialLinksInfoDelegate
             readonly property int linkType: ProfileUtils.linkTextToType(model.text)
-            width: GridView.view.cellWidth - Style.current.padding
-            height: GridView.view.cellHeight - Style.current.padding
+            width: GridView.view.cellWidth - Theme.padding
+            height: GridView.view.cellHeight - Theme.padding
             title: !!ProfileUtils.linkTypeToText(linkType) ? ProfileUtils.linkTypeToText(linkType) : model.text
             asset.bgColor: ProfileUtils.linkTypeBgColor(linkType)
             asset.name: ProfileUtils.linkTypeToIcon(linkType)
@@ -93,7 +93,7 @@ Item {
         visible: (webView.count > 0)
         Rectangle {
             anchors.fill: parent
-            color: Style.current.background
+            color: Theme.palette.background
             radius: 30
             border.color: Theme.palette.baseColor2
         }

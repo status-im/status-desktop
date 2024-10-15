@@ -198,8 +198,8 @@ StatusDropdown {
             Layout.topMargin: 8
             Layout.bottomMargin: 4
             font.weight: Font.Medium
-            color: Style.current.secondaryText
-            font.pixelSize: Style.current.additionalTextSize
+            color: Theme.palette.secondaryText
+            font.pixelSize: Theme.additionalTextSize
             text: d.searchStringLowercase ? (d.filteredModel.count ? qsTr("Search Results") : qsTr("No results found"))
                                           : emojiGrid.currentCategory
             font.capitalization: Font.AllUppercase

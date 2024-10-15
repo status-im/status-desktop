@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -76,7 +76,7 @@ ColumnLayout {
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         validator: RegExpValidator { regExp: /^[!-~]+$/ } // That includes NOT extended ASCII printable characters less space
         maximumLength: Constants.maxPasswordLength // a maximum of 100 characters allowed
-        rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+        rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Theme.padding / 2
         onTextChanged: {
             errorTxt.text = ""
             d.updatePasswordMatch()
@@ -104,7 +104,7 @@ ColumnLayout {
         id: errorTxt
         Layout.alignment: Qt.AlignHCenter
         Layout.fillHeight: true
-        Layout.topMargin: -Style.current.halfPadding
+        Layout.topMargin: -Theme.halfPadding
         font.pixelSize: 12
         color: Theme.palette.dangerColor1
     }

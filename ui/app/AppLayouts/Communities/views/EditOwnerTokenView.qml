@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.14
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -85,7 +85,7 @@ StatusScrollView {
         id: mainLayout
 
         width: root.viewWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         // Owner token defintion:
         StatusBaseText {
@@ -109,8 +109,8 @@ StatusScrollView {
         StatusModalDivider {
             Layout.fillWidth: true
 
-            topPadding: Style.current.padding
-            bottomPadding: Style.current.padding
+            topPadding: Theme.padding
+            bottomPadding: Theme.padding
         }
 
         // TMaster token definition:
@@ -135,8 +135,8 @@ StatusScrollView {
         StatusModalDivider {
             Layout.fillWidth: true
 
-            topPadding: Style.current.padding
-            bottomPadding: Style.current.padding
+            topPadding: Theme.padding
+            bottomPadding: Theme.padding
         }
 
         CustomLabelDescriptionComponent {
@@ -151,7 +151,7 @@ StatusScrollView {
                 id: accountBox
 
                 Layout.fillWidth: true
-                Layout.topMargin: -Style.current.halfPadding
+                Layout.topMargin: -Theme.halfPadding
                 model: root.accounts
                 selectedAddress: ownerToken.accountAddress
                 Binding {
@@ -201,7 +201,7 @@ StatusScrollView {
 
         FeesBox {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             model: QtObject {
                 id: singleFeeModel
@@ -220,7 +220,7 @@ StatusScrollView {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             Layout.topMargin: 4
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
 
             enabled: root.feeText && !root.feeErrorText
             objectName: "mintButton"
@@ -262,7 +262,7 @@ StatusScrollView {
         property string description
 
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
         spacing: 8
 
         CustomLabelDescriptionComponent {

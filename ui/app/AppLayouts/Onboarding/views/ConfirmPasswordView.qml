@@ -1,6 +1,7 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared.views 1.0
@@ -32,7 +33,7 @@ Item {
 
     ColumnLayout {
         id: view
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
         height: 460
         anchors.centerIn: parent
 
@@ -41,7 +42,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
 
             expectedPassword: root.startupStore.getPassword()
 

@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
-import QtQuick.Window 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
@@ -160,11 +159,11 @@ Item {
         Column {
             id: column
             width: scrollView.availableWidth
-            spacing: Style.current.xlPadding + Style.current.halfPadding
+            spacing: Theme.xlPadding + Theme.halfPadding
 
             Column {
                 width: parent.width
-                spacing: Style.current.bigPadding
+                spacing: Theme.bigPadding
 
                 TransactionDelegate {
                     id: transactionHeader
@@ -237,7 +236,7 @@ Item {
 
                 Item {
                     width: parent.width
-                    height: Style.current.smallPadding
+                    height: Theme.smallPadding
                 }
 
                 DetailsPanel {
@@ -269,7 +268,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.outSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdOut, "iconUrl")) ?? Style.svg("network/Network=Custom")
+                                    return Theme.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdOut, "iconUrl")) ?? Theme.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -296,7 +295,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return Style.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Style.svg("network/Network=Custom")
+                                    return Theme.svg(ModelUtils.getByKey(root.rootStore.flatNetworks, "chainId", d.transaction.chainIdIn, "iconUrl")) ?? Theme.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -341,7 +340,7 @@ Item {
                         components: [
                             Loader {
                                 anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: Style.current.halfPadding
+                                anchors.verticalCenterOffset: Theme.halfPadding
                                 active: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
                                 width: active ? implicitWidth : 0
                                 sourceComponent: StatusLoadingIndicator { }
@@ -361,7 +360,7 @@ Item {
                         width: parent.width
                         title: qsTr("Using")
                         subTitle: d.isDetailsValid ? d.details.protocol : ""
-                        asset.name: d.isDetailsValid && d.details.protocol ? Style.svg("protocol/Protocol=%1".arg(d.details.protocol)) : Style.svg("network/Network=Custom")
+                        asset.name: d.isDetailsValid && d.details.protocol ? Theme.svg("protocol/Protocol=%1".arg(d.details.protocol)) : Theme.svg("network/Network=Custom")
                         iconSettings.bgRadius: iconSettings.bgWidth / 2
 //                        buttonIconName: "external" // TODO handle external link #11982
                         visible: !!subTitle
@@ -451,7 +450,7 @@ Item {
 
                 Item {
                     width: parent.width
-                    height: Style.current.bigPadding
+                    height: Theme.bigPadding
                 }
 
                 DetailsPanel {
@@ -482,7 +481,7 @@ Item {
                                         visible: image.source !== ""
                                         border.width: index === 0 ? 0 : 1
                                         border.color: Theme.palette.white
-                                        image.source: Style.svg("tiny/" + modelData)
+                                        image.source: Theme.svg("tiny/" + modelData)
                                         z: index + 1
                                     }
                                 }
@@ -494,7 +493,7 @@ Item {
                             Layout.fillWidth: true
                             title: qsTr("Network")
                             subTitle: transactionHeader.networkName
-                            asset.name: !!d.networkIcon ? Style.svg(d.networkIcon) : ""
+                            asset.name: !!d.networkIcon ? Theme.svg(d.networkIcon) : ""
                             subTitleBadgeLoaderAlignment: Qt.AlignTop
                             smallIcon: true
                             visible: !!subTitle && d.transactionType !== Constants.TransactionType.Bridge
@@ -599,7 +598,7 @@ Item {
 
             Column {
                 width: progressBlock.width
-                spacing: Style.current.smallPadding
+                spacing: Theme.smallPadding
                 visible: !(transactionHeader.isNFT && d.isIncoming)
 
                 RowLayout {
@@ -849,10 +848,10 @@ Item {
         Rectangle {
             id: tileBackground
             anchors.fill: parent
-            color: Style.current.transparent
+            color: Theme.palette.transparent
             radius: 8
             border.width: 1
-            border.color: Style.current.separator
+            border.color: Theme.palette.separator
         }
 
         Column {

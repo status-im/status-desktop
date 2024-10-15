@@ -60,7 +60,7 @@ Control {
             height: Math.min(root.maximumListHeight,
                              d.delegateHeight * root.count)
 
-            radius: Style.current.radius
+            radius: Theme.radius
             color: Theme.palette.statusListItem.backgroundColor
 
             StatusListView {

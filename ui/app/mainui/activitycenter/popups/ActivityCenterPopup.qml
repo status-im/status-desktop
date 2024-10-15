@@ -61,16 +61,16 @@ Popup {
     }
 
     background: Rectangle {
-        color: Style.current.background
-        radius: Style.current.radius
+        color: Theme.palette.background
+        radius: Theme.radius
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
-            radius: Style.current.radius
+            radius: Theme.radius
             samples: 15
             fast: true
             cached: true
-            color: Style.current.dropShadow
+            color: Theme.palette.dropShadow
         }
     }
 
@@ -100,7 +100,7 @@ Popup {
         anchors.right: parent.right
         anchors.top: activityCenterTopBar.bottom
         anchors.bottom: parent.bottom
-        anchors.margins: Style.current.smallPadding
+        anchors.margins: Theme.smallPadding
         spacing: 1
 
         model: root.activityCenterStore.activityCenterNotifications

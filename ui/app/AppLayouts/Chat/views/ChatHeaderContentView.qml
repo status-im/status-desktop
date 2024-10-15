@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -24,7 +24,7 @@ Item {
     property RootStore rootStore
     property var chatContentModule: root.rootStore.currentChatContentModule() || null
     property var emojiPopup
-    property int padding: Style.current.halfPadding
+    property int padding: Theme.halfPadding
 
     signal searchButtonClicked()
     signal displayEditChannelPopup(string chatId,

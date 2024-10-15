@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -119,7 +120,7 @@ StatusModal {
                 asynchronous: true
 
                 sourceComponent: StatusDialog {
-                    width: root.width - 2*Style.current.padding
+                    width: root.width - 2*Theme.padding
 
                     title: Constants.walletConstants.maxNumberOfAccountsTitle
 

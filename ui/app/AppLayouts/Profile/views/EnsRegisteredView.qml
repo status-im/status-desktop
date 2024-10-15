@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -17,9 +17,9 @@ Item {
         id: sectionTitle
         text: qsTr("ENS usernames")
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.bigPadding
+        anchors.leftMargin: Theme.bigPadding
         anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Theme.bigPadding
         font.weight: Font.Bold
         font.pixelSize: 20
         color: Theme.palette.directColor1
@@ -36,7 +36,7 @@ Item {
     Rectangle {
         id: circle
         anchors.top: sectionTitle.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Theme.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
         width: 60
         height: 60
@@ -58,7 +58,7 @@ Item {
         id: title
         text: qsTr("Username added")
         anchors.top: circle.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Theme.bigPadding
         font.weight: Font.Bold
         font.pixelSize: 24
         anchors.left: parent.left
@@ -98,7 +98,7 @@ Item {
     StatusButton {
         id: startBtn
         anchors.top: progress.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Ok, got it")
         onClicked: okBtnClicked()

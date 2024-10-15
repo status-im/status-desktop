@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +28,7 @@ ActivityNotificationBase {
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.topMargin: 2
 
             asset {

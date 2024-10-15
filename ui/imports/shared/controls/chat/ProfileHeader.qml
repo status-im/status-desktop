@@ -10,6 +10,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -102,8 +103,8 @@ Item {
         anchors {
             left: parent.left
             right: parent.right
-            leftMargin: Style.current.smallPadding
-            rightMargin: Style.current.smallPadding
+            leftMargin: Theme.smallPadding
+            rightMargin: Theme.smallPadding
         }
 
         Item {
@@ -193,7 +194,7 @@ Item {
         }
 
         RowLayout {
-            spacing: compact ? 4 : Style.current.halfPadding
+            spacing: compact ? 4 : Theme.halfPadding
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.displayNamePlusIconsVisible
@@ -206,7 +207,7 @@ Item {
                 elide: Text.ElideRight
                 font {
                     weight: Font.Medium
-                    pixelSize: Style.current.primaryTextFontSize
+                    pixelSize: Theme.primaryTextFontSize
                 }
             }
 
@@ -224,7 +225,7 @@ Item {
                     objectName: "ProfileHeader_displayNameEditIcon"
                     height: compact ? 10 : 16
                     width: compact ? 10 : 16
-                    source: Style.svg("edit-message")
+                    source: Theme.svg("edit-message")
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -246,7 +247,7 @@ Item {
             text: root.isBridgedAccount ? qsTr("Bridged from Discord") : Utils.getElidedCompressedPk(pubkey)
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 13
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
         }
 
         RowLayout {
@@ -256,15 +257,15 @@ Item {
                 id: txtChatKey
                 text: qsTr("Chatkey:%1...").arg(pubkey.substring(0, 32))
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Style.current.primaryTextFontSize
-                color: Style.current.secondaryText
+                font.pixelSize: Theme.primaryTextFontSize
+                color: Theme.palette.secondaryText
             }
 
             CopyToClipBoardButton {
                 id: copyBtn
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
-                color: Style.current.transparent
+                color: Theme.palette.transparent
                 textToCopy: pubkey
                 onCopyClicked: ClipboardUtils.setText(textToCopy)
             }

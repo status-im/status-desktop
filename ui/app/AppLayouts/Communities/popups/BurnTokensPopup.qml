@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -85,7 +85,7 @@ StatusDialog {
     contentItem: ColumnLayout {
         id: content
 
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusBaseText {
             Layout.fillWidth: true
@@ -101,12 +101,12 @@ StatusDialog {
 
             wrapMode: Text.WordWrap
             lineHeight: 1.2
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
         }
 
         Item {
             Layout.bottomMargin: 12
-            Layout.leftMargin: -Style.current.halfPadding
+            Layout.leftMargin: -Theme.halfPadding
             Layout.fillWidth: true
 
             implicitHeight: childrenRect.height
@@ -123,7 +123,7 @@ StatusDialog {
                                            + amountInput.Layout.leftMargin
 
                     text: qsTr("Specific amount")
-                    font.pixelSize: Style.current.primaryTextFontSize
+                    font.pixelSize: Theme.primaryTextFontSize
                     ButtonGroup.group: radioGroup
 
                     onToggled: if(checked) amountInput.forceActiveFocus()
@@ -158,7 +158,7 @@ StatusDialog {
                 anchors.leftMargin: parent.spacing
 
                 text: qsTr("All available remaining (%1)").arg(d.remainingTokensDisplayText)
-                font.pixelSize: Style.current.primaryTextFontSize
+                font.pixelSize: Theme.primaryTextFontSize
                 ButtonGroup.group: radioGroup
             }
 
@@ -228,7 +228,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusButton {
                 text: qsTr("Cancel")

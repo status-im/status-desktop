@@ -1,9 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import shared 1.0
-
 import utils 1.0
 
 import "../stores"
@@ -57,11 +58,11 @@ Column {
 
             Loader {
                 id: betaTagLoader
-                readonly property string experimentalTooltip: model.experimentalTooltip
+                readonly property string experimentalTooltip: model.experimentalTooltip ?? ""
                 active: model.isExperimental
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: Style.current.padding + (navigationItem.badge.visible ? navigationItem.badge.width + Style.current.halfPadding : 0)
+                anchors.rightMargin: Theme.padding + (navigationItem.badge.visible ? navigationItem.badge.width + Theme.halfPadding : 0)
 
                 sourceComponent: StatusBetaTag {
                     tooltipText: betaTagLoader.experimentalTooltip

@@ -60,7 +60,7 @@ StatusStackModal {
     stackItems: [
         ColumnLayout {
             id: firstPage
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             readonly property bool cancellable: true
             readonly property bool canGoNext: shardIndexEdit.valid && root.shardIndex != parseInt(shardIndexEdit.text)

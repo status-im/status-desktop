@@ -23,18 +23,18 @@ ColumnLayout {
 
     StatusBaseText {
         text: root.caption
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
     }
     StatusListItem {
         id: listItem
         Layout.fillWidth: true
         Layout.preferredHeight: root.listItemHeight
         title: root.primaryText
-        statusListItemTitle.font.pixelSize: Style.current.additionalTextSize
+        statusListItemTitle.font.pixelSize: Theme.additionalTextSize
         statusListItemTitle.elide: Text.ElideMiddle
         statusListItemTitle.customColor: root.primaryTextCustomColor
         subTitle: root.secondaryText
-        statusListItemSubTitle.font.pixelSize: Style.current.additionalTextSize
+        statusListItemSubTitle.font.pixelSize: Theme.additionalTextSize
         asset.name: root.icon
         asset.isImage: true
         asset.bgWidth: 40

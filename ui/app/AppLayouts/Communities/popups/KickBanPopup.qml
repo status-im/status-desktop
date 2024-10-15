@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 
@@ -37,7 +38,7 @@ StatusDialog {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.Wrap
 
             text: root.mode === KickBanPopup.Mode.Kick
@@ -54,7 +55,7 @@ StatusDialog {
                     Layout.fillWidth: true
 
                     text: qsTr("Delete all messages posted by the user")
-                    font.pixelSize: Style.current.primaryTextFontSize
+                    font.pixelSize: Theme.primaryTextFontSize
                 }
 
                 StatusSwitch {

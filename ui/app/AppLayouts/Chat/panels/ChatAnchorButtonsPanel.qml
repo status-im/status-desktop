@@ -37,11 +37,11 @@ Item {
         radius: 100
         spacing: 2
 
-        icon.width: Style.current.primaryTextFontSize + 5
-        icon.height: Style.current.primaryTextFontSize + 5
-        verticalPadding: Style.current.halfPadding
-        horizontalPadding: Style.current.smallPadding
-        font.pixelSize: Style.current.primaryTextFontSize
+        icon.width: Theme.primaryTextFontSize + 5
+        icon.height: Theme.primaryTextFontSize + 5
+        verticalPadding: Theme.halfPadding
+        horizontalPadding: Theme.smallPadding
+        font.pixelSize: Theme.primaryTextFontSize
 
         layer.enabled: true
         layer.effect: DropShadow {
@@ -56,7 +56,7 @@ Item {
 
         anchors.fill: parent
 
-        spacing: Style.current.smallPadding
+        spacing: Theme.smallPadding
 
         AnchorButton {
             visible: root.mentionsCount > 0

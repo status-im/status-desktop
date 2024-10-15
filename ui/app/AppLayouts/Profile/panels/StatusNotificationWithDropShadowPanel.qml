@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Platform 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -16,7 +17,7 @@ Item {
     StatusMacNotification {
         id: statusNotification
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         width: parent.width
         name: parent.name
         message: parent.message

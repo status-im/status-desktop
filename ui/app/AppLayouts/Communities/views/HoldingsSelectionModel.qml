@@ -4,8 +4,9 @@ import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.controls 1.0
 
-import StatusQ.Core.Utils 0.1
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -67,7 +68,7 @@ SortFilterProxyModel {
 
             function getIcon(type, key) {
                 if (type === Constants.TokenType.ENS)
-                    return Style.png("tokens/ENS")
+                    return Theme.png("tokens/ENS")
 
                 const model = type === Constants.TokenType.ERC20
                             ? assetsModel : collectiblesModel

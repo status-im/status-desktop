@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQml 2.15
 
 import StatusQ 0.1
@@ -110,7 +110,7 @@ Rectangle {
         anchors.centerIn: parent
         height: parent.height
         width: Math.min(root.width, implicitWidth)
-        spacing:  Style.current.padding
+        spacing: Theme.padding
 
         StatusFlatButton {
             id: sendButton

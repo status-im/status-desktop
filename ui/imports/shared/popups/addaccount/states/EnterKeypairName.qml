@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,13 +21,13 @@ Item {
     ColumnLayout {
         id: layout
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 2 * Style.current.padding
-        spacing: Style.current.halfPadding
+        width: parent.width - 2 * Theme.padding
+        spacing: Theme.halfPadding
 
         StatusInput {
             objectName: "AddAccountPopup-GeneratedSeedPhraseKeyName"
             Layout.preferredWidth: parent.width
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             label: qsTr("Key name")
             charLimit: Constants.addAccountPopup.keyPairNameMaxLength
             placeholderText: qsTr("Enter a name")

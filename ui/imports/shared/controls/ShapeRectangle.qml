@@ -11,7 +11,7 @@ import utils 1.0
    \qmltype ShapeRectangle
    \inherits Shape
    \brief Rectangle-like component with the ability to further customize the outline/border style using a Shape/ShapePath;
-          with optional text in the middle
+          with optional text and icon in the middle
 
    Example of how to use it:
 
@@ -35,7 +35,7 @@ Shape {
     property color textColor: Theme.palette.baseColor1
     property alias font: description.font
 
-    property int radius: Style.current.radius
+    property int radius: Theme.radius
     property int leftTopRadius: radius
     property int rightTopRadius: radius
     property int leftBottomRadius: radius
@@ -66,7 +66,7 @@ Shape {
             id: description
             color: root.textColor
             text: root.text
-            font.pixelSize: Style.current.additionalTextSize
+            font.pixelSize: Theme.additionalTextSize
             visible: !!text
         }
     }
@@ -108,7 +108,7 @@ Shape {
         PathArc {
             x:0
             y: root.height - root.leftBottomRadius
-            radiusX: root.leftBottomRadius;
+            radiusX: root.leftBottomRadius
             radiusY: root.leftBottomRadius
         }
         PathLine {

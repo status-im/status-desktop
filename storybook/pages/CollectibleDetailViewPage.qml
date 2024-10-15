@@ -10,6 +10,7 @@ import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.views.collectibles 1.0
 
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import shared.controls 1.0
 import shared.stores 1.0 as SharedStores
@@ -106,7 +107,7 @@ SplitView {
                             }
                             return {
                                 name : "Mock Community",
-                                image : Style.png("tokens/UNI"),
+                                image : Theme.png("tokens/UNI"),
                                 color : "orchid"
                             }                        
 			}

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -28,12 +28,12 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Style.current.padding
-        spacing: Style.current.padding
+        anchors.margins: Theme.padding
+        spacing: Theme.padding
 
         Column {
             width: parent.width
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StatusBaseText {
                 width: parent.width
@@ -45,15 +45,15 @@ Item {
             GridLayout {
                 width: parent.width
                 columns: 2
-                columnSpacing: Style.current.padding
-                rowSpacing: Style.current.halfPadding
+                columnSpacing: Theme.padding
+                rowSpacing: Theme.halfPadding
 
                 StatusPasswordInput {
                     id: privKeyInput
                     objectName: "AddAccountPopup-PrivateKeyInput"
                     Layout.preferredHeight: Constants.addAccountPopup.itemHeight
                     Layout.preferredWidth: parent.width - parent.columnSpacing - showHideButton.width
-                    rightPadding: pasteButton.width + pasteButton.anchors.rightMargin + Style.current.halfPadding
+                    rightPadding: pasteButton.width + pasteButton.anchors.rightMargin + Theme.halfPadding
                     wrapMode: TextEdit.Wrap
                     placeholderText: qsTr("Type or paste your private key")
                     echoMode: d.showPassword ? TextInput.Normal : TextInput.Password
@@ -75,7 +75,7 @@ Item {
                         id: pasteButton
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
-                        anchors.rightMargin: Style.current.padding
+                        anchors.rightMargin: Theme.padding
                         borderColor: Theme.palette.primaryColor1
                         size: StatusBaseButton.Size.Tiny
                         text: qsTr("Paste")
@@ -118,7 +118,7 @@ Item {
             minimumHeight: Constants.addAccountPopup.importPrivateKeyWarningHeight
             visible: !d.addressResolved
             multiline: true
-            leftPadding: Style.current.padding
+            leftPadding: Theme.padding
             font.pixelSize: Constants.addAccountPopup.labelFontSize2
             text: qsTr("New addresses cannot be derived from an account imported from a private key. Import using a seed phrase if you wish to derive addresses.")
             input.edit.enabled: false
@@ -135,7 +135,7 @@ Item {
 
         AddressWithAddressDetails {
             width: parent.width
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             visible: d.addressResolved
 
             addressText: qsTr("Public address of private key")
@@ -152,7 +152,7 @@ Item {
 
         Column {
             width: parent.width
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             visible: root.store.isAddAccountPopup && d.addressResolved
 
             StatusInput {

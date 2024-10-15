@@ -134,7 +134,7 @@ DoubleFlickableWithFolding {
         placeholderText: d.searchActive ? root.emptySearchPlaceholderText : root.emptyInShowcasePlaceholderText
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !dropAreaRow.visible
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         delegate: delegateWrapper
         header: ColumnLayout {
             width: ListView.view.width
@@ -197,7 +197,7 @@ DoubleFlickableWithFolding {
                         horizontalAlignment: Text.AlignRight
                         verticalAlignment: Text.AlignVCenter
                         text: "%1 / %2".arg(inShowcaseCounterTracker.count).arg(root.showcaseLimit)
-                        font.pixelSize: Style.current.tertiaryTextFontSize
+                        font.pixelSize: Theme.tertiaryTextFontSize
                         color: Theme.palette.baseColor1
 
                         ColorAnimation {
@@ -272,10 +272,10 @@ DoubleFlickableWithFolding {
             id: limitReachedButton
 
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.halfPadding
+            anchors.bottomMargin: Theme.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - Style.current.padding
-            height: ProfileUtils.defaultDelegateHeight - Style.current.padding
+            width: parent.width - Theme.padding
+            height: ProfileUtils.defaultDelegateHeight - Theme.padding
             visible: d.isAnyHiddenDragActive && d.limitReached
             enabled: false
             text: qsTr("Showcase limit of %1 reached").arg(root.showcaseLimit)
@@ -293,7 +293,7 @@ DoubleFlickableWithFolding {
         footerHeight: ProfileUtils.defaultDelegateHeight
         footerContentVisible: !hiddenDropAreaButton.visible
         additionalFooterComponent: root.additionalFooterComponent
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         delegate: delegateWrapper
 
         header: FoldableHeader {
@@ -324,12 +324,12 @@ DoubleFlickableWithFolding {
                 id: hiddenDropAreaButton
 
                 anchors.top: parent.top
-                anchors.topMargin: hiddenListView.headerItem.height + Style.current.padding
+                anchors.topMargin: hiddenListView.headerItem.height + Theme.padding
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 visible: d.isAnyShowcaseDragActive || parent.containsDrag || hiddenDropAreaButton.containsDrag
-                width: parent.width - Style.current.padding
-                height: ProfileUtils.defaultDelegateHeight - Style.current.padding
+                width: parent.width - Theme.padding
+                height: ProfileUtils.defaultDelegateHeight - Theme.padding
                 text: qsTr("Hide")
                 dropAreaKeys: d.dragShowcaseItemKey
                 
@@ -347,7 +347,7 @@ DoubleFlickableWithFolding {
         property int showcaseVisibility: Constants.ShowcaseVisibility.NoOne
         property var dropAreaKeys: []
 
-        padding: Style.current.halfPadding
+        padding: Theme.halfPadding
         spacing: padding/2
 
         icon.color: Theme.palette.primaryColor1
@@ -358,7 +358,7 @@ DoubleFlickableWithFolding {
             id: shapeWrapper
 
             color: dropArea.containsDrag ? Theme.palette.primaryColor3 : Theme.palette.getColor(Theme.palette.baseColor4, 0.7)
-            radius: Style.current.radius
+            radius: Theme.radius
             
             ShapeRectangle {
                 anchors.fill: parent
@@ -399,7 +399,7 @@ DoubleFlickableWithFolding {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                     elide: Text.ElideRight
                     color: visibilityDropAreaButton.textColor
@@ -415,12 +415,12 @@ DoubleFlickableWithFolding {
         readonly property bool everyoneContainsDrag: dropAreaEveryone.containsDrag
         readonly property bool contactsContainsDrag: dropAreaContacts.containsDrag
         readonly property bool verifiedContainsDrag: dropAreaVerified.containsDrag
-        property int margins: Style.current.halfPadding
+        property int margins: Theme.halfPadding
 
         RowLayout {
             anchors.fill: parent
             anchors.margins: visibilityDropAreaRow.margins
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             VisibilityDropAreaButton {
                 id: dropAreaEveryone
@@ -456,7 +456,7 @@ DoubleFlickableWithFolding {
         height: ProfileUtils.defaultDelegateHeight
         anchors.centerIn: parent
         color: Theme.palette.baseColor5
-        radius: Style.current.radius
+        radius: Theme.radius
     }
 
     Component {
@@ -547,7 +547,7 @@ DoubleFlickableWithFolding {
             }
 
             Binding {
-                when: showcaseDelegateRoot.isHiddenShowcaseItem  && d.limitReached
+                when: showcaseDelegateRoot.isHiddenShowcaseItem && d.limitReached
                 target: showcaseDraggableDelegateLoader.item
                 property: "tooltipTextWhenContextMenuDisabled"
                 value: qsTr("Showcase limit of %1 reached. <br>Remove item from showcase to add more.").arg(root.showcaseLimit)

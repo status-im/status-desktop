@@ -1,10 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 ThemePalette {
+    id: root
 
     name: "dark"
-
-    dropShadow: getColor('black', 0.08)
 
     baseColor1: getColor('graphite5')
     baseColor2: getColor('graphite4')
@@ -65,6 +64,7 @@ ThemePalette {
     miscColor11: getColor('yellow2')
     miscColor12: getColor('green6')
 
+    dropShadow: getColor('black', 0.08)
     dropShadow2: getColor('blue8', 0.02)
 
     statusFloatingButtonHighlight: getColor('blue4', 0.3)
@@ -99,6 +99,12 @@ ThemePalette {
                           "#C2FFFF", "#00F0B6"]
 
     blockProgressBarColor: directColor7
+
+    // Style compat
+    background: baseColor3
+    separator: directColor7
+    darkGrey: baseColor2
+    secondaryMenuBackground: getColor("graphite2")
 
     statusAppLayout: QtObject {
         property color backgroundColor: baseColor3
@@ -146,7 +152,7 @@ ThemePalette {
     statusMenu: QtObject {
         property color backgroundColor: baseColor3
         property color hoverBackgroundColor: directColor7
-        property color separatorColor: directColor7
+        property color separatorColor: root.separator
     }
 
     statusModal: QtObject {

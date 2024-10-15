@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQml 2.15
 
 import utils 1.0
@@ -272,8 +272,8 @@ SettingsContentBase {
             ProfileHeader {
                 id: profileHeader
                 Layout.fillWidth: true
-                Layout.leftMargin: Style.current.padding
-                Layout.rightMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Theme.padding
 
                 displayName: profileStore.name
                 pubkey: profileStore.pubkey
@@ -348,9 +348,9 @@ SettingsContentBase {
             hiddenModel: priv.showcaseModels.collectiblesHiddenModel
             showcaseLimit: root.profileStore.getProfileShowcaseEntriesLimit()
             addAccountsButtonVisible: priv.showcaseModels.accountsHiddenModel.count > 0
-            
+
             onNavigateToAccountsTab: profileTabBar.currentIndex = MyProfileView.TabIndex.Accounts
-            
+
             onChangePositionRequested: function (from, to) {
                 priv.showcaseModels.changeCollectiblePosition(from, to)
             }

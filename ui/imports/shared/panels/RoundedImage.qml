@@ -1,8 +1,9 @@
-import QtQuick 2.12
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import "./"
 
 Rectangle {
     id: root
@@ -17,7 +18,7 @@ Rectangle {
 
     width: 24
     height: 24
-    color: Style.current.background
+    color: Theme.palette.background
 
     // apply rounded corners mask
     layer.enabled: true

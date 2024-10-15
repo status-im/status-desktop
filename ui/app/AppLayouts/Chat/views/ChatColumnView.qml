@@ -265,7 +265,7 @@ Item {
 
         RowLayout {
             Layout.fillWidth: true
-            Layout.margins: Style.current.smallPadding
+            Layout.margins: Theme.smallPadding
             Layout.preferredHeight: chatInputItem.height
 
             Item {
@@ -399,7 +399,7 @@ Item {
                     width: chatInput.textInput.width
                     height: chatInput.textInput.height
                     anchors.left: parent.left
-                    anchors.leftMargin: (2*Style.current.bigPadding)
+                    anchors.leftMargin: (2*Theme.bigPadding)
                     visible: (!!root.viewAndPostHoldingsModel && (root.viewAndPostHoldingsModel.count > 0)
                               && !root.amISectionAdmin && !root.canPost)
                     assetsModel: root.rootStore.assetsModel

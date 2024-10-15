@@ -34,7 +34,7 @@ SignTransactionModalBase {
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
-    required property string networkIconPath // e.g. `Style.svg("network/Network=Optimism")`
+    required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
 
     required property string fiatFees
@@ -74,20 +74,20 @@ SignTransactionModalBase {
 
         bridgeBadge.visible: true
         bridgeBadge.border.width: 2
-        bridgeBadge.color: Style.current.darkBlue
-        bridgeBadge.image.source: Style.svg("sign")
+        bridgeBadge.color: Theme.palette.darkBlue
+        bridgeBadge.image.source: Theme.svg("sign")
     }
 
     leftFooterContents: ObjectModel {
         RowLayout {
             Layout.leftMargin: 4
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
             ColumnLayout {
                 spacing: 2
                 StatusBaseText {
                     text: qsTr("Max fees:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerFiatFeesText"
@@ -100,7 +100,7 @@ SignTransactionModalBase {
                 StatusBaseText {
                     text: qsTr("Max slippage:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusBaseText {
                     objectName: "footerMaxSlippageText"
@@ -113,7 +113,7 @@ SignTransactionModalBase {
     // Pay
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "payBox"
         caption: qsTr("Pay")
         primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol)
@@ -136,7 +136,7 @@ SignTransactionModalBase {
     // Receive
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "receiveBox"
         caption: qsTr("Receive")
         primaryText: formatBigNumber(root.toTokenAmount, root.toTokenSymbol)
@@ -159,7 +159,7 @@ SignTransactionModalBase {
     // Account
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "accountBox"
         caption: qsTr("In account")
         primaryText: root.accountName
@@ -173,7 +173,7 @@ SignTransactionModalBase {
     // Network
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "networkBox"
         caption: qsTr("Network")
         primaryText: root.networkName
@@ -183,7 +183,7 @@ SignTransactionModalBase {
     // Fees
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "feesBox"
         caption: qsTr("Fees")
         primaryText: qsTr("Max. fees on %1").arg(root.networkName)
@@ -197,7 +197,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: loading ? Constants.dummyText : root.fiatFees
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
                 }
                 StatusTextWithLoadingState {
@@ -205,7 +205,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: loading ? Constants.dummyText : root.cryptoFees
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     customColor: Theme.palette.baseColor1
                     loading: root.feesLoading
                 }

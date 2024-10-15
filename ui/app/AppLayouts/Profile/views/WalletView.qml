@@ -1,12 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 import Qt.labs.settings 1.1
 import QtQml 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
 import utils 1.0
@@ -278,8 +279,8 @@ SettingsContentBase {
         AccountOrderView {
             id: accountOrderView
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             walletStore: root.walletStore
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
@@ -405,7 +406,7 @@ SettingsContentBase {
             StatusRoundedImage {
                 width: 28
                 height: 28
-                image.source: Style.svg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.iconUrl ? editNetwork.combinedNetwork.prod.iconUrl: "")
+                image.source: Theme.svg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.iconUrl ? editNetwork.combinedNetwork.prod.iconUrl: "")
                 image.fillMode: Image.PreserveAspectCrop
             }
         }

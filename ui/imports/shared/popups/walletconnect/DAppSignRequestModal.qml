@@ -58,7 +58,7 @@ SignTransactionModalBase {
     fromImageSmartIdenticon.asset.emoji: root.accountEmoji
     fromImageSmartIdenticon.asset.color: root.accountColor
     fromImageSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
-    toImageSmartIdenticon.asset.name: Style.svg("sign")
+    toImageSmartIdenticon.asset.name: Theme.svg("sign")
     toImageSmartIdenticon.asset.bgColor: Theme.palette.primaryColor3
     toImageSmartIdenticon.asset.width: 24
     toImageSmartIdenticon.asset.height: 24
@@ -84,13 +84,13 @@ SignTransactionModalBase {
     leftFooterContents: ObjectModel {
         RowLayout {
             Layout.leftMargin: 4
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
             ColumnLayout {
                 spacing: 2
                 StatusBaseText {
                     text: qsTr("Max fees:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
                     Layout.fillWidth: true
@@ -111,7 +111,7 @@ SignTransactionModalBase {
                 StatusBaseText {
                     text: qsTr("Est. time:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerEstimatedTime"
@@ -126,7 +126,7 @@ SignTransactionModalBase {
     ContentPanel {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         payloadToDisplay: root.requestPayload
         visible: !!root.requestPayload
     }
@@ -134,7 +134,7 @@ SignTransactionModalBase {
     // Account
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "accountBox"
         caption: qsTr("Sign with")
         primaryText: root.accountName
@@ -148,7 +148,7 @@ SignTransactionModalBase {
     // Network
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "networkBox"
         caption: qsTr("Network")
         primaryText: root.networkName
@@ -158,7 +158,7 @@ SignTransactionModalBase {
     // Fees
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "feesBox"
         caption: qsTr("Fees")
         primaryText: qsTr("Max. fees on %1").arg(root.networkName)
@@ -173,7 +173,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: formatBigNumber(root.fiatFees, root.currentCurrency)
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
                     customColor: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                 }
@@ -182,7 +182,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: formatBigNumber(root.cryptoFees, Constants.ethToken)
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     customColor: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
                     loading: root.feesLoading
                 }

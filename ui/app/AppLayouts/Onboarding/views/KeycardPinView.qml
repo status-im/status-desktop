@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -48,7 +48,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         KeycardImage {
             id: image
@@ -74,7 +74,7 @@ Item {
 
             onPinInputChanged: {
                 if (root.state !== Constants.startupState.keycardWrongPin) {
-                    image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
+                    image.source = Theme.png("keycard/enter-pin-%1".arg(pinInput.length))
                 }
                 if(pinInput.length == 0)
                     return
@@ -91,7 +91,7 @@ Item {
                         root.startupStore.doPrimaryAction()
                     } else {
                         info.text = qsTr("PINs don't match")
-                        image.source = Style.png("keycard/plain-error")
+                        image.source = Theme.png("keycard/plain-error")
                     }
                 }
             }
@@ -123,7 +123,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardCreatePin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/enter-pin-0")
+                source: Theme.png("keycard/enter-pin-0")
                 pattern: ""
             }
             PropertyChanges {
@@ -145,7 +145,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRepeatPin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/enter-pin-0")
+                source: Theme.png("keycard/enter-pin-0")
                 pattern: ""
             }
             PropertyChanges {
@@ -193,7 +193,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEnterPin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-empty")
+                source: Theme.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {
@@ -214,7 +214,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardWrongPin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {

@@ -48,7 +48,7 @@ Control {
     contentItem: ColumnLayout {
         id: mainLayout
 
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         // General artwork representation:
         Rectangle {
@@ -88,7 +88,7 @@ Control {
         }
 
         Flow {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             Layout.fillWidth: true
 
             component CustomPreviewBox: Rectangle {
@@ -101,8 +101,8 @@ Control {
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
-                implicitWidth: Math.min(boxContent.implicitWidth + Style.current.padding, mainLayout.width)
-                implicitHeight: boxContent.implicitHeight + Style.current.padding
+                implicitWidth: Math.min(boxContent.implicitWidth + Theme.padding, mainLayout.width)
+                implicitHeight: boxContent.implicitHeight + Theme.padding
                 states: [
                     State {
                         when: !previewBox.highlighted
@@ -125,7 +125,7 @@ Control {
                         Layout.fillWidth: true
                         text: previewBox.label
                         elide: Text.ElideRight
-                        font.pixelSize: Style.current.additionalTextSize
+                        font.pixelSize: Theme.additionalTextSize
                         color: Theme.palette.baseColor1
                     }
 
@@ -134,13 +134,13 @@ Control {
 
                         StatusBaseText {
                             text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
-                            font.pixelSize: Style.current.tertiaryTextFontSize
+                            font.pixelSize: Theme.tertiaryTextFontSize
                             visible: previewBox.isLoading
                             color: Theme.palette.directColor1
                         }
 
                         StatusBaseText {
-                            Layout.maximumWidth: mainLayout.width - Style.current.padding
+                            Layout.maximumWidth: mainLayout.width - Theme.padding
                             text: previewBox.value
                             elide: Text.ElideRight
                             font.pixelSize: Theme.primaryTextFontSize
@@ -235,7 +235,7 @@ Control {
             Rectangle {
                 visible: root.networkBoxVisible
                 height: symbolBox.height
-                width: rowChain.implicitWidth + 2 * Style.current.padding
+                width: rowChain.implicitWidth + 2 * Theme.padding
                 border.width: 1
                 radius: 8
                 border.color: Theme.palette.baseColor2
@@ -245,14 +245,14 @@ Control {
                     id: rowChain
 
                     anchors.centerIn: parent
-                    spacing: Style.current.padding
+                    spacing: Theme.padding
 
                     SVGImage {
                         Layout.alignment: Qt.AlignVCenter
 
                         height: 24
                         width: height
-                        source: token.chainIcon ? Style.svg(token.chainIcon) : undefined
+                        source: token.chainIcon ? Theme.svg(token.chainIcon) : undefined
                     }
 
                     StatusBaseText {

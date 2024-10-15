@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -45,15 +45,15 @@ Item {
     ColumnLayout {
         anchors {
             fill: parent
-            topMargin: Style.current.smallPadding
+            topMargin: Theme.smallPadding
         }
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         // Chat headline row
         RowLayout {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
 
             StatusNavigationPanelHeadline {
                 objectName: "ContactsColumnView_MessagesHeadline"
@@ -94,8 +94,8 @@ Item {
         SearchBox {
             id: searchInput
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             Layout.preferredHeight: 36
             maximumHeight: 36
             leftPadding: 10

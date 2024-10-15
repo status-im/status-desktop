@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -14,7 +14,7 @@ import StatusQ.Controls 0.1
     \brief Show an address/ens as defined in design https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=4222%3A178403 and https://www.figma.com/file/h2Ab3k4wy1Y7SFHEvbcZZx/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop-(Copy)?node-id=1009%3A106451
 
     Panel's components:
-      - Address: displays the rquired \c address property
+      - Address: displays the required \c address property
       - Frame: a rounded frame and the \c 0x icon prefix
       - Copy action: clickable copy icon. Activable using \c showCopy
 
@@ -113,7 +113,7 @@ Item {
                     Layout.preferredWidth: root.expanded || root.ens ? implicitWidth : (implicitWidth * 0.25).toFixed()
                     Layout.alignment: Qt.AlignVCenter
 
-                    font.family: Theme.palette.monoFont.name
+                    font.family: Theme.monoFont.name
                     font.pixelSize: 15
                     font.weight: Font.Medium
                     elide: Text.ElideMiddle

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -39,7 +39,7 @@ ColumnLayout {
         Layout.preferredWidth: 350
         fillMode: Image.PreserveAspectFit
         antialiasing: true
-        source: Style.png("keycard/keycard-security")
+        source: Theme.png("keycard/keycard-security")
         mipmap: true
         cache: false
     }
@@ -47,7 +47,7 @@ ColumnLayout {
     Item {
         visible: d.noKeycardsSet
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.current.halfPadding
+        Layout.preferredHeight: Theme.halfPadding
     }
 
     StyledText {
@@ -61,14 +61,14 @@ ColumnLayout {
     Item {
         visible: d.noKeycardsSet
         Layout.fillWidth: true
-        Layout.preferredHeight: Style.current.halfPadding
+        Layout.preferredHeight: Theme.halfPadding
     }
 
     StatusSectionHeadline {
         visible: !d.noKeycardsSet
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         text: qsTr("Your Keycard(s)")
     }
 
@@ -76,7 +76,7 @@ ColumnLayout {
         visible: !d.noKeycardsSet
         Layout.fillWidth: true
         Layout.preferredHeight: 250
-        spacing: Style.current.padding
+        spacing: Theme.padding
         model: root.keycardStore.keycardModule.keycardModel
 
         delegate: KeycardItem {
@@ -113,8 +113,8 @@ ColumnLayout {
 
     StatusSectionHeadline {
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         text: qsTr("Create, import or restore a Keycard account")
     }
 
@@ -189,8 +189,8 @@ ColumnLayout {
 
     StatusSectionHeadline {
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         text: qsTr("Other")
     }
 

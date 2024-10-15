@@ -1,4 +1,6 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -57,7 +59,7 @@ Item {
         antialiasing: true
         mipmap: true
         source: d.isAnimation?
-                    Style.png(root.pattern.arg(img.currentImgIndex)) :
+                    Theme.png(root.pattern.arg(img.currentImgIndex)) :
                     root.source
 
         property int currentImgIndex: root.startImgIndexForTheFirstLoop

@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -165,14 +165,14 @@ SettingsContentBase {
 
         Rectangle {
             Layout.preferredWidth: root.contentWidth
-            implicitHeight: col1.height + 2 * Style.current.padding
+            implicitHeight: col1.height + 2 * Theme.padding
             visible: Qt.platform.os == Constants.mac
             radius: Constants.settingsSection.radius
             color: Theme.palette.primaryColor3
 
             ColumnLayout {
                 id: col1
-                anchors.margins: Style.current.padding
+                anchors.margins: Theme.padding
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
@@ -218,7 +218,7 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Messages")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
@@ -293,7 +293,7 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Others")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1
@@ -329,12 +329,12 @@ SettingsContentBase {
 
         Separator {
             Layout.preferredWidth: root.contentWidth
-            Layout.preferredHeight: Style.current.bigPadding
+            Layout.preferredHeight: Theme.bigPadding
         }
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Notification Content")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
@@ -343,7 +343,7 @@ SettingsContentBase {
         NotificationAppearancePreviewPanel {
             id: notifNameAndMsg
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             name: qsTr("Show Name and Message")
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
@@ -358,7 +358,7 @@ SettingsContentBase {
 
         NotificationAppearancePreviewPanel {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             name: qsTr("Name Only")
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("You have a new message")
@@ -373,7 +373,7 @@ SettingsContentBase {
 
         NotificationAppearancePreviewPanel {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             name: qsTr("Anonymous")
             notificationTitle: "Status"
             notificationMessage: qsTr("You have a new message")
@@ -405,7 +405,7 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Volume")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
@@ -413,16 +413,16 @@ SettingsContentBase {
 
         Item {
             Layout.preferredWidth: root.contentWidth
-            Layout.preferredHeight: Constants.settingsSection.itemHeight + Style.current.padding
+            Layout.preferredHeight: Constants.settingsSection.itemHeight + Theme.padding
 
             StatusSlider {
                 id: volumeSlider
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: Style.current.bigPadding
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.topMargin: Theme.bigPadding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 from: 0
                 to: 100
                 stepSize: 1
@@ -443,7 +443,7 @@ SettingsContentBase {
             RowLayout {
                 anchors.top: volumeSlider.bottom
                 anchors.left: volumeSlider.left
-                anchors.topMargin: Style.current.halfPadding
+                anchors.topMargin: Theme.halfPadding
                 width: volumeSlider.width
 
                 StatusBaseText {
@@ -463,7 +463,7 @@ SettingsContentBase {
         }
 
         StatusButton {
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Send a Test Notification")
             onClicked: {
                 root.notificationsStore.sendTestNotification(notifNameAndMsg.notificationTitle,
@@ -473,12 +473,12 @@ SettingsContentBase {
 
         Separator {
             Layout.preferredWidth: root.contentWidth
-            Layout.preferredHeight: Style.current.bigPadding
+            Layout.preferredHeight: Theme.bigPadding
         }
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Exemptions")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.directColor1
@@ -486,15 +486,15 @@ SettingsContentBase {
 
         SearchBox {
             id: searchBox
-            Layout.preferredWidth: root.contentWidth - 2 * Style.current.padding
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.preferredWidth: root.contentWidth - 2 * Theme.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
         }
 
         StatusBaseText {
             Layout.preferredWidth: root.contentWidth
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             text: qsTr("Most recent")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -103,11 +103,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.padding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
+        spacing: Theme.padding
 
         StatusStepper {
             id: stepper
@@ -127,18 +127,18 @@ Item {
             Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
             Layout.alignment: Qt.AlignCenter
             visible: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard
-            height: Style.current.xlPadding * 2
+            height: Theme.xlPadding * 2
             color: "transparent"
             border.color: Theme.palette.baseColor2
             border.width: 1
-            radius: Style.current.halfPadding
+            radius: Theme.halfPadding
 
             RowLayout {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
 
                 ColumnLayout {
                     StatusBaseText {
@@ -213,7 +213,7 @@ Item {
             }
             input.acceptReturn: true
             input.isIconSelectable: true
-            input.leftPadding: Style.current.padding
+            input.leftPadding: Theme.padding
             input.asset.color: Utils.getColorForId(d.observedAccount.colorId)
             input.asset.emoji: d.observedAccount.emoji
 
@@ -236,7 +236,7 @@ Item {
                 root.emojiPopup.open()
                 root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
                 root.emojiPopup.x = inputCoords.x
-                root.emojiPopup.y = inputCoords.y + accountName.height + Style.current.halfPadding
+                root.emojiPopup.y = inputCoords.y + accountName.height + Theme.halfPadding
             }
         }
 

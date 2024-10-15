@@ -253,13 +253,13 @@ Pane {
         spacing: 20
         anchors {
             fill: parent
-            leftMargin: Style.current.bigPadding
-            rightMargin: Style.current.bigPadding
+            leftMargin: Theme.bigPadding
+            rightMargin: Theme.bigPadding
         }
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             UserImage {
                 id: userImage
@@ -485,7 +485,7 @@ Pane {
                 StatusContactVerificationIcons {
                     id: verificationIcons
                     anchors.left: contactName.right
-                    anchors.leftMargin: Style.current.halfPadding
+                    anchors.leftMargin: Theme.halfPadding
                     anchors.verticalCenter: contactName.verticalCenter
                     objectName: "ProfileDialog_userVerificationIcons"
                     visible: !d.isCurrentUser
@@ -496,7 +496,7 @@ Pane {
                 }
             }
             RowLayout {
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 StatusBaseText {
                     id: contactSecondaryName
                     color: Theme.palette.baseColor1
@@ -538,9 +538,9 @@ Pane {
                 Layout.preferredHeight: implicitHeight
                 Layout.maximumHeight: 120
                 contentWidth: availableWidth
-                Layout.topMargin: Style.current.halfPadding
+                Layout.topMargin: Theme.halfPadding
                 padding: 0
-                rightPadding: Style.current.padding
+                rightPadding: Theme.padding
                 visible: !!bioText.text
                 StatusBaseText {
                     id: bioText
@@ -550,7 +550,7 @@ Pane {
                 }
             }
             EmojiHash {
-                Layout.topMargin: Style.current.halfPadding
+                Layout.topMargin: Theme.halfPadding
                 objectName: "ProfileDialog_userEmojiHash"
                 publicKey: root.publicKey
                 oneRow: true

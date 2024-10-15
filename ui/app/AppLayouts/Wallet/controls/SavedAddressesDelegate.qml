@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -104,7 +104,7 @@ StatusListItem {
             radius: 8
             icon.name: "more"
             onClicked: {
-                menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Style.current.halfPadding,
+                menu.openMenu(this, x + width - menu.width - statusListItemComponentsSlot.spacing, y + height + Theme.halfPadding,
                     {
                         name: root.name,
                         address: root.address,

@@ -51,14 +51,14 @@ Loader {
         badge.border.color: Theme.palette.statusBadge.foregroundColor
         badge.color: {
             if (root.onlineStatus === Constants.onlineStatus.online)
-                return Style.current.green
-            return Style.current.midGrey
+                return Theme.palette.successColor1
+            return Theme.palette.baseColor1
         }
         badge.anchors.rightMargin: badge.border.width/2
         badge.anchors.bottomMargin: badge.border.width/2
 
         bridgeBadge.visible: root.isBridgedAccount
-        bridgeBadge.image.source: Style.svg("discord-bridge")
+        bridgeBadge.image.source: Theme.svg("discord-bridge")
 
         Loader {
             anchors.fill: parent

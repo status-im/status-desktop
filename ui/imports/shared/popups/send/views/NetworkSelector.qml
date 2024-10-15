@@ -1,5 +1,5 @@
-﻿import QtQuick 2.13
-import QtQuick.Layouts 1.13
+﻿import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.stores 1.0
@@ -93,9 +93,9 @@ Item {
     StackLayout {
         id: stackLayout
         anchors.top: !root.isCollectiblesTransfer ? tabBar.bottom: parent.top
-        anchors.topMargin: !root.isCollectiblesTransfer ? Style.current.bigPadding: 0
-        height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Style.current.bigPadding:
-                                   advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Style.current.bigPadding
+        anchors.topMargin: !root.isCollectiblesTransfer ? Theme.bigPadding: 0
+        height: currentIndex == 0 ? networksSimpleRoutingPage.height + networksSimpleRoutingPage.anchors.margins + Theme.bigPadding:
+                                   advancedNetworkRoutingPage.height + advancedNetworkRoutingPage.anchors.margins + Theme.bigPadding
         width: parent.width
         currentIndex: root.isCollectiblesTransfer ? 0: tabBar.currentIndex === 0 ? 0 : 1
 
@@ -108,7 +108,7 @@ Item {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: Style.current.padding
+                anchors.margins: Theme.padding
                 isBridgeTx: root.isBridgeTx
                 isCollectiblesTransfer: root.isCollectiblesTransfer
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
@@ -142,7 +142,7 @@ Item {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: Style.current.padding
+                anchors.margins: Theme.padding
                 store: root.store
                 customMode: tabBar.currentIndex === 2
                 selectedRecipient: root.selectedRecipient
@@ -171,7 +171,7 @@ Item {
         id: fees
         width: parent.width
         anchors.top: stackLayout.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Theme.bigPadding
         visible: root.advancedOrCustomMode
 
         selectedAsset: root.selectedAsset
@@ -188,7 +188,7 @@ Item {
         property bool showDetails: false
 
         anchors.top: fees.visible? fees.bottom : stackLayout.bottom
-        anchors.topMargin: Style.current.bigPadding
+        anchors.topMargin: Theme.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.routerError !== ""
         text: root.routerError
@@ -201,9 +201,9 @@ Item {
 
     Rectangle {
         width: parent.width
-        implicitHeight: childrenRect.height + 2*Style.current.padding
+        implicitHeight: childrenRect.height + 2*Theme.padding
         anchors.top: errorTag.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         visible: errorTag.visible && errorTag.showDetails
         color: Theme.palette.dangerColor3
         radius: 8
@@ -212,9 +212,9 @@ Item {
 
         StatusBaseText {
             anchors.centerIn: parent
-            width: parent.width - 2*Style.current.bigPadding
+            width: parent.width - 2*Theme.bigPadding
             text: root.routerErrorDetails
-            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.pixelSize: Theme.tertiaryTextFontSize
             wrapMode: Text.WrapAnywhere
         }
     }

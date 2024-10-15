@@ -263,7 +263,7 @@ StatusChartPanel {
     }
 
     headerLeftPadding: 0
-    headerBottomPadding: Style.current.bigPadding
+    headerBottomPadding: Theme.bigPadding
     graphsModel: d.graphTabsModel
     timeRangeModel: d.modelMetadata
     onHeaderTabClicked: {
@@ -317,9 +317,9 @@ StatusChartPanel {
                         drawTicks: false,
                     },
                     ticks: {
-                        fontSize: Style.current.asideTextFontSize,
+                        fontSize: Theme.asideTextFontSize,
                         fontColor: d.baseColor1,
-                        padding: Style.current.padding,
+                        padding: Theme.padding,
                     }
                 }],
                 yAxes: [{
@@ -340,8 +340,8 @@ StatusChartPanel {
                     ticks: {
                         fontSize: 10,
                         fontColor: d.baseColor1,
-                        padding: Style.current.halfPadding,
-                        maxTicksLimit: Style.current.asideTextFontSize,
+                        padding: Theme.halfPadding,
+                        maxTicksLimit: Theme.asideTextFontSize,
                         beginAtZero: true,
                         stepSize: 1,
                         callback: function(value, index, values) {
@@ -356,14 +356,14 @@ StatusChartPanel {
     StatusMenu {
         id: toolTip
         width: 243 //By design
-        topPadding: Style.current.padding
+        topPadding: Theme.padding
         bottomPadding: topPadding
         leftPadding: topPadding
         rightPadding: topPadding
         parent: Overlay.overlay
 
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
             RowLayout {
                 Layout.fillWidth: true
                 StatusBaseText {
@@ -386,7 +386,7 @@ StatusChartPanel {
                 Layout.fillWidth: true
                 StatusBaseText {
                     elide: Qt.ElideRight
-                    font.pixelSize: Style.current.primaryTextFontSize
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.baseColor1
                     text: qsTr("No. of Messages")
                 }
@@ -394,7 +394,7 @@ StatusChartPanel {
                 StatusBaseText {
                     Layout.alignment: Qt.AlignRight
                     elide: Qt.ElideRight
-                    font.pixelSize: Style.current.primaryTextFontSize
+                    font.pixelSize: Theme.primaryTextFontSize
                     color: Theme.palette.directColor1
                     text: LocaleUtils.numberToLocaleString(d.hoveredBarValue)
                 }

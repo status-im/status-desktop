@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -66,7 +66,7 @@ TextArea {
     placeholderTextColor: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor9
 
     font {
-        family: Theme.palette.baseFont.name
+        family: Theme.baseFont.name
         pixelSize: 15
     }
 

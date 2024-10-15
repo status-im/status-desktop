@@ -287,7 +287,7 @@ Control {
                             messageDetails: root.messageDetails
                             isEdited: root.isEdited
                             allowShowMore: !root.isInPinnedPopup
-                            textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
+                            textField.anchors.rightMargin: root.isInPinnedPopup ? Theme.xlPadding : 0 // margin for the "Unpin" floating button
                             highlightedLink: root.highlightedLink
                             linkAddressAndEnsName: root.linkAddressAndEnsName
                             onLinkActivated: {
@@ -315,7 +315,7 @@ Control {
                                     messageDetails: root.messageDetails
                                     isEdited: root.isEdited
                                     allowShowMore: !root.isInPinnedPopup
-                                    textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
+                                    textField.anchors.rightMargin: root.isInPinnedPopup ? Theme.xlPadding : 0 // margin for the "Unpin" floating button
                                     highlightedLink: root.highlightedLink
                                     onLinkActivated: {
                                         root.linkActivated(link);

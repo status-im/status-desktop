@@ -53,6 +53,7 @@ Item {
         }
 
         property bool forceRefreshBalanceStore: false
+        readonly property var splitAddresses: root.networkFilters.split(":")
     }
 
     Connections {
@@ -81,7 +82,7 @@ Item {
             if (token.image)
                 return token.image
             if (token.symbol)
-                return Style.png("tokens/%1".arg(token.symbol))
+                return Theme.png("tokens/%1".arg(token.symbol))
             return ""
         }
         asset.isImage: true
@@ -90,7 +91,7 @@ Item {
         tertiaryText: {
             if (!d.isCommunityAsset) {
                 let totalCurrencyBalance = token ? token.balance * token.marketPrice : 0
-                return currencyStore.formatCurrencyAmount(totalCurrencyBalance, currencyStore.currentCurrency)
+                return root.currencyStore.formatCurrencyAmount(totalCurrencyBalance, root.currencyStore.currentCurrency)
             }
             return ""
         }
@@ -101,7 +102,7 @@ Item {
         address: root.address
         errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
         formatBalance: function(balance){
-            return LocaleUtils.currencyAmountToLocaleString(currencyStore.getCurrencyAmount(balance, token.symbol))
+            return LocaleUtils.currencyAmountToLocaleString(root.currencyStore.getCurrencyAmount(balance, token.symbol))
         }
         communityTag.visible: d.isCommunityAsset
         communityTag.tagPrimaryLabel.text: d.isCommunityAsset ? token.communityName: ""
@@ -320,7 +321,8 @@ Item {
                     function updateBalanceStore() {
                         let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
 
-                        let currencySymbol = root.sharedRootStore.currencyStore.currentCurrency
+                        let currencySymbol = root.currencyStore.currentCurrency
+
                         if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
                             root.tokensStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
                         }
@@ -508,20 +510,19 @@ Item {
                             Repeater {
                                 model: SortFilterProxyModel {
                                     sourceModel: d.addressPerChainModel
-                                    filters: ExpressionFilter {
-                                        expression: root.networkFilters.split(":").includes(model.chainId+"")
+                                    filters: FastExpressionFilter {
+                                        expression: d.splitAddresses.includes(model.chainId+"")
+                                        expectedRoles: ["chainId"]
                                     }
                                 }
                                 delegate: InformationTag {
-                                    asset.name: Style.svg("tiny/" + model.iconUrl)
+                                    asset.name: Theme.svg("tiny/" + model.iconUrl)
                                     asset.isImage: true
                                     tagPrimaryLabel.text: model.chainName
-                                    tagSecondaryLabel.text: SQUtils.Utils.elideText(model.address, 2,4)
+                                    tagSecondaryLabel.text: SQUtils.Utils.elideAndFormatWalletAddress(model.address)
                                     customBackground: Component {
                                         Rectangle {
                                             color: Theme.palette.baseColor2
-                                            border.width: 1
-                                            border.color: "transparent"
                                             radius: 36
                                         }
                                     }

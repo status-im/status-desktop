@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 DropArea {
@@ -44,7 +46,7 @@ DropArea {
         height: active ? parent.height : 0
         sourceComponent: Rectangle {
             id: dropRectangle
-            color: Style.current.background
+            color: Theme.palette.background
             opacity: 0.8
         }
     }

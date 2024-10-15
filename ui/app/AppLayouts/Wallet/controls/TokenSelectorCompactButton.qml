@@ -43,7 +43,7 @@ Control {
                 Layout.fillWidth: true
 
                 objectName: "tokenSelectorContentItemText"
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 color: Theme.palette.primaryColor1
                 text: root.text
@@ -61,11 +61,11 @@ Control {
         id: selectedContent
 
         RowLayout {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             RowLayout {
                 objectName: "selectedTokenItem"
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
 
                 StatusRoundedImage {
                     objectName: "tokenSelectorIcon"

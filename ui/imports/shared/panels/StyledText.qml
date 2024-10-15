@@ -1,9 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
-import utils 1.0
+import StatusQ.Core.Theme 0.1
 
 Text {
-    font.family: Style.current.baseFont.name
-    font.pixelSize: Style.current.primaryTextFontSize
-    color: Style.current.textColor
+    font.family: Theme.baseFont.name
+    font.pixelSize: Theme.primaryTextFontSize
+    color: Theme.palette.textColor
 }

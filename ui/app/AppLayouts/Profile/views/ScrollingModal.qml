@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -39,7 +40,7 @@ StatusDialog {
         height: root.isCustomScrollingEnabled ? parent.implicitHeight : implicitHeight
         width: parent.width
 
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         ButtonGroup { id: scrollSettingsGroup }
 
@@ -66,19 +67,19 @@ StatusDialog {
         ColumnLayout {
             visible: root.isCustomScrollingEnabled
 
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             Rectangle {
                 id: scrollSeparator
 
                 Layout.fillWidth: true
                 height: 1
-                color: Style.current.separator
+                color: Theme.palette.separator
             }
 
             StatusBaseText {
-                color: Style.current.secondaryText
-                font.pixelSize: Style.current.secondaryTextFontSize
+                color: Theme.palette.secondaryText
+                font.pixelSize: Theme.secondaryTextFontSize
                 text: qsTr("Velocity")
             }
 
@@ -97,8 +98,8 @@ StatusDialog {
             }
 
             StatusBaseText {
-                color: Style.current.secondaryText
-                font.pixelSize: Style.current.secondaryTextFontSize
+                color: Theme.palette.secondaryText
+                font.pixelSize: Theme.secondaryTextFontSize
                 text: qsTr("Deceleration")
             }
 
@@ -117,8 +118,8 @@ StatusDialog {
             }
 
             StatusBaseText {
-                color: Style.current.secondaryText
-                font.pixelSize: Style.current.secondaryTextFontSize
+                color: Theme.palette.secondaryText
+                font.pixelSize: Theme.secondaryTextFontSize
                 text: qsTr("Test scrolling")
             }
 

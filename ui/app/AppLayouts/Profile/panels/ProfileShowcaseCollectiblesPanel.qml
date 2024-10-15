@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -31,7 +32,7 @@ ProfileShowcasePanel {
         hasImage: !!model && !!model.imageUrl
 
         icon.source: hasImage ? model.imageUrl : ""
-        bgRadius: Style.current.radius
+        bgRadius: Theme.radius
         assetBgColor: !!model && !!model.backgroundColor ? model.backgroundColor : "transparent"
 
         actionComponent: model && !!model.communityId ? communityTokenTagComponent : null

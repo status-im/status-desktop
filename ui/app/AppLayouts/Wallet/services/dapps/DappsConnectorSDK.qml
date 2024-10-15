@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import QtWebEngine 1.10
 import QtWebChannel 1.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 
@@ -572,7 +573,7 @@ WalletConnectSDKBase {
             accountEmoji: account.emoji
 
             networkName: network.chainName
-            networkIconPath: Style.svg(network.iconUrl)
+            networkIconPath: Theme.svg(network.iconUrl)
 
             fiatFees: request.maxFeesText
             cryptoFees: request.maxFeesEthText

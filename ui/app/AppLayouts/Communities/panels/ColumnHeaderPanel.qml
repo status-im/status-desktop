@@ -1,6 +1,6 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,9 +21,9 @@ Control {
     signal infoButtonClicked
     signal adHocChatButtonClicked
 
-    padding: Style.current.halfPadding
-    rightPadding: Style.current.padding
-    topPadding: Style.current.smallPadding
+    padding: Theme.halfPadding
+    rightPadding: Theme.padding
+    topPadding: Theme.smallPadding
 
     contentItem: RowLayout {
         StatusChatInfoButton {

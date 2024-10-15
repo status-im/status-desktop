@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -48,7 +48,7 @@ SettingsContentBase {
         id: contentItem
         width: root.contentWidth
         height: (searchBox.height + contactsTabBar.height
-                + stackLayout.height + (2 * Style.current.bigPadding))
+                + stackLayout.height + (2 * Theme.bigPadding))
 
         Component {
             id: contactContextMenuComponent
@@ -104,11 +104,11 @@ SettingsContentBase {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: searchBox.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
 
             StatusTabButton {
                 id: contactsBtn
-                leftPadding: Style.current.padding
+                leftPadding: Theme.padding
                 width: implicitWidth
                 text: qsTr("Contacts")
             }
@@ -144,7 +144,7 @@ SettingsContentBase {
             anchors.right: parent.right
             anchors.top: contactsTabBar.bottom
             currentIndex: contactsTabBar.currentIndex
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             // CONTACTS
             ColumnLayout {
                 Layout.fillWidth: true
@@ -156,7 +156,7 @@ SettingsContentBase {
                         stackLayout.height = height+contactsTabBar.anchors.topMargin;
                     }
                 }
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 ContactsListPanel {
                     id: verifiedContacts
                     Layout.fillWidth: true
@@ -209,7 +209,7 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 Layout.minimumHeight: 0
                 Layout.maximumHeight: (receivedRequests.height + sentRequests.height)
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 visible: (stackLayout.currentIndex === 1)
                 onVisibleChanged: {
                     if (visible) {

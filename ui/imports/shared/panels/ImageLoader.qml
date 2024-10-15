@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.stores 1.0
-import "./"
 
 Rectangle {
     id: root
@@ -19,7 +19,7 @@ Rectangle {
     signal loaded
     signal clicked
 
-    color: Style.current.backgroundHover
+    color: Theme.palette.backgroundHover
     radius: width / 2
     states: [
         State {
@@ -43,7 +43,7 @@ Rectangle {
             when: image.status === Image.Ready
             PropertyChanges {
                 target: root
-                color: Style.current.transparent
+                color: Theme.palette.transparent
             }
             PropertyChanges {
                 target: loader
@@ -83,14 +83,14 @@ Rectangle {
         StatusLoadingIndicator {
             width: 23
             height: 23
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
         }
     }
 
     Component {
         id: reload
         SVGImage {
-            source: Style.svg("reload")
+            source: Theme.svg("reload")
             mipmap: false
             width: 15.5
             height: 19.5
@@ -98,7 +98,7 @@ Rectangle {
             ColorOverlay {
                 anchors.fill: parent
                 source: parent
-                color: Style.current.textColor
+                color: Theme.palette.textColor
                 antialiasing: true
             }
             MouseArea {

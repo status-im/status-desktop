@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -180,7 +180,7 @@ ColumnLayout {
         InformationTag {
             id: networkTag
             readonly property bool isNetworkValid: networkShortName !== ""
-            asset.name: isNetworkValid && networkIconURL !== "" ? Style.svg("tiny/" + networkIconURL) : ""
+            asset.name: isNetworkValid && networkIconURL !== "" ? Theme.svg("tiny/" + networkIconURL) : ""
             asset.isImage: true
             tagPrimaryLabel.text: isNetworkValid ? networkShortName : "---"
             tagPrimaryLabel.color: isNetworkValid ? networkColor : "black"

@@ -23,8 +23,8 @@ ItemDelegate {
 
     property alias balancesListInteractive: balancesListView.interactive
 
-    spacing: Style.current.halfPadding
-    horizontalPadding: Style.current.padding
+    spacing: Theme.halfPadding
+    horizontalPadding: Theme.padding
     verticalPadding: 4
 
     opacity: enabled ? 1 : 0.3
@@ -35,7 +35,7 @@ ItemDelegate {
     icon.source: iconSource
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         color: root.hovered || root.highlighted
                ? Theme.palette.statusListItem.highlightColor
                : "transparent"
@@ -119,7 +119,7 @@ ItemDelegate {
                     StatusRoundedImage {
                         Layout.preferredWidth: 16
                         Layout.preferredHeight: 16
-                        image.source: Style.svg("tiny/%1".arg(model.iconUrl))
+                        image.source: Theme.svg("tiny/%1".arg(model.iconUrl))
                     }
                     StatusBaseText {
                         font.pixelSize: Theme.tertiaryTextFontSize

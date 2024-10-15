@@ -162,7 +162,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         rightButtons: ObjectModel {
             StatusFlatButton {

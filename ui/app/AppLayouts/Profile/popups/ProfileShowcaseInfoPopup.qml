@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Communities.panels 1.0
 
@@ -13,7 +14,7 @@ StatusDialog {
     id: root
 
     width: 480 // by design
-    padding: Style.current.padding
+    padding: Theme.padding
     closePolicy: Popup.NoAutoClose
     footer.visible: false
     header: Item {
@@ -23,20 +24,20 @@ StatusDialog {
             anchors {
                 top: parent.top
                 right: parent.right
-                margins: Style.current.smallPadding
+                margins: Theme.smallPadding
             }
             closeButton.onClicked: root.close()
         }
     }
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         IntroPanel {
             Layout.fillWidth: true
 
-            image: Style.png("onboarding/welcome")
+            image: Theme.png("onboarding/welcome")
             imageWidth: 200
-            imageBottomMargin: Style.current.padding
+            imageBottomMargin: Theme.padding
             bottomPadding: 0
             padding: 0
             title: qsTr("Build your profile showcase")
@@ -52,7 +53,7 @@ StatusDialog {
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: Style.current.bigPadding
+            Layout.bottomMargin: Theme.bigPadding
             objectName: "buildShowcaseButton"
 
             text: qsTr("Build your showcase")

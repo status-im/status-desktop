@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import shared.panels 1.0
 import utils 1.0
@@ -14,7 +14,7 @@ ColumnLayout {
 
     readonly property bool allAccepted: havePen.checked && writeDown.checked && storeIt.checked
 
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     Item {
         Layout.fillWidth: true
@@ -37,12 +37,12 @@ ColumnLayout {
                 ColumnLayout {
                     id: flickLayout
                     width: flick.availableWidth
-                    spacing: Style.current.padding
+                    spacing: Theme.padding
 
                     Image {
                         id: keysImg
                         fillMode: Image.PreserveAspectFit
-                        source: Style.png("onboarding/keys")
+                        source: Theme.png("onboarding/keys")
                         mipmap: true
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: 120
@@ -62,13 +62,13 @@ ColumnLayout {
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.leftMargin: Style.current.padding
-                        Layout.rightMargin: Style.current.padding
-                        spacing: Style.current.bigPadding
+                        Layout.leftMargin: Theme.padding
+                        Layout.rightMargin: Theme.padding
+                        spacing: Theme.bigPadding
 
                         StyledText {
                             id: txtDesc
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
                             text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
@@ -80,7 +80,7 @@ ColumnLayout {
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
                             textFormat: Text.RichText
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             lineHeight: 1.2
                             text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
                             Layout.fillWidth: true
@@ -89,35 +89,35 @@ ColumnLayout {
 
                     ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.leftMargin: Style.current.xlPadding
-                        Layout.rightMargin: Style.current.xlPadding
-                        Layout.topMargin: Style.current.bigPadding
-                        spacing: Style.current.bigPadding/2
+                        Layout.leftMargin: Theme.xlPadding
+                        Layout.rightMargin: Theme.xlPadding
+                        Layout.topMargin: Theme.bigPadding
+                        spacing: Theme.bigPadding/2
 
                         StatusCheckBox {
                             id: havePen
                             objectName: "Acknowledgements_havePen"
-                            spacing: Style.current.padding
+                            spacing: Theme.padding
                             text: qsTr("I have a pen and paper")
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             Layout.fillWidth: true
                         }
 
                         StatusCheckBox {
                             id: writeDown
                             objectName: "Acknowledgements_writeDown"
-                            spacing: Style.current.padding
+                            spacing: Theme.padding
                             text: qsTr("I am ready to write down my seed phrase")
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             Layout.fillWidth: true
                         }
 
                         StatusCheckBox {
                             id: storeIt
                             objectName: "Acknowledgements_storeIt"
-                            spacing: Style.current.padding
+                            spacing: Theme.padding
                             text: qsTr("I know where I’ll store it")
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             Layout.fillWidth: true
                         }
                     }
@@ -128,15 +128,15 @@ ColumnLayout {
 
     Item {
         Layout.fillWidth: true
-        Layout.preferredHeight: (warningText.contentHeight + Style.current.padding)
+        Layout.preferredHeight: (warningText.contentHeight + Theme.padding)
 
         StyledText {
             id: warningText
             anchors.fill: parent
-            anchors.margins: Style.current.halfPadding
+            anchors.margins: Theme.halfPadding
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
             lineHeight: 1.2
@@ -145,7 +145,7 @@ ColumnLayout {
 
         Rectangle {
             anchors.fill: parent
-            radius: Style.current.radius
+            radius: Theme.radius
             color: Theme.palette.dangerColor1
             opacity: 0.1
         }

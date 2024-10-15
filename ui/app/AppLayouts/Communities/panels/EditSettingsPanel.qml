@@ -52,7 +52,7 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
         width: baseLayout.width
-        spacing: Style.current.padding
+        spacing: Theme.padding
         EditCommunitySettingsForm {
             id: baseLayout
             Layout.fillHeight: true
@@ -84,7 +84,7 @@ StatusScrollView {
         }
 
         RowLayout {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             visible: root.shardingEnabled
 
             readonly property bool shardingActive: root.shardIndex !== -1

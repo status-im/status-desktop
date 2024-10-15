@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -20,21 +20,21 @@ Rectangle {
     signal closed()
 
     anchors.fill: parent
-    color: Style.current.background
+    color: Theme.palette.background
 
     StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Quaternary
         icon.name: "close"
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         onClicked: root.closed()
     }
 
     SVGImage {
         id: logoImage
-        source: Style.svg(Theme.palette.name == "light" ? "status-logo-light" : "status-logo-dark")
+        source: Theme.svg(Theme.palette.name == "light" ? "status-logo-light" : "status-logo-dark")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 108

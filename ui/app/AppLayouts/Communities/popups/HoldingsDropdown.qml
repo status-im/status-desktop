@@ -433,7 +433,7 @@ StatusDropdown {
 
                     const chainName = asset.chainName ?? ""
                     const chainIcon = asset.chainIcon
-                                    ? Style.svg(asset.chainIcon) : ""
+                                    ? Theme.svg(asset.chainIcon) : ""
 
                     if (!chainName)
                         return
@@ -509,7 +509,7 @@ StatusDropdown {
 
                     const chainName = collectible.chainName ?? ""
                     const chainIcon = collectible.chainIcon
-                                    ? Style.svg(collectible.chainIcon) : ""
+                                    ? Theme.svg(collectible.chainIcon) : ""
 
                     if (!chainName)
                         return

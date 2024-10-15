@@ -1,4 +1,6 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -12,14 +14,14 @@ Rectangle {
     radius: 8
     width: children[0].width + 10
     height: 32
-    border.color: Style.current.border
-    color: Style.current.transparent
+    border.color: Theme.palette.border
+    color: Theme.palette.transparent
 
     StyledText {
         id: suggestedChannelText
         text: "#" + channel
         font.weight: Font.Medium
-        color: Style.current.blue;
+        color: Theme.palette.primaryColor1;
         anchors.top: parent.top;
         anchors.topMargin: 5;
         anchors.left: parent.left;

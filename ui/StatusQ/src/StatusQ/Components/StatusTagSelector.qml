@@ -297,7 +297,7 @@ Item {
                 clip: true
                 font.pixelSize: 15
                 wrapMode: TextEdit.NoWrap
-                font.family: Theme.palette.baseFont.name
+                font.family: Theme.baseFont.name
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
                 visible: (parent.width>22)
@@ -352,9 +352,9 @@ Item {
         width: 360
         anchors {
             top: (root.sortedList.count > 0) ? tagSelectorRect.bottom : contactsLabel.bottom
-            topMargin: 8//Style.current.halfPadding
+            topMargin: Theme.halfPadding
             bottom: parent.bottom
-            bottomMargin: 16//Style.current.padding
+            bottomMargin: Theme.padding
         }
         clip: true
         visible: (!root.showSortedListOnlyWhenText && ((root.sortedList.count > 0) || (edit.text === ""))) ||

@@ -4,9 +4,12 @@ import QtQuick.Layouts 1.15
 
 import Storybook 1.0
 
-import shared.controls 1.0
+import StatusQ.Core.Theme 0.1
 
+import shared.controls 1.0
 import utils 1.0
+
+import AppLayouts.Profile.stores 1.0
 
 SplitView {
     id: root
@@ -69,7 +72,7 @@ SplitView {
             }
         }
 
-        QtObject {
+        ContactsStore {
             id: contactsStoreMockup
             readonly property var myContactsModel: QtObject {
                 signal itemChanged(address: string)
@@ -97,7 +100,7 @@ SplitView {
                 return getNameForAddress(address)
             }
             function getEmojiForWalletAddress(address) {
-                return '<img class="emoji" draggable="false" alt="??" src="' + Style.emoji("1f61b") + '?72x72" width="16" height="16" style="vertical-align: top"/>'
+                return '<img class="emoji" draggable="false" alt="??" src="' + Theme.emoji("1f61b") + '?72x72" width="16" height="16" style="vertical-align: top"/>'
             }
             function getColorForWalletAddress(address) {
                 return "blue"

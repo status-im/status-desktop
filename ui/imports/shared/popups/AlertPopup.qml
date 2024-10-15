@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -34,12 +34,12 @@ StatusDialog {
     signal cancelClicked
 
     implicitWidth: 400 // by design
-    topPadding: Style.current.padding
+    topPadding: Theme.padding
     bottomPadding: topPadding
     contentItem: StatusBaseText {
         id: contentTextItem
 
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Theme.primaryTextFontSize
         wrapMode: Text.WordWrap
         lineHeight: 1.2
     }
@@ -57,7 +57,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
 
             StatusButton {

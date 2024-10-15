@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -14,14 +14,14 @@ ColumnLayout {
     property int steps: 4
     property int currentIndex: 0
 
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     StyledText {
         id: txtDesc
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        font.pixelSize: Style.current.additionalTextSize
-        color: Style.current.secondaryText
+        font.pixelSize: Theme.additionalTextSize
+        color: Theme.palette.secondaryText
         text: qsTr("Step %1 of %2").arg(root.currentIndex + 1).arg(steps)
         Layout.fillWidth: true
     }

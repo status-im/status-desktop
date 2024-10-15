@@ -1,7 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import "../"
@@ -31,7 +33,7 @@ Popup {
     width: 480
     height: 510 // TODO find a way to make this dynamic
     background: Rectangle {
-        color: Style.current.background
+        color: Theme.palette.background
         radius: 8
     }
     onClosed: {
@@ -56,10 +58,10 @@ Popup {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            anchors.topMargin: popup.noTopMargin ? 0 : Style.current.padding
-            anchors.bottomMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
-            anchors.leftMargin: Style.current.padding
+            anchors.topMargin: popup.noTopMargin ? 0 : Theme.padding
+            anchors.bottomMargin: Theme.padding
+            anchors.rightMargin: Theme.padding
+            anchors.leftMargin: Theme.padding
 
             StyledText {
                 text: title
@@ -89,7 +91,7 @@ Popup {
             anchors.right: parent.right
             anchors.rightMargin: 12
             radius: 8
-            color: hovered ? Style.current.backgroundHover : Style.current.transparent
+            color: hovered ? Theme.palette.backgroundHover : Theme.palette.transparent
 
             SVGImage {
                 id: closeModalImg
@@ -103,7 +105,7 @@ Popup {
             ColorOverlay {
                 anchors.fill: closeModalImg
                 source: closeModalImg
-                color: Style.current.textColor
+                color: Theme.palette.textColor
             }
 
             MouseArea {
@@ -127,7 +129,7 @@ Popup {
         Separator {
             id: separator
             anchors.top: headerContent.bottom
-            anchors.topMargin: visible ? Style.current.padding : 0
+            anchors.topMargin: visible ? Theme.padding : 0
             visible: title.length > 0
         }
 
@@ -135,20 +137,20 @@ Popup {
             id: popupContent
             objectName: "contentParent"
             anchors.top: separator.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             anchors.bottom: separator2.top
-            anchors.bottomMargin: Style.current.padding
+            anchors.bottomMargin: Theme.padding
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
+            anchors.leftMargin: Theme.padding
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: Theme.padding
         }
 
         Separator {
             id: separator2
             visible: footerContent.visible && footerContent.height > 0
             anchors.bottom: footerContent.top
-            anchors.bottomMargin: visible ? Style.current.padding : 0
+            anchors.bottomMargin: visible ? Theme.padding : 0
         }
 
         Item {
@@ -160,9 +162,9 @@ Popup {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: visible ? Style.current.padding : 0
-            anchors.rightMargin: visible ? Style.current.padding : 0
-            anchors.leftMargin: visible ? Style.current.padding : 0
+            anchors.bottomMargin: visible ? Theme.padding : 0
+            anchors.rightMargin: visible ? Theme.padding : 0
+            anchors.leftMargin: visible ? Theme.padding : 0
         }
     }
 }

@@ -1,6 +1,8 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+import QtQuick.Controls 2.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -9,7 +11,7 @@ import shared.panels 1.0
 
 Row {
     id: imageArea
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)
@@ -65,7 +67,7 @@ Row {
                 hoverEnabled: false
                 opacity: mouseArea.containsMouse || buttonMouseArea.containsMouse ? 1 : 0
                 contentItem: SVGImage {
-                    source: Style.svg( !buttonMouseArea.containsMouse ? "close-filled" : "close-filled-hovered")
+                    source: Theme.svg( !buttonMouseArea.containsMouse ? "close-filled" : "close-filled-hovered")
                     width: closeBtn.width
                     height: closeBtn.height
                 }

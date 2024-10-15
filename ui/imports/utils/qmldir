@@ -3,5 +3,4 @@ Tracer 1.0 Tracer.qml
 singleton Constants 1.0 Constants.qml
 singleton Global 1.0 Global.qml
 singleton ProfileUtils 1.0 ProfileUtils.qml
-singleton Style 1.0 Style.qml
 singleton Utils 1.0 Utils.qml

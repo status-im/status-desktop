@@ -38,7 +38,7 @@ StatusDropdown {
 
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
-            Layout.leftMargin: Style.current.halfPadding
+            Layout.leftMargin: Theme.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.topMargin: Layout.leftMargin
             Layout.bottomMargin: 4
@@ -49,9 +49,9 @@ StatusDropdown {
         Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 36
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.rightMargin: Layout.leftMargin
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
 
             visible: !listPlaceholder.visible
 
@@ -91,7 +91,7 @@ StatusDropdown {
             StatusListView {
                 id: listView
                 anchors.fill: parent
-                anchors.leftMargin: Style.current.halfPadding
+                anchors.leftMargin: Theme.halfPadding
                 anchors.rightMargin: anchors.leftMargin
                 model: root.delegateModel
             }
@@ -110,7 +110,7 @@ StatusDropdown {
             objectName: "connectDappButton"
             Layout.fillWidth: true
             Layout.preferredHeight: 38
-            Layout.leftMargin: Style.current.halfPadding
+            Layout.leftMargin: Theme.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.bottomMargin: Layout.leftMargin
             Layout.topMargin: 4

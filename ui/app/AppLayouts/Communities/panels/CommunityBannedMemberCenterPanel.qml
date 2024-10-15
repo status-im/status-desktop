@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -123,7 +123,7 @@ ColumnLayout {
                 StatusBaseText {
                     text: qsTr("You've been banned from <b>%1<b>").arg(root.name)
                     color: Theme.palette.dangerColor1
-                    font.pixelSize: Style.current.secondaryAdditionalTextSize
+                    font.pixelSize: Theme.secondaryAdditionalTextSize
                 }
             }
             Item {

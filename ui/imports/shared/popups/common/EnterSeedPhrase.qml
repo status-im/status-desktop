@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,8 +21,8 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Style.current.padding
-        spacing: Style.current.padding
+        anchors.margins: Theme.padding
+        spacing: Theme.padding
 
 
         StatusBaseText {
@@ -66,7 +66,7 @@ Item {
 
         Column {
             width: parent.width
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             visible: root.store.isAddAccountPopup && root.store.enteredSeedPhraseIsValid
 
             StatusInput {

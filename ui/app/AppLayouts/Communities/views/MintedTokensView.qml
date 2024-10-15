@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -115,7 +115,7 @@ StatusScrollView {
             IntroPanel {
                 Layout.fillWidth: true
 
-                image: Style.png("community/mint2_1")
+                image: Theme.png("community/mint2_1")
                 title: qsTr("Community tokens")
                 subtitle: qsTr("You can mint custom tokens and import tokens for your community")
                 checkersModel: [
@@ -152,10 +152,10 @@ StatusScrollView {
             id: mainLayout
 
             width: root.viewWidth
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StatusBaseText {
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
 
                 text: qsTr("Assets")
                 font.pixelSize: Theme.primaryTextFontSize
@@ -209,8 +209,8 @@ StatusScrollView {
             }
 
             StatusBaseText {
-                Layout.leftMargin: Style.current.padding
-                Layout.topMargin: Style.current.halfPadding
+                Layout.leftMargin: Theme.padding
+                Layout.topMargin: Theme.halfPadding
 
                 text: qsTr("Collectibles")
                 font.pixelSize: Theme.primaryTextFontSize

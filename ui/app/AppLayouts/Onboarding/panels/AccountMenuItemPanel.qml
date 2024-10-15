@@ -37,7 +37,7 @@ Item {
     Loader {
         id: userImageOrIcon
         sourceComponent: !!root.image.toString() || !!root.colorId ? userImage : addIcon
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -66,8 +66,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: userImageOrIcon.right
         anchors.right: root.keycardCreatedAccount? keycardIcon.left : parent.right
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: root.keycardCreatedAccount ? 0 : Style.current.padding
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: root.keycardCreatedAccount ? 0 : Theme.padding
         color: !!root.colorId ? Theme.palette.directColor1 : Theme.palette.primaryColor1
         elide: Text.ElideRight
     }
@@ -76,7 +76,7 @@ Item {
         id: keycardIcon
         active: root.keycardCreatedAccount
         sourceComponent: keycardIconComponent
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -85,7 +85,7 @@ Item {
         id: keycardIconComponent
         StatusIcon {
             icon: "keycard"
-            height: Style.current.padding
+            height: Theme.padding
             color: Theme.palette.baseColor1
         }
     }

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQControls
@@ -68,7 +68,7 @@ Item {
         Rectangle {
             id: circleAt
             anchors.top: parent.top
-            anchors.topMargin: Style.current.bigPadding*2
+            anchors.topMargin: Theme.bigPadding*2
             anchors.horizontalCenter: parent.horizontalCenter
             width: 60
             height: 60
@@ -78,7 +78,7 @@ Item {
             SVGImage {
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
-                source: Style.svg("block-icon-white")
+                source: Theme.svg("block-icon-white")
                 width: 20
                 height: 20
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -111,9 +111,9 @@ Item {
             placeholderText: !isStatus ? "vitalik94.domain.eth" : "vitalik94"
             anchors.left: parent.left
             anchors.top: circleAt.bottom
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             anchors.right: btnContinue.left
-            anchors.rightMargin: Style.current.bigPadding
+            anchors.rightMargin: Theme.bigPadding
             Keys.onReleased: {
                 onKeyReleased(ensUsername.text);
             }
@@ -149,7 +149,7 @@ Item {
             width: 40
             height: 40
             anchors.top: circleAt.bottom
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             anchors.right: parent.right
             type: StatusQControls.StatusRoundButton.Type.Secondary
             objectName: "ensNextButton"
@@ -178,10 +178,10 @@ Item {
         Rectangle {
             id: ensTypeRect
             anchors.top: ensUsername.bottom
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             border.width: 1
-            border.color: Style.current.border
-            color: Style.current.background
+            border.color: Theme.palette.border
+            color: Theme.palette.background
             radius: 50
             height: 30
             width: 350
@@ -190,8 +190,8 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                anchors.topMargin: Style.current.halfPadding
-                anchors.leftMargin: Style.current.padding
+                anchors.topMargin: Theme.halfPadding
+                anchors.leftMargin: Theme.padding
                 height: 20
 
                 StatusBaseText {
@@ -201,7 +201,7 @@ Item {
                         ".stateofus.eth"
                     font.weight: Font.Bold
                     font.pixelSize: 12
-                    anchors.leftMargin: Style.current.padding
+                    anchors.leftMargin: Theme.padding
                     color: Theme.palette.directColor1
                 }
 
@@ -213,7 +213,7 @@ Item {
                     font.pixelSize: 12
                     color: Theme.palette.primaryColor1
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.padding
+                    anchors.rightMargin: Theme.padding
 
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor
@@ -236,7 +236,7 @@ Item {
             width: parent.width
             anchors.top: ensTypeRect.bottom
             wrapMode: Text.WordWrap
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             color: Theme.palette.directColor1
         }
     }

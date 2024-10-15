@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
@@ -33,7 +34,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: sendCheckbox
         title: qsTr("Failed")
-        assetSettings.name: Style.svg("transaction/failed")
+        assetSettings.name: Theme.svg("transaction/failed")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -45,7 +46,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: receiveCheckbox
         title: qsTr("Pending")
-        assetSettings.name: Style.svg("transaction/pending")
+        assetSettings.name: Theme.svg("transaction/pending")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -57,7 +58,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: buyCheckbox
         title: qsTr("Complete")
-        assetSettings.name: Style.svg("transaction/confirmed")
+        assetSettings.name: Theme.svg("transaction/confirmed")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
@@ -69,7 +70,7 @@ StatusMenu {
     ActivityTypeCheckBox {
         id: swapCheckbox
         title: qsTr("Finalised")
-        assetSettings.name: Style.svg("transaction/finished")
+        assetSettings.name: Theme.svg("transaction/finished")
         assetSettings.color: "transparent"
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked

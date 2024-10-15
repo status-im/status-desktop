@@ -8,6 +8,7 @@ import shared.stores 1.0 as SharedStores
 import mainui 1.0
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.stores 1.0 as AppLayoutStores
@@ -78,7 +79,7 @@ SplitView {
                                       lastUpdatedLocally: Date.now(),
                                       localNickname: localNickname.text,
                                       thumbnailImage: "",
-                                      largeImage: userImage.checked ? Style.png("status-logo") : "",
+                                      largeImage: userImage.checked ? Theme.png("status-logo") : "",
                                       isContact: ctrlIsContact.checked,
                                       isBlocked: ctrlIsBlocked.checked,
                                       isSyncing: false,
@@ -277,7 +278,7 @@ SplitView {
                         challenge: "The real Alex would know this 100%! What’s my favourite colour?",
                         response: ctrlIncomingVerificationStatus.currentValue === Constants.verificationStatus.verified ? "Yellow!" : "",
                         displayName: ProfileUtils.displayName(localNickname.text, name.text, displayName.text),
-                        icon: Style.png("status-logo"),
+                        icon: Theme.png("status-logo"),
                         requestedAt: Date.now() - 86400000,
                         repliedAt: Date.now()
                     }
@@ -294,11 +295,6 @@ SplitView {
             }
         }
         communityTokensStore: SharedStores.CommunityTokensStore {}
-    }
-
-    WalletAssetsStore {
-        id: assetsStore
-        assetsWithFilteredBalances: groupedAccountsAssetsModel
     }
 
     SplitView {

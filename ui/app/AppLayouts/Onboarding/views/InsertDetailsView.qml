@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -61,8 +60,8 @@ Item {
             id: txtDesc
             Layout.preferredWidth: root.state === Constants.startupState.userProfileCreate? 338 : 643
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: Style.current.smallPadding
-            color: Style.current.secondaryText
+            Layout.topMargin: Theme.smallPadding
+            color: Theme.palette.secondaryText
             text: qsTr("Longer and unusual names are better as they are less likely to be used by someone else.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -75,7 +74,7 @@ Item {
             Layout.preferredWidth: 86
             Layout.preferredHeight: 86
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: Style.current.bigPadding
+            Layout.topMargin: Theme.bigPadding
             StatusSmartIdenticon {
                 id: userImage
                 objectName: "welcomeScreenUserProfileImage"

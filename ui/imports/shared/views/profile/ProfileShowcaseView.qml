@@ -43,7 +43,7 @@ Control {
     signal copyToClipboard(string text)
 
     horizontalPadding: readOnly ? 20 : 40 // smaller in settings/preview
-    topPadding: Style.current.bigPadding
+    topPadding: Theme.bigPadding
 
     StatusQUtils.QObject {
         id: d
@@ -215,26 +215,27 @@ Control {
         StatusDialog {
             id: visitComunityPopup
             // Community related props:
-             property string communityId
-             property string communityName
-             property string communityLogo
+            property string communityId
+            property string communityName
+            property string communityLogo
 
             // Token related props:
-             property string tokenName
-             property string tokenImage
-             property bool isAssetType: false
+            property string tokenName
+            property string tokenImage
+            property bool isAssetType: false
 
             width: 521 // by design
             padding: 0
+            destroyOnClose: true
 
             contentItem: StatusScrollView {
                 id: scrollView
-                padding: Style.current.padding
+                padding: Theme.padding
                 contentWidth: availableWidth
 
                 ColumnLayout {
                     width: scrollView.availableWidth
-                    spacing: Style.current.padding
+                    spacing: Theme.padding
 
                     StatusBaseText {
                         Layout.fillWidth: true
@@ -249,7 +250,7 @@ Control {
                     // Navigate to community button
                     StatusListItem {
                         Layout.fillWidth: true
-                        Layout.bottomMargin: Style.current.halfPadding
+                        Layout.bottomMargin: Theme.halfPadding
 
                         title: visitComunityPopup.communityName
                         border.color: Theme.palette.baseColor2
@@ -266,10 +267,10 @@ Control {
 
                                 StatusBaseText {
                                     Layout.alignment: Qt.AlignVCenter
-                                    Layout.rightMargin: Style.current.padding
+                                    Layout.rightMargin: Theme.padding
 
                                     text: visitComunityPopup.tokenName
-                                    font.pixelSize: Style.current.additionalTextSize
+                                    font.pixelSize: Theme.additionalTextSize
                                     color: Theme.palette.primaryColor1
                                 }
                             }
@@ -287,7 +288,7 @@ Control {
             header: StatusDialogHeader {
                 leftComponent: StatusRoundedImage {
                     Layout.alignment: Qt.AlignHCenter
-                    Layout.margins: Style.current.padding
+                    Layout.margins: Theme.padding
                     Layout.preferredWidth: 68
                     Layout.preferredHeight: Layout.preferredWidth
                     radius: visitComunityPopup.isAssetType ? width / 2 : 8
@@ -301,7 +302,7 @@ Control {
             }
 
             footer: StatusDialogFooter {
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 rightButtons: ObjectModel {
                     StatusFlatButton {
                         text: qsTr("Cancel")

@@ -26,8 +26,8 @@ StatusDialog {
 
     width: 500
 
-    topPadding: Style.current.padding
-    bottomPadding: Style.current.xlPadding
+    topPadding: Theme.padding
+    bottomPadding: Theme.xlPadding
     horizontalPadding: 0
 
     StatusScrollView {
@@ -39,7 +39,7 @@ StatusDialog {
             anchors.leftMargin: 40
             anchors.right: parent.right
             anchors.rightMargin: 40
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             Rectangle {
                 Layout.fillWidth: true
@@ -84,7 +84,7 @@ StatusDialog {
             }
 
             StatusBaseText {
-                Layout.topMargin: Style.current.smallPadding
+                Layout.topMargin: Theme.smallPadding
                 Layout.fillWidth: true
                 text: qsTr("Profile link")
             }
@@ -93,11 +93,11 @@ StatusDialog {
                 objectName: "profileLinkInput"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.halfPadding
+                leftPadding: Theme.padding
+                rightPadding: Theme.halfPadding
                 topPadding: 0
                 bottomPadding: 0
-                placeholder.rightPadding: Style.current.halfPadding
+                placeholder.rightPadding: Theme.halfPadding
                 placeholder.elide: Text.ElideMiddle
                 placeholderText: root.linkToProfile
                 placeholderTextColor: Theme.palette.directColor1
@@ -114,7 +114,7 @@ StatusDialog {
             }
 
             StatusBaseText {
-                Layout.topMargin: Style.current.halfPadding
+                Layout.topMargin: Theme.halfPadding
                 Layout.fillWidth: true
                 text: qsTr("Emoji hash")
             }
@@ -123,8 +123,8 @@ StatusDialog {
                 objectName: "emojiHashInput"
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
-                leftPadding: Style.current.padding
-                rightPadding: Style.current.halfPadding
+                leftPadding: Theme.padding
+                rightPadding: Theme.halfPadding
                 topPadding: 0
                 bottomPadding: 0
                 edit.readOnly: true

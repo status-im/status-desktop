@@ -1,11 +1,12 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 Rectangle {
@@ -22,12 +23,12 @@ Rectangle {
         radioBtn.toggle()
     }
 
-    border.color: mouseArea.containsMouse || radioBtn.checked ? Style.current.primary : Style.current.border
+    border.color: mouseArea.containsMouse || radioBtn.checked ? Theme.palette.primaryColor1 : Theme.palette.border
     border.width: 1
-    color: Style.current.transparent
+    color: Theme.palette.transparent
     implicitWidth: 130
     implicitHeight: 120
-    radius: Style.current.radius
+    radius: Theme.radius
 
     StatusRadioButton {
         id: radioBtn

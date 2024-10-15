@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 
@@ -49,7 +50,7 @@ StatusMenu {
         id: emojiRow
         visible: !root.disabledForChat || root.forceEnableEmojiReactions
         reactionsModel: root.reactionModel
-        bottomPadding: Style.current.halfPadding
+        bottomPadding: Theme.halfPadding
         onToggleReaction: {
             root.toggleReaction(emojiId)
             root.close()

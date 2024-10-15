@@ -21,7 +21,7 @@ ColumnLayout {
     property bool areTestNetworksEnabled: false
     property bool isGoerliEnabled: false
 
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     StatusBaseText {
         Layout.fillWidth: true
@@ -34,10 +34,10 @@ ColumnLayout {
     Rectangle {
         radius: 8
         Layout.fillWidth: true
-        Layout.preferredHeight: nftPreviewColumn.height + Style.current.bigPadding
+        Layout.preferredHeight: nftPreviewColumn.height + Theme.bigPadding
         color: nftPreviewSensor.hovered ? Theme.palette.baseColor2 : "transparent"
         border.width: 1
-        border.color: Style.current.separator
+        border.color: Theme.palette.separator
 
         HoverHandler {
             id: nftPreviewSensor
@@ -47,12 +47,12 @@ ColumnLayout {
         Column {
             // NOTE Using Column instead of Layout to handle image fill mode properly
             id: nftPreviewColumn
-            spacing: Style.current.padding
+            spacing: Theme.padding
             anchors {
                 left: parent.left
                 top: parent.top
                 right: parent.right
-                margins: Style.current.bigPadding / 2
+                margins: Theme.bigPadding / 2
             }
             height: childrenRect.height
 
@@ -67,11 +67,11 @@ ColumnLayout {
 
             RowLayout {
                 width: parent.width
-                spacing: Style.current.smallPadding
+                spacing: Theme.smallPadding
                 ColumnLayout {
                     Layout.fillWidth: true
                     Layout.rightMargin: button.visible ? 0 : button.width + parent.spacing
-                    Layout.topMargin: Style.current.smallPadding
+                    Layout.topMargin: Theme.smallPadding
                     Layout.alignment: Qt.AlignLeft
                     spacing: 4
                     StatusBaseText {

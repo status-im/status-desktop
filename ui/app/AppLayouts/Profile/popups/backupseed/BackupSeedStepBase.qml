@@ -1,6 +1,6 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -32,13 +32,13 @@ StatusScrollView {
     ColumnLayout {
         id: column
         width: root.availableWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StyledText {
             id: txtTitle
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             Layout.fillWidth: true
         }
 

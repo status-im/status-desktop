@@ -24,7 +24,7 @@ StatusModal {
 
     headerSettings.title: qsTr("Rename key pair")
     focus: visible
-    padding: Style.current.padding
+    padding: Theme.padding
 
     QtObject {
         id: d
@@ -58,7 +58,7 @@ StatusModal {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StatusInput {
             id: nameInput
@@ -80,9 +80,9 @@ StatusModal {
 
         StatusBaseText {
             Layout.preferredWidth: parent.width
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             text: qsTr("Accounts derived from this key pair")
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
         }
 
         Rectangle {
@@ -107,7 +107,7 @@ StatusModal {
                         model: root.accounts
                         delegate: StatusListItemTag {
                             bgColor: Utils.getColorForId(model.account.colorId)
-                            height: Style.current.bigPadding
+                            height: Theme.bigPadding
                             bgRadius: 6
                             tagClickable: false
                             closeButtonVisible: false

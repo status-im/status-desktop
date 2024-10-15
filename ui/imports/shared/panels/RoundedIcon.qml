@@ -1,9 +1,10 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import "../"
-import "./"
 
 Rectangle {
     id: root
@@ -17,9 +18,9 @@ Rectangle {
     property alias iconWidth: roundedIconImage.width
     property alias iconHeight: roundedIconImage.height
     property alias rotation: roundedIconImage.rotation
-    property color iconColor: Style.current.transparent
+    property color iconColor: Theme.palette.transparent
 
-    color: Style.current.blue
+    color: Theme.palette.primaryColor1
     radius: width / 2
 
     Item {
@@ -34,7 +35,7 @@ Rectangle {
             width: 12
             height: 12
             fillMode: Image.PreserveAspectFit
-            source: Style.svg("new_chat")
+            source: Theme.svg("new_chat")
         }
         ColorOverlay {
             anchors.fill: roundedIconImage

@@ -33,7 +33,7 @@ DropArea {
     readonly property var priv: QtObject {
         id: priv
         readonly property int iconSize: root.isCollectible ? 44 : 32
-        readonly property int bgRadius: root.isCollectible ? Style.current.radius : iconSize/2
+        readonly property int bgRadius: root.isCollectible ? Theme.radius : iconSize/2
     }
 
     property var getCurrencyAmount: function (balance, symbol) {}

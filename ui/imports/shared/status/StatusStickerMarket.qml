@@ -1,10 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
-import QtQml.Models 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
@@ -64,11 +65,11 @@ Item {
         width: parent.width
         height: 380
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
-        cellWidth: parent.width - (Style.current.padding * 2)
+        anchors.topMargin: Theme.padding
+        cellWidth: parent.width - (Theme.padding * 2)
         cellHeight: height - 72
         visible: root.marketVisible
 
@@ -145,7 +146,7 @@ Item {
                         packName: name
                         packAuthor: author
                         packNameFontSize: 17
-                        spacing: Style.current.padding / 2
+                        spacing: Theme.padding / 2
                     }
 
                     contentWrapper.anchors.topMargin: 0
@@ -154,7 +155,7 @@ Item {
                     StatusStickerList {
                         id: stickerGridInPopup
                         anchors.fill: parent
-                        anchors.topMargin: Style.current.padding
+                        anchors.topMargin: Theme.padding
                         model: stickers
                         packId: root.packId
                     }
@@ -182,11 +183,11 @@ Item {
 
                 StatusStickerPackDetails {
                     id: stickerPackDetails
-                    height: 64 - (Style.current.smallPadding * 2)
-                    width: parent.width - (Style.current.padding * 2)
+                    height: 64 - (Theme.smallPadding * 2)
+                    width: parent.width - (Theme.padding * 2)
                     anchors.top: imgPreview.bottom
-                    anchors.topMargin: Style.current.smallPadding
-                    anchors.bottomMargin: Style.current.smallPadding
+                    anchors.topMargin: Theme.smallPadding
+                    anchors.bottomMargin: Theme.smallPadding
                     anchors.left: parent.left
                     anchors.right: parent.right
                     packThumb: thumbnail
@@ -225,7 +226,7 @@ Item {
             id: btnBack
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding / 2
+            anchors.leftMargin: Theme.padding / 2
             width: 24
             height: 24
             icon.width: 16

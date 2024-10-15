@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -112,8 +112,8 @@ Item {
         id: layout
         anchors.centerIn: parent
         width: parent.width
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
         clip: true
 
         KeycardImage {
@@ -132,15 +132,15 @@ Item {
         }
 
         Row {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredHeight: Constants.keycard.general.titleHeight
 
             StatusIcon {
                 id: icon
                 visible: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.recognizedKeycard
-                width: Style.current.padding
-                height: Style.current.padding
+                width: Theme.padding
+                height: Theme.padding
                 icon: "checkmark"
                 color: Theme.palette.baseColor1
             }
@@ -180,7 +180,7 @@ Item {
 
         Loader {
             id: loader
-            Layout.preferredWidth: parent.width - 2*Style.current.xlPadding
+            Layout.preferredWidth: parent.width - 2*Theme.xlPadding
             Layout.alignment: Qt.AlignHCenter
 
             active: {
@@ -566,7 +566,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/empty-reader")
+                source: Theme.png("keycard/empty-reader")
                 pattern: ""
             }
             PropertyChanges {
@@ -765,7 +765,7 @@ Item {
                 pattern: d.authenticationOrSigning?
                              "" : Constants.keycardAnimations.strongError.pattern
                 source: d.authenticationOrSigning?
-                            Style.png("keycard/plain-error") : ""
+                            Theme.png("keycard/plain-error") : ""
                 startImgIndexForTheFirstLoop: d.authenticationOrSigning?
                                                   0 : Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
                 startImgIndexForOtherLoops: d.authenticationOrSigning?
@@ -829,7 +829,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -868,7 +868,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -896,7 +896,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-empty")
+                source: Theme.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {
@@ -924,7 +924,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1224,7 +1224,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1249,7 +1249,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1262,7 +1262,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPasswordFailed
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/biometrics-fail")
+                source: Theme.png("keycard/biometrics-fail")
                 pattern: ""
             }
             PropertyChanges {
@@ -1283,7 +1283,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinFailed
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -1304,7 +1304,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.biometricsPinInvalid
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -1386,7 +1386,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -1476,9 +1476,9 @@ Item {
                 }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
-                Layout.leftMargin: 2 * Style.current.xlPadding
-                Layout.rightMargin: 2* Style.current.xlPadding
-                Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
+                Layout.leftMargin: 2 * Theme.xlPadding
+                Layout.rightMargin: 2* Theme.xlPadding
+                Layout.preferredWidth: layout.width - 4 * Theme.xlPadding
             }
         },
         State {
@@ -1520,9 +1520,9 @@ Item {
                 }
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.directColor1
-                Layout.leftMargin: 2 * Style.current.xlPadding
-                Layout.rightMargin: 2* Style.current.xlPadding
-                Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
+                Layout.leftMargin: 2 * Theme.xlPadding
+                Layout.rightMargin: 2* Theme.xlPadding
+                Layout.preferredWidth: layout.width - 4 * Theme.xlPadding
             }
         },
         State {
@@ -1538,7 +1538,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/biometrics-success")
+                source: Theme.png("keycard/biometrics-success")
                 pattern: ""
             }
             PropertyChanges {
@@ -1547,7 +1547,7 @@ Item {
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
                 horizontalAlignment: Text.AlignHCenter
-                Layout.preferredWidth: layout.width - 4 * Style.current.xlPadding
+                Layout.preferredWidth: layout.width - 4 * Theme.xlPadding
             }
         }
     ]

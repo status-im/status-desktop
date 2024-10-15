@@ -54,15 +54,15 @@ ItemDelegate {
     }
 
     padding: 0
-    horizontalPadding: Style.current.padding
-    topPadding: showSeparator ? Style.current.halfPadding : 0
+    horizontalPadding: Theme.padding
+    topPadding: showSeparator ? Theme.halfPadding : 0
 
     background: Item {
         Rectangle {
             anchors.fill: parent
             anchors.topMargin: root.topPadding
 
-            radius: Style.current.radius
+            radius: Theme.radius
             color: root.hovered || root.isCurrentItem ? Theme.palette.baseColor2 : "transparent"
         }
 
@@ -70,7 +70,7 @@ ItemDelegate {
             anchors.fill: parent
             anchors.topMargin: root.topPadding
 
-            radius: Style.current.radius
+            radius: Theme.radius
             color: "transparent"
 
             SequentialAnimation on color {
@@ -145,7 +145,7 @@ ItemDelegate {
         RowLayout {
             id: delegateRow
 
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             Loader {
                 Layout.preferredWidth: root.usernameHeaderWidth
@@ -169,7 +169,7 @@ ItemDelegate {
                     horizontalAlignment: Qt.AlignRight
 
                     text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
-                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     visible: root.remotelyDestructInProgress
                     color: Theme.palette.directColor1
                 }

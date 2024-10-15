@@ -177,7 +177,7 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
                 msgDialog.title = qsTr("Converting account")
                 msgDialog.text = qsTr("Really sorry about this inconvenience.\n\
 Most likely that your account is damaged while converting to a regular Status account.\n\
-First try to login after app restart, if that doesn't work, you can alway recover your accout\n\
+First try to login after app restart, if that doesn't work, you can alway recover your account\n\
 following the \"Add existing Status user\" flow, using your seed phrase.")
             }
 

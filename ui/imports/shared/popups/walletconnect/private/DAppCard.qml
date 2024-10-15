@@ -19,7 +19,7 @@ ColumnLayout {
     property bool connectionSuccessful
     property bool connectionAttempted
 
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     RoundImageWithBadge {
         objectName: "dappIcon"
