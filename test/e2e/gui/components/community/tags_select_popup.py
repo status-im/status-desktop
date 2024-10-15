@@ -1,3 +1,4 @@
+import copy
 import time
 import typing
 
@@ -29,22 +30,23 @@ class TagsSelectPopup(BasePopup):
         tags = []
         checked = []
         unchecked = []
+        _values = copy.deepcopy(values)
         for obj in driver.findAllObjects(self._tag_template.real_name):
             name = str(obj.name)
             tags.append(name)
-            if name in values:
+            if name in _values:
                 if not obj.removable:
-                    driver.mouseClick(obj)
+                    QObject(obj).click()
                     checked.append(name)
                     time.sleep(1)
-                values.remove(name)
+                _values.remove(name)
             else:
                 # Selected and should be unselected
                 if obj.removable:
-                    driver.mouseClick(obj)
+                    QObject(obj).click()
                     time.sleep(1)
                     unchecked.append(name)
-        if values:
+        if _values:
             raise LookupError(
-                f'Tags: {values} not found in {tags}. Checked tags: {checked}, Unchecked tags: {unchecked}')
+                f'Tags: {_values} not found in {tags}. Checked tags: {checked}, Unchecked tags: {unchecked}')
         self._confirm_button.click()

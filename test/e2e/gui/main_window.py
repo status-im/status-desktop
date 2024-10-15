@@ -6,7 +6,7 @@ import allure
 
 import configs
 import driver
-from constants import UserAccount, RandomUser, ColorCodes
+from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.context_menu import ContextMenu
@@ -174,7 +174,7 @@ class MainWindow(Window):
         return super().prepare()
 
     @allure.step('Sign Up user')
-    def sign_up(self, user_account: UserAccount = RandomUser()):
+    def sign_up(self, user_account: UserAccount):
         BeforeStartedPopUp().get_started()
         welcome_screen = WelcomeToStatusView().wait_until_appears()
         profile_view = welcome_screen.get_keys().generate_new_keys()
@@ -213,11 +213,11 @@ class MainWindow(Window):
             return self.sign_up(user_account)
 
     @allure.step('Create community')
-    def create_community(self, name, description, intro, outro, logo, banner, tags_to_set, tags) -> CommunityScreen:
+    def create_community(self, community_data: CommunityData) -> CommunityScreen:
         communities_portal = self.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
-        color = ColorCodes.ORANGE.value
-        app_screen = create_community_form.create_community(name, description, intro, outro, logo, banner, color, tags_to_set, tags)
+        assert isinstance(community_data, CommunityData)
+        app_screen = create_community_form.create_community(community_data)
         return app_screen
 
     @allure.step('Wait for notification and get text')

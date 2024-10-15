@@ -5,7 +5,11 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import configs
-from scripts.utils.generators import random_name_string, random_password_string
+from constants import ColorCodes
+from scripts.tools.image import Image
+from scripts.utils.generators import random_name_string, random_password_string, random_community_name, \
+    random_community_description, random_community_introduction, random_community_leave_message, random_community_tags, \
+    random_color
 
 
 @dataclass
@@ -34,6 +38,42 @@ class ReturningUser(UserAccount):
         )
 
 
+@dataclass
+class CommunityChannel:
+    name: str = None
+    selected: bool = None
+    visible: bool = None
+
+
+@dataclass
+class CommunityData:
+    name: str = None
+    description: str = None
+    members: str = None
+    image: Image = None
+    logo: dict = field(default_factory=dict)
+    banner: dict = field(default_factory=dict)
+    color: Optional[str] = None
+    tags: list = field(default_factory=list)
+    introduction: str = None
+    leaving_message: str = None
+
+
+class RandomCommunity(CommunityData):
+    def __init__(self):
+        super().__init__(
+            name=random_community_name(),
+            description=random_community_description(),
+            logo={'fp': configs.testpath.TEST_IMAGES / 'comm_logo.jpeg', 'zoom': None, 'shift': None},
+            banner={'fp': configs.testpath.TEST_IMAGES / 'comm_banner.jpeg', 'zoom': None, 'shift': None},
+            color=random_color(),
+            tags=random_community_tags(),
+            introduction=random_community_introduction(),
+            leaving_message=random_community_leave_message()
+
+        )
+
+
 user_account_one = UserAccount('squisher', '0000000000', [
     'rail', 'witness', 'era', 'asthma', 'empty', 'cheap', 'shed', 'pond', 'skate', 'amount', 'invite', 'year'
 ], '0x3286c371ef648fe6232324b27ee0515f4ded24d9')
@@ -41,21 +81,6 @@ user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
 ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
 
-community_params = {
-    'name': ''.join(random.choices(string.ascii_letters +
-                                   string.digits, k=30)),
-    'description': ''.join(random.choices(string.ascii_letters +
-                                          string.digits, k=140)),
-    'logo': {'fp': configs.testpath.TEST_IMAGES / 'comm_logo.jpeg', 'zoom': None, 'shift': None},
-    'banner': {'fp': configs.testpath.TEST_IMAGES / 'comm_banner.jpeg', 'zoom': None, 'shift': None},
-    'intro': ''.join(random.choices(string.ascii_letters +
-                                    string.digits, k=200)),
-    'outro': ''.join(random.choices(string.ascii_letters +
-                                    string.digits, k=80))
-}
-
-UserCommunityInfo = namedtuple('CommunityInfo', ['name', 'description', 'members', 'image'])
-UserChannel = namedtuple('Channel', ['name', 'selected', 'visible'])
 
 account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
 wallet_account_list_item = namedtuple('WalletAccountListItem', ['name', 'icon_color', 'icon_emoji', 'object'])

@@ -19,7 +19,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('color, emoji, emoji_unicode, '
                          'new_color, new_emoji, new_emoji_unicode', [
                              pytest.param('#2a4af5', 'sunglasses', '1f60e',

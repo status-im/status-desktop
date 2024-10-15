@@ -1,9 +1,10 @@
 import allure
 import pytest
 from allure_commons._allure import step
+
+from constants import RandomCommunity
 from . import marks
 
-import constants
 from constants.community_settings import AirdropsElements, TokensElements, PermissionsElements
 from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH, TOKENS_WELCOME_IMAGE_PATH, PERMISSION_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
@@ -18,19 +19,17 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703200',
                  'Manage community: Manage Airdrops screen overview')
 @pytest.mark.case(703198, 703199, 703200)
-@pytest.mark.parametrize('params', [constants.community_params])
-def test_manage_community_screens_overview(main_screen: MainWindow, params):
+def test_manage_community_screens_overview(main_screen: MainWindow):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-    with step('Create community'):
-        main_screen.create_community(params['name'], params['description'],
-                                     params['intro'], params['outro'],
-                                     params['logo']['fp'], params['banner']['fp'],
-                                     ['Activism', 'Art'], constants.community_tags[:2])
+
+    with step('Create community and select it'):
+        community = RandomCommunity()
+        main_screen.create_community(community_data=community)
+        community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Open airdrops view from community settings'):
-        community_screen = main_screen.left_panel.select_community(params['name'])
         community_setting = community_screen.left_panel.open_community_settings()
         airdrops_screen = community_setting.left_panel.open_airdrops()
 

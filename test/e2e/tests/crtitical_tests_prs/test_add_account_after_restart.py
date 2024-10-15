@@ -19,7 +19,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
                  'User can add  one more account after restarting the app')
 @pytest.mark.case(704459)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode,',
                          [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e')

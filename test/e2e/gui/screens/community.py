@@ -6,7 +6,7 @@ from allure_commons._allure import step
 
 import configs
 import driver
-from constants import UserChannel, ColorCodes
+from constants import CommunityChannel
 from driver.objects_access import walk_children
 from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
@@ -243,13 +243,13 @@ class LeftPanel(QObject):
 
     @property
     @allure.step('Get channels')
-    def channels(self) -> typing.List[UserChannel]:
+    def channels(self) -> typing.List[CommunityChannel]:
         time.sleep(0.5)
         channels_list = []
         for obj in driver.findAllObjects(self.chatListItemDropAreaItem.real_name):
             container = driver.objectMap.realName(obj)
             self._channel_icon_template.real_name['container'] = container
-            channels_list.append(UserChannel(
+            channels_list.append(CommunityChannel(
                 str(obj.objectName),
                 obj.item.selected,
                 obj.item.visible
@@ -267,7 +267,7 @@ class LeftPanel(QObject):
         return int(category.get_arrow_icon_rotation_value())
 
     @allure.step('Get channel params')
-    def get_channel_parameters(self, name) -> UserChannel:
+    def get_channel_parameters(self, name) -> CommunityChannel:
         for channel in self.channels:
             if channel.name == name:
                 return channel

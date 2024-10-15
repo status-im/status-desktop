@@ -10,15 +10,13 @@ from helpers.OnboardingHelper import open_generate_new_keys_view
 from . import marks
 
 import configs.system
-import constants
 from constants import UserAccount, RandomUser
-from scripts.utils.generators import random_name_string, random_password_string
+from scripts.utils.generators import random_password_string
 from constants.onboarding import OnboardingMessages
 from driver.aut import AUT
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
-from gui.screens.onboarding import WelcomeToStatusView, KeysView, BiometricsView, LoginView, \
+from gui.screens.onboarding import BiometricsView, LoginView, \
     YourEmojihashAndIdenticonRingView
 
 pytestmark = marks
@@ -97,8 +95,6 @@ def test_sign_up_with_wrong_name(aut: AUT, main_window, user_name, error):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702993',
                  'Sign up with password shorter than 10 chars')
 @pytest.mark.case(702993)
-@pytest.mark.parametrize('user_account', [
-    RandomUser()])
 @pytest.mark.parametrize('error', [
     pytest.param(OnboardingMessages.WRONG_PASSWORD.value),
 ])
@@ -122,8 +118,6 @@ def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702994',
                  'Sign up with right password format in new password input but incorrect in confirmation password input')
 @pytest.mark.case(702994)
-@pytest.mark.parametrize('user_account', [
-    RandomUser()])
 def test_sign_up_with_wrong_password_in_confirmation_field(user_account, aut: AUT, main_window):
     keys_screen = open_generate_new_keys_view()
 
@@ -143,7 +137,6 @@ def test_sign_up_with_wrong_password_in_confirmation_field(user_account, aut: AU
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702995',
                  'Sign up with incorrect confirmation-again password')
 @pytest.mark.case(702995)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('error', [
     pytest.param(OnboardingMessages.PASSWORDS_DONT_MATCH.value),
 ])

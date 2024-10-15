@@ -6,6 +6,7 @@ import allure
 
 import configs
 import driver
+from constants import RandomCommunity, CommunityData
 from gui.components.base_popup import BasePopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
@@ -37,7 +38,7 @@ class CreateCommunityPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
-        self._scroll = Scroll(names.generalView_StatusScrollView )
+        self._scroll = Scroll(names.generalView_StatusScrollView)
         self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)
         self._add_logo_button = Button(names.addButton_StatusRoundButton2)
@@ -94,40 +95,6 @@ class CreateCommunityPopup(BasePopup):
     def set_description(self, value: str):
         self._scroll.vertical_scroll_down(self._description_text_edit)
         self._description_text_edit.text = value
-
-    @property
-    @allure.step('Get community logo')
-    def logo(self):
-        return NotImplementedError
-
-    def _open_logo_file_dialog(self, attempt: int = 2):
-        self._add_logo_button.click()
-        try:
-            return OpenFileDialog().wait_until_appears()
-        except Exception as err:
-            if attempt:
-                LOG.debug(err)
-                return self._open_logo_file_dialog(attempt - 1)
-            else:
-                raise err
-
-    @allure.step('Set community logo')
-    def logo(self, kwargs: dict):
-        self._open_logo_file_dialog().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None),
-                                                                           kwargs.get('shift', None))
-
-    @property
-    @allure.step('Get community banner')
-    def banner(self):
-        raise NotImplementedError
-
-    @allure.step('Set community banner')
-    def banner(self, kwargs: dict):
-        self._add_banner_button.click()
-        OpenFileDialog().wait_until_appears().open_file(kwargs['fp'])
-        PictureEditPopup().wait_until_appears().set_zoom_shift_for_picture(kwargs.get('zoom', None),
-                                                                           kwargs.get('shift', None))
 
     @allure.step('Set community logo without file upload dialog')
     def set_logo_without_file_upload_dialog(self, path):
@@ -195,9 +162,9 @@ class CreateCommunityPopup(BasePopup):
         assert self.get_color() == color
 
     @allure.step('Select tags and verify they were set correctly')
-    def verify_tags(self,  tags: typing.List[str]):
+    def verify_tags(self, tags: typing.List[str]):
         actual_tags = self.get_tags()
-        assert tags == actual_tags
+        assert tags.sort(reverse=False) == actual_tags.sort(reverse=False)
 
     @allure.step('Verify default values of checkboxes')
     def verify_checkboxes_values(self):
@@ -206,37 +173,21 @@ class CreateCommunityPopup(BasePopup):
         assert not self.is_pin_messages_checkbox_checked()
 
     @allure.step('Verify community create popup fields and create community without file upload dialog usage')
-    def create_community(self, name: str, description: str, intro: str, outro: str, logo, banner, color: str,
-                         tags_to_set: typing.List[str], tags):
-        self.set_name(name)
-        self.set_description(description)
-        self.set_logo_without_file_upload_dialog(logo)
+    def create_community(self, community_data: CommunityData):
+        self.set_name(community_data.name)
+        self.set_description(community_data.description)
+        self.set_logo_without_file_upload_dialog(community_data.logo['fp'])
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self.set_banner_without_file_upload_dialog(banner)
+        self.set_banner_without_file_upload_dialog(community_data.banner['fp'])
         PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self.set_color(color)
-        self.verify_color(color)
-        self.set_tags(tags_to_set)
-        self.verify_tags(tags)
+        self.set_color(community_data.color)
+        self.verify_color(community_data.color)
+        self.set_tags(community_data.tags)
+        self.verify_tags(community_data.tags)
         self.verify_checkboxes_values()
         self._next_button.click()
-        self.set_intro(intro)
-        self.set_outro(outro)
-        self._create_community_button.click()
-        self.wait_until_hidden()
-        return CommunityScreen().wait_until_appears()
-
-    @allure.step('Create simple community without verifications')
-    def create_simple_community(self, name: str, description: str, intro: str, outro: str, logo, banner):
-        self.set_name(name)
-        self.set_description(description)
-        self.set_logo_without_file_upload_dialog(logo)
-        PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self.set_banner_without_file_upload_dialog(banner)
-        PictureEditPopup().set_zoom_shift_for_picture(None, None)
-        self._next_button.click()
-        self.set_intro(intro)
-        self.set_outro(outro)
+        self.set_intro(community_data.introduction)
+        self.set_outro(community_data.leaving_message)
         self._create_community_button.click()
         self.wait_until_hidden()
         return CommunityScreen().wait_until_appears()

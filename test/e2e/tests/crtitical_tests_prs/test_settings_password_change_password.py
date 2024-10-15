@@ -17,7 +17,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703005',
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account):

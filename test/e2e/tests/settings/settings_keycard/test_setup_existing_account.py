@@ -23,7 +23,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703623',
                  'Setup a keycard with an existing account')
 @pytest.mark.case(703623)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name', [pytest.param('Account 1')])
 @pytest.mark.timeout(timeout=210)
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
