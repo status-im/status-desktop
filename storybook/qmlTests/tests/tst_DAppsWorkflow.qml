@@ -1129,6 +1129,12 @@ Item {
             waitForRendering(controlUnderTest)
             const popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(popup.opened)
+
+            const acceptButton = findChild(popup, "signButton")
+            const rejectButton = findChild(popup, "rejectButton")
+            // Workaround for the buttons not being aligned yet
+            // Removing this could cause the wrong button to be clicked
+            tryVerify(() => acceptButton.x > rejectButton.x + rejectButton.width)
             return popup
         }
 
@@ -1136,11 +1142,10 @@ Item {
             const topic = "abcd"
             const requestId = "12345"
             let popup = showRequestModal(topic, requestId)
-
             let rejectButton = findChild(popup, "rejectButton")
 
+            verify(!!rejectButton)
             mouseClick(rejectButton)
-            waitForRendering(controlUnderTest)
             compare(signRequestRejectedSpy.count, 1, "expected signRequestRejected signal to be emitted")
             compare(signRequestAcceptedSpy.count, 0, "expected signRequestAccepted signal to not be emitted")
             compare(signRequestRejectedSpy.signalArguments[0][0], topic, "expected id to be set")

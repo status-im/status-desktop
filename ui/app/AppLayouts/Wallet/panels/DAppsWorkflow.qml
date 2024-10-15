@@ -294,7 +294,6 @@ DappsComboBox {
                     return
                 }
                 requestHandled = true
-                let userRejected = true
                 root.signRequestRejected(request.topic, request.id)
             }
 
