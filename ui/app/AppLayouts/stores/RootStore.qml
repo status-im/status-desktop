@@ -8,8 +8,6 @@ import SortFilterProxyModel 0.2
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
-import "../Profile/stores"
-
 QtObject {
     id: root
 
@@ -27,12 +25,12 @@ QtObject {
 
     readonly property int loginType: getLoginType()
     function getLoginType() {
-        if(!userProfileInst)
+        if(!d.userProfileInst)
             return Constants.LoginType.Password
 
-        if(userProfileInst.usingBiometricLogin)
+        if(d.userProfileInst.usingBiometricLogin)
             return Constants.LoginType.Biometrics
-        if(userProfileInst.isKeycardUser)
+        if(d.userProfileInst.isKeycardUser)
             return Constants.LoginType.Keycard
         return Constants.LoginType.Password
     }
@@ -136,7 +134,7 @@ QtObject {
         appSearchModule: root.mainModuleInst.appSearchModule
     }
 
-    property ProfileSectionStore profileSectionStore: ProfileSectionStore {
+    property ProfileStores.ProfileSectionStore profileSectionStore: ProfileStores.ProfileSectionStore {
     }
 
     property var chatSearchModel: mainModuleInst.chatSearchModel
@@ -149,7 +147,7 @@ QtObject {
         mainModuleInst.switchTo(sectionId, chatId)
     }
 
-    property var userProfileInst: userProfile
+
     readonly property var accounts: walletSectionAccounts.accounts
 
     property ProfileStores.ContactsStore contactStore: profileSectionStore.contactsStore
@@ -165,6 +163,12 @@ QtObject {
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
     property var flatNetworks: networksModule.flatNetworks
+
+    readonly property QtObject _d: QtObject {
+        id: d
+
+        readonly property var userProfileInst: userProfile
+    }
 
     function getEtherscanLink(chainID) {
         return networksModule.getBlockExplorerURL(chainID)
@@ -207,7 +211,7 @@ QtObject {
     }
 
     function setCurrentUserStatus(newStatus) {
-        if (userProfileInst && userProfileInst.currentUserStatus !== newStatus) {
+        if (d.userProfileInst && d.userProfileInst.currentUserStatus !== newStatus) {
             mainModuleInst.setCurrentUserStatus(newStatus)
         }
     }

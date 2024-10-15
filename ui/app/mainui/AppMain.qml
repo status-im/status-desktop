@@ -39,11 +39,12 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
-import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
+import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.stores 1.0 as AppStores
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -59,7 +60,9 @@ Item {
         currencyStore: appMain.currencyStore
     }
 
-    property AppStores.RootStore rootStore: AppStores.RootStore {}
+    readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
+    readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
+    readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
 
     property ChatStores.RootStore rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
@@ -106,7 +109,7 @@ Item {
         rootStore: appMain.rootStore
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
-        profileStore: appMain.rootStore.profileSectionStore.profileStore
+        profileStore: appMain.profileStore
 
         sendModalPopup: sendModal
     }
@@ -651,7 +654,7 @@ Item {
             walletAssetsStore: appMain.walletAssetsStore
             sendModalPopup: sendModal
 
-            isWalletEnabled: appMain.rootStore.profileSectionStore.profileStore.isWalletEnabled
+            isWalletEnabled: appMain.profileStore.isWalletEnabled
         }
     }
 
@@ -823,16 +826,16 @@ Item {
                 objectName: "statusProfileNavBarTabButton"
                 property bool opened: false
 
-                name: appMain.rootStore.userProfileInst.name
-                icon.source: appMain.rootStore.userProfileInst.icon
+                name: appMain.profileStore.name
+                icon.source: appMain.profileStore.icon
                 implicitWidth: 32
                 implicitHeight: 32
                 identicon.asset.width: width
                 identicon.asset.height: height
                 identicon.asset.useAcronymForLetterIdenticon: true
-                identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
-                identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey,
-                                                                               appMain.rootStore.userProfileInst.preferredName)
+                identicon.asset.color: Utils.colorForPubkey(appMain.profileStore.pubkey)
+                identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.profileStore.pubkey,
+                                                                               appMain.profileStore.preferredName)
 
                 badge.visible: true
                 badge.anchors {
@@ -849,7 +852,7 @@ Item {
                 badge.border.width: 2
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 badge.color: {
-                    switch(appMain.rootStore.userProfileInst.currentUserStatus){
+                    switch(appMain.profileStore.currentUserStatus){
                         case Constants.currentUserStatus.automatic:
                         case Constants.currentUserStatus.alwaysOnline:
                             return Style.current.green;
@@ -866,12 +869,12 @@ Item {
                     y: profileButton.y - userStatusContextMenu.height + profileButton.height
                     x: profileButton.x + profileButton.width + 5
 
-                    pubKey: appMain.rootStore.userProfileInst.pubKey
-                    name: appMain.rootStore.userProfileInst.name
-                    icon: appMain.rootStore.userProfileInst.icon
-                    isEnsVerified: !!appMain.rootStore.userProfileInst.preferredName
+                    pubKey: appMain.profileStore.pubkey
+                    name: appMain.profileStore.name
+                    icon: appMain.profileStore.icon
+                    isEnsVerified: !!appMain.profileStore.preferredName
 
-                    currentUserStatus: appMain.rootStore.userProfileInst.currentUserStatus
+                    currentUserStatus: appMain.profileStore.currentUserStatus
 
                     onViewProfileRequested: Global.openProfilePopup(pubKey)
                     onCopyLinkRequested: ClipboardUtils.setText(appMain.rootStore.contactStore.getLinkToProfile(pubKey))

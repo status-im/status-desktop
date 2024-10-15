@@ -8,7 +8,6 @@ QtObject {
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
-    property var userProfileInst: !!Global.userProfile? Global.userProfile : null
     property var appSettingsInst: Global.appIsReady && !!appSettings? appSettings : null
     property var accountSensitiveSettings: Global.appIsReady && !!localAccountSensitiveSettings? localAccountSensitiveSettings : null
     property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
