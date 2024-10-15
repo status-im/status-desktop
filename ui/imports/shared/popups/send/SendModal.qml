@@ -1,7 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
+
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet 1.0
@@ -326,7 +327,7 @@ StatusDialog {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             Layout.preferredHeight: assetAndAmountSelector.implicitHeight
-                                    + Style.current.halfPadding
+                                    + Theme.halfPadding
             z: 100
 
             color: Theme.palette.baseColor3
@@ -343,8 +344,8 @@ StatusDialog {
                 id: assetAndAmountSelector
 
                 anchors.fill: parent
-                anchors.leftMargin: Style.current.xlPadding
-                anchors.rightMargin: Style.current.xlPadding
+                anchors.leftMargin: Theme.xlPadding
+                anchors.rightMargin: Theme.xlPadding
 
                 z: 1
                 spacing: 16
@@ -596,10 +597,10 @@ StatusDialog {
 
             Layout.fillHeight: true
             Layout.fillWidth:  true
-            Layout.topMargin: Style.current.padding
-            Layout.leftMargin: Style.current.xlPadding
-            Layout.rightMargin: Style.current.xlPadding
-            Layout.bottomMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
+            Layout.leftMargin: Theme.xlPadding
+            Layout.rightMargin: Theme.xlPadding
+            Layout.bottomMargin: Theme.padding
 
             visible: !recipientInputLoader.ready && !d.isBridgeTx
 
@@ -630,13 +631,13 @@ StatusDialog {
             id: scrollView
 
             padding: 0
-            bottomPadding: Style.current.padding
+            bottomPadding: Theme.padding
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: Style.current.bigPadding
-            Layout.leftMargin: Style.current.xlPadding
-            Layout.rightMargin: Style.current.xlPadding
+            Layout.topMargin: Theme.bigPadding
+            Layout.leftMargin: Theme.xlPadding
+            Layout.rightMargin: Theme.xlPadding
 
             contentWidth: availableWidth
 
@@ -688,11 +689,11 @@ StatusDialog {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.bigPadding
-            Layout.leftMargin: Style.current.xlPadding
-            Layout.rightMargin: Style.current.xlPadding
-            Layout.bottomMargin: Style.current.xlPadding
-            implicitHeight: sendErrorColumn.height + Style.current.padding
+            Layout.topMargin: Theme.bigPadding
+            Layout.leftMargin: Theme.xlPadding
+            Layout.rightMargin: Theme.xlPadding
+            Layout.bottomMargin: Theme.xlPadding
+            implicitHeight: sendErrorColumn.height + Theme.padding
             color: Theme.palette.dangerColor3
             radius: 8
             border.width: 1
@@ -705,14 +706,14 @@ StatusDialog {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                spacing: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
+                spacing: Theme.padding
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    Layout.topMargin: Style.current.padding
-                    font.pixelSize: Style.current.secondaryTextFontSize
+                    Layout.topMargin: Theme.padding
+                    font.pixelSize: Theme.secondaryTextFontSize
                     font.bold: true
                     wrapMode: Text.WrapAnywhere
                     text: qsTr("Error sending the transaction")
@@ -720,7 +721,7 @@ StatusDialog {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     wrapMode: Text.WrapAnywhere
                     text: d.sendError
                 }

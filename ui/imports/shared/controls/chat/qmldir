@@ -14,7 +14,6 @@ MessageMouseArea 1.0 MessageMouseArea.qml
 MessageReactionsRow 1.0 MessageReactionsRow.qml
 ProfileHeader 1.0 ProfileHeader.qml
 Retry 1.0 Retry.qml
-SentMessage 1.0 SentMessage.qml
 StateBubble 1.0 StateBubble.qml
 UserImage 1.0 UserImage.qml
 VerificationLabel 1.0 VerificationLabel.qml

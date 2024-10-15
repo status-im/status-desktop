@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
@@ -32,7 +32,7 @@ Rectangle {
         spacing: 10
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.margins: Style.current.padding
+        anchors.margins: Theme.padding
 
         StatusRoundIcon {
             id: feesIcon
@@ -44,7 +44,7 @@ Rectangle {
         Column {
             id: columnLayout
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.preferredWidth: root.width - feesIcon.width - Style.current.xlPadding
+            Layout.preferredWidth: root.width - feesIcon.width - Theme.xlPadding
             spacing: isLoading ? 4 : 0
             Item {
                 width: parent.width
@@ -60,7 +60,7 @@ Rectangle {
                 }
                 StatusBaseText {
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.padding
+                    anchors.rightMargin: Theme.padding
                     id: totalFeesAdvanced
                     text: root.isLoading ? "..." : root.currencyStore.formatCurrencyAmount(root.gasFiatAmount, root.currencyStore.currentCurrency)
                     font.pixelSize: 15

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -48,11 +48,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.padding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
+        spacing: Theme.padding
         clip: true
 
         KeycardImage {
@@ -91,7 +91,7 @@ Item {
             Layout.alignment: Qt.AlignCenter
             Layout.fillWidth: true
             leftSide: false
-            spacing: Style.current.smallPadding
+            spacing: Theme.smallPadding
             font.pixelSize: Constants.keycard.general.fontSize2
             text: qsTr("I understand the key pair on this Keycard will be deleted")
 

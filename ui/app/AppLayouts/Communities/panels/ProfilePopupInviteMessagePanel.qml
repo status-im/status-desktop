@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.4
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -24,7 +25,7 @@ ColumnLayout {
 
     property alias inviteMessage: messageInput.text
 
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     QtObject {
         id: d
@@ -44,8 +45,8 @@ ColumnLayout {
         input.verticalAlignment: TextEdit.AlignTop
         Layout.minimumHeight: 150 // TODO: implicitHeight is not calculated well from input.implicitHeight
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
     }
 
     StatusModalDivider {
@@ -54,9 +55,9 @@ ColumnLayout {
 
     StyledText {
         text: qsTr("Invites will be sent to:")
-        font.pixelSize: Style.current.primaryTextFontSize
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        font.pixelSize: Theme.primaryTextFontSize
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
     }
 
     PickedContacts {
@@ -65,7 +66,7 @@ ColumnLayout {
         pubKeys: root.pubKeys
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.leftMargin: Style.current.halfPadding
-        Layout.rightMargin: Style.current.halfPadding
+        Layout.leftMargin: Theme.halfPadding
+        Layout.rightMargin: Theme.halfPadding
     }
 }

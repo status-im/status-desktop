@@ -1,8 +1,8 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQml.Models 2.2
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -59,8 +59,8 @@ Page {
                 id: membersSelector
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Style.current.halfPadding
-                Layout.rightMargin: Style.current.halfPadding
+                Layout.leftMargin: Theme.halfPadding
+                Layout.rightMargin: Theme.halfPadding
                 rootStore: root.rootStore
 
                 function createChat() {
@@ -122,14 +122,14 @@ Page {
         ColumnLayout {
             anchors {
                 fill: parent
-                topMargin: Style.current.bigPadding
-                bottomMargin: Style.current.padding
-                leftMargin: Style.current.halfPadding
+                topMargin: Theme.bigPadding
+                bottomMargin: Theme.padding
+                leftMargin: Theme.halfPadding
             }
 
             StatusBaseText {
                 Layout.alignment: Qt.AlignTop
-                Layout.leftMargin: Style.current.halfPadding
+                Layout.leftMargin: Theme.halfPadding
                 visible: contactsList.visible
                 font.pixelSize: 15
                 text: qsTr("Contacts")
@@ -177,7 +177,7 @@ Page {
 
         StatusBaseText {
             anchors.centerIn: parent
-            width: Math.min(553, parent.width - 2 * Style.current.padding)
+            width: Math.min(553, parent.width - 2 * Theme.padding)
             visible: root.rootStore.contactsModel.count === 0
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

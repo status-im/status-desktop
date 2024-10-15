@@ -35,7 +35,7 @@ Rectangle {
     property var selectSavedAddresses: function(){}
     property var emojiPopup: null
 
-    color: Style.current.secondaryMenuBackground
+    color: Theme.palette.secondaryMenuBackground
 
     Component.onCompleted: {
         d.loaded = true
@@ -180,9 +180,9 @@ Rectangle {
         Item {
             Layout.fillWidth: true
             Layout.preferredHeight: icon.height
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            Layout.topMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
+            Layout.topMargin: Theme.padding
 
             MouseArea {
                 anchors.fill: parent
@@ -204,7 +204,7 @@ Rectangle {
                 objectName: "addAccountButton"
                 icon.name: "add-circle"
                 anchors.right: parent.right
-                anchors.rightMargin: -Style.current.smallPadding
+                anchors.rightMargin: -Theme.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
                 icon.width: 24
                 icon.height: 24
@@ -216,7 +216,7 @@ Rectangle {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.minimumHeight: Style.current.bigPadding
+            Layout.minimumHeight: Theme.bigPadding
             color: root.color
             z: 2
 
@@ -245,12 +245,12 @@ Rectangle {
                 }
                 height: parent.height - footer.height
 
-                spacing: Style.current.smallPadding
+                spacing: Theme.smallPadding
                 currentIndex: -1
                 highlightRangeMode: ListView.ApplyRange
                 preferredHighlightBegin: 0
                 preferredHighlightEnd: height
-                bottomMargin: Style.current.padding
+                bottomMargin: Theme.padding
 
                 readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
                 readonly property bool footerOverlayed: d.loaded && contentHeight > availableHeight
@@ -258,7 +258,7 @@ Rectangle {
                 delegate: StatusListItem {
                     objectName: "walletAccount-" + model.name
                     readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
-                    width: ListView.view.width - Style.current.padding * 2
+                    width: ListView.view.width - Theme.padding * 2
                     highlighted: RootStore.selectedAddress.toLowerCase() === model.address.toLowerCase()
                     onHighlightedChanged: {
                         if (highlighted)
@@ -308,15 +308,15 @@ Rectangle {
 
                 header: Button {
                     id: header
-                    verticalPadding: Style.current.padding
-                    horizontalPadding: Style.current.padding
+                    verticalPadding: Theme.padding
+                    horizontalPadding: Theme.padding
                     highlighted: RootStore.showAllAccounts
                     objectName: "allAccountsBtn"
 
-                    leftInset: Style.current.padding
-                    bottomInset: Style.current.padding
-                    leftPadding: Style.current.xlPadding
-                    bottomPadding: Style.current.bigPadding
+                    leftInset: Theme.padding
+                    bottomInset: Theme.padding
+                    leftPadding: Theme.xlPadding
+                    bottomPadding: Theme.bigPadding
 
                     background: Rectangle {
                         MouseArea {
@@ -327,9 +327,9 @@ Rectangle {
                             onClicked: root.selectAllAccounts()
                             hoverEnabled: true
                         }
-                        radius: Style.current.radius
-                        color: header.highlighted || mouseArea.containsMouse ? Style.current.backgroundHover : root.color
-                        implicitWidth: parent.ListView.view.width - Style.current.padding * 2
+                        radius: Theme.radius
+                        color: header.highlighted || mouseArea.containsMouse ? Theme.palette.backgroundHover : root.color
+                        implicitWidth: parent.ListView.view.width - Theme.padding * 2
                     }
 
                     contentItem: ColumnLayout {
@@ -348,7 +348,7 @@ Rectangle {
                             StatusTextWithLoadingState {
                                 id: walletAmountValue
                                 objectName: "walletLeftListAmountValue"
-                                customColor: Style.current.textColor
+                                customColor: Theme.palette.textColor
                                 text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance, {noSymbol: true})
                                 font.pixelSize: 22
                                 loading: RootStore.balanceLoading
@@ -357,7 +357,7 @@ Rectangle {
                                 verticalAlignment: Text.AlignVCenter
                             }
                             StatusTextWithLoadingState {
-                                customColor: Style.current.textColor
+                                customColor: Theme.palette.textColor
                                 text: RootStore.totalCurrencyBalance.symbol
                                 font.pixelSize: 13
                                 loading: RootStore.balanceLoading
@@ -400,14 +400,14 @@ Rectangle {
                     right: parent.right
                 }
 
-                horizontalPadding: Style.current.padding
-                verticalPadding: Style.current.padding
+                horizontalPadding: Theme.padding
+                verticalPadding: Theme.padding
 
                 background: Rectangle {
                     id: footerBackground
                     color: root.color
                     implicitWidth: root.width
-                    implicitHeight: walletAccountsListView.firstItem.height + Style.current.xlPadding
+                    implicitHeight: walletAccountsListView.firstItem.height + Theme.xlPadding
 
                     layer.enabled: walletAccountsListView.footerOverlayed && !walletAccountsListView.atYEnd
                     layer.effect: DropShadow {
@@ -429,7 +429,7 @@ Rectangle {
                 contentItem: StatusFlatButton {
                     objectName: "savedAddressesBtn"
                     highlighted: RootStore.showSavedAddresses
-                    hoverColor: Style.current.backgroundHover
+                    hoverColor: Theme.palette.backgroundHover
                     asset.bgColor: Theme.palette.primaryColor3
                     text: qsTr("Saved addresses")
                     icon.name: "address"

@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
@@ -80,7 +81,7 @@ QObject {
                 readonly property string key: model.symbol
 
                 readonly property url icon:
-                    model.imageUrl || model.mediaUrl || Style.png("tokens/DEFAULT-TOKEN")
+                    model.imageUrl || model.mediaUrl || Theme.png("tokens/DEFAULT-TOKEN")
 
                 SortFilterProxyModel { /* 1 */
                     id: ownershipFiltered

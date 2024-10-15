@@ -51,7 +51,7 @@ Control {
     signal switchToCommunityRequested(string communityId)
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         color: Theme.palette.baseColor2
         visible: !root.isLoading && root.hovered
 
@@ -85,7 +85,7 @@ Control {
             id: image
 
             Layout.alignment: Qt.AlignHCenter
-            Layout.margins: Style.current.halfPadding
+            Layout.margins: Theme.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
@@ -102,7 +102,7 @@ Control {
             Loader {
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.margins: Style.current.halfPadding
+                anchors.margins: Theme.halfPadding
                 sourceComponent: root.balanceTag
             }
         }
@@ -111,7 +111,7 @@ Control {
             id: specialCollectible
 
             Layout.alignment: Qt.AlignHCenter
-            Layout.margins: Style.current.halfPadding
+            Layout.margins: Theme.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: width
 
@@ -131,13 +131,13 @@ Control {
             Loader {
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.margins: Style.current.halfPadding
+                anchors.margins: Theme.halfPadding
                 sourceComponent: root.balanceTag
             }
         }
 
         RowLayout {
-            Layout.leftMargin: Style.current.halfPadding
+            Layout.leftMargin: Theme.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.fillWidth: !root.isLoading
             Layout.preferredWidth: root.isLoading ? 134 : width
@@ -164,7 +164,7 @@ Control {
             id: subTitleItem
 
             Layout.topMargin: 4
-            Layout.leftMargin: Style.current.halfPadding
+            Layout.leftMargin: Theme.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.fillWidth: !root.isLoading
             Layout.preferredWidth: root.isLoading ? 88 : width
@@ -179,9 +179,9 @@ Control {
         }
 
         ManageTokensCommunityTag {
-            Layout.topMargin: Style.current.halfPadding
-            Layout.leftMargin: Style.current.halfPadding
-            Layout.rightMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
+            Layout.leftMargin: Theme.halfPadding
+            Layout.rightMargin: Theme.halfPadding
             Layout.maximumWidth: parent.width - Layout.leftMargin - Layout.rightMargin
             communityName: root.communityName
             communityId: root.communityId

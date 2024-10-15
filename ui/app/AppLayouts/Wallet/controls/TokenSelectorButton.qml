@@ -68,7 +68,7 @@ Control {
         RowLayout {
             objectName: "selectedContent"
 
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StatusRoundedImage {
                 id: tokenSelectorIcon

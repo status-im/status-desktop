@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared 1.0
@@ -81,7 +80,7 @@ SettingsContentBase {
             title: qsTr("Contacts, Requests, and Blocked Users")
             requestsCount: root.contactsStore.receivedContactRequestsModel.count
             onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
-                                                                   Constants.settingsSubsection.contacts)
+                                                            Constants.settingsSubsection.contacts)
         }
 
         Separator {
@@ -92,8 +91,8 @@ SettingsContentBase {
         // GIF LINK PREVIEWS
         StatusSectionHeadline {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             text: qsTr("GIF link previews")
         }
 
@@ -122,8 +121,8 @@ SettingsContentBase {
         // URL UNFRULING
         StatusSectionHeadline {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             text: qsTr("Website link previews")
         }
 
@@ -133,8 +132,8 @@ SettingsContentBase {
 
         SettingsRadioButton {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             label: qsTr("Always ask")
             objectName: "MessagingView_AlwaysAsk_RadioButton"
             group: urlUnfurlingGroup
@@ -147,8 +146,8 @@ SettingsContentBase {
         SettingsRadioButton {
             Layout.topMargin: Constants.settingsSection.itemSpacing / 2
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             label: qsTr("Always show previews")
             objectName: "MessagingView_AlwaysShow_RadioButton"
             group: urlUnfurlingGroup
@@ -161,8 +160,8 @@ SettingsContentBase {
         SettingsRadioButton {
             Layout.topMargin: Constants.settingsSection.itemSpacing / 2
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             label: qsTr("Never show previews")
             objectName: "MessagingView_NeverShow_RadioButton"
             group: urlUnfurlingGroup

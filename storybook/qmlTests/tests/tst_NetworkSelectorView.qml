@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtTest 1.15
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Wallet.views 1.0
 
 import utils 1.0
@@ -81,7 +83,7 @@ Item {
 
                 verify(!!delegate)
                 compare(delegate.title, model.chainName)
-                compare(delegate.iconUrl, (model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)))
+                compare(delegate.iconUrl, (model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)))
                 compare(delegate.showIndicator, controlUnderTest.showIndicator)
                 compare(delegate.multiSelection, controlUnderTest.multiSelection)
                 compare(delegate.checkState, controlUnderTest.selection.includes(model.chainId) ? Qt.Checked : Qt.Unchecked)

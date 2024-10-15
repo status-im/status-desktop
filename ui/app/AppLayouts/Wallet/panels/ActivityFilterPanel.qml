@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -129,13 +129,13 @@ Column {
                                       }
                 asset.name: switch(activityFilterStore.statusFilters[index]) {
                                 case Constants.TransactionStatus.Failed:
-                                    return Style.svg("transaction/failed")
+                                    return Theme.svg("transaction/failed")
                                 case Constants.TransactionStatus.Pending:
-                                    return Style.svg("transaction/pending")
+                                    return Theme.svg("transaction/pending")
                                 case Constants.TransactionStatus.Complete:
-                                    return Style.svg("transaction/confirmed")
+                                    return Theme.svg("transaction/confirmed")
                                 case Constants.TransactionStatus.Finished:
-                                    return Style.svg("transaction/finished")
+                                    return Theme.svg("transaction/finished")
                                 default:
                                     console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                     return ""
@@ -228,7 +228,6 @@ Column {
         anchors.topMargin: 16
         visible: !root.hideNoResults && noResults
         text: qsTr("No activity items for the current filter")
-        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.baseColor1
     }
 

@@ -331,7 +331,7 @@ StackView {
 
             contentItem: ColumnLayout {
                 width: root.viewWidth
-                spacing: Style.current.padding
+                spacing: Theme.padding
 
                 StatusSwitchTabBar {
                     id: optionsTab

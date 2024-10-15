@@ -34,13 +34,13 @@ StatusDialog {
 
     width: 521 // by design
     padding: 0
-    horizontalPadding: Style.current.padding
+    horizontalPadding: Theme.padding
 
     contentItem: StatusListView {
         id: list
 
-        topMargin: Style.current.padding
-        bottomMargin: Style.current.padding
+        topMargin: Theme.padding
+        bottomMargin: Theme.padding
         implicitHeight: contentHeight
 
         header: ColumnLayout {
@@ -49,7 +49,7 @@ StatusDialog {
 
             CustomSourceInfoComponent {
                 Layout.fillWidth: true
-                Layout.margins: Style.current.padding
+                Layout.margins: Theme.padding
             }
 
             Separator {}
@@ -74,7 +74,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusButton {
                 text: qsTr("Done")
@@ -127,7 +127,7 @@ StatusDialog {
         spacing: 20
 
         RowLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             CustomTextBlock {
                 title: qsTr("Source")
@@ -135,7 +135,7 @@ StatusDialog {
             }
 
             CustomExternalLinkButton {
-                Layout.rightMargin: Style.current.halfPadding
+                Layout.rightMargin: Theme.halfPadding
 
                 link: root.sourceUrl
             }
@@ -154,14 +154,14 @@ StatusDialog {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
 
             text: qsTr("Name")
             color: Theme.palette.baseColor1
         }
 
         StatusBaseText {
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.preferredWidth: d.symbolColumnWidth - Layout.leftMargin
             Layout.alignment: Qt.AlignLeft
 
@@ -170,7 +170,7 @@ StatusDialog {
         }
 
         StatusBaseText {
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.preferredWidth: d.addressColumnWidth - Layout.leftMargin
             Layout.alignment: Qt.AlignLeft
 
@@ -180,9 +180,9 @@ StatusDialog {
 
         // Just a filler corresponding to external link column
         Item {
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.preferredWidth: d.externalLinkBtnWidth
-            Layout.rightMargin: Style.current.bigPadding
+            Layout.rightMargin: Theme.bigPadding
         }
     }
 
@@ -206,8 +206,8 @@ StatusDialog {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Style.current.padding
-                spacing: Style.current.padding
+                Layout.leftMargin: Theme.padding
+                spacing: Theme.padding
 
                 StatusSmartIdenticon {
                     asset.isImage: true
@@ -238,7 +238,7 @@ StatusDialog {
             }
 
             StatusBaseText {
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
                 Layout.preferredWidth: d.symbolColumnWidth - Layout.leftMargin
                 Layout.alignment: Qt.AlignLeft
 
@@ -246,7 +246,7 @@ StatusDialog {
             }
 
             StatusBaseText {
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
                 Layout.preferredWidth: d.addressColumnWidth - Layout.leftMargin
                 Layout.alignment: Qt.AlignLeft
 
@@ -257,8 +257,8 @@ StatusDialog {
             CustomExternalLinkButton {
                 id: externalLinkBtn
 
-                Layout.leftMargin: Style.current.padding
-                Layout.rightMargin: Style.current.bigPadding
+                Layout.leftMargin: Theme.padding
+                Layout.rightMargin: Theme.bigPadding
 
                 link: model.explorerUrl
             }

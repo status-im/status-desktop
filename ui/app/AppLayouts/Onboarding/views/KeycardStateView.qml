@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -20,7 +20,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         KeycardImage {
             id: image
@@ -93,7 +93,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotEmpty
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -129,7 +129,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardEmpty
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-empty")
+                source: Theme.png("keycard/card-empty")
                 pattern: ""
             }
             PropertyChanges {

@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import utils 1.0
+import QtQuick 2.15
 
-import "."
+import StatusQ.Core.Theme 0.1
+
+import utils 1.0
 
 StyledText {
     property bool expanded: false
@@ -10,9 +11,9 @@ StyledText {
     id: addressComponent
     text: "0x9ce0056c5fc6bb9459a4dcfa35eaad8c1fee5ce9"
     font.pixelSize: 13
-    font.family: Style.current.monoFont.name
+    font.family: Theme.monoFont.name
     elide: Text.ElideMiddle
-    color: Style.current.secondaryText
+    color: Theme.palette.secondaryText
 
     MouseArea {
         width: parent.width
@@ -33,9 +34,3 @@ StyledText {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff"}
-}
-##^##*/

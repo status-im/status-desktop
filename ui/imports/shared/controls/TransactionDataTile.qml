@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
@@ -72,7 +72,7 @@ StatusListItem {
     height: visible ? implicitHeight + bottomPadding : 0
     radius: 0
     sensor.cursorShape: Qt.ArrowCursor
-    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor5 : Style.current.transparent
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor5 : Theme.palette.transparent
 
     // Title
     statusListItemTitle.customColor: Theme.palette.directColor5

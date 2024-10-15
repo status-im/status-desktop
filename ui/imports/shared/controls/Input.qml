@@ -5,6 +5,7 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -18,17 +19,17 @@ Item {
     property alias inputLabel: inputLabel
 
     property string placeholderText: "My placeholder"
-    property string placeholderTextColor: Style.current.secondaryText
+    property string placeholderTextColor: Theme.palette.secondaryText
     property alias text: inputValue.text
     property alias maxLength: inputValue.maximumLength
     property string validationError: ""
     property alias validationErrorObjectName: validationErrorText.objectName
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
     property int validationErrorTopMargin: 1
-    property color validationErrorColor: Style.current.danger
+    property color validationErrorColor: Theme.palette.dangerColor1
     property string label: ""
     readonly property bool hasLabel: label !== ""
-    property color bgColor: Style.current.inputBackground
+    property color bgColor: Theme.palette.baseColor2
     property url icon: ""
     property int iconHeight: 24
     property int iconWidth: 24
@@ -69,7 +70,7 @@ Item {
         text: inputBox.label
         font.weight: Font.Medium
         font.pixelSize: 13
-        color: Style.current.textColor
+        color: Theme.palette.textColor
     }
 
     Item {
@@ -86,24 +87,24 @@ Item {
             placeholderTextColor: inputBox.placeholderTextColor
             anchors.fill: parent
             anchors.right: clipboardButtonLoader.active ? clipboardButtonLoader.left : parent.right
-            anchors.rightMargin: clipboardButtonLoader.active ? Style.current.padding : 0
-            leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
+            anchors.rightMargin: clipboardButtonLoader.active ? Theme.padding : 0
+            leftPadding: inputBox.hasIcon ? iconWidth + 20 : Theme.padding
             font.pixelSize: fontPixelSize
             readOnly: inputBox.readOnly
             background: Rectangle {
                 id: inputRectangle
                 anchors.fill: parent
                 color: bgColor
-                radius: Style.current.radius
+                radius: Theme.radius
                 border.width: (!!validationError || inputValue.focus) ? 1 : 0
                 border.color: {
                     if (!!validationError) {
                         return validationErrorColor
                     }
                     if (!inputBox.readOnly && inputValue.focus) {
-                        return Style.current.inputBorderFocus
+                        return Theme.palette.primaryColor1
                     }
-                    return Style.current.transparent
+                    return Theme.palette.transparent
                 }
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
@@ -119,7 +120,7 @@ Item {
             sourceSize.height: iconHeight
             sourceSize.width: iconWidth
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
+            anchors.leftMargin: Theme.smallPadding
             anchors.verticalCenter: parent.verticalCenter
             fillMode: Image.PreserveAspectFit
             source: inputBox.icon
@@ -130,7 +131,7 @@ Item {
             active: inputBox.copyToClipboard || inputBox.pasteFromClipboard
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: Theme.padding
             sourceComponent: Component {
                 Item {
                     width: copyBtn.width

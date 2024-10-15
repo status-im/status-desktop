@@ -1,16 +1,12 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import shared.status 1.0
-import shared.stores 1.0
-// TODO move Contact into shared to get rid of that import
-import AppLayouts.Chat.controls 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import SortFilterProxyModel 0.2
@@ -29,12 +25,15 @@ Item {
         anchors.fill: parent
         rightMargin: 0
         cellWidth: parent.width / 2
-        cellHeight: 2 * Style.current.xlPadding + Style.current.halfPadding
+        cellHeight: 2 * Theme.xlPadding + Theme.halfPadding
 
         model: SortFilterProxyModel {
             sourceModel: root.contactsStore.myContactsModel
             filters: [
-                ExpressionFilter { expression: root.pubKeys.indexOf(model.pubKey) > -1 }
+                FastExpressionFilter {
+                    expression: root.pubKeys.indexOf(model.pubKey) > -1
+                    expectedRoles: ["pubKey"]
+                }
             ]
         }
 

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -52,7 +52,7 @@ StatusMenu {
 
             Row{
                 anchors.centerIn: parent
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
 
                 StatusIcon {
                     visible: !root.store.addAccountModule.scanningForActivityIsOngoing ||
@@ -108,7 +108,7 @@ StatusMenu {
                 anchors.right: parent.right
                 height: Constants.addAccountPopup.itemHeight
                 enabled: !model.addressDetails.alreadyCreated
-                radius: Style.current.halfPadding
+                radius: Theme.halfPadding
                 color: {
                     if (sensor.containsMouse) {
                         return Theme.palette.baseColor2
@@ -118,9 +118,9 @@ StatusMenu {
 
                 GridLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: Style.current.padding
-                    anchors.rightMargin: Style.current.padding
-                    columnSpacing: Style.current.padding
+                    anchors.leftMargin: Theme.padding
+                    anchors.rightMargin: Theme.padding
+                    columnSpacing: Theme.padding
                     rowSpacing: 0
 
                     StatusBaseText {
@@ -132,7 +132,7 @@ StatusMenu {
 
                     Row {
                         Layout.preferredWidth: 108
-                        spacing: Style.current.halfPadding * 0.5
+                        spacing: Theme.halfPadding * 0.5
 
                         StatusIcon {
                             visible: model.addressDetails.loaded && model.addressDetails.hasActivity

@@ -41,9 +41,9 @@ Item {
         id: collectiblesView
 
         anchors.fill: parent
-        topMargin: Style.current.bigPadding
-        bottomMargin: Style.current.bigPadding
-        leftMargin: Style.current.bigPadding
+        topMargin: Theme.bigPadding
+        bottomMargin: Theme.bigPadding
+        leftMargin: Theme.bigPadding
 
         visible: count
 
@@ -66,8 +66,8 @@ Item {
                 Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
             }
 
-            width: GridView.view.cellWidth - Style.current.padding
-            height: GridView.view.cellHeight - Style.current.padding
+            width: GridView.view.cellWidth - Theme.padding
+            height: GridView.view.cellHeight - Theme.padding
 
             HoverHandler {
                 id: hoverHandler
@@ -77,7 +77,7 @@ Item {
                 id: collectibleImage
                 anchors.fill: parent
                 color: !!model.backgroundColor ? model.backgroundColor : "transparent"
-                radius: Style.current.radius
+                radius: Theme.radius
                 showLoadingIndicator: true
                 isLoading: image.isLoading || !model.imageUrl
                 image.fillMode: Image.PreserveAspectCrop
@@ -102,14 +102,14 @@ Item {
                 id: gradient
                 anchors.fill: collectibleImage
                 visible: hoverHandler.hovered
-                source: Style.png("profile/gradient")
+                source: Theme.png("profile/gradient")
             }
 
             //TODO Add drop shadow
 
             Control {
                 id: amountControl
-                width: (amountText.contentWidth + Style.current.padding)
+                width: (amountText.contentWidth + Theme.padding)
                 height: 24
                 anchors.left: parent.left
                 anchors.leftMargin: 12
@@ -127,7 +127,7 @@ Item {
                     id: amountText
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: Style.current.asideTextFontSize
+                    font.pixelSize: Theme.asideTextFontSize
                     text: "x"+model.userHas
                 }
             }
@@ -166,7 +166,7 @@ Item {
                 tagImage: isCommunity ? (model.communityImage ?? "")
                                     : (hovered ? "external" : "gallery")
                 isIcon: !isCommunity
-                backgroundColor: hovered ? Style.current.background : Theme.palette.indirectColor2
+                backgroundColor: hovered ? Theme.palette.background : Theme.palette.indirectColor2
                 expanded: hoverHandler.hovered || hovered
                 onTagClicked: {
                     if (isCommunity) {

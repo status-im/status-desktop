@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
@@ -37,9 +37,9 @@ Popup {
     implicitWidth: 300
 
     background: Rectangle {
-        radius: Style.current.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3

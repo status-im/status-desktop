@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,10 +17,10 @@ Control {
     padding: 12
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
-        color: Style.current.transparent
+        color: Theme.palette.transparent
     }
 
     contentItem: ColumnLayout {

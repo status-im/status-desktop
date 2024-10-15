@@ -6,6 +6,7 @@ import QtQml.Models 2.15
 import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -164,7 +165,7 @@ Control {
                 text: qsTr("Back")
 
                 horizontalPadding: 21
-                bottomPadding: Style.current.halfPadding
+                bottomPadding: Theme.halfPadding
 
                 onClicked: collectiblesStackView.pop(StackView.Immediate)
             }

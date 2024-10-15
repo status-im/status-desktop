@@ -21,8 +21,8 @@ StatusDialog {
     ColumnLayout {
         spacing: 4
 
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         Layout.preferredHeight: 348
 
         DecoratedListItem {
@@ -74,6 +74,5 @@ StatusDialog {
             order: "5. "
             text1: qsTr("Head back to Status and paste the URI")
         }
-
     }
 }

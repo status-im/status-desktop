@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -25,13 +25,13 @@ Rectangle {
     property var keyPairAccounts
 
     color: Theme.palette.baseColor2
-    radius: Style.current.halfPadding
+    radius: Theme.halfPadding
     implicitWidth: 448
     implicitHeight: 198
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StatusListItem {
             Layout.fillWidth: true
@@ -57,12 +57,12 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: Style.current.grey3
+            color: Theme.palette.separator
         }
 
         StatusBaseText {
-            Layout.preferredWidth: parent.width - 2 * Style.current.padding
-            Layout.leftMargin: Style.current.padding
+            Layout.preferredWidth: parent.width - 2 * Theme.padding
+            Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Active Accounts")
             font.pixelSize: Constants.keycard.general.fontSize2
@@ -75,24 +75,24 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
             clip: true
-            spacing: Style.current.halfPadding * 0.5
+            spacing: Theme.halfPadding * 0.5
             model: root.keyPairAccounts
 
             delegate: Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width - 2 * Style.current.padding
-                height: Style.current.xlPadding * 2
+                width: parent.width - 2 * Theme.padding
+                height: Theme.xlPadding * 2
                 color: Theme.palette.statusModal.backgroundColor
-                radius: Style.current.halfPadding
+                radius: Theme.halfPadding
 
                 RowLayout {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: Style.current.padding
-                    anchors.rightMargin: Style.current.padding
+                    anchors.leftMargin: Theme.padding
+                    anchors.rightMargin: Theme.padding
 
                     ColumnLayout {
 

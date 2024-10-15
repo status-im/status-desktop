@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 
@@ -11,7 +11,7 @@ Item {
 
     property bool selected: false
     property bool useIconInsteadOfImage: false
-    property url source: Style.svg("history")
+    property url source: Theme.svg("history")
     signal clicked
 
     implicitHeight: 24
@@ -34,7 +34,7 @@ Item {
         width: parent.width
         height: parent.height
         iconWidth: 6
-        color: Style.current.darkGrey
+        color: Theme.palette.darkGrey
         source: root.source
         onClicked: {
             root.clicked()

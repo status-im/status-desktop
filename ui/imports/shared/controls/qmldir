@@ -32,7 +32,6 @@ ProfilePerspectiveSelector 1.0 ProfilePerspectiveSelector.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 SearchBox 1.0 SearchBox.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
-SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
 ShapeRectangle 1.0 ShapeRectangle.qml
 SlippageSelector 1.0 SlippageSelector.qml

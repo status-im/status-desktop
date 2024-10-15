@@ -448,7 +448,7 @@ StatusStackModal {
                 bottomPadding: 80
 
                 ColumnLayout {
-                    spacing: Style.current.bigPadding
+                    spacing: Theme.bigPadding
                     width: parent.width
 
                     StatusRoundedImage {
@@ -474,7 +474,7 @@ StatusStackModal {
                 id: eligibilityTag
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: Style.current.bigPadding
+                anchors.bottomMargin: Theme.bigPadding
                 eligibleToJoinAs: d.eligibleToJoinAs
                 isEditMode: root.isEditMode
                 visible: !root.isInvitationPending && !root.checkingPermissionToJoinInProgress && root.joinPermissionsCheckCompletedWithoutErrors &&

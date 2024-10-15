@@ -22,7 +22,7 @@ StatusStackModal {
     implicitWidth: 480 // design
     implicitHeight: 512 // design
     anchors.centerIn: parent
-    padding: currentIndex === 0 ? 0 : Style.current.padding
+    padding: currentIndex === 0 ? 0 : Theme.padding
 
     headerSettings.title: currentIndex === 0 ? qsTr("Add a link") :
                                                qsTr("Add %1 link").arg(ProfileUtils.linkTypeToText(d.selectedLinkType) || qsTr("custom"))
@@ -105,7 +105,7 @@ StatusStackModal {
         },
         ColumnLayout {
             width: root.availableWidth
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StaticSocialLinkInput {
                 id: customTitle
@@ -144,7 +144,7 @@ StatusStackModal {
             StaticSocialLinkInput {
                 id: linkTarget
                 Layout.fillWidth: true
-                Layout.topMargin: customTitle.visible ? Style.current.padding : 0
+                Layout.topMargin: customTitle.visible ? Theme.padding : 0
                 placeholderText: ""
                 label: linkType === Constants.socialLinkType.custom ? qsTr("Link") : qsTr("Username")
                 linkType: d.selectedLinkType

@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
 import StatusQ.Core.Theme 0.1
 import "./xss.js" as XSS
 
@@ -189,7 +189,7 @@ QtObject {
         return `<style type="text/css">` +
                     `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
-                        `font-family: ${Theme.palette.codeFont.name};` +
+                        `font-family: ${Theme.codeFont.name};` +
                         `font-weight: 400;` +
                         `font-size: 14;` +
                         `padding: 2px 4px;` +

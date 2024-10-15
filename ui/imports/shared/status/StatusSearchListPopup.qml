@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -27,9 +27,9 @@ Popup {
     signal selected(string sectionId, string chatId)
 
     background: Rectangle {
-        radius: Style.current.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3

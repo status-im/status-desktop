@@ -1,6 +1,7 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import shared.panels 1.0
@@ -16,7 +17,7 @@ Item {
     signal clicked()
     signal timerTriggered()
 
-    implicitHeight: childrenRect.height + Style.current.smallPadding * 2
+    implicitHeight: childrenRect.height + Theme.smallPadding * 2
 
     QtObject {
         id: d
@@ -41,7 +42,7 @@ Item {
     Loader {
         id: fetchLoaderIndicator
         anchors.top: sep1.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.left: parent.left
         anchors.right: parent.right
         active: false
@@ -53,13 +54,13 @@ Item {
     StyledText {
         id: fetchMoreButton
         font.weight: Font.Medium
-        font.pixelSize: Style.current.primaryTextFontSize
-        color: Style.current.blue
+        font.pixelSize: Theme.primaryTextFontSize
+        color: Theme.palette.primaryColor1
         text: qsTr("↓ Fetch more messages")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: sep1.bottom
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
         MouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
@@ -78,13 +79,13 @@ Item {
         anchors.topMargin: 3
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
         text: qsTr("Before %1").arg(d.formattedDate)
         visible: d.formattedDate
     }
 
     Separator {
         anchors.top: fetchDate.bottom
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
     }
 }

@@ -1,9 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import "./"
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Platform 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -22,11 +22,11 @@ Item {
 
     Rectangle {
         id: container
-        width: notificationPreview.width + Style.current.padding * 2
-        height: childrenRect.height + Style.current.padding + Style.current.halfPadding
-        color: radioButton.checked ? Style.current.secondaryBackground :
-                                     (isHovered ? Style.current.backgroundHover : Style.current.transparent)
-        radius: Style.current.radius
+        width: notificationPreview.width + Theme.padding * 2
+        height: childrenRect.height + Theme.padding + Theme.halfPadding
+        color: radioButton.checked ? Theme.palette.secondaryBackground :
+                                     (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
+        radius: Theme.radius
 
         StatusRadioButton {
             id: radioButton
@@ -35,20 +35,19 @@ Item {
             checked: root.checked
             onCheckedChanged: root.radioCheckedChanged(checked)
             anchors.top: parent.top
-            anchors.topMargin: Style.current.halfPadding
+            anchors.topMargin: Theme.halfPadding
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
+            anchors.leftMargin: Theme.padding
         }
 
         StatusNotificationWithDropShadowPanel {
             id: notificationPreview
             anchors.top: radioButton.bottom
-            anchors.topMargin: Style.current.halfPadding
+            anchors.topMargin: Theme.halfPadding
             anchors.left: parent.left
             name: root.notificationTitle
             message: root.notificationMessage
         }
-
     }
 
     MouseArea {

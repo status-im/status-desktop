@@ -1,8 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
-import QtGraphicalEffects 1.13
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -64,7 +64,7 @@ Item {
         readonly property bool isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
-        readonly property bool isRegularLogin: (image.source.toString() === Style.png("status-logo"))
+        readonly property bool isRegularLogin: (image.source.toString() === Theme.png("status-logo"))
         readonly property string lostKeycardItemKey: Constants.appTranslatableConstants.loginAccountsListLostKeycard
 
         property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
@@ -112,7 +112,7 @@ Item {
                 return
             }
 
-            image.source = Style.png("keycard/biometrics-fail")
+            image.source = Theme.png("keycard/biometrics-fail")
             image.Layout.preferredWidth = Constants.onboarding.biometricsImageWidth
             image.Layout.preferredHeight = Constants.onboarding.biometricsImageHeight;
             info.icon = ""
@@ -175,7 +175,7 @@ Item {
         //26 for input error text top margin + height
         anchors.verticalCenterOffset: d.isRegularLogin ? 26 : 0
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
         KeycardImage {
             id: image
             Layout.alignment: Qt.AlignHCenter
@@ -193,7 +193,7 @@ Item {
             id: title
             Layout.alignment: Qt.AlignHCenter
             //spacing between logo and title is 16px
-            Layout.topMargin: -Style.current.halfPadding
+            Layout.topMargin: -Theme.halfPadding
             font.weight: Font.Bold
             font.pixelSize: Constants.onboarding.titleFontSize
             color: Theme.palette.directColor1
@@ -228,8 +228,8 @@ Item {
                 anchors.left: userImage.right
                 anchors.right: root.startupStore.selectedLoginAccount.keycardCreatedAccount?
                                    keycardIcon.left : changeAccountBtn.left
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 anchors.verticalCenter: userImage.verticalCenter
                 color: Theme.palette.directColor1
                 elide: Text.ElideRight
@@ -241,7 +241,7 @@ Item {
                 anchors.right: changeAccountBtn.left
                 anchors.verticalCenter: userImage.verticalCenter
                 icon: "keycard"
-                height: Style.current.padding
+                height: Theme.padding
                 color: Theme.palette.baseColor1
             }
 
@@ -272,19 +272,19 @@ Item {
                                     return userInfo.mapToItem(
                                                 root,
                                                 root.height,
-                                                userInfo.height + Style.current.halfPadding).y
+                                                userInfo.height + Theme.halfPadding).y
                                     })
                         accountsPopup.popup(
                                     userInfo,
                                     (userInfo.width - accountsPopup.width) / 2,
-                                    userInfo.height + Style.current.halfPadding)
+                                    userInfo.height + Theme.halfPadding)
                     }
                 }
             }
 
             StatusMenu {
                 id: accountsPopup
-                width: parent.width + Style.current.bigPadding
+                width: parent.width + Theme.bigPadding
 
                 SortFilterProxyModel {
                     id: proxyModel
@@ -401,7 +401,7 @@ Item {
                 icon.name: "arrow-right"
                 opacity: (d.loading || txtPassword.text.length > 0) ? 1 : 0
                 anchors.left: txtPassword.right
-                anchors.leftMargin: (d.loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
+                anchors.leftMargin: (d.loading || txtPassword.text.length > 0) ? Theme.padding : Theme.smallPadding
                 state: d.loading ? "pending" : "default"
                 onClicked: {
                     d.doLogin(txtPassword.textField.text)
@@ -426,7 +426,7 @@ Item {
             id: pinSection
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             property alias text: pinText.text
 
@@ -449,7 +449,7 @@ Item {
                     if (root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardPinVerified)
                         return
                     if (root.state !== Constants.startupState.loginKeycardWrongPin) {
-                        image.source = Style.png("keycard/enter-pin-%1".arg(pinInput.length))
+                        image.source = Theme.png("keycard/enter-pin-%1".arg(pinInput.length))
                     }
                     if(pinInput.length == 0)
                         return
@@ -462,7 +462,7 @@ Item {
         Row {
             id: info
             Layout.alignment: Qt.AlignCenter
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             property alias text: infoTxt.text
             property alias font: infoTxt.font
@@ -472,8 +472,8 @@ Item {
             StatusIcon {
                 id: infoIcon
                 visible: icon !== ""
-                width: Style.current.padding
-                height: Style.current.padding
+                width: Theme.padding
+                height: Theme.padding
                 color: Theme.palette.baseColor1
             }
             StatusLoadingIndicator {
@@ -541,7 +541,7 @@ Item {
             PropertyChanges {
                 target: image
                 source: d.isBiometricsLogin ?
-                            Style.png("keycard/biometrics-success") : Style.png("status-logo")
+                            Theme.png("keycard/biometrics-success") : Theme.png("status-logo")
                 pattern: ""
                 Layout.preferredHeight: d.isBiometricsLogin ?
                                             Constants.onboarding.biometricsImageWidth :
@@ -594,7 +594,7 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.login
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/biometrics-success")
+                source: Theme.png("keycard/biometrics-success")
                 pattern: ""
                 Layout.preferredWidth: Constants.onboarding.biometricsImageWidth
                 Layout.preferredHeight: Constants.onboarding.biometricsImageHeight
@@ -643,7 +643,7 @@ Item {
                   root.startupStore.currentStartupState.stateType === Constants.startupState.loginPlugin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/empty-reader")
+                source: Theme.png("keycard/empty-reader")
                 pattern: ""
                 Layout.preferredWidth: Constants.keycard.general.imageWidth
                 Layout.preferredHeight: Constants.keycard.general.imageHeight
@@ -905,7 +905,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPassword
             PropertyChanges {
                 target: image
-                source: Style.png("status-logo")
+                source: Theme.png("status-logo")
                 Layout.preferredHeight: Constants.onboarding.logoImageWidth
                 Layout.preferredWidth: Constants.onboarding.logoImageHeight
                 pattern: ""
@@ -949,7 +949,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEnterPin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-empty")
+                source: Theme.png("keycard/card-empty")
                 pattern: ""
                 Layout.preferredWidth: Constants.keycard.general.imageWidth
                 Layout.preferredHeight: Constants.keycard.general.imageHeight
@@ -1098,7 +1098,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardWrongPin
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
                 Layout.preferredWidth: Constants.keycard.general.imageWidth
                 Layout.preferredHeight: Constants.keycard.general.imageHeight
@@ -1206,7 +1206,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardEmpty
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-empty")
+                source: Theme.png("keycard/card-empty")
                 pattern: ""
                 Layout.preferredWidth: Constants.keycard.general.imageWidth
                 Layout.preferredHeight: Constants.keycard.general.imageHeight

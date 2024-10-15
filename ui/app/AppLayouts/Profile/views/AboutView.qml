@@ -57,7 +57,7 @@ SettingsContentBase {
                 id: statusIcon
                 width: 80
                 height: 80
-                icon: root.store.isProduction ? Style.png("status-logo-circle") : Style.png("status-logo-dev-circle")
+                icon: root.store.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -90,7 +90,7 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 text: qsTr("Status Go Version")
             }
 
@@ -107,7 +107,7 @@ SettingsContentBase {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 text: qsTr("Qt Version")
             }
 
@@ -125,7 +125,7 @@ SettingsContentBase {
 
         ColumnLayout {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             LinkItem {
                 title: qsTr("Status Manifesto")
@@ -139,10 +139,10 @@ SettingsContentBase {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 text: qsTr("Status desktop’s GitHub Repositories")
-                color: Style.current.secondaryText
+                color: Theme.palette.secondaryText
             }
 
             LinkItem {
@@ -171,10 +171,10 @@ SettingsContentBase {
 
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 text: qsTr("Legal & Privacy Documents")
-                color: Style.current.secondaryText
+                color: Theme.palette.secondaryText
             }
 
             DocumentItem {

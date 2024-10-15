@@ -1,4 +1,7 @@
-import QtQuick 2.3
+import QtQuick 2.15
+
+import StatusQ.Core.Theme 0.1
+
 import shared.controls 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -15,9 +18,9 @@ SVGImage {
     source: {
         switch(trustStatus) {
             case Constants.trustStatus.trusted:
-                return Style.svg("verified");
+                return Theme.svg("verified");
             case Constants.trustStatus.untrustworthy:
-                return Style.svg("untrustworthy");
+                return Theme.svg("untrustworthy");
             default:
                 return "";
         }

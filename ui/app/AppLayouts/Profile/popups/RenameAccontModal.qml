@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
@@ -46,7 +46,7 @@ StatusModal {
 
         width: popup.width
         spacing: marginBetweenInputs
-        topPadding: Style.current.padding
+        topPadding: Theme.padding
 
         StatusInput {
             id: accountNameInput
@@ -64,8 +64,8 @@ StatusModal {
 
             onIconClicked: {
                 popup.emojiPopup.open()
-                popup.emojiPopup.x = popup.x + accountNameInput.x + Style.current.padding
-                popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Style.current.halfPadding
+                popup.emojiPopup.x = popup.x + accountNameInput.x + Theme.padding
+                popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Theme.halfPadding
             }
             validators: [
                 StatusMinLengthValidator {
@@ -86,7 +86,7 @@ StatusModal {
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
             model: Theme.palette.customisationColorsArray
-            titleText: qsTr("COLOR")
+            titleText: qsTr("COLOUR")
             selectedColor: Utils.getColorForId(popup.account.colorId)
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {

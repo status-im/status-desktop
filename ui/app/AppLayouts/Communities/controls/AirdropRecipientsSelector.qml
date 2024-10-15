@@ -35,7 +35,7 @@ StatusFlowSelector {
                              !membersSelectorPanel.visible
 
     title: qsTr("To")
-    icon: Style.svg("member")
+    icon: Theme.svg("member")
     flowSpacing: addressesSelectorPanel.visible || membersSelectorPanel.visible
                  ? 12 : 6
 

@@ -120,8 +120,8 @@ Rectangle {
     ColumnLayout {
         id: toastContent
         anchors.fill: parent
-        anchors.margins: Style.current.padding
-        spacing: Style.current.padding
+        anchors.margins: Theme.padding
+        spacing: Theme.padding
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter

@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 
@@ -15,7 +15,7 @@ StatusListView {
 
     anchors.fill: parent
     focus: true
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     delegate: AccountViewDelegate {
         username: model.username

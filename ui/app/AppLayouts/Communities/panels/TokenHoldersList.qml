@@ -67,13 +67,13 @@ Item {
         }
         contentItem: Item {
             anchors.fill: parent
-            anchors.leftMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
+            anchors.leftMargin: Theme.padding
+            anchors.rightMargin: Theme.padding
             clip: true
             RowLayout {
                 id: row
                 anchors.fill: parent
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 RowLayout {
                     id: usernameHeader
 
@@ -108,7 +108,7 @@ Item {
                 }
                 Item {
                     Layout.preferredWidth: 233
-                    Layout.rightMargin: Style.current.halfPadding
+                    Layout.rightMargin: Theme.halfPadding
                 }
             }
         }
@@ -165,7 +165,7 @@ Item {
             background: Item {
                 Rectangle {
                     anchors.fill: parent
-                    radius: Style.current.radius
+                    radius: Theme.radius
                     color: (delegate.hovered || delegate.ListView.isCurrentItem)
                            ? Theme.palette.baseColor2 : "transparent"
                 }
@@ -185,10 +185,10 @@ Item {
             contentItem: Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 RowLayout {
-                    spacing: Style.current.halfPadding
+                    spacing: Theme.halfPadding
 
                     StatusListItem {
                         readonly property bool unknownHolder: model.name === ""
@@ -209,7 +209,7 @@ Item {
 
                     TokenHolderNumberCell {
                         Layout.preferredWidth: header.holdingHeaderWidth
-                        Layout.leftMargin: Style.current.halfPadding
+                        Layout.leftMargin: Theme.halfPadding
 
                         text: LocaleUtils.numberToLocaleString(model.amount)
                     }
@@ -220,7 +220,7 @@ Item {
                         id: combo
                         Layout.preferredWidth: 68
                         Layout.preferredHeight: 44
-                        control.spacing: Style.current.halfPadding / 2
+                        control.spacing: Theme.halfPadding / 2
                         model: amount
                         size: StatusComboBox.Size.Small
                         type: StatusComboBox.Type.Secondary

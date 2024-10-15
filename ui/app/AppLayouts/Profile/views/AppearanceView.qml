@@ -26,12 +26,11 @@ SettingsContentBase {
 
     function updateTheme(theme) {
         localAppSettings.theme = theme
-        Style.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
+        Theme.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
     }
 
     function updateFontSize(fontSize) {
-        Style.changeFontSize(fontSize)
-        Theme.updateFontSize(fontSize)
+        Theme.changeFontSize(fontSize)
     }
 
     Component.onCompleted: {
@@ -41,8 +40,8 @@ SettingsContentBase {
     Item {
         id: appearanceContainer
         anchors.left: !!parent ? parent.left : undefined
-        anchors.leftMargin: Style.current.padding
-        width: appearanceView.contentWidth - 2 * Style.current.padding
+        anchors.leftMargin: Theme.padding
+        width: appearanceView.contentWidth - 2 * Theme.padding
         height: childrenRect.height
 
         Rectangle {
@@ -53,16 +52,16 @@ SettingsContentBase {
             height: placeholderMessage.implicitHeight +
                     placeholderMessage.anchors.leftMargin +
                     placeholderMessage.anchors.rightMargin
-            radius: Style.current.radius
-            border.color: Style.current.border
-            color: Style.current.transparent
+            radius: Theme.radius
+            border.color: Theme.palette.border
+            color: Theme.palette.transparent
 
             MessageView {
                 id: placeholderMessage
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.margins: Style.current.smallPadding
+                anchors.margins: Theme.smallPadding
                 isMessage: true
                 shouldRepeatHeader: true
                 messageTimestamp: Date.now()
@@ -78,7 +77,7 @@ SettingsContentBase {
             id: sectionHeadlineFontSize
             text: qsTr("Text size")
             anchors.top: preview.bottom
-            anchors.topMargin: Style.current.bigPadding*2
+            anchors.topMargin: Theme.bigPadding*2
             anchors.left: parent.left
             anchors.right: parent.right
         }
@@ -86,7 +85,7 @@ SettingsContentBase {
         StatusQ.StatusLabeledSlider {
             id: fontSizeSlider
             anchors.top: sectionHeadlineFontSize.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             width: parent.width
 
             textRole: "name"
@@ -114,18 +113,18 @@ SettingsContentBase {
         Rectangle {
             id: modeSeparator
             anchors.top: fontSizeSlider.bottom
-            anchors.topMargin: Style.current.padding*3
+            anchors.topMargin: Theme.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: Style.current.separator
+            color: Theme.palette.separator
         }
 
         StatusSectionHeadline {
             id: sectionHeadlineAppearance
             text: qsTr("Mode")
             anchors.top: modeSeparator.bottom
-            anchors.topMargin: Style.current.padding*3
+            anchors.topMargin: Theme.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
         }
@@ -133,15 +132,15 @@ SettingsContentBase {
         RowLayout {
             id: appearanceSection
             anchors.top: sectionHeadlineAppearance.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             StatusImageRadioButton {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
                 Layout.preferredHeight: implicitHeight
-                image.source: Style.png("appearance-light")
+                image.source: Theme.png("appearance-light")
                 control.text: qsTr("Light")
                 control.checked: localAppSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
@@ -153,7 +152,7 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
-                image.source: Style.png("appearance-dark")
+                image.source: Theme.png("appearance-dark")
                 control.text: qsTr("Dark")
                 control.checked: localAppSettings.theme === Universal.Dark
                 onRadioCheckedChanged: {
@@ -165,7 +164,7 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 Layout.preferredWidth: parent.width/3 - parent.spacing
-                image.source: Style.png("appearance-system")
+                image.source: Theme.png("appearance-system")
                 control.text: qsTr("System")
                 control.checked: localAppSettings.theme === Universal.System
                 onRadioCheckedChanged: {

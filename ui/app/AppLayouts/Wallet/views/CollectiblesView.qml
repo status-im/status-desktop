@@ -335,7 +335,7 @@ ColumnLayout {
 
         RowLayout {
             Layout.fillWidth: true
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             FilterComboBox {
                 id: cmbFilter
@@ -382,7 +382,7 @@ ColumnLayout {
 
             StatusBaseText {
                 color: Theme.palette.baseColor1
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 text: qsTr("Sort by:")
             }
 
@@ -438,7 +438,7 @@ ColumnLayout {
 
     ShapeRectangle {
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
         visible: !d.hasRegularCollectibles && !d.hasCommunityCollectibles
         text: qsTr("Collectibles will appear here")
     }

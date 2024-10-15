@@ -1,10 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
-import QtQuick.Layouts 1.13
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 Menu {
@@ -18,8 +18,8 @@ Menu {
             id: menuBackgroundContent
             implicitWidth: menuBackground.width
             implicitHeight: menuBackground.height
-            color: Style.current.modalBackground
-            radius: Style.current.radius
+            color: Theme.palette.indirectColor2
+            radius: Theme.radius
             layer.enabled: true
             layer.effect: DropShadow{
                 width: menuBackgroundContent.width
@@ -41,11 +41,10 @@ Menu {
         width: root.width
         height: root.height
         Row {
-          anchors.verticalCenter: parent.verticalCenter
-          anchors.horizontalCenter: parent.horizontalCenter
-          Repeater {
-              model: root.contentModel
-          }
+            anchors.centerIn: parent
+            Repeater {
+                model: root.contentModel
+            }
         }
     }
 

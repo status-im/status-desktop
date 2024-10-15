@@ -19,12 +19,12 @@ ColumnLayout {
 
     StatusDialogDivider {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.halfPadding
+        Layout.bottomMargin: Theme.halfPadding
     }
     RowLayout {
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.smallPadding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.smallPadding
         Layout.bottomMargin: 4
         StatusBaseText {
             id: sectionTitle

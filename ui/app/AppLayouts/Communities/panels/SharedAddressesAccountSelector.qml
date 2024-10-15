@@ -33,9 +33,9 @@ StatusListView {
     signal airdropAddressSelected (string address)
 
     leftMargin: d.absLeftMargin
-    topMargin: Style.current.padding
-    rightMargin: Style.current.padding
-    bottomMargin: Style.current.padding
+    topMargin: Theme.padding
+    rightMargin: Theme.padding
+    bottomMargin: Theme.padding
 
 
     ModelChangeTracker {
@@ -166,7 +166,7 @@ StatusListView {
         }
     }
 
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
     delegate: StatusListItem {
         readonly property string address: model.address.toLowerCase()
         readonly property int tokenCount: tagsCount
@@ -176,8 +176,6 @@ StatusListView {
         statusListItemTitle.font.weight: Font.Medium
         title: model.name
         tertiaryTitle: root.hasPermissions && !tagsCount ? qsTr("No relevant tokens") : ""
-
-        onClicked: shareAddressCheckbox.toggle()
 
         ObjectProxyModel {
             id: filteredBalances
@@ -280,7 +278,7 @@ StatusListView {
             }
         }
 
-        statusListItemInlineTagsSlot.spacing: Style.current.padding
+        statusListItemInlineTagsSlot.spacing: Theme.padding
 
         tagsDelegate: Row {
             spacing: 4

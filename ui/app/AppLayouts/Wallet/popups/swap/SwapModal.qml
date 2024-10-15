@@ -124,14 +124,14 @@ StatusDialog {
         anchors.fill: parent
         contentWidth: availableWidth
         topPadding: 0
-        bottomPadding: Style.current.xlPadding
+        bottomPadding: Theme.xlPadding
 
         ColumnLayout {
             anchors.left: parent.left
-            anchors.leftMargin: Style.current.halfPadding
+            anchors.leftMargin: Theme.halfPadding
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.halfPadding
-            spacing: Style.current.padding
+            anchors.rightMargin: Theme.halfPadding
+            spacing: Theme.padding
             clip: true
 
             // without this Column, the whole popup resizing when the network selector popup is clicked
@@ -293,7 +293,7 @@ StatusDialog {
                 id: editSlippagePanel
                 objectName: "editSlippagePanel"
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
                 visible: editSlippageButton.checked
                 selectedToToken: root.swapAdaptor.toToken
                 toTokenAmount: root.swapAdaptor.swapOutputData.toTokenAmount
@@ -308,7 +308,7 @@ StatusDialog {
                 visible: d.isError
                 Layout.maximumWidth: parent.width
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Style.current.smallPadding
+                Layout.topMargin: Theme.smallPadding
                 text: root.swapAdaptor.errorMessage
                 buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH")
                 buttonVisible: visible && (root.swapAdaptor.isTokenBalanceInsufficient || root.swapAdaptor.isEthBalanceInsufficient)
@@ -328,7 +328,7 @@ StatusDialog {
         dropShadowEnabled: true
         leftButtons: ObjectModel {
             ColumnLayout {
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
                 spacing: 0
                 StatusBaseText {
                     objectName: "maxSlippageText"
@@ -360,8 +360,8 @@ StatusDialog {
         }
         rightButtons: ObjectModel {
             RowLayout {
-                Layout.rightMargin: Style.current.padding
-                spacing: Style.current.bigPadding
+                Layout.rightMargin: Theme.padding
+                spacing: Theme.bigPadding
                 ColumnLayout {
                     StatusBaseText {
                         objectName: "maxFeesText"
@@ -455,7 +455,7 @@ StatusDialog {
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
-            networkIconPath: Style.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
 
             fiatFees: {
@@ -468,7 +468,7 @@ StatusDialog {
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
-            serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
+            serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
@@ -512,7 +512,7 @@ StatusDialog {
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
-            networkIconPath: Style.svg(networkFilter.singleSelectionItemData.iconUrl)
+            networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
 
             fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.totalFees,

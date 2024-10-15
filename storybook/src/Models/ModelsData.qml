@@ -1,6 +1,9 @@
 pragma Singleton
 
 import QtQuick 2.14
+
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 QtObject {
@@ -34,36 +37,36 @@ QtObject {
 
 
     readonly property QtObject assets: QtObject {
-        readonly property string socks: Style.png("tokens/SOCKS")
-        readonly property string zrx: Style.png("tokens/ZRX")
-        readonly property string inch: Style.png("tokens/CUSTOM-TOKEN")
-        readonly property string aave: Style.png("tokens/CUSTOM-TOKEN")
-        readonly property string amp: Style.png("tokens/CUSTOM-TOKEN")
-        readonly property string uni: Style.png("tokens/UNI")
-        readonly property string eth: Style.png("tokens/ETH")
-        readonly property string dai: Style.png("tokens/DAI")
-        readonly property string snt: Style.png("tokens/SNT")
-        readonly property string mana: Style.png("tokens/aMANA")
+        readonly property string socks: Theme.png("tokens/SOCKS")
+        readonly property string zrx: Theme.png("tokens/ZRX")
+        readonly property string inch: Theme.png("tokens/CUSTOM-TOKEN")
+        readonly property string aave: Theme.png("tokens/CUSTOM-TOKEN")
+        readonly property string amp: Theme.png("tokens/CUSTOM-TOKEN")
+        readonly property string uni: Theme.png("tokens/UNI")
+        readonly property string eth: Theme.png("tokens/ETH")
+        readonly property string dai: Theme.png("tokens/DAI")
+        readonly property string snt: Theme.png("tokens/SNT")
+        readonly property string mana: Theme.png("tokens/aMANA")
     }
 
     readonly property QtObject collectibles: QtObject {
-        readonly property string anniversary: Style.png("collectibles/Anniversary")
-        readonly property string cryptoKitties: Style.png("collectibles/CryptoKitties")
-        readonly property string kitty1: Style.png("collectibles/Furbeard")
-        readonly property string kitty1Big: Style.png("collectibles/FurbeardBig")
-        readonly property string kitty2: Style.png("collectibles/Magicat")
-        readonly property string kitty2Big: Style.png("collectibles/MagicatBig")
-        readonly property string kitty3: Style.png("collectibles/HappyMeow")
-        readonly property string kitty3Big: Style.png("collectibles/HappyMeowBig")
-        readonly property string kitty4: Style.png("collectibles/Furbeard")
-        readonly property string kitty4Big: Style.png("collectibles/FurbeardBig")
-        readonly property string kitty5: Style.png("collectibles/Magicat")
-        readonly property string kitty5Big: Style.png("collectibles/MagicatBig")
-        readonly property string superRare: Style.png("collectibles/SuperRare")
-        readonly property string custom: Style.png("collectibles/SNT")
-        readonly property string doodles: Style.png("collectibles/Doodles")
-        readonly property string mana: Style.png("collectibles/MANA-token-icon")
-        readonly property string cryptoPunks: Style.png("collectibles/CryptoPunks")
+        readonly property string anniversary: Theme.png("collectibles/Anniversary")
+        readonly property string cryptoKitties: Theme.png("collectibles/CryptoKitties")
+        readonly property string kitty1: Theme.png("collectibles/Furbeard")
+        readonly property string kitty1Big: Theme.png("collectibles/FurbeardBig")
+        readonly property string kitty2: Theme.png("collectibles/Magicat")
+        readonly property string kitty2Big: Theme.png("collectibles/MagicatBig")
+        readonly property string kitty3: Theme.png("collectibles/HappyMeow")
+        readonly property string kitty3Big: Theme.png("collectibles/HappyMeowBig")
+        readonly property string kitty4: Theme.png("collectibles/Furbeard")
+        readonly property string kitty4Big: Theme.png("collectibles/FurbeardBig")
+        readonly property string kitty5: Theme.png("collectibles/Magicat")
+        readonly property string kitty5Big: Theme.png("collectibles/MagicatBig")
+        readonly property string superRare: Theme.png("collectibles/SuperRare")
+        readonly property string custom: Theme.png("collectibles/SNT")
+        readonly property string doodles: Theme.png("collectibles/Doodles")
+        readonly property string mana: Theme.png("collectibles/MANA-token-icon")
+        readonly property string cryptoPunks: Theme.png("collectibles/CryptoPunks")
     }
 
     readonly property QtObject networks: QtObject {
@@ -84,9 +87,9 @@ QtObject {
     }
 
     readonly property QtObject onRampProviderImages: QtObject {
-        readonly property string latamex: Style.png("onRampProviders/latamex")
-        readonly property string moonPay: Style.png("onRampProviders/moonPay")
-        readonly property string ramp: Style.png("onRampProviders/ramp")
-        readonly property string mercuryo: Style.png("onRampProviders/mercuryo")
+        readonly property string latamex: Theme.png("onRampProviders/latamex")
+        readonly property string moonPay: Theme.png("onRampProviders/moonPay")
+        readonly property string ramp: Theme.png("onRampProviders/ramp")
+        readonly property string mercuryo: Theme.png("onRampProviders/mercuryo")
     }
 }

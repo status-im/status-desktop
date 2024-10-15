@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.0
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 import SortFilterProxyModel 0.2
 
 import StatusQ.Popups 0.1
@@ -139,7 +139,7 @@ StatusStackModal {
 
     width: 560
     height: 515
-    padding: Style.current.xlPadding
+    padding: Theme.xlPadding
     stackTitle: qsTr("Buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
     rightButtons: [d.buyButton, finishButton]
     finishButton: StatusButton {

@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -13,16 +14,16 @@ Page {
     signal backClicked()
 
     background: Rectangle {
-        color: Style.current.background
+        color: Theme.palette.background
     }
 
     StatusRoundButton {
         id: backButton
         objectName: "onboardingBackButton"
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         icon.name: "arrow-left"
         onClicked: {
             root.backClicked();

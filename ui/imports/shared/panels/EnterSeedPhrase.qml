@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -18,7 +18,7 @@ ColumnLayout {
     //**************************************************************************
     //* This component is not refactored, just pulled out to a shared location *
     //**************************************************************************
-    spacing: Style.current.padding
+    spacing: Theme.padding
     clip: true
 
     readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""

@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared 1.0
@@ -8,6 +8,7 @@ import shared.panels 1.0
 import shared.controls.chat 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 Rectangle {
     property string contactPubKey
@@ -24,14 +25,14 @@ Rectangle {
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
-    radius: Style.current.radius
-    color: isHovered ? Style.current.backgroundHover : Style.current.transparent
+    radius: Theme.radius
+    color: isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent
 
     UserImage {
         id: accountImage
 
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
 
         name: contactName
@@ -45,11 +46,11 @@ Rectangle {
         elide: Text.ElideRight
         font.pixelSize: 17
         anchors.top: accountImage.top
-        anchors.topMargin: Style.current.smallPadding
+        anchors.topMargin: Theme.smallPadding
         anchors.left: accountImage.right
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.right: buttons.left
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
     }
 
     HoverHandler {
@@ -59,7 +60,7 @@ Rectangle {
     AcceptRejectOptionsButtonsPanel {
         id: buttons
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         onAcceptClicked: container.acceptClicked()
         onDeclineClicked: container.declineClicked()

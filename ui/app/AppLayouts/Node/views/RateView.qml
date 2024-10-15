@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,8 +18,8 @@ Column {
     spacing: 0
     StatusSectionHeadline {
         text: qsTr("Bandwidth")
-        topPadding: Style.current.bigPadding
-        bottomPadding: Style.current.padding
+        topPadding: Theme.bigPadding
+        bottomPadding: Theme.padding
     }
 
     Row {
@@ -50,7 +50,7 @@ Column {
                 text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: uploadRate.right
-                anchors.rightMargin: Style.current.padding
+                anchors.rightMargin: Theme.padding
                 font.pixelSize: 15
             }
         }
@@ -80,7 +80,7 @@ Column {
                 text: qsTr("Kb/s")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: downloadRate.right
-                anchors.rightMargin: Style.current.padding
+                anchors.rightMargin: Theme.padding
                 font.pixelSize: 15
             }
         }

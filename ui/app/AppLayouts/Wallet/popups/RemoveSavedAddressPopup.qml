@@ -27,7 +27,7 @@ StatusDialog {
 
     width: 521
     focus: visible
-    padding: Style.current.padding
+    padding: Theme.padding
 
     QtObject {
         id: d
@@ -60,21 +60,21 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StatusBaseText {
             objectName: "RemoveSavedAddressPopup-Notification"
             Layout.preferredWidth: parent.width
             wrapMode: Text.WordWrap
             textFormat: Text.RichText
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: d.lineHeight
             text: qsTr("Are you sure you want to remove %1 from your saved addresses? Transaction history relating to this address will no longer be labelled %1.").arg("<b>%1</b>".arg(root.name))
         }
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 objectName: "RemoveSavedAddressPopup-CancelButton"

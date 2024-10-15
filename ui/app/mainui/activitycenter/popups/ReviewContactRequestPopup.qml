@@ -1,7 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -24,7 +24,7 @@ StatusDialog {
 
     anchors.centerIn: parent
     width: 638
-    padding: Style.current.bigPadding
+    padding: Theme.bigPadding
 
     title: qsTr("Review Contact Request")
     RowLayout {
@@ -36,7 +36,7 @@ StatusDialog {
             Layout.preferredWidth: root.messageDetails.sender.profileImage.assetSettings.width
             Layout.preferredHeight: profileImage.height
             Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: -Style.current.halfPadding
+            Layout.leftMargin: -Theme.halfPadding
             Layout.topMargin: 2
 
             StatusSmartIdenticon {
@@ -70,7 +70,7 @@ StatusDialog {
                     font.pixelSize: 15
                     Layout.alignment: Qt.AlignVCenter
                     Layout.fillWidth: true
-                    Layout.rightMargin: -Style.current.halfPadding
+                    Layout.rightMargin: -Theme.halfPadding
                 }
             }
         }

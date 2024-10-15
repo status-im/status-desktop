@@ -150,8 +150,8 @@ StatusStackModal {
             root.emojiPopupOpened = true;
             root.emojiPopup.open();
             root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-            root.emojiPopup.x = leftSide ? root.x + Style.current.padding : (root.x + (root.width - root.emojiPopup.width - Style.current.padding));
-            root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Style.current.smallPadding;
+            root.emojiPopup.x = leftSide ? root.x + Theme.padding : (root.x + (root.width - root.emojiPopup.width - Theme.padding));
+            root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Theme.smallPadding;
         }
 
         function _getChannelConfig() {
@@ -681,12 +681,12 @@ StatusStackModal {
             ColumnLayout {
                 id: content
                 width: scrollView.availableWidth
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 StatusInput {
                     id: nameInput
                     Layout.fillWidth: true
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     input.edit.objectName: "createOrEditCommunityChannelNameInput"
                     label: qsTr("Channel name")
                     charLimit: root.maxChannelNameLength
@@ -728,12 +728,12 @@ StatusStackModal {
                 Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 82
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     StatusBaseText {
                         width: parent.width
                         anchors.top: parent.top
-                        anchors.topMargin: Style.current.halfPadding
+                        anchors.topMargin: Theme.halfPadding
                         text: qsTr("Channel colour")
                     }
                     StatusPickerButton {
@@ -758,9 +758,9 @@ StatusStackModal {
                 StatusInput {
                     id: descriptionTextArea
                     Layout.fillWidth: true
-                    Layout.topMargin: Style.current.halfPadding
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.topMargin: Theme.halfPadding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     input.edit.objectName: "createOrEditCommunityChannelDescriptionInput"
                     input.verticalAlignment: TextEdit.AlignTop
                     label: qsTr("Description")
@@ -789,8 +789,8 @@ StatusStackModal {
                     id: viewOnlyCanAddReactionCheckbox
                     Layout.fillWidth: true
                     Layout.preferredHeight: 48
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     leftSide: false
                     text: qsTr("Hide channel from members who don't have permissions to view the channel")
                     checked: d.hideIfPermissionsNotMet
@@ -804,8 +804,8 @@ StatusStackModal {
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 56
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     StatusBaseText {
                         text: qsTr("Permissions")
                     }
@@ -833,8 +833,8 @@ StatusStackModal {
                 PermissionsView {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignBottom
-                    Layout.leftMargin: Style.current.padding
-                    Layout.rightMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
+                    Layout.rightMargin: Theme.padding
                     viewWidth: (scrollView.availableWidth - 32)
                     permissionsModel: d.channelEditModel.channelPermissionsModel
                     assetsModel: root.assetsModel

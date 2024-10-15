@@ -31,7 +31,7 @@ CalloutCard {
     implicitWidth: 324+2*borderWidth
     hoverEnabled: true
     dropShadow: d.highlight
-    borderColor: d.highlight ? Style.current.background : Style.current.border
+    borderColor: d.highlight ? Theme.palette.background : Theme.palette.border
 
     Behavior on borderColor {
         ColorAnimation { duration: 200 }

@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 
 import Storybook 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
@@ -141,7 +143,7 @@ SplitView {
         property bool isNFT: false
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
-        property string nftImageUrl: Style.png("collectibles/HappyMeow")
+        property string nftImageUrl: Theme.png("collectibles/HappyMeow")
         property string symbol: "ETH"
         property int txType: Constants.TransactionType.Send
 

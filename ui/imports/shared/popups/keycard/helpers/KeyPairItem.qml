@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQml.Models 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQml.Models 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -94,7 +94,7 @@ StatusListItem {
 
     tagsDelegate: StatusListItemTag {
         bgColor: Utils.getColorForId(model.account.colorId)
-        height: Style.current.bigPadding
+        height: Theme.bigPadding
         bgRadius: 6
         tagClickable: root.tagClickable
         closeButtonVisible: root.tagDisplayRemoveAccountButton?

@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,19 +17,19 @@ Rectangle {
     signal addMembersClicked()
     signal addCategoriesClicked()
 
-    implicitHeight: childrenRect.height + Style.current.padding
+    implicitHeight: childrenRect.height + Theme.padding
     anchors.left: parent.left
-    anchors.leftMargin: Style.current.padding
+    anchors.leftMargin: Theme.padding
     anchors.right: parent.right
-    anchors.rightMargin: Style.current.padding
-    border.color: Style.current.border
+    anchors.rightMargin: Theme.padding
+    border.color: Theme.palette.border
     radius: 16
-    color: Style.current.transparent
+    color: Theme.palette.transparent
 
     Rectangle {
         width: 66
         height: 4
-        color: Style.current.secondaryMenuBackground
+        color: Theme.palette.secondaryMenuBackground
         anchors.top: parent.top
         anchors.topMargin: -2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -74,9 +74,9 @@ Rectangle {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.rightMargin: Theme.xlPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
+        anchors.leftMargin: Theme.xlPadding
     }
 
     StatusButton {
@@ -84,7 +84,7 @@ Rectangle {
         text: qsTr("Add channels")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: descriptionText.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         onClicked: {
             root.addMembersClicked();
         }
@@ -95,7 +95,7 @@ Rectangle {
         text: qsTr("Add categories")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: addMembersBtn.bottom
-        anchors.topMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
 
         onClicked: {
             root.addCategoriesClicked();

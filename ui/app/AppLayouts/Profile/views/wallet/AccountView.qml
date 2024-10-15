@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
@@ -52,7 +52,7 @@ ColumnLayout {
         Layout.preferredWidth: parent.width
         RowLayout {
             Layout.fillWidth: true
-            spacing: Style.current.smallPadding
+            spacing: Theme.smallPadding
             StatusBaseText {
                 id: accountName
                 objectName: "walletAccountViewAccountName"
@@ -81,7 +81,7 @@ ColumnLayout {
 
     ImportKeypairInfo {
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.bigPadding
+        Layout.topMargin: Theme.bigPadding
         Layout.preferredHeight: childrenRect.height
         visible: !!root.keyPair && root.keyPair.operability === Constants.keypair.operability.nonOperable
 
@@ -92,17 +92,17 @@ ColumnLayout {
 
     StatusBaseText {
         objectName: "AccountDetails_TextLabel"
-        Layout.topMargin: Style.current.bigPadding
+        Layout.topMargin: Theme.bigPadding
         text: qsTr("Account details")
         font.pixelSize: 15
         color: Theme.palette.baseColor1
     }
 
     Rectangle {
-        Layout.topMargin: Style.current.halfPadding
+        Layout.topMargin: Theme.halfPadding
         Layout.fillWidth: true
         Layout.preferredHeight: childrenRect.height
-        radius: Style.current.radius
+        radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.directColor8
         color: Theme.palette.transparent

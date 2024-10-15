@@ -1,5 +1,5 @@
-﻿import QtQuick 2.13
-import QtQuick.Layouts 1.13
+﻿import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -82,14 +82,14 @@ ColumnLayout {
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
                 text: isBridgeTx ? qsTr("Routes will be automatically calculated to give you the lowest cost.") :
-                                  qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
+                                   qsTr("The networks where the recipient will receive tokens. Amounts calculated automatically for the lowest cost.")
                 wrapMode: Text.WordWrap
             }
             Loader {
                 id: networksLoader
                 Layout.fillWidth: true
                 Layout.preferredHeight: item.height
-                Layout.topMargin: Style.current.padding
+                Layout.topMargin: Theme.padding
                 visible: active
                 sourceComponent: NetworkCardsComponent {
                     store: root.store

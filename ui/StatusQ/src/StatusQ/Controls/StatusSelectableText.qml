@@ -1,6 +1,6 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
-import QtQuick.Controls 2.14 as QC
+import QtQuick.Controls 2.15 as QC
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -70,7 +70,7 @@ Item {
                 selectedTextColor: color
                 focus: true
                 font.pixelSize: 15
-                font.family: Theme.palette.baseFont.name
+                font.family: Theme.baseFont.name
                 color: Theme.palette.directColor1
                 textFormat: Text.RichText
                 onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)

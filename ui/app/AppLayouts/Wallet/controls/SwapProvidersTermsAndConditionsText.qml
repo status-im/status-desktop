@@ -23,7 +23,7 @@ RowLayout {
         color: Theme.palette.directColor1
     }
     StatusBaseText {
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         text: qsTr("Powered by")
     }
     StatusLinkText {
@@ -35,7 +35,7 @@ RowLayout {
         onClicked: root.linkClicked()
     }
     StatusBaseText {
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         text: qsTr("View")
     }
     StatusLinkText {

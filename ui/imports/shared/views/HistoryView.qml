@@ -118,12 +118,12 @@ ColumnLayout {
         Layout.topMargin: root.firstItemOffset
         Layout.preferredHeight: 56
         visible: root.firstItemOffset === 0 // visible only in the main wallet view
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         backgroundColor: Theme.palette.primaryColor3
-        bgRadius: Style.current.radius
+        bgRadius: Theme.radius
         bgBorderColor: Theme.palette.primaryColor2
         tagPrimaryLabel.textFormat: Text.RichText
-        tagPrimaryLabel.font.pixelSize: Style.current.additionalTextSize
+        tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
         tagPrimaryLabel.text: qsTr("Activity is in beta. If transactions are missing, check %1, %2, or %3.")
             .arg(Utils.getStyledLink("Etherscan", "https://etherscan.io/", tagPrimaryLabel.hoveredLink))
             .arg(Utils.getStyledLink("OP Explorer", "https://optimistic.etherscan.io/", tagPrimaryLabel.hoveredLink))
@@ -151,8 +151,8 @@ ColumnLayout {
         Layout.topMargin: root.firstItemOffset
         visible: root.walletRootStore.isNonArchivalNode
         text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
-        font.pixelSize: Style.current.primaryTextFontSize
-        color: Style.current.danger
+        font.pixelSize: Theme.primaryTextFontSize
+        color: Theme.palette.dangerColor1
         wrapMode: Text.WordWrap
     }
 
@@ -162,7 +162,7 @@ ColumnLayout {
         Layout.preferredHeight: 42
         Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
         visible: !d.isInitialLoading && !root.walletRootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
-        font.pixelSize: Style.current.primaryTextFontSize
+        font.pixelSize: Theme.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
 
@@ -183,7 +183,7 @@ ColumnLayout {
     Item {
         id: transactionListWrapper
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Style.current.padding : 0
+        Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Theme.padding : 0
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -191,7 +191,7 @@ ColumnLayout {
             anchors.top: parent.top
             width: parent.width
             height: 4
-            color: Style.current.separator
+            color: Theme.palette.separator
             visible: !root.disableShadowOnScroll && !transactionListRoot.atYBeginning
         }
 
@@ -302,7 +302,7 @@ ColumnLayout {
             id: newTransactions
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
-            anchors.topMargin: Style.current.halfPadding
+            anchors.topMargin: Theme.halfPadding
 
             text: qsTr("New transactions")
 
@@ -470,7 +470,7 @@ ColumnLayout {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     width: parent.width
-                    spacing: Style.current.halfPadding
+                    spacing: Theme.halfPadding
 
                     Separator {
                         Layout.fillWidth: true
@@ -478,8 +478,8 @@ ColumnLayout {
                     }
 
                     StatusBaseText {
-                        leftPadding: Style.current.padding
-                        bottomPadding: Style.current.halfPadding
+                        leftPadding: Theme.padding
+                        bottomPadding: Theme.halfPadding
                         text: transactionDelegate.model.date
                         font.pixelSize: 13
                     }
@@ -524,13 +524,13 @@ ColumnLayout {
 
             Separator {
                 Layout.fillWidth: true
-                Layout.topMargin: Style.current.halfPadding
+                Layout.topMargin: Theme.halfPadding
                 visible: d.isInitialLoading
             }
 
             StatusTextWithLoadingState {
                 Layout.alignment: Qt.AlignLeft
-                Layout.leftMargin: Style.current.padding
+                Layout.leftMargin: Theme.padding
                 text: "01.01.2000"
                 width: d.loadingSectionWidth
                 font.pixelSize: 15
@@ -563,7 +563,7 @@ ColumnLayout {
             }
 
             Separator {
-                Layout.topMargin: Style.current.bigPadding
+                Layout.topMargin: Theme.bigPadding
                 Layout.fillWidth: true
                 visible: footerColumn.allActivityLoaded
             }
@@ -585,7 +585,7 @@ ColumnLayout {
 
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Style.current.halfPadding
+                Layout.preferredHeight: Theme.halfPadding
             }
         }
     }

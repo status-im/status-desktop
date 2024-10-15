@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Components 0.1
@@ -61,10 +61,10 @@ Item {
 
             anchors {
                 fill: parent
-                leftMargin: Style.current.bigPadding + Style.current.halfPadding / 2
-                rightMargin: Style.current.bigPadding + Style.current.halfPadding / 2
-                topMargin: Style.current.bigPadding
-                bottomMargin: Style.current.bigPadding
+                leftMargin: Theme.bigPadding + Theme.halfPadding / 2
+                rightMargin: Theme.bigPadding + Theme.halfPadding / 2
+                topMargin: Theme.bigPadding
+                bottomMargin: Theme.bigPadding
             }
 
             margins: root.roundedImage ? 10 : 20

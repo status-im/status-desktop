@@ -1,6 +1,7 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.panels 1.0 as SharedPanels
@@ -27,9 +28,9 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Style.current.padding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.topMargin: Theme.padding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
         visible: text != ""
         font.pixelSize: Constants.keycard.general.fontSize1
         font.weight: Font.Bold
@@ -43,10 +44,10 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
 
         isSeedPhraseValid: function(mnemonic) {
             return root.sharedKeycardModule.validSeedPhrase(mnemonic)

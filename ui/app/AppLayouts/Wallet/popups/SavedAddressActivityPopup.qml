@@ -176,7 +176,7 @@ StatusModal {
                     width: parent.width
                     height: 4
                     opacity: 0.5
-                    color: d.showSplitLine? Style.current.separator : "transparent"
+                    color: d.showSplitLine? Theme.palette.separator : "transparent"
                 }
             }
         }
@@ -207,8 +207,8 @@ StatusModal {
                         id: addressText
                         anchors.left: parent.left
                         anchors.right: copyButton.left
-                        anchors.rightMargin: Style.current.padding
-                        anchors.leftMargin: Style.current.padding
+                        anchors.rightMargin: Theme.padding
+                        anchors.leftMargin: Theme.padding
                         anchors.verticalCenter: parent.verticalCenter
                         text: !!d.ens ? d.ens : d.address
                         wrapMode: Text.WrapAnywhere
@@ -221,7 +221,7 @@ StatusModal {
                         width: 24
                         height: 24
                         anchors.right: parent.right
-                        anchors.rightMargin: Style.current.padding
+                        anchors.rightMargin: Theme.padding
                         anchors.top: addressText.top
                         icon.name: "copy"
                         type: StatusRoundButton.Type.Tertiary

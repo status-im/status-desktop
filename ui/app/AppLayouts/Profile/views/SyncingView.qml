@@ -1,8 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.14
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -38,7 +37,7 @@ SettingsContentBase {
     ColumnLayout {
         id: layout
         width: root.contentWidth
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         QtObject {
             id: d
@@ -74,8 +73,8 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             text: qsTr("Devices")
             font.pixelSize: Constants.settingsSection.subHeaderFontSize
             color: Theme.palette.baseColor1

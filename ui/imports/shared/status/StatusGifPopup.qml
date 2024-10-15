@@ -1,11 +1,12 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Backpressure 0.1
 
 import utils 1.0
@@ -49,9 +50,9 @@ Popup {
     width: 360
 
     background: Rectangle {
-        radius: Style.current.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
@@ -132,7 +133,7 @@ Popup {
                     return ""
                 }
                 visible: searchBox.text === ""
-                color: Style.current.secondaryText
+                color: Theme.palette.secondaryText
                 font.pixelSize: 13
                 topPadding: gifHeader.headerMargin
                 leftPadding: gifHeader.headerMargin
@@ -153,8 +154,8 @@ Popup {
             Row {
                 id: categorySelector
                 Layout.fillWidth: true
-                leftPadding: Style.current.smallPadding / 2
-                rightPadding: Style.current.smallPadding / 2
+                leftPadding: Theme.smallPadding / 2
+                rightPadding: Theme.smallPadding / 2
                 spacing: 0
 
 
@@ -190,7 +191,7 @@ Popup {
         Rectangle {
             color: 'black'
             opacity: 0.4
-            radius: Style.current.radius
+            radius: Theme.radius
             anchors.fill: parent
             visible: confirmationPopupLoader.active
         }
@@ -222,7 +223,7 @@ Popup {
             Row {
                 id: gifs
                 width: scrollView.availableWidth
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
 
                 property string lastHoveredId
 
@@ -230,7 +231,7 @@ Popup {
                     gifStore: root.gifStore
 
                     gifList.model: root.gifStore.gifColumnA
-                    gifWidth: (root.width / 3) - Style.current.padding
+                    gifWidth: (root.width / 3) - Theme.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
@@ -244,7 +245,7 @@ Popup {
                     gifStore: root.gifStore
 
                     gifList.model: root.gifStore.gifColumnB
-                    gifWidth: (root.width / 3) - Style.current.padding
+                    gifWidth: (root.width / 3) - Theme.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
@@ -258,7 +259,7 @@ Popup {
                     gifStore: root.gifStore
 
                     gifList.model: root.gifStore.gifColumnC
-                    gifWidth: (root.width / 3) - Style.current.padding
+                    gifWidth: (root.width / 3) - Theme.padding
                     gifSelected: root.gifSelected
                     toggleFavorite: root.toggleFavorite
                     lastHoveredId: gifs.lastHoveredId
@@ -275,7 +276,7 @@ Popup {
         id: emptyPlaceholderComponent
 
         EmptyPlaceholder {
-            Layout.margins: Style.current.smallPadding
+            Layout.margins: Theme.smallPadding
             currentCategory: root.currentCategory
             loading: root.loading
             onDoRetry: searchBox.text === ""

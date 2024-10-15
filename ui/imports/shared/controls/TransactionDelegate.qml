@@ -165,13 +165,13 @@ StatusListItem {
         name: {
             switch(root.transactionStatus) {
             case Constants.TransactionStatus.Pending:
-                return Style.svg("transaction/pending")
+                return Theme.svg("transaction/pending")
             case Constants.TransactionStatus.Complete:
-                return Style.svg("transaction/confirmed")
+                return Theme.svg("transaction/confirmed")
             case Constants.TransactionStatus.Finalised:
-                return Style.svg("transaction/finished")
+                return Theme.svg("transaction/finished")
             case Constants.TransactionStatus.Failed:
-                return Style.svg("transaction/failed")
+                return Theme.svg("transaction/failed")
             default:
                 return ""
             }
@@ -201,7 +201,7 @@ StatusListItem {
         property int subtitlePixelSize: 13
         property bool showRetryButton: false
 
-        readonly property bool isLightTheme: Style.current.name === Constants.lightThemeName
+        readonly property bool isLightTheme: Theme.palette.name === Constants.lightThemeName
         property color animatedBgColor
         property int txType: walletRootStore.transactionType(root.modelData)
 
@@ -627,7 +627,7 @@ StatusListItem {
         if (bgColorAnimation.running) {
             return d.animatedBgColor
         }
-        return sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
+        return sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.transparent
     }
 
     statusListItemIcon.active: (loading || root.asset.name)
