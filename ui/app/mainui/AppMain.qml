@@ -421,6 +421,7 @@ Item {
         rootStore: appMain.rootStore
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
+        profileStore: appMain.profileStore
         devicesStore: appMain.rootStore.profileSectionStore.devicesStore
         currencyStore: appMain.currencyStore
         walletAssetsStore: appMain.walletAssetsStore
@@ -1870,6 +1871,7 @@ Item {
         id: keycardPopupForAuthenticationOrSigning
         active: false
         sourceComponent: KeycardPopup {
+            myKeyUid: appMain.profileStore.keyUid
             sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModuleForAuthenticationOrSigning
         }
 
@@ -1882,6 +1884,7 @@ Item {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
+            myKeyUid: appMain.profileStore.keyUid
             sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
         }
 

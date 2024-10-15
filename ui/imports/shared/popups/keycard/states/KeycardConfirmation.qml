@@ -13,6 +13,8 @@ import "../helpers"
 Item {
     id: root
 
+    property string myKeyUid
+
     property var sharedKeycardModule
 
     signal confirmationUpdated(bool value)
@@ -73,10 +75,8 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             Layout.preferredHeight: Constants.keycard.general.titleHeight
             text: {
-                // we need to check userProfile since factory reset flow is also available before user logs in the app
-                if (!!Global.userProfile &&
-                        !!root.sharedKeycardModule.keyPairForProcessing &&
-                        root.sharedKeycardModule.keyPairForProcessing.keyUid === Global.userProfile.keyUid)
+                if (!!root.sharedKeycardModule.keyPairForProcessing &&
+                        root.sharedKeycardModule.keyPairForProcessing.keyUid === root.myKeyUid)
                     return qsTr("Warning, this Keycard stores your main Status profile and\naccounts. A factory reset will permanently delete it.")
 
                 return qsTr("A factory reset will delete the key on this Keycard.\nAre you sure you want to do this?")

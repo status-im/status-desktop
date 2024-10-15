@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.0
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import utils 1.0
 
@@ -14,6 +16,7 @@ import Storybook 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+
 
 SplitView {
     id: root
@@ -48,17 +51,6 @@ SplitView {
         }
     }
 
-    // Global.userProfile mock
-    QtObject {
-        readonly property string pubKey: "0x043a7ed0e8d1012cf04" // Mike from UsersModel
-        Component.onCompleted: {
-            Global.userProfile = this
-        }
-        Component.onDestruction: {
-            Global.userProfile = {}
-        }
-    }
-
     MembersTabPanel {
         id: membersTabPanelPage
         SplitView.fillWidth: true
@@ -66,6 +58,12 @@ SplitView {
         placeholderText: "Search users"
         model: usersModelWithMembershipState
         panelType: viewStateSelector.currentValue
+
+        rootStore: ChatStores.RootStore {
+            contactsStore: ProfileStores.ContactsStore {
+                readonly property string myPublicKey: "0x000"
+            }
+        }
 
         onKickUserClicked: {
             logs.logEvent("MembersTabPanel::onKickUserClicked", ["id", "name"], arguments)
