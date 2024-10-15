@@ -863,9 +863,20 @@ Item {
 
                 UserStatusContextMenu {
                     id: userStatusContextMenu
+
                     y: profileButton.y - userStatusContextMenu.height + profileButton.height
                     x: profileButton.x + profileButton.width + 5
-                    store: appMain.rootStore
+
+                    pubKey: appMain.rootStore.userProfileInst.pubKey
+                    name: appMain.rootStore.userProfileInst.name
+                    icon: appMain.rootStore.userProfileInst.icon
+                    isEnsVerified: !!appMain.rootStore.userProfileInst.preferredName
+
+                    currentUserStatus: appMain.rootStore.userProfileInst.currentUserStatus
+
+                    onViewProfileRequested: Global.openProfilePopup(pubKey)
+                    onCopyLinkRequested: ClipboardUtils.setText(appMain.rootStore.contactStore.getLinkToProfile(pubKey))
+                    onSetCurrentUserStatusRequested: appMain.rootStore.setCurrentUserStatus(status)
                 }
             }
 

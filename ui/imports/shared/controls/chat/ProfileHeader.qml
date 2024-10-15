@@ -11,8 +11,6 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import AppLayouts.Profile.stores 1.0 as ProfileStores
-
 Item {
     id: root
 
@@ -22,7 +20,6 @@ Item {
         Big
     }
 
-    property ProfileStores.ProfileStore store
     property string displayName
     property string pubkey
     property string icon
@@ -145,7 +142,7 @@ Item {
                 icon.height: d.getSize(8, 12, 24)
 
                 onClicked: {
-                    if (!!root.store.profileLargeImage)
+                    if (!!root.icon)
                         Global.openMenu(editImageMenuComponent, this)
                     else
                         Global.openChangeProfilePicPopup(tempIcon);
