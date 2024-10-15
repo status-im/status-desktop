@@ -178,11 +178,11 @@ QtObject {
     function getLinkToProfile(publicKey) {
         return root.contactsModule.shareUserUrlWithData(publicKey)
     }
-    function getProfileContext(publicKey, myPublicKey, isBridgedAccount = false) {
+    function getProfileContext(publicKey, isBridgedAccount = false) {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey, true, true)
         if (!contactDetails)
             return {
-                profileType: getProfileType(publicKey, myPublicKey, isBridgedAccount, false),
+                profileType: getProfileType(publicKey, isBridgedAccount, false),
                 trustStatus: Constants.trustStatus.unknown,
                 contactType: getContactType(Constants.ContactRequestState.None, false),
                 ensVerified: false,
@@ -191,7 +191,7 @@ QtObject {
             }
 
         const isBlocked = contactDetails.isBlocked
-        const profileType = getProfileType(publicKey, myPublicKey, isBridgedAccount, isBlocked)
+        const profileType = getProfileType(publicKey, isBridgedAccount, isBlocked)
         const contactType = getContactType(contactDetails.contactRequestState, contactDetails.isContact)
         const trustStatus = contactDetails.trustStatus
         const ensVerified = contactDetails.ensVerified
@@ -201,8 +201,8 @@ QtObject {
         return { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname }
     }
 
-    function getProfileType(publicKey, myPublicKey, isBridgedAccount, isBlocked) {
-        if (publicKey === myPublicKey) return Constants.profileType.self
+    function getProfileType(publicKey, isBridgedAccount, isBlocked) {
+        if (publicKey === root.myPublicKey) return Constants.profileType.self
         if (isBridgedAccount) return Constants.profileType.bridged
         if (isBlocked) return Constants.profileType.blocked
         return Constants.profileType.regular

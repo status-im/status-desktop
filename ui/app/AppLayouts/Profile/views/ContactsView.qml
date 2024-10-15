@@ -34,7 +34,7 @@ SettingsContentBase {
     }
 
     function openContextMenu(publicKey, name, icon) {
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, root.contactsStore.myPublicKey)
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey)
 
         Global.openMenu(contactContextMenuComponent, this, {
             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
