@@ -1,20 +1,17 @@
 import time
-from copy import deepcopy
-from datetime import datetime
 
 import allure
 import pytest
 from allure_commons._allure import step
 
 import driver
-from constants import ColorCodes, UserAccount, RandomUser
+from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community_settings import ToastMessages
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
 from . import marks
 
 import configs.testpath
-import constants
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -22,8 +19,7 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703630', 'Create community')
 @pytest.mark.case(703630)
-@pytest.mark.parametrize('params', [constants.community_params])
-def test_create_community(user_account, main_screen: MainWindow, params):
+def test_create_community(user_account, main_screen: MainWindow):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
@@ -33,17 +29,12 @@ def test_create_community(user_account, main_screen: MainWindow, params):
         create_community_form = communities_portal.open_create_community_popup()
 
     with step('Verify fields of create community popup and create community'):
-        color = ColorCodes.ORANGE.value
-        community_screen = create_community_form.create_community(params['name'], params['description'],
-                                                                  params['intro'], params['outro'],
-                                                                  params['logo']['fp'], params['banner']['fp'], color,
-                                                                  ['Activism', 'Art'], constants.community_tags[:2])
+        community = RandomCommunity()
+        community_screen = create_community_form.create_community(community_data=community)
 
     with step('Verify community parameters in community overview'):
-        with step('Name is correct'):
-            assert community_screen.left_panel.name == params['name']
-        with step('Members count is correct'):
-            assert '1' in community_screen.left_panel.members
+        assert community_screen.left_panel.name == community.name
+        assert '1' in community_screen.left_panel.members
 
     with step('Verify General channel is present for recently created community'):
         community_screen.verify_channel(
@@ -55,20 +46,17 @@ def test_create_community(user_account, main_screen: MainWindow, params):
     with step('Verify community parameters in community settings view'):
         community_setting = community_screen.left_panel.open_community_settings()
         overview_setting = community_setting.left_panel.open_overview()
-        with step('Name is correct'):
-            assert overview_setting.name == params['name']
-        with step('Description is correct'):
-            assert overview_setting.description == params['description']
-        with step('Members count is correct'):
-            members_settings = community_setting.left_panel.open_members()
-            assert user_account.name in members_settings.members
+        assert overview_setting.name == community.name
+        assert overview_setting.description == community.description
+        members_settings = community_setting.left_panel.open_members()
+        assert user_account.name in members_settings.members
 
     with step('Verify community parameters in community settings screen'):
         settings_screen = main_screen.left_panel.open_settings()
         community_settings = settings_screen.left_panel.open_communities_settings()
-        community = community_settings.get_community_info(params['name'])
-        assert community.name == params['name']
-        assert community.description == params['description']
+        community = community_settings.get_community_info(community.name)
+        assert community.name == community.name
+        assert community.description == community.description
         assert '1' in community.members
 
 
@@ -81,8 +69,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
-    community_params = deepcopy(constants.community_params)
-    community_params['name'] = f'{datetime.now():%d%m%Y_%H%M%S}'
+    community: CommunityData = RandomCommunity()
     main_screen = MainWindow()
 
     with multiple_instances(user_data=None) as aut_one, multiple_instances(user_data=None) as aut_two:
@@ -123,10 +110,9 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             settings = main_screen.left_panel.open_settings()
             settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
-            community = main_screen.create_community(community_params['name'], community_params['description'],
-                                                     community_params['intro'], community_params['outro'],
-                                                     community_params['logo']['fp'], community_params['banner']['fp'])
-            community.left_panel.invite_people_to_community([user_one.name], 'Message')
+            main_screen.create_community(community_data=community)
+            community_screen = main_screen.left_panel.select_community(community.name)
+            community_screen.left_panel.invite_people_to_community([user_one.name], 'Message')
             main_screen.hide()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
@@ -136,12 +122,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert driver.waitFor(lambda: user_two.name in messages_view.left_panel.get_chats_names,
                                   10000)
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community_params['name'], 0)
+            community_screen = chat.accept_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
-            assert community_params['name'] in welcome_popup.title
-            assert community_params['intro'] == welcome_popup.intro
+            assert community.name in welcome_popup.title
+            assert community.introduction == welcome_popup.intro
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   10000), 'Join community button not hidden'
@@ -153,7 +139,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_two.name}, delete member message of {user_one.name} and verify it was deleted'):
             aut_two.attach()
             main_screen.prepare()
-            community_screen = main_screen.left_panel.select_community(community_params['name'])
+            community_screen = main_screen.left_panel.select_community(community.name)
             messages_screen = MessagesScreen()
             message = messages_screen.chat.find_message_by_text(message_text, '0')
             message.hover_message().delete_message()
@@ -178,7 +164,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert len(toast_messages) == 1, \
                 f"Multiple toast messages appeared"
             message = toast_messages[0]
-            assert message == user_one.name + ToastMessages.BANNED_USER_TOAST.value + community_params['name'], \
+            assert message == user_one.name + ToastMessages.BANNED_USER_TOAST.value + community.name, \
                 f"Toast message is incorrect, current message is {message}"
 
         with step(f'User {user_two.name}, does not see {user_one.name} in members list'):
@@ -195,7 +181,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step('Check toast message about unbanned member'):
             toast_messages = main_screen.wait_for_notification()
-            toast_message = user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community_params['name']
+            toast_message = user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name
             assert driver.waitFor(lambda: toast_message in toast_messages, timeout), \
                 f"Toast message is incorrect, current message {toast_message} is not in {toast_messages}"
             main_screen.hide()
@@ -203,7 +189,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_one.name} join community again {user_two.name}'):
             aut_one.attach()
             main_screen.prepare()
-            community_screen = chat.accept_community_invite(community_params['name'], 0)
+            community_screen = chat.accept_community_invite(community.name, 0)
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
@@ -221,7 +207,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert len(toast_messages) == 1, \
                 f"Multiple toast messages appeared"
             message = toast_messages[0]
-            assert message == user_one.name + ToastMessages.KICKED_USER_TOAST.value + community_params['name'], \
+            assert message == user_one.name + ToastMessages.KICKED_USER_TOAST.value + community.name, \
                 f"Toast message is incorrect, current message is {message}"
 
         with step(f'User {user_two.name}, does not see {user_one.name} in members list'):
@@ -231,4 +217,4 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_one.name} is not in the community anymore'):
             aut_one.attach()
             main_screen.prepare()
-            assert driver.waitFor(lambda: community_params['name'] not in main_screen.left_panel.communities, timeout)
+            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)

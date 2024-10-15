@@ -19,7 +19,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703007',
                  'Change own display name from online identifier')
 @pytest.mark.case(703007)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 def test_change_own_display_name(main_screen: MainWindow, user_account):
     with step('Open own profile popup and check name of user is correct'):
         profile = main_screen.left_panel.open_online_identifier()

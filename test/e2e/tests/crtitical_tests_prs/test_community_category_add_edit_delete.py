@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 import constants
+from constants import RandomCommunity
 from gui.main_window import MainWindow
 from . import marks
 
@@ -27,13 +28,11 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+
     with step('Create community and select it'):
-        community_params = constants.community_params
-        main_screen.create_community(community_params['name'], community_params['description'],
-                                     community_params['intro'], community_params['outro'],
-                                     community_params['logo']['fp'], community_params['banner']['fp'],
-                                     ['Activism', 'Art'], constants.community_tags[:2])
-        community_screen = main_screen.left_panel.select_community(community_params['name'])
+        community = RandomCommunity()
+        main_screen.create_community(community_data=community)
+        community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Create community category and verify that it displays correctly'):
         community_screen.create_category(category_name, general_checkbox)

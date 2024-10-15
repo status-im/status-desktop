@@ -21,7 +21,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703420',
                  'Wallet -> Settings -> Keypair interactions: Rename keypair')
 @pytest.mark.case(703420)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize(
     'emoji',
     [pytest.param('sunglasses')])

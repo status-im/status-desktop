@@ -4,13 +4,11 @@ import allure
 import pytest
 from allure import step
 
-from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
 from tests.wallet_main_screen import marks
 
 import constants
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -19,7 +17,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703036',
                  'Manage an account created from the generated seed phrase')
 @pytest.mark.case(703036)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode, keypair_name', [
                              pytest.param('SPAcc', '#2a4af5', 'sunglasses', '1f60e',
                                           'SPKeyPair')])

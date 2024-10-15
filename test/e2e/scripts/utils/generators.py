@@ -4,6 +4,8 @@ from zpywallet import HDWallet
 from zpywallet.network import EthereumMainNet
 from eth_account.hdaccount import generate_mnemonic, Mnemonic
 
+from constants import user
+
 
 def random_name_string():
     return ''.join((random.choice(
@@ -22,6 +24,37 @@ def random_password_string():
 def random_ens_string():
     return ''.join(
         random.choices(string.digits + string.ascii_lowercase, k=8))
+
+
+def random_community_name():
+    return ''.join(random.choices(string.ascii_letters +
+                                  string.digits, k=30))
+
+
+def random_community_description():
+    return ''.join(random.choices(string.ascii_letters +
+                                  string.digits, k=140))
+
+
+def random_community_introduction():
+    return ''.join(random.choices(string.ascii_letters +
+                                  string.digits, k=200))
+
+
+def random_community_leave_message():
+    return ''.join(random.choices(string.ascii_letters +
+                                  string.digits, k=80))
+
+
+def random_community_tags():
+    num_tags = random.randint(1, 3)
+    return random.sample(user.community_tags, num_tags)
+
+
+def random_color():
+    random_number = random.randint(0, 0xFFFFFF)
+    hex_color = f'#{random_number:06x}'
+    return hex_color
 
 
 def random_mnemonic():

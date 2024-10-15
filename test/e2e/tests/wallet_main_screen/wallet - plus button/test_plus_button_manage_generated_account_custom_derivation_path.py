@@ -5,13 +5,11 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from constants.wallet import DerivationPathName
 from scripts.utils.generators import random_wallet_account_name
 from tests.wallet_main_screen import marks
 
 import constants
-import driver
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
@@ -20,7 +18,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')
 @pytest.mark.case(703028)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize(
     'color, emoji, emoji_unicode',
     [
