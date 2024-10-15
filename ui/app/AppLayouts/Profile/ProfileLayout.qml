@@ -247,16 +247,19 @@ StatusSectionLayout {
             sourceComponent: WalletView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                myPublicKey: root.store.contactsStore.myPublicKey
-                currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
+                contentWidth: d.contentWidth
+
                 rootStore: root.store
                 tokensStore: root.tokensStore
                 networkConnectionStore: root.networkConnectionStore
                 assetsStore: root.walletAssetsStore
                 collectiblesStore: root.collectiblesStore
+
+                myPublicKey: root.store.contactsStore.myPublicKey
+                currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
+                sendModalPopup: root.sendModalPopup
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
-                contentWidth: d.contentWidth
             }
             onLoaded: root.store.backButtonName = ""
         }
