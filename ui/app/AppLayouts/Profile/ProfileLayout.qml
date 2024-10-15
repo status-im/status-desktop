@@ -496,6 +496,7 @@ StatusSectionLayout {
         id: keycardPopup
         active: false
         sourceComponent: KeycardPopup {
+            myKeyUid: store.profileStore.keyUid
             sharedKeycardModule: root.store.keycardStore.keycardModule.keycardSharedModule
             emojiPopup: root.emojiPopup
         }

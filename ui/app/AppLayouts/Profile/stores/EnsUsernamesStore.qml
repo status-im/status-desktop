@@ -17,12 +17,12 @@ QtObject {
         }
     }
 
-    property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
-    property string icon: !!Global.userProfile? Global.userProfile.icon : ""
-    property string preferredUsername: !!Global.userProfile? Global.userProfile.preferredName : ""
+    property string pubkey: userProfile.pubKey
+    property string icon: userProfile.icon
+    property string preferredUsername: userProfile.preferredName
     readonly property string chainId: mainModule.appNetworkId
 
-    property string username: !!Global.userProfile? Global.userProfile.username : ""
+    property string username: userProfile.username
 
     function setPrefferedEnsUsername(ensName) {
         if(!root.ensUsernamesModule)

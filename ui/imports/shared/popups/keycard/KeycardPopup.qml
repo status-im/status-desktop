@@ -11,6 +11,8 @@ import utils 1.0
 StatusModal {
     id: root
 
+    property alias myKeyUid: content.myKeyUid
+
     property var sharedKeycardModule
     property var emojiPopup
 

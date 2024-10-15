@@ -7,6 +7,8 @@ import "./states"
 Item {
     id: root
 
+    property string myKeyUid
+
     property var sharedKeycardModule
     property var emojiPopup
     readonly property alias primaryButtonEnabled: d.primaryButtonEnabled
@@ -158,6 +160,7 @@ Item {
     Component {
         id: confirmationComponent
         KeycardConfirmation {
+            myKeyUid: root.myKeyUid
             sharedKeycardModule: root.sharedKeycardModule
 
             Component.onCompleted: {

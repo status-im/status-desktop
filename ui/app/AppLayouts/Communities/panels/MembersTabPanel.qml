@@ -150,7 +150,7 @@ Item {
                 // The admin that initited the pending state can change the state. Actions are not visible for other admins
                 readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
 
-                readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
+                readonly property bool itsMe: model.pubKey.toLowerCase() === rootStore.contactsStore.myPublicKey.toLowerCase()
                 readonly property bool isHovered: memberItem.hovered
                 readonly property bool canBeBanned: {
                     if (memberItem.itsMe) {
@@ -315,7 +315,6 @@ Item {
 
                         Global.openMenu(memberContextMenuComponent, this, {
                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
-                            myPublicKey: Global.userProfile.pubKey,
                             publicKey: model.pubKey,
                             displayName: memberItem.title || model.displayName,
                             userIcon: icon.name,

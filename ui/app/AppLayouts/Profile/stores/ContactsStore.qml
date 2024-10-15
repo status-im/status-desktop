@@ -11,7 +11,7 @@ QtObject {
     property var globalUtilsInst: globalUtils
     property var mainModuleInst: Global.appIsReady? mainModule : null
 
-    property string myPublicKey: !!Global.userProfile? Global.userProfile.pubKey : ""
+    property string myPublicKey: userProfile.pubKey
 
     // contactsModel holds all available contacts
     property var contactsModel: contactsModule.contactsModel

@@ -43,6 +43,7 @@ QtObject {
     required property AppLayoutStores.RootStore rootStore
     required property CommunityTokensStore communityTokensStore
     property CommunitiesStore communitiesStore
+    property ProfileStores.ProfileStore profileStore
     property ProfileStores.DevicesStore devicesStore
     property CurrenciesStore currencyStore
     property WalletStore.WalletAssetsStore walletAssetsStore
@@ -446,6 +447,9 @@ QtObject {
         Component {
             id: contactOutgoingVerificationRequestPopupComponent
             OutgoingContactVerificationRequestPopup {
+
+                profileStore: root.profileStore
+
                 onVerificationRequestCanceled: {
                     rootStore.contactStore.cancelVerificationRequest(publicKey)
                 }

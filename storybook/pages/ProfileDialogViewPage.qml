@@ -100,14 +100,6 @@ SplitView {
         }
     }
 
-    Component.onCompleted: {
-        Global.userProfile = {
-            name: "Anna",
-            pubKey: "Oxdeadbeef",
-            icon: ModelsData.collectibles.cryptoPunks
-        }
-    }
-
     ListModel {
         id: linksModel
         ListElement {

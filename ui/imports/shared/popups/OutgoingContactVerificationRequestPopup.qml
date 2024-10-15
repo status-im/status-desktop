@@ -10,8 +10,12 @@ import StatusQ.Controls 0.1
 
 import shared.views.chat 1.0
 
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+
 CommonContactDialog {
     id: root
+
+    property ProfileStores.ProfileStore profileStore
 
     property int verificationStatus
     property string verificationChallenge
@@ -70,13 +74,13 @@ CommonContactDialog {
         id: challengeMessage
         timestamp: root.verificationRequestedAt
         messageDetails.messageText: root.verificationChallenge
-        messageDetails.sender.id: Global.userProfile.pubKey
-        messageDetails.sender.displayName: Global.userProfile.name
-        messageDetails.sender.profileImage.name: Global.userProfile.icon
+        messageDetails.sender.id: root.profileStore.pubkey
+        messageDetails.sender.displayName: root.profileStore.name
+        messageDetails.sender.profileImage.name: root.profileStore.icon
         messageDetails.sender.profileImage.assetSettings.isImage: true
-        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(Global.userProfile.pubKey)
-        messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(Global.userProfile.pubKey, !!Global.userProfile.preferredName)
-        messageDetails.sender.isEnsVerified: !!Global.userProfile.preferredName
+        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.profileStore.pubkey)
+        messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(root.profileStore.pubkey, !!root.profileStore.preferredName)
+        messageDetails.sender.isEnsVerified: !!root.profileStore.preferredName
         Layout.fillWidth: true
     }
 
