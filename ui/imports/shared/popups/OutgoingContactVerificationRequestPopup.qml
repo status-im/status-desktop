@@ -20,12 +20,18 @@ CommonContactDialog {
     property string verificationResponseIcon
     property string verificationRequestedAt
     property string verificationRepliedAt
+    property bool ensVerified
+    property string pubKey
+    property string preferredName
+    property string name
+    property string icon
 
     readonly property bool hasReply: root.verificationResponse !== ""
 
-    signal verificationRequestCanceled(string publicKey)
-    signal untrustworthyVerified(string publicKey)
-    signal trustedVerified(string publicKey)
+    signal verificationRequestCanceled()
+    signal untrustworthyVerified()
+    signal trustedVerified()
+    signal linkActivated()
 
     title: !hasReply ? qsTr("ID verification pending") : qsTr("Review ID verification reply")
 
@@ -36,7 +42,7 @@ CommonContactDialog {
             borderColor: "transparent"
             visible: !root.hasReply
             onClicked: {
-                root.verificationRequestCanceled(root.publicKey)
+                root.verificationRequestCanceled()
                 root.close()
             }
         }
@@ -51,7 +57,7 @@ CommonContactDialog {
             visible: root.hasReply
             type: StatusBaseButton.Type.Danger
             onClicked: {
-                root.untrustworthyVerified(root.publicKey)
+                root.untrustworthyVerified()
                 root.close()
             }
         }
@@ -60,7 +66,7 @@ CommonContactDialog {
             visible: root.hasReply
             type: StatusBaseButton.Type.Success
             onClicked: {
-                root.trustedVerified(root.publicKey)
+                root.trustedVerified()
                 root.close()
             }
         }
@@ -70,11 +76,11 @@ CommonContactDialog {
         id: challengeMessage
         timestamp: root.verificationRequestedAt
         messageDetails.messageText: root.verificationChallenge
-        messageDetails.sender.id: Global.userProfile.pubKey
-        messageDetails.sender.displayName: Global.userProfile.name
-        messageDetails.sender.profileImage.name: Global.userProfile.icon
+        messageDetails.sender.id: root.pubKey
+        messageDetails.sender.displayName: root.name
+        messageDetails.sender.profileImage.name: root.icon
         messageDetails.sender.profileImage.assetSettings.isImage: true
-        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(Global.userProfile.pubKey)
+        messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.pubKey)
         messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(Global.userProfile.pubKey, !!Global.userProfile.preferredName)
         messageDetails.sender.isEnsVerified: !!Global.userProfile.preferredName
         Layout.fillWidth: true
@@ -91,7 +97,7 @@ CommonContactDialog {
         messageDetails.sender.profileImage.assetSettings.isImage: true
         messageDetails.sender.profileImage.colorId: Utils.colorIdForPubkey(root.publicKey)
         messageDetails.sender.profileImage.colorHash: Utils.getColorHashAsJson(root.publicKey)
-        messageDetails.sender.isEnsVerified: contactDetails.ensVerified
+        messageDetails.sender.isEnsVerified: root.ensVerified
         Layout.fillWidth: true
     }
 
@@ -105,10 +111,6 @@ CommonContactDialog {
         wrapMode: Text.WordWrap
         textFormat: Text.RichText
         color: root.hasReply ? Theme.palette.directColor1 : Theme.palette.baseColor1
-        onLinkActivated: {
-            root.verificationRequestCanceled(root.publicKey)
-            root.close()
-            Global.openSendIDRequestPopup(root.publicKey, root.contactDetails, null)
-        }
+        onLinkActivated: root.linkActivated()
     }
 }

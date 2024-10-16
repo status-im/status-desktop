@@ -15,7 +15,7 @@ CommonContactDialog {
     StatusBaseText {
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
-        text: qsTr("Mark users as ID verified only if you’re 100% sure who they are. Otherwise, it’s safer to send %1 an ID verification request.").arg(mainDisplayName)
+        text: qsTr("Mark users as ID verified only if you’re 100% sure who they are. Otherwise, it’s safer to send %1 an ID verification request.").arg(root.mainDisplayName)
     }
 
     rightButtons: ObjectModel {
