@@ -220,7 +220,6 @@ Item {
                 tokenId: d.isTransactionValid ? transaction.tokenID : ""
                 tokenAddress: d.isTransactionValid ? transaction.tokenAddress : ""
                 areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
-                isGoerliEnabled: WalletStores.RootStore.isGoerliEnabled
             }
 
             Column {
@@ -820,7 +819,6 @@ Item {
         id: addressMenu
 
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
-        isGoerliEnabled: WalletStores.RootStore.isGoerliEnabled
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore
         onOpenSendModal: (address) => root.sendModal.open(address)
