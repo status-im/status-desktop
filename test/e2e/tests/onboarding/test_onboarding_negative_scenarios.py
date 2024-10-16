@@ -116,7 +116,7 @@ def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, 
 
     with step('Verify that button Create password is disabled and correct error appears'):
         assert create_password_view.is_create_password_button_enabled is False
-        assert create_password_view.password_error_message == error
+        assert str(create_password_view.password_error_message) == error
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702994',
