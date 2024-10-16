@@ -38,71 +38,9 @@ StackLayout {
 
     property var sectionItemModel
 
-    readonly property var joinedMembers: SortFilterProxyModel {
-        sourceModel: sectionItemModel.allMembers
-
-        filters: AnyOf {
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.Accepted
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.KickedPending
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.BannedPending
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.AwaitingAddress
-            }
-        }
-    }
-    readonly property var bannedMembers: SortFilterProxyModel {
-        sourceModel: sectionItemModel.allMembers
-
-        filters: AnyOf {
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.Banned
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.UnbannedPending
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
-            }
-        }
-    }
-    readonly property var pendingMembers: SortFilterProxyModel {
-        sourceModel: sectionItemModel.allMembers
-
-        filters: AnyOf {
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.Pending
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.AcceptedPending
-            }
-            ValueFilter {
-                roleName: "membershipRequestState"
-                value: Constants.CommunityMembershipRequestState.RejectedPending
-            }
-        }
-    }
-    readonly property var declinedMembers: SortFilterProxyModel {
-        sourceModel: sectionItemModel.allMembers
-
-        filters: ValueFilter {
-            roleName: "membershipRequestState"
-            value: Constants.CommunityMembershipRequestState.Rejected
-        }
+    MembersModelAdaptor {
+        id: membersModelAdaptor
+        allMembers: !!sectionItemModel ? sectionItemModel.allMembers : null
     }
 
     property var sendModalPopup
@@ -172,7 +110,7 @@ StackLayout {
             communityDesc: sectionItemModel.description
             color: sectionItemModel.color
             image: sectionItemModel.image
-            membersCount: joinedMembers.count
+            membersCount: membersModelAdaptor.joinedMembers.ModelCount.count
             accessType: mainViewLoader.accessType
             joinCommunity: true
             amISectionAdmin: sectionItemModel.memberRole === Constants.memberRole.owner ||
@@ -226,7 +164,7 @@ StackLayout {
             currencyStore: root.currencyStore
             sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
-            joinedMembersCount: root.joinedMembers.ModelCount.count
+            joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
@@ -321,10 +259,10 @@ StackLayout {
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: root.sectionItemModel
-            joinedMembers: root.joinedMembers
-            bannedMembers: root.bannedMembers
-            pendingMembers: root.pendingMembers
-            declinedMembers: root.declinedMembers
+            joinedMembers: membersModelAdaptor.joinedMembers
+            bannedMembers: membersModelAdaptor.bannedMembers
+            pendingMembers: membersModelAdaptor.pendingMembers
+            declinedMembers: membersModelAdaptor.declinedMembers
             communitySettingsDisabled: root.communitySettingsDisabled
             onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
@@ -341,7 +279,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: root.joinedMembers.ModelCount.count
+            membersCount: membersModelAdaptor.joinedMembers.ModelCount.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
@@ -359,7 +297,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: root.joinedMembers.ModelCount.count
+            membersCount: membersModelAdaptor.joinedMembers.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
