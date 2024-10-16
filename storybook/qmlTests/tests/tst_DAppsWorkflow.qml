@@ -216,7 +216,7 @@ Item {
                 }
                 // Used by tst_balanceCheck
                 ListElement {
-                    chainId: 421613
+                    chainId: 421614
                     layer: 2
                 }
             }
@@ -378,7 +378,7 @@ Item {
             },
             {
                 tag: "check_l2_doesnt_have_enough_funds_on_l1",
-                chainId: 421613,
+                chainId: 421614,
                 // Override the l1 additional fees
                 l1GasFee: 1000000000.0,
 
@@ -389,7 +389,7 @@ Item {
             },
             {
                 tag: "check_l2_doesnt_have_enough_funds_on_l2",
-                chainId: 421613,
+                chainId: 421614,
                 // Override the l2 to a higher value
                 maxFeePerGasM: 1000000.0, /*GWEI*/
                 // Override the l1 additional fees

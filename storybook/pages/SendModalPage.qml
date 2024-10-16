@@ -44,7 +44,7 @@ SplitView {
                                 account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
                             },
                             {
-                              chainId: "420",
+                              chainId: "11155420",
                               balance: "559133758939097000",
                               account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
                             }
@@ -65,7 +65,7 @@ SplitView {
                         communityId: "",
                         balances: [
                             {
-                                chainId: "420",
+                                chainId: "11155420",
                                 balance: "1142155111",
                                 account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
                             },
@@ -109,7 +109,7 @@ SplitView {
 
         property ListModel toModel: ListModel {
             ListElement {
-                chainId: 420
+                chainId: 11155420
                 amountOut: "3003845308235848343"
             }
             ListElement {

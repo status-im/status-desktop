@@ -27,7 +27,6 @@ StatusListItem {
     property string ens
     property string colorId
     property bool areTestNetworksEnabled: false
-    property bool isGoerliEnabled: false
 
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
@@ -212,7 +211,7 @@ StatusListItem {
             text: qsTr("View on Etherscan")
             icon.name: "link"
             onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
+                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
                 Global.openLink(link)
             }
         }

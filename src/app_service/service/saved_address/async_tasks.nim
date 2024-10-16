@@ -19,7 +19,7 @@ type
     OnlyIfDifferent
 
 proc isValidChainId(chainId: int): bool =
-  return chainId == Mainnet or chainId == Goerli or chainId == Sepolia
+  return chainId == Mainnet or chainId == Sepolia
 
 proc checkForEnsNameAndUpdate(chainId: int, savedAddress: var SavedAddressDto, updateCriteria: UpdateCriteria): RpcResponse[JsonNode] {.raises: [RpcException].} =
   if savedAddress.isTest and chainId == Mainnet or

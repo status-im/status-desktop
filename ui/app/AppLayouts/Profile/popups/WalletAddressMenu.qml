@@ -28,7 +28,6 @@ StatusMenu {
                                        colorId: "",
                                    })
     property bool areTestNetworksEnabled: false
-    property bool isGoerliEnabled: false
 
     signal copyToClipboard(string address)
 
@@ -42,7 +41,7 @@ StatusMenu {
         text: qsTr("View on Etherscan")
         icon.name: "link"
         onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.isGoerliEnabled, root.selectedAccount.address?? "")
+            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.selectedAccount.address?? "")
             Global.openLink(link)
         }
     }

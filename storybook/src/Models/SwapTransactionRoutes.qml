@@ -45,7 +45,7 @@ QtObject {
 
     property ListModel toModel: ListModel {
         ListElement {
-            chainId: 420
+            chainId: 11155420
             chainName: "Optimism"
             iconUrl: "network/Network=Optimism"
             amountOut: "3003845308235848343"

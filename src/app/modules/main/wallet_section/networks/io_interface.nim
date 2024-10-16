@@ -29,9 +29,6 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method toggleTestNetworksEnabled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleIsGoerliEnabled*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

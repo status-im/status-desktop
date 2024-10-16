@@ -29,7 +29,7 @@ SplitView {
                 Layout.fillHeight: true
             
                 model: NetworksModel.flatNetworks
-                selection: [420]
+                selection: [11155420]
                 showIndicator: true
                 multiSelection: false
             }
@@ -49,7 +49,7 @@ SplitView {
                 showIndicator: true
                 multiSelection: true
 
-                selection: [1, 420]
+                selection: [1, 11155420]
             }
         }
     }

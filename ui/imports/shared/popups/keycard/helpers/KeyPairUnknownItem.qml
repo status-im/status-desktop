@@ -144,7 +144,6 @@ Rectangle {
                                 onClicked: {
                                     let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
                                                                                WalletStore.RootStore.areTestNetworksEnabled,
-                                                                               WalletStore.RootStore.isGoerliEnabled,
                                                                                model.account.address)
                                     Global.openLink(link)
                                 }

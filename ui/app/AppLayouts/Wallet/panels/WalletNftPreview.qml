@@ -19,7 +19,6 @@ ColumnLayout {
     property string tokenAddress
     property bool strikethrough: false
     property bool areTestNetworksEnabled: false
-    property bool isGoerliEnabled: false
 
     spacing: Theme.padding
 
@@ -106,11 +105,7 @@ ColumnLayout {
                     onClicked: {
                         let link = Constants.networkExplorerLinks.etherscan
                         if (areTestNetworksEnabled) {
-                            if (root.isGoerliEnabled) {
-                                link = Constants.networkExplorerLinks.goerliEtherscan
-                            } else {
-                                link = Constants.networkExplorerLinks.sepoliaEtherscan
-                            }
+                            link = Constants.networkExplorerLinks.sepoliaEtherscan
                         }
                         Global.openLink("%1/nft/%2/%3".arg(link).arg(root.tokenAddress).arg(root.tokenId))
                     }

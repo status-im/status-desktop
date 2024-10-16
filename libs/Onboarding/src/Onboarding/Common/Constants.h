@@ -30,7 +30,7 @@ inline const auto Websocket = u"wss/p2p/waku"_qs;
 namespace General
 {
 inline const auto DefaultNetworkName = u"mainnet_rpc"_qs;
-//const DEFAULT_NETWORKS_IDS* = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "goerli_rpc", "xdai_rpc", "poa_rpc" ]
+//const DEFAULT_NETWORKS_IDS* = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "xdai_rpc", "poa_rpc" ]
 
 inline const auto ZeroAddress = u"0x0000000000000000000000000000000000000000"_qs;
 

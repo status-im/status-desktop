@@ -116,7 +116,7 @@ SplitView {
                     },
                     ExpressionRole {
                         name: "chainName"
-                        expression: model.index ? "Ethereum Mainnet" : "Goerli"
+                        expression: model.index ? "Ethereum Mainnet" : "Sepolia"
                     },
                     ExpressionRole {
                         name: "decimals"

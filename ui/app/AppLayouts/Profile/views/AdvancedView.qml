@@ -444,15 +444,6 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                text: qsTr("Enable Goerli as Test Network")
-                isSwitch: true
-                switchChecked: root.advancedStore.isGoerliEnabled
-                onClicked: Global.openPopup(enableSepoliaConfirmationDialogComponent)
-            }
-
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 objectName: "manageCommunitiesOnTestnetButton"
                 text: qsTr("Manage communities on testnet")
                 isSwitch: true
@@ -502,26 +493,6 @@ SettingsContentBase {
             WakuNodesModal {
                 messagingStore: root.messagingStore
                 advancedStore: root.advancedStore
-            }
-        }
-
-        Component {
-            id: enableSepoliaConfirmationDialogComponent
-            ConfirmationDialog {
-                property bool mode: false
-
-                id: confirmDialog
-                destroyOnClose: true
-                showCancelButton: true
-                confirmationText: qsTr("Are you sure you want to toggle sepolia? The app will be restarted.")
-                onConfirmButtonClicked: {
-                    root.advancedStore.toggleIsGoerliEnabled()
-                    close()
-                    SystemUtils.restartApplication()
-                }
-                onCancelButtonClicked: {
-                    close()
-                }
             }
         }
 

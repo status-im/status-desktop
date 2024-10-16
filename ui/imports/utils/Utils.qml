@@ -609,36 +609,24 @@ QtObject {
                     Theme.palette.warningColor1
     }
 
-    function getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, addressOrTx, isAddressNotTx)  {
+    function getEtherscanUrl(networkShortName, testnetMode, addressOrTx, isAddressNotTx)  {
         const type = isAddressNotTx
             ? Constants.networkExplorerLinks.addressPath
             : Constants.networkExplorerLinks.txPath
         let link = Constants.networkExplorerLinks.etherscan
         if (testnetMode) {
-            if (sepoliaEnabled) {
-                link = Constants.networkExplorerLinks.sepoliaEtherscan
-            } else {
-                link = Constants.networkExplorerLinks.goerliEtherscan
-            }
+            link = Constants.networkExplorerLinks.sepoliaEtherscan
         }
 
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             link = Constants.networkExplorerLinks.arbiscan
             if (testnetMode) {
-                if (sepoliaEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaArbiscan
-                } else {
-                    link = Constants.networkExplorerLinks.goerliArbiscan
-                }
+                link = Constants.networkExplorerLinks.sepoliaArbiscan
             }
         } else if (networkShortName === Constants.networkShortChainNames.optimism) {
             link = Constants.networkExplorerLinks.optimism
             if (testnetMode) {
-                if (sepoliaEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaOptimism
-                } else {
-                    link = Constants.networkExplorerLinks.goerliOptimism
-                }
+                link = Constants.networkExplorerLinks.sepoliaOptimism
             }
         }
 
@@ -646,13 +634,13 @@ QtObject {
     }
 
     // Etherscan URL for an address
-    function getUrlForAddressOnNetwork(networkShortName, testnetMode, sepoliaEnabled, address)  {
-        return getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, address, true /* is address */)
+    function getUrlForAddressOnNetwork(networkShortName, testnetMode, address)  {
+        return getEtherscanUrl(networkShortName, testnetMode, address, true /* is address */)
     }
 
     // Etherscan URL for a transaction
-    function getUrlForTxOnNetwork(networkShortName, testnetMode, sepoliaEnabled, tx)  {
-        return getEtherscanUrl(networkShortName, testnetMode, sepoliaEnabled, tx, false /* is TX */)
+    function getUrlForTxOnNetwork(networkShortName, testnetMode, tx)  {
+        return getEtherscanUrl(networkShortName, testnetMode, tx, false /* is TX */)
     }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
