@@ -18,6 +18,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
+import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 import SortFilterProxyModel 0.2
 
@@ -225,7 +226,7 @@ StackLayout {
             currencyStore: root.currencyStore
             sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
-            joinedMembersCount: root.joinedMembers.count
+            joinedMembersCount: root.joinedMembers.ModelCount.count
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
@@ -340,7 +341,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: root.joinedMembers.count
+            membersCount: root.joinedMembers.ModelCount.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
@@ -358,7 +359,7 @@ StackLayout {
             communityDesc: root.sectionItemModel.description
             color: root.sectionItemModel.color
             image: root.sectionItemModel.image
-            membersCount: root.joinedMembers.count
+            membersCount: root.joinedMembers.ModelCount.count
             communityItemsModel: root.rootStore.communityItemsModel
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications

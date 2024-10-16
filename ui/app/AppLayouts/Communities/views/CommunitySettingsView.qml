@@ -113,7 +113,7 @@ StatusSectionLayout {
                 id: communityHeader
 
                 title: community.name
-                subTitle: qsTr("%n member(s)", "", root.joinedMembers.count || 0)
+                subTitle: qsTr("%n member(s)", "", root.joinedMembers.ModelCount.count || 0)
                 asset.name: community.image
                 asset.color: community.color
                 asset.isImage: true
