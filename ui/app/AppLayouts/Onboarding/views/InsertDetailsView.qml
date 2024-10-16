@@ -13,6 +13,7 @@ import shared.panels 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.controls 1.0
+import shared.validators 1.0
 import utils 1.0
 
 import "../popups"
@@ -116,7 +117,7 @@ Item {
                 input.clearable: true
                 errorMessageCmp.wrapMode: Text.NoWrap
                 errorMessageCmp.horizontalAlignment: Text.AlignHCenter
-                validators: Constants.validators.displayName
+                validators: displayNameValidators.validators
                 onTextChanged: {
                     userImage.name = text;
                 }
@@ -125,6 +126,10 @@ Item {
                         event.accepted = true
                         d.doAction()
                     }
+                }
+
+                DisplayNameValidators {
+                    id: displayNameValidators
                 }
             }
         }

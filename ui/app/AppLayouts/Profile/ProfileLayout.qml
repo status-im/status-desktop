@@ -29,6 +29,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import SortFilterProxyModel 0.2
 import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.Communities.stores 1.0 as CommunitiesStore
 
 StatusSectionLayout {
     id: root
@@ -38,6 +39,7 @@ StatusSectionLayout {
     property SharedStores.RootStore sharedRootStore
     property ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
+    property CommunitiesStore.CommunitiesStore communitiesStore
     required property var sendModalPopup
     property var systemPalette
     property var emojiPopup
@@ -146,6 +148,8 @@ StatusSectionLayout {
 
                 profileStore: root.store.profileStore
                 contactsStore: root.store.contactsStore
+                communitiesStore: root.communitiesStore
+
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth

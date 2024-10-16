@@ -1438,6 +1438,7 @@ Item {
                             sharedRootStore: appMain.sharedRootStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
+                            communitiesStore: appMain.communitiesStore
                             sendModalPopup: sendModal
                             systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup.item

@@ -190,7 +190,6 @@ StatusWindow {
                 if (!appLoadingAnimation.runningProgressAnimation) {
                     mainModule.fakeLoadingScreenFinished()
                 }
-                Global.userProfile = userProfile
                 Global.appIsReady = true
 
                 loader.sourceComponent = app

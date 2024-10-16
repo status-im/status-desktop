@@ -9,7 +9,6 @@ QtObject {
     property int settingsSubsection: Constants.settingsSubsection.profile
     property int settingsSubSubsection: -1
 
-    property var userProfile
     property bool appIsReady: false
 
     // use the generic var as type to break the cyclic dependency
