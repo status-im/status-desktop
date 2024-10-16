@@ -21,7 +21,6 @@ ModalPopup 1.0 ModalPopup.qml
 NicknamePopup 1.0 NicknamePopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml
 OutgoingContactVerificationRequestPopup 1.0 OutgoingContactVerificationRequestPopup.qml
-PopupMenu 1.0 PopupMenu.qml
 ProfileDialog 1.0 ProfileDialog.qml
 RemoveAccountConfirmationPopup 1.0 RemoveAccountConfirmationPopup.qml
 RemoveContactPopup 1.0 RemoveContactPopup.qml
