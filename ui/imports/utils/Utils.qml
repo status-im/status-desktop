@@ -967,20 +967,4 @@ QtObject {
     function addTimestampToURL(url) {
         return globalUtilsInst.addTimestampToURL(url)
     }
-
-    // Returns true if the provided displayName occurs in community members
-    function isDisplayNameDupeOfCommunityMember(displayName) {
-        if (!communitiesModuleInst)
-            return false
-
-        if (displayName === "")
-            return false
-
-        const myDisplayName = Global.userProfile ? Global.userProfile.name : ""
-
-        if (displayName === myDisplayName)
-            return false
-
-        return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
-    }
 }

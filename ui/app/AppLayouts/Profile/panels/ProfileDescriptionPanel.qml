@@ -33,7 +33,6 @@ Item {
             label: qsTr("Display name")
             placeholderText: qsTr("Display Name")
             charLimit: Constants.keypair.nameLengthMax
-            validators: Constants.validators.displayName
 
             input.tabNavItem: bioInput.input.edit
         }

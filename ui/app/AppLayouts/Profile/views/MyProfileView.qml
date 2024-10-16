@@ -8,6 +8,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
+import shared.validators 1.0
 import shared.controls.chat 1.0
 
 import "../popups"
@@ -24,12 +25,14 @@ import StatusQ.Controls 0.1
 import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.panels 1.0
 import AppLayouts.Wallet.stores 1.0
+import AppLayouts.Communities.stores 1.0
 
 SettingsContentBase {
     id: root
 
     property ProfileStore profileStore
     property ContactsStore contactsStore
+    property CommunitiesStore communitiesStore
 
     property bool sendToAccountEnabled: false
 
@@ -294,8 +297,15 @@ SettingsContentBase {
                 displayName.input.edit.readOnly: isEnsName
                 displayName.text: profileStore.name
                 displayName.validationMode: StatusInput.ValidationMode.Always
-                displayName.validators: isEnsName ? [] : Constants.validators.displayName
+                displayName.validators: isEnsName ? [] : displayNameValidators.validators
                 bio.text: profileStore.bio
+
+                DisplayNameValidators {
+                    id: displayNameValidators
+
+                    myDisplayName: root.profileStore.name
+                    communitiesStore: root.communitiesStore
+                }
             }
         }
 

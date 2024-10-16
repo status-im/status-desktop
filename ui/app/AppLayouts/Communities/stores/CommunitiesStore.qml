@@ -246,6 +246,13 @@ QtObject {
                                                         args.description, args.color, args.emoji, from)
     }
 
+    function isDisplayNameDupeOfCommunityMember(displayName) {
+        if (displayName === "")
+            return false
+
+        return communitiesModuleInst.isDisplayNameDupeOfCommunityMember(displayName)
+    }
+
     readonly property Connections connections: Connections {
         target: communitiesModuleInst
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
