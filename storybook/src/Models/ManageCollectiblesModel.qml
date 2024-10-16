@@ -115,7 +115,7 @@ ListModel {
         },
         {
             uid: "34545656768",
-            chainId: 420,
+            chainId: 11155420,
             userHas: 1,
             name: "Kitty 1",
             collectionUid: "KT",
@@ -161,7 +161,7 @@ ListModel {
         },
         {
             uid: "123456",
-            chainId: 420,
+            chainId: 11155420,
             userHas: 0,
             name: "Kitty 2",
             collectionUid: "KT",
@@ -210,7 +210,7 @@ ListModel {
         },
         {
             uid: "12345645459537432",
-            chainId: 421613,
+            chainId: 421614,
             userHas: 0,
             name: "Big Kitty",
             collectionUid: "KT",
@@ -261,7 +261,7 @@ ListModel {
         },
         {
             uid: "pp21",
-            chainId: 421613,
+            chainId: 421614,
             userHas: 0,
             name: "pepepunk#21",
             collectionUid: "pepepunks",
@@ -299,7 +299,7 @@ ListModel {
         },
         {
             uid: "lp#666a",
-            chainId: 421613,
+            chainId: 421614,
             userHas: 0,
             name: "Lonely Panda #666",
             collectionUid: "lpan_collection",
@@ -337,7 +337,7 @@ ListModel {
         },
         {
             uid: "invalid#123",
-            chainId: 421613,
+            chainId: 421614,
             userHas: 0,
             name: "",
             collectionUid: "",
@@ -401,7 +401,7 @@ ListModel {
         },
         {
             uid: "691",
-            chainId: 421613,
+            chainId: 421614,
             name: "KILLABEAR #691",
             collectionUid: "",
             collectionName: "",
@@ -429,7 +429,7 @@ ListModel {
         },
         {
             uid: "8876",
-            chainId: 421613,
+            chainId: 421614,
             name: "KILLABEAR #2385",
             collectionUid: "",
             collectionName: "",
@@ -541,7 +541,7 @@ ListModel {
         },
         {
             uid: "lb#666",
-            chainId: 420,
+            chainId: 11155420,
             name: "Lonely Bear #666",
             collectionUid: "",
             collectionName: "",
@@ -574,7 +574,7 @@ ListModel {
         },
         {
             uid: "lb#777",
-            chainId: 420,
+            chainId: 11155420,
             name: "Lonely Turtle #777",
             collectionUid: "",
             collectionName: "",

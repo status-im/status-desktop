@@ -111,7 +111,7 @@ SplitView {
         function requestMockedFees(contractKeysAndAmounts) {
             if (!loader.item)
                 return
-            
+
             const view = loader.item
             view.feesAvailable = false
             view.totalFeeText = ""
@@ -234,7 +234,7 @@ SplitView {
                         },
                         ExpressionRole {
                             name: "chainName"
-                            expression: model.index ? "Ethereum Mainnet" : "Goerli"
+                            expression: model.index ? "Ethereum Mainnet" : "Sepolia"
                         },
                         ExpressionRole {
                             readonly property string icon1: "network/Network=Ethereum"

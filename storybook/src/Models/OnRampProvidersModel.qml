@@ -49,8 +49,8 @@ ListModel {
             supportsRecurrentPurchase: true,
             supportedAssets:[
                 { key: "111551110x0000000000000000000000000000000000000000",  chainId: 11155111, address: "0x0000000000000000000000000000000000000000"},
-                { key: "4200x0000000000000000000000000000000000000000", chainId: 420, address: "0x0000000000000000000000000000000000000000"},
-                { key: "4200xf2edf1c091f683e3fb452497d9a98a49cba84669", chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
+                { key: "4200x0000000000000000000000000000000000000000", chainId: 11155420, address: "0x0000000000000000000000000000000000000000"},
+                { key: "4200xf2edf1c091f683e3fb452497d9a98a49cba84669", chainId: 11155420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
             ],
             urlsNeedParameters: true
         }

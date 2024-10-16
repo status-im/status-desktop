@@ -232,7 +232,7 @@ Item {
             compare(selectedAssetButton.subname, modelDataToTest.symbol)
 
             //switch to a network that has no tokens and ensure its reset
-             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421613
+             controlUnderTest.buyCryptoInputParamsForm.selectedNetworkChainId = 421614
 
              waitForRendering(selectParamsPanel)
 

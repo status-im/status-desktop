@@ -15,21 +15,6 @@
     "enabled": true
   },
   {
-      "chainId": 5,
-      "chainName": "Goerli",
-      "rpcUrl": "https://goerli.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
-      "blockExplorerUrl": "https://goerli.etherscan.io/",
-      "iconUrl": "network/Network=Testnet",
-      "chainColor": "#939BA1",
-      "shortName": "goeEth",
-      "nativeCurrencyName": "Ether",
-      "nativeCurrencySymbol": "ETH",
-      "nativeCurrencyDecimals": 18,
-      "isTest": true,
-      "layer": 1,
-      "enabled": true
-  },
-  {
     "chainId": 10,
     "chainName": "Optimism",
     "rpcUrl": "https://optimism-mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
@@ -45,21 +30,6 @@
     "enabled": true
   },
   {
-    "chainId": 420,
-    "chainName": "Optimism Goerli Testnet",
-    "rpcUrl": "https://optimism-goerli.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
-    "blockExplorerUrl": "https://goerli-optimism.etherscan.io/",
-    "iconUrl": "network/Network=Testnet",
-    "chainColor": "#939BA1",
-    "shortName": "goerOpt",
-    "nativeCurrencyName": "Ether",
-    "nativeCurrencySymbol": "ETH",
-    "nativeCurrencyDecimals": 18,
-    "isTest":  true,
-    "layer":   2,
-    "enabled": false
-  },
-  {
     "chainId": 42161,
     "chainName": "Arbitrum",
     "rpcUrl": "https://arbitrum-mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
@@ -73,20 +43,5 @@
     "isTest":  false,
     "layer":   2,
     "enabled": true
-  },
-  {
-    "chainId": 421613,
-    "chainName": "Arbitrum Goerli",
-    "rpcUrl": "https://arbitrum-goerli.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
-    "blockExplorerUrl": "https://goerli.arbiscan.io/",
-    "iconUrl": "network/Network=Testnet",
-    "chainColor": "#939BA1",
-    "shortName": "rinArb",
-    "nativeCurrencyName": "Ether",
-    "nativeCurrencySymbol": "ETH",
-    "nativeCurrencyDecimals": 18,
-    "isTest":  true,
-    "layer":   2,
-    "enabled": false
   }
 ]

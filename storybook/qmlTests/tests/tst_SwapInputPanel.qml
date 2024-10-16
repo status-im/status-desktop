@@ -34,7 +34,7 @@ Item {
 
     QtObject {
         id: d
-        readonly property int goOptChainId: 420
+        readonly property int goOptChainId: 11155420
 
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {

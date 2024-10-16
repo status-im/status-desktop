@@ -54,7 +54,6 @@ QtObject {
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    readonly property bool isGoerliEnabled: profileSectionModule.walletModule.networksModule.isGoerliEnabled
 
     property var savedAddresses: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
@@ -405,30 +404,18 @@ QtObject {
         let link = Constants.networkExplorerLinks.etherscan
         if (networkShortName === Constants.networkShortChainNames.mainnet) {
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaEtherscan
-                } else {
-                    link = Constants.networkExplorerLinks.goerliEtherscan
-                }
+                link = Constants.networkExplorerLinks.sepoliaEtherscan
             }
         }
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             link = Constants.networkExplorerLinks.arbiscan
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaArbiscan
-                } else {
-                    link = Constants.networkExplorerLinks.goerliArbiscan
-                }
+                link = Constants.networkExplorerLinks.sepoliaArbiscan
             }
         } else if (networkShortName === Constants.networkShortChainNames.optimism) {
             link = Constants.networkExplorerLinks.optimism
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    link = Constants.networkExplorerLinks.sepoliaOptimism
-                } else {
-                    link = Constants.networkExplorerLinks.goerliOptimism
-                }
+                link = Constants.networkExplorerLinks.sepoliaOptimism
             }
         }
         return link
@@ -458,30 +445,18 @@ QtObject {
         let networkName = Constants.openseaExplorerLinks.ethereum
         if (networkShortName === Constants.networkShortChainNames.mainnet) {
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    networkName = Constants.openseaExplorerLinks.sepoliaEthereum
-                } else {
-                    networkName = Constants.openseaExplorerLinks.goerliEthereum
-                }
+                networkName = Constants.openseaExplorerLinks.sepoliaEthereum
             }
         }
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             networkName = Constants.openseaExplorerLinks.arbitrum
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    networkName = Constants.openseaExplorerLinks.sepoliaArbitrum
-                } else {
-                    networkName = Constants.openseaExplorerLinks.goerliArbitrum
-                }
+                networkName = Constants.openseaExplorerLinks.sepoliaArbitrum
             }
         } else if (networkShortName === Constants.networkShortChainNames.optimism) {
             networkName = Constants.openseaExplorerLinks.optimism
             if (root.areTestNetworksEnabled) {
-                if (!root.isGoerliEnabled) {
-                    networkName = Constants.openseaExplorerLinks.sepoliaOptimism
-                } else {
-                    networkName = Constants.openseaExplorerLinks.goerliOptimism
-                }
+                networkName = Constants.openseaExplorerLinks.sepoliaOptimism
             }
         }
         return networkName

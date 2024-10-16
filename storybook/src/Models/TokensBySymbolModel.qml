@@ -18,9 +18,9 @@ ListModel {
                 { chainId: 1, address: "0x0000000000000000000000000000000000000000"},
                 { chainId: 5, address: "0x0000000000000000000000000000000000000000"},
                 { chainId: 10, address: "0x0000000000000000000000000000000000000000"},
-                { chainId: 420, address: "0x0000000000000000000000000000000000000000"},
+                { chainId: 11155420, address: "0x0000000000000000000000000000000000000000"},
                 { chainId: 42161, address: "0x0000000000000000000000000000000000000000"},
-                { chainId: 421613, address: "0x0000000000000000000000000000000000000000"},
+                { chainId: 421614, address: "0x0000000000000000000000000000000000000000"},
                 { chainId: 11155111, address: "0x0000000000000000000000000000000000000000"},
             ],
             decimals: 18,
@@ -48,8 +48,8 @@ ListModel {
             sources: ";" + status + ";",
             addressPerChain: [
                 {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
-                { chainId: 420, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
-                { chainId: 421613, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 11155420, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                { chainId: 421614, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
                 { chainId: 11155111, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
                 { chainId: 10, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
             ],
@@ -82,8 +82,8 @@ ListModel {
                 { chainId: 42161, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
                 { chainId: 5, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
-                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
-                { chainId: 421613, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                { chainId: 11155420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
+                { chainId: 421614, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
             ],
             decimals: 18,
             type: 1,
@@ -112,7 +112,7 @@ ListModel {
             sources: ";" + uniswap + ";" + status + ";",
             addressPerChain: [
                 { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
-                { chainId: 421613, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                { chainId: 421614, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
             ],
             decimals: 18,
             type: 1,
@@ -169,8 +169,8 @@ ListModel {
             communityId: "",
             sources: ";" + uniswap + ";" + status + ";",
             addressPerChain: [
-                { chainId: 420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
-                { chainId: 421613, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                { chainId: 11155420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                { chainId: 421614, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
             ],
             decimals: 18,
             type: 1,
@@ -197,7 +197,7 @@ ListModel {
             symbol: "ZRX",
             sources: ";" + custom + ";",
             addressPerChain: [
-                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271e0f"}
+                { chainId: 11155420, address: "0x6b175474e89094c44da98b954eedeac495271e0f"}
             ],
             decimals: 0,
             type: 1,
@@ -223,7 +223,7 @@ ListModel {
             symbol: "OMG",
             sources: ";" + custom + ";",
             addressPerChain: [
-                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271p0f"}
+                { chainId: 11155420, address: "0x6b175474e89094c44da98b954eedeac495271p0f"}
             ],
             decimals: 0,
             type: 1,
@@ -249,7 +249,7 @@ ListModel {
             symbol: "MET",
             sources: ";" + custom + ";",
             addressPerChain: [
-                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
+                { chainId: 11155420, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
                 { chainId: 10, address: "0x6b175474e89094c44da98b954eedeac495271d0f"}
             ],
             decimals: 0,
@@ -276,7 +276,7 @@ ListModel {
             symbol: "AST",
             sources: ";" + custom + ";",
             addressPerChain: [
-                { chainId: 420, address: "0x6b175474e89094c44da98b954eedeac495271a0f"}
+                { chainId: 11155420, address: "0x6b175474e89094c44da98b954eedeac495271a0f"}
             ],
             decimals: 0,
             type: 1,

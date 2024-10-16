@@ -36,7 +36,6 @@ StatusMenu {
     property ProfileStores.ContactsStore contactsStore
     property NetworkConnectionStore networkConnectionStore
     property bool areTestNetworksEnabled: false
-    property bool isGoerliEnabled: false
 
     signal openSendModal(address: string)
 
@@ -216,8 +215,7 @@ StatusMenu {
         text: d.getViewText(qsTr("Etherscan"))
         icon.name: "link"
         onTriggered: {
-            let url = Utils.getEtherscanUrl(d.chains.mainnet, root.areTestNetworksEnabled, !root.isGoerliEnabled,
-                                            d.cleanSelectedAddress, d.isAddress)
+            let url = Utils.getEtherscanUrl(d.chains.mainnet, root.areTestNetworksEnabled, d.cleanSelectedAddress, d.isAddress)
             Global.openLink(url)
         }
     }
@@ -227,8 +225,7 @@ StatusMenu {
         text: d.getViewText(qsTr("Arbiscan"))
         icon.name: "link"
         onTriggered: {
-            let url = Utils.getEtherscanUrl(d.chains.arbitrum, root.areTestNetworksEnabled, !root.isGoerliEnabled,
-                                            d.cleanSelectedAddress, d.isAddress)
+            let url = Utils.getEtherscanUrl(d.chains.arbitrum, root.areTestNetworksEnabled, d.cleanSelectedAddress, d.isAddress)
             Global.openLink(url)
         }
     }
@@ -238,8 +235,7 @@ StatusMenu {
         text: d.getViewText(qsTr("Optimism Explorer"))
         icon.name: "link"
         onTriggered: {
-            let url = Utils.getEtherscanUrl(d.chains.optimism, root.areTestNetworksEnabled, !root.isGoerliEnabled,
-                                            d.cleanSelectedAddress, d.isAddress)
+            let url = Utils.getEtherscanUrl(d.chains.optimism, root.areTestNetworksEnabled, d.cleanSelectedAddress, d.isAddress)
             Global.openLink(url)
         }
     }

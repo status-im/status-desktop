@@ -28,10 +28,10 @@ StatusFlatButton {
     onClicked: moreMenu.popup(-moreMenu.width + width, height + 4)
 
     function getExplorerName() {
-        if (root.networkShortName === Constants.networkShortChainNames.arbitrum || root.networkShortName === Constants.networkShortChainNames.arbitrum_goerli) {
+        if (root.networkShortName === Constants.networkShortChainNames.arbitrum) {
             return qsTr("Arbiscan")
         }
-        if (root.networkShortName === Constants.networkShortChainNames.optimism || root.networkShortName === Constants.networkShortChainNames.optimism_goerli) {
+        if (root.networkShortName === Constants.networkShortChainNames.optimism) {
             return qsTr("Optimistic")
         }
         return qsTr("Etherscan")

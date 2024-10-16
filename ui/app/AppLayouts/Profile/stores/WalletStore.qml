@@ -18,7 +18,6 @@ QtObject {
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
     readonly property bool areTestNetworksEnabled: networksModuleInst.areTestNetworksEnabled
-    readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled
 
     readonly property var combinedNetworks: networksModuleInst.combinedNetworks
 

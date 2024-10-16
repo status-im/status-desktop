@@ -49,7 +49,7 @@ SplitView {
 
             balances: [
                 ListElement {
-                    chainId: 420
+                    chainId: 11155420
                     balance: "1013151281976507736"
                     account: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
                 },

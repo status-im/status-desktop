@@ -156,7 +156,6 @@ Item {
                 onTriggered: {
                     let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
                                             root.walletStore.areTestNetworksEnabled,
-                                            root.walletStore.isGoerliEnabled,
                                             contextMenu.accountAddress);
                     Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
                 }

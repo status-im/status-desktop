@@ -52,7 +52,7 @@ SplitView {
                         { chainId: 1, balanceAsString: "1234.50", iconUrl: "network/Network=Ethereum" },
                         { chainId: 42161, balanceAsString: "55.91", iconUrl: "network/Network=Arbitrum" },
                         { chainId: 10, balanceAsString: "45.12", iconUrl: "network/Network=Optimism" },
-                        { chainId: 420, balanceAsString: "1.23", iconUrl: "network/Network=Testnet" }
+                        { chainId: 11155420, balanceAsString: "1.23", iconUrl: "network/Network=Testnet" }
                     ]
                     Component.onCompleted: append(data)
                 }
