@@ -18,8 +18,7 @@ pytestmark = marks
                  'Change the password and login with new password')
 @pytest.mark.case(703005)
 @pytest.mark.parametrize('user_account', [RandomUser()])
-# @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15178')
-# @pytest.mark.critical
+@pytest.mark.critical
 # TODO: follow up on https://github.com/status-im/status-desktop/issues/13013
 def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_account):
     with step('Open change password view'):
