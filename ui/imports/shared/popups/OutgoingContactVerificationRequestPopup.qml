@@ -17,7 +17,6 @@ CommonContactDialog {
 
     property ProfileStores.ProfileStore profileStore
 
-    property int verificationStatus
     property string verificationChallenge
     property string verificationResponse
     property string verificationResponseDisplayName

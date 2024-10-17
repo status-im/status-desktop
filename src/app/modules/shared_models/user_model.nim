@@ -22,8 +22,6 @@ type
     IsUntrustworthy
     IsBlocked
     ContactRequest
-    IncomingVerificationStatus
-    OutgoingVerificationStatus
     IsCurrentUser
     DefaultDisplayName
     OptionalName
@@ -99,8 +97,6 @@ QtObject:
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
-      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.IsCurrentUser.int: "isCurrentUser",
       ModelRole.DefaultDisplayName.int: "defaultDisplayName",
       ModelRole.OptionalName.int: "optionalName",
@@ -160,10 +156,6 @@ QtObject:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerificationStatus:
-      result = newQVariant(item.incomingVerificationStatus.int)
-    of ModelRole.OutgoingVerificationStatus:
-      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.IsCurrentUser:
       result = newQVariant(item.isCurrentUser)
     of ModelRole.DefaultDisplayName:
@@ -365,24 +357,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
-    self.itemChanged(pubKey)
-
-  proc updateIncomingRequestStatus*(
-      self: Model,
-      pubKey: string,
-      requestStatus: VerificationRequestStatus
-      ) =
-    let ind = self.findIndexByPubKey(pubKey)
-    if(ind == -1):
-      return
-
-    self.items[ind].incomingVerificationStatus = requestStatus
-
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.IncomingVerificationStatus.int
-    ])
     self.itemChanged(pubKey)
 
   proc updateTrustStatus*(self: Model, pubKey: string, isUntrustworthy: bool) =

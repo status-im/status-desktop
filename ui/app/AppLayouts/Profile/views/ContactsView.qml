@@ -241,10 +241,6 @@ SettingsContentBase {
                     onContactRequestRejected: {
                         root.contactsStore.dismissContactRequest(publicKey, "")
                     }
-
-                    onShowVerificationRequest: {
-                        Global.openIncomingIDRequestPopup(publicKey, null, null)
-                    }
                 }
 
                 ContactsListPanel {

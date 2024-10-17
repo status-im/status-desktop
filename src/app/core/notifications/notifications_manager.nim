@@ -292,12 +292,6 @@ QtObject:
         self.notificationCheck(title, message, details, self.settingsService.getNotifSettingContactRequests())
         return
 
-    # In case of identity verification request
-    elif(details.notificationType == NotificationType.IdentityVerificationRequest):
-      if(self.settingsService.getNotifSettingIdentityVerificationRequests() != VALUE_NOTIF_TURN_OFF):
-        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingIdentityVerificationRequests())
-        return
-
     # In case of new message (regardless it's message with mention or not)
     elif(details.notificationType == NotificationType.NewMessage or
       details.notificationType == NotificationType.NewMessageWithPersonalMention or

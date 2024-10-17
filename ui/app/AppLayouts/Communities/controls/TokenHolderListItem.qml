@@ -108,7 +108,7 @@ ItemDelegate {
             userName: ProfileUtils.displayName("", root.contactDetails.ensName, root.contactDetails.displayName, root.contactDetails.alias)
             pubKey: root.contactDetails.isEnsVerified ? "" : Utils.getCompressedPk(root.contactId)
             isContact: root.contactDetails.isContact
-            isVerified: root.contactDetails.verificationStatus === Constants.verificationStatus.verified
+            isVerified: root.contactDetails.trustStatus === Constants.trustStatus.trusted
             isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
             isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
             status: root.contactDetails.onlineStatus

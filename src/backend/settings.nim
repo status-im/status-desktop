@@ -52,12 +52,6 @@ proc getContactRequests*(): RpcResponse[JsonNode] =
 proc setContactRequests*(value: string): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_notificationsSetContactRequests", %* [value])
 
-proc getIdentityVerificationRequests*(): RpcResponse[JsonNode] =
-  return core.callPrivateRPC("settings_notificationsGetIdentityVerificationRequests")
-
-proc setIdentityVerificationRequests*(value: string): RpcResponse[JsonNode] =
-  return core.callPrivateRPC("settings_notificationsSetIdentityVerificationRequests", %* [value])
-
 proc getSoundEnabled*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_notificationsGetSoundEnabled")
 
