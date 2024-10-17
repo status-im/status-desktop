@@ -116,7 +116,7 @@ QObject {
                 if (!model.visible)
                     return false
 
-                if (filteredBalances.ModelCount.count === 0)
+                if (filteredBalances.ModelCount.empty)
                     return false
 
                 if (hasCommunityId)
