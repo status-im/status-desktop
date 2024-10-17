@@ -22,13 +22,13 @@ let memberC = createTestMemberItem("0xc")
 let memberD = createTestMemberItem("0xd")
 let memberE = createTestMemberItem("0xe")
 
-suite "empty model":
+suite "empty member model":
   let model = newModel()
 
   test "initial size":
     require(model.rowCount() == 0)
 
-suite "updating items":
+suite "updating member items":
   setup:
     let model = newModel()
     model.addItems(@[memberA, memberB, memberC])
