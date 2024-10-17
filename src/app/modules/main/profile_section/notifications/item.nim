@@ -19,9 +19,15 @@ type
     globalMentions: string
     otherMessages: string
 
-proc initItem*(id, name, image, color: string, joinedTimestamp: int64, itemType: Type, muteAllMessages = false, 
-  personalMentions = VALUE_NOTIF_SEND_ALERTS, globalMentions = VALUE_NOTIF_SEND_ALERTS, 
-  otherMessages = VALUE_NOTIF_TURN_OFF): Item =
+proc initItem*(
+    id, name, image, color: string,
+    joinedTimestamp: int64,
+    itemType: Type,
+    muteAllMessages = false, 
+    personalMentions = VALUE_NOTIF_SEND_ALERTS,
+    globalMentions = VALUE_NOTIF_SEND_ALERTS, 
+    otherMessages = VALUE_NOTIF_TURN_OFF,
+  ): Item =
   result = Item()
   result.id = id
   result.name = name
@@ -46,8 +52,14 @@ proc `name=`*(self: Item, value: string) =
 proc image*(self: Item): string =
   return self.image
 
+proc `image=`*(self: Item, value: string) =
+  self.image = value
+
 proc color*(self: Item): string =
   self.color
+
+proc `color=`*(self: Item, value: string) =
+  self.color = value
 
 proc joinedTimestamp*(self: Item): int64 =
   return self.joinedTimestamp

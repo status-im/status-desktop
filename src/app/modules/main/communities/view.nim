@@ -315,7 +315,7 @@ QtObject:
     self.model.addItem(item)
     self.communityAdded(item.id)
 
-  proc updateItem(self: View, item: SectionItem) =
+  proc updateItem*(self: View, item: SectionItem) =
     self.model.editItem(item)
     self.communityChanged(item.id)
 

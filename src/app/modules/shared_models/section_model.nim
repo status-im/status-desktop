@@ -2,8 +2,9 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import json
 
-import section_item, member_model
+import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
+import model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -34,7 +35,6 @@ type
     EnsOnly
     Muted
     MembersModel
-    PendingRequestsToJoinModel
     HistoryArchiveSupportEnabled
     PinMessageAllMembersEnabled
     BannedMembersModel
@@ -111,7 +111,6 @@ QtObject:
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"members",
-      ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
       ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
       ModelRole.BannedMembersModel.int:"bannedMembers",
@@ -191,8 +190,6 @@ QtObject:
       result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
-    of ModelRole.PendingRequestsToJoinModel:
-      result = newQVariant(item.pendingRequestsToJoin)
     of ModelRole.HistoryArchiveSupportEnabled:
       result = newQVariant(item.historyArchiveSupportEnabled)
     of ModelRole.PinMessageAllMembersEnabled:
@@ -283,9 +280,11 @@ QtObject:
     self.countChanged()
 
   proc setMuted*(self: SectionModel, id: string, muted: bool) = 
-
     let index = self.getItemIndex(id)
-    if (index == -1):
+    if index == -1:
+      return
+
+    if self.items[index].muted == muted:
       return
 
     self.items[index].muted = muted 
@@ -294,14 +293,119 @@ QtObject:
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
   proc editItem*(self: SectionModel, item: SectionItem) =
-    let index = self.getItemIndex(item.id)
-    if (index == -1):
+    let ind = self.getItemIndex(item.id)
+    if ind == -1:
+      return
+    
+    var roles: seq[int] = @[]
+
+    updateRoleWithValue(name, Name, item.name)
+    updateRoleWithValue(memberRole, MemberRole, item.memberRole)
+    updateRoleWithValue(isControlNode, IsControlNode, item.isControlNode)
+    updateRoleWithValue(description, Description, item.description)
+    updateRoleWithValue(introMessage, IntroMessage, item.introMessage)
+    updateRoleWithValue(outroMessage, OutroMessage, item.outroMessage)
+    updateRoleWithValue(image, Image, item.image)
+    updateRoleWithValue(bannerImageData, BannerImageData, item.bannerImageData)
+    updateRoleWithValue(icon, Icon, item.icon)
+    updateRoleWithValue(color, Color, item.color)
+    updateRoleWithValue(tags, Tags, item.tags)
+    updateRoleWithValue(hasNotification, HasNotification, item.hasNotification)
+    updateRoleWithValue(notificationsCount, NotificationsCount, item.notificationsCount)
+    updateRoleWithValue(active, Active, item.active)
+    updateRoleWithValue(enabled, Enabled, item.enabled)
+    updateRoleWithValue(joined, Joined, item.joined)
+    updateRoleWithValue(spectated, Spectated, item.spectated)
+    updateRoleWithValue(isMember, IsMember, item.isMember)
+    updateRoleWithValue(isMember, IsMember, item.isMember)
+    updateRoleWithValue(canManageUsers, CanManageUsers, item.canManageUsers)
+    updateRoleWithValue(canRequestAccess, CanRequestAccess, item.canRequestAccess)
+    updateRoleWithValue(access, Access, item.access)
+    updateRoleWithValue(ensOnly, EnsOnly, item.ensOnly)
+    updateRoleWithValue(muted, Muted, item.muted)
+    updateRoleWithValue(historyArchiveSupportEnabled, HistoryArchiveSupportEnabled, item.historyArchiveSupportEnabled)
+    updateRoleWithValue(pinMessageAllMembersEnabled, PinMessageAllMembersEnabled, item.pinMessageAllMembersEnabled)
+    updateRoleWithValue(encrypted, Encrypted, item.encrypted)
+    updateRoleWithValue(pubsubTopic, PubsubTopic, item.pubsubTopic)
+    updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
+    updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
+    updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
+
+    self.items[ind].members.updateToTheseItems(item.members.getItems())
+    self.items[ind].bannedMembers.updateToTheseItems(item.bannedMembers.getItems())
+    self.items[ind].pendingMemberRequests.updateToTheseItems(item.pendingMemberRequests.getItems())
+    self.items[ind].declinedMemberRequests.updateToTheseItems(item.declinedMemberRequests.getItems())
+
+    if roles.len == 0:
       return
 
-    self.items[index] = item
-    let dataIndex = self.createIndex(index, 0, nil)
+    let dataIndex = self.createIndex(ind, 0, nil)
     defer: dataIndex.delete
-    self.dataChanged(dataIndex, dataIndex)
+    self.dataChanged(dataIndex, dataIndex, roles)
+
+  proc updateMemberItemInSections*(
+      self: SectionModel,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      isEnsVerified: bool,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      isContact: bool,
+      isVerified: bool,
+      isUntrustworthy: bool,
+    ) =
+    for item in self.items:
+      # TODO refactor to use only one model https://github.com/status-im/status-desktop/issues/16433
+      item.members.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.bannedMembers.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.pendingMemberRequests.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
+      item.declinedMemberRequests.updateItem(
+        pubKey,
+        displayName,
+        ensName,
+        isEnsVerified,
+        localNickname,
+        alias,
+        icon,
+        isContact,
+        isVerified,
+        isUntrustworthy,
+      )
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
     if nth >= 0 and nth < self.items.len:
@@ -330,13 +434,13 @@ QtObject:
 
   proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].active):
+      if self.items[i].active:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = true
@@ -348,9 +452,11 @@ QtObject:
   proc notificationsCountChanged*(self: SectionModel) {.signal.}
 
   proc enableDisableSection(self: SectionModel, sectionType: SectionType, value: bool) =
-    if(sectionType != SectionType.Community):
+    if sectionType != SectionType.Community:
       for i in 0 ..< self.items.len:
-        if(self.items[i].sectionType == sectionType):
+        if self.items[i].sectionType == sectionType:
+          if self.items[i].enabled == value:
+            continue
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.items[i].enabled = value
@@ -359,9 +465,9 @@ QtObject:
       var topInd = -1
       var bottomInd = -1
       for i in 0 ..< self.items.len:
-        if(self.items[i].sectionType == sectionType):
+        if self.items[i].sectionType == sectionType:
           self.items[i].enabled = value
-          if(topInd == -1):
+          if topInd == -1:
             topInd = i
 
           bottomInd = i
@@ -393,21 +499,31 @@ QtObject:
 
   proc updateIsPendingOwnershipRequest*(self: SectionModel, id: string, isPending: bool) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
+
+        if self.items[i].isPendingOwnershipRequest == isPending:
+          return
+
         self.items[i].setIsPendingOwnershipRequest(isPending)
         self.dataChanged(index, index, @[ModelRole.IsPendingOwnershipRequest.int])
         return
 
   proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let index = self.createIndex(i, 0, nil)
+    for ind in 0 ..< self.items.len:
+      if self.items[ind].id == id:
+        var roles: seq[int] = @[]
+
+        updateRole(hasNotification, HasNotification)
+        updateRole(notificationsCount, NotificationsCount)
+
+        if roles.len == 0:
+          return
+
+        let index = self.createIndex(ind, 0, nil)
         defer: index.delete
-        self.items[i].hasNotification = hasNotification
-        self.items[i].notificationsCount = notificationsCount
-        self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
+        self.dataChanged(index, index, roles)
         self.notificationsCountChanged()
         return
 
@@ -423,7 +539,6 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].appendCommunityToken(item)
-        self.dataChanged(index, index, @[ModelRole.CommunityTokensModel.int])
         return
 
   proc getSectionNameById*(self: SectionModel, sectionId: string): string {.slot.} =
@@ -476,9 +591,23 @@ QtObject:
     for pubkey, airdropAddress in communityMembersAirdropAddress.pairs:
       self.items[index].members.setAirdropAddress(pubkey, airdropAddress)
 
-  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) = 
+  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) =
     let index = self.getItemIndex(id)
     if (index == -1):
       return
 
     self.items[index].communityTokens.setItems(communityTokensItems)
+
+  proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+
+    self.items[i].pendingMemberRequests.addItem(memberItem)
+
+  proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+
+    self.items[i].pendingMemberRequests.removeItemById(memberId)
