@@ -69,6 +69,26 @@ WalletConnectSDKBase {
         wcCalls.rejectSessionRequest(topic, id, error)
     }
 
+    populateAuthPayload: function(id, authPayload, chains, methods) {
+        wcCalls.populateAuthPayload(id, authPayload, chains, methods)
+    }
+
+    formatAuthMessage: function(id, request, iss) {
+        wcCalls.formatAuthMessage(id, request, iss)
+    }
+
+    acceptSessionAuthenticate: function(id, auths) {
+        wcCalls.acceptSessionAuthenticate(id, auths)
+    }
+
+    rejectSessionAuthenticate: function(id, error) {
+        wcCalls.rejectSessionAuthenticate(id, error)
+    }
+
+    buildAuthObject: function(id, authPayload, signature, iss) {
+        wcCalls.buildAuthObject(id, authPayload, signature, iss)
+    }
+
     QtObject {
         id: d
 
@@ -253,6 +273,81 @@ WalletConnectSDKBase {
                                    `
             )
         }
+
+        function populateAuthPayload(id, authPayload, chains, methods) {
+            console.debug(`WC WalletConnectSDK.wcCall.populateAuthPayload; id: "${id}", authPayload: ${JSON.stringify(authPayload)}, chains: ${JSON.stringify(chains)}, methods: ${JSON.stringify(methods)}`)
+
+            d.engine.runJavaScript(`
+                                    wc.populateAuthPayload(${JSON.stringify(authPayload)}, ${JSON.stringify(chains)}, ${JSON.stringify(methods)})
+                                    .then((value) => {
+                                        wc.statusObject.onPopulateAuthPayloadResponse("${id}", value, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onPopulateAuthPayloadResponse("${id}", "", e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function formatAuthMessage(id, request, iss) {
+            console.debug(`WC WalletConnectSDK.wcCall.formatAuthMessage; id: ${id}, request: ${JSON.stringify(request)}, iss: ${iss}`)
+
+            d.engine.runJavaScript(`
+                                    wc.formatAuthMessage(${JSON.stringify(request)}, "${iss}")
+                                    .then((value) => {
+                                        wc.statusObject.onFormatAuthMessageResponse(${id}, value, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onFormatAuthMessageResponse(${id}, "", e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function buildAuthObject(id, authPayload, signature, iss) {
+            console.debug(`WC WalletConnectSDK.wcCall.buildAuthObject; id: ${id}, authPayload: ${JSON.stringify(authPayload)}, signature: ${signature}, iss: ${iss}`)
+
+            d.engine.runJavaScript(`
+                                    wc.buildAuthObject(${JSON.stringify(authPayload)}, "${signature}", "${iss}")
+                                    .then((value) => {
+                                        wc.statusObject.onBuildAuthObjectResponse(${id}, value, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onBuildAuthObjectResponse(${id}, "", e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function acceptSessionAuthenticate(id, auths) {
+            console.debug(`WC WalletConnectSDK.wcCall.acceptSessionAuthenticate; id: ${id}, auths: ${JSON.stringify(auths)}`)
+
+            d.engine.runJavaScript(`
+                                    wc.acceptSessionAuthenticate(${id}, ${JSON.stringify(auths)})
+                                    .then((value) => {
+                                        wc.statusObject.onAcceptSessionAuthenticateResult(${id}, value, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onAcceptSessionAuthenticateResult(${id}, "", e.message)
+                                    })
+                                   `
+            )
+        }
+
+        function rejectSessionAuthenticate(id, error) {
+            console.debug(`WC WalletConnectSDK.wcCall.rejectSessionAuthenticate; id: ${id}, error: "${error}"`)
+
+            d.engine.runJavaScript(`
+                                    wc.rejectSessionAuthenticate(${id}, ${error})
+                                    .then((value) => {
+                                        wc.statusObject.onRejectSessionAuthenticateResult(${id}, value, "")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.onRejectSessionAuthenticateResult(${id}, "", e.message)
+                                    })
+                                   `
+            )
+        }
     }
 
     QtObject {
@@ -370,6 +465,36 @@ WalletConnectSDKBase {
         function onSessionRequestExpire(id) {
             console.debug(`WC WalletConnectSDK.onSessionRequestExpire; id: ${id}`)
             root.sessionRequestExpired(id)
+        }
+
+        function onPopulateAuthPayloadResponse(id, payload, error) {
+            console.debug(`WC WalletConnectSDK.onPopulateAuthPayloadResponse; id: ${id}, payload: ${JSON.stringify(payload)}, error: ${error}`)
+            root.populateAuthPayloadResult(id, payload, error)
+        }
+
+        function onFormatAuthMessageResponse(id, message, error) {
+            console.debug(`WC WalletConnectSDK.onFormatAuthMessageResponse; id: ${id}, message: ${JSON.stringify(message)}, error: ${error}`)
+            root.formatAuthMessageResult(id, message, error)
+        }
+
+        function onBuildAuthObjectResponse(id, authObject, error) {
+            console.debug(`WC WalletConnectSDK.onBuildAuthObjectResponse; id: ${id}, authObject: ${JSON.stringify(authObject)}, error: ${error}`)
+            root.buildAuthObjectResult(id, authObject, error)
+        }
+
+        function onSessionAuthenticate(details) {
+            console.debug(`WC WalletConnectSDK.onSessionAuthenticate; details: ${JSON.stringify(details)}`)
+            root.sessionAuthenticateRequest(details)
+        }
+
+        function onAcceptSessionAuthenticateResult(id, result, error) {
+            console.debug(`WC WalletConnectSDK.onAcceptSessionAuthenticateResult; id: ${id}, result: ${JSON.stringify(result)}, error: ${error}`)
+            root.acceptSessionAuthenticateResult(id, result, error)
+        }
+
+        function onRejectSessionAuthenticateResult(id, result, error) {
+            //console.debug(`WC WalletConnectSDK.onRejectSessionAuthenticateResult; id: ${id}, result: ${result}, error: ${error}`)
+            root.rejectSessionAuthenticateResult(id, result, error)
         }
     }
 
