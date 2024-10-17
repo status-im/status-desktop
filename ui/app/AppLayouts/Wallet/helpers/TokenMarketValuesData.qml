@@ -1,10 +1,10 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 
 import utils 1.0
 
-ChartStoreBase {
+ChartDataBase {
     id: root
 
     function setTimeAndValueData(data, range) {
@@ -13,33 +13,33 @@ ChartStoreBase {
         for (var i = 0; i < data.length; ++i) {
             marketValues[i] = data[i].close;
 
-            timeRanges[i] = range === ChartStoreBase.TimeRange.Weekly || range === ChartStoreBase.TimeRange.Monthly ?
+            timeRanges[i] = range === ChartDataBase.TimeRange.Weekly || range === ChartDataBase.TimeRange.Monthly ?
                         LocaleUtils.getDayMonth(data[i].time * 1000):
                         LocaleUtils.getMonthYear(data[i].time * 1000)
         }
 
         switch(range) {
-        case ChartStoreBase.TimeRange.Weekly: {
+        case ChartDataBase.TimeRange.Weekly: {
             weeklyData = marketValues
             weeklyTimeRange = timeRanges
             break
         }
-        case ChartStoreBase.TimeRange.Monthly: {
+        case ChartDataBase.TimeRange.Monthly: {
             monthlyData = marketValues
             monthlyTimeRange = timeRanges
             break
         }
-        case ChartStoreBase.TimeRange.HalfYearly: {
+        case ChartDataBase.TimeRange.HalfYearly: {
             halfYearlyData = marketValues
             halfYearlyTimeRange = timeRanges
             break
         }
-        case ChartStoreBase.TimeRange.Yearly: {
+        case ChartDataBase.TimeRange.Yearly: {
             yearlyData = marketValues
             yearlyTimeRange = timeRanges
             break
         }
-        case ChartStoreBase.TimeRange.All: {
+        case ChartDataBase.TimeRange.All: {
             allData = marketValues
             allTimeRange = timeRanges
             if(data.length > 0)

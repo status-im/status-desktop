@@ -18,8 +18,6 @@ QtObject {
 
     required property CurrenciesStore currencyStore
 
-    property TokenMarketValuesStore marketValueStore: TokenMarketValuesStore {}
-
     function setNeverAskAboutUnfurlingAgain(value) {
         localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
     }
