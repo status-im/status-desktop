@@ -64,7 +64,6 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   chatId*: string
   communityId*: string
   membershipStatus*: ActivityCenterMembershipStatus
-  verificationStatus*: VerificationStatus
   name*: string
   author*: string
   installationId*: string
@@ -85,7 +84,6 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     chatId: {self.chatId},
     communityId: {self.communityId},
     membershipStatus: {self.membershipStatus},
-    contactVerificationStatus: {self.verificationStatus},
     author: {self.author},
     installationId: {self.installationId},
     notificationType: {$self.notificationType.int},
@@ -112,13 +110,6 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
     (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) and
     membershipStatusInt <= ord(high(ActivityCenterMembershipStatus)))):
       result.membershipStatus = ActivityCenterMembershipStatus(membershipStatusInt)
-
-  result.verificationStatus = VerificationStatus.Unverified
-  var verificationStatusInt: int
-  if (jsonObj.getProp("contactVerificationStatus", verificationStatusInt) and
-    (verificationStatusInt >= ord(low(VerificationStatus)) and
-    verificationStatusInt <= ord(high(VerificationStatus)))):
-      result.verificationStatus = VerificationStatus(verificationStatusInt)
 
   discard jsonObj.getProp("author", result.author)
   discard jsonObj.getProp("installationId", result.installationId)

@@ -494,16 +494,6 @@ QtObject {
         readonly property int untrustworthy: 2
     }
 
-    readonly property QtObject verificationStatus: QtObject {
-        readonly property int unverified: 0
-        readonly property int verifying: 1
-        readonly property int verified: 2
-        readonly property int declined: 3
-        readonly property int canceled: 4
-        readonly property int trusted: 5
-        readonly property int untrustworthy: 6
-    }
-
     readonly property QtObject contactsPanelUsage: QtObject {
         readonly property int unknownPosition: -1
         readonly property int mutualContacts: 0

@@ -85,7 +85,6 @@ SplitView {
                                       isSyncing: false,
                                       trustStatus: ctrlTrustStatus.currentValue,
                                       verificationStatus: ctrlVerificationStatus.currentValue,
-                                      incomingVerificationStatus: ctrlIncomingVerificationStatus.currentValue,
                                       contactRequestState: ctrlContactRequestState.currentValue,
                                       bio: bio.text,
                                       onlineStatus: ctrlOnlineStatus.currentValue
@@ -319,7 +318,6 @@ SplitView {
                         implicitWidth: 640
 
                         readOnly: ctrlReadOnly.checked
-                        idVerificationFlowsEnabled: true // enabled in SB
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")
@@ -537,38 +535,6 @@ SplitView {
                 RowLayout {
                     Layout.fillWidth: true
 
-                    Label { text: "incomingVerificationStatus:" }
-                    ComboBox {
-                        id: ctrlIncomingVerificationStatus
-                        enabled: ctrlIsContact.checked && !switchOwnProfile.checked
-                        textRole: "text"
-                        valueRole: "value"
-                        model: [
-                            { value: Constants.verificationStatus.unverified, text: "unverified" },
-                            { value: Constants.verificationStatus.verifying, text: "verifying" },
-                            { value: Constants.verificationStatus.verified, text: "verified" },
-                            { value: Constants.verificationStatus.declined, text: "declined" },
-                            { value: Constants.verificationStatus.canceled, text: "canceled" },
-                            { value: Constants.verificationStatus.trusted, text: "trusted" },
-                            { value: Constants.verificationStatus.untrustworthy, text: "untrustworthy" }
-                        ]
-                    }
-                    Label { text: "verificationStatus:" }
-                    ComboBox {
-                        id: ctrlVerificationStatus
-                        enabled: ctrlIsContact.checked && !switchOwnProfile.checked
-                        textRole: "text"
-                        valueRole: "value"
-                        model: [
-                            { value: Constants.verificationStatus.unverified, text: "unverified" },
-                            { value: Constants.verificationStatus.verifying, text: "verifying" },
-                            { value: Constants.verificationStatus.verified, text: "verified" },
-                            { value: Constants.verificationStatus.declined, text: "declined" },
-                            { value: Constants.verificationStatus.canceled, text: "canceled" },
-                            { value: Constants.verificationStatus.trusted, text: "trusted" },
-                            { value: Constants.verificationStatus.untrustworthy, text: "untrustworthy" }
-                        ]
-                    }
                     Button {
                         text: "Send ID request"
                         onClicked: {

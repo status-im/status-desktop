@@ -32,8 +32,6 @@ QObject {
     readonly property bool isUntrustworthy: d.contactDetails.isUntrustworthy ?? false
     readonly property bool isBlocked: d.contactDetails.isBlocked ?? false
     readonly property int contactRequestState: d.contactDetails.contactRequest ?? Constants.ContactRequestState.None
-    readonly property int incomingVerificationStatus: d.contactDetails.incomingVerificationStatus ?? Constants.verificationStatus.unverified
-    readonly property int outgoingVerificationStatus: d.contactDetails.outgoingVerificationStatus ?? Constants.verificationStatus.unverified
     readonly property string defaultDisplayName: d.contactDetails.defaultDisplayName ?? ""
     readonly property string optionalName: d.contactDetails.optionalName ?? ""
     readonly property int lastUpdated: d.contactDetails.lastUpdated ?? 0
@@ -50,11 +48,9 @@ QObject {
     // Backwards compatibility properties - Don't use in new code
     // TODO: #14965 - Try to remove these properties
     readonly property string name: ensName
-    readonly property int verificationStatus: outgoingVerificationStatus
 
     // Extra properties provided by getContactDetailsAsJson, not available in the model
     // TODO: #14964 - Review all the model rolenames and fill the rest of the properties with data from the model
-    //readonly property int verificationStatus: d.contactDetails.verificationStatus ?? Constants.verificationStatus.unverified
     //readonly property var socialLinks: d.contactDetails.socialLinks ?? []
 
     ModelEntry {
@@ -91,8 +87,6 @@ QObject {
             readonly property bool isUntrustworthy: false
             readonly property bool isBlocked: false
             readonly property int contactRequestState: Constants.ContactRequestState.None
-            readonly property int incomingVerificationStatus: Constants.verificationStatus.unverified
-            readonly property int outgoingVerificationStatus: Constants.verificationStatus.unverified
             readonly property string defaultDisplayName: root.profileStore.defaultDisplayName
             readonly property string optionalName: defaultDisplayName
             readonly property string name: defaultDisplayName

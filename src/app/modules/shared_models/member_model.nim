@@ -25,8 +25,6 @@ type
     IsUntrustworthy
     IsBlocked
     ContactRequest
-    IncomingVerificationStatus
-    OutgoingVerificationStatus
     MemberRole
     Joined
     RequestToJoinId
@@ -95,8 +93,6 @@ QtObject:
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
-      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.MemberRole.int: "memberRole",
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
@@ -149,10 +145,6 @@ QtObject:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerificationStatus:
-      result = newQVariant(item.incomingVerificationStatus.int)
-    of ModelRole.OutgoingVerificationStatus:
-      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
     of ModelRole.Joined:

@@ -30,7 +30,6 @@ type MessageSignal* = ref object of Signal
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
   clearedHistories*: seq[ClearedHistoryDto]
-  verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
   watchOnlyAccounts*: seq[WalletAccountDto]
@@ -133,10 +132,6 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("settings"):
     for jsonSettingsField in e["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
-
-  if e.contains("verificationRequests"):
-    for jsonVerificationRequest in e["verificationRequests"]:
-      signal.verificationRequests.add(jsonVerificationRequest.toVerificationRequest())
 
   if e.contains("savedAddresses"):
     for jsonSavedAddress in e["savedAddresses"]:

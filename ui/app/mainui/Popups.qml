@@ -61,11 +61,8 @@ QtObject {
     property var activePopupComponents: []
 
     Component.onCompleted: {
-        Global.openSendIDRequestPopup.connect(openSendIDRequestPopup)
         Global.openMarkAsIDVerifiedPopup.connect(openMarkAsIDVerifiedPopup)
         Global.openRemoveIDVerificationDialog.connect(openRemoveIDVerificationDialog)
-        Global.openOutgoingIDRequestPopup.connect(openOutgoingIDRequestPopup)
-        Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
         Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
         Global.openInviteFriendsToCommunityByIdPopup.connect(openInviteFriendsToCommunityByIdPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
@@ -185,49 +182,12 @@ QtObject {
         openPopup(communityProfilePopup, { store: store, community: community, communitySectionModule: communitySectionModule})
     }
 
-    function openSendIDRequestPopup(publicKey, contactDetails, cb) {
-        openPopup(sendIDRequestPopupComponent, {
-            publicKey: publicKey,
-            contactDetails: contactDetails,
-            title: qsTr("Request ID verification"),
-            labelText: qsTr("Ask a question only they can answer"),
-            challengeText: qsTr("Ask your question..."),
-            buttonText: qsTr("Request ID verification")
-        }, cb)
-    }
-
     function openMarkAsIDVerifiedPopup(publicKey, contactDetails, cb) {
         openPopup(markAsIDVerifiedPopupComponent, {publicKey, contactDetails}, cb)
     }
 
     function openRemoveIDVerificationDialog(publicKey, contactDetails, cb) {
         openPopup(removeIDVerificationPopupComponent, {publicKey, contactDetails}, cb)
-    }
-
-    function openOutgoingIDRequestPopup(publicKey, contactDetails, cb) {
-        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
-        try {
-            const verificationDetails = rootStore.contactStore.getSentVerificationDetailsAsJson(publicKey)
-            const popupProperties = {
-                publicKey: publicKey,
-                contactDetails: details,
-                verificationStatus: verificationDetails.requestStatus,
-                verificationChallenge: verificationDetails.challenge,
-                verificationResponse: verificationDetails.response,
-                verificationResponseDisplayName: verificationDetails.displayName,
-                verificationResponseIcon: verificationDetails.icon,
-                verificationRequestedAt: verificationDetails.requestedAt,
-                verificationRepliedAt: verificationDetails.repliedAt
-            }
-            openPopup(contactOutgoingVerificationRequestPopupComponent, popupProperties, cb)
-        } catch (e) {
-            console.error("Error getting or parsing verification data", e)
-        }
-    }
-
-    function openIncomingIDRequestPopup(publicKey, contactDetails, cb) {
-        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey)
-        openPopup(contactVerificationRequestPopupComponent, {publicKey, contactDetails: details})
     }
 
     function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
@@ -433,52 +393,6 @@ QtObject {
                 onClosed: destroy()
             }
         },
-        Component {
-            id: contactVerificationRequestPopupComponent
-            ContactVerificationRequestPopup {
-                contactsStore: rootStore.contactStore
-                onResponseSent: (senderPublicKey, response) => {
-                    contactsStore.acceptVerificationRequest(senderPublicKey, response)
-                    Global.displaySuccessToastMessage(qsTr("ID verification reply sent"))
-                }
-                onVerificationRefused: (senderPublicKey) => {
-                    contactsStore.declineVerificationRequest(senderPublicKey)
-                    Global.displaySuccessToastMessage(qsTr("ID verification request declined"))
-                }
-                onClosed: destroy()
-            }
-        },
-
-        Component {
-            id: contactOutgoingVerificationRequestPopupComponent
-
-            OutgoingContactVerificationRequestPopup {
-                profileStore: root.profileStore
-                utilsStore: root.utilsStore
-
-                onVerificationRequestCanceled: {
-                    rootStore.contactStore.cancelVerificationRequest(publicKey)
-                }
-                onUntrustworthyVerified: {
-                    rootStore.contactStore.verifiedUntrustworthy(publicKey)
-                    Global.displaySuccessToastMessage(qsTr("%1 marked as untrusted").arg(mainDisplayName))
-                }
-                onTrustedVerified: {
-                    rootStore.contactStore.verifiedTrusted(publicKey)
-                    Global.displaySuccessToastMessage(qsTr("%1 ID verified").arg(mainDisplayName))
-                }
-                onClosed: destroy()
-            }
-        },
-
-        Component {
-            id: sendIDRequestPopupComponent
-            SendContactRequestModal {
-                rootStore: root.rootStore
-                onAccepted: rootStore.contactStore.sendVerificationRequest(publicKey, message)
-                onClosed: destroy()
-            }
-        },
 
         Component {
             id: markAsIDVerifiedPopupComponent
@@ -487,7 +401,7 @@ QtObject {
 
                 onAccepted: {
                     rootStore.contactStore.markAsTrusted(publicKey)
-                    Global.displaySuccessToastMessage(qsTr("%1 ID verified").arg(mainDisplayName))
+                    Global.displaySuccessToastMessage(qsTr("%1 marked as trusted").arg(mainDisplayName))
                     close()
                 }
                 onClosed: destroy()
@@ -505,15 +419,15 @@ QtObject {
                     if (markAsUntrusted && removeContact) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
                         rootStore.contactStore.removeContact(publicKey)
-                        Global.displaySuccessToastMessage(qsTr("%1 ID verification removed, removed from contacts and marked as untrusted").arg(mainDisplayName))
+                        Global.displaySuccessToastMessage(qsTr("%1 trust mark removed, removed from contacts and marked as untrusted").arg(mainDisplayName))
                     } else if (markAsUntrusted) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
-                        Global.displaySuccessToastMessage(qsTr("%1 ID verification removed and marked as untrusted").arg(mainDisplayName))
+                        Global.displaySuccessToastMessage(qsTr("%1 trust mark removed and marked as untrusted").arg(mainDisplayName))
                     } else if (removeContact) {
                         rootStore.contactStore.removeContact(publicKey)
-                        Global.displaySuccessToastMessage(qsTr("%1 ID verification removed and removed from contacts").arg(mainDisplayName))
+                        Global.displaySuccessToastMessage(qsTr("%1 trust mark removed and removed from contacts").arg(mainDisplayName))
                     } else {
-                        Global.displaySuccessToastMessage(qsTr("%1 ID verification removed").arg(mainDisplayName))
+                        Global.displaySuccessToastMessage(qsTr("%1 trust mark removed").arg(mainDisplayName))
                     }
                     close()
                 }

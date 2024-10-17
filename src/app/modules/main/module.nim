@@ -1112,9 +1112,6 @@ method onCommunityMuted*[T](
     muted: bool) =
   self.view.model.setMuted(communityId, muted)
 
-method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
-  self.controller.getVerificationRequestFrom(publicKey)
-
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool = false,
   getOnlineStatus: bool = false, includeDetails: bool = false): string =
   var contactDetails: ContactDetails
@@ -1155,10 +1152,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "isSyncing": contactDetails.dto.isSyncing,
     "removed": contactDetails.dto.removed,
     "trustStatus": contactDetails.dto.trustStatus.int,
-    # TODO rename verificationStatus to outgoingVerificationStatus
     "contactRequestState": contactDetails.dto.contactRequestState.int,
-    "verificationStatus": contactDetails.dto.verificationStatus.int,
-    "incomingVerificationStatus": 0,
     "bio": contactDetails.dto.bio,
     "onlineStatus": onlineStatus.int
   }

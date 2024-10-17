@@ -31,8 +31,6 @@ proc initMemberItem*(
   isUntrustworthy: bool = false,
   isBlocked: bool = false,
   contactRequest: ContactRequest = ContactRequest.None,
-  incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
-  outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   memberRole: MemberRole = MemberRole.None,
   joined: bool = false,
   requestToJoinId: string = "",
@@ -63,8 +61,6 @@ proc initMemberItem*(
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
-    incomingVerificationStatus = incomingVerificationStatus,
-    outgoingVerificationStatus = outgoingVerificationStatus
   )
 
 proc `$`*(self: MemberItem): string =
@@ -85,8 +81,6 @@ proc `$`*(self: MemberItem): string =
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
-    incomingVerificationStatus: {$self.incomingVerificationStatus.int},
-    outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     memberRole: {self.memberRole},
     joined: {self.joined},
     requestToJoinId: {self.requestToJoinId},

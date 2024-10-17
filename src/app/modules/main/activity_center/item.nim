@@ -12,7 +12,6 @@ type Item* = ref object
   chatId: string
   communityId: string
   membershipStatus: ActivityCenterMembershipStatus
-  verificationStatus: VerificationStatus
   sectionId: string
   name: string
   author: string
@@ -32,7 +31,6 @@ proc initItem*(
   chatId: string,
   communityId: string,
   membershipStatus: ActivityCenterMembershipStatus,
-  verificationStatus: VerificationStatus,
   sectionId: string,
   name: string,
   author: string,
@@ -52,7 +50,6 @@ proc initItem*(
   result.chatId = chatId
   result.communityId = communityId
   result.membershipStatus = membershipStatus
-  result.verificationStatus = verificationStatus
   result.sectionId = sectionId
   result.name = name
   result.author = author
@@ -74,7 +71,6 @@ proc `$`*(self: Item): string =
     chatId: {$self.chatId},
     communityId: {$self.communityId},
     membershipStatus: {$self.membershipStatus.int},
-    verificationStatus: {$self.verificationStatus.int},
     sectionId: {$self.sectionId},
     author: {$self.author},
     installationId: {$self.installationId},
@@ -111,9 +107,6 @@ proc communityId*(self: Item): string =
 
 proc membershipStatus*(self: Item): ActivityCenterMembershipStatus =
   return self.membershipStatus
-
-proc verificationStatus*(self: Item): VerificationStatus =
-  return self.verificationStatus
 
 proc sectionId*(self: Item): string =
   return self.sectionId

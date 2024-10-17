@@ -318,7 +318,7 @@ StatusScrollView {
                         userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                         pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
                         isContact: model.isContact
-                        isVerified: model.verificationStatus === Constants.verificationStatus.verified
+                        isVerified: model.trustStatus === Constants.trustStatus.trusted
                         isUntrustworthy: model.trustStatus === Constants.trustStatus.untrustworthy
                         status: model.onlineStatus
                         icon.name: model.icon

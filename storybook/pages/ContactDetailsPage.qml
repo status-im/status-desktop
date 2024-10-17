@@ -96,14 +96,6 @@ SplitView {
                 Layout.fillWidth: true
                 text: "contactRequestState: " + contactDetails.contactRequestState
             }
-            Label {
-                Layout.fillWidth: true
-                text: "incomingVerificationStatus: " + contactDetails.incomingVerificationStatus
-            }
-            Label {
-                Layout.fillWidth: true
-                text: "outgoingVerificationStatus: " + contactDetails.outgoingVerificationStatus
-            }
 
             Pane {
                 contentItem: RowLayout {
@@ -168,8 +160,6 @@ SplitView {
                 isUntrustworthy: false,
                 isBlocked: false,
                 contactRequestState: 3,
-                incomingVerificationStatus: 3,
-                outgoingVerificationStatus: 2,
                 defaaaultDisplayName: "defaultDisplayName",
                 optionalName: "optionalName",
                 lastUpdated: 1234567890,
