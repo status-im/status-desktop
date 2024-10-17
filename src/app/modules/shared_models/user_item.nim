@@ -10,26 +10,6 @@ type
     Received = 3
     Dismissed = 4
 
-  VerificationRequestStatus* {.pure.} = enum
-    None = 0
-    Pending
-    Answered
-    Declined
-    Canceled
-    Trusted
-    Untrustworthy
-
-proc toVerificationRequestStatus*(value: VerificationStatus): VerificationRequestStatus =
-  case value:
-  of VerificationStatus.Unverified: return VerificationRequestStatus.None
-  of VerificationStatus.Verifying: return VerificationRequestStatus.Pending
-  of VerificationStatus.Verified: return VerificationRequestStatus.Answered
-  of VerificationStatus.Declined: return VerificationRequestStatus.Declined
-  of VerificationStatus.Canceled: return VerificationRequestStatus.Canceled
-  of VerificationStatus.Trusted: return VerificationRequestStatus.Trusted
-  of VerificationStatus.Untrustworthy: return VerificationRequestStatus.Untrustworthy
-  else: return VerificationRequestStatus.None
-
 #TODO: #14964 - To check if this is needed
 proc toContactStatus*(value: ContactRequestState): ContactRequest =
   case value:
@@ -57,8 +37,6 @@ type
     isUntrustworthy: bool
     isBlocked: bool
     contactRequest: ContactRequest
-    incomingVerificationStatus: VerificationRequestStatus
-    outgoingVerificationStatus: VerificationRequestStatus
     #Contact extra details
     isCurrentUser: bool
     defaultDisplayName: string
@@ -90,8 +68,6 @@ proc setup*(self: UserItem,
   isUntrustworthy: bool,
   isBlocked: bool,
   contactRequest: ContactRequest,
-  incomingVerificationStatus: VerificationRequestStatus,
-  outgoingVerificationStatus: VerificationRequestStatus,
   #TODO: #14964 - remove defaults
   isCurrentUser: bool = false,
   defaultDisplayName: string = "",
@@ -122,8 +98,6 @@ proc setup*(self: UserItem,
   self.isUntrustworthy = isUntrustworthy
   self.isBlocked = isBlocked
   self.contactRequest = contactRequest
-  self.incomingVerificationStatus = incomingVerificationStatus
-  self.outgoingVerificationStatus = outgoingVerificationStatus
   self.isCurrentUser = isCurrentUser
   self.defaultDisplayName = defaultDisplayName
   self.optionalName = optionalName
@@ -156,8 +130,6 @@ proc initUserItem*(
     isUntrustworthy: bool,
     isBlocked: bool,
     contactRequest: ContactRequest = ContactRequest.None,
-    incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
-    outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
     isCurrentUser: bool = false,
     defaultDisplayName: string = "",
     optionalName: string = "",
@@ -189,9 +161,7 @@ proc initUserItem*(
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
-    incomingVerificationStatus = incomingVerificationStatus,
     isCurrentUser = isCurrentUser,
-    outgoingVerificationStatus = outgoingVerificationStatus,
     defaultDisplayName = defaultDisplayName,
     optionalName = optionalName,
     lastUpdated = lastUpdated,
@@ -223,8 +193,6 @@ proc `$`*(self: UserItem): string =
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
-    incomingVerificationStatus: {$self.incomingVerificationStatus.int},
-    outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     isCurrentUser: {self.isCurrentUser},
     defaultDisplayName: {self.defaultDisplayName},
     optionalName: {self.optionalName},
@@ -326,18 +294,6 @@ proc contactRequest*(self: UserItem): ContactRequest {.inline.} =
 
 proc `contactRequest=`*(self: UserItem, value: ContactRequest) {.inline.} =
   self.contactRequest = value
-
-proc incomingVerificationStatus*(self: UserItem): VerificationRequestStatus {.inline.} =
-  self.incomingVerificationStatus
-
-proc `incomingVerificationStatus=`*(self: UserItem, value: VerificationRequestStatus) {.inline.} =
-  self.incomingVerificationStatus = value
-
-proc outgoingVerificationStatus*(self: UserItem): VerificationRequestStatus {.inline.} =
-  self.outgoingVerificationStatus
-
-proc `outgoingVerificationStatus=`*(self: UserItem, value: VerificationRequestStatus) {.inline.} =
-  self.outgoingVerificationStatus = value
 
 proc isCurrentUser*(self: UserItem): bool {.inline.} =
   self.isCurrentUser

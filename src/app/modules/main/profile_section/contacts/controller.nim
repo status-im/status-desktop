@@ -62,18 +62,6 @@ proc init*(self: Controller) =
     var args = TrustArgs(e)
     self.delegate.contactTrustStatusChanged(args.publicKey, args.isUntrustworthy)
     
-  self.events.on(SIGNAL_CONTACT_VERIFIED) do (e: Args):
-    var args = ContactArgs(e)
-    self.delegate.updateContactVerificationStatus(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_SENT) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.updateContactVerificationStatus(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_ACCEPTED) do(e: Args):
-    var args = VerificationRequestArgs(e)
-    self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
-    
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
@@ -81,28 +69,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
     let args = ContactsStatusUpdatedArgs(e)
     self.delegate.contactsStatusUpdated(args.statusUpdates)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_DECLINED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.onVerificationRequestDeclined(args.contactId)
-    self.delegate.updateContactVerificationStatus(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_CANCELLED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.onVerificationRequestCanceled(args.contactId)
-    self.delegate.updateContactVerificationStatus(args.contactId)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_ADDED) do(e: Args):
-    var args = VerificationRequestArgs(e)
-    self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_UPDATED) do(e: Args):
-    var args = VerificationRequestArgs(e)
-    self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
-
-  self.events.on(SIGNAL_CONTACT_VERIFICATION_ACCEPTED) do(e: Args):
-    var args = VerificationRequestArgs(e)
-    self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
 
   self.events.on(SIGNAL_CONTACT_INFO_REQUEST_FINISHED) do(e: Args):
     let args = ContactInfoRequestArgs(e)
@@ -169,35 +135,8 @@ proc markUntrustworthy*(self: Controller, publicKey: string) =
 proc removeTrustStatus*(self: Controller, publicKey: string) =
   self.contactsService.removeTrustStatus(publicKey)
 
-proc getVerificationRequestSentTo*(self: Controller, publicKey: string): VerificationRequest =
-  self.contactsService.getVerificationRequestSentTo(publicKey)
-
-proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
-  self.contactsService.getVerificationRequestFrom(publicKey)
-
-proc sendVerificationRequest*(self: Controller, publicKey: string, challenge: string) =
-  self.contactsService.sendVerificationRequest(publicKey, challenge)
-
-proc cancelVerificationRequest*(self: Controller, publicKey: string) =
-  self.contactsService.cancelVerificationRequest(publicKey)
-
 proc removeTrustVerificationStatus*(self: Controller, publicKey: string) =
   self.contactsService.removeTrustVerificationStatus(publicKey)
-
-proc verifiedTrusted*(self: Controller, publicKey: string) =
-  self.contactsService.verifiedTrusted(publicKey)
-
-proc verifiedUntrustworthy*(self: Controller, publicKey: string) =
-  self.contactsService.verifiedUntrustworthy(publicKey)
-
-proc acceptVerificationRequest*(self: Controller, publicKey: string, response: string) =
-  self.contactsService.acceptVerificationRequest(publicKey, response)
-
-proc declineVerificationRequest*(self: Controller, publicKey: string) =
-  self.contactsService.declineVerificationRequest(publicKey)
-
-proc getReceivedVerificationRequests*(self: Controller): seq[VerificationRequest] =
-  self.contactsService.getReceivedVerificationRequests()
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)

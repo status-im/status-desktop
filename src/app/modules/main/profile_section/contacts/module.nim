@@ -128,18 +128,6 @@ method viewDidLoad*(self: Module) =
   # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
   # self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
   # self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-  
-  let receivedVerificationRequests = self.controller.getReceivedVerificationRequests()
-  var receivedVerificationRequestItems: seq[UserItem] = @[]
-  for receivedVerificationRequest in receivedVerificationRequests:
-    if receivedVerificationRequest.status == VerificationStatus.Verifying or
-        receivedVerificationRequest.status == VerificationStatus.Verified:
-      let contactItem = self.createItemFromPublicKey(receivedVerificationRequest.fromID)
-      contactItem.incomingVerificationStatus = toVerificationRequestStatus(receivedVerificationRequest.status)
-      receivedVerificationRequestItems.add(contactItem)
-      self.view.contactsModel().updateIncomingRequestStatus(contactItem.pubKey, contactItem.incomingVerificationStatus)
-
-  self.view.receivedContactRequestsModel().addItems(receivedVerificationRequestItems)
 
   self.moduleLoaded = true
   self.delegate.contactsModuleDidLoad()
@@ -256,7 +244,6 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
   self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
   self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
-  self.updateContactVerificationStatus(publicKey)
 
 method markAsTrusted*(self: Module, publicKey: string): void =
   self.controller.markAsTrusted(publicKey)
@@ -269,86 +256,6 @@ method removeTrustStatus*(self: Module, publicKey: string): void =
 
 method removeTrustVerificationStatus*(self: Module, publicKey: string): void =
   self.controller.removeTrustVerificationStatus(publicKey)
-
-method updateContactVerificationStatus*(self: Module, publicKey: string) =
-  let item = self.createItemFromPublicKey(publicKey)
-  self.view.contactsModel().removeItemById(publicKey)
-  self.view.contactsModel().addItem(item)
-
-method getSentVerificationDetailsAsJson*(self: Module, publicKey: string): string =
-  let verificationRequest = self.controller.getVerificationRequestSentTo(publicKey)
-  let (name, image, largeImage) = self.controller.getContactNameAndImage(publicKey)
-  let jsonObj = %* {
-    "challenge": verificationRequest.challenge,
-    "response": verificationRequest.response,
-    "requestedAt": verificationRequest.requestedAt,
-    "requestStatus": verificationRequest.status.int,
-    "repliedAt": verificationRequest.repliedAt,
-    "icon": image,
-    "largeImage": largeImage,
-    "displayName": name
-  }
-  return $jsonObj
-
-method getVerificationDetailsFromAsJson*(self: Module, publicKey: string): string =
-  let verificationRequest = self.controller.getVerificationRequestFrom(publicKey)
-  let (name, image, largeImage) = self.controller.getContactNameAndImage(publicKey)
-  let jsonObj = %* {
-    "from": verificationRequest.fromId,
-    "challenge": verificationRequest.challenge,
-    "response": verificationRequest.response,
-    "requestedAt": verificationRequest.requestedAt,
-    "requestStatus": verificationRequest.status.int,
-    "repliedAt": verificationRequest.repliedAt,
-    "icon": image,
-    "largeImage": largeImage,
-    "displayName": name
-  }
-  return $jsonObj
-
-method sendVerificationRequest*(self: Module, publicKey: string, challenge: string) =
-  self.controller.sendVerificationRequest(publicKey, challenge)
-
-method cancelVerificationRequest*(self: Module, publicKey: string) =
-  self.controller.cancelVerificationRequest(publicKey)
-
-method verifiedTrusted*(self: Module, publicKey: string) =
-  self.controller.verifiedTrusted(publicKey)
-
-method verifiedUntrustworthy*(self: Module, publicKey: string) =
-  self.controller.verifiedUntrustworthy(publicKey)
-
-method declineVerificationRequest*(self: Module, publicKey: string) =
-  self.controller.declineVerificationRequest(publicKey)
-
-method acceptVerificationRequest*(self: Module, publicKey: string, response: string) =
-  self.controller.acceptVerificationRequest(publicKey, response)
-
-method getReceivedVerificationRequests*(self: Module): seq[VerificationRequest] =
-  self.controller.getReceivedVerificationRequests()
-
-method onVerificationRequestDeclined*(self: Module, publicKey: string) =
-  self.view.receivedContactRequestsModel.removeItemById(publicKey)
-
-method onVerificationRequestCanceled*(self: Module, publicKey: string) =
-  self.view.receivedContactRequestsModel.removeItemById(publicKey)
-
-method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationRequest) =
-  let item =  self.createItemFromPublicKey(request.fromID)
-  item.incomingVerificationStatus = toVerificationRequestStatus(request.status)
-  self.view.contactsModel().updateIncomingRequestStatus(item.pubKey, item.incomingVerificationStatus)
-
-  if (self.view.receivedContactRequestsModel.containsItemWithPubKey(request.fromID)):
-    if request.status != VerificationStatus.Verifying and
-        request.status != VerificationStatus.Verified:
-      self.view.receivedContactRequestsModel.removeItemById(request.fromID)
-      return
-    self.view.receivedContactRequestsModel.updateIncomingRequestStatus(
-      item.pubKey,
-      item.incomingVerificationStatus
-    )
-    return
-  self.view.receivedContactRequestsModel.addItem(item)
 
 method requestContactInfo*(self: Module, publicKey: string) =
   self.controller.requestContactInfo(publicKey)

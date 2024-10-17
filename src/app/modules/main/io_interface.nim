@@ -284,9 +284,6 @@ method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, com
   url: string, userId: string, shard: Shard) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getKeycardSharedModuleForAuthenticationOrSigning*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 

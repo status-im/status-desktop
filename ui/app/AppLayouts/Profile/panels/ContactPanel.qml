@@ -69,18 +69,6 @@ StatusListItem {
     }
 
     components: [
-        StatusFlatButton {
-            objectName: "idVerifyBtn"
-            visible: verificationRequestStatus === Constants.verificationStatus.verifying ||
-                verificationRequestStatus === Constants.verificationStatus.verified
-            width: visible ? implicitWidth : 0
-            height: visible ? implicitHeight : 0
-            text: verificationRequestStatus === Constants.verificationStatus.verifying ?
-                qsTr("Reply to ID verification request") :
-                qsTr("Review ID verification reply")
-            size: StatusBaseButton.Size.Small
-            onClicked: root.showVerificationRequest(root.publicKey)
-        },
         StatusFlatRoundButton {
             objectName: "chatBtn"
             visible: showSendMessageButton
