@@ -17,6 +17,7 @@ CalloutCard {
 
     readonly property LinkData linkData: LinkData { }
     readonly property UserData userData: UserData { }
+    readonly property TransactionData transactionData: TransactionData { }
     readonly property CommunityData communityData: CommunityData { }
     readonly property ChannelData channelData: ChannelData { }
 
@@ -284,7 +285,50 @@ CalloutCard {
             PropertyChanges { target: footerLoader; active: false; visible: !root.userData.bio; Layout.fillHeight: true }
             PropertyChanges { target: title; text: root.userData.name }
             PropertyChanges { target: description; text: root.userData.bio; Layout.minimumHeight: 32; visible: true }
+        },
+        State {
+            name: "transaction"
+            when: root.type === Constants.LinkPreviewType.StatusTransaction
+            PropertyChanges { target: root; implicitHeight: 187 }
+            PropertyChanges { target: bannerImageLoader; visible: false }
+            PropertyChanges { target: footerLoader; active: false; visible: false }
+            PropertyChanges {
+                target: title
+                text: {
+                    switch(root.transactionData.txType) {
+                    case Constants.SendType.Bridge:
+                        return qsTr("Bridge transaction")
+                    case Constants.SendType.Swap:
+                        return qsTr("Swap transaction")
+                    default:
+                        return qsTr("Send transaction")
+                    }
+                }
+            }
+            PropertyChanges {
+                target: description
+                text: {
+                    let description = "\n"
+                    if (!!root.transactionData.amount) {
+                        description += qsTr("Amount: %1\n").arg(root.transactionData.amount)
+                    }
+                    if (!!root.transactionData.asset) {
+                        description += qsTr("Asset: %1\n").arg(root.transactionData.asset)
+                    }
+                    if (!!root.transactionData.toAsset) {
+                        description += qsTr("To Asset: %1\n").arg(root.transactionData.asset)
+                    }
+                    if (!!root.transactionData.address) {
+                        description += qsTr("Recipient: %1\n").arg(root.transactionData.address)
+                    }
+                    if (root.transactionData.chainId > 0) {
+                        description += qsTr("Network: %1").arg(root.transactionData.chainId)
+                    }
+                    return description
+                }
+            }
         }
+
     ]
 
     QtObject {

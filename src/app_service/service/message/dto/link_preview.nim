@@ -1,6 +1,6 @@
 import json, stew/shims/strformat, tables
 import ./status_link_preview, ./standard_link_preview
-import ./status_contact_link_preview, ./status_community_link_preview, ./status_community_channel_link_preview
+import ./status_contact_link_preview, ./status_community_link_preview, ./status_community_channel_link_preview, ./status_transaction_link_preview
 import ../../contacts/dto/contact_details
 import ../../community/dto/community
 include ../../../common/json_utils
@@ -13,6 +13,7 @@ type
     StatusContactPreview
     StatusCommunityPreview
     StatusCommunityChannelPreview
+    StatusTransactionPreview
 
   LinkPreview* = ref object
     url*: string
@@ -21,6 +22,7 @@ type
     statusContactPreview*: StatusContactLinkPreview
     statusCommunityPreview*: StatusCommunityLinkPreview
     statusCommunityChannelPreview*: StatusCommunityChannelLinkPreview
+    statusTransactionPreview*: StatusTransactionLinkPreview
 
 proc delete*(self: LinkPreview) =
   if self.standardPreview != nil:
@@ -31,6 +33,8 @@ proc delete*(self: LinkPreview) =
     self.statusCommunityPreview.delete
   if self.statusCommunityChannelPreview != nil:
     self.statusCommunityChannelPreview.delete
+  if self.statusTransactionPreview != nil:
+    self.statusTransactionPreview.delete
 
 proc initLinkPreview*(url: string): LinkPreview =
   result = LinkPreview()
@@ -57,19 +61,24 @@ proc toLinkPreview*(jsonObj: JsonNode, standard: bool): LinkPreview =
     elif jsonObj.getProp("channel", node):
       result.previewType = PreviewType.StatusCommunityChannelPreview
       result.statusCommunityChannelPreview = toStatusCommunityChannelLinkPreview(node)
+    elif jsonObj.getProp("transaction", node):
+      result.previewType = PreviewType.StatusTransactionPreview
+      result.statusTransactionPreview = toStatusTransactionLinkPreview(node)
 
 proc `$`*(self: LinkPreview): string =
   let standardPreview = if self.standardPreview != nil: $self.standardPreview else: ""
   let contactPreview = if self.statusContactPreview != nil: $self.statusContactPreview else: ""
   let communityPreview = if self.statusCommunityPreview != nil: $self.statusCommunityPreview else: ""
   let channelPreview = if self.statusCommunityChannelPreview != nil: $self.statusCommunityChannelPreview else: ""
+  let transactionPreview = if self.statusTransactionPreview != nil: $self.statusTransactionPreview else: ""
   result = fmt"""LinkPreview(
     url: {self.url},
     previewType: {self.previewType},
     standardPreview: {standardPreview},
     contactPreview: {contactPreview},
     communityPreview: {communityPreview},
-    channelPreview: {channelPreview}
+    channelPreview: {channelPreview},
+    transactionPreview: {transactionPreview}
   )"""
 
 proc `%`*(self: LinkPreview): JsonNode =
@@ -78,7 +87,8 @@ proc `%`*(self: LinkPreview): JsonNode =
     "standardPreview": if self.standardPreview != nil: %self.standardPreview else: newJNull(),
     "contactPreview": if self.statusContactPreview != nil: %self.statusContactPreview else: newJNull(),
     "communityPreview": if self.statusCommunityPreview != nil: %self.statusCommunityPreview else: newJNull(),
-    "channelPreview": if self.statusCommunityChannelPreview != nil: %self.statusCommunityChannelPreview else: newJNull()
+    "channelPreview": if self.statusCommunityChannelPreview != nil: %self.statusCommunityChannelPreview else: newJNull(),
+    "transactionPreview": if self.statusTransactionPreview != nil: %self.statusTransactionPreview else: newJNull()
   }
 
 proc empty*(self: LinkPreview): bool =
@@ -91,6 +101,8 @@ proc empty*(self: LinkPreview): bool =
       return self.statusCommunityPreview == nil or self.statusCommunityPreview.empty()
     of PreviewType.StatusCommunityChannelPreview:
       return self.statusCommunityChannelPreview == nil or self.statusCommunityChannelPreview.empty()
+    of PreviewType.StatusTransactionPreview:
+      return self.statusTransactionPreview == nil or self.statusTransactionPreview.empty()
     else:
       return true
 
@@ -118,6 +130,11 @@ proc extractLinkPreviewsLists*(input: seq[LinkPreview]): (seq[StandardLinkPrevie
         let statusLinkPreview = StatusLinkPreview()
         statusLinkPreview.url = preview.url
         statusLinkPreview.channel = preview.statusCommunityChannelPreview
+        status.add(statusLinkPreview)
+      of PreviewType.StatusTransactionPreview:
+        let statusLinkPreview = StatusLinkPreview()
+        statusLinkPreview.url = preview.url
+        statusLinkPreview.transaction = preview.statusTransactionPreview
         status.add(statusLinkPreview)
       else:
         discard

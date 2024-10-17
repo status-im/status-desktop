@@ -42,6 +42,7 @@ LinkPreviewMiniCard {
     required property var statusCommunityChannelCommunityPreview
     required property var statusCommunityChannelCommunityPreviewIcon
     required property var statusCommunityChannelCommunityPreviewBanner
+    required property var statusTransactionPreview
 
     previewState: !root.unfurled ? LinkPreviewMiniCard.State.Loading : root.unfurled && !root.empty ? LinkPreviewMiniCard.State.Loaded : LinkPreviewMiniCard.State.LoadingFailed
     type: root.previewType
@@ -82,5 +83,13 @@ LinkPreviewMiniCard {
             membersCount: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.membersCount : 0
             color: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.color : ""
         }
+    }
+    transactionData {
+        txType: statusTransactionPreview ? statusTransactionPreview.txType : ""
+        asset: statusTransactionPreview ? statusTransactionPreview.asset : ""
+        toAsset: statusTransactionPreview ? statusTransactionPreview.toAsset : ""
+        amount: statusTransactionPreview ? statusTransactionPreview.amount : ""
+        chainId: statusTransactionPreview ? statusTransactionPreview.chainId : ""
+        address: statusTransactionPreview ? statusTransactionPreview.address : ""
     }
 }

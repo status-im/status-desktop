@@ -25,6 +25,7 @@ CalloutCard {
     readonly property UserData userData: UserData { }
     readonly property CommunityData communityData: CommunityData { }
     readonly property ChannelData channelData: ChannelData { }
+    readonly property TransactionData transactionData: TransactionData { }
 
     required property int previewState
     required property int type
@@ -147,7 +148,28 @@ CalloutCard {
                 asset.charactersLen: 2
                 asset.color: Theme.palette.miscColor9
             }
+        },
+        State {
+            name: "loadedTransaction"
+            when: root.previewState === LinkPreviewMiniCard.State.Loaded && root.type === Constants.LinkPreviewType.StatusTransaction
+            extend: "loaded"
+            PropertyChanges { target: titleText; text: qsTr("Transaction") }
+            PropertyChanges {
+                target: subtitleText; visible: true;
+                text: {
+                    switch(root.transactionData.txType) {
+                    case Constants.SendType.Bridge:
+                        return qsTr("Bridge")
+                    case Constants.SendType.Swap:
+                        return qsTr("Swap")
+                    default:
+                        return qsTr("Send")
+                    }
+                }
+            }
+            PropertyChanges { target: favIcon; visible: false }
         }
+
     ]
 
     contentItem: Item {
