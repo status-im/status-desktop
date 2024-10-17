@@ -42,7 +42,7 @@ QObject {
     property var allMembers
 
     readonly property var joinedMembers: SortFilterProxyModel {
-        sourceModel: !!root.allMembers ? root.allMembers : null
+        sourceModel: root.allMembers ?? null
 
         filters: AnyOf {
             ValueFilter {
@@ -65,7 +65,7 @@ QObject {
     }
 
     readonly property var bannedMembers: SortFilterProxyModel {
-        sourceModel: !!root.allMembers ? root.allMembers : null
+        sourceModel: root.allMembers ?? null
 
         filters: AnyOf {
             ValueFilter {
@@ -84,7 +84,7 @@ QObject {
     }
 
     readonly property var pendingMembers: SortFilterProxyModel {
-        sourceModel: !!root.allMembers ? root.allMembers : null
+        sourceModel: root.allMembers ?? null
 
         filters: AnyOf {
             ValueFilter {
@@ -103,7 +103,7 @@ QObject {
     }
 
     readonly property var declinedMembers: SortFilterProxyModel {
-        sourceModel: !!root.allMembers ? root.allMembers : null
+        sourceModel: root.allMembers ?? null
 
         filters: ValueFilter {
             roleName: "membershipRequestState"

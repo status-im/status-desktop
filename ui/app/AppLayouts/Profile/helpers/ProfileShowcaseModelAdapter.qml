@@ -57,7 +57,7 @@ QObject {
             },
             FastExpressionRole {
                 name: "membersCount"
-                expression: model.allMembers.count
+                expression: model.allMembers.rowCount()
                 expectedRoles: ["allMembers"]
             },
             ConstantRole {
