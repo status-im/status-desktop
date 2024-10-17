@@ -221,24 +221,6 @@ QtObject:
   proc removeTrustVerificationStatus*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeTrustVerificationStatus(publicKey)
 
-  proc getSentVerificationDetailsAsJson(self: View, publicKey: string): string {.slot.} =
-    return self.delegate.getSentVerificationDetailsAsJson(publicKey)
-
-  proc getVerificationDetailsFromAsJson(self: View, publicKey: string): string {.slot.} =
-    return self.delegate.getVerificationDetailsFromAsJson(publicKey)
-
-  proc sendVerificationRequest*(self: View, publicKey: string, challenge: string) {.slot.} =
-    self.delegate.sendVerificationRequest(publicKey, challenge)
-
-  proc cancelVerificationRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.cancelVerificationRequest(publicKey)
-
-  proc verifiedTrusted*(self: View, publicKey: string) {.slot.} =
-    self.delegate.verifiedTrusted(publicKey)
-
-  proc verifiedUntrustworthy*(self: View, publicKey: string) {.slot.} =
-    self.delegate.verifiedUntrustworthy(publicKey)
-
   proc shareUserUrlWithData*(self: View, pubkey: string): string {.slot.} =
     return self.delegate.shareUserUrlWithData(pubkey)
 
@@ -247,12 +229,6 @@ QtObject:
 
   proc shareUserUrlWithENS*(self: View, pubkey: string): string {.slot.} =
     return self.delegate.shareUserUrlWithENS(pubkey)
-
-  proc declineVerificationRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.declineVerificationRequest(publicKey)
-
-  proc acceptVerificationRequest*(self: View, publicKey: string, response: string) {.slot.} =
-    self.delegate.acceptVerificationRequest(publicKey, response)
 
   proc requestContactInfo*(self: View, publicKey: string) {.slot.} =
     self.delegate.requestContactInfo(publicKey)

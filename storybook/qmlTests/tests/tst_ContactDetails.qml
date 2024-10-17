@@ -46,8 +46,6 @@ Item {
                     isUntrustworthy: false,
                     isBlocked: false,
                     contactRequest: 3,
-                    incomingVerificationStatus: 3,
-                    outgoingVerificationStatus: 2,
                     defaultDisplayName: "defaultDisplayName",
                     optionalName: "optionalName",
                     lastUpdated: 1234567890,
@@ -151,8 +149,6 @@ Item {
             compare(contactDetails.isUntrustworthy, false, "Expected the isUntrustworthy flag to be set")
             compare(contactDetails.isBlocked, false, "Expected the isBlocked flag to be set")
             compare(contactDetails.contactRequestState, 3, "Expected the contactRequestState flag to be set")
-            compare(contactDetails.incomingVerificationStatus, 3, "Expected the incomingVerificationStatus flag to be set")
-            compare(contactDetails.outgoingVerificationStatus, 2, "Expected the outgoingVerificationStatus flag to be set")
             compare(contactDetails.defaultDisplayName, "defaultDisplayName", "Expected the defaultDisplayName to be set")
             compare(contactDetails.optionalName, "optionalName", "Expected the optionalName to be set")
             compare(contactDetails.lastUpdated, 1234567890, "Expected the lastUpdated to be set")
@@ -260,8 +256,6 @@ Item {
                 isUntrustworthy: true,
                 isBlocked: true,
                 contactRequest: 2,
-                incomingVerificationStatus: 2,
-                outgoingVerificationStatus: 1,
                 defaultDisplayName: "newDefaultDisplayName",
                 optionalName: "newOptionalName",
                 lastUpdated: 1234567891,
@@ -295,8 +289,6 @@ Item {
             compare(contactDetails.isUntrustworthy, true, "Expected the isUntrustworthy flag to be set")
             compare(contactDetails.isBlocked, true, "Expected the isBlocked flag to be set")
             compare(contactDetails.contactRequestState, 2, "Expected the contactRequestState flag to be set")
-            compare(contactDetails.incomingVerificationStatus, 2, "Expected the incomingVerificationStatus flag to be set")
-            compare(contactDetails.outgoingVerificationStatus, 1, "Expected the outgoingVerificationStatus flag to be set")
             compare(contactDetails.defaultDisplayName, "newDefaultDisplayName", "Expected the defaultDisplayName to be set")
             compare(contactDetails.optionalName, "newOptionalName", "Expected the optionalName to be set")
             compare(contactDetails.lastUpdated, 1234567891, "Expected the lastUpdated to be set")
