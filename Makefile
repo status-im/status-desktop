@@ -104,10 +104,10 @@ else
  RUN_TARGET := run-linux
 endif
 
-check-qt-dir:
-ifeq ($(shell qmake -v 2>/dev/null),)
-	$(error Cannot find your Qt5 installation. Please make sure to export correct Qt installation binaries path to PATH env)
-endif
+#check-qt-dir:
+#ifeq ($(shell qmake -v 2>/dev/null),)
+#	$(error Cannot find your Qt5 installation. Please make sure to export correct Qt installation binaries path to PATH env)
+#endif
 
 check-pkg-target-linux:
 ifneq ($(detected_OS),Linux)
@@ -851,9 +851,12 @@ run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_
 	./bin/nim_status_client.exe $(ARGS)
 
 NIM_TEST_FILES := $(wildcard test/nim/*.nim)
+NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
-tests-nim-linux: | dotherside
-	LD_LIBRARY_PATH="$(QT5_LIBDIR):$(LD_LIBRARY_PATH)" \
-	$(foreach nimfile,$(NIM_TEST_FILES),$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r $(nimfile);)
+nim-test-run/%:
+	LD_LIBRARY_PATH="$(QT5_LIBDIR):$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r $(subst nim-test-run/,,$@)
+
+tests-nim-linux: $(NIM_TESTS)
 
 endif # "variables.mk" was not included
