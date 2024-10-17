@@ -246,7 +246,8 @@ communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWi
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
 
 # Select Tag Popup
-o_StatusCommunityTag = {"container": statusDesktop_mainWindow_overlay, "type": "StatusCommunityTag", "unnamed": 1, "visible": True}
+tagsRepeater = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityTagsRepeater", "type": "Repeater", "visible": True}
+o_StatusCommunityTag = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityTag", "type": "StatusCommunityTag", "visible": True}
 confirm_Community_Tags_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "confirmCommunityTagsButton", "type": "StatusButton", "visible": True}
 tags_edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 selected_tags_text = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBaseText", "unnamed": 1, "visible": True}
