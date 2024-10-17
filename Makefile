@@ -401,6 +401,9 @@ storybook-build: | storybook-configure
 		--config $(COMMON_CMAKE_BUILD_TYPE) \
 		$(HANDLE_OUTPUT)
 
+# This will fix the issue on Ubuntu:
+# (nim_status_client:11556): GLib-GIO-ERROR **: 14:15:07.064: Settings schema 'org.gnome.settings-daemon.plugins.xsettings' does not contain a key named 'antialiasing'
+run-storybook: export GDK_BACKEND := x11
 run-storybook: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook"
 	nixGL $(STORYBOOK_BUILD_PATH)/bin/Storybook
@@ -863,11 +866,17 @@ ICON_TOOL := node_modules/.bin/fileicon
 # STATUS_PORT ?= 30306
 # WAKUV2_PORT ?= 30307
 
+# This will fix the issue on Ubuntu:
+# (nim_status_client:11556): GLib-GIO-ERROR **: 14:15:07.064: Settings schema 'org.gnome.settings-daemon.plugins.xsettings' does not contain a key named 'antialiasing'
+run-linux: export GDK_BACKEND := x11
 run-linux: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
 	nixGL ./bin/nim_status_client $(ARGS)
 
+# This will fix the issue on Ubuntu:
+# (nim_status_client:11556): GLib-GIO-ERROR **: 14:15:07.064: Settings schema 'org.gnome.settings-daemon.plugins.xsettings' does not contain a key named 'antialiasing'
+run-linux: export GDK_BACKEND := x11
 run-linux-gdb: export LD_LIBRARY_PATH := $(QT5_LIBDIR):$(STATUSGO_LIBDIR):$(STATUSKEYCARDGO_LIBDIR):$(LD_LIBRARY_PATH)
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
