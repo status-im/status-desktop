@@ -145,6 +145,7 @@ StatusWindow {
     Action {
         shortcut: StandardKey.Quit
         onTriggered: {
+            console.log('quit key')
             Qt.quit()
         }
     }
@@ -229,10 +230,12 @@ StatusWindow {
                 close.accepted = true
             } else {
                 if (loader.sourceComponent != app) {
+                    console.log('quit sourceComponent')
                     Qt.quit();
                 }
                 else if (loader.sourceComponent == app) {
                     if (localAccountSensitiveSettings.quitOnClose) {
+                        console.log('quit quitOnClose')
                         Qt.quit();
                     } else {
                         applicationWindow.visible = false;
@@ -395,11 +398,13 @@ StatusWindow {
 
         onClose: {
             if (loader.sourceComponent != app) {
+                console.log('quit MacTrafficLights')
                 Qt.quit()
                 return
             }
 
             if (localAccountSensitiveSettings.quitOnClose) {
+                console.log('quit MacTrafficLights2')
                 Qt.quit();
                 return
             }

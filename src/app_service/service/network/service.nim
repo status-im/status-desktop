@@ -35,22 +35,36 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.settingsService = settingsService
 
 proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
+  # try:
+  echo "Getting chains"
   let response = backend.getEthereumChains()
+  echo "got chains ", response
   if not response.error.isNil:
+    echo 1
     raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
+  echo 2
   let combinedNetworksDto = if response.result.isNil or response.result.kind == JNull: @[]
             else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
+  echo 3
   result = combinedNetworksDto.map(x => x.combinedNetworkDtoToCombinedItem())
+  echo 4
   self.combinedNetworks = result
+  echo 5
   let allTestEnabled = self.combinedNetworks.filter(n => n.test.isEnabled).len == self.combinedNetworks.len
   let allProdEnabled = self.combinedNetworks.filter(n => n.prod.isEnabled).len == self.combinedNetworks.len
+  echo 6
   for n in self.combinedNetworks:
     n.test.enabledState = networkEnabledToUxEnabledState(n.test.isEnabled, allTestEnabled)
     n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.isEnabled, allProdEnabled)
+  echo 7
   self.flatNetworks = @[]
+  echo 8
   for network in self.combinedNetworks:
     self.flatNetworks.add(network.test)
     self.flatNetworks.add(network.prod)
+  echo 9
+  # except Exception as e:
+  #   error "error fetching networks", msg=e.msg
 
 proc init*(self: Service) =
   discard self.fetchNetworks()
@@ -126,7 +140,7 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
       discard self.upsertNetwork(network)
   discard self.fetchNetworks()
 
-## This procedure retuns the network to be used based on the app mode (testnet/mainnet).
+## This procedure returns the network to be used based on the app mode (testnet/mainnet).
 ## We don't need to check if retuned network is nil cause it should never be, but if somehow it is, the app will be closed.
 ##
 ## Should be used for:
