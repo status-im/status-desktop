@@ -114,7 +114,6 @@ Item {
             isBlocked: model.isBlocked
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
-            verificationRequestStatus: model.incomingVerificationStatus
 
             showSendMessageButton: isContact && !isBlocked
             onOpenContactContextMenu: function (publicKey, name, icon) {

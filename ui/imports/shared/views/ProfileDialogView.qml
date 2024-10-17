@@ -86,19 +86,6 @@ Pane {
 
         readonly property int contactRequestState: contactDetails.contactRequestState
 
-        readonly property int outgoingVerificationStatus: contactDetails.outgoingVerificationStatus
-        readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
-
-        readonly property bool isVerificationRequestSent:
-            outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
-            outgoingVerificationStatus !== Constants.verificationStatus.verified &&
-            outgoingVerificationStatus !== Constants.verificationStatus.trusted
-        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying ||
-                                                              incomingVerificationStatus === Constants.verificationStatus.verified
-
-        readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                                          incomingVerificationStatus === Constants.verificationStatus.trusted
-
         readonly property bool isLocallyTrusted: contactDetails.trustStatus === Constants.trustStatus.trusted
 
         readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
@@ -193,39 +180,6 @@ Pane {
     }
 
     Component {
-        id: btnReplyToIdRequestComponent
-        StatusFlatButton {
-            size: StatusButton.Size.Small
-            text: qsTr("Reply to ID verification request")
-            objectName: "respondToIDRequest_StatusItem"
-            icon.name: "checkmark-circle"
-            onClicked: Global.openIncomingIDRequestPopup(root.publicKey, contactDetails, null)
-        }
-    }
-
-    Component {
-        id: btnRequestIDVerification
-        StatusFlatButton {
-            size: StatusButton.Size.Small
-            text: qsTr("Request ID verification")
-            objectName: "requestIDVerification_StatusItem"
-            icon.name: "checkmark-circle"
-            onClicked: Global.openSendIDRequestPopup(root.publicKey, contactDetails, null)
-        }
-    }
-
-    Component {
-        id: btnReviewIDVerificationReply
-        StatusFlatButton {
-            size: StatusButton.Size.Small
-            text: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? qsTr("ID verification pending")
-                                                                                         : qsTr("Review ID verification reply")
-            icon.name: d.incomingVerificationStatus !== Constants.verificationStatus.verified ? "history" : "checkmark-circle"
-            onClicked: Global.openOutgoingIDRequestPopup(root.publicKey, contactDetails, null)
-        }
-    }
-
-    Component {
         id: btnShareProfile
         StatusFlatButton {
             objectName: "shareProfileButton"
@@ -293,15 +247,6 @@ Pane {
 
                     if (!root.idVerificationFlowsEnabled)
                         return
-
-                    if (d.isContact && !(d.isTrusted || d.isLocallyTrusted) && !d.isBlocked) {
-                        if (d.isVerificationRequestSent)
-                            return btnReviewIDVerificationReply
-                        else if (d.isVerificationRequestReceived)
-                            return btnReplyToIdRequestComponent
-                        else if (d.outgoingVerificationStatus === Constants.verificationStatus.unverified)
-                            return btnRequestIDVerification
-                    }
                 }
             }
 
@@ -333,12 +278,6 @@ Pane {
                         return txtPendingContactRequestComponent
                     case Constants.ContactRequestState.Received:
                         break // handled above
-                    case Constants.ContactRequestState.Mutual: {
-                        if (d.outgoingVerificationStatus === Constants.verificationStatus.declined) {
-                            return btnBlockUserComponent
-                        }
-                        break
-                    }
                     case Constants.ContactRequestState.None:
                     case Constants.ContactRequestState.Dismissed:
                         return btnSendContactRequestComponent
@@ -375,7 +314,7 @@ Pane {
                     StatusAction {
                         text: qsTr("Mark as ID verified")
                         icon.name: "checkmark-circle"
-                        enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && !(d.isTrusted || d.isLocallyTrusted)
+                        enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && !d.isLocallyTrusted
                         onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, contactDetails, null)
                     }
                     StatusAction {
@@ -406,7 +345,7 @@ Pane {
                         text: qsTr("Remove ID verification")
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
-                        enabled: root.idVerificationFlowsEnabled && d.isContact && (d.isTrusted || d.isLocallyTrusted)
+                        enabled: root.idVerificationFlowsEnabled && d.isContact && d.isLocallyTrusted
                         onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, contactDetails, null)
                     }
                     StatusAction {
@@ -425,13 +364,6 @@ Pane {
                         onTriggered: {
                             Global.markAsUntrustedRequested(root.publicKey, contactDetails)
                         }
-                    }
-                    StatusAction {
-                        text: qsTr("Cancel ID verification request")
-                        icon.name: "delete"
-                        type: StatusAction.Type.Danger
-                        enabled: root.idVerificationFlowsEnabled && d.isContact && !d.isBlocked && d.isVerificationRequestSent
-                        onTriggered: root.contactsStore.cancelVerificationRequest(root.publicKey)
                     }
                     StatusAction {
                         text: qsTr("Remove untrusted mark")

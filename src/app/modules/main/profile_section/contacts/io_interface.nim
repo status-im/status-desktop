@@ -79,9 +79,6 @@ method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, isUn
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateContactVerificationStatus*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -95,42 +92,6 @@ method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base
   raise newException(ValueError, "No implementation available")
 
 method removeTrustVerificationStatus*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getSentVerificationDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getVerificationDetailsFromAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method sendVerificationRequest*(self: AccessInterface, publicKey: string, challenge: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method cancelVerificationRequest*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method verifiedTrusted*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method verifiedUntrustworthy*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method declineVerificationRequest*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method acceptVerificationRequest*(self: AccessInterface, publicKey: string, response: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getReceivedVerificationRequests*(self: AccessInterface): seq[VerificationRequest] {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onVerificationRequestDeclined*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onVerificationRequestCanceled*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onVerificationRequestUpdatedOrAdded*(self: AccessInterface, VerificationRequest: VerificationRequest) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestContactInfo*(self: AccessInterface, publicKey: string) {.base.} =
