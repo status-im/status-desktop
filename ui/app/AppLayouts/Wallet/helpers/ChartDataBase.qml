@@ -15,11 +15,11 @@ QtObject {
     }
 
     readonly property var timeRangeTabsModel: [
-        {text: qsTr("7D"), enabled: true, timeRange: ChartStoreBase.TimeRange.Weekly, timeIndex: 0},
-        {text: qsTr("1M"), enabled: true, timeRange: ChartStoreBase.TimeRange.Monthly, timeIndex: 1},
-        {text: qsTr("6M"), enabled: true, timeRange: ChartStoreBase.TimeRange.HalfYearly, timeIndex: 2},
-        {text: qsTr("1Y"), enabled: true, timeRange: ChartStoreBase.TimeRange.Yearly, timeIndex: 3},
-        {text: qsTr("ALL"), enabled: true, timeRange: ChartStoreBase.TimeRange.All,  timeIndex: 4}]
+        {text: qsTr("7D"), enabled: true, timeRange: ChartDataBase.TimeRange.Weekly, timeIndex: 0},
+        {text: qsTr("1M"), enabled: true, timeRange: ChartDataBase.TimeRange.Monthly, timeIndex: 1},
+        {text: qsTr("6M"), enabled: true, timeRange: ChartDataBase.TimeRange.HalfYearly, timeIndex: 2},
+        {text: qsTr("1Y"), enabled: true, timeRange: ChartDataBase.TimeRange.Yearly, timeIndex: 3},
+        {text: qsTr("ALL"), enabled: true, timeRange: ChartDataBase.TimeRange.All,  timeIndex: 4}]
 
     property var weeklyData: []
     property var monthlyData: []
