@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +28,7 @@ Item {
         id: textItem
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
+        anchors.rightMargin: Theme.smallPadding
         visible: !buttons.visible
         text: {
             if (root.accepted) {

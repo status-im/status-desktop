@@ -22,13 +22,13 @@ StatusDialogFooter {
     signal nextButtonClicked()
 
     implicitHeight: 82
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
     color: Theme.palette.baseColor3
     dropShadowEnabled: true
 
     leftButtons: ObjectModel {
         ColumnLayout {
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             StatusBaseText {
                 color: Theme.palette.directColor5
                 text: qsTr("Estimated time:")
@@ -42,7 +42,7 @@ StatusDialogFooter {
 
     rightButtons: ObjectModel {
         RowLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
             ColumnLayout {
                 StatusBaseText {
                     color: Theme.palette.directColor5
@@ -54,7 +54,7 @@ StatusDialogFooter {
                 }
             }
             StatusButton {
-                Layout.rightMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
                 text: root.nextButtonText
                 objectName: "transactionModalFooterButton"
                 enabled: !root.pending

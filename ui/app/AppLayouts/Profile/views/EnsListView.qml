@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -77,8 +77,8 @@ Item {
         Item {
             id: addUsername
             anchors.top: sectionTitle.bottom
-            anchors.topMargin: Style.current.bigPadding
-            width: addButton.width + usernameText.width + Style.current.padding
+            anchors.topMargin: Theme.bigPadding
+            width: addButton.width + usernameText.width + Theme.padding
             height: addButton.height
 
             StatusRoundButton {
@@ -95,7 +95,7 @@ Item {
                 text: qsTr("Add username")
                 color: Theme.palette.primaryColor1
                 anchors.left: addButton.right
-                anchors.leftMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
                 anchors.verticalCenter: addButton.verticalCenter
                 font.pixelSize: 15
             }
@@ -166,7 +166,7 @@ Item {
 
         Separator {
             id: separator
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             anchors.top: ensList.bottom
         }
 
@@ -204,7 +204,7 @@ Item {
                 visible: chatSettingsLabel.visible
                 text: root.ensUsernamesStore.preferredUsername || qsTr("None selected")
                 anchors.left: usernameLabel.right
-                anchors.leftMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
                 font.pixelSize: 14
                 color: Theme.palette.directColor1
             }
@@ -222,7 +222,7 @@ Item {
             id: messagesShownAs
 
             anchors.top: !visible ? separator.bottom : primaryUsernameItem.bottom
-            anchors.topMargin: Style.current.padding * 2
+            anchors.topMargin: Theme.padding * 2
 
             visible: d.hasConfirmedEnsUsernames
                      && root.ensUsernamesStore.preferredUsername !== ""
@@ -245,7 +245,7 @@ Item {
         StatusBaseText {
             anchors.top: messagesShownAs.bottom
             anchors.left: messagesShownAs.left
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             text: qsTr("You’re displaying your ENS username in chats")
             font.pixelSize: 14
             color: Theme.palette.baseColor1

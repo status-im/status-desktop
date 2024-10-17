@@ -66,7 +66,7 @@ StatusDialog {
 
     contentItem: ColumnLayout {
         width: root.availableWidth
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StaticSocialLinkInput {
             id: customTitle
@@ -107,7 +107,7 @@ StatusDialog {
         StaticSocialLinkInput {
             id: linkTarget
             Layout.fillWidth: true
-            Layout.topMargin: customTitle.visible ? Style.current.padding : 0
+            Layout.topMargin: customTitle.visible ? Theme.padding : 0
             placeholderText: ""
             label: ProfileUtils.linkTypeToDescription(linkType) || qsTr("Edit your link")
             linkType: root.linkType

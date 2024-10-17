@@ -49,7 +49,7 @@ Control {
     }
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         color: Theme.palette.statusListItem.backgroundColor
     }
 

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -88,7 +88,6 @@ StatusModal {
 
             StatusBaseText {
                 text: qsTr("Preview")
-                font.pixelSize: 15
             }
 
             Rectangle {
@@ -103,7 +102,6 @@ StatusModal {
                     y: 16
                     text: root.color.toString()
                     color: Theme.palette.white
-                    font.pixelSize: 15
                 }
             }
 

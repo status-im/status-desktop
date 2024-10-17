@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -27,7 +27,7 @@ StatusDialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Style.current.xlPadding
+        spacing: Theme.xlPadding
 
         StatusBaseText {
             Layout.fillWidth: true

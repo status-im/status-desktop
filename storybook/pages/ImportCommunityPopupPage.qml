@@ -6,6 +6,8 @@ import QtQml 2.15
 import Storybook 1.0
 import Models 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Communities.popups 1.0
 
 import utils 1.0
@@ -135,7 +137,7 @@ SplitView {
         function getContactDetailsAsJson(arg1, arg2) {
             return JSON.stringify({
                 displayName: "Mock user",
-                displayIcon: Style.png("tokens/AST"),
+                displayIcon: Theme.png("tokens/AST"),
                 publicKey: 123456789,
                 name: "",
                 ensVerified: false,

@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,7 +18,7 @@ StatusInput {
     property bool readOnly: false
 
     input.edit.readOnly: root.readOnly
-    input.font: Theme.palette.monoFont.name
+    input.font: Theme.monoFont.name
     input.placeholderFont: root.input.font
 
     input.rightComponent: {

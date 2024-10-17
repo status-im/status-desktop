@@ -1,10 +1,12 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
 TextEdit {
-    font.family: Style.current.baseFont.name
-    color: Style.current.textColor
-    selectedTextColor: Style.current.textColor
-    selectionColor: Style.current.primarySelectionColor
+    font.family: Theme.baseFont.name
+    color: Theme.palette.textColor
+    selectedTextColor: Theme.palette.textColor
+    selectionColor: Theme.palette.primaryColor2
 }

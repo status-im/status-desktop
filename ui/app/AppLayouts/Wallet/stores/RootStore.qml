@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick 2.15
 
 // Aliasing not to conflict with the shared.stores.RootStore
 import shared.stores 1.0 as SharedStores
@@ -538,7 +538,7 @@ QtObject {
             case Constants.swap.paraswapV5ApproveContractAddress:
             case Constants.swap.paraswapV5SwapContractAddress:
                 return {
-                    "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
                     "url": Constants.swap.paraswapHostname,
                     "name": Constants.swap.paraswapName,
                     "approvalContractAddress": Constants.swap.paraswapV5ApproveContractAddress,
@@ -546,7 +546,7 @@ QtObject {
                 }
             case Constants.swap.paraswapV6_2ContractAddress:
                 return {
-                    "icon": Style.png("swap/%1".arg(Constants.swap.paraswapIcon)),
+                    "icon": Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)),
                     "url": Constants.swap.paraswapUrl,
                     "name": Constants.swap.paraswapName,
                     "approvalContractAddress": Constants.swap.paraswapV6_2ContractAddress,

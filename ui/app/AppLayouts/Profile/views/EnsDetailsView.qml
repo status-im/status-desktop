@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -55,9 +55,9 @@ Item {
         active: false
         sourceComponent: loadingImageComponent
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.top: parent.top
-        anchors.topMargin: Style.currentPadding
+        anchors.topMargin: Theme.padding
     }
 
     Connections {
@@ -155,12 +155,12 @@ Item {
             const formattedDate = LocaleUtils.formatDate(d.expirationTimestamp, Locale.ShortFormat)
             return qsTr("Username locked. You won't be able to release it until %1").arg(formattedDate)
         }
-        color: Style.current.darkGrey
+        color: Theme.palette.darkGrey
     }
 
     StatusQControls.StatusButton {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Back")
         onClicked: backBtnClicked()

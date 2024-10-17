@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
@@ -102,7 +102,7 @@ StatusModal {
                 width: parent.width
 
                 StatusBaseText {
-                    Layout.leftMargin: Style.current.bigPadding
+                    Layout.leftMargin: Theme.bigPadding
                     Layout.preferredWidth: parent.width - copyButton.width
                     Layout.fillWidth: true
                     verticalAlignment: Text.AlignVCenter
@@ -116,7 +116,7 @@ StatusModal {
                 CopyButtonWithCircle {
                     id: copyButton
 
-                    Layout.rightMargin: Style.current.bigPadding
+                    Layout.rightMargin: Theme.bigPadding
                     Layout.preferredWidth: 32
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
@@ -142,9 +142,9 @@ StatusModal {
         width: parent.width
         height: childrenRect.height
 
-        topPadding: Style.current.xlPadding
-        bottomPadding: Style.current.xlPadding
-        spacing: Style.current.bigPadding
+        topPadding: Theme.xlPadding
+        bottomPadding: Theme.xlPadding
+        spacing: Theme.bigPadding
 
         Item {
             id: qrCode
@@ -162,21 +162,21 @@ StatusModal {
                         anchors.left: parent.left
                         width: qrCode.width
                         height: qrCode.height
-                        radius: Style.current.bigPadding
+                        radius: Theme.bigPadding
                         border.width: 1
-                        border.color: Style.current.border
+                        border.color: Theme.palette.border
                     }
                     Rectangle {
                         anchors.top: parent.top
                         anchors.right: parent.right
-                        width: Style.current.bigPadding
-                        height: Style.current.bigPadding
+                        width: Theme.bigPadding
+                        height: Theme.bigPadding
                     }
                     Rectangle {
                         anchors.bottom: parent.bottom
                         anchors.left: parent.left
-                        width: Style.current.bigPadding
-                        height: Style.current.bigPadding
+                        width: Theme.bigPadding
+                        height: Theme.bigPadding
                     }
                 }
             }

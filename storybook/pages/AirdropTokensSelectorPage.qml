@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Communities.controls 1.0
 
 import utils 1.0
@@ -11,22 +13,22 @@ ColumnLayout {
         {
             tokenText: "2 MCT",
             networkText: "Ethereum",
-            tokenImage: Style.png("tokens/SNT"),
-            networkImage: Style.svg("network/Network=Ethereum"),
+            tokenImage: Theme.png("tokens/SNT"),
+            networkImage: Theme.svg("network/Network=Ethereum"),
             valid: true
         },
         {
             tokenText: "64 DAI",
             networkText: "Optimism",
-            tokenImage: Style.png("tokens/DAI"),
-            networkImage: Style.svg("network/Network=Optimism"),
+            tokenImage: Theme.png("tokens/DAI"),
+            networkImage: Theme.svg("network/Network=Optimism"),
             valid: false
         },
         {
             tokenText: "0.125 ETH",
             networkText: "Arbitrum",
-            tokenImage: Style.png("tokens/ETH"),
-            networkImage: Style.svg("network/Network=Arbitrum"),
+            tokenImage: Theme.png("tokens/ETH"),
+            networkImage: Theme.svg("network/Network=Arbitrum"),
             valid: true
         }
     ]

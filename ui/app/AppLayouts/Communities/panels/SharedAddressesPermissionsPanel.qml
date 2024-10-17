@@ -183,20 +183,20 @@ Rectangle {
     StatusScrollView {
         id: permissionsScrollView
         anchors.fill: parent
-        anchors.topMargin: -Style.current.padding
+        anchors.topMargin: -Theme.padding
         bottomPadding: eligibilityHintBubble.visible ? eligibilityHintBubble.height + eligibilityHintBubble.anchors.bottomMargin*2
                                                      : 16
         contentWidth: availableWidth
 
         ColumnLayout {
             width: parent.width
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
 
             // header
             RowLayout {
                 Layout.fillWidth: true
                 Layout.bottomMargin: 4
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 StatusRoundedImage {
                     Layout.preferredWidth: 40
                     Layout.preferredHeight: 40
@@ -209,12 +209,12 @@ Rectangle {
                 }
                 Item { Layout.fillWidth: true }
                 RowLayout {
-                    Layout.rightMargin: Style.current.halfPadding
+                    Layout.rightMargin: Theme.halfPadding
                     spacing: 4
                     visible: root.requirementsCheckPending
                     StatusBaseText {
                         text: qsTr("Updating eligibility")
-                        font.pixelSize: Style.current.tertiaryTextFontSize
+                        font.pixelSize: Theme.tertiaryTextFontSize
                         color: Theme.palette.baseColor1
                     }
                     StatusLoadingIndicator {
@@ -271,7 +271,7 @@ Rectangle {
         color: Theme.palette.statusListItem.backgroundColor
         border.width: 1
         border.color: Theme.palette.baseColor2
-        radius: Style.current.radius
+        radius: Theme.radius
     }
 
     component PanelIcon: StatusRoundIcon {
@@ -313,7 +313,7 @@ Rectangle {
 
     component SinglePermissionFlow: Flow {
         Layout.fillWidth: true
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         Repeater {
             model: HoldingsSelectionModel {
                 sourceModel: model.holdingsListModel
@@ -351,7 +351,7 @@ Rectangle {
         padding: d.absLeftMargin
         background: PanelBg {}
         contentItem: RowLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
             PanelIcon {}
             ColumnLayout {
                 Layout.fillWidth: true
@@ -362,15 +362,15 @@ Rectangle {
                     Layout.preferredHeight: grid.implicitHeight + grid.anchors.margins*2
                     border.width: 1
                     border.color: d.tableBorderColor
-                    radius: Style.current.radius
+                    radius: Theme.radius
                     color: "transparent"
 
                     GridLayout {
                         id: grid
                         anchors.fill: parent
-                        anchors.margins: Style.current.halfPadding
-                        rowSpacing: Style.current.halfPadding
-                        columnSpacing: Style.current.halfPadding
+                        anchors.margins: Theme.halfPadding
+                        rowSpacing: Theme.halfPadding
+                        columnSpacing: Theme.halfPadding
                         columns: 2
 
                         Repeater {
@@ -385,7 +385,7 @@ Rectangle {
                                 Layout.column: 0
                                 Layout.row: index
                                 Layout.fillWidth: true
-                                spacing: Style.current.halfPadding
+                                spacing: Theme.halfPadding
 
                                 readonly property bool tokenCriteriaMet: model.tokenCriteriaMet ?? false
                                 onTokenCriteriaMetChanged: permissionsRepeater.revision++
@@ -422,8 +422,8 @@ Rectangle {
                             Rectangle {
                                 Layout.preferredWidth: 1
                                 Layout.fillHeight: true
-                                Layout.topMargin: -Style.current.halfPadding
-                                Layout.bottomMargin: -Style.current.halfPadding
+                                Layout.topMargin: -Theme.halfPadding
+                                Layout.bottomMargin: -Theme.halfPadding
                                 color: d.tableBorderColor
                             }
                             Row {
@@ -500,12 +500,12 @@ Rectangle {
         readonly property bool anyPermissionLost: channelPermsRepeater.count > 0 ? channelPermsRepeater.itemAt(0).permissionLost || channelPermsRepeater.itemAt(1).permissionLost : false
 
         contentItem: RowLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
             PanelIcon {}
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: Style.current.smallPadding
+                spacing: Theme.smallPadding
                 PanelHeading {}
                 Repeater { // permissions repeater
                     id: channelPermsRepeater
@@ -523,16 +523,16 @@ Rectangle {
                         Layout.preferredHeight: grid2.implicitHeight + grid2.anchors.margins*2
                         border.width: 1
                         border.color: d.tableBorderColor
-                        radius: Style.current.radius
+                        radius: Theme.radius
                         color: "transparent"
                         visible: permissionsRepeater2.model.count > 0
 
                         GridLayout {
                             id: grid2
                             anchors.fill: parent
-                            anchors.margins: Style.current.halfPadding
-                            rowSpacing: Style.current.halfPadding
-                            columnSpacing: Style.current.halfPadding
+                            anchors.margins: Theme.halfPadding
+                            rowSpacing: Theme.halfPadding
+                            columnSpacing: Theme.halfPadding
                             columns: 2
 
                             Repeater {
@@ -565,7 +565,7 @@ Rectangle {
                                     Layout.column: 0
                                     Layout.row: index
                                     Layout.fillWidth: true
-                                    spacing: Style.current.halfPadding
+                                    spacing: Theme.halfPadding
 
                                     readonly property bool tokenCriteriaMet: model.tokenCriteriaMet ?? false
                                     onTokenCriteriaMetChanged: permissionsRepeater2.revision++
@@ -603,8 +603,8 @@ Rectangle {
                                 Rectangle {
                                     Layout.preferredWidth: 1
                                     Layout.fillHeight: true
-                                    Layout.topMargin: -Style.current.halfPadding
-                                    Layout.bottomMargin: -Style.current.halfPadding
+                                    Layout.topMargin: -Theme.halfPadding
+                                    Layout.bottomMargin: -Theme.halfPadding
                                     color: d.tableBorderColor
                                 }
                                 Row {

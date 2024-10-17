@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -35,11 +35,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.padding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
+        spacing: Theme.padding
 
         KeycardImage {
             id: image
@@ -66,7 +66,7 @@ Item {
                 root.pukUpdated(pinInput)
                 if (root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.enterPuk &&
                         root.sharedKeycardModule.currentState.stateType !== Constants.keycardSharedState.wrongPuk) {
-                    image.source = Style.png("keycard/card-inserted")
+                    image.source = Theme.png("keycard/card-inserted")
                 }
                 if(pinInput.length == 0) {
                     return
@@ -84,7 +84,7 @@ Item {
                         root.sharedKeycardModule.currentState.doSecondaryAction()
                     } else {
                         info.text = qsTr("The PUK doesn’t match")
-                        image.source = Style.png("keycard/plain-error")
+                        image.source = Theme.png("keycard/plain-error")
                     }
                 }
             }
@@ -117,7 +117,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.enterPuk
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -140,7 +140,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.wrongPuk
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/plain-error")
+                source: Theme.png("keycard/plain-error")
                 pattern: ""
             }
             PropertyChanges {
@@ -169,7 +169,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.createPuk
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {
@@ -192,7 +192,7 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.repeatPuk
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/card-inserted")
+                source: Theme.png("keycard/card-inserted")
                 pattern: ""
             }
             PropertyChanges {

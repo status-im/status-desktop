@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
@@ -136,7 +136,7 @@ Rectangle {
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
-    color: Style.current.transparent
+    color: Theme.palette.transparent
 
     QtObject {
         id: d
@@ -160,7 +160,7 @@ Rectangle {
         function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
             const popupWidth = emojiPopup ? emojiPopup.width : 0
             const popupHeight = emojiPopup ? emojiPopup.height : 0
-            const controlX = controlWidth - popupWidth - Style.current.halfPadding
+            const controlX = controlWidth - popupWidth - Theme.halfPadding
             const controlY = -popupHeight
             return popupParent.mapFromItem(control, controlX, controlY)
         }
@@ -1014,7 +1014,7 @@ Rectangle {
         objectName: "suggestionsBox"
         model: control.usersModel ?? []
         x : messageInput.x
-        y: -height - Style.current.smallPadding
+        y: -height - Theme.smallPadding
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
@@ -1091,7 +1091,7 @@ Rectangle {
             implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
             implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
 
-            color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
+            color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Theme.palette.baseColor2
             radius: 20
 
             StatusQ.StatusToolTip {
@@ -1199,7 +1199,7 @@ Rectangle {
                 anchors.right: parent.right
                 height: parent.height / 2
                 width: 32
-                radius: Style.current.radius
+                radius: Theme.radius
             }
 
             ColumnLayout {
@@ -1249,7 +1249,7 @@ Rectangle {
                     Layout.fillWidth: true
                     Layout.minimumHeight: (messageInputField.contentHeight + messageInputField.topPadding + messageInputField.bottomPadding)
                     Layout.maximumHeight: 200
-                    spacing: Style.current.radius
+                    spacing: Theme.radius
                     StatusScrollView {
                         id: inputScrollView
                         Layout.fillWidth: true
@@ -1274,12 +1274,12 @@ Rectangle {
 
                             textFormat: Text.RichText
                             font.pixelSize: 15
-                            font.family: Style.current.baseFont.name
+                            font.family: Theme.baseFont.name
                             wrapMode: TextArea.Wrap
                             placeholderText: control.chatInputPlaceholder
-                            placeholderTextColor: Style.current.secondaryText
+                            placeholderTextColor: Theme.palette.secondaryText
                             selectByMouse: true
-                            color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
+                            color: isEdit ? Theme.palette.directColor1 : Theme.palette.textColor
                             topPadding: 9
                             bottomPadding: 9
                             leftPadding: 0
@@ -1308,7 +1308,7 @@ Rectangle {
                             }
                             Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                             Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
-                            selectionColor: Style.current.primarySelectionColor
+                            selectionColor: Theme.palette.primaryColor2
                             persistentSelection: true
                             property var keyEvent
 
@@ -1392,8 +1392,8 @@ Rectangle {
 
                             StatusSyntaxHighlighter {
                                 quickTextDocument: messageInputField.textDocument
-                                codeBackgroundColor: Style.current.codeBackground
-                                codeForegroundColor: Style.current.textColor
+                                codeBackgroundColor: Theme.palette.baseColor4
+                                codeForegroundColor: Theme.palette.textColor
                                 hyperlinks: control.urlsList
                                 hyperlinkColor: Theme.palette.primaryColor1
                                 highlightedHyperlink: linkPreviewArea.hoveredUrl
@@ -1451,14 +1451,14 @@ Rectangle {
                         StyledText {
                             id: messageLengthLimit
                             property int remainingChars: -1
-                            leftPadding: Style.current.halfPadding
-                            rightPadding: Style.current.halfPadding
+                            leftPadding: Theme.halfPadding
+                            rightPadding: Theme.halfPadding
                             visible: messageInputField.length >= control.messageLimit - control.messageLimitSoft
                             color: {
                                 if (remainingChars  >= 0)
-                                    return Style.current.textColor
+                                    return Theme.palette.textColor
                                 else
-                                    return Style.current.danger
+                                    return Theme.palette.dangerColor1
                             }
                             text: visible ? remainingChars.toString() : ""
 

@@ -16,7 +16,7 @@ Rectangle {
 
     signal runImport()
 
-    radius: Style.current.radius
+    radius: Theme.radius
     border.width: 1
     border.color: Theme.palette.directColor8
     color: Theme.palette.transparent
@@ -24,13 +24,13 @@ Rectangle {
     ColumnLayout {
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
-        spacing: Style.current.halfPadding
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
+        spacing: Theme.halfPadding
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             text: root.title
             color: Theme.palette.warningColor1
         }
@@ -43,7 +43,7 @@ Rectangle {
 
         StatusButton {
             Layout.alignment: Qt.AlignLeft
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
             text: root.buttonName
             type: StatusBaseButton.Type.Warning
             icon.name: "download"

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -24,7 +24,7 @@ Item {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.top: parent.top
         anchors.bottom: startBtn.top
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -40,7 +40,7 @@ Item {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: Style.png("ens/ens-header-" + Style.current.name + "@2x")
+                source: Theme.png("ens/ens-header-" + Theme.palette.name + "@2x")
                 cache: false
             }
 
@@ -287,7 +287,7 @@ Item {
         interactive: startButtonEnabled
         objectName: "ensStartButton"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Start")
         tooltip.text: root.tooltipText

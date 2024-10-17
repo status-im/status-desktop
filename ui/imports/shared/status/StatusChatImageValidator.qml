@@ -1,7 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import ".."
@@ -21,8 +23,8 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Style.current.background
-        radius: Style.current.halfPadding
+        color: Theme.palette.background
+        radius: Theme.halfPadding
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
@@ -45,7 +47,7 @@ Item {
             anchors.topMargin: 6
             anchors.leftMargin: 6
             fillMode: Image.PreserveAspectFit
-            source: Style.svg("exclamation_outline")
+            source: Theme.svg("exclamation_outline")
         }
         StyledText {
             id: txtValidationError
@@ -57,7 +59,7 @@ Item {
             wrapMode: Text.WordWrap
             font.pixelSize: 13
             height: 18
-            color: Style.current.danger
+            color: Theme.palette.dangerColor1
         }
         StyledText {
             id: txtValidationExtraInfo
@@ -69,7 +71,7 @@ Item {
             wrapMode: Text.WordWrap
             font.pixelSize: 13
             height: 18
-            color: Style.current.textColor
+            color: Theme.palette.textColor
         }
     }
 }

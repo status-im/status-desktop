@@ -171,7 +171,7 @@ StatusScrollView {
                 tokenImage: modelItem.iconSource,
                 networkId: modelItem.chainId,
                 networkText: modelItem.chainName,
-                networkImage: Style.svg(modelItem.chainIcon),
+                networkImage: Theme.svg(modelItem.chainIcon),
                 remainingSupply: modelItem.remainingSupply,
                 multiplierIndex: modelItem.multiplierIndex,
                 infiniteSupply: modelItem.infiniteSupply,
@@ -258,7 +258,7 @@ StatusScrollView {
             property int editedIndex: -1
 
             Layout.fillWidth: true
-            icon: Style.svg("token")
+            icon: Theme.svg("token")
             title: qsTr("What")
             placeholderText: qsTr("Example: 1 SOCK")
             addButton.visible: model.count < d.maxAirdropTokens
@@ -574,7 +574,7 @@ StatusScrollView {
             id: notEnoughTokensWarning
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
 
             text: qsTr("Not enough tokens to send to all recipients. Reduce the number of recipients or change the number of tokens sent to each recipient.")
 
@@ -585,7 +585,7 @@ StatusScrollView {
         NetworkWarningPanel {
             visible: !!d.networkThatIsNotActive
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             networkThatIsNotActive: d.networkThatIsNotActive
             onEnableNetwork: {
                 root.enableNetwork(d.networkIdThatIsNotActive)
@@ -598,7 +598,7 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.bigPadding
+            Layout.topMargin: Theme.bigPadding
             text: qsTr("Create airdrop")
             enabled: root.isFullyFilled && root.feesAvailable && root.feeErrorText === ""
 

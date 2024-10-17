@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -30,7 +30,7 @@ Item {
         readonly property int pukLength: 12
         property var pukArray: []
         property bool allEntriesValid: false
-        readonly property int rowSpacing: Style.current.padding
+        readonly property int rowSpacing: Theme.padding
 
         function updateValidity() {
             for(let i = 0; i < pukLength; ++i) {
@@ -52,7 +52,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         StatusBaseText {
             id: title

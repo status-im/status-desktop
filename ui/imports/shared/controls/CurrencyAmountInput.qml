@@ -62,10 +62,10 @@ StatusTextField {
     Component.onCompleted: text = internalProp.asLocaleString(decimals)
     onTextEdited: value = text
 
-    leftPadding: Style.current.padding
+    leftPadding: Theme.padding
     rightPadding: currencySymbol !== "" ?
                       currencySymbolText.width + currencySymbolText.anchors.leftMargin + currencySymbolText.anchors.rightMargin :
-                      Style.current.padding
+                      Theme.padding
     topPadding: 10
     bottomPadding: 10
 
@@ -81,7 +81,7 @@ StatusTextField {
     }
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         color: Theme.palette.statusAppNavBar.backgroundColor
         border.width: 1
         border.color: {
@@ -100,8 +100,8 @@ StatusTextField {
         id: currencySymbolText
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
+        anchors.rightMargin: Theme.padding
         color: Theme.palette.baseColor1
         text: root.currencySymbol
         visible: !!text

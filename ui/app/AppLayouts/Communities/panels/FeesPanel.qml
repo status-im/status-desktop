@@ -40,7 +40,7 @@ Control {
         PropertyChanges {
             target: root.footer
             Layout.fillWidth: true
-            Layout.topMargin: -Style.current.padding
+            Layout.topMargin: -Theme.padding
         }
     }
 
@@ -51,7 +51,7 @@ Control {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusBaseText {
             id: placeholderText
@@ -61,7 +61,7 @@ Control {
                                              d.placeholderHeight)
 
             visible: repeater.count === 0
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.Wrap
             color: Theme.palette.baseColor1
             verticalAlignment: Text.AlignVCenter

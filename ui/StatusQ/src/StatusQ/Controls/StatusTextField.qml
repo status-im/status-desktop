@@ -7,7 +7,7 @@ import StatusQ.Core.Theme 0.1
 TextField {
     id: root
 
-    font.family: Theme.palette.baseFont.name
+    font.family: Theme.baseFont.name
     font.pixelSize: Theme.primaryTextFontSize
     color: readOnly ? Theme.palette.baseColor1 : Theme.palette.directColor1
     selectByMouse: true

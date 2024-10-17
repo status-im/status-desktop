@@ -1,8 +1,9 @@
 pragma Singleton
 
-import QtQml 2.14
+import QtQml 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Internal 0.1 as Internal
 
@@ -18,7 +19,7 @@ QtObject {
         // symbol - ERC20
         // collectionUid model role keeps chainId+address for every ERC721
         // key model role keeps: symbol for ERC20, chainId+address for community ERC721 tokens, chainId+address+tokenId for ERC721 tokens from wallet
-        let collectionUid = PermissionsHelpers.getCollectionUidFromKey(key)
+        let collectionUid = getCollectionUidFromKey(key)
         if(collectionUid !== "") {
             item = ModelUtils.getByKey(model, "collectionUid", collectionUid)
         } else {
@@ -44,7 +45,7 @@ QtObject {
 
     function getTokenIconByKey(model, key) {
         const item = getTokenByKey(model, key)
-        const defaultIcon = Style.png("tokens/DEFAULT-TOKEN")
+        const defaultIcon = Theme.png("tokens/DEFAULT-TOKEN")
         if (item)
             return item.iconSource ? item.iconSource : defaultIcon
         return defaultIcon

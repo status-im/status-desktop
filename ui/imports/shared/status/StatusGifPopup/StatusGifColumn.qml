@@ -1,14 +1,13 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
-
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.stores 1.0
-
 
 Column {
     id: root
@@ -37,14 +36,14 @@ Column {
 
             height: animation.status != Image.Ready ? loader.height : animation.height
             width: root.gifWidth
-            color: Style.current.background
+            color: Theme.palette.background
 
             Rectangle {
                 id: loader
                 height: 100
                 width: root.gifWidth
                 visible: animation.status != Image.Ready
-                radius: Style.current.radius
+                radius: Theme.radius
                 rotation: 90
                 gradient: Gradient {
                     GradientStop { position: 0.0; color: "transparent" }
@@ -57,7 +56,7 @@ Column {
                 property bool favorite: root.gifStore.isFavorite(model.id)
 
                 type: StatusFlatRoundButton.Type.Secondary
-                textColor: hovered || favorite ? Style.current.yellow : Style.current.secondaryText
+                textColor: hovered || favorite ? Theme.palette.miscColor7 : Theme.palette.secondaryText
                 icon.name: favorite ? "star-icon" : "star-icon-outline"
                 icon.width:  (14/104) * thumb.width
                 icon.height: (13/104) * thumb.width
@@ -101,7 +100,7 @@ Column {
                     maskSource: Rectangle {
                         width: animation.width
                         height: animation.height
-                        radius: Style.current.radius
+                        radius: Theme.radius
                     }
                 }
             }

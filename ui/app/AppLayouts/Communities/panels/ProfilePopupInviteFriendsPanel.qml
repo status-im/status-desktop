@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.4
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -33,10 +34,10 @@ ColumnLayout {
     StyledText {
         id: headline
         text: qsTr("Contacts")
-        font.pixelSize: Style.current.primaryTextFontSize
-        color: Style.current.secondaryText
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        font.pixelSize: Theme.primaryTextFontSize
+        color: Theme.palette.secondaryText
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
     }
 
     SearchBox {
@@ -46,10 +47,10 @@ ColumnLayout {
         topPadding: 0
         bottomPadding: 0
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.bigPadding
-        Layout.bottomMargin: Style.current.padding
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.topMargin: Theme.bigPadding
+        Layout.bottomMargin: Theme.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
     }
 
     ExistingContacts {
@@ -78,8 +79,8 @@ ColumnLayout {
         }
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.leftMargin: Style.current.halfPadding
-        Layout.rightMargin: Style.current.halfPadding
+        Layout.leftMargin: Theme.halfPadding
+        Layout.rightMargin: Theme.halfPadding
     }
 
     StatusModalDivider {

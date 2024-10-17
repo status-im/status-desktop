@@ -87,9 +87,9 @@ ComboBox {
         StatusDialog {
             id: dappConnectSelect
             width: 480
-            topPadding: Style.current.bigPadding
-            leftPadding: Style.current.padding
-            rightPadding: Style.current.padding
+            topPadding: Theme.bigPadding
+            leftPadding: Theme.padding
+            rightPadding: Theme.padding
             bottomPadding: 4
             destroyOnClose: true
 
@@ -106,13 +106,13 @@ ComboBox {
             contentItem: ColumnLayout {
                 StatusBaseText {
                     Layout.fillWidth: true
-                    Layout.leftMargin: Style.current.padding
+                    Layout.leftMargin: Theme.padding
                     color: Theme.palette.baseColor1
                     text: qsTr("How would you like to connect?")
                 }
                 StatusListItem {
                     title: "Status Connector"
-                    asset.name: Style.png("status-logo")
+                    asset.name: Theme.png("status-logo")
                     asset.isImage: true
                     components: [
                         StatusIcon {
@@ -128,7 +128,7 @@ ComboBox {
                 StatusListItem {
                     objectName: "btnWalletConnect"
                     title: "Wallet Connect"
-                    asset.name: Style.svg("walletconnect")
+                    asset.name: Theme.svg("walletconnect")
                     asset.isImage: true
                     components: [
                         StatusIcon {

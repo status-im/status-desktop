@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -29,11 +29,11 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
-        spacing: Style.current.padding
+        anchors.topMargin: Theme.xlPadding
+        anchors.bottomMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.xlPadding
+        anchors.rightMargin: Theme.xlPadding
+        spacing: Theme.padding
         clip: true
 
         ButtonGroup {
@@ -61,14 +61,14 @@ Item {
 
         Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.halfPadding
+            Layout.preferredHeight: Theme.halfPadding
             Layout.fillHeight: root.sharedKeycardModule.keyPairModel.count === 0
         }
 
         StatusBaseText {
             visible: !userProfile.isKeycardUser
-            Layout.preferredWidth: parent.width - 2 * Style.current.padding
-            Layout.leftMargin: Style.current.padding
+            Layout.preferredWidth: parent.width - 2 * Theme.padding
+            Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Profile key pair")
             font.pixelSize: Constants.keycard.general.fontSize2
@@ -85,7 +85,7 @@ Item {
             Layout.preferredWidth: parent.width
 
             modelFilters: ExpressionFilter {
-                expression: model.keyPair.pairType == d.profilePairTypeValue
+                expression: model.keyPair.pairType === d.profilePairTypeValue
             }
             keyPairModel: root.sharedKeycardModule.keyPairModel
             buttonGroup: keyPairsButtonGroup
@@ -99,8 +99,8 @@ Item {
         StatusBaseText {
             visible: userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 0 ||
                      !userProfile.isKeycardUser && root.sharedKeycardModule.keyPairModel.count > 1
-            Layout.preferredWidth: parent.width - 2 * Style.current.padding
-            Layout.leftMargin: Style.current.padding
+            Layout.preferredWidth: parent.width - 2 * Theme.padding
+            Layout.leftMargin: Theme.padding
             Layout.alignment: Qt.AlignLeft
             text: qsTr("Other key pairs")
             font.pixelSize: Constants.keycard.general.fontSize2
@@ -117,7 +117,7 @@ Item {
             Layout.preferredWidth: parent.width
 
             modelFilters: ExpressionFilter {
-                expression: model.keyPair.pairType == d.profilePairTypeValue
+                expression: model.keyPair.pairType === d.profilePairTypeValue
                 inverted: true
             }
             keyPairModel: root.sharedKeycardModule.keyPairModel

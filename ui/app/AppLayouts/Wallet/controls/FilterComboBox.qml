@@ -40,11 +40,11 @@ ComboBox {
     displayText: qsTr("Collection")
 
     horizontalPadding: 12
-    verticalPadding: Style.current.halfPadding
-    spacing: Style.current.halfPadding
+    verticalPadding: Theme.halfPadding
+    spacing: Theme.halfPadding
 
-    font.family: Theme.palette.baseFont.name
-    font.pixelSize: Style.current.additionalTextSize
+    font.family: Theme.baseFont.name
+    font.pixelSize: Theme.additionalTextSize
 
     QtObject {
         id: d
@@ -178,7 +178,7 @@ ComboBox {
         StatusBadge {
             Layout.preferredHeight: 16
             Layout.preferredWidth: 16
-            Layout.rightMargin: Style.current.halfPadding
+            Layout.rightMargin: Theme.halfPadding
             value: d.selectedFilterGroupIds.length
             visible: root.hasEnabledFilters
         }
@@ -195,14 +195,14 @@ ComboBox {
 
         implicitWidth: 290
         implicitHeight: Math.min(contentHeight+margins, 380)
-        margins: Style.current.halfPadding
+        margins: Theme.halfPadding
 
         padding: 0
-        bottomPadding: Style.current.halfPadding
+        bottomPadding: Theme.halfPadding
 
         background: Rectangle {
             color: Theme.palette.statusSelect.menuItemBackgroundColor
-            radius: Style.current.radius
+            radius: Theme.radius
             layer.enabled: true
             layer.effect: DropShadow {
                 horizontalOffset: 0
@@ -220,8 +220,8 @@ ComboBox {
                 id: searchBox
                 Layout.fillWidth: true
                 Layout.topMargin: 12
-                Layout.leftMargin: Style.current.halfPadding
-                Layout.rightMargin: Style.current.halfPadding
+                Layout.leftMargin: Theme.halfPadding
+                Layout.rightMargin: Theme.halfPadding
                 Layout.bottomMargin: 12
                 minimumHeight: d.defaultDelegateHeight
                 maximumHeight: d.defaultDelegateHeight
@@ -263,13 +263,13 @@ ComboBox {
 
                         StatusBaseText {
                             anchors.fill: parent
-                            anchors.leftMargin: Style.current.padding
-                            anchors.rightMargin: Style.current.padding
+                            anchors.leftMargin: Theme.padding
+                            anchors.rightMargin: Theme.padding
                             verticalAlignment: Text.AlignVCenter
                             text: section === "community" ? qsTr("Community minted") : root.hasCommunityGroups ? qsTr("Other")
                                                                                                                : qsTr("Collections")
                             color: Theme.palette.baseColor1
-                            font.pixelSize: Style.current.tertiaryTextFontSize
+                            font.pixelSize: Theme.tertiaryTextFontSize
                             elide: Text.ElideRight
                         }
                     }
@@ -308,7 +308,7 @@ ComboBox {
         readonly property string groupImage: !!model ? model.communityImage || model.imageUrl : ""
 
         highlighted: hovered
-        leftPadding: Style.current.padding
+        leftPadding: Theme.padding
         rightPadding: 44
         verticalPadding: 4
         spacing: root.spacing
@@ -326,7 +326,7 @@ ComboBox {
         }
         indicator: Rectangle {
             anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: Theme.padding
             anchors.verticalCenter: parent.verticalCenter
             implicitWidth: 18
             implicitHeight: implicitWidth
@@ -390,7 +390,7 @@ ComboBox {
             Item { Layout.fillWidth: true }
 
             StatusBaseText {
-                font.pixelSize: Style.current.tertiaryTextFontSize
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: Theme.palette.baseColor1
                 text: menuDelegate.count
             }

@@ -1,7 +1,7 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.13
-import QtQuick.Controls 2.14
-import QtQuick.Window 2.12
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -111,7 +111,7 @@ StatusMenu {
         readonly property TextMetrics contentMetrics: TextMetrics {
             id: contentMetrics
             font.pixelSize: root.fontSettings.pixelSize
-            font.family: Theme.palette.baseFont.name
+            font.family: Theme.baseFont.name
             text: {
                 // Getting longest possible text
                 if (showOnEtherscanAction.enabled) {

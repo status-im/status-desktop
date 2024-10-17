@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -20,7 +20,7 @@ Item {
     Column {
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Style.current.padding
+        anchors.margins: Theme.padding
 
         StatusListItem {
             title: qsTr("Add new master key")

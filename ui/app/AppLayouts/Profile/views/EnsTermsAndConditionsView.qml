@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -56,7 +56,7 @@ Item {
             contentWidth: availableWidth
 
             Column {
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 width: scroll.availableWidth
 
 
@@ -130,7 +130,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Style.current.monoFont.name
+                    font.family: Theme.monoFont.name
                     color: Theme.palette.directColor1
                 }
 
@@ -154,7 +154,7 @@ Item {
                     wrapMode: Text.WordWrap
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    font.family: Style.current.monoFont.name
+                    font.family: Theme.monoFont.name
                     color: Theme.palette.directColor1
                 }
 
@@ -180,9 +180,9 @@ Item {
     StatusScrollView {
         id: sview
         anchors.top: sectionTitle.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.bottom: startBtn.top
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -200,14 +200,14 @@ Item {
                 width: 60
                 height: 60
                 radius: 120
-                color: Style.current.blue
+                color: Theme.palette.primaryColor1
 
                 StatusBaseText {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
                     font.pixelSize: 18
-                    color: Style.current.white
+                    color: Theme.palette.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -261,7 +261,7 @@ Item {
                 id: termsAndConditionsCheckbox
                 objectName: "ensAgreeTerms"
                 anchors.top: keyLbl.bottom
-                anchors.topMargin: Style.current.padding
+                anchors.topMargin: Theme.padding
                 anchors.left: parent.left
                 anchors.leftMargin: 24
             }
@@ -269,7 +269,7 @@ Item {
             StatusBaseText {
                 text: qsTr("Agree to <a href=\"#\">Terms of name registration.</a> I understand that my wallet address will be publicly connected to my username.")
                 anchors.left: termsAndConditionsCheckbox.right
-                anchors.leftMargin: Style.current.halfPadding
+                anchors.leftMargin: Theme.halfPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 anchors.verticalCenter: termsAndConditionsCheckbox.verticalCenter
@@ -290,9 +290,9 @@ Item {
 
     StatusButton {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         text: qsTr("Back")
         onClicked: backBtnClicked()
     }
@@ -300,14 +300,14 @@ Item {
     Item {
         anchors.top: startBtn.top
         anchors.right: startBtn.left
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         width: childrenRect.width
 
         Image {
             id: image1
             height: 50
             width: height
-            source: Style.png("tokens/SNT")
+            source: Theme.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
             cache: false
         }
@@ -337,9 +337,9 @@ Item {
         id: startBtn
         objectName: "ensStartTransaction"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         text: d.sntBalance < 10 ?
           qsTr("Not enough SNT") :
           qsTr("Register")

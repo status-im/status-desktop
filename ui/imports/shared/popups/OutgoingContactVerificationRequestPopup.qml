@@ -101,10 +101,10 @@ CommonContactDialog {
 
     StatusBaseText {
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.halfPadding
-        text: root.hasReply ? qsTr("Still not sure?") +  " " + Utils.getLinkStyle(qsTr("Ask something else"), hoveredLink, Style.current.blue)
+        Layout.topMargin: Theme.halfPadding
+        text: root.hasReply ? qsTr("Still not sure?") +  " " + Utils.getLinkStyle(qsTr("Ask something else"), hoveredLink, Theme.palette.primaryColor1)
                             : qsTr("Awaiting %1's response...").arg(root.verificationResponseDisplayName)
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         horizontalAlignment : Text.AlignHCenter
         wrapMode: Text.WordWrap
         textFormat: Text.RichText

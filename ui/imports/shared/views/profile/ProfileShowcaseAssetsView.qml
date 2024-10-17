@@ -19,8 +19,8 @@ Item {
     required property var assetsModel
     required property bool sendToAccountEnabled
 
-    property alias cellWidth: accountsView.cellWidth
-    property alias cellHeight: accountsView.cellHeight
+    property alias cellWidth: assetsView.cellWidth
+    property alias cellHeight: assetsView.cellHeight
 
     signal closeRequested()
     signal visitCommunity(var model)
@@ -37,9 +37,9 @@ Item {
         id: assetsView
 
         anchors.fill: parent
-        topMargin: Style.current.bigPadding
-        bottomMargin: Style.current.bigPadding
-        leftMargin: Style.current.bigPadding
+        topMargin: Theme.bigPadding
+        bottomMargin: Theme.bigPadding
+        leftMargin: Theme.bigPadding
         
         visible: count
 
@@ -47,8 +47,8 @@ Item {
         ScrollBar.vertical: StatusScrollBar { anchors.right: parent.right; anchors.rightMargin: width / 2 }
         delegate: InfoCard {
             id: assetsInfoDelegate
-            width: GridView.view.cellWidth - Style.current.padding
-            height: GridView.view.cellHeight - Style.current.padding
+            width: GridView.view.cellWidth - Theme.padding
+            height: GridView.view.cellHeight - Theme.padding
             title: model.name
             //TODO show balance & symbol
             subTitle: model.decimals + " " + model.symbol

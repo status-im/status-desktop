@@ -418,7 +418,7 @@ StatusStackModal {
                 Layout.fillHeight: true
 
                 minimumHeight: height
-                maximumHeight: (height - Style.current.xlPadding)
+                maximumHeight: (height - Theme.xlPadding)
 
                 label: qsTr("Community introduction and rules")
             }

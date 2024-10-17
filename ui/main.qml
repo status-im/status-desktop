@@ -31,7 +31,7 @@ StatusWindow {
     objectName: "mainWindow"
     minimumWidth: 1200
     minimumHeight: 680
-    color: Style.current.background
+    color: Theme.palette.background
     title: {
         // Set application settings
         Qt.application.name = "Status Desktop"
@@ -206,9 +206,8 @@ StatusWindow {
                 startupOnboarding.unload()
                 startupOnboarding.visible = false
 
-                Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
-                Style.changeFontSize(localAccountSensitiveSettings.fontSize)
-                Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
+                Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+                Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
                 d.runMockedKeycardControllerWindow()
             } else if(state === Constants.appState.appEncryptionProcess) {
@@ -277,12 +276,12 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Style.changeTheme(startupOnboarding.visible ? Universal.System : localAppSettings.theme,
+        Theme.changeTheme(startupOnboarding.visible ? Universal.System : localAppSettings.theme,
                           systemPalette.isCurrentSystemThemeDark())
     }
 
     Component.onCompleted: {
-        Style.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
+        Theme.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
 

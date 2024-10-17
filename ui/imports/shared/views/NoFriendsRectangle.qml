@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import utils 1.0
 
@@ -21,7 +21,7 @@ Item {
         text: noContactsRect.text
         color: Theme.palette.baseColor1
         anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
@@ -32,7 +32,7 @@ Item {
         text: qsTr("Invite friends")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContacts.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         onClicked: Global.openPopup(inviteFriendsPopup);
     }
 

@@ -1,4 +1,7 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 QtObject {
@@ -17,7 +20,7 @@ QtObject {
     readonly property bool isPinMessageAllowedForMembers: messageModule ? messageModule.isPinMessageAllowedForMembers : false
     readonly property string chatId: messageModule ? messageModule.getChatId() : ""
     readonly property int chatType: messageModule ? messageModule.chatType : Constants.chatType.unknown
-    readonly property string chatColor: messageModule ? messageModule.chatColor : Style.current.blue
+    readonly property string chatColor: messageModule ? messageModule.chatColor : Theme.palette.primaryColor1
     readonly property string chatIcon: messageModule ? messageModule.chatIcon : ""
     readonly property bool keepUnread: messageModule ? messageModule.keepUnread : false
 

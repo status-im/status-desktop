@@ -33,7 +33,7 @@ SignTransactionModalBase {
 
     required property string networkShortName // e.g. "oeth"
     required property string networkName // e.g. "Optimism"
-    required property string networkIconPath // e.g. `Style.svg("network/Network=Optimism")`
+    required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
 
     required property string fiatFees
@@ -46,7 +46,7 @@ SignTransactionModalBase {
     property string serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl
     property string serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
     property string serviceProviderContractAddress: Constants.swap.paraswapV6_2ContractAddress
-    property string serviceProviderIcon: Style.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
+    property string serviceProviderIcon: Theme.png("swap/%1".arg(Constants.swap.paraswapIcon)) // FIXME svg
 
     title: qsTr("Approve spending cap")
     subtitle: root.serviceProviderHostname
@@ -68,7 +68,7 @@ SignTransactionModalBase {
                 Layout.fillWidth: true
                 horizontalAlignment: Qt.AlignHCenter
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 text: qsTr("The smart contract specified will be able to spend up to %1 of your current or future balance.").arg(formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol))
             }
             SwapProvidersTermsAndConditionsText {
@@ -91,13 +91,13 @@ SignTransactionModalBase {
     leftFooterContents: ObjectModel {
         RowLayout {
             Layout.leftMargin: 4
-            spacing: Style.current.bigPadding
+            spacing: Theme.bigPadding
             ColumnLayout {
                 spacing: 2
                 StatusBaseText {
                     text: qsTr("Max fees:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerFiatFeesText"
@@ -110,7 +110,7 @@ SignTransactionModalBase {
                 StatusBaseText {
                     text: qsTr("Est. time:")
                     color: Theme.palette.baseColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerEstimatedTime"
@@ -124,7 +124,7 @@ SignTransactionModalBase {
     // spending cap
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "spendingCapBox"
         caption: qsTr("Set spending cap")
         primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol, true)
@@ -145,7 +145,7 @@ SignTransactionModalBase {
     // Account
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "accountBox"
         caption: qsTr("Account")
         primaryText: root.accountName
@@ -169,7 +169,7 @@ SignTransactionModalBase {
     // Token
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "tokenBox"
         caption: qsTr("Token")
         primaryText: root.fromTokenSymbol
@@ -192,7 +192,7 @@ SignTransactionModalBase {
     // Smart contract
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "smartContractBox"
         caption: qsTr("Via smart contract")
         primaryText: root.serviceProviderName
@@ -213,7 +213,7 @@ SignTransactionModalBase {
     // Network
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "networkBox"
         caption: qsTr("Network")
         primaryText: root.networkName
@@ -223,7 +223,7 @@ SignTransactionModalBase {
     // Fees
     SignInfoBox {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.bigPadding
+        Layout.bottomMargin: Theme.bigPadding
         objectName: "feesBox"
         caption: qsTr("Fees")
         primaryText: qsTr("Max. fees on %1").arg(root.networkName)
@@ -237,7 +237,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: loading ? Constants.dummyText : root.fiatFees
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
                 }
                 StatusTextWithLoadingState {
@@ -245,7 +245,7 @@ SignTransactionModalBase {
                     Layout.alignment: Qt.AlignRight
                     text: loading ? Constants.dummyText : root.cryptoFees
                     horizontalAlignment: Text.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     customColor: Theme.palette.baseColor1
                     loading: root.feesLoading
                 }

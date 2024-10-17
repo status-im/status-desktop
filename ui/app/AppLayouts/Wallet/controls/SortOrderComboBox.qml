@@ -63,11 +63,11 @@ ComboBox {
     }
 
     horizontalPadding: 12
-    verticalPadding: Style.current.halfPadding
-    spacing: Style.current.halfPadding
+    verticalPadding: Theme.halfPadding
+    spacing: Theme.halfPadding
 
-    font.family: Theme.palette.baseFont.name
-    font.pixelSize: Style.current.additionalTextSize
+    font.family: Theme.baseFont.name
+    font.pixelSize: Theme.additionalTextSize
 
     QtObject {
         id: d
@@ -102,14 +102,14 @@ ComboBox {
         y: root.height + 4
 
         implicitWidth: 290
-        margins: Style.current.halfPadding
+        margins: Theme.halfPadding
 
         padding: 1
-        verticalPadding: Style.current.halfPadding
+        verticalPadding: Theme.halfPadding
 
         background: Rectangle {
             color: Theme.palette.statusSelect.menuItemBackgroundColor
-            radius: Style.current.radius
+            radius: Theme.radius
             layer.enabled: true
             layer.effect: DropShadow {
                 horizontalOffset: 0
@@ -127,8 +127,8 @@ ComboBox {
                 Layout.fillWidth: true
                 Layout.preferredHeight: d.defaultDelegateHeight
                 text: qsTr("Sort by")
-                font.pixelSize: Style.current.tertiaryTextFontSize
-                leftPadding: Style.current.padding
+                font.pixelSize: Theme.tertiaryTextFontSize
+                leftPadding: Theme.padding
                 verticalAlignment: Qt.AlignVCenter
                 color: Theme.palette.baseColor1
             }

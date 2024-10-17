@@ -26,8 +26,8 @@ Item {
         spacing: d.panelRowSpacing
         StatusBaseText {
             text: qsTr("To post, hold")
-            font.pixelSize: Style.current.primaryTextFontSize
-            color: Style.current.secondaryText
+            font.pixelSize: Theme.primaryTextFontSize
+            color: Theme.palette.secondaryText
         }
 
         StatusScrollView {
@@ -75,9 +75,9 @@ Item {
                             height: parent.height
                             visible: (index !== (repeater.count - 1))
                             verticalAlignment: Text.AlignVCenter
-                            font.pixelSize: Style.current.primaryTextFontSize
+                            font.pixelSize: Theme.primaryTextFontSize
                             rightPadding: d.panelRowSpacing
-                            color: Style.current.secondaryText
+                            color: Theme.palette.secondaryText
                             text: qsTr("or")
                         }
                     }

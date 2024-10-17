@@ -89,7 +89,7 @@ Control {
         Receive = 1
     }
 
-    padding: Style.current.padding
+    padding: Theme.padding
 
     // by design
     implicitWidth: 492
@@ -141,7 +141,7 @@ Control {
     background: Shape {
         id: shape
 
-        property int radius: Style.current.radius
+        property int radius: Theme.radius
         property int leftTopRadius: radius
         property int rightTopRadius: radius
         property int leftBottomRadius: radius

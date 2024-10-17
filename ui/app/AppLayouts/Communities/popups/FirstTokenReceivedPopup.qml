@@ -49,15 +49,15 @@ StatusDialog {
         id: scrollView
 
         contentWidth: availableWidth
-        padding: Style.current.padding
+        padding: Theme.padding
 
         ColumnLayout {
-            spacing: Style.current.padding
+            spacing: Theme.padding
             width: scrollView.availableWidth
 
             StatusRoundedImage {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.margins: Style.current.padding
+                Layout.margins: Theme.padding
                 Layout.preferredWidth: 68
                 Layout.preferredHeight: Layout.preferredWidth
 
@@ -79,7 +79,7 @@ StatusDialog {
             // Navigate to community button
             StatusListItem {
                 Layout.fillWidth: true
-                Layout.bottomMargin: Style.current.halfPadding
+                Layout.bottomMargin: Theme.halfPadding
 
                 title: root.communityName
                 border.color: Theme.palette.baseColor2
@@ -97,10 +97,10 @@ StatusDialog {
 
                         StatusBaseText {
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.rightMargin: Style.current.padding
+                            Layout.rightMargin: Theme.padding
 
                             text: qsTr("Visit Community")
-                            font.pixelSize: Style.current.additionalTextSize
+                            font.pixelSize: Theme.additionalTextSize
                             color: Theme.palette.primaryColor1
                         }
                     }
@@ -120,7 +120,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 id: hideBtn

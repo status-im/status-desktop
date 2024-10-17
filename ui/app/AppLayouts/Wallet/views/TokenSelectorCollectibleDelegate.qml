@@ -19,8 +19,8 @@ ItemDelegate {
     property bool goDeeperIconVisible: true
     property bool interactive: true
 
-    spacing: Style.current.halfPadding
-    horizontalPadding: Style.current.padding
+    spacing: Theme.halfPadding
+    horizontalPadding: Theme.padding
     verticalPadding: 4
 
     opacity: interactive ? 1 : 0.3
@@ -35,7 +35,7 @@ ItemDelegate {
     enabled: interactive
 
     background: Rectangle {
-        radius: Style.current.radius
+        radius: Theme.radius
         color: (root.interactive && root.hovered) || root.highlighted
                ? Theme.palette.statusListItem.highlightColor
                : "transparent"

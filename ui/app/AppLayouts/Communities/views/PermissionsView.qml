@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import SortFilterProxyModel 0.2
 import shared.status 1.0
@@ -77,7 +78,7 @@ ColumnLayout {
 
         visible: (root.count === 0 && root.allowIntroPanel)
 
-        image: Style.png("community/permissions2_3")
+        image: Theme.png("community/permissions2_3")
         title: qsTr("Permissions")
         subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
         checkersModel: [
@@ -144,7 +145,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         text: qsTr("No channel permissions")
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
     }
 
     StatusIconSwitch {

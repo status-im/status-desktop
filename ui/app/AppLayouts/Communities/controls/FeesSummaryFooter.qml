@@ -18,20 +18,20 @@ Control {
         spacing: 0
 
         StatusBaseText {
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.fillWidth: true
 
             visible: root.accountName !== ""
             color: Theme.palette.baseColor1
             elide: Text.ElideRight
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             maximumLineCount: 2
             text: qsTr("via %1").arg(root.accountName)
             wrapMode: Text.Wrap
         }
 
         Rectangle {
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.fillWidth: true
             Layout.preferredHeight: 1
 
@@ -41,7 +41,7 @@ Control {
         FeeRow {
             id: feeTotalRow
 
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.fillWidth: true
 
             title: qsTr("Total")
@@ -52,7 +52,7 @@ Control {
             id: errorText
 
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
 
             color: Theme.palette.dangerColor1
             font.pixelSize: Theme.tertiaryTextFontSize + 1

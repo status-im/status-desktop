@@ -1,7 +1,9 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -12,10 +14,10 @@ Rectangle {
     id: root
     height: visible ? 32 : 0
     visible: !RootStore.mnemonicBackedUp
-    color: Style.current.red
+    color: Theme.palette.dangerColor1
 
     Row {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -23,7 +25,7 @@ Rectangle {
             text: qsTr("Back up your seed phrase")
             font.pixelSize: 13
             anchors.verticalCenter: parent.verticalCenter
-            color: Style.current.white
+            color: Theme.palette.white
         }
 
         Button {
@@ -35,20 +37,20 @@ Rectangle {
                     text: qsTr("Back up")
                     font.pixelSize: 13
                     font.weight: Font.Medium
-                    font.family: Style.current.baseFont.name
+                    font.family: Theme.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    color: Style.current.white
+                    color: Theme.palette.white
                 }
             }
             background: Rectangle {
                 radius: 4
                 anchors.fill: parent
-                border.color: Style.current.white
+                border.color: Theme.palette.white
                 color: "#19FFFFFF"
             }
             MouseArea {
@@ -64,14 +66,14 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 18
-        source: Style.svg("close-white")
+        source: Theme.svg("close-white")
         height: 20
         width: 20
     }
     ColorOverlay {
         anchors.fill: closeImg
         source: closeImg
-        color: Style.current.white
+        color: Theme.palette.white
         opacity: 0.7
     }
     MouseArea {

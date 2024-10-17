@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -57,8 +57,8 @@ Rectangle {
                 ringPxSize: Math.max(asset.width / 24.0)
             }
             asset {
-                width: !!root.keyPair && keyPair.icon? Style.current.bigPadding : 40
-                height: !!root.keyPair && keyPair.icon? Style.current.bigPadding : 40
+                width: !!root.keyPair && keyPair.icon? Theme.bigPadding : 40
+                height: !!root.keyPair && keyPair.icon? Theme.bigPadding : 40
                 name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
                 isImage: !!root.keyPair && !!keyPair.image
                 color: d.isProfileKeypair ? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
@@ -116,7 +116,7 @@ Rectangle {
                 RowLayout {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
-                    anchors.rightMargin: Style.current.padding + walletAccountDelegate.statusListItemComponentsSlot.width
+                    anchors.rightMargin: Theme.padding + walletAccountDelegate.statusListItemComponentsSlot.width
                     visible: keyPair.pairType === Constants.keypair.type.watchOnly
 
                     StatusIcon {

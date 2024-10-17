@@ -90,7 +90,7 @@ StatusDialog {
     padding: 0
 
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         TokenHoldersPanel {
             id: tokenHoldersPanel
             tokenName: root.collectibleName
@@ -147,7 +147,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 text: qsTr("Cancel")

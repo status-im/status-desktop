@@ -1,10 +1,11 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-
 
 Rectangle {
     id: headerButton
@@ -15,18 +16,18 @@ Rectangle {
     property var onClicked: function () {}
     property int margin: 8
 
-    width: buttonImage.width + buttonText.width + Style.current.smallPadding * 2
+    width: buttonImage.width + buttonText.width + Theme.smallPadding * 2
            + (text === "" ? 0 : headerButton.margin)
-    height: buttonText.height + Style.current.smallPadding * 2
+    height: buttonText.height + Theme.smallPadding * 2
     border.width: 0
-    color: Style.current.transparent
-    radius: Style.current.radius
+    color: Theme.palette.transparent
+    radius: Theme.radius
 
     SVGImage {
         id: buttonImage
         height: 18
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
+        anchors.leftMargin: Theme.smallPadding
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
         source: imageSource
@@ -35,7 +36,7 @@ Rectangle {
         ColorOverlay {
             anchors.fill: parent
             source: parent
-            color: Style.current.primary
+            color: Theme.palette.primaryColor1
         }
     }
 
@@ -47,19 +48,18 @@ Rectangle {
         anchors.leftMargin: headerButton.margin
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 13
-        font.family: Style.current.baseFont.name
         font.weight: Font.Medium
-        color: Style.current.blue
+        color: Theme.palette.primaryColor1
     }
 
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
-            parent.color = Style.current.secondaryBackground
+            parent.color = Theme.palette.secondaryBackground
         }
         onExited: {
-            parent.color = Style.current.transparent
+            parent.color = Theme.palette.transparent
         }
         onClicked: {
             headerButton.onClicked()

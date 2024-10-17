@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.controls 1.0
@@ -22,13 +23,13 @@ ColumnLayout {
     property int purpose: SyncingCodeInstructions.Purpose.AppSync
     property int type: SyncingCodeInstructions.Type.QRCode
 
-    spacing: Style.current.xlPadding
+    spacing: Theme.xlPadding
 
     StatusSwitchTabBar {
         id: switchTabBar
         Layout.fillWidth: true
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.leftMargin: Theme.padding
+        Layout.rightMargin: Theme.padding
         Layout.minimumWidth: 400
         currentIndex: 0
 

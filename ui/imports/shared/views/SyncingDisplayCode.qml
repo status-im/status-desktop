@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -177,7 +177,7 @@ ColumnLayout {
         readOnly: true
         selectByMouse: !d.codeExpired
         text: root.connectionString
-        rightPadding: syncCodeButtons.width + Style.current.padding / 2
+        rightPadding: syncCodeButtons.width + Theme.padding / 2
         wrapMode: TextEdit.Wrap
         echoMode: effectiveShowPassword ? TextInput.Normal : TextInput.Password
 

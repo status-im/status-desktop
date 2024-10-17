@@ -62,25 +62,6 @@ QtObject {
                                 (!startsWith0x(value) && value.length === 64))
     }
 
-    function getCurrentThemeAccountColor(color) {
-        const upperCaseColor = color.toUpperCase()
-        if (Style.current.accountColors.indexOf(upperCaseColor) > -1) {
-            return upperCaseColor
-        }
-
-        let colorIndex
-        if (Style.current.name === Constants.lightThemeName) {
-            colorIndex = Style.darkTheme.accountColors.indexOf(upperCaseColor)
-        } else {
-            colorIndex = Style.lightTheme.accountColors.indexOf(upperCaseColor)
-        }
-        if (colorIndex === -1) {
-            // Unknown color
-            return false
-        }
-        return Style.current.accountColors[colorIndex]
-    }
-
     function validLink(link) {
         if (link.length === 0) {
             return false
@@ -499,34 +480,33 @@ QtObject {
     }
 
     function getHoveredColor(colorId) {
-        let isLightTheme = Theme.palette.name === Constants.lightThemeName
         switch(colorId.toString().toUpperCase()) {
         case Constants.walletAccountColors.primary.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.blue: Style.statusQLightTheme.customisationColors.blue
+            return Theme.palette.customisationColors.blue
         case Constants.walletAccountColors.purple.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.purple: Style.statusQLightTheme.customisationColors.purple
+            return Theme.palette.customisationColors.purple
         case Constants.walletAccountColors.orange.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.orange: Style.statusQLightTheme.customisationColors.orange
+            return Theme.palette.customisationColors.orange
         case Constants.walletAccountColors.army.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.army: Style.statusQLightTheme.customisationColors.army
+            return Theme.palette.customisationColors.army
         case Constants.walletAccountColors.turquoise.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.turquoise: Style.statusQLightTheme.customisationColors.turquoise
+            return Theme.palette.customisationColors.turquoise
         case Constants.walletAccountColors.sky.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.sky: Style.statusQLightTheme.customisationColors.sky
+            return Theme.palette.customisationColors.sky
         case Constants.walletAccountColors.yellow.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.yellow: Style.statusQLightTheme.customisationColors.yellow
+            return Theme.palette.customisationColors.yellow
         case Constants.walletAccountColors.pink.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.pink: Style.statusQLightTheme.customisationColors.pink
+            return Theme.palette.customisationColors.pink
         case Constants.walletAccountColors.copper.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.copper: Style.statusQLightTheme.customisationColors.copper
+            return Theme.palette.customisationColors.copper
         case Constants.walletAccountColors.camel.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.camel: Style.statusQLightTheme.customisationColors.camel
+            return Theme.palette.customisationColors.camel
         case Constants.walletAccountColors.magenta.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.customisationColors.magenta: Style.statusQLightTheme.customisationColors.magenta
+            return Theme.palette.customisationColors.magenta
         case Constants.walletAccountColors.yinYang.toUpperCase():
-            return isLightTheme ? Theme.palette.getColor('blackHovered'): Theme.palette.getColor('grey4')
+            return Theme.palette.name === Constants.lightThemeName ? Theme.palette.getColor('blackHovered'): Theme.palette.getColor('grey4') // FIXME introduce symbolic color names
         case Constants.walletAccountColors.undefinedAccount.toUpperCase():
-            return isLightTheme ? Style.statusQDarkTheme.baseColor1: Style.statusQLightTheme.baseColor1
+            return Theme.palette.baseColor1
         default:
             return getColorForId(colorId)
         }

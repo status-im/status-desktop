@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -32,20 +31,20 @@ StatusDialog {
     signal cancelClicked
 
     width: 640 // by design
-    padding: Style.current.padding
+    padding: Theme.padding
     contentItem: ColumnLayout {
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         component CustomText : StatusBaseText {
             Layout.fillWidth: true
 
             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
         CustomText {
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
 
             text: qsTr("Are you sure you want to transfer ownership of %1? All ownership rights you currently hold for %1 will be transferred to the new owner.").arg(root.communityName)
         }
@@ -74,10 +73,10 @@ StatusDialog {
         StatusCheckBox {
             id: ackCheckBox
 
-            Layout.topMargin: -Style.current.halfPadding
-            Layout.bottomMargin: Style.current.halfPadding
+            Layout.topMargin: -Theme.halfPadding
+            Layout.bottomMargin: Theme.halfPadding
 
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("My ownership rights will be removed and transferred to the recipient")
         }
     }
@@ -92,7 +91,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 text: qsTr("Cancel")

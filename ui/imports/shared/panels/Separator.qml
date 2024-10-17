@@ -1,14 +1,14 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
-import utils 1.0
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
-    property color color: Style.current.separator
+    property color color: Theme.palette.separator
     width: parent.width
     implicitHeight: 1
     height: root.visible ? implicitHeight : 0
-    anchors.topMargin: Style.current.padding
+    anchors.topMargin: Theme.padding
     Rectangle {
         id: separator
         width: parent.width

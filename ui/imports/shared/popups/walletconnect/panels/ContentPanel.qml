@@ -34,7 +34,7 @@ Rectangle {
         anchors.margins: 20
 
         text: root.payloadToDisplay
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         lineHeightMode: Text.FixedHeight
         lineHeight: 18
 

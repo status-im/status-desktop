@@ -1,6 +1,6 @@
-﻿import QtQuick 2.13
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+﻿import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.controls 1.0
@@ -33,7 +33,7 @@ Control {
     }
     property var formatBalance: function(balance){}
 
-    topPadding: Style.current.padding
+    topPadding: Theme.padding
 
     contentItem: ColumnLayout {
         id: mainLayout
@@ -66,13 +66,13 @@ Control {
 
         GridLayout {
             Layout.fillWidth: true
-            rowSpacing: Style.current.halfPadding
-            columnSpacing: Style.current.halfPadding
+            rowSpacing: Theme.halfPadding
+            columnSpacing: Theme.halfPadding
             flow: mainLayout.isOverflowing ? GridLayout.TopToBottom: GridLayout.LeftToRight
 
             RowLayout {
                 Layout.fillWidth: true
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 StatusTextWithLoadingState {
                     id: cryptoBalance
                     Layout.alignment: Qt.AlignHCenter
@@ -103,7 +103,7 @@ Control {
             RowLayout {
                 id: communityAndBalances
                 Layout.fillWidth: true
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 InformationTag {
                     id: communityTag
                 }
@@ -135,7 +135,7 @@ Control {
                         }
                         tagPrimaryLabel.text: root.formatBalance(aggregatedbalance)
                         tagPrimaryLabel.color: model.chainColor
-                        asset.name: Style.svg("tiny/%1".arg(model.iconUrl))
+                        asset.name: Theme.svg("tiny/%1".arg(model.iconUrl))
                         asset.isImage: true
                         loading: root.isLoading
                         visible: balancesAggregator.value > 0

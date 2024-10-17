@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -29,7 +29,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         KeycardImage {
             id: image
@@ -46,15 +46,15 @@ Item {
         }
 
         Row {
-            spacing: Style.current.halfPadding
+            spacing: Theme.halfPadding
             Layout.alignment: Qt.AlignCenter
             Layout.preferredHeight: Constants.keycard.general.titleHeight
 
             StatusIcon {
                 id: icon
                 visible: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardRecognizedKeycard
-                width: Style.current.padding
-                height: Style.current.padding
+                width: Theme.padding
+                height: Theme.padding
                 icon: "checkmark"
                 color: Theme.palette.baseColor1
             }
@@ -93,7 +93,7 @@ Item {
             }
             PropertyChanges {
                 target: image
-                source: Style.png("keycard/empty-reader")
+                source: Theme.png("keycard/empty-reader")
                 pattern: ""
             }
             PropertyChanges {

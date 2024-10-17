@@ -4,7 +4,6 @@ import QtQuick.Controls 2.15
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
@@ -32,15 +31,15 @@ Control {
     contentItem: ColumnLayout {
         id: column
         anchors.fill: parent
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         spacing: 0
         StatusBaseText {
             id: txtLabel
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
 
             text: qsTr("%1 token hodlers").arg(root.tokenName)
@@ -50,8 +49,8 @@ Control {
             id: searcher
             Layout.fillWidth: true
             Layout.topMargin: 12
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
             visible: !root.empty
             topPadding: 0
             bottomPadding: 0
@@ -63,11 +62,11 @@ Control {
             id: anotherLabel
             Layout.fillWidth: true
             Layout.topMargin: 12
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
+            Layout.rightMargin: Theme.padding
 
             wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
             visible: (searcher.text.length > 0 && filteredModel.count === 0)
             text: visible ? qsTr("No hodlers found") : ""

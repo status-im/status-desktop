@@ -1,8 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Dialogs 1.3
+import QtGraphicalEffects 1.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -92,8 +92,8 @@ Item {
         id: columnHeaderButton
 
         anchors.top: communityHeader.bottom
-        anchors.topMargin: Style.current.halfPadding
-        anchors.bottomMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
+        anchors.bottomMargin: Theme.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: d.showFinaliseOwnershipButton ? finaliseCommunityOwnershipBtn :
                                                          d.showJoinButton ? joinCommunityButton : undefined
@@ -104,7 +104,7 @@ Item {
         chatSectionModule: root.communitySectionModule
         width: parent.width
         anchors.top: columnHeaderButton.active ? columnHeaderButton.bottom : communityHeader.bottom
-        anchors.topMargin: active ? Style.current.halfPadding : 0
+        anchors.topMargin: active ? Theme.halfPadding : 0
     }
 
     StatusMenu {
@@ -162,7 +162,7 @@ Item {
         id: scrollView
 
         anchors.top: columnHeaderButton.active ? columnHeaderButton.bottom : communityHeader.bottom
-        anchors.topMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
         anchors.bottom: createChatOrCommunity.top
         anchors.horizontalCenter: parent.horizontalCenter
 
@@ -397,8 +397,8 @@ Item {
             id: bannerColumn
             width: scrollView.availableWidth
             anchors.top: communityChatListAndCategories.bottom
-            anchors.topMargin: Style.current.padding
-            spacing: Style.current.bigPadding
+            anchors.topMargin: Theme.padding
+            spacing: Theme.bigPadding
 
             Loader {
                 active: root.isSectionAdmin &&
@@ -456,7 +456,7 @@ Item {
         id: createChatOrCommunity
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: active ? Style.current.padding : 0
+        anchors.bottomMargin: active ? Theme.padding : 0
         active: root.isSectionAdmin
         sourceComponent: Component {
             StatusLinkText {
@@ -485,8 +485,8 @@ Item {
 
         StatusButton {
             anchors.top: communityHeader.bottom
-            anchors.topMargin: Style.current.halfPadding
-            anchors.bottomMargin: Style.current.halfPadding
+            anchors.topMargin: Theme.halfPadding
+            anchors.bottomMargin: Theme.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: !root.communityData.amIBanned
             loading: d.requestToJoinState === Constants.RequestToJoinState.InProgress
@@ -527,8 +527,8 @@ Item {
 
         StatusButton {
             anchors.top: communityHeader.bottom
-            anchors.topMargin: Style.current.halfPadding
-            anchors.bottomMargin: Style.current.halfPadding
+            anchors.topMargin: Theme.halfPadding
+            anchors.bottomMargin: Theme.halfPadding
             anchors.horizontalCenter: parent.horizontalCenter
 
             text: communityData.joined ? qsTr("Finalise community ownership") : qsTr("To join, finalise community ownership")

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -39,7 +39,7 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         ProfileFetchingAnimation {
             id: loadingAnimation

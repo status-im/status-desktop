@@ -3,6 +3,7 @@ import QtQuick 2.13
 import utils 1.0
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
 
 import SortFilterProxyModel 0.2
 import AppLayouts.Profile.stores 1.0 as ProfileStores
@@ -77,7 +78,7 @@ QtObject {
 
         proxyRoles: FastExpressionRole {
             function collectibleIcon(icon) {
-                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                return !!icon ? icon : Theme.png("tokens/DEFAULT-TOKEN")
             }
             name: "iconSource"
             expression: collectibleIcon(model.icon)

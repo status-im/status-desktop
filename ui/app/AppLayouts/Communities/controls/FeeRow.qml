@@ -23,7 +23,7 @@ Control {
         implicitHeight: Math.max(titleText.implicitHeight,
                                  feeText.implicitHeight)
 
-        readonly property int halfWidth: (width - Style.current.padding) / 2
+        readonly property int halfWidth: (width - Theme.padding) / 2
 
         StatusBaseText {
             id: titleText
@@ -35,7 +35,7 @@ Control {
             maximumLineCount: 2
             lineHeight: 22
             lineHeightMode: Text.FixedHeight
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             elide: Text.ElideRight
         }
 
@@ -51,14 +51,14 @@ Control {
 
             textFormat: Text.RichText
             text: `<span style="color:${baseColor};` +
-                  `font-size:${Style.current.tertiaryTextFontSize}px;">` +
+                  `font-size:${Theme.tertiaryTextFontSize}px;">` +
                   `${qsTr("Max.")}</span> ${SQUtils.StringUtils.escapeHtml(root.feeText)}`
 
             visible: root.feeText !== ""
             horizontalAlignment: Text.AlignRight
             color: root.errorFee ? Theme.palette.dangerColor1 : baseColor
 
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.Wrap
             maximumLineCount: 2
 

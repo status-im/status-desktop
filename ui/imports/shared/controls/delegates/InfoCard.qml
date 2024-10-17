@@ -1,12 +1,13 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
+
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-
 import StatusQ.Components 0.1
+
 import AppLayouts.Wallet.controls 1.0
 
 import utils 1.0
@@ -35,8 +36,8 @@ Control {
     background: Rectangle {
         id: background
         anchors.fill: parent
-        color: Style.current.background
-        radius: Style.current.radius
+        color: Theme.palette.background
+        radius: Theme.radius
         border.width: 1
         border.color: Theme.palette.baseColor2
         layer.enabled: mouseArea.containsMouse || root.highlight
@@ -86,7 +87,7 @@ Control {
             StatusTextWithLoadingState {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 22
-                Layout.topMargin: Style.current.halfPadding
+                Layout.topMargin: Theme.halfPadding
                 text: root.title
                 elide: Text.ElideRight
                 font.weight: Font.Medium
@@ -99,7 +100,7 @@ Control {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 16
                 text: root.subTitle
-                font.pixelSize: Style.current.tertiaryTextFontSize
+                font.pixelSize: Theme.tertiaryTextFontSize
                 lineHeight: 16
                 customColor: !root.enabled || !root.tertiaryTitle ?
                                  Theme.palette.baseColor1 : Theme.palette.directColor1

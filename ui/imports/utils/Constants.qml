@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQml 2.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
 QtObject {
@@ -972,7 +973,7 @@ QtObject {
     readonly property string dataImagePrefix: "data:image"
     readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg"]
 
-    readonly property string mentionSpanTag: `<span style="background-color: ${Style.current.mentionBgColor};"><a style="color:${Style.current.mentionColor};text-decoration:none" href='http://'>`
+    readonly property string mentionSpanTag: `<span style="background-color: ${Theme.palette.mentionColor2};"><a style="color:${Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"
@@ -1257,10 +1258,10 @@ QtObject {
 
     function tokenIcon(symbol, useDefault=true) {
         if (!!symbol && knownTokenPNGs.indexOf(symbol) !== -1)
-            return Style.png("tokens/" + symbol)
+            return Theme.png("tokens/" + symbol)
 
         if (useDefault)
-            return Style.png("tokens/DEFAULT-TOKEN")
+            return Theme.png("tokens/DEFAULT-TOKEN")
         return ""
     }
 
@@ -1270,13 +1271,13 @@ QtObject {
 
     function getSupportedTokenSourceImage(name, useDefault=true) {
         if (name === supportedTokenSources.uniswap)
-            return Style.png("tokens/UNI")
+            return Theme.png("tokens/UNI")
 
         if (name === supportedTokenSources.status)
-            return Style.png("tokens/SNT")
+            return Theme.png("tokens/SNT")
 
         if (useDefault)
-            return Style.png("tokens/DEFAULT-TOKEN")
+            return Theme.png("tokens/DEFAULT-TOKEN")
         return ""
     }
 

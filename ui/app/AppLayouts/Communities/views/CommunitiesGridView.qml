@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -129,8 +129,8 @@ StatusScrollView {
                               ? featuredLabel.height + contentColumn.spacing + featuredLabel.Layout.topMargin
                               : 0
             columns: 3
-            columnSpacing: Style.current.padding
-            rowSpacing: Style.current.padding
+            columnSpacing: Theme.padding
+            rowSpacing: Theme.padding
             visible: featuredRepeater.count
 
             Repeater {
@@ -153,8 +153,8 @@ StatusScrollView {
         GridLayout {
             visible: !root.searchLayout
             columns: 3
-            columnSpacing: Style.current.padding
-            rowSpacing: Style.current.padding
+            columnSpacing: Theme.padding
+            rowSpacing: Theme.padding
 
             Repeater {
                 id: popularRepeater

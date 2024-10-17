@@ -20,7 +20,7 @@ StatusDialog {
     signal declineClicked
 
     width: 480 // by design
-    padding: Style.current.padding
+    padding: Theme.padding
     title: qsTr("Are you sure you don’t want to be the owner?")
     contentItem: StatusBaseText {
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -29,7 +29,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 text: qsTr("Cancel")

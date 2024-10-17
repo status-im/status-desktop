@@ -5,6 +5,7 @@ import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
@@ -42,12 +43,13 @@ QtObject {
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
 
-        proxyRoles: ExpressionRole {
+        proxyRoles: FastExpressionRole {
             function tokenIcon(symbol) {
                 return Constants.tokenIcon(symbol)
             }
             name: "iconSource"
             expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
+            expectedRoles: ["icon", "symbol"]
         }
     }
 
@@ -55,23 +57,26 @@ QtObject {
         sourceModel: communitiesModuleInst.collectiblesModel
 
         proxyRoles: [
-            ExpressionRole {
+            FastExpressionRole {
                 function collectibleIcon(icon) {
-                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                    return !!icon ? icon : Theme.png("tokens/DEFAULT-TOKEN")
                 }
-            name: "iconSource"
-            expression: collectibleIcon(model.icon)
+                name: "iconSource"
+                expression: collectibleIcon(model.icon)
+                expectedRoles: ["icon"]
             },
-            ExpressionRole {
-            name: "collectionUid"
-            expression: model.key
+            FastExpressionRole {
+                name: "collectionUid"
+                expression: model.key
+                expectedRoles: ["key"]
             },
-            ExpressionRole {
+            FastExpressionRole {
                 function collectibleIcon(icon) {
-                    return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+                    return !!icon ? icon : Theme.png("tokens/DEFAULT-TOKEN")
                 }
-            name: "collectionImageUrl"
-            expression: collectibleIcon(model.icon)
+                name: "collectionImageUrl"
+                expression: collectibleIcon(model.icon)
+                expectedRoles: ["icon"]
             }
         ]
     }

@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -48,7 +48,7 @@ Item {
         anchors.fill: parent
         rightMargin: 0
         leftMargin: 0
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         model: SortFilterProxyModel {
             sourceModel: root.contactsStore.myContactsModel

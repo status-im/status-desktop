@@ -76,7 +76,7 @@ Item {
 
         readonly property int filterItemsHeight: 36
         readonly property int filterPopupWidth: 233
-        readonly property int padding: Style.current.halfPadding
+        readonly property int padding: Theme.halfPadding
 
         // Internal management properties
         property bool isFilterOptionVisible: false

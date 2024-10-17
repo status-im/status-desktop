@@ -3,21 +3,23 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
-import Storybook 1.0
-import utils 1.0
+import StatusQ.Core.Theme 0.1
 
+import utils 1.0
 import shared.controls 1.0
 import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import Models 1.0
+import Storybook 1.0
 
 SplitView {
     id: root
 
     // mirrors ActivityEntry defined in src/app/modules/main/wallet_section/activity/entry.nim
     readonly property QtObject mockupModelData: QtObject {
+        readonly property string id: "0xdeadbeef"
         readonly property int timestamp: Date.now() / 1000
         readonly property int status: ctrlStatus.currentValue
         readonly property double amount: 123.45
@@ -34,16 +36,16 @@ SplitView {
         readonly property bool isNFT: ctrlIsNft.checked
         readonly property bool isCommunityAssetViaAirdrop: isCommunityAssetViaAirdrop.checked
         readonly property string communityName: "Doodles"
-        readonly property string communityImageUrl: Style.png("collectibles/HappyMeow")
+        readonly property string communityImageUrl: Theme.png("collectibles/HappyMeow")
         readonly property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         readonly property string tokenAddress: "0xdeadbeef"
-        readonly property string tokenInAddress: "0xdeadbeef-00"
-        readonly property string tokenOutAddress: "0xdeadbeef-00"
+        readonly property string tokenInAddress: "0xdeadbeef-in"
+        readonly property string tokenOutAddress: "0xdeadbeef-out"
         readonly property string nftName: "Happy Meow NFT"
-        readonly property string nftImageUrl: Style.png("collectibles/HappyMeow")
-        readonly property string chainId: "NETWORKID"
-        readonly property string chainIdIn: "NETWORKID-IN"
-        readonly property string chainIdOut: "NETWORKID-OUT"
+        readonly property string nftImageUrl: Theme.png("collectibles/HappyMeow")
+        readonly property int chainId: 1
+        readonly property int chainIdIn: 1
+        readonly property int chainIdOut: 2
 
         readonly property bool highlight: _highlight
         function doneHighlighting() {

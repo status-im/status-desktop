@@ -192,7 +192,7 @@ StatusScrollView {
             property int editedIndex: -1
 
             Layout.fillWidth: true
-            icon: Style.svg("contact_verified")
+            icon: Theme.svg("contact_verified")
             title: qsTr("Who holds")
             placeholderText: qsTr("Example: 10 SNT")
             tagLeftPadding: 2
@@ -389,7 +389,7 @@ StatusScrollView {
 
             title: qsTr("Is allowed to")
             placeholderText: qsTr("Example: View and post")
-            icon: Style.svg("profile/security")
+            icon: Theme.svg("profile/security")
 
             readonly property bool empty:
                 d.dirtyValues.permissionType === PermissionTypes.Type.None
@@ -477,7 +477,7 @@ StatusScrollView {
             itemsClickable: editable
             visible: root.showChannelSelector
             Layout.fillWidth: true
-            icon: d.isCommunityPermission ? Style.svg("communities") : Style.svg("create-category")
+            icon: d.isCommunityPermission ? Theme.svg("communities") : Theme.svg("create-category")
             title: qsTr("In")
             placeholderText: qsTr("Example: `#general` channel")
 
@@ -616,7 +616,7 @@ StatusScrollView {
 
         StatusWarningBox {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             visible: root.showChannelSelector
             icon: "desktop"
             text: qsTr("Any changes to community permissions will take effect after the control node receives and processes them")
@@ -628,7 +628,7 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.bigPadding
+            Layout.topMargin: Theme.bigPadding
 
             visible: !root.isEditState && root.showChannelSelector
             objectName: "createPermissionButton"

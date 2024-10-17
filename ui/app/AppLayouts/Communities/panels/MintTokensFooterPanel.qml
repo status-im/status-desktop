@@ -31,7 +31,7 @@ Control {
     signal sendOwnershipClicked
 
     height: 61 // by design
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     contentItem: Item {
         StatusModalDivider {
