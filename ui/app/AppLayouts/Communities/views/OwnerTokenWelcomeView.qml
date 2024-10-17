@@ -28,11 +28,15 @@ StatusScrollView {
     ColumnLayout {
         id: mainLayout
 
+        objectName: "welcomeView"
+
         width: root.viewWidth
         spacing: 20
 
         StatusBaseText {
             id: introPanel
+
+            objectName: "introPanelText"
 
             Layout.fillWidth: true
 
@@ -45,6 +49,9 @@ StatusScrollView {
         }
 
         InfoPanel {
+
+            objectName: "ownerChecklist"    
+
             isOwner: true
             checkersModel: [
                 qsTr("Only 1 will ever exist"),
@@ -55,6 +62,9 @@ StatusScrollView {
         }
 
         InfoPanel {
+
+            objectName: "masterChecklist"
+
             isOwner: false
             showTag: true
             checkersModel: [
@@ -176,6 +186,8 @@ StatusScrollView {
         }
 
         StatusButton {
+
+            objectName: "welcomeViewNextButton"
             Layout.alignment: Qt.AlignHCenter
             Layout.bottomMargin: Style.current.bigPadding
 
