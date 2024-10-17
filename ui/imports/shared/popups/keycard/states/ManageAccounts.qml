@@ -189,7 +189,6 @@ Item {
                             onClicked: {
                                 let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
                                                                            WalletStore.RootStore.areTestNetworksEnabled,
-                                                                           WalletStore.RootStore.isGoerliEnabled,
                                                                            root.sharedKeycardModule.keyPairHelper.observedAccount.address)
                                 Global.openLink(link)
                             }

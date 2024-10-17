@@ -46,13 +46,10 @@ let
   INFURA_TOKEN_RESOLVED* = desktopConfig.infuraToken
   INFURA_TOKEN_SECRET_RESOLVED* = desktopConfig.infuraTokenSecret
   ALCHEMY_ETHEREUM_MAINNET_TOKEN_RESOLVED* = desktopConfig.alchemyEthereumMainnetToken
-  ALCHEMY_ETHEREUM_GOERLI_TOKEN_RESOLVED* = desktopConfig.alchemyEthereumGoerliToken
   ALCHEMY_ETHEREUM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyEthereumSepoliaToken
   ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED* = desktopConfig.alchemyArbitrumMainnetToken
-  ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED* = desktopConfig.alchemyArbitrumGoerliToken
   ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyArbitrumSepoliaToken
   ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismMainnetToken
-  ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismGoerliToken
   ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismSepoliaToken
   OPENSEA_API_KEY_RESOLVED* = desktopConfig.openseaApiKey
   RARIBLE_MAINNET_API_KEY_RESOLVED* = desktopConfig.raribleMainnetApiKey

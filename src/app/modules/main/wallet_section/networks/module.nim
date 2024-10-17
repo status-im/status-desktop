@@ -66,10 +66,6 @@ method toggleTestNetworksEnabled*(self: Module) =
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
 
-method toggleIsGoerliEnabled*(self: Module) =
-  self.controller.toggleIsGoerliEnabled()
-  self.refreshNetworks()
-
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
 

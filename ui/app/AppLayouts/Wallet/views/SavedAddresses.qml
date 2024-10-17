@@ -149,7 +149,6 @@ ColumnLayout {
             colorId: model.colorId
             networkConnectionStore: root.networkConnectionStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
-            isGoerliEnabled: RootStore.isGoerliEnabled
             onOpenSendModal: root.sendModal.open(recipient);
 
             states: [

@@ -43,8 +43,6 @@ QtObject {
 
     readonly property bool refreshTokenEnabled: localAppSettings.refreshTokenEnabled ?? false
 
-    readonly property bool isGoerliEnabled: networksModuleInst.isGoerliEnabled
-
     function logDir() {
         if(!root.advancedModule)
             return ""
@@ -202,9 +200,4 @@ QtObject {
 
         localAppSettings.scrollDeceleration = value
     }
-
-    function toggleIsGoerliEnabled(){
-        networksModule.toggleIsGoerliEnabled()
-    }
-
 }

@@ -39,7 +39,7 @@ const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
 const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
 const SIGNAL_TOKEN_PREFERENCES_UPDATED* = "tokenPreferencesUpdated"
 
-type 
+type
   ResultArgs* = ref object of Args
     success*: bool
 
@@ -265,7 +265,7 @@ QtObject:
   # Callback to process the response of getSupportedTokensList call
   proc supportedTokensListRetrieved(self: Service, response: string) {.slot.} =
     # this is emited so that the models can know that the seq it depends on has been updated
-    defer: 
+    defer:
       self.fetchTokenPreferences()
       self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
     try:
@@ -278,7 +278,7 @@ QtObject:
 
       if not errorString.isEmptyOrWhitespace:
         raise newException(Exception, "Error getting supported tokens list: " & errorString)
-      
+
       if tokensResult.isNil or tokensResult.kind == JNull:
         raise newException(Exception, "Error in response of getting supported tokens list")
 
@@ -372,7 +372,7 @@ QtObject:
       var data = WalletSignal(e)
       case data.eventType:
         of "wallet-tick-reload":
-          self.rebuildMarketData()    
+          self.rebuildMarketData()
     # update and populate internal list and then emit signal when new custom token detected?
 
   proc getCurrency*(self: Service): string =
@@ -449,10 +449,7 @@ QtObject:
   proc getStatusTokenKey*(self: Service): string =
     var token: TokenBySymbolItem
     if self.settingsService.areTestNetworksEnabled():
-      if self.settingsService.isGoerliEnabled():
-        token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_GOERLI)
-      else:
-        token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_SEPOLIA)
+      token = self.getTokenBySymbolByContractAddr(STT_CONTRACT_ADDRESS_SEPOLIA)
     else:
       token = self.getTokenBySymbolByContractAddr(SNT_CONTRACT_ADDRESS)
     if token != nil:
