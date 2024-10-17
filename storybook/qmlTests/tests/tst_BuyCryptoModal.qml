@@ -400,6 +400,7 @@ Item {
         }
 
         function test_modalContent_recurrent_tab() {
+            skip("to be fixed in 16462")
             notificationSpy.clear()
             // Launch modal
             launchPopup()

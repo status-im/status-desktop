@@ -5,7 +5,7 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
-from constants import permission_data_member
+from constants import permission_data_member, RandomCommunity
 from constants.community_settings import LimitWarnings
 from gui.main_window import MainWindow
 from . import marks
@@ -16,25 +16,22 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/739309',
                  'Can create up to 5 member role permissions')
 @pytest.mark.case(739309)
-@pytest.mark.parametrize('params', [constants.community_params])
-def test_add_5_member_role_permissions(main_screen: MainWindow, params):
-
-    permission_data = permission_data_member
+def test_add_5_member_role_permissions(main_screen: MainWindow):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
-    main_screen.create_community(params['name'], params['description'],
-                                 params['intro'], params['outro'],
-                                 params['logo']['fp'], params['banner']['fp'],
-                                 ['Activism', 'Art'], constants.community_tags[:2])
+    with step('Create community and select it'):
+        community = RandomCommunity()
+        main_screen.create_community(community_data=community)
+        community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Open add new permission page'):
-        community_screen = main_screen.left_panel.select_community(params['name'])
         community_setting = community_screen.left_panel.open_community_settings()
         permissions_intro_view = community_setting.left_panel.open_permissions()
 
     with step('Create new permission'):
+        permission_data = permission_data_member
         for index, item in enumerate(permission_data):
             permissions_settings = permissions_intro_view.add_new_permission()
             permissions_settings.set_who_holds_checkbox_state(permission_data[index]['checkbox_state'])

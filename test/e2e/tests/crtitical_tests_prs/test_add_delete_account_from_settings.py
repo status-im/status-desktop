@@ -22,7 +22,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704454',
                  'Account view interactions: Delete generated account')
 @pytest.mark.case(704454)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.parametrize('account_name, color, emoji, emoji_unicode',
                          [
                              pytest.param(''.join(random.choices(string.ascii_letters +

@@ -20,7 +20,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736372', 'Re-importing seed-phrase')
 @pytest.mark.case(703040, 736372)
-@pytest.mark.parametrize('user_account', [RandomUser()])
 @pytest.mark.critical
 def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
 

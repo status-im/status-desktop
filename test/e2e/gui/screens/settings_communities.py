@@ -6,7 +6,7 @@ import allure
 
 import configs.timeouts
 import driver
-from constants import UserCommunityInfo
+from constants import CommunityData
 from driver import objects_access
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -29,7 +29,7 @@ class CommunitiesSettingsView(QObject):
 
     @property
     @allure.step('Get communities')
-    def communities(self) -> typing.List[UserCommunityInfo]:
+    def communities(self) -> typing.List[CommunityData]:
         time.sleep(0.5)
         _communities = []
         for obj in driver.findAllObjects(self._community_item.real_name):
@@ -47,7 +47,7 @@ class CommunitiesSettingsView(QObject):
             members = str(name_members_labels[1].text)
             image = self._community_template_image.image
 
-            _communities.append(UserCommunityInfo(name, description, members, image))
+            _communities.append(CommunityData(name, description, members, image))
         return _communities
 
     def _get_community_item(self, name: str):
@@ -59,7 +59,7 @@ class CommunitiesSettingsView(QObject):
 
     @allure.step('Open community info')
     def get_community_info(
-            self, name: str, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> UserCommunityInfo:
+            self, name: str, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> CommunityData:
         started_at = time.monotonic()
         while True:
             communities = self.communities

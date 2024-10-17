@@ -25,11 +25,6 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
 @pytest.mark.case(703421, 703010)
 @pytest.mark.critical  # TODO 'https://github.com/status-im/status-desktop/issues/13013'
-@pytest.mark.parametrize('user_account',
-                         [
-                             pytest.param(
-                                 RandomUser())
-                         ])
 @pytest.mark.parametrize('user_image, zoom, shift', [
     pytest.param(
         random.choice(['sample_JPEG_1920×1280.jpeg', 'file_example_PNG_3MB.png', 'file_example_JPG_2500kB.jpg']

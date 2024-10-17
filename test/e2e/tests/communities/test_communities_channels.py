@@ -8,7 +8,7 @@ from allure_commons._allure import step
 import configs
 import constants
 import driver
-from constants import UserAccount
+from constants import UserAccount, RandomCommunity
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
@@ -34,13 +34,10 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
         settings = main_screen.left_panel.open_settings()
         settings.left_panel.open_advanced_settings().enable_creation_of_communities()
 
-    with step('Create simple community'):
-        community_params = constants.community_params
-        main_screen.create_community(community_params['name'], community_params['description'],
-                                     community_params['intro'], community_params['outro'],
-                                     community_params['logo']['fp'], community_params['banner']['fp'],
-                                     ['Activism', 'Art'], constants.community_tags[:2])
-        community_screen = main_screen.left_panel.select_community(community_params['name'])
+    with step('Create community and select it'):
+        community = RandomCommunity()
+        main_screen.create_community(community_data=community)
+        community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Verify General channel is present for recently created community'):
         community_screen.verify_channel(

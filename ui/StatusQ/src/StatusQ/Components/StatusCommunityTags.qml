@@ -74,6 +74,7 @@ Item {
             }
 
             delegate: StatusCommunityTag {
+                objectName: "communityTag"
                 emoji: model.emoji
                 name: model.name
                 removable: root.mode === StatusCommunityTags.ShowSelectedOnly && root.active && repeater.count > 1
