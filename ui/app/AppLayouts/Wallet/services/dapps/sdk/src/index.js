@@ -2,7 +2,7 @@ import { Core } from "@walletconnect/core";
 import { WalletKit } from "@reown/walletkit";
 
 // import the builder util
-import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
+import { buildApprovedNamespaces, getSdkError, populateAuthPayload, buildAuthObject } from "@walletconnect/utils";
 import { formatJsonRpcResult, formatJsonRpcError } from "@walletconnect/jsonrpc-utils";
 
 window.wc = {
@@ -102,6 +102,16 @@ window.wc = {
                 window.wc.core.relayer.on("relayer_disconnect", () => {
                     wc.statusObject.echo("debug", `WC unhandled event: "relayer_disconnect" connection to the relay server is lost`);
                 })
+                window.wc.walletKit.on("session_authenticate", (payload) => {
+                    // Process the authentication request here.
+                    // Steps include:
+                    // 1. Populate the authentication payload with the supported chains and methods
+                    // 2. Format the authentication message using the payload and the user's account
+                    // 3. Present the authentication message to the user
+                    // 4. Sign the authentication message(s) to create a verifiable authentication object(s)
+                    // 5. Approve the authentication request with the authentication object(s)
+                    wc.statusObject.onSessionAuthenticate(payload)
+                  })
 
                 resolve("");
             } catch(error) {
@@ -187,4 +197,44 @@ window.wc = {
             }
         );
     },
+
+    populateAuthPayload: async function (authPayload, chains, methods) {
+        return populateAuthPayload({
+            authPayload,
+            chains,
+            methods,
+        });
+    },
+
+    formatAuthMessage: async function (request, iss) {
+        return wc.walletKit.formatAuthMessage({
+            request,
+            iss
+        });
+    },
+
+    buildAuthObject: async function (authPayload, signature, iss) {
+        return buildAuthObject(
+            authPayload,
+            {
+              t: 'eip191',
+              s: signature
+            },
+            iss
+          )
+    },
+
+    acceptSessionAuthenticate: async function(id, auths) { // Approve
+        return await window.wc.walletKit.approveSessionAuthenticate({
+            id,
+            auths
+        })
+    },
+
+    rejectSessionAuthenticate: async function(id, error) { // Reject
+        return await window.wc.walletKit.rejectSessionAuthenticate({
+            id: id,
+            reason: getSdkError('USER_REJECTED') // or choose a different reason if applicable
+        })
+    }
 };

@@ -16,9 +16,9 @@
     "start": "webpack serve --mode development --open"
   },
   "dependencies": {
-    "@reown/walletkit": "^1.1.0",
-    "@walletconnect/utils": "^2.17.0",
-    "@walletconnect/jsonrpc-utils": "^1.0.8",
-    "@walletconnect/core": "^2.17.0"
+    "@reown/walletkit": "^1.1.1",
+    "@walletconnect/core": "^2.17.1",
+    "@walletconnect/utils": "^2.17.1",
+    "buffer": "^6.0.3"
   }
 }
