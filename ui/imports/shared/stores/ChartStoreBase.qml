@@ -1,8 +1,8 @@
-import QtQuick 2.13
+import QtQml 2.15
 
 import utils 1.0
 
-Item {
+QtObject {
     id: root
 
     // @see src/app_service/service/token/async_tasks.nim BalanceHistoryTimeInterval
@@ -78,7 +78,7 @@ Item {
         return d.timeRangeStrToEnumMap.get(str)
     }
 
-    QtObject {
+    readonly property QtObject _d: QtObject {
         id: d
 
         readonly property int hoursInADay: 24

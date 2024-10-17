@@ -1,6 +1,4 @@
-import QtQuick 2.13
-
-import StatusQ.Core 0.1
+import QtQml 2.15
 
 import utils 1.0
 
@@ -11,7 +9,7 @@ ChartStoreBase {
     readonly property alias tokenSymbol: d.tokenSymbol
     readonly property alias currencySymbol: d.currencySymbol
 
-    QtObject {
+    readonly property QtObject _d: QtObject {
         id: d
 
         // Data identity received from backend
@@ -67,7 +65,7 @@ ChartStoreBase {
         }
     }
 
-    Connections {
+    readonly property Connections _c: Connections {
         target: walletSectionAllTokens
 
         function onTokenBalanceHistoryDataReady(balanceHistoryJson: string) {

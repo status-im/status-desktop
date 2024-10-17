@@ -36,11 +36,19 @@ Item {
     property var networkFilters
     onNetworkFiltersChanged: d.forceRefreshBalanceStore = true
     /*required*/ property string address: ""
-    property SharedStores.TokenBalanceHistoryStore balanceStore: SharedStores.TokenBalanceHistoryStore {}
+
+    SharedStores.TokenBalanceHistoryStore {
+        id: balanceStore
+    }
+
+    SharedStores.TokenMarketValuesStore {
+        id: marketValueStore
+    }
+
 
     QtObject {
         id: d
-        property SharedStores.TokenMarketValuesStore marketValueStore : root.sharedRootStore.marketValueStore
+
         readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
         property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
         property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
@@ -67,7 +75,7 @@ Item {
             if(response.historicalData === null || response.historicalData <= 0)
                 return
 
-            d.marketValueStore.setTimeAndValueData(response.historicalData, response.range)
+            marketValueStore.setTimeAndValueData(response.historicalData, response.range)
         }
     }
 
@@ -138,7 +146,7 @@ Item {
                     id: graphDetail
 
                     property int selectedGraphType: AssetsDetailView.GraphType.Price
-                    property SharedStores.TokenMarketValuesStore selectedStore: d.marketValueStore
+                    property SharedStores.TokenMarketValuesStore selectedStore: marketValueStore
 
                     function dataReady() {
                         return typeof selectedStore != "undefined"
@@ -179,7 +187,7 @@ Item {
                                             }
 
                                             if(!isTimeRange) {
-                                                graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
+                                                graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? marketValueStore : balanceStore
                                             }
 
                                             chart.refresh()
