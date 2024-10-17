@@ -12,20 +12,6 @@ function Install-Scoop {
     }
 }
 
-# Install Protobuf tool necessary to generate status-go files.
-function Install-Protobuf-Go {
-    $ProtocGenVersion = "v1.34.1"
-    $ProtocGenZIP = "protoc-gen-go.$ProtocGenVersion.windows.amd64.zip"
-    $ProtocGenURL = "https://github.com/protocolbuffers/protobuf-go/releases/download/$ProtocGenVersion/$ProtocGenZIP"
-    $ProtocGenSHA256 = "403a619c4698fe5c4162c7f855803de3e8d8e0c187d7d51cbeb8d599f7a5a073"
-    (New-Object System.Net.WebClient).DownloadFile($ProtocGenURL, "$env:USERPROFILE\$ProtocGenZIP")
-    $ProtocGenRealSHA256 = (Get-Filehash -algorithm SHA256 "$env:USERPROFILE\$ProtocGenZIP").Hash
-    if ($ProtocGenRealSHA256 -ne $ProtocGenSHA256) {
-        throw "SHA256 hash does not match for $ProtocGenZIP !"
-    }
-    New-Item "$env:USERPROFILE\go\bin" -ItemType Directory -ea 0
-    7z x -o="$env:USERPROFILE\go\bin" -y "$env:USERPROFILE\$ProtocGenZIP"
-}
 
 # Install Git and other dependencies
 function Install-Dependencies {
@@ -104,7 +90,6 @@ $QtVersion = "5.15.2"
 If ($MyInvocation.InvocationName -ne ".") {
     Install-Scoop
     Install-Dependencies
-    Install-Protobuf-Go
     Install-Qt-SDK
     Install-VC-BuildTools
     Show-Success-Message

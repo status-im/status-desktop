@@ -16,7 +16,7 @@ function install_build_dependencies {
   echo "Install build dependencies"
   apt update
   apt install -yq git wget build-essential \
-    cmake extra-cmake-modules pkg-config protoc-gen-go \
+    cmake extra-cmake-modules pkg-config \
     mesa-common-dev unixodbc-dev libpq-dev libglu1-mesa-dev libpcsclite-dev \
     libpcre3-dev libssl-dev libpulse-mainloop-glib0 libxkbcommon-x11-dev
 }
