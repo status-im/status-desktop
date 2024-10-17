@@ -371,7 +371,7 @@ statusq-tests:
 run-statusq-tests: export QTWEBENGINE_CHROMIUM_FLAGS := "${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
 run-statusq-tests: statusq-tests
 	echo -e "\033[92mRunning:\033[39m StatusQ Unit Tests"
-	ctest -V --test-dir $(STATUSQ_BUILD_PATH) ${ARGS}
+	cd $(STATUSQ_BUILD_PATH) && nixGL ctest -V ${ARGS}
 
 ##
 ##	Storybook
@@ -410,12 +410,12 @@ run-storybook: storybook-build
 
 run-storybook-tests: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Tests"
-	ctest -V --test-dir $(STORYBOOK_BUILD_PATH) -E PagesValidator
+	cd $(STORYBOOK_BUILD_PATH) && nixGL ctest -V -E PagesValidator
 
 # repeat because of https://bugreports.qt.io/browse/QTBUG-92236 (Qt < 5.15.4)
 run-storybook-pages-validator: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Pages Validator"
-	ctest -V --test-dir $(STORYBOOK_BUILD_PATH) -R PagesValidator --repeat until-pass:3
+	cd $(STORYBOOK_BUILD_PATH) && nixGL ctest -V -R PagesValidator --repeat until-pass:3
 
 storybook-clean:
 	echo -e "\033[92mCleaning:\033[39m Storybook"
