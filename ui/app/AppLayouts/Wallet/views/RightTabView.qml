@@ -472,7 +472,6 @@ RightTabBaseView {
 
             visible: (stack.currentIndex === 2)
 
-            sharedRootStore: root.sharedRootStore
             tokensStore: RootStore.tokensStore
             allNetworksModel: RootStore.filteredFlatModel
             address: RootStore.overview.mixedcaseAddress

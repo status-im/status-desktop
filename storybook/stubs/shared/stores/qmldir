@@ -7,5 +7,3 @@ NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 PermissionsStore 1.0 PermissionsStore.qml
 ProfileStore 1.0 ProfileStore.qml
 RootStore 1.0 RootStore.qml
-TokenBalanceHistoryStore 1.0 TokenBalanceHistoryStore.qml
-TokenMarketValuesStore 1.0 TokenMarketValuesStore.qml

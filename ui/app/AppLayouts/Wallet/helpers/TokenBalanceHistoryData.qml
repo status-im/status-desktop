@@ -2,7 +2,7 @@ import QtQml 2.15
 
 import utils 1.0
 
-ChartStoreBase {
+ChartDataBase {
     id: root
 
     readonly property alias address: d.address
@@ -24,26 +24,26 @@ ChartStoreBase {
                 && root.dataRange[root.timeRangeEnumToTimeIndex(timeRangeEnum)][root.timeRangeEnumToStr(timeRangeEnum)].length > 0
     }
 
-    /// \arg timeRange: of type ChartStoreBase.TimeRange
+    /// \arg timeRange: of type ChartDataBase.TimeRange
     function setData(address, tokenSymbol, currencySymbol, timeRange, timeRangeData, balanceData) {
         switch(timeRange) {
-            case ChartStoreBase.TimeRange.Weekly:
+            case ChartDataBase.TimeRange.Weekly:
                 root.weeklyData = balanceData
                 root.weeklyMaxTicks = 0
             break;
-            case ChartStoreBase.TimeRange.Monthly:
+            case ChartDataBase.TimeRange.Monthly:
                 root.monthlyData = balanceData
                 root.monthlyMaxTicks = 0
             break;
-            case ChartStoreBase.TimeRange.HalfYearly:
+            case ChartDataBase.TimeRange.HalfYearly:
                 root.halfYearlyData = balanceData
                 root.halfYearlyMaxTicks = 0
             break;
-            case ChartStoreBase.TimeRange.Yearly:
+            case ChartDataBase.TimeRange.Yearly:
                 root.yearlyData = balanceData
                 root.yearlyMaxTicks = 0
             break;
-            case ChartStoreBase.TimeRange.All:
+            case ChartDataBase.TimeRange.All:
                 root.allData = balanceData
                 root.allTimeRangeTicks = 0
             break;
@@ -60,7 +60,7 @@ ChartStoreBase {
     }
 
     function resetAllData(address, tokenSymbol, currencySymbol) {
-        for (let tR = ChartStoreBase.TimeRange.Weekly; tR <= ChartStoreBase.TimeRange.All; tR++) {
+        for (let tR = ChartDataBase.TimeRange.Weekly; tR <= ChartDataBase.TimeRange.All; tR++) {
             root.setData(address, tokenSymbol, currencySymbol, tR, [], [])
         }
     }
