@@ -9,25 +9,26 @@ ModelCount::ModelCount(QObject* parent) : QObject(parent)
     if (model == nullptr)
         return;
 
-    connect(model, &QAbstractItemModel::rowsInserted,
-            this, &ModelCount::countChanged);
-    connect(model, &QAbstractItemModel::rowsRemoved,
-            this, &ModelCount::countChanged);
+    m_count = model->rowCount();
 
-    auto storeIntermediateCount = [this, model] {
-        this->m_intermediateCount = model->rowCount();
+    auto update = [this, model] {
+        auto wasEmpty = m_count == 0;
+        auto count = model->rowCount();
+
+        if (m_count == count)
+            return;
+
+        m_count = count;
+        emit this->countChanged();
+
+        if (wasEmpty != (count == 0))
+            this->emptyChanged();
     };
 
-    auto emitIfChanged = [this, model] {
-        if (this->m_intermediateCount != model->rowCount())
-            emit this->countChanged();
-    };
-
-    connect(model, &QAbstractItemModel::modelAboutToBeReset, this, storeIntermediateCount);
-    connect(model, &QAbstractItemModel::layoutAboutToBeChanged, storeIntermediateCount);
-
-    connect(model, &QAbstractItemModel::modelReset, this, emitIfChanged);
-    connect(model, &QAbstractItemModel::layoutChanged, this, emitIfChanged);
+    connect(model, &QAbstractItemModel::rowsInserted, this, update);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, update);
+    connect(model, &QAbstractItemModel::modelReset, this, update);
+    connect(model, &QAbstractItemModel::layoutChanged, this, update);
 }
 
 ModelCount* ModelCount::qmlAttachedProperties(QObject* object)
@@ -37,8 +38,10 @@ ModelCount* ModelCount::qmlAttachedProperties(QObject* object)
 
 int ModelCount::count() const
 {
-    if (auto model = qobject_cast<QAbstractItemModel*>(parent()))
-        return model->rowCount();
+    return m_count;
+}
 
-    return 0;
+bool ModelCount::empty() const
+{
+    return m_count == 0;
 }
