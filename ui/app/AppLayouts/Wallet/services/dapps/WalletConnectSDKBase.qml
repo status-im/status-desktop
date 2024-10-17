@@ -15,10 +15,12 @@ Item {
     signal sessionRequestExpired(var id)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(string topic, string id, bool accept /* not reject */, string error)
-
-    signal authRequest(var request)
-    signal authMessageFormated(string formatedMessage, string address)
-    signal authRequestUserAnswerResult(bool accept, string error)
+    signal sessionAuthenticateRequest(var sessionData)
+    signal populateAuthPayloadResult(var id, var authPayload, string error)
+    signal formatAuthMessageResult(var id, var request, string error)
+    signal acceptSessionAuthenticateResult(var id, var result, string error)
+    signal rejectSessionAuthenticateResult(var id, var result, string error)
+    signal buildAuthObjectResult(var id, var authObject, string error)
 
     signal sessionDelete(var topic, string error)
 
@@ -59,5 +61,25 @@ Item {
 
     property var rejectSessionRequest: function(topic, id, error) {
         console.error("rejectSessionRequest not implemented")
+    }
+
+    property var populateAuthPayload: function (id, authPayload, chains, methods) {
+        console.error("populateAuthPayload not implemented")
+    }
+
+    property var formatAuthMessage: function(id, request, iss) {
+        console.error("formatAuthMessage not implemented")
+    }
+
+    property var buildAuthObject: function(id, authPayload, signature, iss) {
+        console.error("buildAuthObject not implemented")
+    }
+
+    property var acceptSessionAuthenticate: function(id, auths) {
+        console.error("acceptSessionAuthenticate not implemented")
+    }
+
+    property var rejectSessionAuthenticate: function(id, error) {
+        console.error("rejectSessionAuthenticate not implemented")
     }
 }
