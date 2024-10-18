@@ -396,7 +396,7 @@ QtObject:
     result.extradata = extradata
     result.generatedId = result.id.toString()
     result.generatedCollectionId = result.id.contractID.toString()
-    result.tokenType = contractTypeToTokenType(data.contractType.get())
+    result.tokenType = contractTypeToTokenType(data.contractType.get(ContractType.ContractTypeUnknown))
     result.setup()
 
   proc newCollectibleDetailsBasicEntry*(id: backend.CollectibleUniqueID, extradata: ExtraData): CollectiblesEntry =
