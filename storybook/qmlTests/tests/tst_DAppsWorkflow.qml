@@ -310,7 +310,9 @@ Item {
 
         function test_TestAuthentication() {
             let td = mockSessionRequestEvent(this, handler.sdk, handler.accountsModel, handler.networksModel)
-            handler.authenticate(td.request)
+            handler.sdk.sessionRequestEvent(td.request.event)
+            let request = handler.requestsModel.findById(td.request.requestId)
+            request.accept()
             compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
 
             let store = handler.store
@@ -532,6 +534,7 @@ Item {
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
 
             ignoreWarning("Error: request expired")
+            request.accept()
             handler.store.userAuthenticated(topic, session.id, "1234", "", message)
             verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
             sdk.sessionRequestUserAnswerResult(topic, session.id, false, "")
@@ -558,6 +561,7 @@ Item {
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
 
             ignoreWarning("Error: request expired")
+            handler.requestsModel.findRequest(topic, session.id).accept()
             handler.store.userAuthenticationFailed(topic, session.id)
             verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
         }
@@ -581,6 +585,7 @@ Item {
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
 
             ignoreWarning("Error: request expired")
+            handler.requestsModel.findRequest(topic, session.id).accept()
             handler.store.userAuthenticationFailed(topic, session.id)
             verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
         }
@@ -708,9 +713,8 @@ Item {
         function test_TestPairingUnsupportedNetworks() {
             const {sdk, walletStore, store} = testSetupPair(Testing.formatSessionProposal())
 
-            let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult([], []))
             const approvedArgs = sdk.buildApprovedNamespacesCalls[0]
-            sdk.buildApprovedNamespacesResult(approvedArgs.id, allApprovedNamespaces, "")
+            sdk.buildApprovedNamespacesResult(approvedArgs.id, {}, "Non conforming namespaces. approve() namespaces chains don't satisfy required namespaces")
             compare(connectDAppSpy.count, 0, "expected not to have calls to service.connectDApp")
             compare(service.onPairingValidatedTriggers.length, 1, "expected a call to service.onPairingValidated")
             compare(service.onPairingValidatedTriggers[0].validationState, Pairing.errors.unsupportedNetwork, "expected unsupportedNetwork state error")
@@ -794,8 +798,6 @@ Item {
 
         // Implemented as a regression to metamask not having icons which failed dapps list
         function test_TestUpdateDapps() {
-            provider.updateDapps()
-
             // Validate that persistance fallback is working
             compare(provider.dappsModel.count, 2, "expected dappsModel have the right number of elements")
             let persistanceList = JSON.parse(dappsListReceivedJsonStr)

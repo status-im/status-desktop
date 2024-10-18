@@ -207,7 +207,9 @@ DappsComboBox {
         }
 
         function connectionSuccessful(key, newTopic) {
+            print ("Connection successful")
             if (connectDappLoader.key === key && connectDappLoader.item) {
+                print ("Connection successful - updating topic", newTopic)
                 connectDappLoader.topic = newTopic
                 connectDappLoader.item.pairSuccessful()
             }
