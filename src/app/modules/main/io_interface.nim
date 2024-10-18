@@ -219,6 +219,9 @@ method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipR
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityMembershipRequestCanceled*(self: AccessInterface, communityId: string, requestId: string, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method meMentionedCountChanged*(self: AccessInterface, allMentions: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -431,6 +434,9 @@ method startTokenHoldersManagement*(self: AccessInterface, communityId: string, 
   raise newException(ValueError, "No implementation available")
 
 method stopTokenHoldersManagement*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactUpdated*(self: AccessInterface, contactId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
