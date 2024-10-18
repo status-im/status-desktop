@@ -18,7 +18,8 @@ QObject {
     readonly property int connectorId: Constants.WalletConnect
     readonly property var dappsModel: d.dappsModel
 
-    function updateDapps() {
+    Component.onCompleted: {
+        // Just in case the SDK is already initialized
         d.updateDappsModel()
     }
 
@@ -28,6 +29,29 @@ QObject {
         property ListModel dappsModel: ListModel {
             id: dapps
             objectName: "DAppsModel"
+        }
+
+        property Connections sdkConnections: Connections {
+            target: root.sdk
+            function onSessionDelete(topic, err) {
+                d.updateDappsModel()
+            }
+            function onSdkInit(success, result) {
+                if (success) {
+                    d.updateDappsModel()
+                }
+            }
+            function onApproveSessionResult(topic, success, result) {
+                if (success) {
+                    d.updateDappsModel()
+                }
+            }
+
+            function onAcceptSessionAuthenticateResult(id, result, error) {
+                if (!error) {
+                    d.updateDappsModel()
+                }
+            }
         }
 
         property var dappsListReceivedFn: null
