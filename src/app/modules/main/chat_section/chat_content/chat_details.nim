@@ -1,4 +1,5 @@
 import NimQml
+import ../../../../../app_service/common/types
 
 
 QtObject:
@@ -19,7 +20,7 @@ QtObject:
     highlight: bool
     muted: bool
     position: int
-    isUntrustworthy: bool
+    trustStatus: TrustStatus
     isContact: bool
     active: bool
     blocked: bool
@@ -51,7 +52,7 @@ QtObject:
       notificationsCount: int,
       highlight, muted: bool,
       position: int,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
       isContact: bool = false,
       blocked: bool = false,
       canPost: bool = true,
@@ -75,7 +76,7 @@ QtObject:
     self.highlight = highlight
     self.muted = muted
     self.position = position
-    self.isUntrustworthy = isUntrustworthy
+    self.trustStatus = trustStatus
     self.isContact = isContact
     self.active = false
     self.blocked = blocked
@@ -251,15 +252,23 @@ QtObject:
 
   proc isUntrustworthyChanged(self: ChatDetails) {.signal.}
   proc getIsUntrustworthy(self: ChatDetails): bool {.slot.} =
-    return self.isUntrustworthy
+    return self.trustStatus == TrustStatus.Untrustworthy
   QtProperty[bool] isUntrustworthy:
     read = getIsUntrustworthy
     notify = isUntrustworthyChanged
 
-  proc setIsUntrustworthy*(self: ChatDetails, value: bool) = # this is not a slot
-    if self.isUntrustworthy == value:
+  proc trustStatusChanged(self: ChatDetails) {.signal.}
+  proc getTrustStatus(self: ChatDetails): int {.slot.} =
+    return self.trustStatus.int
+  QtProperty[int] trustStatus:
+    read = getTrustStatus
+    notify = trustStatusChanged
+
+  proc setTrustStatus*(self: ChatDetails, value: TrustStatus) = # this is not a slot
+    if self.trustStatus == value:
       return
-    self.isUntrustworthy = value
+    self.trustStatus = value
+    self.trustStatusChanged()
     self.isUntrustworthyChanged()
 
   proc activeChanged(self: ChatDetails) {.signal.}

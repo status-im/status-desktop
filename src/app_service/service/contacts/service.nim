@@ -37,7 +37,7 @@ type
 
   TrustArgs* = ref object of Args
     publicKey*: string
-    isUntrustworthy*: bool
+    trustStatus*: TrustStatus
 
   ResolvedContactArgs* = ref object of Args
     pubkey*: string
@@ -603,7 +603,7 @@ QtObject:
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
 
     self.events.emit(SIGNAL_CONTACT_TRUSTED,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
@@ -615,7 +615,7 @@ QtObject:
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
 
     self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: true))
+      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
     try:
@@ -629,21 +629,10 @@ QtObject:
       if self.contacts.hasKey(publicKey):
         self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
         
-      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
+        TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
     except Exception as e:
       error "error in removeTrustStatus request", msg = e.msg
-
-  proc removeTrustVerificationStatus*(self: Service, publicKey: string) =
-    try:
-      let response = status_contacts.removeTrustVerificationStatus(publicKey)
-      if not response.error.isNil:
-        error "error removing trust status", msg = response.error.message
-        return
-
-      self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
-    except Exception as e:
-      error "error removeTrustVerificationStatus request", msg = e.msg
 
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = pubkeyAndRpcResponse.parseJson

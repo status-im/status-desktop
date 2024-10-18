@@ -97,3 +97,8 @@ type RequestToJoinState* {.pure.} = enum
   None = 0
   InProgress
   Requested
+
+type TrustStatus* {.pure.}= enum
+  Unknown = 0,
+  Trusted = 1,
+  Untrustworthy = 2

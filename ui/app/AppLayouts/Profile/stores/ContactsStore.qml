@@ -127,10 +127,6 @@ QtObject {
         root.contactsModule.removeTrustStatus(pubKey)
     }
 
-    function removeTrustVerificationStatus(pubKey) {
-        root.contactsModule.removeTrustVerificationStatus(pubKey)
-    }
-
     function requestContactInfo(publicKey) {
         root.contactsModule.requestContactInfo(publicKey)
     }

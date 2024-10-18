@@ -5,6 +5,7 @@ import json
 import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
 import model_utils
+import ../../../app_service/common/types
 
 type
   ModelRole {.pure.} = enum
@@ -343,8 +344,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
     ) =
     for item in self.items:
       item.members.updateItem(
@@ -356,8 +356,7 @@ QtObject:
         alias,
         icon,
         isContact,
-        isVerified,
-        isUntrustworthy,
+        trustStatus,
       )
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =

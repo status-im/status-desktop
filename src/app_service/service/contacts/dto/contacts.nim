@@ -10,11 +10,6 @@ type
     thumbnail*: string
     large*: string
 
-type TrustStatus* {.pure.}= enum
-  Unknown = 0,
-  Trusted = 1,
-  Untrustworthy = 2
-
 type ContactRequestState* {.pure.} = enum
   None = 0
   Mutual = 1

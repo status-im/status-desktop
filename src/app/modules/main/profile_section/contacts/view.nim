@@ -218,9 +218,6 @@ QtObject:
   proc removeTrustStatus*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeTrustStatus(publicKey)
 
-  proc removeTrustVerificationStatus*(self: View, publicKey: string) {.slot.} =
-    self.delegate.removeTrustVerificationStatus(publicKey)
-
   proc shareUserUrlWithData*(self: View, pubkey: string): string {.slot.} =
     return self.delegate.shareUserUrlWithData(pubkey)
 

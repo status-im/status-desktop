@@ -88,7 +88,6 @@ method contactUpdated*(self: Module, publicKey: string) =
   if self.isPublicCommunityChannel:
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
-  let isMe = publicKey == singletonInstance.userProfile.getPubKey()
   self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
@@ -98,8 +97,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = not isMe and contactDetails.dto.isContactVerified(),
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 method userProfileUpdated*(self: Module) =
@@ -151,10 +149,10 @@ proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): 
     colorHash = contactDetails.colorHash,
     onlineStatus = status,
     isContact = contactDetails.dto.isContact,
-    isVerified = not isMe and contactDetails.dto.isContactVerified(),
+    isCurrentUser = isMe,
     memberRole = member.role,
     joined = member.joined,
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
@@ -195,7 +193,6 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
   if self.isPublicCommunityChannel:
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
-  let isMe = publicKey == singletonInstance.userProfile.getPubKey()
   discard self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
@@ -205,10 +202,9 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = not isMe and contactDetails.dto.isContactVerified(),
     memberRole,
     joined,
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 method addGroupMembers*(self: Module, pubKeys: seq[string]) =

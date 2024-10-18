@@ -81,7 +81,7 @@ method load*(self: Module, chatItem: chat_item.Item) =
   var chatImage = chatItem.icon
   var isContact = false
   var trustStatus = TrustStatus.Unknown
-  if(chatItem.`type` == ChatType.OneToOne.int):
+  if chatItem.`type` == ChatType.OneToOne.int:
     let contactDto = self.controller.getContactById(self.controller.getMyChatId())
     chatName = contactDto.userDefaultDisplayName()
     isContact = contactDto.isContact
@@ -95,7 +95,7 @@ method load*(self: Module, chatItem: chat_item.Item) =
   self.view.chatDetails.setChatDetails(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage,
     chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
-    chatItem.highlight, chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
+    chatItem.highlight, chatItem.muted, chatItem.position, trustStatus,
     isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
     chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey, chatItem.requiresPermissions)
   
@@ -362,9 +362,9 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
       let communityChats = self.controller.getCommunityDetails().chats
       item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
-  if(self.controller.getMyChatId() == contactId):
+  if self.controller.getMyChatId() == contactId:
     self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
-    self.view.updateTrustStatus(updatedContact.dto.trustStatus == TrustStatus.Untrustworthy)
+    self.view.updateTrustStatus(updatedContact.dto.trustStatus)
     self.view.updateChatBlocked(updatedContact.dto.blocked)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =

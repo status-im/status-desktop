@@ -1743,7 +1743,7 @@ proc createMemberItem[T](
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(status.statusType),
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    trustStatus = contactDetails.dto.trustStatus,
     memberRole = role,
     membershipRequestState = state,
     requestToJoinId = requestId,
@@ -1752,7 +1752,6 @@ proc createMemberItem[T](
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
   let contactDetails = self.controller.getContactDetails(contactId)
-  let isMe = contactId == singletonInstance.userProfile.getPubKey()
   self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,
@@ -1762,8 +1761,7 @@ method contactUpdated*[T](self: Module[T], contactId: string) =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = not isMe and contactDetails.dto.isContactVerified(),
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 {.pop.}

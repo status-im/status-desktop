@@ -381,7 +381,7 @@ QtObject {
                 onAccepted: {
                     rootStore.contactStore.removeContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.removeTrustVerificationStatus(publicKey)
+                        rootStore.contactStore.removeTrustStatus(publicKey)
                     if (markAsUntrusted) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 removed from contacts and marked as untrusted").arg(mainDisplayName))
@@ -414,7 +414,7 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.removeTrustVerificationStatus(publicKey)
+                    rootStore.contactStore.removeTrustStatus(publicKey)
 
                     if (markAsUntrusted && removeContact) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
@@ -646,7 +646,7 @@ QtObject {
                 onAccepted: {
                     rootStore.contactStore.blockContact(publicKey)
                     if (removeIDVerification)
-                        rootStore.contactStore.removeTrustVerificationStatus(publicKey)
+                        rootStore.contactStore.removeTrustStatus(publicKey)
                     if (removeContact)
                         rootStore.contactStore.removeContact(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 blocked").arg(mainDisplayName))

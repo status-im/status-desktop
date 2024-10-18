@@ -84,8 +84,6 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contactDetails.dto.isContact(),
-    isVerified = contactDetails.dto.isContactVerified(),
-    isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
     isBlocked = contactDetails.dto.isBlocked(),
     isCurrentUser = contactDetails.isCurrentUser,
     contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
@@ -241,9 +239,10 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   # self.view.sentButRejectedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
   self.view.blockedContactsModel().setName(publicKey, displayName, ensName, localNickname)
 
-method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
-  self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
-  self.view.blockedContactsModel().updateTrustStatus(publicKey, isUntrustworthy)
+method contactTrustStatusChanged*(self: Module, publicKey: string, trustStatus: TrustStatus) =
+  self.view.contactsModel().updateTrustStatus(publicKey, trustStatus)
+  self.view.myMutualContactsModel().updateTrustStatus(publicKey, trustStatus)
+  self.view.blockedContactsModel().updateTrustStatus(publicKey, trustStatus)
 
 method markAsTrusted*(self: Module, publicKey: string): void =
   self.controller.markAsTrusted(publicKey)
@@ -253,9 +252,6 @@ method markUntrustworthy*(self: Module, publicKey: string): void =
 
 method removeTrustStatus*(self: Module, publicKey: string): void =
   self.controller.removeTrustStatus(publicKey)
-
-method removeTrustVerificationStatus*(self: Module, publicKey: string): void =
-  self.controller.removeTrustVerificationStatus(publicKey)
 
 method requestContactInfo*(self: Module, publicKey: string) =
   self.controller.requestContactInfo(publicKey)
