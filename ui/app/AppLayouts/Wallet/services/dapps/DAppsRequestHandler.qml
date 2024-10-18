@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import AppLayouts.Wallet.services.dapps 1.0
+import AppLayouts.Wallet.services.dapps.plugins 1.0
 import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 
@@ -8,8 +9,6 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.stores 1.0
 import utils 1.0
-
-import "types"
 
 SQUtils.QObject {
     id: root
@@ -23,27 +22,221 @@ SQUtils.QObject {
 
     property alias requestsModel: requests
 
-    function rejectSessionRequest(topic, id, hasError) {
-        d.unsubscribeForFeeUpdates(topic, id)
-        sdk.rejectSessionRequest(topic, id, hasError)
-    }
-
     function subscribeForFeeUpdates(topic, id) {
         d.subscribeForFeeUpdates(topic, id)
     }
 
-    /// Beware, it will fail if called multiple times before getting an answer
-    function authenticate(topic, id, address, payload) {
-        d.unsubscribeForFeeUpdates(topic, id)
-        return store.authenticateUser(topic, id, address, payload)
+    function pair(uri) {
+        return sdk.pair(uri)
     }
 
-    signal sessionRequest(string id)
+    /// Approves or rejects the session proposal
+    function approvePairSession(key, approvedChainIds, accountAddress) {
+        const approvedNamespaces = JSON.parse(
+            DAppsHelpers.buildSupportedNamespaces(approvedChainIds,
+                                             [accountAddress],
+                                             SessionRequest.getSupportedMethods())
+        )
+
+        if (siwePlugin.connectionApproved(key, approvedNamespaces)) {
+            return
+        }
+
+        if (!d.activeProposals.has(key)) {
+            console.error("No active proposal found for key: " + key)
+            return
+        }
+
+        const proposal = d.activeProposals.get(key)
+        d.acceptedSessionProposal = proposal
+        d.acceptedNamespaces = approvedNamespaces
+
+        sdk.buildApprovedNamespaces(key, proposal.params, approvedNamespaces)
+    }
+
+    /// Rejects the session proposal
+    function rejectPairSession(id) {
+        if (siwePlugin.connectionRejected(id)) {
+            return
+        }
+        sdk.rejectSession(id)
+    }
+
+    /// Disconnects the WC session with the given topic
+    function disconnectSession(sessionTopic) {
+        wcSDK.disconnectSession(sessionTopic)
+    }
+
+    function validatePairingUri(uri){
+        const info = DAppsHelpers.extractInfoFromPairUri(uri)
+        sdk.getActiveSessions((sessions) => {
+            // Check if the URI is already paired
+            let validationState = Pairing.errors.uriOk
+            for (const key in sessions) {
+                if (sessions[key].pairingTopic === info.topic) {
+                    validationState = Pairing.errors.alreadyUsed
+                    break
+                }
+            }
+
+            // Check if expired
+            if (validationState === Pairing.errors.uriOk) {
+                const now = (new Date().getTime())/1000
+                if (info.expiry < now) {
+                    validationState = Pairing.errors.expired
+                }
+            }
+
+            root.pairingValidated(validationState)
+        });
+    }
+
+    signal sessionRequest(var id)
     /*type - maps to Constants.ephemeralNotificationType*/
     signal displayToastMessage(string message, int type)
+    signal pairingValidated(int validationState)
+    signal pairingResponse(int state) // Maps to Pairing.errors
+    signal connectDApp(var chains, string dAppUrl, string dAppName, string dAppIcon, var key)
+    signal approveSessionResult(var proposalId, bool error, var topic)
+    signal dappDisconnected(var topic, string url, bool error)
 
     Connections {
         target: sdk
+
+        function onRejectSessionResult(proposalId, err) {
+            if (!d.activeProposals.has(proposalId)) {
+                console.error("No active proposal found for key: " + proposalId)
+                return
+            }
+            
+            const proposal = d.activeProposals.get(proposalId)
+            d.activeProposals.delete(proposalId)
+
+            const app_url = proposal.params.proposer.metadata.url ?? "-"
+            const app_domain = SQUtils.StringUtils.extractDomainFromLink(app_url)
+            if(err) {
+                root.pairingResponse(Pairing.errors.unknownError)
+                root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_domain), Constants.ephemeralNotificationType.danger)
+            } else {
+                root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_domain), Constants.ephemeralNotificationType.success)
+            }
+        }
+
+        function onApproveSessionResult(proposalId, session, err) {
+            if (!d.activeProposals.has(proposalId)) {
+                console.error("No active proposal found for key: " + proposalId)
+                return
+            }
+
+            if (!d.acceptedSessionProposal || d.acceptedSessionProposal.id !== proposalId) {
+                console.error("No accepted proposal found for key: " + proposalId)
+                d.activeProposals.delete(proposalId)
+                return
+            }
+
+            const proposal = d.activeProposals.get(proposalId)
+            d.activeProposals.delete(proposalId)
+            d.acceptedSessionProposal = null
+            d.acceptedNamespaces = null
+            
+            if (err) {
+                root.pairingResponse(Pairing.errors.unknownError)
+                return
+            }
+
+            // TODO #14754: implement custom dApp notification
+            const app_url = proposal.params.proposer.metadata.url ?? "-"
+            const app_domain = SQUtils.StringUtils.extractDomainFromLink(app_url)
+            root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_domain), Constants.ephemeralNotificationType.success)
+
+            // Persist session
+            if(!root.store.addWalletConnectSession(JSON.stringify(session))) {
+                console.error("Failed to persist session")
+            }
+
+            // Notify client
+            root.approveSessionResult(proposalId, err, session.topic)
+        }
+
+        function onBuildApprovedNamespacesResult(key, approvedNamespaces, error) {
+            if (!d.activeProposals.has(key)) {
+                console.error("No active proposal found for key: " + key)
+                return
+            }
+
+            if(error || !approvedNamespaces) {
+                // Check that it contains Non conforming namespaces"
+                if (error.includes("Non conforming namespaces")) {
+                    root.pairingResponse(Pairing.errors.unsupportedNetwork)
+                } else {
+                    root.pairingResponse(Pairing.errors.unknownError)
+                }
+                return
+            }
+
+            approvedNamespaces = applyChainAgnosticFix(approvedNamespaces)
+
+            if (d.acceptedSessionProposal) {
+                sdk.approveSession(d.acceptedSessionProposal, approvedNamespaces)
+            } else {
+                const proposal = d.activeProposals.get(key)
+                const res = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces)
+                const chains = res.chains
+                const dAppUrl = proposal.params.proposer.metadata.url
+                const dAppName = proposal.params.proposer.metadata.name
+                const dAppIcons = proposal.params.proposer.metadata.icons
+                const dAppIcon = dAppIcons && dAppIcons.length > 0 ? dAppIcons[0] : ""
+
+                root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, key)
+            }
+        }
+
+        //Special case for chain agnostic dapps
+        //WC considers the approved namespace as valid, but there's no chainId or account established
+        //Usually this request is declared by using `eip155:0`, but we don't support this chainID, resulting in empty `chains` and `accounts`
+        //The established connection will use for all user approved chains and accounts
+        //This fix is applied to all valid namespaces that don't have a chainId or account
+        function applyChainAgnosticFix(approvedNamespaces) {
+            try {
+                const an = approvedNamespaces.eip155
+                const chainAgnosticRequest = (!an.chains || an.chains.length === 0) && (!an.accounts || an.accounts.length === 0)
+                if (!chainAgnosticRequest) {
+                    return approvedNamespaces
+                }
+
+                // If the `d.acceptedNamespaces` is set it means the user already confirmed the chain and account
+                if (!!d.acceptedNamespaces) {
+                    approvedNamespaces.eip155.chains = d.acceptedNamespaces.eip155.chains
+                    approvedNamespaces.eip155.accounts = d.acceptedNamespaces.eip155.accounts
+                    return approvedNamespaces
+                }
+
+                // Show to the user all possible chains
+                const supportedNamespacesStr = DAppsHelpers.buildSupportedNamespacesFromModels(
+                    root.networksModel, root.accountsModel, SessionRequest.getSupportedMethods())
+                const supportedNamespaces = JSON.parse(supportedNamespacesStr)
+
+                approvedNamespaces.eip155.chains = supportedNamespaces.eip155.chains
+                approvedNamespaces.eip155.accounts = supportedNamespaces.eip155.accounts
+            } catch (e) {
+                console.warn("WC Error applying chain agnostic fix", e)
+            }
+
+            return approvedNamespaces
+        }
+
+        function onSessionProposal(sessionProposal) {
+            const key = sessionProposal.id
+            d.activeProposals.set(key, sessionProposal)
+
+            const supportedNamespacesStr = DAppsHelpers.buildSupportedNamespacesFromModels(
+                  root.networksModel, root.accountsModel, SessionRequest.getSupportedMethods())
+            sdk.buildApprovedNamespaces(key, sessionProposal.params, JSON.parse(supportedNamespacesStr))
+        }
+
+        function onPairResponse(ok) {
+            root.pairingResponse(ok)
+        }
 
         function onSessionRequestEvent(event) {
             const res = d.resolveAsync(event)
@@ -83,7 +276,7 @@ SQUtils.QObject {
 
             if (error) {
                 root.displayToastMessage(qsTr("Fail to %1 from %2").arg(methodStr).arg(appDomain), Constants.ephemeralNotificationType.danger)
-                root.rejectSessionRequest(topic, id, true /*hasError*/)
+                sdk.rejectSessionRequest(topic, id, true /*hasError*/)
                 console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
                 return
             }
@@ -112,52 +305,56 @@ SQUtils.QObject {
 
             request.setExpired()
         }
+
+        function onSessionDelete(topic, err) {
+            d.disconnectSessionRequested(topic, err)
+        }
     }
 
-    Connections {
-        target: root.store
+    SiweRequestPlugin {
+        id: siwePlugin
 
-        function onUserAuthenticated(topic, id, password, pin, payload) {
-            var request = requests.findRequest(topic, id)
+        sdk: root.sdk
+        store: root.store
+        accountsModel: root.accountsModel
+        networksModel: root.networksModel
+
+        onRegisterSignRequest: (request) => {
+            requests.enqueue(request)
+        }
+
+        onUnregisterSignRequest: (requestId) => {
+            const request = requests.findById(requestId)
             if (request === null) {
-                console.error("Error finding event for topic", topic, "id", id)
+                console.error("SiweRequestPlugin::onUnregisterSignRequest: Error finding event for requestId", requestId)
                 return
             }
-            if (request.isExpired()) {
-                console.warn("Error: request expired")
-                root.rejectSessionRequest(topic, id, true /*hasError*/)
-                return
-            }
-
-            d.executeSessionRequest(request, password, pin, payload)
+            requests.removeRequest(request.topic, requestId)
         }
 
-        function onUserAuthenticationFailed(topic, id) {
-            let request = requests.findRequest(topic, id)
-            let methodStr = SessionRequest.methodToUserString(request.method)
-            if (request === null || !methodStr) {
-                return
-            }
-
-            if (request.isExpired()) {
-                console.warn("Error: request expired")
-                root.rejectSessionRequest(topic, id, true /*hasError*/)
-                return
-            }
-
-            const appDomain = SQUtils.StringUtils.extractDomainFromLink(request.dappUrl)
-            root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(appDomain), Constants.ephemeralNotificationType.danger)
-            root.rejectSessionRequest(topic, id, true /*hasError*/)
+        onConnectDApp: (chains, dAppUrl, dAppName, dAppIcon, key) => {
+            root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, key)
         }
 
-        function onSigningResult(topic, id, data) {
-            let hasErrors = (data == "")
-            if (!hasErrors) {
-                // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
-                sdk.acceptSessionRequest(topic, id, data)
-            } else {
-                root.rejectSessionRequest(topic, id, hasErrors)
-            }
+        onSiweFailed: (id, error, topic) => {
+            root.approveSessionResult(id, error, topic)
+        }
+
+        onSiweSuccessful: (id, topic) => {
+            d.lookupSession(topic, function(session) {
+                // TODO #14754: implement custom dApp notification
+                let meta = session.peer.metadata
+                const dappUrl = meta.url ?? "-"
+                const dappDomain = SQUtils.StringUtils.extractDomainFromLink(dappUrl)
+                root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(dappDomain), Constants.ephemeralNotificationType.success)
+
+                // Persist session
+                if(!root.store.addWalletConnectSession(JSON.stringify(session))) {
+                    console.error("Failed to persist session")
+                }
+
+                root.approveSessionResult(id, "", topic)
+            })
         }
     }
 
@@ -271,6 +468,10 @@ SQUtils.QObject {
             readonly property int ok: 1
             readonly property int ignored: 2
         }
+
+        property var activeProposals: new Map() // key: proposalId, value: sessionProposal
+        property var acceptedSessionProposal: null
+        property var acceptedNamespaces: null
 
         // returns {
         //   obj: obj or nil
@@ -845,6 +1046,44 @@ SQUtils.QObject {
             }
             return BigOps.fromNumber(0)
         }
+
+        function disconnectSessionRequested(topic, err) {
+            // Get all sessions and filter the active ones for known accounts
+            // Act on the first matching session with the same topic
+            const activeSessionsCallback = (allSessions, success) => {
+                root.store.activeSessionsReceived.disconnect(activeSessionsCallback)
+                
+                if (!success) {
+                    // TODO #14754: implement custom dApp notification
+                    root.dappDisconnected("", "", true)
+                    return
+                }
+                
+                // Convert to original format
+                const webSdkSessions = allSessions.map((session) => {
+                    return JSON.parse(session.sessionJson)
+                })
+
+                const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(webSdkSessions, root.accountsModel)
+                
+                for (const sessionID in sessions) {
+                    const session = sessions[sessionID]
+                    if (session.topic == topic) {
+                        root.store.deactivateWalletConnectSession(topic)
+                        
+                        const dappUrl = session.peer.metadata.url ?? "-"
+                        root.dappDisconnected(topic, dappUrl, err)
+                        break
+                    }
+                }
+            }
+
+            root.store.activeSessionsReceived.connect(activeSessionsCallback)
+            if (!root.store.getActiveSessions()) {
+                root.store.activeSessionsReceived.disconnect(activeSessionsCallback)
+                // TODO #14754: implement custom dApp notification
+            }
+        }
     }
 
     /// The queue is used to ensure that the events are processed in the order they are received but they could be
@@ -856,8 +1095,58 @@ SQUtils.QObject {
     Component {
         id: sessionRequestComponent
 
-        SessionRequestResolved {
+        SessionRequestWithAuth {
+            id: request
             sourceId: Constants.DAppConnectors.WalletConnect
+            store: root.store
+
+            function signedHandler(topic, id, data) {
+                if (topic != request.topic || id != request.requestId) {
+                    return
+                }
+                root.store.signingResult.disconnect(request.signedHandler)
+
+                let hasErrors = (data == "")
+                if (!hasErrors) {
+                    // acceptSessionRequest will trigger an sdk.sessionRequestUserAnswerResult signal
+                    sdk.acceptSessionRequest(topic, id, data)
+                } else {
+                    request.reject(true)
+                }
+            }
+
+            onAccepted: () => {
+                d.unsubscribeForFeeUpdates(request.topic, request.requestId)
+            }
+
+            onRejected: (hasError) => {
+                d.unsubscribeForFeeUpdates(request.topic, request.requestId)
+                sdk.rejectSessionRequest(request.topic, request.requestId, hasError)
+            }
+
+            onAuthFailed: () => {
+                const appDomain = SQUtils.StringUtils.extractDomainFromLink(request.dappUrl)
+                const methodStr = SessionRequest.methodToUserString(request.method)
+                if (!methodStr) {
+                    return
+                }
+                root.displayToastMessage(qsTr("Failed to authenticate %1 from %2").arg(methodStr).arg(appDomain), Constants.ephemeralNotificationType.danger)
+            }
+
+            onExecute: (password, pin) => {
+                root.store.signingResult.connect(request.signedHandler)
+                let executed = false
+                try {
+                    executed = d.executeSessionRequest(request, password, pin, request.feesInfo)
+                } catch (e) {
+                    console.error("Error executing session request", e)
+                }
+                
+                if (!executed) {
+                    sdk.rejectSessionRequest(request.topic, request.requestId, true /*hasError*/)
+                    root.store.signingResult.disconnect(request.signedHandler)
+                }
+            }
         }
     }
 

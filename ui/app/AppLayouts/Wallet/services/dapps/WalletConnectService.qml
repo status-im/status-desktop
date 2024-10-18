@@ -56,11 +56,11 @@ QObject {
     function sign(topic, id) {
         // The authentication triggers the signing process
         // authenticate -> sign -> inform the dApp
-        d.authenticate(topic, id)
+        d.sign(topic, id)
     }
 
     function rejectSign(topic, id, hasError) {
-        requestHandler.rejectSessionRequest(topic, id, hasError)
+        d.rejectSign(topic, id, hasError)
     }
 
     function subscribeForFeeUpdates(topic, id) {
@@ -75,29 +75,18 @@ QObject {
     /// Initiates the pairing process with the given URI
     function pair(uri) {
         timeoutTimer.start()
-        wcSDK.pair(uri)
+        requestHandler.pair(uri)
     }
     
     /// Approves or rejects the session proposal
     function approvePairSession(key, approvedChainIds, accountAddress) {
-        if (!d.activeProposals.has(key)) {
-            console.error("No active proposal found for key: " + key)
-            return
-        }
-
-        const proposal = d.activeProposals.get(key)
-        d.acceptedSessionProposal = proposal
-        const approvedNamespaces = JSON.parse(
-            DAppsHelpers.buildSupportedNamespaces(approvedChainIds,
-                                             [accountAddress],
-                                             SessionRequest.getSupportedMethods())
-        )
-        wcSDK.buildApprovedNamespaces(key, proposal.params, approvedNamespaces)
+        requestHandler.approvePairSession(key, approvedChainIds, accountAddress)
     }
+
 
     /// Rejects the session proposal
     function rejectPairSession(id) {
-        wcSDK.rejectSession(id)
+        requestHandler.rejectPairSession(id)
     }
 
     /// Disconnects the dApp with the given topic
@@ -166,14 +155,6 @@ QObject {
             }
         }
 
-        property var activeProposals: new Map() // key: proposalId, value: sessionProposal
-        property var acceptedSessionProposal: null
-
-        /// Disconnects the WC session with the given topic
-        function disconnectSession(sessionTopic) {
-            wcSDK.disconnectSession(sessionTopic)
-        }   
-
         function disconnectDapp(topic) {
             const dApp = d.getDAppByTopic(topic)
             if (!dApp) {
@@ -196,7 +177,7 @@ QObject {
             if (dApp.connectorId === dappsProvider.connectorId) {
                 // Currently disconnect acts on all sessions!
                 for (let i = 0; i < dApp.sessions.ModelCount.count; i++) {
-                    d.disconnectSession(dApp.sessions.get(i).topic)
+                    requestHandler.disconnectSession(dApp.sessions.get(i).topic)
                 }
             }
         }
@@ -211,80 +192,30 @@ QObject {
                 return
             }
 
-            const info = DAppsHelpers.extractInfoFromPairUri(uri)
-            wcSDK.getActiveSessions((sessions) => {
-                // Check if the URI is already paired
-                let validationState = Pairing.errors.uriOk
-                for (const key in sessions) {
-                    if (sessions[key].pairingTopic === info.topic) {
-                        validationState = Pairing.errors.alreadyUsed
-                        break
-                    }
-                }
-
-                // Check if expired
-                if (validationState === Pairing.errors.uriOk) {
-                    const now = (new Date().getTime())/1000
-                    if (info.expiry < now) {
-                        validationState = Pairing.errors.expired
-                    }
-                }
-
-                root.pairingValidated(validationState)
-            });
+            requestHandler.validatePairingUri(uri)
         }
         
-        function authenticate(topic, id) {
+        function sign(topic, id) {
             const request = sessionRequestsModel.findRequest(topic, id)
             if (!request) {
                 console.error("Session request not found")
                 return
             }
-            requestHandler.authenticate(topic, id, request.accountAddress, request.feesInfo)
+            request.accept()
+        }
+
+        function rejectSign(topic, id, hasError) {
+            const request = sessionRequestsModel.findRequest(topic, id)
+            if (!request) {
+                console.error("Session request not found")
+                return
+            }
+            request.reject(hasError)
         }
 
         function reportPairErrorState(state) {
             timeoutTimer.stop()
             root.pairingValidated(state)
-        }
-
-        function disconnectSessionRequested(topic, err) {
-            // Get all sessions and filter the active ones for known accounts
-            // Act on the first matching session with the same topic
-            const activeSessionsCallback = (allSessions, success) => {
-                store.activeSessionsReceived.disconnect(activeSessionsCallback)
-                
-                if (!success) {
-                    // TODO #14754: implement custom dApp notification
-                    d.notifyDappDisconnect("-", true)
-                    return
-                }
-                
-                // Convert to original format
-                const webSdkSessions = allSessions.map((session) => {
-                    return JSON.parse(session.sessionJson)
-                })
-
-                const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(webSdkSessions, root.validAccounts)
-                
-                for (const sessionID in sessions) {
-                    const session = sessions[sessionID]
-                    if (session.topic === topic) {
-                        store.deactivateWalletConnectSession(topic)
-                        dappsProvider.updateDapps()
-                        
-                        const dappUrl = session.peer.metadata.url ?? "-"
-                        d.notifyDappDisconnect(dappUrl, err)
-                        break
-                    }
-                }
-            }
-
-            store.activeSessionsReceived.connect(activeSessionsCallback)
-            if (!store.getActiveSessions()) {
-                store.activeSessionsReceived.disconnect(activeSessionsCallback)
-                // TODO #14754: implement custom dApp notification
-            }
         }
         
         function notifyDappDisconnect(dappUrl, err) {
@@ -313,125 +244,6 @@ QObject {
         }
     }
 
-    Connections {
-        target: wcSDK
-
-        function onPairResponse(ok) {
-            if (!ok) {
-                d.reportPairErrorState(Pairing.errors.unknownError)
-            } // else waiting for onSessionProposal
-        }
-
-        function onSessionProposal(sessionProposal) {
-            const key = sessionProposal.id
-            d.activeProposals.set(key, sessionProposal)
-
-            const supportedNamespacesStr = DAppsHelpers.buildSupportedNamespacesFromModels(
-                  root.flatNetworks, root.validAccounts, SessionRequest.getSupportedMethods())
-            wcSDK.buildApprovedNamespaces(key, sessionProposal.params, JSON.parse(supportedNamespacesStr))
-        }
-
-        function onBuildApprovedNamespacesResult(key, approvedNamespaces, error) {
-            if (!d.activeProposals.has(key)) {
-                console.error("No active proposal found for key: " + key)
-                return
-            }
-
-            if(error || !approvedNamespaces) {
-                // Check that it contains Non conforming namespaces"
-                if (error.includes("Non conforming namespaces")) {
-                    d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
-                } else {
-                    d.reportPairErrorState(Pairing.errors.unknownError)
-                }
-                return
-            }
-            const an = approvedNamespaces.eip155
-            if (!(an.accounts) || an.accounts.length === 0 || (!(an.chains) || an.chains.length === 0)) {
-                d.reportPairErrorState(Pairing.errors.unsupportedNetwork)
-                return
-            }
-
-            if (d.acceptedSessionProposal) {
-                wcSDK.approveSession(d.acceptedSessionProposal, approvedNamespaces)
-            } else {
-                const proposal = d.activeProposals.get(key)
-                const res = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces)
-                const chains = res.chains
-                const dAppUrl = proposal.params.proposer.metadata.url
-                const dAppName = proposal.params.proposer.metadata.name
-                const dAppIcons = proposal.params.proposer.metadata.icons
-                const dAppIcon = dAppIcons && dAppIcons.length > 0 ? dAppIcons[0] : ""
-
-                root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, key)
-            }
-        }
-
-        function onApproveSessionResult(proposalId, session, err) {
-            if (!d.activeProposals.has(proposalId)) {
-                console.error("No active proposal found for key: " + proposalId)
-                return
-            }
-
-            if (!d.acceptedSessionProposal || d.acceptedSessionProposal.id !== proposalId) {
-                console.error("No accepted proposal found for key: " + proposalId)
-                d.activeProposals.delete(proposalId)
-                return
-            }
-
-            const proposal = d.activeProposals.get(proposalId)
-            d.activeProposals.delete(proposalId)
-            d.acceptedSessionProposal = null
-            
-            if (err) {
-                d.reportPairErrorState(Pairing.errors.unknownError)
-                return
-            }
-
-            // TODO #14754: implement custom dApp notification
-            const app_url = proposal.params.proposer.metadata.url ?? "-"
-            const app_domain = StringUtils.extractDomainFromLink(app_url)
-            root.displayToastMessage(qsTr("Connected to %1 via WalletConnect").arg(app_domain), Constants.ephemeralNotificationType.success)
-
-            // Persist session
-            if(!store.addWalletConnectSession(JSON.stringify(session))) {
-                console.error("Failed to persist session")
-            }
-
-            // Notify client
-            root.approveSessionResult(proposalId, err, session.topic)
-
-            dappsProvider.updateDapps()
-        }
-
-        function onRejectSessionResult(proposalId, err) {
-            if (!d.activeProposals.has(proposalId)) {
-                console.error("No active proposal found for key: " + proposalId)
-                return
-            }
-            
-            const proposal = d.activeProposals.get(proposalId)
-            d.activeProposals.delete(proposalId)
-
-            const app_url = proposal.params.proposer.metadata.url ?? "-"
-            const app_domain = StringUtils.extractDomainFromLink(app_url)
-            if(err) {
-                d.reportPairErrorState(Pairing.errors.unknownError)
-                root.displayToastMessage(qsTr("Failed to reject connection request for %1").arg(app_domain), Constants.ephemeralNotificationType.danger)
-            } else {
-                root.displayToastMessage(qsTr("Connection request for %1 was rejected").arg(app_domain), Constants.ephemeralNotificationType.success)
-            }
-        }
-
-        function onSessionDelete(topic, err) {
-            d.disconnectSessionRequested(topic, err)
-        }
-    }
-
-    Component.onCompleted: {
-        dappsProvider.updateDapps()
-    }
-
     DAppsRequestHandler {
         id: requestHandler
 
@@ -448,6 +260,24 @@ QObject {
         }
         onDisplayToastMessage: (message, type) => {
             root.displayToastMessage(message, type)
+        }
+        onPairingResponse: (state) => {
+            if (state != Pairing.errors.uriOk) {
+                d.reportPairErrorState(state)
+            }
+        }
+        onConnectDApp: (dappChains, dappUrl, dappName, dappIcon, key) => {
+            root.connectDApp(dappChains, dappUrl, dappName, dappIcon, key)
+        }
+        onApproveSessionResult: (key, error, topic) => {
+            root.approveSessionResult(key, error, topic)
+        }
+        onPairingValidated: (validationState) => {
+            timeoutTimer.stop()
+            root.pairingValidated(validationState)
+        }
+        onDappDisconnected: (_, dappUrl, err) => {
+            d.notifyDappDisconnect(dappUrl, err)
         }
     }
 

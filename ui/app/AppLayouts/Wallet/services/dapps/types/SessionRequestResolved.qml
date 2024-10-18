@@ -31,9 +31,9 @@ QObject {
     // Data prepared for display in a human readable format
     required property var preparedData
 
-    readonly property alias dappName: d.dappName
-    readonly property alias dappUrl: d.dappUrl
-    readonly property alias dappIcon: d.dappIcon
+    property alias dappName: d.dappName
+    property alias dappUrl: d.dappUrl
+    property alias dappIcon: d.dappIcon
 
     /// extra data resolved from wallet
     property string maxFeesText: ""
