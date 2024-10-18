@@ -65,14 +65,14 @@ StatusComboBox {
     }
 
     control.contentItem: RowLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         StatusSmartIdenticon {
             objectName: "contentItemIcon"
             Layout.alignment: Qt.AlignVCenter
             asset.height: 24
             asset.width: 24
             asset.isImage: !root.multiSelection
-            asset.name: !root.multiSelection ? Style.svg(d.singleSelectionIconUrl) : ""
+            asset.name: !root.multiSelection ? Theme.svg(d.singleSelectionIconUrl) : ""
             active: !root.multiSelection
             visible: active
         }
@@ -99,7 +99,7 @@ StatusComboBox {
 
                     width: 24
                     height: 24
-                    image.source: model.isTest ? Style.svg(model.iconUrl + "-test") : Style.svg(model.iconUrl)
+                    image.source: model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)
                     z: index + 1
 
                     image.layer.enabled: index < chainRepeater.count - 1 && row.spacing < 0
@@ -129,7 +129,7 @@ StatusComboBox {
             objectName: "contentItemText"
             Layout.alignment: Qt.AlignVCenter
             Layout.fillWidth: true
-            font.pixelSize: Style.current.additionalTextSize
+            font.pixelSize: Theme.additionalTextSize
             font.weight: Font.Medium
             elide: Text.ElideRight
             lineHeight: 24

@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -31,7 +31,7 @@ StatusDialog {
 
         property int maxHeight: root.contentItem.Window.window.height - 80
         property int maxWidth: root.contentItem.Window.window.width - 80
-        readonly property int radius: Style.current.radius
+        readonly property int radius: Theme.radius
     }
 
     onOpened: imageLoader.source = root.image.source;

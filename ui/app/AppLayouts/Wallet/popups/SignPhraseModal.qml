@@ -1,9 +1,10 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared.panels 1.0
@@ -31,7 +32,7 @@ ModalPopup {
             font.pixelSize: 17
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
-            height: Style.current.padding * 3
+            height: Theme.padding * 3
         }
 
         StyledText {
@@ -41,11 +42,11 @@ ModalPopup {
             width: 330
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
-            height: Style.current.padding * 4
+            height: Theme.padding * 4
         }
 
         Rectangle {
-            color: Style.current.inputBackground
+            color: Theme.palette.baseColor2
             height: 44
             width: parent.width
             StyledText {
@@ -68,7 +69,7 @@ ModalPopup {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
                 fillMode: Image.PreserveAspectFit
-                source: Style.svg("exclamation_outline")
+                source: Theme.svg("exclamation_outline")
             }
         }
 
@@ -79,7 +80,7 @@ ModalPopup {
             width: parent.width
             font.pixelSize: 13
             height: 18
-            color: Style.current.danger
+            color: Theme.palette.dangerColor1
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
@@ -91,7 +92,7 @@ ModalPopup {
         StatusFlatButton {
             objectName: "signPhraseModalOkButton"
             anchors.right: btnRemindLater.left
-            anchors.rightMargin: Style.current.padding
+            anchors.rightMargin: Theme.padding
             text: qsTr("Ok, got it")
             onClicked: {
                 acceptClicked()

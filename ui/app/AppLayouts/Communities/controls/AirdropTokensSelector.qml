@@ -20,7 +20,7 @@ StatusFlowSelector {
     placeholderItem.visible: repeater.count === 0
 
     title: qsTr("What")
-    icon: Style.svg("token")
+    icon: Theme.svg("token")
 
     QtObject {
         id: d

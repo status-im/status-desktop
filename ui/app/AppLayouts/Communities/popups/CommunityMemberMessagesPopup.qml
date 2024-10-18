@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtQml.Models 2.14
-import QtGraphicalEffects 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -41,7 +41,7 @@ StatusDialog {
             text: qsTr("No messages")
             Layout.alignment: Qt.AlignCenter
             verticalAlignment: Text.AlignVCenter
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             Layout.topMargin: 40
             Layout.bottomMargin: 40
         }

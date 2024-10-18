@@ -78,9 +78,9 @@ ColumnLayout {
 
     ColumnLayout {
         Layout.fillWidth: true
-        Layout.margins: Style.current.xlPadding
+        Layout.margins: Theme.xlPadding
 
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusBaseText {
             Layout.preferredWidth: parent.width
@@ -108,7 +108,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: nonKeycardProfileKeypair.contentHeight
             visible: nonKeycardProfileKeypair.model.count > 0
-            spacing: Style.current.padding
+            spacing: Theme.padding
             model: SortFilterProxyModel {
                 sourceModel: root.keypairSigningModel
                 filters: ExpressionFilter {
@@ -181,7 +181,7 @@ ColumnLayout {
         Item {
             visible: nonKeycardProfileKeypair.visible
             Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.xlPadding
+            Layout.preferredHeight: Theme.xlPadding
         }
 
         RowLayout {
@@ -209,7 +209,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: keycardKeypairs.contentHeight
             visible: keycardKeypairs.model.count > 0
-            spacing: Style.current.padding
+            spacing: Theme.padding
             model: SortFilterProxyModel {
                 sourceModel: root.keypairSigningModel
                 filters: ExpressionFilter {
@@ -276,7 +276,7 @@ ColumnLayout {
         Item {
             visible: keycardKeypairs.visible
             Layout.fillWidth: true
-            Layout.preferredHeight: Style.current.xlPadding
+            Layout.preferredHeight: Theme.xlPadding
         }
 
         RowLayout {
@@ -328,7 +328,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: nonProfileRegularKeypairs.contentHeight
             visible: nonProfileRegularKeypairs.model.count > 0
-            spacing: Style.current.padding
+            spacing: Theme.padding
             model: SortFilterProxyModel {
                 sourceModel: root.keypairSigningModel
                 filters: ExpressionFilter {

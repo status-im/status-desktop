@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -47,8 +47,8 @@ Item {
         property bool anyInputDirty: false
         property bool allEntriesValid: false
         readonly property int numOfColumns: 4
-        readonly property int rowSpacing: Style.current.bigPadding
-        readonly property int columnSpacing: Style.current.bigPadding
+        readonly property int rowSpacing: Theme.bigPadding
+        readonly property int columnSpacing: Theme.bigPadding
 
         function updateValidity(index, valid, dirty) {
             dirtyWordAtIndex[index] = dirty
@@ -67,7 +67,7 @@ Item {
     ColumnLayout {
         anchors.centerIn: parent
         height: Constants.onboarding.loginHeight
-        spacing: Style.current.bigPadding
+        spacing: Theme.bigPadding
 
         StatusBaseText {
             id: title
@@ -125,7 +125,7 @@ Item {
                         anchors.left: wordNumber.right
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: Style.current.xlPadding
+                        anchors.leftMargin: Theme.xlPadding
                         input.edit.font.pixelSize: Constants.keycard.general.seedPhraseCellFontSize
                         input.acceptReturn: true
 

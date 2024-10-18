@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 import QtQml 2.15
 
 import StatusQ.Controls 0.1
@@ -66,7 +66,7 @@ StatusDraggableListItem {
             interactive: root.contextMenuEnabled
             tooltip.text: root.tooltipTextWhenContextMenuDisabled
             icon.name: ProfileUtils.visibilityIcon(root.showcaseVisibility)
-            horizontalPadding: Style.current.halfPadding
+            horizontalPadding: Theme.halfPadding
             verticalPadding: 3
             Layout.preferredWidth: 72
             Layout.preferredHeight: root.height/2

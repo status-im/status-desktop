@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.popups 1.0
@@ -14,7 +14,7 @@ FocusScope {
 
     property string sectionTitle
     property int contentWidth
-    readonly property int contentHeight: root.height - titleRow.height - Style.current.padding
+    readonly property int contentHeight: root.height - titleRow.height - Theme.padding
 
     property alias titleRowLeftComponentLoader: leftLoader
     property alias titleRowComponentLoader: loader
@@ -39,7 +39,7 @@ FocusScope {
 
     readonly property real availableHeight:
         scrollView.availableHeight - settingsDirtyToastMessagePlaceholder.height
-        - Style.current.bigPadding
+        - Theme.bigPadding
 
     signal baseAreaClicked()
     signal saveChangesClicked()
@@ -110,11 +110,11 @@ FocusScope {
         objectName: "settingsContentBaseScrollView"
         anchors.top: titleRow.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: titleLayout.visible ? Style.current.padding: 0
+        anchors.topMargin: titleLayout.visible ? Theme.padding: 0
         padding: 0
         width: root.width
         contentWidth: root.contentWidth
-        contentHeight: contentLayout.implicitHeight + Style.current.bigPadding
+        contentHeight: contentLayout.implicitHeight + Theme.bigPadding
 
         Column {
             id: contentLayout

@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Controls.Universal 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared 1.0
@@ -52,7 +52,7 @@ Item {
             height: 230
             anchors.horizontalCenter: parent.horizontalCenter
             fillMode: Image.PreserveAspectFit
-            source: Style.png("onboarding/welcome")
+            source: Theme.png("onboarding/welcome")
             mipmap: true
             cache: false
         }
@@ -60,7 +60,7 @@ Item {
         StyledText {
             id: txtTitle1
             text: qsTr("Welcome to Status")
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
@@ -70,14 +70,14 @@ Item {
 
         StyledText {
             id: txtDesc1
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             text: qsTr("Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and communities.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: txtTitle1.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Theme.padding
             font.pixelSize: 15
         }
 
@@ -85,7 +85,7 @@ Item {
             id: btnNewUser
             objectName: "welcomeViewIAmNewToStatusButton"
             anchors.top: txtDesc1.bottom
-            anchors.topMargin: Style.current.xlPadding
+            anchors.topMargin: Theme.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("I am new to Status")
             onClicked: {
@@ -103,7 +103,7 @@ Item {
             id: btnExistingUser
             text: qsTr("I already use Status")
             anchors.top: btnNewUser.bottom
-            anchors.topMargin: Style.current.bigPadding
+            anchors.topMargin: Theme.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 d.showMetricsAndRunAction(root.startupStore.doSecondaryAction)

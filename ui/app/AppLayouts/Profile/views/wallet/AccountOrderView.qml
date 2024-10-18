@@ -24,7 +24,7 @@ ColumnLayout {
 
     signal goBack
 
-    spacing: Style.current.padding
+    spacing: Theme.padding
 
     QtObject {
         id: d

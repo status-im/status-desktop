@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -81,7 +81,7 @@ Item {
             if (!showLeft) {
                 root.store.emojiPopup.x += accountName.width - root.store.emojiPopup.width
             }
-            root.store.emojiPopup.y = inputCoords.y + accountName.height + Style.current.halfPadding
+            root.store.emojiPopup.y = inputCoords.y + accountName.height + Theme.halfPadding
         }
     }
 
@@ -109,16 +109,16 @@ Item {
         spacing: 0
 
         Loader {
-            Layout.preferredHeight: Style.current.padding
+            Layout.preferredHeight: Theme.padding
             Layout.fillWidth: true
             sourceComponent: spacer
         }
 
         Column {
             Layout.fillWidth: true
-            spacing: Style.current.padding
-            topPadding: Style.current.padding
-            bottomPadding: Style.current.padding
+            spacing: Theme.padding
+            topPadding: Theme.padding
+            bottomPadding: Theme.padding
 
             StatusInput {
                 id: accountName
@@ -129,7 +129,7 @@ Item {
                 charLimit: 20
                 text: root.store.addAccountModule.accountName
                 input.isIconSelectable: true
-                input.leftPadding: Style.current.padding
+                input.leftPadding: Theme.padding
                 input.asset.color: Utils.getColorForId(root.store.addAccountModule.selectedColorId)
                 onIconClicked: {
                     d.openEmojiPopup(true)
@@ -217,9 +217,9 @@ Item {
             }
 
             WatchOnlyAddressSection {
-                width: parent.width - 2 * Style.current.padding
+                width: parent.width - 2 * Theme.padding
                 anchors.horizontalCenter: parent.horizontalCenter
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 visible: !root.store.editMode &&
                          root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
                          root.store.selectedOrigin.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
@@ -233,7 +233,7 @@ Item {
         }
 
         Loader {
-            Layout.preferredHeight: Style.current.padding
+            Layout.preferredHeight: Theme.padding
             Layout.fillWidth: true
             sourceComponent: spacer
         }
@@ -249,8 +249,8 @@ Item {
         AddressWithAddressDetails {
             id: addressWithDetails
             Layout.fillWidth: true
-            Layout.margins: Style.current.padding
-            spacing: Style.current.halfPadding
+            Layout.margins: Theme.padding
+            spacing: Theme.halfPadding
             visible: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.privateKeyImport ||
                      root.store.editMode &&
                      root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
@@ -266,7 +266,7 @@ Item {
         }
 
         Loader {
-            Layout.preferredHeight: Style.current.padding
+            Layout.preferredHeight: Theme.padding
             Layout.fillWidth: true
             visible: derivationPathSection.visible || addressWithDetails.visible
             sourceComponent: spacer

@@ -83,7 +83,7 @@ Control {
                     opacity: visible ? 1 : 0
                     Behavior on opacity { NumberAnimation {} }
                     verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: Style.current.tertiaryTextFontSize
+                    font.pixelSize: Theme.tertiaryTextFontSize
                     text: root.tagName
                     elide: Text.ElideRight
                 }

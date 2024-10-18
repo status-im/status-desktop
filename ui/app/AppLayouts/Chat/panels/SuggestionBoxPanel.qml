@@ -17,12 +17,13 @@
     Boston, MA 02110-1301, USA.
 */
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
-import QtQml.Models 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -82,15 +83,15 @@ Rectangle {
 
     z: parent.z + 100
     visible: !shouldHide && filter.length > 0 && suggestionsModel.count > 0
-    height: Math.min(400, listView.contentHeight + Style.current.padding)
+    height: Math.min(400, listView.contentHeight + Theme.padding)
 
     opacity: visible ? 1.0 : 0
     Behavior on opacity {
         NumberAnimation { }
     }
 
-    color: Style.current.background
-    radius: Style.current.radius
+    color: Theme.palette.background
+    radius: Theme.radius
     border.width: 0
     layer.enabled: true
     layer.effect: DropShadow{
@@ -119,10 +120,10 @@ Rectangle {
         model: mentionsListDelegate
         keyNavigationEnabled: true
         anchors.fill: parent
-        anchors.topMargin: Style.current.halfPadding
-        anchors.leftMargin: Style.current.halfPadding
-        anchors.rightMargin: Style.current.halfPadding
-        anchors.bottomMargin: Style.current.halfPadding
+        anchors.topMargin: Theme.halfPadding
+        anchors.leftMargin: Theme.halfPadding
+        anchors.rightMargin: Theme.halfPadding
+        anchors.bottomMargin: Theme.halfPadding
         Keys.priority: Keys.AfterItem
         Keys.forwardTo: container.inputField
         Keys.onPressed: {
@@ -189,17 +190,17 @@ Rectangle {
             delegate: Rectangle {
                 id: itemDelegate
                 objectName: model.name
-                color: ListView.isCurrentItem ? Style.current.backgroundHover : Style.current.transparent
+                color: ListView.isCurrentItem ? Theme.palette.backgroundHover : Theme.palette.transparent
                 border.width: 0
                 width: ListView.view.width
                 height: 42
-                radius: Style.current.radius
+                radius: Theme.radius
 
                 UserImage {
                     id: accountImage
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
-                    anchors.leftMargin: Style.current.smallPadding
+                    anchors.leftMargin: Theme.smallPadding
                     imageWidth: 32
                     imageHeight: 32
 
@@ -211,10 +212,10 @@ Rectangle {
 
                 StyledText {
                     text: model[container.property.find(p => !!model[p])]
-                    color: Style.current.textColor
+                    color: Theme.palette.textColor
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: accountImage.right
-                    anchors.leftMargin: Style.current.smallPadding
+                    anchors.leftMargin: Theme.smallPadding
                     font.pixelSize: 15
                 }
 

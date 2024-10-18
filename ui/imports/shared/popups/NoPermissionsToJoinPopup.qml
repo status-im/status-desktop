@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import utils 1.0
 
@@ -29,7 +29,7 @@ StatusDialog {
                 text: qsTr("Reject")
                 type: StatusBaseButton.Type.Danger
                 icon.name: "close-circle"
-                icon.color: Style.current.danger
+                icon.color: Theme.palette.dangerColor1
                 onClicked: root.rejectButtonClicked(root.requestId, root.communityId)
             }
         }
@@ -37,11 +37,10 @@ StatusDialog {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Style.current.padding
+        spacing: Theme.padding
 
         StatusBaseText {
             text: qsTr("%1 no longer holds the tokens required to join %2 in their wallet, so their request to join %2 must be rejected.").arg(root.userName).arg(root.communityName)
-            font.pixelSize: 15
             wrapMode: Text.WordWrap
             color: Theme.palette.directColor1
             Layout.fillWidth: true
@@ -49,7 +48,6 @@ StatusDialog {
 
         StatusBaseText {
             text: qsTr("%1 can request to join %2 again in the future, when they have the tokens required to join %2 in their wallet.").arg(root.userName).arg(root.communityName)
-            font.pixelSize: 15
             wrapMode: Text.WordWrap
             color: Theme.palette.directColor1
             Layout.fillWidth: true

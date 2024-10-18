@@ -1,10 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 import QtQuick.Dialogs 1.3
-import QtQuick.Layouts 1.13
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -39,15 +40,15 @@ Popup {
     }
 
     id: popup
-    padding: Style.current.smallPadding
+    padding: Theme.smallPadding
     width: messageInput.width
     height: {
-        let possibleHeight = listView.contentHeight + Style.current.smallPadding * 2
+        let possibleHeight = listView.contentHeight + Theme.smallPadding * 2
         if (popupTitle.visible) {
-            possibleHeight += popupTitle.height + Style.current.smallPadding
+            possibleHeight += popupTitle.height + Theme.smallPadding
         }
         if (searchBox.visible) {
-            possibleHeight += searchBox.height + Style.current.smallPadding
+            possibleHeight += searchBox.height + Theme.smallPadding
         }
 
         return Math.min(400, possibleHeight)
@@ -57,9 +58,9 @@ Popup {
     background: Rectangle {
         id: bgRectangle
         visible: !!popup.title || (!!popup.modelList && popup.modelList.length > 0)
-        color: Style.current.background
+        color: Theme.palette.background
         border.width: 0
-        radius: Style.current.radius
+        radius: Theme.radius
         layer.enabled: true
         layer.effect: DropShadow{
             width: bgRectangle.width
@@ -72,7 +73,7 @@ Popup {
             verticalOffset: 2
             radius: 10
             samples: 15
-            color: Style.current.dropShadow
+            color: Theme.palette.dropShadow
         }
     }
 
@@ -91,7 +92,7 @@ Popup {
         height: visible ? implicitHeight : 0
         width: parent.width
         anchors.top: popupTitle.bottom
-        anchors.topMargin: popupTitle.visible ? Style.current.smallPadding : 0
+        anchors.topMargin: popupTitle.visible ? Theme.smallPadding : 0
 
         function goToNextAvailableIndex(up) {
             do {
@@ -136,7 +137,7 @@ Popup {
         keyNavigationEnabled: true
         width: parent.width
         anchors.top: searchBox.bottom
-        anchors.topMargin: searchBox.visible ? Style.current.smallPadding : 0
+        anchors.topMargin: searchBox.visible ? Theme.smallPadding : 0
         anchors.bottom: parent.bottom
 
         delegate: Rectangle {
@@ -145,11 +146,11 @@ Popup {
             property var myData: typeof modelData === "undefined" ? model : modelData
             property string myText: popup.getText(myData)
             visible: searchBox.text === "" || myText.includes(searchBox.text)
-            color: listView.currentIndex === index ? Style.current.backgroundHover : Style.current.transparent
+            color: listView.currentIndex === index ? Theme.palette.backgroundHover : Theme.palette.transparent
             border.width: 0
             width: ListView.view.width
             height: visible ? 42 : 0
-            radius: Style.current.radius
+            radius: Theme.radius
 
             Loader {
                 id: imageLoader
@@ -158,7 +159,7 @@ Popup {
                 height: popup.imageHeight
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: Style.current.smallPadding
+                anchors.leftMargin: Theme.smallPadding
                 sourceComponent: popup.getImageComponent ? customImageComponent : normalImageComponent
             }
 
@@ -192,10 +193,10 @@ Popup {
 
             StyledText {
                 text: rectangle.myText
-                color: Style.current.textColor
+                color: Theme.palette.textColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: imageLoader.right
-                anchors.leftMargin: Style.current.smallPadding
+                anchors.leftMargin: Theme.smallPadding
                 font.pixelSize: 15
             }
 

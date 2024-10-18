@@ -41,15 +41,15 @@ StatusDialog {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 66
-            radius: Style.current.halfPadding
+            radius: Theme.halfPadding
             color: Theme.palette.baseColor4
 
             StatusBaseText {
                 anchors.fill: parent
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 anchors.topMargin: 11
-                anchors.bottomMargin: Style.current.halfPadding
+                anchors.bottomMargin: Theme.halfPadding
                 text: root.link
                 wrapMode: Text.WrapAnywhere
                 elide: Text.ElideRight

@@ -21,10 +21,10 @@ CalloutCard {
     borderWidth: 0
     topPadding: 13
     bottomPadding: 13
-    horizontalPadding: Style.current.padding
+    horizontalPadding: Theme.padding
 
     contentItem: RowLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
         ColumnLayout {
             spacing: 0
             Layout.fillHeight: true
@@ -33,7 +33,7 @@ CalloutCard {
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 font.weight: Font.Medium
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
@@ -44,7 +44,7 @@ CalloutCard {
             StatusBaseText {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
@@ -62,12 +62,12 @@ CalloutCard {
             hoverEnabled: true
             flat: true
             contentItem: RowLayout {
-                spacing: Style.current.halfPadding
+                spacing: Theme.halfPadding
                 StatusBaseText {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     elide: Text.ElideRight
                     text: qsTr("Options")
                     color: Theme.palette.baseColor1
@@ -83,7 +83,7 @@ CalloutCard {
                 border.width: 1
                 border.color: Theme.palette.directColor7
                 color: optionsComboBox.popup.visible ? Theme.palette.baseColor2 : "transparent"
-                radius: Style.current.radius
+                radius: Theme.radius
                 HoverHandler {
                     cursorShape: Qt.PointingHandCursor
                     enabled: optionsComboBox.enabled

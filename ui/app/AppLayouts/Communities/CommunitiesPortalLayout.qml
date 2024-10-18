@@ -113,7 +113,7 @@ StatusSectionLayout {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 38
-                spacing: Style.current.bigPadding
+                spacing: Theme.bigPadding
 
                 SearchBox {
                     id: searcher

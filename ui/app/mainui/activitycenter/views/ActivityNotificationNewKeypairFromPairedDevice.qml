@@ -31,7 +31,7 @@ ActivityNotificationBase {
             Layout.preferredWidth: 40
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignTop
-            Layout.leftMargin: Style.current.padding
+            Layout.leftMargin: Theme.padding
             Layout.topMargin: 2
 
             asset {

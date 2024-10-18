@@ -30,7 +30,7 @@ StatusListView {
     signal clicked(int index, var parent, var mouse)
 
     currentIndex: -1
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     component ColumnHeader: StatusSortableColumnHeader {
         id: columnHeader
@@ -72,7 +72,7 @@ StatusListView {
         width: ListView.view.width
 
         padding: 0
-        horizontalPadding: Style.current.padding
+        horizontalPadding: Theme.padding
 
 
         readonly property alias usernameHeaderWidth: usernameHeader.width
@@ -82,7 +82,7 @@ StatusListView {
         contentItem: RowLayout {
             id: row
 
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             RowLayout {
                 id: usernameHeader

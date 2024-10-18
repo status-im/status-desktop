@@ -1,6 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import shared 1.0
@@ -30,9 +31,9 @@ Item {
         id: notificationImg
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: txtTitle.top
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: Theme.padding
         fillMode: Image.PreserveAspectFit
-        source: Style.png("onboarding/notifications@2x")
+        source: Theme.png("onboarding/notifications@2x")
         cache: false
     }
 
@@ -49,13 +50,13 @@ Item {
 
     StyledText {
         id: txtDesc
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
         text: qsTr("Status will notify you about new messages. You can\nedit your notification preferences later in settings.")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: txtTitle.bottom
-        anchors.topMargin: Style.current.padding
-        font.pixelSize: Style.current.primaryTextFontSize
+        anchors.topMargin: Theme.padding
+        font.pixelSize: Theme.primaryTextFontSize
         lineHeight: 1.2
     }
 
@@ -65,8 +66,8 @@ Item {
         anchors.top: txtDesc.bottom
         anchors.topMargin: d.okButtonTopMargin
         anchors.horizontalCenter: parent.horizontalCenter
-        leftPadding: Style.current.padding
-        rightPadding: Style.current.padding
+        leftPadding: Theme.padding
+        rightPadding: Theme.padding
         font.weight: Font.Medium
         text: qsTr("Start using Status")
         onClicked: {

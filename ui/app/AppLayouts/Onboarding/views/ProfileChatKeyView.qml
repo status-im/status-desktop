@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -61,8 +60,8 @@ Item {
             id: txtDesc
             Layout.preferredWidth: root.state === Constants.startupState.userProfileCreate? 338 : 643
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: Style.current.smallPadding
-            color: Style.current.secondaryText
+            Layout.topMargin: Theme.smallPadding
+            color: Theme.palette.secondaryText
             text: qsTr("This set of emojis and coloured ring around your avatar are unique and represent your chat key, so your friends can easily distinguish you from potential impersonators.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -75,7 +74,7 @@ Item {
             Layout.preferredWidth: 86
             Layout.preferredHeight: 86
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: Style.current.bigPadding
+            Layout.topMargin: Theme.bigPadding
             StatusSmartIdenticon {
                 id: userImage
                 objectName: "welcomeScreenUserProfileImage"
@@ -98,7 +97,7 @@ Item {
             id: chatKeyTxt
             objectName: "profileChatKeyViewChatKeyTxt"
             Layout.preferredHeight: 22
-            color: Style.current.secondaryText
+            color: Theme.palette.secondaryText
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(d.publicKey)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -111,14 +110,14 @@ Item {
         Item {
             id: chainsChatKeyImg
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.preferredWidth: 215
             Layout.preferredHeight: 77
 
             Image {
                 id: imgChains
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: Style.svg("onboarding/chains")
+                source: Theme.svg("onboarding/chains")
                 cache: false
             }
             EmojiHash {

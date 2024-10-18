@@ -5,101 +5,6 @@ QtObject {
 
     property string name
 
-    property var baseFont: FontLoader {
-        source: "../../../assets/fonts/Inter/Inter-Regular.otf"
-    }
-
-    property var monoFont: FontLoader {
-        source: "../../../assets/fonts/InterStatus/InterStatus-Regular.otf"
-    }
-
-    property var codeFont: FontLoader {
-        source: "../../../assets/fonts/RobotoMono/RobotoMono-Regular.ttf"
-    }
-
-    readonly property QtObject _d: QtObject {
-        // specific font variants should not be accessed directly
-
-        // Inter font variants
-        property var baseFontThin: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-Thin.otf"
-        }
-
-        property var baseFontExtraLight: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-ExtraLight.otf"
-        }
-
-        property var baseFontLight: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-Light.otf"
-        }
-
-        property var baseFontMedium: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-Medium.otf"
-        }
-
-        property var baseFontBold: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-Bold.otf"
-        }
-
-        property var baseFontExtraBold: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-ExtraBold.otf"
-        }
-
-        property var baseFontBlack: FontLoader {
-            source: "../../../assets/fonts/Inter/Inter-Black.otf"
-        }
-
-        // Inter Status font variants
-        property var monoFontThin: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-Thin.otf"
-        }
-
-        property var monoFontExtraLight: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-ExtraLight.otf"
-        }
-
-        property var monoFontLight: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-Light.otf"
-        }
-
-        property var monoFontMedium: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-Medium.otf"
-        }
-
-        property var monoFontBold: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-Bold.otf"
-        }
-
-        property var monoFontExtraBold: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-ExtraBold.otf"
-        }
-
-        property var monoFontBlack: FontLoader {
-            source: "../../../assets/fonts/InterStatus/InterStatus-Black.otf"
-        }
-
-        // Roboto font variants
-        property var codeFontThin: FontLoader {
-            source: "../../../assets/fonts/RobotoMono/RobotoMono-Thin.ttf"
-        }
-
-        property var codeFontExtraLight: FontLoader {
-            source: "../../../assets/fonts/RobotoMono/RobotoMono-ExtraLight.ttf"
-        }
-
-        property var codeFontLight: FontLoader {
-            source: "../../../assets/fonts/RobotoMono/RobotoMono-Light.ttf"
-        }
-
-        property var codeFontMedium: FontLoader {
-            source: "../../../assets/fonts/RobotoMono/RobotoMono-Medium.ttf"
-        }
-
-        property var codeFontBold: FontLoader {
-            source: "../../../assets/fonts/RobotoMono/RobotoMono-Bold.ttf"
-        }
-    }
-
     property color black: Qt.rgba(0, 0, 0)
     property color white: Qt.rgba(1, 1, 1)
     property color transparent: "#00000000"
@@ -112,10 +17,6 @@ QtObject {
     property color dropShadow: getColor('black', 0.12)
     property color dropShadow2
     property color backdropColor: getColor('black', 0.4)
-
-    function hoverColor(normalColor) {
-        return theme.name === "light" ? Qt.darker(normalColor, 1.2) : Qt.lighter(normalColor, 1.2)
-    }
 
     property color baseColor1
     property color baseColor2
@@ -190,6 +91,17 @@ QtObject {
     property var identiconRingColors: []
 
     property color blockProgressBarColor
+
+    // Style compat
+    property color background
+    property color backgroundHover: baseColor2
+    property color border: baseColor2
+    property color textColor: directColor1
+    property color secondaryText: baseColor1
+    property color separator
+    property color darkGrey
+    property color secondaryBackground: primaryColor2
+    property color secondaryMenuBackground
 
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor
@@ -317,6 +229,10 @@ QtObject {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha
         return actualColor
+    }
+
+    function hoverColor(normalColor) {
+        return theme.name === "light" ? Qt.darker(normalColor, 1.2) : Qt.lighter(normalColor, 1.2)
     }
 
     function getColor(name, alpha) {

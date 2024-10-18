@@ -25,7 +25,7 @@ CommonContactDialog {
 
     StatusBaseText {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.halfPadding
+        Layout.bottomMargin: Theme.halfPadding
         text: qsTr("You and %1 will no longer be contacts").arg(mainDisplayName)
         wrapMode: Text.WordWrap
     }

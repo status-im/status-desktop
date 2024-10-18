@@ -19,8 +19,8 @@ Control {
     property int imageHeigth: root.imageWidth
     property int imageBottomMargin: 0
 
-    padding: Style.current.padding
-    bottomPadding: Style.current.xlPadding
+    padding: Theme.padding
+    bottomPadding: Theme.xlPadding
 
     QtObject {
         id: d

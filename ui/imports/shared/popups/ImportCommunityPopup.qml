@@ -1,9 +1,8 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.13
-import QtQuick.Dialogs 1.3
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
+import QtQml.Models 2.15
 
 import utils 1.0
 import shared.controls 1.0
@@ -127,20 +126,20 @@ StatusDialog {
     StatusScrollView {
         id: scrollContent
         anchors.fill: parent
-        anchors.leftMargin: Style.current.halfPadding
-        contentWidth: (root.width-Style.current.bigPadding-Style.current.padding)
+        anchors.leftMargin: Theme.halfPadding
+        contentWidth: (root.width-Theme.bigPadding-Theme.padding)
         padding: 0
 
         ColumnLayout {
-            width: (scrollContent.width-Style.current.padding)
-            spacing: Style.current.halfPadding
+            width: (scrollContent.width-Theme.padding)
+            spacing: Theme.halfPadding
 
             StatusBaseText {
                 id: infoText1
                 Layout.fillWidth: true
                 text: qsTr("Enter the public key of the community you wish to access")
                 wrapMode: Text.WordWrap
-                font.pixelSize: Style.current.additionalTextSize
+                font.pixelSize: Theme.additionalTextSize
                 color: Theme.palette.baseColor1
             }
 
@@ -177,7 +176,7 @@ StatusDialog {
                 StatusBaseText {
                     id: detectionLabel
                     Layout.alignment: Qt.AlignRight
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     visible: !!d.inputKey
                     text: {
                         if (d.errorMessage !== "")

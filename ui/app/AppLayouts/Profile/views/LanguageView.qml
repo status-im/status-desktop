@@ -114,7 +114,7 @@ SettingsContentBase {
 
                 button.interactive: root.languageSelectionEnabled
                 StatusToolTip {
-                    y: parent.height + Style.current.padding
+                    y: parent.height + Theme.padding
                     margins: 0
                     visible: !root.languageSelectionEnabled && languagePicker.button.hovered
                     orientation: StatusToolTip.Orientation.Bottom
@@ -179,7 +179,7 @@ SettingsContentBase {
 
         StatusWarningBox {
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
             borderColor: Theme.palette.baseColor2
             textColor: Theme.palette.directColor1
             icon: "group-chat"
@@ -195,7 +195,7 @@ SettingsContentBase {
 
         Separator {
             Layout.fillWidth: true
-            Layout.bottomMargin: Style.current.padding
+            Layout.bottomMargin: Theme.padding
         }
 
         // Time format options:

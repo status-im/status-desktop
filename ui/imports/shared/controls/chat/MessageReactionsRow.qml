@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 import shared 1.0
 
@@ -10,14 +12,14 @@ Row {
 
     signal toggleReaction(int emojiId)
 
-    spacing: Style.current.halfPadding
-    leftPadding: Style.current.halfPadding
-    rightPadding: Style.current.halfPadding
+    spacing: Theme.halfPadding
+    leftPadding: Theme.halfPadding
+    rightPadding: Theme.halfPadding
 
     Repeater {
         model: root.reactionsModel
         delegate: EmojiReaction {
-            source: Style.svg(model.filename)
+            source: Theme.svg(model.filename)
             emojiId: model.emojiId
             reactedByUser: model.didIReactWithThisEmoji
             onCloseModal: {

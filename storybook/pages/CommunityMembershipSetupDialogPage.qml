@@ -37,6 +37,7 @@ SplitView {
                 modal: false
                 visible: true
                 closePolicy: Popup.NoAutoClose
+                destroyOnClose: true
 
                 isEditMode: ctrlIsEditMode.checked
                 communityId: "ddls"
@@ -61,7 +62,7 @@ SplitView {
 
                 walletAccountsModel: WalletAccountsModel {}
                 walletAssetsModel: root.walletAssetStore.groupedAccountAssetsModel
-                walletCollectiblesModel: ListModel {}
+                walletCollectiblesModel: ManageCollectiblesModel {}
                 permissionsModel: ctrlPermissionsModel.currentValue
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}

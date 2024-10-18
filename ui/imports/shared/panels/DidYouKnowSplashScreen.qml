@@ -46,7 +46,7 @@ Pane {
                     Layout.bottomMargin: 12
                     color: Theme.palette.primaryColor1
                     font.weight: Font.DemiBold
-                    font.pixelSize: Style.current.asideTextFontSize
+                    font.pixelSize: Theme.asideTextFontSize
                     text: qsTr("DID YOU KNOW?")
                 }
                 StatusBaseText {
@@ -57,7 +57,7 @@ Pane {
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     color: Theme.palette.directColor1
-                    font.pixelSize: Style.current.additionalTextSize
+                    font.pixelSize: Theme.additionalTextSize
                     text: didYouKnowMessages.iterator.next()
                     Behavior on text {
                         SequentialAnimation {
@@ -89,6 +89,6 @@ Pane {
         }
     }
     background: Rectangle {
-        color: Style.current.background
+        color: Theme.palette.background
     }
 }

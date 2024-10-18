@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,8 +17,8 @@ StatusListItem {
     title: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly ? qsTr("Watched address") : root.keyPair.name: ""
     titleAsideText: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.getElidedCompressedPk(root.keyPair.pubKey): ""
     asset {
-        width: !!root.keyPair && root.keyPair.icon? Style.current.bigPadding : 40
-        height: !!root.keyPair && root.keyPair.icon? Style.current.bigPadding : 40
+        width: !!root.keyPair && root.keyPair.icon? Theme.bigPadding : 40
+        height: !!root.keyPair && root.keyPair.icon? Theme.bigPadding : 40
         name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
         isImage: !!root.keyPair && !!root.keyPair.image
         color: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
@@ -40,10 +40,10 @@ StatusListItem {
     tagsDelegate: StatusListItemTag {
         bgColor: !!model.account.colorId ? Utils.getColorForId(model.account.colorId): ""
         bgRadius: 6
-        height: Style.current.bigPadding
+        height: Theme.bigPadding
         closeButtonVisible: false
-        asset.width: Style.current.bigPadding
-        asset.height: Style.current.bigPadding
+        asset.width: Theme.bigPadding
+        asset.height: Theme.bigPadding
         asset.emoji: model.account.emoji
         asset.emojiSize: Emoji.size.verySmall
         asset.color: Theme.palette.transparent

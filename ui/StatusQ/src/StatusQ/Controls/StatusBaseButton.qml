@@ -83,7 +83,7 @@ Button {
         }
     }
 
-    font.family: Theme.palette.baseFont.name
+    font.family: Theme.baseFont.name
     font.weight: Font.Medium
     font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13
 

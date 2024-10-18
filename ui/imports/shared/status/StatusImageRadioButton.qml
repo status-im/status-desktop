@@ -1,18 +1,18 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-import "./"
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
 
-    property int padding: Style.current.halfPadding
+    property int padding: Theme.halfPadding
     property alias control: radioControl
     property alias image: img
     property bool isHovered: false
@@ -20,10 +20,10 @@ Rectangle {
 
     implicitWidth: 208
     implicitHeight: layout.height
-    color: radioControl.checked ? Style.current.secondaryBackground :
-                                  (isHovered ? Style.current.backgroundHover : Style.current.transparent)
+    color: radioControl.checked ? Theme.palette.secondaryBackground :
+                                  (isHovered ? Theme.palette.backgroundHover : Theme.palette.transparent)
 
-    radius: Style.current.radius
+    radius: Theme.radius
 
     ColumnLayout {
         id: layout

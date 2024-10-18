@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -10,6 +10,7 @@ import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
@@ -32,19 +33,19 @@ Rectangle {
     anchors.left: parent.left
     border.width: 0
     color: getBgColor()
-    radius: Style.current.radius
+    radius: Theme.radius
 
     function getBgColor() {
-        if (selected) return Style.current.secondaryBackground
-        if (isHovered) return Style.current.backgroundHover
-        return Style.current.transparent
+        if (selected) return Theme.palette.secondaryBackground
+        if (isHovered) return Theme.palette.backgroundHover
+        return Theme.palette.transparent
     }
 
     UserImage {
         id: accountImage
 
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
 
         name: root.username
@@ -58,31 +59,31 @@ Rectangle {
         text: username
         elide: Text.ElideRight
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding + radio.width
+        anchors.rightMargin: Theme.padding + radio.width
         font.pixelSize: 17
         anchors.top: accountImage.top
         anchors.left: accountImage.right
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
     }
 
     StyledText {
         id: addressText
         width: 108
         text: address
-        font.family: Style.current.monoFont.name
+        font.family: Theme.monoFont.name
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
         anchors.bottomMargin: 0
         anchors.left: usernameText.left
         anchors.leftMargin: 0
         font.pixelSize: 15
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
     }
 
     StatusQControls.StatusRadioButton {
         id: radio
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         checked: root.selected
     }

@@ -27,7 +27,7 @@ CommonContactDialog {
 
     StatusBaseText {
         Layout.fillWidth: true
-        Layout.bottomMargin: Style.current.halfPadding
+        Layout.bottomMargin: Theme.halfPadding
         text: qsTr("%1 will be marked as untrusted. This mark will only be visible to you.").arg(mainDisplayName)
         wrapMode: Text.WordWrap
     }

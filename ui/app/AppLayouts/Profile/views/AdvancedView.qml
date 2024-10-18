@@ -1,8 +1,8 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQml.Models 2.14
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQml.Models 2.15
+import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.15
 
 import utils 1.0
 import shared 1.0
@@ -94,11 +94,11 @@ SettingsContentBase {
             StatusBaseText {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 text: qsTr("Application Logs")
                 font.underline: mouseArea.containsMouse
-                color: Style.current.blue
+                color: Theme.palette.primaryColor1
                 topPadding: 23
 
                 MouseArea {
@@ -114,7 +114,7 @@ SettingsContentBase {
 
             Item {
                 id: spacer1
-                height: Style.current.bigPadding
+                height: Theme.bigPadding
                 width: parent.width
             }
 
@@ -125,11 +125,11 @@ SettingsContentBase {
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 text: qsTr("Experimental features")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
+                topPadding: Theme.bigPadding
+                bottomPadding: Theme.padding
             }
 
             // TODO: replace with StatusQ component
@@ -190,11 +190,11 @@ SettingsContentBase {
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 text: qsTr("WakuV2 options")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
+                topPadding: Theme.bigPadding
+                bottomPadding: Theme.padding
             }
 
             // TODO: replace with StatusQ component
@@ -223,8 +223,8 @@ SettingsContentBase {
             Row {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 spacing: 11
 
                 Component {
@@ -288,8 +288,8 @@ SettingsContentBase {
             StatusListItem {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 title: qsTr("History nodes")
                 label: root.messagingStore.activeMailserverId || "---"
                 components: [
@@ -312,11 +312,11 @@ SettingsContentBase {
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
+                anchors.rightMargin: Theme.padding
                 text: qsTr("Developer features")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
+                topPadding: Theme.bigPadding
+                bottomPadding: Theme.padding
             }
 
             Separator {
@@ -649,8 +649,8 @@ SettingsContentBase {
                         id: numberInput
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.leftMargin: Style.current.padding
-                        anchors.rightMargin: Style.current.padding
+                        anchors.leftMargin: Theme.padding
+                        anchors.rightMargin: Theme.padding
                         label: qsTr("Number of archives files")
                         input.text: root.advancedStore.logMaxBackups
                         placeholderText: qsTr("Number between 1 and 100")

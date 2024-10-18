@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -16,9 +16,9 @@ Control {
     horizontalPadding: 18
 
     background: Rectangle {
-        border.color: Style.current.border
-        radius: Style.current.radius
-        color: Style.current.transparent
+        border.color: Theme.palette.border
+        radius: Theme.radius
+        color: Theme.palette.transparent
     }
 
     contentItem: RowLayout {
@@ -39,7 +39,7 @@ Control {
 
             wrapMode: Text.Wrap
 
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 22
             lineHeightMode: Text.FixedHeight
 

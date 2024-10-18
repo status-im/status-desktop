@@ -45,7 +45,7 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.halfPadding
+        spacing: Theme.halfPadding
 
         StatusBaseText {
             text: qsTr("Shard number")
@@ -58,7 +58,7 @@ StatusDialog {
         }
 
         StatusBaseText {
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
             text: qsTr("Pub/Sub topic")
         }
 

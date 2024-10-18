@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 
 
@@ -41,7 +43,7 @@ SplitView {
             anchors.centerIn: parent
 
             title: titleTextEdit.text
-            icon: Style.png("tokens/SNT")
+            icon: Theme.png("tokens/SNT")
             iconSize: iconSizeSlider.value
 
             label.enabled: labelEnabledCheckBox.checked

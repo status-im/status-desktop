@@ -1,7 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.controls 1.0 as SharedControls
@@ -187,7 +186,7 @@ Item {
                             id: transferIcon
                             height: 15
                             width: 15
-                            color: listItem.isIncoming ? Style.current.success : Style.current.danger
+                            color: listItem.isIncoming ? Theme.palette.successColor1 : Theme.palette.dangerColor1
                             icon: listItem.isIncoming ? "arrow-down" : "arrow-up"
                             rotation: 45
                         },

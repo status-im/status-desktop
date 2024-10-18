@@ -97,7 +97,7 @@ Item {
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
         color: d.isQuote ? Theme.palette.baseColor1 : Theme.palette.directColor1
-        font.family: Theme.palette.baseFont.name
+        font.family: Theme.baseFont.name
         font.pixelSize: Theme.primaryTextFontSize
         textFormat: Text.RichText
         wrapMode: root.convertToSingleLine ? Text.NoWrap : Text.Wrap

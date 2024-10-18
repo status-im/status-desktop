@@ -1,7 +1,8 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.panels 1.0
@@ -17,9 +18,9 @@ Rectangle {
     id: collectibleHeader
     height: 64
     width: parent.width
-    color: hovered ? Style.current.backgroundHover : Style.current.transparent
+    color: hovered ? Theme.palette.backgroundHover : Theme.palette.transparent
     border.width: 0
-    radius: Style.current.radius
+    radius: Theme.radius
 
     Image {
         id: collectibleIconImage
@@ -27,7 +28,7 @@ Rectangle {
         width: 40
         height: 40
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         cache: false
     }
@@ -36,7 +37,7 @@ Rectangle {
         id: collectibleName
         text: collectibleHeader.collectibleName
         anchors.left: collectibleIconImage.right
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 17
     }
@@ -45,9 +46,9 @@ Rectangle {
         visible: collectiblesQty >= Constants.maxTokens
         text: qsTr("Maximum number of collectibles to display reached")
         font.pixelSize: 17
-        color: Style.current.secondaryText
+        color: Theme.palette.secondaryText
         anchors.left: collectibleName.right
-        anchors.leftMargin: Style.current.padding
+        anchors.leftMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
 
     }
@@ -56,7 +57,7 @@ Rectangle {
         active: true
         sourceComponent: collectibleHeader.isLoading ? loadingComponent : handleComponent
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
+        anchors.rightMargin: Theme.padding
         anchors.verticalCenter: parent.verticalCenter
     }
 
@@ -76,7 +77,7 @@ Rectangle {
 
             StyledText {
                 id: numberCollectibleText
-                color: Style.current.secondaryText
+                color: Theme.palette.secondaryText
                 text: !!error ? "-" : collectibleHeader.collectiblesQty
                 font.pixelSize: 15
                 anchors.verticalCenter: parent.verticalCenter
@@ -85,16 +86,16 @@ Rectangle {
             SVGImage {
                 id: caretImg
                 anchors.verticalCenter: parent.verticalCenter
-                source: Style.svg("caret")
+                source: Theme.svg("caret")
                 width: 11
                 anchors.left: numberCollectibleText.right
-                anchors.leftMargin: Style.current.padding
+                anchors.leftMargin: Theme.padding
                 fillMode: Image.PreserveAspectFit
             }
             ColorOverlay {
                 anchors.fill: caretImg
                 source: caretImg
-                color: Style.current.black
+                color: Theme.palette.black
             }
         }
     }

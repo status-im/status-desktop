@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -24,13 +25,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"
@@ -53,13 +54,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"
@@ -82,13 +83,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"
@@ -111,13 +112,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"
@@ -140,13 +141,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"
@@ -169,13 +170,13 @@ ListModel {
                 isNFT: false,
                 isCommunityAssetViaAirdrop: false,
                 communityName: "Doodles",
-                communityImageUrl: Style.png("collectibles/HappyMeow"),
+                communityImageUrl: Theme.png("collectibles/HappyMeow"),
                 tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337",
                 tokenAddress: "0xdeadbeef",
                 tokenInAddress: "0xdeadbeef-00",
                 tokenOutAddress: "0xdeadbeef-00",
                 nftName: "Happy Meow NFT",
-                nftImageUrl: Style.png("collectibles/HappyMeow"),
+                nftImageUrl: Theme.png("collectibles/HappyMeow"),
                 chainId: "NETWORKID",
                 chainIdIn: "NETWORKID-IN",
                 chainIdOut: "NETWORKID-OUT"

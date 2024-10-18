@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Layout 0.1
 import StatusQ.Core 0.1
@@ -41,8 +41,8 @@ StatusSectionLayout {
                 id: peerDescription
                 color: Theme.palette.primaryColor1
                 text: "Peers"
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
@@ -52,8 +52,8 @@ StatusSectionLayout {
                 color: Theme.palette.primaryColor1
                 // Not Refactored Yet
                 text: root.store.nodeModelInst.peerSize
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
@@ -66,16 +66,16 @@ StatusSectionLayout {
             StatusBaseText {
                 color: Theme.palette.primaryColor1
                 text: "Mailserver Interactions:"
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
             StatusTextArea {
                 id: mailserverLogTxt
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 Layout.preferredHeight: 200
                 text: ""
@@ -90,16 +90,16 @@ StatusSectionLayout {
                 id: logHeaderDesc
                 color: Theme.palette.primaryColor1
                 text: "Logs:"
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
             }
             StatusTextArea {
                 id: logsTxt
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 Layout.preferredHeight: 200
                 text: ""
@@ -137,8 +137,8 @@ StatusSectionLayout {
                 id: testDescription
                 color: Theme.palette.primaryColor1
                 text: "latest block (auto updates):"
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
@@ -148,8 +148,8 @@ StatusSectionLayout {
                 color: Theme.palette.primaryColor1
                 // Not Refactored Yet
                 text: root.store.nodeModelInst.lastMessage
-                Layout.rightMargin: Style.current.padding
-                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Theme.padding
+                Layout.leftMargin: Theme.padding
                 Layout.fillWidth: true
                 font.weight: Font.Medium
                 font.pixelSize: 20
@@ -173,7 +173,7 @@ StatusSectionLayout {
                 Rectangle {
                     id: rectangle
                     color: "#00000000"
-                    border.color: Style.current.border
+                    border.color: Theme.palette.border
                     anchors.fill: parent
 
                     Button {
@@ -194,7 +194,7 @@ StatusSectionLayout {
                         }
                         enabled: txtData.text !== ""
                         background: Rectangle {
-                            color: parent.enabled ? Style.current.blue : Style.current.grey
+                            color: parent.enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                             radius: 50
                         }
                     }
@@ -227,8 +227,8 @@ StatusSectionLayout {
         RowLayout {
             id: resultContainer
             Layout.fillHeight: true
-            Layout.rightMargin: Style.current.padding
-            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Theme.padding
+            Layout.leftMargin: Theme.padding
             StatusTextArea { 
                 id: callResult
                 Layout.fillWidth: true
@@ -238,8 +238,3 @@ StatusSectionLayout {
         }
     }
 }
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.5;height:770;width:1152}
-}
-##^##*/

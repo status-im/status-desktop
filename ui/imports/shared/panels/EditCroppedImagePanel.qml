@@ -1,7 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -12,7 +11,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 Item {
@@ -100,7 +98,7 @@ Item {
                 image.source: root.dataImage
                 showLoadingIndicator: true
                 border.width: 1
-                border.color: Style.current.border
+                border.color: Theme.palette.border
                 radius: root.roundedImage ? width/2 : croppedPreview.radius
             }
 
@@ -156,7 +154,7 @@ Item {
 
             visible: root.state === d.noImageState
             radius: roundedImage ? Math.max(width, height)/2 : croppedPreview.radius
-            color: Style.current.inputBackground
+            color: Theme.palette.baseColor2
 
             border.color: Theme.palette.dangerColor1
             border.width: root.isError ? 1 : 0

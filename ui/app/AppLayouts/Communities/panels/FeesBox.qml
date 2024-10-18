@@ -10,7 +10,7 @@ StatusGroupBox {
     id: root
 
     title: qsTr("Fees")
-    icon: Style.svg("gas")
+    icon: Theme.svg("gas")
 
     // expected roles:
     //
@@ -36,12 +36,12 @@ StatusGroupBox {
         id: feesBox
 
         width: root.availableWidth
-        padding: Style.current.padding
+        padding: Theme.padding
 
         verticalPadding: 20
 
         background: Rectangle {
-            radius: Style.current.radius
+            radius: Theme.radius
             color: Theme.palette.statusListItem.backgroundColor
         }
 

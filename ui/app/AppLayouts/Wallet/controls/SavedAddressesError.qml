@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import utils 1.0
 
@@ -25,7 +25,7 @@ Item {
         id: label
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: errorIcon.right
-        anchors.leftMargin: Style.current.halfPadding
+        anchors.leftMargin: Theme.halfPadding
         font.pixelSize: 13
         color: Theme.palette.dangerColor1
     }

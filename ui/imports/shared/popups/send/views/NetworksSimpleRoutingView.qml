@@ -1,6 +1,6 @@
-﻿import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+﻿import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.stores.send 1.0 as SharedSendStores
@@ -72,9 +72,9 @@ RowLayout {
 
         Column {
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.smallPadding
-            Layout.bottomMargin: Style.current.smallPadding
-            spacing: Style.current.halfPadding
+            Layout.topMargin: Theme.smallPadding
+            Layout.bottomMargin: Theme.smallPadding
+            spacing: Theme.halfPadding
             visible: root.isBridgeTx ? true : !root.isLoading ? root.errorType === Constants.NoError : false
 
             // TODO: This transformation should come from an adaptor outside this component
@@ -97,7 +97,7 @@ RowLayout {
         BalanceExceeded {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: Style.current.smallPadding
+            Layout.topMargin: Theme.smallPadding
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
         }
@@ -124,7 +124,7 @@ RowLayout {
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
             asset.height: 32
-            asset.name: Style.svg("tiny/" + model.iconUrl)
+            asset.name: Theme.svg("tiny/" + model.iconUrl)
             asset.isImage: true
             color: "transparent"
         }
@@ -146,7 +146,7 @@ RowLayout {
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32
-                asset.name: Style.svg("tiny/" + iconUrl)
+                asset.name: Theme.svg("tiny/" + iconUrl)
                 asset.isImage: true
                 border.color: gasRectangle.checked ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
                 color: {

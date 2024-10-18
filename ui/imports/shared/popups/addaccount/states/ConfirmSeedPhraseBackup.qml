@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -27,13 +27,13 @@ Item {
     ColumnLayout {
         id: layout
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 2 * 3 * Style.current.padding
-        spacing: Style.current.halfPadding
+        width: parent.width - 2 * 3 * Theme.padding
+        spacing: Theme.halfPadding
 
         StatusStepper {
             Layout.preferredWidth: Constants.addAccountPopup.stepperWidth
             Layout.preferredHeight: Constants.addAccountPopup.stepperHeight
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Theme.padding
             Layout.alignment: Qt.AlignCenter
             title: qsTr("Step 4 of 4")
             titleFontSize: Constants.addAccountPopup.labelFontSize1
@@ -54,7 +54,7 @@ Item {
 
         StatusBaseText {
             Layout.preferredWidth: parent.width
-            Layout.topMargin: 2 * Style.current.xlPadding
+            Layout.topMargin: 2 * Theme.xlPadding
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
@@ -66,11 +66,11 @@ Item {
 
         StatusBaseText {
             Layout.preferredWidth: parent.width
-            Layout.topMargin: Style.current.halfPadding
+            Layout.topMargin: Theme.halfPadding
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: Style.current.primaryTextFontSize
+            font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
             color: Theme.palette.directColor1
             text: qsTr("By completing this process, you will remove your seed phrase from this application’s storage. This makes your funds more secure.\n\nYou will remain logged in, and your seed phrase will be entirely in your hands.")
@@ -80,10 +80,10 @@ Item {
             id: aknowledge
             objectName: "AddAccountPopup-SeedBackupAknowledge"
             Layout.preferredWidth: parent.width
-            Layout.topMargin: 2 * Style.current.xlPadding
+            Layout.topMargin: 2 * Theme.xlPadding
             Layout.alignment: Qt.AlignHCenter
-            spacing: Style.current.padding
-            font.pixelSize: Style.current.primaryTextFontSize
+            spacing: Theme.padding
+            font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("I aknowledge that Status will not be able to show me my seed phrase again.")
             onToggled: {
                 root.store.seedPhraseBackupConfirmed = checked

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
@@ -38,7 +39,7 @@ StatusDialog {
     }
 
     width: 640 // by design
-    padding: Style.current.padding
+    padding: Theme.padding
     contentItem: StatusBaseText {
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         text: d.alertText
@@ -55,7 +56,7 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        spacing: Style.current.padding
+        spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
                 text: qsTr("Cancel")

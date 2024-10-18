@@ -153,7 +153,7 @@ ColumnLayout {
     }
 
     implicitWidth: 460
-    spacing: Style.current.bigPadding
+    spacing: Theme.bigPadding
     z: root.zFront
 
     StatusBaseText {
@@ -178,7 +178,7 @@ ColumnLayout {
 
             text: root.introText
             horizontalAlignment: root.contentAlignment
-            font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
+            font.pixelSize: root.highSizeIntro ? Theme.primaryTextFontSize : Theme.tertiaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.baseColor1
         }
@@ -189,7 +189,7 @@ ColumnLayout {
 
             text: root.recoverText
             horizontalAlignment: root.contentAlignment
-            font.pixelSize: root.highSizeIntro ? Style.current.primaryTextFontSize : Style.current.tertiaryTextFontSize
+            font.pixelSize: root.highSizeIntro ? Theme.primaryTextFontSize : Theme.tertiaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
         }
@@ -213,7 +213,7 @@ ColumnLayout {
             Layout.alignment: root.contentAlignment
             placeholderText: qsTr("Enter current password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+            rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Theme.padding / 2
             onAccepted: root.returnPressed()
 
             StatusFlatRoundButton {
@@ -257,7 +257,7 @@ ColumnLayout {
             Layout.fillWidth: true
             placeholderText: qsTr("Enter new password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
+            rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Theme.padding / 2
 
             onTextChanged: {
                 // Update password checkers
@@ -313,16 +313,16 @@ ColumnLayout {
         border.color: Theme.palette.baseColor2
         border.width: 1
         color: "transparent"
-        radius: Style.current.radius
+        radius: Theme.radius
         implicitHeight: strengthColumn.implicitHeight
         implicitWidth: strengthColumn.implicitWidth
 
         ColumnLayout {
             id: strengthColumn
             anchors.fill: parent
-            anchors.margins: Style.current.padding
+            anchors.margins: Theme.padding
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Style.current.padding
+            spacing: Theme.padding
 
             StatusBaseText {
                 id: strengthenTxt
@@ -336,7 +336,7 @@ ColumnLayout {
             }
 
             RowLayout {
-                spacing: Style.current.padding
+                spacing: Theme.padding
                 Layout.alignment: Qt.AlignHCenter
 
                 StatusBaseText {
@@ -386,7 +386,7 @@ ColumnLayout {
             Layout.alignment: root.contentAlignment
             placeholderText: qsTr("Enter new password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
+            rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Theme.padding / 2
 
             onTextChanged: {
                 errorTxt.text = ""

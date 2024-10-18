@@ -158,7 +158,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
 
                         text: "Dark mode"
-                        onCheckedChanged: Style.changeTheme(checked ? Universal.Dark : Universal.Light, !checked)
+                        onCheckedChanged: Theme.changeTheme(checked ? Universal.Dark : Universal.Light, !checked)
                     }
 
                     HotReloaderControls {

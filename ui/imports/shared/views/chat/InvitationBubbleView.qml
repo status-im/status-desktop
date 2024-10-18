@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 
@@ -38,7 +38,7 @@ Control {
         readonly property bool   communitySpectated:    !!d.invitedCommunity ? d.invitedCommunity.spectated : false
 
         readonly property int margin: 12
-        readonly property int radius: Style.current.padding
+        readonly property int radius: Theme.padding
 
         readonly property bool loading: !d.invitedCommunity
 
@@ -85,8 +85,8 @@ Control {
 
     background: Rectangle {
         radius: d.radius
-        color: Style.current.background
-        border.color: Style.current.border
+        color: Theme.palette.background
+        border.color: Theme.palette.border
         border.width: 1
     }
 
@@ -111,7 +111,7 @@ Control {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: Style.current.separator
+            color: Theme.palette.separator
         }
 
         RowLayout {
@@ -177,7 +177,7 @@ Control {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            color: Style.current.separator
+            color: Theme.palette.separator
         }
 
         Item {

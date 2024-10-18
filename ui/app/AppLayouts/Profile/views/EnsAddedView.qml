@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import utils 1.0
 
@@ -84,7 +84,7 @@ Item {
     StatusButton {
         id: startBtn
         anchors.top: subtitle.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Theme.padding
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Ok, got it")
         onClicked: okBtnClicked()

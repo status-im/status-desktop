@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import shared.panels 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -15,12 +16,12 @@ ColumnLayout {
 
     signal clicked
 
-    spacing: Style.current.halfPadding
+    spacing: Theme.halfPadding
 
     Separator {
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
-        Layout.bottomMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
+        Layout.bottomMargin: Theme.padding
     }
 
     StatusBaseText {
@@ -28,14 +29,14 @@ ColumnLayout {
 
         Layout.alignment: Qt.AlignHCenter
 
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         text: ""
     }
 
     StatusFlatButton {
         Layout.alignment: Qt.AlignHCenter
 
-        font.pixelSize: Style.current.additionalTextSize
+        font.pixelSize: Theme.additionalTextSize
         text: qsTr("Add accounts to showcase")
 
         onClicked: root.clicked()

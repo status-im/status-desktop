@@ -35,7 +35,7 @@ CommonContactDialog {
     StatusWarningBox {
         objectName: "blockWarningBox"
         Layout.fillWidth: true
-        Layout.topMargin: Style.current.padding
+        Layout.topMargin: Theme.padding
         icon: "warning"
         iconColor: Theme.palette.dangerColor1
         bgColor: Theme.palette.dangerColor1
@@ -46,7 +46,7 @@ CommonContactDialog {
     }
 
     StatusCheckBox {
-        Layout.topMargin: Style.current.halfPadding
+        Layout.topMargin: Theme.halfPadding
         objectName: "removeContactCheckbox"
         id: ctrlRemoveContact
         visible: contactDetails.isContact

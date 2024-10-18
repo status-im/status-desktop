@@ -1,7 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -182,7 +181,7 @@ Item {
                     text: button.text
                     font.pixelSize: 13
                     font.weight: Font.Medium
-                    font.family: Style.current.baseFont.name
+                    font.family: Theme.baseFont.name
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                     color: Theme.palette.indirectColor1
@@ -204,7 +203,7 @@ Item {
         StatusBaseText {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: progressBar.left
-            anchors.rightMargin: Style.current.halfPadding
+            anchors.rightMargin: Theme.halfPadding
             text: qsTr("%1%").arg(progressBar.value)
             visible: progressBar.visible
             font.pixelSize: 12
@@ -216,7 +215,7 @@ Item {
             id: progressBar
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: closeImg.left
-            anchors.rightMargin: Style.current.bigPadding
+            anchors.rightMargin: Theme.bigPadding
             from: 0
             to: 100
             visible: root.progressValue > -1

@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -25,7 +27,7 @@ Item {
 
     ListView {
         anchors.fill: parent
-        spacing: Style.current.padding
+        spacing: Theme.padding
         clip: true
         model: proxyModel
         delegate: KeyPairItem {

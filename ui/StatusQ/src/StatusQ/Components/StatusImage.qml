@@ -46,5 +46,5 @@ Image {
     readonly property bool isError: status === Image.Error
 
     fillMode: Image.PreserveAspectFit
-    sourceSize: source.toString().endsWith(".svg") ? Qt.size(width, 0) : undefined
+    sourceSize: source.toString().endsWith(".svg") ? Qt.size(width, height) : undefined
 }
