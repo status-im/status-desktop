@@ -35,6 +35,7 @@ StatusSectionLayout {
     id: root
 
     property alias settingsSubsection: profileContainer.currentIndex
+    property int settingsSubSubsection
 
     objectName: "profileStatusSectionLayout"
 
@@ -73,7 +74,8 @@ StatusSectionLayout {
             keycardView.item.handleBackAction()
             break;
         }
-        Global.settingsSubSubsection = -1
+
+        root.settingsSubSubsection = -1
     }
 
     Component.onCompleted: {
@@ -257,6 +259,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 contentWidth: d.contentWidth
+
+                settingsSubSubsection: root.settingsSubSubsection
 
                 rootStore: root.store
                 tokensStore: root.tokensStore

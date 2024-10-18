@@ -6,7 +6,6 @@ QtObject {
     id: root
 
     property bool activityPopupOpened: false
-    property int settingsSubSubsection: -1
 
     property bool appIsReady: false
 

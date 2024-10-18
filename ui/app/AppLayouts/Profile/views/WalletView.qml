@@ -34,6 +34,8 @@ SettingsContentBase {
     property string myPublicKey: ""
     property alias currencySymbol: manageTokensView.currencySymbol
 
+    property int settingsSubSubsection
+
     property ProfileSectionStore rootStore
     property WalletStore walletStore: rootStore.walletStore
     required property TokensStore tokensStore
@@ -112,10 +114,10 @@ SettingsContentBase {
 
     readonly property var priv: QtObject {
         id: priv
-        readonly property bool isManageTokensSubsection: Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
-                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
-                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
-                                                         Global.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
+        readonly property bool isManageTokensSubsection: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAssets ||
+                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageCollectibles ||
+                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
+                                                         root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
 
         readonly property var walletSettings: Settings {
             category: "walletSettings-" + root.myPublicKey
@@ -349,7 +351,7 @@ SettingsContentBase {
 
             Binding on currentIndex {
                 value: {
-                    switch (Global.settingsSubSubsection) {
+                    switch (root.settingsSubSubsection) {
                     case Constants.walletSettingsSubsection.manageAssets:
                         return 0
                     case Constants.walletSettingsSubsection.manageCollectibles:
