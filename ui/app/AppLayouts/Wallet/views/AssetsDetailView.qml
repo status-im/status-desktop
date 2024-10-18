@@ -15,6 +15,7 @@ import shared.views 1.0
 import shared.controls 1.0
 import shared.stores 1.0 as SharedStores
 
+import AppLayouts.Wallet.helpers 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import SortFilterProxyModel 0.2
@@ -28,7 +29,7 @@ Item {
     id: root
 
     property var token: ({})
-    property SharedStores.RootStore sharedRootStore
+
     property WalletStores.TokensStore tokensStore
     property SharedStores.CurrenciesStore currencyStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
@@ -36,11 +37,18 @@ Item {
     property var networkFilters
     onNetworkFiltersChanged: d.forceRefreshBalanceStore = true
     /*required*/ property string address: ""
-    property SharedStores.TokenBalanceHistoryStore balanceStore: SharedStores.TokenBalanceHistoryStore {}
+
+    TokenBalanceHistoryData {
+        id: balanceData
+    }
+
+    TokenMarketValuesData {
+        id: marketValueData
+    }
 
     QtObject {
         id: d
-        property SharedStores.TokenMarketValuesStore marketValueStore : root.sharedRootStore.marketValueStore
+
         readonly property string symbol: !!root.token? root.token.symbol?? "" : ""
         property bool marketDetailsLoading: !!root.token? root.token.marketDetailsLoading?? false : false
         property bool tokenDetailsLoading: !!root.token? root.token.detailsLoading?? false: false
@@ -66,7 +74,7 @@ Item {
             if(response.historicalData === null || response.historicalData <= 0)
                 return
 
-            d.marketValueStore.setTimeAndValueData(response.historicalData, response.range)
+            marketValueData.setTimeAndValueData(response.historicalData, response.range)
         }
     }
 
@@ -137,7 +145,7 @@ Item {
                     id: graphDetail
 
                     property int selectedGraphType: AssetsDetailView.GraphType.Price
-                    property SharedStores.TokenMarketValuesStore selectedStore: d.marketValueStore
+                    property TokenMarketValuesData selectedStore: marketValueData
 
                     function dataReady() {
                         return typeof selectedStore != "undefined"
@@ -166,7 +174,7 @@ Item {
                         {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price, visible: !d.isCommunityAsset},
                         {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance, visible: true},
                     ]
-                    defaultTimeRangeIndexShown: SharedStores.ChartStoreBase.TimeRange.All
+                    defaultTimeRangeIndexShown: ChartDataBase.TimeRange.All
                     timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
                     onHeaderTabClicked: (privateIdentifier, isTimeRange) => {
                                             if(!isTimeRange && graphDetail.selectedGraphType !== privateIdentifier) {
@@ -178,15 +186,15 @@ Item {
                                             }
 
                                             if(!isTimeRange) {
-                                                graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? d.marketValueStore : balanceStore
+                                                graphDetail.selectedStore = graphDetail.selectedGraphType === AssetsDetailView.GraphType.Price ? marketValueData : balanceData
                                             }
 
                                             chart.refresh()
                                         }
 
                     readonly property var dateToShortLabel: function (value) {
-                        const range = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                        return range === SharedStores.ChartStoreBase.TimeRange.Weekly || range === SharedStores.ChartStoreBase.TimeRange.Monthly ?
+                        const range = balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                        return range === ChartDataBase.TimeRange.Weekly || range === ChartDataBase.TimeRange.Monthly ?
                                     LocaleUtils.getDayMonth(value) :
                                     LocaleUtils.getMonthYear(value)
                     }
@@ -318,19 +326,19 @@ Item {
                     }
 
                     function updateBalanceStore() {
-                        let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+                        let selectedTimeRangeEnum = balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)
 
-                        let currencySymbol = root.sharedRootStore.currencyStore.currentCurrency
-                        if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
+                        let currencySymbol = root.currencyStore.currentCurrency
+                        if(!balanceData.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum) || d.forceRefreshBalanceStore) {
                             root.tokensStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
                         }
                     }
 
                     Connections {
-                        target: balanceStore
+                        target: balanceData
                         function onNewDataReady(address, tokenSymbol, currencySymbol, timeRange) {
                             d.forceRefreshBalanceStore = false
-                            if (timeRange === balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
+                            if (timeRange === balanceData.timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
                                 chart.refresh()
                             }
                         }

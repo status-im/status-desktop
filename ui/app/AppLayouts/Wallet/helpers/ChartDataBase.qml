@@ -1,8 +1,8 @@
-import QtQuick 2.13
+import QtQml 2.15
 
 import utils 1.0
 
-Item {
+QtObject {
     id: root
 
     // @see src/app_service/service/token/async_tasks.nim BalanceHistoryTimeInterval
@@ -15,11 +15,11 @@ Item {
     }
 
     readonly property var timeRangeTabsModel: [
-        {text: qsTr("7D"), enabled: true, timeRange: ChartStoreBase.TimeRange.Weekly, timeIndex: 0},
-        {text: qsTr("1M"), enabled: true, timeRange: ChartStoreBase.TimeRange.Monthly, timeIndex: 1},
-        {text: qsTr("6M"), enabled: true, timeRange: ChartStoreBase.TimeRange.HalfYearly, timeIndex: 2},
-        {text: qsTr("1Y"), enabled: true, timeRange: ChartStoreBase.TimeRange.Yearly, timeIndex: 3},
-        {text: qsTr("ALL"), enabled: true, timeRange: ChartStoreBase.TimeRange.All,  timeIndex: 4}]
+        {text: qsTr("7D"), enabled: true, timeRange: ChartDataBase.TimeRange.Weekly, timeIndex: 0},
+        {text: qsTr("1M"), enabled: true, timeRange: ChartDataBase.TimeRange.Monthly, timeIndex: 1},
+        {text: qsTr("6M"), enabled: true, timeRange: ChartDataBase.TimeRange.HalfYearly, timeIndex: 2},
+        {text: qsTr("1Y"), enabled: true, timeRange: ChartDataBase.TimeRange.Yearly, timeIndex: 3},
+        {text: qsTr("ALL"), enabled: true, timeRange: ChartDataBase.TimeRange.All,  timeIndex: 4}]
 
     property var weeklyData: []
     property var monthlyData: []
@@ -78,7 +78,7 @@ Item {
         return d.timeRangeStrToEnumMap.get(str)
     }
 
-    QtObject {
+    readonly property QtObject _d: QtObject {
         id: d
 
         readonly property int hoursInADay: 24
