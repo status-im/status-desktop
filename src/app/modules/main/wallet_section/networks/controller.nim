@@ -34,7 +34,7 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
-    self.delegate.refreshNetworks()   
+    self.delegate.refreshNetworks()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED) do(e: Args):
     let args = ChainIdForUrlArgs(e)
@@ -57,12 +57,6 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
-
-proc isGoerliEnabled*(self: Controller): bool =
-  return self.walletAccountService.isGoerliEnabled()
-
-proc toggleIsGoerliEnabled*(self: Controller) =
-  self.walletAccountService.toggleIsGoerliEnabled()
 
 proc updateNetworkEndPointValues*(self: Controller, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
   self.networkService.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)

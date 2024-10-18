@@ -10,7 +10,6 @@ QtObject:
       combinedNetworks: CombinedModel
       areTestNetworksEnabled: bool
       enabledChainIds: string
-      isGoerliEnabled: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -63,20 +62,6 @@ QtObject:
     read = getEnabledChainIds
     notify = enabledChainIdsChanged
 
-  proc isGoerliEnabledChanged*(self: View) {.signal.}
-  proc getIsGoerliEnabled(self: View): bool {.slot.} =
-    return self.isGoerliEnabled
-  QtProperty[bool] isGoerliEnabled:
-    read = getIsGoerliEnabled
-    notify = isGoerliEnabledChanged
-
-  proc setIsGoerliEnabled*(self: View, IsGoerliEnabled: bool) =
-    self.isGoerliEnabled = IsGoerliEnabled
-    self.isGoerliEnabledChanged()
-
-  proc toggleIsGoerliEnabled*(self: View) {.slot.} =
-    self.delegate.toggleIsGoerliEnabled()
-
   proc refreshModel*(self: View) =
     self.flatNetworks.refreshModel()
     self.combinedNetworks.modelUpdated()
@@ -93,7 +78,7 @@ QtObject:
 
   proc enableNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.setNetworksState(@[chainId], enable = true)
-  
+
   proc getBlockExplorerURL*(self: View, chainId: int): string {.slot.} =
     return self.flatNetworks.getBlockExplorerURL(chainId)
 

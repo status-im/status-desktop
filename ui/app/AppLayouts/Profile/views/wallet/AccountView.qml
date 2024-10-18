@@ -293,7 +293,6 @@ ColumnLayout {
         id: addressMenu
         selectedAccount: root.account
         areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
-        isGoerliEnabled: root.walletStore.isGoerliEnabled
         onCopyToClipboard: ClipboardUtils.setText(address)
     }
 

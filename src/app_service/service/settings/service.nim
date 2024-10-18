@@ -474,16 +474,6 @@ QtObject:
       return true
     return false
 
-  proc isGoerliEnabled*(self: Service): bool =
-    return self.settings.isGoerliEnabled
-
-  proc toggleIsGoerliEnabled*(self: Service): bool =
-    let newValue = not self.settings.isGoerliEnabled
-    if(self.saveSetting(KEY_IS_GOERLI_ENABLED, newValue)):
-      self.settings.isGoerliEnabled = newValue
-      return true
-    return false
-
   proc tokenGroupByCommunity*(self: Service): bool =
     return self.settings.tokenGroupByCommunity
 
