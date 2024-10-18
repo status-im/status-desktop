@@ -1,6 +1,7 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
 import ../item as chat_item
+import ../../../../../app_service/common/types
 
 import io_interface
 import chat_details
@@ -112,8 +113,8 @@ QtObject:
     self.updateChatDetailsNameAndIcon(name, icon)
     self.chatDetails.setColor(color)
 
-  proc updateTrustStatus*(self: View, isUntrustworthy: bool) =
-    self.chatDetails.setIsUntrustworthy(isUntrustworthy)
+  proc updateTrustStatus*(self: View, trustStatus: TrustStatus) =
+    self.chatDetails.setTrustStatus(trustStatus)
 
   proc updateChatDetailsNotifications*(self: View, hasUnreadMessages: bool, notificationCount: int) =
     self.chatDetails.setHasUnreadMessages(hasUnreadMessages)

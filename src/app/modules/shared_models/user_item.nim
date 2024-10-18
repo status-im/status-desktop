@@ -33,8 +33,6 @@ type
     colorHash: string
     onlineStatus: OnlineStatus
     isContact: bool
-    isVerified: bool
-    isUntrustworthy: bool
     isBlocked: bool
     contactRequest: ContactRequest
     #Contact extra details
@@ -64,8 +62,6 @@ proc setup*(self: UserItem,
   colorHash: string,
   onlineStatus: OnlineStatus,
   isContact: bool,
-  isVerified: bool,
-  isUntrustworthy: bool,
   isBlocked: bool,
   contactRequest: ContactRequest,
   #TODO: #14964 - remove defaults
@@ -94,8 +90,6 @@ proc setup*(self: UserItem,
   self.colorHash = colorHash
   self.onlineStatus = onlineStatus
   self.isContact = isContact
-  self.isVerified = isVerified
-  self.isUntrustworthy = isUntrustworthy
   self.isBlocked = isBlocked
   self.contactRequest = contactRequest
   self.isCurrentUser = isCurrentUser
@@ -126,8 +120,6 @@ proc initUserItem*(
     colorHash: string = "",
     onlineStatus: OnlineStatus,
     isContact: bool,
-    isVerified: bool,
-    isUntrustworthy: bool,
     isBlocked: bool,
     contactRequest: ContactRequest = ContactRequest.None,
     isCurrentUser: bool = false,
@@ -157,8 +149,6 @@ proc initUserItem*(
     colorHash = colorHash,
     onlineStatus = onlineStatus,
     isContact = isContact,
-    isVerified = isVerified,
-    isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
     isCurrentUser = isCurrentUser,
@@ -189,8 +179,6 @@ proc `$`*(self: UserItem): string =
     colorHash: {self.colorHash},
     onlineStatus: {$self.onlineStatus.int},
     isContact: {self.isContact},
-    isVerified: {self.isVerified},
-    isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
     isCurrentUser: {self.isCurrentUser},
@@ -270,18 +258,6 @@ proc isContact*(self: UserItem): bool {.inline.} =
 
 proc `isContact=`*(self: UserItem, value: bool) {.inline.} =
   self.isContact = value
-
-proc isVerified*(self: UserItem): bool {.inline.} =
-  self.isVerified
-
-proc `isVerified=`*(self: UserItem, value: bool) {.inline.} =
-  self.isVerified = value
-
-proc isUntrustworthy*(self: UserItem): bool {.inline.} =
-  self.isUntrustworthy
-
-proc `isUntrustworthy=`*(self: UserItem, value: bool) {.inline.} =
-  self.isUntrustworthy = value
 
 proc isBlocked*(self: UserItem): bool {.inline.} =
   self.isBlocked

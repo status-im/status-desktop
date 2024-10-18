@@ -63,7 +63,6 @@ QtObject:
       alias = "",
       icon = "",
       colorId = 0,
-      isVerified = false,
     )
     self.temporaryModel.addItem(userItem)
 

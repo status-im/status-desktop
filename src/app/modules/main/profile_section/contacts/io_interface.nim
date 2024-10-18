@@ -1,6 +1,7 @@
 import NimQml
 import ../../../../../app_service/service/contacts/dto/contacts as contacts
 import ../../../../../app_service/service/contacts/dto/status_update
+import app_service/common/types
 
 import app_service/service/contacts/dto/profile_showcase
 
@@ -73,7 +74,7 @@ method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, isUntrustworthy: bool) {.base.} =
+method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, trustStatus: TrustStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
@@ -89,9 +90,6 @@ method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base
   raise newException(ValueError, "No implementation available")
 
 method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method removeTrustVerificationStatus*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestContactInfo*(self: AccessInterface, publicKey: string) {.base.} =

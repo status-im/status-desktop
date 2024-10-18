@@ -193,7 +193,7 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    trustStatus = contactDetails.dto.trustStatus,
     requestToJoinId = requestId,
     membershipRequestState = status,
   )
