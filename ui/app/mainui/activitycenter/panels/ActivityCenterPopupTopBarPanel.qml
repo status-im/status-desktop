@@ -19,7 +19,6 @@ Item {
     property bool hasMentions: false
     property bool hasReplies: false
     property bool hasContactRequests: false
-    property bool hasIdentityVerification: false
     property bool hasMembership: false
 
     property bool hideReadNotifications: false

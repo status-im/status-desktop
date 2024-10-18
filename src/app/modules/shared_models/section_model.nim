@@ -5,6 +5,7 @@ import json
 import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
 import model_utils
+import ../../../app_service/common/types
 
 type
   ModelRole {.pure.} = enum
@@ -353,8 +354,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
     ) =
     for item in self.items:
       # TODO refactor to use only one model https://github.com/status-im/status-desktop/issues/16433
@@ -367,8 +367,7 @@ QtObject:
         alias,
         icon,
         isContact,
-        isVerified,
-        isUntrustworthy,
+        trustStatus,
       )
       item.bannedMembers.updateItem(
         pubKey,
@@ -379,8 +378,7 @@ QtObject:
         alias,
         icon,
         isContact,
-        isVerified,
-        isUntrustworthy,
+        trustStatus,
       )
       item.pendingMemberRequests.updateItem(
         pubKey,
@@ -391,8 +389,7 @@ QtObject:
         alias,
         icon,
         isContact,
-        isVerified,
-        isUntrustworthy,
+        trustStatus,
       )
       item.declinedMemberRequests.updateItem(
         pubKey,
@@ -403,8 +400,7 @@ QtObject:
         alias,
         icon,
         isContact,
-        isVerified,
-        isUntrustworthy,
+        trustStatus,
       )
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =

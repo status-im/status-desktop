@@ -1,7 +1,6 @@
 import NimQml, Tables, strutils, stew/shims/strformat, json, sequtils, system
 import ../../../../app_service/common/types
 import ../../../../app_service/service/chat/dto/chat
-from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
 import item
 import ../../../global/utils as utils
 import ../../../global/global_singleton
