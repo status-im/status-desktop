@@ -22,6 +22,8 @@ Column {
 
     property bool walletMenuItemEnabled: false
 
+    property int settingsSubsection
+
     signal menuItemClicked(var menu_item)
 
     Repeater {
@@ -33,7 +35,7 @@ Column {
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
-            selected: Global.settingsSubsection === model.subsection
+            selected: root.settingsSubsection === model.subsection
             highlighted: !!betaTagLoader.item && betaTagLoader.item.hovered
             onClicked: root.menuItemClicked(model)
             badge.value: {
@@ -85,7 +87,7 @@ Column {
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
-            selected: Global.settingsSubsection === model.subsection
+            selected: root.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: {
                 (model.subsection !== Constants.settingsSubsection.wallet) ||
@@ -116,7 +118,7 @@ Column {
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
-            selected: Global.settingsSubsection === model.subsection
+            selected: root.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
         }
     }
@@ -134,7 +136,7 @@ Column {
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
-            selected: Global.settingsSubsection === model.subsection
+            selected: root.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
         }
     }

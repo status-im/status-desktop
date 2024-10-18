@@ -18,6 +18,8 @@ Item {
 
     signal menuItemClicked(var event)
 
+    property alias settingsSubsection: profileMenu.settingsSubsection
+
     StatusNavigationPanelHeadline {
         id: title
         text: qsTr("Settings")
@@ -68,7 +70,7 @@ Item {
                 if (menu_item.subsection === Constants.settingsSubsection.signout)
                     return confirmDialog.open()
 
-                Global.settingsSubsection = menu_item.subsection
+                profileMenu.settingsSubsection = menu_item.subsection
             }
         }
     }

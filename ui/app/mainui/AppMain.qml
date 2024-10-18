@@ -501,7 +501,7 @@ Item {
             appMain.rootStore.mainModuleInst.setActiveSectionBySectionType(sectionType)
 
             if (sectionType === Constants.appSection.profile) {
-                Global.settingsSubsection = subsection;
+                profileLoader.settingsSubsection = subsection
                 Global.settingsSubSubsection = subSubsection;
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
@@ -1432,6 +1432,10 @@ Item {
                     }
 
                     Loader {
+                        id: profileLoader
+
+                        property int settingsSubsection: Constants.settingsSubsection.profile
+
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
                         sourceComponent: ProfileLayout {
@@ -1448,6 +1452,12 @@ Item {
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
+
+                            Binding on settingsSubsection {
+                                value: profileLoader.settingsSubsection
+                            }
+
+                            onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
                         }
                     }
 
