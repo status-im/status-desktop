@@ -16,6 +16,7 @@ ColumnLayout {
     property alias name: appNameText.text
     property url dAppUrl: ""
     property url iconUrl: ""
+    property string badgeIcon: ""
     property bool connectionSuccessful
     property bool connectionAttempted
 
@@ -28,6 +29,7 @@ ColumnLayout {
         Layout.preferredHeight: Layout.preferredWidth
 
         imageUrl: iconUrl
+        badgeIcon: root.badgeIcon
     }
 
     ColumnLayout {
