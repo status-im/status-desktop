@@ -34,6 +34,9 @@ import AppLayouts.Communities.stores 1.0 as CommunitiesStore
 StatusSectionLayout {
     id: root
 
+    property alias settingsSubsection: profileContainer.currentIndex
+    property int settingsSubSubsection
+
     objectName: "profileStatusSectionLayout"
 
     property SharedStores.RootStore sharedRootStore
@@ -56,7 +59,7 @@ StatusSectionLayout {
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
-        switch (Global.settingsSubsection) {
+        switch (root.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
             break;
@@ -71,12 +74,12 @@ StatusSectionLayout {
             keycardView.item.handleBackAction()
             break;
         }
-        Global.settingsSubSubsection = -1
+
+        root.settingsSubSubsection = -1
     }
 
     Component.onCompleted: {
-        profileContainer.currentIndex = -1
-        profileContainer.currentIndex = Qt.binding(() => Global.settingsSubsection)
+        profileContainer.currentIndexChanged()
         root.store.devicesStore.loadDevices() // Load devices to get non-paired number for badge
     }
 
@@ -109,6 +112,12 @@ StatusSectionLayout {
                 profileContainer.currentItem.notifyDirty();
             }
         }
+
+        onSettingsSubsectionChanged: root.settingsSubsection = settingsSubsection
+
+        Binding on settingsSubsection {
+            value: root.settingsSubsection
+        }
     }
 
     centerPanel: StackLayout {
@@ -118,8 +127,6 @@ StatusSectionLayout {
 
         anchors.fill: parent
         anchors.leftMargin: Constants.settingsSection.leftMargin
-
-        currentIndex: Global.settingsSubsection
 
         onCurrentIndexChanged: {
             if (!!children[currentIndex] && !children[currentIndex].active)
@@ -252,6 +259,8 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 contentWidth: d.contentWidth
+
+                settingsSubSubsection: root.settingsSubSubsection
 
                 rootStore: root.store
                 tokensStore: root.tokensStore
