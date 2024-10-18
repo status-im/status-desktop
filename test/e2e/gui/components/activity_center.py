@@ -30,9 +30,9 @@ class ContactRequest:
 
     def init_ui(self):
         for child in walk_children(self.object):
-            if str(getattr(child, 'objectName', '')) == 'checkmark-circle-icon':
+            if str(getattr(child, 'objectName', '')) == 'acceptBtn':
                 self._accept_button = Button(real_name=driver.objectMap.realName(child))
-            elif str(getattr(child, 'objectName', '')) == 'close-circle-icon':
+            elif str(getattr(child, 'objectName', '')) == 'declineBtn':
                 self._decline_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'objectName', '')) == 'StatusMessageHeader_DisplayName':
                 self.contact_request = str(child.text)
