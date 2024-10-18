@@ -64,9 +64,9 @@ class ContactItem:
                 self.icon = Image(driver.objectMap.realName(child))
             elif str(getattr(child, 'id', '')) == 'menuButton':
                 self._open_canvas_button = Button(real_name=driver.objectMap.realName(child))
-            elif str(getattr(child, 'objectName', '')) == 'checkmark-circle-icon':
+            elif str(getattr(child, 'objectName', '')) == 'acceptBtn':
                 self._accept_button = Button(real_name=driver.objectMap.realName(child))
-            elif str(getattr(child, 'objectName', '')) == 'close-circle-icon':
+            elif str(getattr(child, 'objectName', '')) == 'declineBtn':
                 self._reject_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'id', '')) == 'statusListItemTitle':
                 self.contact = str(child.text)
