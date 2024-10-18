@@ -5,7 +5,7 @@ ListModel {
     id: root
 
     function enqueue(request) {
-        root.append({requestId: request.id, requestItem: request});
+        root.append({requestId: request.requestId, requestItem: request});
     }
 
     function dequeue() {
@@ -20,7 +20,7 @@ ListModel {
     function removeRequest(topic, id) {
         for (var i = 0; i < root.count; i++) {
             let entry = root.get(i).requestItem
-            if (entry.topic == topic && entry.id == id) {
+            if (entry.topic == topic && entry.requestId == id) {
                 root.remove(i, 1);
                 return;
             }
@@ -31,7 +31,7 @@ ListModel {
     function findRequest(topic, id) {
         for (var i = 0; i < root.count; i++) {
             let entry = root.get(i).requestItem
-            if (entry.topic == topic && entry.id == id) {
+            if (entry.topic == topic && entry.requestId == id) {
                 return entry;
             }
         }
@@ -42,7 +42,7 @@ ListModel {
     function findById(id) {
         for (var i = 0; i < root.count; i++) {
             let entry = root.get(i).requestItem
-            if (entry.id == id) {
+            if (entry.requestId == id) {
                 return entry;
             }
         }
