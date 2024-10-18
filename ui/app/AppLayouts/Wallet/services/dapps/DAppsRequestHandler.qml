@@ -309,7 +309,7 @@ SQUtils.QObject {
             let obj = sessionRequestComponent.createObject(null, {
                 event,
                 topic: event.topic,
-                id: event.id,
+                requestId: event.id,
                 method,
                 accountAddress,
                 chainId,
@@ -317,7 +317,6 @@ SQUtils.QObject {
                 preparedData: interpreted.preparedData,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
-                enoughFunds: enoughFunds,
                 expirationTimestamp: requestExpiry
             })
             if (obj === null) {
@@ -338,7 +337,7 @@ SQUtils.QObject {
                 }
 
                 obj.resolveDappInfoFromSession(session)
-                root.sessionRequest(obj.id)
+                root.sessionRequest(obj.requestId)
 
                 d.updateFeesParamsToPassedObj(obj)
             })
@@ -498,24 +497,24 @@ SQUtils.QObject {
         function executeSessionRequest(request, password, pin, payload) {
             if (!SessionRequest.getSupportedMethods().includes(request.method)) {
                 console.error("Unsupported method to execute: ", request.method)
-                return
+                return false
             }
 
             if (password === "") {
                 console.error("No password provided to sign message")
-                return
+                return false
             }
 
             if (request.method === SessionRequest.methods.sign.name) {
                 store.signMessageUnsafe(request.topic,
-                                        request.id,
+                                        request.requestId,
                                         request.accountAddress,
                                         SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                         password,
                                         pin)
             } else if (request.method === SessionRequest.methods.personalSign.name) {
                 store.signMessage(request.topic,
-                                  request.id,
+                                  request.requestId,
                                   request.accountAddress,
                                   SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                   password,
@@ -525,7 +524,7 @@ SQUtils.QObject {
             {
                 let legacy = request.method === SessionRequest.methods.signTypedData.name
                 store.safeSignTypedData(request.topic,
-                                        request.id,
+                                        request.requestId,
                                         request.accountAddress,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
                                         request.chainId,
@@ -554,7 +553,7 @@ SQUtils.QObject {
 
                 if (request.method === SessionRequest.methods.signTransaction.name) {
                     store.signTransaction(request.topic,
-                                          request.id,
+                                          request.requestId,
                                           request.accountAddress,
                                           request.chainId,
                                           txObj,
@@ -563,7 +562,7 @@ SQUtils.QObject {
                 } else if (request.method === SessionRequest.methods.sendTransaction.name) {
                     store.sendTransaction(
                                 request.topic,
-                                request.id,
+                                request.requestId,
                                 request.accountAddress,
                                 request.chainId,
                                 txObj,
@@ -571,6 +570,8 @@ SQUtils.QObject {
                                 pin)
                 }
             }
+
+            return true
         }
 
         // Returns Constants.TransactionEstimatedTime

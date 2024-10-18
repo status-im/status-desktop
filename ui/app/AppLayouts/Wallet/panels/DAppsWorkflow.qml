@@ -297,7 +297,7 @@ DappsComboBox {
                     return
                 }
                 requestHandled = true
-                root.signRequestRejected(request.topic, request.id)
+                root.signRequestRejected(request.topic, request.requestId)
             }
 
             parent: root
@@ -347,7 +347,7 @@ DappsComboBox {
             hasExpiryDate: !!request.expirationTimestamp
 
             onOpened: {
-                root.subscribeForFeeUpdates(request.topic, request.id)
+                root.subscribeForFeeUpdates(request.topic, request.requestId)
             }
 
             onClosed: {
@@ -356,7 +356,7 @@ DappsComboBox {
 
             onAccepted: {
                 requestHandled = true
-                root.signRequestAccepted(request.topic, request.id)
+                root.signRequestAccepted(request.topic, request.requestId)
             }
 
             onRejected: {
