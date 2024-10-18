@@ -409,24 +409,24 @@ Item {
             // hardcoded for https://react-app.walletconnect.com/
             function signMessage(topic, id, address, password, message) {
                 console.info(`calling mocked DAppsStore.signMessage(${topic}, ${id}, ${address}, ${password}, ${message})`)
-                return "0x0b083acc1b3b612dd38e8e725b28ce9b2dd4936b4cf7922da4e4a3c6f44f7f4f6d3050ccb41455a2b85093f1bfadb10fc6a75d83bb590b2eb70e3447653459701c"
+                signingResult(topic, id, "0xca49ddfba1279d246f1c22b2002fbd1a51faf27956264b476f26505ad729cc3a17958d30e11aff33b2420e20a4647076d3a98fa6c12ed142aa75dee7063a5dc601")
             }
 
             // hardcoded for https://react-app.walletconnect.com/
             function safeSignTypedData(topic, id, address, password, typedDataJson, chainId, legacy) {
                 console.info(`calling mocked DAppsStore.safeSignTypedData(${topic}, ${id}, ${address}, ${password}, ${typedDataJson}, ${chainId}, ${legacy})`)
-                return "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b"
+                signingResult(topic, id, "0xf8ceb3468319cc215523b67c24c4504b3addd9bf8de31c278038d7478c9b6de554f7d8a516cd5d6a066b7d48b81f03d9d6bb7d5d754513c08325674ebcc7efbc1b")
             }
 
             // hardcoded for https://react-app.walletconnect.com/
             function signTransaction(topic, id, address, chainId, password, tx) {
                 console.info(`calling mocked DAppsStore.signTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
-                return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe06866ca8e35273ba8a80808401546d71a04fc89c2f007c3b27d0fcff07d3e69c29f940967fab4caf525f9af72dadb48befa00c5312a3cb6f50328889ad361a0c88bb9d1b1a4fc510f6783b287930b4e187b5"
+                signingResult(topic, id, "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe06866ca8e35273ba8a80808401546d71a04fc89c2f007c3b27d0fcff07d3e69c29f940967fab4caf525f9af72dadb48befa00c5312a3cb6f50328889ad361a0c88bb9d1b1a4fc510f6783b287930b4e187b5")
             }
 
             function sendTransaction(topic, id, address, chainId, password, tx) {
                 console.info(`calling mocked DAppsStore.sendTransaction(${topic}, ${id}, ${address}, ${chainId}, ${password}, ${tx})`)
-                return "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe068"
+                signingResult(topic, id, "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe068")
             }
 
             function getEstimatedTime(chainId, maxFeePerGas) {
