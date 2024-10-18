@@ -34,6 +34,8 @@ import AppLayouts.Communities.stores 1.0 as CommunitiesStore
 StatusSectionLayout {
     id: root
 
+    property alias settingsSubsection: profileContainer.currentIndex
+
     objectName: "profileStatusSectionLayout"
 
     property SharedStores.RootStore sharedRootStore
@@ -56,7 +58,7 @@ StatusSectionLayout {
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
-        switch (Global.settingsSubsection) {
+        switch (root.settingsSubsection) {
         case Constants.settingsSubsection.contacts:
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
             break;
@@ -75,8 +77,7 @@ StatusSectionLayout {
     }
 
     Component.onCompleted: {
-        profileContainer.currentIndex = -1
-        profileContainer.currentIndex = Qt.binding(() => Global.settingsSubsection)
+        profileContainer.currentIndexChanged()
         root.store.devicesStore.loadDevices() // Load devices to get non-paired number for badge
     }
 
@@ -109,6 +110,12 @@ StatusSectionLayout {
                 profileContainer.currentItem.notifyDirty();
             }
         }
+
+        onSettingsSubsectionChanged: root.settingsSubsection = settingsSubsection
+
+        Binding on settingsSubsection {
+            value: root.settingsSubsection
+        }
     }
 
     centerPanel: StackLayout {
@@ -118,8 +125,6 @@ StatusSectionLayout {
 
         anchors.fill: parent
         anchors.leftMargin: Constants.settingsSection.leftMargin
-
-        currentIndex: Global.settingsSubsection
 
         onCurrentIndexChanged: {
             if (!!children[currentIndex] && !children[currentIndex].active)
