@@ -40,21 +40,21 @@ pipeline {
 
   stages {
     stage('Build StatusQ Tests') {
-      steps {
+      steps { script {
         nix.shell('make statusq-tests', pure: true)
-      }
+      } }
     }
 
     stage('Build StatusQ Sanity Checker') {
-      steps {
+      steps { script {
         nix.shell('make statusq-sanity-checker', pure: true)
-      }
+      } }
     }
 
     stage('Build Storybook') {
-      steps {
+      steps { script {
         nix.shell('make storybook-build', pure: true)
-      }
+      } }
     }
 
     stage('Check StatusQ Tests') {
