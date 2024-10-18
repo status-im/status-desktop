@@ -147,7 +147,7 @@ Item {
 
         function onActiveSectionChanged() {
             createChatView.opened = false
-            Global.settingsSubSubsection = -1
+            profileLoader.settingsSubSubsection = -1
         }
 
         function onOpenActivityCenter() {
@@ -502,7 +502,7 @@ Item {
 
             if (sectionType === Constants.appSection.profile) {
                 profileLoader.settingsSubsection = subsection
-                Global.settingsSubSubsection = subSubsection;
+                profileLoader.settingsSubSubsection = subSubsection;
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
             }
@@ -1435,6 +1435,7 @@ Item {
                         id: profileLoader
 
                         property int settingsSubsection: Constants.settingsSubsection.profile
+                        property int settingsSubSubsection: -1
 
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
@@ -1452,6 +1453,7 @@ Item {
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
+                            settingsSubSubsection: profileLoader.settingsSubSubsection
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection
