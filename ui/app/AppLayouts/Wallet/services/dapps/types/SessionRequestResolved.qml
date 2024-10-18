@@ -17,7 +17,7 @@ QObject {
 
     /// dApp request data
     required property string topic
-    required property string id
+    required property string requestId
     required property string method
     required property string accountAddress
     required property string chainId

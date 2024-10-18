@@ -85,7 +85,7 @@ WalletConnectSDKBase {
             let obj = sessionRequestComponent.createObject(null, {
                 event,
                 topic: event.topic,
-                id: event.id,
+                requestId: event.id,
                 method,
                 accountAddress,
                 chainId,
@@ -93,7 +93,7 @@ WalletConnectSDKBase {
                 preparedData: interpreted.preparedData,
                 maxFeesText: "?",
                 maxFeesEthText: "?",
-                enoughFunds: enoughFunds
+                haveEnoughFunds: enoughFunds
             })
 
             if (obj === null) {
@@ -132,14 +132,14 @@ WalletConnectSDKBase {
                     let maxFeesString = maxFees.toString()
                     obj.maxFeesText = maxFeesString
                     obj.maxFeesEthText = maxFeesString
-                    obj.enoughFunds = true
+                    obj.haveEnoughFunds = true
                 } else {
                     let gasPrice = hexToGwei(tx.gasPrice)
                     let maxFees = BigOps.times(gasLimit, gasPrice)
                     let maxFeesString = maxFees.toString()
                     obj.maxFeesText = maxFeesString
                     obj.maxFeesEthText = maxFeesString
-                    obj.enoughFunds = true
+                    obj.haveEnoughFunds = true
                 }
             }
 
@@ -363,14 +363,14 @@ WalletConnectSDKBase {
 
             if (request.method === SessionRequest.methods.sign.name) {
                 store.signMessageUnsafe(request.topic,
-                                        request.id,
+                                        request.requestId,
                                         request.accountAddress,
                                         SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                         password,
                                         pin)
             } else if (request.method === SessionRequest.methods.personalSign.name) {
                 store.signMessage(request.topic,
-                                  request.id,
+                                  request.requestId,
                                   request.accountAddress,
                                   SessionRequest.methods.personalSign.getMessageFromData(request.data),
                                   password,
@@ -380,7 +380,7 @@ WalletConnectSDKBase {
             {
                 let legacy = request.method === SessionRequest.methods.signTypedData.name
                 store.safeSignTypedData(request.topic,
-                                        request.id,
+                                        request.requestId,
                                         request.accountAddress,
                                         SessionRequest.methods.signTypedData.getMessageFromData(request.data),
                                         request.chainId,
@@ -390,7 +390,7 @@ WalletConnectSDKBase {
             } else if (request.method === SessionRequest.methods.signTransaction.name) {
                 let txObj = SessionRequest.methods.signTransaction.getTxObjFromData(request.data)
                 store.signTransaction(request.topic,
-                                      request.id,
+                                      request.requestId,
                                       request.accountAddress,
                                       request.chainId,
                                       txObj,
@@ -398,9 +398,9 @@ WalletConnectSDKBase {
                                       pin)
             } else if (request.method === SessionRequest.methods.sendTransaction.name) {
                 store.sendTransaction(request.topic,
-                                      request.id,
-                                      request.account.address,
-                                      request.network.chainId,
+                                      request.requestId,
+                                      request.accountAddress,
+                                      request.chainId,
                                       request.data.tx,
                                       password,
                                       pin)
@@ -444,7 +444,7 @@ WalletConnectSDKBase {
         }
 
         function authenticate(request) {
-            return store.authenticateUser(request.topic, request.id, request.account.address)
+            return store.authenticateUser(request.topic, request.requestId, request.accountAddress)
         }
     }
 
@@ -544,14 +544,14 @@ WalletConnectSDKBase {
             id: dappRequestModal
             objectName: "connectorDappsRequestModal"
 
-            readonly property var account: accountEntry.available ? accountEntry.model : {
+            readonly property var account: accountEntry.available ? accountEntry.item : {
                 "address": "",
                 "name": "",
                 "emoji": "",
                 "colorId": 0
             }
 
-            readonly property var network: networkEntry.available ? networkEntry.model : {
+            readonly property var network: networkEntry.available ? networkEntry.item : {
                 "chainId": 0,
                 "chainName": "",
                 "iconUrl": ""
@@ -579,8 +579,8 @@ WalletConnectSDKBase {
             estimatedTime: ""
             feesLoading: !request.maxFeesText || !request.maxFeesEthText
             hasFees: signingTransaction
-            enoughFundsForTransaction: request.enoughFunds
-            enoughFundsForFees: request.enoughFunds
+            enoughFundsForTransaction: request.haveEnoughFunds
+            enoughFundsForFees: request.haveEnoughFunds
 
             signingTransaction: request.method === SessionRequest.methods.signTransaction.name || request.method === SessionRequest.methods.sendTransaction.name
 
