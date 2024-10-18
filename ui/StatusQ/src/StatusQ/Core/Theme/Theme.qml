@@ -18,7 +18,7 @@ QtObject {
     readonly property ThemePalette statusQLightTheme: StatusLightTheme {}
     readonly property ThemePalette statusQDarkTheme: StatusDarkTheme {}
 
-    readonly property string sqAssetPath: Qt.resolvedUrl("../../../assets/")
+    readonly property string assetPath: Qt.resolvedUrl("../../../assets/")
 
     function changeTheme(theme:int, isCurrentSystemThemeDark:bool) {
         switch (theme) {
@@ -41,15 +41,15 @@ QtObject {
     }
 
     readonly property var baseFont: FontLoader {
-        source: sqAssetPath + "fonts/Inter/Inter-Regular.otf"
+        source: assetPath + "fonts/Inter/Inter-Regular.otf"
     }
 
     readonly property var monoFont: FontLoader {
-        source: sqAssetPath + "fonts/InterStatus/InterStatus-Regular.otf"
+        source: assetPath + "fonts/InterStatus/InterStatus-Regular.otf"
     }
 
     readonly property var codeFont: FontLoader {
-        source: sqAssetPath + "fonts/RobotoMono/RobotoMono-Regular.ttf"
+        source: assetPath + "fonts/RobotoMono/RobotoMono-Regular.ttf"
     }
 
     readonly property var _d: QtObject {
@@ -57,81 +57,81 @@ QtObject {
 
         // Inter font variants
         property var baseFontThin: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-Thin.otf"
+            source: assetPath + "fonts/Inter/Inter-Thin.otf"
         }
 
         property var baseFontExtraLight: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-ExtraLight.otf"
+            source: assetPath + "fonts/Inter/Inter-ExtraLight.otf"
         }
 
         property var baseFontLight: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-Light.otf"
+            source: assetPath + "fonts/Inter/Inter-Light.otf"
         }
 
         property var baseFontMedium: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-Medium.otf"
+            source: assetPath + "fonts/Inter/Inter-Medium.otf"
         }
 
         property var baseFontBold: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-Bold.otf"
+            source: assetPath + "fonts/Inter/Inter-Bold.otf"
         }
 
         property var baseFontExtraBold: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-ExtraBold.otf"
+            source: assetPath + "fonts/Inter/Inter-ExtraBold.otf"
         }
 
         property var baseFontBlack: FontLoader {
-            source: sqAssetPath + "fonts/Inter/Inter-Black.otf"
+            source: assetPath + "fonts/Inter/Inter-Black.otf"
         }
 
         // Inter Status font variants
         property var monoFontThin: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-Thin.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-Thin.otf"
         }
 
         property var monoFontExtraLight: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-ExtraLight.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-ExtraLight.otf"
         }
 
         property var monoFontLight: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-Light.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-Light.otf"
         }
 
         property var monoFontMedium: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-Medium.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-Medium.otf"
         }
 
         property var monoFontBold: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-Bold.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-Bold.otf"
         }
 
         property var monoFontExtraBold: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-ExtraBold.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-ExtraBold.otf"
         }
 
         property var monoFontBlack: FontLoader {
-            source: sqAssetPath + "fonts/InterStatus/InterStatus-Black.otf"
+            source: assetPath + "fonts/InterStatus/InterStatus-Black.otf"
         }
 
         // Roboto font variants
         property var codeFontThin: FontLoader {
-            source: sqAssetPath + "fonts/RobotoMono/RobotoMono-Thin.ttf"
+            source: assetPath + "fonts/RobotoMono/RobotoMono-Thin.ttf"
         }
 
         property var codeFontExtraLight: FontLoader {
-            source: sqAssetPath + "fonts/RobotoMono/RobotoMono-ExtraLight.ttf"
+            source: assetPath + "fonts/RobotoMono/RobotoMono-ExtraLight.ttf"
         }
 
         property var codeFontLight: FontLoader {
-            source: sqAssetPath + "fonts/RobotoMono/RobotoMono-Light.ttf"
+            source: assetPath + "fonts/RobotoMono/RobotoMono-Light.ttf"
         }
 
         property var codeFontMedium: FontLoader {
-            source: sqAssetPath + "fonts/RobotoMono/RobotoMono-Medium.ttf"
+            source: assetPath + "fonts/RobotoMono/RobotoMono-Medium.ttf"
         }
 
         property var codeFontBold: FontLoader {
-            source: sqAssetPath + "fonts/RobotoMono/RobotoMono-Bold.ttf"
+            source: assetPath + "fonts/RobotoMono/RobotoMono-Bold.ttf"
         }
     }
 
@@ -208,17 +208,13 @@ QtObject {
     }
 
     // Style compat
-    readonly property string assetPath: Qt.resolvedUrl("../../../../../imports/assets/")
     function png(name) {
         return assetPath + "png/" + name + ".png"
     }
     function svg(name) {
-        return assetPath + "icons/" + name + ".svg"
+        return assetPath + "img/icons/" + name + ".svg"
     }
     function emoji(name) {
-        return "qrc:/StatusQ/src/assets/twemoji/svg/" + name + ".svg"
-    }
-    function gif(name) {
-        return assetPath + "gif/" + name + ".gif"
+        return assetPath + "twemoji/svg/" + name + ".svg"
     }
 }

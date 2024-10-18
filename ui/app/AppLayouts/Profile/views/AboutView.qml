@@ -53,11 +53,11 @@ SettingsContentBase {
 
         Column {
             Layout.fillWidth: true
-            StatusIcon {
+            StatusImage {
                 id: statusIcon
                 width: 80
                 height: 80
-                icon: root.store.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
+                source: root.store.isProduction ? Theme.png("status-logo-circle") : Theme.png("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
