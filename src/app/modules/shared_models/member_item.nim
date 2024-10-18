@@ -26,19 +26,17 @@ proc initMemberItem*(
   colorId: int,
   colorHash: string = "",
   onlineStatus: OnlineStatus = OnlineStatus.Inactive,
+  isCurrentUser: bool = false,
   isContact: bool = false,
-  isVerified: bool,
-  isUntrustworthy: bool = false,
+  trustStatus: TrustStatus = TrustStatus.Unknown,
   isBlocked: bool = false,
   contactRequest: ContactRequest = ContactRequest.None,
-  incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
-  outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   memberRole: MemberRole = MemberRole.None,
   joined: bool = false,
   requestToJoinId: string = "",
   requestToJoinLoading: bool = false,
   airdropAddress: string = "",
-  membershipRequestState: MembershipRequestState = MembershipRequestState.None
+  membershipRequestState: MembershipRequestState = MembershipRequestState.None,
 ): MemberItem =
   result = MemberItem()
   result.memberRole = memberRole
@@ -59,12 +57,10 @@ proc initMemberItem*(
     colorHash = colorHash,
     onlineStatus = onlineStatus,
     isContact = isContact,
-    isVerified = isVerified,
-    isUntrustworthy = isUntrustworthy,
+    isCurrentUser = isCurrentUser,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
-    incomingVerificationStatus = incomingVerificationStatus,
-    outgoingVerificationStatus = outgoingVerificationStatus
+    trustStatus = trustStatus,
   )
 
 proc `$`*(self: MemberItem): string =
@@ -81,12 +77,9 @@ proc `$`*(self: MemberItem): string =
     colorHash: {self.colorHash},
     onlineStatus: {$self.onlineStatus.int},
     isContact: {self.isContact},
-    isVerified: {self.isVerified},
-    isUntrustworthy: {self.isUntrustworthy},
+    trustStatus: {self.trustStatus.int},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
-    incomingVerificationStatus: {$self.incomingVerificationStatus.int},
-    outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     memberRole: {self.memberRole},
     joined: {self.joined},
     requestToJoinId: {self.requestToJoinId},

@@ -23,10 +23,9 @@ type
     IsContact
     IsVerified
     IsUntrustworthy
+    TrustStatus
     IsBlocked
     ContactRequest
-    IncomingVerificationStatus
-    OutgoingVerificationStatus
     MemberRole
     Joined
     RequestToJoinId
@@ -93,10 +92,9 @@ QtObject:
       ModelRole.IsContact.int: "isContact",
       ModelRole.IsVerified.int: "isVerified",
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
+      ModelRole.TrustStatus.int: "trustStatus",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
-      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.MemberRole.int: "memberRole",
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
@@ -142,17 +140,15 @@ QtObject:
     of ModelRole.IsContact:
       result = newQVariant(item.isContact)
     of ModelRole.IsVerified:
-      result = newQVariant(item.isVerified)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Trusted)
     of ModelRole.IsUntrustworthy:
-      result = newQVariant(item.isUntrustworthy)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Untrustworthy)
+    of ModelRole.TrustStatus:
+      result = newQVariant(item.trustStatus.int)
     of ModelRole.IsBlocked:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerificationStatus:
-      result = newQVariant(item.incomingVerificationStatus.int)
-    of ModelRole.OutgoingVerificationStatus:
-      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
     of ModelRole.Joined:
@@ -265,10 +261,9 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
       memberRole: MemberRole,
       joined: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
       ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
@@ -279,6 +274,8 @@ QtObject:
     let preferredDisplayNameChanged =
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
+
+    let trustStatusChanged = trustStatus != self.items[ind].trustStatus
 
     if self.items[ind].displayName != displayName:
       self.items[ind].displayName = displayName
@@ -308,10 +305,6 @@ QtObject:
       self.items[ind].isContact = isContact
       roles.add(ModelRole.IsContact.int)
 
-    if self.items[ind].isVerified != isVerified:
-      self.items[ind].isVerified = isVerified
-      roles.add(ModelRole.IsVerified.int)
-
     if self.items[ind].memberRole != memberRole:
       self.items[ind].memberRole = memberRole
       roles.add(ModelRole.MemberRole.int)
@@ -320,12 +313,16 @@ QtObject:
       self.items[ind].joined = joined
       roles.add(ModelRole.Joined.int)
 
-    if self.items[ind].isUntrustworthy != isUntrustworthy:
-      self.items[ind].isUntrustworthy = isUntrustworthy
-      roles.add(ModelRole.IsUntrustworthy.int)
+    if self.items[ind].trustStatus != trustStatus:
+      self.items[ind].trustStatus = trustStatus
+      roles.add(ModelRole.TrustStatus.int)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
+
+    if trustStatusChanged:
+      roles.add(ModelRole.IsUntrustworthy.int)
+      roles.add(ModelRole.IsVerified.int)
 
     if roles.len == 0:
       return
@@ -344,8 +341,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
       ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
@@ -360,10 +356,9 @@ QtObject:
       alias,
       icon,
       isContact,
-      isVerified,
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
-      isUntrustworthy,
+      trustStatus,
     )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =

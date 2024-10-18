@@ -153,7 +153,6 @@ SplitView {
                 removed: false,
                 trustStatus: Constants.trustStatus.unknown,
                 verificationStatus: Constants.verificationStatus.unverified,
-                incomingVerificationStatus: Constants.verificationStatus.unverified
             })
         }
 

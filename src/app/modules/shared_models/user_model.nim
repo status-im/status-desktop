@@ -22,8 +22,6 @@ type
     IsUntrustworthy
     IsBlocked
     ContactRequest
-    IncomingVerificationStatus
-    OutgoingVerificationStatus
     IsCurrentUser
     DefaultDisplayName
     OptionalName
@@ -99,8 +97,6 @@ QtObject:
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
-      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.IsCurrentUser.int: "isCurrentUser",
       ModelRole.DefaultDisplayName.int: "defaultDisplayName",
       ModelRole.OptionalName.int: "optionalName",
@@ -153,17 +149,13 @@ QtObject:
     of ModelRole.IsContact:
       result = newQVariant(item.isContact)
     of ModelRole.IsVerified:
-      result = newQVariant(item.isVerified)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Trusted)
     of ModelRole.IsUntrustworthy:
-      result = newQVariant(item.isUntrustworthy)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Untrustworthy)
     of ModelRole.IsBlocked:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerificationStatus:
-      result = newQVariant(item.incomingVerificationStatus.int)
-    of ModelRole.OutgoingVerificationStatus:
-      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.IsCurrentUser:
       result = newQVariant(item.isCurrentUser)
     of ModelRole.DefaultDisplayName:
@@ -316,8 +308,8 @@ QtObject:
       localNickname: string,
       alias: string,
       icon: string,
-      isUntrustworthy: bool = false,
-      ) =
+      trustStatus: TrustStatus,
+    ) =
     let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
@@ -327,6 +319,8 @@ QtObject:
     let preferredDisplayNameChanged =
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
+
+    let trustStatusChanged = trustStatus != self.items[ind].trustStatus
 
     if self.items[ind].displayName != displayName:
       self.items[ind].displayName = displayName
@@ -352,12 +346,16 @@ QtObject:
       self.items[ind].icon = icon
       roles.add(ModelRole.Icon.int)
 
-    if self.items[ind].isUntrustworthy != isUntrustworthy:
-      self.items[ind].isUntrustworthy = isUntrustworthy
-      roles.add(ModelRole.IsUntrustworthy.int)
+    if self.items[ind].trustStatus != trustStatus:
+      self.items[ind].trustStatus = trustStatus
+      roles.add(ModelRole.TrustStatus.int)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
+
+    if trustStatusChanged:
+      roles.add(ModelRole.IsUntrustworthy.int)
+      roles.add(ModelRole.IsVerified.int)
 
     if roles.len == 0:
       return
@@ -367,50 +365,36 @@ QtObject:
     self.dataChanged(index, index, roles)
     self.itemChanged(pubKey)
 
-  proc updateIncomingRequestStatus*(
-      self: Model,
-      pubKey: string,
-      requestStatus: VerificationRequestStatus
-      ) =
+  proc updateTrustStatus*(self: Model, pubKey: string, trustStatus: TrustStatus) =
     let ind = self.findIndexByPubKey(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    self.items[ind].incomingVerificationStatus = requestStatus
+    if self.items[ind].trustStatus == trustStatus:
+      return
+
+    self.items[ind].trustStatus = trustStatus
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.IncomingVerificationStatus.int
-    ])
+    self.dataChanged(index, index, @[ModelRole.TrustStatus.int, ModelRole.IsUntrustworthy.int, ModelRole.IsVerified.int])
     self.itemChanged(pubKey)
 
-  proc updateTrustStatus*(self: Model, pubKey: string, isUntrustworthy: bool) =
+  proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
     let ind = self.findIndexByPubKey(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    let first = self.createIndex(ind, 0, nil)
-    let last = self.createIndex(ind, 0, nil)
-    defer: first.delete
-    defer: last.delete
-    self.items[ind].isUntrustworthy = isUntrustworthy
-    self.dataChanged(first, last, @[ModelRole.IsUntrustworthy.int])
+    if self.items[ind].onlineStatus == onlineStatus:
+      return
+
+    self.items[ind].onlineStatus = onlineStatus
+
+    let index = self.createIndex(ind, 0, nil)
+    defer: index.delete
+    self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
     self.itemChanged(pubKey)
 
-  proc setOnlineStatus*(self: Model, pubKey: string,
-      onlineStatus: OnlineStatus) =
-    let ind = self.findIndexByPubKey(pubKey)
-    if(ind == -1):
-      return
-
-    if(self.items[ind].onlineStatus == onlineStatus):
-      return
-
-    var item = self.items[ind]
-    item.onlineStatus = onlineStatus
-    self.removeItemWithIndex(ind)
-    self.addItem(item)
 
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =

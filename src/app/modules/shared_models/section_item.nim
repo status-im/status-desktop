@@ -311,10 +311,19 @@ proc updateMember*(
     alias: string,
     image: string,
     isContact: bool,
-    isVerified: bool,
-    isUntrustworthy: bool) =
-  self.membersModel.updateItem(pubkey, name, ensName, isEnsVerified, nickname, alias, image, isContact,
-    isVerified, isUntrustworthy)
+    trustStatus: TrustStatus,
+  ) =
+  self.membersModel.updateItem(
+    pubkey,
+    name,
+    ensName,
+    isEnsVerified,
+    nickname,
+    alias,
+    image,
+    isContact,
+    trustStatus,
+  )
 
 proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
   self.bannedMembersModel
