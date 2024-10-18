@@ -70,6 +70,7 @@ StatusListItem {
 
     components: [
         StatusFlatButton {
+            objectName: "idVerifyBtn"
             visible: verificationRequestStatus === Constants.verificationStatus.verifying ||
                 verificationRequestStatus === Constants.verificationStatus.verified
             width: visible ? implicitWidth : 0
@@ -81,6 +82,7 @@ StatusListItem {
             onClicked: root.showVerificationRequest(root.publicKey)
         },
         StatusFlatRoundButton {
+            objectName: "chatBtn"
             visible: showSendMessageButton
             width: visible ? 32 : 0
             height: visible ? 32 : 0
@@ -89,6 +91,7 @@ StatusListItem {
             onClicked: root.sendMessageActionTriggered(root.publicKey)
         },
         StatusFlatRoundButton {
+            objectName: "declineBtn"
             visible: showRejectContactRequestButton
             width: visible ? 32 : 0
             height: visible ? 32 : 0
@@ -97,6 +100,7 @@ StatusListItem {
             onClicked: root.contactRequestRejected(root.publicKey)
         },
         StatusFlatRoundButton {
+            objectName: "acceptBtn"
             visible: showAcceptContactRequestButton
             width: visible ? 32 : 0
             height: visible ? 32 : 0
@@ -105,6 +109,7 @@ StatusListItem {
             onClicked: root.contactRequestAccepted(root.publicKey)
         },
         StatusFlatRoundButton {
+            objectName: "removeRejectBtn"
             visible: showRemoveRejectionButton
             width: visible ? 32 : 0
             height: visible ? 32 : 0
@@ -128,6 +133,7 @@ StatusListItem {
             }
         },
         StatusFlatRoundButton {
+            objectName: "moreBtn"
             id: menuButton
             width: 32
             height: 32

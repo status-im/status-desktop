@@ -22,6 +22,7 @@ Row {
     signal detailsClicked()
 
     StatusFlatRoundButton {
+        objectName: "declineBtn"
         id: declineBtn
         width: 32
         height: 32
@@ -33,6 +34,7 @@ Row {
     }
 
     StatusFlatRoundButton  {
+        objectName: "acceptBtn"
         id: acceptBtn
         width: 32
         height: 32
@@ -44,6 +46,7 @@ Row {
     }
 
     StatusFlatRoundButton {
+        objectName: "moreBtn"
         id: menuButton
         anchors.verticalCenter: parent.verticalCenter
         width: 32
