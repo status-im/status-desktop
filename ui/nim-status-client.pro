@@ -32,8 +32,17 @@ OTHER_FILES += $$files("$$PWD/*.js", true)
 OTHER_FILES += $$files("$$PWD/../src/*.nim", true)
 OTHER_FILES += $$files("$$PWD/../monitoring/*.qml", true)
 
+OTHER_FILES += $$files("$$PWD/../vendor/DOtherSide/lib/*.cpp", true)
+OTHER_FILES += $$files("$$PWD/../vendor/DOtherSide/lib/*.h", true)
+
+OTHER_FILES += $$files("$$PWD/../vendor/SortFilterProxyModel/*.cpp", true)
+OTHER_FILES += $$files("$$PWD/../vendor/SortFilterProxyModel/*.h", true)
+
+OTHER_FILES += $$files("$$PWD/../vendor/nimqml/src/*.nim", true)
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/imports \
+                  $$PWD/StatusQ \
                   $$PWD/StatusQ/src \
                   $$PWD/app
 
@@ -45,4 +54,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += resources.qrc
+RESOURCES += resources.qrc StatusQ/src/assets.qrc StatusQ/src/statusq.qrc
