@@ -68,6 +68,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
+const SIGNAL_CONTACTS_LOADED* = "contactsLoaded"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "contactBlocked"
 const SIGNAL_CONTACT_UNBLOCKED* = "contactUnblocked"
@@ -142,18 +143,22 @@ QtObject:
     self.contactsStatus[contact.dto.id] = StatusUpdateDto(publicKey: contact.dto.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
+    let arg = AsyncFetchContactsTaskArg(
+      tptr: asyncFetchContactsTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "fetchContactsDone",
+    )
+    self.threadpool.start(arg)
+    
+  proc fetchContactsDone*(self: Service, response: string) {.slot.} =
     try:
-      let response = status_contacts.getContacts()
-
-      let contacts = map(response.result.getElems(), proc(x: JsonNode): ContactsDto = x.toContactsDto())
-
-      for contact in contacts:
-        self.addContact(self.constructContactDetails(contact))
-
+      let rpcResponseObj = response.parseJson
+      for elem in rpcResponseObj["response"]["result"].getElems():
+        let contactDto = elem.toContactsDto()
+        self.addContact(self.constructContactDetails(contactDto))
+      self.events.emit(SIGNAL_CONTACTS_LOADED, Args())
     except Exception as e:
-      let errDesription = e.msg
-      error "error fetching contacts: ", errDesription
-      return
+      error "error fetching contacts", msg = e.msg
 
   proc updateAndEmitStatuses(self: Service, statusUpdates: seq[StatusUpdateDto]) =
     for s in statusUpdates:
@@ -293,15 +298,6 @@ QtObject:
       return
     return status_accounts.generateAlias(publicKey).result.getStr
 
-  proc getTrustStatus*(self: Service, publicKey: string): TrustStatus =
-    try:
-      let t = status_contacts.getTrustStatus(publicKey).result.getInt
-      return t.toTrustStatus()
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return TrustStatus.Unknown
-
   proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
       tuple[name: string, optionalName: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
@@ -334,7 +330,7 @@ QtObject:
     if len(pubkey) == 0:
         return
 
-    if(pubkey == singletonInstance.userProfile.getPubKey()):
+    if pubkey == singletonInstance.userProfile.getPubKey():
       # If we try to get the contact details of ourselves, just return our own info
       return self.constructContactDetails(
         ContactsDto(
@@ -360,18 +356,17 @@ QtObject:
 
     result = self.fetchContact(pubkey)
     if result.dto.id.len == 0:
-      if(not pubkey.startsWith("0x")):
+      if not pubkey.startsWith("0x"):
         debug "id is not in a hex format"
         return
 
       var num64: int64
       let parsedChars = parseHex(pubkey, num64)
-      if(parsedChars != PK_LENGTH_0X_INCLUDED):
+      if parsedChars != PK_LENGTH_0X_INCLUDED:
         debug "id doesn't have expected length"
         return
 
       let alias = self.generateAlias(pubkey)
-      let trustStatus = self.getTrustStatus(pubkey)
       let contact = self.constructContactDetails(
         ContactsDto(
           id: pubkey,
@@ -380,7 +375,7 @@ QtObject:
           added: result.dto.added,
           blocked: result.dto.blocked,
           hasAddedUs: result.dto.hasAddedUs,
-          trustStatus: trustStatus
+          trustStatus: result.dto.trustStatus
         )
       )
       self.addContact(contact)
@@ -562,13 +557,16 @@ QtObject:
     checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
-    let jsonObj = jsonObj.parseJson()
-    let data = ResolvedContactArgs(
-        pubkey: jsonObj["id"].getStr,
-        address: jsonObj["address"].getStr,
-        uuid: jsonObj["uuid"].getStr,
-        reason: jsonObj["reason"].getStr)
-    self.events.emit(SIGNAL_ENS_RESOLVED, data)
+    try:
+      let jsonObj = jsonObj.parseJson()
+      let data = ResolvedContactArgs(
+          pubkey: jsonObj["id"].getStr,
+          address: jsonObj["address"].getStr,
+          uuid: jsonObj["uuid"].getStr,
+          reason: jsonObj["reason"].getStr)
+      self.events.emit(SIGNAL_ENS_RESOLVED, data)
+    except Exception as e:
+      error "error resolving ENS ", msg=e.msg
 
   proc resolveENS*(self: Service, value: string, uuid: string = "", reason = "") =
     if(self.closingApp):
@@ -635,26 +633,29 @@ QtObject:
       error "error in removeTrustStatus request", msg = e.msg
 
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
-    let rpcResponseObj = pubkeyAndRpcResponse.parseJson
-    let publicKey = rpcResponseObj{"publicKey"}.getStr
-    let requestError = rpcResponseObj{"error"}
-    var error : string
+    try:
+      let rpcResponseObj = pubkeyAndRpcResponse.parseJson
+      let publicKey = rpcResponseObj{"publicKey"}.getStr
+      let requestError = rpcResponseObj{"error"}
+      var error : string
 
-    if requestError.kind != JNull:
-      error = requestError.getStr
-    else:
-      let responseError = rpcResponseObj{"response"}{"error"}
-      if responseError.kind != JNull:
-        error = Json.decode($responseError, RpcError).message
+      if requestError.kind != JNull:
+        error = requestError.getStr
+      else:
+        let responseError = rpcResponseObj{"response"}{"error"}
+        if responseError.kind != JNull:
+          error = Json.decode($responseError, RpcError).message
 
-    if len(error) != 0:
-      error "error requesting contact info", msg = error, publicKey
-      self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
-      return
+      if len(error) != 0:
+        error "error requesting contact info", msg = error, publicKey
+        self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
+        return
 
-    let contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: true))
+      let contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
+      self.saveContact(contact)
+      self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: true))
+    except Exception as e:
+      error "error in contact info loaded", msg = e.msg
 
   proc requestContactInfo*(self: Service, pubkey: string) =
     try:

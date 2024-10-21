@@ -143,6 +143,23 @@ proc init*(self: Controller) =
       self.networksService,
     )
 
+  self.events.on(SIGNAL_CONTACTS_LOADED) do(e:Args):
+    self.delegate.onContactsLoaded(
+      self.events,
+      self.settingsService,
+      self.nodeConfigurationService,
+      self.contactsService,
+      self.chatService,
+      self.communityService,
+      self.messageService,
+      self.mailserversService,
+      self.walletAccountService,
+      self.tokenService,
+      self.communityTokensService,
+      self.sharedUrlsService,
+      self.networksService,
+    )
+
   self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
     self.delegate.onChatsLoadingFailed()
 
@@ -532,9 +549,6 @@ proc setCurrentUserStatus*(self: Controller, status: StatusType) =
 
 proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
-
-proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
-  return self.contactsService.getContactsByGroup(group)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =

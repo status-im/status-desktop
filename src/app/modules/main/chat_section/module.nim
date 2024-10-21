@@ -413,18 +413,6 @@ proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
 proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
   return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
 
-method initListOfMyContacts*(self: Module, pubKeys: string) =
-  var myContacts: seq[UserItem]
-  let contacts =  self.controller.getContacts(ContactsGroup.MyMutualContacts)
-  for c in contacts:
-    let item = self.createItemFromPublicKey(c.id)
-    myContacts.add(item)
-
-  self.view.listOfMyContacts().addItems(myContacts)
-
-method clearListOfMyContacts*(self: Module) =
-  self.view.listOfMyContacts().clear()
-
 method load*(self: Module) =
   self.controller.init()
   self.view.load()
@@ -452,7 +440,7 @@ method onChatsLoaded*(
   if self.membersListModule != nil:
     self.membersListModule.load()
 
-  if(not self.controller.isCommunity()):
+  if not self.controller.isCommunity():
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
   else:

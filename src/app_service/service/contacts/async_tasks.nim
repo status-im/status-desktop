@@ -53,9 +53,22 @@ proc lookupContactTask(argEncoded: string) {.gcsafe, nimcall.} =
     error "error lookupContactTask: ", message = e.msg
     arg.finish(output)
 
-#################################################
-# Async request contact info
-#################################################
+type
+  AsyncFetchContactsTaskArg = ref object of QObjectTaskArg
+    pubkey: string
+
+proc asyncFetchContactsTask(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncFetchContactsTaskArg](argEncoded)
+  try:
+    let response = status_contacts.getContacts()
+    arg.finish(%* {
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
 
 type
   AsyncRequestContactInfoTaskArg = ref object of QObjectTaskArg

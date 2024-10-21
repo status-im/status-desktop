@@ -30,6 +30,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_CONTACTS_LOADED) do(e:Args):
+    self.delegate.onContactsLoaded()
+
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactAdded(args.contactId)

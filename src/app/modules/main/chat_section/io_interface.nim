@@ -263,12 +263,6 @@ method createGroupChat*(self: AccessInterface, groupName: string, pubKeys: seq[s
 method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method initListOfMyContacts*(self: AccessInterface, pubKeys: string) {.base.}  =
-  raise newException(ValueError, "No implementation available")
-
-method clearListOfMyContacts*(self: AccessInterface) {.base.}  =
-  raise newException(ValueError, "No implementation available")
-
 method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
