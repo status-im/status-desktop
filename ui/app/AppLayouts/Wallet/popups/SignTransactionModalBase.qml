@@ -120,10 +120,12 @@ StatusDialog {
         id: scrollView
         anchors.fill: parent
         contentWidth: availableWidth
+        contentHeight: content.implicitHeight
         topPadding: 0
         bottomPadding: countdownPill.height
 
         ColumnLayout {
+            id: content
             anchors.left: parent.left
             anchors.leftMargin: 4
             anchors.right: parent.right
