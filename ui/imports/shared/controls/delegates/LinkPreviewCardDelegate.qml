@@ -48,6 +48,7 @@ LinkPreviewCard {
     required property var statusCommunityChannelCommunityPreview
     required property var statusCommunityChannelCommunityPreviewIcon
     required property var statusCommunityChannelCommunityPreviewBanner
+    required property var statusTransactionPreview
 
     //View properties
     type: root.previewType
@@ -90,5 +91,13 @@ LinkPreviewCard {
             activeMembersCount: statusCommunityChannelCommunityPreview && isLocalData ? statusCommunityChannelCommunityPreview.activeMembersCount : -1
             color: statusCommunityChannelCommunityPreview ? statusCommunityChannelCommunityPreview.color : ""
         }
+    }
+    transactionData {
+        txType: statusTransactionPreview ? statusTransactionPreview.txType : ""
+        asset: statusTransactionPreview ? statusTransactionPreview.asset : ""
+        toAsset: statusTransactionPreview ? statusTransactionPreview.toAsset : ""
+        amount: statusTransactionPreview ? statusTransactionPreview.amount : ""
+        chainId: statusTransactionPreview ? statusTransactionPreview.chainId : ""
+        address: statusTransactionPreview ? statusTransactionPreview.address : ""
     }
 }
