@@ -20,4 +20,8 @@ QtObject {
         return (Utils.startsWith0x(value) && Utils.isHex(value) && value.length === Constants.communityIdLength)
                 || d.globalUtilsInst.isCompressedPubKey(value)
     }
+
+    function isCompressedPubKey(pubKey) {
+        return d.globalUtilsInst.isCompressedPubKey(pubKey)
+    }
 }
