@@ -58,7 +58,7 @@ StatusDialog {
             }
             if (!root.utilsStore.isCommunityPublicKey(inputKey))
                 return ""
-            if (!Utils.isCompressedPubKey(inputKey))
+            if (!root.utilsStore.isCompressedPubKey(inputKey))
                 return inputKey
             return Utils.changeCommunityKeyCompression(inputKey)
         }
