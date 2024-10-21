@@ -46,7 +46,7 @@ QtObject {
             return "Hermez"
 
         if(chainId === root.testnetNet)
-            return "Goerli"
+            return "Sepolia"
 
         if(chainId === root.customNet)
             return "Custom"
@@ -97,12 +97,12 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 420,
-                chainName: "Optimism Goerli Testnet",
-                blockExplorerURL: "https://goerli-optimism.etherscan.io/",
+                chainId: 11155420,
+                chainName: "Optimism Sepolia",
+                blockExplorerURL: "https://sepolia-optimism.etherscan.io/",
                 iconUrl: "network/Network=Optimism",
                 chainColor: "#939BA1",
-                shortName: "goOpt",
+                shortName: "oeth",
                 nativeCurrencyName: "Ether",
                 nativeCurrencySymbol: "ETH",
                 nativeCurrencyDecimals: 18,
@@ -121,20 +121,6 @@ QtObject {
                 nativeCurrencySymbol: "ETH",
                 nativeCurrencyDecimals: 18,
                 isTest:  false,
-                layer:   2,
-                isRouteEnabled: true,
-            },
-            {
-                chainId: 421613,
-                chainName: "Arbitrum Goerli",
-                blockExplorerURL: "https://goerli.arbiscan.io/",
-                iconUrl: "network/Network=Arbitrum",
-                chainColor: "#939BA1",
-                shortName: "goArb",
-                nativeCurrencyName: "Ether",
-                nativeCurrencySymbol: "ETH",
-                nativeCurrencyDecimals: 18,
-                isTest:  true,
                 layer:   2,
                 isRouteEnabled: true,
             }]

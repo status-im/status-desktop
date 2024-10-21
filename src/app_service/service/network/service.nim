@@ -140,8 +140,6 @@ proc getAppNetwork*(self: Service): NetworkItem =
   var networkId = Mainnet
   if self.settingsService.areTestNetworksEnabled():
     networkId = Sepolia
-    if self.settingsService.isGoerliEnabled():
-      networkId = Goerli
   let network = self.getNetworkByChainId(networkId)
   if network.isNil:
     # we should not be here ever

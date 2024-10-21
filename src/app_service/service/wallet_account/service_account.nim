@@ -544,14 +544,6 @@ proc toggleTestNetworksEnabled*(self: Service) =
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
-proc toggleIsGoerliEnabled*(self: Service) =
-  discard self.settingsService.toggleIsGoerliEnabled()
-  self.networkService.resetNetworks()
-  let addresses = self.getWalletAddresses()
-  self.buildAllTokens(addresses, store = true)
-  self.checkRecentHistory(addresses)
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
-
 proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =
   try:
     var account = self.getAccountByAddress(address)
@@ -748,9 +740,6 @@ proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
 
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()
-
-proc isGoerliEnabled*(self: Service): bool =
-  return self.settingsService.isGoerliEnabled()
 
 proc hasPairedDevices*(self: Service): bool =
   return hasPairedDevices()
