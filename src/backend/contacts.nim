@@ -83,10 +83,6 @@ proc removeTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]
   result = callPrivateRPC("removeTrustStatus".prefix, payload)
 
-proc getTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey]
-  result = callPrivateRPC("getTrustStatus".prefix, payload)
-
 proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %*[{
     "id": pubkey

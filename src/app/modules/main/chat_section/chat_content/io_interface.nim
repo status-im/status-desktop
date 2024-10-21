@@ -89,9 +89,6 @@ method unpinMessage*(self: AccessInterface, messageId: string) {.base.} =
 method getMyChatId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isMyContact*(self: AccessInterface, contactId: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method muteChat*(self: AccessInterface, interval: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

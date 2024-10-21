@@ -66,9 +66,6 @@ QtObject:
   proc getMyChatId*(self: View): string {.slot.} =
     return self.delegate.getMyChatId()
 
-  proc isMyContact*(self: View, contactId: string): bool {.slot.} =
-    return self.delegate.isMyContact(contactId)
-
   proc muteChat*(self: View, interval: int) {.slot.} =
     self.delegate.muteChat(interval)
 

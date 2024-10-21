@@ -118,6 +118,10 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  self.moduleLoaded = true
+  self.delegate.contactsModuleDidLoad()
+
+method onContactsLoaded*(self: Module) =
   self.buildModel(self.view.contactsModel(), ContactsGroup.AllKnownContacts)
   self.buildModel(self.view.myMutualContactsModel(), ContactsGroup.MyMutualContacts)
   self.buildModel(self.view.blockedContactsModel(), ContactsGroup.BlockedContacts)
@@ -126,9 +130,6 @@ method viewDidLoad*(self: Module) =
   # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
   # self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
   # self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-
-  self.moduleLoaded = true
-  self.delegate.contactsModuleDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant

@@ -117,6 +117,7 @@ type
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
+    contactsLoaded: bool
     pendingSpectateRequest: SpectateRequest
     statusDeepLinkToActivate: string
 
@@ -195,6 +196,7 @@ proc newModule*[T](
   result.moduleLoaded = false
   result.chatsLoaded = false
   result.communityDataLoaded = false
+  result.contactsLoaded = false
 
   result.events = events
   result.urlsManager = urlsManager
@@ -619,6 +621,9 @@ method load*[T](
   else:
     self.setActiveSection(activeSection)
 
+proc isEverythingLoaded[T](self: Module[T]): bool =
+  return self.communityDataLoaded and self.chatsLoaded and self.contactsLoaded
+
 method onChatsLoaded*[T](
   self: Module[T],
   events: EventEmitter,
@@ -636,11 +641,9 @@ method onChatsLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.chatsLoaded = true
-  if not self.communityDataLoaded:
+  if not self.isEverythingLoaded:
     return
-
   let myPubKey = singletonInstance.userProfile.getPubKey()
-
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
@@ -752,7 +755,43 @@ method onCommunityDataLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.communityDataLoaded = true
-  if not self.chatsLoaded:
+  if not self.isEverythingLoaded:
+    return
+
+  self.onChatsLoaded(
+    events,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService,
+    sharedUrlsService,
+    networkService,
+  )
+
+method onContactsLoaded*[T](
+  self: Module[T],
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service,
+  sharedUrlsService: urls_service.Service,
+  networkService: network_service.Service,
+) =
+  self.contactsLoaded = true
+  if not self.isEverythingLoaded:
     return
 
   self.onChatsLoaded(
