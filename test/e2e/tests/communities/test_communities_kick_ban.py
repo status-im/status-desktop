@@ -6,7 +6,7 @@ from allure_commons._allure import step
 
 import driver
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
-from constants.community_settings import ToastMessages
+from constants.community import ToastMessages
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
 from . import marks
@@ -15,49 +15,6 @@ import configs.testpath
 from gui.main_window import MainWindow
 
 pytestmark = marks
-
-
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703630', 'Create community')
-@pytest.mark.case(703630)
-def test_create_community(user_account, main_screen: MainWindow):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
-
-    with step('Open create community popup'):
-        communities_portal = main_screen.left_panel.open_communities_portal()
-        create_community_form = communities_portal.open_create_community_popup()
-
-    with step('Verify fields of create community popup and create community'):
-        community = RandomCommunity()
-        community_screen = create_community_form.create_community(community_data=community)
-
-    with step('Verify community parameters in community overview'):
-        assert community_screen.left_panel.name == community.name
-        assert '1' in community_screen.left_panel.members
-
-    with step('Verify General channel is present for recently created community'):
-        community_screen.verify_channel(
-            'general',
-            'General channel for the community',
-            None
-        )
-
-    with step('Verify community parameters in community settings view'):
-        community_setting = community_screen.left_panel.open_community_settings()
-        overview_setting = community_setting.left_panel.open_overview()
-        assert overview_setting.name == community.name
-        assert overview_setting.description == community.description
-        members_settings = community_setting.left_panel.open_members()
-        assert user_account.name in members_settings.members
-
-    with step('Verify community parameters in community settings screen'):
-        settings_screen = main_screen.left_panel.open_settings()
-        community_settings = settings_screen.left_panel.open_communities_settings()
-        community = community_settings.get_community_info(community.name)
-        assert community.name == community.name
-        assert community.description == community.description
-        assert '1' in community.members
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703252', 'Kick user')

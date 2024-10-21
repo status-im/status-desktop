@@ -6,7 +6,7 @@ import configs
 import constants
 import driver
 from constants import permission_data_member, RandomCommunity
-from constants.community_settings import LimitWarnings
+from constants.community import LimitWarnings
 from gui.main_window import MainWindow
 from . import marks
 

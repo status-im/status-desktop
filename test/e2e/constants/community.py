@@ -72,3 +72,8 @@ class BlockPopupWarnings(Enum):
     UNBLOCK_TEXT_1 = 'Unblocking '
     UNBLOCK_TEXT_2 = ' will allow new messages you receive from '
     UNBLOCK_TEXT_3 = ' to reach you.'
+
+
+class Channel(Enum):
+    DEFAULT_CHANNEL_NAME = 'general'
+    DEFAULT_CHANNEL_DESC = 'General channel for the community'

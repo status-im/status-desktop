@@ -9,6 +9,7 @@ mainWindow_Create_New_Community_StatusButton = {"checkable": False, "container":
 
 # Community View
 mainWindow_communityLoader_Loader = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
+
 # Left Panel
 mainWindow_communityColumnView_CommunityColumnView = {"container": mainWindow_communityLoader_Loader, "objectName": "communityColumnView", "type": "CommunityColumnView", "visible": True}
 mainWindow_communityHeaderButton_StatusChatInfoButton = {"checkable": False, "container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
@@ -43,6 +44,7 @@ add_channels_StatusButton = {"checkable": False, "container": mainWindow_scrollV
 scrollView_general_StatusChatListItem = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "general", "type": "StatusChatListItem", "visible": True}
 invite_People_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "invitePeople", "type": "StatusMenuItem", "visible": True}
 mute_Community_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "StatusMenuItemDelegate", "type": "StatusMenuItem", "visible": True}
+leave_Community_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "leaveCommunityMenuItem", "type": "StatusMenuItem", "visible": True}
 
 # Tool Bar
 mainWindow_statusToolBar_StatusToolBar = {"container": mainWindow_StatusWindow, "objectName": "statusToolBar", "type": "StatusToolBar", "visible": True}
@@ -78,6 +80,7 @@ mainWindow_OverviewSettingsPanel = {"container": mainWindow_communityLoader_Load
 communityOverviewSettingsCommunityName_StatusBaseText = {"container": mainWindow_OverviewSettingsPanel, "objectName": "communityOverviewSettingsCommunityName", "type": "StatusBaseText", "visible": True}
 communityOverviewSettingsCommunityDescription_StatusBaseText = {"container": mainWindow_OverviewSettingsPanel,  "objectName": "communityOverviewSettingsCommunityDescription", "type": "StatusBaseText", "visible": True}
 mainWindow_Edit_Community_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "communityOverviewSettingsEditCommunityButton", "type": "StatusButton", "visible": True}
+
 # Members Settings View
 mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "MembersSettingsPanel", "unnamed": 1, "visible": True}
 membersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
@@ -236,3 +239,6 @@ statusBadge_StatusBadge = {"container": userListPanel_StatusMemberListItem, "id"
 mainWindow_membersTabBar_StatusTabBar = {"container": statusDesktop_mainWindow, "id": "membersTabBar", "type": "StatusTabBar", "unnamed": 1, "visible": True}
 membersTabBar_Banned_StatusTabButton = {"checkable": True, "container": mainWindow_membersTabBar_StatusTabBar, "objectName": "bannedButton", "type": "StatusTabButton", "visible": True}
 membersTabBar_All_Members_StatusTabButton = {"checkable": True, "container": mainWindow_membersTabBar_StatusTabBar, "objectName": "allMembersButton", "type": "StatusTabButton", "visible": True}
+
+# Context menu
+leaveCommunityContextMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "CommunitiesListPanel_leaveCommunityButtonInPopup", "type": "StatusButton", "visible": True}

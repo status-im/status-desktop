@@ -5,7 +5,7 @@ from allure_commons._allure import step
 import constants
 import driver
 from constants import UserAccount, RandomUser
-from constants.community_settings import BlockPopupWarnings, ToastMessages
+from constants.community import BlockPopupWarnings, ToastMessages
 from gui.main_window import MainWindow
 import configs
 from gui.screens.messages import ToolBar
