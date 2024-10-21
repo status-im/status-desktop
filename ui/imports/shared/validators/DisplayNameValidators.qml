@@ -3,10 +3,13 @@ import QtQuick 2.15
 import StatusQ.Controls.Validators 0.1
 
 import AppLayouts.Communities.stores 1.0
+import shared.stores 1.0
 import utils 1.0
 
 QtObject {
     id: root
+
+    property UtilsStore utilsStore
 
     /**
       * communitiesStore and myDisplayName are optional. When provided
@@ -43,7 +46,7 @@ QtObject {
         },
         StatusValidator {
             name: "isAliasValidator"
-            validate: function (t) { return !Utils.isAlias(t) }
+            validate: function (t) { return !root.utilsStore.isAlias(t) }
             errorMessage: qsTr("Adjective-animal Display Name formats are not allowed")
         },
         StatusValidator {

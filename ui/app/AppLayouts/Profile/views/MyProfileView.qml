@@ -33,6 +33,7 @@ SettingsContentBase {
     property ProfileStore profileStore
     property ContactsStore contactsStore
     property CommunitiesStore communitiesStore
+    property UtilsStore utilsStore
 
     property bool sendToAccountEnabled: false
 
@@ -303,6 +304,7 @@ SettingsContentBase {
                 DisplayNameValidators {
                     id: displayNameValidators
 
+                    utilsStore: root.utilsStore
                     myDisplayName: root.profileStore.name
                     communitiesStore: root.communitiesStore
                 }
