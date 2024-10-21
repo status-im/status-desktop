@@ -99,13 +99,10 @@ QtObject {
         return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }
 
-    function requestCommunityInfo(communityKey, shardCluster, shardIndex, importing = false) {
-        const publicKey = Utils.isCompressedPubKey(communityKey)
-                            ? Utils.changeCommunityKeyCompression(communityKey)
-                            : communityKey
+    function requestCommunityInfo(communityPubKey, shardCluster, shardIndex, importing = false) {
         if (importing)
-            root.mainModuleInst.setCommunityIdToSpectate(publicKey)
-        root.communitiesModuleInst.requestCommunityInfo(publicKey, shardCluster, shardIndex, importing)
+            root.mainModuleInst.setCommunityIdToSpectate(communityPubKey)
+        root.communitiesModuleInst.requestCommunityInfo(communityPubKey, shardCluster, shardIndex, importing)
     }
 
     property var communitiesList: communitiesModuleInst.model
@@ -119,12 +116,9 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey);
     }
 
-    function getCommunityDetails(communityId) {
-        const publicKey = Utils.isCompressedPubKey(communityId)
-                            ? Utils.changeCommunityKeyCompression(communityId)
-                            : communityId
+    function getCommunityDetails(communityPubKey) {
         try {
-            const communityJson = root.communitiesList.getSectionByIdJson(publicKey)
+            const communityJson = root.communitiesList.getSectionByIdJson(communityPubKey)
             if (!!communityJson)
                 return JSON.parse(communityJson)
         } catch (e) {
