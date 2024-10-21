@@ -788,6 +788,7 @@ Item {
 
                         StatusAction {
                             id: leaveCommunityMenuItem
+                            objectName: "leaveCommunityMenuItem"
                             // allow to leave community for the owner in non-production builds
                             enabled: model.memberRole !== Constants.memberRole.owner || !production
                             text: {
