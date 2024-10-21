@@ -5,7 +5,7 @@ import allure
 
 import configs
 import driver
-from constants.community_settings import MintOwnerTokensElements
+from constants.community import MintOwnerTokensElements
 from gui.components.sign_transaction_popup import SignTransactionPopup
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox

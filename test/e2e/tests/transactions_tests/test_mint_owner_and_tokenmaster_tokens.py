@@ -14,7 +14,7 @@ from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_se
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode
 from tests.communities import marks
-from constants.community_settings import MintOwnerTokensElements
+from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
 
 pytestmark = marks

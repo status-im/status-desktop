@@ -5,7 +5,7 @@ from allure_commons._allure import step
 from constants import RandomCommunity
 from . import marks
 
-from constants.community_settings import AirdropsElements, TokensElements, PermissionsElements
+from constants.community import AirdropsElements, TokensElements, PermissionsElements
 from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH, TOKENS_WELCOME_IMAGE_PATH, PERMISSION_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
 

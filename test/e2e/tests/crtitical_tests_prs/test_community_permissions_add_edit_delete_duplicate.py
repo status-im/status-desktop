@@ -8,7 +8,7 @@ import configs
 import constants
 import driver
 from constants import permission_data, RandomCommunity
-from constants.community_settings import ToastMessages, PermissionsElements
+from constants.community import ToastMessages, PermissionsElements
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
 from gui.components.delete_popup import DeletePermissionPopup
 from gui.main_window import MainWindow
