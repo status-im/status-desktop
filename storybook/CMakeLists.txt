@@ -119,6 +119,7 @@ add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
+list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/pages")
