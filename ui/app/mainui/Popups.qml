@@ -42,6 +42,8 @@ QtObject {
     required property RootStore sharedRootStore
     required property AppLayoutStores.RootStore rootStore
     required property CommunityTokensStore communityTokensStore
+
+    property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.DevicesStore devicesStore
@@ -655,7 +657,10 @@ QtObject {
 
         Component {
             id: nicknamePopupComponent
+
             NicknamePopup {
+                utilsStore: root.utilsStore
+
                 onEditDone: {
                     if (nickname !== newNickname) {
                         rootStore.contactStore.changeContactNickname(publicKey, newNickname, optionalDisplayName, !!nickname)

@@ -10,10 +10,13 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
+import shared.stores 1.0
 import utils 1.0
 
 CommonContactDialog {
     id: root
+
+    property UtilsStore utilsStore
 
     readonly property string nickname: contactDetails.localNickname
 
@@ -60,7 +63,7 @@ CommonContactDialog {
             },
             StatusValidator {
                 name: "isAliasValidator"
-                validate: function (t) { return !Utils.isAlias(t) }
+                validate: function (t) { return !root.utilsStore.isAlias(t) }
                 errorMessage: qsTr("Adjective-animal nickname formats are not allowed")
             }
         ]

@@ -725,10 +725,6 @@ QtObject {
         return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
 
-    function isAlias(name) {
-        return globalUtilsInst.isAlias(name)
-    }
-
     function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
         const defaultValue = {
             defaultDisplayName: "",

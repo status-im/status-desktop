@@ -24,4 +24,8 @@ QtObject {
     function isCompressedPubKey(pubKey) {
         return d.globalUtilsInst.isCompressedPubKey(pubKey)
     }
+
+    function isAlias(name) {
+        return d.globalUtilsInst.isAlias(name)
+    }
 }
