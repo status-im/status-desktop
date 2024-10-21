@@ -60,6 +60,8 @@ Item {
         currencyStore: appMain.currencyStore
     }
 
+    readonly property SharedStores.UtilsStore utilsStore: SharedStores.UtilsStore {}
+
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
     readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
@@ -633,6 +635,7 @@ Item {
 
         sourceComponent: AppSearch {
             store: appMain.rootStore.appSearchStore
+            utilsStore: appMain.utilsStore
             onClosed: appSearch.active = false
         }
     }
@@ -1578,6 +1581,7 @@ Item {
 
                     sourceComponent: CreateChatView {
                         sharedRootStore: appMain.sharedRootStore
+                        utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
                             currencyStore: appMain.currencyStore

@@ -19,6 +19,7 @@ Page {
     id: root
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property var emojiPopup: null
@@ -59,7 +60,9 @@ Page {
                 Layout.fillHeight: true
                 Layout.leftMargin: Theme.halfPadding
                 Layout.rightMargin: Theme.halfPadding
+
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
 
                 function createChat() {
                     if (model.count === 0) {
