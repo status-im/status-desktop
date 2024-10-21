@@ -60,7 +60,7 @@ Item {
         currencyStore: appMain.currencyStore
     }
 
-    readonly property SharedStores.UtilsStore utilsStore: SharedStores.UtilsStore {}
+    property SharedStores.UtilsStore utilsStore
 
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
@@ -421,6 +421,7 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         popupParent: appMain
         rootStore: appMain.rootStore
+        utilsStore: appMain.utilsStore
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         profileStore: appMain.profileStore
@@ -1445,6 +1446,7 @@ Item {
                         asynchronous: true
                         sourceComponent: ProfileLayout {
                             sharedRootStore: appMain.sharedRootStore
+                            utilsStore: appMain.utilsStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore

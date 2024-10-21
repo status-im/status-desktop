@@ -40,6 +40,7 @@ StatusSectionLayout {
     objectName: "profileStatusSectionLayout"
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
@@ -51,6 +52,7 @@ StatusSectionLayout {
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
+
     required property bool isCentralizedMetricsEnabled
 
     backButtonName: root.store.backButtonName
@@ -156,6 +158,7 @@ StatusSectionLayout {
                 profileStore: root.store.profileStore
                 contactsStore: root.store.contactsStore
                 communitiesStore: root.communitiesStore
+                utilsStore: root.utilsStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
