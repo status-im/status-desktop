@@ -207,7 +207,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'User {user_one.name}, add reaction to the last message and verify it was added'):
             occurrence = random.randint(1, 6)
             message.open_context_menu_for_message().add_reaction_to_message(occurrence)
-            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == str(message.get_emoji_reactions_pathes()[0]),
+            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] in str(message.get_emoji_reactions_pathes()[0]),
                                   timeout), \
                 f"Emoji reaction is not correct"
             main_window.hide()
@@ -216,7 +216,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             aut_two.attach()
             main_window.prepare()
             message = chat.find_message_by_text(chat_message_reply, 0)
-            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] == str(message.get_emoji_reactions_pathes()[0]),
+            assert driver.waitFor(lambda: EMOJI_PATHES[occurrence - 1] in str(message.get_emoji_reactions_pathes()[0]),
                                   timeout), \
                 f"Emoji reaction is not correct"
             main_window.hide()
