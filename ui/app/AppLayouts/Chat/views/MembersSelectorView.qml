@@ -7,10 +7,13 @@ import StatusQ.Components 0.1
 
 import "private"
 
+import shared.stores 1.0
 import utils 1.0
 
 MembersSelectorBase {
     id: root
+
+    property UtilsStore utilsStore
 
     limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
 
@@ -69,7 +72,7 @@ MembersSelectorBase {
 
             value = Utils.dropUserLinkPrefix(value.trim())
 
-            if (Utils.isChatKey(value)) {
+            if (root.utilsStore.isChatKey(value)) {
                 processContact(value)
                 return
             }
