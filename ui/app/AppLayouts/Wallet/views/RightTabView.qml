@@ -204,7 +204,7 @@ RightTabBaseView {
                             settings.category = settingsCategoryName
                             walletSettings.sync()
                             settings.sync()
-                            let value = SortOrderComboBox.TokenOrderAlpha
+                            let value = SortOrderComboBox.TokenOrderBalance
                             if (walletSettings.assetsViewCustomOrderApplyTimestamp > settings.sortOrderUpdateTimestamp && customOrderAvailable) {
                                 value = SortOrderComboBox.TokenOrderCustom
                             } else {
@@ -326,7 +326,7 @@ RightTabBaseView {
                             settings.category = settingsCategoryName
                             walletSettings.sync()
                             settings.sync()
-                            let value = SortOrderComboBox.TokenOrderAlpha
+                            let value = SortOrderComboBox.TokenOrderBalance
                             if (walletSettings.collectiblesViewCustomOrderApplyTimestamp > settings.sortOrderUpdateTimestamp && customOrderAvailable) {
                                 value = SortOrderComboBox.TokenOrderCustom
                             } else {
