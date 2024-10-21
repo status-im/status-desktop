@@ -6,6 +6,7 @@ import QtQml.Models 2.15
 
 import utils 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,6 +19,8 @@ StatusDialog {
     id: root
 
     property CommunitiesStores.CommunitiesStore store
+    property UtilsStore utilsStore
+
     property alias text: keyInput.text
 
     signal joinCommunityRequested(string communityId, var communityDetails)
@@ -53,7 +56,7 @@ StatusDialog {
                 }
                 return linkData.communityId
             }
-            if (!Utils.isCommunityPublicKey(inputKey))
+            if (!root.utilsStore.isCommunityPublicKey(inputKey))
                 return ""
             if (!Utils.isCompressedPubKey(inputKey))
                 return inputKey
