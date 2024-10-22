@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -46,7 +45,6 @@ Page {
     Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
 
     background: Rectangle {
-        anchors.fill: parent
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
     }
 
@@ -73,14 +71,14 @@ Page {
                         const ensName = member.displayName.includes(".eth") ? member.displayName : ""
                         root.rootStore.chatCommunitySectionModule.createOneToOneChat("", member.pubKey, ensName)
                     } else {
-                        var groupName = "";
-                        var pubKeys = [];
+                        var groupName = []
+                        var pubKeys = []
                         for (var i = 0; i < model.count; i++) {
                             const member = model.get(i)
-                            groupName += (member.displayName + (i === model.count - 1 ? "" : "&"))
+                            groupName.push(member.displayName)
                             pubKeys.push(member.pubKey)
                         }
-                        root.rootStore.chatCommunitySectionModule.createGroupChat("", groupName, JSON.stringify(pubKeys))
+                        root.rootStore.chatCommunitySectionModule.createGroupChat("", groupName.join("&"), JSON.stringify(pubKeys))
                     }
                 }
 
@@ -131,7 +129,6 @@ Page {
                 Layout.alignment: Qt.AlignTop
                 Layout.leftMargin: Theme.halfPadding
                 visible: contactsList.visible
-                font.pixelSize: 15
                 text: qsTr("Contacts")
                 color: Theme.palette.baseColor1
             }
@@ -182,7 +179,6 @@ Page {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")

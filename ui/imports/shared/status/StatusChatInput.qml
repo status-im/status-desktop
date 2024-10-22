@@ -39,7 +39,6 @@ Rectangle {
     signal dismissLinkPreview(int index)
     
     property var usersModel
-    property ChatStores.RootStore store
     property SharedStores.RootStore sharedStore
 
     property var emojiPopup: null

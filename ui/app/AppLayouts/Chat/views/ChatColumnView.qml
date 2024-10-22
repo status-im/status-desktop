@@ -290,7 +290,6 @@ Item {
                                  && !d.sendingInProgress
                     }
 
-                    store: root.rootStore
                     usersModel: d.activeUsersStore.usersModel
                     sharedStore: root.sharedRootStore
 

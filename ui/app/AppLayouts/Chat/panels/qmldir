@@ -1,3 +1,4 @@
 SuggestionBoxPanel 1.0 SuggestionBoxPanel.qml
 UserListPanel 1.0 UserListPanel.qml
 ChatAnchorButtonsPanel 1.0 ChatAnchorButtonsPanel.qml
+InlineSelectorPanel 1.0 InlineSelectorPanel.qml

@@ -55,16 +55,6 @@ StatusMenu {
     }
 
     StatusAction {
-        objectName: "viewMembersStatusAction"
-        text: qsTr("View Members")
-        icon.name: "group-chat"
-        enabled: root.chatType === Constants.chatType.privateGroupChat
-        onTriggered: {
-            localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList;
-        }
-    }
-
-    StatusAction {
         objectName: "addRemoveFromGroupStatusAction"
         text: root.amIChatAdmin ? qsTr("Add / remove from group") : qsTr("Add to group")
         icon.name: "add-to-dm"

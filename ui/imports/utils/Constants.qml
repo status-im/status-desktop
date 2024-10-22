@@ -659,6 +659,7 @@ QtObject {
         readonly property var alphanumerical: /^$|^[a-zA-Z0-9]+$/
         readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_\.\u0020]+$/
         readonly property var alphanumericalExpanded1: /^[a-zA-Z0-9\-_]+(?: [a-zA-Z0-9\-_]+)*$/
+        readonly property var alphanumericalExpanded2: /^$|^[a-zA-Z0-9\-_\.\u0020\&]+$/
         readonly property var alphanumericalWithSpace: /^$|^[a-zA-Z0-9\s]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/

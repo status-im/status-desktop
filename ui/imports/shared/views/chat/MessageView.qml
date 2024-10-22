@@ -933,7 +933,6 @@ Loader {
                             suggestionsOpened = false
                         }
 
-                        store: root.rootStore
                         usersModel: root.usersStore.usersModel
                         sharedStore: root.sharedRootStore
                         emojiPopup: root.emojiPopup
@@ -957,7 +956,7 @@ Loader {
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
-                        playAnimations: root.Window.window.active && root.messageStore.isChatActive
+                        playAnimations: root.Window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
                         onImageClicked: (image, mouse, imageSource, url) => {
