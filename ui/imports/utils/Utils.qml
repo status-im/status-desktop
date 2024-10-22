@@ -851,10 +851,6 @@ QtObject {
         }
     }
 
-    function changeCommunityKeyCompression(communityKey) {
-        return globalUtilsInst.changeCommunityKeyCompression(communityKey)
-    }
-
     function getCompressedPk(publicKey) {
         if (publicKey === "") {
             return ""

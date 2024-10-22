@@ -60,7 +60,7 @@ StatusDialog {
                 return ""
             if (!root.utilsStore.isCompressedPubKey(inputKey))
                 return inputKey
-            return Utils.changeCommunityKeyCompression(inputKey)
+            return root.utilsStore.changeCommunityKeyCompression(inputKey)
         }
         readonly property bool isInputValid: publicKey !== ""
 
