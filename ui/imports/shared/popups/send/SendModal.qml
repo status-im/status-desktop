@@ -72,17 +72,7 @@ StatusDialog {
         popup.store.authenticateAndTransfer(d.uuid)
     }
 
-    property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!popup.selectedAccount.address && !!holdingSelector.selectedItem
-                && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)) {
-            popup.isLoading = true
-            d.routerError = ""
-            d.routerErrorDetails = ""
-            popup.store.suggestedRoutes(d.uuid, d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
-        }
-    })
-
-    property var generateUuid: () => { return Utils.uuid() }
+    readonly property string uuid: d.uuid
 
     QtObject {
         id: d
@@ -130,7 +120,7 @@ StatusDialog {
 
         property string sendError: ""
 
-        readonly property string uuid: popup.generateUuid()
+        property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
         property double totalFeesInFiat
@@ -170,6 +160,27 @@ StatusDialog {
 
         function addMetricsEvent(subEventName) {
             Global.addCentralizedMetricIfEnabled(d.isBridgeTx ? "bridge" : "send", {subEvent: subEventName})
+        }
+
+        function areInputParametersValid() {
+            return !!popup.selectedAccount && !!popup.selectedAccount.address && !!holdingSelector.selectedItem
+                && recipientInputLoader.ready && (amountToSend.ready || d.isCollectiblesTransfer)
+        }
+
+        property var debounceRecalculateRoutesAndFees: Backpressure.debounce(popup, 1000, function() {
+            if(d.areInputParametersValid()) {
+                popup.store.suggestedRoutes(d.uuid, d.isCollectiblesTransfer ? "1" : amountToSend.amount, "0", d.extraParamsJson)
+            }
+        })
+
+        function recalculateRoutesAndFees() {
+            if(d.areInputParametersValid()) {
+                popup.isLoading = true
+            }
+            d.uuid = Utils.uuid()
+            d.routerError = ""
+            d.routerErrorDetails = ""
+            debounceRecalculateRoutesAndFees()
         }
     }
 
@@ -314,7 +325,7 @@ StatusDialog {
                                 d.selectedHolding.tokensKey)
                 }
 
-                popup.recalculateRoutesAndFees()
+                d.recalculateRoutesAndFees()
             }
         }
     }
@@ -529,12 +540,12 @@ StatusDialog {
 
                         onValidChanged: {
                             d.sendError = ""
-                            popup.recalculateRoutesAndFees()
+                            d.recalculateRoutesAndFees()
                         }
 
                         onAmountChanged: {
                             d.sendError = ""
-                            popup.recalculateRoutesAndFees()
+                            d.recalculateRoutesAndFees()
                         }
                     }
 
@@ -583,7 +594,7 @@ StatusDialog {
                         onIsLoading: popup.isLoading = true
                         onRecalculateRoutesAndFees: {
                             d.sendError = ""
-                            popup.recalculateRoutesAndFees()
+                            d.recalculateRoutesAndFees()
                         }
                         onAddressTextChanged: store.setSelectedRecipient(addressText)
                     }
@@ -669,7 +680,7 @@ StatusDialog {
                 selectedAsset: d.selectedHolding
                 onReCalculateSuggestedRoute: {
                     d.sendError = ""
-                    popup.recalculateRoutesAndFees()
+                    d.recalculateRoutesAndFees()
                 }
                 errorType: d.errorType
                 isLoading: popup.isLoading
@@ -748,6 +759,11 @@ StatusDialog {
     Connections {
         target: popup.store.walletSectionSendInst
         function onSuggestedRoutesReady(txRoutes, errCode, errDescription) {
+            if (txRoutes.uuid !== d.uuid) {
+                // Suggested routes for a different fetch, ignore
+                return
+            }
+
             popup.bestRoutes =  txRoutes.suggestedRoutes
 
             d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
