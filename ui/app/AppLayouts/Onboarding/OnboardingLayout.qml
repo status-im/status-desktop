@@ -250,6 +250,7 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         id: profileChatKeyViewComponent
         ProfileChatKeyView {
             startupStore: root.startupStore
+            utilsStore: root.utilsStore
         }
     }
 

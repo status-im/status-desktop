@@ -8,13 +8,16 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import shared.controls 1.0
-import shared.status 1.0
 import shared.panels 1.0
+import shared.status 1.0
+import shared.stores 1.0
 
 import shared.controls.delegates 1.0
 
 Flow {
     id: root
+
+    property UtilsStore utilsStore
 
     required property bool isOnline
     required property bool playAnimations
@@ -76,6 +79,9 @@ Flow {
         model: root.linkPreviewModel
         delegate: LinkPreviewCardDelegate {
             id: delegate
+
+            utilsStore: root.utilsStore
+
             highlight: url === root.highlightLink
             onHoveredChanged: {
                 linksRepeater.hoveredUrl = hovered ? url : ""

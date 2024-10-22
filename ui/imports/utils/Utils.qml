@@ -781,14 +781,6 @@ QtObject {
         return mainModuleInst.isEnsVerified(publicKey)
     }
 
-    function getEmojiHashAsJson(publicKey) {
-        if (publicKey === "" || !isChatKey(publicKey)) {
-            return ""
-        }
-        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
-    }
-
     function getColorHashAsJson(publicKey, skipEnsVerification=false) {
         if (publicKey === "" || !isChatKey(publicKey))
             return

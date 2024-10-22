@@ -23,6 +23,7 @@ StatusMenu {
     property bool hasLocalNickname: false
     property int chatType: Constants.chatType.unknown
     property bool isAdmin: false
+    property var emojiHash: []
 
     signal openProfileClicked
     signal createOneToOneChat
@@ -43,6 +44,7 @@ StatusMenu {
         editButtonVisible: false
         displayName: StatusQUtils.Emoji.parse(root.displayName, StatusQUtils.Emoji.size.verySmall)
         pubkey: root.publicKey
+        emojiHash: root.emojiHash
         icon: root.userIcon
         trustStatus: root.profileType === Constants.profileType.regular ? root.trustStatus : Constants.trustStatus.unknown
         isContact: root.profileType === Constants.profileType.regular ? root.contactType === Constants.contactType.contact : false

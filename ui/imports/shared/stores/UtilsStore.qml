@@ -28,4 +28,12 @@ QtObject {
     function isAlias(name) {
         return d.globalUtilsInst.isAlias(name)
     }
+
+
+    function getEmojiHash(publicKey) {
+        if (publicKey === "" || !isChatKey(publicKey))
+            return []
+
+        return JSON.parse(d.globalUtilsInst.getEmojiHashAsJson(publicKey))
+    }
 }

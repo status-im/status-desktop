@@ -32,6 +32,8 @@ ColumnLayout {
     property var chatContentModule
     property var chatSectionModule
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
+
     property RootStore rootStore
     property ContactsStore contactsStore
     property string chatId
@@ -85,6 +87,7 @@ ColumnLayout {
             chatContentModule: root.chatContentModule
 
             sharedRootStore: root.sharedRootStore
+            utilsStore: root.utilsStore
             rootStore: root.rootStore
             contactsStore: root.contactsStore
             messageStore: root.messageStore
