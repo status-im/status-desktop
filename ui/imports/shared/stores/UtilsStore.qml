@@ -29,11 +29,14 @@ QtObject {
         return d.globalUtilsInst.isAlias(name)
     }
 
-
     function getEmojiHash(publicKey) {
         if (publicKey === "" || !isChatKey(publicKey))
             return []
 
         return JSON.parse(d.globalUtilsInst.getEmojiHashAsJson(publicKey))
+    }
+
+    function changeCommunityKeyCompression(communityKey) {
+        return d.globalUtilsInst.changeCommunityKeyCompression(communityKey)
     }
 }
