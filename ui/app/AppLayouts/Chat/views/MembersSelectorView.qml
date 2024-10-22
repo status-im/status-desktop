@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQml.Models 2.2
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQml.Models 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -8,8 +8,6 @@ import StatusQ.Components 0.1
 import "private"
 
 import utils 1.0
-
-import SortFilterProxyModel 0.2
 
 MembersSelectorBase {
     id: root
@@ -39,20 +37,18 @@ MembersSelectorBase {
     }
 
     onTextPasted: (text) => {
-        // When pated, process text immediately
-        contactLookupDelayTimer.stop() // when pasting, textChanged is still emited first
+        // When pasted, process text immediately
+        contactLookupDelayTimer.stop() // when pasting, textChanged is still emitted first
         d.lookupContact(text)
     }
 
-    model: SortFilterProxyModel {
-        sourceModel: d.selectedMembers
-    }
+    model: d.selectedMembers
 
     delegate: StatusTagItem {
         readonly property string _pubKey: model.pubKey
 
         height: ListView.view.height
-        text: root.tagText(model.localNickname, model.displayName, model.alias)
+        text: model.localNickname || model.displayName
 
         onClosed: root.entryRemoved(this)
     }
@@ -129,11 +125,7 @@ MembersSelectorBase {
                     return false
             }
 
-            d.selectedMembers.append({
-                                         "pubKey": pubKey,
-                                         "displayName": displayName,
-                                         "localNickname": localNickname
-                                     })
+            d.selectedMembers.append({pubKey, displayName, localNickname})
             return true
         }
 

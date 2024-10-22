@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -8,13 +8,13 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
-import "../panels"
-import "../stores"
-import "private"
+import AppLayouts.Chat.stores 1.0
 
 import utils 1.0
 
 import SortFilterProxyModel 0.2
+
+import "private"
 
 MembersSelectorBase {
     id: root
@@ -55,7 +55,7 @@ MembersSelectorBase {
         readonly property string _pubKey: model.pubKey
 
         height: ListView.view.height
-        text: root.tagText(model.localNickname, model.displayName, model.alias)
+        text: model.preferredDisplayName
 
         isReadonly: {
             if (model.memberRole === Constants.memberRole.owner) return true

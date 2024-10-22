@@ -1,7 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtQml.Models 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import shared.controls 1.0
 import shared.panels 1.0
@@ -26,11 +26,11 @@ StatusDialog {
 
     title: qsTr("Edit group name and image")
     width: 480
-    height: 610
+    padding: 0
 
     QtObject {
         id: d
-        readonly property int nameCharLimit: 24
+        readonly property int nameCharLimit: 30 // cf spec: https://github.com/status-im/feature-specs/blob/d66c586f13cb1fa0486544030148df68e06928f0/content/raw/chat/group_chat.md
     }
 
     onOpened: {
@@ -47,66 +47,71 @@ StatusDialog {
         imageEditor.dataImage = activeGroupImageData
     }
 
-    ColumnLayout {
+    StatusScrollView {
+        id: scrollView
         anchors.fill: parent
-        spacing: 20
+        contentWidth: availableWidth
 
-        StatusInput {
-            id: groupName
-            input.edit.objectName: "groupChatEdit_name"
-            Layout.alignment: Qt.AlignHCenter
-            label: qsTr("Name the group")
-            charLimit: d.nameCharLimit
+        ColumnLayout {
+            width: scrollView.availableWidth
+            spacing: 20
 
-            validators: [
-                StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage: Utils.getErrorMessage(groupName.errors, qsTr("group name"))
-                },
-                StatusRegularExpressionValidator {
-                    regularExpression: Constants.regularExpressions.alphanumericalExpanded
-                    errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
-                }
-            ]
-        }
+            StatusInput {
+                id: groupName
+                input.edit.objectName: "groupChatEdit_name"
+                Layout.alignment: Qt.AlignHCenter
+                label: qsTr("Name the group")
+                charLimit: d.nameCharLimit
 
-        StatusBaseText {
-            id: imgText
-            text: qsTr("Group image")
-            leftPadding: groupName.leftPadding - root.padding
-        }
+                validators: [
+                    StatusMinLengthValidator {
+                        minLength: 1
+                        errorMessage: Utils.getErrorMessage(groupName.errors, qsTr("group name"))
+                    },
+                    StatusRegularExpressionValidator {
+                        regularExpression: Constants.regularExpressions.alphanumericalExpanded2
+                        errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+                    }
+                ]
+            }
 
-        EditCroppedImagePanel {
-            id: imageEditor
-            objectName: "groupChatEdit_image"
-            Layout.preferredWidth: 128
-            Layout.preferredHeight: Layout.preferredWidth / aspectRatio
-            Layout.alignment: Qt.AlignHCenter
+            StatusBaseText {
+                id: imgText
+                text: qsTr("Group image")
+            }
 
-            imageFileDialogTitle: qsTr("Choose an image as logo")
-            title: qsTr("Edit group name and image")
-            acceptButtonText: qsTr("Use as an icon for this group chat")
-        }
+            EditCroppedImagePanel {
+                id: imageEditor
+                objectName: "groupChatEdit_image"
+                Layout.preferredWidth: 128
+                Layout.preferredHeight: Layout.preferredWidth / aspectRatio
+                Layout.alignment: Qt.AlignHCenter
 
-        StatusBaseText {
-            id: colorText
-            text: qsTr("Standard colours")
-            leftPadding: groupName.leftPadding - root.padding
-        }
+                imageFileDialogTitle: qsTr("Choose an image as logo")
+                title: qsTr("Edit group name and image")
+                acceptButtonText: qsTr("Use as an icon for this group chat")
+            }
 
-        StatusColorSelectorGrid {
-            id: colorSelectionGrid
-            objectName: "groupChatEdit_color"
-            Layout.alignment: Qt.AlignHCenter
-            diameter: 40
-            selectorDiameter: 16
-            columns: 6
-            selectedColorIndex: -1
-        }
+            StatusBaseText {
+                id: colorText
+                text: qsTr("Standard colours")
+            }
 
-        Item {
-            id: spacerItem
-            height: 10
+            StatusColorSelectorGrid {
+                id: colorSelectionGrid
+                objectName: "groupChatEdit_color"
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: -(parent.spacing / 3)
+                diameter: 40
+                selectorDiameter: 16
+                columns: 6
+                selectedColorIndex: -1
+            }
+
+            Item {
+                id: spacerItem
+                height: 10
+            }
         }
     }
 

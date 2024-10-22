@@ -73,7 +73,6 @@ Item {
                     Layout.leftMargin: Theme.padding
                     Layout.alignment: Qt.AlignVCenter
                     visible: text !== ""
-                    font.pixelSize: 15
                     color: Theme.palette.baseColor1
                 }
                 Item {
@@ -115,7 +114,7 @@ Item {
                                 Layout.minimumWidth: 4
                                 Layout.fillHeight: true
                                 verticalAlignment: Text.AlignVCenter
-                                font.pixelSize: 15
+                                font.pixelSize: Theme.primaryTextFontSize
                                 color: Theme.palette.directColor1
 
                                 selectByMouse: true
@@ -193,7 +192,7 @@ Item {
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                     Layout.rightMargin: Theme.padding
                     visible: text !== ""
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.asideTextFontSize
                     color: Theme.palette.dangerColor1
                 }
             }
@@ -210,14 +209,12 @@ Item {
 
         StatusButton {
             objectName: "inlineSelectorConfirmButton"
-            Layout.alignment: Qt.AlignVCenter
             enabled: (listView.count > 0)
             text: qsTr("Confirm")
             onClicked: root.confirmed()
         }
 
         StatusButton {
-            Layout.alignment: Qt.AlignVCenter
             text: qsTr("Cancel")
             type: StatusBaseButton.Type.Danger
             onClicked: root.rejected()

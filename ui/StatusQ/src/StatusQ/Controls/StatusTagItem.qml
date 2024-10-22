@@ -61,22 +61,21 @@ Control {
         function getTagColor(isReadonly) {
             if(isReadonly)
                 return Theme.palette.baseColor1
-            return mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
+            return root.hovered ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
         }
     }
 
     implicitHeight: 30
     horizontalPadding: d.tagMargins
-    font.pixelSize: 15
+    font.pixelSize: Theme.primaryTextFontSize
     font.family: Theme.baseFont.name
 
     background: Rectangle {
         color: d.getTagColor(root.isReadonly)
-        radius: 8
+        radius: Theme.radius
     }
 
     contentItem: RowLayout {
-        id: tagRow
         spacing: 2
 
         StatusIcon {
@@ -99,7 +98,6 @@ Control {
             height: d.tagIconsSize
             icon: "close"
             MouseArea {
-                id: mouseArea
                 enabled: !root.isReadonly
                 anchors.fill: parent
                 hoverEnabled: true

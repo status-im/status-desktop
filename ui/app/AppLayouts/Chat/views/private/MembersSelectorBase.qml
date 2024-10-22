@@ -1,16 +1,13 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-
-import "../../panels"
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Chat.panels 1.0
 
 import utils 1.0
 import shared.controls.delegates 1.0
@@ -24,10 +21,6 @@ InlineSelectorPanel {
 
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
     property bool limitReached: model.count >= membersLimit
-
-    function tagText(localNickname, displayName, aliasName) {
-        return localNickname || displayName || aliasName
-    }
 
     property string pastedChatKey: ""
 
@@ -54,41 +47,32 @@ InlineSelectorPanel {
             return true
         }
 
-        function isPastedProfileLinkToContact(pubkey) {
-            return root.pastedChatKey === pubkey
-        }
-
         filters: [
-            ExpressionFilter {
+            FastExpressionFilter {
                 enabled: root.edit.text !== "" && root.pastedChatKey == ""
                 expression: {
                     root.edit.text // ensure expression is reevaluated when edit.text changes
                     return _suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
                 }
+                expectedRoles: ["displayName", "localNickname", "alias"]
             },
-            ExpressionFilter {
+            FastExpressionFilter {
                 expression: {
                     root.model.count // ensure expression is reevaluated when members model changes
                     return _suggestionsModel.notAMemberPredicate(model.pubKey)
                 }
+                expectedRoles: ["pubKey"]
             },
-            ExpressionFilter {
-                enabled: root.pastedChatKey != ""
-                expression: {
-                    root.pastedChatKey // ensure expression is reevaluated when members model changes
-                    return _suggestionsModel.isPastedProfileLinkToContact(model.pubKey)
-                }
+            ValueFilter {
+                roleName: "pubKey"
+                value: root.pastedChatKey
+                enabled: root.pastedChatKey !== ""
             }
         ]
 
-        proxyRoles: ExpressionRole {
-            name: "title"
-            expression: model.localNickname || model.displayName || model.alias
-        }
-
         sorters: StringSorter {
-            roleName: "title"
-            numericMode: true
+            roleName: "preferredDisplayName"
+            caseSensitivity: Qt.CaseInsensitive
         }
     }
 

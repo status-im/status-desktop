@@ -216,7 +216,6 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: accountImage.right
                     anchors.leftMargin: Theme.smallPadding
-                    font.pixelSize: 15
                 }
 
                 MouseArea {
