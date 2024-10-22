@@ -36,6 +36,7 @@ StatusSectionLayout {
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     property ChatStores.RootStore rootStore
+    property UtilsStore utilsStore
     property var chatCommunitySectionModule
     required property TokensStore tokensStore
     property var community
@@ -291,6 +292,7 @@ StatusSectionLayout {
 
             sourceComponent: MembersSettingsPanel {
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
                 pendingMemberRequestsModel: root.community.pendingMemberRequests

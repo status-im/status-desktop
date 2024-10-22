@@ -10,13 +10,10 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import shared.controls 1.0
-import shared.stores 1.0
 import utils 1.0
 
 CommonContactDialog {
     id: root
-
-    property UtilsStore utilsStore
 
     readonly property string nickname: contactDetails.localNickname
 

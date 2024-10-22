@@ -406,6 +406,7 @@ SettingsContentBase {
                 publicKey: root.contactsStore.myPublicKey
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
                 dirtyValues: root.liveValues
@@ -427,6 +428,7 @@ SettingsContentBase {
             MyProfilePreview {
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 dirtyValues: root.liveValues
                 dirty: root.dirty

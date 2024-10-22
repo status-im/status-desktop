@@ -20,6 +20,7 @@ StatusDialog {
     id: root
 
     property SharedStores.RootStore sharedStore
+    property SharedStores.UtilsStore utilsStore
     property RootStore store
     property MessageStore messageStore
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
@@ -80,6 +81,7 @@ StatusDialog {
                     width: parent.width
 
                     sharedRootStore: root.sharedStore
+                    utilsStore: root.utilsStore
                     rootStore: root.store
                     messageStore: root.messageStore
 

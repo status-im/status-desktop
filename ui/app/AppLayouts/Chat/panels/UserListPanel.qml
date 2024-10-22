@@ -12,6 +12,8 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.views.chat 1.0
+import shared.stores 1.0 as SharedStores
+
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -22,6 +24,8 @@ Item {
     id: root
 
     property ChatStores.RootStore store
+    property SharedStores.UtilsStore utilsStore
+
     property var usersModel
     property string label
     property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None
@@ -125,7 +129,7 @@ Item {
 
                         Global.openMenu(profileContextMenuComponent, this, {
                                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
-                                            publicKey: model.pubKey,
+                                            publicKey: model.pubKey, emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
                                             displayName: nickName || userName,
                                             userIcon: model.icon,
                                         })
