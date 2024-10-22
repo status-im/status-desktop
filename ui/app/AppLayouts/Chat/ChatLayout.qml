@@ -26,6 +26,7 @@ StackLayout {
     id: root
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     readonly property ProfileStores.ContactsStore contactsStore: rootStore.contactsStore
@@ -157,6 +158,7 @@ StackLayout {
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             sharedRootStore: root.sharedRootStore
+            utilsStore: root.utilsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             communitiesStore: root.communitiesStore
@@ -245,9 +247,12 @@ StackLayout {
                 root.isPrivilegedUser &&
                 (root.currentIndex === 1 || !!communitySettingsLoader.item) // lazy load and preserve state after loading
         asynchronous: false // It's false on purpose. We want to load the component synchronously
+
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
+
             rootStore: root.rootStore
+            utilsStore: root.utilsStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
             enabledChainIds: WalletStore.RootStore.networkFilters
             onEnableNetwork: WalletStore.RootStore.enableNetwork(chainId)

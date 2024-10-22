@@ -216,6 +216,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 contactsStore: root.store.contactsStore
+                utilsStore: root.utilsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
             }

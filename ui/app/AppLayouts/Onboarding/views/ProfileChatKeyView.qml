@@ -8,10 +8,11 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
-import shared.panels 1.0
 import shared 1.0
-import shared.popups 1.0
 import shared.controls 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.stores 1.0
 import utils 1.0
 
 import "../popups"
@@ -23,6 +24,7 @@ Item {
     objectName: "onboardingProfileChatKeyView"
 
     property StartupStore startupStore
+    property UtilsStore utilsStore
 
     Component.onCompleted: {
         nextBtn.forceActiveFocus()
@@ -125,7 +127,7 @@ Item {
                     bottom: parent.bottom
                     left: parent.left
                 }
-                publicKey: d.publicKey
+                emojiHash: root.utilsStore.getEmojiHash(d.publicKey)
                 objectName: "publicKeyEmojiHash"
             }
             StatusSmartIdenticon {

@@ -10,10 +10,11 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-import utils 1.0
-import shared.views.chat 1.0
-import shared.controls.chat 1.0
 import shared.controls 1.0
+import shared.controls.chat 1.0
+import shared.stores 1.0 as SharedStores
+import shared.views.chat 1.0
+import utils 1.0
 
 import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.layouts 1.0
@@ -26,6 +27,8 @@ Item {
     property string placeholderText
     property var model
     property RootStore rootStore
+    property SharedStores.UtilsStore utilsStore
+
     property int memberRole: Constants.memberRole.none
 
     readonly property bool isOwner: memberRole === Constants.memberRole.owner
@@ -315,7 +318,7 @@ Item {
 
                         Global.openMenu(memberContextMenuComponent, this, {
                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
-                            publicKey: model.pubKey,
+                            publicKey: model.pubKey, emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
                             displayName: memberItem.title || model.displayName,
                             userIcon: icon.name,
                         })
