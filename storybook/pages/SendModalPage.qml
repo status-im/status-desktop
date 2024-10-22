@@ -212,12 +212,11 @@ SplitView {
                 preSelectedHoldingID: loader.preSelectedHoldingID
                 preSelectedHoldingType: loader.preSelectedHoldingType
                 showCustomRoutingMode: ctrlShowCustomMode.checked
-                generateUuid: () => { return "12345" }
                 sendTransaction: () => {
                                     if (!showSendErrorCheckBox.checked)
                                          return
 
-                                    txStore.walletSectionSendInst.transactionSent(1, "0x123", generateUuid(), "Send error, please ignore")
+                                    txStore.walletSectionSendInst.transactionSent(1, "0x123", uuid, "Send error, please ignore")
                                  }
             }
             Component.onCompleted: loader.active = true
