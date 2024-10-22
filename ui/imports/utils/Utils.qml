@@ -824,19 +824,6 @@ QtObject {
         return getCommunityChannelShareLink(communityId, channelId)
     }
 
-    function getCommunityIdFromShareLink(link) {
-        let index = link.lastIndexOf("/c/")
-        if (index === -1) {
-            return ""
-        }
-        const communityKey = link.substring(index + 3)
-        if (globalUtilsInst.isCompressedPubKey(communityKey)) {
-            // is zQ.., need to be converted to standard compression
-            return globalUtilsInst.changeCommunityKeyCompression(communityKey)
-        }
-        return communityKey
-    }
-
     function getCommunityDataFromSharedLink(link) {
         const index = link.lastIndexOf("/c/")
         if (index === -1)
