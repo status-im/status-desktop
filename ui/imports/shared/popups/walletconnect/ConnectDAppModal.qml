@@ -62,6 +62,7 @@ StatusDialog {
     property alias dAppName: dappCard.name
     property alias dAppIconUrl: dappCard.iconUrl
     property alias connectionStatus: d.connectionStatus
+    property bool connectButtonEnabled: true
 
     /*
         Selected account address holds the initial account address selection for the account selector.
@@ -79,9 +80,11 @@ StatusDialog {
     readonly property int connectionFailedStatus: 2
 
     function pairSuccessful() {
+        d.connectionInProgress = false
         d.connectionStatus = root.connectionSuccessfulStatus
     }
     function pairFailed() {
+        d.connectionInProgress = false
         d.connectionStatus = root.connectionFailedStatus
     }
 
@@ -181,16 +184,21 @@ StatusDialog {
                 height: 44
                 text: d.connectionAttempted ? qsTr("Close") : qsTr("Connect")
                 enabled: {
+                    if (d.connectionInProgress)
+                        return false
                     if (!d.connectionAttempted)
                         return root.selectedChains.length > 0
-                    return true
+                    return root.connectButtonEnabled
                 }
 
                 onClicked: {
-                    if (!d.connectionAttempted)
+                    if (!d.connectionAttempted) {
+                        d.connectionInProgress = true
                         root.connect()
-                    else
+                    }
+                    else {
                         root.close()
+                    }
                 }
             }
         }
@@ -219,5 +227,6 @@ StatusDialog {
         readonly property bool connectionSuccessful: d.connectionStatus === root.connectionSuccessfulStatus
         readonly property bool connectionFailed: d.connectionStatus === root.connectionFailedStatus
         readonly property bool connectionAttempted: d.connectionStatus !== root.notConnectedStatus
+        property bool connectionInProgress: false
     }
 }
