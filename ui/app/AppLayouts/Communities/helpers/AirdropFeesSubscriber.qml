@@ -47,7 +47,7 @@ QtObject {
             return qsTr("Infura error")
 
         if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Revert)
-            return qsTr("Estimation reverted. Make sure you are using the account that owns the TokenMaster or Owner Token.")
+            return qsTr("Estimation reverted. Make sure you selected the Wallet account that owns the TokenMaster or Owner Token.")
 
         return qsTr("Unknown error")
     }
