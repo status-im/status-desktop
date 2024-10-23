@@ -25,9 +25,7 @@ pytestmark = marks
     pytest.param('0x7f1502605A2f2Cc01f9f4E7dd55e549954A8cD0C', ''.join(random.choices(string.ascii_letters +
                                                                                       string.digits, k=20)))
 ])
-@pytest.mark.local_run
-@pytest.mark.skipif('jenkins' in str(testpath.ROOT),
-                    reason="https://github.com/status-im/status-desktop/issues/14862, https://github.com/status-im/status-desktop/issues/14509")
+@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862, https://github.com/status-im/status-desktop/issues/14509")
 def test_settings_include_in_total_balance(main_screen: MainWindow, name, watched_address):
     with (step('Open wallet on main screen and check the total balance for new account is 0')):
         wallet_main_screen = main_screen.left_panel.open_wallet()

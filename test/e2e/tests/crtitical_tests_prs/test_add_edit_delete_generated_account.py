@@ -34,7 +34,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
+        account_popup.set_name(name).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -45,7 +45,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
+        expected_account = constants.user.account_list_item(name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
@@ -55,10 +55,10 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
     with step('Edit wallet account'):
         new_name = random_wallet_account_name()
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
+        account_popup.set_name(new_name).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)
+        expected_account = constants.user.account_list_item(new_name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)

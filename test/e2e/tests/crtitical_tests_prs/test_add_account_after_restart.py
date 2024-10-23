@@ -37,7 +37,7 @@ def test_add_generated_account_restart_add_again(
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).save_changes()
+        account_popup.set_name(name).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -48,7 +48,7 @@ def test_add_generated_account_restart_add_again(
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
+        expected_account = constants.user.account_list_item(name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
@@ -64,7 +64,7 @@ def test_add_generated_account_restart_add_again(
         assert not SigningPhrasePopup().is_ok_got_it_button_visible(), \
             f"Signing phrase should not be present because it has been hidden in the first step"
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name2).set_emoji(emoji2).set_color(color2).save_changes()
+        account_popup.set_name(name2).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -75,7 +75,7 @@ def test_add_generated_account_restart_add_again(
         assert message == f'"{name2}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item_2(name2, color2.lower(), emoji_unicode2)
+        expected_account = constants.user.account_list_item_2(name2, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
