@@ -41,7 +41,6 @@ SignTransactionModalBase {
     property bool enoughFundsForTransaction: true
     property bool enoughFundsForFees: false
 
-    signButtonEnabled: (!hasFees) || enoughFundsForTransaction && enoughFundsForFees
     title: qsTr("Sign Request")
     subtitle: SQUtils.StringUtils.extractDomainFromLink(root.dappUrl)
     headerIconComponent: RoundImageWithBadge {
