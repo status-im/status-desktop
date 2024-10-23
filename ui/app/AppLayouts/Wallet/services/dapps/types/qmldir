@@ -3,3 +3,4 @@ SessionRequestWithAuth 1.0 SessionRequestWithAuth.qml
 SessionRequestsModel 1.0 SessionRequestsModel.qml
 singleton SessionRequest 1.0 SessionRequest.qml
 singleton Pairing 1.0 Pairing.qml
+singleton ErrorCodes 1.0 ErrorCodes.qml

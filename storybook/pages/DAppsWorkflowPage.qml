@@ -72,6 +72,7 @@ Item {
                     accountsModel: wcService.validAccounts
                     networksModel: wcService.flatNetworks
                     sessionRequestsModel: wcService.sessionRequestsModel
+                    enabled: wcService.isServiceOnline
 
                     //formatBigNumber: (number, symbol, noSymbolOption) => wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
@@ -198,6 +199,13 @@ Item {
                     settings.persistedSessions = "[]"
                     d.updateSessionsModelAndAddNewIfNotNull(null)
                 }
+            }
+
+            StatusBaseText { text: "Networks Down" }
+
+            NetworkFilter {
+                id: networkFilter
+                flatNetworks: walletConnectService.walletRootStore.filteredFlatModel
             }
 
             // spacer
@@ -336,6 +344,8 @@ Item {
 
             projectId: projectIdText.projectId
         }
+
+        blockchainNetworksDown: networkFilter.selection
 
         store: SharedStores.DAppsStore {
             signal dappsListReceived(string dappsJson)
