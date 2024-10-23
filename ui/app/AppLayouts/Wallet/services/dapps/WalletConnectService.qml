@@ -32,6 +32,8 @@ QObject {
     required property WalletConnectSDKBase wcSDK
     required property DAppsStore store
     required property var walletRootStore
+    // // Array[chainId] of the networks that are down
+    required property var blockchainNetworksDown
 
     //output properties
     /// Model contaning all dApps available for the currently selected account
@@ -48,6 +50,8 @@ QObject {
                 ModelUtils.contains(root.validAccounts, "address", root.walletRootStore.selectedAddress, Qt.CaseInsensitive)
     /// TODO: refactor
     readonly property alias connectorDAppsProvider: connectorDAppsProvider
+
+    readonly property bool isServiceOnline: requestHandler.isServiceOnline
 
     // methods
     /// Triggers the signing process for the given session request
@@ -250,7 +254,16 @@ QObject {
         sdk: root.wcSDK
         store: root.store
         accountsModel: root.validAccounts
-        networksModel: root.flatNetworks
+        networksModel: SortFilterProxyModel {
+            sourceModel: root.flatNetworks
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "isOnline"
+                    expression: !root.blockchainNetworksDown.map(Number).includes(model.chainId)
+                    expectedRoles: "chainId"
+                }
+            ]
+        }
         currenciesStore: root.walletRootStore.currencyStore
         assetsStore: root.walletRootStore.walletAssetsStore
 
