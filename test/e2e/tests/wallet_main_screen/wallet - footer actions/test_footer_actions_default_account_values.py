@@ -14,9 +14,6 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 ])
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14862")
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14509")
-@pytest.mark.local_run
-@pytest.mark.skipif('jenkins' in str(testpath.ROOT),
-                    reason="https://github.com/status-im/status-desktop/issues/14862, https://github.com/status-im/status-desktop/issues/14509")
 def test_wallet_modals_default_account_values(main_screen, default_name, address, name, color, emoji):
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
