@@ -27,6 +27,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onContactsLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method switchToOrCreateOneToOneChat*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

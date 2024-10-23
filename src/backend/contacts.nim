@@ -8,10 +8,6 @@ proc getContacts*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("contacts".prefix, payload)
 
-proc getContactById*(id: string): RpcResponse[JsonNode] =
-  let payload = %* [id]
-  result = callPrivateRPC("getContactByID".prefix, payload)
-
 proc blockContact*(id: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("blockContactDesktop".prefix, %* [id])
 
@@ -82,10 +78,6 @@ proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] =
 proc removeTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]
   result = callPrivateRPC("removeTrustStatus".prefix, payload)
-
-proc getTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey]
-  result = callPrivateRPC("getTrustStatus".prefix, payload)
 
 proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %*[{

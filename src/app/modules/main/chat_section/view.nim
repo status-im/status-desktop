@@ -18,8 +18,6 @@ QtObject:
       tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
       contactRequestsModel: user_model.Model
       contactRequestsModelVariant: QVariant
-      listOfMyContacts: user_model.Model
-      listOfMyContactsVariant: QVariant
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
       loadingHistoryMessagesInProgress: bool
@@ -47,8 +45,6 @@ QtObject:
     self.activeItemVariant.delete
     self.contactRequestsModel.delete
     self.contactRequestsModelVariant.delete
-    self.listOfMyContacts.delete
-    self.listOfMyContactsVariant.delete
     self.editCategoryChannelsModel.delete
     self.editCategoryChannelsVariant.delete
     self.tokenPermissionsModel.delete
@@ -70,8 +66,6 @@ QtObject:
     result.activeItemVariant = newQVariant(result.activeItem)
     result.contactRequestsModel = user_model.newModel()
     result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)
-    result.listOfMyContacts = user_model.newModel()
-    result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)
     result.loadingHistoryMessagesInProgress = false
     result.tokenPermissionsModel = newTokenPermissionsModel()
     result.tokenPermissionsVariant = newQVariant(result.tokenPermissionsModel)
@@ -131,25 +125,6 @@ QtObject:
     return self.contactRequestsModelVariant
   QtProperty[QVariant] contactRequestsModel:
     read = getContactRequestsModel
-
-  proc listOfMyContactsChanged*(self: View) {.signal.}
-
-  proc populateMyContacts*(self: View, pubKeys: string) {.slot.} =
-    self.delegate.initListOfMyContacts(pubKeys)
-    self.listOfMyContactsChanged()
-
-  proc clearMyContacts*(self: View) {.slot.} =
-    self.delegate.clearListOfMyContacts()
-    self.listOfMyContactsChanged()
-
-  proc listOfMyContacts*(self: View): user_model.Model =
-    return self.listOfMyContacts
-
-  proc getListOfMyContacts(self: View): QVariant {.slot.} =
-    return self.listOfMyContactsVariant
-  QtProperty[QVariant] listOfMyContacts:
-    read = getListOfMyContacts
-    notify = listOfMyContactsChanged
 
   proc activeItemChanged*(self:View) {.signal.}
 
