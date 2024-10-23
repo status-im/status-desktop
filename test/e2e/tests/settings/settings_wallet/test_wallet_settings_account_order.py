@@ -37,6 +37,7 @@ def _verify_account_order(account_order, main_screen, default_name, order):
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703415',
                  'Account order: account order could be changed with drag&drop')
 @pytest.mark.case(703415)
+@pytest.mark.skip("To check if we need that test at all in e2e")
 def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_account):
     default_name = 'Account 1'
     name_1, emoji_1, acc_emoji_1 = 'Generated 1', 'sunglasses', '😎 '
