@@ -89,6 +89,10 @@ WalletConnectSDKBase {
         wcCalls.buildAuthObject(id, authPayload, signature, iss)
     }
 
+    emitSessionEvent: function(topic, event, chainId) {
+        wcCalls.emitSessionEvent(topic, event, chainId)
+    }
+
     QtObject {
         id: d
 
@@ -244,6 +248,18 @@ WalletConnectSDKBase {
             )
         }
 
+        function emitSessionEvent(topic, event, chainId) {
+            console.debug(`WC WalletConnectSDK.wcCall.emitSessionEvent; topic: ${topic}, event: ${JSON.stringify(event)}, chainId: ${chainId}`)
+            d.engine.runJavaScript(`
+                                    wc.emitSessionEvent("${topic}", ${JSON.stringify(event)}, "${chainId}")
+                                    .then((value) => {
+                                        wc.statusObject.echo("debug", " emitSessionEvent success")
+                                    })
+                                    .catch((e) => {
+                                        wc.statusObject.echo("error", " emitSessionEvent error: " + e.message)
+                                    })`)
+        }
+
         function disconnectPairing(topic) {
             console.debug(`WC WalletConnectSDK.wcCall.disconnectPairing; topic: "${topic}"`)
 
@@ -347,6 +363,14 @@ WalletConnectSDKBase {
                                     })
                                    `
             )
+        }
+
+        function connected() {
+            console.debug(`WC WalletConnectSDK.wcCall.connected;`)
+        }
+
+        function disconnected() {
+            console.debug(`WC WalletConnectSDK.wcCall.disconnected;`)
         }
     }
 

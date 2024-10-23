@@ -236,5 +236,9 @@ window.wc = {
             id: id,
             reason: getSdkError('USER_REJECTED') // or choose a different reason if applicable
         })
+    },
+
+    emitSessionEvent: async function (topic, event, chainId) {
+        return await window.wc.walletKit.emitSessionEvent({topic, event, chainId});
     }
 };
