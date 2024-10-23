@@ -1,11 +1,11 @@
 import NimQml, Tables, stew/shims/strformat, sequtils, sugar
-
 # TODO: use generics to remove duplication between user_model and member_model
 
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 import member_item
 import contacts_utils
+import model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -74,7 +74,7 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
@@ -174,6 +174,44 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc findIndexForMember(self: Model, pubKey: string): int =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].pubKey == pubKey):
+        return i
+
+    return -1
+
+  proc getMemberItem*(self: Model, pubKey: string): MemberItem =
+    let ind = self.findIndexForMember(pubKey)
+    if ind != -1:
+      return self.items[ind]
+
+  proc removeItemWithIndex(self: Model, index: int) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, index, index)
+    self.items.delete(index)
+    self.endRemoveRows()
+    self.countChanged()
+
+  proc removeAllItems(self: Model) =
+    if self.items.len <= 0:
+      return
+
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+
+  # TODO: rename me to removeItemByPubkey
+  proc removeItemById*(self: Model, pubKey: string) =
+    let ind = self.findIndexForMember(pubKey)
+    if ind == -1:
+      return
+
+    self.removeItemWithIndex(ind)
+
   proc addItems*(self: Model, items: seq[MemberItem]) =
     if items.len == 0:
       return
@@ -187,22 +225,6 @@ QtObject:
     self.beginInsertRows(modelIndex, first, last)
     self.items.add(items)
     self.endInsertRows()
-    self.countChanged()
-
-  proc findIndexForMember(self: Model, pubKey: string): int =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
-        return i
-
-    return -1
-
-  proc removeItemWithIndex(self: Model, index: int) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginRemoveRows(parentModelIndex, index, index)
-    self.items.delete(index)
-    self.endRemoveRows()
     self.countChanged()
 
   proc isContactWithIdAdded*(self: Model, id: string): bool =
@@ -219,17 +241,9 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
-
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
 
     if roles.len == 0:
       return
@@ -269,7 +283,8 @@ QtObject:
       memberRole: MemberRole,
       joined: bool,
       isUntrustworthy: bool,
-      ) =
+      callDataChanged: bool = true,
+    ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -278,51 +293,19 @@ QtObject:
 
     let preferredDisplayNameChanged =
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
-      resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
+      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
-
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
-
-    if self.items[ind].isEnsVerified != isEnsVerified:
-      self.items[ind].isEnsVerified = isEnsVerified
-      roles.add(ModelRole.IsEnsVerified.int)
-
-    if self.items[ind].alias != alias:
-      self.items[ind].alias = alias
-      roles.add(ModelRole.Alias.int)
-
-    if self.items[ind].icon != icon:
-      self.items[ind].icon = icon
-      roles.add(ModelRole.Icon.int)
-
-    if self.items[ind].isContact != isContact:
-      self.items[ind].isContact = isContact
-      roles.add(ModelRole.IsContact.int)
-
-    if self.items[ind].isVerified != isVerified:
-      self.items[ind].isVerified = isVerified
-      roles.add(ModelRole.IsVerified.int)
-
-    if self.items[ind].memberRole != memberRole:
-      self.items[ind].memberRole = memberRole
-      roles.add(ModelRole.MemberRole.int)
-
-    if self.items[ind].joined != joined:
-      self.items[ind].joined = joined
-      roles.add(ModelRole.Joined.int)
-
-    if self.items[ind].isUntrustworthy != isUntrustworthy:
-      self.items[ind].isUntrustworthy = isUntrustworthy
-      roles.add(ModelRole.IsUntrustworthy.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
+    updateRole(isEnsVerified, IsEnsVerified)
+    updateRole(alias, Alias)
+    updateRole(icon, Icon)
+    updateRole(isContact, IsContact)
+    updateRole(isVerified, IsVerified)
+    updateRole(memberRole, MemberRole)
+    updateRole(joined, Joined)
+    updateRole(isUntrustworthy, IsUntrustworthy)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -330,9 +313,89 @@ QtObject:
     if roles.len == 0:
       return
 
-    let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, roles)
+    if callDataChanged:
+      let index = self.createIndex(ind, 0, nil)
+      defer: index.delete
+      self.dataChanged(index, index, roles)
+
+    return roles
+
+  proc updateItems*(self: Model, items: seq[MemberItem]) =
+    var startIndex = -1
+    var endIndex = -1
+    var allRoles: seq[int] = @[]
+    for item in items:
+      let itemIndex = self.findIndexForMember(item.pubKey)
+      if itemIndex == -1:
+        continue
+      let roles = self.updateItem(
+        item.pubKey,
+        item.displayName,
+        item.ensName,
+        item.isEnsVerified,
+        item.localNickname,
+        item.alias,
+        item.icon,
+        item.isContact,
+        item.isVerified,
+        item.memberRole,
+        item.joined,
+        item.isUntrustworthy,
+        callDataChanged = false,
+      )
+
+      if roles.len > 0:
+        if startIndex == -1:
+          startIndex = itemIndex
+        endIndex = itemIndex
+        allRoles = concat(allRoles, roles)
+
+    if allRoles.len == 0:
+      return
+
+    let startModelIndex = self.createIndex(startIndex, 0, nil)
+    let endModelIndex = self.createIndex(endIndex, 0, nil)
+    defer: startModelIndex.delete
+    defer: endModelIndex.delete
+    self.dataChanged(startModelIndex, endModelIndex, allRoles)
+
+
+  proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
+    if items.len == 0:
+      self.removeAllItems()
+      return
+
+    # Check for removals
+    var itemsToRemove: seq[string] = @[]
+    for oldItem in self.items:
+      var found = false
+      for newItem in items:
+        if oldItem.pubKey == newItem.pubKey:
+          found = true
+          break
+      if not found:
+        itemsToRemove.add(oldItem.pubKey)
+    
+    for itemToRemove in itemsToRemove:
+      self.removeItemById(itemToRemove)
+
+    var itemsToAdd: seq[MemberItem] = @[]
+    var itemsToUpdate: seq[MemberItem] = @[]
+
+    for item in items:
+      let ind = self.findIndexForMember(item.pubKey)
+      if ind == -1:
+        # Item does not exist, we add it
+        itemsToAdd.add(item)
+        continue
+
+      itemsToUpdate.add(item)
+
+    if itemsToUpdate.len > 0:
+      self.updateItems(itemsToUpdate)
+
+    if itemsToAdd.len > 0:
+      self.addItems(itemsToAdd)
 
   proc updateItem*(
       self: Model,
@@ -351,7 +414,7 @@ QtObject:
     if ind == -1:
       return
 
-    self.updateItem(
+    discard self.updateItem(
       pubKey,
       displayName,
       ensName,
@@ -402,14 +465,6 @@ QtObject:
       return ""
 
     return self.items[idx].airdropAddress
-
-# TODO: rename me to removeItemByPubkey
-  proc removeItemById*(self: Model, pubKey: string) =
-    let ind = self.findIndexForMember(pubKey)
-    if ind == -1:
-      return
-
-    self.removeItemWithIndex(ind)
 
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =

@@ -1,6 +1,6 @@
 {.used.}
 
-import json, sequtils, sugar, tables, strutils, json_serialization
+import json, sequtils, sugar, tables, strutils, json_serialization, strformat
 
 import ../../../../backend/communities
 include ../../../common/json_utils
@@ -63,6 +63,17 @@ type CommunityMembershipRequestDto* = object
   state*: int
   our*: string #FIXME: should be bool
   revealedAccounts*: seq[RevealedAccount]
+
+proc `$`*(self: CommunityMembershipRequestDto): string =
+  return fmt"""CommunityMembershipRequestDto(
+    id:{self.id}, 
+    publicKey:{self.publicKey},
+    chatId:{self.chatId},
+    communityId:{self.communityId},
+    state:{self.state},
+    our:{self.our},
+    revealedAccounts.count:{self.revealedAccounts.len},
+    """
 
 type CommunitySettingsDto* = object
   id*: string

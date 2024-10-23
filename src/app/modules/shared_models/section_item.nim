@@ -1,6 +1,5 @@
 import stew/shims/strformat, stint
 import ./member_model, ./member_item
-import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
 
@@ -48,7 +47,6 @@ type
     ensOnly: bool
     muted: bool
     membersModel: member_model.Model
-    pendingRequestsToJoinModel: PendingRequestModel
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     bannedMembersModel: member_model.Model
@@ -89,7 +87,6 @@ proc initItem*(
     ensOnly = false,
     muted = false,
     members: seq[MemberItem] = @[],
-    pendingRequestsToJoin: seq[PendingRequestItem] = @[],
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
     bannedMembers: seq[MemberItem] = @[],
@@ -130,8 +127,6 @@ proc initItem*(
   result.muted = muted
   result.membersModel = newModel()
   result.membersModel.setItems(members)
-  result.pendingRequestsToJoinModel = newPendingRequestModel()
-  result.pendingRequestsToJoinModel.setItems(pendingRequestsToJoin)
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
   result.bannedMembersModel = newModel()
@@ -199,6 +194,9 @@ proc sectionType*(self: SectionItem): SectionType {.inline.} =
 proc name*(self: SectionItem): string {.inline.} =
   self.name
 
+proc `name=`*(self: var SectionItem, value: string) {.inline.} =
+  self.name = value
+
 proc memberRole*(self: SectionItem): MemberRole {.inline.} =
   self.memberRole
 
@@ -208,29 +206,56 @@ proc `memberRole=`*(self: var SectionItem, value: MemberRole) {.inline.} =
 proc isControlNode*(self: SectionItem): bool {.inline.} =
   self.isControlNode
 
+proc `isControlNode=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.isControlNode = value
+
 proc description*(self: SectionItem): string {.inline.} =
   self.description
+
+proc `description=`*(self: var SectionItem, value: string) {.inline.} =
+  self.description = value
 
 proc introMessage*(self: SectionItem): string {.inline.} =
   self.introMessage
 
+proc `introMessage=`*(self: var SectionItem, value: string) {.inline.} =
+  self.introMessage = value
+
 proc outroMessage*(self: SectionItem): string {.inline.} =
   self.outroMessage
+
+proc `outroMessage=`*(self: var SectionItem, value: string) {.inline.} =
+  self.outroMessage = value
 
 proc image*(self: SectionItem): string {.inline.} =
   self.image
 
+proc `image=`*(self: var SectionItem, value: string) {.inline.} =
+  self.image = value
+
 proc bannerImageData*(self: SectionItem): string {.inline.} =
   self.bannerImageData
+
+proc `bannerImageData=`*(self: var SectionItem, value: string) {.inline.} =
+  self.bannerImageData = value
 
 proc icon*(self: SectionItem): string {.inline.} =
   self.icon
 
+proc `icon=`*(self: var SectionItem, value: string) {.inline.} =
+  self.icon = value
+
 proc color*(self: SectionItem): string {.inline.} =
   self.color
 
+proc `color=`*(self: var SectionItem, value: string) {.inline.} =
+  self.color = value
+
 proc tags*(self: SectionItem): string {.inline.} =
   self.tags
+
+proc `tags=`*(self: var SectionItem, value: string) {.inline.} =
+  self.tags = value
 
 proc hasNotification*(self: SectionItem): bool {.inline.} =
   self.hasNotification
@@ -265,26 +290,50 @@ proc `enabled=`*(self: var SectionItem, value: bool) {.inline.} =
 proc joined*(self: SectionItem): bool {.inline.} =
   self.joined
 
+proc `joined=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.joined = value
+
 proc canJoin*(self: SectionItem): bool {.inline.} =
   self.canJoin
+
+proc `canJoin=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.canJoin = value
 
 proc spectated*(self: SectionItem): bool {.inline.} =
   self.spectated
 
+proc `spectated=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.spectated = value
+
 proc canRequestAccess*(self: SectionItem): bool {.inline.} =
   self.canRequestAccess
+
+proc `canRequestAccess=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.canRequestAccess = value
 
 proc canManageUsers*(self: SectionItem): bool {.inline.} =
   self.canManageUsers
 
+proc `canManageUsers=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.canManageUsers = value
+
 proc isMember*(self: SectionItem): bool {.inline.} =
   self.isMember
+
+proc `isMember=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.isMember = value
 
 proc access*(self: SectionItem): int {.inline.} =
   self.access
 
+proc `access=`*(self: var SectionItem, value: int) {.inline.} =
+  self.access = value
+
 proc ensOnly*(self: SectionItem): bool {.inline.} =
   self.ensOnly
+
+proc `ensOnly=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.ensOnly = value
 
 proc muted*(self: SectionItem): bool {.inline.} =
   self.muted
@@ -331,20 +380,29 @@ proc declinedMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
 
+proc `isPendingOwnershipRequest=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.isPendingOwnershipRequest = value
+
 proc setIsPendingOwnershipRequest*(self: var SectionItem, isPending: bool) {.inline.} =
   self.isPendingOwnershipRequest = isPending
-
-proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
-  self.pendingRequestsToJoinModel
 
 proc historyArchiveSupportEnabled*(self: SectionItem): bool {.inline.} =
   self.historyArchiveSupportEnabled
 
+proc `historyArchiveSupportEnabled=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.historyArchiveSupportEnabled = value
+
 proc pinMessageAllMembersEnabled*(self: SectionItem): bool {.inline.} =
   self.pinMessageAllMembersEnabled
 
+proc `pinMessageAllMembersEnabled=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.pinMessageAllMembersEnabled = value
+
 proc encrypted*(self: SectionItem): bool {.inline.} =
   self.encrypted
+
+proc `encrypted=`*(self: var SectionItem, value: bool) {.inline.} =
+  self.encrypted = value
 
 proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
   self.communityTokensModel.appendItem(item)

@@ -196,7 +196,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
   let isMe = publicKey == singletonInstance.userProfile.getPubKey()
-  self.view.model().updateItem(
+  discard self.view.model().updateItem(
     pubKey = publicKey,
     displayName = contactDetails.dto.displayName,
     ensName = contactDetails.dto.name,

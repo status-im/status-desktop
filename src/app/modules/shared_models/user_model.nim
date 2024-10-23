@@ -3,6 +3,7 @@ import user_item
 
 import ../../../app_service/common/types
 import contacts_utils
+import model_utils
 
 type
   ModelRole {.pure.} = enum
@@ -272,17 +273,9 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
-
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -319,7 +312,7 @@ QtObject:
       isUntrustworthy: bool = false,
       ) =
     let ind = self.findIndexByPubKey(pubKey)
-    if(ind == -1):
+    if ind == -1:
       return
 
     var roles: seq[int] = @[]
@@ -328,33 +321,12 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, alias)
 
-    if self.items[ind].displayName != displayName:
-      self.items[ind].displayName = displayName
-      roles.add(ModelRole.DisplayName.int)
-
-    if self.items[ind].ensName != ensName:
-      self.items[ind].ensName = ensName
-      roles.add(ModelRole.EnsName.int)
-
-    if self.items[ind].isEnsVerified != isEnsVerified:
-      self.items[ind].isEnsVerified = isEnsVerified
-      roles.add(ModelRole.IsEnsVerified.int)
-
-    if self.items[ind].localNickname != localNickname:
-      self.items[ind].localNickname = localNickname
-      roles.add(ModelRole.LocalNickname.int)
-
-    if self.items[ind].alias != alias:
-      self.items[ind].alias = alias
-      roles.add(ModelRole.Alias.int)
-
-    if self.items[ind].icon != icon:
-      self.items[ind].icon = icon
-      roles.add(ModelRole.Icon.int)
-
-    if self.items[ind].isUntrustworthy != isUntrustworthy:
-      self.items[ind].isUntrustworthy = isUntrustworthy
-      roles.add(ModelRole.IsUntrustworthy.int)
+    updateRole(displayName, DisplayName)
+    updateRole(ensName, EnsName)
+    updateRole(localNickname, LocalNickname)
+    updateRole(alias, Alias)
+    updateRole(icon, Icon)
+    updateRole(isUntrustworthy, IsUntrustworthy)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)

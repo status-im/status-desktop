@@ -309,6 +309,10 @@ proc init*(self: Controller) =
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)
 
+  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
+    let args = community_service.CanceledCommunityRequestArgs(e)
+    self.delegate.communityMembershipRequestCanceled(args.communityId, args.requestId, args.pubKey)
+
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED) do(e: Args):
     var args = CommunityRequestArgs(e)
     self.delegate.communityMemberRevealedAccountsAdded(args.communityRequest)
@@ -495,6 +499,13 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.onAppNetworkChanged()
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
+    self.delegate.contactUpdated(singletonInstance.userProfile.getPubKey())
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()

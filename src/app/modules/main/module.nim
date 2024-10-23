@@ -1,8 +1,7 @@
-import NimQml, tables, json, sugar, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
+import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
-import ./communities/models/[pending_request_item, pending_request_model]
 import ../shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
 import ../shared_models/[color_hash_item, color_hash_model]
 import ../shared_modules/keycard_popup/module as keycard_shared_module
@@ -127,7 +126,7 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
-
+proc createMemberItem[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole, airdropAddress: string = ""): MemberItem
 
 proc newModule*[T](
   delegate: T,
@@ -342,7 +341,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
 
-
   # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
   var members = communityDetails.members
   for requestForAutoRejoin in communityDetails.waitingForSharedAddressesRequestsToJoin:
@@ -408,15 +406,6 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
         airdropAddress,
       )
     ),
-    # pendingRequestsToJoin
-    communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
-      x.id,
-      x.publicKey,
-      x.chatId,
-      x.communityId,
-      x.state,
-      x.our
-    )),
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     bannedMembers,
@@ -1102,7 +1091,7 @@ method communityLeft*[T](self: Module[T], communityId: string) =
 method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
-  if(not self.chatSectionModules.contains(community.id)):
+  if not self.chatSectionModules.contains(community.id):
     return
   var communitySectionItem = self.createCommunitySectionItem(community, isEdit = true)
   # We need to calculate the unread counts because the community update doesn't come with it
@@ -1367,7 +1356,17 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
   let community =  self.controller.getCommunityById(membershipRequest.communityId)
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
-  fmt "{contactName} asks to join {community.name}", community.id)
+    fmt "{contactName} asks to join {community.name}", community.id)
+
+  self.view.model().addPendingMember(membershipRequest.communityId, self.createMemberItem(
+    membershipRequest.publicKey,
+    membershipRequest.id,
+    MembershipRequestState(membershipRequest.state),
+    MemberRole.None,
+  ))
+
+method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
+  self.view.model().removePendingMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
@@ -1725,7 +1724,7 @@ method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestT
   if sectionId in self.chatSectionModules:
     self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
-proc createMemberItem*[T](
+proc createMemberItem[T](
     self: Module[T],
     memberId: string,
     requestId: string,
@@ -1752,6 +1751,22 @@ proc createMemberItem*[T](
     membershipRequestState = state,
     requestToJoinId = requestId,
     airdropAddress = airdropAddress,
+  )
+
+method contactUpdated*[T](self: Module[T], contactId: string) =
+  let contactDetails = self.controller.getContactDetails(contactId)
+  let isMe = contactId == singletonInstance.userProfile.getPubKey()
+  self.view.model().updateMemberItemInSections(
+    pubKey = contactId,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
+    icon = contactDetails.icon,
+    isContact = contactDetails.dto.isContact,
+    isVerified = not isMe and contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
   )
 
 {.pop.}
