@@ -8,10 +8,6 @@ proc getContacts*(): RpcResponse[JsonNode] =
   let payload = %* []
   result = callPrivateRPC("contacts".prefix, payload)
 
-proc getContactById*(id: string): RpcResponse[JsonNode] =
-  let payload = %* [id]
-  result = callPrivateRPC("getContactByID".prefix, payload)
-
 proc blockContact*(id: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("blockContactDesktop".prefix, %* [id])
 
