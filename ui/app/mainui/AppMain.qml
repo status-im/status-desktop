@@ -2212,6 +2212,7 @@ Item {
                 controller: WalletStores.RootStore.walletConnectController
             }
             walletRootStore: WalletStores.RootStore
+            blockchainNetworksDown: appMain.networkConnectionStore.blockchainNetworksDown
 
             Component.onCompleted: {
                 Global.walletConnectService = walletConnectService
