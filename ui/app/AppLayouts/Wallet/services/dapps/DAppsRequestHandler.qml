@@ -16,11 +16,13 @@ SQUtils.QObject {
     required property WalletConnectSDKBase sdk
     required property DAppsStore store
     required property var accountsModel
+    // Required roles: chainId, layer, isOnline
     required property var networksModel
     required property CurrenciesStore currenciesStore
     required property WalletStore.WalletAssetsStore assetsStore
 
     property alias requestsModel: requests
+    readonly property bool isServiceOnline: chainsSupervisorPlugin.anyChainAvailable && sdk.sdkReady
 
     function pair(uri) {
         return sdk.pair(uri)
@@ -1009,5 +1011,12 @@ SQUtils.QObject {
                 }
             }
         }
+    }
+
+    ChainsSupervisorPlugin {
+        id: chainsSupervisorPlugin
+
+        sdk: root.sdk
+        networksModel: root.networksModel
     }
 }

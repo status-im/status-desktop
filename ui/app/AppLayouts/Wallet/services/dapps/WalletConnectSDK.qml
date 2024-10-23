@@ -364,14 +364,6 @@ WalletConnectSDKBase {
                                    `
             )
         }
-
-        function connected() {
-            console.debug(`WC WalletConnectSDK.wcCall.connected;`)
-        }
-
-        function disconnected() {
-            console.debug(`WC WalletConnectSDK.wcCall.disconnected;`)
-        }
     }
 
     QtObject {
