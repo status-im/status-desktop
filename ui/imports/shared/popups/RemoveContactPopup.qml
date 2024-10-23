@@ -17,12 +17,6 @@ CommonContactDialog {
 
     title: qsTr("Remove contact")
 
-    readonly property var d: QtObject {
-        id: d
-        readonly property bool isTrusted: contactDetails.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                                          contactDetails.incomingVerificationStatus === Constants.verificationStatus.trusted
-    }
-
     StatusBaseText {
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.halfPadding
@@ -32,10 +26,10 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveIDVerification
-        visible: d.isTrusted || contactDetails.trustStatus === Constants.trustStatus.trusted
+        visible: contactDetails.trustStatus === Constants.trustStatus.trusted
         checked: visible
         enabled: false
-        text: qsTr("Remove ID verification")
+        text: qsTr("Remove trust mark")
     }
 
     StatusCheckBox {

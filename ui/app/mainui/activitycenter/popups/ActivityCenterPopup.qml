@@ -82,7 +82,6 @@ Popup {
         hasReplies: activityCenterStore.repliesCount > 0
         hasMentions: activityCenterStore.mentionsCount > 0
         hasContactRequests: activityCenterStore.contactRequestsCount > 0
-        hasIdentityVerification: activityCenterStore.identityVerificationCount > 0
         hasMembership: activityCenterStore.membershipCount > 0
         hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
         activeGroup: activityCenterStore.activeNotificationGroup
@@ -121,8 +120,6 @@ Popup {
                     return replyNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
                     return contactRequestNotificationComponent
-                case ActivityCenterStore.ActivityCenterNotificationType.ContactVerification:
-                    return verificationRequestNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
                     return communityInvitationNotificationComponent
                 case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
@@ -188,17 +185,6 @@ Popup {
         id: contactRequestNotificationComponent
 
         ActivityNotificationContactRequest {
-            filteredIndex: parent.filteredIndex
-            notification: parent.notification
-            store: root.store
-            activityCenterStore: root.activityCenterStore
-            onCloseActivityCenter: root.close()
-        }
-    }
-    Component {
-        id: verificationRequestNotificationComponent
-
-        ActivityNotificationContactVerification {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             store: root.store

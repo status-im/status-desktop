@@ -160,7 +160,7 @@ SettingsContentBase {
                 ContactsListPanel {
                     id: verifiedContacts
                     Layout.fillWidth: true
-                    title: qsTr("Identity Verified Contacts")
+                    title: qsTr("Trusted Contacts")
                     visible: !noFriendsItem.visible && count > 0
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
@@ -240,10 +240,6 @@ SettingsContentBase {
 
                     onContactRequestRejected: {
                         root.contactsStore.dismissContactRequest(publicKey, "")
-                    }
-
-                    onShowVerificationRequest: {
-                        Global.openIncomingIDRequestPopup(publicKey, null, null)
                     }
                 }
 

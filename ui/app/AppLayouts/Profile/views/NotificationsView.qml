@@ -312,21 +312,6 @@ SettingsContentBase {
             ]
         }
 
-        StatusListItem {
-            // Hidden since 2.29 since it's not mature enough
-            visible: false
-            Layout.preferredWidth: root.contentWidth
-            title: qsTr("Identity Verification Requests")
-            components: [
-                NotificationSelect {
-                    selected: appSettings.notifSettingIdentityVerificationRequests
-                    onSendAlertsClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.turnOffValue
-                }
-            ]
-        }
-
         Separator {
             Layout.preferredWidth: root.contentWidth
             Layout.preferredHeight: Theme.bigPadding

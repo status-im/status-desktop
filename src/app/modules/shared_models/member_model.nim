@@ -23,10 +23,9 @@ type
     IsContact
     IsVerified
     IsUntrustworthy
+    TrustStatus
     IsBlocked
     ContactRequest
-    IncomingVerificationStatus
-    OutgoingVerificationStatus
     MemberRole
     Joined
     RequestToJoinId
@@ -93,10 +92,9 @@ QtObject:
       ModelRole.IsContact.int: "isContact",
       ModelRole.IsVerified.int: "isVerified",
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
+      ModelRole.TrustStatus.int: "trustStatus",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
-      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.MemberRole.int: "memberRole",
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
@@ -142,17 +140,15 @@ QtObject:
     of ModelRole.IsContact:
       result = newQVariant(item.isContact)
     of ModelRole.IsVerified:
-      result = newQVariant(item.isVerified)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Trusted)
     of ModelRole.IsUntrustworthy:
-      result = newQVariant(item.isUntrustworthy)
+      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Untrustworthy)
+    of ModelRole.TrustStatus:
+      result = newQVariant(item.trustStatus.int)
     of ModelRole.IsBlocked:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerificationStatus:
-      result = newQVariant(item.incomingVerificationStatus.int)
-    of ModelRole.OutgoingVerificationStatus:
-      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
     of ModelRole.Joined:
@@ -279,10 +275,9 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
       memberRole: MemberRole,
       joined: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
       callDataChanged: bool = true,
     ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
@@ -295,6 +290,8 @@ QtObject:
       resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
       resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
 
+    let trustStatusChanged = trustStatus != self.items[ind].trustStatus
+
     updateRole(displayName, DisplayName)
     updateRole(ensName, EnsName)
     updateRole(localNickname, LocalNickname)
@@ -302,13 +299,16 @@ QtObject:
     updateRole(alias, Alias)
     updateRole(icon, Icon)
     updateRole(isContact, IsContact)
-    updateRole(isVerified, IsVerified)
     updateRole(memberRole, MemberRole)
     updateRole(joined, Joined)
-    updateRole(isUntrustworthy, IsUntrustworthy)
+    updateRole(trustStatus, TrustStatus)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
+
+    if trustStatusChanged:
+      roles.add(ModelRole.IsUntrustworthy.int)
+      roles.add(ModelRole.IsVerified.int)
 
     if roles.len == 0:
       return
@@ -337,10 +337,9 @@ QtObject:
         item.alias,
         item.icon,
         item.isContact,
-        item.isVerified,
         item.memberRole,
         item.joined,
-        item.isUntrustworthy,
+        item.trustStatus,
         callDataChanged = false,
       )
 
@@ -407,8 +406,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
-      isVerified: bool,
-      isUntrustworthy: bool,
+      trustStatus: TrustStatus,
       ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
@@ -423,10 +421,9 @@ QtObject:
       alias,
       icon,
       isContact,
-      isVerified,
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
-      isUntrustworthy,
+      trustStatus,
     )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =

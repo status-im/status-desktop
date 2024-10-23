@@ -565,9 +565,6 @@ proc spectateCommunity*(self: Controller, communityId: string) =
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 
-proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
-  self.contactsService.getVerificationRequestFrom(publicKey)
-
 proc getCommunityTokensDetailsAsync*(self: Controller, communityId: string) =
   self.communityTokensService.getCommunityTokensDetailsAsync(communityId)
 

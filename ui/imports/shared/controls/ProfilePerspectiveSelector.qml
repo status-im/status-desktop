@@ -57,7 +57,7 @@ StatusButton {
         }
         ShowcaseVisibilityAction {
             showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-            text: qsTr("ID verified contact")
+            text: qsTr("Trusted contact")
         }
     }
 

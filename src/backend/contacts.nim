@@ -79,57 +79,13 @@ proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]
   result = callPrivateRPC("markAsUntrustworthy".prefix, payload)
 
-proc verifiedTrusted*(requestId: string): RpcResponse[JsonNode] =
-  let payload = %*[{
-    "id": requestId
-  }]
-  result = callPrivateRPC("verifiedTrusted".prefix, payload)
-
-proc verifiedUntrustworthy*(requestId: string): RpcResponse[JsonNode] =
-  let payload = %*[{
-    "id": requestId
-  }]
-  result = callPrivateRPC("verifiedUntrustworthy".prefix, payload)
-
 proc removeTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]
   result = callPrivateRPC("removeTrustStatus".prefix, payload)
 
-proc removeTrustVerificationStatus*(pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey]
-  result = callPrivateRPC("removeTrustVerificationStatus".prefix, payload)
-
 proc getTrustStatus*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %* [pubkey]
   result = callPrivateRPC("getTrustStatus".prefix, payload)
-
-proc sendVerificationRequest*(pubkey: string, challenge: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey, challenge]
-  result = callPrivateRPC("sendContactVerificationRequest".prefix, payload)
-
-proc acceptVerificationRequest*(requestId: string, response: string): RpcResponse[JsonNode] =
-  let payload = %* [requestId, response]
-  result = callPrivateRPC("acceptContactVerificationRequest".prefix, payload)
-
-proc declineVerificationRequest*(requestId: string): RpcResponse[JsonNode] =
-  let payload = %* [requestId]
-  result = callPrivateRPC("declineContactVerificationRequest".prefix, payload)
-
-proc getVerificationRequestSentTo*(pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey]
-  result = callPrivateRPC("getVerificationRequestSentTo".prefix, payload)
-
-proc getVerificationRequestFrom*(pubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [pubkey]
-  result = callPrivateRPC("getLatestVerificationRequestFrom".prefix, payload)
-
-proc getReceivedVerificationRequests*(): RpcResponse[JsonNode] =
-  let payload = %* []
-  result = callPrivateRPC("getReceivedVerificationRequests".prefix, payload)
-
-proc cancelVerificationRequest*(requestId: string): RpcResponse[JsonNode] =
-  let payload = %* [requestId]
-  result = callPrivateRPC("cancelVerificationRequest".prefix, payload)
 
 proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] =
   let payload = %*[{

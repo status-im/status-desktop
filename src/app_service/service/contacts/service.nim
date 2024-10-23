@@ -37,7 +37,7 @@ type
 
   TrustArgs* = ref object of Args
     publicKey*: string
-    isUntrustworthy*: bool
+    trustStatus*: TrustStatus
 
   ResolvedContactArgs* = ref object of Args
     pubkey*: string
@@ -47,9 +47,6 @@ type
 
   ContactsStatusUpdatedArgs* = ref object of Args
     statusUpdates*: seq[StatusUpdateDto]
-
-  VerificationRequestArgs* = ref object of Args
-    verificationRequest*: VerificationRequest
 
   ContactInfoRequestArgs* = ref object of Args
     publicKey*: string
@@ -83,13 +80,6 @@ const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 const SIGNAL_REMOVED_TRUST_STATUS* = "removedTrustStatus"
 const SIGNAL_CONTACT_UNTRUSTWORTHY* = "contactUntrustworthy"
 const SIGNAL_CONTACT_TRUSTED* = "contactTrusted"
-const SIGNAL_CONTACT_VERIFIED* = "contactVerified"
-const SIGNAL_CONTACT_VERIFICATION_SENT* = "contactVerificationRequestSent"
-const SIGNAL_CONTACT_VERIFICATION_CANCELLED* = "contactVerificationRequestCancelled"
-const SIGNAL_CONTACT_VERIFICATION_DECLINED* = "contactVerificationRequestDeclined"
-const SIGNAL_CONTACT_VERIFICATION_ACCEPTED* = "contactVerificationRequestAccepted"
-const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
-const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
 const SIGNAL_APPEND_CHAT_MESSAGES* = "appendChatMessages"
 
@@ -114,7 +104,6 @@ QtObject:
     settingsService: settings_service.Service
     contacts: Table[string, ContactDetails] # [contact_id, ContactDetails]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
-    receivedIdentityRequests: Table[string, VerificationRequest] # [from_id, VerificationRequest]
     events: EventEmitter
     closingApp: bool
     imageServerUrl: string
@@ -122,7 +111,6 @@ QtObject:
   # Forward declaration
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
-  proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
   proc requestContactInfo*(self: Service, pubkey: string)
   proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails
 
@@ -130,7 +118,6 @@ QtObject:
     self.closingApp = true
     self.contacts.clear
     self.contactsStatus.clear
-    self.receivedIdentityRequests.clear
     self.QObject.delete
 
   proc newService*(
@@ -148,7 +135,6 @@ QtObject:
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactDetails]()
     result.contactsStatus = initTable[string, StatusUpdateDto]()
-    result.receivedIdentityRequests = initTable[string, VerificationRequest]()
 
   proc addContact(self: Service, contact: ContactDetails) =
     # Private proc, used for adding contacts only.
@@ -163,10 +149,6 @@ QtObject:
 
       for contact in contacts:
         self.addContact(self.constructContactDetails(contact))
-
-      # Identity verifications
-      for request in self.fetchReceivedVerificationRequests():
-        self.receivedIdentityRequests[request.fromId] = request
 
     except Exception as e:
       let errDesription = e.msg
@@ -207,35 +189,6 @@ QtObject:
           let data = ContactArgs(contactId: c.id)
           self.events.emit(SIGNAL_CONTACT_UPDATED, data)
 
-      let myPubKey = singletonInstance.userProfile.getPubKey()
-      if(receivedData.verificationRequests.len > 0):
-        for request in receivedData.verificationRequests:
-          if request.fromId == myPubKey:
-            # TODO handle reacting to my own request later
-            continue
-
-          let data = VerificationRequestArgs(verificationRequest: request)
-          let alreadyContains = self.receivedIdentityRequests.contains(request.fromId)
-          self.receivedIdentityRequests[request.fromId] = request
-
-          if alreadyContains:
-            self.events.emit(SIGNAL_CONTACT_VERIFICATION_UPDATED, data)
-
-            if request.status == VerificationStatus.Trusted:
-              if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].dto.trustStatus = TrustStatus.Trusted
-                self.contacts[request.fromId].dto.verificationStatus = VerificationStatus.Trusted
-              self.events.emit(SIGNAL_CONTACT_TRUSTED,
-                TrustArgs(publicKey: request.fromId, isUntrustworthy: false))
-              self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: request.fromId))
-
-            if request.status == VerificationStatus.Canceled:
-              if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].dto.verificationStatus = VerificationStatus.Canceled
-              self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: request.fromId))
-
-          else:
-            self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
       if receivedData.updatedProfileShowcaseContactIDs.len > 0:
@@ -650,7 +603,7 @@ QtObject:
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
 
     self.events.emit(SIGNAL_CONTACT_TRUSTED,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
@@ -662,57 +615,7 @@ QtObject:
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
 
     self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
-      TrustArgs(publicKey: publicKey, isUntrustworthy: true))
-
-  proc verifiedTrusted*(self: Service, publicKey: string) =
-    try:
-      var response = status_contacts.getVerificationRequestSentTo(publicKey)
-      if not response.error.isNil:
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      let request = response.result.toVerificationRequest()
-
-      response = status_contacts.verifiedTrusted(request.id)
-      if not response.error.isNil:
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
-        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Trusted
-
-        self.events.emit(SIGNAL_CONTACT_TRUSTED, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
-        self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
-        checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "error verified trusted request", msg=e.msg
-
-  proc verifiedUntrustworthy*(self: Service, publicKey: string) =
-    try:
-      var response = status_contacts.getVerificationRequestSentTo(publicKey)
-      if not response.error.isNil:
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      let request = response.result.toVerificationRequest()
-
-      response = status_contacts.verifiedUntrustworthy(request.id)
-      if not response.error.isNil:
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
-        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Untrustworthy
-
-        self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY, TrustArgs(publicKey: publicKey, isUntrustworthy: true))
-        self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
-        checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "error verified untrustworthy request", msg=e.msg
+      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
     try:
@@ -726,140 +629,10 @@ QtObject:
       if self.contacts.hasKey(publicKey):
         self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
         
-      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
+        TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
     except Exception as e:
       error "error in removeTrustStatus request", msg = e.msg
-
-  proc removeTrustVerificationStatus*(self: Service, publicKey: string) =
-    try:
-      let response = status_contacts.removeTrustVerificationStatus(publicKey)
-      if not response.error.isNil:
-        error "error removing trust status", msg = response.error.message
-        return
-
-      self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, isUntrustworthy: false))
-      self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
-    except Exception as e:
-      error "error removeTrustVerificationStatus request", msg = e.msg
-
-  proc getVerificationRequestSentTo*(self: Service, publicKey: string): VerificationRequest =
-    try:
-      let response = status_contacts.getVerificationRequestSentTo(publicKey)
-      return response.result.toVerificationRequest()
-    except Exception as e:
-      let errDesription = e.msg
-      error "error obtaining verification request", errDesription
-      return
-
-  proc getVerificationRequestFrom*(self: Service, publicKey: string): VerificationRequest =
-    try:
-      if (self.receivedIdentityRequests.contains(publicKey)):
-        return self.receivedIdentityRequests[publicKey]
-
-      let response = status_contacts.getVerificationRequestFrom(publicKey)
-      if not response.result.isNil and response.result.kind == JObject:
-        result = response.result.toVerificationRequest()
-        self.receivedIdentityRequests[publicKey] = result
-    except Exception as e:
-      let errDesription = e.msg
-      error "error obtaining verification request", errDesription
-
-  proc fetchReceivedVerificationRequests*(self: Service): seq[VerificationRequest] =
-    try:
-      let response = status_contacts.getReceivedVerificationRequests()
-
-      for request in response.result:
-        result.add(request.toVerificationRequest())
-    except Exception as e:
-      let errDesription = e.msg
-      error "error obtaining verification requests", errDesription
-
-  proc getReceivedVerificationRequests*(self: Service): seq[VerificationRequest] =
-    result = toSeq(self.receivedIdentityRequests.values)
-
-  proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
-    try:
-      let response = status_contacts.sendVerificationRequest(publicKey, challenge)
-      if not response.error.isNil:
-        error "error sending contact verification request", msg = response.error.message
-        return
-
-      var contact = self.getContactById(publicKey)
-      contact.verificationStatus = VerificationStatus.Verifying
-      self.saveContact(contact)
-
-      self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "Error sending verification request", msg = e.msg
-
-  proc cancelVerificationRequest*(self: Service, publicKey: string) =
-    try:
-      var response = status_contacts.getVerificationRequestSentTo(publicKey)
-      if not response.error.isNil:
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      let request = response.result.toVerificationRequest()
-
-      response = status_contacts.cancelVerificationRequest(request.id)
-      if not response.error.isNil:
-        error "error sending contact verification request", msg = response.error.message
-        return
-
-      var contact = self.getContactById(publicKey)
-      contact.verificationStatus = VerificationStatus.Unverified
-      self.saveContact(contact)
-
-      self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "Error canceling verification request", msg = e.msg
-
-  proc acceptVerificationRequest*(self: Service, publicKey: string, responseText: string) =
-    try:
-      if not self.receivedIdentityRequests.contains(publicKey):
-        raise newException(ValueError, fmt"No verification request for public key: `{publicKey}`")
-
-      var request = self.receivedIdentityRequests[publicKey]
-      let response = status_contacts.acceptVerificationRequest(request.id, responseText)
-      if(not response.error.isNil):
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      request.status = VerificationStatus.Verified
-      request.response = responseText
-      request.repliedAt = getTime().toUnix * 1000
-      self.receivedIdentityRequests[publicKey] = request
-
-      self.events.emit(SIGNAL_CONTACT_VERIFICATION_ACCEPTED, VerificationRequestArgs(verificationRequest: request))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "error accepting contact verification request", msg=e.msg
-
-  proc declineVerificationRequest*(self: Service, publicKey: string) =
-    try:
-      if not self.receivedIdentityRequests.contains(publicKey):
-        raise newException(ValueError, fmt"No verification request for public key: `{publicKey}`")
-
-      var request = self.receivedIdentityRequests[publicKey]
-      let response = status_contacts.declineVerificationRequest(request.id)
-      if(not response.error.isNil):
-        let msg = response.error.message
-        raise newException(RpcException, msg)
-
-      request.status = VerificationStatus.Declined
-      self.receivedIdentityRequests[publicKey] = request
-
-      self.events.emit(SIGNAL_CONTACT_VERIFICATION_DECLINED, ContactArgs(contactId: publicKey))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
-    except Exception as e:
-      error "error declining contact verification request", msg=e.msg
 
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = pubkeyAndRpcResponse.parseJson
