@@ -146,7 +146,7 @@ Item {
                 visible: !root.walletStore.showSavedAddresses
                          && root.dappsEnabled
                          && wcService.serviceAvailableToCurrentAddress
-                enabled: !!Global.walletConnectService
+                enabled: !!wcService && wcService.isServiceOnline
 
 
                 loginType: root.loginType

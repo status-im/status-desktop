@@ -121,6 +121,7 @@ Item {
             onPairingValidated: function(validationState) {
                 onPairingValidatedTriggers.push({validationState})
             }
+            blockchainNetworksDown: []
         }
     }
 
@@ -221,6 +222,33 @@ Item {
                 }
             }
 
+            readonly property ListModel filteredFlatModelWithOnlineStat: ListModel {
+                ListElement {
+                    chainId: 1
+                    layer: 1
+                    isOnline: true
+                }
+                ListElement {
+                    chainId: 2
+                    chainName: "Test Chain"
+                    iconUrl: "network/Network=Ethereum"
+                    layer: 2
+                    isOnline: true
+                }
+                // Used by tst_balanceCheck
+                ListElement {
+                    chainId: 11155111
+                    layer: 1
+                    isOnline: true
+                }
+                // Used by tst_balanceCheck
+                ListElement {
+                    chainId: 421613
+                    layer: 2
+                    isOnline: true
+                }
+            }
+
             readonly property ListModel nonWatchAccounts: ListModel {
                 ListElement {
                     address: "0x1"
@@ -299,9 +327,10 @@ Item {
                 sdk: sdk,
                 store: store,
                 accountsModel: walletStore.nonWatchAccounts,
-                networksModel: walletStore.filteredFlatModel
+                networksModel: walletStore.filteredFlatModelWithOnlineStat
             })
             verify(!!handler)
+            sdk.getActiveSessionsCallbacks = []
         }
 
         function cleanup() {
@@ -791,6 +820,7 @@ Item {
             verify(!!walletStore)
             provider = createTemporaryObject(dappsListProviderComponent, root, {sdk: sdk, store: store, supportedAccountsModel: walletStore.nonWatchAccounts})
             verify(!!provider)
+            sdk.getActiveSessionsCallbacks = []
         }
 
         function cleanup() {
