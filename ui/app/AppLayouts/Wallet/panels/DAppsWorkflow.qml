@@ -241,6 +241,7 @@ DappsComboBox {
             dAppUrl: connectDappLoader.dappUrl
             dAppName: connectDappLoader.dappName
             dAppIconUrl: connectDappLoader.dappIcon
+            connectButtonEnabled: root.enabled
 
             onConnect: {
                 if (!selectedAccount || !selectedAccount.address) {
@@ -327,6 +328,7 @@ DappsComboBox {
             enoughFundsForTransaction: request.haveEnoughFunds
             enoughFundsForFees: request.haveEnoughFees
 
+            signButtonEnabled: ((!hasFees) || enoughFundsForTransaction && enoughFundsForFees) && root.enabled
             signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name
                                                   || request.method === SessionRequest.methods.sendTransaction.name)
             requestPayload: {
