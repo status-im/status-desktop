@@ -276,22 +276,6 @@ QtObject:
 
     return contacts
 
-  proc fetchContact(self: Service, id: string): ContactDetails =
-    try:
-      let response = status_contacts.getContactByID(id)
-
-      let contactDto = response.result.toContactsDto()
-      if contactDto.id.len == 0:
-        return
-
-      result = self.constructContactDetails(contactDto)
-      self.addContact(result)
-
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return
-
   proc generateAlias*(self: Service, publicKey: string): string =
     if(publicKey.len == 0):
       error "cannot generate an alias from the empty public key"
@@ -351,35 +335,32 @@ QtObject:
 
     ## Returns contact details based on passed id (public key)
     ## If we don't have stored contact localy or in the db then we create it based on public key.
-    if(self.contacts.hasKey(pubkey)):
+    if self.contacts.hasKey(pubkey):
       return self.contacts[pubkey]
 
-    result = self.fetchContact(pubkey)
-    if result.dto.id.len == 0:
-      if not pubkey.startsWith("0x"):
-        debug "id is not in a hex format"
-        return
+    if not pubkey.startsWith("0x"):
+      debug "id is not in a hex format"
+      return
 
-      var num64: int64
-      let parsedChars = parseHex(pubkey, num64)
-      if parsedChars != PK_LENGTH_0X_INCLUDED:
-        debug "id doesn't have expected length"
-        return
+    var num64: int64
+    let parsedChars = parseHex(pubkey, num64)
+    if parsedChars != PK_LENGTH_0X_INCLUDED:
+      debug "id doesn't have expected length"
+      return
 
-      let alias = self.generateAlias(pubkey)
-      let contact = self.constructContactDetails(
-        ContactsDto(
-          id: pubkey,
-          alias: alias,
-          ensVerified: result.dto.ensVerified,
-          added: result.dto.added,
-          blocked: result.dto.blocked,
-          hasAddedUs: result.dto.hasAddedUs,
-          trustStatus: result.dto.trustStatus
-        )
+    let contact = self.constructContactDetails(
+      ContactsDto(
+        id: pubkey,
+        alias: self.generateAlias(pubkey),
+        ensVerified: false,
+        added: false,
+        blocked: false,
+        hasAddedUs: false,
+        trustStatus: TrustStatus.Unknown,
       )
-      self.addContact(contact)
-      return contact
+    )
+    self.addContact(contact)
+    return contact
 
   proc getContactById*(self: Service, id: string): ContactsDto =
     return self.getContactDetails(id).dto
