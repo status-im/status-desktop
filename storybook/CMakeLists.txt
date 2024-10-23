@@ -117,14 +117,21 @@ target_compile_definitions(QmlTests PRIVATE
 target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB} SortFilterProxyModel)
 add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
+set(OVERRIDE_STORE_PATHS_WITH_STUBS_IN_QTCREATOR OFF CACHE BOOL
+  "Resolve store components as stubs instead of actual ones in QtCreator")
+
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/pages")
-list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/stubs")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/mocks")
+
+if (OVERRIDE_STORE_PATHS_WITH_STUBS_IN_QTCREATOR)
+  list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/stubs")
+endif()
+
 set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra QML import paths" FORCE)
 
 if (APPLE)
