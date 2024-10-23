@@ -23,7 +23,7 @@ SplitView {
             }
 
             NetworkSelectorView {
-                id: networkSelectionView
+                id: networkSelectorView
                 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -40,7 +40,7 @@ SplitView {
             }
 
             NetworkSelectorView {
-                id: networkSelectionView2
+                id: networkSelectorView2
                 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -72,10 +72,10 @@ SplitView {
                 model: NetworksModel.flatNetworks
                 delegate: CheckBox {
                     text: model.chainName
-                    checked: networkSelectionView.selection.includes(model.chainId)
+                    checked: networkSelectorView.selection.includes(model.chainId)
                     onToggled: {
                         if (checked) {
-                            networkSelectionView.selection = [model.chainId]
+                            networkSelectorView.selection = [model.chainId]
                         }
                     }
                 }
@@ -89,14 +89,14 @@ SplitView {
                 model: NetworksModel.flatNetworks
                 delegate: CheckBox {
                     text: model.chainName
-                    checked: networkSelectionView2.selection.includes(model.chainId)
+                    checked: networkSelectorView2.selection.includes(model.chainId)
                     onToggled: {
                         if (checked) {
-                            const selection = networkSelectionView2.selection
+                            const selection = networkSelectorView2.selection
                             selection.push(model.chainId)
-                            networkSelectionView2.selection = selection
+                            networkSelectorView2.selection = selection
                         } else {
-                            networkSelectionView2.selection = networkSelectionView2.selection.filter((id) => id !== model.chainId)
+                            networkSelectorView2.selection = networkSelectorView2.selection.filter((id) => id !== model.chainId)
                         }
                     }
                 }
