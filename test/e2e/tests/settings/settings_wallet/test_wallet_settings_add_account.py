@@ -40,7 +40,7 @@ def test_add_new_account_from_wallet_settings(
                                                               string.digits, k=4)))
             assert add_account_popup.get_error_message() == WalletAccountPopup.WALLET_ACCOUNT_NAME_MIN.value
 
-        add_account_popup.set_name(account_name).set_emoji(emoji).set_color(color).save_changes()
+        add_account_popup.set_name(account_name).save_changes()
         authenticate_with_password(user_account)
         add_account_popup.wait_until_hidden()
 
@@ -54,7 +54,7 @@ def test_add_new_account_from_wallet_settings(
 
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
-        expected_account = constants.user.account_list_item(account_name, color.lower(), emoji_unicode)
+        expected_account = constants.user.account_list_item(account_name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)

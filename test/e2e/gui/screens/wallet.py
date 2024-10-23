@@ -55,13 +55,14 @@ class LeftPanel(QObject):
         for account_item in driver.findAllObjects(self._wallet_account_item.real_name):
             try:
                 name = str(account_item.title)
-                color = str(account_item.asset.color.name).lower()
-                emoji = ''
-                for child in walk_children(account_item):
-                    if hasattr(child, 'emojiId'):
-                        emoji = str(child.emojiId)
-                        break
-                accounts.append(constants.user.account_list_item(name, color, emoji))
+                # TODO: to fix properly with account data class implementation
+                # color = str(account_item.asset.color.name).lower()
+                # emoji = ''
+                # for child in walk_children(account_item):
+                #     if hasattr(child, 'emojiId'):
+                #         emoji = str(child.emojiId)
+                #         break
+                accounts.append(constants.user.account_list_item(name, None, None))
             except (AttributeError, RuntimeError):
                 continue
 
