@@ -18,7 +18,8 @@ Item {
          const pubKey = "0x%1".arg(seed)
          return {
              pubKey: pubKey,
-             displayName: seed%8 ? "user%1".arg(seed) : "",
+             displayName: seed%8 ? "_user%1".arg(seed) : "",
+             preferredDisplayName: "user%1".arg(seed),
              localNickname: seed%3 ? "" : "nickname%1".arg(seed),
              alias: "three word name(%1)".arg(pubKey),
              isVerified: seed%3 ? false : true,

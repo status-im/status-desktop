@@ -15,6 +15,8 @@ StatusDialog {
 
     property alias profileStore: profileView.profileStore
     property alias contactsStore: profileView.contactsStore
+    property alias utilsStore: profileView.utilsStore
+
     property alias sendToAccountEnabled: profileView.sendToAccountEnabled
 
     property alias showcaseCommunitiesModel: profileView.showcaseCommunitiesModel

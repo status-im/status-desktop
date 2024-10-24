@@ -33,6 +33,7 @@ SettingsContentBase {
     property ProfileStore profileStore
     property ContactsStore contactsStore
     property CommunitiesStore communitiesStore
+    property UtilsStore utilsStore
 
     property bool sendToAccountEnabled: false
 
@@ -303,6 +304,7 @@ SettingsContentBase {
                 DisplayNameValidators {
                     id: displayNameValidators
 
+                    utilsStore: root.utilsStore
                     myDisplayName: root.profileStore.name
                     communitiesStore: root.communitiesStore
                 }
@@ -404,6 +406,7 @@ SettingsContentBase {
                 publicKey: root.contactsStore.myPublicKey
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
                 dirtyValues: root.liveValues
@@ -425,6 +428,7 @@ SettingsContentBase {
             MyProfilePreview {
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 dirtyValues: root.liveValues
                 dirty: root.dirty

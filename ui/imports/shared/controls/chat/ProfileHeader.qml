@@ -38,6 +38,7 @@ Item {
     property bool displayNamePlusIconsVisible: false
     property bool pubkeyVisible: true
     property bool pubkeyVisibleWithCopy: false
+    property alias emojiHash: emojiHash.emojiHash
     property bool emojiHashVisible: true
     property bool editImageButtonVisible: false
     property bool editButtonVisible: displayNamePlusIconsVisible
@@ -276,7 +277,6 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             visible: root.emojiHashVisible && !root.isBridgedAccount
             compact: root.compact
-            publicKey: root.pubkey
         }
     }
 

@@ -8,12 +8,15 @@ import StatusQ.Components 0.1
 
 import shared.controls 1.0
 import shared.status 1.0
+import shared.stores 1.0
 import utils 1.0
 
 import "./private"
 
 CalloutCard {
     id: root
+
+    property UtilsStore utilsStore
 
     readonly property LinkData linkData: LinkData { }
     readonly property UserData userData: UserData { }
@@ -114,7 +117,7 @@ CalloutCard {
                 Layout.topMargin: 4
                 Layout.bottomMargin: 6
                 visible: root.type === Constants.LinkPreviewType.StatusContact
-                publicKey: root.userData.publicKey
+                emojiHash: root.utilsStore.getEmojiHash(root.userData.publicKey)
                 oneRow: true
                 objectName: "linkPreviewEmojiHash"
             }

@@ -32,6 +32,8 @@ Item {
     property var chatContentModule
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
+
     property RootStore rootStore
     property MessageStore messageStore
     property UsersStore usersStore
@@ -271,6 +273,7 @@ Item {
             objectName: "chatMessageViewDelegate"
 
             sharedRootStore: root.sharedRootStore
+            utilsStore: root.utilsStore
             rootStore: root.rootStore
             messageStore: root.messageStore
             usersStore: root.usersStore

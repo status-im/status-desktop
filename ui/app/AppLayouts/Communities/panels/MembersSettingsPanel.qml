@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
+
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import AppLayouts.Chat.stores 1.0
@@ -12,6 +14,8 @@ SettingsPage {
     id: root
 
     property RootStore rootStore
+    property SharedStores.UtilsStore utilsStore
+
     property var membersModel
     property var bannedMembersModel
     property var pendingMemberRequestsModel
@@ -108,6 +112,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.membersModel
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
                 memberRole: root.memberRole
                 placeholderText: {
                     if (root.membersModel.count === 0)
@@ -140,6 +145,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.pendingMemberRequestsModel
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
                 memberRole: root.memberRole
                 placeholderText: {
                     if (root.pendingMemberRequestsModel.count === 0)
@@ -159,6 +165,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.declinedMemberRequestsModel
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
                 memberRole: root.memberRole
                 placeholderText: {
                     if (root.declinedMemberRequestsModel.count === 0)
@@ -177,6 +184,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.bannedMembersModel
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
                 memberRole: root.memberRole
                 placeholderText: {
                     if (root.bannedMembersModel.count === 0)

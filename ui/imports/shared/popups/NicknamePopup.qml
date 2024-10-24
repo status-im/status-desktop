@@ -60,7 +60,7 @@ CommonContactDialog {
             },
             StatusValidator {
                 name: "isAliasValidator"
-                validate: function (t) { return !Utils.isAlias(t) }
+                validate: function (t) { return !root.utilsStore.isAlias(t) }
                 errorMessage: qsTr("Adjective-animal nickname formats are not allowed")
             }
         ]

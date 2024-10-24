@@ -42,6 +42,8 @@ QtObject {
     required property RootStore sharedRootStore
     required property AppLayoutStores.RootStore rootStore
     required property CommunityTokensStore communityTokensStore
+
+    property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.DevicesStore devicesStore
@@ -412,7 +414,10 @@ QtObject {
     readonly property list<Component> _components: [
         Component {
             id: removeContactConfirmationDialog
+
             RemoveContactPopup {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.removeContact(publicKey)
                     if (removeIDVerification)
@@ -446,9 +451,10 @@ QtObject {
 
         Component {
             id: contactOutgoingVerificationRequestPopupComponent
-            OutgoingContactVerificationRequestPopup {
 
+            OutgoingContactVerificationRequestPopup {
                 profileStore: root.profileStore
+                utilsStore: root.utilsStore
 
                 onVerificationRequestCanceled: {
                     rootStore.contactStore.cancelVerificationRequest(publicKey)
@@ -477,6 +483,8 @@ QtObject {
         Component {
             id: markAsIDVerifiedPopupComponent
             MarkAsIDVerifiedDialog {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.markAsTrusted(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 ID verified").arg(mainDisplayName))
@@ -489,6 +497,8 @@ QtObject {
         Component {
             id: removeIDVerificationPopupComponent
             RemoveIDVerificationDialog {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.removeTrustVerificationStatus(publicKey)
 
@@ -525,6 +535,8 @@ QtObject {
 
             SendContactRequestModal {
                 rootStore: root.rootStore
+                utilsStore: root.utilsStore
+
                 onAccepted: rootStore.contactStore.sendContactRequest(publicKey, message)
                 onClosed: destroy()
             }
@@ -533,6 +545,8 @@ QtObject {
         Component {
             id: reviewContactRequestPopupComponent
             ReviewContactRequestPopup {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.acceptContactRequest(publicKey, contactRequestId)
                     Global.displaySuccessToastMessage(qsTr("Contact request accepted"))
@@ -587,6 +601,8 @@ QtObject {
 
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
+                utilsStore: root.utilsStore
+
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
                 showcaseCommunitiesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCommunitiesModel : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
@@ -647,15 +663,20 @@ QtObject {
 
         Component {
             id: pinnedMessagesPopup
+
             PinnedMessagesPopup {
                 sharedStore: root.sharedRootStore
+                utilsStore: root.utilsStore
                 onClosed: destroy()
             }
         },
 
         Component {
             id: nicknamePopupComponent
+
             NicknamePopup {
+                utilsStore: root.utilsStore
+
                 onEditDone: {
                     if (nickname !== newNickname) {
                         rootStore.contactStore.changeContactNickname(publicKey, newNickname, optionalDisplayName, !!nickname)
@@ -673,6 +694,8 @@ QtObject {
         Component {
             id: markAsUntrustedComponent
             MarkAsUntrustedPopup {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.markUntrustworthy(publicKey)
                     if (removeContact) {
@@ -690,6 +713,8 @@ QtObject {
         Component {
             id: unblockContactConfirmationComponent
             UnblockContactConfirmationDialog {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.unblockContact(publicKey)
                     Global.displaySuccessToastMessage(qsTr("%1 unblocked").arg(mainDisplayName))
@@ -702,6 +727,8 @@ QtObject {
         Component {
             id: blockContactConfirmationComponent
             BlockContactConfirmationDialog {
+                utilsStore: root.utilsStore
+
                 onAccepted: {
                     rootStore.contactStore.blockContact(publicKey)
                     if (removeIDVerification)
@@ -1240,6 +1267,7 @@ QtObject {
             id: communityMemberMessagesPopup
             CommunityMemberMessagesPopup {
                 sharedRootStore: root.sharedRootStore
+                utilsStore: root.utilsStore
                 onClosed: destroy()
             }
         },

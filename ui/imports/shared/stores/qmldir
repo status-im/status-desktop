@@ -7,3 +7,4 @@ MetricsStore 1.0 MetricsStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 PermissionsStore 1.0 PermissionsStore.qml
 RootStore 1.0 RootStore.qml
+UtilsStore 1.0 UtilsStore.qml

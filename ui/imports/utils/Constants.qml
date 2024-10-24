@@ -810,6 +810,8 @@ QtObject {
         Error = 3
     }
 
+    readonly property int communityIdLength: 68
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
@@ -968,6 +970,7 @@ QtObject {
 
     readonly property int maxUploadFiles: 6
     readonly property double maxUploadFilesizeMB: 10
+    readonly property int maxImgSizeBytes: maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
 
     readonly property int maxNumberOfPins: 3
 

@@ -25,6 +25,7 @@ StatusWindow {
     property bool appIsReady: false
 
     property MetricsStore metricsStore: MetricsStore {}
+    property UtilsStore utilsStore: UtilsStore {}
 
     Universal.theme: Universal.System
 
@@ -331,6 +332,8 @@ StatusWindow {
     Component {
         id: app
         AppMain {
+            utilsStore: applicationWindow.utilsStore
+
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
@@ -368,6 +371,8 @@ StatusWindow {
         id: startupOnboarding
         objectName: "startupOnboardingLayout"
         anchors.fill: parent
+
+        utilsStore: applicationWindow.utilsStore
     }
 
     Loader {

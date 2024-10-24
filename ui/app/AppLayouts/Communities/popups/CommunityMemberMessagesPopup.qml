@@ -20,6 +20,7 @@ StatusDialog {
     id: root
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property var chatCommunitySectionModule
     property var memberMessagesModel: chatCommunitySectionModule.memberMessagesModel
@@ -65,6 +66,7 @@ StatusDialog {
                     width: parent.width
 
                     sharedRootStore: root.sharedRootStore
+                    utilsStore: root.utilsStore
                     rootStore: root.rootStore
                     chatCommunitySectionModule: root.chatCommunitySectionModule
                     messageStore: root.rootStore.messageStore

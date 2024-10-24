@@ -25,6 +25,7 @@ Loader {
     id: root
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.MessageStore messageStore
     property ChatStores.UsersStore usersStore
@@ -953,6 +954,8 @@ Loader {
                 linksComponent: Component {
                     LinksMessageView {
                         id: linksMessageView
+
+                        utilsStore: root.utilsStore
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks

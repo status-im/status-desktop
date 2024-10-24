@@ -18,6 +18,7 @@ StatusDialog {
     required property string publicKey
     required property string qrCode
     required property string linkToProfile
+    required property var emojiHash
 
     required property string displayName
     required property string largeImage
@@ -131,11 +132,11 @@ StatusDialog {
                 background.color: "transparent"
                 background.border.color: Theme.palette.baseColor2
                 leftComponent: EmojiHash {
-                    publicKey: root.publicKey
+                    emojiHash: root.emojiHash
                     oneRow: true
                 }
                 rightComponent: CopyButton {
-                    textToCopy: Utils.getEmojiHashAsJson(root.publicKey).join("").toString()
+                    textToCopy: emojiHash.join("")
                     StatusToolTip {
                         text: qsTr("Copy emoji hash")
                         visible: parent.hovered

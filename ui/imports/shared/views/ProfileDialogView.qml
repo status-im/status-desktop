@@ -12,13 +12,14 @@ import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
 import shared.controls 1.0
-import shared.panels 1.0
-import shared.popups 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
+import shared.panels 1.0
+import shared.popups 1.0
+import shared.stores 1.0 as SharedStores
 import shared.views.profile 1.0
+import utils 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -37,6 +38,7 @@ Pane {
 
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.ContactsStore contactsStore
+    property SharedStores.UtilsStore utilsStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
 
@@ -102,6 +104,8 @@ Pane {
         readonly property bool isLocallyTrusted: contactDetails.trustStatus === Constants.trustStatus.trusted
 
         readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
+
+        readonly property var emojiHash: root.utilsStore.getEmojiHash(root.publicKey)
     }
 
     Component {
@@ -241,6 +245,7 @@ Pane {
             destroyOnClose: true
             title: d.isCurrentUser ? qsTr("Share your profile") : qsTr("%1's profile").arg(StatusQUtils.Emoji.parse(d.mainDisplayName))
             publicKey: root.publicKey
+            emojiHash: d.emojiHash
             linkToProfile: d.linkToProfile
             qrCode: root.profileStore.getQrCodeSource(linkToProfile)
             displayName: userImage.name
@@ -552,7 +557,7 @@ Pane {
             EmojiHash {
                 Layout.topMargin: Theme.halfPadding
                 objectName: "ProfileDialog_userEmojiHash"
-                publicKey: root.publicKey
+                emojiHash: d.emojiHash
                 oneRow: true
             }
         }

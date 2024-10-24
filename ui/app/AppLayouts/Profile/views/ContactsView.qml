@@ -9,10 +9,11 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-import shared.views 1.0
+import shared.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
+import shared.views 1.0
 import shared.views.chat 1.0
 
 import "../stores"
@@ -21,7 +22,10 @@ import "../popups"
 
 SettingsContentBase {
     id: root
+
     property ContactsStore contactsStore
+    property SharedStores.UtilsStore utilsStore
+
     property alias searchStr: searchBox.text
     property bool isPending: false
 
@@ -39,6 +43,7 @@ SettingsContentBase {
         Global.openMenu(contactContextMenuComponent, this, {
             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
             publicKey: publicKey,
+            emojiHash: root.utilsStore.getEmojiHash(publicKey),
             displayName: name,
             userIcon: icon,
         })

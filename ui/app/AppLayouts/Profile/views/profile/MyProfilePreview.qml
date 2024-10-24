@@ -11,6 +11,8 @@ import shared.controls 1.0
 Item {
     property alias profileStore: profilePreview.profileStore
     property alias contactsStore: profilePreview.contactsStore
+    property alias utilsStore: profilePreview.utilsStore
+
     property alias sendToAccountEnabled: profilePreview.sendToAccountEnabled
     property alias dirtyValues: profilePreview.dirtyValues
     property alias dirty: profilePreview.dirty

@@ -9,9 +9,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
-    readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
-    readonly property int communityIdLength: 68
-
     function isDigit(value) {
         return /^\d$/.test(value);
     }
@@ -25,11 +22,11 @@ QtObject {
     }
 
     function getCommunityIdFromFullChatId(fullChatId) {
-        return fullChatId.substr(0, communityIdLength)
+        return fullChatId.substr(0, Constants.communityIdLength)
     }
 
     function getChannelUuidFromFullChatId(fullChatId) {
-        return fullChatId.substr(communityIdLength, fullChatId.length)
+        return fullChatId.substr(Constants.communityIdLength, fullChatId.length)
     }
 
     function isValidETHNamePrefix(value) {
@@ -285,10 +282,10 @@ QtObject {
 
     function isFilesizeValid(img) {
         if (img.startsWith(Constants.dataImagePrefix)) {
-            return img.length < maxImgSizeBytes
+            return img.length < Constants.maxImgSizeBytes
         }
         const size = UrlUtils.getFileSize(img)
-        return size <= maxImgSizeBytes
+        return size <= Constants.maxImgSizeBytes
     }
 
     function deduplicate(array) {
@@ -728,18 +725,6 @@ QtObject {
         return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
 
-    function isCommunityPublicKey(value) {
-        return (startsWith0x(value) && isHex(value) && value.length === communityIdLength) || globalUtilsInst.isCompressedPubKey(value)
-    }
-
-    function isCompressedPubKey(pubKey) {
-        return globalUtilsInst.isCompressedPubKey(pubKey)
-    }
-
-    function isAlias(name) {
-        return globalUtilsInst.isAlias(name)
-    }
-
     function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
         const defaultValue = {
             defaultDisplayName: "",
@@ -796,14 +781,6 @@ QtObject {
         return mainModuleInst.isEnsVerified(publicKey)
     }
 
-    function getEmojiHashAsJson(publicKey) {
-        if (publicKey === "" || !isChatKey(publicKey)) {
-            return ""
-        }
-        let jsonObj = globalUtilsInst.getEmojiHashAsJson(publicKey)
-        return JSON.parse(jsonObj)
-    }
-
     function getColorHashAsJson(publicKey, skipEnsVerification=false) {
         if (publicKey === "" || !isChatKey(publicKey))
             return
@@ -847,19 +824,6 @@ QtObject {
         return getCommunityChannelShareLink(communityId, channelId)
     }
 
-    function getCommunityIdFromShareLink(link) {
-        let index = link.lastIndexOf("/c/")
-        if (index === -1) {
-            return ""
-        }
-        const communityKey = link.substring(index + 3)
-        if (globalUtilsInst.isCompressedPubKey(communityKey)) {
-            // is zQ.., need to be converted to standard compression
-            return globalUtilsInst.changeCommunityKeyCompression(communityKey)
-        }
-        return communityKey
-    }
-
     function getCommunityDataFromSharedLink(link) {
         const index = link.lastIndexOf("/c/")
         if (index === -1)
@@ -872,10 +836,6 @@ QtObject {
             console.warn("Error while parsing community data from url:", e.message)
             return null
         }
-    }
-
-    function changeCommunityKeyCompression(communityKey) {
-        return globalUtilsInst.changeCommunityKeyCompression(communityKey)
     }
 
     function getCompressedPk(publicKey) {

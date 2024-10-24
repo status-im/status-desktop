@@ -60,6 +60,8 @@ Item {
         currencyStore: appMain.currencyStore
     }
 
+    property SharedStores.UtilsStore utilsStore
+
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
     readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
@@ -419,6 +421,7 @@ Item {
         sharedRootStore: appMain.sharedRootStore
         popupParent: appMain
         rootStore: appMain.rootStore
+        utilsStore: appMain.utilsStore
         communityTokensStore: appMain.communityTokensStore
         communitiesStore: appMain.communitiesStore
         profileStore: appMain.profileStore
@@ -633,6 +636,7 @@ Item {
 
         sourceComponent: AppSearch {
             store: appMain.rootStore.appSearchStore
+            utilsStore: appMain.utilsStore
             onClosed: appSearch.active = false
         }
     }
@@ -872,6 +876,7 @@ Item {
                     x: profileButton.x + profileButton.width + 5
 
                     pubKey: appMain.profileStore.pubkey
+                    emojiHash: appMain.utilsStore.getEmojiHash(pubKey)
                     name: appMain.profileStore.name
                     icon: appMain.profileStore.icon
                     isEnsVerified: !!appMain.profileStore.preferredName
@@ -1367,6 +1372,7 @@ Item {
                                 id: chatLayoutContainer
 
                                 sharedRootStore: appMain.sharedRootStore
+                                utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
@@ -1442,6 +1448,7 @@ Item {
                         asynchronous: true
                         sourceComponent: ProfileLayout {
                             sharedRootStore: appMain.sharedRootStore
+                            utilsStore: appMain.utilsStore
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
@@ -1532,6 +1539,7 @@ Item {
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
                                 sharedRootStore: appMain.sharedRootStore
+                                utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
                                     currencyStore: appMain.currencyStore
@@ -1578,6 +1586,7 @@ Item {
 
                     sourceComponent: CreateChatView {
                         sharedRootStore: appMain.sharedRootStore
+                        utilsStore: appMain.utilsStore
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
                             currencyStore: appMain.currencyStore

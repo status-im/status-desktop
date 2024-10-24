@@ -43,6 +43,7 @@ StatusSectionLayout {
     property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property CommunitiesStores.CommunitiesStore communitiesStore
@@ -177,6 +178,7 @@ StatusSectionLayout {
         UserListPanel {
             anchors.fill: parent
             store: root.rootStore
+            utilsStore: root.utilsStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
             usersModel: {
@@ -234,6 +236,7 @@ StatusSectionLayout {
         ChatColumnView {
             parentModule: root.rootStore.chatCommunitySectionModule
             sharedRootStore: root.sharedRootStore
+            utilsStore: root.utilsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             contactsStore: root.contactsStore

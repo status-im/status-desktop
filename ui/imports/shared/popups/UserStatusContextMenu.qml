@@ -8,7 +8,8 @@ import utils 1.0
 StatusMenu {
     id: root
 
-    property string pubKey
+    property alias pubKey: header.pubkey
+    property alias emojiHash: header.emojiHash
     property alias name: header.displayName
     property alias icon: header.icon
 
@@ -27,7 +28,6 @@ StatusMenu {
         objectName: 'onlineIdentifierProfileHeader'
 
         width: parent.width
-        pubkey: root.pubKey
     }
 
     StatusMenuSeparator {}

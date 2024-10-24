@@ -4,13 +4,13 @@ import QtQuick.Controls 2.14
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Profile.views.wallet 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
 import Storybook 1.0
-
 import Models 1.0
 
 SplitView {
@@ -48,7 +48,7 @@ SplitView {
             property bool accountBalanceNotAvailable: false
         }
 
-        readonly property QtObject walletStore: QtObject {
+        readonly property ProfileStores.WalletStore walletStore: ProfileStores.WalletStore {
             property var networks: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }

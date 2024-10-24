@@ -26,6 +26,7 @@ SplitView {
         sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
         communityTokensStore: SharedStores.CommunityTokensStore {}
+        utilsStore: SharedStores.UtilsStore {}
     }
 
     QtObject {

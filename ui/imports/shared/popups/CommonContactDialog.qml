@@ -9,12 +9,15 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
+import shared.stores 1.0
+import utils 1.0
 
 StatusDialog {
     id: root
+
+    required property UtilsStore utilsStore
 
     required property string publicKey
     required property var contactDetails
@@ -114,7 +117,7 @@ StatusDialog {
                 }
                 EmojiHash {
                     Layout.topMargin: 4
-                    publicKey: root.publicKey
+                    emojiHash: root.utilsStore.getEmojiHash(root.publicKey)
                     oneRow: true
                 }
             }

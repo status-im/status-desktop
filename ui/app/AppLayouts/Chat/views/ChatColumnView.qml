@@ -40,6 +40,7 @@ Item {
     property var parentModule
 
     property SharedStores.RootStore sharedRootStore
+    property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
     property ProfileStores.ContactsStore contactsStore
@@ -236,6 +237,7 @@ Item {
                         chatType: model.type
                         chatMessagesLoader.active: model.loaderActive
                         sharedRootStore: root.sharedRootStore
+                        utilsStore: root.utilsStore
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         emojiPopup: root.emojiPopup

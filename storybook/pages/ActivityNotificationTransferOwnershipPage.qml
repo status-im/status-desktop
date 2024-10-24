@@ -42,7 +42,6 @@ SplitView {
             height: implicitHeight
 
             type: ActivityNotificationTransferOwnership.OwnershipState.Pending
-            store: undefined
             notification: notificationMock
             communityName: communityNameText.text
             communityColor: colorSwitch.checked ? "green" : "orange"

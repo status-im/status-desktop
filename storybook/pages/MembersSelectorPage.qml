@@ -7,6 +7,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import Storybook 1.0
 import utils 1.0
+import shared.stores 1.0 as SharedStores
 
 SplitView {
     id: root
@@ -86,7 +87,7 @@ SplitView {
         }
     }
 
-    QtObject {
+    ChatStores.UsersStore {
         id: usersStoreMock
 
         readonly property var usersModel: ListModel {
@@ -188,6 +189,11 @@ SplitView {
 
                     sourceComponent: MembersSelectorView {
                         rootStore: rootStoreMock
+                        utilsStore: SharedStores.UtilsStore {
+                            function isChatKey() {
+                                return true
+                            }
+                        }
                     }
                 }
             }
