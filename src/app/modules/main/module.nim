@@ -1367,7 +1367,17 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
   let community =  self.controller.getCommunityById(membershipRequest.communityId)
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
-  fmt "{contactName} asks to join {community.name}", community.id)
+    fmt "{contactName} asks to join {community.name}", community.id)
+
+  self.view.model().addPendingMember(membershipRequest.communityId, self.createMemberItem(
+    membershipRequest.publicKey,
+    membershipRequest.id,
+    MembershipRequestState(membershipRequest.state),
+    MemberRole.None,
+  ))
+  
+method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
+  self.view.model().removePendingMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
