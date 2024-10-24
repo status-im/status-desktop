@@ -6,14 +6,15 @@ import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Chat.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import Storybook 1.0
-
 import Models 1.0
 
 SplitView {
@@ -25,6 +26,32 @@ SplitView {
 
     property bool globalUtilsReady: false
     property bool mainModuleReady: false
+
+    SharedStores.NetworkConnectionStore {
+        id: connectionStore
+
+        property bool accountBalanceNotAvailable: false
+    }
+
+    // TODO: WalletStores.RootStore is singleton and therefore it's not mockable
+    // Once store is converted to regular, non-singleton store it can be mocked as follows
+    // WalletStores.RootStore {
+    //     id: walletStore
+
+    //     property var filteredFlatModel: SortFilterProxyModel {
+    //         sourceModel: NetworksModel.flatNetworks
+    //         filters: ValueFilter { roleName: "isTest"; value: false }
+    //     }
+    //     function toggleNetwork(chainId) {
+    //         print ("toggleNetwork called with chainId: " + chainId)
+    //     }
+
+    //     function getAllNetworksSupportedString(hovered) {
+    //         return hovered ?  "<font color=\"" + "#627EEA" + "\">" + "eth:" + "</font>" +
+    //                          "<font color=\"" + "#E90101" + "\">" + "oeth:" + "</font>" +
+    //                          "<font color=\"" + "#27A0EF" + "\">" + "arb1:" + "</font>" : "eth:oeth:arb1:"
+    //     }
+    // }
 
     // globalUtilsInst mock
     QtObject {
@@ -74,26 +101,6 @@ SplitView {
                                                    isAllAccounts: true,
                                                    colorIds: "purple;pink;magenta"
                                                })
-
-        readonly property QtObject connectionStore: QtObject {
-            property bool accountBalanceNotAvailable: false
-        }
-
-        readonly property QtObject walletStore: QtObject {
-            property var filteredFlatModel: SortFilterProxyModel {
-                sourceModel: NetworksModel.flatNetworks
-                filters: ValueFilter { roleName: "isTest"; value: false }
-            }
-            function toggleNetwork(chainId) {
-                print ("toggleNetwork called with chainId: " + chainId)
-            }
-
-            function getAllNetworksSupportedString(hovered) {
-                return hovered ?  "<font color=\"" + "#627EEA" + "\">" + "eth:" + "</font>" +
-                                 "<font color=\"" + "#E90101" + "\">" + "oeth:" + "</font>" +
-                                 "<font color=\"" + "#27A0EF" + "\">" + "arb1:" + "</font>" : "eth:oeth:arb1:"
-            }
-        }
     }
 
     // mainModuleInst mock
@@ -133,9 +140,9 @@ SplitView {
                 active: globalUtilsReady && mainModuleReady
 
                 sourceComponent: WalletHeader {
-                    networkConnectionStore: d.connectionStore
+                    networkConnectionStore: connectionStore
                     overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
-                    walletStore: d.walletStore
+                    walletStore: walletStore
                     width: parent.width
                 }
             }
