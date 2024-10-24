@@ -47,7 +47,7 @@ class AccountPopup(BasePopup):
         self._non_eth_checkbox = CheckBox(names.mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox)
 
     def verify_add_account_popup_present(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        driver.waitFor(lambda: self._popup_header_title.exists, timeout_msec)
+        driver.waitFor(lambda: self._popup_header_title.is_visible, timeout_msec)
         assert (getattr(self._popup_header_title.object, 'text')
                 == WalletScreensHeaders.WALLET_ADD_ACCOUNT_POPUP_TITLE.value), \
             f"AccountPopup is not shown or has wrong title, \

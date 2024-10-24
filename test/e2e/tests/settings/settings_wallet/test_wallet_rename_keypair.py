@@ -5,10 +5,9 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
 from helpers.WalletHelper import authenticate_with_password
-from scripts.utils.generators import random_wallet_account_name
+from scripts.utils.generators import random_wallet_acc_keypair_name
 from tests.wallet_main_screen import marks
 
 import constants
@@ -35,7 +34,7 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(random_wallet_account_name()).set_emoji(emoji)
+        account_popup.set_name(random_wallet_acc_keypair_name()).set_emoji(emoji)
 
     with step('Enter private key name less than 5 characters and verify that error appears'):
         pk_name_short = ''.join(random.choices(string.ascii_letters + string.digits, k=4))

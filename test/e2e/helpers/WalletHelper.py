@@ -9,6 +9,7 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 with step('Authenticate user action with password'):
     def authenticate_with_password(user_account):
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
+        AuthenticatePopup().wait_until_hidden()
 
 with step('Close signing phrase popup and open wallet send popup'):
     def open_send_modal_for_account(main_window, account_name):

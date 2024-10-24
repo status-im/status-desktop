@@ -21,7 +21,12 @@ class QObject:
     @property
     @allure.step('Get object {0}')
     def object(self):
-        return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        try:
+            obj = driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        except LookupError:
+            raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC}")
+        return obj
+
 
     def set_text_property(self, text):
         self.object.forceActiveFocus()

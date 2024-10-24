@@ -32,8 +32,7 @@ pytest_plugins = [
 def setup_session_scope(
         init_testrail_api,
         prepare_test_directory,
-        start_squish_server,
-        close_apps_before_start
+        start_squish_server
 ):
     LOG.info('Session startup...')
     yield

@@ -57,10 +57,10 @@ class WalletNetworkNaming(Enum):
 
 
 class WalletNetworkDefaultValues(Enum):
-    ETHEREUM_LIVE_MAIN = 'https://eth-archival.rpc.grove.city'
-    ETHEREUM_TEST_MAIN = 'https://sepolia-archival.rpc.grove.city'
-    ETHEREUM_LIVE_FAILOVER = 'https://mainnet.infura.io'
-    ETHEREUM_TEST_FAILOVER = 'https://sepolia.infura.io'
+    ETHEREUM_LIVE_MAIN = 'https://mainnet.infura.io/v3'
+    ETHEREUM_TEST_MAIN = 'https://sepolia.infura.io'
+    ETHEREUM_LIVE_FAILOVER = 'https://eth-archival.rpc.grove.city/v1'
+    ETHEREUM_TEST_FAILOVER = 'https://sepolia-archival.rpc.grove.city'
 
 
 class WalletEditNetworkErrorMessages(Enum):
