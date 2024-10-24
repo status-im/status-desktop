@@ -6,7 +6,7 @@ from allure_commons._allure import step
 
 from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
-from scripts.utils.generators import random_wallet_account_name
+from scripts.utils.generators import random_wallet_acc_keypair_name
 
 import constants
 import driver
@@ -19,18 +19,10 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
-@pytest.mark.parametrize('color, emoji, emoji_unicode, '
-                         'new_color, new_emoji, new_emoji_unicode', [
-                             pytest.param('#2a4af5', 'sunglasses', '1f60e',
-                                          '#216266', 'thumbsup', '1f44d')
-                         ])
 @pytest.mark.critical
-def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,
-                                           color: str, emoji: str, emoji_unicode: str,
-                                           new_color: str, new_emoji: str,
-                                           new_emoji_unicode: str):
+def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,):
     with step('Create generated wallet account'):
-        name = random_wallet_account_name()
+        name = random_wallet_acc_keypair_name()
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
@@ -53,9 +45,9 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
                 raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
 
     with step('Edit wallet account'):
-        new_name = random_wallet_account_name()
+        new_name = random_wallet_acc_keypair_name()
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_color(new_color).save_changes()
+        account_popup.set_name(new_name).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
         expected_account = constants.user.account_list_item(new_name, None, None)

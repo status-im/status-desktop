@@ -92,14 +92,3 @@ def main_screen(user_account: UserAccount, main_window: MainWindow) -> MainWindo
     main_window.authorize_user(user_account)
     return main_window
 
-
-@pytest.fixture(scope="session")
-def close_apps_before_start():
-    if get_platform() == "Windows":
-        name = 'Status.exe'
-    else:
-        name = 'nim_status_client'
-    running_pids = get_pid_by_process_name(name)
-    if running_pids is not None:
-        for pid in running_pids:
-            kill_process(pid)
