@@ -29,7 +29,6 @@ StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusDotsLoadingIndicator 0.1 StatusDotsLoadingIndicator.qml
 StatusDraggableListItem 0.1 StatusDraggableListItem.qml
 StatusEmoji 0.1 StatusEmoji.qml
-StatusEmojiAndColorComboBox 0.1 StatusEmojiAndColorComboBox.qml
 StatusExpandableItem 0.1 StatusExpandableItem.qml
 StatusFlowSelector 0.1 StatusFlowSelector.qml
 StatusGroupBox 0.1 StatusGroupBox.qml
