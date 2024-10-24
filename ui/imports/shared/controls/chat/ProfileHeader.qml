@@ -284,6 +284,7 @@ Item {
         id: editImageMenuComponent
 
         StatusMenu {
+            onClosed: destroy()
             StatusAction {
                 text: !!root.icon ? qsTr("Select different image") : qsTr("Select image")
                 assetSettings.name: "image"

@@ -38,8 +38,7 @@ StatusMenu {
     signal removeFromGroup
 
     ProfileHeader {
-        width: parent.width
-        height: visible ? implicitHeight : 0
+        implicitWidth: parent.width
 
         displayNameVisible: false
         displayNamePlusIconsVisible: true
@@ -60,6 +59,7 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
+        visible: root.profileType !== Constants.profileType.bridged
         topPadding: root.topPadding
     }
 
@@ -113,7 +113,8 @@ StatusMenu {
 
     StatusMenuSeparator {
         topPadding: root.topPadding
-        enabled: removeNicknameAction.enabled || unblockAction.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled || removeContactAction.enabled || blockMenuItem.enabled
+        visible: root.profileType !== Constants.profileType.bridged &&
+                 (removeNicknameAction.enabled || unblockAction.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled || removeContactAction.enabled || blockMenuItem.enabled)
     }
 
     // Remove Nickname
