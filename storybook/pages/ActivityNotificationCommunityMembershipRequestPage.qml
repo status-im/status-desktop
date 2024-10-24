@@ -9,6 +9,8 @@ import StatusQ.Core.Theme 0.1
 import mainui.activitycenter.views 1.0
 import mainui.activitycenter.stores 1.0
 
+import AppLayouts.Chat.stores 1.0 as ChatStores
+
 import utils 1.0
 
 import Storybook 1.0
@@ -110,10 +112,6 @@ SplitView {
             return true
         }
 
-        function getCompressedPk(publicKey) {
-            return "0x00000"
-        }
-
         Component.onCompleted: {
             Utils.mainModuleInst = this
             Utils.globalUtilsInst = this
@@ -126,7 +124,7 @@ SplitView {
         }
     }
 
-    QtObject {
+    ChatStores.RootStore {
         id: storeMock
 
         function getCommunityDetailsAsJson(community) {

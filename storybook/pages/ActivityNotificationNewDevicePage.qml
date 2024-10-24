@@ -43,7 +43,6 @@ SplitView {
 
             type: ActivityNotificationNewDevice.InstallationType.Received
             accountName: "bob.eth"
-            store: undefined
             notification: notificationMock
 
             onMoreDetailsClicked: logs.logEvent("ActivityNotificationNewDevice::onMoreDetailsClicked")

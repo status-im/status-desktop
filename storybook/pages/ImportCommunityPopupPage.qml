@@ -9,9 +9,11 @@ import Models 1.0
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 
-import utils 1.0
 import shared.popups 1.0
+import shared.stores 1.0 as SharedStores
+import utils 1.0
 
 SplitView {
     id: root
@@ -99,7 +101,7 @@ SplitView {
         property string currentKey: ""
     }
 
-    QtObject {
+    CommunitiesStores.CommunitiesStore {
         id: communityStoreMock
 
         property bool newCommunityFetched: false
@@ -157,23 +159,6 @@ SplitView {
                 verificationStatus: Constants.verificationStatus.unverified,
                 incomingVerificationStatus: Constants.verificationStatus.unverified
             })
-        }
-
-        function isCompressedPubKey(key) {
-            return d.dialog.text === d.knownCommunityCompressedPublicKey ||
-                    d.dialog.text === d.newCommunityCompressedPublicKey
-        }
-
-        function changeCommunityKeyCompression(key) {
-            if (key === d.knownCommunityCompressedPublicKey)
-                return d.knownCommunityPublicKey
-            if (key === d.newCommunityCompressedPublicKey)
-                return d.newCommunityPublicKey
-            if (key === d.knownCommunityPublicKey)
-                return d.knownCommunityCompressedPublicKey
-            if (key === d.newCommunityPublicKey)
-                return d.newCommunityCompressedPublicKey
-            return ""
         }
 
         function getCommunityDataFromSharedLink(link) {
@@ -235,6 +220,29 @@ SplitView {
                 destroyOnClose: false
 
                 store: communityStoreMock
+                utilsStore: SharedStores.UtilsStore {
+                    function isCompressedPubKey(key) {
+                        return d.dialog.text === d.knownCommunityCompressedPublicKey ||
+                                d.dialog.text === d.newCommunityCompressedPublicKey
+                    }
+
+                    function isCommunityPublicKey() {
+                        return true
+                    }
+
+                    function changeCommunityKeyCompression(key) {
+                        if (key === d.knownCommunityCompressedPublicKey)
+                            return d.knownCommunityPublicKey
+                        if (key === d.newCommunityCompressedPublicKey)
+                            return d.newCommunityPublicKey
+                        if (key === d.knownCommunityPublicKey)
+                            return d.knownCommunityCompressedPublicKey
+                        if (key === d.newCommunityPublicKey)
+                            return d.newCommunityCompressedPublicKey
+                        return ""
+                    }
+
+                }
 
                 Component.onCompleted: open()
 
