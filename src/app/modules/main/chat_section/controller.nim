@@ -410,7 +410,7 @@ proc init*(self: Controller) =
       self.delegate.updateRequestToJoinState(RequestToJoinState.Requested)
 
   self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
-    let args = community_service.CommunityIdArgs(e)
+    let args = community_service.CanceledCommunityRequestArgs(e)
     if args.communityId == self.sectionId:
       self.delegate.updateRequestToJoinState(RequestToJoinState.None)
 
