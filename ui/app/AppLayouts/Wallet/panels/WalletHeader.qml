@@ -13,7 +13,7 @@ import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.services.dapps 1.0
@@ -21,14 +21,14 @@ import AppLayouts.Wallet.services.dapps 1.0
 import utils 1.0
 
 import "../controls"
-import "../stores"
 
 Item {
     id: root
 
-    property NetworkConnectionStore networkConnectionStore
-    property var overview
+    property SharedStores.NetworkConnectionStore networkConnectionStore
     property WalletStores.RootStore walletStore
+
+    property var overview
 
     property bool dappsEnabled
     property int loginType // RootStore.loginType -> Constants.LoginType enum
@@ -112,14 +112,14 @@ Item {
                     }
                     asset.mirror: true
 
-                    loading: RootStore.isAccountTokensReloading
+                    loading: root.walletStore.isAccountTokensReloading
                     interactive: !loading && !throttleTimer.running
-                    readonly property string lastReloadTimeFormated: !!RootStore.lastReloadTimestamp ?
+                    readonly property string lastReloadTimeFormated: !!root.walletStore.lastReloadTimestamp ?
                                                                  LocaleUtils.formatRelativeTimestamp(
-                                                                     RootStore.lastReloadTimestamp * 1000) : ""
+                                                                     root.walletStore.lastReloadTimestamp * 1000) : ""
                     tooltip.text: qsTr("Last refreshed %1").arg(lastReloadTimeFormated)
 
-                    onClicked: RootStore.reloadAccountTokens()
+                    onClicked: root.walletStore.reloadAccountTokens()
 
                     Timer {
                         id: throttleTimer

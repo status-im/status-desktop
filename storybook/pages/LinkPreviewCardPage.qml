@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 
 import shared.controls.chat 1.0
 import utils 1.0
+import shared.stores 1.0
 
 
 SplitView {
@@ -20,9 +21,6 @@ SplitView {
 
     // globalUtilsInst mock
     QtObject {
-        function getEmojiHashAsJson(publicKey) {
-            return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-        }
         function getColorId(publicKey) { return 4 }
 
         function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
@@ -51,6 +49,13 @@ SplitView {
         
         LinkPreviewCard {
             id: previewCard
+
+            utilsStore: UtilsStore {
+                function getEmojiHash(publicKey) {
+                    return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
+                }
+            }
+
             type: 1
             linkData {
                 title: titleInput.text
