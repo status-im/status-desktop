@@ -13,6 +13,10 @@ QtObject {
     property var gifColumnC: d.gifsModuleInst ? d.gifsModuleInst.gifColumnC : null
     property bool gifLoading: d.gifsModuleInst ? d.gifsModuleInst.gifLoading : false
 
+    function setGifUnfurlingEnabled(value) {
+        localAccountSensitiveSettings.gifUnfurlingEnabled = value
+    }
+
     function searchGifs(query) {
         if (d.gifsModuleInst)
             d.gifsModuleInst.searchGifs(query)
