@@ -2,3 +2,4 @@ ChartDataBase 1.0 ChartDataBase.qml
 TokenBalanceHistoryData 1.0 TokenBalanceHistoryData.qml
 TokenMarketValuesData 1.0 TokenMarketValuesData.qml
 singleton NetworkModelHelpers 1.0 NetworkModelHelpers.qml
+ChainsAvailabilityWatchdog 1.0 ChainsAvailabilityWatchdog.qml

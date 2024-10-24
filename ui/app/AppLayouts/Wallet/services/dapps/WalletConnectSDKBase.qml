@@ -82,4 +82,8 @@ Item {
     property var rejectSessionAuthenticate: function(id, error) {
         console.error("rejectSessionAuthenticate not implemented")
     }
+
+    property var emitSessionEvent: function(topic, event, chainId) {
+        console.error("emitSessionEvent not implemented")
+    }
 }

@@ -68,12 +68,9 @@ QtObject:
     case website:
       of BLOCKCHAINS:
         self.blockchainNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
-        self.blockchainNetworkConnectionChanged()
       of COLLECTIBLES:
         self.collectiblesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
-        self.collectiblesNetworkConnectionChanged()
       of MARKET:
         self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
-        self.marketValuesNetworkConnectionChanged()
     self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, float(lastCheckedAt))
 
