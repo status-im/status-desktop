@@ -13,6 +13,7 @@ const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
+const SIGNAL_CONNECTOR_PERSONAL_SIGN* = "ConnectorPersonalSign"
 
 logScope:
   topics = "connector-controller"
@@ -30,6 +31,7 @@ QtObject:
   proc dappValidatesTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
   proc dappGrantDAppPermission*(self: Controller, payload: string) {.signal.}
   proc dappRevokeDAppPermission*(self: Controller, payload: string) {.signal.}
+  proc dappPersonalSign*(self: Controller, requestId: string, payload: string) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -85,6 +87,18 @@ QtObject:
 
       controller.dappRevokeDAppPermission(dappInfo.toJson())
 
+    result.events.on(SIGNAL_CONNECTOR_PERSONAL_SIGN) do(e: Args):
+      let params = ConnectorPersonalSignSignal(e)
+      let dappInfo = %*{
+        "icon": params.iconUrl,
+        "name": params.name,
+        "url": params.url,
+        "challenge": params.challenge,
+        "address": params.address,
+      }
+
+      controller.dappPersonalSign(params.requestId, dappInfo.toJson())
+
     result.QObject.setup
 
   proc parseSingleUInt(chainIDsString: string): uint =
@@ -114,3 +128,9 @@ QtObject:
 
   proc recallDAppPermission*(self: Controller, dAppUrl: string): bool {.slot.} =
     return self.service.recallDAppPermission(dAppUrl)
+
+  proc approveDappPersonalSignRequest*(self: Controller, requestId: string, signature: string): bool {.slot.} =
+    return self.service.approvePersonalSignRequest(requestId, signature)
+
+  proc rejectPersonalSigning*(self: Controller, requestId: string): bool {.slot.} =
+    return self.service.rejectPersonalSigning(requestId)

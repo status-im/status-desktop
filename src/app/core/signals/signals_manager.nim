@@ -140,10 +140,12 @@ QtObject:
       of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)
       of SignalType.CommunityTokenTransactionStatusChanged: CommunityTokenTransactionStatusChangedSignal.fromEvent(jsonSignal)
       of SignalType.CommunityTokenAction: CommunityTokenActionSignal.fromEvent(jsonSignal)
+      # connector
       of SignalType.ConnectorSendRequestAccounts: ConnectorSendRequestAccountsSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorSendTransaction: ConnectorSendTransactionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorPersonalSign: ConnectorPersonalSignSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType

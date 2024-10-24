@@ -16,6 +16,7 @@ const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
+const SIGNAL_CONNECTOR_EVENT_CONNECTOR_PERSONAL_SIGN* = "ConnectorPersonalSign"
 
 # Enum with events
 type Event* = enum
@@ -83,6 +84,18 @@ QtObject:
 
       self.events.emit(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION, data)
     )
+    self.events.on(SignalType.ConnectorPersonalSign.event, proc(e: Args) =
+      if self.eventHandler == nil:
+        return
+
+      var data = ConnectorPersonalSignSignal(e)
+
+      if not data.requestId.len() == 0:
+        error "ConnectorPersonalSignSignal failed, requestId is empty"
+        return
+
+      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_PERSONAL_SIGN, data)
+    )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
@@ -138,3 +151,18 @@ QtObject:
     except Exception as e:
       error "recallDAppPermissionFinishedRpc failed: ", err=e.msg
       return false
+
+  proc approvePersonalSignRequest*(self: Service, requestId: string, signature: string): bool =
+    try:
+      var args = PersonalSignAcceptedArgs()
+      args.requestId = requestId
+      args.signature = signature
+
+      return status_go.sendPersonalSignAcceptedFinishedRpc(args)
+
+    except Exception as e:
+      error "sendPersonalSigAcceptedFinishedRpc failed: ", err=e.msg
+      return false
+
+  proc rejectPersonalSigning*(self: Service, requestId: string): bool =
+    rejectRequest(self, requestId, status_go.sendPersonalSignRejectedFinishedRpc, "sendPersonalSignRejectedFinishedRpc failed: ")
