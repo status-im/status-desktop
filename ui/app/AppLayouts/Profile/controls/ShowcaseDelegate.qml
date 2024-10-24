@@ -103,11 +103,6 @@ StatusDraggableListItem {
                     onClosed: menuLoader.active = false
                     StatusMenuHeadline { text: qsTr("Show to") }
 
-                    Binding on width {
-                        value: Math.max(implicitWidth, everyoneAction.implicitWidth, contactsAction.implicitWidth, idVerifiedContactsAction.implicitWidth) + margins * 2
-                        delayed: true
-                    }
-
                     ShowcaseVisibilityAction {
                         id: everyoneAction
                         showcaseVisibility: Constants.ShowcaseVisibility.Everyone
