@@ -511,6 +511,7 @@ WalletConnectSDKBase {
             dAppUrl: proposalMedatada.url
             dAppName: proposalMedatada.name
             dAppIconUrl: !!proposalMedatada.icons && proposalMedatada.icons.length > 0 ? proposalMedatada.icons[0] : ""
+            dAppBadgeIcon: "status-connector"
             multipleChainSelection: false
 
             onConnect: {
@@ -566,6 +567,7 @@ WalletConnectSDKBase {
             dappName: request.dappName
             dappUrl: request.dappUrl
             dappIcon: request.dappIcon
+            badgeIcon: "status-connector"
 
             accountColor: Utils.getColorForId(account.colorId)
             accountName: account.name
