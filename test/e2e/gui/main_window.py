@@ -228,4 +228,5 @@ class MainWindow(Window):
                 return ToastMessage().get_toast_messages()
             except LookupError as err:
                 LOG.info(err)
-                assert time.monotonic() - started_at < timeout_msec, str(err)
+                if time.monotonic() - started_at > timeout_msec:
+                    raise LookupError(f'Notifications are not found')

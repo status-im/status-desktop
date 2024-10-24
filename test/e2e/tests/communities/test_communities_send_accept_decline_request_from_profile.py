@@ -133,14 +133,14 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
-        with step(f'User {user_one.name} send contact request to {user_three.name} from user profile'):
+        with step(f'User {user_one.name} send contact request to {user_three.name} from user profile from members list'):
             community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
             ProfilePopupFromMembers().wait_until_appears()
             main_screen.hide()
 
-        with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile'):
+        with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile from members list'):
             aut_three.attach()
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community(community.name)
@@ -166,7 +166,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_three.name}, decline contact request from user profile {user_one.name}'):
             aut_three.attach()
             main_screen.prepare()
-            profile_popup.review_contact_request().decline()
+            profile_decline = community_screen.right_panel.click_member(user_one.name)
+            profile_decline.review_contact_request().decline()
 
         with step(f'User {user_three.name} verify that send request button is available again in profile popup'):
             assert driver.waitFor(lambda: profile_popup.is_send_request_button_visible,

@@ -19,7 +19,8 @@ class TextEdit(QObject):
     @text.setter
     @allure.step('Type text {1} {0}')
     def text(self, value: str):
-        self.clear()
+        if self.text:
+            self.clear()
         self.type_text(value)
         assert driver.waitFor(lambda: self.text == value, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), \
             f'Type text failed, value in field: "{self.text}", expected: {value}'

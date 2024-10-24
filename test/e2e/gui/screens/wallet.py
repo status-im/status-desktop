@@ -50,7 +50,7 @@ class LeftPanel(QObject):
     def accounts(self) -> typing.List[constants.user.account_list_item]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
-        time.sleep(1) # to give a chance to build the list
+        time.sleep(1) # to give a chance for the left panel to refresh
         raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
         if len(raw_data) > 0:
@@ -98,8 +98,8 @@ class LeftPanel(QObject):
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
             self._wallet_account_item.real_name['title'] = account_name
-            time.sleep(0.5)
             self._wallet_account_item.click()
+            time.sleep(0.5)
             self._wallet_account_item.right_click()
             return ContextMenu()
         else:

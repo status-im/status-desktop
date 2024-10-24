@@ -118,7 +118,7 @@ class ProfilePopupFromMembers(ProfilePopup):
 
     @allure.step('Click review contact request button')
     def review_contact_request(self):
-        assert driver.waitFor(lambda: self._review_request_button.is_visible, 15000)
+        self._review_request_button.wait_until_appears(15000)
         self._review_request_button.click()
         return AcceptRequestFromProfile().wait_until_appears()
 

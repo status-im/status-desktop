@@ -1,3 +1,4 @@
+import os
 import time
 
 import allure
@@ -96,6 +97,7 @@ class AUT:
     def startaut(self):
         LOG.info('Launching AUT: %s', self.path)
         self.port = local_system.find_free_port(configs.squish.AUT_PORT, 100)
+
         command = [
             str(configs.testpath.SQUISH_DIR / 'bin/startaut'),
             '--verbose',

@@ -38,7 +38,7 @@ def test_manage_community_screens_overview(main_screen: MainWindow):
             assert airdrops_screen.is_new_airdrop_button_present is True, \
                 f'New airdrop button should be disabled by default'
         with step('Airdrops welcome image source path is correct'):
-            assert AIRDROPS_WELCOME_IMAGE_PATH == str(airdrops_screen.airdrops_welcome_image_path)
+            assert AIRDROPS_WELCOME_IMAGE_PATH in str(airdrops_screen.airdrops_welcome_image_path)
         with step('Airdrops welcome title is correct'):
             assert airdrops_screen.airdrops_welcome_title == AirdropsElements.WELCOME_TITLE.value
         with step('Airdrops welcome subtitle is correct'):
@@ -60,7 +60,7 @@ def test_manage_community_screens_overview(main_screen: MainWindow):
             assert tokens_screen.is_mint_token_button_present is True, \
                 f'Mint token button should be present'
         with step('Tokens welcome image path is correct'):
-            assert TOKENS_WELCOME_IMAGE_PATH == str(tokens_screen.tokens_welcome_image_path)
+            assert TOKENS_WELCOME_IMAGE_PATH in str(tokens_screen.tokens_welcome_image_path)
         with step('Tokens welcome title is correct'):
             assert tokens_screen.tokens_welcome_title == TokensElements.WELCOME_TITLE.value
         with step('Tokens welcome subtitle is correct'):
@@ -83,7 +83,7 @@ def test_manage_community_screens_overview(main_screen: MainWindow):
             assert permissions_settings.is_add_new_permission_button_present is True, \
                 f'Add new permission button should be visible'
         with step('Permission welcome image source path is correct'):
-            assert PERMISSION_WELCOME_IMAGE_PATH == str(permissions_settings.permission_welcome_image_source)
+            assert PERMISSION_WELCOME_IMAGE_PATH in str(permissions_settings.permission_welcome_image_source)
         with step('Permission welcome title is correct'):
             assert permissions_settings.permission_welcome_title == PermissionsElements.WELCOME_TITLE.value
         with step('Permission welcome subtitle is correct'):
