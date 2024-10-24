@@ -58,7 +58,7 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        visible: emojiRow.visible
+        visible: emojiRow.visible && !root.disabledForChat
     }
 
     StatusAction {

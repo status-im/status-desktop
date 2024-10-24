@@ -70,9 +70,9 @@ Menu {
 
     dim: false
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
-    topPadding: 8
-    bottomPadding: 8
-    margins: 16
+    topPadding: Theme.halfPadding
+    bottomPadding: Theme.halfPadding
+    margins: Theme.padding
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -92,6 +92,7 @@ Menu {
     }
 
     contentItem: StatusScrollView {
+        id: scrollView
         padding: 0
 
         ColumnLayout {
@@ -101,6 +102,7 @@ Menu {
 
                 onItemAdded: {
                     item.Layout.fillWidth = true
+                    item.Layout.minimumWidth = scrollView.width
                     item.Layout.maximumWidth = root.maxImplicitWidth
                 }
             }
@@ -111,7 +113,7 @@ Menu {
         id: backgroundContent
         implicitWidth: 176
         color: Theme.palette.statusMenu.backgroundColor
-        radius: 8
+        radius: Theme.radius
         layer.enabled: true
         layer.effect: DropShadow {
             width: backgroundContent.width
