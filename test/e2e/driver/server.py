@@ -43,7 +43,7 @@ class SquishServer:
         if cls.pid is None:
             return
         LOG.info('Stopping Squish Server with PID: %d', cls.pid)
-        local_system.kill_process(cls.pid)
+        local_system.kill_process_with_retries(cls.pid)
         time.sleep(1) # FIXME: Implement waiting for process to actually exit.
         cls.pid = None
         cls.port = None

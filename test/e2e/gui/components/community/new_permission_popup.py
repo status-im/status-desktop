@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 import configs
@@ -39,6 +41,7 @@ class NewPermissionPopup(QObject):
     def open_who_holds_context_menu(self, attempt: int = 2):
         try:
             for child in walk_children(self._who_holds_list_item.object):
+                time.sleep(0.5)
                 if getattr(child, 'objectName', '') == 'addItemButton':
                     driver.mouseClick(child)
                     return self._who_holds_asset_field.wait_until_appears()
