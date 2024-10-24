@@ -24,10 +24,6 @@ QtObject {
         localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
     }
 
-    function setGifUnfurlingEnabled(value) {
-        localAccountSensitiveSettings.gifUnfurlingEnabled = value
-    }
-
     function getPasswordStrengthScore(password) {
         return root.privacyModule.getPasswordStrengthScore(password);
     }
