@@ -40,13 +40,7 @@ StatusDialog {
         })
 
         function fetchSuggestedRoutes() {
-            if (root.swapInputParamsForm.isFormFilledCorrectly()) {
-                root.swapAdaptor.swapProposalLoading = true
-            }
-            root.swapAdaptor.validSwapProposalReceived = false
-            root.swapAdaptor.approvalPending = false
-            root.swapAdaptor.approvalSuccessful = false
-            root.swapAdaptor.swapOutputData.resetPathInfoAndError()
+            root.swapAdaptor.prepareFetchSuggestedRoutes()
             debounceFetchSuggestedRoutes()
         }
 
@@ -60,6 +54,26 @@ StatusDialog {
 
         function addMetricsEvent(subEventName) {
             Global.addCentralizedMetricIfEnabled("swap", {subEvent: subEventName})
+        }
+
+        property bool isReviewingApproveTx: false 
+        property bool isReviewingSwapTx: false 
+        readonly property bool hasStartedTxProcess: root.swapAdaptor.approvalPending || root.swapAdaptor.approvalSuccessful
+        readonly property bool canRefreshSwapProposal: !isReviewingApproveTx && !isReviewingSwapTx && !hasStartedTxProcess
+
+        function checkSwapProposalAutoRefresh() {
+            // Refresh the swap proposal if it has expired and:
+            // - the user isn't reviewing/signing a transaction
+            // - the user hasn't placed an approval or swap tx
+            if (root.swapAdaptor.swapProposalExpired && d.canRefreshSwapProposal) {
+                d.fetchSuggestedRoutes()
+            }
+        }
+
+        onCanRefreshSwapProposalChanged: {
+            if (canRefreshSwapProposal) {
+                d.checkSwapProposalAutoRefresh()
+            }
         }
     }
 
@@ -77,6 +91,16 @@ StatusDialog {
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
             payPanel.reevaluateSelectedId()
+        }
+    }
+
+    Connections {
+        target: root.swapAdaptor
+
+        function onSwapProposalExpiredChanged() {
+            if (root.swapAdaptor.swapProposalExpired) {
+                d.checkSwapProposalAutoRefresh()
+            }
         }
     }
 
@@ -440,9 +464,7 @@ StatusDialog {
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
-            fromTokenAmount: SQUtils.AmountsArithmetic.div(
-                                 SQUtils.AmountsArithmetic.fromString(root.swapAdaptor.swapOutputData.approvalAmountRequired),
-                                 SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.fromToken.decimals ?? 18)).toFixed()
+            fromTokenAmount: root.swapInputParamsForm.fromTokenAmount
             fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
                                                                   "chainId", root.swapInputParamsForm.selectedNetworkChainId,
                                                                   "address")
@@ -476,6 +498,10 @@ StatusDialog {
             onAccepted: {
                 d.addMetricsEvent("send approve tx")
                 root.swapAdaptor.sendApproveTx()
+            }
+
+            onVisibleChanged: {
+                d.isReviewingApproveTx = visible
             }
         }
     }
@@ -532,6 +558,10 @@ StatusDialog {
                 d.addMetricsEvent("send swap tx")
                 root.swapAdaptor.sendSwapTx()
                 root.close()
+            }
+
+            onVisibleChanged: {
+                d.isReviewingSwapTx = visible
             }
         }
     }

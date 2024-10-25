@@ -19,9 +19,10 @@ QObject {
     required property SwapInputParamsForm swapFormData
     required property SwapOutputData swapOutputData
 
-    // the below 2 properties holds the state of finding a swap proposal
+    // the below 3 properties holds the state of finding a swap proposal
     property bool validSwapProposalReceived: false
     property bool swapProposalLoading: false
+    property bool swapProposalExpired: false // We consider a swap proposal "expired" some time after it was received
 
     // the below 2 properties holds the state of finding a swap proposal
     property bool approvalPending: false
@@ -193,6 +194,15 @@ QObject {
             }
             return ""
         }
+
+        property Timer swapProposalExpiredTimer: Timer {
+            interval: root.swapFormData.expirationTime
+            running: false
+            repeat: false
+            onTriggered: {
+                root.swapProposalExpired = true
+            }
+        }
     }
 
     ModelEntry {
@@ -246,6 +256,9 @@ QObject {
                 root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
                 root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
+                if (!root.swapProposalExpired) {
+                    d.swapProposalExpiredTimer.start()
+                }
             } else {
                 root.swapOutputData.hasError = true
             }
@@ -274,6 +287,7 @@ QObject {
     }
 
     function reset() {
+        d.uuid = ""
         root.swapFormData.resetFormData()
         root.swapOutputData.reset()
         root.validSwapProposalReceived = false
@@ -281,6 +295,8 @@ QObject {
         root.approvalPending = false
         root.approvalSuccessful = false
         d.txHash = ""
+        root.swapProposalExpired = false
+        d.swapProposalExpiredTimer.stop()
     }
 
     function formatCurrencyAmount(balance, symbol, options = null, locale = null) {
@@ -300,6 +316,19 @@ QObject {
             }
         }
         return disabledChainIds.join(":")
+    }
+
+    function prepareFetchSuggestedRoutes() {
+        d.uuid = ""
+        if (root.swapFormData.isFormFilledCorrectly()) {
+            root.swapProposalLoading = true
+        }
+        root.swapProposalExpired = false
+        d.swapProposalExpiredTimer.stop()
+        root.validSwapProposalReceived = false
+        root.approvalPending = false
+        root.approvalSuccessful = false
+        root.swapOutputData.resetPathInfoAndError()
     }
 
     function fetchSuggestedRoutes(cryptoValueInRaw) {

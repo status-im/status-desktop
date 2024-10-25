@@ -20,7 +20,7 @@ QtObject {
     // default token key
     property string defaultToTokenKey: ""
     // 15 seconds
-    property int autoRefreshTime: 15000
+    property int expirationTime: 15000
 
     onSelectedAccountAddressChanged: root.formValuesChanged()
     onSelectedNetworkChainIdChanged: root.formValuesChanged()
