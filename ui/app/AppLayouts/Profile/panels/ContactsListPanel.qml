@@ -11,8 +11,6 @@ import shared 1.0
 import shared.popups 1.0
 import shared.panels 1.0
 
-import "../../Chat/popups"
-
 import SortFilterProxyModel 0.2
 
 Item {
@@ -28,13 +26,11 @@ Item {
     readonly property int count: contactsList.count
 
     signal openContactContextMenu(string publicKey, string name, string icon)
-    signal contactClicked(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
     signal showVerificationRequest(string publicKey)
     signal contactRequestAccepted(string publicKey)
     signal contactRequestRejected(string publicKey)
     signal rejectionRemoved(string publicKey)
-    signal textClicked(string publicKey)
 
     StyledText {
         id: title
@@ -102,63 +98,51 @@ Item {
 
             width: ListView.view.width
             name: model.preferredDisplayName
-            publicKey: model.pubKey
             iconSource: model.icon
-            isContact: model.isContact
-            isBlocked: model.isBlocked
-            isVerified: model.isVerified
-            isUntrustworthy: model.isUntrustworthy
 
             subTitle: model.ensVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
             pubKeyColor: Utils.colorForPubkey(model.pubKey)
             colorHash: Utils.getColorHashAsJson(model.pubKey, model.ensVerified)
 
-            showSendMessageButton: isContact && !isBlocked
-            onOpenContactContextMenu: function (publicKey, name, icon) {
-                root.openContactContextMenu(publicKey, name, icon)
-            }
+            showSendMessageButton: model.isContact && !model.isBlocked
             showRejectContactRequestButton: {
-                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
+                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest
+                        && !model.verificationRequestStatus)
                     return true
-                }
 
                 return false
             }
             showAcceptContactRequestButton: {
-                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
+                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest
+                        && !model.verificationRequestStatus)
                     return true
-                }
 
                 return false
             }
             showRemoveRejectionButton: {
-                if (root.panelUsage === Constants.contactsPanelUsage.rejectedReceivedContactRequest) {
+                if (root.panelUsage === Constants.contactsPanelUsage.rejectedReceivedContactRequest)
                     return true
-                }
 
                 return false
             }
             contactText: {
-                if (root.panelUsage === Constants.contactsPanelUsage.sentContactRequest) {
+                if (root.panelUsage === Constants.contactsPanelUsage.sentContactRequest)
                     return qsTr("Contact Request Sent")
-                }
-                else if (root.panelUsage === Constants.contactsPanelUsage.rejectedSentContactRequest) {
+
+                if (root.panelUsage === Constants.contactsPanelUsage.rejectedSentContactRequest)
                     return qsTr("Contact Request Rejected")
-                }
 
                 return ""
             }
-            contactTextClickable: {
-                return false
-            }
 
-            onClicked: root.contactClicked(model.pubKey)
-            onSendMessageActionTriggered: root.sendMessageActionTriggered(publicKey)
-            onContactRequestAccepted: root.contactRequestAccepted(publicKey)
-            onContactRequestRejected: root.contactRequestRejected(publicKey)
-            onRejectionRemoved: root.rejectionRemoved(publicKey)
-            onTextClicked: root.textClicked(publicKey)
-            onShowVerificationRequest: root.showVerificationRequest(publicKey)
+
+            onContextMenuRequested: root.openContactContextMenu(
+                                      model.pubKey, model.preferredDisplayName, model.icon)
+            onSendMessageRequested: root.sendMessageActionTriggered(model.pubKey)
+            onAcceptContactRequested: root.contactRequestAccepted(model.pubKey)
+            onRejectRequestRequested: root.contactRequestRejected(model.pubKey)
+            onRemoveRejectionRequested: root.rejectionRemoved(model.pubKey)
+            onShowVerificationRequestRequested: root.showVerificationRequest(model.pubKey)
         }
     }
 }
