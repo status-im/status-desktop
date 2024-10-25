@@ -2,7 +2,7 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import json
 
-import section_item, member_model
+import section_item, member_model, member_item
 import ../main/communities/tokens/models/[token_item, token_model]
 
 type
@@ -468,7 +468,7 @@ QtObject:
         }
         return $jsonObj
 
-  proc setMembersAirdropAddress*(self: SectionModel, id: string, communityMembersAirdropAddress: Table[string, string]) = 
+  proc setMembersAirdropAddress*(self: SectionModel, id: string, communityMembersAirdropAddress: Table[string, string]) =
     let index = self.getItemIndex(id)
     if (index == -1):
       return
@@ -482,3 +482,15 @@ QtObject:
       return
 
     self.items[index].communityTokens.setItems(communityTokensItems)
+
+  proc addPendingMember*(self: SectionModel, communityId: string, memberItem: MemberItem) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+    self.items[i].pendingMemberRequests.addItem(memberItem)
+
+  proc removePendingMember*(self: SectionModel, communityId: string, memberId: string) =
+    let i = self.getItemIndex(communityId)
+    if i == -1:
+      return
+    self.items[i].pendingMemberRequests.removeItemById(memberId)
