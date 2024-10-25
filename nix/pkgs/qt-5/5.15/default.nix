@@ -51,6 +51,7 @@ let
       ./qtdeclarative.patch
       # prevent headaches from stale qmlcache data
       ./qtdeclarative-default-disable-qmlcache.patch
+      ./qtdeclarative-accessibility.patch
     ];
     qtscript = [ ./qtscript.patch ];
     qtserialport = [ ./qtserialport.patch ];
