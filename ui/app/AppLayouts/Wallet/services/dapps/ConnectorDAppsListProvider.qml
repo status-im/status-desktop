@@ -11,8 +11,13 @@ QObject {
 
     readonly property alias dappsModel: d.dappsModel
     readonly property int connectorId: Constants.StatusConnect
+    property bool enabled: true
 
     function addSession(url, name, iconUrl, accountAddress) {
+        if (!enabled) {
+            return
+        }
+
         if (!url || !name || !iconUrl || !accountAddress) {
             console.error("addSession: missing required parameters")
             return
@@ -38,10 +43,18 @@ QObject {
     }
 
     function revokeSession(topic) {
+        if (!enabled) {
+            return
+        }
+
         d.revokeSession(topic)
     }
 
     function getActiveSession(topic) {
+        if (!enabled) {
+            return
+        }
+
         return d.getActiveSession(topic)
     }
 

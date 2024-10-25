@@ -18,9 +18,22 @@ QObject {
     readonly property int connectorId: Constants.WalletConnect
     readonly property var dappsModel: d.dappsModel
 
+    property bool enabled: true
+
     Component.onCompleted: {
+        if (!enabled) {
+            return
+        }
         // Just in case the SDK is already initialized
         d.updateDappsModel()
+    }
+
+    onEnabledChanged: {
+        if (enabled) {
+            d.updateDappsModel()
+        } else {
+            d.dappsModel.clear()
+        }
     }
 
     QObject {
@@ -33,6 +46,8 @@ QObject {
 
         property Connections sdkConnections: Connections {
             target: root.sdk
+            enabled: root.enabled
+
             function onSessionDelete(topic, err) {
                 d.updateDappsModel()
             }

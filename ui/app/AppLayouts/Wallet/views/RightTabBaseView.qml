@@ -19,7 +19,6 @@ FocusScope {
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
 
-    property bool dappsEnabled
     property bool swapEnabled
 
     property var sendModal
@@ -40,7 +39,6 @@ FocusScope {
             overview: WalletStores.RootStore.overview
             walletStore: WalletStores.RootStore
             networkConnectionStore: root.networkConnectionStore
-            dappsEnabled: root.dappsEnabled
             loginType: root.store.loginType
         }
 

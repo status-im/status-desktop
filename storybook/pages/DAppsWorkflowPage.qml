@@ -74,6 +74,9 @@ Item {
                     sessionRequestsModel: wcService.sessionRequestsModel
                     enabled: wcService.isServiceOnline
 
+                    walletConnectEnabled: wcService.walletConnectFeatureEnabled
+                    connectorEnabled: wcService.connectorFeatureEnabled
+
                     //formatBigNumber: (number, symbol, noSymbolOption) => wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
                     onDisconnectRequested: (connectionId) => wcService.disconnectDapp(connectionId)
@@ -211,12 +214,30 @@ Item {
             // spacer
             ColumnLayout {}
 
-            CheckBox {
+            RowLayout {
+                CheckBox {
 
-                text: "Enable SDK"
-                checked: settings.enableSDK
-                onCheckedChanged: {
-                    settings.enableSDK = checked
+                    text: "Enable SDK"
+                    checked: settings.enableSDK
+                    onCheckedChanged: {
+                        settings.enableSDK = checked
+                    }
+                }
+
+                CheckBox {
+                    text: "WC feature flag"
+                    checked: true
+                    onCheckedChanged: {
+                        walletConnectService.walletConnectFeatureEnabled = checked
+                    }
+                }
+
+                CheckBox {
+                    text: "Connector feature flag"
+                    checked: true
+                    onCheckedChanged: {
+                        walletConnectService.connectorFeatureEnabled = checked
+                    }
                 }
             }
 
