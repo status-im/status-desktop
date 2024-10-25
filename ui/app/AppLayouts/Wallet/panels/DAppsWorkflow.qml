@@ -207,7 +207,9 @@ DappsComboBox {
         }
 
         function connectionSuccessful(key, newTopic) {
+            print ("Connection successful")
             if (connectDappLoader.key === key && connectDappLoader.item) {
+                print ("Connection successful - updating topic", newTopic)
                 connectDappLoader.topic = newTopic
                 connectDappLoader.item.pairSuccessful()
             }
@@ -295,7 +297,7 @@ DappsComboBox {
                     return
                 }
                 requestHandled = true
-                root.signRequestRejected(request.topic, request.id)
+                root.signRequestRejected(request.topic, request.requestId)
             }
 
             parent: root
@@ -338,7 +340,7 @@ DappsComboBox {
 
             onAccepted: {
                 requestHandled = true
-                root.signRequestAccepted(request.topic, request.id)
+                root.signRequestAccepted(request.topic, request.requestId)
             }
 
             onRejected: {
