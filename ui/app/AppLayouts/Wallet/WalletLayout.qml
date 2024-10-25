@@ -41,7 +41,6 @@ Item {
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property bool appMainVisible
 
-    property bool dappsEnabled
     property bool swapEnabled
 
     onAppMainVisibleChanged: {
@@ -224,7 +223,6 @@ Item {
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
 
-            dappsEnabled: root.dappsEnabled
             swapEnabled: root.swapEnabled
 
             headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
