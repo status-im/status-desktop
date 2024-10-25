@@ -63,3 +63,7 @@ method parseCommunityChannelSharedUrl*(self: Module, url: string): string =
 method parseContactSharedUrl*(self: Module, url: string): string =
   let contactData = self.controller.parseContactSharedUrl(url)
   return $contactData
+
+method parseTransactionSharedUrl*(self: Module, url: string): string =
+  let transactionData = self.controller.parseTransactionSharedUrl(url)
+  return $transactionData

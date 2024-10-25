@@ -1,9 +1,10 @@
+import QtQml.Models 2.15
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import QtQml.Models 2.15
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
@@ -11,8 +12,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 
-import shared.popups.send.controls 1.0
 import shared.controls 1.0
+import shared.popups.send.controls 1.0
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.panels 1.0
@@ -26,6 +27,8 @@ StatusDialog {
     required property SwapInputParamsForm swapInputParamsForm
     required property SwapModalAdaptor swapAdaptor
     required property int loginType
+
+    property bool transactionDeepLinkEnabled
 
     objectName: "swapModal"
 
@@ -145,6 +148,21 @@ StatusDialog {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                         text: qsTr("Swap")
+                    }
+                    ShareButton {
+                        id: shareButton
+                        visible: root.transactionDeepLinkEnabled
+                        enabled: !!root.swapInputParamsForm.fromTokensKey || !!root.swapInputParamsForm.selectedAccountAddress || !!root.swapInputParamsForm.fromTokenAmount || !!root.swapInputParamsForm.toTokenKey
+
+                        onClicked: {
+                            const url = root.swapAdaptor.swapStore.getShareTransactionUrl(Constants.SendType.Swap,
+                                                                                          root.swapInputParamsForm.fromTokensKey,
+                                                                                          root.swapInputParamsForm.fromTokenAmount,
+                                                                                          root.swapInputParamsForm.selectedAccountAddress,
+                                                                                          root.swapInputParamsForm.selectedNetworkChainId,
+                                                                                          root.swapInputParamsForm.toTokenKey)
+                            ClipboardUtils.setText(url)
+                        }
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter

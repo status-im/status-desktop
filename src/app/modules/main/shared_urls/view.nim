@@ -26,3 +26,6 @@ QtObject:
 
   proc parseContactSharedUrl*(self: View, url: string): string {.slot.} =
     return self.delegate.parseContactSharedUrl(url)
+
+  proc parseTransactionSharedUrl*(self: View, url: string): string {.slot.} =
+    return self.delegate.parseTransactionSharedUrl(url)

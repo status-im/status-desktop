@@ -55,6 +55,7 @@ ColumnLayout {
     }
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     signal showReplyArea(messageId: string)
     signal forceInputFocus()
@@ -97,6 +98,7 @@ ColumnLayout {
             isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)
             }

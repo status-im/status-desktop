@@ -1,4 +1,5 @@
 import Tables, json, stint, json_serialization, stew/shims/strformat, logging
+import ../app_service/common/utils
 
 import ./core as core
 
@@ -118,3 +119,6 @@ proc sendRouterTransactionsWithSignatures*(resultOut: var JsonNode, uuid: string
   except Exception as e:
     warn e.msg
     return e.msg
+
+proc shareTransactionURL*(urlData: JsonNode): RpcResponse[JsonNode] =
+  return callPrivateRPC("shareTransactionURL".prefix, urlData)

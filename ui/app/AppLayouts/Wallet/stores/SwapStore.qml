@@ -52,4 +52,8 @@ QtObject {
     function getWei2Eth(wei, decimals) {
         return globalUtils.wei2Eth(wei, decimals)
     }
+
+    function getShareTransactionUrl(txType, asset, amount, address, chainId, toAsset) {
+        return walletSectionSendInst.shareTransactionURL(txType, asset, amount, address, chainId, toAsset)
+    }
 }
