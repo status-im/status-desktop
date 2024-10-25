@@ -87,7 +87,7 @@ StackView {
     // Community Permissions possible view contents:
     initialItem: SettingsPage {
         id: initialItem
-        implicitWidth: 0
+        width: root.viewWidth + leftPadding
 
         title: qsTr("Permissions")
 
