@@ -248,12 +248,6 @@ StatusSectionLayout {
                     }
                 }
 
-                onInviteNewPeopleClicked: {
-                    Global.openInviteFriendsToCommunityPopup(root.community,
-                                                            root.chatCommunitySectionModule,
-                                                            null)
-                }
-
                 onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
                 onExportControlNodeClicked: {
                     if(!root.isControlNode)
@@ -308,6 +302,7 @@ StatusSectionLayout {
                     root.rootStore.loadCommunityMemberMessages(root.community.id, pubKey)
                     Global.openCommunityMemberMessagesPopupRequested(root.rootStore, root.chatCommunitySectionModule, pubKey, displayName)
                 }
+                onInviteNewPeopleClicked: Global.openInviteFriendsToCommunityPopup(root.community, root.chatCommunitySectionModule, null)
             }
         }
 

@@ -74,7 +74,6 @@ StackLayout {
 
     signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
 
-    signal inviteNewPeopleClicked
     signal airdropTokensClicked
     signal exportControlNodeClicked
     signal importControlNodeClicked
@@ -369,6 +368,7 @@ StackLayout {
         id: transferOwnershipAlertPopup
 
         TransferOwnershipAlertPopup {
+            destroyOnClose: true
             communityName: root.name
             communityLogo: root.logoImageData
 
