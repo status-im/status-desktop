@@ -1,3 +1,4 @@
+import os
 import time
 
 import allure
@@ -75,6 +76,13 @@ class AUT:
         driver.currentApplicationContext().detach()
         self.ctx = None
 
+    def kill_process(self):
+        if self.pid is None:
+            LOG.warning('No PID available for AUT')
+            return
+        local_system.kill_process_with_retries(self.pid)
+        self.pid = None
+
     @allure.step('Attach Squish to Test Application')
     def attach(self):
         LOG.info('Attaching to AUT: localhost:%d', self.port)
@@ -96,6 +104,9 @@ class AUT:
     def startaut(self):
         LOG.info('Launching AUT: %s', self.path)
         self.port = local_system.find_free_port(configs.squish.AUT_PORT, 100)
+        # if str(self.path).endswith('nim_status_client'):
+        #     os.environ['LD_LIBRARY_PATH'] = '/home/anastasiya/Qt/5.15.2/gcc_64/lib:/home/anastasiya/status-desktop/vendor/status-go/build/bin:/home/anastasiya/status-desktop/vendor/status-keycard-go/build/libkeycard:/home/anastasiya/status-desktop/bin/StatusQ'
+
         command = [
             str(configs.testpath.SQUISH_DIR / 'bin/startaut'),
             '--verbose',
@@ -118,7 +129,7 @@ class AUT:
     def stop(self):
         LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
-        local_system.kill_process(self.pid)
+        self.kill_process()
         time.sleep(1) # FIXME: Implement waiting for process to actually exit.
 
     @allure.step("Start and attach AUT")

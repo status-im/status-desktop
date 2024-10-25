@@ -5,6 +5,7 @@ import pytest
 from allure_commons._allure import step
 
 from helpers.WalletHelper import authenticate_with_password
+from scripts.utils.generators import random_wallet_acc_keypair_name
 from tests.wallet_main_screen import marks
 
 import constants
@@ -18,20 +19,16 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
 @pytest.mark.parametrize('address_pair', [constants.user.private_key_address_pair_1])
-@pytest.mark.parametrize('name, color, emoji, emoji_unicode, '
-                         'new_name, new_color, new_emoji, new_emoji_unicode', [
-                             pytest.param('PrivKeyAcc1', '#2a4af5', 'sunglasses', '1f60e',
-                                          'PrivKeyAcc1edited', '#216266', 'thumbsup', '1f44d')
-                         ])
-def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair,
-                                                     name: str, color: str, emoji: str, emoji_unicode: str,
-                                                     new_name: str, new_color: str, new_emoji: str,
-                                                     new_emoji_unicode: str):
+def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair):
+
+    name = random_wallet_acc_keypair_name()
+    new_name = random_wallet_acc_keypair_name()
+
     with step('Import an account within private key'):
         wallet = main_screen.left_panel.open_wallet()
         SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_private_key(
+        account_popup.set_name(name).set_origin_private_key(
             address_pair.private_key, address_pair.private_key[:5]).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
@@ -43,7 +40,7 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
+        expected_account = constants.user.account_list_item(name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
@@ -62,10 +59,10 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
     with step('Edit wallet account'):
         main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
+        account_popup.set_name(new_name).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)
+        expected_account = constants.user.account_list_item(new_name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)

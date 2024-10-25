@@ -36,14 +36,39 @@ def kill_process(pid):
     LOG.debug(f'Terminating process {pid}')
 
     try:
-        if get_platform() == "Windows":
-            subprocess.call(f"taskkill /F /T /PID {str(pid)}")
-        elif get_platform() in ["Linux", "Darwin"]:
-            os.kill(pid, signal.SIGKILL)
-        else:
-            raise NotImplementedError(f"Unsupported platform: {get_platform()}")
+        p = psutil.Process(pid)
+
+        for i in range(2):
+            if get_platform() == "Windows":
+                    subprocess.call(f"taskkill /F /T /PID {str(pid)}")
+            elif get_platform() in ["Linux", "Darwin"]:
+                p.kill()
+                if not p.is_running():
+                    break
+            else:
+                raise NotImplementedError(f"Unsupported platform: {get_platform()}")
     except Exception as e:
         print(f"Failed to terminate process {pid}: {e}")
+
+@allure.step('Kill process with retries')
+def kill_process_with_retries(pid, sig: signal.Signals = signal.SIGKILL, attempts = 3):
+    try:
+        p = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        LOG.warning('Process %d already gone', pid)
+        return
+
+    p.send_signal(sig)
+
+    while attempts > 0:
+        attempts-=1
+        try:
+            p.wait()
+        except TimeoutError as err:
+            p.kill()
+        else:
+            return
+    raise RuntimeError('Failed to kill process: %d', pid)
 
 
 @allure.step('System execute command')
