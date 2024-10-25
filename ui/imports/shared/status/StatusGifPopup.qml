@@ -206,7 +206,7 @@ Popup {
             visible: true
 
             onEnableGifsRequested: {
-                RootStore.setGifUnfurlingEnabled(true)
+                root.gifStore.setGifUnfurlingEnabled(true)
                 root.gifStore.getTrendingsGifs()
             }
         }
