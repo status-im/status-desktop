@@ -33,6 +33,7 @@ SettingsPage {
     signal acceptRequestToJoin(string id)
     signal declineRequestToJoin(string id)
     signal viewMemberMessagesClicked(string pubKey, string displayName)
+    signal inviteNewPeopleClicked()
 
     function goTo(tab: int) {
         if(root.contentItem) {
@@ -41,6 +42,13 @@ SettingsPage {
     }
 
     title: qsTr("Members")
+
+    buttons: [
+        StatusButton {
+            text: qsTr("Invite people")
+            onClicked: root.inviteNewPeopleClicked()
+        }
+    ]
 
     contentItem: ColumnLayout {
 
