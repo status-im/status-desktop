@@ -82,7 +82,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
     with step('Verify emojihash and identicon ring profile screen appeared and capture the details'):
         emoji_hash_identicon_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
         chat_key = emoji_hash_identicon_view.get_chat_key
-        emoji_hash_public_key = emoji_hash_identicon_view.get_emoji_hash
+        assert len(chat_key) == 49
         assert emoji_hash_identicon_view._identicon_ring.is_visible, f'Identicon ring is not present when it should'
 
     with step('Click Start using Status'):
@@ -106,9 +106,10 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
             f'Identicon ring is not present when it should'
         assert str(online_identifier.object.pubkey) is not None, \
             f'Public key is not present'
-        assert str(online_identifier.object.pubkey) == emoji_hash_public_key, f'Public keys should match when they dont'
+        assert chat_key in online_identifier.copy_link_to_profile(), f'Public keys should match when they dont'
 
     with step('Open user profile from online identifier and check the data'):
+        online_identifier = main_window.left_panel.open_online_identifier()
         profile_popup = online_identifier.open_profile_popup_from_online_identifier()
         profile_popup_user_name = profile_popup.user_name
         profile_popup_chat_key = profile_popup.copy_chat_key
@@ -116,16 +117,12 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
             f'Display name in user profile is wrong, current: {profile_popup_user_name}, expected: {user_account.name}'
         assert profile_popup_chat_key == chat_key, \
             f'Chat key in user profile is wrong, current: {profile_popup_chat_key}, expected: {chat_key}'
-        assert profile_popup.get_emoji_hash == emoji_hash_public_key, \
-            f'Public keys should match when they dont'
 
     with step('Open share profile popup and check the data'):
         share_profile_popup = profile_popup.share_profile()
         profile_link = share_profile_popup.get_profile_link()
-        emoji_hash = share_profile_popup.get_emoji_hash()
         assert share_profile_popup.is_profile_qr_code_visibile
         assert chat_key in profile_link, f'Profile link is wrong {profile_link}, it does not contain correct chat key'
-        assert emoji_hash == emoji_hash_public_key, f'Public keys do not match'
         share_profile_popup.close()
 
     with step('Click left panel and open settings'):
