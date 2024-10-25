@@ -172,7 +172,6 @@ SettingsContentBase {
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
-                    contactsStore: root.contactsStore
                     panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
                     onSendMessageActionTriggered: {
                         root.contactsStore.joinPrivateChat(publicKey)
@@ -186,7 +185,6 @@ SettingsContentBase {
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    contactsStore: root.contactsStore
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
                     }
@@ -227,7 +225,6 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     title: qsTr("Received")
                     searchString: searchBox.text
-                    contactsStore: root.contactsStore
                     visible: count > 0
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
@@ -254,7 +251,6 @@ SettingsContentBase {
                     Layout.fillWidth: true
                     title: qsTr("Sent")
                     searchString: searchBox.text
-                    contactsStore: root.contactsStore
                     visible: count > 0
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
@@ -279,7 +275,6 @@ SettingsContentBase {
             //                        clip: true
             //                        title: qsTr("Received")
             //                        searchString: searchBox.text
-            //                        contactsStore: root.contactsStore
             //                        onOpenContactContextMenu: function (publicKey, name, icon) {
             //                           root.openContextMenu(publicKey, name, icon)
             //                        }
@@ -297,7 +292,6 @@ SettingsContentBase {
             //                        clip: true
             //                        title: qsTr("Sent")
             //                        searchString: searchBox.text
-            //                        contactsStore: root.contactsStore
             //                        onOpenContactContextMenu: function (publicKey, name, icon) {
             //                             root.openContextMenu(publicKey, name, icon)
             //                         }
@@ -316,7 +310,6 @@ SettingsContentBase {
             ContactsListPanel {
                 Layout.fillWidth: true
                 searchString: searchBox.text
-                contactsStore: root.contactsStore
                 onOpenContactContextMenu: function (publicKey, name, icon) {
                     root.openContextMenu(publicKey, name, icon)
                 }
