@@ -23,7 +23,7 @@ Control {
     property alias communityTag: communityTag
     property var balances
     property int decimals
-    property var allNetworksModel
+    property var networksModel
     property bool isLoading: false
     property string errorTooltipText
     property string address
@@ -110,7 +110,7 @@ Control {
                 Repeater {
                     id: chainRepeater
                     Layout.alignment: Qt.AlignRight
-                    model: root.allNetworksModel
+                    model: root.networksModel
                     delegate: InformationTag {
                         readonly property double aggregatedbalance: balancesAggregator.value/(10 ** root.decimals)
                         SortFilterProxyModel {
