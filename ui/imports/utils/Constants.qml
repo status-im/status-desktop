@@ -1322,16 +1322,17 @@ QtObject {
     enum CommunityMembershipRequestState {
         None = 0,
         Pending,
-        Accepted,
         Rejected,
+        Accepted,
+        Canceled,
         AcceptedPending,
         RejectedPending,
+        AwaitingAddress,
         Banned,
         Kicked,
         BannedPending,
         UnbannedPending,
         KickedPending,
-        AwaitingAddress,
         Unbanned,
         BannedWithAllMessagesDelete
     }
