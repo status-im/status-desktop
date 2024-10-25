@@ -13,15 +13,12 @@ import shared.panels 1.0
 
 import "../../Chat/popups"
 
-import AppLayouts.Profile.stores 1.0
-
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
     implicitHeight: (title.height + contactsList.height)
 
-    property ContactsStore contactsStore
     property var contactsModel
 
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
@@ -104,16 +101,17 @@ Item {
             id: panelDelegate
 
             width: ListView.view.width
-            contactsStore: root.contactsStore
             name: model.preferredDisplayName
-            ensVerified: model.isEnsVerified
             publicKey: model.pubKey
-            compressedPk: Utils.getCompressedPk(model.pubKey)
             iconSource: model.icon
             isContact: model.isContact
             isBlocked: model.isBlocked
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
+
+            subTitle: model.ensVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
+            pubKeyColor: Utils.colorForPubkey(model.pubKey)
+            colorHash: Utils.getColorHashAsJson(model.pubKey, model.ensVerified)
 
             showSendMessageButton: isContact && !isBlocked
             onOpenContactContextMenu: function (publicKey, name, icon) {
