@@ -18,6 +18,7 @@ SplitView {
         SplitView.fillWidth: true
 
         LoginView {
+            id: loginView
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
@@ -25,7 +26,7 @@ SplitView {
                 readonly property QtObject startupModuleInst: QtObject {
                     readonly property int remainingAttempts: 5
 
-                    signal accountLoginError
+                    signal accountLoginError(string errorMessage)
                     signal obtainingPasswordSuccess
                     signal obtainingPasswordError
 
@@ -79,7 +80,7 @@ SplitView {
                 }
 
                 readonly property QtObject currentStartupState: QtObject {
-                    readonly property string stateType: Constants.startupState.welcome
+                    readonly property string stateType: Constants.startupState.loginKeycardEnterPassword
                 }
 
                 function setPassword(password) {
@@ -123,6 +124,12 @@ SplitView {
             SplitView.preferredHeight: 200
 
             logsView.logText: logs.logText
+
+            TextField {
+                id: error
+                placeholderText: "Error"
+                onAccepted: loginView.startupStore.startupModuleInst.accountLoginError(text)
+            }
         }
     }
 }

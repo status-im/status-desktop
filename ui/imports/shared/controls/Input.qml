@@ -184,6 +184,7 @@ Item {
         horizontalAlignment: Text.AlignRight
         font.pixelSize: 12
         height: 16
+        width: inputField.width
         color: validationErrorColor
         wrapMode: TextEdit.Wrap
     }
