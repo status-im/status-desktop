@@ -35,6 +35,9 @@ QObject {
     // // Array[chainId] of the networks that are down
     required property var blockchainNetworksDown
 
+    property bool walletConnectFeatureEnabled: true
+    property bool connectorFeatureEnabled: true
+
     //output properties
     /// Model contaning all dApps available for the currently selected account
     readonly property var dappsModel: d.filteredDappsModel
@@ -81,7 +84,7 @@ QObject {
         timeoutTimer.start()
         requestHandler.pair(uri)
     }
-    
+
     /// Approves or rejects the session proposal
     function approvePairSession(key, approvedChainIds, accountAddress) {
         requestHandler.approvePairSession(key, approvedChainIds, accountAddress)
@@ -296,6 +299,7 @@ QObject {
 
     DAppsListProvider {
         id: dappsProvider
+        enabled: root.walletConnectFeatureEnabled
         sdk: root.wcSDK
         store: root.store
         supportedAccountsModel: root.walletRootStore.nonWatchAccounts
@@ -303,6 +307,7 @@ QObject {
 
     ConnectorDAppsListProvider {
         id: connectorDAppsProvider
+        enabled: root.connectorFeatureEnabled
     }
 
     // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal

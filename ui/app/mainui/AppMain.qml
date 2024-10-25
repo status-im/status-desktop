@@ -1430,7 +1430,6 @@ Item {
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
-                            dappsEnabled: featureFlagsStore.dappsEnabled
                             swapEnabled: featureFlagsStore.swapEnabled
                         }
                         onLoaded: {
@@ -2209,6 +2208,9 @@ Item {
             }
             walletRootStore: WalletStores.RootStore
             blockchainNetworksDown: appMain.networkConnectionStore.blockchainNetworksDown
+
+            connectorFeatureEnabled: featureFlagsStore.connectorEnabled
+            walletConnectFeatureEnabled: featureFlagsStore.dappsEnabled
 
             Component.onCompleted: {
                 Global.walletConnectService = walletConnectService

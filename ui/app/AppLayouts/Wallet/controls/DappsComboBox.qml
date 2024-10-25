@@ -17,6 +17,9 @@ import StatusQ.Components.private 0.1 as SQP
 
 ComboBox {
     id: root
+    
+    property bool walletConnectEnabled: true
+    property bool connectorEnabled: true
 
     signal dappsListReady
     signal pairDapp
@@ -86,6 +89,7 @@ ComboBox {
         id: dappConnectSelectComponent
         StatusDialog {
             id: dappConnectSelect
+            objectName: "dappConnectSelect"
             width: 480
             topPadding: Theme.bigPadding
             leftPadding: Theme.padding
@@ -111,9 +115,11 @@ ComboBox {
                     text: qsTr("How would you like to connect?")
                 }
                 StatusListItem {
+                    objectName: "btnStatusConnector"
                     title: "Status Connector"
                     asset.name: Theme.png("status-logo")
                     asset.isImage: true
+                    enabled: root.connectorEnabled
                     components: [
                         StatusIcon {
                             icon: "external-link"
@@ -130,6 +136,7 @@ ComboBox {
                     title: "Wallet Connect"
                     asset.name: Theme.svg("walletconnect")
                     asset.isImage: true
+                    enabled: root.walletConnectEnabled
                     components: [
                         StatusIcon {
                             icon: "next"

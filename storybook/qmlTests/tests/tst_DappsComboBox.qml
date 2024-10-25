@@ -96,5 +96,35 @@ Item {
             compare(background.active, false)
             compare(dappTooltip.visible, false)
         }
+
+        function test_connectorsEnabledOrDisabled() {
+            mouseClick(controlUnderTest)
+            const dappListPopup = findChild(controlUnderTest, "dappsListPopup")
+            verify(!!dappListPopup)
+
+            dappListPopup.connectDapp()
+            waitForRendering(controlUnderTest)
+            waitForItemPolished(controlUnderTest)
+
+            const connectorButton = findChild(controlUnderTest, "btnStatusConnector")
+            const wcButton = findChild(controlUnderTest, "btnWalletConnect")
+            verify(!!connectorButton)
+            verify(!!wcButton)
+
+            compare(controlUnderTest.walletConnectEnabled, true)
+            compare(controlUnderTest.connectorEnabled, true)
+
+            controlUnderTest.walletConnectEnabled = false
+            compare(wcButton.enabled, false)
+
+            controlUnderTest.walletConnectEnabled = true
+            compare(wcButton.enabled, true)
+
+            controlUnderTest.connectorEnabled = false
+            compare(connectorButton.enabled, false)
+
+            controlUnderTest.connectorEnabled = true
+            compare(connectorButton.enabled, true)
+        }
     }
 }

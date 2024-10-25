@@ -29,8 +29,6 @@ Item {
     property WalletStores.RootStore walletStore
 
     property var overview
-
-    property bool dappsEnabled
     property int loginType // RootStore.loginType -> Constants.LoginType enum
 
     property alias headerButton: headerButton
@@ -144,10 +142,12 @@ Item {
                 spacing: 8
 
                 visible: !root.walletStore.showSavedAddresses
-                         && root.dappsEnabled
+                         && (wcService.walletConnectFeatureEnabled || wcService.connectorFeatureEnabled)
                          && wcService.serviceAvailableToCurrentAddress
                 enabled: !!wcService && wcService.isServiceOnline
 
+                walletConnectEnabled: wcService.walletConnectFeatureEnabled
+                connectorEnabled: wcService.connectorFeatureEnabled
 
                 loginType: root.loginType
                 selectedAccountAddress: root.walletStore.selectedAddress
