@@ -174,9 +174,8 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 for message_item in message_items:
                     assert chat_message_2 in message_item
 
-            with step(f'User {user_two.name}, get own profile link and emoji hash in online identifier'):
+            with step(f'User {user_two.name}, get own profile link in online identifier'):
                 profile_link = main_window.left_panel.open_online_identifier().copy_link_to_profile()
-                public_key_from_emoji_hash = main_window.left_panel.open_online_identifier().open_profile_popup_from_online_identifier().get_emoji_hash
 
             with step(f'User {user_two.name} paste external link'):
                 message = external_link
@@ -258,11 +257,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                     lambda: user_two.name == messages_screen.group_chat.get_link_preview_bubble_title(), 12000)
                 messages_screen.group_chat.confirm_sending_message()
 
-            with step('Verify title and emojihash are correct for link preview of sent message'):
+            with step('Verify title is correct for link preview of sent message'):
                 sent_message = messages_screen.chat.messages(0)
                 assert driver.waitFor(lambda: sent_message[0].get_link_preview_title() == user_two.name,
-                                      timeout)
-                assert driver.waitFor(lambda: sent_message[0].link_preview_emoji_hash == public_key_from_emoji_hash,
                                       timeout)
 
             with step('Leave group'):

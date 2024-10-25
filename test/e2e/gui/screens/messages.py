@@ -133,7 +133,6 @@ class Message:
         self.reply_corner: typing.Optional[QObject] = None
         self.link_preview: typing.Optional[QObject] = None
         self.link_preview_title_object: typing.Optional[QObject] = None
-        self.link_preview_emoji_hash: typing.Optional[str] = None
         self.image_message: typing.Optional[QObject] = None
         self.banner_image: typing.Optional[QObject] = None
         self.community_invitation: dict = {}
@@ -149,8 +148,6 @@ class Message:
                 self.community_invitation['description'] = str(child.text)
             elif getattr(child, 'id', '') == 'titleLayout':
                 self.link_preview_title_object = child
-            elif getattr(child, 'objectName', '') == 'linkPreviewEmojiHash':
-                self.link_preview_emoji_hash = str(child.publicKey)
             else:
                 match getattr(child, 'id', ''):
                     case 'profileImage':

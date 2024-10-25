@@ -66,11 +66,6 @@ class ProfilePopup(BasePopup):
         return chat_key
 
     @property
-    @allure.step('Get emoji hash image')
-    def get_emoji_hash(self) -> str:
-        return str(getattr(self._emoji_hash.object, 'publicKey'))
-
-    @property
     @allure.step('Copy chat key')
     def copy_chat_key(self) -> str:
         self._chat_key_copy_button.click()
