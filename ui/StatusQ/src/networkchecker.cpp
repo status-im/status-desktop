@@ -16,7 +16,7 @@ bool NetworkChecker::isOnline() const
 
 void NetworkChecker::checkNetwork()
 {
-    QNetworkRequest request(QUrl("https://fedoraproject.org/static/hotspot.txt"));
+    QNetworkRequest request(QUrl(QStringLiteral("http://fedoraproject.org/static/hotspot.txt")));
     manager.get(request);
 }
 
