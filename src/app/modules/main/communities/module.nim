@@ -198,54 +198,61 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
     membershipRequestState = status,
   )
 
-method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
-  # TODO: unite bannedMembers, pendingMemberRequests and declinedMemberRequests
-  var members: seq[MemberItem] = @[]
-  for member in c.members:
-    if c.pendingAndBannedMembers.hasKey(member.id):
-      let communityMemberState = c.pendingAndBannedMembers[member.id]
-      members.add(self.createMemberItem(member.id, "", toMembershipRequestState(communityMemberState)))
+method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
+  var memberItems: seq[MemberItem] = @[]
+  for member in community.members:
+    var communityMemberState = MembershipRequestState.Accepted
+    if community.pendingAndBannedMembers.hasKey(member.id):
+      let memberState = community.pendingAndBannedMembers[member.id].toMembershipRequestState()
+      if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+        communityMemberState = memberState
+    memberItems.add(self.createMemberItem(member.id, "", communityMemberState))
 
   var bannedMembers: seq[MemberItem] = @[]
-  for memberId, communityMemberState in c.pendingAndBannedMembers:
+  for memberId, communityMemberState in community.pendingAndBannedMembers:
     bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
 
+  let pendingMembers = community.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
+    )
+  let declinedMemberItems = community.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
+    )
+
+  memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
+
   return initItem(
-      c.id,
+      community.id,
       SectionType.Community,
-      c.name,
-      c.memberRole,
-      c.isControlNode,
-      c.description,
-      c.introMessage,
-      c.outroMessage,
-      c.images.thumbnail,
-      c.images.banner,
+      community.name,
+      community.memberRole,
+      community.isControlNode,
+      community.description,
+      community.introMessage,
+      community.outroMessage,
+      community.images.thumbnail,
+      community.images.banner,
       icon = "",
-      c.color,
-      c.tags,
+      community.color,
+      community.tags,
       hasNotification = false,
       notificationsCount = 0,
       active = false,
       enabled = true,
-      c.joined,
-      c.canJoin,
-      c.spectated,
-      c.canManageUsers,
-      c.canRequestAccess,
-      c.isMember,
-      c.permissions.access,
-      c.permissions.ensOnly,
-      c.muted,
-      members = members,
-      historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
-      bannedMembers = bannedMembers,
-      pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
-      declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
-      encrypted = c.encrypted,
-      communityTokens = @[]
+      community.joined,
+      community.canJoin,
+      community.spectated,
+      community.canManageUsers,
+      community.canRequestAccess,
+      community.isMember,
+      community.permissions.access,
+      community.permissions.ensOnly,
+      community.muted,
+      members = memberItems,
+      historyArchiveSupportEnabled = community.settings.historyArchiveSupportEnabled,
+      encrypted = community.encrypted,
+      communityTokens = @[],
+      activeMembersCount = int(community.activeMembersCount),
     )
 
 proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedCommunityItem =
@@ -302,8 +309,10 @@ method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
+  var items: seq[SectionItem] = @[]
   for community in communities:
-    self.view.addItem(self.getCommunityItem(community))
+    items.add(self.getCommunityItem(community))
+  self.view.model.addItems(items)
 
 method communityAdded*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))
