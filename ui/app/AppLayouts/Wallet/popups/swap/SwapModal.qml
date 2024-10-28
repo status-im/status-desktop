@@ -406,9 +406,18 @@ StatusDialog {
                         }
                         return qsTr("Swap")
                     }
-                    tooltip.text: root.swapAdaptor.validSwapProposalReceived &&
-                                  root.swapAdaptor.swapOutputData.approvalNeeded ?
-                                      qsTr("Approve %1 spending cap to Swap").arg(fromTokenSymbol) : ""
+                    tooltip.text: {
+                        if(root.swapAdaptor.validSwapProposalReceived) {
+                            if(root.swapAdaptor.swapOutputData.approvalNeeded) {
+                                if (root.swapAdaptor.approvalPending) {
+                                    return qsTr("Approving %1 spending cap to Swap").arg(fromTokenSymbol)
+                                } else if(!root.swapAdaptor.approvalSuccessful) {
+                                    return qsTr("Approve %1 spending cap to Swap").arg(fromTokenSymbol)
+                                }
+                            }
+                        }
+                        return ""
+                    }
                     disabledColor: Theme.palette.directColor8
                     interactive: root.swapAdaptor.validSwapProposalReceived &&
                                  editSlippagePanel.valid &&
