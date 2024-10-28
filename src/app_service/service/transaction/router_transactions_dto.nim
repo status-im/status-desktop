@@ -55,6 +55,7 @@ type
     fromToken*: string
     toToken*: string
     amount*: UInt256 # amount of the transaction
+    amountOut*: UInt256 # amount of the transaction
     hash*: string
     approvalTx*: bool
 
@@ -130,6 +131,8 @@ proc toRouterSentTransaction*(jsonObj: JsonNode): RouterSentTransaction =
   var tmpObj: JsonNode
   if jsonObj.getProp("amount", tmpObj):
     result.amount = stint.fromHex(UInt256, tmpObj.getStr)
+  if jsonObj.getProp("amountOut", tmpObj):
+    result.amountOut = stint.fromHex(UInt256, tmpObj.getStr)
 
 proc toRouterSentTransactionsDto*(jsonObj: JsonNode): RouterSentTransactionsDto =
   result = RouterSentTransactionsDto()
