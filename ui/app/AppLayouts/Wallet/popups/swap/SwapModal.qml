@@ -40,14 +40,13 @@ StatusDialog {
         })
 
         function fetchSuggestedRoutes() {
+            root.swapAdaptor.invalidateSuggestedRoute()
             if (root.swapInputParamsForm.isFormFilledCorrectly()) {
                 root.swapAdaptor.swapProposalLoading = true
+                debounceFetchSuggestedRoutes()
+            } else {
+                root.swapAdaptor.swapProposalLoading = false
             }
-            root.swapAdaptor.validSwapProposalReceived = false
-            root.swapAdaptor.approvalPending = false
-            root.swapAdaptor.approvalSuccessful = false
-            root.swapAdaptor.swapOutputData.resetPathInfoAndError()
-            debounceFetchSuggestedRoutes()
         }
 
         readonly property bool isError: root.swapAdaptor.errorMessage !== ""
@@ -440,9 +439,7 @@ StatusDialog {
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
-            fromTokenAmount: SQUtils.AmountsArithmetic.div(
-                                 SQUtils.AmountsArithmetic.fromString(root.swapAdaptor.swapOutputData.approvalAmountRequired),
-                                 SQUtils.AmountsArithmetic.fromNumber(1, root.swapAdaptor.fromToken.decimals ?? 18)).toFixed()
+            fromTokenAmount: root.swapInputParamsForm.fromTokenAmount
             fromTokenContractAddress: SQUtils.ModelUtils.getByKey(root.swapAdaptor.fromToken.addressPerChain,
                                                                   "chainId", root.swapInputParamsForm.selectedNetworkChainId,
                                                                   "address")
