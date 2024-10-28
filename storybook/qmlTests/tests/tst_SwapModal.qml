@@ -1866,5 +1866,61 @@ Item {
 //            wait(root.swapFormData.autoRefreshTime*2)
 //            compare(fetchSuggestedRoutesCalled.count, 2)
         }
+
+        function test_uuid_change() {
+            root.swapFormData.fromTokenAmount = "0.0001"
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.toTokenKey = "STT"
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const payPanel = findChild(controlUnderTest, "payPanel")
+            verify(!!payPanel)
+
+            const receivePanel = findChild(controlUnderTest, "receivePanel")
+            verify(!!receivePanel)
+
+            waitForItemPolished(controlUnderTest.contentItem)
+
+            // check if fetchSuggestedRoutes called
+            fetchSuggestedRoutesCalled.wait()
+
+            // emit routes ready
+            let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            let lastUuid = root.swapAdaptor.uuid
+
+            // edit some params to retry swap
+            root.swapFormData.fromTokenAmount = "0.00011"
+            waitForRendering(receivePanel)
+            formValuesChanged.wait()
+            // verify loading state was set and no errors currently
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // uuid changed
+            verify(root.swapAdaptor.uuid !== lastUuid)
+
+            // emit event with route that needs no approval for previous uuid
+            txHasRouteNoApproval.uuid = lastUuid
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            // route with old uuid should have been ignored
+            verifyLoadingAndNoErrorsState(payPanel, receivePanel)
+
+            // emit routes ready
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            // verify loading state removed and data is displayed as expected on the Modal
+            verify(root.swapAdaptor.validSwapProposalReceived)
+            verify(!root.swapAdaptor.swapProposalLoading)
+
+            closeAndVerfyModal()
+        }
     }
 }
