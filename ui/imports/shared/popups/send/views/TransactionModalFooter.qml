@@ -9,11 +9,12 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
+import shared.panels 1.0
 
 StatusDialogFooter {
     id: root
 
-    property string maxFiatFees: "..."
+    property string maxFiatFees: d.emptyValue
     property string totalTimeEstimate
     property bool pending: true
     property string nextButtonText: qsTr("Next")
@@ -26,6 +27,12 @@ StatusDialogFooter {
     color: Theme.palette.baseColor3
     dropShadowEnabled: true
 
+    QtObject {
+        id: d
+
+        readonly property string emptyValue: "..."
+    }
+
     leftButtons: ObjectModel {
         ColumnLayout {
             Layout.leftMargin: Theme.padding
@@ -34,8 +41,21 @@ StatusDialogFooter {
                 text: qsTr("Estimated time:")
             }
             StatusBaseText {
+                id: estimatedTime
                 wrapMode: Text.WordWrap
                 text: root.totalTimeEstimate
+
+                onTextChanged: {
+                    if (text === "" || text === d.emptyValue) {
+                        return
+                    }
+                    estimatedTimeAnimation.restart()
+                }
+
+                AnimatedText {
+                    id: estimatedTimeAnimation
+                    target: estimatedTime
+                }
             }
         }
     }
@@ -49,8 +69,21 @@ StatusDialogFooter {
                     text: qsTr("Max fees:")
                 }
                 StatusBaseText {
+                    id: fees
                     text: maxFiatFees
                     wrapMode: Text.WordWrap
+
+                    onTextChanged: {
+                        if (text === "" || text === d.emptyValue) {
+                            return
+                        }
+                        feesAnimation.restart()
+                    }
+
+                    AnimatedText {
+                        id: feesAnimation
+                        target: fees
+                    }
                 }
             }
             StatusButton {
