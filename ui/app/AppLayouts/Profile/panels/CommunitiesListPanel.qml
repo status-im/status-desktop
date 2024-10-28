@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -10,6 +11,7 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import shared.controls.chat.menuItems 1.0
 import AppLayouts.stores 1.0 as AppLayoutsStores
+import AppLayouts.Chat.views 1.0
 
 StatusListView {
     id: root
@@ -32,6 +34,12 @@ StatusListView {
 
     delegate: StatusListItem {
         id: listItem
+
+        MembersModelAdaptor {
+            id: membersModelAdaptor
+            allMembers: model.allMembers
+        }
+
         width: ListView.view.width
         title: model.name
         statusListItemTitle.font.pixelSize: 17
@@ -39,7 +47,7 @@ StatusListView {
         statusListItemIcon.anchors.verticalCenter: undefined
         statusListItemIcon.anchors.top: statusListItemTitleArea.top
         subTitle: model.description
-        tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
+        tertiaryTitle: qsTr("%n member(s)", "", membersModelAdaptor.joinedMembers.ModelCount.count)
         statusListItemTertiaryTitle.font.weight: Font.Medium
         asset.name: model.image
         asset.isLetterIdenticon: !model.image
