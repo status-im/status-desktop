@@ -7,12 +7,11 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.stores 1.0
+import shared.stores 1.0 as SharedStores
 import shared.validators 1.0
 import shared.controls.chat 1.0
 
 import "../popups"
-import "../stores"
 import "../controls"
 import "./profile"
 
@@ -22,18 +21,19 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Communities.stores 1.0 as CommunitiesStores
 import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.panels 1.0
-import AppLayouts.Wallet.stores 1.0
-import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 SettingsContentBase {
     id: root
 
-    property ProfileStore profileStore
-    property ContactsStore contactsStore
-    property CommunitiesStore communitiesStore
-    property UtilsStore utilsStore
+    property ProfileStores.ProfileStore profileStore
+    property ProfileStores.ContactsStore contactsStore
+    property CommunitiesStores.CommunitiesStore communitiesStore
+    property SharedStores.UtilsStore utilsStore
 
     property bool sendToAccountEnabled: false
 
@@ -406,6 +406,7 @@ SettingsContentBase {
                 publicKey: root.contactsStore.myPublicKey
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()

@@ -3,13 +3,15 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-import utils 1.0
 import shared 1.0
-import shared.popups 1.0
 import shared.panels 1.0
+import shared.popups 1.0
+import shared.stores 1.0 as SharedStores
+import utils 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -18,6 +20,7 @@ Item {
     implicitHeight: (title.height + contactsList.height)
 
     property var contactsModel
+    property SharedStores.UtilsStore utilsStore
 
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
 
@@ -60,14 +63,17 @@ Item {
             sourceModel: root.contactsModel
 
             function panelUsagePredicate(isVerified) {
-                if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts) return isVerified
-                if (panelUsage === Constants.contactsPanelUsage.mutualContacts) return !isVerified
+                if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts)
+                    return isVerified
+                if (panelUsage === Constants.contactsPanelUsage.mutualContacts)
+                    return !isVerified
+
                 return true
             }
 
             function searchPredicate(name, pubkey) {
                 const lowerCaseSearchString = root.searchString.toLowerCase()
-                const compressedPubkey = Utils.getCompressedPk(pubkey)
+                const compressedPubkey = root.utilsStore.getCompressedPk(pubkey)
 
                 return name.toLowerCase().includes(lowerCaseSearchString) ||
                        pubkey.toLowerCase().includes(lowerCaseSearchString) ||
@@ -75,7 +81,10 @@ Item {
             }
 
             filters: [
-                ExpressionFilter { expression: filteredModel.panelUsagePredicate(model.isVerified) },
+                FastExpressionFilter {
+                    expression: filteredModel.panelUsagePredicate(model.isVerified)
+                    expectedRoles: ["isVerified"]
+                },
                 ExpressionFilter {
                     enabled: root.searchString !== ""
                     expression: {
@@ -85,12 +94,10 @@ Item {
                 }
             ]
 
-            sorters: [
-                StringSorter {
-                    roleName: "preferredDisplayName"
-                    caseSensitivity: Qt.CaseInsensitive
-                }
-            ]
+            sorters: StringSorter {
+                roleName: "preferredDisplayName"
+                caseSensitivity: Qt.CaseInsensitive
+            }
         }
 
         delegate: ContactPanel {

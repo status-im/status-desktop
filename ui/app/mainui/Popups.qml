@@ -25,7 +25,7 @@ import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Communities.stores 1.0
 
-import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import shared.popups 1.0
@@ -51,10 +51,10 @@ QtObject {
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.DevicesStore devicesStore
     property CurrenciesStore currencyStore
-    property WalletStore.WalletAssetsStore walletAssetsStore
-    property WalletStore.CollectiblesStore walletCollectiblesStore
+    property WalletStores.WalletAssetsStore walletAssetsStore
+    property WalletStores.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
-    property WalletStore.BuyCryptoStore buyCryptoStore
+    property WalletStores.BuyCryptoStore buyCryptoStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -528,6 +528,7 @@ QtObject {
 
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
+                walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
@@ -695,9 +696,9 @@ QtObject {
                 joinPermissionsCheckCompletedWithoutErrors: root.rootStore.joinPermissionsCheckCompletedWithoutErrors
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
-                walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+                walletCollectiblesModel: WalletStores.RootStore.collectiblesStore.allCollectiblesModel
 
-                canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+                canProfileProveOwnershipOfProvidedAddressesFn: WalletStores.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
                 permissionsModel: {
@@ -947,12 +948,12 @@ QtObject {
 
                 introMessage: chatStore.sectionDetails.introMessage
 
-                canProfileProveOwnershipOfProvidedAddressesFn: WalletStore.RootStore.canProfileProveOwnershipOfProvidedAddresses
+                canProfileProveOwnershipOfProvidedAddressesFn: WalletStores.RootStore.canProfileProveOwnershipOfProvidedAddresses
 
                 walletAccountsModel: root.rootStore.walletAccountsModel
 
                 walletAssetsModel: walletAssetsStore.groupedAccountAssetsModel
-                walletCollectiblesModel: WalletStore.RootStore.collectiblesStore.allCollectiblesModel
+                walletCollectiblesModel: WalletStores.RootStore.collectiblesStore.allCollectiblesModel
 
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
@@ -1054,7 +1055,7 @@ QtObject {
                 feeErrorText: feeSubscriber.feeErrorText
                 isFeeLoading: !feeSubscriber.feesResponse
 
-                accounts: WalletStore.RootStore.nonWatchAccounts
+                accounts: WalletStores.RootStore.nonWatchAccounts
 
                 destroyOnClose: true
 
@@ -1200,7 +1201,7 @@ QtObject {
             id: swapModal
             SwapModal {
                 swapAdaptor: SwapModalAdaptor {
-                    swapStore: WalletStore.SwapStore {}
+                    swapStore: WalletStores.SwapStore {}
                     walletAssetsStore: root.walletAssetsStore
                     currencyStore: root.currencyStore
                     swapFormData: swapInputParamsForm

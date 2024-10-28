@@ -110,7 +110,7 @@ StatusDialog {
                             id: keyHoverHandler
                         }
                         StatusToolTip {
-                            text: Utils.getCompressedPk(root.publicKey)
+                            text: root.utilsStore.getCompressedPk(root.publicKey)
                             visible: keyHoverHandler.hovered
                         }
                     }
