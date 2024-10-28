@@ -15,11 +15,13 @@ import mainui 1.0
 
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
+import AppLayouts.Chat.popups 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
@@ -40,6 +42,7 @@ Rectangle {
     
     property var usersModel
     property SharedStores.RootStore sharedStore
+    property SharedStores.RequestPaymentStore requestPaymentStore
 
     property var emojiPopup: null
     property var stickersPopup: null
@@ -153,6 +156,9 @@ Rectangle {
 
         property bool emojiPopupOpened: false
         property bool stickersPopupOpened: false
+
+        property var imageDialog: null
+        property var requestPaymentPopup: null
 
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
@@ -355,7 +361,7 @@ Rectangle {
     property var mentionsPos: []
 
     function isUploadFilePressed(event) {
-        return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && imageBtn.visible && !imageBtn.highlighted
+        return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && !d.imageDialog
     }
 
     function checkTextInsert() {
@@ -535,7 +541,7 @@ Rectangle {
 
         // ⌘⇧U
         if (isUploadFilePressed(event)) {
-            imageBtn.clicked(null)
+            openImageDialog()
             event.accepted = true
         }
 
@@ -949,6 +955,16 @@ Rectangle {
         messageInputField.forceActiveFocus();
     }
 
+    function openImageDialog() {
+        d.imageDialog = imageDialogComponent.createObject(control)
+        d.imageDialog.open()
+    }
+
+    function openPaymentRequestPopup() {
+        d.requestPaymentPopup = requestPaymentPopupComponent.createObject(control)
+        d.requestPaymentPopup.open()
+    }
+
     DropAreaPanel {
         enabled: control.visible && control.enabled
         parent: Overlay.overlay
@@ -985,13 +1001,45 @@ Rectangle {
                 qsTr("Image files (%1)").arg(UrlUtils.validImageNameFilters)
             ]
             onAccepted: {
-                imageBtn.highlighted = false
                 validateImagesAndShowImageArea(fileUrls)
                 messageInputField.forceActiveFocus()
+                destroy()
             }
-            onRejected: {
-                imageBtn.highlighted = false
+            onRejected: destroy()
+            Component.onDestruction: d.imageDialog = null
+        }
+    }
+
+    Component {
+        id: requestPaymentPopupComponent
+        RequestPaymentModal {
+            store: control.requestPaymentStore
+
+            onAccepted: {
+                control.requestPaymentStore.addPaymentRequest(selectedTokenKey, amount, selectedAccountAddress, selectedNetworkChainId)
             }
+        }
+    }
+
+    Component {
+        id: chatCommandMenuComponent
+
+        StatusMenu {
+            StatusAction {
+                text: qsTr("Add image")
+                icon.name: "image"
+                onTriggered: control.openImageDialog()
+            }
+
+            StatusAction {
+                text: qsTr("Add payment request")
+                icon.name: "wallet"
+                // TODO_ES disable for testnet (only production)
+                // TODO_ES error message when disabled on testnet (only production)
+                onTriggered: control.openPaymentRequestPopup()
+            }
+
+            closeHandler: () => commandBtn.highlighted = false
         }
     }
 
@@ -1068,18 +1116,19 @@ Rectangle {
         spacing: 4
 
         StatusQ.StatusFlatRoundButton {
-            id: imageBtn
+            id: commandBtn
             Layout.preferredWidth: 32
             Layout.preferredHeight: 32
             Layout.alignment: Qt.AlignBottom
             Layout.bottomMargin: 4
-            icon.name: "image"
+            icon.name: "chat-commands"
             type: StatusQ.StatusFlatRoundButton.Type.Tertiary
             visible: !isEdit
             onClicked: {
                 highlighted = true
-                const popup = imageDialogComponent.createObject(control)
-                popup.open()
+                let menu = chatCommandMenuComponent.createObject(commandBtn)
+                menu.y = -menu.height // Show above button
+                menu.open()
             }
         }
 
@@ -1224,6 +1273,7 @@ Rectangle {
                     topPadding: 12
                     imagePreviewArray: control.fileUrlsAndSources
                     linkPreviewModel: control.linkPreviewModel
+                    requestPaymentModel: control.requestPaymentStore.requestPaymentModel
                     showLinkPreviewSettings: control.askToEnableLinkPreview
                     onImageRemoved: (index) => {
                         //Just do a copy and replace the whole thing because it's a plain JS array and thre's no signal when a single item is removed
@@ -1242,6 +1292,7 @@ Rectangle {
                     onDisableLinkPreview: () => control.disableLinkPreview()
                     onDismissLinkPreviewSettings: () => control.dismissLinkPreviewSettings()
                     onDismissLinkPreview: (index) => control.dismissLinkPreview(index)
+                    onPaymentRequestRemoved: (index) => control.requestPaymentStore.removePaymentRequest(index)
                 }
 
                 RowLayout {

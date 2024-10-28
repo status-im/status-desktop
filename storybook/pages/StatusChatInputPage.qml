@@ -11,6 +11,7 @@ import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 SplitView {
@@ -99,6 +100,8 @@ SplitView {
                     }
                 }
 
+                requestPaymentStore: d.requestPaymentStore
+
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [SQUtils.StringUtils.plainText(chatInput.getTextWithPublicKeys())])
@@ -138,6 +141,23 @@ SplitView {
 
         QtObject {
             id: d
+
+            readonly property var walletAssetsStore: WalletStores.WalletAssetsStore {
+                id: thisWalletAssetStore
+                walletTokensStore: WalletStores.TokensStore {
+                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                }
+                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            }
+
+            readonly property SharedStores.RequestPaymentStore requestPaymentStore: SharedStores.RequestPaymentStore {
+                currencyStore: SharedStores.CurrenciesStore {}
+                flatNetworksModel: NetworksModel.flatNetworks
+                processedAssetsModel: d.walletAssetsStore.renamedTokensBySymbolModel
+                accountsModel: WalletAccountsModel {}
+            }
+
             property bool linkPreviewsEnabled: linkPreviewSwitch.checked && !askToEnableLinkPreviewSwitch.checked
             onLinkPreviewsEnabledChanged: {
                 loadLinkPreviews(chatInputLoader.item ? chatInputLoader.item.unformattedText : "")
