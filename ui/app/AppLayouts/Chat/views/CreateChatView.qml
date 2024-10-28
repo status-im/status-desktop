@@ -169,6 +169,7 @@ Page {
                 closeGifPopupAfterSelection: true
                 usersModel: membersSelector.model
                 sharedStore: root.sharedRootStore
+                paymentRequestFeatureEnabled: false
                 onStickerSelected: {
                     root.createChatPropertiesStore.createChatStickerHashId = hashId;
                     root.createChatPropertiesStore.createChatStickerPackId = packId;

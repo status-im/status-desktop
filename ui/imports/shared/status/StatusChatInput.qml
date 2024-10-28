@@ -15,11 +15,13 @@ import mainui 1.0
 
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
+import AppLayouts.Chat.popups 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
@@ -37,6 +39,7 @@ Rectangle {
     signal disableLinkPreview()
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
+    signal openPaymentRequestModal()
     signal removePaymentRequestPreview(int index)
     
     property var usersModel
@@ -46,6 +49,8 @@ Rectangle {
     property var stickersPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool closeGifPopupAfterSelection: true
+    property bool areTestNetworksEnabled
+    property bool paymentRequestFeatureEnabled: false
 
     property bool emojiEvent: false
     property bool isColonPressed: false
@@ -157,6 +162,8 @@ Rectangle {
 
         property bool emojiPopupOpened: false
         property bool stickersPopupOpened: false
+
+        property var imageDialog: null
 
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
@@ -359,7 +366,7 @@ Rectangle {
     property var mentionsPos: []
 
     function isUploadFilePressed(event) {
-        return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && imageBtn.visible && !imageBtn.highlighted
+        return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && !d.imageDialog
     }
 
     function checkTextInsert() {
@@ -539,7 +546,7 @@ Rectangle {
 
         // ⌘⇧U
         if (isUploadFilePressed(event)) {
-            imageBtn.clicked(null)
+            openImageDialog()
             event.accepted = true
         }
 
@@ -953,6 +960,11 @@ Rectangle {
         messageInputField.forceActiveFocus();
     }
 
+    function openImageDialog() {
+        d.imageDialog = imageDialogComponent.createObject(control)
+        d.imageDialog.open()
+    }
+
     DropAreaPanel {
         enabled: control.visible && control.enabled
         parent: Overlay.overlay
@@ -989,13 +1001,45 @@ Rectangle {
                 qsTr("Image files (%1)").arg(UrlUtils.validImageNameFilters)
             ]
             onAccepted: {
-                imageBtn.highlighted = false
                 validateImagesAndShowImageArea(fileUrls)
                 messageInputField.forceActiveFocus()
+                destroy()
             }
-            onRejected: {
-                imageBtn.highlighted = false
+            onRejected: destroy()
+            Component.onDestruction: d.imageDialog = null
+        }
+    }
+
+    Component {
+        id: chatCommandMenuComponent
+
+        StatusMenu {
+            id: chatCommandMenu
+            StatusAction {
+                text: qsTr("Add image")
+                icon.name: "image"
+                onTriggered: control.openImageDialog()
             }
+
+            MouseArea {
+                implicitWidth: paymentRequestMenuItem.width
+                implicitHeight: paymentRequestMenuItem.height
+                hoverEnabled: true
+                visible: control.paymentRequestFeatureEnabled
+                StatusMenuItem {
+                    id: paymentRequestMenuItem
+                    text: parent.containsMouse && !enabled ? qsTr("Not available in Testnet mode") : qsTr("Add payment request")
+                    icon.name: "wallet"
+                    icon.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                    enabled: !control.areTestNetworksEnabled
+                    onTriggered: {
+                        control.openPaymentRequestModal()
+                        chatCommandMenu.close()
+                    }
+                }
+            }
+
+            closeHandler: () => commandBtn.highlighted = false
         }
     }
 
@@ -1072,18 +1116,19 @@ Rectangle {
         spacing: 4
 
         StatusQ.StatusFlatRoundButton {
-            id: imageBtn
+            id: commandBtn
             Layout.preferredWidth: 32
             Layout.preferredHeight: 32
             Layout.alignment: Qt.AlignBottom
             Layout.bottomMargin: 4
-            icon.name: "image"
+            icon.name: "chat-commands"
             type: StatusQ.StatusFlatRoundButton.Type.Tertiary
             visible: !isEdit
             onClicked: {
                 highlighted = true
-                const popup = imageDialogComponent.createObject(control)
-                popup.open()
+                let menu = chatCommandMenuComponent.createObject(commandBtn)
+                menu.y = -menu.height // Show above button
+                menu.open()
             }
         }
 
