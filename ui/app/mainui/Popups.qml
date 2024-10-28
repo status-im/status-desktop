@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import QtQml.Models 2.15
 import QtQml 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -31,6 +32,8 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.stores 1.0
 import shared.views 1.0
+
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
@@ -440,7 +443,17 @@ QtObject {
 
             InviteFriendsToCommunityPopup {
                 rootStore: root.rootStore
-                contactsModel: root.rootStore.contactStore.myContactsModel
+
+                contactsModel: SortFilterProxyModel {
+                    sourceModel: root.rootStore.contactStore.myContactsModel
+
+                    proxyRoles: FastExpressionRole {
+                        name: "compressedKey"
+                        expression: root.utilsStore.getCompressedPk(model.pubKey)
+                        expectedRoles: ["pubKey"]
+                    }
+                }
+
                 onClosed: destroy()
             }
         },

@@ -13,12 +13,9 @@ SplitView {
 
     Logs { id: logs }
 
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
     property bool communitiesModuleReady: false
 
     Item {
-
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
@@ -31,46 +28,6 @@ SplitView {
             text: "Reopen"
 
             onClicked: loader.item.open()
-        }
-
-        QtObject {
-            function getCompressedPk(publicKey) {
-                return "compressed"
-            }
-
-            function isCompressedPubKey() {
-                return true
-            }
-
-            function getColorHashAsJson(publicKey) {
-                return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                       {colorId: 19, segmentLength: 2}])
-            }
-
-            Component.onCompleted: {
-                Utils.globalUtilsInst = this
-                globalUtilsReady = true
-
-            }
-            Component.onDestruction: {
-                globalUtilsReady = false
-                Utils.globalUtilsInst = {}
-            }
-        }
-
-        QtObject {
-            function getContactDetailsAsJson() {
-                return JSON.stringify({})
-            }
-
-            Component.onCompleted: {
-                mainModuleReady = true
-                Utils.mainModuleInst = this
-            }
-            Component.onDestruction: {
-                mainModuleReady = false
-                Utils.mainModuleInst = {}
-            }
         }
 
         QtObject {
@@ -90,7 +47,7 @@ SplitView {
 
         Loader {
             id: loader
-            active: globalUtilsReady && mainModuleReady && communitiesModuleReady
+            active: communitiesModuleReady
             anchors.fill: parent
 
             sourceComponent: InviteFriendsToCommunityPopup {
@@ -132,7 +89,13 @@ SplitView {
                                 isContact: true,
                                 localNickname: "",
                                 onlineStatus: 1,
-                                pubKey: key
+                                pubKey: key,
+                                compressedKey: "zx3sh" + key,
+                                colorHash: [
+                                    { colorId: i, segmentLength: i % 5 },
+                                    { colorId: i + 5, segmentLength: 3 },
+                                    { colorId: 19, segmentLength: 2 }
+                                ]
                             })
                         }
                     }

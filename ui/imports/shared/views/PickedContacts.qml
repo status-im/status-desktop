@@ -35,7 +35,7 @@ Item {
 
         delegate: StatusMemberListItem {
             width: contactGridView.cellWidth
-            pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+            pubKey: model.isEnsVerified ? "" : model.compressedKey
             isContact: model.isContact
             status: model.onlineStatus
             nickName: model.localNickname
