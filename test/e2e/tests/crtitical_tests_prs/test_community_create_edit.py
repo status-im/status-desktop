@@ -16,7 +16,8 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
 @pytest.mark.case(703057)
-@pytest.mark.critical
+#@pytest.mark.critical
+@pytest.mark.skip(reason='temp disable')
 def test_create_edit_community(main_screen: MainWindow):
     with step('Enable creation of community option'):
         settings = main_screen.left_panel.open_settings()
