@@ -1,72 +1,35 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import AppLayouts.Chat.panels 1.0
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-import utils 1.0
+import AppLayouts.Chat.panels 1.0
+import StatusQ 0.1
 
 import Storybook 1.0
 import Models 1.0
 
-SplitView {
-    id: root
+import SortFilterProxyModel 0.2
 
+SplitView {
     Logs { id: logs }
 
     orientation: Qt.Vertical
-
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
 
     UsersModel {
         id: model
     }
 
-    // globalUtilsInst mock
-    QtObject {
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
-        function isCompressedPubKey(publicKey) { return true }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            root.globalUtilsReady = true
-        }
-        Component.onDestruction: {
-            root.globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    // mainModuleInst mock
-    QtObject {
-        function getContactDetailsAsJson(publicKey, getVerificationRequest) {
-            return JSON.stringify({ ensVerified: false })
-        }
-        Component.onCompleted: {
-            Utils.mainModuleInst = this
-            root.mainModuleReady = true
-        }
-        Component.onDestruction: {
-            root.mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
-    }
-    Item {
+    UserListPanel {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        Loader {
-            anchors.fill: parent
-            active: globalUtilsReady && mainModuleReady
+        label: "Some label"
 
-            sourceComponent: UserListPanel {
-                usersModel: model
-                label: "Some label"
+        usersModel: SortFilterProxyModel {
+            sourceModel: model
+
+            proxyRoles: FastExpressionRole {
+                name: "compressedKey"
+                expression: "compressed"
             }
         }
     }

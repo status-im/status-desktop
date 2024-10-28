@@ -12,7 +12,6 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 import shared.views.chat 1.0
-import shared.stores 1.0 as SharedStores
 
 import utils 1.0
 
@@ -24,7 +23,6 @@ Item {
     id: root
 
     property ChatStores.RootStore store
-    property SharedStores.UtilsStore utilsStore
 
     property var usersModel
     property string label
@@ -112,7 +110,7 @@ Item {
                 width: ListView.view.width
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+                pubKey: model.isEnsVerified ? "" : model.compressedKey
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
@@ -130,9 +128,9 @@ Item {
                         Global.openMenu(profileContextMenuComponent, this, {
                                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
                                             publicKey: model.pubKey,
-                                            emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
+                                            emojiHash: model.emojiHash,
                                             displayName: nickName || userName,
-                                            userIcon: model.icon,
+                                            userIcon: model.icon
                                         })
                     } else if (mouse.button === Qt.LeftButton) {
                         Global.openProfilePopup(model.pubKey)
