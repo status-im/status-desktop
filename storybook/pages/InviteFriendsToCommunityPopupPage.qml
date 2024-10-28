@@ -118,24 +118,22 @@ SplitView {
                     }
                 }
 
-                contactsStore: ProfileStores.ContactsStore {
-                    readonly property ListModel myContactsModel: ListModel {
-                        Component.onCompleted: {
-                            for (let i = 0; i < 20; i++) {
-                                const key = `pub_key_${i}`
+                contactsModel: ListModel {
+                    Component.onCompleted: {
+                        for (let i = 0; i < 20; i++) {
+                            const key = `pub_key_${i}`
 
-                                append({
-                                    alias: "",
-                                    colorId: "1",
-                                    displayName: `contact ${i}`,
-                                    ensName: "",
-                                    icon: "",
-                                    isContact: true,
-                                    localNickname: "",
-                                    onlineStatus: 1,
-                                    pubKey: key
-                                })
-                            }
+                            append({
+                                alias: "",
+                                colorId: "1",
+                                displayName: `contact ${i}`,
+                                ensName: "",
+                                icon: "",
+                                isContact: true,
+                                localNickname: "",
+                                onlineStatus: 1,
+                                pubKey: key
+                            })
                         }
                     }
                 }

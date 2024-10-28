@@ -15,7 +15,6 @@ import shared.views 1.0
 import shared.status 1.0
 
 import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 ColumnLayout {
     id: root
@@ -24,7 +23,8 @@ ColumnLayout {
     property string headerTitle: ""
 
     property AppLayoutStores.RootStore rootStore
-    property ProfileStores.ContactsStore contactsStore
+
+    property var contactsModel
     property string communityId
 
     property var pubKeys: ([])
@@ -57,7 +57,8 @@ ColumnLayout {
         id: existingContacts
 
         rootStore: root.rootStore
-        contactsStore: root.contactsStore
+
+        contactsModel: root.contactsModel
         communityId: root.communityId
 
         hideCommunityMembers: true

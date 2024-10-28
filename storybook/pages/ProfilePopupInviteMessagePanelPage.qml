@@ -65,28 +65,26 @@ Item {
             sourceComponent: ProfilePopupInviteMessagePanel {
                 id: panel
 
-                contactsStore: ProfileStores.ContactsStore {
-                    readonly property ListModel myContactsModel: ListModel {
-                        Component.onCompleted: {
-                            const keys = []
+                contactsModel: ListModel {
+                    Component.onCompleted: {
+                        const keys = []
 
-                            for (let i = 0; i < 20; i++) {
-                                const key = `pub_key_${i}`
+                        for (let i = 0; i < 20; i++) {
+                            const key = `pub_key_${i}`
 
-                                append({
-                                    isContact: true,
-                                    onlineStatus: 1,
-                                    displayName: `contact ${i}`,
-                                    icon: "",
-                                    colorId: "1",
-                                    pubKey: key
-                                })
+                            append({
+                                isContact: true,
+                                onlineStatus: 1,
+                                displayName: `contact ${i}`,
+                                icon: "",
+                                colorId: "1",
+                                pubKey: key
+                            })
 
-                                keys.push(key)
-                            }
-
-                            panel.pubKeys = keys
+                            keys.push(key)
                         }
+
+                        panel.pubKeys = keys
                     }
                 }
             }

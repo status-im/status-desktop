@@ -17,7 +17,8 @@ StatusStackModal {
     id: root
 
     property AppLayoutStores.RootStore rootStore
-    property ProfileStores.ContactsStore contactsStore
+
+    property var contactsModel
     property var community
     property var communitySectionModule
 
@@ -95,13 +96,15 @@ StatusStackModal {
     stackItems: [
         ProfilePopupInviteFriendsPanel {
             rootStore: root.rootStore
-            contactsStore: root.contactsStore
+
+            contactsModel: root.contactsModel
             communityId: root.community.id
+
             onPubKeysChanged: root.pubKeys = pubKeys
         },
 
         ProfilePopupInviteMessagePanel {
-            contactsStore: root.contactsStore
+            contactsModel: root.contactsModel
             pubKeys: root.pubKeys
             onInviteMessageChanged: root.inviteMessage = inviteMessage
         }
