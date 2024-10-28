@@ -459,17 +459,16 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = TransactionSentArgs(e)
     self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error,
       ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount,
-      args.toTokenKey, args.toAmount)
+      args.toTokenKey, args.toAmount, args.approvalTx)
 
   self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
     let args = WalletAddressesArgs(e)
     for address in args.addresses:
       self.addressWasShown(address)
 
-  self.events.on(SIGNAL_TRANSACTION_SENDING_COMPLETE) do(e:Args):
-    let args = TransactionMinedArgs(e)
-    self.view.showToastTransactionSendingComplete(args.chainId, args.transactionHash, args.data, args.success,
-    ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount, args.toTokenKey, args.toAmount)
+  self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+    let args = TransactionStatusArgs(e)
+    self.view.showToastTransactionSendingComplete(args.data.hash, args.data.status)
 
   self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
     self.view.showToastPairingFallbackCompleted()
