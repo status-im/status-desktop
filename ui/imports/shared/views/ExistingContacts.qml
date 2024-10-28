@@ -13,7 +13,6 @@ import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
 import AppLayouts.Chat.controls 1.0
 import AppLayouts.stores 1.0 as AppLayoutStores
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import SortFilterProxyModel 0.2
 
@@ -21,7 +20,8 @@ Item {
     id: root
 
     property AppLayoutStores.RootStore rootStore
-    property ProfileStores.ContactsStore contactsStore
+
+    property var contactsModel
     property string communityId
 
     property string filterText: ""
@@ -51,7 +51,7 @@ Item {
         spacing: Theme.padding
 
         model: SortFilterProxyModel {
-            sourceModel: root.contactsStore.myContactsModel
+            sourceModel: root.contactsModel
             filters: [
                 ExpressionFilter {
                     expression: {

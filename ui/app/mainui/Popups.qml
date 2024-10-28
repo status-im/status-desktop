@@ -440,7 +440,7 @@ QtObject {
 
             InviteFriendsToCommunityPopup {
                 rootStore: root.rootStore
-                contactsStore: root.rootStore.contactStore
+                contactsModel: root.rootStore.contactStore.myContactsModel
                 onClosed: destroy()
             }
         },

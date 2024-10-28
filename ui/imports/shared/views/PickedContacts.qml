@@ -7,15 +7,13 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
 
-    property ProfileStores.ContactsStore contactsStore
-
+    property var contactsModel
     property var pubKeys: ([])
 
     readonly property alias count: contactGridView.count
@@ -28,13 +26,11 @@ Item {
         cellHeight: 2 * Theme.xlPadding + Theme.halfPadding
 
         model: SortFilterProxyModel {
-            sourceModel: root.contactsStore.myContactsModel
-            filters: [
-                FastExpressionFilter {
-                    expression: root.pubKeys.indexOf(model.pubKey) > -1
-                    expectedRoles: ["pubKey"]
-                }
-            ]
+            sourceModel: root.contactsModel
+            filters: FastExpressionFilter {
+                expression: root.pubKeys.indexOf(model.pubKey) > -1
+                expectedRoles: ["pubKey"]
+            }
         }
 
         delegate: StatusMemberListItem {
