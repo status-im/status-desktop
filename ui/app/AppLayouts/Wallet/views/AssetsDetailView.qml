@@ -62,6 +62,14 @@ Item {
 
         property bool forceRefreshBalanceStore: false
         readonly property var splitAddresses: root.networkFilters.split(":")
+
+        readonly property SortFilterProxyModel enabledNetworksModel: SortFilterProxyModel {
+            sourceModel: root.allNetworksModel
+            filters: ValueFilter {
+                roleName: "isEnabled"
+                value: true
+            }
+        }
     }
 
     Connections {
@@ -105,7 +113,7 @@ Item {
         }
         decimals: token && token.decimals ? token.decimals : 4
         balances: token && token.balances ? token.balances: null
-        allNetworksModel: root.allNetworksModel
+        networksModel: d.enabledNetworksModel
         isLoading: d.marketDetailsLoading
         address: root.address
         errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
