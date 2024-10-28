@@ -63,8 +63,6 @@ Item {
             asset.height: 32
             name: model.name ?? ""
             memberCountVisible: model.joined || !model.encrypted
-            members: model.membersCount
-            activeUsers: model.activeMembersCount
             banner: model.bannerImageData ?? ""
             descriptionFontSize: 12
             descriptionFontColor: Theme.palette.baseColor1
@@ -72,7 +70,7 @@ Item {
                 switch (model.memberRole)  {
                 case (Constants.memberRole.owner):
                     return qsTr("Owner");
-                case (Constants.memberRole.admin):
+                case (Constants.memberRole.admin) :
                     return qsTr("Admin");
                 case (Constants.memberRole.tokenMaster):
                     return qsTr("Token Master");
@@ -110,7 +108,7 @@ Item {
                         StatusBaseText {
                             font.pixelSize: Theme.tertiaryTextFontSize
                             color: Theme.palette.successColor1
-                            text: qsTr("You're there too")
+                            text: qsTr("You’re there too")
                         }
                     }
                 }

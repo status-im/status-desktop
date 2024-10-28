@@ -79,7 +79,7 @@ QtObject {
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
                             
-    readonly property var communitiesList: SortFilterProxyModel {
+    property var communitiesList: SortFilterProxyModel {
         sourceModel: root.mainModuleInst.sectionsModel
         filters: ValueFilter {
             roleName: "sectionType"

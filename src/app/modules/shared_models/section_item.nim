@@ -49,13 +49,15 @@ type
     membersModel: member_model.Model
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
+    bannedMembersModel: member_model.Model
+    pendingMemberRequestsModel*: member_model.Model
+    declinedMemberRequestsModel: member_model.Model
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
     pubsubTopic: string
     pubsubTopicKey: string
     shardIndex: int
     isPendingOwnershipRequest: bool
-    activeMembersCount: int
 
 proc initItem*(
     id: string,
@@ -87,13 +89,15 @@ proc initItem*(
     members: seq[MemberItem] = @[],
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
+    bannedMembers: seq[MemberItem] = @[],
+    pendingMemberRequests: seq[MemberItem] = @[],
+    declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
     communityTokens: seq[TokenItem] = @[],
     pubsubTopic = "",
     pubsubTopicKey = "",
     shardIndex = -1,
-    isPendingOwnershipRequest: bool = false,
-    activeMembersCount: int = 0,
+    isPendingOwnershipRequest: bool = false
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -125,6 +129,12 @@ proc initItem*(
   result.membersModel.setItems(members)
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
+  result.bannedMembersModel = newModel()
+  result.bannedMembersModel.setItems(bannedMembers)
+  result.pendingMemberRequestsModel = newModel()
+  result.pendingMemberRequestsModel.setItems(pendingMemberRequests)
+  result.declinedMemberRequestsModel = newModel()
+  result.declinedMemberRequestsModel.setItems(declinedMemberRequests)
   result.encrypted = encrypted
   result.communityTokensModel = newTokenModel()
   result.communityTokensModel.setItems(communityTokens)
@@ -132,7 +142,6 @@ proc initItem*(
   result.pubsubTopicKey = pubsubTopicKey
   result.shardIndex = shardIndex
   result.isPendingOwnershipRequest = isPendingOwnershipRequest
-  result.activeMembersCount = activeMembersCount
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -168,6 +177,9 @@ proc `$`*(self: SectionItem): string =
     members:{self.membersModel},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
+    bannedMembers:{self.bannedMembersModel},
+    pendingMemberRequests:{self.pendingMemberRequestsModel},
+    declinedMemberRequests:{self.declinedMemberRequestsModel},
     encrypted:{self.encrypted},
     communityTokensModel:{self.communityTokensModel},
     isPendingOwnershipRequest:{self.isPendingOwnershipRequest}
@@ -353,8 +365,17 @@ proc updateMember*(
   self.membersModel.updateItem(pubkey, name, ensName, isEnsVerified, nickname, alias, image, isContact,
     isVerified, isUntrustworthy)
 
+proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
+  self.bannedMembersModel
+
 proc amIBanned*(self: SectionItem): bool {.inline.} =
-  return self.membersModel.isUserBanned(singletonInstance.userProfile.getPubKey())
+  self.bannedMembersModel.isContactWithIdAdded(singletonInstance.userProfile.getPubKey())
+
+proc pendingMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
+  self.pendingMemberRequestsModel
+
+proc declinedMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
+  self.declinedMemberRequestsModel
 
 proc isPendingOwnershipRequest*(self: SectionItem): bool {.inline.} =
   self.isPendingOwnershipRequest
@@ -417,10 +438,14 @@ proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.in
   self.communityTokensModel
 
 proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
-  self.membersModel.updateLoadingState(memberKey, loading)
+  self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
 
 proc updateMembershipStatus*(self: SectionItem, memberKey: string, state: MembershipRequestState) {.inline.} =
-  self.membersModel.updateMembershipStatus(memberKey, state)
+  case state:
+    of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
+      self.bannedMembersModel.updateMembershipStatus(memberKey, state)
+    else:
+      self.membersModel.updateMembershipStatus(memberKey, state)
 
 proc pubsubTopic*(self: SectionItem): string {.inline.} =
   self.pubsubTopic
@@ -439,9 +464,3 @@ proc shardIndex*(self: SectionItem): int {.inline.} =
 
 proc `shardIndex=`*(self: var SectionItem, value: int) {.inline.} =
   self.shardIndex = value
-
-proc activeMembersCount*(self: SectionItem): int {.inline.} =
-  self.activeMembersCount
-
-proc `activeMembersCount=`*(self: var SectionItem, value: int) {.inline.} =
-  self.activeMembersCount = value
