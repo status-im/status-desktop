@@ -15,7 +15,6 @@ StatusModal {
     id: root
 
     property var community
-    property bool hasAddedContacts
     property var communitySectionModule
 
     onClosed: {

@@ -42,7 +42,6 @@ Item {
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStores.WalletAssetsStore walletAssetsStore
     required property CurrenciesStore currencyStore
-    property bool hasAddedContacts: false
     property var communityData
     property int joinedMembersCount
     property alias createChannelPopup: createChannelPopup
@@ -411,7 +410,6 @@ Item {
                     WelcomeBannerPanel {
                         activeCommunity: communityData
                         store: root.store
-                        hasAddedContacts: root.hasAddedContacts
                         communitySectionModule: root.communitySectionModule
                         onManageCommunityClicked: root.manageButtonClicked()
                     }
