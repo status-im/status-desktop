@@ -2,90 +2,45 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import AppLayouts.Communities.panels 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.stores 1.0 as AppLayoutStores
 
-import utils 1.0
-
 Item {
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
-
-    QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            globalUtilsReady = true
-
-        }
-        Component.onDestruction: {
-            globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    QtObject {
-        function getContactDetailsAsJson() {
-            return JSON.stringify({})
-        }
-
-        Component.onCompleted: {
-            mainModuleReady = true
-            Utils.mainModuleInst = this
-        }
-        Component.onDestruction: {
-            mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
-    }
-
     Frame {
         anchors.centerIn: parent
 
-        Loader {
-            active: globalUtilsReady && mainModuleReady
-            sourceComponent: ProfilePopupInviteFriendsPanel {
-                id: panel
+        ProfilePopupInviteFriendsPanel {
+            communityId: "communityId"
 
-                communityId: "communityId"
-
-                rootStore: AppLayoutStores.RootStore {
-                    function communityHasMember(communityId, pubKey) {
-                        return false
-                    }
+            rootStore: AppLayoutStores.RootStore {
+                function communityHasMember(communityId, pubKey) {
+                    return false
                 }
+            }
 
-                contactsStore: ProfileStores.ContactsStore {
-                    readonly property ListModel myContactsModel: ListModel {
-                        Component.onCompleted: {
-                            const keys = []
+            contactsModel: ListModel {
+                Component.onCompleted: {
+                    const keys = []
 
-                            for (let i = 0; i < 20; i++) {
-                                const key = `pub_key_${i}`
+                    for (let i = 0; i < 20; i++) {
+                        const key = `pub_key_${i}`
 
-                                append({
-                                    alias: "",
-                                    colorId: "1",
-                                    displayName: `contact ${i}`,
-                                    ensName: "",
-                                    icon: "",
-                                    isContact: true,
-                                    localNickname: "",
-                                    onlineStatus: 1,
-                                    pubKey: key
-                                })
-                            }
-                        }
+                        append({
+                            alias: "",
+                            colorId: "1",
+                            displayName: `contact ${i}`,
+                            ensName: "",
+                            icon: "",
+                            isContact: true,
+                            localNickname: "",
+                            onlineStatus: 1,
+                            pubKey: key,
+                            compressedKey: "zx3sh" + key,
+                            colorHash: [
+                                { colorId: i, segmentLength: i % 5 },
+                                { colorId: i + 5, segmentLength: 3 },
+                                { colorId: 19, segmentLength: 2 }
+                            ]
+                        })
                     }
                 }
             }
