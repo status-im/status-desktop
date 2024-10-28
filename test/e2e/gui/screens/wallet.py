@@ -50,10 +50,11 @@ class LeftPanel(QObject):
     def accounts(self) -> typing.List[constants.user.account_list_item]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
-
+        time.sleep(1) # to give a chance to build the list
+        raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
-        for account_item in driver.findAllObjects(self._wallet_account_item.real_name):
-            try:
+        if len(raw_data) > 0:
+            for account_item in raw_data:
                 name = str(account_item.title)
                 # TODO: to fix properly with account data class implementation
                 # color = str(account_item.asset.color.name).lower()
@@ -63,9 +64,8 @@ class LeftPanel(QObject):
                 #         emoji = str(child.emojiId)
                 #         break
                 accounts.append(constants.user.account_list_item(name, None, None))
-            except (AttributeError, RuntimeError):
-                continue
-
+        else:
+            raise LookupError("Account items were not found")
         return accounts
 
     @allure.step('Get total balance value from All accounts')
@@ -98,8 +98,8 @@ class LeftPanel(QObject):
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
             self._wallet_account_item.real_name['title'] = account_name
-            self._wallet_account_item.click()
             time.sleep(0.5)
+            self._wallet_account_item.click()
             self._wallet_account_item.right_click()
             return ContextMenu()
         else:

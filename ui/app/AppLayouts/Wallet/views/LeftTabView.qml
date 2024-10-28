@@ -256,7 +256,7 @@ Rectangle {
                 readonly property bool footerOverlayed: d.loaded && contentHeight > availableHeight
 
                 delegate: StatusListItem {
-                    objectName: "walletAccount-" + model.name
+                    objectName: "walletAccountListItem"
                     readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                     width: ListView.view.width - Theme.padding * 2
                     highlighted: RootStore.selectedAddress.toLowerCase() === model.address.toLowerCase()
