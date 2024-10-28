@@ -13,6 +13,7 @@ import StatusQ.Popups.Dialog 0.1
 
 import shared.popups.send.controls 1.0
 import shared.controls 1.0
+import shared.panels 1.0
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.panels 1.0
@@ -370,6 +371,7 @@ StatusDialog {
                         font.weight: Font.Medium
                     }
                     StatusTextWithLoadingState {
+                        id: fees
                         objectName: "maxFeesValue"
                         text: {
                             if(root.swapAdaptor.swapProposalLoading) {
@@ -384,9 +386,22 @@ StatusDialog {
 
                             return "--"
                         }
+
+                        onTextChanged: {
+                            if (text === "" || text === "--" || text === Constants.dummyText) {
+                                return
+                            }
+                            animation.restart()
+                        }
+
                         customColor: Theme.palette.directColor4
                         font.weight: Font.Medium
                         loading: root.swapAdaptor.swapProposalLoading
+
+                        AnimatedText {
+                            id: animation
+                            target: fees
+                        }
                     }
                 }
                 StatusButton {
