@@ -417,6 +417,8 @@ QtObject {
             return qsTr("Node Management")
         case Constants.appSection.communitiesPortal:
             return qsTr("Discover Communities")
+        case Constants.appSection.loadingSection:
+            return qsTr("Chat section loading...")
         default:
             return fallback
         }

@@ -815,7 +815,7 @@ Item {
                     RangeFilter {
                         roleName: "sectionType"
                         minimumValue: Constants.appSection.wallet
-                        maximumValue: Constants.appSection.communitiesPortal
+                        maximumValue: Constants.appSection.loadingSection
                     },
                     ValueFilter {
                         roleName: "enabled"

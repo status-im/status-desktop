@@ -504,6 +504,22 @@ method load*[T](
   if (activeSectionId == ""):
     activeSectionId = singletonInstance.userProfile.getPubKey()
 
+  let loadingItem = initItem(
+    LOADING_SECTION_ID,
+    SectionType.LoadingSection,
+    conf.LOADING_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    image = "",
+    icon = conf.LOADING_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
+  self.view.model().addItem(loadingItem)
+
   # Communities Portal Section
   let communitiesPortalSectionItem = initItem(
     conf.COMMUNITIESPORTAL_SECTION_ID,
@@ -520,7 +536,7 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(communitiesPortalSectionItem)
-  if(activeSectionId == communitiesPortalSectionItem.id):
+  if activeSectionId == communitiesPortalSectionItem.id:
     activeSection = communitiesPortalSectionItem
 
   # Wallet Section
@@ -541,7 +557,7 @@ method load*[T](
     enabled = WALLET_ENABLED,
   )
   self.view.model().addItem(walletSectionItem)
-  if(activeSectionId == walletSectionItem.id):
+  if activeSectionId == walletSectionItem.id:
     activeSection = walletSectionItem
 
   # Node Management Section
@@ -562,7 +578,7 @@ method load*[T](
     enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled(),
   )
   self.view.model().addItem(nodeManagementSectionItem)
-  if(activeSectionId == nodeManagementSectionItem.id):
+  if activeSectionId == nodeManagementSectionItem.id:
     activeSection = nodeManagementSectionItem
 
   # Profile Section
@@ -583,7 +599,7 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(profileSettingsSectionItem)
-  if(activeSectionId == profileSettingsSectionItem.id):
+  if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
 
   self.profileSectionModule.load()
@@ -602,21 +618,6 @@ method load*[T](
   # If section is empty or profile then open the loading section until chats are loaded
   if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
     # Set bogus Item as active until the chat is loaded
-    let loadingItem = initItem(
-      LOADING_SECTION_ID,
-      SectionType.LoadingSection,
-      name = "",
-      memberRole = MemberRole.Owner,
-      description = "",
-      image = "",
-      icon = "",
-      color = "",
-      hasNotification = false,
-      notificationsCount = 0,
-      active = false,
-      enabled = true,
-    )
-    self.view.model().addItem(loadingItem)
     self.setActiveSection(loadingItem, skipSavingInSettings = true)
   else:
     self.setActiveSection(activeSection)
