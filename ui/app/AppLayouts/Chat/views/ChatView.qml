@@ -12,6 +12,7 @@ import shared.views.chat 1.0
 import shared.stores.send 1.0 as SendStores
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Layout 0.1
@@ -183,10 +184,25 @@ StatusSectionLayout {
 
             anchors.fill: parent
             store: root.rootStore
-            utilsStore: root.utilsStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
-            usersModel: usersStore.usersModel
+
+            usersModel: SortFilterProxyModel {
+                sourceModel: usersStore.usersModel
+
+                proxyRoles: [
+                    FastExpressionRole {
+                        name: "emojiHash"
+                        expression: root.utilsStore.getEmojiHash(model.pubKey)
+                        expectedRoles: ["pubKey"]
+                    },
+                    FastExpressionRole {
+                        name: "compressedKey"
+                        expression: root.utilsStore.getCompressedPk(model.pubKey)
+                        expectedRoles: ["pubKey"]
+                    }
+                ]
+            }
         }
     }
 
