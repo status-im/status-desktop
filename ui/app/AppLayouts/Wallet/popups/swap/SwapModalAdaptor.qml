@@ -274,6 +274,7 @@ QObject {
     }
 
     function reset() {
+        d.uuid = ""
         root.swapFormData.resetFormData()
         root.swapOutputData.reset()
         root.validSwapProposalReceived = false
@@ -300,6 +301,14 @@ QObject {
             }
         }
         return disabledChainIds.join(":")
+    }
+
+    function invalidateSuggestedRoute() {
+        d.uuid = ""
+        root.validSwapProposalReceived = false
+        root.approvalPending = false
+        root.approvalSuccessful = false
+        root.swapOutputData.resetPathInfoAndError()
     }
 
     function fetchSuggestedRoutes(cryptoValueInRaw) {
