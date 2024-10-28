@@ -569,8 +569,6 @@ QtObject {
             id: communityProfilePopup
 
             CommunityProfilePopup {
-                hasAddedContacts: rootStore.hasAddedContacts
-
                 onClosed: destroy()
             }
         },

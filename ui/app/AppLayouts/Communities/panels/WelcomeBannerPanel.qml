@@ -17,7 +17,6 @@ Rectangle {
     property var activeCommunity
     property RootStore store
     property var communitySectionModule
-    property bool hasAddedContacts
 
     signal manageCommunityClicked()
 

@@ -40,8 +40,6 @@ StatusSectionLayout {
     id: root
 
     property ContactsStore contactsStore
-    property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
-
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
@@ -307,7 +305,6 @@ StatusSectionLayout {
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
             emojiPopup: root.emojiPopup
-            hasAddedContacts: root.hasAddedContacts
             isPendingOwnershipRequest: root.isPendingOwnershipRequest
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
