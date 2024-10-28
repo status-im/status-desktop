@@ -38,6 +38,7 @@ Pane {
     property ProfileStores.ProfileStore profileStore
     property ProfileStores.ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
+    property WalletStores.RootStore walletStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
 
@@ -448,7 +449,7 @@ Pane {
                         id: keyHoverHandler
                     }
                     StatusToolTip {
-                        text: Utils.getCompressedPk(root.publicKey)
+                        text: root.utilsStore.getCompressedPk(root.publicKey)
                         visible: keyHoverHandler.hovered
                     }
                 }
@@ -456,7 +457,7 @@ Pane {
                     Layout.leftMargin: -4
                     Layout.preferredWidth: 16
                     Layout.preferredHeight: 16
-                    textToCopy: Utils.getCompressedPk(root.publicKey)
+                    textToCopy: root.utilsStore.getCompressedPk(root.publicKey)
                     StatusToolTip {
                         text: qsTr("Copy Chat Key")
                         visible: parent.hovered
@@ -549,7 +550,7 @@ Pane {
                     socialLinksModel: root.showcaseSocialLinksModel
                     // assetsModel: root.showcaseAssetsModel
 
-                    walletStore: WalletStores.RootStore
+                    walletStore: root.walletStore
 
                     onCloseRequested: root.closeRequested()
                     onCopyToClipboard: ClipboardUtils.setText(text)

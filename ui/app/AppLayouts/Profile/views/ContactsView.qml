@@ -168,6 +168,7 @@ SettingsContentBase {
                     title: qsTr("Trusted Contacts")
                     visible: !noFriendsItem.visible && count > 0
                     contactsModel: root.contactsStore.myContactsModel
+                    utilsStore: root.utilsStore
                     searchString: searchBox.text
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
@@ -184,6 +185,7 @@ SettingsContentBase {
                     visible: !noFriendsItem.visible && count > 0
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
+                    utilsStore: root.utilsStore
                     searchString: searchBox.text
                     onOpenContactContextMenu: function (publicKey, name, icon) {
                         root.openContextMenu(publicKey, name, icon)
@@ -230,6 +232,7 @@ SettingsContentBase {
                         root.openContextMenu(publicKey, name, icon)
                     }
                     contactsModel: root.contactsStore.receivedContactRequestsModel
+                    utilsStore: root.utilsStore
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
                     onSendMessageActionTriggered: {
@@ -256,6 +259,7 @@ SettingsContentBase {
                         root.openContextMenu(publicKey, name, icon)
                     }
                     contactsModel: root.contactsStore.sentContactRequestsModel
+                    utilsStore: root.utilsStore
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
             }
@@ -314,6 +318,7 @@ SettingsContentBase {
                     root.openContextMenu(publicKey, name, icon)
                 }
                 contactsModel: root.contactsStore.blockedContactsModel
+                utilsStore: root.utilsStore
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
                 visible: (stackLayout.currentIndex === 2)
                 onVisibleChanged: {

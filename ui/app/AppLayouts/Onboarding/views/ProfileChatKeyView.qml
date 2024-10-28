@@ -100,7 +100,7 @@ Item {
             objectName: "profileChatKeyViewChatKeyTxt"
             Layout.preferredHeight: 22
             color: Theme.palette.secondaryText
-            text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(d.publicKey)
+            text: qsTr("Chatkey:") + " " + root.utilsStore.getCompressedPk(d.publicKey)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop

@@ -846,7 +846,7 @@ Loader {
                     albumCount: root.albumCount
 
                     amISender: root.amISender
-                    sender.id: root.senderIsEnsVerified ? "" :  Utils.getCompressedPk(root.senderId)
+                    sender.id: root.senderIsEnsVerified ? "" :  root.utilsStore.getCompressedPk(root.senderId)
                     sender.displayName: root.senderDisplayName
                     sender.secondaryName: root.senderOptionalName
                     sender.isEnsVerified: root.isBridgeMessage ? false : root.senderIsEnsVerified

@@ -2,11 +2,11 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
-import shared.views 1.0 as SharedViews
-
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import shared.controls 1.0
+import shared.views 1.0 as SharedViews
 
 Item {
     property alias profileStore: profilePreview.profileStore
@@ -51,9 +51,13 @@ Item {
 
         SharedViews.ProfileDialogView {
             id: profilePreview
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.maximumHeight: implicitHeight
+
+            walletStore: WalletStores.RootStore
+
             readOnly: true
         }
         Item { Layout.fillHeight: true }

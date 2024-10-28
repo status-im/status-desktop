@@ -26,12 +26,7 @@ SplitView {
 
     // globalUtilsInst mock
     QtObject {
-        function getEmojiHashAsJson(publicKey) {
-            return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-        }
         function getColorId(publicKey) { return colorId.value }
-
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
 
         function getColorHashAsJson(publicKey, skipEnsVerification=false) {
             if (skipEnsVerification)
@@ -40,14 +35,8 @@ SplitView {
                                    {colorId: 19, segmentLength: 2}])
         }
 
-        function isCompressedPubKey(publicKey) { return true }
-
         function addTimestampToURL(url) {
             return url
-        }
-
-        function isAlias(name)  {
-            return false
         }
 
         Component.onCompleted: {
@@ -407,6 +396,24 @@ SplitView {
                             function requestProfileShowcase(publicKey) {
                                 logs.logEvent("contactsStore::requestProfileShowcase", ["publicKey"], arguments)
                             }
+                        }
+
+                        utilsStore: SharedStores.UtilsStore {
+                            function getEmojiHash(publicKey) {
+                                return ["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻",
+                                        "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"]
+                            }
+
+                            function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
+
+
+                            function isCompressedPubKey(publicKey) { return true }
+
+                            function isAlias(name)  {
+                                return false
+                            }
+
+
                         }
                     }
                 }
