@@ -21,16 +21,16 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property string username: ""
     property string chainId: ""
-    property string walletAddress: "-"
-    property string key: "-"
 
     signal backBtnClicked()
-    signal releaseUsernameRequested()
+    signal releaseUsernameRequested(string senderAddress)
 
     QtObject {
         id: d
 
         property double expirationTimestamp: 0
+        property string walletAddress: "-"
+        property string key: "-"
     }
 
     StatusBaseText {
@@ -65,10 +65,14 @@ Item {
         function onDetailsObtained(chainId: int, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {
             if(username != (isStatus ? ensName + ".stateofus.eth" : ensName))
                 return;
+            d.walletAddress = address
             walletAddressLbl.subTitle = address;
+            walletAddressLbl.visible = !!address;
+
+            d.key = pubkey
             keyLbl.subTitle = pubkey.substring(0, 20) + "..." + pubkey.substring(pubkey.length - 20);
-            walletAddressLbl.visible = true;
-            keyLbl.visible = true;
+            keyLbl.visible = !!pubkey;
+
             releaseBtn.visible = isStatus
             removeButton.visible = true
             releaseBtn.enabled = expirationTime > 0
@@ -140,7 +144,7 @@ Item {
             enabled: false
             text: qsTr("Release username")
             onClicked: {
-                root.releaseUsernameRequested()
+                root.releaseUsernameRequested(d.walletAddress)
             }
         }
     }
@@ -152,6 +156,8 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 24
         text: {
+            if (d.expirationTimestamp === 0)
+                return ""
             const formattedDate = LocaleUtils.formatDate(d.expirationTimestamp, Locale.ShortFormat)
             return qsTr("Username locked. You won't be able to release it until %1").arg(formattedDate)
         }
