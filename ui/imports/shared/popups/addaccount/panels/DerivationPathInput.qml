@@ -107,7 +107,7 @@ Item {
         readonly property var passthroughKeys: [Qt.Key_Left, Qt.Key_Right, Qt.Key_Escape]
 
         Shortcut {
-            sequence: StandardKey.Copy
+            sequences: [StandardKey.Copy]
             enabled: d.selectionIsActive
             onActivated: input.copy()
         }
