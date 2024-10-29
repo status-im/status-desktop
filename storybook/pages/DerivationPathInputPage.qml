@@ -11,6 +11,32 @@ import utils 1.0
 import shared.popups.addaccount.panels 1.0
 
 SplitView {
+    id: root
+
+    QtObject {
+        id: d
+
+        function translation(key, isTitle) {
+            if (!isTitle) {
+                if (key === Constants.addAccountPopup.predefinedPaths.custom)
+                    return qsTr("Type your own derivation path")
+                return key
+            }
+            switch(key) {
+            case Constants.addAccountPopup.predefinedPaths.custom:
+                return qsTr("Custom")
+            case Constants.addAccountPopup.predefinedPaths.ethereum:
+                return qsTr("Ethereum")
+            case Constants.addAccountPopup.predefinedPaths.ethereumRopsten:
+                return qsTr("Ethereum Testnet (Ropsten)")
+            case Constants.addAccountPopup.predefinedPaths.ethereumLedger:
+                return qsTr("Ethereum (Ledger)")
+            case Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive:
+                return qsTr("Ethereum (Ledger Live/KeepKey)")
+            }
+        }
+    }
+
     Pane {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
@@ -41,19 +67,19 @@ SplitView {
                     }
                 }
 
-                StatusMenu {
+                DerivationPathSelection {
                     id: derivationPathSelection
 
-                    ColumnLayout {
-                        StatusBaseText {
-                            text: "Test Popup"
-                            Layout.margins: 10
-                        }
-                        StatusBaseText {
-                            text: "Some more content here"
-                            Layout.margins: 10
-                        }
-                    }
+                    roots: [Constants.addAccountPopup.predefinedPaths.custom,
+                        Constants.addAccountPopup.predefinedPaths.ethereum,
+                        Constants.addAccountPopup.predefinedPaths.ethereumRopsten,
+                        Constants.addAccountPopup.predefinedPaths.ethereumLedger,
+                        Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive
+                    ]
+                    translation: d.translation
+                    selectedRootPath: Constants.addAccountPopup.predefinedPaths.ethereum
+
+                    onSelected: (rootPath) => console.warn("!!! SELECTED PATH:", rootPath)
                 }
             }
 
