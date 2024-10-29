@@ -311,11 +311,13 @@ method setCommunityTags*(self: Module, communityTags: string) =
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   var items: seq[SectionItem] = @[]
   for community in communities:
-    items.add(self.getCommunityItem(community))
+    if community.joined or community.spectated:
+      items.add(self.getCommunityItem(community))
   self.view.model.addItems(items)
 
 method communityAdded*(self: Module, community: CommunityDto) =
-  self.view.addItem(self.getCommunityItem(community))
+  if community.joined or community.spectated:
+    self.view.addItem(self.getCommunityItem(community))
 
 method spectateCommunity*(self: Module, communityId: string): string =
   self.controller.spectateCommunity(communityId)
@@ -328,7 +330,8 @@ method navigateToCommunity*(self: Module, communityId: string) =
     self.delegate.setActiveSectionById(communityId)
 
 method communityEdited*(self: Module, community: CommunityDto) =
-  self.view.updateItem(self.getCommunityItem(community))
+  if community.joined or community.spectated:
+    self.view.updateItem(self.getCommunityItem(community))
 
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto]) =
   for community in curatedCommunities:
@@ -430,7 +433,8 @@ method isMyCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isMyCommunityRequestPending(communityId)
 
 method communityDataImported*(self: Module, community: CommunityDto) =
-  self.view.addItem(self.getCommunityItem(community))
+  if community.joined or community.spectated:
+    self.view.addItem(self.getCommunityItem(community))
   self.buildTokensAndCollectiblesFromCommunities(@[community])
   self.view.emitCommunityInfoRequestCompleted(community.id, "")
 
