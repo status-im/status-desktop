@@ -113,11 +113,6 @@ StatusDraggableListItem {
                         showcaseVisibility: Constants.ShowcaseVisibility.Contacts
                         text: enabled ? qsTr("Contacts") : qsTr("Contacts (set account to Contacts)")
                     }
-                    ShowcaseVisibilityAction {
-                        id: idVerifiedContactsAction
-                        showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                        text: enabled ? qsTr("ID verified contacts") : qsTr("ID verified contacts (set account to ID verified contacts)")
-                    }
 
                     StatusMenuSeparator {}
 

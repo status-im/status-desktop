@@ -13,7 +13,7 @@ proc createTestMemberItem(pubKey: string): MemberItem =
       alias = "",
       icon = "",
       colorId = 0,
-      isVerified = false,
+      trustStatus = TrustStatus.Unknown,
     )
 
 let memberA = createTestMemberItem("0xa")
@@ -44,10 +44,9 @@ suite "updating member items":
         alias = "",
         icon = "",
         isContact = false,
-        isVerified = false,
         memberRole = MemberRole.None,
         joined = false,
-        isUntrustworthy = false,
+        trustStatus = TrustStatus.Unknown,
         callDataChanged = false,
       )
     # Two updated roles, because preferredDisplayName gets updated too
@@ -65,10 +64,9 @@ suite "updating member items":
         alias = "",
         icon = "icon",
         isContact = true,
-        isVerified = false,
         memberRole = MemberRole.None,
         joined = false,
-        isUntrustworthy = false,
+        trustStatus = TrustStatus.Unknown,
         callDataChanged = false,
       )
     check(updatedRoles.len() == 2)

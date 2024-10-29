@@ -194,13 +194,6 @@ QtObject:
     read = getContactRequestsCount
     notify = groupCountersChanged
 
-  proc getIdentityVerificationCount*(self: View): int {.slot.} =
-    return self.groupCounters.getOrDefault(ActivityCenterGroup.IdentityVerification, 0)
-
-  QtProperty[int] identityVerificationCount:
-    read = getIdentityVerificationCount
-    notify = groupCountersChanged
-
   proc getMembershipCount*(self: View): int {.slot.} =
     return self.groupCounters.getOrDefault(ActivityCenterGroup.Membership, 0)
 

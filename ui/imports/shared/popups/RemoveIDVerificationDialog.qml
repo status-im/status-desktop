@@ -14,13 +14,13 @@ CommonContactDialog {
     readonly property bool markAsUntrusted: ctrlMarkAsUntrusted.checked
     readonly property bool removeContact: ctrlRemoveContact.checked
 
-    title: qsTr("Remove ID verification")
+    title: qsTr("Remove trust mark")
 
     StatusBaseText {
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.halfPadding
         wrapMode: Text.WordWrap
-        text: qsTr("%1’s identity will no longer be verified. This is only visible to you.").arg(mainDisplayName)
+        text: qsTr("%1's identity will no longer be verified. This is only visible to you.").arg(mainDisplayName)
     }
 
     StatusCheckBox {
@@ -40,7 +40,7 @@ CommonContactDialog {
         }
         StatusButton {
             type: StatusBaseButton.Type.Danger
-            text: qsTr("Remove ID verification")
+            text: qsTr("Remove trust mark")
             onClicked: root.accepted()
         }
     }

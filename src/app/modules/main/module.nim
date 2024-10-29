@@ -1112,9 +1112,6 @@ method onCommunityMuted*[T](
     muted: bool) =
   self.view.model.setMuted(communityId, muted)
 
-method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
-  self.controller.getVerificationRequestFrom(publicKey)
-
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool = false,
   getOnlineStatus: bool = false, includeDetails: bool = false): string =
   var contactDetails: ContactDetails
@@ -1155,10 +1152,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "isSyncing": contactDetails.dto.isSyncing,
     "removed": contactDetails.dto.removed,
     "trustStatus": contactDetails.dto.trustStatus.int,
-    # TODO rename verificationStatus to outgoingVerificationStatus
     "contactRequestState": contactDetails.dto.contactRequestState.int,
-    "verificationStatus": contactDetails.dto.verificationStatus.int,
-    "incomingVerificationStatus": 0,
     "bio": contactDetails.dto.bio,
     "onlineStatus": onlineStatus.int
   }
@@ -1749,7 +1743,7 @@ proc createMemberItem[T](
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(status.statusType),
     isContact = contactDetails.dto.isContact,
-    isVerified = contactDetails.dto.isContactVerified(),
+    trustStatus = contactDetails.dto.trustStatus,
     memberRole = role,
     membershipRequestState = state,
     requestToJoinId = requestId,
@@ -1758,7 +1752,6 @@ proc createMemberItem[T](
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
   let contactDetails = self.controller.getContactDetails(contactId)
-  let isMe = contactId == singletonInstance.userProfile.getPubKey()
   self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,
@@ -1768,8 +1761,7 @@ method contactUpdated*[T](self: Module[T], contactId: string) =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
-    isVerified = not isMe and contactDetails.dto.isContactVerified(),
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    trustStatus = contactDetails.dto.trustStatus,
   )
 
 {.pop.}

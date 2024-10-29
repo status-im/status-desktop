@@ -8,12 +8,12 @@ import StatusQ.Controls 0.1
 CommonContactDialog {
     id: root
 
-    title: qsTr("Mark as ID verified")
+    title: qsTr("Mark as trusted")
 
     StatusBaseText {
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
-        text: qsTr("Mark users as ID verified only if you’re 100% sure who they are. Otherwise, it’s safer to send %1 an ID verification request.").arg(mainDisplayName)
+        text: qsTr("Mark users as trusted only if you're 100% sure who they are.")
     }
 
     rightButtons: ObjectModel {
@@ -22,7 +22,7 @@ CommonContactDialog {
             onClicked: root.close()
         }
         StatusButton {
-            text: qsTr("Mark as ID verified")
+            text: qsTr("Mark as trusted")
             onClicked: root.accepted()
         }
     }

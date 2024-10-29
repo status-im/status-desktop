@@ -368,8 +368,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     colorHash = if not contactDetails.dto.ensVerified: contactDetails.colorHash else: "",
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contactDetails.dto.isContact(),
-    isVerified = contactDetails.dto.isContactVerified(),
-    isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
+    trustStatus = contactDetails.dto.trustStatus,
     isBlocked = contactDetails.dto.isBlocked(),
   )
 

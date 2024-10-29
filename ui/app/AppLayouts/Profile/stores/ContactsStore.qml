@@ -127,46 +127,6 @@ QtObject {
         root.contactsModule.removeTrustStatus(pubKey)
     }
 
-    function removeTrustVerificationStatus(pubKey) {
-        root.contactsModule.removeTrustVerificationStatus(pubKey)
-    }
-
-    function sendVerificationRequest(pubKey, challenge) {
-        root.contactsModule.sendVerificationRequest(pubKey, challenge);
-        Global.displaySuccessToastMessage(qsTr("ID verification request sent"))
-    }
-
-    function cancelVerificationRequest(pubKey) {
-        root.contactsModule.cancelVerificationRequest(pubKey);
-        Global.displaySuccessToastMessage(qsTr("ID verification request cancelled"))
-    }
-
-    function declineVerificationRequest(pubKey) {
-        root.contactsModule.declineVerificationRequest(pubKey);
-    }
-
-    function acceptVerificationRequest(pubKey, response) {
-        root.contactsModule.acceptVerificationRequest(pubKey, response);
-    }
-
-    function getVerificationDetailsFromAsJson(pubKey) {
-        let resp = root.contactsModule.getVerificationDetailsFromAsJson(pubKey);
-        return JSON.parse(resp);
-    }
-
-    function getSentVerificationDetailsAsJson(pubKey) {
-        let resp = root.contactsModule.getSentVerificationDetailsAsJson(pubKey);
-        return JSON.parse(resp);
-    }
-
-    function verifiedTrusted(pubKey) {
-        root.contactsModule.verifiedTrusted(pubKey);
-    }
-
-    function verifiedUntrustworthy(pubKey) {
-        root.contactsModule.verifiedUntrustworthy(pubKey);
-    }
-
     function requestContactInfo(publicKey) {
         root.contactsModule.requestContactInfo(publicKey)
     }

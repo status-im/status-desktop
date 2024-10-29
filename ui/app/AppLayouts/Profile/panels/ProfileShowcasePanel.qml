@@ -262,8 +262,7 @@ DoubleFlickableWithFolding {
                          (d.isAnyHiddenDragActive ||
                           parent.containsDrag ||
                           everyoneContainsDrag ||
-                          contactsContainsDrag ||
-                          verifiedContainsDrag)
+                          contactsContainsDrag)
             }
         }
 
@@ -414,7 +413,6 @@ DoubleFlickableWithFolding {
 
         readonly property bool everyoneContainsDrag: dropAreaEveryone.containsDrag
         readonly property bool contactsContainsDrag: dropAreaContacts.containsDrag
-        readonly property bool verifiedContainsDrag: dropAreaVerified.containsDrag
         property int margins: Theme.halfPadding
 
         RowLayout {
@@ -437,15 +435,6 @@ DoubleFlickableWithFolding {
                 Layout.fillHeight: true
                 showcaseVisibility: Constants.ShowcaseVisibility.Contacts
                 text: qsTr("Contacts")
-                dropAreaKeys: d.dragHiddenItemKey
-            }
-
-            VisibilityDropAreaButton {
-                id: dropAreaVerified
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                showcaseVisibility: Constants.ShowcaseVisibility.IdVerifiedContacts
-                text: qsTr("Verified")
                 dropAreaKeys: d.dragHiddenItemKey
             }
         }

@@ -739,8 +739,6 @@ QtObject {
             removed: false,
             trustStatus: Constants.trustStatus.unknown,
             contactRequestState: Constants.ContactRequestState.None,
-            verificationStatus: Constants.verificationStatus.unverified,
-            incomingVerificationStatus: Constants.verificationStatus.unverified,
             socialLinks: [],
             bio: "",
             onlineStatus: Constants.onlineStatus.inactive

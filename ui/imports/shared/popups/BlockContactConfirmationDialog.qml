@@ -17,12 +17,6 @@ CommonContactDialog {
 
     title: qsTr("Block user")
 
-    readonly property var d: QtObject {
-        id: d
-        readonly property bool isTrusted: contactDetails.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                                          contactDetails.incomingVerificationStatus === Constants.verificationStatus.trusted
-    }
-
     StatusBaseText {
         objectName: "youWillNotSeeText"
         Layout.fillWidth: true
@@ -57,10 +51,10 @@ CommonContactDialog {
 
     StatusCheckBox {
         id: ctrlRemoveIDVerification
-        visible: (contactDetails.isContact && d.isTrusted) || contactDetails.trustStatus === Constants.trustStatus.trusted
+        visible: contactDetails.trustStatus === Constants.trustStatus.trusted
         checked: visible
         enabled: false
-        text: qsTr("Remove ID verification")
+        text: qsTr("Remove trust mark")
     }
 
     rightButtons: ObjectModel {

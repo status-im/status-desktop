@@ -62,7 +62,6 @@ QtObject:
   proc getNotifSettingGlobalMentions*(self: Service): string
   proc getNotifSettingAllMessages*(self: Service): string
   proc getNotifSettingContactRequests*(self: Service): string
-  proc getNotifSettingIdentityVerificationRequests*(self: Service): string
   proc getNotificationSoundsEnabled*(self: Service): bool
   proc getNotificationVolume*(self: Service): int
   proc getNotificationMessagePreview*(self: Service): int
@@ -126,7 +125,6 @@ QtObject:
     discard self.getNotifSettingGlobalMentions()
     discard self.getNotifSettingAllMessages()
     discard self.getNotifSettingContactRequests()
-    discard self.getNotifSettingIdentityVerificationRequests()
     discard self.getNotificationSoundsEnabled()
     discard self.getNotificationVolume()
     discard self.getNotificationMessagePreview()
@@ -780,40 +778,6 @@ QtObject:
     read = getNotifSettingContactRequests
     write = setNotifSettingContactRequests
     notify = notifSettingContactRequestsChanged
-
-  proc notifSettingIdentityVerificationRequestsChanged*(self: Service) {.signal.}
-  proc getNotifSettingIdentityVerificationRequests*(self: Service): string {.slot.} =
-    if self.initialized:
-      return self.settings.notificationsIdentityVerificationRequests
-
-    result = VALUE_NOTIF_SEND_ALERTS #default value
-    try:
-      let response = status_settings.getIdentityVerificationRequests()
-      if(not response.error.isNil):
-        error "error reading identity verification request setting: ", errDescription = response.error.message
-        return
-      result = response.result.getStr
-      self.settings.notificationsIdentityVerificationRequests = result
-    except Exception as e:
-      let errDesription = e.msg
-      error "reading identity verification request setting error: ", errDesription
-
-  proc setNotifSettingIdentityVerificationRequests*(self: Service, value: string) {.slot.} =
-    try:
-      let response = status_settings.setIdentityVerificationRequests(value)
-      if(not response.error.isNil):
-        error "error saving identity verification request setting: ", errDescription = response.error.message
-        return
-      self.settings.notificationsIdentityVerificationRequests = value
-      self.notifSettingIdentityVerificationRequestsChanged()
-    except Exception as e:
-      let errDesription = e.msg
-      error "saving identity verification request setting error: ", errDesription
-
-  QtProperty[string] notifSettingIdentityVerificationRequests:
-    read = getNotifSettingIdentityVerificationRequests
-    write = setNotifSettingIdentityVerificationRequests
-    notify = notifSettingIdentityVerificationRequestsChanged
 
   proc notificationSoundsEnabledChanged*(self: Service) {.signal.}
   proc getNotificationSoundsEnabled*(self: Service): bool {.slot.} =

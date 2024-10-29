@@ -83,7 +83,7 @@ Row {
                 return qsTr("Blocked")
             if (root.isContact) {
                 if (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified)
-                    return qsTr("ID verified contact")
+                    return qsTr("Trusted contact")
                 if (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Untrustworthy)
                     return qsTr("Untrusted contact")
                 return qsTr("Contact")

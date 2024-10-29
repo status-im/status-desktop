@@ -207,7 +207,6 @@ method convertToItems*(
         notification.chatId,
         notification.communityId,
         notification.membershipStatus,
-        notification.verificationStatus,
         sectionId,
         notification.name,
         notification.author,
