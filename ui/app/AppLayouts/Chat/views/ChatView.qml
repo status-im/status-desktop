@@ -78,6 +78,7 @@ StatusSectionLayout {
     property var collectiblesModel
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     readonly property bool contentLocked: {
         if (!rootStore.chatCommunitySectionModule.isCommunity()) {
@@ -248,6 +249,7 @@ StatusSectionLayout {
             canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
             amISectionAdmin: root.amISectionAdmin
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }

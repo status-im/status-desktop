@@ -51,6 +51,7 @@ Item {
     property bool isOneToOne: false
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
@@ -287,6 +288,7 @@ Item {
             isChatBlocked: root.isChatBlocked
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
 
             chatId: root.chatId
             messageId: model.id

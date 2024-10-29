@@ -8,6 +8,7 @@ import app_service/service/currency/service as currency_service
 import app_service/service/currency/dto as currency_dto
 import app_service/service/keycard/service as keycard_service
 import app_service/service/network/network_item
+import app_service/service/shared_urls/dto/url_data as shared_urls_dto
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 import app/modules/shared/wallet_utils
@@ -136,6 +137,9 @@ proc signMessage*(self: Controller, address: string, hashedPassword: string, has
 
 proc sendRouterTransactionsWithSignatures*(self: Controller, uuid: string, signatures: TransactionsSignatures): string =
   return self.transactionService.sendRouterTransactionsWithSignatures(uuid, signatures)
+
+proc shareTransactionURL*(self: Controller, urlData: shared_urls_dto.TransactionURLDataDto): string =
+  return self.transactionService.shareTransactionURL(urlData)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()

@@ -59,6 +59,7 @@ Item {
     property bool amISectionAdmin: false
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -245,6 +246,7 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+                        transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }

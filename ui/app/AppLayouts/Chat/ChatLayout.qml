@@ -56,6 +56,7 @@ StackLayout {
     property bool communitySettingsDisabled
 
     property bool sendViaPersonalChatEnabled
+    property bool transactionDeepLinkEnabled
 
     property var emojiPopup
     property var stickersPopup
@@ -173,6 +174,7 @@ StackLayout {
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            transactionDeepLinkEnabled: root.transactionDeepLinkEnabled
 
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision

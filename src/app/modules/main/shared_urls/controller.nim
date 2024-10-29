@@ -37,3 +37,7 @@ proc parseContactSharedUrl*(self: Controller, url: string): ContactUrlDataDto =
 
 proc parseSharedUrl*(self: Controller, url: string): UrlDataDto =
   return self.sharedUrlsService.parseSharedUrl(url)
+
+proc parseTransactionSharedUrl*(self: Controller, url: string): TransactionUrlDataDto =
+  let data = self.sharedUrlsService.parseSharedUrl(url)
+  return data.transaction
