@@ -164,6 +164,8 @@ method communityDataLoaded*(self: Module) =
   self.buildTokensAndCollectiblesFromAllCommunities()
 
 method onActivated*(self: Module) =
+  if self.curatedCommunitiesLoaded:
+    return
   self.controller.asyncLoadCuratedCommunities()
 
 method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CommunityDto]) =
