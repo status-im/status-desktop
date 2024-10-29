@@ -15,10 +15,15 @@ QtObject {
 
     // contactsModel holds all available contacts
     property var contactsModel: contactsModule.contactsModel
-    property var myContactsModel: contactsModule.myMutualContactsModel
-    property var blockedContactsModel: contactsModule.blockedContactsModel
-    property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
-    property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
+
+    readonly property var contactsModelAdaptor: ContactsModelAdaptor {
+        allContacts: contactsModel
+    }
+
+    property var myContactsModel: contactsModelAdaptor.mutualContacts
+    property var blockedContactsModel: contactsModelAdaptor.blockedContacts
+    property var receivedContactRequestsModel: contactsModelAdaptor.pendingReceivedRequestContacts
+    property var sentContactRequestsModel: contactsModelAdaptor.pendingSentRequestContacts
 
     readonly property var showcasePublicKey: contactsModule.showcasePublicKey
 
@@ -49,14 +54,6 @@ QtObject {
 
     function generateAlias(pubKey) {
         return root.globalUtilsInst.generateAlias(pubKey)
-    }
-
-    function isMyMutualContact(pubKey) {
-        return root.contactsModule.isMyMutualContact(pubKey)
-    }
-
-    function isBlockedContact(pubKey) {
-        return root.contactsModule.isBlockedContact(pubKey)
     }
 
     function hasPendingContactRequest(pubKey) {

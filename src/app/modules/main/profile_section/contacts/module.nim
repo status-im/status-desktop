@@ -105,8 +105,7 @@ proc buildModel(self: Module, model: Model, group: ContactsGroup) =
   var items: seq[UserItem]
   let contacts =  self.controller.getContacts(group)
   for c in contacts:
-    let item = self.createItemFromPublicKey(c.id)
-    items.add(item)
+    items.add(self.createItemFromPublicKey(c.id))
 
   model.addItems(items)
 
@@ -123,13 +122,6 @@ method viewDidLoad*(self: Module) =
 
 method onContactsLoaded*(self: Module) =
   self.buildModel(self.view.contactsModel(), ContactsGroup.AllKnownContacts)
-  self.buildModel(self.view.myMutualContactsModel(), ContactsGroup.MyMutualContacts)
-  self.buildModel(self.view.blockedContactsModel(), ContactsGroup.BlockedContacts)
-  self.buildModel(self.view.receivedContactRequestsModel(), ContactsGroup.IncomingPendingContactRequests)
-  self.buildModel(self.view.sentContactRequestsModel(), ContactsGroup.OutgoingPendingContactRequests)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-  # self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -169,35 +161,15 @@ method removeContact*(self: Module, publicKey: string) =
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
+# TODO rename this function
 proc addItemToAppropriateModel(self: Module, item: UserItem) =
-  if(singletonInstance.userProfile.getPubKey() == item.pubKey):
+  if singletonInstance.userProfile.getPubKey() == item.pubKey:
     return
-  let contact = self.controller.getContact(item.pubKey())
 
   self.view.contactsModel().addItem(item)
-  if contact.isBlocked():
-    self.view.blockedContactsModel().addItem(item)
-    return
-
-  case contact.contactRequestState:
-    of ContactRequestState.Received:
-      self.view.receivedContactRequestsModel().addItem(item)
-    of ContactRequestState.Sent:
-      self.view.sentContactRequestsModel().addItem(item)
-    of ContactRequestState.Mutual:
-      self.view.myMutualContactsModel().addItem(item)
-    else:
-      return
 
 proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
   self.view.contactsModel().removeItemById(publicKey)
-  self.view.myMutualContactsModel().removeItemById(publicKey)
-  self.view.receivedContactRequestsModel().removeItemById(publicKey)
-  self.view.sentContactRequestsModel().removeItemById(publicKey)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().removeItemById(publicKey)
-  # self.view.sentButRejectedContactRequestsModel().removeItemById(publicKey)
-  self.view.blockedContactsModel().removeItemById(publicKey)
 
 proc removeIfExistsAndAddToAppropriateModel(self: Module, publicKey: string) =
   self.removeItemWithPubKeyFromAllModels(publicKey)
@@ -221,29 +193,20 @@ method contactUpdated*(self: Module, publicKey: string) =
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
-    let status = toOnlineStatus(s.statusType)
-    self.view.myMutualContactsModel().setOnlineStatus(s.publicKey, status)
-    self.view.contactsModel().setOnlineStatus(s.publicKey, status)
+    self.view.contactsModel().setOnlineStatus(s.publicKey, toOnlineStatus(s.statusType))
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
-  let displayName = contactDetails.dto.displayName
-  let ensName = contactDetails.dto.name
-  let localNickname = contactDetails.dto.localNickname
 
-  self.view.contactsModel().setName(publicKey, displayName, ensName, localNickname)
-  self.view.myMutualContactsModel().setName(publicKey, displayName, ensName, localNickname)
-  self.view.receivedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
-  self.view.sentContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
-  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
-  # self.view.sentButRejectedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
-  self.view.blockedContactsModel().setName(publicKey, displayName, ensName, localNickname)
+  self.view.contactsModel().setName(
+    publicKey,
+    contactDetails.dto.displayName,
+    contactDetails.dto.name,
+    contactDetails.dto.localNickname,
+  )
 
 method contactTrustStatusChanged*(self: Module, publicKey: string, trustStatus: TrustStatus) =
   self.view.contactsModel().updateTrustStatus(publicKey, trustStatus)
-  self.view.myMutualContactsModel().updateTrustStatus(publicKey, trustStatus)
-  self.view.blockedContactsModel().updateTrustStatus(publicKey, trustStatus)
 
 method markAsTrusted*(self: Module, publicKey: string): void =
   self.controller.markAsTrusted(publicKey)

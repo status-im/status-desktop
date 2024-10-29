@@ -165,8 +165,10 @@ QtObject:
     of ModelRole.IsCurrentUser:
       result = newQVariant(item.isCurrentUser)
     of ModelRole.DefaultDisplayName:
+      # TODO this is the same as preferred name
       result = newQVariant(item.defaultDisplayName)
     of ModelRole.OptionalName:
+      # This seems useless
       result = newQVariant(item.optionalName)
     of ModelRole.LastUpdated:
       result = newQVariant(item.lastUpdated)
@@ -183,6 +185,7 @@ QtObject:
     of ModelRole.IsContactRequestSent:
       result = newQVariant(item.isContactRequestSent)
     of ModelRole.IsSyncing:
+      # TODO not sure what that is and it's never used
       result = newQVariant(item.isSyncing)
     of ModelRole.IsRemoved:
       result = newQVariant(item.isRemoved)
@@ -237,10 +240,15 @@ QtObject:
 
   proc findIndexByPubKey(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
+      if self.items[i].pubKey == pubKey:
         return i
 
     return -1
+
+  proc getItemByPubKey*(self: Model, pubKey: string): UserItem =
+    for item in self.items:
+      if item.pubKey == pubKey:
+        return item
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
@@ -254,7 +262,6 @@ QtObject:
 
     self.itemChanged(pubKey)
 
-# TODO: rename to `containsItem`
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexByPubKey(id) != -1
 
@@ -384,6 +391,3 @@ QtObject:
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
-
-  proc containsItemWithPubKey*(self: Model, pubKey: string): bool =
-    return self.findIndexByPubKey(pubKey) != -1
