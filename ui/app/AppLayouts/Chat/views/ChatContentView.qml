@@ -43,7 +43,9 @@ ColumnLayout {
 
     property var emojiPopup
     property var stickersPopup
-    property UsersStore usersStore: UsersStore {}
+    property UsersStore usersStore: UsersStore {
+        chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
+    }
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -65,6 +67,7 @@ ColumnLayout {
     spacing: 0
 
     onChatContentModuleChanged: if (!!chatContentModule) {
+        root.usersStore.chatDetails = root.chatContentModule.chatDetails
         root.usersStore.usersModule = root.chatContentModule.usersModule
     }
 

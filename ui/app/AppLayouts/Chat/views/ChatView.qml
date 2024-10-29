@@ -177,22 +177,18 @@ StatusSectionLayout {
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
+            readonly property var usersStore: ChatStores.UsersStore {
+                usersModule: !!root.chatContentModule ? root.chatContentModule.usersModule : null
+                chatDetails: !!root.chatContentModule ? root.chatContentModule.chatDetails : null
+                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
+            }
+
             anchors.fill: parent
             store: root.rootStore
             utilsStore: root.utilsStore
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
-            usersModel: {
-                if (!root.chatContentModule || !root.chatContentModule.chatDetails) {
-                    return null
-                }
-                let isFullCommunityList = !root.chatContentModule.chatDetails.requiresPermissions
-                if (root.chatContentModule.chatDetails.belongsToCommunity && isFullCommunityList) {
-                    // Community channel with no permisisons. We can use the section's membersModel
-                    return root.rootStore.chatCommunitySectionModule.membersModel
-                }
-                return root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
-            }
+            usersModel: usersStore.usersModel
         }
     }
 
