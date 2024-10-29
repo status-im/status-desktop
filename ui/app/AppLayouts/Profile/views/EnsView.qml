@@ -6,6 +6,8 @@ import QtQml.StateMachine 1.14 as DSM
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -377,8 +379,15 @@ Item {
             onBackBtnClicked: back()
 
             onReleaseUsernameRequested: {
+                const name = RootStore.getNameForWalletAddress(senderAddress)
+                if (name === "") {
+                    Global.openPopup(noAccountPopupComponent)
+                    return
+                }
+
                 ensView.sendModalPopup.modalHeaderText = qsTr("Release your username")
                 ensView.sendModalPopup.interactive = false
+                ensView.sendModalPopup.preSelectedAccountAddress = senderAddress
                 ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
                 ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
                 ensView.sendModalPopup.preSelectedHoldingID = Constants.ethToken
@@ -400,6 +409,22 @@ Item {
                     done(ensView.selectedUsername)
                 }
             }
+        }
+    }
+
+    Component {
+        id: noAccountPopupComponent
+        StatusDialog {
+            title: qsTr("Release username")
+
+            StatusBaseText {
+                anchors.fill: parent
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.directColor1
+                text: qsTr("The account this username was bought with is no longer among active accounts.\nPlease add it and try again.")
+            }
+
+            standardButtons: Dialog.Ok
         }
     }
 
