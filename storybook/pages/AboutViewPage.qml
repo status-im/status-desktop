@@ -30,12 +30,17 @@ SplitView {
 
                 function getCurrentVersion() {
                     logs.logEvent("store::getCurrentVersion")
-                    return isProduction ? "0.13.2" : "45784cf0c"
+                    return isProduction ? "0.13.2" : "0.13.2-dev"
+                }
+
+                function getGitCommit() {
+                    logs.logEvent("store::getGitCommit")
+                    return "92b88e8a3e1d48f2c39d1db6e4d577ebbe21f7a9"
                 }
 
                 function getStatusGoVersion() {
                     logs.logEvent("store::getStatusGoVersion")
-                    return "0.162.9"
+                    return "v0.162.9"
                 }
 
                 function qtRuntimeVersion() {
@@ -44,10 +49,10 @@ SplitView {
 
                 function getReleaseNotes() {
                     logs.logEvent("store::getReleaseNotes")
-                    const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1" :
-                                                "https://github.com/status-im/status-desktop/commit/%1"
+                    const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
+                                                "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
 
-                    openLink(link.arg(getCurrentVersion()))
+                    openLink(link)
                 }
 
                 function openLink(url) {

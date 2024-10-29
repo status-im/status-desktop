@@ -47,6 +47,9 @@ QtObject:
   proc getAppVersion*(self: Service): string =
     return APP_VERSION
 
+  proc getGitCommit*(self: Service): string =
+    return GIT_COMMIT
+
   proc getNodeVersion*(self: Service): string =
     try:
       return backend.clientVersion().result.getStr

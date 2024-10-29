@@ -68,7 +68,7 @@ SettingsContentBase {
                 font.pixelSize: 22
                 font.bold: true
                 normalColor: Theme.palette.directColor1
-                text: (root.store.isProduction ? "" : "git:") + root.store.getCurrentVersion()
+                text: root.store.getCurrentVersion()
                 onClicked: root.store.getReleaseNotes()
             }
 
@@ -84,7 +84,7 @@ SettingsContentBase {
                 font.pixelSize: 17
                 font.bold: true
                 normalColor: Theme.palette.directColor1
-                text: root.store.getStatusGoVersion()
+                text: root.store.getStatusGoVersion().replace(/^v/, '')
                 onClicked: root.store.openLink("https://github.com/status-im/status-go/tree/%1".arg(root.store.getStatusGoVersion()))
             }
 

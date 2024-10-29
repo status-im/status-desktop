@@ -49,6 +49,9 @@ method viewDidLoad*(self: Module) =
 method getAppVersion*(self: Module): string =
   return self.controller.getAppVersion()
 
+method getGitCommit*(self: Module): string =
+  return self.controller.getGitCommit()
+
 method getNodeVersion*(self: Module): string =
   return self.controller.getNodeVersion()
 

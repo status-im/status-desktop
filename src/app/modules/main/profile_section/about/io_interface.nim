@@ -14,6 +14,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getAppVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getGitCommit*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getNodeVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

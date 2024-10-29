@@ -236,8 +236,7 @@ endif
 NIM_PARAMS += --outdir:./bin
 
 # App version
-VERSIONFILE=VERSION
-DESKTOP_VERSION=`cat $(VERSIONFILE)`
+DESKTOP_VERSION=`git describe --tags`
 STATUSGO_VERSION=`(cd vendor/status-go; git describe --tags --abbrev=0)`
 NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 NIM_PARAMS += -d:STATUSGO_VERSION="$(STATUSGO_VERSION)"
