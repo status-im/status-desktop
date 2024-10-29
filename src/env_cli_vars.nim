@@ -1,4 +1,4 @@
-import os, sequtils, strutils, stew/shims/strformat, chronicles
+import os, sequtils, strutils, chronicles
 
 import app/global/feature_flags
 

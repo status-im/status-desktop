@@ -133,7 +133,11 @@ QtObject {
     }
 
     function getCurrentVersion() {
-        return aboutModuleInst.getCurrentVersion()
+        return aboutModuleInst.getCurrentVersion().replace(/^v/, '')
+    }
+
+    function getGitCommit() {
+        return aboutModuleInst.getGitCommit()
     }
 
     function getStatusGoVersion() {

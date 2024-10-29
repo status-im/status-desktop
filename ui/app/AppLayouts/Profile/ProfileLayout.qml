@@ -401,6 +401,10 @@ StatusSectionLayout {
                         return root.store.getCurrentVersion()
                     }
 
+                    function getGitCommit() {
+                        return root.store.getGitCommit()
+                    }
+
                     function getStatusGoVersion() {
                         return root.store.getStatusGoVersion()
                     }
@@ -410,10 +414,10 @@ StatusSectionLayout {
                     }
 
                     function getReleaseNotes() {
-                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1" :
-                                                    "https://github.com/status-im/status-desktop/commit/%1"
+                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1".arg(getCurrentVersion()) :
+                                                    "https://github.com/status-im/status-desktop/commit/%1".arg(getGitCommit())
 
-                        openLink(link.arg(getCurrentVersion()))
+                        openLink(link)
                     }
 
                     function openLink(url) {

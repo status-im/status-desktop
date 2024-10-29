@@ -1,3 +1,5 @@
+import std/strformat
+
 include env_cli_vars
 
 ## Added a constant here cause it's easier to check the app how it behaves
@@ -12,7 +14,7 @@ const STATUSGO_VERSION* {.strdefine.} = "0.0.0"
 # This is changed during compilation by executing git command
 const GIT_COMMIT* {.strdefine.} = ""
 
-const APP_VERSION* = if defined(production): DESKTOP_VERSION else: fmt("{GIT_COMMIT}")
+const APP_VERSION* = if defined(production): DESKTOP_VERSION else: fmt"{DESKTOP_VERSION}-{GIT_COMMIT}"
 
 const sep* = when defined(windows): "\\" else: "/"
 
