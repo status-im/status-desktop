@@ -10,7 +10,6 @@ import StatusQ.Core.Theme 0.1
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -20,7 +19,6 @@ Item {
     implicitHeight: (title.height + contactsList.height)
 
     property var contactsModel
-    property SharedStores.UtilsStore utilsStore
 
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
 
@@ -71,13 +69,12 @@ Item {
                 return true
             }
 
-            function searchPredicate(name, pubkey) {
+            function searchPredicate(name, pubkey, compressedPubKey) {
                 const lowerCaseSearchString = root.searchString.toLowerCase()
-                const compressedPubkey = root.utilsStore.getCompressedPk(pubkey)
 
                 return name.toLowerCase().includes(lowerCaseSearchString) ||
                        pubkey.toLowerCase().includes(lowerCaseSearchString) ||
-                       compressedPubkey.toLowerCase().includes(lowerCaseSearchString)
+                       compressedPubKey.toLowerCase().includes(lowerCaseSearchString)
             }
 
             filters: [
@@ -85,12 +82,13 @@ Item {
                     expression: filteredModel.panelUsagePredicate(model.isVerified)
                     expectedRoles: ["isVerified"]
                 },
-                ExpressionFilter {
+                FastExpressionFilter {
                     enabled: root.searchString !== ""
                     expression: {
                         root.searchString // ensure expression is reevaluated when searchString changes
-                        return filteredModel.searchPredicate(model.displayName, model.pubKey)
+                        return filteredModel.searchPredicate(model.displayName, model.pubKey, model.compressedPubKey)
                     }
+                    expectedRoles: ["displayName", "pubKey", "compressedPubKey"]
                 }
             ]
 

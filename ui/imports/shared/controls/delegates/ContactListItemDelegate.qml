@@ -15,7 +15,7 @@ StatusMemberListItem {
 
     readonly property string _pubKey: model.pubKey // expose uncompressed pubkey
 
-    pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
+    pubKey: model.isEnsVerified ? "" : model.compressedPubKey
     nickName: model.localNickname
     userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
     isVerified: model.isVerified

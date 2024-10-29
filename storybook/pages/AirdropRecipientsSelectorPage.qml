@@ -7,55 +7,11 @@ import AppLayouts.Communities.controls 1.0
 import Models 1.0
 import Storybook 1.0
 
-import utils 1.0
-
 
 SplitView {
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
-
     orientation: Qt.Vertical
 
     Logs { id: logs }
-
-    QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "compressed_" + publicKey
-        }
-
-        function getColorId(publicKey) {
-            return Math.floor(Math.random() * 10)
-        }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            globalUtilsReady = true
-
-        }
-        Component.onDestruction: {
-            globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    QtObject {
-        function getContactDetailsAsJson() {
-            return JSON.stringify({ ensVerified: true })
-        }
-
-        Component.onCompleted: {
-            mainModuleReady = true
-            Utils.mainModuleInst = this
-        }
-        Component.onDestruction: {
-            mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
-    }
 
     Pane {
         SplitView.fillWidth: true
@@ -84,6 +40,7 @@ SplitView {
                     localNickname: "",
                     onlineStatus: 1,
                     pubKey: key,
+                    compressedPubKey: "compressed_" + key,
                     isVerified: true,
                     isUntrustworthy: false
                 })
@@ -95,41 +52,36 @@ SplitView {
             }
         }
 
-        Loader {
-            id: loader
+        AirdropRecipientsSelector {
+            id: selector
 
             anchors.centerIn: parent
-            active: globalUtilsReady && mainModuleReady
 
-            sourceComponent: AirdropRecipientsSelector {
-                id: selector
+            addressesModel: addresses
+            loadingAddresses: timer.running
+            membersModel: members
+            showAddressesInputWhenEmpty:
+                showAddressesInputWhenEmptyCheckBox.checked
 
-                addressesModel: addresses
-                loadingAddresses: timer.running
-                membersModel: members
-                showAddressesInputWhenEmpty:
-                    showAddressesInputWhenEmptyCheckBox.checked
+            infiniteMaxNumberOfRecipients:
+                infiniteMaxNumberOfRecipientsCheckBox.checked
 
-                infiniteMaxNumberOfRecipients:
-                    infiniteMaxNumberOfRecipientsCheckBox.checked
+            maxNumberOfRecipients: maxNumberOfRecipientsSpinBox.value
 
-                maxNumberOfRecipients: maxNumberOfRecipientsSpinBox.value
+            onAddAddressesRequested: timer.start()
+            onRemoveAddressRequested: addresses.remove(index)
+            onRemoveMemberRequested: members.remove(index)
 
-                onAddAddressesRequested: timer.start()
-                onRemoveAddressRequested: addresses.remove(index)
-                onRemoveMemberRequested: members.remove(index)
+            Timer {
+                id: timer
 
-                Timer {
-                    id: timer
+                interval: 1000
 
-                    interval: 1000
-
-                    onTriggered: {
-                        addresses.addAddressesFromString(
-                                    selector.addressesInputText)
-                        selector.clearAddressesInput()
-                        selector.positionAddressesListAtEnd()
-                    }
+                onTriggered: {
+                    addresses.addAddressesFromString(
+                                selector.addressesInputText)
+                    selector.clearAddressesInput()
+                    selector.positionAddressesListAtEnd()
                 }
             }
         }

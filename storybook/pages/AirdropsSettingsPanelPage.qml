@@ -23,14 +23,6 @@ SplitView {
     Logs { id: logs }
 
     QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "compressed_" + publicKey
-        }
-
         function getColorId(publicKey) {
             return Math.floor(Math.random() * 10)
         }
@@ -103,6 +95,8 @@ SplitView {
                 // Models
                 assetsModel: AssetsModel {}
                 collectiblesModel: ListModel {}
+
+                enabledChainIds: "1"
 
                 CollectiblesModel {
                     id: collectiblesModel

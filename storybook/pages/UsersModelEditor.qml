@@ -18,6 +18,7 @@ Item {
          const pubKey = "0x%1".arg(seed)
          return {
              pubKey: pubKey,
+             compressedPubKey: "compressed_" + pubKey,
              displayName: seed%8 ? "_user%1".arg(seed) : "",
              preferredDisplayName: "user%1".arg(seed),
              localNickname: seed%3 ? "" : "nickname%1".arg(seed),

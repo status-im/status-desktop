@@ -133,45 +133,7 @@ SplitView {
             timer.start()
         }
     }
-    QtObject {
-        id: utilsMock
-
-        function getContactDetailsAsJson(arg1, arg2) {
-            return JSON.stringify({
-                displayName: "Mock user",
-                displayIcon: Theme.png("tokens/AST"),
-                publicKey: 123456789,
-                name: "",
-                ensVerified: false,
-                alias: "",
-                lastUpdated: 0,
-                lastUpdatedLocally: 0,
-                localNickname: "",
-                thumbnailImage: "",
-                largeImage: "",
-                isContact: false,
-                isAdded: false,
-                isBlocked: false,
-                requestReceived: false,
-                isSyncing: false,
-                removed: false,
-                trustStatus: Constants.trustStatus.unknown,
-                verificationStatus: Constants.verificationStatus.unverified,
-            })
-        }
-
-        function getCommunityDataFromSharedLink(link) {
-            return d.knownCommunityDetails
-        }
-
-        function getCompressedPk(publicKey) {
-            return d.knownCommunityCompressedPublicKey
-        }
-
-        signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
-
-        // sharedUrlsModuleInst
-
+    QtObject {        // sharedUrlsModuleInst
         function parseCommunitySharedUrl(link) {
             if (link === d.knownCommunityLink)
                 return JSON.stringify({ communityId: d.knownCommunityPublicKey })
@@ -182,13 +144,11 @@ SplitView {
 
         Component.onCompleted: {
             Utils.sharedUrlsModuleInst = this
-            Utils.globalUtilsInst = this
             d.utilsReady = true
         }
         Component.onDestruction: {
             d.utilsReady = false
             Utils.sharedUrlsModuleInst = {}
-            Utils.globalUtilsInst = {}
         }
     }
 

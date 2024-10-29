@@ -110,7 +110,7 @@ Item {
                 width: ListView.view.width
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                pubKey: model.isEnsVerified ? "" : model.compressedKey
+                pubKey: model.isEnsVerified ? "" : model.compressedPubKey
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy

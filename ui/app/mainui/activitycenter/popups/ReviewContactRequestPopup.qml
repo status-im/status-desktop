@@ -17,6 +17,7 @@ StatusDialog {
     id: root
 
     property StatusMessageDetails messageDetails
+    property string compressedPubKey
     property double timestamp: 0
 
     signal accepted
@@ -56,7 +57,7 @@ StatusDialog {
                 sender: root.messageDetails.sender
                 amISender: root.messageDetails.amISender
                 messageOriginInfo: root.messageDetails.messageOriginInfo
-                tertiaryDetail: Utils.getCompressedPk(sender.id)
+                tertiaryDetail: root.compressedPubKey
                 timestamp: root.timestamp
             }
 

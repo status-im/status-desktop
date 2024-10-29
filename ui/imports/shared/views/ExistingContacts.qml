@@ -82,7 +82,7 @@ Item {
 
         delegate: StatusMemberListItem {
             width: contactListView.availableWidth
-            pubKey: model.isEnsVerified ? "" : model.compressedKey
+            pubKey: model.isEnsVerified ? "" : model.compressedPubKey
             isContact: model.isContact
             status: model.onlineStatus
             height: visible ? implicitHeight : 0

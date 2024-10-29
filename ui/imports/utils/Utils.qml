@@ -723,6 +723,7 @@ QtObject {
             colorHash: "",
             displayName: "",
             publicKey: publicKey,
+            compressedPublicKey: "",
             name: "",
             ensVerified: false,
             alias: "",
@@ -824,7 +825,8 @@ QtObject {
         }
     }
 
-    function getCompressedPk(publicKey) {
+    // TODO: remove when getElidedCompressedPk moved to utilsStore
+    function _getCompressedPk(publicKey) {
         if (publicKey === "") {
             return ""
         }
@@ -837,7 +839,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let compressedPk = getCompressedPk(publicKey)
+        let compressedPk = _getCompressedPk(publicKey)
         return getElidedPk(compressedPk)
     }
 

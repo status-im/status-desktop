@@ -190,18 +190,11 @@ StatusSectionLayout {
             usersModel: SortFilterProxyModel {
                 sourceModel: usersStore.usersModel
 
-                proxyRoles: [
-                    FastExpressionRole {
-                        name: "emojiHash"
-                        expression: root.utilsStore.getEmojiHash(model.pubKey)
-                        expectedRoles: ["pubKey"]
-                    },
-                    FastExpressionRole {
-                        name: "compressedKey"
-                        expression: root.utilsStore.getCompressedPk(model.pubKey)
-                        expectedRoles: ["pubKey"]
-                    }
-                ]
+                proxyRoles: FastExpressionRole {
+                    name: "emojiHash"
+                    expression: root.utilsStore.getEmojiHash(model.pubKey)
+                    expectedRoles: ["pubKey"]
+                }
             }
         }
     }

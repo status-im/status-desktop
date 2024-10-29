@@ -23,14 +23,10 @@ SplitView {
     QtObject {
         function getColorId(publicKey) { return 4 }
 
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
         function getColorHashAsJson(publicKey) {
             return JSON.stringify([{4: 0, segmentLength: 1},
                                    {5: 19, segmentLength: 2}])
         }
-
-        function isCompressedPubKey(publicKey) { return true }
 
         Component.onCompleted: {
             Utils.globalUtilsInst = this
@@ -51,6 +47,10 @@ SplitView {
             id: previewCard
 
             utilsStore: UtilsStore {
+                function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
+
+                function isCompressedPubKey(publicKey) { return true }
+
                 function getEmojiHash(publicKey) {
                     return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
                 }

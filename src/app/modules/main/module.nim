@@ -43,6 +43,7 @@ import ../../../app_service/service/wallet_account/service as wallet_account_ser
 import ../../../app_service/service/provider/service as provider_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/accounts/service as accounts_service
+import ../../../app_service/service/accounts/utils as accounts_utils
 import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/about/service as about_service
@@ -1137,6 +1138,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     # contact dto props
     "displayName": contactDetails.dto.displayName,
     "publicKey": contactDetails.dto.id,
+    "compressedPublicKey": accounts_utils.compressPk(contactDetails.dto.id),
     "name": contactDetails.dto.name,
     "ensVerified": contactDetails.dto.ensVerified,
     "alias": contactDetails.dto.alias,

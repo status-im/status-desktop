@@ -61,6 +61,7 @@ ActivityNotificationMessage {
         onDetailsClicked: {
             Global.openPopup(reviewContactRequestPopupComponent, {
                 messageDetails: root.messageDetails,
+                compressedPubKey: contactDetails ? contactDetails.compressedPublicKey : "",
                 timestamp: notification ? notification.timestamp : 0
             })
         }

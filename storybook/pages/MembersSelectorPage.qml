@@ -18,14 +18,6 @@ SplitView {
     property bool mainModuleReady: false
 
     QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "123456789"
-        }
-
         function getColorHashAsJson(publicKey) {
             return JSON.stringify([{colorId: 0, segmentLength: 1},
                                    {colorId: 19, segmentLength: 2}])
@@ -33,10 +25,6 @@ SplitView {
 
         function getColorId(publicKey) {
             return Math.floor(Math.random() * 10)
-        }
-
-        function isEnsVerified(publicKey)  {
-            return false
         }
 
         Component.onCompleted: {
@@ -132,6 +120,7 @@ SplitView {
                 const obj = temporaryModel.get(i)
                 users.push({
                                pubKey: obj.pubKey,
+                               compressedPubKey: "compressed_" + obj.pubKey,
                                displayName: obj.displayName,
                                localNickname: "",
                                alias: "three word name(%1)".arg(obj.pubKey),
@@ -191,6 +180,10 @@ SplitView {
                         rootStore: rootStoreMock
                         utilsStore: SharedStores.UtilsStore {
                             function isChatKey() {
+                                return true
+                            }
+
+                            function isCompressedPubKey(publicKey) {
                                 return true
                             }
                         }

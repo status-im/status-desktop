@@ -3,6 +3,8 @@ import NimQml
 import ../../constants as main_constants
 import local_account_settings
 
+import ../../app_service/service/accounts/utils
+
 QtObject:
   type UserProfile* = ref object of QObject
     localAccountSettings: LocalAccountSettings
@@ -45,6 +47,11 @@ QtObject:
     self.pubKey
   QtProperty[string] pubKey:
     read = getPubKey
+
+  proc getCompressedPubKey*(self: UserProfile): string {.slot.} =
+    compressPk(self.pubKey)
+  QtProperty[string] compressedPubKey:
+    read = getCompressedPubKey
 
   proc getIsKeycardUser*(self: UserProfile): bool {.slot.} =
     self.isKeycardUser
