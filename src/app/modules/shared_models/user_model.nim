@@ -2,12 +2,14 @@ import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 import user_item
 
 import ../../../app_service/common/types
+import ../../../app_service/service/accounts/utils
 import contacts_utils
 import model_utils
 
 type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
+    CompressedPubKey
     DisplayName
     PreferredDisplayName
     EnsName
@@ -83,6 +85,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.PubKey.int: "pubKey",
+      ModelRole.CompressedPubKey.int: "compressedPubKey",
       ModelRole.DisplayName.int: "displayName",
       ModelRole.PreferredDisplayName.int: "preferredDisplayName",
       ModelRole.EnsName.int: "ensName",
@@ -126,6 +129,8 @@ QtObject:
     case enumRole:
     of ModelRole.PubKey:
       result = newQVariant(item.pubKey)
+    of ModelRole.CompressedPubKey:
+      result = newQVariant(compressPk(item.pubKey))
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
     of ModelRole.PreferredDisplayName:

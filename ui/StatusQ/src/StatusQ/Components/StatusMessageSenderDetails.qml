@@ -5,6 +5,7 @@ QtObject {
     id: root
 
     property string id: ""
+    property string compressedPubKey: ""
     property string displayName: ""
     property string secondaryName: ""
 

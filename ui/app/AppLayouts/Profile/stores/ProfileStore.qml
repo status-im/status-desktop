@@ -9,6 +9,7 @@ QtObject {
     property var profileModule
 
     property string pubkey: userProfile.pubKey
+    property string compressedPubKey: userProfile.compressedPubKey
     property string name: userProfile.name
     property string username: userProfile.username
     property string displayName: userProfile.displayName

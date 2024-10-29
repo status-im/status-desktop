@@ -48,7 +48,7 @@ Page {
             }
             compressedKeyGetter: function(pubKey) {
                 //for simulation purposes only, in real app
-                //this would be Utils.getCompressedPk(pubKey);
+                //this would be utilsStore.getCompressedPk(pubKey);
                 var possibleCharacters = pubKey.split('');
                 var randomStringLength = 12; // assuming you want random strings of 12 characters
                 var randomString = [];

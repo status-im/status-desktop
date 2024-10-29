@@ -106,7 +106,7 @@ ItemDelegate {
             hoverEnabled: false
             nickName: root.contactDetails.localNickname
             userName: ProfileUtils.displayName("", root.contactDetails.ensName, root.contactDetails.displayName, root.contactDetails.alias)
-            pubKey: root.contactDetails.isEnsVerified ? "" : Utils.getCompressedPk(root.contactId)
+            pubKey: root.contactDetails.isEnsVerified ? "" : root.contactDetails.compressedPublicKey
             isContact: root.contactDetails.isContact
             isVerified: root.contactDetails.trustStatus === Constants.trustStatus.trusted
             isUntrustworthy: root.contactDetails.trustStatus === Constants.trustStatus.untrustworthy

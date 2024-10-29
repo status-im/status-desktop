@@ -56,7 +56,7 @@ RowLayout {
             sender: root.messageDetails.sender
             amISender: root.messageDetails.amISender
             messageOriginInfo: root.messageDetails.messageOriginInfo
-            tertiaryDetail: sender.isEnsVerified ? "" : Utils.getCompressedPk(sender.id)
+            tertiaryDetail: sender.isEnsVerified ? "" : root.messageDetails.sender.compressedPubKey
             timestamp: root.timestamp
             onClicked: root.openProfilePopup()
         }

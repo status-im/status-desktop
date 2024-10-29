@@ -42,7 +42,6 @@ SplitView {
 
     // globalUtilsInst mock
     QtObject {
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
         function getColorHashAsJson(publicKey) {
             return JSON.stringify([{"segmentLength":1,"colorId":12},{"segmentLength":5,"colorId":18},
                                    {"segmentLength":3,"colorId":25},{"segmentLength":3,"colorId":23},
@@ -51,7 +50,6 @@ SplitView {
                                    {"segmentLength":4,"colorId":28},{"segmentLength":1,"colorId":17},
                                    {"segmentLength":2,"colorId":2}])
         }
-        function isCompressedPubKey(publicKey) { return true }
         function getColorId(publicKey) { return Math.floor(Math.random() * 10) }
 
         Component.onCompleted: {
@@ -71,6 +69,7 @@ SplitView {
                 displayName: "ArianaP",
                 displayIcon: "",
                 publicKey: publicKey,
+                compressedPublicKey: "compressed",
                 name: "",
                 alias: "",
                 localNickname: "",

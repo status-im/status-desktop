@@ -15,49 +15,7 @@ SplitView {
     orientation: Qt.Vertical
     SplitView.fillWidth: true
 
-    property bool globalUtilsReady: false
-    property bool mainModuleReady: false
-
     Logs { id: logs }
-
-    QtObject {
-        function isCompressedPubKey(publicKey) {
-            return true
-        }
-
-        function getCompressedPk(publicKey) {
-            return "compressed_" + publicKey
-        }
-
-        function getColorId(publicKey) {
-            return Math.floor(Math.random() * 10)
-        }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-            globalUtilsReady = true
-
-        }
-        Component.onDestruction: {
-            globalUtilsReady = false
-            Utils.globalUtilsInst = {}
-        }
-    }
-
-    QtObject {
-        function getContactDetailsAsJson() {
-            return JSON.stringify({ ensVerified: true })
-        }
-
-        Component.onCompleted: {
-            mainModuleReady = true
-            Utils.mainModuleInst = this
-        }
-        Component.onDestruction: {
-            mainModuleReady = false
-            Utils.mainModuleInst = {}
-        }
-    }
 
     ListModel {
         id: members
@@ -109,14 +67,13 @@ SplitView {
         }
 
         function requestMockedFees(contractKeysAndAmounts) {
-            if (!loader.item)
+            if (!contractKeysAndAmounts)
                 return
 
-            const view = loader.item
-            view.feesAvailable = false
-            view.totalFeeText = ""
-            view.feeErrorText = ""
-            view.feesPerSelectedContract = []
+            editAirdropView.feesAvailable = false
+            editAirdropView.totalFeeText = ""
+            editAirdropView.feeErrorText = ""
+            editAirdropView.feesPerSelectedContract = []
 
             const fees = []
 
@@ -133,14 +90,10 @@ SplitView {
         }
 
         onTriggered: {
-            if (!loader.item)
-                return
-
-            const view = loader.item
-            view.totalFeeText = createAmount(0.0002120115 * feesPerContract.length, "ETH", 4) + "(" ,createAmount(123.15 * feesPerContract.length, "USD", 2),"USD)"
-            view.feeErrorText = feesErrorsButtonGroup.checkedButton.code ? feesErrorsButtonGroup.checkedButton.text : ""
-            view.feesAvailable = true
-            view.feesPerSelectedContract = feesCalculationTimer.feesPerContract
+            editAirdropView.totalFeeText = createAmount(0.0002120115 * feesPerContract.length, "ETH", 4) + "(" ,createAmount(123.15 * feesPerContract.length, "USD", 2),"USD)"
+            editAirdropView.feeErrorText = feesErrorsButtonGroup.checkedButton.code ? feesErrorsButtonGroup.checkedButton.text : ""
+            editAirdropView.feesAvailable = true
+            editAirdropView.feesPerSelectedContract = feesCalculationTimer.feesPerContract
         }
     }
 
@@ -148,155 +101,149 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        Loader {
-            id: loader
+        EditAirdropView {
+            id: editAirdropView
 
             anchors.fill: parent
-            active: globalUtilsReady && mainModuleReady
 
-            sourceComponent: EditAirdropView {
-                id: editAirdropView
+            CollectiblesModel {
+                id: collectiblesModel
+            }
 
-                CollectiblesModel {
-                    id: collectiblesModel
-                }
+            SortFilterProxyModel {
+                id: collectiblesModelWithSupply
 
-                SortFilterProxyModel {
-                    id: collectiblesModelWithSupply
+                sourceModel: collectiblesModel
 
-                    sourceModel: collectiblesModel
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "supply"
+                        expression: ((model.index + 1) * 115).toString()
+                    },
+                    ExpressionRole {
+                        name: "infiniteSupply"
+                        expression: !(model.index % 4)
+                    },
+                    ExpressionRole {
+                        name: "accountName"
+                        expression: "StatusAccount"
+                    },
+                    ExpressionRole {
+                        name: "contractUniqueKey"
+                        expression: "contractUniqueKey_" + model.index
+                    },
+                    ExpressionRole {
+                        name: "chainName"
+                        expression: model.index ? "Optimism" : "Arbitrum"
+                    },
+                    ExpressionRole {
+                        readonly property string icon1: "network/Network=Optimism"
+                        readonly property string icon2: "network/Network=Arbitrum"
 
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "supply"
-                            expression: ((model.index + 1) * 115).toString()
-                        },
-                        ExpressionRole {
-                            name: "infiniteSupply"
-                            expression: !(model.index % 4)
-                        },
-                        ExpressionRole {
-                            name: "accountName"
-                            expression: "StatusAccount"
-                        },
-                        ExpressionRole {
-                            name: "contractUniqueKey"
-                            expression: "contractUniqueKey_" + model.index
-                        },
-                        ExpressionRole {
-                            name: "chainName"
-                            expression: model.index ? "Optimism" : "Arbitrum"
-                        },
-                        ExpressionRole {
-                            readonly property string icon1: "network/Network=Optimism"
-                            readonly property string icon2: "network/Network=Arbitrum"
-
-                            name: "chainIcon"
-                            expression: model.index ? icon1 : icon2
-                        }
-                    ]
-
-                    filters: ValueFilter {
-                        roleName: "category"
-                        value: TokenCategories.Category.Community
+                        name: "chainIcon"
+                        expression: model.index ? icon1 : icon2
                     }
+                ]
 
-                    Component.onCompleted: {
-                        Qt.callLater(() => editAirdropView.collectiblesModel = this)
+                filters: ValueFilter {
+                    roleName: "category"
+                    value: TokenCategories.Category.Community
+                }
+
+                Component.onCompleted: {
+                    Qt.callLater(() => editAirdropView.collectiblesModel = this)
+                }
+            }
+
+            AssetsModel {
+                id: assetsModel
+            }
+
+            SortFilterProxyModel {
+                id: assetsModelWithSupply
+
+                sourceModel: assetsModel
+
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "supply"
+                        expression: ((model.index + 1) * 258).toString()
+                    },
+                    ExpressionRole {
+                        name: "infiniteSupply"
+                        expression: !(model.index % 4)
+                    },
+                    ExpressionRole {
+                        name: "accountName"
+                        expression: "StatusAccount"
+                    },
+                    ExpressionRole {
+                        name: "contractUniqueKey"
+                        expression: "contractUniqueKey_" + model.index
+                    },
+                    ExpressionRole {
+                        name: "chainName"
+                        expression: model.index ? "Ethereum Mainnet" : "Sepolia"
+                    },
+                    ExpressionRole {
+                        readonly property string icon1: "network/Network=Ethereum"
+                        readonly property string icon2: "network/Network=Testnet"
+
+                        name: "chainIcon"
+                        expression: model.index ? icon1 : icon2
                     }
+                ]
+
+                filters: ValueFilter {
+                    roleName: "category"
+                    value: TokenCategories.Category.Community
                 }
 
-                AssetsModel {
-                    id: assetsModel
+                Component.onCompleted: {
+                    Qt.callLater(() => editAirdropView.assetsModel = this)
                 }
+            }
 
-                SortFilterProxyModel {
-                    id: assetsModelWithSupply
+            assetsModel: AssetsModel {}
+            collectiblesModel: CollectiblesModel {}
+            membersModel: members
+            totalFeeText: ""
+            feeErrorText: ""
+            feesPerSelectedContract: []
+            feesAvailable: false
 
-                    sourceModel: assetsModel
+            onShowingFeesChanged: {
+                feesCalculationTimer.requestMockedFees(editAirdropView.selectedContractKeysAndAmounts)
+            }
 
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "supply"
-                            expression: ((model.index + 1) * 258).toString()
-                        },
-                        ExpressionRole {
-                            name: "infiniteSupply"
-                            expression: !(model.index % 4)
-                        },
-                        ExpressionRole {
-                            name: "accountName"
-                            expression: "StatusAccount"
-                        },
-                        ExpressionRole {
-                            name: "contractUniqueKey"
-                            expression: "contractUniqueKey_" + model.index
-                        },
-                        ExpressionRole {
-                            name: "chainName"
-                            expression: model.index ? "Ethereum Mainnet" : "Sepolia"
-                        },
-                        ExpressionRole {
-                            readonly property string icon1: "network/Network=Ethereum"
-                            readonly property string icon2: "network/Network=Testnet"
-
-                            name: "chainIcon"
-                            expression: model.index ? icon1 : icon2
-                        }
-                    ]
-
-                    filters: ValueFilter {
-                        roleName: "category"
-                        value: TokenCategories.Category.Community
-                    }
-
-                    Component.onCompleted: {
-                        Qt.callLater(() => editAirdropView.assetsModel = this)
-                    }
+            accountsModel: ListModel {
+                ListElement {
+                    name: "Test account"
+                    emoji: "😋"
+                    address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                    color: "red"
                 }
-
-                assetsModel: AssetsModel {}
-                collectiblesModel: CollectiblesModel {}
-                membersModel: members
-                totalFeeText: ""
-                feeErrorText: ""
-                feesPerSelectedContract: []
-                feesAvailable: false
-
-                onShowingFeesChanged: {
-                    feesCalculationTimer.requestMockedFees(loader.item.selectedContractKeysAndAmounts)
+                ListElement {
+                    name: "Another account - generated"
+                    emoji: "🚗"
+                    address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
+                    color: "blue"
                 }
+            }
 
-                accountsModel: ListModel {
-                    ListElement {
-                        name: "Test account"
-                        emoji: "😋"
-                        address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
-                        color: "red"
-                    }
+            communityDetails: QtObject {
+                readonly property string name: "Socks"
+                readonly property string id: "SOCKS"
+                readonly property string image: ModelsData.icons.socks
+                readonly property string color: "red"
+                readonly property bool owner: true
+            }
 
-                    ListElement {
-                        name: "Another account - generated"
-                        emoji: "🚗"
-                        address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
-                        color: "blue"
-                    }
-                }
-
-                communityDetails: QtObject {
-                    readonly property string name: "Socks"
-                    readonly property string id: "SOCKS"
-                    readonly property string image: ModelsData.icons.socks
-                    readonly property string color: "red"
-                    readonly property bool owner: true
-                }
-
-                onAirdropClicked: {
-                    logs.logEvent("EditAirdropView::airdropClicked",
-                                  ["airdropTokens", "addresses",
-                                   "membersPubKeys", "feeAccountAddress"],
-                                  arguments)
-                }
+            onAirdropClicked: {
+                logs.logEvent("EditAirdropView::airdropClicked",
+                              ["airdropTokens", "addresses",
+                               "membersPubKeys", "feeAccountAddress"],
+                              arguments)
             }
         }
     }
@@ -323,10 +270,7 @@ SplitView {
 
                 buttons: feesErrorsRow.children
                 onCheckedButtonChanged: {
-                    if(!loader.item)
-                        return
-
-                    feesCalculationTimer.requestMockedFees(loader.item.selectedContractKeysAndAmounts)
+                    feesCalculationTimer.requestMockedFees(editAirdropView.selectedContractKeysAndAmounts)
                 }
             }
 
