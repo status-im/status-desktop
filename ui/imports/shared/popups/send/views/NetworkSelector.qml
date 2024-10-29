@@ -129,7 +129,7 @@ Item {
                     root.reCalculateSuggestedRoute()
                 }
 
-                showBetaTag: root.bestRoutes.count > 1
+                showBetaTag: !!root.bestRoutes && root.bestRoutes.count > 1
             }
         }
 
