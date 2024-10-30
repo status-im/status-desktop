@@ -26,10 +26,16 @@ QtObject:
   proc delete*(self: Controller) =
     self.QObject.delete
 
-  proc dappRequestsToConnect*(self: Controller, requestId: string, payload: string) {.signal.}
-  proc dappValidatesTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
-  proc dappGrantDAppPermission*(self: Controller, payload: string) {.signal.}
-  proc dappRevokeDAppPermission*(self: Controller, payload: string) {.signal.}
+  proc connectRequested*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc connected*(self: Controller, payload: string) {.signal.}
+  proc disconnected*(self: Controller, payload: string) {.signal.}
+
+  proc signRequested*(self: Controller, requestId: string, payload: string) {.signal.}
+  proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
+  proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
+
+  proc approveTransactionResponse*(self: Controller, requestId: string, error: bool) {.signal.}
+  proc rejectTransactionResponse*(self: Controller, requestId: string, error: bool) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -51,7 +57,7 @@ QtObject:
         "url": params.url,
       }
 
-      controller.dappRequestsToConnect(params.requestId, dappInfo.toJson())
+      controller.connectRequested(params.requestId, dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION) do(e: Args):
       let params = ConnectorSendTransactionSignal(e)
@@ -63,7 +69,7 @@ QtObject:
         "txArgs": params.txArgs,
       }
 
-      controller.dappValidatesTransaction(params.requestId, dappInfo.toJson())
+      controller.signRequested(params.requestId, dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION) do(e: Args):
       let params = ConnectorGrantDAppPermissionSignal(e)
@@ -71,9 +77,11 @@ QtObject:
         "icon": params.iconUrl,
         "name": params.name,
         "url": params.url,
+        "chains": params.chains,
+        "sharedAccount": params.sharedAccount,
       }
 
-      controller.dappGrantDAppPermission(dappInfo.toJson())
+      controller.connected(dappInfo.toJson())
 
     result.events.on(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION) do(e: Args):
       let params = ConnectorRevokeDAppPermissionSignal(e)
@@ -83,7 +91,7 @@ QtObject:
         "url": params.url,
       }
 
-      controller.dappRevokeDAppPermission(dappInfo.toJson())
+      controller.disconnected(dappInfo.toJson())
 
     result.QObject.setup
 
@@ -97,20 +105,27 @@ QtObject:
     except JsonParsingError:
       raise newException(ValueError, "Failed to parse JSON")
 
-  proc approveDappConnectRequest*(self: Controller, requestId: string, account: string, chainIDString: string): bool {.slot.} =
+  proc approveConnection*(self: Controller, requestId: string, account: string, chainIDString: string): bool {.slot.} =
     let chainId = parseSingleUInt(chainIDString)
-    return self.service.approveDappConnect(requestId, account, chainId)
+    result = self.service.approveDappConnect(requestId, account, chainId)
+    self.approveConnectResponse(requestId, not result)
 
-  proc rejectDappConnectRequest*(self: Controller, requestId: string): bool {.slot.} =
-    return self.service.rejectDappConnect(requestId)
+  proc rejectConnection*(self: Controller, requestId: string): bool {.slot.} =
+    result = self.service.rejectDappConnect(requestId)
+    self.rejectConnectResponse(requestId, not result)
 
-  proc approveTransactionRequest*(self: Controller, requestId: string, signature: string): bool {.slot.} =
+  proc approveTransaction*(self: Controller, requestId: string, signature: string): bool {.slot.} =
     let hash = utils.createHash(signature)
 
-    return self.service.approveTransactionRequest(requestId, hash)
+    result = self.service.approveTransactionRequest(requestId, hash)
+    self.approveTransactionResponse(requestId, not result)
 
-  proc rejectTransactionSigning*(self: Controller, requestId: string): bool {.slot.} =
-    return self.service.rejectTransactionSigning(requestId)
+  proc rejectTransaction*(self: Controller, requestId: string): bool {.slot.} =
+    result = self.service.rejectTransactionSigning(requestId)
+    self.rejectTransactionResponse(requestId, not result)
 
-  proc recallDAppPermission*(self: Controller, dAppUrl: string): bool {.slot.} =
-    return self.service.recallDAppPermission(dAppUrl)
+  proc disconnect*(self: Controller, dAppUrl: string): bool {.slot.} =
+    result = self.service.recallDAppPermission(dAppUrl)
+
+  proc getDApps*(self: Controller): string {.slot.} =
+    return self.service.getDApps()

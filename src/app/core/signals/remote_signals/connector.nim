@@ -21,6 +21,8 @@ type ConnectorGrantDAppPermissionSignal* = ref object of Signal
   url*: string
   name*: string
   iconUrl*: string
+  chains*: string
+  sharedAccount*: string
 
 type ConnectorRevokeDAppPermissionSignal* = ref object of Signal
   url*: string
@@ -48,6 +50,8 @@ proc fromEvent*(T: type ConnectorGrantDAppPermissionSignal, event: JsonNode): Co
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
+  result.chains = $(event["event"]{"chains"})
+  result.sharedAccount = event["event"]{"sharedAccount"}.getStr()
 
 proc fromEvent*(T: type ConnectorRevokeDAppPermissionSignal, event: JsonNode): ConnectorRevokeDAppPermissionSignal =
   result = ConnectorRevokeDAppPermissionSignal()

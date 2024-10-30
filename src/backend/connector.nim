@@ -38,6 +38,9 @@ rpc(requestAccountsRejected, "connector"):
 rpc(recallDAppPermission, "connector"):
   dAppUrl: string
 
+rpc(getPermittedDAppsList, "connector"):
+  discard
+
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
 

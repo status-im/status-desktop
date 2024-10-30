@@ -2210,6 +2210,9 @@ Item {
             store: SharedStores.DAppsStore {
                 controller: WalletStores.RootStore.walletConnectController
             }
+            bcStore: SharedStores.BrowserConnectStore {
+                controller: WalletStores.RootStore.dappsConnectorController
+            }
             walletRootStore: WalletStores.RootStore
             blockchainNetworksDown: appMain.networkConnectionStore.blockchainNetworksDown
 
