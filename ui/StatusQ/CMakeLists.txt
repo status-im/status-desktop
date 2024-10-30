@@ -35,6 +35,7 @@ endif()
 
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
+add_subdirectory(../../vendor/sentry-native sentry-native)
 
 target_compile_options(qzxing PRIVATE -w)
 target_compile_options(SortFilterProxyModel PRIVATE -w)
@@ -186,6 +187,7 @@ target_link_libraries(StatusQ PRIVATE
         Qt5::QuickControls2
         SortFilterProxyModel
         qzxing
+        sentry::sentry
         )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

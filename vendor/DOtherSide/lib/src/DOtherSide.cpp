@@ -215,6 +215,18 @@ void dos_installMessageHandler(MessageHandlerCallback messageHandler)
 
 void dos_qguiapplication_create()
 {
+    sentry_options_t *options = sentry_options_new();
+    // sentry_options_set_dsn(options, "https://fecdd38f76baa59481dd8b643bd54022@sentry.infra.status.im/8");
+    // This is also the default-path. For further information and recommendations:
+    // https://docs.sentry.io/platforms/native/configuration/options/#database-path
+    sentry_options_set_database_path(options, ".sentry-native");
+    sentry_options_set_release(options, "status-desktop@x.y.z");
+    sentry_options_set_debug(options, 1);
+    sentry_init(options);
+
+    // Make sure everything flushes
+    auto sentryClose = qScopeGuard([] { sentry_close(); });
+
     // The parameters argc and argv and the strings pointed to by the argv array shall be modifiable by the program,
     // and retain their last-stored values between program startup and program termination.
     // In other words: argv strings can't be string literals!

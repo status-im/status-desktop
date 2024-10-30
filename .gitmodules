@@ -114,3 +114,6 @@
 [submodule "vendor/qzxing"]
 	path = vendor/qzxing
 	url = https://github.com/status-im/qzxing.git
+[submodule "vendor/sentry-native"]
+	path = vendor/sentry-native
+	url = https://github.com/getsentry/sentry-native.git
