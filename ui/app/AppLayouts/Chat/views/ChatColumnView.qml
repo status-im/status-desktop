@@ -104,6 +104,8 @@ Item {
 
         readonly property ChatStores.UsersStore activeUsersStore: ChatStores.UsersStore {
             usersModule: !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
+            chatDetails: !!d.activeChatContentModule ? d.activeChatContentModule.chatDetails : null
+            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
         }
 
         readonly property ChatStores.MessageStore activeMessagesStore: ChatStores.MessageStore {
