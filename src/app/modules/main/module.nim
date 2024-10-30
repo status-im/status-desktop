@@ -1188,8 +1188,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
 
   let jsonObj = %* {
     # contact details props
-    "defaultDisplayName": contactDetails.defaultDisplayName,
-    "optionalName": contactDetails.optionalName,
     "icon": contactDetails.icon,
     "isCurrentUser": contactDetails.isCurrentUser,
     "colorId": contactDetails.colorId,
@@ -1210,7 +1208,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "isBlocked": contactDetails.dto.isBlocked,
     "isContactRequestReceived": contactDetails.dto.isContactRequestReceived,
     "isContactRequestSent": contactDetails.dto.isContactRequestSent,
-    "isSyncing": contactDetails.dto.isSyncing,
     "removed": contactDetails.dto.removed,
     "trustStatus": contactDetails.dto.trustStatus.int,
     "contactRequestState": contactDetails.dto.contactRequestState.int,

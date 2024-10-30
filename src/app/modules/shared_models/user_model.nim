@@ -26,8 +26,6 @@ type
     IsBlocked
     ContactRequest
     IsCurrentUser
-    DefaultDisplayName
-    OptionalName
     LastUpdated
     LastUpdatedLocally
     Bio
@@ -35,7 +33,6 @@ type
     LargeImage
     IsContactRequestReceived
     IsContactRequestSent
-    IsSyncing
     IsRemoved
     TrustStatus
 
@@ -102,8 +99,6 @@ QtObject:
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
       ModelRole.IsCurrentUser.int: "isCurrentUser",
-      ModelRole.DefaultDisplayName.int: "defaultDisplayName",
-      ModelRole.OptionalName.int: "optionalName",
       ModelRole.LastUpdated.int: "lastUpdated",
       ModelRole.LastUpdatedLocally.int: "lastUpdatedLocally",
       ModelRole.Bio.int: "bio",
@@ -111,7 +106,6 @@ QtObject:
       ModelRole.LargeImage.int: "largeImage",
       ModelRole.IsContactRequestReceived.int: "isContactRequestReceived",
       ModelRole.IsContactRequestSent.int: "isContactRequestSent",
-      ModelRole.IsSyncing.int: "isSyncing",
       ModelRole.IsRemoved.int: "isRemoved",
       ModelRole.TrustStatus.int: "trustStatus",
     }.toTable
@@ -164,12 +158,6 @@ QtObject:
       result = newQVariant(item.contactRequest.int)
     of ModelRole.IsCurrentUser:
       result = newQVariant(item.isCurrentUser)
-    of ModelRole.DefaultDisplayName:
-      # TODO this is the same as preferred name
-      result = newQVariant(item.defaultDisplayName)
-    of ModelRole.OptionalName:
-      # This seems useless
-      result = newQVariant(item.optionalName)
     of ModelRole.LastUpdated:
       result = newQVariant(item.lastUpdated)
     of ModelRole.LastUpdatedLocally:
@@ -184,9 +172,6 @@ QtObject:
       result = newQVariant(item.isContactRequestReceived)
     of ModelRole.IsContactRequestSent:
       result = newQVariant(item.isContactRequestSent)
-    of ModelRole.IsSyncing:
-      # TODO not sure what that is and it's never used
-      result = newQVariant(item.isSyncing)
     of ModelRole.IsRemoved:
       result = newQVariant(item.isRemoved)
     of ModelRole.TrustStatus:

@@ -87,8 +87,6 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     isBlocked = contactDetails.dto.isBlocked(),
     isCurrentUser = contactDetails.isCurrentUser,
     contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-    defaultDisplayName = contactDetails.defaultDisplayName,
-    optionalName = contactDetails.optionalName,
     lastUpdated = contactDetails.dto.lastUpdated,
     lastUpdatedLocally = contactDetails.dto.lastUpdatedLocally,
     bio = contactDetails.dto.bio,
@@ -96,7 +94,6 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     largeImage = contactDetails.dto.image.large,
     isContactRequestReceived = contactDetails.dto.isContactRequestReceived,
     isContactRequestSent = contactDetails.dto.isContactRequestSent,
-    isSyncing = contactDetails.dto.isSyncing,
     isRemoved = contactDetails.dto.removed,
     trustStatus = contactDetails.dto.trustStatus,
   )

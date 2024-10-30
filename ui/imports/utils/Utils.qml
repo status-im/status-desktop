@@ -738,8 +738,6 @@ QtObject {
 
     function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
         const defaultValue = {
-            defaultDisplayName: "",
-            optionalName: "",
             icon: "",
             isCurrentUser: "",
             colorId: "",
@@ -759,7 +757,6 @@ QtObject {
             isBlocked: false,
             isContactRequestReceived: false,
             isContactRequestSent: false,
-            isSyncing: false,
             removed: false,
             trustStatus: Constants.trustStatus.unknown,
             contactRequestState: Constants.ContactRequestState.None,

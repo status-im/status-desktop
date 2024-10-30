@@ -1,21 +1,13 @@
-import QtQml 2.15
+import QtTest 1.15
+
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import SortFilterProxyModel 0.2
-import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
-import Storybook 1.0
-import utils 1.0
 import Models 1.0
 
 import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Profile.stores 1.0
-
-import QtTest 1.15
 
 SplitView {
     id: root
@@ -160,15 +152,13 @@ SplitView {
                 isUntrustworthy: false,
                 isBlocked: false,
                 contactRequestState: 3,
-                defaaaultDisplayName: "defaultDisplayName",
-                optionalName: "optionalName",
+                preferredDisplayName: "preferredDisplayName",
                 lastUpdated: 1234567890,
                 lastUpdatedLocally: 1234567890,
                 thumbnailImage: "thumbnailImage",
                 largeImage: "largeImage",
                 isContactRequestReceived: false,
                 isContactRequestSent: false,
-                isSyncing: false,
                 removed: false,
                 trustStatus: 1,
                 bio: "bio"
@@ -185,7 +175,7 @@ SplitView {
         readonly property int colorId: 1
         readonly property var colorHash: {}
         readonly property int currentUserStatus: 1
-        readonly property string defaultDisplayName: "myDefaultDisplayName"
+        readonly property string preferredDisplayName: "myPreferredDisplayName"
         readonly property string thumbnailImage: "myThumbnailImage"
         readonly property string largeImage: "myLargeImage"
         readonly property string bio: "myBio"
@@ -199,3 +189,6 @@ SplitView {
     }
 }
 // category: Contacts
+
+// Page is working in general but throwing multiple "Cannot read property" when changing id via combo box
+// status: decent
