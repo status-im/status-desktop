@@ -238,6 +238,9 @@ method updateMembersList*(self: Module, membersToReset: seq[ChatMember] = @[]) =
         if chat.members.len > 0:
           members = chat.members
         else:
+          if chat.missingEncryptionKey:
+            # We don't have the enryption keys, so we can't show the members
+            return
           # The channel now has a permisison, but the re-eval wasn't performed yet. Show all members for now
           members = myCommunity.members
 
