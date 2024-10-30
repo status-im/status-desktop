@@ -165,6 +165,7 @@ Item {
                 onConnectionDeclined: (pairingId) => wcService.rejectPairSession(pairingId)
                 onSignRequestAccepted: (connectionId, requestId) => wcService.sign(connectionId, requestId)
                 onSignRequestRejected: (connectionId, requestId) => wcService.rejectSign(connectionId, requestId, false /*hasError*/)
+                onSubscribeForFeeUpdates: (connectionId, requestId) => wcService.subscribeForFeeUpdates(connectionId, requestId)
 
                 Connections {
                     target: dappsWorkflow.wcService

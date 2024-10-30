@@ -63,6 +63,10 @@ QObject {
         requestHandler.rejectSessionRequest(topic, id, hasError)
     }
 
+    function subscribeForFeeUpdates(topic, id) {
+        requestHandler.subscribeForFeeUpdates(topic, id)
+    }
+
     /// Validates the pairing URI
     function validatePairingUri(uri) {
         d.validatePairingUri(uri)
