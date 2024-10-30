@@ -991,24 +991,15 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
   for chat in self.controller.getAllChats():
     let communityId = chat.communityId
 
-    # try to skip hidden chats
+    # skip hidden chats
     if chat.chatType == ChatType.CommunityChat and communityId != "":
       let communityDto = self.controller.getCommunityById(communityId)
-      var chatId = chat.id
-      if not communityDto.hasCommunityChat(chatId):
-        # try with shortened chatId
-        warn "!!! main-module, unexisting communityId for chatId", communityId, chatId
-        chatId.removePrefix(communityId)
-        if not chatId.startsWith("0x"):
-          chatId = "0x" % chatId
-
-        if not communityDto.hasCommunityChat(chatId):
-          warn "!!! main-module, unexisting communityId for shortened chatId", communityId, chatId
-          #continue
-        else:
-          let communityChat = communityDto.getCommunityChat(chatId)
-          if communityChat.isHiddenChat:
-            continue
+      if communityDto.hasCommunityChat(chat.id):
+        let communityChat = communityDto.getCommunityChat(chat.id)
+        if communityChat.isHiddenChat:
+          continue
+      else:
+        continue
 
     var chatName = chat.name
     var chatImage = chat.icon
