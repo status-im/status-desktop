@@ -8,8 +8,9 @@ type
     sectionId: string
     sectionName: string
     colorHash: string
+    emoji: string
 
-proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName: string): Item =
+proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName, emoji: string): Item =
   result = Item()
   result.chatId = chatId
   result.name = name
@@ -19,6 +20,7 @@ proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, secti
   result.colorHash = colorHash
   result.sectionId = sectionId
   result.sectionName = sectionName
+  result.emoji = emoji
 
 proc chatId*(self: Item): string =
   self.chatId
@@ -43,3 +45,6 @@ proc sectionId*(self: Item): string =
 
 proc sectionName*(self: Item): string =
   self.sectionName
+
+proc emoji*(self: Item): string =
+  self.emoji

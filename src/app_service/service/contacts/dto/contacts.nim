@@ -77,12 +77,12 @@ proc toImages(jsonObj: JsonNode): Images =
 
 proc toContactRequestState*(value: int): ContactRequestState =
   result = ContactRequestState.None
-  if value >= ord(low(ContactRequestState)) or value <= ord(high(ContactRequestState)):
+  if value >= ord(low(ContactRequestState)) and value <= ord(high(ContactRequestState)):
       result = ContactRequestState(value)
 
 proc toTrustStatus*(value: int): TrustStatus =
   result = TrustStatus.Unknown
-  if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
+  if value >= ord(low(TrustStatus)) and value <= ord(high(TrustStatus)):
       result = TrustStatus(value)
 
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
