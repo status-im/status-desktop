@@ -135,8 +135,8 @@ Item {
                 }
 
                 StatusBaseText {
-                    text: qsTr("<a href='%1%2'>Look up on Etherscan</a>")
-                    .arg(root.ensUsernamesStore.getEtherscanLink())
+                    text: qsTr("<a href='%1/%2'>Look up on Etherscan</a>")
+                    .arg(root.ensUsernamesStore.getEtherscanAddressLink())
                     .arg(root.ensUsernamesStore.getEnsRegisteredAddress())
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -159,8 +159,8 @@ Item {
                 }
 
                 StatusBaseText {
-                    text: qsTr("<a href='%1%2'>Look up on Etherscan</a>")
-                    .arg(root.ensUsernamesStore.getEtherscanLink())
+                    text: qsTr("<a href='%1/%2'>Look up on Etherscan</a>")
+                    .arg(root.ensUsernamesStore.getEtherscanAddressLink())
                     .arg(root.ensUsernamesStore.getEnsRegistry())
                     anchors.left: parent.left
                     anchors.right: parent.right

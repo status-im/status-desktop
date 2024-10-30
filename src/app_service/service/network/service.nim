@@ -13,6 +13,8 @@ logScope:
   topics = "network-service"
 
 const SIGNAL_NETWORK_ENDPOINT_UPDATED* = "networkEndPointUpdated"
+const EXPLORER_TX_PATH* = "/tx"
+const EXPLORER_ADDRESS_PATH* = "/address"
 
 type NetworkEndpointUpdatedArgs* = ref object of Args
   isTest*: bool
