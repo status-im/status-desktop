@@ -5,7 +5,6 @@
 
 #include "directoryfileswatcher.h"
 
-
 namespace {
 const auto categoryUncategorized QStringLiteral("Uncategorized");
 }
@@ -35,29 +34,9 @@ PagesModelItem PagesModel::readMetadata(const QString& path)
     file.open(QIODevice::ReadOnly);
     QByteArray content = file.readAll();
 
-    static QRegularExpression categoryRegex(
-                "^//(\\s)*category:(.+)$", QRegularExpression::MultilineOption);
-
-    QRegularExpressionMatch categoryMatch = categoryRegex.match(content);
-    QString category = categoryMatch.hasMatch()
-            ? categoryMatch.captured(2).trimmed() : categoryUncategorized;
-
-    item.category = category.size() ? category : categoryUncategorized;
-
-    static QRegularExpression figmaRegex(
-                "^(\\/\\/\\s*)((?:https:\\/\\/)?(?:www\\.)?figma\\.com\\/.*)$",
-                QRegularExpression::MultilineOption);
-
-    QRegularExpressionMatchIterator i = figmaRegex.globalMatch(content);
-    QStringList links;
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString link = match.captured(2);
-        links << link;
-    }
-
-    item.figmaLinks = links;
+    item.category = extractCategory(content);
+    item.status = extractStatus(content);
+    item.figmaLinks = extractFigmaLinks(content);
 
     return item;
 }
@@ -73,6 +52,55 @@ QList<PagesModelItem> PagesModel::readMetadata(const QStringList &paths)
     });
 
     return metadata;
+}
+
+QString PagesModel::extractCategory(const QByteArray& content)
+{
+    static QRegularExpression categoryRegex(
+                "^//(\\s)*category:(.+)$", QRegularExpression::MultilineOption);
+
+    QRegularExpressionMatch categoryMatch = categoryRegex.match(content);
+    QString category = categoryMatch.hasMatch()
+            ? categoryMatch.captured(2).trimmed() : categoryUncategorized;
+
+    return category.isEmpty() ? categoryUncategorized : category;
+}
+
+PagesModel::Status PagesModel::extractStatus(const QByteArray& content)
+{
+    static QRegularExpression statusRegex(
+                "^//(\\s)*status:(.+)$", QRegularExpression::MultilineOption);
+
+    QRegularExpressionMatch statusMatch = statusRegex.match(content);
+    QString status = statusMatch.hasMatch()
+            ? statusMatch.captured(2).trimmed() : "";
+
+    if (status == QStringLiteral("bad"))
+        return Bad;
+    if (status == QStringLiteral("decent"))
+        return Decent;
+    if (status == QStringLiteral("good"))
+        return Good;
+
+    return Uncategorized;
+}
+
+QStringList PagesModel::extractFigmaLinks(const QByteArray& content)
+{
+    static QRegularExpression figmaRegex(
+                "^(\\/\\/\\s*)((?:https:\\/\\/)?(?:www\\.)?figma\\.com\\/.*)$",
+                QRegularExpression::MultilineOption);
+
+    QRegularExpressionMatchIterator i = figmaRegex.globalMatch(content);
+    QStringList links;
+
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString link = match.captured(2);
+        links << link;
+    }
+
+    return links;
 }
 
 void PagesModel::onPagesChanged(const QStringList& added,
@@ -106,10 +134,11 @@ void PagesModel::onPagesChanged(const QStringList& added,
         PagesModelItem metadata = readMetadata(path);
         setFigmaLinks(metadata.title, metadata.figmaLinks);
 
-        if (previous.category != metadata.category) {
-            // For simplicity category change is handled by removing and
-            // adding item. In the future it can be changed to regular dataChanged
-            // event and handled properly in upstream models like SectionSDecoratorModel.
+        // For simplicity category and status change is handled by removing and
+        // adding item. In the future it can be changed to regular dataChanged
+        // event and handled properly in upstream models like SectionSDecoratorModel.
+        if (previous.category != metadata.category
+                || previous.status != metadata.status) {
             beginRemoveRows({}, index, index);
             m_items.removeAt(index);
             endRemoveRows();
@@ -135,6 +164,7 @@ QHash<int, QByteArray> PagesModel::roleNames() const
     static const QHash<int,QByteArray> roles {
         { TitleRole, QByteArrayLiteral("title") },
         { CategoryRole, QByteArrayLiteral("category") },
+        { StatusRole, QByteArrayLiteral("status") },
         { FigmaRole, QByteArrayLiteral("figma") }
     };
 
@@ -156,6 +186,9 @@ QVariant PagesModel::data(const QModelIndex &index, int role) const
 
     if (role == CategoryRole)
         return m_items.at(index.row()).category;
+
+    if (role == StatusRole)
+        return m_items.at(index.row()).status;
 
     if (role == FigmaRole) {
         auto title = m_items.at(index.row()).title;

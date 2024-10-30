@@ -8,7 +8,6 @@ import Qt.labs.settings 1.0
 import StatusQ.Core.Theme 0.1
 import Storybook 1.0
 
-import utils 1.0
 
 ApplicationWindow {
     id: root
@@ -181,6 +180,7 @@ ApplicationWindow {
                         model: pagesModel
 
                         onPageSelected: root.currentPage = page
+                        onStatusClicked: statusStatsDialog.open()
                     }
                 }
             }
@@ -287,17 +287,8 @@ ApplicationWindow {
         }
     }
 
-    Dialog {
+    NoFigmaTokenDialog {
         id: noFigmaTokenDialog
-
-        anchors.centerIn: Overlay.overlay
-
-        title: "Figma token not set"
-        standardButtons: Dialog.Ok
-
-        Label {
-            text: "Please set Figma personal token in \"Settings\""
-        }
     }
 
     FigmaLinksCache {
@@ -310,24 +301,16 @@ ApplicationWindow {
         id: inspectionWindow
     }
 
-    Dialog {
+    NothingToInspectDialog {
         id: nothingToInspectDialog
 
-        anchors.centerIn: Overlay.overlay
-        width: contentItem.implicitWidth + leftPadding + rightPadding
+        pageName: root.currentPage
+    }
 
-        title: "No items to inspect found"
-        standardButtons: Dialog.Ok
-        modal: true
+    StatusStatisticsDialog {
+        id: statusStatsDialog
 
-        contentItem: Label {
-            text: '
-Tips:\n\
-    •   For inline components use naming convention of adding\n\
-        "Custom" at the begining (like Custom'+root.currentPage+')\n\
-    •   For popups set closePolicy to "Popup.NoAutoClose"\n\
-'
-        }
+        pagesModel: pagesModel
     }
 
     Component {

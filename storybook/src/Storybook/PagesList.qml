@@ -1,5 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+import Storybook 1.0
 
 ListView {
     id: root
@@ -10,6 +12,7 @@ ListView {
 
     signal pageSelected(string page)
     signal sectionClicked(int index)
+    signal statusClicked
 
     readonly property string foldedPrefix: "▶  "
     readonly property string unfoldedPrefix: "▼  "
@@ -25,6 +28,35 @@ ListView {
         Drag.active: dragArea.drag.active
         Drag.mimeData: {
             "text/uri-list": `file:${pagesFolder}/${model.title}Page.qml`
+        }
+
+        indicator: Rectangle {
+            visible: !model.isSection
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: parent.leftPadding / 2
+
+            width: 6
+            height: 6
+            radius: 3
+
+            color: {
+                if (model.status === PagesModel.Good)
+                    return "green"
+                if (model.status === PagesModel.Decent)
+                    return "orange"
+                if (model.status === PagesModel.Bad)
+                    return "red"
+
+                return "gray"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: root.statusClicked()
+            }
         }
 
         MouseArea {
