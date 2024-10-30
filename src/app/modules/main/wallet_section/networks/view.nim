@@ -79,8 +79,8 @@ QtObject:
   proc enableNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.setNetworksState(@[chainId], enable = true)
 
-  proc getBlockExplorerURL*(self: View, chainId: int): string {.slot.} =
-    return self.flatNetworks.getBlockExplorerURL(chainId)
+  proc getBlockExplorerTxURL*(self: View, chainId: int): string {.slot.} =
+    return self.flatNetworks.getBlockExplorerTxURL(chainId)
 
   proc updateNetworkEndPointValues*(self: View, chainId: int, testNetwork: bool, newMainRpcInput: string, newFailoverRpcUrl: string, revertToDefault: bool) {.slot.} =
     self.delegate.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
