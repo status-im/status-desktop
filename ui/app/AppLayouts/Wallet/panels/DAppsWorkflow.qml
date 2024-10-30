@@ -74,6 +74,8 @@ DappsComboBox {
     signal signRequestAccepted(string connectionId, string requestId)
     signal signRequestRejected(string connectionId, string requestId)
 
+    signal subscribeForFeeUpdates(string connectionId, string requestId)
+
     /// Response to pairingValidationRequested
     function pairingValidated(validationState) {
         if (pairWCLoader.item) {
@@ -327,10 +329,26 @@ DappsComboBox {
 
             signingTransaction: !!request.method && (request.method === SessionRequest.methods.signTransaction.name
                                                   || request.method === SessionRequest.methods.sendTransaction.name)
-            requestPayload: request.preparedData
+            requestPayload: {
+                try {
+                    const data = JSON.parse(request.preparedData)
+
+                    delete data.maxFeePerGas
+                    delete data.maxPriorityFeePerGas
+                    delete data.gasPrice
+
+                    return JSON.stringify(data, null, 2)
+                } catch(_) {
+                    return request.preparedData
+                }
+            }
             expirationSeconds: request.expirationTimestamp ? request.expirationTimestamp - requestTimestamp.getTime() / 1000
                                                             : 0
             hasExpiryDate: !!request.expirationTimestamp
+
+            onOpened: {
+                root.subscribeForFeeUpdates(request.topic, request.id)
+            }
 
             onClosed: {
                 Qt.callLater(rejectRequest)

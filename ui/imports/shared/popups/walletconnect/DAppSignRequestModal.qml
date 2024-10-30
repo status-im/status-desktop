@@ -11,6 +11,7 @@ import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.panels 1.0
 
 import shared.popups.walletconnect.panels 1.0
+import shared.panels 1.0
 
 import utils 1.0
 
@@ -93,6 +94,7 @@ SignTransactionModalBase {
                     font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
+                    id: maxFees
                     Layout.fillWidth: true
                     objectName: "footerFiatFeesText"
                     text: formatBigNumber(root.fiatFees, root.currentCurrency)
@@ -102,6 +104,18 @@ SignTransactionModalBase {
                     Binding on text {
                         when: !root.hasFees
                         value: qsTr("No fees")
+                    }
+
+                    onTextChanged: {
+                        if (text === "") {
+                            return
+                        }
+                        maxFeesAnimation.restart()
+                    }
+
+                    AnimatedText {
+                        id: maxFeesAnimation
+                        target: maxFees
                     }
                 }
             }
@@ -114,9 +128,22 @@ SignTransactionModalBase {
                     font.pixelSize: Theme.additionalTextSize
                 }
                 StatusTextWithLoadingState {
+                    id: estimatedTime
                     objectName: "footerEstimatedTime"
                     text: root.estimatedTime
                     loading: root.feesLoading
+
+                    onTextChanged: {
+                        if (text === "") {
+                            return
+                        }
+                        estimatedTimeAnimation.restart()
+                    }
+
+                    AnimatedText {
+                        id: estimatedTimeAnimation
+                        target: estimatedTime
+                    }
                 }
             }
         }
@@ -169,6 +196,7 @@ SignTransactionModalBase {
             ColumnLayout {
                 spacing: 2
                 StatusTextWithLoadingState {
+                    id: fiatFees
                     objectName: "fiatFeesText"
                     Layout.alignment: Qt.AlignRight
                     text: formatBigNumber(root.fiatFees, root.currentCurrency)
@@ -176,8 +204,21 @@ SignTransactionModalBase {
                     font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
                     customColor: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
+
+                    onTextChanged: {
+                        if (text === "") {
+                            return
+                        }
+                        fiatFeesAnimation.restart()
+                    }
+
+                    AnimatedText {
+                        id: fiatFeesAnimation
+                        target: fiatFees
+                    }
                 }
                 StatusTextWithLoadingState {
+                    id: cryptoFees
                     objectName: "cryptoFeesText"
                     Layout.alignment: Qt.AlignRight
                     text: formatBigNumber(root.cryptoFees, Constants.ethToken)
@@ -185,6 +226,18 @@ SignTransactionModalBase {
                     font.pixelSize: Theme.additionalTextSize
                     customColor: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
                     loading: root.feesLoading
+
+                    onTextChanged: {
+                        if (text === "") {
+                            return
+                        }
+                        cryptoFeesAnimation.restart()
+                    }
+
+                    AnimatedText {
+                        id: cryptoFeesAnimation
+                        target: cryptoFees
+                    }
                 }
             }
         ]

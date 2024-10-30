@@ -26,7 +26,6 @@ proc convertFeesInfoToHex*(feesInfoJson: string): string =
       parsedJson = parseJson(feesInfoJson)
 
       maxFeePerGasFloat = getFloatFromJson(parsedJson, "maxFeePerGas")
-      a = maxFeePerGasFloat * 1e9
       maxFeePerGasWei = uint64(maxFeePerGasFloat * 1e9)
 
       maxPriorityFeePerGasFloat = getFloatFromJson(parsedJson, "maxPriorityFeePerGas")

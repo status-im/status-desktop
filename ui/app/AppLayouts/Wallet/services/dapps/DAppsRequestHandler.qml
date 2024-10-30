@@ -24,11 +24,17 @@ SQUtils.QObject {
     property alias requestsModel: requests
 
     function rejectSessionRequest(topic, id, hasError) {
+        d.unsubscribeForFeeUpdates(topic, id)
         sdk.rejectSessionRequest(topic, id, hasError)
+    }
+
+    function subscribeForFeeUpdates(topic, id) {
+        d.subscribeForFeeUpdates(topic, id)
     }
 
     /// Beware, it will fail if called multiple times before getting an answer
     function authenticate(topic, id, address, payload) {
+        d.unsubscribeForFeeUpdates(topic, id)
         return store.authenticateUser(topic, id, address, payload)
     }
 
@@ -158,6 +164,108 @@ SQUtils.QObject {
     SQUtils.QObject {
         id: d
 
+        property int selectedFeesMode: Constants.FeesMode.Medium
+
+        function getFeesForFeesMode(feesObj) {
+            if (!(feesObj.hasOwnProperty("maxFeePerGasL") &&
+                  feesObj.hasOwnProperty("maxFeePerGasM") &&
+                  feesObj.hasOwnProperty("maxFeePerGasH"))) {
+                throw new Error("inappropriate fees object provided")
+            }
+
+            switch (d.selectedFeesMode) {
+            case Constants.FeesMode.Low:
+                return feesObj.maxFeePerGasL
+            case Constants.FeesMode.Medium:
+                return feesObj.maxFeePerGasM
+            case Constants.FeesMode.High:
+                return feesObj.maxFeePerGasH
+            default:
+                throw new Error("unknown selected mode")
+            }
+        }
+
+        property var feesSubscriptions: []
+
+        function findSubscriptionIndex(topic, id) {
+            for (let i = 0; i < d.feesSubscriptions.length; i++) {
+                const subscription = d.feesSubscriptions[i]
+                if (subscription.topic == topic && subscription.id == id) {
+                    return i
+                }
+            }
+            return -1
+        }
+
+        function findChainIndex(chainId) {
+            for (let i = 0; i < feesSubscription.chainIds.length; i++) {
+                if (feesSubscription.chainIds[i] == chainId) {
+                    return i
+                }
+            }
+            return -1
+        }
+
+        function subscribeForFeeUpdates(topic, id) {
+            const request = requests.findRequest(topic, id)
+            if (request === null) {
+                console.error("Error finding event for subscribing for fees for topic", topic, "id", id)
+                return
+            }
+
+            const index = d.findSubscriptionIndex(topic, id)
+            if (index >= 0) {
+                return
+            }
+
+            d.feesSubscriptions.push({
+                                         topic: topic,
+                                         id: id,
+                                         chainId: request.chainId
+                                     })
+
+            for (let i = 0; i < feesSubscription.chainIds.length; i++) {
+                if (feesSubscription.chainIds == request.chainId) {
+                    return
+                }
+            }
+
+            feesSubscription.chainIds.push(request.chainId)
+            feesSubscription.restart()
+        }
+
+        function unsubscribeForFeeUpdates(topic, id) {
+            const index = d.findSubscriptionIndex(topic, id)
+            if (index == -1) {
+                return
+            }
+
+            const chainId = d.feesSubscriptions[index].chainId
+            d.feesSubscriptions.splice(index, 1)
+
+            const chainIndex = d.findChainIndex(chainId)
+            if (index == -1) {
+                return
+            }
+
+            let found = false
+            for (let i = 0; i < d.feesSubscriptions.length; i++) {
+                if (d.feesSubscriptions[i].chainId == chainId) {
+                    found = true
+                    break
+                }
+            }
+
+            if (found) {
+                return
+            }
+
+            feesSubscription.chainIds.splice(chainIndex, 1)
+            if (feesSubscription.chainIds.length == 0) {
+                feesSubscription.stop()
+            }
+        }
+
         readonly property QtObject resolveAsyncResult: QtObject {
             readonly property int error: 0
             readonly property int ok: 1
@@ -193,7 +301,7 @@ SQUtils.QObject {
                 return { obj: null, code: resolveAsyncResult.error }
             }
 
-            const interpreted = d.prepareData(method, data)
+            const interpreted = d.prepareData(method, data, chainId)
 
             const enoughFunds = !d.isTransactionMethod(method)
             const requestExpiry = event.params.request.expiryTimestamp
@@ -232,33 +340,39 @@ SQUtils.QObject {
                 obj.resolveDappInfoFromSession(session)
                 root.sessionRequest(obj.id)
 
-                if (!d.isTransactionMethod(method)) {
-                    return
-                }
-
-                obj.estimatedTimeCategory = getEstimatedTimeInterval(data, method, obj.chainId)
-
-                const mainNet = lookupMainnetNetwork()
-                let mainChainId = obj.chainId
-                if (!!mainNet) {
-                    mainChainId = mainNet.chainId
-                } else {
-                    console.error("Error finding mainnet network")
-                }
-
-                let st = getEstimatedFeesStatus(data, method, obj.chainId, mainChainId)
-                let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, obj.accountAddress, obj.chainId, mainNet.chainId, interpreted.value)
-                obj.fiatMaxFees = st.fiatMaxFees
-                obj.ethMaxFees = st.maxFeesEth
-                obj.haveEnoughFunds = fundsStatus.haveEnoughFunds
-                obj.haveEnoughFees = fundsStatus.haveEnoughForFees
-                obj.feesInfo = st.feesInfo
+                d.updateFeesParamsToPassedObj(obj)
             })
 
             return {
                 obj: obj,
                 code: resolveAsyncResult.ok
             }
+        }
+
+        function updateFeesParamsToPassedObj(obj) {
+            if (!d.isTransactionMethod(obj.method)) {
+                return
+            }
+
+            obj.estimatedTimeCategory = getEstimatedTimeInterval(obj.data, obj.method, obj.chainId)
+
+            const mainNet = lookupMainnetNetwork()
+            let mainChainId = obj.chainId
+            if (!!mainNet) {
+                mainChainId = mainNet.chainId
+            } else {
+                console.error("Error finding mainnet network")
+            }
+
+            const interpreted = d.prepareData(obj.method, obj.data, obj.chainId)
+
+            let st = getEstimatedFeesStatus(obj.data, obj.method, obj.chainId, mainChainId)
+            let fundsStatus = checkFundsStatus(st.feesInfo.maxFees, st.feesInfo.l1GasFee, obj.accountAddress, obj.chainId, mainNet.chainId, interpreted.value)
+            obj.fiatMaxFees = st.fiatMaxFees
+            obj.ethMaxFees = st.maxFeesEth
+            obj.haveEnoughFunds = fundsStatus.haveEnoughFunds
+            obj.haveEnoughFees = fundsStatus.haveEnoughForFees
+            obj.feesInfo = st.feesInfo
         }
 
         /// returns {
@@ -628,7 +742,7 @@ SQUtils.QObject {
         //   preparedData,
         //   value // null or ETH Big number
         // }
-        function prepareData(method, data) {
+        function prepareData(method, data, chainId) {
             let payload = null
             switch(method) {
                 case SessionRequest.methods.personalSign.name: {
@@ -662,22 +776,44 @@ SQUtils.QObject {
             if (d.isTransactionMethod(method)) {
                 let txObj = d.getTxObject(method, data)
                 let tx = Object.assign({}, txObj)
+                let fees = root.store.getSuggestedFees(chainId)
                 if (tx.value) {
                     value = hexToEth(tx.value)
                     tx.value = value.toString()
                 }
-                if (tx.maxFeePerGas) {
-                    tx.maxFeePerGas = hexToGwei(tx.maxFeePerGas).toString()
+
+                if (tx.hasOwnProperty("maxFeePerGas")) {
+                    if (tx.maxFeePerGas) {
+                        tx.maxFeePerGas = hexToGwei(tx.maxFeePerGas).toString()
+                    } else if (fees.eip1559Enabled) {
+                        try {
+                            tx.maxFeePerGas = d.getFeesForFeesMode(fees)
+                        } catch (e) {
+                            console.warn(e)
+                        }
+                    }
                 }
-                if (tx.maxPriorityFeePerGas) {
-                    tx.maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas).toString()
+
+                if (tx.hasOwnProperty("maxPriorityFeePerGas")) {
+                    if (tx.maxPriorityFeePerGas) {
+                        tx.maxPriorityFeePerGas = hexToGwei(tx.maxPriorityFeePerGas).toString()
+                    } else if (fees.eip1559Enabled) {
+                        tx.maxPriorityFeePerGas = fees.maxPriorityFeePerGas
+                    }
                 }
-                if (tx.gasPrice) {
-                    tx.gasPrice = hexToGwei(tx.gasPrice)
+
+                if (tx.hasOwnProperty("gasPrice")) {
+                    if (tx.gasPrice) {
+                        tx.gasPrice = hexToGwei(tx.gasPrice)
+                    } else if (!fees.eip1559Enabled) {
+                        tx.gasPrice = fees.gasPrice
+                    }
                 }
+
                 if (tx.gasLimit) {
                     tx.gasLimit = parseInt(root.store.hexToDec(tx.gasLimit))
                 }
+
                 if (tx.nonce) {
                     tx.nonce = parseInt(root.store.hexToDec(tx.nonce))
                 }
@@ -721,6 +857,32 @@ SQUtils.QObject {
 
         SessionRequestResolved {
             sourceId: Constants.DAppConnectors.WalletConnect
+        }
+    }
+
+    Timer {
+        id: feesSubscription
+
+        property var chainIds: []
+
+        interval: 5000
+        repeat: true
+        running: Qt.application.state === Qt.ApplicationActive
+
+        onTriggered: {
+            for (let i = 0; i < chainIds.length; i++) {
+                for (let j = 0; j < d.feesSubscriptions.length; j++) {
+                    let subscription = d.feesSubscriptions[j]
+                    if (subscription.chainId == chainIds[i]) {
+                        let request = requests.findRequest(subscription.topic, subscription.id)
+                        if (request === null) {
+                            console.error("Error updating fees for topic", subscription.topic, "id", subscription.id)
+                            continue
+                        }
+                        d.updateFeesParamsToPassedObj(request)
+                    }
+                }
+            }
         }
     }
 }

@@ -1098,6 +1098,12 @@ QtObject {
         }
     }
 
+    enum FeesMode {
+        Low,
+        Medium,
+        High
+    }
+
     enum LoginType {
         Password,
         Biometrics,
