@@ -30,6 +30,7 @@ QObject {
 
     //input properties
     required property WalletConnectSDKBase wcSDK
+    required property BrowserConnectStore bcStore
     required property DAppsStore store
     required property var walletRootStore
     // // Array[chainId] of the networks that are down
@@ -51,8 +52,6 @@ QObject {
     /// Default value: true
     readonly property bool serviceAvailableToCurrentAddress: !root.walletRootStore.selectedAddress ||
                 ModelUtils.contains(root.validAccounts, "address", root.walletRootStore.selectedAddress, Qt.CaseInsensitive)
-    /// TODO: refactor
-    readonly property alias connectorDAppsProvider: connectorDAppsProvider
 
     readonly property bool isServiceOnline: requestHandler.isServiceOnline
 
@@ -130,11 +129,11 @@ QObject {
 
             sources: [
                 SourceModel {
-                    model: dappsProvider.dappsModel
+                    model: dappsProvider.model
                     markerRoleValue: "walletConnect"
                 },
                 SourceModel {
-                    model: connectorDAppsProvider.dappsModel
+                    model: connectorDAppsProvider.model
                     markerRoleValue: "statusConnect"
                 }
             ]
@@ -308,6 +307,7 @@ QObject {
     ConnectorDAppsListProvider {
         id: connectorDAppsProvider
         enabled: root.connectorFeatureEnabled
+        store: root.bcStore
     }
 
     // Timeout for the corner case where the URL was already dismissed and the SDK doesn't respond with an error nor advances with the proposal

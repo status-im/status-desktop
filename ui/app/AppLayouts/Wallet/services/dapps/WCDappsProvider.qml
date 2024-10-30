@@ -9,14 +9,15 @@ import shared.stores 1.0
 
 import utils 1.0
 
-QObject {
+DAppsModel {
     id: root
 
+    // Input
     required property WalletConnectSDKBase sdk
     required property DAppsStore store
     required property var supportedAccountsModel
+
     readonly property int connectorId: Constants.WalletConnect
-    readonly property var dappsModel: d.dappsModel
 
     property bool enabled: true
 
@@ -38,11 +39,6 @@ QObject {
 
     QObject {
         id: d
-
-        property ListModel dappsModel: ListModel {
-            id: dapps
-            objectName: "DAppsModel"
-        }
 
         property Connections sdkConnections: Connections {
             target: root.sdk
@@ -75,23 +71,22 @@ QObject {
         {
             dappsListReceivedFn = (dappsJson) => {
                 root.store.dappsListReceived.disconnect(dappsListReceivedFn);
-                dapps.clear();
+                root.clear();
 
                 let dappsList = JSON.parse(dappsJson);
                 for (let i = 0; i < dappsList.length; i++) {
                     const cachedEntry = dappsList[i];
                     // TODO #15075: on SDK dApps refresh update the model that has data source from persistence instead of using reset
                     const dappEntryWithRequiredRoles = {
-                        description: "",
                         url: cachedEntry.url,
                         name: cachedEntry.name,
                         iconUrl: cachedEntry.iconUrl,
                         accountAddresses: [],
                         topic: "",
                         connectorId: root.connectorId, 
-                        sessions: []
+                        rawSessions: []
                     }
-                    dapps.append(dappEntryWithRequiredRoles);
+                    root.append(dappEntryWithRequiredRoles);
                 }
             }
             root.store.dappsListReceived.connect(dappsListReceivedFn);
@@ -125,18 +120,18 @@ QObject {
                             // more modern syntax (ES-6) is not available yet
                             const combinedAddresses = new Set(existingDApp.accountAddresses.concat(accounts));
                             existingDApp.accountAddresses = Array.from(combinedAddresses);
-                            dapp.sessions = [...existingDApp.sessions, session]
+                            dapp.rawSessions = [...existingDApp.rawSessions, session]
                         } else {
                             dapp.accountAddresses = accounts
                             dapp.topic = sessionID
-                            dapp.sessions = [session]
+                            dapp.rawSessions = [session]
                             dAppsMap[dapp.url] = dapp
                         }
                         topics.push(sessionID)
                     }
 
                     // TODO #15075: on SDK dApps refresh update the model that has data source from persistence instead of using reset
-                    dapps.clear();
+                    root.clear();
 
                     // Iterate dAppsMap and fill dapps
                     for (const uri in dAppsMap) {
@@ -145,7 +140,7 @@ QObject {
                         // having array of key value pair fixes the problem
                         dAppEntry.accountAddresses = dAppEntry.accountAddresses.filter(account => (!!account)).map(account => ({address: account}));
                         dAppEntry.connectorId = root.connectorId;
-                        dapps.append(dAppEntry);
+                        root.append(dAppEntry);
                     }
 
                     root.store.updateWalletConnectSessions(JSON.stringify(topics))

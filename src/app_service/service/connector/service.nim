@@ -138,3 +138,16 @@ QtObject:
     except Exception as e:
       error "recallDAppPermissionFinishedRpc failed: ", err=e.msg
       return false
+
+  proc getDApps*(self: Service): string =
+    try:
+      let response = status_go.getPermittedDAppsList()
+      if not response.error.isNil:
+        raise newException(Exception, "Error getting connector dapp list: " & response.error.message)
+
+      # Expect nil golang array to be valid empty array
+      let jsonArray = $response.result
+      return if jsonArray != "null": jsonArray else: "[]"
+    except Exception as e:
+      error "getDApps failed: ", err=e.msg
+      return "[]"
