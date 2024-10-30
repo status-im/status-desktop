@@ -13,6 +13,7 @@ ColumnLayout {
     property alias currentPage: pagesList.currentPage
 
     signal pageSelected(string page)
+    signal statusClicked
 
     SortFilterProxyModel {
         id: filteredModel
@@ -96,5 +97,6 @@ ColumnLayout {
 
         onPageSelected: root.pageSelected(page)
         onSectionClicked: sectionsModel.flipFolding(index)
+        onStatusClicked: root.statusClicked()
     }
 }
