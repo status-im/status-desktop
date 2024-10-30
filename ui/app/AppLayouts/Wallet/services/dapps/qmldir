@@ -1,10 +1,9 @@
+BCDappsProvider 1.0 BCDappsProvider.qml
+DappsConnectorSDK 1.0 DappsConnectorSDK.qml
+DAppsHelpers 1.0 helpers.js
+DAppsModel 1.0 DAppsModel.qml
+DAppsRequestHandler 1.0 DAppsRequestHandler.qml
 WalletConnectSDKBase 1.0 WalletConnectSDKBase.qml
 WalletConnectSDK 1.0 WalletConnectSDK.qml
 WalletConnectService 1.0 WalletConnectService.qml
-DappsConnectorSDK 1.0 DappsConnectorSDK.qml
-
-DAppsListProvider 1.0 DAppsListProvider.qml
-DAppsRequestHandler 1.0 DAppsRequestHandler.qml
-ConnectorDAppsListProvider 1.0 ConnectorDAppsListProvider.qml
-
-DAppsHelpers 1.0 helpers.js
+WCDappsProvider 1.0 WCDappsProvider.qml
