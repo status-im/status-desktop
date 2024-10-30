@@ -18,7 +18,6 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')
 @pytest.mark.case(703028)
-@pytest.mark.xfail
 def test_plus_button_manage_generated_account_custom_derivation_path(main_screen: MainWindow, user_account):
     with step('Create generated wallet account'):
         name = random_wallet_acc_keypair_name()
