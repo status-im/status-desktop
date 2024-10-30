@@ -170,8 +170,8 @@ QtObject {
         readonly property var userProfileInst: userProfile
     }
 
-    function getEtherscanLink(chainID) {
-        return networksModule.getBlockExplorerURL(chainID)
+    function getEtherscanTxLink(chainID) {
+        return networksModule.getBlockExplorerTxURL(chainID)
     }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,

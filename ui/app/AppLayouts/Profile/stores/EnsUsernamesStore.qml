@@ -49,10 +49,16 @@ QtObject {
     }
 
 
-    function getEtherscanLink() {
+    function getEtherscanTxLink() {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.getEtherscanLink()
+        return ensUsernamesModule.getEtherscanTxLink()
+    }
+
+    function getEtherscanAddressLink() {
+        if(!root.ensUsernamesModule)
+            return ""
+        return ensUsernamesModule.getEtherscanAddressLink()
     }
 
     function ensConnectOwnedUsername(name, isStatus) {

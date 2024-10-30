@@ -247,7 +247,7 @@ Item {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     let toastTitle = qsTr("Setting spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     let toastSubtitle = qsTr("View on %1").arg(networkName)
-                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
+                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.normal
                     let icon = ""
                     if(error) {
@@ -271,7 +271,7 @@ Item {
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
                     let toastTitle = qsTr("Swapping %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     let toastSubtitle = qsTr("View on %1").arg(networkName)
-                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
+                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.normal
                     let icon = ""
                     if(error) {
@@ -294,7 +294,7 @@ Item {
                                                    "",
                                                    true,
                                                    Constants.ephemeralNotificationType.normal,
-                                                   "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash))
+                                                   "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash))
                     }
                 }
                 break
@@ -314,7 +314,7 @@ Item {
                     const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
                     let toastTitle = qsTr("Spending cap set: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     const toastSubtitle =  qsTr("View on %1").arg(networkName)
-                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
+                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.success
                     let icon = "checkmark-circle"
                     if(!success) {
@@ -336,7 +336,7 @@ Item {
                     const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
                     let toastTitle = qsTr("Swapped %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
                     const toastSubtitle = qsTr("View on %1").arg(networkName)
-                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanLink(chainId)).arg(txHash)
+                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
                     let toastType = Constants.ephemeralNotificationType.success
                     let icon = "checkmark-circle"
                     if(!success) {

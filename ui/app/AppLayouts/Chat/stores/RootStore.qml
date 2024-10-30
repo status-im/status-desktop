@@ -594,8 +594,8 @@ QtObject {
         return globalUtilsInst.wei2Eth(wei,18)
     }
 
-    function getEtherscanLink() {
-        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    function getEtherscanTxLink() {
+        return profileSectionModule.ensUsernamesModule.getEtherscanTxLink()
     }
 
     function getLoginType() {
