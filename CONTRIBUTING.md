@@ -381,6 +381,26 @@ It offers a number of functionalities that improve development:
   relative import from the file system. As a consequence, the mechanism for
   overriding import paths for tests and Storybook's pages will not work.
 
+### Page classification
+
+To keep the components and Storybook pages in the good shape, a simple classification
+has been introduced. It allows to assign pages one of the following statuses:
+
+- Good
+  - It is fully possible to interact with the whole component's public API.
+  - No workarounds are needed to use a component in isolation (like e.g. altering singletons).
+  - Additional controls are not overly complicated (e.g. the model editor is often not an
+    ideal solution - it is better to use a separate page for the delegate).
+  - No errors and warnings printed.
+- Decent
+  - Most of the component's functionality is reachable.
+  - The component does not print errors, some minor warnings are acceptable only.
+- Bad
+  - The component is not working properly (e.g. some elements are missing).
+  - Most of the component's functionality is unreachable (lack of additional controls
+    to interact with the component).
+  - The page prints many errors/warnings.
+
 ## Unit tests
 
 The project has unit tests for both C++ and QML code.
