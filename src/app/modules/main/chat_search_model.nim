@@ -11,6 +11,7 @@ type
     ColorHash
     SectionId
     SectionName
+    Emoji
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -45,6 +46,7 @@ QtObject:
       ModelRole.ColorHash.int:"colorHash",
       ModelRole.SectionId.int:"sectionId",
       ModelRole.SectionName.int:"sectionName",
+      ModelRole.Emoji.int:"emoji",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -72,3 +74,5 @@ QtObject:
         result = newQVariant(item.sectionId)
       of ModelRole.SectionName:
         result = newQVariant(item.sectionName)
+      of ModelRole.Emoji:
+        result = newQVariant(item.emoji)

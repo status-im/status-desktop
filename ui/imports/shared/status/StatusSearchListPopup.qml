@@ -109,6 +109,10 @@ Popup {
                         roleName: "name"
                         searchPhrase: searchBox.text
                     }
+                    enabled: !!searchBox.text
+                }
+                sorters: StringSorter {
+                    roleName: "name"
                 }
             }
 
@@ -132,6 +136,7 @@ Popup {
                 asset.height: 30
                 asset.color: model ? model.color ? model.color : Utils.colorForColorId(model.colorId) : ""
                 asset.name: model ? model.icon : ""
+                asset.emoji: model ? model.emoji : ""
                 asset.charactersLen: 2
                 asset.letterSize: asset._twoLettersSize
                 ringSettings.ringSpecModel: model ? model.colorHash : undefined
