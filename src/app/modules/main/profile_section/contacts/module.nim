@@ -4,7 +4,6 @@ import io_interface, view, controller, json
 import ../../../shared_models/user_item
 import ../../../shared_models/user_model
 import ../io_interface as delegate_interface
-import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
 import app_service/common/types
@@ -158,35 +157,45 @@ method removeContact*(self: Module, publicKey: string) =
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
-# TODO rename this function
-proc addItemToAppropriateModel(self: Module, item: UserItem) =
-  if singletonInstance.userProfile.getPubKey() == item.pubKey:
-    return
-
-  self.view.contactsModel().addItem(item)
-
-proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
-  self.view.contactsModel().removeItemById(publicKey)
-
-proc removeIfExistsAndAddToAppropriateModel(self: Module, publicKey: string) =
-  self.removeItemWithPubKeyFromAllModels(publicKey)
+proc updateContactItem(self: Module, publicKey: string) =
   let item = self.createItemFromPublicKey(publicKey)
-  self.addItemToAppropriateModel(item)
+  self.view.contactsModel().updateItem(
+    publicKey,
+    item.displayName,
+    item.ensName,
+    item.isEnsVerified,
+    item.localNickname,
+    item.alias,
+    item.icon,
+    item.trustStatus,
+    item.onlineStatus,
+    item.isContact,
+    item.isBlocked,
+    item.contactRequest,
+    item.lastUpdated,
+    item.lastUpdatedLocally,
+    item.bio,
+    item.thumbnailImage,
+    item.largeImage,
+    item.isContactRequestReceived,
+    item.isContactRequestSent,
+    item.isRemoved,
+  )
 
 method contactAdded*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.view.contactsModel().addItem(self.createItemFromPublicKey(publicKey))
 
 method contactBlocked*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.updateContactItem(publicKey)
 
 method contactUnblocked*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.updateContactItem(publicKey)
 
 method contactRemoved*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.updateContactItem(publicKey)
 
 method contactUpdated*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
+  self.updateContactItem(publicKey)
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
@@ -219,7 +228,7 @@ method requestContactInfo*(self: Module, publicKey: string) =
 
 method onContactInfoRequestFinished*(self: Module, publicKey: string, ok: bool) =
   if ok:
-    self.removeIfExistsAndAddToAppropriateModel(publicKey)
+    self.updateContactItem(publicKey)
   self.view.onContactInfoRequestFinished(publicKey, ok)
 
 method shareUserUrlWithData*(self: Module, pubkey: string): string =

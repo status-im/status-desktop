@@ -202,11 +202,11 @@ QtObject:
     # if we add an item with offline status we add it as the first offline item (after the last online item)
     var position = -1
     for i in 0 ..< self.items.len:
-      if(self.items[i].onlineStatus == OnlineStatus.Inactive):
+      if self.items[i].onlineStatus == OnlineStatus.Inactive:
         position = i
         break
 
-    if(position == -1):
+    if position == -1:
       position = self.items.len
 
     let parentModelIndex = newQModelIndex()
@@ -299,6 +299,18 @@ QtObject:
       alias: string,
       icon: string,
       trustStatus: TrustStatus,
+      onlineStatus: OnlineStatus,
+      isContact: bool,
+      isBlocked: bool,
+      contactRequest: ContactRequest,
+      lastUpdated: int64,
+      lastUpdatedLocally: int64,
+      bio: string,
+      thumbnailImage: string,
+      largeImage: string,
+      isContactRequestReceived: bool,
+      isContactRequestSent: bool,
+      isRemoved: bool,
     ) =
     let ind = self.findIndexByPubKey(pubKey)
     if ind == -1:
@@ -318,6 +330,18 @@ QtObject:
     updateRole(alias, Alias)
     updateRole(icon, Icon)
     updateRole(trustStatus, TrustStatus)
+    updateRole(onlineStatus, OnlineStatus)
+    updateRole(isContact, IsContact)
+    updateRole(isBlocked, IsBlocked)
+    updateRole(contactRequest, ContactRequest)
+    updateRole(lastUpdated, LastUpdated)
+    updateRole(lastUpdatedLocally, LastUpdatedLocally)
+    updateRole(bio, Bio)
+    updateRole(thumbnailImage, ThumbnailImage)
+    updateRole(largeImage, LargeImage)
+    updateRole(isContactRequestReceived, IsContactRequestReceived)
+    updateRole(isContactRequestSent, IsContactRequestSent)
+    updateRole(isRemoved, IsRemoved)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -326,6 +350,10 @@ QtObject:
       roles.add(ModelRole.IsUntrustworthy.int)
       roles.add(ModelRole.IsVerified.int)
 
+    # The image is actually a URL that doesn't change. We need to force refresh it just in case
+    roles.add(ModelRole.ThumbnailImage.int)
+    roles.add(ModelRole.LargeImage.int)
+
     if roles.len == 0:
       return
 
@@ -333,6 +361,44 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, roles)
     self.itemChanged(pubKey)
+
+  proc updateItem*(
+      self: Model,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      isEnsVerified: bool,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      trustStatus: TrustStatus,
+    ) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if ind == -1:
+      return
+    let item = self.items[ind]
+    self.updateItem(
+      pubKey,
+      displayName,
+      ensName,
+      isEnsVerified,
+      localNickname,
+      alias,
+      icon,
+      trustStatus,
+      item.onlineStatus,
+      item.isContact,
+      item.isBlocked,
+      item.contactRequest,
+      item.lastUpdated,
+      item.lastUpdatedLocally,
+      item.bio,
+      item.thumbnailImage,
+      item.largeImage,
+      item.isContactRequestReceived,
+      item.isContactRequestSent,
+      item.isRemoved,
+    )
 
   proc updateTrustStatus*(self: Model, pubKey: string, trustStatus: TrustStatus) =
     let ind = self.findIndexByPubKey(pubKey)

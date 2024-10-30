@@ -103,7 +103,7 @@ Item {
 
             width: ListView.view.width
             name: model.preferredDisplayName
-            iconSource: model.icon
+            iconSource: model.thumbnailImage
 
             subTitle: model.ensVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
             pubKeyColor: Utils.colorForPubkey(model.pubKey)
