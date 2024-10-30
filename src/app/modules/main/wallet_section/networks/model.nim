@@ -3,7 +3,7 @@ import NimQml, Tables, strutils, sequtils, sugar
 import app_service/service/network/dto
 import ./io_interface
 
-const EXPLORER_TX_PREFIX* = "/tx/"
+from app_service/service/network/service import EXPLORER_TX_PATH
 
 type
   ModelRole* {.pure.} = enum
@@ -125,10 +125,10 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc getBlockExplorerURL*(self: Model, chainId: int): string =
+  proc getBlockExplorerTxURL*(self: Model, chainId: int): string =
     for item in self.delegate.getFlatNetworksList():
       if(item.chainId == chainId):
-        return item.blockExplorerURL & EXPLORER_TX_PREFIX
+        return item.blockExplorerURL & EXPLORER_TX_PATH
     return ""
 
   proc getEnabledState*(self: Model, chainId: int): UxEnabledState =

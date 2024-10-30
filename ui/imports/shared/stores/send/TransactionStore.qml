@@ -54,8 +54,8 @@ QtObject {
         walletSectionSendInst.setSelectedRecipient(recipientAddress)
     }
 
-    function getEtherscanLink(chainID) {
-        return networksModule.getBlockExplorerURL(chainID)
+    function getEtherscanTxLink(chainID) {
+        return networksModule.getBlockExplorerTxURL(chainID)
     }
 
     function authenticateAndTransfer(uuid, slippagePercentage = "") {

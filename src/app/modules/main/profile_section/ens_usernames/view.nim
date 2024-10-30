@@ -9,7 +9,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      etherscanLink: string
+      etherscanTxLink: string
+      etherscanAddressLink: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -23,8 +24,9 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.delegate = delegate
 
-  proc load*(self: View, link: string) =
-    self.etherscanLink = link
+  proc load*(self: View, txLink, addressLink: string) =
+    self.etherscanTxLink = txLink
+    self.etherscanAddressLink = addressLink
     self.delegate.viewDidLoad()
 
   proc model*(self: View): Model =
@@ -66,8 +68,11 @@ QtObject:
   proc emitTransactionWasSentSignal*(self: View, trxType: string, chainId: int, txHash: string, username: string, error: string) =
     self.transactionWasSent(trxType, chainId, txHash, username, error)
 
-  proc getEtherscanLink*(self: View): string {.slot.} =
-    return self.etherscanLink
+  proc getEtherscanTxLink*(self: View): string {.slot.} =
+    return self.etherscanTxLink
+
+  proc getEtherscanAddressLink*(self: View): string {.slot.} =
+    return self.etherscanAddressLink
 
   proc usernameConfirmed(self: View, username: string) {.signal.}
   proc emitUsernameConfirmedSignal*(self: View, ensUsername: string) =

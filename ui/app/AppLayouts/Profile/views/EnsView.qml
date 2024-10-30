@@ -470,7 +470,7 @@ Item {
                 ephType = Constants.ephemeralNotificationType.success;
             }
 
-            let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txHash}`;
+            let url = `${ensView.ensUsernamesStore.getEtherscanTxLink()}/${txHash}`;
             Global.displayToastMessage(qsTr("Transaction pending..."),
                                        qsTr("View on etherscan"),
                                        icon,

@@ -56,8 +56,9 @@ method delete*(self: Module) =
 method load*(self: Module) =
   self.controller.init()
 
-  let link = self.controller.getAppNetwork().blockExplorerUrl & "/tx/"
-  self.view.load(link)
+  let txLink = self.controller.getAppNetwork().blockExplorerUrl & EXPLORER_TX_PATH
+  let addressLink = self.controller.getAppNetwork().blockExplorerUrl & EXPLORER_ADDRESS_PATH
+  self.view.load(txLink, addressLink)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.controller.fixPreferredName(true)
