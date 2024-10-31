@@ -3,33 +3,34 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 
-import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-import shared.stores 1.0 as SharedStores
 import shared.popups.keycard 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0
+import utils 1.0
 
-import StatusQ.Core.Theme 0.1
-
-import AppLayouts.Wallet.controls 1.0
-import AppLayouts.Wallet.stores 1.0
-
-import "stores"
 import "popups"
 import "views"
 import "views/profile"
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Layout 0.1
+import StatusQ.Popups.Dialog 0.1
+
+import AppLayouts.Communities.stores 1.0 as CommunitiesStore
+import AppLayouts.Profile.helpers 1.0
+import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0
+import AppLayouts.stores 1.0 as AppLayoutsStores
 
 import SortFilterProxyModel 0.2
-import AppLayouts.stores 1.0 as AppLayoutsStores
-import AppLayouts.Communities.stores 1.0 as CommunitiesStore
+
 
 StatusSectionLayout {
     id: root
@@ -41,7 +42,7 @@ StatusSectionLayout {
 
     property SharedStores.RootStore sharedRootStore
     property SharedStores.UtilsStore utilsStore
-    property ProfileSectionStore store
+    property ProfileStores.ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
     required property var sendModalPopup
@@ -99,6 +100,17 @@ StatusSectionLayout {
         readonly property bool toastClashesWithDirtyBubble: root.Window.width <= 1650 // design
     }
 
+    SettingsEntriesModel {
+        id: settingsEntriesModel
+
+        showWalletEntries: root.store.walletMenuItemEnabled
+        showBackUpSeed: !root.store.privacyStore.mnemonicBackedUp
+
+        syncingBadgeCount: root.store.devicesStore.devicesModel.count -
+                           root.store.devicesStore.devicesModel.pairedCount
+        messagingBadgeCount: root.store.contactsStore.receivedContactRequestsModel.count
+    }
+
     headerBackground: AccountHeaderGradient {
         width: parent.width
         overview: root.store.walletStore.selectedAccount
@@ -106,8 +118,10 @@ StatusSectionLayout {
     }
 
     leftPanel: LeftTabView {
-        store: root.store
         anchors.fill: parent
+
+        model: settingsEntriesModel
+
         onMenuItemClicked: {
             if (profileContainer.currentItem.dirty && !profileContainer.currentItem.ignoreDirty) {
                 event.accepted = true;
@@ -137,9 +151,9 @@ StatusSectionLayout {
             root.store.backButtonName = ""
 
             if (currentIndex === Constants.settingsSubsection.contacts) {
-                root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
             } else if (currentIndex === Constants.settingsSubsection.about_privacy || currentIndex === Constants.settingsSubsection.about_terms) {
-                root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.about)
+                root.store.backButtonName = settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()
             } else if (currentIndex === Constants.settingsSubsection.keycard) {
@@ -161,7 +175,7 @@ StatusSectionLayout {
                 utilsStore: root.utilsStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
                 sideBySidePreview: d.sideBySidePreviewAvailable
                 toastClashesWithDirtyBubble: d.toastClashesWithDirtyBubble
@@ -205,7 +219,7 @@ StatusSectionLayout {
                 privacyStore: root.store.privacyStore
                 passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.password)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.password)
             }
         }
 
@@ -249,7 +263,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 messagingStore: root.store.messagingStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
                 contactsStore: root.store.contactsStore
                 contentWidth: d.contentWidth
             }
@@ -276,7 +290,7 @@ StatusSectionLayout {
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
                 sendModalPopup: root.sendModalPopup
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
             }
             onLoaded: root.store.backButtonName = ""
         }
@@ -289,7 +303,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 appearanceStore: root.store.appearanceStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.appearance)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
                 systemPalette: root.systemPalette
             }
@@ -305,7 +319,7 @@ StatusSectionLayout {
                 languageSelectionEnabled: localAppSettings.translationsEnabled
                 languageStore: root.store.languageStore
                 currencyStore: root.currencyStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
             }
         }
@@ -318,7 +332,7 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 notificationsStore: root.store.notificationsStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
         }
@@ -335,7 +349,7 @@ StatusSectionLayout {
                 devicesStore: root.store.devicesStore
                 privacyStore: root.store.privacyStore
                 advancedStore: root.store.advancedStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
             }
         }
@@ -351,7 +365,7 @@ StatusSectionLayout {
                 advancedStore: root.store.advancedStore
                 walletStore: root.store.walletStore
                 isFleetSelectionEnabled: fleetSelectionEnabled
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }
         }
@@ -362,7 +376,7 @@ StatusSectionLayout {
             sourceComponent: AboutView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.about)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
 
                 store: QtObject {
@@ -411,7 +425,7 @@ StatusSectionLayout {
                 rootStore: root.globalStore
                 currencyStore: root.currencyStore
                 walletAssetsStore: root.walletAssetsStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }
         }
@@ -427,8 +441,8 @@ StatusSectionLayout {
                 profileSectionStore: root.store
                 keycardStore: root.store.keycardStore
                 emojiPopup: root.emojiPopup
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
-                mainSectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.keycard)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
+                mainSectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.keycard)
                 contentWidth: d.contentWidth
             }
         }
@@ -483,7 +497,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
                 contentWidth: d.contentWidth
             }
         }
