@@ -228,10 +228,11 @@ StatusDialog {
         }
 
         if (!!popup.preSelectedHoldingID
-                && popup.preSelectedHoldingType > Constants.TokenType.Native
+                && popup.preSelectedHoldingType >= Constants.TokenType.Native
                 && popup.preSelectedHoldingType < Constants.TokenType.Unknown) {
 
-            if (popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
+            if (popup.preSelectedHoldingType === Constants.TokenType.Native
+                    || popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
                 const entry = SQUtils.ModelUtils.getByKey(
                                 assetsAdaptor.outputAssetsModel, "tokensKey",
                                 popup.preSelectedHoldingID)
