@@ -22,6 +22,7 @@ pytestmark = marks
                  'Edit chat - Remove pinned message (when any member can pin is disabled)')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510)
+@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/16672')
 def test_join_community_and_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
