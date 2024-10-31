@@ -1,11 +1,11 @@
-import QtQuick 2.13
-import utils 1.0
+import QtQuick 2.15
+
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.helpers 1.0
-
-import StatusQ.Core.Utils 0.1
+import utils 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -88,80 +88,6 @@ QtObject {
     }
     property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
 
-    property ListModel mainMenuItems: ListModel {
-        Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.backUpSeed,
-                       text: qsTr("Back up seed phrase"),
-                       icon: "seed-phrase"})
-            append({subsection: Constants.settingsSubsection.profile,
-                       text: qsTr("Profile"),
-                       icon: "profile"})
-            append({subsection: Constants.settingsSubsection.password,
-                       text: qsTr("Password"),
-                       icon: "password"})
-            append({subsection: Constants.settingsSubsection.keycard,
-                       text: qsTr("Keycard"),
-                       icon: "keycard"})
-            append({subsection: Constants.settingsSubsection.ensUsernames,
-                       text: qsTr("ENS usernames"),
-                       icon: "username",
-                       isExperimental: true,
-                       experimentalTooltip: qsTr("This section is going through a redesign.")
-                   })
-            append({subsection: Constants.settingsSubsection.syncingSettings,
-                       text: qsTr("Syncing"),
-                       icon: "rotate",
-                       isExperimental: true,
-                       experimentalTooltip: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Seed Phrase feature instead.")
-                   })
-        }
-    }
-
-    property ListModel appsMenuItems: ListModel {
-        Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.messaging,
-                       text: qsTr("Messaging"),
-                       icon: "chat"})
-            append({subsection: Constants.settingsSubsection.wallet,
-                       text: qsTr("Wallet"),
-                       icon: "wallet"})
-            append({subsection: Constants.settingsSubsection.communitiesSettings,
-                       text: qsTr("Communities"),
-                       icon: "communities"})
-        }
-    }
-
-    property ListModel settingsMenuItems: ListModel {
-        Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.privacyAndSecurity,
-                       text: qsTr("Privacy and security"),
-                       icon: "security"})
-            append({subsection: Constants.settingsSubsection.appearance,
-                       text: qsTr("Appearance"),
-                       icon: "appearance"})
-            append({subsection: Constants.settingsSubsection.notifications,
-                       text: qsTr("Notifications & Sounds"),
-                       icon: "notification"})
-            append({subsection: Constants.settingsSubsection.language,
-                       text: qsTr("Language & Currency"),
-                       icon: "language"})
-            append({subsection: Constants.settingsSubsection.advanced,
-                       text: qsTr("Advanced"),
-                       icon: "settings"})
-        }
-    }
-
-    property ListModel extraMenuItems: ListModel {
-        Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.about,
-                       text: qsTr("About"),
-                       icon: "info"})
-            append({subsection: Constants.settingsSubsection.signout,
-                       text: qsTr("Sign out & Quit"),
-                       icon: "logout"})
-        }
-    }
-
     readonly property alias ownShowcaseCommunitiesModel: ownShowcaseModels.adaptedCommunitiesSourceModel
     readonly property alias ownShowcaseAccountsModel: ownShowcaseModels.adaptedAccountsSourceModel
     readonly property alias ownShowcaseCollectiblesModel: ownShowcaseModels.adaptedCollectiblesSourceModel
@@ -222,35 +148,6 @@ QtObject {
 
     function checkForUpdates() {
         aboutModuleInst.checkForUpdates()
-    }
-
-    function getNameForSubsection(subsection) {
-        let i = 0;
-        for (; i < mainMenuItems.count; i++) {
-            let elem = mainMenuItems.get(i)
-            if(elem.subsection === subsection)
-                return elem.text
-        }
-
-        for (i=0; i < appsMenuItems.count; i++) {
-            let elem = appsMenuItems.get(i)
-            if(elem.subsection === subsection)
-                return elem.text
-        }
-
-        for (i=0; i < settingsMenuItems.count; i++) {
-            let elem = settingsMenuItems.get(i)
-            if(elem.subsection === subsection)
-                return elem.text
-        }
-
-        for (i=0; i < extraMenuItems.count; i++) {
-            let elem = extraMenuItems.get(i)
-            if(elem.subsection === subsection)
-                return elem.text
-        }
-
-        return ""
     }
 
     function addressWasShown(address) {

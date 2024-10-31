@@ -1,25 +1,21 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
-import shared 1.0
 import shared.popups 1.0
 
-import "../panels"
-import AppLayouts.Profile.stores 1.0
+import AppLayouts.Profile.controls 1.0
 
 Item {
     id: root
 
-    property ProfileSectionStore store
+    property alias model: settingsList.model
 
     signal menuItemClicked(var event)
 
-    property alias settingsSubsection: profileMenu.settingsSubsection
+    property alias settingsSubsection: settingsList.currenctSubsection
 
     StatusNavigationPanelHeadline {
         id: title
@@ -30,49 +26,38 @@ Item {
         anchors.leftMargin: Theme.bigPadding
     }
 
-    StatusScrollView {
-        id: scrollView
-        contentWidth: availableWidth
-        contentHeight: profileMenu.height + Theme.bigPadding
+    SettingsList {
+        id: settingsList
+
         anchors.right: parent.right
         anchors.left: parent.left
-        leftPadding: Theme.halfPadding
         anchors.top: title.bottom
-        anchors.topMargin: Theme.halfPadding
         anchors.bottom: parent.bottom
 
-        MenuPanel {
-            id: profileMenu
-            width: scrollView.availableWidth
-            privacyStore: store.privacyStore
-            contactsStore: store.contactsStore
-            devicesStore: store.devicesStore
-            mainMenuItems: store.mainMenuItems
-            settingsMenuItems: store.settingsMenuItems
-            extraMenuItems: store.extraMenuItems
-            appsMenuItems: store.appsMenuItems
-            walletMenuItemEnabled: store.walletMenuItemEnabled
+        anchors.topMargin: Theme.bigPadding
+        anchors.bottomMargin: Theme.padding
 
-            objectName: "leftTabViewProfileMenu"
+        leftMargin: Theme.halfPadding
+        rightMargin: Theme.padding
+        bottomMargin: Theme.bigPadding
 
-            onMenuItemClicked: {
-                if (menu_item.subsection === Constants.settingsSubsection.backUpSeed) {
-                    Global.openBackUpSeedPopup();
-                    return;
-                }
-
-                let event = { accepted: false, item: menu_item.subsection };
-                
-                root.menuItemClicked(event);
-                
-                if (event.accepted)
-                    return;
-
-                if (menu_item.subsection === Constants.settingsSubsection.signout)
-                    return confirmDialog.open()
-
-                profileMenu.settingsSubsection = menu_item.subsection
+        onClicked: {
+            if (subsection === Constants.settingsSubsection.backUpSeed) {
+                Global.openBackUpSeedPopup()
+                return
             }
+
+            const event = { accepted: false, item: subsection };
+
+            root.menuItemClicked(event)
+
+            if (event.accepted)
+                return
+
+            if (subsection === Constants.settingsSubsection.signout)
+                return confirmDialog.open()
+
+            root.settingsSubsection = subsection
         }
     }
 
@@ -82,8 +67,6 @@ Item {
         headerSettings.title: qsTr("Sign out")
         confirmationText: qsTr("Make sure you have your account password and seed phrase stored. Without them you can lock yourself out of your account and lose funds.")
         confirmButtonLabel: qsTr("Sign out & Quit")
-        onConfirmButtonClicked: {
-            Qt.quit()
-        }
+        onConfirmButtonClicked: Qt.quit()
     }
 }
