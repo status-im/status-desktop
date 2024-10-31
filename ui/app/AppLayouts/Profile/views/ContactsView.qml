@@ -126,14 +126,6 @@ SettingsContentBase {
                 text: qsTr("Pending Requests")
                 badge.value: root.contactsStore.receivedContactRequestsModel.count
             }
-            // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-            //            StatusTabButton {
-            //                id: rejectedRequestsBtn
-            //                width: implicitWidth
-            //                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
-            //                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
-            //                btnText: qsTr("Rejected Requests")
-            //            }
             StatusTabButton {
                 id: blockedBtn
                 objectName: "ContactsView_Blocked_Button"
@@ -259,52 +251,6 @@ SettingsContentBase {
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
             }
-
-            // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-            //            // REJECTED REQUESTS
-            //            Item {
-            //                Layout.fillWidth: true
-            //                //Layout.fillHeight: true
-
-            //                ColumnLayout {
-            //                    //anchors.fill: parent
-
-            //                    ContactsListPanel {
-            //                        Layout.fillWidth: true
-            //                        Layout.preferredHeight: root.height * 0.5
-            //                        clip: true
-            //                        title: qsTr("Received")
-            //                        searchString: searchBox.text
-            //                        onOpenContactContextMenu: function (publicKey, name, icon) {
-            //                           root.openContextMenu(publicKey, name, icon)
-            //                        }
-            //                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
-            //                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
-
-            //                        onRejectionRemoved: {
-            //                            root.contactsStore.removeContactRequestRejection(publicKey)
-            //                        }
-            //                    }
-
-            //                    ContactsListPanel {
-            //                        Layout.fillWidth: true
-            //                        Layout.preferredHeight: root.height * 0.5
-            //                        clip: true
-            //                        title: qsTr("Sent")
-            //                        searchString: searchBox.text
-            //                        onOpenContactContextMenu: function (publicKey, name, icon) {
-            //                             root.openContextMenu(publicKey, name, icon)
-            //                         }
-            //                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
-            //                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
-            //                    }
-
-            //                    Item {
-            //                        Layout.fillWidth: true
-            //                        Layout.fillHeight: true
-            //                    }
-            //                }
-            //            }
 
             // BLOCKED
             ContactsListPanel {
