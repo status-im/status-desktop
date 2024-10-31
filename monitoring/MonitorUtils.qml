@@ -1,6 +1,6 @@
 pragma Singleton
 
-import QtQml 2.14
+import QtQml 2.15
 
 import Monitoring 1.0
 
@@ -39,7 +39,7 @@ QtObject {
 
     function contextPropertyBindingHelper(name, parent) {
         return Qt.createQmlObject(
-                              `import QtQml 2.14; QtObject { readonly property var value: ${name} }`,
+                              `import QtQml 2.15; QtObject { readonly property var value: ${name} }`,
                               parent, `ctxPropHelperSnippet_${name}`)
     }
 }

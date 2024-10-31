@@ -8,9 +8,7 @@ import Qt.labs.settings 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 Component {
-
     ColumnLayout {
-
         spacing: 0
 
         Settings {
@@ -73,7 +71,7 @@ Component {
                             implicitHeight: delegateRow.implicitHeight
 
                             readonly property var contextPropertyValue:
-                                MonitorUtils.contextPropertyBindingHelper(name, root).value
+                                MonitorUtils.contextPropertyBindingHelper(name, this).value
 
                             Row {
                                 id: delegateRow
@@ -98,6 +96,7 @@ Component {
 
                                 onClicked: {
                                     inspectionStackView.clear()
+                                    headerModel.clear()
 
                                     const props = {
                                         name: name,
@@ -105,6 +104,7 @@ Component {
                                     }
 
                                     inspectionStackView.push(inspectionList, props)
+                                    headerModel.append({ name })
                                 }
                             }
                         }
@@ -120,11 +120,11 @@ Component {
                 Component {
                     id: inspectionList
 
-                    Pane {
-                        id: inspectionPanel
-
+                    ListView {
                         property var objectForInspection
                         property string name
+
+                        ScrollBar.vertical: ScrollBar {}
 
                         onObjectForInspectionChanged: {
                             inspectionModel.clear()
@@ -181,107 +181,146 @@ Component {
                             inspectionModel.append(items)
                         }
 
-                        ColumnLayout {
-                            anchors.fill: parent
-                            anchors.margins: 5
+                        anchors.fill: parent
 
-                            Label {
-                                text: name
-                                font.pixelSize: 20
-                                font.bold: true
-                            }
+                        spacing: 5
+                        clip: true
 
-                            MenuSeparator {
-                                Layout.fillWidth: true
-                            }
+                        model: ListModel {
+                            id: inspectionModel
+                        }
 
-                            ListView {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
+                        delegate: Item {
+                            implicitWidth: delegateRow.implicitWidth
+                            implicitHeight: delegateRow.implicitHeight
 
-                                spacing: 5
-                                clip: true
+                            Row {
+                                id: delegateRow
 
-                                model: ListModel {
-                                    id: inspectionModel
+                                readonly property var object: objectForInspection[name]
+
+                                Label {
+                                    text: name
                                 }
 
-                                delegate: Item {
-                                    implicitWidth: delegateRow.implicitWidth
-                                    implicitHeight: delegateRow.implicitHeight
-
-                                    Row {
-                                        id: delegateRow
-
-                                        readonly property var object: objectForInspection[name]
-
-                                        Label {
-                                            text: name
-                                        }
-
-                                        Loader {
-                                            active: type !== "function"
-                                            sourceComponent: Label {
-                                                text: ` [${type}]`
-                                                color: "darkgreen"
-                                            }
-                                        }
-
-                                        Loader {
-                                            active: type !== "function"
-                                            sourceComponent: Label {
-                                                text: ` (${MonitorUtils.valueToString(delegateRow.object)})`
-                                                color: "darkred"
-                                            }
-                                        }
-
-                                        Loader {
-                                            active: isModel
-                                            sourceComponent: Label {
-                                                text: `, ${delegateRow.object.rowCount()} items`
-                                                color: "darkred"
-                                                font.bold: true
-                                            }
-                                        }
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-
-                                        onClicked: {
-                                            if (!isModel)
-                                                return
-
-                                            const props = {
-                                                name: name,
-                                                model: objectForInspection[name]
-                                            }
-
-                                            inspectionStackView.push(modelInspectionComponent,
-                                                                     props, StackView.Immediate)
-                                        }
+                                Loader {
+                                    active: type !== "function"
+                                    sourceComponent: Label {
+                                        text: ` [${type}]`
+                                        color: "darkgreen"
                                     }
                                 }
 
-                                section.property: "category"
-                                section.delegate: Pane {
-                                    leftPadding: 0
+                                Loader {
+                                    active: type !== "function"
+                                    sourceComponent: Label {
+                                        text: ` (${MonitorUtils.valueToString(delegateRow.object)})`
+                                        color: "darkred"
+                                    }
+                                }
 
-                                    Label {
-                                        text: section
+                                Loader {
+                                    active: isModel
+                                    sourceComponent: Label {
+                                        text: `, ${delegateRow.object.rowCount()} items`
+                                        color: "darkred"
                                         font.bold: true
                                     }
                                 }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                onClicked: {
+                                    if (isModel) {
+                                        const props = {
+                                            name: name,
+                                            model: objectForInspection[name]
+                                        }
+
+                                        inspectionStackView.push(modelInspectionComponent,
+                                                                 props, StackView.Immediate)
+                                        headerModel.append({ name })
+                                    } else if (type !== "function") {
+                                        const props = {
+                                            name: name,
+                                            objectForInspection: objectForInspection[name]
+                                        }
+
+                                        inspectionStackView.push(inspectionList, props, StackView.Immediate)
+                                        headerModel.append({ name })
+                                    }
+                                }
+                            }
+                        }
+
+                        section.property: "category"
+                        section.delegate: Pane {
+                            leftPadding: 0
+
+                            Label {
+                                text: section
+                                font.bold: true
                             }
                         }
                     }
                 }
 
-                StackView {
-                    id: inspectionStackView
-
+                Pane {
                     SplitView.fillHeight: true
                     SplitView.minimumWidth: 100
+
+                    ColumnLayout {
+                        anchors.fill: parent
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: false
+
+                            RoundButton {
+                                text: "⬅️"
+
+                                visible: headerRepeater.count > 1
+
+                                onClicked: {
+                                    inspectionStackView.pop(StackView.Immediate)
+                                    headerModel.remove(headerModel.count - 1)
+                                }
+                            }
+
+                            Repeater {
+                                id: headerRepeater
+
+                                model: ListModel {
+                                    id: headerModel
+                                }
+
+                                delegate: TextInput {
+                                    readonly property bool last: headerRepeater.count - 1 === index
+
+                                    text: model.name + (last ? "" : "  ->  ")
+                                    font.pixelSize: 20
+                                    font.bold: true
+
+                                    selectByMouse: true
+                                    readOnly: true
+                                }
+                            }
+                        }
+
+                        MenuSeparator {
+                            visible: headerRepeater.count
+                            Layout.fillWidth: true
+                        }
+
+                        StackView {
+                            id: inspectionStackView
+
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                        }
+                    }
                 }
             }
 

@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 import Monitoring 1.0
 import StatusQ.Core.Utils 0.1
 
-Pane {
+Item {
     property string name
     property var model
     readonly property var rootModel: model
@@ -51,36 +51,6 @@ Pane {
 
     ColumnLayout {
         anchors.fill: parent
-
-        RowLayout {
-            Layout.fillWidth: true
-
-            visible: showControls
-
-            RoundButton {
-                text: "⬅️"
-
-                onClicked: {
-                    inspectionStackView.pop(StackView.Immediate)
-                }
-            }
-
-            TextInput {
-                Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
-
-                text: name
-                font.pixelSize: 20
-                font.bold: true
-
-                selectByMouse: true
-                readOnly: true
-            }
-        }
-
-        MenuSeparator {
-            Layout.fillWidth: true
-        }
 
         Label {
             visible: listView.count
