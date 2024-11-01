@@ -14,10 +14,15 @@ LeftTabProfileMenu = {"container": LeftTabView_ScrollView, "objectName": "leftTa
 
 mainWindow_Settings_StatusNavigationPanelHeadline = {"container": mainWindow_LeftTabView, "type": "StatusNavigationPanelHeadline", "unnamed": 1, "visible": True}
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_LeftTabView, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
+mainWindow_settingsList_SettingsList = {"container": statusDesktop_mainWindow, "id": "settingsList", "type": "SettingsList", "unnamed": 1, "visible": True}
+mainWindow_settingsList_SettingsListItem = {"container": mainWindow_settingsList_SettingsList, "type": "StatusNavigationListItem", "visible": True}
+mainWindow_settingsList_VerticalScroll = {"container": mainWindow_settingsList_SettingsList, "id": "verticalScrollBar", "type": "StatusScrollBar", "unnamed": 1, "visible": True}
 scrollView_MenuItem_StatusNavigationListItem = {"container": mainWindow_scrollView_StatusScrollView, "type": "StatusNavigationListItem", "visible": True}
+
+
 scrollView_Flickable = {"container": mainWindow_scrollView_StatusScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
 settingsBackUpSeedPhraseOption = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "18-MainMenuItem", "type": "StatusNavigationListItem", "visible": True}
-settingsWalletOption = {"container": LeftTabView_ScrollView, "objectName": "5-AppMenuItem", "type": "StatusNavigationListItem", "visible": True}
+settingsWalletOption = {"container": mainWindow_settingsList_SettingsList, "objectName": "5-MenuItem", "type": "StatusNavigationListItem", "visible": True}
 settingsSignOutQuitOption = {"container": LeftTabProfileMenu, "objectName": "17-ExtraMenuItem", "type": "StatusNavigationListItem", "visible": True}
 
 # Communities View
