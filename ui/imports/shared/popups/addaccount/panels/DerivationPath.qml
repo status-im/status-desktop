@@ -149,7 +149,7 @@ GridLayout {
                 return qsTr("Select address")
             }
 
-            return "0x0000000000000000000000000000000000000000"
+            return Constants.zeroAddress
         }
 
         components: [

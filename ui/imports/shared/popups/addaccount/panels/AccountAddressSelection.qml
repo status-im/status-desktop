@@ -28,17 +28,16 @@ StatusMenu {
         id: d
 
         property int currentPage: 0
+        readonly property int lowerBound: root.itemsPerPage * d.currentPage
         readonly property int totalPages: Math.ceil(root.store.derivedAddressModel.count / root.itemsPerPage)
     }
 
     SortFilterProxyModel {
         id: proxyModel
         sourceModel: root.store.derivedAddressModel
-        filters: ExpressionFilter {
-            expression: {
-                let lowerBound = root.itemsPerPage * d.currentPage
-                return model.index >= lowerBound  && model.index < lowerBound + root.itemsPerPage
-            }
+        filters: IndexFilter {
+            minimumIndex: d.lowerBound
+            maximumIndex: d.lowerBound + root.itemsPerPage
         }
     }
 
@@ -99,13 +98,15 @@ StatusMenu {
             }
         }
 
-        Repeater {
+        StatusListView {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            implicitHeight: contentHeight
             model: proxyModel
 
-            Rectangle {
+            delegate: Rectangle {
                 objectName: "AddAccountPopup-GeneratedAddress-%1".arg(model.addressDetails.order)
-                anchors.left: parent.left
-                anchors.right: parent.right
+                width: ListView.view.width
                 height: Constants.addAccountPopup.itemHeight
                 enabled: !model.addressDetails.alreadyCreated
                 radius: Theme.halfPadding
@@ -116,6 +117,16 @@ StatusMenu {
                     return "transparent"
                 }
 
+                MouseArea {
+                    id: sensor
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        root.selected(model.addressDetails.address)
+                    }
+                }
+
                 GridLayout {
                     anchors.fill: parent
                     anchors.leftMargin: Theme.padding
@@ -124,26 +135,26 @@ StatusMenu {
                     rowSpacing: 0
 
                     StatusBaseText {
-                        Layout.preferredWidth: 208
+                        Layout.fillWidth: true
+                        elide: Text.ElideMiddle
                         color: model.addressDetails.alreadyCreated? Theme.palette.baseColor1 : Theme.palette.directColor1
                         font.pixelSize: Constants.addAccountPopup.labelFontSize1
-                        text: StatusQUtils.Utils.elideText(model.addressDetails.address, 15, 4)
+                        text: model.addressDetails.address
                     }
 
-                    Row {
-                        Layout.preferredWidth: 108
+                    RowLayout {
                         spacing: Theme.halfPadding * 0.5
 
                         StatusIcon {
                             visible: model.addressDetails.loaded && model.addressDetails.hasActivity
-                            width: 20
-                            height: 20
+                            Layout.preferredWidth: 20
+                            Layout.preferredHeight: 20
                             icon: "flash"
                             color: Theme.palette.successColor1
                         }
 
                         StatusTextWithLoadingState {
-                            width: 84
+                            Layout.fillWidth: true
                             font.pixelSize: Constants.addAccountPopup.labelFontSize1
                             text: {
                                 if (!root.store.addAccountModule.scanningForActivityIsOngoing) {
@@ -171,7 +182,6 @@ StatusMenu {
                     }
 
                     StatusBaseText {
-                        Layout.preferredWidth: 20
                         color: Theme.palette.baseColor1
                         font.pixelSize: Constants.addAccountPopup.labelFontSize1
                         text: model.addressDetails.order
@@ -185,18 +195,8 @@ StatusMenu {
                         icon.width: 16
                         icon.height: 16
                         onClicked: {
-                            Qt.openUrlExternally("https://etherscan.io/address/%1".arg(model.addressDetails.address))
+                            Global.openLink("https://etherscan.io/address/%1".arg(model.addressDetails.address))
                         }
-                    }
-                }
-
-                MouseArea {
-                    id: sensor
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        root.selected(model.addressDetails.address)
                     }
                 }
             }
