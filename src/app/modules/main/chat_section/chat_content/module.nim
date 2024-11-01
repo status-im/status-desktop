@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar
+import NimQml, chronicles, sequtils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -272,9 +272,6 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
 
 method getMyChatId*(self: Module): string =
   self.controller.getMyChatId()
-
-method isMyContact*(self: Module, contactId: string): bool =
-  self.controller.getMyMutualContacts().filter(x => x.id == contactId).len > 0
 
 method muteChat*(self: Module, interval: int) =
   self.controller.muteChat(interval)

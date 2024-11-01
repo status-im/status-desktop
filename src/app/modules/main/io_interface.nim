@@ -117,6 +117,24 @@ method onCommunityDataLoaded*(
   ){.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onContactsLoaded*(
+    self: AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
+  ){.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onChatsLoadingFailed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

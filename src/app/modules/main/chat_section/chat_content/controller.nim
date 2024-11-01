@@ -208,9 +208,6 @@ proc getMessageById*(self: Controller, messageId: string): GetMessageResult =
 proc isUsersListAvailable*(self: Controller): bool =
   return self.isUsersListAvailable
 
-proc getMyMutualContacts*(self: Controller): seq[ContactsDto] =
-  return self.contactService.getContactsByGroup(ContactsGroup.MyMutualContacts)
-
 proc muteChat*(self: Controller, interval: int) =
   self.chatService.muteChat(self.chatId, interval)
 

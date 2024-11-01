@@ -117,6 +117,7 @@ type
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
+    contactsLoaded: bool
     pendingSpectateRequest: SpectateRequest
     statusDeepLinkToActivate: string
 
@@ -195,6 +196,7 @@ proc newModule*[T](
   result.moduleLoaded = false
   result.chatsLoaded = false
   result.communityDataLoaded = false
+  result.contactsLoaded = false
 
   result.events = events
   result.urlsManager = urlsManager
@@ -502,6 +504,22 @@ method load*[T](
   if (activeSectionId == ""):
     activeSectionId = singletonInstance.userProfile.getPubKey()
 
+  let loadingItem = initItem(
+    LOADING_SECTION_ID,
+    SectionType.LoadingSection,
+    conf.LOADING_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    image = "",
+    icon = conf.LOADING_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
+  self.view.model().addItem(loadingItem)
+
   # Communities Portal Section
   let communitiesPortalSectionItem = initItem(
     conf.COMMUNITIESPORTAL_SECTION_ID,
@@ -518,7 +536,7 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(communitiesPortalSectionItem)
-  if(activeSectionId == communitiesPortalSectionItem.id):
+  if activeSectionId == communitiesPortalSectionItem.id:
     activeSection = communitiesPortalSectionItem
 
   # Wallet Section
@@ -539,7 +557,7 @@ method load*[T](
     enabled = WALLET_ENABLED,
   )
   self.view.model().addItem(walletSectionItem)
-  if(activeSectionId == walletSectionItem.id):
+  if activeSectionId == walletSectionItem.id:
     activeSection = walletSectionItem
 
   # Node Management Section
@@ -560,7 +578,7 @@ method load*[T](
     enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled(),
   )
   self.view.model().addItem(nodeManagementSectionItem)
-  if(activeSectionId == nodeManagementSectionItem.id):
+  if activeSectionId == nodeManagementSectionItem.id:
     activeSection = nodeManagementSectionItem
 
   # Profile Section
@@ -581,7 +599,7 @@ method load*[T](
     enabled = true,
   )
   self.view.model().addItem(profileSettingsSectionItem)
-  if(activeSectionId == profileSettingsSectionItem.id):
+  if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
 
   self.profileSectionModule.load()
@@ -600,24 +618,12 @@ method load*[T](
   # If section is empty or profile then open the loading section until chats are loaded
   if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
     # Set bogus Item as active until the chat is loaded
-    let loadingItem = initItem(
-      LOADING_SECTION_ID,
-      SectionType.LoadingSection,
-      name = "",
-      memberRole = MemberRole.Owner,
-      description = "",
-      image = "",
-      icon = "",
-      color = "",
-      hasNotification = false,
-      notificationsCount = 0,
-      active = false,
-      enabled = true,
-    )
-    self.view.model().addItem(loadingItem)
     self.setActiveSection(loadingItem, skipSavingInSettings = true)
   else:
     self.setActiveSection(activeSection)
+
+proc isEverythingLoaded[T](self: Module[T]): bool =
+  return self.communityDataLoaded and self.chatsLoaded and self.contactsLoaded
 
 method onChatsLoaded*[T](
   self: Module[T],
@@ -636,11 +642,9 @@ method onChatsLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.chatsLoaded = true
-  if not self.communityDataLoaded:
+  if not self.isEverythingLoaded:
     return
-
   let myPubKey = singletonInstance.userProfile.getPubKey()
-
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
@@ -752,7 +756,43 @@ method onCommunityDataLoaded*[T](
   networkService: network_service.Service,
 ) =
   self.communityDataLoaded = true
-  if not self.chatsLoaded:
+  if not self.isEverythingLoaded:
+    return
+
+  self.onChatsLoaded(
+    events,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService,
+    sharedUrlsService,
+    networkService,
+  )
+
+method onContactsLoaded*[T](
+  self: Module[T],
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service,
+  sharedUrlsService: urls_service.Service,
+  networkService: network_service.Service,
+) =
+  self.contactsLoaded = true
+  if not self.isEverythingLoaded:
     return
 
   self.onChatsLoaded(

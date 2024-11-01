@@ -25,7 +25,8 @@ TabButton {
         StatusSmartIdenticon {
             id: identicon
             anchors.centerIn: parent
-            asset.isImage: (statusIconTabButton.icon.source.toString() !== "")
+            loading: statusIconTabButton.icon.name === "loading"
+            asset.isImage: loading || statusIconTabButton.icon.source.toString() !== ""
             asset.name: asset.isImage ?
                         statusIconTabButton.icon.source : statusIconTabButton.icon.name
             asset.width: asset.isImage ? 28 : statusIconTabButton.icon.width

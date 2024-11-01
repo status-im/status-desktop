@@ -10,13 +10,13 @@ import ../../../app_service/service/community_tokens/community_collectible_owner
 
 type
   SectionType* {.pure.} = enum
-    LoadingSection = -1
     Chat = 0
     Community,
     Wallet,
     ProfileSettings,
     NodeManagement,
-    CommunitiesPortal
+    CommunitiesPortal,
+    LoadingSection,
 
 type
   SectionItem* = object
