@@ -390,6 +390,12 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
 
   memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
 
+  # Remove duplicates, this can happen when the requests to join have not updated in time
+  var finalMembers: Table[string, MemberItem]
+  for memberItem in memberItems:
+    if not finalMembers.contains(memberItem.pubKey):
+      finalMembers[memberItem.pubKey] = memberItem
+
   result = initItem(
     communityDetails.id,
     sectionType = SectionType.Community,
@@ -417,7 +423,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     communityDetails.permissions.access,
     communityDetails.permissions.ensOnly,
     communityDetails.muted,
-    memberItems,
+    finalMembers.values.toSeq(),
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
     communityDetails.encrypted,

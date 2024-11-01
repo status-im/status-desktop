@@ -337,6 +337,10 @@ QtObject:
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
+      # Handling membership requests
+      if(receivedData.membershipRequests.len > 0):
+        self.handleCommunitiesRequestsToJoin(receivedData.membershipRequests)
+
       # Handling community updates
       if (receivedData.communities.len > 0):
         # Channel added removed is notified in the chats param
@@ -344,10 +348,6 @@ QtObject:
 
       if (receivedData.communitiesSettings.len > 0):
         self.handleCommunitiesSettingsUpdates(receivedData.communitiesSettings)
-
-      # Handling membership requests
-      if(receivedData.membershipRequests.len > 0):
-        self.handleCommunitiesRequestsToJoin(receivedData.membershipRequests)
 
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
@@ -788,12 +788,12 @@ QtObject:
         # Request was accepted, update the member's airdrop address
         self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED,
           CommunityRequestArgs(communityRequest: membershipRequest))
-      else:
-        try:
-          self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, self.communities[membershipRequest.communityId],
-            requestToJoinState)
-        except Exception as e:
-          error "Unknown request", msg = e.msg
+
+      try:
+        self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, self.communities[membershipRequest.communityId],
+          requestToJoinState)
+      except Exception as e:
+        error "Unknown request", msg = e.msg
 
   proc init*(self: Service) =
     self.doConnect()
