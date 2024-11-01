@@ -1,12 +1,14 @@
 import QtQuick 2.15
 
+import StatusQ 0.1
+
 import utils 1.0
 
 StatusChatImageValidator {
     id: root
 
     errorMessage: qsTr("Format not supported.")
-    secondaryErrorMessage: qsTr("Upload %1 only").arg(Constants.acceptedDragNDropImageExtensions.map(ext => ext.replace(".", "").toUpperCase() + "s").join(", "))
+    secondaryErrorMessage: qsTr("Upload %1 only").arg(UrlUtils.validPreferredImageExtensions.map(ext => ext.toUpperCase() + "s").join(", "))
 
     onImagesChanged: {
         let isValid = true

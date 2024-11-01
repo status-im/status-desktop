@@ -147,11 +147,12 @@ SettingsContentBase {
 
             Panel {
                 id: panelMembers
-                filters: ExpressionFilter {
+                filters: FastExpressionFilter {
                     readonly property int ownerRole: Constants.memberRole.owner
                     readonly property int adminRole: Constants.memberRole.admin
                     readonly property int tokenMasterRole: Constants.memberRole.tokenMaster
                     expression: model.joined && model.memberRole !== ownerRole && model.memberRole !== adminRole && model.memberRole !== tokenMasterRole
+                    expectedRoles: ["joined", "memberRole"]
                 }
             }
 
@@ -162,8 +163,9 @@ SettingsContentBase {
 
             Panel {
                 id: panelPendingRequests
-                filters: ExpressionFilter {
+                filters: FastExpressionFilter {
                     expression: model.spectated && !model.joined
+                    expectedRoles: ["joined", "spectated"]
                 }
             }
         }

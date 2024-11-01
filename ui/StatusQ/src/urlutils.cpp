@@ -1,25 +1,40 @@
 #include "StatusQ/urlutils.h"
 
 #include <QFile>
+#include <QImageReader>
 #include <QUrl>
 
-#include <algorithm>
-
-QObject* UrlUtils::qmlInstance(QQmlEngine*, QJSEngine*)
-{
-    return new UrlUtils;
+namespace {
+constexpr auto webpMime = "image/webp";
 }
 
-bool UrlUtils::isValidImageUrl(const QUrl& url, const QStringList& acceptedExtensions)
-{
-    const auto strippedUrl = url.url(
-                QUrl::RemoveAuthority | QUrl::RemoveFragment | QUrl::RemoveQuery);
+UrlUtils::UrlUtils(QObject *parent): QObject(parent) {
+    const auto webpSupported = QImageReader::supportedMimeTypes().contains(webpMime);
+    if (webpSupported)
+        m_validImageMimeTypes.append(webpMime);
 
-    return std::any_of(acceptedExtensions.constBegin(),
-                       acceptedExtensions.constEnd(),
-                       [strippedUrl](const auto & ext) {
-        return strippedUrl.endsWith(ext, Qt::CaseInsensitive);
-    });
+    QStringList imgFilters;
+    for (const auto& mime: std::as_const(m_validImageMimeTypes)) {
+        const auto mimeData = m_mimeDb.mimeTypeForName(mime);
+        imgFilters.append(mimeData.globPatterns());
+        m_imgExtensions.append(mimeData.preferredSuffix());
+        m_allImgExtensions.append(mimeData.suffixes());
+    }
+
+    m_imgFilters = imgFilters.join(' ');
+    m_imgFilters.append(QStringLiteral(" "));
+    m_imgFilters.append(m_imgFilters.toUpper()); // include the uppercase extensions too for case sensitive file systems
+}
+
+bool UrlUtils::isValidImageUrl(const QUrl &url) const
+{
+    QString mimeType;
+    if (url.isLocalFile())
+        mimeType = m_mimeDb.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent).name();
+    else
+        mimeType = m_mimeDb.mimeTypeForUrl(url).name();
+
+    return m_validImageMimeTypes.contains(mimeType);
 }
 
 qint64 UrlUtils::getFileSize(const QUrl& url)
