@@ -954,7 +954,6 @@ QtObject {
     readonly property int maxNumberOfPins: 3
 
     readonly property string dataImagePrefix: "data:image"
-    readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg"]
 
     readonly property string mentionSpanTag: `<span style="background-color: ${Theme.palette.mentionColor2};"><a style="color:${Theme.palette.mentionColor1};text-decoration:none" href='http://'>`
 

@@ -276,8 +276,7 @@ QtObject {
     }
 
     function isValidDragNDropImage(url) {
-        return url.startsWith(Constants.dataImagePrefix) ||
-                UrlUtils.isValidImageUrl(url, Constants.acceptedDragNDropImageExtensions)
+        return url.startsWith(Constants.dataImagePrefix) || UrlUtils.isValidImageUrl(url)
     }
 
     function isFilesizeValid(img) {

@@ -71,7 +71,9 @@ void registerStatusQTypes() {
     qmlRegisterType<FormattedDoubleProperty>("StatusQ", 0, 1, "FormattedDoubleProperty");
 
     qmlRegisterSingletonType<ClipboardUtils>("StatusQ", 0, 1, "ClipboardUtils", &ClipboardUtils::qmlInstance);
-    qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", &UrlUtils::qmlInstance);
+    qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", [](QQmlEngine* engine, QJSEngine*) {
+        return new UrlUtils(engine);
+    });
 
     qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
     qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");

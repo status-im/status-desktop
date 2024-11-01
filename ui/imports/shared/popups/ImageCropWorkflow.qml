@@ -1,12 +1,15 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Dialogs 1.3
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 
@@ -39,13 +42,36 @@ Item {
 
         title: root.imageFileDialogTitle
         folder: root.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : shortcuts.pictures
-        nameFilters: [qsTr("Supported image formats (%1)").arg(Constants.acceptedDragNDropImageExtensions.map(img => "*" + img).join(" "))]
+        nameFilters: [qsTr("Supported image formats (%1)").arg(UrlUtils.validImageNameFilters)]
         onAccepted: {
             if (fileDialog.fileUrls.length > 0) {
-                cropImage(fileDialog.fileUrls[0])
+                const url = fileDialog.fileUrls[0]
+                if (Utils.isValidDragNDropImage(url))
+                    cropImage(url)
+                else
+                    errorDialog.open()
             }
         }
     } // FileDialog
+
+    StatusDialog {
+        id: errorDialog
+        title: qsTr("Image format not supported")
+        width: 480
+        contentItem: ColumnLayout {
+            StatusBaseText {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: qsTr("Format of the image you chose is not supported. Most probably you picked a file that is invalid, corrupted or has a wrong file extension.")
+            }
+            StatusBaseText {
+                Layout.fillWidth: true
+                font.pixelSize: Theme.additionalTextSize
+                text: qsTr("Supported image extensions: %1").arg(UrlUtils.allValidImageExtensions)
+            }
+        }
+        standardButtons: Dialog.Ok
+    } // StatusDialog
 
     StatusModal {
         id: imageCropperModal
