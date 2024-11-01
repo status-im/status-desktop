@@ -118,7 +118,6 @@ Item {
         model: d.pages
         delegate: StatusBaseButton {
             objectName: "Page-%1".arg(itemText)
-            width: d.buttonWidth
             text: itemText
             size: StatusBaseButton.Size.Small
             normalColor: itemIndex === root.currentIndex? Theme.palette.primaryColor3 : "transparent"
