@@ -10,6 +10,7 @@ LinkPreviewCard 1.0 LinkPreviewCard.qml
 LinkPreviewMiniCard 1.0 LinkPreviewMiniCard.qml
 LinkPreviewSettingsCard 1.0 LinkPreviewSettingsCard.qml
 LinkPreviewSettingsCardMenu 1.0 LinkPreviewSettingsCardMenu.qml
+RequestPaymentMiniCardDelegate 1.0 RequestPaymentMiniCardDelegate.qml
 MessageMouseArea 1.0 MessageMouseArea.qml
 MessageReactionsRow 1.0 MessageReactionsRow.qml
 ProfileHeader 1.0 ProfileHeader.qml

@@ -5,4 +5,6 @@ QtObject {
     required property var flatNetworksModel
     required property var processedAssetsModel
     required property var accountsModel
+
+    property var requestPaymentModel: null
 }
