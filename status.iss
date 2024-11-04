@@ -68,6 +68,9 @@ Name: "{userdesktop}\{#Name}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app
 Filename: "{app}\vendor\vc_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing VS2017 redistributable package (64 Bit)";
 Filename: "{app}\{#ExeName}"; Description: {cm:LaunchProgram,{#Name}}; Flags: nowait postinstall skipifsilent
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\bin"
+
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 Type: files; Name: "{userdesktop}\{#Name}"
