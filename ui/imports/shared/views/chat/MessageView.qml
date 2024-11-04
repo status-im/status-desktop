@@ -1219,6 +1219,8 @@ Loader {
             onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
             onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
             onRemoveFromGroup: root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
+            onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(profileContextMenu.pubKey, null)
+            onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(profileContextMenu.pubKey, null)
 
             onOpened: root.setMessageActive(root.messageId, true)
             onClosed: {

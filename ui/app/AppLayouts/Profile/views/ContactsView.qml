@@ -87,6 +87,8 @@ SettingsContentBase {
                 onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.pubKey)
                 onRemoveNickname: root.contactsStore.changeContactNickname(contactContextMenu.pubKey, "",
                                                                            contactContextMenu.displayName, true)
+                onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(contactContextMenu.pubKey, null)
+                onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(contactContextMenu.pubKey, null)
                 onClosed: destroy()
             }
         }

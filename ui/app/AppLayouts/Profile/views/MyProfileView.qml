@@ -333,7 +333,7 @@ SettingsContentBase {
             inShowcaseModel: priv.showcaseModels.accountsVisibleModel
             hiddenModel: priv.showcaseModels.accountsHiddenModel
             showcaseLimit: root.profileStore.getProfileShowcaseEntriesLimit()
-            currentWallet: RootStore.overview.mixedcaseAddress
+            currentWallet: WalletStores.RootStore.overview.mixedcaseAddress
 
             onChangePositionRequested: function (from, to) {
                 priv.showcaseModels.changeAccountPosition(from, to)

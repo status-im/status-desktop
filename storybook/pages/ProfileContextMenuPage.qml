@@ -286,3 +286,4 @@ SplitView {
 
 // category: Views
 // status: good
+// https://www.figma.com/design/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=7898-265693&node-type=canvas&m=dev
