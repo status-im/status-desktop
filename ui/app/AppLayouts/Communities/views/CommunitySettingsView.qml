@@ -118,6 +118,7 @@ StatusSectionLayout {
                 asset.name: community.image
                 asset.color: community.color
                 asset.isImage: true
+                asset.cache: false
                 Layout.fillWidth: true
                 Layout.leftMargin: Theme.halfPadding
                 Layout.rightMargin: Theme.halfPadding

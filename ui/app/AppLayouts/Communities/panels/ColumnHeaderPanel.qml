@@ -34,6 +34,7 @@ Control {
             asset.name: root.image
             asset.color: root.color
             asset.isImage: true
+            asset.cache: false
             type: StatusChatInfoButton.Type.OneToOneChat
             hoverEnabled: root.amISectionAdmin
             onClicked: if(root.amISectionAdmin) root.infoButtonClicked()

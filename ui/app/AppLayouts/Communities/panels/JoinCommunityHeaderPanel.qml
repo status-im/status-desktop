@@ -30,6 +30,7 @@ RowLayout {
         title: root.joinCommunity ? root.name : root.channelName
         subTitle: root.joinCommunity ? root.communityDesc : root.channelDesc
         asset.color: root.color
+        asset.cache: false
         enabled: false
         type: StatusChatInfoButton.Type.CommunityChat
         layer.enabled: root.joinCommunity // Blured when joining community but not when entering channel

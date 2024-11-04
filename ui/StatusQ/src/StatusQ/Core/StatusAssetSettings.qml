@@ -40,6 +40,7 @@ QtObject {
     property bool isImage: isImgSrc(root.name)
     property int imgStatus
     property bool imgIsIdenticon: false
+    property bool cache: true
 
     // ring settings hints
     readonly property real ringPxSize: Math.max(1.5, root.width / 24.0)

@@ -327,11 +327,29 @@ QtObject:
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
 
+    let dataIndex = self.createIndex(ind, 0, nil)
+    defer: dataIndex.delete
+
+    # Images come in the form of local URLs that do not change when they get updated
+      # eg: localhost://communityId="0x1234...890"&format="thumbnail"
+      # This means that the iamge won't update unless forced to
+    if item.image != "" and self.items[ind].image == item.image:
+      self.items[ind].image = ""
+      self.dataChanged(dataIndex, dataIndex, @[ModelRole.Image.int])
+
+      self.items[ind].image = item.image
+      roles.add(ModelRole.Image.int)
+    # Same thing for the banner
+    if item.bannerImageData != "" and self.items[ind].bannerImageData == item.bannerImageData:
+      self.items[ind].bannerImageData = ""
+      self.dataChanged(dataIndex, dataIndex, @[ModelRole.BannerImageData.int])
+
+      self.items[ind].bannerImageData = item.bannerImageData
+      roles.add(ModelRole.BannerImageData.int)
+
     if roles.len == 0:
       return
 
-    let dataIndex = self.createIndex(ind, 0, nil)
-    defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
   proc updateMemberItemInSections*(

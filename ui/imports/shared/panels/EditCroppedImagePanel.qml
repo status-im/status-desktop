@@ -96,6 +96,7 @@ Item {
                 visible: root.state === d.dataImageState
 
                 image.source: root.dataImage
+                image.cache: false
                 showLoadingIndicator: true
                 border.width: 1
                 border.color: Theme.palette.border

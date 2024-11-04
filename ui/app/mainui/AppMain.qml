@@ -704,6 +704,7 @@ Item {
                 icon.name: model.icon
                 icon.source: model.image
                 identicon.asset.color: (hovered || identicon.highlighted || checked) ? model.color : icon.color
+                identicon.asset.cache: false
                 tooltip.text: model.name
                 checked: model.active
                 badge.value: model.notificationsCount

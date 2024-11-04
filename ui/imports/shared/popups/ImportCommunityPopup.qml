@@ -174,6 +174,7 @@ StatusDialog {
                     asset.name: visible ? d.communityDetails.image : ""
                     asset.isImage: (asset.name !== "")
                     asset.color: visible ? d.communityDetails.color : ""
+                    asset.cache: false
                 }
                 Item { Layout.fillWidth: true }
                 StatusBaseText {
