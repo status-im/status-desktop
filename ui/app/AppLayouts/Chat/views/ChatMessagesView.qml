@@ -326,6 +326,7 @@ Item {
             deletedByContactColorHash: model.deletedByContactColorHash
             linkPreviewModel: model.linkPreviewModel
             links: model.links
+            paymentRequestModel: model.paymentRequestModel
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentioned

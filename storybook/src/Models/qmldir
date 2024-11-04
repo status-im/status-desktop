@@ -23,6 +23,7 @@ TokensBySymbolModel 1.0 TokensBySymbolModel.qml
 CommunitiesModel 1.0 CommunitiesModel.qml
 OnRampProvidersModel 1.0 OnRampProvidersModel.qml
 SwapTransactionRoutes 1.0 SwapTransactionRoutes.qml
+PaymentRequestModel 1.0 PaymentRequestModel.qml
 
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml

@@ -49,6 +49,7 @@ Control {
     property string messageAttachments: ""
     property var reactionIcons: []
     property var linkPreviewModel
+    property var paymentRequestModel
     property var gifLinks
 
     property string messageId: ""
@@ -312,6 +313,7 @@ Control {
                                 anchors.right: parent.right
                                 visible: active
                                 sourceComponent: StatusTextMessage {
+                                    objectName: "StatusMessage_textMessage"
                                     messageDetails: root.messageDetails
                                     isEdited: root.isEdited
                                     allowShowMore: !root.isInPinnedPopup
@@ -326,6 +328,7 @@ Control {
                             Loader {
                                 active: true
                                 sourceComponent: StatusMessageImageAlbum {
+                                    objectName: "StatusMessage_imageAlbum"
                                     width: messageLayout.width
                                     album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
                                     albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 1
@@ -375,7 +378,8 @@ Control {
                         Layout.preferredHeight: implicitHeight
                         active: !root.editMode &&
                                 ((!!root.linkPreviewModel && root.linkPreviewModel.count > 0)
-                                || (!!root.gifLinks && root.gifLinks.length > 0))
+                                || (!!root.gifLinks && root.gifLinks.length > 0)
+                                || (!!root.paymentRequestModel && root.paymentRequestModel.count > 0))
                         visible: active 
                     }
                     Loader {
