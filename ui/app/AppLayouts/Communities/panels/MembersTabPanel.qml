@@ -363,6 +363,8 @@ Item {
             onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.pubKey)
             onRemoveContact: Global.removeContactRequested(memberContextMenuView.pubKey)
             onBlockContact: Global.blockContactRequested(memberContextMenuView.pubKey)
+            onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(memberContextMenuView.pubKey, null)
+            onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(memberContextMenuView.pubKey, null)
             onClosed: destroy()
         }
     }

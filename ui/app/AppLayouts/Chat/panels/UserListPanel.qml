@@ -30,8 +30,10 @@ Item {
     signal removeNicknameRequested(string pubKey)
     signal blockContactRequested(string pubKey)
     signal unblockContactRequested(string pubKey)
+    signal markAsTrustedRequested(string pubKey)
     signal markAsUntrustedRequested(string pubKey)
     signal removeTrustStatusRequested(string pubKey)
+    signal removeTrustedMarkRequested(string pubKey)
     signal removeContactRequested(string pubKey)
     signal removeContactFromGroupRequested(string pubKey)
 
@@ -212,6 +214,8 @@ Item {
             onRemoveContact: root.removeContactRequested(pubKey)
             onBlockContact: root.blockContactRequested(pubKey)
             onRemoveFromGroup: root.removeContactFromGroupRequested(pubKey)
+            onMarkAsTrusted: root.markAsTrustedRequested(pubKey)
+            onRemoveTrustedMark: root.removeTrustedMarkRequested(pubKey)
 
             onClosed: destroy()
         }

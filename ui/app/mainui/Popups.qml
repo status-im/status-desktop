@@ -200,7 +200,7 @@ QtObject {
 
     function openMarkAsIDVerifiedPopup(publicKey, cb) {
         const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
+                                 publicKey, true, true, true)
         const properties = { publicKey, contactDetails }
 
         openPopup(markAsIDVerifiedPopupComponent, properties, cb)
@@ -208,7 +208,7 @@ QtObject {
 
     function openRemoveIDVerificationDialog(publicKey, cb) {
         const contactDetails = Utils.getContactDetailsAsJson(
-                                 publicKey, false, true, true)
+                                 publicKey, true, true, true)
         const properties = { publicKey, contactDetails }
 
         openPopup(removeIDVerificationPopupComponent, properties, cb)

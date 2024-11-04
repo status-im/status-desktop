@@ -216,11 +216,14 @@ StatusSectionLayout {
 
             onCreateOneToOneChatRequested: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.pubKey, "")
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
             }
 
             onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
             onRemoveContactFromGroupRequested: root.rootStore.removeMemberFromGroupChat(pubKey)
+
+            onMarkAsTrustedRequested: Global.openMarkAsIDVerifiedPopup(pubKey, null)
+            onRemoveTrustedMarkRequested: Global.openRemoveIDVerificationDialog(pubKey, null)
         }
     }
 

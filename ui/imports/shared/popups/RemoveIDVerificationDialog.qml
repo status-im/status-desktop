@@ -20,7 +20,7 @@ CommonContactDialog {
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.halfPadding
         wrapMode: Text.WordWrap
-        text: qsTr("%1's identity will no longer be verified. This is only visible to you.").arg(mainDisplayName)
+        text: qsTr("%1 will no longer be marked as trusted. This is only visible to you.").arg(mainDisplayName)
     }
 
     StatusCheckBox {

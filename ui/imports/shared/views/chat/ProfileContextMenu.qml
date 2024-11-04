@@ -35,6 +35,8 @@ StatusMenu {
     signal editNickname
     signal removeNickname
     signal unblockContact
+    signal markAsTrusted
+    signal removeTrustedMark
     signal markAsUntrusted
     signal removeTrustStatus
     signal removeContact
@@ -78,25 +80,6 @@ StatusMenu {
         }
     }
 
-    // Edit Nickname
-    StatusAction {
-        id: renameAction
-        objectName: "rename_StatusItem"
-        enabled: root.profileType === Constants.profileType.blocked || root.profileType === Constants.profileType.regular
-        text: root.hasLocalNickname ? qsTr("Edit nickname") : qsTr("Add nickname")
-        icon.name: "edit_pencil"
-        onTriggered: root.editNickname()
-    }
-
-    // Review Contact Request
-    StatusAction {
-        text: qsTr("Review contact request")
-        objectName: "reviewContactRequest_StatusItem"
-        icon.name: "add-contact"
-        enabled: root.profileType === Constants.profileType.regular && root.contactType === Constants.contactType.contactRequestReceived
-        onTriggered: root.reviewContactRequest()
-    }
-
     // Send Message
     SendMessageMenuItem {
         id: sendMessageMenuItem
@@ -108,12 +91,40 @@ StatusMenu {
         }
     }
 
+    // Mark as trusted
+    StatusAction {
+        objectName: "markAsTrusted_StatusItem"
+        enabled: root.profileType === Constants.profileType.regular && root.contactType === Constants.contactType.contact && root.trustStatus !== Constants.trustStatus.trusted
+        text: qsTr("Mark as trusted")
+        icon.name: "checkmark-circle"
+        onTriggered: root.markAsTrusted()
+    }
+
+    // Review Contact Request
+    StatusAction {
+        text: qsTr("Review contact request")
+        objectName: "reviewContactRequest_StatusItem"
+        icon.name: "add-contact"
+        enabled: root.profileType === Constants.profileType.regular && root.contactType === Constants.contactType.contactRequestReceived
+        onTriggered: root.reviewContactRequest()
+    }
+
     // Send Contact Request
     SendContactRequestMenuItem {
         id: sendContactRequestMenuItem
         objectName: "sendContactRequest_StatusItem"
         enabled: root.profileType === Constants.profileType.regular && root.contactType === Constants.contactType.nonContact
         onTriggered: root.sendContactRequest()
+    }
+
+    // Edit Nickname
+    StatusAction {
+        id: renameAction
+        objectName: "rename_StatusItem"
+        enabled: root.profileType === Constants.profileType.blocked || root.profileType === Constants.profileType.regular
+        text: root.hasLocalNickname ? qsTr("Edit nickname") : qsTr("Add nickname")
+        icon.name: "edit_pencil"
+        onTriggered: root.editNickname()
     }
 
     StatusMenuSeparator {
@@ -132,6 +143,16 @@ StatusMenu {
         onTriggered: root.removeNickname()
     }
 
+    // Remove trusted mark
+    StatusAction {
+        objectName: "removeTrustedMark_StatusItem"
+        enabled: root.profileType === Constants.profileType.regular && root.contactType === Constants.contactType.contact && root.trustStatus === Constants.trustStatus.trusted
+        text: qsTr("Remove trusted mark")
+        icon.name: "checkmark-circle"
+        type: StatusAction.Type.Danger
+        onTriggered: root.removeTrustedMark()
+    }
+
     // Unblock User
     StatusAction {
         id: unblockAction
@@ -148,7 +169,7 @@ StatusMenu {
         objectName: "removeFromGroup_StatusItem"
         icon.name: "remove-contact"
         type: StatusAction.Type.Danger
-        enabled: root.isAdmin && root.profileType !== Constants.profileType.self && root.chatType === Constants.chatType.privateGroupChat
+        enabled: root.isAdmin && root.profileType !== Constants.profileType.self && root.profileType !== Constants.profileType.bridged && root.chatType === Constants.chatType.privateGroupChat
         onTriggered: root.removeFromGroup()
     }
 
