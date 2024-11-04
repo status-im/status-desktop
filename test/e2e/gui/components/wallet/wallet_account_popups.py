@@ -1,3 +1,5 @@
+import time
+
 import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_keycard import KeycardSettingsView
@@ -353,3 +355,4 @@ class GeneratedAddressesList(QObject):
                 selected_page_number += 1
                 self._paginator_page.real_name['text'] = selected_page_number
                 self._paginator_page.click()
+                time.sleep(0.5)
