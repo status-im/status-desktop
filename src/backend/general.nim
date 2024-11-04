@@ -79,7 +79,24 @@ proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] =
     error "error", methodName = "initKeystore", exception=e.msg
     raise newException(RpcException, e.msg)
 
+type
+  Node = ref object
+    value: int
+
 proc backupData*(): RpcResponse[JsonNode] =
+  echo "<<< ABOUT TO CRASH"
+
+  # FIXME: Force a crash to test the crash reporting
+
+  var n: Node = nil
+  echo n.value
+
+  let p = cast[ptr int](0x1)  # Point to an invalid address
+  echo p[]  # Attempt to access it
+
+  # var arr = cast[ptr array[1, int]](nil)  # Array pointer with no valid memory
+  # echo arr[1]  # Out-of-bounds access
+
   let payload = %* []
   result = callPrivateRPC("backupData".prefix, payload)
 

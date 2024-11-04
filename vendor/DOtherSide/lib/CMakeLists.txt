@@ -9,6 +9,8 @@ if(MONITORING)
     include(../../../ui/MonitoringSources.cmake)
 endif()
 
+add_subdirectory(../../sentry-native sentry-native)
+
 # Macro for merging common code between static and shared
 macro(add_target name type)
     find_package(Qt5 COMPONENTS Core Qml Gui Quick QuickControls2 Widgets Network Multimedia WebView REQUIRED)
@@ -68,6 +70,8 @@ macro(add_target name type)
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
         set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")
     endif()
+
+    target_link_libraries(${name} PUBLIC sentry::sentry)
 endmacro()
 
 set(major 0)

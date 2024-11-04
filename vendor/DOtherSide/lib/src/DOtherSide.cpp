@@ -81,6 +81,8 @@
 #include "StatusDesktop/Monitoring/Monitor.h"
 #endif
 
+#include <sentry.h>
+
 namespace {
 
 void register_meta_types()
@@ -189,6 +191,24 @@ void dos_qguiapplication_try_enable_threaded_renderer()
 
 static MessageHandlerCallback messageHandlerCallback = nullptr;
 
+sentry_level_t qtLevelToSentry(int type)
+{
+    switch (type) {
+        case QtDebugMsg:
+            return SENTRY_LEVEL_DEBUG;
+        case QtInfoMsg:
+            return SENTRY_LEVEL_INFO;
+        case QtWarningMsg:
+            return SENTRY_LEVEL_WARNING;
+        case QtCriticalMsg:
+            return SENTRY_LEVEL_ERROR;
+        case QtFatalMsg:
+            return SENTRY_LEVEL_FATAL;
+        default:
+            return SENTRY_LEVEL_INFO;
+    }
+}
+
 // This catches the QT and QML logs and outputs them.
 // This is necessary on Windows, because otherwise we do not get any logs at all
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -205,6 +225,16 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
     int messageType = int(type);
 
     messageHandlerCallback(messageType, message, category, file, function, context.line);
+
+    // if (type == QtDebugMsg || type == QtInfoMsg) {
+    //     return;
+    // }
+
+    // sentry_capture_event(sentry_value_new_message_event(
+    // /*   level */ convertToSentryLevel(type),
+    // /*  logger */ "",
+    // /* message */ message
+    // ));
 }
 
 void dos_installMessageHandler(MessageHandlerCallback messageHandler)
@@ -213,19 +243,39 @@ void dos_installMessageHandler(MessageHandlerCallback messageHandler)
     qInstallMessageHandler(myMessageOutput);
 }
 
+static sentry_value_t on_crash_callback(
+    const sentry_ucontext_t *uctx, // provides the user-space context of the crash
+    sentry_value_t event,          // used the same way as in `before_send`
+    void *closure                  // user-data that you can provide at configuration time
+)
+{
+    // Do contextual clean-up before the crash is sent to sentry's backend infrastructure
+
+    qInfo() << "on_crash_callback";
+
+    /* ... */
+
+    // tell the backend to retain the event (+ dump)
+    // or to discard it, you could free the event and return a `null`:
+    //       sentry_value_decref(event);
+    //       return sentry_value_new_null();
+    return event;
+}
+
 void dos_qguiapplication_create()
 {
+    qInfo() << "dos_qguiapplication_create";
+
     sentry_options_t *options = sentry_options_new();
-    // sentry_options_set_dsn(options, "https://fecdd38f76baa59481dd8b643bd54022@sentry.infra.status.im/8");
     // This is also the default-path. For further information and recommendations:
     // https://docs.sentry.io/platforms/native/configuration/options/#database-path
     sentry_options_set_database_path(options, ".sentry-native");
-    sentry_options_set_release(options, "status-desktop@x.y.z");
+    sentry_options_set_release(options, "status-desktop@test-1");
     sentry_options_set_debug(options, 1);
+    sentry_options_set_on_crash(options, on_crash_callback, NULL);
     sentry_init(options);
 
-    // Make sure everything flushes
-    auto sentryClose = qScopeGuard([] { sentry_close(); });
+    qInfo() << "sentry initialized" << sentry_options_get_dsn(options); 
 
     // The parameters argc and argv and the strings pointed to by the argv array shall be modifiable by the program,
     // and retain their last-stored values between program startup and program termination.
@@ -362,6 +412,9 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
 void dos_qguiapplication_delete()
 {
     delete qGuiApp;
+
+    // Make sure everything flushes
+    sentry_close();
 }
 
 void dos_qguiapplication_exec()
@@ -1887,3 +1940,32 @@ void dos_app_make_it_active(::DosQQmlApplicationEngine* vptr)
         }
     }
 }
+
+// sentry_level_t chroniclesLevelToSentry(const char* type)
+// {
+//     switch (type) {
+//         case "DEBUG":
+//             return SENTRY_LEVEL_DEBUG;
+//         case "INFO":
+//             return SENTRY_LEVEL_INFO;
+//         case "WARN":
+//             return SENTRY_LEVEL_WARNING;
+//         case "ERROR":
+//             return SENTRY_LEVEL_ERROR;
+//         default:
+//             return SENTRY_LEVEL_INFO;
+//     }
+// }
+
+// void report_sentry_event(const char* type, const char* message) {
+//     const int sentryLevel = convertToSentryLevel(type);
+//     if (sentryLevel == SENTRY_LEVEL_DEBUG || type == SENTRY_LEVEL_INFO) {
+//         return;
+//     }
+
+//     sentry_capture_event(sentry_value_new_message_event(
+//     /*   level */ sentryLevel,
+//     /*  logger */ "",
+//     /* message */ message
+//     ));
+// }

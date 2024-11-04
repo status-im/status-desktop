@@ -186,7 +186,7 @@ ifneq ($(detected_OS),Windows)
  endif
  # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
  ifeq ($(detected_OS),Darwin)
-  NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
+  NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication -lbsm"
   # Fix for failures due to 'can't allocate code signature data for'
   NIM_PARAMS += --passL:"-headerpad_max_install_names"
   NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
@@ -405,6 +405,7 @@ $(DOTHERSIDE_CMAKE_CACHE): | deps
 		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
 		-DENABLE_DOCS=OFF \
 		-DENABLE_TESTS=OFF \
+		-DSENTRY_INTEGRATION_QT=YES \
 		$(COMMON_CMAKE_CONFIG_PARAMS) \
 		$(DOTHERSIDE_CMAKE_CONFIG_PARAMS) \
 		-B $(DOTHERSIDE_BUILD_PATH) \
@@ -556,8 +557,35 @@ else
  NIM_STATUS_CLIENT := bin/nim_status_client
 endif
 
+export SENTRY_LIB := vendor/DOtherSide/build/lib/sentry-native/libsentry.$(LIBSTATUS_EXT)
+export SENTRY_LIBDIR := "$(shell pwd)/$(shell dirname "$(SENTRY_LIB)")"
+
+export CRASHPAD_CLIENT_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/client/libcrashpad_client.$(LIBSTATUS_EXT)
+export CRASHPAD_CLIENT_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_CLIENT_LIB)")"
+
+export CRASHPAD_HANDLER_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/handler/libcrashpad_handler_lib.$(LIBSTATUS_EXT)
+export CRASHPAD_HANDLER_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_HANDLER_LIB)")"
+
+export CRASHPAD_MINIDUMP_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/minidump/libcrashpad_minidump.$(LIBSTATUS_EXT)
+export CRASHPAD_MINIDUMP_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_MINIDUMP_LIB)")"
+
+export CRASHPAD_SNAPSHOT_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/snapshot/libcrashpad_snapshot.$(LIBSTATUS_EXT)
+export CRASHPAD_SNAPSHOT_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_SNAPSHOT_LIB)")"
+
+export CRASHPAD_TOOLS_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/tools/libcrashpad_tools.$(LIBSTATUS_EXT)
+export CRASHPAD_TOOLS_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_TOOLS_LIB)")"
+
+export CRASHPAD_UTIL_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/util/libcrashpad_util.$(LIBSTATUS_EXT)
+export CRASHPAD_UTIL_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_UTIL_LIB)")"
+
+export CRASHPAD_MINICHROMIUM_LIB := vendor/DOtherSide/build/lib/sentry-native/crashpad_build/third_party/mini_chromium/libmini_chromium.$(LIBSTATUS_EXT)
+export CRASHPAD_MINICHROMIUM_LIBDIR := "$(shell pwd)/$(shell dirname "$(CRASHPAD_MINICHROMIUM_LIB)")"
+
+bin/crashpad_handler:
+	cp vendor/DOtherSide/build/lib/sentry-native/crashpad_build/handler/crashpad_handler bin/
+
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps bin/crashpad_handler
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
@@ -566,8 +594,25 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 		--passL:"-lStatusQ" \
 		--passL:"-L$(STATUSKEYCARDGO_LIBDIR)" \
 		--passL:"-lkeycard" \
+		--passL:"-L$(SENTRY_LIBDIR)" \
+		--passL:"-lsentry" \
+		--passL:"-L$(CRASHPAD_CLIENT_LIBDIR)" \
+		--passL:"-lcrashpad_client" \
+		--passL:"-L$(CRASHPAD_HANDLER_LIBDIR)" \
+		--passL:"-lcrashpad_handler_lib" \
+		--passL:"-L$(CRASHPAD_MINIDUMP_LIBDIR)" \
+		--passL:"-lcrashpad_minidump" \
+		--passL:"-L$(CRASHPAD_SNAPSHOT_LIBDIR)" \
+		--passL:"-lcrashpad_snapshot" \
+		--passL:"-L$(CRASHPAD_TOOLS_LIBDIR)" \
+		--passL:"-lcrashpad_tools" \
+		--passL:"-L$(CRASHPAD_UTIL_LIBDIR)" \
+		--passL:"-lcrashpad_util" \
+		--passL:"-L$(CRASHPAD_MINICHROMIUM_LIBDIR)" \
+		--passL:"-lmini_chromium" \
 		--passL:"$(QRCODEGEN)" \
 		--passL:"-lm" \
+		--passL:"-lcurl" \
 		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
 ifeq ($(detected_OS),Darwin)
 	install_name_tool -change \
@@ -686,6 +731,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
 	cp Info.plist $(MACOS_OUTER_BUNDLE)/Contents/
 	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
+	cp bin/crashpad_handler $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
