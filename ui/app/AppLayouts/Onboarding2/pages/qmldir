@@ -1,0 +1,15 @@
+WelcomePage 1.0 WelcomePage.qml
+HelpUsImproveStatusPage 1.0 HelpUsImproveStatusPage.qml
+CreateProfilePage 1.0 CreateProfilePage.qml
+CreatePasswordPage 1.0 CreatePasswordPage.qml
+EnableBiometricsPage 1.0 EnableBiometricsPage.qml
+SeedphrasePage 1.0 SeedphrasePage.qml
+KeycardIntroPage 1.0 KeycardIntroPage.qml
+CreateKeycardProfilePage 1.0 CreateKeycardProfilePage.qml
+KeycardCreatePinPage 1.0 KeycardCreatePinPage.qml
+KeycardEnterPinPage 1.0 KeycardEnterPinPage.qml
+BackupSeedphraseIntro 1.0 BackupSeedphraseIntro.qml
+BackupSeedphraseAcks 1.0 BackupSeedphraseAcks.qml
+BackupSeedphraseReveal 1.0 BackupSeedphraseReveal.qml
+BackupSeedphraseVerify 1.0 BackupSeedphraseVerify.qml
+BackupSeedphraseOutro 1.0 BackupSeedphraseOutro.qml

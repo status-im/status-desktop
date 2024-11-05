@@ -57,7 +57,7 @@ ColumnLayout {
             if (d.allEntriesValid) {
                 mnemonicString = buildMnemonicString()
                 if (!Utils.isMnemonic(mnemonicString) || !root.isSeedPhraseValid(mnemonicString)) {
-                    root.setWrongSeedPhraseMessage(qsTr("Invalid seed phrase"))
+                    root.setWrongSeedPhraseMessage(qsTr("Invalid recovery phrase"))
                     d.allEntriesValid = false
                 }
             }

@@ -75,6 +75,9 @@ Item {
         input text.
     */
     property ListModel filteredList: ListModel { }
+
+    readonly property bool suggestionsOpened: suggListContainer.opened
+
     /*!
         \qmlsignal doneInsertingWord
         This signal is emitted when the user selects a word from the suggestions list
@@ -117,9 +120,10 @@ Item {
     Component {
         id: seedInputLeftComponent
         StatusBaseText {
-            leftPadding: 4
-            rightPadding: 6
+            leftPadding: text.length == 1 ? 10 : 6
+            rightPadding: 4
             text: root.leftComponentText
+            font.family: Theme.monoFont.name
             color: seedWordInput.input.edit.activeFocus ?
                    Theme.palette.primaryColor1 : Theme.palette.baseColor1
         }
@@ -197,7 +201,7 @@ Item {
         id: suggListContainer
         contentWidth: seedSuggestionsList.width
         contentHeight: ((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34
-        x: 16
+        x: 0
         y: seedWordInput.height + 4
         topPadding: 8
         bottomPadding: 8

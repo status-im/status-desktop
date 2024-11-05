@@ -1401,7 +1401,7 @@ Item {
                 target: title
                 text: {
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.setupNewKeycardOldSeedPhrase) {
-                        return qsTr("This seed phrase has already been imported")
+                        return qsTr("This recovery phrase has already been imported")
                     }
                     if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard) {
                         return qsTr("This keycard has already been imported")
@@ -1459,7 +1459,7 @@ Item {
                     if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.migrateKeypairToApp) {
                         if (root.sharedKeycardModule.keyPairForProcessing.pairType === Constants.keycard.keyPairType.profile) {
                             if (root.sharedKeycardModule.forceFlow) {
-                                return qsTr("In order to continue using this profile on this device, you need to enter the key pairs seed phrase and create a new password to log in with on this device.")
+                                return qsTr("In order to continue using this profile on this device, you need to enter the key pairs recovery phrase and create a new password to log in with on this device.")
                             }
 
                             let t = qsTr("%1 is your default Status key pair.").arg(root.sharedKeycardModule.keyPairForProcessing.name)
