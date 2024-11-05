@@ -1249,7 +1249,7 @@ Item {
                     active: !appMain.rootStore.profileSectionStore.profileStore.userDeclinedBackupBanner
                               && !appMain.rootStore.profileSectionStore.profileStore.privacyStore.mnemonicBackedUp
                     type: ModuleWarning.Danger
-                    text: qsTr("Secure your seed phrase")
+                    text: qsTr("Secure your recovery phrase")
                     buttonText: qsTr("Back up now")
                     delay: false
                     onClicked: popups.openBackUpSeedPopup()

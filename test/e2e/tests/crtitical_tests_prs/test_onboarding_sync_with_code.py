@@ -56,6 +56,7 @@ def test_sync_device_during_onboarding(multiple_instances):
             sync_start = sync_view.open_enter_sync_code_form()
             pyperclip.copy(sync_code)
             sync_start.click_paste_button()
+            sync_start.continue_button.click()
             sync_device_found = SyncDeviceFoundView()
             assert driver.waitFor(
                 lambda: 'Device found!' in sync_device_found.device_found_notifications, 15000)

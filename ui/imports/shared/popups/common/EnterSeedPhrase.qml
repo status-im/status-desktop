@@ -27,7 +27,7 @@ Item {
 
         StatusBaseText {
             width: parent.width
-            text: root.store.isAddAccountPopup? qsTr("Enter seed phrase") : qsTr("Enter private key for %1 key pair").arg(root.store.selectedKeypair.name)
+            text: root.store.isAddAccountPopup? qsTr("Enter recovery phrase") : qsTr("Enter private key for %1 key pair").arg(root.store.selectedKeypair.name)
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
             elide: Text.ElideRight
         }
@@ -46,9 +46,9 @@ Item {
                 }
                 root.store.enteredSeedPhraseIsValid = valid
                 if (!enterSeedPhrase.isSeedPhraseValid(seedPhrase)) {
-                    let err = qsTr("The entered seed phrase is already added")
+                    let err = qsTr("The entered recovery phrase is already added")
                     if (!root.store.isAddAccountPopup) {
-                        err = qsTr("This is not the correct seed  phrase for %1 key").arg(root.store.selectedKeypair.name)
+                        err = qsTr("This is not the correct recovery phrase for %1 key").arg(root.store.selectedKeypair.name)
                     }
                     enterSeedPhrase.setWrongSeedPhraseMessage(err)
                 }

@@ -7,6 +7,7 @@ import Storybook 1.0
 import mainui 1.0
 import shared.views 1.0
 import shared.stores 1.0 as SharedStores
+import shared.popups 1.0
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 
@@ -33,8 +34,18 @@ SplitView {
             anchors.horizontalCenter: parent.horizontalCenter
             validateConnectionString: (stringValue) => !Number.isNaN(parseInt(stringValue))
 
-            onDisplayInstructions: logs.logEvent("SyncingEnterCode::displayInstructions")
+            onDisplayInstructions: {
+                logs.logEvent("SyncingEnterCode::displayInstructions")
+                instructionsPopup.createObject(root).open()
+            }
             onProceed: (connectionString) => logs.logEvent("SyncingEnterCode::proceed", ["connectionString"], arguments)
+        }
+
+        Component {
+            id: instructionsPopup
+            GetSyncCodeInstructionsPopup {
+                destroyOnClose: true
+            }
         }
     }
 

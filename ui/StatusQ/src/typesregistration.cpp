@@ -35,6 +35,8 @@
 #include "wallet/managetokenscontroller.h"
 #include "wallet/managetokensmodel.h"
 
+#include "onboarding/enums.h"
+
 void registerStatusQTypes() {
     qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
@@ -101,6 +103,10 @@ void registerStatusQTypes() {
         "StatusQ.Internal", 0, 1, "PermissionUtils", [](QQmlEngine*, QJSEngine*) {
             return new PermissionUtilsInternal;
         });
+
+    // onboarding
+    qmlRegisterUncreatableType<OnboardingEnums>("AppLayouts.Onboarding.enums", 1, 0,
+                                                "Onboarding", "This is an enum type, cannot be created directly.");
 
     QZXing::registerQMLTypes();
     qqsfpm::registerTypes();

@@ -325,9 +325,9 @@ StatusModal {
                 case Constants.addAccountPopup.state.enterKeypairName:
                     return qsTr("Continue")
                 case Constants.addAccountPopup.state.confirmAddingNewMasterKey:
-                    return qsTr("Reveal seed phrase")
+                    return qsTr("Reveal recovery phrase")
                 case Constants.addAccountPopup.state.displaySeedPhrase:
-                    return qsTr("Confirm seed phrase")
+                    return qsTr("Confirm recovery phrase")
                 }
 
                 return ""

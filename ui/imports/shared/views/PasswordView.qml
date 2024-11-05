@@ -32,7 +32,7 @@ ColumnLayout {
 
     property int contentAlignment: Qt.AlignHCenter
 
-    property var passwordStrengthScoreFunction: function () {}
+    property var passwordStrengthScoreFunction: (password) => { console.error("passwordStrengthScoreFunction: IMPLEMENT ME") }
 
     readonly property int zBehind: 1
     readonly property int zFront: 100
@@ -78,11 +78,6 @@ ColumnLayout {
 
     QtObject {
         id: d
-
-        property bool containsLower: false
-        property bool containsUpper: false
-        property bool containsNumbers: false
-        property bool containsSymbols: false
 
         readonly property var validatorRegexp: /^[!-~]+$/
         readonly property string validatorErrMessage: qsTr("Only ASCII letters, numbers, and symbols are allowed")
@@ -244,7 +239,7 @@ ColumnLayout {
         Layout.alignment: root.contentAlignment
 
         StatusBaseText {
-            text: qsTr("New password")
+            text: qsTr("Choose password")
         }
 
         StatusPasswordInput {
@@ -255,7 +250,7 @@ ColumnLayout {
 
             Layout.alignment: root.contentAlignment
             Layout.fillWidth: true
-            placeholderText: qsTr("Enter new password")
+            placeholderText: qsTr("Type password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Theme.padding / 2
 
@@ -264,11 +259,6 @@ ColumnLayout {
                 errorTxt.text = ""
                 // Update strength indicator:
                 strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
-
-                d.containsLower = d.lowerCaseValidator(text)
-                d.containsUpper = d.upperCaseValidator(text)
-                d.containsNumbers = d.numbersValidator(text)
-                d.containsSymbols = d.symbolsValidator(text)
 
                 if(!d.validateCharacterSet(text)) return
 
@@ -292,87 +282,11 @@ ColumnLayout {
                 onClicked: newPswInput.showPassword = !newPswInput.showPassword
             }
         }
-
-        StatusPasswordStrengthIndicator {
-            id: strengthInditactor
-            Layout.fillWidth: true
-            value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
-            from: 0
-            to: Constants.minPasswordLength
-            labelVeryWeak: qsTr("Very weak")
-            labelWeak: qsTr("Weak")
-            labelSoso: qsTr("So-so")
-            labelGood: qsTr("Good")
-            labelGreat: qsTr("Great")
-        }
-    }
-
-    Rectangle {
-        Layout.fillWidth: true
-        Layout.minimumHeight: 80
-        border.color: Theme.palette.baseColor2
-        border.width: 1
-        color: "transparent"
-        radius: Theme.radius
-        implicitHeight: strengthColumn.implicitHeight
-        implicitWidth: strengthColumn.implicitWidth
-
-        ColumnLayout {
-            id: strengthColumn
-            anchors.fill: parent
-            anchors.margins: Theme.padding
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: Theme.padding
-
-            StatusBaseText {
-                id: strengthenTxt
-                Layout.fillHeight: true
-                Layout.alignment: Qt.AlignHCenter
-                wrapMode: Text.WordWrap
-                text: root.strengthenText
-                font.pixelSize: 12
-                color: Theme.palette.baseColor1
-                clip: true
-            }
-
-            RowLayout {
-                spacing: Theme.padding
-                Layout.alignment: Qt.AlignHCenter
-
-                StatusBaseText {
-                    id: lowerCaseTxt
-                    text: "• " + qsTr("Lower case")
-                    font.pixelSize: 12
-                    color: d.containsLower ? Theme.palette.successColor1 : Theme.palette.baseColor1
-                }
-
-                StatusBaseText {
-                    id: upperCaseTxt
-                    text: "• " + qsTr("Upper case")
-                    font.pixelSize: 12
-                    color: d.containsUpper ? Theme.palette.successColor1 : Theme.palette.baseColor1
-                }
-
-                StatusBaseText {
-                    id: numbersTxt
-                    text: "• " + qsTr("Numbers")
-                    font.pixelSize: 12
-                    color: d.containsNumbers ? Theme.palette.successColor1 : Theme.palette.baseColor1
-                }
-
-                StatusBaseText {
-                    id: symbolsTxt
-                    text: "• " + qsTr("Symbols")
-                    font.pixelSize: 12
-                    color: d.containsSymbols ? Theme.palette.successColor1 : Theme.palette.baseColor1
-                }
-            }
-        }
     }
 
     ColumnLayout {
         StatusBaseText {
-            text: qsTr("Confirm new password")
+            text: qsTr("Repeat password")
         }
 
         StatusPasswordInput {
@@ -384,7 +298,7 @@ ColumnLayout {
             z: root.zFront
             Layout.fillWidth: true
             Layout.alignment: root.contentAlignment
-            placeholderText: qsTr("Enter new password")
+            placeholderText: qsTr("Type password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Theme.padding / 2
 
@@ -427,11 +341,44 @@ ColumnLayout {
         }
     }
 
+    StatusPasswordStrengthIndicator {
+        id: strengthInditactor
+        Layout.fillWidth: true
+        value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
+        from: 0
+        to: Constants.minPasswordLength
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Theme.padding
+        Layout.alignment: Qt.AlignHCenter
+
+        PasswordComponentIndicator {
+            caption: qsTr("Lower case")
+            checked: d.lowerCaseValidator(newPswInput.text)
+        }
+
+        PasswordComponentIndicator {
+            caption: qsTr("Upper case")
+            checked: d.upperCaseValidator(newPswInput.text)
+        }
+
+        PasswordComponentIndicator {
+            caption: qsTr("Numbers")
+            checked: d.numbersValidator(newPswInput.text)
+        }
+
+        PasswordComponentIndicator {
+            caption: qsTr("Symbols")
+            checked: d.symbolsValidator(newPswInput.text)
+        }
+    }
+
     StatusBaseText {
         id: errorTxt
         Layout.alignment: root.contentAlignment
-        Layout.fillHeight: true
-        font.pixelSize: 12
+        font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
     }
 }
