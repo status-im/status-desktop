@@ -24,8 +24,6 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property WalletAssetsStore walletAssetsStore
 
-    required property var sendModalPopup
-
     property ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
 
@@ -33,7 +31,7 @@ Item {
     property bool showSearchScreen: false
     property string addedUsername: ""
     property string selectedUsername: ""
-    property string selectedChainId: ""
+    property int selectedChainId: -1
 
     signal next(output: string)
     signal back()
@@ -42,6 +40,10 @@ Item {
     signal changePubKey(ensUsername: string)
     signal goToWelcome();
     signal goToList();
+
+    signal connectUsernameRequested(string ensName)
+    signal registerUsernameRequested(string ensName)
+    signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
 
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -53,13 +55,6 @@ Item {
         readonly property string registerENS: "RegisterENS"
         readonly property string setPubKey: "SetPubKey"
         readonly property string releaseENS: "ReleaseENS"
-
-        readonly property var sntToken: ModelUtils.getByKey(ensView.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", ensView.ensUsernamesStore.getStatusTokenKey())
-        readonly property SumAggregator aggregator: SumAggregator {
-            model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: nil
-            roleName: "balance"
-        }
-        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
     }
 
     DSM.StateMachine {
@@ -261,19 +256,7 @@ Item {
 
             onConnectUsername: {
                 ensView.selectedUsername = username
-
-                ensView.sendModalPopup.modalHeaderText = qsTr("Connect username with your pubkey")
-                ensView.sendModalPopup.interactive = false
-                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
-                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
-                ensView.sendModalPopup.preSelectedHoldingID = Constants.ethToken
-                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
-                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSSetPubKey
-                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(0)
-                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
-                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
-                ensView.sendModalPopup.ensName = ensView.selectedUsername
-                ensView.sendModalPopup.open()
+                ensView.connectUsernameRequested(ensView.selectedUsername)
             }
 
             Connections {
@@ -293,22 +276,11 @@ Item {
         EnsTermsAndConditionsView {
             ensUsernamesStore: ensView.ensUsernamesStore
             username: selectedUsername
+            assetsModel: ensView.walletAssetsStore.groupedAccountAssetsModel
 
             onBackBtnClicked: back();
 
-            onRegisterUsername: {
-                ensView.sendModalPopup.interactive = false
-                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
-                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
-                ensView.sendModalPopup.preSelectedHoldingID = !!d.sntToken && !!d.sntToken.symbol ? d.sntToken.symbol: ""
-                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
-                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSRegister
-                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(10)
-                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
-                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
-                ensView.sendModalPopup.ensName = ensView.selectedUsername
-                ensView.sendModalPopup.open()
-            }
+            onRegisterUsername: ensView.registerUsernameRequested(ensView.selectedUsername)
 
             Connections {
                 target: ensView.ensUsernamesStore.ensUsernamesModule
@@ -384,20 +356,7 @@ Item {
                     Global.openPopup(noAccountPopupComponent)
                     return
                 }
-
-                ensView.sendModalPopup.modalHeaderText = qsTr("Release your username")
-                ensView.sendModalPopup.interactive = false
-                ensView.sendModalPopup.preSelectedAccountAddress = senderAddress
-                ensView.sendModalPopup.preSelectedRecipient = ensView.ensUsernamesStore.getEnsRegisteredAddress()
-                ensView.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
-                ensView.sendModalPopup.preSelectedHoldingID = Constants.ethToken
-                ensView.sendModalPopup.preSelectedHoldingType = Constants.TokenType.Native
-                ensView.sendModalPopup.preSelectedSendType = Constants.SendType.ENSRelease
-                ensView.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(0)
-                ensView.sendModalPopup.preSelectedChainId = ensView.selectedChainId
-                ensView.sendModalPopup.publicKey = ensView.contactsStore.myPublicKey
-                ensView.sendModalPopup.ensName = ensView.selectedUsername
-                ensView.sendModalPopup.open()
+                ensView.releaseUsernameRequested(ensView.selectedUsername, senderAddress, ensView.selectedChainId)
             }
 
             Connections {

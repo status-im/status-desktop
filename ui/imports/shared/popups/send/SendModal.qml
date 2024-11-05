@@ -184,6 +184,20 @@ StatusDialog {
             d.routerErrorDetails = ""
             debounceRecalculateRoutesAndFees()
         }
+
+        function getTitleText() {
+            switch (store.sendType) {
+            case Constants.SendType.Bridge:
+                return qsTr("Bridge")
+            case Constants.SendType.ENSRegister:
+                return qsTr("Register Ens")
+            case Constants.SendType.ENSSetPubKey:
+                return qsTr("Connect username")
+            case Constants.SendType.ENSRelease:
+                return qsTr("Release username")
+            default: return qsTr("Send")
+            }
+        }
     }
 
     LeftJoinModel {
@@ -388,7 +402,7 @@ StatusDialog {
                         objectName: "modalHeader"
                         Layout.maximumWidth: contentWidth
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        text: d.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
+                        text: d.getTitleText()
                     }
 
                     TokenSelector {

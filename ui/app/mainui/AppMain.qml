@@ -140,8 +140,6 @@ Item {
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
-
-        sendModalPopup: sendModal
     }
 
     Connections {
@@ -637,6 +635,24 @@ Item {
         }
     }
 
+    SendModalHandler {
+        popupParent: appMain
+        loginType: appMain.rootStore.loginType
+        transactionStore: appMain.transactionStore
+        walletCollectiblesStore: appMain.walletCollectiblesStore
+
+        // for ens flows
+        ensRegisteredAddress: appMain.rootStore.profileSectionStore.ensUsernamesStore.getEnsRegisteredAddress()
+        myPublicKey: appMain.rootStore.contactStore.myPublicKey
+        getStatusTokenKey: function() {
+            return appMain.rootStore.profileSectionStore.ensUsernamesStore.getStatusTokenKey()
+        }
+
+        // for sticker flows
+        stickersMarketAddress: appMain.rootChatStore.stickersStore.getStickersMarketAddress()
+        stickersNetworkId: appMain.rootChatStore.appNetworkId
+    }
+
     Connections {
         id: globalConns
         target: Global
@@ -703,10 +719,6 @@ Item {
             } else if (sectionType === Constants.appSection.wallet) {
                 appView.children[Constants.appViewStackIndex.wallet].item.openDesiredView(subsection, subSubsection, data)
             }
-        }
-
-        function onOpenSendModal(address: string) {
-            sendModal.open(address)
         }
 
         function onPaymentRequestClicked(receiverAddress: string, symbol: string, amount: string, chainId: int) {
@@ -865,10 +877,8 @@ Item {
         active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
-            walletAssetsStore: appMain.walletAssetsStore
-            sendModalPopup: sendModal
-
             isWalletEnabled: appMain.profileStore.isWalletEnabled
+            onBuyClicked: Global.buyStickerPackRequested(packId, price)
         }
     }
 
@@ -1651,7 +1661,6 @@ Item {
                             communitiesStore: appMain.communitiesStore
                             transactionStore: appMain.transactionStore
                             emojiPopup: statusEmojiPopup.item
-                            sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
@@ -1683,7 +1692,6 @@ Item {
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             communitiesStore: appMain.communitiesStore
-                            sendModalPopup: sendModal
                             systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
@@ -1766,7 +1774,6 @@ Item {
                                     }
                                 }
 
-                                sendModalPopup: sendModal
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
@@ -1865,109 +1872,6 @@ Item {
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore
-            }
-        }
-
-        // Add SendModal here as it is used by the Wallet as well as the Browser
-        Loader {
-            id: sendModal
-            active: false
-
-            function open(address = "") {
-                if (!!address) {
-                    preSelectedRecipient = address
-                    preSelectedRecipientType = SendPopups.Helpers.RecipientAddressObjectType.Address
-                }
-                this.active = true
-                this.item.open()
-            }
-
-            function closed() {
-                // this.sourceComponent = undefined // kill an opened instance
-                this.active = false
-            }
-
-            property string modalHeaderText
-            property bool interactive: true
-            property string preSelectedAccountAddress
-            property var preSelectedRecipient
-            property int preSelectedRecipientType
-            property string preSelectedHoldingID
-            property int preSelectedHoldingType: Constants.TokenType.Unknown
-            property int preSelectedSendType: Constants.SendType.Unknown
-            property string preDefinedAmountToSend
-            property string preDefinedRawAmountToSend
-            property int preSelectedChainId: 0
-            property bool onlyAssets: false
-
-            property string stickersPackId: ""
-            property string publicKey: ""
-            property string ensName: ""
-
-            sourceComponent: SendPopups.SendModal {
-                interactive: sendModal.interactive
-                onlyAssets: sendModal.onlyAssets                
-
-                loginType: appMain.rootStore.loginType
-
-                store: appMain.transactionStore
-                collectiblesStore: appMain.walletCollectiblesStore
-
-                showCustomRoutingMode: !production
-
-                onClosed: {
-                    sendModal.closed()
-                    sendModal.modalHeaderText = ""
-                    sendModal.interactive = true
-                    sendModal.preSelectedSendType = Constants.SendType.Unknown
-                    sendModal.preSelectedHoldingID = ""
-                    sendModal.preSelectedHoldingType = Constants.TokenType.Unknown
-                    sendModal.preSelectedAccountAddress = ""
-                    sendModal.preSelectedRecipient = undefined
-                    sendModal.preDefinedAmountToSend = ""
-                    sendModal.preDefinedRawAmountToSend = ""
-                    sendModal.preSelectedChainId = 0
-
-                    sendModal.stickersPackId = ""
-                    sendModal.publicKey = ""
-                    sendModal.ensName = ""
-                }
-            }
-            onLoaded: {
-                if (!!sendModal.preSelectedAccountAddress) {
-                    item.preSelectedAccountAddress = sendModal.preSelectedAccountAddress
-                }
-                if (!!sendModal.preSelectedRecipient) {
-                    // NOTE Should be assigned in that order: type then recipient
-                    item.preSelectedRecipientType = sendModal.preSelectedRecipientType
-                    item.preSelectedRecipient = sendModal.preSelectedRecipient
-                }
-                if (sendModal.preSelectedSendType !== Constants.SendType.Unknown) {
-                    item.preSelectedSendType = sendModal.preSelectedSendType
-                }
-                if (sendModal.preSelectedHoldingType !== Constants.TokenType.Unknown) {
-                    item.preSelectedHoldingID = sendModal.preSelectedHoldingID
-                    item.preSelectedHoldingType = sendModal.preSelectedHoldingType
-                }
-                if (sendModal.preDefinedAmountToSend != "") {
-                    item.preDefinedAmountToSend = sendModal.preDefinedAmountToSend
-                }
-                if (sendModal.preDefinedRawAmountToSend != "") {
-                    item.preDefinedRawAmountToSend = sendModal.preDefinedRawAmountToSend
-                }
-                if (!!sendModal.preSelectedChainId) {
-                    item.preSelectedChainId = sendModal.preSelectedChainId
-                }
-
-                if (!!sendModal.stickersPackId) {
-                    item.stickersPackId = sendModal.stickersPackId
-                }
-                if (!!sendModal.publicKey) {
-                    item.publicKey = sendModal.publicKey
-                }
-                if (!!sendModal.ensName) {
-                    item.ensName = sendModal.ensName
-                }
             }
         }
 
@@ -2400,8 +2304,10 @@ Item {
         sourceComponent: WalletPopups.SavedAddressActivityPopup {
             networkConnectionStore: appMain.networkConnectionStore
             contactsStore: appMain.rootStore.contactStore
-            sendModalPopup: sendModal
 
+            onSendToAddressRequested: {
+                Global.sendToRecipientRequested(address)
+            }
             onClosed: {
                 savedAddressActivity.close()
             }

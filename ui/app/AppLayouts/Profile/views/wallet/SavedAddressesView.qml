@@ -12,11 +12,13 @@ ColumnLayout {
 
     property ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
-    property var sendModal
+
+    signal sendToAddressRequested(string address)
 
     SavedAddresses {
-        sendModal: root.sendModal
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore
+
+        onSendToAddressRequested: root.sendToAddressRequested(address)
     }
 }

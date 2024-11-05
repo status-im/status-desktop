@@ -14,6 +14,7 @@ import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import utils 1.0
 import shared.views 1.0
+import shared.popups.send 1.0
 import shared.stores 1.0 as SharedStores
 
 import "../controls"
@@ -24,7 +25,8 @@ StatusModal {
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property ProfileStores.ContactsStore contactsStore
-    property var sendModalPopup
+
+    signal sendToAddressRequested(string address)
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: false
@@ -162,8 +164,8 @@ StatusModal {
                         root.close()
                     }
                     onOpenSendModal: {
-                        root.close()
-                        root.sendModalPopup.open(recipient)
+                        root.sendToAddressRequested(recipient)
+                        root.close()  
                     }
                 }
 
@@ -240,8 +242,8 @@ StatusModal {
                     icon.name: "send"
                     enabled: root.networkConnectionStore.sendBuyBridgeEnabled
                     onClicked: {
+                        root.sendToAddressRequested(d.visibleAddress)
                         root.close()
-                        root.sendModalPopup.open(d.visibleAddress)
                     }
                 }
 

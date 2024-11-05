@@ -26,8 +26,6 @@ FocusScope {
 
     property var dAppsModel
 
-    property var sendModal
-
     property alias header: header
     property alias headerButton: header.headerButton
     property alias networkFilter: header.networkFilter

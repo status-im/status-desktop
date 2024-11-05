@@ -47,8 +47,6 @@ StackLayout {
         allMembers: !!sectionItemModel ? sectionItemModel.allMembers : null
     }
 
-    property var sendModalPopup
-
     readonly property bool isOwner: sectionItemModel.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: sectionItemModel.memberRole === Constants.memberRole.admin
     readonly property bool isTokenMasterOwner: sectionItemModel.memberRole === Constants.memberRole.tokenMaster
@@ -170,7 +168,6 @@ StackLayout {
 
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
-            sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
             areTestNetworksEnabled: root.areTestNetworksEnabled
@@ -265,7 +262,6 @@ StackLayout {
             enabledChainIds: WalletStore.RootStore.networkFilters
             onEnableNetwork: WalletStore.RootStore.enableNetwork(chainId)
             tokensStore: root.tokensStore
-            sendModalPopup: root.sendModalPopup
             transactionStore: root.transactionStore
 
             isPendingOwnershipRequest: root.isPendingOwnershipRequest

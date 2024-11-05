@@ -44,8 +44,6 @@ SettingsContentBase {
     required property WalletAssetsStore assetsStore
     required property CollectiblesStore collectiblesStore
 
-    required property var sendModalPopup
-
     readonly property int mainViewIndex: 0
     readonly property int networksViewIndex: 1
     readonly property int editNetworksViewIndex: 2
@@ -372,7 +370,10 @@ SettingsContentBase {
             id: savedAddressesView
             contactsStore: root.rootStore.contactsStore
             networkConnectionStore: root.networkConnectionStore
-            sendModal: root.sendModalPopup
+
+            onSendToAddressRequested: {
+                Global.sendToRecipientRequested(address)
+            }
         }
 
         Component {

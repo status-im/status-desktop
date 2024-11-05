@@ -529,6 +529,9 @@ Pane {
 
                     onCloseRequested: root.closeRequested()
                     onCopyToClipboard: ClipboardUtils.setText(text)
+                    onSendToAccountRequested: {
+                        Global.sendToRecipientRequested(recipientAddress)
+                    }
                 }
             }
         }

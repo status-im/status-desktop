@@ -10,6 +10,7 @@ import shared.popups 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
 import shared.stores 1.0 as SharedStores
+import shared.popups.send 1.0
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -244,6 +245,7 @@ Loader {
     }
 
     signal openStickerPackPopup(string stickerPackId)
+    signal sendViaPersonalChatRequested(string recipientAddress)
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
@@ -763,7 +765,7 @@ Loader {
                 onLinkActivated: {
                     if (link.startsWith(Constants.sendViaChatPrefix)) {
                         const addressOrEns = link.replace(Constants.sendViaChatPrefix, "");
-                        Global.openSendModal(addressOrEns)
+                        root.sendViaPersonalChatRequested(addressOrEns)
                         return
                     }
                     if (link.startsWith('//')) {

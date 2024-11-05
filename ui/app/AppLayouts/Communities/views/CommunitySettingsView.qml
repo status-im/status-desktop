@@ -46,7 +46,6 @@ StatusSectionLayout {
     required property var declinedMembers
     required property TransactionStore transactionStore
     property bool communitySettingsDisabled
-    property var sendModalPopup
 
     required property string enabledChainIds
 
@@ -221,7 +220,6 @@ StatusSectionLayout {
                 pubsubTopic: root.community.pubsubTopic
                 pubsubTopicKey: root.community.pubsubTopicKey
 
-                sendModalPopup: root.sendModalPopup
                 ownerToken: tokensModelChangesTracker.ownerToken
 
                 isPendingOwnershipRequest: root.isPendingOwnershipRequest
@@ -380,7 +378,6 @@ StatusSectionLayout {
                 communityName: root.community.name
                 communityLogo: root.community.image
                 communityColor: root.community.color
-                sendModalPopup: root.sendModalPopup
 
                 // User profile props
                 isOwner: root.isOwner
