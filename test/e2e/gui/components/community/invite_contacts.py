@@ -7,6 +7,7 @@ import configs.timeouts
 import driver
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
+from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
@@ -17,6 +18,7 @@ class InviteContactsPopup(BasePopup):
     def __init__(self):
         super().__init__()
         self._member_item = QObject(names.o_StatusMemberListItem)
+        self.member_checkbox = CheckBox(names.memberListCheckbox)
         self._next_button = Button(names.next_StatusButton)
         self._message_text_edit = TextEdit(names.communityProfilePopupInviteMessagePanel_MessageInput_TextEdit)
         self._invited_member_item = QObject(names.o_StatusMemberListItem_2)
@@ -39,12 +41,13 @@ class InviteContactsPopup(BasePopup):
                 f'Contact: {contact} not found in {self.contacts}'
 
         selected = []
-        for member in driver.findAllObjects(self._member_item.real_name):
-            if str(getattr(member, 'userName', '')) in contacts:
-                driver.mouseClick(member)
-                selected.append(member.userName)
+        for member in driver.findAllObjects(self.member_checkbox.real_name):
+            if str(getattr(member, 'objectName', '')).split('-')[1] in contacts:
+                CheckBox(member).set(True)
+                assert member.checkState != 0, f"Member item checkbox is not checked"
+                selected.append(str(getattr(member, 'objectName', '')).split('-')[1])
 
-        assert len(contacts) == len(selected), f'Selected contacts: {selected}, expected: {contacts}'
+        assert set(contacts) == set(selected), f'Selected contacts: {selected}, expected: {contacts}'
 
         self._next_button.click()
         self._message_text_edit.text = message
