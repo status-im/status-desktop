@@ -18,7 +18,7 @@ BackupSeedStepBase {
     property bool hideSeed: true
     property ProfileStores.PrivacyStore privacyStore
 
-    titleText: qsTr("Write down your 12-word seed phrase to keep offline")
+    titleText: qsTr("Write down your 12-word recovery phrase to keep offline")
 
     Item {
         implicitHeight: 304
@@ -69,7 +69,7 @@ BackupSeedStepBase {
             anchors.centerIn: parent
             visible: hideSeed
             icon.name: "view"
-            text: qsTr("Reveal seed phrase")
+            text: qsTr("Reveal recovery phrase")
             onClicked: {
                 privacyStore.mnemonicWasShown();
                 hideSeed = false;
@@ -86,7 +86,7 @@ BackupSeedStepBase {
         wrapMode: Text.WordWrap
         textFormat: Text.RichText
         color: Theme.palette.dangerColor1
-        text: qsTr("The next screen contains your seed phrase.\n<b>Anyone</b> who sees it can use it to access to your funds.")
+        text: qsTr("The next screen contains your recovery phrase.\n<b>Anyone</b> who sees it can use it to access to your funds.")
         Layout.fillWidth: true
     }
 }

@@ -78,11 +78,11 @@ QtObject {
                 `<a href="${link}">${link}</a>`
     }
 
-    function getStyledLink(linkText, linkUrl, hoveredLink, textColor = Theme.palette.directColor1, linkColor = Theme.palette.primaryColor1) {
+    function getStyledLink(linkText, linkUrl, hoveredLink, textColor = Theme.palette.directColor1, linkColor = Theme.palette.primaryColor1, underlineLink = true) {
         return `<style type="text/css">` +
                 `a {` +
                 `color: ${textColor};` +
-                `text-decoration: underline;` +
+                (underlineLink ? `text-decoration: underline;` : `text-decoration: none;`) +
                 `}` +
                 (hoveredLink === linkUrl ? `a[href="${linkUrl}"] { text-decoration: underline; color: ${linkColor} }` : "") +
                 `</style>` +

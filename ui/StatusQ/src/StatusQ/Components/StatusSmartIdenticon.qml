@@ -53,6 +53,7 @@ Loader {
                 objectName: "statusRoundImage"
                 width: parent.width
                 height: parent.height
+                radius: asset.bgRadius
                 image.source: root.asset.isImage ? root.asset.name : ""
                 showLoadingIndicator: true
                 border.width: root.asset.imgIsIdenticon ? 1 : 0
