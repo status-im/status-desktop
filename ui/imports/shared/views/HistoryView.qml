@@ -17,7 +17,6 @@ import utils 1.0
 
 import "../panels"
 import "../popups"
-import "../popups/send"
 import "../stores"
 import "../controls"
 

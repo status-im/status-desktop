@@ -25,6 +25,7 @@ Item {
     property alias cellHeight: accountsView.cellHeight
 
     signal copyToClipboard(string text)
+    signal sendToAccountRequested(string recipientAddress)
 
     StatusBaseText {
         anchors.centerIn: parent
@@ -68,9 +69,7 @@ Item {
                     icon.name: "send"
                     icon.color: !hovered ? Theme.palette.baseColor1 : Theme.palette.directColor1
                     enabled: root.sendToAccountEnabled
-                    onClicked: {
-                        Global.openSendModal(model.address)
-                    }
+                    onClicked: root.sendToAccountRequested(model.address)
                     onHoveredChanged: accountInfoDelegate.highlight = hovered
                 }
                 StatusFlatRoundButton {

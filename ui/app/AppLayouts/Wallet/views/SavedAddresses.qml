@@ -20,9 +20,10 @@ import "../controls"
 ColumnLayout {
     id: root
 
-    property var sendModal
     property ProfileStores.ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
+
+    signal sendToAddressRequested(string address)
 
     QtObject {
         id: d
@@ -149,7 +150,7 @@ ColumnLayout {
             colorId: model.colorId
             networkConnectionStore: root.networkConnectionStore
             areTestNetworksEnabled: RootStore.areTestNetworksEnabled
-            onOpenSendModal: root.sendModal.open(recipient);
+            onOpenSendModal: root.sendToAddressRequested(recipient)
 
             states: [
                 State {

@@ -37,7 +37,6 @@ Item {
     required property TransactionStore transactionStore
 
     property var emojiPopup: null
-    property var sendModalPopup
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property bool appMainVisible
 
@@ -219,12 +218,15 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
-            sendModal: root.sendModalPopup
 
             networkFilter.visible: false
             headerButton.text: qsTr("Add new address")
             headerButton.onClicked: {
                 Global.openAddEditSavedAddressesPopup({})
+            }
+
+            onSendToAddressRequested: {
+                Global.sendToRecipientRequested(address)
             }
         }
     }
@@ -236,7 +238,6 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             communitiesStore: root.communitiesStore
-            sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
 
             swapEnabled: root.swapEnabled
@@ -346,40 +347,33 @@ Item {
                                                                   hasFloatingButtons: true
                                                               })
             onLaunchSendModal: (fromAddress) => {
-                if(isCommunityOwnershipTransfer) {
-                    const tokenItem = walletStore.currentViewedCollectible
-                    const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
+                                   if(isCommunityOwnershipTransfer) {
+                                       const tokenItem = walletStore.currentViewedCollectible
+                                       const ownership = StatusQUtils.ModelUtils.get(tokenItem.ownership, 0)
 
-                    Global.openTransferOwnershipPopup(tokenItem.communityId,
-                                                      footer.communityName,
-                                                      tokenItem.communityImage,
-                                                      {
-                                                          key: tokenItem.tokenId,
-                                                          privilegesLevel: tokenItem.communityPrivilegesLevel,
-                                                          chainId: tokenItem.chainId,
-                                                          name: tokenItem.name,
-                                                          artworkSource: tokenItem.artworkSource,
-                                                          accountAddress: fromAddress,
-                                                          tokenAddress: tokenItem.contractAddress
-                                                      },
-                                                      root.sendModalPopup)
-                    return
-                }
+                                       Global.openTransferOwnershipPopup(tokenItem.communityId,
+                                                                         footer.communityName,
+                                                                         tokenItem.communityImage,
+                                                                         {
+                                                                             key: tokenItem.tokenId,
+                                                                             privilegesLevel: tokenItem.communityPrivilegesLevel,
+                                                                             chainId: tokenItem.chainId,
+                                                                             name: tokenItem.name,
+                                                                             artworkSource: tokenItem.artworkSource,
+                                                                             accountAddress: fromAddress,
+                                                                             tokenAddress: tokenItem.contractAddress
+                                                                         })
+                                       return
+                                   }
 
-                // Common send modal popup:
-                root.sendModalPopup.preSelectedAccountAddress = fromAddress
-                root.sendModalPopup.preSelectedSendType = Constants.SendType.Transfer
-                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingTokensKey
-                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
-                root.sendModalPopup.onlyAssets = false
-                root.sendModalPopup.open()
-            }
+                                   // Common send modal popup:
+                                   Global.sendTokenRequested(fromAddress,
+                                                             walletStore.currentViewedHoldingTokensKey,
+                                                             walletStore.currentViewedHoldingType)
+                               }
             onLaunchBridgeModal: {
-                root.sendModalPopup.preSelectedSendType = Constants.SendType.Bridge
-                root.sendModalPopup.preSelectedHoldingID = walletStore.currentViewedHoldingID
-                root.sendModalPopup.preSelectedHoldingType = walletStore.currentViewedHoldingType
-                root.sendModalPopup.onlyAssets = true
-                root.sendModalPopup.open()
+                Global.bridgeTokenRequested(walletStore.currentViewedHoldingID,
+                                            walletStore.currentViewedHoldingType)
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""

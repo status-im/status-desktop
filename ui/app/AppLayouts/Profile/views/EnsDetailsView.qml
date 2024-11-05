@@ -20,7 +20,7 @@ Item {
     id: root
     property EnsUsernamesStore ensUsernamesStore
     property string username: ""
-    property string chainId: ""
+    property int chainId: -1
 
     signal backBtnClicked()
     signal releaseUsernameRequested(string senderAddress)

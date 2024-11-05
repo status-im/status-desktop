@@ -122,7 +122,7 @@ Rectangle {
             interactive: !d.isCollectibleSoulbound && networkConnectionStore.sendBuyBridgeEnabled
             onClicked: {
                 root.transactionStore.setSenderAccount(root.walletStore.selectedAddress)
-                root.launchSendModal(d.userOwnedAddressForCollectible)
+                root.launchSendModal(d.isCollectibleViewed ? d.userOwnedAddressForCollectible: root.walletStore.selectedAddress)
             }
             tooltip.text: d.isCollectibleSoulbound ? qsTr("Soulbound collectibles cannot be sent to another wallet") : networkConnectionStore.sendBuyBridgeToolTipText
             visible: d.sendActionAvailable

@@ -40,7 +40,6 @@ StackLayout {
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
     property string previousPageName: (currentIndex === 1) ? qsTr("Overview") : ""
-    property var sendModalPopup
 
     property bool archiveSupporVisible: true
     property bool editable: false
@@ -134,8 +133,15 @@ StackLayout {
                             Global.openTransferOwnershipPopup(root.communityId,
                                                               root.name,
                                                               root.logoImageData,
-                                                              root.ownerToken,
-                                                              root.sendModalPopup)
+                                                              {
+                                                                  key: "0",
+                                                                  privilegesLevel: root.ownerToken.privilegesLevel,
+                                                                  chainId: root.ownerToken.chainId,
+                                                                  name: root.ownerToken.name,
+                                                                  artworkSource: root.ownerToken.image,
+                                                                  accountAddress: root.ownerToken.accountAddress.toLowerCase(),
+                                                                  tokenAddress: root.ownerToken.tokenAddress.toLowerCase()
+                                                              })
                         } else {
                             Global.openPopup(transferOwnershipAlertPopup, { mode: TransferOwnershipAlertPopup.Mode.TransferOwnership })
                         }

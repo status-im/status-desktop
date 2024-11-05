@@ -47,8 +47,7 @@ QtObject {
     signal openTransferOwnershipPopup(string communityId,
                                       string communityName,
                                       string communityLogo,
-                                      var token,
-                                      var sendModalPopup)
+                                      var token)
     signal openFinaliseOwnershipPopup(string communityId)
     signal openDeclineOwnershipPopup(string communityId, string communityName)
     signal openFirstTokenReceivedPopup(string communityId,
@@ -69,7 +68,6 @@ QtObject {
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection, int subSubsection, var data)
 
-    signal openSendModal(string address)
     signal paymentRequestClicked(string receiverAddress, string symbol, string amount, int chainId)
     signal switchToCommunity(string communityId)
     signal switchToCommunitySettings(string communityId)
@@ -107,6 +105,17 @@ QtObject {
     signal openShowQRPopup(var params)
     signal openSavedAddressActivityPopup(var params)
     signal openCommunityMemberMessagesPopupRequested(var store, var chatCommunitySectionModule, var memberPubKey, var displayName)
+
+    // Intent based launch send modal signals
+    signal launchSendRequested()
+    signal connectUsernameRequested(string ensName)
+    signal registerUsernameRequested(string ensName)
+    signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)    
+    signal buyStickerPackRequested(string packId, int price)
+    signal transferOwnershipRequested(string tokenId, string senderAddress)
+    signal sendToRecipientRequested(string recipientAddress)
+    signal bridgeTokenRequested(string tokenId, int tokenType)
+    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
 
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)

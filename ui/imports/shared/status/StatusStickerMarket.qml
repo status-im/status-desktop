@@ -26,8 +26,6 @@ Item {
 
     property ChatStores.RootStore store
     property var stickerPacks: ChatStores.StickerPackData {}
-    required property WalletAssetsStore walletAssetsStore
-    required property var sendModalPopup
     property string packId
     property bool marketVisible
     property bool isWalletEnabled
@@ -37,27 +35,7 @@ Item {
     signal installClicked(var stickers, string packId, int index)
     signal cancelClicked(string packId)
     signal updateClicked(string packId)
-    signal buyClicked(string packId)
-
-    QtObject {
-        id: d
-
-        function runSendModal(price, packId) {
-
-            const token = ModelUtils.getByKey(root.walletAssetsStore.groupedAccountAssetsModel, "tokensKey", root.store.stickersStore.getStatusTokenKey())
-
-            root.sendModalPopup.interactive = false
-            root.sendModalPopup.preSelectedRecipient = root.store.stickersStore.getStickersMarketAddress()
-            root.sendModalPopup.preSelectedRecipientType = Helpers.RecipientAddressObjectType.Address
-            root.sendModalPopup.preSelectedHoldingID = !!token && !!token.symbol ? token.symbol : ""
-            root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC20
-            root.sendModalPopup.preSelectedSendType = Constants.SendType.StickersBuy
-            root.sendModalPopup.preDefinedAmountToSend = LocaleUtils.numberToLocaleString(parseFloat(price))
-            root.sendModalPopup.preSelectedChainId = root.store.appNetworkId
-            root.sendModalPopup.stickersPackId = packId
-            root.sendModalPopup.open()
-        }
-    }
+    signal buyClicked(string packId, int price)
 
     StatusGridView {
         id: availableStickerPacks
@@ -174,10 +152,7 @@ Item {
                         onUninstallClicked: root.uninstallClicked(packId)
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
-                        onBuyClicked: {
-                            d.runSendModal(price, packId)
-                            root.buyClicked(packId)
-                        }
+                        onBuyClicked: root.buyClicked(packId, price)
                     }
                 }
 
@@ -207,10 +182,7 @@ Item {
                         onUninstallClicked: root.uninstallClicked(packId)
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
-                        onBuyClicked: {
-                            d.runSendModal(price, packId)
-                            root.buyClicked(packId)
-                        }
+                        onBuyClicked: root.buyClicked(packId, price)
                     }
                 }
             }

@@ -31,7 +31,6 @@ StackView {
     required property string communityName
     required property string communityLogo
     required property color communityColor
-    property var sendModalPopup
 
     // User profile props:
     required property bool isOwner
@@ -786,8 +785,7 @@ StackView {
             onSendOwnershipClicked: Global.openTransferOwnershipPopup(root.communityId,
                                                                       root.communityName,
                                                                       root.communityLogo,
-                                                                      tokenViewPage.token,
-                                                                      root.sendModalPopup)
+                                                                      tokenViewPage.token)
 
             // helper properties to pass data through popups
             property var walletsAndAmounts
