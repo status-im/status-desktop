@@ -8339,6 +8339,23 @@
         <file>assets/png/onboarding/profile_fetching_in_progress.png</file>
         <file>assets/png/onboarding/seed-phrase.png</file>
         <file>assets/png/onboarding/welcome.png</file>
+        <file>assets/png/onboarding/status_totebag_artwork_1.png</file>
+        <file>assets/png/onboarding/status_generate_keys.png</file>
+        <file>assets/png/onboarding/status_generate_keycard.png</file>
+        <file>assets/png/onboarding/create_profile_seed.png</file>
+        <file>assets/png/onboarding/create_profile_keycard.png</file>
+        <file>assets/png/onboarding/status_chat.png</file>
+        <file>assets/png/onboarding/status_key.png</file>
+        <file>assets/png/onboarding/status_keycard.png</file>
+        <file>assets/png/onboarding/status_keycard_multiple.png</file>
+        <file>assets/png/onboarding/status_seedphrase.png</file>
+        <file>assets/png/onboarding/enable_biometrics.png</file>
+        <file>assets/png/onboarding/keycard/empty.png</file>
+        <file>assets/png/onboarding/keycard/insert.png</file>
+        <file>assets/png/onboarding/keycard/invalid.png</file>
+        <file>assets/png/onboarding/keycard/reading.png</file>
+        <file>assets/png/onboarding/keycard/error.png</file>
+        <file>assets/png/onboarding/keycard/success.png</file>
         <file>assets/png/onRampProviders/latamex.png</file>
         <file>assets/png/onRampProviders/mercuryo.png</file>
         <file>assets/png/onRampProviders/moonPay.png</file>

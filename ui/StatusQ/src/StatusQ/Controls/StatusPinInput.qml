@@ -42,7 +42,7 @@ Item {
     property alias pinInput: inputText.text
 
     /*!
-       \qmlproperty Validator StatusPinInput::validator
+       \qmlproperty StatusValidator StatusPinInput::validator
         This property allows you to set a validator on the StatusPinInput. When a validator is set the StatusPinInput will only accept
         input which leaves the pinInput property in an acceptable state.
 
@@ -58,6 +58,13 @@ Item {
         \endqml
     */
     property alias validator: d.statusValidator
+
+    /*!
+       \qmlproperty bool StatusPinInput::pinInput
+       This property holds whether the entered PIN is valid; PIN is considered valid when it passes the internal validator
+       and its length matches that of @p pinLen
+    */
+    readonly property bool valid: inputText.acceptableInput && inputText.length === pinLen
 
     /*!
        \qmlproperty int StatusPinInput::pinLen
@@ -166,6 +173,23 @@ Item {
         for (var i = 0; i < root.pinLen; i++) {
             const currItem = repeater.itemAt(i)
             currItem.innerState = "FILLED"
+        }
+    }
+
+    /*
+        \qmlmethod StatusPinInput::clearPin()
+
+        Sets the pin input to an empty string, setting state of each digit to "EMPTY", and stops the blinking animation
+
+        Doesn't change the current `pinLen`.
+    */
+    function clearPin() {
+        inputText.text = ""
+        d.currentPinIndex = 0
+        d.deactivateBlink()
+        for (var i = 0; i < root.pinLen; i++) {
+            const currItem = repeater.itemAt(i)
+            currItem.innerState = "EMPTY"
         }
     }
 
