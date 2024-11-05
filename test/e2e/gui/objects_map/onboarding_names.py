@@ -44,10 +44,11 @@ mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_Se
 # SyncCode View
 mainWindow_SyncCodeView = {"container": statusDesktop_mainWindow, "type": "SyncCodeView", "unnamed": 1, "visible": True}
 mainWindow_switchTabBar_StatusSwitchTabBar_2 = {"container": statusDesktop_mainWindow, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
-switchTabBar_Enter_sync_code_StatusSwitchTabButton = {"checkable": True, "container": mainWindow_switchTabBar_StatusSwitchTabBar_2, "text": "Enter sync code", "type": "StatusSwitchTabButton", "unnamed": 1, "visible": True}
+switchTabBar_Enter_sync_code_StatusSwitchTabButton = {"checkable": True, "container": mainWindow_switchTabBar_StatusSwitchTabBar_2, "objectName": "secondTab_StatusSwitchTabButton", "type": "StatusSwitchTabButton", "visible": True}
 mainWindow_statusBaseInput_StatusBaseInput = {"container": statusDesktop_mainWindow, "id": "statusBaseInput", "type": "StatusBaseInput", "unnamed": 1, "visible": True}
 mainWindow_Paste_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "syncCodePasteButton", "type": "StatusButton", "visible": True}
 mainWindow_syncingEnterCode_SyncingEnterCode = {"container": statusDesktop_mainWindow, "objectName": "syncingEnterCode", "type": "SyncingEnterCode", "visible": True}
+mainWindow_nameInput_syncingEnterCode_Continue = {"checkable": False, "container": statusDesktop_mainWindow, "objectName": "continue_StatusButton", "type": "StatusButton", "visible": True}
 
 # SyncDevice View
 mainWindow_SyncingDeviceView_found = {"container": statusDesktop_mainWindow, "type": "SyncingDeviceView", "unnamed": 1, "visible": True}
@@ -89,7 +90,7 @@ mainWindow_passwordViewNewPassword = {"container": mainWindow_CreatePasswordView
 mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
-mainWindow_RowLayout = {"container": statusDesktop_mainWindow, "type": "RowLayout", "unnamed": 1, "visible": True}
+mainWindow_RowLayout = {"container": statusDesktop_mainWindow, "type": "PassIncludesIndicator", "unnamed": 1, "visible": True}
 mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": statusDesktop_mainWindow, "id": "strengthInditactor", "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
 mainWindow_show_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "show-icon", "type": "StatusIcon", "visible": True}
 mainWindow_hide_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "hide-icon", "type": "StatusIcon", "visible": True}

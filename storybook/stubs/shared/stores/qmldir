@@ -9,3 +9,4 @@ ProfileStore 1.0 ProfileStore.qml
 RootStore 1.0 RootStore.qml
 UtilsStore 1.0 UtilsStore.qml
 BrowserConnectStore 1.0 BrowserConnectStore.qml
+MetricsStore 1.0 MetricsStore.qml

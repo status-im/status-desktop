@@ -12,7 +12,7 @@ import shared.popups 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
-    title: qsTr("Enter seed phrase")
+    title: qsTr("Enter recovery phrase")
     height: 200
     signal openModalClicked()
 

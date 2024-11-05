@@ -148,6 +148,7 @@ class SyncCodeView(OnboardingView):
         self._enter_sync_code_button = Button(onboarding_names.switchTabBar_Enter_sync_code_StatusSwitchTabButton)
         self._paste_sync_code_button = Button(onboarding_names.mainWindow_Paste_StatusButton)
         self._syncing_enter_code_item = QObject(onboarding_names.mainWindow_syncingEnterCode_SyncingEnterCode)
+        self.continue_button = Button(onboarding_names.mainWindow_nameInput_syncingEnterCode_Continue)
 
     @allure.step('Open enter sync code form')
     def open_enter_sync_code_form(self):
@@ -481,15 +482,10 @@ class CreatePasswordView(OnboardingView):
     def green_indicator_messages(self) -> typing.List[str]:
         messages = []
         color = ColorCodes.GREEN.value
-        for child in walk_children(self._indicator_panel_object.object):
-            if getattr(child, 'id', '') == 'lowerCaseTxt' and child.color['name'] == color:
-                messages.append(str(child.text))
-            elif getattr(child, 'id', '') == 'upperCaseTxt' and child.color['name'] == color:
-                messages.append(str(child.text))
-            elif getattr(child, 'id', '') == 'numbersTxt' and child.color['name'] == color:
-                messages.append(str(child.text))
-            elif getattr(child, 'id', '') == 'symbolsTxt' and child.color['name'] == color:
-                messages.append(str(child.text))
+
+        for item in driver.findAllObjects(self._indicator_panel_object.real_name):
+            if str(item.color.name) == color:
+                messages.append(str(item.text))
         return messages
 
     @property

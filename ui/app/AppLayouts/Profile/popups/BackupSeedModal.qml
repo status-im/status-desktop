@@ -63,8 +63,8 @@ StatusStackModal {
     }
 
     implicitHeight: 748
-    width: 480
-    headerSettings.title: qsTr("Back up your seed phrase")
+    width: 500
+    headerSettings.title: qsTr("Back up your recovery phrase")
     rightButtons: [ d.skipButton, nextButton, finishButton ]
 
     nextButton: StatusButton {
@@ -88,7 +88,7 @@ StatusStackModal {
             switch (root.currentIndex) {
             case 0:
             case 1:
-                return qsTr("Confirm Seed Phrase");
+                return qsTr("Confirm Recovery Phrase");
             case 2:
             case 3:
                 return qsTr("Continue");
@@ -100,7 +100,7 @@ StatusStackModal {
     }
 
     finishButton: StatusButton {
-        text: qsTr("Complete & Delete My Seed Phrase")
+        text: qsTr("Complete & Delete My Recovery Phrase")
         objectName: "BackupSeedModal_completeAndDeleteSeedPhraseButton"
         enabled: d.seedStored
         onClicked: {
@@ -137,7 +137,7 @@ StatusStackModal {
         BackupSeedStepBase {
             id: confirmFirstWord
             objectName: "BackupSeedModal_BackupSeedStepBase_confirmFirstWord"
-            titleText: qsTr("Confirm word #%1 of your seed phrase").arg(d.firstRandomNo + 1)
+            titleText: qsTr("Confirm word #%1 of your recovery phrase").arg(d.firstRandomNo + 1)
             wordRandomNumber: d.firstRandomNo
             wordAtRandomNumber: root.privacyStore.getMnemonicWordAtIndex(d.firstRandomNo)
             onEnterPressed: {
@@ -147,7 +147,7 @@ StatusStackModal {
         BackupSeedStepBase {
             id: confirmSecondWord
             objectName: "BackupSeedModal_BackupSeedStepBase_confirmSecondWord"
-            titleText: qsTr("Confirm word #%1 of your seed phrase").arg(d.secondRandomNo + 1)
+            titleText: qsTr("Confirm word #%1 of your recovery phrase").arg(d.secondRandomNo + 1)
             wordRandomNumber: d.secondRandomNo
             wordAtRandomNumber: root.privacyStore.getMnemonicWordAtIndex(d.secondRandomNo)
         },

@@ -146,6 +146,10 @@ SplitView {
                     enabled: searchField.searchText !== ""
                     onClicked: searchField.clear()
                 }
+                Label {
+                    text: "INFO: Reload the page after selecting 'Dark mode'"
+                    font.weight: Font.Medium
+                }
             }
 
             ColorFlow {

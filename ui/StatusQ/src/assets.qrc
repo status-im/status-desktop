@@ -8340,6 +8340,35 @@
         <file>assets/png/onboarding/profile_fetching_in_progress.png</file>
         <file>assets/png/onboarding/seed-phrase.png</file>
         <file>assets/png/onboarding/welcome.png</file>
+        <file>assets/png/onboarding/status_totebag_artwork_1.png</file>
+        <file>assets/png/onboarding/status_generate_keys.png</file>
+        <file>assets/png/onboarding/status_generate_keycard.png</file>
+        <file>assets/png/onboarding/create_profile_seed.png</file>
+        <file>assets/png/onboarding/create_profile_keycard.png</file>
+        <file>assets/png/onboarding/login_syncing.png</file>
+        <file>assets/png/onboarding/status_chat.png</file>
+        <file>assets/png/onboarding/status_login_seedphrase.png</file>
+        <file>assets/png/onboarding/status_key.png</file>
+        <file>assets/png/onboarding/status_keycard.png</file>
+        <file>assets/png/onboarding/status_keycard_multiple.png</file>
+        <file>assets/png/onboarding/status_keycard_adding_keypair.png</file>
+        <file>assets/png/onboarding/status_keycard_adding_keypair_success.png</file>
+        <file>assets/png/onboarding/status_keycard_adding_keypair_failed.png</file>
+        <file>assets/png/onboarding/status_seedphrase.png</file>
+        <file>assets/png/onboarding/status_sync.png</file>
+        <file>assets/png/onboarding/status_sync_progress.png</file>
+        <file>assets/png/onboarding/status_sync_success.png</file>
+        <file>assets/png/onboarding/status_sync_failed.png</file>
+        <file>assets/png/onboarding/enable_biometrics.png</file>
+        <file>assets/png/onboarding/carousel/crypto.png</file>
+        <file>assets/png/onboarding/carousel/chat.png</file>
+        <file>assets/png/onboarding/carousel/keycard.png</file>
+        <file>assets/png/onboarding/keycard/empty.png</file>
+        <file>assets/png/onboarding/keycard/insert.png</file>
+        <file>assets/png/onboarding/keycard/invalid.png</file>
+        <file>assets/png/onboarding/keycard/reading.png</file>
+        <file>assets/png/onboarding/keycard/error.png</file>
+        <file>assets/png/onboarding/keycard/success.png</file>
         <file>assets/png/onRampProviders/latamex.png</file>
         <file>assets/png/onRampProviders/mercuryo.png</file>
         <file>assets/png/onRampProviders/moonPay.png</file>
@@ -8978,6 +9007,7 @@
         <file>assets/png/status-logo-dev-round-rect.png</file>
         <file>assets/png/status-logo-icon.png</file>
         <file>assets/png/status-logo-round-rect.png</file>
+        <file>assets/png/status-preparing.png</file>
         <file>assets/png/unfurling-image.png</file>
         <file>assets/img/icons/arrow-next.svg</file>
         <file>assets/img/icons/arrow-previous.svg</file>

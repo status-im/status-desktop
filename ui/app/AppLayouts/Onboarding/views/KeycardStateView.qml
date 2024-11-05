@@ -349,7 +349,7 @@ Item {
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Unlock using seed phrase")
+                text: qsTr("Unlock using recovery phrase")
                 type: StatusBaseButton.Type.Normal
             }
             PropertyChanges {
@@ -420,19 +420,19 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Seed phrase doesn’t match any user")
+                text: qsTr("Recovery phrase doesn’t match any user")
                 color: Theme.palette.directColor1
                 font.pixelSize: Constants.keycard.general.fontSize1
             }
             PropertyChanges {
                 target: info
-                text: qsTr("The seed phrase you enter needs to match the seed phrase of an existing user on this device")
+                text: qsTr("The recovery phrase you enter needs to match the recovery phrase of an existing user on this device")
                 color: Theme.palette.directColor1
                 font.pixelSize: Constants.keycard.general.fontSize2
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Try entering seed phrase again")
+                text: qsTr("Try entering recovery phrase again")
             }
             PropertyChanges {
                 target: link

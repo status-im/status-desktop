@@ -8,12 +8,10 @@ StatusAnimatedImage 0.1 StatusAnimatedImage.qml
 StatusBadge 0.1 StatusBadge.qml
 StatusBetaTag 0.1 StatusBetaTag.qml
 StatusCard 0.1 StatusCard.qml
-StatusChart 0.1 StatusChart.qml
 StatusChartPanel 0.1 StatusChartPanel.qml
 StatusChatInfoToolBar 0.1 StatusChatInfoToolBar.qml
 StatusChatList 0.1 StatusChatList.qml
 StatusChatListAndCategories 0.1 StatusChatListAndCategories.qml
-StatusChatListCategory 0.1 StatusChatListCategory.qml
 StatusChatListCategoryItem 0.1 StatusChatListCategoryItem.qml
 StatusChatListItem 0.1 StatusChatListItem.qml
 StatusColorSpace 0.0 StatusColorSpace.qml
@@ -23,7 +21,6 @@ StatusContactRequestsIndicatorListItem 0.1 StatusContactRequestsIndicatorListIte
 StatusContactVerificationIcons 0.1 StatusContactVerificationIcons.qml
 StatusCursorDelegate 0.1 StatusCursorDelegate.qml
 StatusDateGroupLabel 0.1 StatusDateGroupLabel.qml
-StatusDateInput 0.1 StatusDateInput.qml
 StatusDatePicker 0.1 StatusDatePicker.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusDotsLoadingIndicator 0.1 StatusDotsLoadingIndicator.qml

@@ -53,7 +53,7 @@ Item {
         visible: !root.seedPhraseRevealed
         type: StatusBaseButton.Type.Primary
         icon.name: "view"
-        text: qsTr("Reveal seed phrase")
+        text: qsTr("Reveal recovery phrase")
         onClicked: {
             root.seedPhraseRevealed = true
         }
