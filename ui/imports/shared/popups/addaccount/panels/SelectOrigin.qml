@@ -86,7 +86,7 @@ StatusSelect {
         subTitle: {
             if (menu.isOption) {
                 if (model.keyPair.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey)
-                    return qsTr("From Keycard, private key or seed phrase")
+                    return qsTr("From Keycard, private key or recovery phrase")
                 if (model.keyPair.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc)
                     return qsTr("Any ETH address")
             }

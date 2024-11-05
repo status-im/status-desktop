@@ -38,7 +38,7 @@ BackupSeedStepBase {
             wrapMode: Text.WordWrap
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
-            text: qsTr("By completing this process, you will remove your seed phrase from this application’s storage. This makes your funds more secure.")
+            text: qsTr("By completing this process, you will remove your recovery phrase from this application’s storage. This makes your funds more secure.")
             Layout.fillWidth: true
         }
 
@@ -48,7 +48,7 @@ BackupSeedStepBase {
             wrapMode: Text.WordWrap
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
-            text: qsTr("You will remain logged in, and your seed phrase will be entirely in your hands.")
+            text: qsTr("You will remain logged in, and your recovery phrase will be entirely in your hands.")
             Layout.fillWidth: true
         }
 
@@ -57,7 +57,7 @@ BackupSeedStepBase {
             objectName: "ConfirmStoringSeedPhrasePanel_storeCheck"
             spacing: Theme.padding
             font.pixelSize: Theme.primaryTextFontSize
-            text: qsTr("I acknowledge that Status will not be able to show me my seed phrase again.")
+            text: qsTr("I acknowledge that Status will not be able to show me my recovery phrase again.")
             Layout.fillWidth: true
             Layout.topMargin: Theme.bigPadding
         }

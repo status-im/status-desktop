@@ -43,7 +43,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
             color: Theme.palette.directColor1
-            text: qsTr("Write down your 12-word seed phrase to keep offline")
+            text: qsTr("Write down your 12-word recovery phrase to keep offline")
         }
 
         SeedPhrase {
@@ -69,7 +69,7 @@ Item {
             textFormat: Text.RichText
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
-            text: qsTr("The next screen contains your seed phrase.<br/><b>Anyone</b> who sees it can use it to access to your funds.")
+            text: qsTr("The next screen contains your recovery phrase.<br/><b>Anyone</b> who sees it can use it to access to your funds.")
         }
     }
 }
