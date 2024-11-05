@@ -111,6 +111,7 @@ QtObject {
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
         Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
+        Global.termsOfUseRequested.connect(() => openPopup(termsOfUsePopupComponent))
     }
 
     property var currentPopup
@@ -1278,23 +1279,25 @@ QtObject {
         },
         Component {
             id: privacyPolicyPopupComponent
-            StatusDialog {
-                width: 600
-                padding: 0
+            StatusSimpleTextPopup {
                 title: qsTr("Status Software Privacy Policy")
-                StatusScrollView {
-                    id: privacyDialogScrollView
-                    anchors.fill: parent
-                    contentWidth: availableWidth
-                    StatusBaseText {
-                        width: privacyDialogScrollView.availableWidth
-                        wrapMode: Text.Wrap
-                        textFormat: Text.MarkdownText
-                        text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
-                        onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
-                    }
+                content {
+                    textFormat: Text.MarkdownText
+                    text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/privacy.mdwn")
+                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
                 }
-                standardButtons: Dialog.Ok
+                destroyOnClose: true
+            }
+        },
+        Component {
+            id: termsOfUsePopupComponent
+            StatusSimpleTextPopup {
+                title: qsTr("Status Software Terms of Use")
+                content {
+                    textFormat: Text.MarkdownText
+                    text: SQUtils.StringUtils.readTextFile(":/imports/assets/docs/terms-of-use.mdwn")
+                    onLinkActivated: Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+                }
                 destroyOnClose: true
             }
         },

@@ -62,7 +62,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? root.keyPair.pairType === Constants.keypair.type.privateKeyImport? qsTr("Import via entering private key") : qsTr("Import via entering seed phrase") : ""
+        text: enabled? root.keyPair.pairType === Constants.keypair.type.privateKeyImport? qsTr("Import via entering private key") : qsTr("Import via entering recovery phrase") : ""
         enabled: !!root.keyPair &&
                  !root.keyPair.migratedToKeycard &&
                  root.keyPair.operability === Constants.keypair.operability.nonOperable &&

@@ -64,6 +64,7 @@ ThemePalette {
     miscColor11: getColor('brown2')
     miscColor12: getColor('green5')
 
+    dropShadow: Qt.rgba(0, 34/255, 51/255, 0.03)
     dropShadow2: getColor('blue7', 0.02)
 
     statusFloatingButtonHighlight: getColor('blueHijab')

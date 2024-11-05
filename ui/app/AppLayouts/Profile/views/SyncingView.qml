@@ -187,7 +187,7 @@ SettingsContentBase {
                             anchors.left: parent.right
                             anchors.leftMargin: 8
                             anchors.verticalCenter: parent.verticalCenter
-                            tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Seed Phrase feature instead.")
+                            tooltipText: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
                         }
                     }
                 }
