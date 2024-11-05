@@ -51,7 +51,6 @@ StatusSectionLayout {
 
     property var mutualContactsModel
 
-    required property var sendModalPopup
     property var sectionItemModel
     property int joinedMembersCount
 
@@ -358,11 +357,10 @@ StatusSectionLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
-            walletAssetsStore: root.walletAssetsStore
-            sendModalPopup: root.sendModalPopup
-            onClosed: {
-                destroy();
+            onBuyClicked: {
+                Global.buyStickerPackRequested(packId, price)
             }
+            onClosed: destroy()
         }
     }
 }

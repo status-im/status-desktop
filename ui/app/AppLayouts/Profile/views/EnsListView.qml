@@ -25,7 +25,7 @@ Item {
     property int profileContentWidth
 
     signal addBtnClicked()
-    signal selectEns(string username, string chainId)
+    signal selectEns(string username, int chainId)
 
     Component.onCompleted: {
         d.updateNumberOfPendingEnsUsernames()

@@ -309,13 +309,8 @@ RightTabBaseView {
                         swapVisible: root.swapEnabled
 
                         onSendRequested: {
-                            const modal = root.sendModal
-
-                            modal.preSelectedSendType = Constants.SendType.Transfer
-                            modal.preSelectedHoldingID = key
-                            modal.preSelectedHoldingType = Constants.TokenType.ERC20
-                            modal.onlyAssets = true
-                            modal.open()
+                            Global.sendTokenRequested(RootStore.overview.mixedcaseAddress.toLowerCase(),
+                                                      key, Constants.TokenType.ERC20)
                         }
 
                         onSwapRequested: root.launchSwapModal(key)
@@ -415,33 +410,27 @@ RightTabBaseView {
                             stack.currentIndex = 1
                         }
                         onSendRequested: (symbol, tokenType, fromAddress) => {
-                            const collectible = ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
-                            if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
-                                Global.openTransferOwnershipPopup(collectible.communityId,
-                                                                  collectible.communityName,
-                                                                  collectible.communityImage,
-                                                                  {
-                                                                      key: collectible.tokenId,
-                                                                      privilegesLevel: collectible.communityPrivilegesLevel,
-                                                                      chainId: collectible.chainId,
-                                                                      name: collectible.name,
-                                                                      artworkSource: collectible.communityImage,
-                                                                      accountAddress: fromAddress,
-                                                                      tokenAddress: collectible.contractAddress
-                                                                  },
-                                                                  root.sendModal)
-                                return
-                            }
-                        
-                            root.sendModal.preSelectedAccountAddress = fromAddress
-                            root.sendModal.preSelectedHoldingID = symbol
-                            root.sendModal.preSelectedHoldingType = tokenType
-                            root.sendModal.preSelectedSendType = tokenType === Constants.TokenType.ERC721 ?
-                                    Constants.SendType.ERC721Transfer:
-                                    Constants.SendType.ERC1155Transfer
-                            root.sendModal.onlyAssets = false
-                            root.sendModal.open()
-                        }
+                                             const collectible = ModelUtils.getByKey(controller.sourceModel, "symbol", symbol)
+                                             if (!!collectible && collectible.communityPrivilegesLevel === Constants.TokenPrivilegesLevel.Owner) {
+                                                 Global.openTransferOwnershipPopup(collectible.communityId,
+                                                                                   collectible.communityName,
+                                                                                   collectible.communityImage,
+                                                                                   {
+                                                                                       key: collectible.tokenId,
+                                                                                       privilegesLevel: collectible.communityPrivilegesLevel,
+                                                                                       chainId: collectible.chainId,
+                                                                                       name: collectible.name,
+                                                                                       artworkSource: collectible.communityImage,
+                                                                                       accountAddress: fromAddress,
+                                                                                       tokenAddress: collectible.contractAddress
+                                                                                   })
+                                                 return
+                                             }
+
+                                             Global.sendTokenRequested(fromAddress ,
+                                                                       symbol,
+                                                                       tokenType)
+                                         }
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
                         onManageTokensRequested: Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.wallet,

@@ -41,6 +41,7 @@ Control {
 
     signal closeRequested()
     signal copyToClipboard(string text)
+    signal sendToAccountRequested(string recipientAddress)
 
     horizontalPadding: readOnly ? 20 : 40 // smaller in settings/preview
     topPadding: Theme.bigPadding
@@ -155,6 +156,7 @@ Control {
             cellHeight: d.delegateHeightM
 
             onCopyToClipboard: root.copyToClipboard(text)
+            onSendToAccountRequested: root.sendToAccountRequested(recipientAddress)
         }
 
         ProfileShowcaseCollectiblesView {

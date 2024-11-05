@@ -26,9 +26,9 @@ StatusDialog {
 
     // Transaction related props:
     property var token // Expected roles: accountAddress, key, chainId, name, artworkSource
-    property var sendModalPopup
 
     signal cancelClicked
+    signal transferOwnershipRequested(string tokenId, string senderAddress)
 
     width: 640 // by design
     padding: Theme.padding
@@ -109,13 +109,9 @@ StatusDialog {
 
                 onClicked: {
                     // Pre-populated dialog with the relevant Owner token info:
-                    root.sendModalPopup.preSelectedSendType = Constants.SendType.ERC721Transfer
-                    root.sendModalPopup.preSelectedAccountAddress = token.accountAddress
                     const store = WalletStores.RootStore.currentActivityFiltersStore
                     const uid = store.collectiblesList.getUidForData(token.key, token.tokenAddress, token.chainId);
-                    root.sendModalPopup.preSelectedHoldingID = uid
-                    root.sendModalPopup.preSelectedHoldingType = Constants.TokenType.ERC721
-                    root.sendModalPopup.open()
+                    root.transferOwnershipRequested(uid, token.accountAddress)
                     close()
                 }
             }

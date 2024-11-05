@@ -45,7 +45,6 @@ StatusSectionLayout {
     property ProfileStores.ProfileSectionStore store
     property AppLayoutsStores.RootStore globalStore
     property CommunitiesStore.CommunitiesStore communitiesStore
-    required property var sendModalPopup
     property var systemPalette
     property var emojiPopup
     property SharedStores.NetworkConnectionStore networkConnectionStore
@@ -259,10 +258,12 @@ StatusSectionLayout {
                 implicitHeight: parent.height
                 ensUsernamesStore: root.store.ensUsernamesStore
                 walletAssetsStore: root.walletAssetsStore
-                sendModalPopup: root.sendModalPopup
                 contactsStore: root.store.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
+                onConnectUsernameRequested: Global.connectUsernameRequested(ensName)
+                onRegisterUsernameRequested: Global.registerUsernameRequested(ensName)
+                onReleaseUsernameRequested: Global.releaseUsernameRequested(ensName, senderAddress, chainId)
             }
         }
 
@@ -300,7 +301,6 @@ StatusSectionLayout {
                 myPublicKey: root.store.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
                 emojiPopup: root.emojiPopup
-                sendModalPopup: root.sendModalPopup
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.wallet)
             }
             onLoaded: root.store.backButtonName = ""

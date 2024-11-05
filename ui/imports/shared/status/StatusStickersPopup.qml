@@ -13,18 +13,16 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 //TODO improve this!
 import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.Wallet.stores 1.0
 
 Popup {
     id: root
 
     property ChatStores.RootStore store
-    required property WalletAssetsStore walletAssetsStore
-    required property var sendModalPopup
 
     property alias isWalletEnabled: stickerMarket.isWalletEnabled
 
     signal stickerSelected(string hashId, string packId, string url)
+    signal buyClicked(string packId, string price)
 
     QtObject {
         id: d
@@ -102,8 +100,6 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: root.store
-            walletAssetsStore: root.walletAssetsStore
-            sendModalPopup: root.sendModalPopup
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
             marketVisible: d.stickerPacksLoaded && d.online
@@ -121,6 +117,7 @@ Popup {
                 footerContent.visible = true
                 stickersContainer.visible = true
             }
+            onBuyClicked: root.buyClicked(packId, price)
 
             Connections {
                 target: root.store.stickersModuleInst

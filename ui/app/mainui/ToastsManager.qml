@@ -34,9 +34,6 @@ QtObject {
     required property SharedStores.CommunityTokensStore communityTokensStore
     required property ProfileStore profileStore
 
-    // Properties:
-    required property var sendModalPopup
-
     // Utils:
     readonly property string viewOptimismExplorerText: qsTr("View on Optimism Explorer")
     readonly property string checkmarkCircleAssetName: "checkmark-circle"
@@ -241,7 +238,7 @@ QtObject {
             Global.openFinaliseOwnershipPopup(actionData)
             return
         case ToastsManager.ActionType.OpenSendModalPopup:
-            root.sendModalPopup.open()
+            Global.launchSendRequested()
             return
         case ToastsManager.ActionType.ViewTransactionDetails:
             if(actionData) {

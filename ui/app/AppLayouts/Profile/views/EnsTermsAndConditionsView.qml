@@ -24,8 +24,21 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
     property string username: ""
 
+    required property var assetsModel
+
     signal backBtnClicked()
     signal registerUsername()
+
+    QtObject {
+        id: d
+
+        readonly property var sntToken: statusTokenEntry.item
+        readonly property SumAggregator aggregator: SumAggregator {
+            model: !!d.sntToken && !!d.sntToken.balances ? d.sntToken.balances: null
+            roleName: "balance"
+        }
+        property real sntBalance: !!sntToken && !!sntToken.decimals ? aggregator.value/(10 ** sntToken.decimals): 0
+    }
 
     StatusBaseText {
         id: sectionTitle
@@ -345,5 +358,12 @@ Item {
           qsTr("Register")
         enabled: d.sntBalance >= 10 && termsAndConditionsCheckbox.checked
         onClicked: root.registerUsername(root.username)
+    }
+
+    ModelEntry {
+        id: statusTokenEntry
+        sourceModel: root.assetsModel
+        key: "tokensKey"
+        value: root.ensUsernamesStore.getStatusTokenKey()
     }
 }

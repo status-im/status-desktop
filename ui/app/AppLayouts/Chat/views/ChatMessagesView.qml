@@ -369,6 +369,10 @@ Item {
 
             stickersLoaded: root.stickersLoaded
 
+            onSendViaPersonalChatRequested: {
+                Global.sendToRecipientRequested(recipientAddress)
+            }
+
             onVisibleChanged: {
                 if(!visible && model.editMode)
                     messageStore.setEditModeOff(model.id)
