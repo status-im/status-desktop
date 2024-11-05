@@ -4,6 +4,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.popups.simpleSend 1.0
 
 import shared.popups.send 1.0
 import shared.stores.send 1.0
@@ -28,12 +29,14 @@ QtObject {
     required property string stickersMarketAddress
     required property string stickersNetworkId
 
+    // Feature flag for single network send until its feature complete
+    required property bool simpleSendEnabled
+
     function openSend(params = {}) {
-        if (!!root._sendModalInstance) {
-            return
-        }
-        _sendModalInstance = sendModalComponent.createObject(popupParent, params)
-        _sendModalInstance.open()
+        // TODO remove once simple send is feature complete
+        let sendModalCmp = root.simpleSendEnabled ? simpleSendModalComponent: sendModalComponent
+        let sendModalInst = sendModalCmp.createObject(popupParent, params)
+        sendModalInst.open()
     }
 
     function connectUsername(ensName) {
@@ -150,6 +153,9 @@ QtObject {
         }
     }
 
-    // internally used to handle the instance thats launched
-    property var _sendModalInstance
+    readonly property Component simpleSendModalComponent: Component {
+        SimpleSendModal {
+            onClosed: destroy()
+        }
+    }
 }

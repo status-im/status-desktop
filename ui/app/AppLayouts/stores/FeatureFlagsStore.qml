@@ -6,4 +6,5 @@ QtObject {
     property bool swapEnabled
     property bool sendViaPersonalChatEnabled
     property bool paymentRequestEnabled
+    property bool simpleSendEnabled
 }
