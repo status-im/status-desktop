@@ -179,11 +179,12 @@ save_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_o
 # Invite Contacts Popup
 communityProfilePopupInviteFrindsPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteFrindsPanel_ColumnLayout", "type": "ProfilePopupInviteFriendsPanel", "visible": True}
 communityProfilePopupInviteMessagePanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityProfilePopupInviteMessagePanel_ColumnLayout", "type": "ProfilePopupInviteMessagePanel", "visible": True}
-o_StatusMemberListItem = {"container": communityProfilePopupInviteFrindsPanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
-next_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_NextButton", "text": "Next", "type": "StatusButton", "visible": True}
+o_StatusMemberListItem = {"container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("statusMemberListItem*"), "type": "StatusMemberListItem", "visible": True}
+memberListCheckbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": RegularExpression("contactCheckbox-*"), "type": "StatusCheckBox", "visible": True}
+next_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_NextButton", "type": "StatusButton", "visible": True}
 communityProfilePopupInviteMessagePanel_MessageInput_TextEdit = {"container": communityProfilePopupInviteMessagePanel, "objectName": "CommunityProfilePopupInviteMessagePanel_MessageInput", "type": "TextEdit", "visible": True}
-send_1_invite_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "text": "Send 1 invite", "type": "StatusButton", "visible": True}
-o_StatusMemberListItem_2 = {"container": communityProfilePopupInviteMessagePanel, "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
+send_1_invite_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "type": "StatusButton", "visible": True}
+o_StatusMemberListItem_2 = {"container": communityProfilePopupInviteMessagePanel, "objectName": RegularExpression("statusMemberListItem*"), "type": "StatusMemberListItem", "visible": True}
 copy_icon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "objectName": "copy-icon", "type": "StatusIcon", "visible": True}
 
 # Welcome community
