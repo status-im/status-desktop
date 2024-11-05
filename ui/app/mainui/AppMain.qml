@@ -100,6 +100,7 @@ Item {
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
+        simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
@@ -656,6 +657,8 @@ Item {
         // for sticker flows
         stickersMarketAddress: appMain.rootChatStore.stickersStore.getStickersMarketAddress()
         stickersNetworkId: appMain.rootChatStore.appNetworkId
+
+        simpleSendEnabled: appMain.featureFlagsStore.simpleSendEnabled
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
