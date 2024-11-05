@@ -81,6 +81,7 @@ Item {
         }
 
         delegate: StatusMemberListItem {
+            objectName: "statusMemberListItem-%1".arg(model.compressedPubKey)
             width: contactListView.availableWidth
             pubKey: model.isEnsVerified ? "" : model.compressedPubKey
             isContact: model.isContact
@@ -101,6 +102,7 @@ Item {
 
             StatusCheckBox  {
                 id: contactCheckbox
+                objectName: "contactCheckbox-%1".arg(model.displayName)
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 checked: root.pubKeys.indexOf(model.pubKey) > -1

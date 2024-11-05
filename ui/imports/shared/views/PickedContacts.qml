@@ -34,6 +34,7 @@ Item {
         }
 
         delegate: StatusMemberListItem {
+            objectName: "statusMemberListItem-%1".arg(model.compressedPubKey)
             width: contactGridView.cellWidth
             pubKey: model.isEnsVerified ? "" : model.compressedPubKey
             isContact: model.isContact
