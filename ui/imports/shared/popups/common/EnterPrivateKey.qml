@@ -37,7 +37,7 @@ Item {
 
             StatusBaseText {
                 width: parent.width
-                text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Enter seed phrase for %1 key pair").arg(root.store.selectedKeypair.name)
+                text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Enter recovery phrase for %1 key pair").arg(root.store.selectedKeypair.name)
                 font.pixelSize: Constants.addAccountPopup.labelFontSize1
                 elide: Text.ElideRight
             }
@@ -120,7 +120,7 @@ Item {
             multiline: true
             leftPadding: Theme.padding
             font.pixelSize: Constants.addAccountPopup.labelFontSize2
-            text: qsTr("New addresses cannot be derived from an account imported from a private key. Import using a seed phrase if you wish to derive addresses.")
+            text: qsTr("New addresses cannot be derived from an account imported from a private key. Import using a recovery phrase if you wish to derive addresses.")
             input.edit.enabled: false
             input.enabled: false
             input.background.color: "transparent"

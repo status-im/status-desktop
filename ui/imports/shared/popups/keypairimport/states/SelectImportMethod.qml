@@ -62,7 +62,7 @@ Item {
 
         StatusListItem {
             title: root.store.selectedKeypair.pairType === Constants.keypair.type.seedImport?
-                       qsTr("Import via entering seed phrase") :
+                       qsTr("Import via entering recovery phrase") :
                        qsTr("Import via entering private key")
 
             asset {

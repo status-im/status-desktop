@@ -43,7 +43,7 @@ SortFilterProxyModel {
     readonly property var entries: [
         {
             subsection: Constants.settingsSubsection.backUpSeed,
-            text: qsTr("Back up seed phrase"),
+            text: qsTr("Back up recovery phrase"),
             icon: "seed-phrase"
         },
         {
@@ -73,7 +73,7 @@ SortFilterProxyModel {
             text: qsTr("Syncing"),
             icon: "rotate",
             isExperimental: true,
-            experimentalTooltip: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Seed Phrase feature instead.")
+            experimentalTooltip: qsTr("Connection problems can happen.<br>If they do, please use the Enter a Recovery Phrase feature instead.")
         },
         {
             subsection: Constants.settingsSubsection.messaging,

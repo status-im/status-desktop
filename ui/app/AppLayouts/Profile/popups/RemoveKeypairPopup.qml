@@ -31,7 +31,7 @@ StatusDialog {
 
         StatusBaseText {
             Layout.fillWidth: true
-            text: qsTr("Are you sure you want to remove %1 key pair? The key pair will be removed from all of your synced devices. Make sure you have a backup of your keys or seed phrase before proceeding.").arg(name)
+            text: qsTr("Are you sure you want to remove %1 key pair? The key pair will be removed from all of your synced devices. Make sure you have a backup of your keys or recovery phrase before proceeding.").arg(name)
             wrapMode: Text.WordWrap
             font.pixelSize: 15
         }

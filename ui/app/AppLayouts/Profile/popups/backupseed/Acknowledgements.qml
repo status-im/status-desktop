@@ -71,7 +71,7 @@ ColumnLayout {
                             font.pixelSize: Theme.primaryTextFontSize
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
-                            text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
+                            text: qsTr("Your recovery phrase is a 12-word passcode to your funds.")
                             Layout.fillWidth: true
                         }
 
@@ -82,7 +82,7 @@ ColumnLayout {
                             textFormat: Text.RichText
                             font.pixelSize: Theme.primaryTextFontSize
                             lineHeight: 1.2
-                            text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
+                            text: qsTr("Your recovery phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
                             Layout.fillWidth: true
                         }
                     }
@@ -107,7 +107,7 @@ ColumnLayout {
                             id: writeDown
                             objectName: "Acknowledgements_writeDown"
                             spacing: Theme.padding
-                            text: qsTr("I am ready to write down my seed phrase")
+                            text: qsTr("I am ready to write down my recovery phrase")
                             font.pixelSize: Theme.primaryTextFontSize
                             Layout.fillWidth: true
                         }
@@ -140,7 +140,7 @@ ColumnLayout {
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
             lineHeight: 1.2
-            text: qsTr("You can only complete this process once. Status will not store your seed phrase and can never help you recover it.")
+            text: qsTr("You can only complete this process once. Status will not store your recovery phrase and can never help you recover it.")
         }
 
         Rectangle {
