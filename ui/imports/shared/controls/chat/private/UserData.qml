@@ -5,5 +5,7 @@ QtObject {
     property string publicKey
     property string bio
     property string image
-    property bool   ensVerified
+    property bool ensVerified
+    property int colorId
+    property var colorHash
 }

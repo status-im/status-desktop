@@ -46,40 +46,15 @@ Item {
         anchors.fill: parent
         spacing: 0
 
-        // This is used in the profile section. The user's pubkey is available
-        // so we can calculate the hash and colorId
-        Loader {
-            id: profileSectionUserImage
-            active: root.userPublicKey != ""
-            Layout.alignment: Qt.AlignHCenter
-            sourceComponent: UserImage {
-                name: root.userDisplayName
-                pubkey: root.userPublicKey
-                image: root.userImage
-                interactive: false
-                imageWidth: 80
-                imageHeight: 80
-            }
-        }
-
-        // This is used in the onboarding once a sync code is received. The
-        // user's pubkey is unknown, but we have the multiaccount information
-        // available (from the plaintext accounts db), so we use the colorHash
-        // and colorId directly
-        Loader {
-            id: colorUserImage
-            active: root.userPublicKey == ""
-            Layout.alignment: Qt.AlignHCenter
-            sourceComponent: UserImage {
-                name: root.userDisplayName
-                colorId: root.userColorId
-                colorHash: root.userColorHash
-                image: root.userImage
-                interactive: false
-                imageWidth: 80
-                imageHeight: 80
-                loading: name === ""
-            }
+        UserImage {
+            name: root.userDisplayName
+            colorId: root.userColorId
+            colorHash: root.userColorHash
+            image: root.userImage
+            interactive: false
+            imageWidth: 80
+            imageHeight: 80
+            loading: name === ""
         }
 
         StatusBaseText {

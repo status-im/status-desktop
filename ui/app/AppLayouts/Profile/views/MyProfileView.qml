@@ -285,6 +285,8 @@ SettingsContentBase {
                 pubkeyVisible: false
                 emojiHashVisible: false
                 editImageButtonVisible: true
+                colorHash: root.profileStore.colorHash
+                colorId: root.profileStore.colorId
             }
 
             ProfileDescriptionPanel {

@@ -2,10 +2,11 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
@@ -37,7 +38,7 @@ SettingsContentBase {
         }
     }
 
-    function openContextMenu(publicKey, name, icon) {
+    function openContextMenu(publicKey, name, icon, colorHash, colorId) {
         const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey)
 
         Global.openMenu(contactContextMenuComponent, this, {
@@ -46,7 +47,14 @@ SettingsContentBase {
             emojiHash: root.utilsStore.getEmojiHash(publicKey),
             displayName: name,
             userIcon: icon,
+            colorHash, colorId
         })
+    }
+
+    function fetchDataAndOpenContextMenu(model, publicKey) {
+        const entry = ModelUtils.getByKey(model, "pubKey", publicKey)
+        openContextMenu(publicKey, entry.preferredDisplayName,
+                        entry.icon, entry.colorHash, entry.colorId)
     }
 
     Item {
@@ -63,35 +71,35 @@ SettingsContentBase {
                 onOpenProfileClicked: Global.openProfilePopup(contactContextMenu.publicKey, null, null)
                 onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.publicKey)
                 onReviewContactRequest: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.openReviewContactRequestPopup(contactContextMenu.publicKey, contactDetails, null)
                 }
                 onSendContactRequest: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.openContactRequestPopup(contactContextMenu.publicKey, contactDetails, null)
                 }
                 onEditNickname: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.openNicknamePopupRequested(contactContextMenu.publicKey, contactDetails, null)
                 }
                 onRemoveNickname: (displayName) => {
                     root.contactsStore.changeContactNickname(contactContextMenu.publicKey, "", displayName, true)
                 }
                 onUnblockContact: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.unblockContactRequested(contactContextMenu.publicKey, contactDetails)
                 }
                 onMarkAsUntrusted: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.markAsUntrustedRequested(contactContextMenu.publicKey, contactDetails)
                 }
                 onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.publicKey)
                 onRemoveContact: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.removeContactRequested(contactContextMenu.publicKey, contactDetails)
                 }
                 onBlockContact: () => {
-                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true)
+                    const contactDetails = contactContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(contactContextMenu.publicKey, true, true, true)
                     Global.blockContactRequested(contactContextMenu.publicKey, contactDetails)
                 }
                 onClosed: destroy()
@@ -161,9 +169,7 @@ SettingsContentBase {
                     visible: !noFriendsItem.visible && count > 0
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    onOpenContactContextMenu: function (publicKey, name, icon) {
-                        root.openContextMenu(publicKey, name, icon)
-                    }
+                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
                     onSendMessageActionTriggered: {
                         root.contactsStore.joinPrivateChat(publicKey)
@@ -177,9 +183,7 @@ SettingsContentBase {
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    onOpenContactContextMenu: function (publicKey, name, icon) {
-                        root.openContextMenu(publicKey, name, icon)
-                    }
+                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.mutualContacts
 
                     onSendMessageActionTriggered: {
@@ -218,9 +222,7 @@ SettingsContentBase {
                     title: qsTr("Received")
                     searchString: searchBox.text
                     visible: count > 0
-                    onOpenContactContextMenu: function (publicKey, name, icon) {
-                        root.openContextMenu(publicKey, name, icon)
-                    }
+                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
                     contactsModel: root.contactsStore.receivedContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
@@ -244,9 +246,7 @@ SettingsContentBase {
                     title: qsTr("Sent")
                     searchString: searchBox.text
                     visible: count > 0
-                    onOpenContactContextMenu: function (publicKey, name, icon) {
-                        root.openContextMenu(publicKey, name, icon)
-                    }
+                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
                     contactsModel: root.contactsStore.sentContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
@@ -256,9 +256,7 @@ SettingsContentBase {
             ContactsListPanel {
                 Layout.fillWidth: true
                 searchString: searchBox.text
-                onOpenContactContextMenu: function (publicKey, name, icon) {
-                    root.openContextMenu(publicKey, name, icon)
-                }
+                onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
                 contactsModel: root.contactsStore.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
                 visible: (stackLayout.currentIndex === 2)

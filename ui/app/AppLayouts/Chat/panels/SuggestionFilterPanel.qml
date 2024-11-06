@@ -35,6 +35,8 @@ Item {
             property string alias: model.alias
             property string ensName: model.ensName
             property string icon: model.icon
+            property var colorHash: model.colorHash
+            property int colorId: model.colorId
         }
     }
 
@@ -73,7 +75,9 @@ Item {
                 name: listItem.name || listItem.alias,
                 nickname: listItem.nickname,
                 ensName: listItem.ensName,
-                icon: listItem.icon
+                icon: listItem.icon,
+                colorHash: listItem.colorHash,
+                colorId: listItem.colorId
             }
             if (all || isAcceptedItem(filter, item)) {
                 filterModel.append(item)

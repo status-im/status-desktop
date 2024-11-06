@@ -204,6 +204,7 @@ Pane {
             qrCode: root.profileStore.getQrCodeSource(linkToProfile)
             displayName: userImage.name
             largeImage: userImage.image
+            colorId: root.profileStore.colorId
         }
     }
 
@@ -229,6 +230,9 @@ Pane {
                 pubkey: root.publicKey
                 image: root.dirty ? root.dirtyValues.profileLargeImage
                                   : Utils.addTimestampToURL(contactDetails.largeImage)
+                colorId: contactDetails.colorId
+                colorHash: contactDetails.colorHash
+
                 interactive: false
                 imageWidth: 90
                 imageHeight: imageWidth

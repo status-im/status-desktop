@@ -877,6 +877,8 @@ Item {
 
                     pubKey: appMain.profileStore.pubkey
                     emojiHash: appMain.utilsStore.getEmojiHash(pubKey)
+                    colorHash: appMain.profileStore.colorHash
+                    colorId: appMain.profileStore.colorId
                     name: appMain.profileStore.name
                     icon: appMain.profileStore.icon
                     isEnsVerified: !!appMain.profileStore.preferredName

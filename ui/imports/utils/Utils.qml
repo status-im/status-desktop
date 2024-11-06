@@ -721,7 +721,7 @@ QtObject {
             icon: "",
             isCurrentUser: "",
             colorId: "",
-            colorHash: "",
+            colorHash: [],
             displayName: "",
             publicKey: publicKey,
             compressedPublicKey: "",
