@@ -47,7 +47,6 @@ StatusDialog {
 
             UserImage {
                 name: root.mainDisplayName
-                pubkey: root.publicKey
                 colorHash: contactDetails.colorHash
                 colorId: contactDetails.colorId
                 image: Utils.addTimestampToURL(contactDetails.largeImage)

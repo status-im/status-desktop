@@ -15,7 +15,6 @@ Loader {
     property int imageWidth: 44
 
     property string name
-    property string pubkey
     property string image
     property bool showRing: !ensVerified && !root.isBridgedAccount
     property bool interactive: true

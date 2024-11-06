@@ -227,7 +227,6 @@ Pane {
                 objectName: "ProfileDialog_userImage"
                 name: root.dirty ? root.dirtyValues.displayName
                                  : d.mainDisplayName
-                pubkey: root.publicKey
                 image: root.dirty ? root.dirtyValues.profileLargeImage
                                   : Utils.addTimestampToURL(contactDetails.largeImage)
                 colorId: contactDetails.colorId

@@ -61,7 +61,6 @@ StatusDialog {
                         anchors.centerIn: parent
 
                         name: root.displayName
-                        pubkey: root.publicKey
                         image: root.largeImage
                         colorId: root.colorId
 

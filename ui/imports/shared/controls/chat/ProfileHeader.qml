@@ -120,7 +120,6 @@ Item {
 
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
-                pubkey: root.pubkey
                 colorHash: root.colorHash
                 colorId: root.colorId
                 image: root.previewIcon
