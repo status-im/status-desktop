@@ -206,6 +206,9 @@ who_holds_StatusItemSelector = {"container": statusDesktop_mainWindow_overlay, "
 is_allowed_to_StatusFlowSelector = {"container": statusDesktop_mainWindow_overlay, "objectName": "permissionsSelector", "type": "StatusFlowSelector", "visible": True}
 switchItem_StatusSwitch = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "switchItem", "occurrence": 2, "type": "StatusSwitch", "visible": True}
 whoHoldsSwitch_StatusSwitch = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "whoHoldsSwitch", "type": "StatusSwitch", "unnamed": 1, "visible": True}
+whoHoldsPlusButton = {"container": statusDesktop_mainWindow, "objectName": RegularExpression("addItemButton_Who*"), "type": "StatusRoundButton", "visible": True}
+isAllowedPlusButton = {"container": statusDesktop_mainWindow, "objectName": RegularExpression("addItemButton_Is*"), "type": "StatusRoundButton", "visible": True}
+inPlusButton = {"container": statusDesktop_mainWindow, "objectName": "addItemButton_In", "type": "StatusRoundButton", "visible": True}
 
 # Edit Community
 mainWindow_communityEditPanelScrollView_EditSettingsPanel = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "EditSettingsPanel", "visible": True}

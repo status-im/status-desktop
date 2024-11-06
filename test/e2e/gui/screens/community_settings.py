@@ -6,7 +6,6 @@ import allure
 
 import configs
 import driver
-from driver.objects_access import walk_children
 from gui.components.community.ban_member_popup import BanMemberPopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
@@ -462,24 +461,20 @@ class PermissionsSettingsView(QObject):
         self._add_button = Button(communities_names.add_StatusButton)
         self._add_button_who_holds = Button(communities_names.add_update_statusButton)
         self._add_button_in = Button(communities_names.add_StatusButton_in)
-        self._who_holds_list_item = QObject(communities_names.editPermissionView_Who_holds_StatusItemSelector)
-        self._is_allowed_to_list_item = QObject(communities_names.editPermissionView_Is_allowed_to_StatusFlowSelector)
-        self._in_list_item = QObject(communities_names.editPermissionView_In_StatusItemSelector)
         self._tag_item = QObject(communities_names.o_StatusListItemTag)
         self._who_holds_tag = QObject(communities_names.whoHoldsTagListItem)
         self._is_allowed_tag = QObject(communities_names.isAllowedTagListItem)
         self._in_community_in_channel_tag = QObject(communities_names.inCommunityTagListItem)
         self._is_allowed_to_edit_tag = QObject(communities_names.isAllowedToEditPermissionView_StatusListItemTag)
-        self._warning_panel = QObject(communities_names.editPermissionView_duplicationPanel_WarningPanel)
-
-    @allure.step('Verify warning panel is present')
-    def is_warning_text_present(self):
-        return self._warning_panel.exists
+        self.warning_panel = QObject(communities_names.editPermissionView_duplicationPanel_WarningPanel)
+        self.who_holds_plus_button = Button(communities_names.whoHoldsPlusButton)
+        self.is_allowed_to_plus_button = Button(communities_names.isAllowedPlusButton)
+        self.in_plus_button = Button(communities_names.inPlusButton)
 
     @allure.step('Get text from warning panel')
     def get_warning_text(self):
-        if self._warning_panel.exists:
-            return self._warning_panel.object.text
+        if self.warning_panel.exists:
+            return self.warning_panel.object.text
         else:
             raise LookupError
 
@@ -518,13 +513,13 @@ class PermissionsSettingsView(QObject):
 
     @allure.step('Set state of who holds checkbox')
     def set_who_holds_checkbox_state(self, state):
-        if state is False:
+        if not state:
             self._who_holds_checkbox.set(state)
 
     @allure.step('Set asset and amount')
     def set_who_holds_asset_and_amount(self, asset: str, amount: str):
-        if asset is not False:
-            self.open_who_holds_context_menu()
+        if asset:
+            self.who_holds_plus_button.click()
             self._who_holds_asset_field.clear().text = asset
             self._asset_item.click()
             self._who_holds_asset_field.wait_until_hidden()
@@ -533,7 +528,7 @@ class PermissionsSettingsView(QObject):
 
     @allure.step('Choose option from Is allowed to context menu')
     def set_is_allowed_to(self, name):
-        self.open_is_allowed_to_context_menu()
+        self.is_allowed_to_plus_button.click()
         self._is_allowed_to_option_button.real_name['objectName'] = name
         self._is_allowed_to_option_button.wait_until_appears().click()
         self.click_add_button_allowed_to()
@@ -541,7 +536,7 @@ class PermissionsSettingsView(QObject):
     @allure.step('Choose channel from In context menu')
     def set_in(self, in_general):
         if in_general == '#general':
-            self.open_in_context_menu()
+            self.in_plus_button.click()
             self._in_general_checkbox.wait_until_appears().click()
             self.click_add_button_in()
 
@@ -580,48 +575,8 @@ class PermissionsSettingsView(QObject):
 
     @allure.step('Click create permission')
     def create_permission(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._create_permission_button.click(timeout=30)
+        self._create_permission_button.click()
         self._create_permission_button.wait_until_hidden()
-
-    @allure.step('Open Who holds context menu')
-    def open_who_holds_context_menu(self, attempt: int = 2):
-        try:
-            for child in walk_children(self._who_holds_list_item.object):
-                if getattr(child, 'objectName', '') == 'addItemButton':
-                    driver.mouseClick(child)
-                    return
-        except LookupError:
-            if attempt:
-                return self.open_who_holds_context_menu(attempt - 1)
-            else:
-                raise LookupError('Add button for who holds not found')
-
-    @allure.step('Open Is allowed to context menu')
-    def open_is_allowed_to_context_menu(self, attempt: int = 2):
-        try:
-            for child in walk_children(self._is_allowed_to_list_item.object):
-                if getattr(child, 'objectName', '') == 'addItemButton':
-                    driver.mouseClick(child)
-                    return
-        except LookupError:
-            if attempt:
-                return self.open_is_allowed_to_context_menu(attempt - 1)
-            else:
-                raise LookupError('Add button for allowed to not found')
-
-    @allure.step('Open In context menu')
-    def open_in_context_menu(self, attempt: int = 2):
-        try:
-            for child in walk_children(self._in_list_item.object):
-                if getattr(child, 'objectName', '') == 'addItemButton':
-                    driver.mouseClick(child)
-                    return
-        except LookupError:
-            if attempt:
-                return self.open_in_context_menu(attempt - 1)
-            else:
-                raise LookupError('Add button for in not found')
 
     @allure.step('Switch hide permission checkbox')
     def switch_hide_permission_checkbox(self, state):
