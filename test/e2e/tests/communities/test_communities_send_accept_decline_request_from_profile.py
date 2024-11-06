@@ -6,6 +6,7 @@ import driver
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
+from scripts.utils.generators import random_text_message
 from . import marks
 import configs
 from constants import UserAccount, RandomUser, RandomCommunity
@@ -98,8 +99,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
                 main_screen.create_community(community_data=community)
                 community_screen = main_screen.left_panel.select_community(community.name)
 
-            community_screen.left_panel.invite_people_to_community([user_one.name], 'Message')
-            community_screen.left_panel.invite_people_to_community([user_three.name], 'Message')
+            add_popup = community_screen.left_panel.open_add_members_popup()
+            add_popup.invite([user_one.name, user_three.name], message=random_text_message())
             main_screen.hide()
 
         with step(f'User {user_three.name}, accept invitation from {user_two.name}'):

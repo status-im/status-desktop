@@ -9,6 +9,7 @@ from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
+from scripts.utils.generators import random_text_message
 from . import marks
 
 import configs.testpath
@@ -69,7 +70,8 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
             main_screen.create_community(community_data=community)
             community_screen = main_screen.left_panel.select_community(community.name)
-            community_screen.left_panel.invite_people_to_community([user_one.name], 'Message')
+            add_members = community_screen.left_panel.open_add_members_popup()
+            add_members.invite([user_one.name], message=random_text_message())
             main_screen.hide()
 
         with step(f'User {user_one.name}, accept invitation from {user_two.name}'):
