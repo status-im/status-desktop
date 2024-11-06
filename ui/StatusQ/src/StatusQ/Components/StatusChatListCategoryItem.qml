@@ -66,6 +66,7 @@ Control {
             spacing: 1
             StatusChatListCategoryItemButton {
                 id: addButton
+                objectName: "categoryItemButtonAdd"
                 icon.name: "add"
                 icon.width: 20
                 visible: (root.showAddButton && (hoverHandler.hovered || root.highlighted))
@@ -74,6 +75,7 @@ Control {
             }
             StatusChatListCategoryItemButton {
                 id: menuButton
+                objectName: "categoryItemButtonMore"
                 icon.name: "more"
                 icon.width: 21
                 visible: (root.showMenuButton && (hoverHandler.hovered || root.highlighted))
@@ -82,6 +84,7 @@ Control {
             }
             StatusChatListCategoryItemButton {
                 id: toggleButton
+                objectName: "categoryItemButtonToggle"
                 icon.name: "chevron-down"
                 icon.width: 18
                 icon.rotation: root.opened ? 0 : 270
