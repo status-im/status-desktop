@@ -153,20 +153,36 @@ QtObject {
         openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup}, cb)
     }
 
-    function openNicknamePopup(publicKey: string, contactDetails, cb) {
-        openPopup(nicknamePopupComponent, {publicKey, contactDetails}, cb)
+    function openNicknamePopup(publicKey: string, cb) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(nicknamePopupComponent, properties, cb)
     }
 
-    function openMarkAsUntrustedPopup(publicKey: string, contactDetails) {
-        openPopup(markAsUntrustedComponent, {publicKey, contactDetails})
+    function openMarkAsUntrustedPopup(publicKey: string) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(markAsUntrustedComponent, properties)
     }
 
-    function openBlockContactPopup(publicKey: string, contactDetails) {
-        openPopup(blockContactConfirmationComponent, {publicKey, contactDetails})
+    function openBlockContactPopup(publicKey: string) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(blockContactConfirmationComponent, properties)
     }
 
-    function openUnblockContactPopup(publicKey: string, contactDetails) {
-        openPopup(unblockContactConfirmationComponent, {publicKey, contactDetails})
+    function openUnblockContactPopup(publicKey: string) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(unblockContactConfirmationComponent, properties)
     }
 
     function openChangeProfilePicPopup(cb) {
@@ -182,12 +198,20 @@ QtObject {
         openPopup(communityProfilePopup, { store: store, community: community, communitySectionModule: communitySectionModule})
     }
 
-    function openMarkAsIDVerifiedPopup(publicKey, contactDetails, cb) {
-        openPopup(markAsIDVerifiedPopupComponent, {publicKey, contactDetails}, cb)
+    function openMarkAsIDVerifiedPopup(publicKey, cb) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(markAsIDVerifiedPopupComponent, properties, cb)
     }
 
-    function openRemoveIDVerificationDialog(publicKey, contactDetails, cb) {
-        openPopup(removeIDVerificationPopupComponent, {publicKey, contactDetails}, cb)
+    function openRemoveIDVerificationDialog(publicKey, cb) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(removeIDVerificationPopupComponent, properties, cb)
     }
 
     function openInviteFriendsToCommunityPopup(community, communitySectionModule, cb) {
@@ -202,23 +226,27 @@ QtObject {
         openPopup(inviteFriendsToCommunityPopup, { community: communityData, communitySectionModule: communitySectionModuleData }, cb)
     }
 
-    function openContactRequestPopup(publicKey, contactDetails, cb) {
-        let details = contactDetails ?? Utils.getContactDetailsAsJson(publicKey, false)
-        const popupProperties = {
-            publicKey: publicKey,
-            contactDetails: details
-        }
-        openPopup(sendContactRequestPopupComponent, popupProperties, cb)
+    function openContactRequestPopup(publicKey, cb) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(sendContactRequestPopupComponent, properties, cb)
     }
 
-    function openReviewContactRequestPopup(publicKey, contactDetails, cb) {
+    function openReviewContactRequestPopup(publicKey, cb) {
         try {
             const crDetails = rootStore.contactStore.getLatestContactRequestForContactAsJson(publicKey)
             if (crDetails.from !== publicKey) {
                 console.warn("Popups.openReviewContactRequestPopup: not matching publicKey:", publicKey)
                 return
             }
-            openPopup(reviewContactRequestPopupComponent, {publicKey, contactDetails, crDetails}, cb)
+
+            const contactDetails = Utils.getContactDetailsAsJson(
+                                     publicKey, false, true, true)
+            const properties = { publicKey, contactDetails, crDetails }
+
+            openPopup(reviewContactRequestPopupComponent, properties, cb)
         } catch (e) {
             console.error("Popups.openReviewContactRequestPopup: error getting or parsing contact request data", e)
         }
@@ -280,8 +308,12 @@ QtObject {
         openPopup(discordImportProgressDialog, {importingSingleChannel: importingSingleChannel})
     }
 
-    function openRemoveContactConfirmationPopup(publicKey, contactDetails) {
-        openPopup(removeContactConfirmationDialog, {publicKey, contactDetails})
+    function openRemoveContactConfirmationPopup(publicKey) {
+        const contactDetails = Utils.getContactDetailsAsJson(
+                                 publicKey, false, true, true)
+        const properties = { publicKey, contactDetails }
+
+        openPopup(removeContactConfirmationDialog, properties)
     }
 
     function openDeleteMessagePopup(messageId, messageStore) {

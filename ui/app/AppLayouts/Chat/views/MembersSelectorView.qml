@@ -114,7 +114,7 @@ MembersSelectorBase {
 
             if (root.model.count === 0 && !hasPendingContactRequest) {
                 // List is empty and not a contact yet. Open the contact request popup
-                Global.openContactRequestPopup(contactDetails.publicKey, contactDetails,
+                Global.openContactRequestPopup(contactDetails.publicKey,
                                                popup => popup.closed.connect(root.rejected))
                 return
             }
