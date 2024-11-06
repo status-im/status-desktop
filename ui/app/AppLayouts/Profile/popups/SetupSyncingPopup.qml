@@ -215,6 +215,8 @@ StatusDialog {
             userDisplayName: root.profileStore.displayName
             userPublicKey: root.profileStore.pubkey
             userImage: root.profileStore.icon
+            userColorHash: root.profileStore.colorHash
+            userColorId: root.profileStore.colorId
 
             localPairingState: root.devicesStore.localPairingState
             localPairingError: root.devicesStore.localPairingError

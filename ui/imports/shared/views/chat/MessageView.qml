@@ -169,9 +169,11 @@ Loader {
         const isAdmin = false // chatContentModule.amIChatAdmin()
 
         const params = { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
-            publicKey: isReply ? quotedMessageFrom : root.senderId,
+            publicKey,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
+            colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,
+            colorId: Utils.colorIdForPubkey(publicKey)
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -1192,35 +1194,35 @@ Loader {
                 root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.publicKey, "")
             }
             onReviewContactRequest: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.openReviewContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
             }
             onSendContactRequest: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.openContactRequestPopup(profileContextMenu.publicKey, contactDetails, null)
             }
             onEditNickname: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.openNicknamePopupRequested(profileContextMenu.publicKey, contactDetails, null)
             }
             onRemoveNickname: () => {
                 root.rootStore.contactsStore.changeContactNickname(profileContextMenu.publicKey, "", profileContextMenu.displayName, true)
             }
             onUnblockContact: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.unblockContactRequested(profileContextMenu.publicKey, contactDetails)
             }
             onMarkAsUntrusted: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.markAsUntrustedRequested(profileContextMenu.publicKey, contactDetails)
             }
             onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.publicKey)
             onRemoveContact: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.removeContactRequested(profileContextMenu.publicKey, contactDetails)
             }
             onBlockContact: () => {
-                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true)
+                const contactDetails = profileContextMenu.publicKey === "" ? {} : Utils.getContactDetailsAsJson(profileContextMenu.publicKey, true, true, true)
                 Global.blockContactRequested(profileContextMenu.publicKey, contactDetails)
             }
             onRemoveFromGroup: () => {

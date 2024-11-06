@@ -26,7 +26,7 @@ Item {
     property string searchString: ""
     readonly property int count: contactsList.count
 
-    signal openContactContextMenu(string publicKey, string name, string icon)
+    signal openContactContextMenu(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
     signal showVerificationRequest(string publicKey)
     signal contactRequestAccepted(string publicKey)
@@ -141,8 +141,7 @@ Item {
             }
 
 
-            onContextMenuRequested: root.openContactContextMenu(
-                                      model.pubKey, model.preferredDisplayName, model.icon)
+            onContextMenuRequested: root.openContactContextMenu(model.pubKey)
             onSendMessageRequested: root.sendMessageActionTriggered(model.pubKey)
             onAcceptContactRequested: root.contactRequestAccepted(model.pubKey)
             onRejectRequestRequested: root.contactRequestRejected(model.pubKey)

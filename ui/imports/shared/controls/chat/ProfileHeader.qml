@@ -32,6 +32,8 @@ Item {
     property bool isCurrentUser
     property bool userIsEnsVerified
     property rect cropRect
+    property var colorHash: []
+    property int colorId
 
     property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
@@ -115,9 +117,12 @@ Item {
 
             UserImage {
                 id: userImage
+
                 objectName: "ProfileHeader_userImage"
                 name: root.displayName
                 pubkey: root.pubkey
+                colorHash: root.colorHash
+                colorId: root.colorId
                 image: root.previewIcon
                 interactive: false
                 imageWidth: d.getSize(36, 64, 170)

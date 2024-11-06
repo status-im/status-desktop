@@ -206,6 +206,8 @@ Rectangle {
 
                     name: model.name
                     pubkey: model.publicKey
+                    colorHash: model.colorHash
+                    colorId: model.colorId
                     image: model.icon
                     interactive: false
                 }

@@ -19,6 +19,7 @@ StatusDialog {
     required property string qrCode
     required property string linkToProfile
     required property var emojiHash
+    required property int colorId
 
     required property string displayName
     required property string largeImage
@@ -58,9 +59,12 @@ StatusDialog {
 
                     UserImage {
                         anchors.centerIn: parent
+
                         name: root.displayName
                         pubkey: root.publicKey
                         image: root.largeImage
+                        colorId: root.colorId
+
                         interactive: false
                         imageWidth: 78
                         imageHeight: 78

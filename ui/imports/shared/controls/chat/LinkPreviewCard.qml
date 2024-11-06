@@ -78,6 +78,8 @@ CalloutCard {
                     name: root.userData.name
                     pubkey: root.userData.publicKey
                     image: root.userData.image
+                    colorId: Utils.colorIdForPubkey(root.userData.publicKey)
+                    colorHash: Utils.getColorHashAsJson(root.userData.publicKey)
                 }
             }
             RowLayout {

@@ -25,8 +25,8 @@ Loader {
     property bool isBridgedAccount: false
     property int onlineStatus: Constants.onlineStatus.unknown
 
-    property int colorId: Utils.colorIdForPubkey(pubkey)
-    property var colorHash: Utils.getColorHashAsJson(pubkey, ensVerified)
+    property int colorId
+    property var colorHash: []
 
     signal clicked()
 
