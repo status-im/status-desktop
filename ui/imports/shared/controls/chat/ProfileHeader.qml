@@ -39,7 +39,6 @@ Item {
     property bool displayNameVisible: true
     property bool displayNamePlusIconsVisible: false
     property bool pubkeyVisible: true
-    property bool pubkeyVisibleWithCopy: false
     property alias emojiHash: emojiHash.emojiHash
     property bool emojiHashVisible: true
     property bool editImageButtonVisible: false
@@ -253,27 +252,6 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 13
             color: Theme.palette.secondaryText
-        }
-
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            visible: root.pubkeyVisibleWithCopy && !root.isBridgedAccount
-            StyledText {
-                id: txtChatKey
-                text: qsTr("Chatkey:%1...").arg(pubkey.substring(0, 32))
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Theme.primaryTextFontSize
-                color: Theme.palette.secondaryText
-            }
-
-            CopyToClipBoardButton {
-                id: copyBtn
-                Layout.preferredWidth: 20
-                Layout.preferredHeight: 20
-                color: Theme.palette.transparent
-                textToCopy: pubkey
-                onCopyClicked: ClipboardUtils.setText(textToCopy)
-            }
         }
 
         EmojiHash {
