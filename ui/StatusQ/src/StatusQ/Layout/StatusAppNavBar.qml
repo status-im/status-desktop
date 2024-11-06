@@ -9,6 +9,7 @@ import StatusQ.Popups 0.1
 
 Rectangle {
     id: root
+    objectName: "statusAppNavBar"
 
     property alias chatItemsModel: chatItemsListView.model
     property alias chatItemDelegate: chatItemsListView.delegate
