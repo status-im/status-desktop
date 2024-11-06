@@ -59,7 +59,7 @@ def test_add_5_member_role_permissions(main_screen: MainWindow):
                                                             extra_permission_data['amount'])
         permissions_settings.set_is_allowed_to(extra_permission_data['allowed_to'])
 
-        assert permissions_settings.is_warning_text_present(), 'Member role limit warning is not displayed'
+        assert permissions_settings.warning_panel.exists, 'Member role limit warning is not displayed'
         assert permissions_settings.get_warning_text() \
                == LimitWarnings.MEMBER_ROLE_LIMIT_WARNING.value, \
             f'Warning text about become a member limit reached is incorrect'
