@@ -155,7 +155,7 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
             permission_popup.add_permission().set_who_holds_asset_and_amount(asset, amount).set_is_allowed_to(
                 'viewOnly').switch_hide_permission_checkbox(True).create_permission()
             permission_popup.hide_permission(True)
-            permission_popup.save()
+            permission_popup.save_button.click()
             channel = community_screen.left_panel.get_channel_parameters(channel_name)
             assert driver.waitFor(lambda: channel in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
