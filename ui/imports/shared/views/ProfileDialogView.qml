@@ -129,7 +129,7 @@ Pane {
             objectName: "profileDialog_reviewContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Review contact request")
-            onClicked: Global.openReviewContactRequestPopup(root.publicKey, contactDetails, null)
+            onClicked: Global.openReviewContactRequestPopup(root.publicKey, null)
         }
     }
 
@@ -139,7 +139,7 @@ Pane {
             objectName: "profileDialog_sendContactRequestButton"
             size: StatusButton.Size.Small
             text: qsTr("Send contact request")
-            onClicked: Global.openContactRequestPopup(root.publicKey, contactDetails, null)
+            onClicked: Global.openContactRequestPopup(root.publicKey, null)
         }
     }
 
@@ -150,7 +150,7 @@ Pane {
             type: StatusBaseButton.Type.Danger
             objectName: "blockUserButton"
             text: qsTr("Block user")
-            onClicked: Global.blockContactRequested(root.publicKey, contactDetails)
+            onClicked: Global.blockContactRequested(root.publicKey)
         }
     }
 
@@ -160,7 +160,7 @@ Pane {
             size: StatusButton.Size.Small
             objectName: "unblockUserProfileButton"
             text: qsTr("Unblock user")
-            onClicked: Global.unblockContactRequested(root.publicKey, contactDetails)
+            onClicked: Global.unblockContactRequested(root.publicKey)
         }
     }
 
@@ -311,38 +311,30 @@ Pane {
                     SendContactRequestMenuItem {
                         enabled: !d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent &&
                                  contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
-                        onTriggered: {
-                            Global.openContactRequestPopup(root.publicKey, contactDetails, null)
-                        }
+                        onTriggered: Global.openContactRequestPopup(root.publicKey, null)
                     }
                     StatusAction {
                         text: qsTr("Mark as trusted")
                         icon.name: "checkmark-circle"
                         enabled: d.isContact && !d.isBlocked && !d.isLocallyTrusted
-                        onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, contactDetails, null)
+                        onTriggered: Global.openMarkAsIDVerifiedPopup(root.publicKey, null)
                     }
                     StatusAction {
                         objectName: "addEditNickNameStatusAction"
                         text: d.userNickName ? qsTr("Edit nickname") : qsTr("Add nickname")
                         icon.name: "edit_pencil"
-                        onTriggered: {
-                            Global.openNicknamePopupRequested(root.publicKey, contactDetails, null)
-                        }
+                        onTriggered: Global.openNicknamePopupRequested(root.publicKey, null)
                     }
                     StatusAction {
                         text: qsTr("Show QR code")
                         icon.name: "qr"
                         enabled: !d.isCurrentUser
-                        onTriggered: {
-                            Global.openPopup(shareProfileCmp)
-                        }
+                        onTriggered: Global.openPopup(shareProfileCmp)
                     }
                     StatusAction {
                         text: qsTr("Copy link to profile")
                         icon.name: "copy"
-                        onTriggered: {
-                            ClipboardUtils.setText(d.linkToProfile)
-                        }
+                        onTriggered: ClipboardUtils.setText(d.linkToProfile)
                     }
                     StatusMenuSeparator {}
                     StatusAction {
@@ -350,7 +342,7 @@ Pane {
                         icon.name: "delete"
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && d.isLocallyTrusted
-                        onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, contactDetails, null)
+                        onTriggered: Global.openRemoveIDVerificationDialog(root.publicKey, null)
                     }
                     StatusAction {
                         text: qsTr("Remove nickname")
@@ -365,27 +357,21 @@ Pane {
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
                         enabled: contactDetails.trustStatus !== Constants.trustStatus.untrustworthy && !d.isBlocked
-                        onTriggered: {
-                            Global.markAsUntrustedRequested(root.publicKey, contactDetails)
-                        }
+                        onTriggered: Global.markAsUntrustedRequested(root.publicKey)
                     }
                     StatusAction {
                         text: qsTr("Remove untrusted mark")
                         icon.name: "warning"
                         type: StatusAction.Type.Danger
                         enabled: contactDetails.trustStatus === Constants.trustStatus.untrustworthy && !d.isBlocked
-                        onTriggered: {
-                            root.contactsStore.removeTrustStatus(root.publicKey)
-                        }
+                        onTriggered: root.contactsStore.removeTrustStatus(root.publicKey)
                     }
                     StatusAction {
                         text: qsTr("Remove contact")
                         icon.name: "remove-contact"
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
-                        onTriggered: {
-                            Global.removeContactRequested(root.publicKey, contactDetails)
-                        }
+                        onTriggered: Global.removeContactRequested(root.publicKey)
                     }
                     StatusAction {
                         text: qsTr("Block user")
@@ -393,9 +379,7 @@ Pane {
                         icon.name: "cancel"
                         type: StatusAction.Type.Danger
                         enabled: !d.isBlocked
-                        onTriggered: {
-                            Global.blockContactRequested(root.publicKey, contactDetails)
-                        }
+                        onTriggered: Global.blockContactRequested(root.publicKey)
                     }
                 }
             }

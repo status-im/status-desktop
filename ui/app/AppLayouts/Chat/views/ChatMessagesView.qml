@@ -409,7 +409,7 @@ Item {
             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
             text: qsTr("Send Contact Request")
             onClicked: {
-                Global.openContactRequestPopup(root.chatId, null, null)
+                Global.openContactRequestPopup(root.chatId, null)
             }
         }
     }
