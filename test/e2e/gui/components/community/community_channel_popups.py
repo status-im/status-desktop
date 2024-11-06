@@ -14,7 +14,7 @@ class ChannelPopup(BasePopup):
         super(ChannelPopup, self).__init__()
         self._name_text_edit = TextEdit(names.createOrEditCommunityChannelNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createOrEditCommunityChannelDescriptionInput_TextEdit)
-        self._save_create_button = Button(names.createOrEditCommunityChannelBtn_StatusButton)
+        self.save_create_button = Button(names.createOrEditCommunityChannelBtn_StatusButton)
         self._emoji_button = Button(names.createOrEditCommunityChannel_EmojiButton)
         self._add_permission_button = Button(names.add_permission_StatusButton)
         self._hide_channel_checkbox = CheckBox(names.hide_channel_checkbox)
@@ -47,10 +47,6 @@ class NewChannelPopup(ChannelPopup):
             else:
                 raise err
 
-    def save(self):
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._save_create_button.click(timeout=30)
-
 
 class EditChannelPopup(ChannelPopup):
 
@@ -61,5 +57,5 @@ class EditChannelPopup(ChannelPopup):
         if emoji is not None:
             self._emoji_button.click()
             EmojiPopup().wait_until_appears().select(emoji)
-        self._save_create_button.click()
+        self.save_create_button.click()
         self.wait_until_hidden()

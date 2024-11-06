@@ -17,7 +17,7 @@ class DeletePopup(BasePopup):
             self._delete_button.click()
         except Exception as ex:
             if attempts:
-                self.delete(attempts-1)
+                self.delete(attempts - 1)
             else:
                 raise ex
 
@@ -26,14 +26,15 @@ class DeleteCategoryPopup(DeletePopup):
 
     def __init__(self):
         super().__init__()
-        self._delete_button = Button(names.confirm_StatusButton)
+        self.confirm_button = Button(names.confirm_StatusButton)
 
 
 class DeletePermissionPopup(DeletePopup):
 
     def __init__(self):
         super().__init__()
-        self._delete_button = Button(names.confirm_permission_delete_StatusButton)
+        self.confirm_delete_button = Button(names.confirm_permission_delete_StatusButton)
+
 
 class DeleteMessagePopup(DeletePopup):
 

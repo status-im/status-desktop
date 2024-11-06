@@ -113,8 +113,8 @@ def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
             f"Toast message is incorrect, current message is {message}"
 
     with step('Delete permission'):
-        permissions_intro_view.click_delete_permission()
-        DeletePermissionPopup().wait_until_appears().delete()
+        delete_pop_up = permissions_intro_view.click_delete_permission()
+        delete_pop_up.confirm_delete_button.click()
 
     with step('Verify that permission was deleted'):
         assert driver.waitFor(lambda: PermissionsIntroView().is_visible)

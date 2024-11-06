@@ -40,7 +40,7 @@ class CommunityScreen(QObject):
 
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
-        self.left_panel.open_create_channel_popup().create(name, description, emoji).save()
+        self.left_panel.open_create_channel_popup().create(name, description, emoji).save_create_button.click()
 
     @allure.step('Edit channel')
     def edit_channel(self, channel, name: str, description: str, emoji: str = None):
@@ -76,14 +76,16 @@ class CommunityScreen(QObject):
 
     @allure.step('Delete category from the list')
     def delete_category(self):
-        self.left_panel.open_more_options()
-        self.left_panel.open_delete_category_popup().delete()
+        context_menu = self.left_panel.open_more_options()
+        delete_pop_up = context_menu.open_delete_category_popup()
+        delete_pop_up.confirm_button.click()
+        return self
 
     @allure.step('Edit category')
     def edit_category(self):
-        self.left_panel.open_more_options()
-        self.left_panel.edit_category_item.click()
-        return EditCategoryPopup().wait_until_appears()
+        context_menu = self.left_panel.open_more_options()
+        edit_popup = context_menu.open_edit_category_popup()
+        return edit_popup
 
     @allure.step('Verify category in the list')
     def verify_category(self, category_name: str):
@@ -343,16 +345,10 @@ class LeftPanel(QObject):
         driver.mouseClick(self.find_category_in_list(category_name).object)
 
     @allure.step('Open more options')
-    def open_more_options(self, attempts: int = 2):
+    def open_more_options(self):
         self._arrow_button.click()
-        try:
-            self._more_button.click()
-        except LookupError as err:
-            if attempts:
-                return self._more_button.click(attempts - 1)
-            else:
-                raise err
-        return self
+        self._more_button.click()
+        return ContextMenu()
 
     @allure.step('Get visibility state of delete item')
     def is_delete_item_visible(self) -> bool:
@@ -362,15 +358,7 @@ class LeftPanel(QObject):
     def is_edit_item_visible(self) -> bool:
         return self.edit_category_item.is_visible
 
-    @allure.step('Open delete category popup')
-    def open_delete_category_popup(self) -> DeleteCategoryPopup:
-        self._delete_category_item.click()
-        return DeleteCategoryPopup().wait_until_appears()
 
-    @allure.step('Open edit category popup')
-    def open_edit_category_popup(self) -> EditCategoryPopup:
-        self.edit_category_item.click()
-        return CategoryPopup().wait_until_appears()
 
     @allure.step('Open new channel popup inside category')
     def open_new_channel_popup_in_category(self) -> NewChannelPopup:

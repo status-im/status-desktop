@@ -42,7 +42,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
 
     with step('Create community channel inside category'):
         community_screen.left_panel.open_new_channel_popup_in_category().create(channel_name, channel_description,
-                                                                                channel_emoji).save()
+                                                                                channel_emoji).save_create_button.click()
 
     with step('Create community channel outside of category'):
         community_screen.create_channel(second_channel_name, second_channel_description, second_channel_emoji)
@@ -53,7 +53,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
     with step('Open edit category popup'):
         category_popup = community_screen.edit_category()
         category_popup.enter_category_title("New category").click_checkbox_by_index(0)
-        category_popup.save()
+        category_popup.save_button.click()
 
     with step('Verify that selected channel is now listed inside category'):
         assert community_screen.left_panel.get_channel_or_category_index(second_channel_name) == 3
@@ -61,7 +61,7 @@ def test_create_edit_remove_community_category(main_screen: MainWindow, category
     with step('Open edit category popup'):
         category_popup = community_screen.edit_category()
         category_popup.click_checkbox_by_index(2)
-        category_popup.save()
+        category_popup.save_button.click()
 
     with step('Verify that selected channel is now listed outside of category'):
         assert community_screen.left_panel.get_channel_or_category_index(second_channel_name) == 0
