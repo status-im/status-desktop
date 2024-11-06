@@ -350,16 +350,6 @@ class LeftPanel(QObject):
         self._more_button.click()
         return ContextMenu()
 
-    @allure.step('Get visibility state of delete item')
-    def is_delete_item_visible(self) -> bool:
-        return self._delete_category_item.is_visible
-
-    @allure.step('Get visibility state of edit item')
-    def is_edit_item_visible(self) -> bool:
-        return self.edit_category_item.is_visible
-
-
-
     @allure.step('Open new channel popup inside category')
     def open_new_channel_popup_in_category(self) -> NewChannelPopup:
         self._arrow_button.click()
@@ -376,16 +366,10 @@ class LeftPanel(QObject):
     def right_click_on_panel(self):
         super(LeftPanel, self).right_click()
 
-    @allure.step('Invite people to community')
-    def invite_people_to_community(self, contacts: typing.List[str], message: str, attempts: int = 2):
+    @allure.step('Open add members popup')
+    def open_add_members_popup(self):
         self._add_members_button.click()
-        try:
-            InviteContactsPopup().wait_until_appears().invite(contacts, message)
-        except AssertionError as err:
-            if attempts:
-                self.invite_people_to_community(contacts, message, attempts - 1)
-            else:
-                raise err
+        return InviteContactsPopup().wait_until_appears()
 
 
 class Chat(QObject):

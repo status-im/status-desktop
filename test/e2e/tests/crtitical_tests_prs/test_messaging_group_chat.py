@@ -13,6 +13,7 @@ from constants import UserAccount, RandomUser
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
+from scripts.utils.generators import random_text_message
 from . import marks
 
 pytestmark = marks
@@ -128,8 +129,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 assert messages_screen.group_chat.group_name == group_chat_new_name
 
             with step('Send message to group chat and verify it was sent'):
-                chat_message = ''.join(random.choices(string.ascii_letters +
-                                                      string.digits, k=40))
+                chat_message = random_text_message()
                 messages_screen.group_chat.send_message_to_group_chat(chat_message)
                 message_objects = messages_screen.chat.messages('0')
                 message_items = [message.text for message in message_objects]
@@ -166,8 +166,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 assert len(messages_screen.right_panel.members) == 2
 
             with step('Send message to group chat after user removal and verify it'):
-                chat_message_2 = ''.join(random.choices(string.ascii_letters +
-                                                        string.digits, k=40))
+                chat_message_2 = random_text_message()
                 messages_screen.group_chat.send_message_to_group_chat(chat_message_2)
                 message_objects = messages_screen.chat.messages('1')
                 message_items = [message.text for message in message_objects]

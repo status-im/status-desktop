@@ -16,6 +16,7 @@ from gui.screens.messages import MessagesScreen
 import configs.testpath
 from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
+from scripts.utils.generators import random_text_message
 from scripts.utils.parsers import remove_tags
 from . import marks
 
@@ -196,8 +197,8 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
                 f"There is no image in the last message"
 
         with step(f'User {user_one.name}, reply to own message and verify that message displayed as a reply'):
-            chat_message_reply = \
-                ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
+            chat_message_reply = random_text_message()
+
             message.hover_message().reply_own_message(chat_message_reply)
             chat = main_window.left_panel.open_messages_screen().left_panel.click_chat_by_name(user_two.name)
             message = chat.find_message_by_text(chat_message_reply, 0)

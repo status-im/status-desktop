@@ -36,7 +36,7 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
         with step('Verify that context menu does not appear'):
             assert not ContextMenu().is_visible
         with step('Verify that delete item is not present in more options context menu'):
-            assert not community_screen.left_panel.open_more_options().is_edit_item_visible()
+            assert not community_screen.left_panel.open_more_options().edit_category_item.is_visible
 
     with step('Verify that member cannot delete category'):
         with step('Right-click on category in the left navigation bar'):
@@ -44,7 +44,7 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
         with step('Verify that context menu does not appear'):
             assert not ContextMenu().is_visible
         with step('Verify that delete item is not present in more options context menu'):
-            assert not community_screen.left_panel.open_more_options().is_delete_item_visible()
+            assert not community_screen.left_panel.open_more_options().delete_category_item.is_visible
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704622', 'Community category clicking')

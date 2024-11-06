@@ -1,5 +1,6 @@
 import random
 import string
+import time
 
 import allure
 import pytest
@@ -149,13 +150,16 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
             community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
         with step(f'User {user_two.name}, create hidden channel, verify that it is in the list'):
-            permission_popup = community_screen.left_panel.open_create_channel_popup().create(channel_name,
+            create_channel_popup = community_screen.left_panel.open_create_channel_popup().create(channel_name,
                                                                                               channel_description,
                                                                                               emoji=None)
-            permission_popup.add_permission().set_who_holds_asset_and_amount(asset, amount).set_is_allowed_to(
-                'viewOnly').switch_hide_permission_checkbox(True).create_permission()
-            permission_popup.hide_permission(True)
-            permission_popup.save_button.click()
+            permission_popup = create_channel_popup.add_permission()
+            time.sleep(3)
+            permission_popup.set_who_holds_asset_and_amount(asset, amount)
+            permission_popup.set_is_allowed_to('viewOnly')
+            permission_popup.switch_hide_permission_checkbox(True)
+            permission_popup.create_permission()
+            create_channel_popup.save_create_button.click()
             channel = community_screen.left_panel.get_channel_parameters(channel_name)
             assert driver.waitFor(lambda: channel in community_screen.left_panel.channels,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

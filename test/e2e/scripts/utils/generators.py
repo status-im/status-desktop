@@ -76,3 +76,7 @@ def get_wallet_address_from_mnemonic(mnemonic_data) -> str:
     child_w = w.get_child_for_path("m/44'/60'/0'/0/0")
     address_from_mnemonic = child_w.address()
     return address_from_mnemonic
+
+
+def random_text_message():
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 141))

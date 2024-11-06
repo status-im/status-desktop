@@ -42,10 +42,10 @@ class InviteContactsPopup(BasePopup):
 
         selected = []
         for member in driver.findAllObjects(self.member_checkbox.real_name):
-            if str(getattr(member, 'objectName', '')).split('-')[1] in contacts:
+            if str(getattr(member, 'objectName', '')).split('contactCheckbox-')[1] in contacts:
                 CheckBox(member).set(True)
                 assert member.checkState != 0, f"Member item checkbox is not checked"
-                selected.append(str(getattr(member, 'objectName', '')).split('-')[1])
+                selected.append(str(getattr(member, 'objectName', '')).split('contactCheckbox-')[1])
 
         assert set(contacts) == set(selected), f'Selected contacts: {selected}, expected: {contacts}'
 

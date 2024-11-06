@@ -6,6 +6,7 @@ from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.text_edit import TextEdit
 from gui.objects_map import names
+from gui.screens.community_settings import PermissionsSettingsView
 
 
 class ChannelPopup(BasePopup):
