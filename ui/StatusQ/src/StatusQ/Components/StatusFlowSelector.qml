@@ -124,7 +124,7 @@ StatusGroupBox {
 
         StatusRoundButton {
             id: addItemButton
-            objectName: "addItemButton"
+            objectName: "addItemButton_" + root.title
 
             implicitHeight: root.placeholderItemHeight
             implicitWidth: implicitHeight
