@@ -22,6 +22,8 @@ SQUtils.QObject {
     // - chainId
     required property var networksModel
 
+    readonly property bool enabled: sdk.enabled
+
     // Trigger a connection request to the dApp
     // Expected `connectionApproved` to be called with the key and the approved namespaces
     signal connectDApp(var chains, string dAppUrl, string dAppName, string dAppIcon, var key)
@@ -109,6 +111,7 @@ SQUtils.QObject {
 
     Connections {
         target: sdk
+        enabled: root.enabled
 
         function onSessionAuthenticateRequest(sessionData) {
             if (!sessionData || !sessionData.id) {

@@ -1,3 +1,5 @@
 ChainsSupervisorPlugin 1.0 ChainsSupervisorPlugin.qml
+DAppConnectionsPlugin 1.0 DAppConnectionsPlugin.qml
 SiweRequestPlugin 1.0 SiweRequestPlugin.qml
 SiweLifeCycle 1.0 SiweLifeCycle.qml
+SignRequestPlugin 1.0 SignRequestPlugin.qml

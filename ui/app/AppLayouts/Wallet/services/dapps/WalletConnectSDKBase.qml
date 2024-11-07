@@ -3,24 +3,25 @@ import QtQuick 2.15
 /// SDK requires a visible parent to embed WebEngineView
 Item {
     required property string projectId
+    property bool enabled: true
 
     signal statusChanged(string message)
     signal sdkInit(bool success, var result)
     signal pairResponse(bool success)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
-    signal buildApprovedNamespacesResult(var id, var session, string error)
-    signal approveSessionResult(var proposalId, var approvedNamespaces, string error)
-    signal rejectSessionResult(var proposalId, string error)
-    signal sessionRequestExpired(var id)
+    signal buildApprovedNamespacesResult(string id, var session, string error)
+    signal approveSessionResult(string proposalId, var approvedNamespaces, string error)
+    signal rejectSessionResult(string proposalId, string error)
+    signal sessionRequestExpired(string id)
     signal sessionRequestEvent(var sessionRequest)
     signal sessionRequestUserAnswerResult(string topic, string id, bool accept /* not reject */, string error)
     signal sessionAuthenticateRequest(var sessionData)
-    signal populateAuthPayloadResult(var id, var authPayload, string error)
-    signal formatAuthMessageResult(var id, var request, string error)
-    signal acceptSessionAuthenticateResult(var id, var result, string error)
-    signal rejectSessionAuthenticateResult(var id, var result, string error)
-    signal buildAuthObjectResult(var id, var authObject, string error)
+    signal populateAuthPayloadResult(string id, var authPayload, string error)
+    signal formatAuthMessageResult(string id, var request, string error)
+    signal acceptSessionAuthenticateResult(string id, var result, string error)
+    signal rejectSessionAuthenticateResult(string id, var result, string error)
+    signal buildAuthObjectResult(string id, var authObject, string error)
 
     signal sessionDelete(var topic, string error)
 
