@@ -431,10 +431,6 @@ RightTabBaseView {
                         showAllAccounts: RootStore.showAllAccounts
                         sendModal: root.sendModal
                         filterVisible: filterButton.checked
-                        onLaunchTransactionDetail: function (txID) {
-                            RootStore.activityController.fetchTxDetails(txID)
-                            stack.currentIndex = 3
-                        }
                     }
                 }
             }
@@ -458,14 +454,6 @@ RightTabBaseView {
                     RootStore.collectiblesStore.resetDetailedCollectible()
                 }
             }
-
-            onLaunchTransactionDetail: function (txID) {
-                d.detailedCollectibleActivityController.fetchTxDetails(txID)
-                stack.currentIndex = 3
-
-                // Take user to the activity view when they press the "Back" button
-                walletTabBar.currentIndex = 2
-            }
         }
         AssetsDetailView {
             id: assetDetailView
@@ -483,34 +471,6 @@ RightTabBaseView {
             onVisibleChanged: {
                 if (!visible)
                     RootStore.resetCurrentViewedHolding(Constants.TokenType.ERC20)
-            }
-        }
-
-        Loader {
-            active: stack.currentIndex === 3
-
-            sourceComponent: TransactionDetailView {
-                controller: RootStore.activityDetailsController
-                onVisibleChanged: {
-                    if (visible) {
-                        if (!!transaction) {
-                            RootStore.addressWasShown(transaction.sender)
-                            if (transaction.sender !== transaction.recipient) {
-                                RootStore.addressWasShown(transaction.recipient)
-                            }
-                        }
-                    } else {
-                        controller.resetActivityEntry()
-                    }
-                }
-                showAllAccounts: RootStore.showAllAccounts
-                communitiesStore: root.communitiesStore
-                sendModal: root.sendModal
-                rootStore: root.sharedRootStore
-                currenciesStore: root.sharedRootStore.currencyStore
-                contactsStore: root.contactsStore
-                networkConnectionStore: root.networkConnectionStore
-                visible: (stack.currentIndex === 3)
             }
         }
     }

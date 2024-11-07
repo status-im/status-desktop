@@ -126,14 +126,10 @@ Item {
             rightPanelStackView.currentItem.resetView()
             rightPanelStackView.currentItem.currentTabIndex = rightPanelSelection
 
-            let txHash = data.txHash?? ""
             let savedAddress = data.savedAddress?? ""
             if (!!savedAddress) {
                 RootStore.currentActivityFiltersStore.resetAllFilters()
                 RootStore.currentActivityFiltersStore.toggleSavedAddress(savedAddress)
-            } else if (!!txHash) {
-                RootStore.currentActivityFiltersStore.resetAllFilters()
-                RootStore.currentActivityFiltersStore.displayTxDetails(txHash)
             }
         }
     }
