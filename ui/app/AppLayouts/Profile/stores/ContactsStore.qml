@@ -140,46 +140,26 @@ QtObject {
     }
     function getProfileContext(publicKey, isBridgedAccount = false) {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey, true, true)
+        const isMe = publicKey === root.myPublicKey
+
         if (!contactDetails)
             return {
-                profileType: getProfileType(publicKey, isBridgedAccount, false),
+                profileType: Utils.getProfileType(isMe, isBridgedAccount, false),
                 trustStatus: Constants.trustStatus.unknown,
-                contactType: getContactType(Constants.ContactRequestState.None, false),
+                contactType: Utils.getContactType(Constants.ContactRequestState.None, false),
                 ensVerified: false,
                 onlineStatus: Constants.onlineStatus.unknown,
                 hasLocalNickname: false
             }
 
         const isBlocked = contactDetails.isBlocked
-        const profileType = getProfileType(publicKey, isBridgedAccount, isBlocked)
-        const contactType = getContactType(contactDetails.contactRequestState, contactDetails.isContact)
+        const profileType = Utils.getProfileType(isMe, isBridgedAccount, isBlocked)
+        const contactType = Utils.getContactType(contactDetails.contactRequestState, contactDetails.isContact)
         const trustStatus = contactDetails.trustStatus
         const ensVerified = contactDetails.ensVerified
         const onlineStatus = contactDetails.onlineStatus
         const hasLocalNickname = !!contactDetails.localNickname
 
         return { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname }
-    }
-
-    function getProfileType(publicKey, isBridgedAccount, isBlocked) {
-        if (publicKey === root.myPublicKey)
-            return Constants.profileType.self
-        if (isBridgedAccount)
-            return Constants.profileType.bridged
-
-        return isBlocked ? Constants.profileType.blocked
-                         : Constants.profileType.regular
-    }
-
-    function getContactType(contactRequestState, isContact) {
-        switch (contactRequestState) {
-            case Constants.ContactRequestState.Received:
-                return Constants.contactType.contactRequestReceived
-            case Constants.ContactRequestState.Sent:
-                return Constants.contactType.contactRequestSent
-        }
-
-        return isContact ? Constants.contactType.contact
-                         : Constants.contactType.nonContact
     }
 }
