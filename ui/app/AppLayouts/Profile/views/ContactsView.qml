@@ -38,23 +38,27 @@ SettingsContentBase {
         }
     }
 
-    function openContextMenu(pubKey, compressedPubKey, name, icon, colorHash, colorId) {
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(pubKey)
-
-        Global.openMenu(contactContextMenuComponent, this, {
-            profileType, trustStatus, contactType, ensVerified, onlineStatus,
-            hasLocalNickname, pubKey, compressedPubKey,
-            emojiHash: root.utilsStore.getEmojiHash(pubKey),
-            displayName: name,
-            userIcon: icon,
-            colorHash, colorId
-        })
-    }
-
-    function fetchDataAndOpenContextMenu(model, pubKey) {
+    function openContextMenu(model, pubKey) {
         const entry = ModelUtils.getByKey(model, "pubKey", pubKey)
-        openContextMenu(pubKey, entry.compressedPubKey, entry.preferredDisplayName,
-                        entry.icon, entry.colorHash, entry.colorId)
+
+        const profileType = Utils.getProfileType(entry.isCurrentUser, false, entry.isBlocked)
+        const contactType = Utils.getContactType(entry.contactRequest, entry.isContact)
+
+        const params = {
+            pubKey, profileType, contactType,
+            compressedPubKey: entry.compressedPubKey,
+            emojiHash: root.utilsStore.getEmojiHash(pubKey),
+            displayName: entry.preferredDisplayName,
+            userIcon: entry.icon,
+            colorHash: entry.colorHash,
+            colorId: entry.colorId,
+            trustStatus: entry.trustStatus,
+            onlineStatus: entry.onlineStatus,
+            ensVerified: entry.isEnsVerified,
+            hasLocalNickname: !!entry.localNickname
+        }
+
+        Global.openMenu(contactContextMenuComponent, this, params)
     }
 
     Item {
@@ -150,7 +154,7 @@ SettingsContentBase {
                     visible: !noFriendsItem.visible && count > 0
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
+                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
                     onSendMessageActionTriggered: {
                         root.contactsStore.joinPrivateChat(publicKey)
@@ -164,7 +168,7 @@ SettingsContentBase {
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
+                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.mutualContacts
 
                     onSendMessageActionTriggered: {
@@ -203,7 +207,7 @@ SettingsContentBase {
                     title: qsTr("Received")
                     searchString: searchBox.text
                     visible: count > 0
-                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
+                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     contactsModel: root.contactsStore.receivedContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
@@ -227,7 +231,7 @@ SettingsContentBase {
                     title: qsTr("Sent")
                     searchString: searchBox.text
                     visible: count > 0
-                    onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
+                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     contactsModel: root.contactsStore.sentContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
@@ -237,7 +241,7 @@ SettingsContentBase {
             ContactsListPanel {
                 Layout.fillWidth: true
                 searchString: searchBox.text
-                onOpenContactContextMenu: root.fetchDataAndOpenContextMenu(contactsModel, publicKey)
+                onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                 contactsModel: root.contactsStore.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
                 visible: (stackLayout.currentIndex === 2)
