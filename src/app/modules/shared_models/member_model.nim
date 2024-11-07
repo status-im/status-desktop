@@ -12,6 +12,7 @@ type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
     CompressedPubKey
+    IsCurrentUser
     DisplayName
     PreferredDisplayName
     EnsName
@@ -82,6 +83,7 @@ QtObject:
     {
       ModelRole.PubKey.int: "pubKey",
       ModelRole.CompressedPubKey.int: "compressedPubKey",
+      ModelRole.IsCurrentUser.int: "isCurrentUser",
       ModelRole.DisplayName.int: "displayName",
       ModelRole.PreferredDisplayName.int: "preferredDisplayName",
       ModelRole.EnsName.int: "ensName",
@@ -121,6 +123,8 @@ QtObject:
       result = newQVariant(item.pubKey)
     of ModelRole.CompressedPubKey:
       result = newQVariant(compressPk(item.pubKey))
+    of ModelRole.IsCurrentUser:
+      result = newQVariant(item.isCurrentUser)
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
     of ModelRole.PreferredDisplayName:

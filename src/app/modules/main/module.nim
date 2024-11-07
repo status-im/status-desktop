@@ -1804,6 +1804,7 @@ proc createMemberItem[T](
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(status.statusType),
     isContact = contactDetails.dto.isContact,
+    isCurrentUser = contactDetails.isCurrentUser,
     trustStatus = contactDetails.dto.trustStatus,
     memberRole = role,
     membershipRequestState = state,
