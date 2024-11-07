@@ -1,169 +1,68 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
+import Qt.labs.settings 1.1
+
+import shared.views.chat 1.0
+import utils 1.0
 
 import Storybook 1.0
 import Models 1.0
 
-import utils 1.0
-import shared.views.chat 1.0
-import shared.status 1.0
-
 SplitView {
-    QtObject {
-        id: d
-    }
-
     Logs { id: logs }
 
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        Rectangle {
+        Item {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
-            color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
-            clip: true
 
-            ColumnLayout {
+            ProfileContextMenu {
                 anchors.centerIn: parent
-                spacing: 10
+                visible: true
+                closePolicy: Popup.NoAutoClose
+                userIcon: useIconCheckBox.checked ? ModelsData.icons.cryptPunks : ""
 
-                RowLayout {
-                    Button {
-                        text: "Profile context menu"
-                        onClicked: {
-                            menu1.createObject(this).popup()
-                        }
-                    }
-                    Button {
-                        text: "Profile context menu (hide disabled items)"
-                        onClicked: {
-                            menu2.createObject(this).popup()
-                        }
-                    }
-                }
-            }
+                compressedPubKey: "zQ3shQBu4PRDX17veeYYhSczbTjgi44iTXxcMNvQLeyQsBDF4"
+                displayName: displayNameTextField.text
+                hideDisabledItems: hideDisabledCheckBox.checked
+                profileType: profileTypeSelector.currentValue
+                trustStatus: trustStatusSelector.currentValue
+                contactType: contactTypeSelector.currentValue
+                ensVerified: ensVerifiedCheckBox.checked
+                onlineStatus: onlineStatusSelector.currentValue
+                hasLocalNickname: hasLocalNicknameCheckBox.checked
+                chatType: chatTypeSelector.currentValue
+                isAdmin: isAdminCheckBox.checked
 
-            Component {
-                id: menu1
-                ProfileContextMenu {
-                    id: profileContextMenu
-                    anchors.centerIn: parent
-                    hideDisabledItems: false
-                    profileType: profileTypeSelector.currentValue
-                    trustStatus: trustStatusSelector.currentValue
-                    contactType: contactTypeSelector.currentValue
-                    ensVerified: ensVerifiedCheckBox.checked
-                    onlineStatus: onlineStatusSelector.currentValue
-                    hasLocalNickname: hasLocalNicknameCheckBox.checked
-                    chatType: chatTypeSelector.currentValue
-                    isAdmin: isAdminCheckBox.checked
-                    publicKey: publicKeyInput.text
+                colorHash: [
+                    { segmentLength: 3, colorId: 11 },
+                    { segmentLength: 5, colorId: 9  },
+                    { segmentLength: 1, colorId: 26 },
+                    { segmentLength: 2, colorId: 19 },
+                    { segmentLength: 5, colorId: 17 }
+                ]
 
-                    onOpenProfileClicked: () => {
-                        logs.logEvent("Open profile clicked for:", profileContextMenu.publicKey)
-                    }
-                    onCreateOneToOneChat: () => {
-                        logs.logEvent("Create one-to-one chat:", profileContextMenu.publicKey)
-                    }
-                    onReviewContactRequest: () => {
-                        logs.logEvent("Review contact request:", profileContextMenu.publicKey)
-                    }
-                    onSendContactRequest: () => {
-                        logs.logEvent("Send contact request:", profileContextMenu.publicKey)
-                    }
-                    onEditNickname: () => {
-                        logs.logEvent("Edit nickname:", profileContextMenu.publicKey)
-                    }
-                    onRemoveNickname: (displayName) => {
-                        logs.logEvent("Remove nickname:", profileContextMenu.publicKey, displayName)
-                    }
-                    onUnblockContact: () => {
-                        logs.logEvent("Unblock contact:", profileContextMenu.publicKey)
-                    }
-                    onMarkAsUntrusted: () => {
-                        logs.logEvent("Mark as untrusted:", profileContextMenu.publicKey)
-                    }
-                    onRemoveTrustStatus: () => {
-                        logs.logEvent("Remove trust status:", profileContextMenu.publicKey)
-                    }
-                    onRemoveContact: () => {
-                        logs.logEvent("Remove contact:", profileContextMenu.publicKey)
-                    }
-                    onBlockContact: () => {
-                        logs.logEvent("Block contact:", profileContextMenu.publicKey)
-                    }
-                    onRemoveFromGroup: (publicKey) => {
-                        logs.logEvent("Remove from group:", publicKey)
-                    }
-                    onClosed: {
-                        destroy()
-                    }
-                }
-            }
+                colorId: colorIdSpinBox.value
 
-            Component {
-                id: menu2
-                ProfileContextMenu {
-                    id: profileContextMenu
-                    anchors.centerIn: parent
-                    hideDisabledItems: true
-                    profileType: profileTypeSelector.currentValue
-                    trustStatus: trustStatusSelector.currentValue
-                    contactType: contactTypeSelector.currentValue
-                    ensVerified: ensVerifiedCheckBox.checked
-                    onlineStatus: onlineStatusSelector.currentValue
-                    hasLocalNickname: hasLocalNicknameCheckBox.checked
-                    chatType: chatTypeSelector.currentValue
-                    isAdmin: isAdminCheckBox.checked
-                    publicKey: publicKeyInput.text
+                onOpenProfileClicked: logs.logEvent("Open profile clicked")
+                onCreateOneToOneChat: logs.logEvent("Create one-to-one chat clicked")
+                onReviewContactRequest: logs.logEvent("Review contact request")
+                onSendContactRequest: logs.logEvent("Send contact request")
+                onEditNickname: logs.logEvent("Edit nickname")
+                onRemoveNickname: logs.logEvent("Remove nickname")
+                onUnblockContact: logs.logEvent("Unblock contact")
+                onMarkAsUntrusted: logs.logEvent("Mark as untrusted")
+                onRemoveTrustStatus: logs.logEvent("Remove trust status")
+                onRemoveContact: logs.logEvent("Remove contact")
+                onBlockContact: logs.logEvent("Block contact")
+                onRemoveFromGroup: logs.logEvent("Remove from group")
 
-                    onOpenProfileClicked: () => {
-                        logs.logEvent("Open profile clicked for:", profileContextMenu.publicKey)
-                    }
-                    onCreateOneToOneChat: () => {
-                        logs.logEvent("Create one-to-one chat:", profileContextMenu.publicKey)
-                    }
-                    onReviewContactRequest: () => {
-                        logs.logEvent("Review contact request:", profileContextMenu.publicKey)
-                    }
-                    onSendContactRequest: () => {
-                        logs.logEvent("Send contact request:", profileContextMenu.publicKey)
-                    }
-                    onEditNickname: () => {
-                        logs.logEvent("Edit nickname:", profileContextMenu.publicKey)
-                    }
-                    onRemoveNickname: (displayName) => {
-                        logs.logEvent("Remove nickname:", profileContextMenu.publicKey, displayName)
-                    }
-                    onUnblockContact: () => {
-                        logs.logEvent("Unblock contact:", profileContextMenu.publicKey)
-                    }
-                    onMarkAsUntrusted: () => {
-                        logs.logEvent("Mark as untrusted:", profileContextMenu.publicKey)
-                    }
-                    onRemoveTrustStatus: () => {
-                        logs.logEvent("Remove trust status:", profileContextMenu.publicKey)
-                    }
-                    onRemoveContact: () => {
-                        logs.logEvent("Remove contact:", profileContextMenu.publicKey)
-                    }
-                    onBlockContact: () => {
-                        logs.logEvent("Block contact:", profileContextMenu.publicKey)
-                    }
-                    onRemoveFromGroup: (publicKey) => {
-                        logs.logEvent("Remove from group:", publicKey)
-                    }
-                    onClosed: {
-                        destroy()
-                    }
-                }
+                onClosed: open()
             }
         }
     }
@@ -171,152 +70,222 @@ SplitView {
     LogsAndControlsPanel {
         id: logsAndControlsPanel
 
-        SplitView.minimumWidth: 150
-        SplitView.preferredWidth: 250
+        SplitView.minimumWidth: 250
+        SplitView.preferredWidth: 280
 
         logsView.logText: logs.logText
 
-        controls: ColumnLayout {
-            spacing: 16
+        controls: ScrollView {
+            anchors.fill: parent
+            clip: true
 
-            TextField {
-                id: publicKeyInput
-                Layout.fillWidth: true
-                placeholderText: "Enter public key"
+            ColumnLayout {
+                id: columnLayout
+
+                spacing: 8
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Display name:"
+                    }
+
+                    TextField {
+                        id: displayNameTextField
+
+                        Layout.fillWidth: true
+
+                        placeholderText: "Display name"
+                        text: "Display name"
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        text: "Color id:"
+                    }
+
+                    SpinBox {
+                        id: colorIdSpinBox
+
+                        from: 0
+                        to: 10
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Profile type:"
+                    }
+
+                    ComboBox {
+                        id: profileTypeSelector
+
+                        Layout.fillWidth: true
+
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { text: "Regular", value: Constants.profileType.regular },
+                            { text: "Self", value: Constants.profileType.self },
+                            { text: "Blocked", value: Constants.profileType.blocked },
+                            { text: "Bridged", value: Constants.profileType.bridged }
+                        ]
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Trust status:"
+                    }
+
+                    ComboBox {
+                        id: trustStatusSelector
+
+                        Layout.fillWidth: true
+
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { text: "Unknown", value: Constants.trustStatus.unknown },
+                            { text: "Trusted", value: Constants.trustStatus.trusted },
+                            { text: "Untrusted", value: Constants.trustStatus.untrustworthy }
+                        ]
+                        currentIndex: 0
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Contact type:"
+                    }
+
+                    ComboBox {
+                        id: contactTypeSelector
+
+                        Layout.fillWidth: true
+
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { text: "Non Contact", value: Constants.contactType.nonContact },
+                            { text: "Contact", value: Constants.contactType.contact },
+                            { text: "Contact Request Received", value: Constants.contactType.contactRequestReceived },
+                            { text: "Contact Request Sent", value: Constants.contactType.contactRequestSent }
+                        ]
+                        currentIndex: 0
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Online status:"
+                    }
+
+                    ComboBox {
+                        id: onlineStatusSelector
+
+                        Layout.fillWidth: true
+
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { text: "Online", value: Constants.onlineStatus.online },
+                            { text: "Unknown", value: Constants.onlineStatus.unknown },
+                            { text: "Inactive", value: Constants.onlineStatus.inactive }
+                        ]
+                    }
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Chat type:"
+                    }
+
+                    ComboBox {
+                        id: chatTypeSelector
+
+                        Layout.fillWidth: true
+
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { text: "Unknown", value: Constants.chatType.unknown },
+                            { text: "Category", value: Constants.chatType.category },
+                            { text: "One-to-One", value: Constants.chatType.oneToOne },
+                            { text: "Public Chat", value: Constants.chatType.publicChat },
+                            { text: "Private Group Chat", value: Constants.chatType.privateGroupChat },
+                            { text: "Profile", value: Constants.chatType.profile },
+                            { text: "Community Chat", value: Constants.chatType.communityChat }
+                        ]
+                        currentIndex: 0
+                    }
+                }
+
+                MenuSeparator {
+                    Layout.fillWidth: true
+                }
+
+                ColumnLayout {
+                    CheckBox {
+                        id: useIconCheckBox
+                        text: "Use icon"
+                        checked: true
+                    }
+
+                    CheckBox {
+                        id: ensVerifiedCheckBox
+                        text: "ENS Verified"
+                        checked: false
+                    }
+
+                    CheckBox {
+                        id: hasLocalNicknameCheckBox
+
+                        text: "Has Local Nickname"
+                        checked: false
+                    }
+
+                    CheckBox {
+                        id: isAdminCheckBox
+                        text: "Is Admin"
+                        checked: false
+                    }
+                }
+
+                MenuSeparator {
+                    Layout.fillWidth: true
+                }
+
+                CheckBox {
+                    id: hideDisabledCheckBox
+
+                    text: "Hide disabled entries (debug)"
+                    checked: true
+                }
             }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Public Key: " + (publicKeyInput.text || "0x047d6710733523714e65e783f975f2c02f5a0f43ecf6febb4e0fadb48bffae32cdc749ea366b2649c271b76e568e9bf0c173596c6e54a2659293a46947b33c9d72")
-                elide: Text.ElideMiddle
-            }
-
-            ComboBox {
-                id: profileTypeSelector
-                textRole: "text"
-                valueRole: "value"
-                model: [
-                    { text: "Regular", value: Constants.profileType.regular },
-                    { text: "Self", value: Constants.profileType.self },
-                    { text: "Blocked", value: Constants.profileType.blocked },
-                    { text: "Bridged", value: Constants.profileType.bridged }
-                ]
-                currentIndex: 0
-            }
-
-            ComboBox {
-                id: trustStatusSelector
-                textRole: "text"
-                valueRole: "value"
-                model: [
-                    { text: "Unknown", value: Constants.trustStatus.unknown },
-                    { text: "Trusted", value: Constants.trustStatus.trusted },
-                    { text: "Untrusted", value: Constants.trustStatus.untrustworthy }
-                ]
-                currentIndex: 0
-            }
-
-            ComboBox {
-                id: contactTypeSelector
-                textRole: "text"
-                valueRole: "value"
-                model: [
-                    { text: "Non Contact", value: Constants.contactType.nonContact },
-                    { text: "Contact", value: Constants.contactType.contact },
-                    { text: "Contact Request Received", value: Constants.contactType.contactRequestReceived },
-                    { text: "Contact Request Sent", value: Constants.contactType.contactRequestSent }
-                ]
-                currentIndex: 0
-            }
-
-            CheckBox {
-                id: ensVerifiedCheckBox
-                text: "ENS Verified"
-                checked: false
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "ENS Verified: " + (ensVerifiedCheckBox.checked ? "Yes" : "No")
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Profile type: " + profileTypeSelector.currentText
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Trust status: " + trustStatusSelector.currentText
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Contact type: " + contactTypeSelector.currentText
-            }
-
-            ComboBox {
-                id: onlineStatusSelector
-                textRole: "text"
-                valueRole: "value"
-                model: [
-                    { text: "Unknown", value: Constants.onlineStatus.unknown },
-                    { text: "Inactive", value: Constants.onlineStatus.inactive },
-                    { text: "Online", value: Constants.onlineStatus.online }
-                ]
-                currentIndex: 2  // Default to online
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Online status: " + onlineStatusSelector.currentText
-            }
-
-            CheckBox {
-                id: hasLocalNicknameCheckBox
-                text: "Has Local Nickname"
-                checked: false
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Has Local Nickname: " + (hasLocalNicknameCheckBox.checked ? "Yes" : "No")
-            }
-
-            ComboBox {
-                id: chatTypeSelector
-                textRole: "text"
-                valueRole: "value"
-                model: [
-                    { text: "Unknown", value: Constants.chatType.unknown },
-                    { text: "Category", value: Constants.chatType.category },
-                    { text: "One-to-One", value: Constants.chatType.oneToOne },
-                    { text: "Public Chat", value: Constants.chatType.publicChat },
-                    { text: "Private Group Chat", value: Constants.chatType.privateGroupChat },
-                    { text: "Profile", value: Constants.chatType.profile },
-                    { text: "Community Chat", value: Constants.chatType.communityChat }
-                ]
-                currentIndex: 0
-            }
-
-            CheckBox {
-                id: isAdminCheckBox
-                text: "Is Admin"
-                checked: false
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Is Admin: " + (isAdminCheckBox.checked ? "Yes" : "No")
-            }
-
-            Label {
-                Layout.fillWidth: true
-                text: "Chat type: " + chatTypeSelector.currentText
-            }
-
         }
+    }
+
+    Settings {
+        property alias profileTypeIndex: profileTypeSelector.currentIndex
+        property alias trustStatusIndex: trustStatusSelector.currentIndex
+        property alias contactTypeIndex: contactTypeSelector.currentIndex
+        property alias onlineStatusIndex: onlineStatusSelector.currentIndex
+        property alias chatTypeIndex: chatTypeSelector.currentIndex
+
+        property alias useIcon: useIconCheckBox.checked
+        property alias ensVerified: ensVerifiedCheckBox.checked
+        property alias hasLocalNickname: hasLocalNicknameCheckBox.checked
+        property alias isAdmin: isAdminCheckBox.checked
+        property alias hideDisabled: hideDisabledCheckBox.checked
     }
 }
 
 // category: Views
+// status: good
