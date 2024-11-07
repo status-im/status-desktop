@@ -1,18 +1,19 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
-import utils 1.0
+import StatusQ.Popups 0.1
+
 import shared 1.0
-import shared.status 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
+import shared.status 1.0
+import utils 1.0
 
 StatusMenu {
     id: root
 
-    property string publicKey: ""
+    property string compressedPubKey: ""
     property string displayName: ""
     property string userIcon: ""
     property int trustStatus: Constants.trustStatus.unknown
@@ -45,7 +46,7 @@ StatusMenu {
         displayNamePlusIconsVisible: true
         editButtonVisible: false
         displayName: StatusQUtils.Emoji.parse(root.displayName, StatusQUtils.Emoji.size.verySmall)
-        pubkey: root.publicKey
+        compressedPubKey: root.compressedPubKey
         emojiHash: root.emojiHash
         colorHash: root.colorHash
         colorId: root.colorId

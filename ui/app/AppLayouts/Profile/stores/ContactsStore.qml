@@ -162,10 +162,13 @@ QtObject {
     }
 
     function getProfileType(publicKey, isBridgedAccount, isBlocked) {
-        if (publicKey === root.myPublicKey) return Constants.profileType.self
-        if (isBridgedAccount) return Constants.profileType.bridged
-        if (isBlocked) return Constants.profileType.blocked
-        return Constants.profileType.regular
+        if (publicKey === root.myPublicKey)
+            return Constants.profileType.self
+        if (isBridgedAccount)
+            return Constants.profileType.bridged
+
+        return isBlocked ? Constants.profileType.blocked
+                         : Constants.profileType.regular
     }
 
     function getContactType(contactRequestState, isContact) {
@@ -174,8 +177,9 @@ QtObject {
                 return Constants.contactType.contactRequestReceived
             case Constants.ContactRequestState.Sent:
                 return Constants.contactType.contactRequestSent
-            default:
-                return isContact ? Constants.contactType.contact : Constants.contactType.nonContact
         }
+
+        return isContact ? Constants.contactType.contact
+                         : Constants.contactType.nonContact
     }
 }

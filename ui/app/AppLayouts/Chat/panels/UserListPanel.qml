@@ -127,7 +127,8 @@ Item {
 
                         Global.openMenu(profileContextMenuComponent, this, {
                                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
-                                            publicKey: model.pubKey,
+                                            pubKey: model.pubKey,
+                                            compressedPubKey: model.compressedPubKey,
                                             emojiHash: model.emojiHash,
                                             colorHash: model.colorHash,
                                             colorId: model.colorId,
@@ -170,25 +171,28 @@ Item {
 
         ProfileContextMenu {
             id: profileContextMenu
+
+            property string pubKey
+
             margins: 8
-            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.publicKey, null)
+            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.pubKey, null)
             onCreateOneToOneChat: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.publicKey, "")
+                root.store.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.pubKey, "")
             }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.publicKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.publicKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.publicKey, null)
+            onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.pubKey, null)
+            onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.pubKey, null)
+            onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.pubKey, null)
             onRemoveNickname: (displayName) => {
-                root.store.contactsStore.changeContactNickname(profileContextMenu.publicKey, "", displayName, true)
+                root.store.contactsStore.changeContactNickname(profileContextMenu.pubKey, "", displayName, true)
             }
-            onUnblockContact: Global.unblockContactRequested(profileContextMenu.publicKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.publicKey)
-            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(profileContextMenu.publicKey)
-            onRemoveContact: Global.removeContactRequested(profileContextMenu.publicKey)
-            onBlockContact: Global.blockContactRequested(profileContextMenu.publicKey)
+            onUnblockContact: Global.unblockContactRequested(profileContextMenu.pubKey)
+            onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.pubKey)
+            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(profileContextMenu.pubKey)
+            onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
+            onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
             onRemoveFromGroup: {
-                root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
+                root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
             }
             onClosed: destroy()
         }

@@ -8,7 +8,7 @@ import utils 1.0
 StatusMenu {
     id: root
 
-    property alias pubKey: header.pubkey
+    property alias compressedPubKey: header.compressedPubKey
     property alias emojiHash: header.emojiHash
     property alias name: header.displayName
     property alias icon: header.icon

@@ -38,22 +38,22 @@ SettingsContentBase {
         }
     }
 
-    function openContextMenu(publicKey, name, icon, colorHash, colorId) {
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey)
+    function openContextMenu(pubKey, compressedPubKey, name, icon, colorHash, colorId) {
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(pubKey)
 
         Global.openMenu(contactContextMenuComponent, this, {
-            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
-            publicKey: publicKey,
-            emojiHash: root.utilsStore.getEmojiHash(publicKey),
+            profileType, trustStatus, contactType, ensVerified, onlineStatus,
+            hasLocalNickname, pubKey, compressedPubKey,
+            emojiHash: root.utilsStore.getEmojiHash(pubKey),
             displayName: name,
             userIcon: icon,
             colorHash, colorId
         })
     }
 
-    function fetchDataAndOpenContextMenu(model, publicKey) {
-        const entry = ModelUtils.getByKey(model, "pubKey", publicKey)
-        openContextMenu(publicKey, entry.preferredDisplayName,
+    function fetchDataAndOpenContextMenu(model, pubKey) {
+        const entry = ModelUtils.getByKey(model, "pubKey", pubKey)
+        openContextMenu(pubKey, entry.compressedPubKey, entry.preferredDisplayName,
                         entry.icon, entry.colorHash, entry.colorId)
     }
 
@@ -68,19 +68,21 @@ SettingsContentBase {
             ProfileContextMenu {
                 id: contactContextMenu
 
-                onOpenProfileClicked: Global.openProfilePopup(contactContextMenu.publicKey, null, null)
-                onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.publicKey)
-                onReviewContactRequest: Global.openReviewContactRequestPopup(contactContextMenu.publicKey, null)
-                onSendContactRequest: Global.openContactRequestPopup(contactContextMenu.publicKey, null)
-                onEditNickname: Global.openNicknamePopupRequested(contactContextMenu.publicKey, null)
+                property string pubKey
+
+                onOpenProfileClicked: Global.openProfilePopup(contactContextMenu.pubKey, null, null)
+                onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.pubKey)
+                onReviewContactRequest: Global.openReviewContactRequestPopup(contactContextMenu.pubKey, null)
+                onSendContactRequest: Global.openContactRequestPopup(contactContextMenu.pubKey, null)
+                onEditNickname: Global.openNicknamePopupRequested(contactContextMenu.pubKey, null)
                 onRemoveNickname: (displayName) => {
-                    root.contactsStore.changeContactNickname(contactContextMenu.publicKey, "", displayName, true)
+                    root.contactsStore.changeContactNickname(contactContextMenu.pubKey, "", displayName, true)
                 }
-                onUnblockContact: Global.unblockContactRequested(contactContextMenu.publicKey)
-                onMarkAsUntrusted: Global.markAsUntrustedRequested(contactContextMenu.publicKey)
-                onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.publicKey)
-                onRemoveContact: Global.removeContactRequested(contactContextMenu.publicKey)
-                onBlockContact: Global.blockContactRequested(contactContextMenu.publicKey)
+                onUnblockContact: Global.unblockContactRequested(contactContextMenu.pubKey)
+                onMarkAsUntrusted: Global.markAsUntrustedRequested(contactContextMenu.pubKey)
+                onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.pubKey)
+                onRemoveContact: Global.removeContactRequested(contactContextMenu.pubKey)
+                onBlockContact: Global.blockContactRequested(contactContextMenu.pubKey)
                 onClosed: destroy()
             }
         }

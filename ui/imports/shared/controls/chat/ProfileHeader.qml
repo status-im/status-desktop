@@ -22,7 +22,7 @@ Item {
     }
 
     property string displayName
-    property string pubkey
+    property string compressedPubKey
     property string icon
     property url previewIcon: icon
     property int trustStatus
@@ -248,7 +248,7 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.pubkeyVisible
-            text: root.isBridgedAccount ? qsTr("Bridged from Discord") : Utils.getElidedCompressedPk(pubkey)
+            text: root.isBridgedAccount ? qsTr("Bridged from Discord") : Utils.getElidedPk(compressedPubKey)
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: 13
             color: Theme.palette.secondaryText

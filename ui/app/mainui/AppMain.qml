@@ -872,10 +872,12 @@ Item {
                 UserStatusContextMenu {
                     id: userStatusContextMenu
 
+                    readonly property string pubKey: appMain.profileStore.pubkey
+
                     y: profileButton.y - userStatusContextMenu.height + profileButton.height
                     x: profileButton.x + profileButton.width + 5
 
-                    pubKey: appMain.profileStore.pubkey
+                    compressedPubKey: appMain.profileStore.compressedPubKey
                     emojiHash: appMain.utilsStore.getEmojiHash(pubKey)
                     colorHash: appMain.profileStore.colorHash
                     colorId: appMain.profileStore.colorId
