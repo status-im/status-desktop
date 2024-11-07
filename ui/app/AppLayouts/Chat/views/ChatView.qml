@@ -1,5 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
 import Qt.labs.settings 1.0
 
 import utils 1.0
@@ -13,15 +15,12 @@ import shared.stores.send 1.0 as SendStores
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
-import StatusQ.Controls 0.1
-import QtQuick.Layouts 1.15
-
-import "."
-import "../panels"
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
@@ -33,9 +32,10 @@ import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
-import "../popups"
-import "../helpers"
 import "../controls"
+import "../helpers"
+import "../panels"
+import "../popups"
 
 StatusSectionLayout {
     id: root
@@ -183,7 +183,10 @@ StatusSectionLayout {
             }
 
             anchors.fill: parent
-            store: root.rootStore
+
+            chatType: root.chatContentModule.chatDetails.type
+            isAdmin: root.chatContentModule.amIChatAdmin()
+
             label: qsTr("Members")
             communityMemberReevaluationStatus: root.rootStore.communityMemberReevaluationStatus
 
@@ -196,6 +199,28 @@ StatusSectionLayout {
                     expectedRoles: ["pubKey"]
                 }
             }
+
+            onOpenProfileRequested: Global.openProfilePopup(pubKey, null)
+            onReviewContactRequestRequested: Global.openReviewContactRequestPopup(pubKey, null)
+            onSendContactRequestRequested: Global.openContactRequestPopup(pubKey, null)
+            onEditNicknameRequested: Global.openNicknamePopupRequested(pubKey, null)
+            onBlockContactRequested: Global.blockContactRequested(pubKey)
+            onUnblockContactRequested: Global.unblockContactRequested(pubKey)
+            onMarkAsUntrustedRequested: Global.markAsUntrustedRequested(pubKey)
+            onRemoveContactRequested: Global.removeContactRequested(pubKey)
+
+            onRemoveNicknameRequested: {
+                const oldName = ModelUtils.getByKey(usersModel, "pubKey", pubKey, "localNickname")
+                root.contactsStore.changeContactNickname(pubKey, "", oldName, true)
+            }
+
+            onCreateOneToOneChatRequested: {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.pubKey, "")
+            }
+
+            onRemoveTrustStatusRequested: root.contactsStore.removeTrustStatus(pubKey)
+            onRemoveContactFromGroupRequested: root.rootStore.removeMemberFromGroupChat(pubKey)
         }
     }
 

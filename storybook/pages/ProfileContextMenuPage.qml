@@ -153,7 +153,6 @@ SplitView {
                             { text: "Trusted", value: Constants.trustStatus.trusted },
                             { text: "Untrusted", value: Constants.trustStatus.untrustworthy }
                         ]
-                        currentIndex: 0
                     }
                 }
 
@@ -176,7 +175,6 @@ SplitView {
                             { text: "Contact Request Received", value: Constants.contactType.contactRequestReceived },
                             { text: "Contact Request Sent", value: Constants.contactType.contactRequestSent }
                         ]
-                        currentIndex: 0
                     }
                 }
 
@@ -223,7 +221,6 @@ SplitView {
                             { text: "Profile", value: Constants.chatType.profile },
                             { text: "Community Chat", value: Constants.chatType.communityChat }
                         ]
-                        currentIndex: 0
                     }
                 }
 

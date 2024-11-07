@@ -2,44 +2,57 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import shared 1.0
-import shared.panels 1.0
-import shared.status 1.0
 import shared.views.chat 1.0
-
 import utils 1.0
 
 import SortFilterProxyModel 0.2
 
-import AppLayouts.Chat.stores 1.0 as ChatStores
-
 Item {
     id: root
 
-    property ChatStores.RootStore store
-
     property var usersModel
+
     property string label
+    property int chatType: Constants.chatType.unknown
+    property bool isAdmin
     property int communityMemberReevaluationStatus: Constants.CommunityMemberReevaluationStatus.None
+
+    signal openProfileRequested(string pubKey)
+    signal createOneToOneChatRequested(string pubKey)
+    signal reviewContactRequestRequested(string pubKey)
+    signal sendContactRequestRequested(string pubKey)
+    signal editNicknameRequested(string pubKey)
+    signal removeNicknameRequested(string pubKey)
+    signal blockContactRequested(string pubKey)
+    signal unblockContactRequested(string pubKey)
+    signal markAsUntrustedRequested(string pubKey)
+    signal removeTrustStatusRequested(string pubKey)
+    signal removeContactRequested(string pubKey)
+    signal removeContactFromGroupRequested(string pubKey)
 
     StatusBaseText {
         id: titleText
+
         anchors.top: parent.top
         anchors.topMargin: Theme.padding
         anchors.left: parent.left
         anchors.leftMargin: Theme.padding
+        anchors.right: parent.right
+        anchors.rightMargin: Theme.padding
+
         opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Theme.primaryTextFontSize
         font.weight: Font.Medium
         color: Theme.palette.directColor1
         text: root.label
+
+        wrapMode: Text.Wrap
     }
 
     StatusBaseText {
@@ -108,6 +121,7 @@ Item {
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
                 width: ListView.view.width
+
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 pubKey: model.isEnsVerified ? "" : model.compressedPubKey
@@ -125,9 +139,6 @@ Item {
                         const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
                         const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
-                        const chatType = chatContentModule.chatDetails.type
-                        const isAdmin = chatContentModule.amIChatAdmin()
-
                         const params = {
                             profileType, contactType, chatType, isAdmin,
                             pubKey: model.pubKey,
@@ -140,7 +151,9 @@ Item {
                             trustStatus: model.trustStatus,
                             onlineStatus: model.onlineStatus,
                             ensVerified: model.isEnsVerified,
-                            hasLocalNickname: !!model.localNickname
+                            hasLocalNickname: !!model.localNickname,
+                            chatType: root.chatType,
+                            isAdmin: root.isAdmin
                         }
 
                         Global.openMenu(profileContextMenuComponent, this, params)
@@ -154,9 +167,11 @@ Item {
 
     Component {
         id: sectionDelegateComponent
+
         Item {
             width: ListView.view.width
             height: 24
+
             StatusBaseText {
                 anchors.fill: parent
                 anchors.leftMargin: Theme.padding
@@ -184,25 +199,20 @@ Item {
             property string pubKey
 
             margins: 8
-            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.pubKey, null)
-            onCreateOneToOneChat: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.store.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.pubKey, "")
-            }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.pubKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.pubKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.pubKey, null)
-            onRemoveNickname: (displayName) => {
-                root.store.contactsStore.changeContactNickname(profileContextMenu.pubKey, "", displayName, true)
-            }
-            onUnblockContact: Global.unblockContactRequested(profileContextMenu.pubKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.pubKey)
-            onRemoveTrustStatus: root.store.contactsStore.removeTrustStatus(profileContextMenu.pubKey)
-            onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
-            onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
-            onRemoveFromGroup: {
-                root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
-            }
+
+            onOpenProfileClicked: root.openProfileRequested(pubKey)
+            onCreateOneToOneChat: root.createOneToOneChatRequested(pubKey)
+            onReviewContactRequest: root.reviewContactRequestRequested(pubKey)
+            onSendContactRequest: root.sendContactRequestRequested(pubKey)
+            onEditNickname: root.editNicknameRequested(pubKey)
+            onRemoveNickname: root.removeNicknameRequested(pubKey)
+            onUnblockContact: root.unblockContactRequested(pubKey)
+            onMarkAsUntrusted: root.markAsUntrustedRequested(pubKey)
+            onRemoveTrustStatus: root.removeTrustStatusRequested(pubKey)
+            onRemoveContact: root.removeContactRequested(pubKey)
+            onBlockContact: root.blockContactRequested(pubKey)
+            onRemoveFromGroup: root.removeContactFromGroupRequested(pubKey)
+
             onClosed: destroy()
         }
     }
