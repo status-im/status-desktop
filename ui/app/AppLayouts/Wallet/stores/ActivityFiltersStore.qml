@@ -20,8 +20,6 @@ QtObject {
                                 recentsFilters.length !== 0 ||
                                 savedAddressFilters.length !== 0
 
-    signal displayTxDetails(string txHash)
-
     readonly property QtObject _d: QtObject {
         id: d
 

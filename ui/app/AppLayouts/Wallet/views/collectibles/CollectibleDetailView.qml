@@ -25,8 +25,6 @@ import "../../controls"
 Item {
     id: root
 
-    signal launchTransactionDetail(string txID)
-
     required property SharedStores.RootStore rootStore
     required property RootStore walletRootStore
     required property CommunitiesStore communitiesStore
@@ -309,8 +307,6 @@ Item {
                             onClicked: {
                                 if (mouse.button === Qt.RightButton) {
                                     // TODO: Implement context menu
-                                } else {
-                                    root.launchTransactionDetail(modelData.id)
                                 }
                             }
                         }

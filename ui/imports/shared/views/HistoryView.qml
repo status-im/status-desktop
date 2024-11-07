@@ -45,16 +45,10 @@ ColumnLayout {
 
     property real yPosition: transactionListRoot.visibleArea.yPosition * transactionListRoot.contentHeight
 
-    signal launchTransactionDetail(string txID)
-
     function resetView() {
         if (!!filterPanelLoader.item) {
             filterPanelLoader.item.resetView()
         }
-    }
-
-    onVisibleChanged: {
-        d.openTxDetailsHash = ""
     }
 
     Component.onCompleted: {
@@ -78,16 +72,6 @@ ColumnLayout {
         }
     }
 
-    Connections {
-        target: root.walletRootStore.currentActivityFiltersStore
-        enabled: root.visible
-        function onDisplayTxDetails(txHash) {
-            if (!d.openTxDetails(txHash)) {
-                d.openTxDetailsHash = txHash
-            }
-        }
-    }
-
     QtObject {
         id: d
         readonly property bool isInitialLoading: root.walletRootStore.loadingHistoryTransactions && transactionListRoot.count === 0
@@ -97,18 +81,6 @@ ColumnLayout {
         property bool firstSectionHeaderLoaded: false
 
         readonly property int maxSecondsBetweenRefresh: 3
-
-        property string openTxDetailsHash
-
-        function openTxDetails(txID) {
-            // Prevent opening details when loading, that will invalidate the model data
-            if (root.walletRootStore.loadingHistoryTransactions) {
-                return false
-            }
-
-            root.launchTransactionDetail(txID)
-            return true
-        }
     }
 
     InformationTag {
@@ -199,16 +171,6 @@ ColumnLayout {
             id: transactionListRoot
             objectName: "walletAccountTransactionList"
             anchors.fill: parent
-
-            onCountChanged: {
-                if (!!d.openTxDetailsHash && root.visible) {
-                    if (d.openTxDetails(d.openTxDetailsHash)) {
-                        d.openTxDetailsHash = ""
-                    } else {
-                        root.walletRootStore.fetchMoreTransactions()
-                    }
-                }
-            }
 
             model: SortFilterProxyModel {
                 id: txModel
@@ -499,8 +461,6 @@ ColumnLayout {
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
                         delegateMenu.openMenu(this, mouse, modelData)
-                    } else {
-                        launchTransactionDetail(modelData.id)
                     }
                 }
             }
