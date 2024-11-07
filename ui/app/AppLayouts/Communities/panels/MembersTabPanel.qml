@@ -153,12 +153,11 @@ Item {
                 // The admin that initited the pending state can change the state. Actions are not visible for other admins
                 readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
 
-                readonly property bool itsMe: model.pubKey.toLowerCase() === rootStore.contactsStore.myPublicKey.toLowerCase()
                 readonly property bool isHovered: memberItem.hovered
                 readonly property bool canBeBanned: {
-                    if (memberItem.itsMe) {
+                    if (model.isCurrentUser)
                         return false
-                    }
+
                     switch (model.memberRole) {
                         // Owner can't be banned
                         case Constants.memberRole.owner: return false
@@ -171,7 +170,7 @@ Item {
                     }
                 }
                 readonly property bool showOnHover: isHovered && ctaAllowed
-                readonly property bool canDeleteMessages: itsMe || model.memberRole !== Constants.memberRole.owner
+                readonly property bool canDeleteMessages: model.isCurrentUser || model.memberRole !== Constants.memberRole.owner
 
                 /// Button visibility ///
                 readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending || isAcceptedPending) && showOnHover
@@ -313,19 +312,27 @@ Item {
                 badge.visible: (root.panelType === MembersTabPanel.TabType.AllMembers)
 
                 onClicked: {
-                    if(mouse.button === Qt.RightButton) {
-                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.rootStore.contactsStore.getProfileContext(model.pubKey)
+                    if (mouse.button === Qt.RightButton) {
+                        const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
+                        const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
-                        Global.openMenu(memberContextMenuComponent, this, {
-                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
+                        const params = {
+                            profileType, contactType,
                             pubKey: model.pubKey,
                             compressedPubKey: model.compressedPubKey,
                             emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
-                            colorHash: model.colorHash, colorId: model.colorId,
+                            colorHash: model.colorHash,
+                            colorId: model.colorId,
                             displayName: memberItem.title || model.displayName,
-                            userIcon: icon.name,
-                        })
-                    } else {
+                            userIcon: model.icon,
+                            trustStatus: model.trustStatus,
+                            onlineStatus: model.onlineStatus,
+                            ensVerified: model.isEnsVerified,
+                            hasLocalNickname: !!model.localNickname
+                        }
+
+                        Global.openMenu(memberContextMenuComponent, this, params)
+                    } else if (mouse.button === Qt.LeftButton) {
                         Global.openProfilePopup(model.pubKey)
                     }
                 }

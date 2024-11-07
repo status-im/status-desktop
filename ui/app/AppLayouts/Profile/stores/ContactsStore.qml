@@ -138,28 +138,4 @@ QtObject {
     function getLinkToProfile(publicKey) {
         return root.contactsModule.shareUserUrlWithData(publicKey)
     }
-    function getProfileContext(publicKey, isBridgedAccount = false) {
-        const contactDetails = Utils.getContactDetailsAsJson(publicKey, true, true)
-        const isMe = publicKey === root.myPublicKey
-
-        if (!contactDetails)
-            return {
-                profileType: Utils.getProfileType(isMe, isBridgedAccount, false),
-                trustStatus: Constants.trustStatus.unknown,
-                contactType: Utils.getContactType(Constants.ContactRequestState.None, false),
-                ensVerified: false,
-                onlineStatus: Constants.onlineStatus.unknown,
-                hasLocalNickname: false
-            }
-
-        const isBlocked = contactDetails.isBlocked
-        const profileType = Utils.getProfileType(isMe, isBridgedAccount, isBlocked)
-        const contactType = Utils.getContactType(contactDetails.contactRequestState, contactDetails.isContact)
-        const trustStatus = contactDetails.trustStatus
-        const ensVerified = contactDetails.ensVerified
-        const onlineStatus = contactDetails.onlineStatus
-        const hasLocalNickname = !!contactDetails.localNickname
-
-        return { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname }
-    }
 }

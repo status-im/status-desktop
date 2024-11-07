@@ -156,26 +156,36 @@ Loader {
         if (isViewMemberMessagesePopup)
             return false
 
-        if (isReply && !quotedMessageFrom) {
-            // The responseTo message was deleted
-            // so we don't enable to right click the unavailable profile
+        // The responseTo message was deleted
+        // so we don't enable to right click the unavailable profile
+        if (isReply && !quotedMessageFrom)
             return false
-        }
+
         const pubKey = isReply ? quotedMessageFrom : root.senderId
-        const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(pubKey, isBridgedAccount)
+        const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType)
+                                         : root.isBridgeMessage
+
+        // TODO: getContactDetailsAsJson will be called from contacts store when refactored
+        const contactDetails = Utils.getContactDetailsAsJson(pubKey, true, true, true)
+        const isMe = pubKey === root.contactsStore.myPublicKey
+
+        const profileType = Utils.getProfileType(isMe, isBridgedAccount, contactDetails.isBlocked)
+        const contactType = Utils.getContactType(contactDetails.contactRequestState, contactDetails.isContact)
         const chatType = chatContentModule.chatDetails.type
         // set false for now, because the remove from group option is still available after member is removed
         const isAdmin = false // chatContentModule.amIChatAdmin()
 
         const params = {
-            profileType, trustStatus, contactType, ensVerified, onlineStatus,
-            hasLocalNickname, chatType, isAdmin, pubKey,
-            compressedPubKey: root.utilsStore.getCompressedPk(pubKey),
+            pubKey, profileType, contactType, chatType, isAdmin,
+            compressedPubKey: contactDetails.compressedPublicKey,
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
             colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,
-            colorId: Utils.colorIdForPubkey(pubKey)
+            colorId: Utils.colorIdForPubkey(pubKey),
+            trustStatus: contactDetails.trustStatus,
+            ensVerified: contactDetails.ensVerified,
+            onlineStatus: contactDetails.onlineStatus,
+            hasLocalNickname: !!contactDetails.localNickname
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -1024,7 +1034,7 @@ Loader {
                     },
                     Loader {
                         active: {
-                        
+
                             return !root.isInPinnedPopup && !root.editRestricted && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
                                 && !root.isViewMemberMessagesePopup && d.canPost
                         }
@@ -1045,10 +1055,10 @@ Loader {
                         active: {
                             if(!delegate.hovered)
                                 return false;
-                                
+
                             if (!root.messageStore)
                                 return false
-                            
+
                             if(delegate.hideQuickActions)
                                 return false;
 
@@ -1162,7 +1172,7 @@ Loader {
 
         MessageAddReactionContextMenu {
             reactionsModel: root.emojiReactionsModel
-            
+
             onToggleReaction: (emojiId) => {
                 root.messageStore.toggleReaction(root.messageId, emojiId)
             }

@@ -119,22 +119,31 @@ Item {
                 icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
                 ringSettings.ringSpecModel: model.colorHash
+
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
-                        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.store.contactsStore.getProfileContext(model.pubKey)
+                        const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
+                        const contactType = Utils.getContactType(model.contactRequest, model.isContact)
+
                         const chatType = chatContentModule.chatDetails.type
                         const isAdmin = chatContentModule.amIChatAdmin()
 
-                        Global.openMenu(profileContextMenuComponent, this, {
-                                            profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
-                                            pubKey: model.pubKey,
-                                            compressedPubKey: model.compressedPubKey,
-                                            emojiHash: model.emojiHash,
-                                            colorHash: model.colorHash,
-                                            colorId: model.colorId,
-                                            displayName: nickName || userName,
-                                            userIcon: model.icon
-                                        })
+                        const params = {
+                            profileType, contactType, chatType, isAdmin,
+                            pubKey: model.pubKey,
+                            compressedPubKey: model.compressedPubKey,
+                            emojiHash: model.emojiHash,
+                            colorHash: model.colorHash,
+                            colorId: model.colorId,
+                            displayName: nickName || userName,
+                            userIcon: model.icon,
+                            trustStatus: model.trustStatus,
+                            onlineStatus: model.onlineStatus,
+                            ensVerified: model.isEnsVerified,
+                            hasLocalNickname: !!model.localNickname
+                        }
+
+                        Global.openMenu(profileContextMenuComponent, this, params)
                     } else if (mouse.button === Qt.LeftButton) {
                         Global.openProfilePopup(model.pubKey)
                     }
