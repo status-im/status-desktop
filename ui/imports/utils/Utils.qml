@@ -700,6 +700,28 @@ QtObject {
         xhr.send();
     }
 
+    function getProfileType(isMe, isBridgedAccount, isBlocked) {
+        if (isMe)
+            return Constants.profileType.self
+        if (isBridgedAccount)
+            return Constants.profileType.bridged
+
+        return isBlocked ? Constants.profileType.blocked
+                         : Constants.profileType.regular
+    }
+
+    function getContactType(contactRequestState, isContact) {
+        switch (contactRequestState) {
+            case Constants.ContactRequestState.Received:
+                return Constants.contactType.contactRequestReceived
+            case Constants.ContactRequestState.Sent:
+                return Constants.contactType.contactRequestSent
+        }
+
+        return isContact ? Constants.contactType.contact
+                         : Constants.contactType.nonContact
+    }
+
     // BACKEND DEPENDENT PART
     //
     // Methods and properties below are intended to be refactored in various
