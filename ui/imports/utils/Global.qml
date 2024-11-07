@@ -10,7 +10,7 @@ QtObject {
     property bool appIsReady: false
 
     // use the generic var as type to break the cyclic dependency
-    property var walletConnectService: null
+    property var dAppsService: null
 
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin, string chatId)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)

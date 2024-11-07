@@ -18,8 +18,8 @@ SQUtils.QObject {
     signal approveConnectResponse(string id, bool error)
     signal rejectConnectResponse(string id, bool error)
 
-    signal approveTransactionResponse(string requestId, bool error)
-    signal rejectTransactionResponse(string requestId, bool error)
+    signal approveTransactionResponse(string topic, string requestId, bool error)
+    signal rejectTransactionResponse(string topic, string requestId, bool error)
 
     function approveConnection(id, account, chainId) {
         return controller.approveConnection(id, account, chainId)
@@ -29,12 +29,12 @@ SQUtils.QObject {
         return controller.rejectConnection(id, error)
     }
 
-    function approveTransaction(requestId, signature) {
-        return controller.approveTransaction(requestId, signature)
+    function approveTransaction(topic, requestId, signature) {
+        return controller.approveTransaction(topic, requestId, signature)
     }
 
-    function rejectTransaction(requestId, error) {
-        return controller.rejectTransaction(requestId, error)
+    function rejectTransaction(topic, requestId, error) {
+        return controller.rejectTransaction(topic, requestId, error)
     }
 
     function disconnect(id) {
@@ -72,12 +72,12 @@ SQUtils.QObject {
             root.rejectConnectResponse(id, error)
         }
 
-        function onApproveTransactionResponse(requestId, error) {
-            root.approveTransactionResponse(requestId, error)
+        function onApproveTransactionResponse(topic, requestId, error) {
+            root.approveTransactionResponse(topic, requestId, error)
         }
 
-        function onRejectTransactionResponse(requestId, error) {
-            root.rejectTransactionResponse(requestId, error)
+        function onRejectTransactionResponse(topic, requestId, error) {
+            root.rejectTransactionResponse(topic, requestId, error)
         }
     }
 }

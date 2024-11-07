@@ -13,10 +13,8 @@ import "types"
 WalletConnectSDKBase {
     id: root
 
-    readonly property alias sdkReady: d.sdkReady
+    readonly property bool sdkReady: d.sdkReady
 
-    // Enable the WalletConnect SDK
-    property alias enableSdk: loader.active
     property alias userUID: loader.profileName
     readonly property alias url: loader.url
 
@@ -509,7 +507,7 @@ WalletConnectSDKBase {
         }
 
         function onRejectSessionAuthenticateResult(id, result, error) {
-            //console.debug(`WC WalletConnectSDK.onRejectSessionAuthenticateResult; id: ${id}, result: ${result}, error: ${error}`)
+            console.debug(`WC WalletConnectSDK.onRejectSessionAuthenticateResult; id: ${id}, result: ${result}, error: ${error}`)
             root.rejectSessionAuthenticateResult(id, result, error)
         }
     }
@@ -518,7 +516,7 @@ WalletConnectSDKBase {
         id: loader
 
         anchors.fill: parent
-
+        active: root.enabled
         url: "qrc:/app/AppLayouts/Wallet/services/dapps/sdk/src/index.html"
         webChannelObjects: [ statusObject ]
 
@@ -527,6 +525,12 @@ WalletConnectSDKBase {
         }
         onPageLoadingError: function(error) {
             console.error("WebEngineLoader.onPageLoadingError: ", error)
+        }
+
+        onActiveChanged: function() {
+            if (!active) {
+                d.sdkReady = false
+            }
         }
     }
 }

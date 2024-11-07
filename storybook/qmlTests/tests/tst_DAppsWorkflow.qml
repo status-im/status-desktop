@@ -25,19 +25,31 @@ Item {
     width: 600
     height: 400
 
+    function mockActiveSession(accountsModel, networksModel, sdk, topic) {
+        const account = accountsModel.get(1)
+        const networks = ModelUtils.modelToFlatArray(networksModel, "chainId")
+        const requestId = 1717149885151715
+        const session = JSON.parse(Testing.formatApproveSessionResponse(networks, [account.address]))
+        const sessionProposal = JSON.parse(Testing.formatSessionProposal())
+
+        sdk.sessionProposal(sessionProposal)
+        // Expect to have calls to getActiveSessions from service initialization
+        const prevRequests = sdk.getActiveSessionsCallbacks.length
+        sdk.approveSessionResult(sessionProposal.id, session, null)
+        // Service might trigger a sessionRequest event following the getActiveSessions call
+        const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
+        callback({"b536a": session})
+
+        return session
+    }
+
     function mockSessionRequestEvent(tc, sdk, accountsModel, networksModel) {
         const account = accountsModel.get(1)
         const network = networksModel.get(1)
         const topic = "b536a"
         const requestId = 1717149885151715
+        const session = mockActiveSession(accountsModel, networksModel, sdk, topic)
         const request = buildSessionRequestResolved(tc, account.address, network.chainId, topic, requestId)
-        // Expect to have calls to getActiveSessions from service initialization
-        const prevRequests = sdk.getActiveSessionsCallbacks.length
-        sdk.sessionRequestEvent(request.event)
-        // Service might trigger a sessionRequest event following the getActiveSessions call
-        const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
-        const session = JSON.parse(Testing.formatApproveSessionResponse([network.chainId, 7], [account.address]))
-        callback({"b536a": session})
 
         return {sdk, session, account, network, topic, request}
     }
@@ -58,10 +70,12 @@ Item {
             data: "hello world",
             preparedData: "hello world",
             expirationTimestamp: (Date.now() + 10000) / 1000,
-            sourceId: Constants.DAppConnectors.WalletConnect
+            sourceId: Constants.DAppConnectors.WalletConnect,
+            dappName: "Test DApp",
+            dappUrl: "https://test.dapp",
+            dappIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAcCAYAAACdz7SqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAM2SURBVHgBtVbNbtNAEJ7ZpBQ4pRGF9kQqWqkBRNwnwLlxI9y4NX2CiiOntE9QeINw49a8QdwT3NhKQCKaSj4WUVXmABRqe5hxE+PGTuyk5ZOSXe/ftzs/3y5CBiw/NEzw/cdAaCJAifgXdCA4QGAjggbEvbMf0LJt7aSth6lkHjW4akIG8GI2/1k5H7e7XW2PGRdHqWQU8jdoNytZIrnC7YNPupnUnxtuWF01SjhD77hqwPQosNlrxdt34OTb172xpELoKvrA1QW4EqCZRJyLEnpI7ZBQggThlGvXYVLI3HAeE88vfj85Pno/6FaDiqeoEUZlMA9bvc/7cxyxVa6/SeM5j2Tcdn/hnHsNly520s7KAyN0V17+7pWNGhHVhxYJTNLraosLi8e0kMBxT0FH00IW830oeT/ButBertjRQ5BPO1xUQ1IE2oQUHHZ0K6mdI1RzoSEdpqRg76O2lPgSElKDdz919JYMoxA95QDow7qUykWoxTo5z2YIXsGUsLV2CPD1cDu7MODiQKKnsVmI1jhFyQJvFrb6URxFQWJAYYIZSEF6tKZATitFQpehEm1PkCraWYCE+8Nt5ENBwX8EAd2NNaKQxu0ukVuCqwATQHwnjhphShMuiSAVKZ527E6bzYt78Q3SulxvcAm44K8ntXMqagmkJDUpzNwMZGsqBDqLuDXcLvkvqajcWWgm+ZUI6svlym5fsbITlh9tsgi0Ezs5//vkMtBocqSJOZw84ZrHPiXFJ6UwECx5A/FbqNXX2hAiefkzqCNRha1Wi8yJgddeCk4qHzkK1aMgdypfshYRbkTGm3z0Rs6LW0REgDXVEMuMI0TE5kDlgkv8+PjIKRYXfzPxEyH2EYzDzv7L4q1FHsvpg8Gkt186OlGp5uYXZMjzkYS8txwfQnj63//APmzDIF1yWJVrCDJgeZVfjTjCj0KicC3qlny0053FZ/k/PFnyy6P2yv1Kk1T/1eCGF/pEYCncGI6DCzIo/uGnRvg8CfzE5MEPoQGT4Pz5Uj3oxp+hMe0V4oOOrssOMfmWyMJo5X1cG2WZkYIvO2Tn85sGXwg5B5Q9kiKMas5DntPr6Oq4+/gvs8hkkbAzoC8AAAAASUVORK5CYII="
         })
 
-        requestItem.resolveDappInfoFromSession({peer: {metadata: {name: "Test DApp", url: "https://test.dapp", icons: ["data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAcCAYAAACdz7SqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAM2SURBVHgBtVbNbtNAEJ7ZpBQ4pRGF9kQqWqkBRNwnwLlxI9y4NX2CiiOntE9QeINw49a8QdwT3NhKQCKaSj4WUVXmABRqe5hxE+PGTuyk5ZOSXe/ftzs/3y5CBiw/NEzw/cdAaCJAifgXdCA4QGAjggbEvbMf0LJt7aSth6lkHjW4akIG8GI2/1k5H7e7XW2PGRdHqWQU8jdoNytZIrnC7YNPupnUnxtuWF01SjhD77hqwPQosNlrxdt34OTb172xpELoKvrA1QW4EqCZRJyLEnpI7ZBQggThlGvXYVLI3HAeE88vfj85Pno/6FaDiqeoEUZlMA9bvc/7cxyxVa6/SeM5j2Tcdn/hnHsNly520s7KAyN0V17+7pWNGhHVhxYJTNLraosLi8e0kMBxT0FH00IW830oeT/ButBertjRQ5BPO1xUQ1IE2oQUHHZ0K6mdI1RzoSEdpqRg76O2lPgSElKDdz919JYMoxA95QDow7qUykWoxTo5z2YIXsGUsLV2CPD1cDu7MODiQKKnsVmI1jhFyQJvFrb6URxFQWJAYYIZSEF6tKZATitFQpehEm1PkCraWYCE+8Nt5ENBwX8EAd2NNaKQxu0ukVuCqwATQHwnjhphShMuiSAVKZ527E6bzYt78Q3SulxvcAm44K8ntXMqagmkJDUpzNwMZGsqBDqLuDXcLvkvqajcWWgm+ZUI6svlym5fsbITlh9tsgi0Ezs5//vkMtBocqSJOZw84ZrHPiXFJ6UwECx5A/FbqNXX2hAiefkzqCNRha1Wi8yJgddeCk4qHzkK1aMgdypfshYRbkTGm3z0Rs6LW0REgDXVEMuMI0TE5kDlgkv8+PjIKRYXfzPxEyH2EYzDzv7L4q1FHsvpg8Gkt186OlGp5uYXZMjzkYS8txwfQnj63//APmzDIF1yWJVrCDJgeZVfjTjCj0KicC3qlny0053FZ/k/PFnyy6P2yv1Kk1T/1eCGF/pEYCncGI6DCzIo/uGnRvg8CfzE5MEPoQGT4Pz5Uj3oxp+hMe0V4oOOrssOMfmWyMJo5X1cG2WZkYIvO2Tn85sGXwg5B5Q9kiKMas5DntPr6Oq4+/gvs8hkkbAzoC8AAAAASUVORK5CYII="]}}})
         return requestItem
     }
 
@@ -70,6 +84,7 @@ Item {
 
         WalletConnectSDKBase {
             property bool sdkReady: true
+            enabled: true
 
             property var getActiveSessionsCallbacks: []
             getActiveSessions: function(callback) {
@@ -106,7 +121,7 @@ Item {
     Component {
         id: serviceComponent
 
-        WalletConnectService {
+        DAppsService {
             property var onApproveSessionResultTriggers: []
             onApproveSessionResult: function(session, error) {
                 onApproveSessionResultTriggers.push({session, error})
@@ -121,7 +136,6 @@ Item {
             onPairingValidated: function(validationState) {
                 onPairingValidatedTriggers.push({validationState})
             }
-            blockchainNetworksDown: []
         }
     }
 
@@ -243,7 +257,7 @@ Item {
                 }
                 // Used by tst_balanceCheck
                 ListElement {
-                    chainId: 421613
+                    chainId: 421614
                     layer: 2
                     isOnline: true
                 }
@@ -294,37 +308,34 @@ Item {
     }
 
     Component {
-        id: dappsRequestHandlerComponent
+        id: dappsModuleComponent
 
-        DAppsRequestHandler {
+        DAppsModule {
             currenciesStore: CurrenciesStore {}
-            assetsStore: assetsStoreMock
+            groupedAccountAssetsModel: assetsStoreMock.groupedAccountAssetsModel
         }
     }
 
     TestCase {
-        id: requestHandlerTest
-        name: "DAppsRequestHandler"
+        id: dappsModuleTest
+        name: "DAppsModuleTest"
         // Ensure mocked GroupedAccountsAssetsModel is properly initialized
         when: windowShown
 
-        property DAppsRequestHandler handler: null
-
-        SignalSpy {
-            id: displayToastMessageSpy
-            target: requestHandlerTest.handler
-            signalName: "onDisplayToastMessage"
-        }
+        property DAppsModule handler: null
 
         function init() {
             let walletStore = createTemporaryObject(walletStoreComponent, root)
             verify(!!walletStore)
-            let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab" })
+            let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab", enabled: true })
             verify(!!sdk)
+            let bcSdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab", enabled: false })
+            verify(!!bcSdk)
             let store = createTemporaryObject(dappsStoreComponent, root)
             verify(!!store)
-            handler = createTemporaryObject(dappsRequestHandlerComponent, root, {
-                sdk: sdk,
+            handler = createTemporaryObject(dappsModuleComponent, root, {
+                wcSdk: sdk,
+                bcSdk: bcSdk,
                 store: store,
                 accountsModel: walletStore.nonWatchAccounts,
                 networksModel: walletStore.filteredFlatModelWithOnlineStat
@@ -333,13 +344,9 @@ Item {
             sdk.getActiveSessionsCallbacks = []
         }
 
-        function cleanup() {
-            displayToastMessageSpy.clear()
-        }
-
         function test_TestAuthentication() {
-            let td = mockSessionRequestEvent(this, handler.sdk, handler.accountsModel, handler.networksModel)
-            handler.sdk.sessionRequestEvent(td.request.event)
+            let td = mockSessionRequestEvent(this, handler.wcSdk, handler.accountsModel, handler.networksModel)
+            handler.wcSdk.sessionRequestEvent(td.request.event)
             let request = handler.requestsModel.findById(td.request.requestId)
             request.accept()
             compare(handler.store.authenticateUserCalls.length, 1, "expected a call to store.authenticateUser")
@@ -351,7 +358,7 @@ Item {
         }
 
         function test_onSessionRequestEventDifferentCaseForAddress() {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
 
             const testAddressUpper = "0x3A"
             const chainId = 2
@@ -362,6 +369,7 @@ Item {
             const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
             // Expect to have calls to getActiveSessions from service initialization
             const prevRequests = sdk.getActiveSessionsCallbacks.length
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
@@ -369,7 +377,7 @@ Item {
 
         // Tests that the request is ignored if not in the current profile (don't have the PK for the address)
         function test_onSessionRequestEventMissingAddress() {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
 
             const testAddressUpper = "0xY"
             const chainId = 2
@@ -378,12 +386,13 @@ Item {
             const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddressUpper}"`]
             const topic = "b536a"
             const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
-            // Expect to have calls to getActiveSessions from service initialization
-            const prevRequests = sdk.getActiveSessionsCallbacks.length
+
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
+            sdk.getActiveSessionsCallbacks = []
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 0, "expected DAppsRequestHandler don't call sdk.getActiveSessions")
-            compare(sdk.rejectSessionRequestCalls.length, 0, "expected no call to service.rejectSessionRequest")
+            compare(sdk.rejectSessionRequestCalls.length, 1, "expected to reject the request")
         }
 
         function test_balanceCheck_data() {
@@ -434,7 +443,7 @@ Item {
         }
 
         function test_balanceCheck(data) {
-            let sdk = handler.sdk
+            let sdk = handler.wcSdk
 
             // Override the suggestedFees
             if (!!data.maxFeePerGasM) {
@@ -456,6 +465,7 @@ Item {
                 }`]
             let topic = "b536a"
             let session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             compare(sdk.getActiveSessionsCallbacks.length, 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
@@ -473,7 +483,7 @@ Item {
         }
 
         function test_sessionRequestExpiryInTheFuture() {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -486,6 +496,7 @@ Item {
 
             // Expect to have calls to getActiveSessions from service initialization
             const prevRequests = sdk.getActiveSessionsCallbacks.length
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             verify(handler.requestsModel.count === 1, "expected a request to be added")
@@ -496,7 +507,7 @@ Item {
 
         function test_sessionRequestExpiryInThePast()
         {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -508,18 +519,18 @@ Item {
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
 
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             verify(handler.requestsModel.count === 1, "expected a request to be added")
             const request = handler.requestsModel.findRequest(topic, session.id)
             verify(!!request, "expected request to be found")
             verify(request.isExpired(), "expected request to be expired")
-            verify(displayToastMessageSpy.count === 0, "no toast message should be displayed")
         }
 
         function test_wcSignalsSessionRequestExpiry()
         {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -529,6 +540,8 @@ Item {
             const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
 
             verify(session.params.request.expiryTimestamp > Date.now() / 1000, "expected expiryTimestamp to be in the future")
+
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
             const request = handler.requestsModel.findRequest(topic, session.id)
             verify(!!request, "expected request to be found")
@@ -536,12 +549,11 @@ Item {
 
             sdk.sessionRequestExpired(session.id)
             verify(request.isExpired(), "expected request to be expired")
-            verify(displayToastMessageSpy.count === 0, "no toast message should be displayed")
         }
 
         function test_acceptExpiredSessionRequest()
         {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -552,12 +564,12 @@ Item {
             session.params.request.expiryTimestamp = (Date.now() - 10000) / 1000
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
-
+            
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             verify(handler.requestsModel.count === 1, "expected a request to be added")
             const request = handler.requestsModel.findRequest(topic, session.id)
-            request.resolveDappInfoFromSession({peer: {metadata: {name: "Test DApp", url: "https://test.dapp", icons:[]}}})
             verify(!!request, "expected request to be found")
             verify(request.isExpired(), "expected request to be expired")
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
@@ -567,13 +579,11 @@ Item {
             handler.store.userAuthenticated(topic, session.id, "1234", "", message)
             verify(sdk.rejectSessionRequestCalls.length === 1, "expected a call to sdk.rejectSessionRequest")
             sdk.sessionRequestUserAnswerResult(topic, session.id, false, "")
-            verify(displayToastMessageSpy.count === 1, "expected a toast message to be displayed")
-            compare(displayToastMessageSpy.signalArguments[0][0], "test.dapp sign request timed out")
         }
 
         function test_rejectExpiredSessionRequest()
         {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -585,6 +595,7 @@ Item {
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
 
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
@@ -597,7 +608,7 @@ Item {
 
         function test_signFailedAuthOnExpiredRequest()
         {
-            const sdk = handler.sdk
+            const sdk = handler.wcSdk
             const testAddressUpper = "0x3A"
             const chainId = 2
             const method = "personal_sign"
@@ -609,6 +620,7 @@ Item {
 
             verify(session.params.request.expiryTimestamp < Date.now() / 1000, "expected expiryTimestamp to be in the past")
 
+            mockActiveSession(handler.accountsModel, handler.networksModel, sdk, topic)
             sdk.sessionRequestEvent(session)
 
             verify(sdk.rejectSessionRequestCalls.length === 0, "expected no call to sdk.rejectSessionRequest")
@@ -621,14 +633,14 @@ Item {
     }
 
     TestCase {
-        id: walletConnectServiceTest
-        name: "WalletConnectService"
+        id: dappsServiceTest
+        name: "DAppsService"
 
-        property WalletConnectService service: null
+        property DAppsService service: null
 
         SignalSpy {
             id: connectDAppSpy
-            target: walletConnectServiceTest.service
+            target: dappsServiceTest.service
             signalName: "connectDApp"
 
             property var argPos: {
@@ -640,35 +652,52 @@ Item {
             }
         }
 
-        readonly property SignalSpy sessionRequestSpy: SignalSpy {
-            target: walletConnectServiceTest.service
-            signalName: "sessionRequest"
-
-            property var argPos: {
-                "id": 0
+        function populateDAppData(topic) {
+            const dapp = {
+                topic,
+                name: Testing.dappName,
+                url: Testing.dappUrl,
+                iconUrl: Testing.dappFirstIcon,
+                connectorId: 0,
+                accountAddresses: [{address: "0x123"}],
+                rawSessions: [{session: {topic}}]
             }
+            findChild(service.dappsModule, "DAppsModel").model.append(dapp)
         }
 
         function init() {
             let walletStore = createTemporaryObject(walletStoreComponent, root)
             verify(!!walletStore)
-            let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab" })
+            let sdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab", enabled: true })
             verify(!!sdk)
+            let bcSdk = createTemporaryObject(sdkComponent, root, { projectId: "12ab", enabled: false })
             let store = createTemporaryObject(dappsStoreComponent, root)
             verify(!!store)
-            service = createTemporaryObject(serviceComponent, root, {wcSDK: sdk, store: store, walletRootStore: walletStore})
+            let dappsModuleObj = createTemporaryObject(dappsModuleComponent, root, {
+                wcSdk: sdk,
+                bcSdk: bcSdk,
+                store: store,
+                accountsModel: walletStore.nonWatchAccounts,
+                networksModel: walletStore.filteredFlatModelWithOnlineStat
+            })
+
+            service = createTemporaryObject(serviceComponent, root, {
+                dappsModule: dappsModuleObj,
+                selectedAddress: "",
+                accountsModel: walletStore.nonWatchAccounts
+            })
             verify(!!service)
         }
 
         function cleanup() {
             connectDAppSpy.clear()
-            sessionRequestSpy.clear()
         }
 
         function testSetupPair(sessionProposalPayload) {
-            let sdk = service.wcSDK
-            let walletStore = service.walletRootStore
-            let store = service.store
+            let sdk = service.dappsModule.wcSdk
+            let accountsModel = service.dappsModule.accountsModel
+            let networksModel = service.dappsModule.networksModel
+            let store = service.dappsModule.store
 
             service.pair("wc:12ab@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=12ab")
             compare(sdk.pairCalled, 1, "expected a call to sdk.pair")
@@ -680,21 +709,21 @@ Item {
 
             // All calls to SDK are expected as events to be made by the wallet connect SDK
             let chainsForApproval = args.supportedNamespaces.eip155.chains
-            let networksArray = ModelUtils.modelToArray(walletStore.filteredFlatModel).map(entry => entry.chainId)
+            let networksArray = ModelUtils.modelToArray(networksModel).map(entry => entry.chainId)
             verify(networksArray.every(chainId => chainsForApproval.some(eip155Chain => eip155Chain === `eip155:${chainId}`)),
                 "expect all the networks to be present")
             // We test here all accounts for one chain only, we have separate tests to validate that all accounts are present
             let allAccountsForApproval = args.supportedNamespaces.eip155.accounts
-            let accountsArray = ModelUtils.modelToArray(walletStore.nonWatchAccounts).map(entry => entry.address)
+            let accountsArray = ModelUtils.modelToArray(accountsModel).map(entry => entry.address)
             verify(accountsArray.every(address => allAccountsForApproval.some(eip155Address => eip155Address === `eip155:${networksArray[0]}:${address}`)),
                 "expect at least all accounts for the first chain to be present"
             )
 
-            return {sdk, walletStore, store, networksArray, accountsArray}
+            return {sdk, store, networksArray, accountsArray, networksModel, accountsModel}
         }
 
         function test_TestPairing() {
-            const {sdk, walletStore, store, networksArray, accountsArray} = testSetupPair(Testing.formatSessionProposal())
+            const {sdk, store, networksArray, accountsArray, networksModel, accountsModel} = testSetupPair(Testing.formatSessionProposal())
 
             compare(sdk.buildApprovedNamespacesCalls.length, 1, "expected a call to sdk.buildApprovedNamespaces")
             let allApprovedNamespaces = JSON.parse(Testing.formatBuildApprovedNamespacesResult(networksArray, accountsArray))
@@ -708,7 +737,7 @@ Item {
             compare(connectArgs[connectDAppSpy.argPos.dappIcon], Testing.dappFirstIcon, "expected dappIcon to be set")
             verify(!!connectArgs[connectDAppSpy.argPos.key], "expected key to be set")
 
-            let selectedAccount = walletStore.nonWatchAccounts.get(1).address
+            let selectedAccount = accountsModel.get(1).address
             service.approvePairSession(connectArgs[connectDAppSpy.argPos.key], connectArgs[connectDAppSpy.argPos.dappChains], selectedAccount)
             compare(sdk.buildApprovedNamespacesCalls.length, 2, "expected a call to sdk.buildApprovedNamespaces")
             const approvedArgs = sdk.buildApprovedNamespacesCalls[1]
@@ -740,7 +769,7 @@ Item {
         }
 
         function test_TestPairingUnsupportedNetworks() {
-            const {sdk, walletStore, store} = testSetupPair(Testing.formatSessionProposal())
+            const {sdk, store} = testSetupPair(Testing.formatSessionProposal())
 
             const approvedArgs = sdk.buildApprovedNamespacesCalls[0]
             sdk.buildApprovedNamespacesResult(approvedArgs.id, {}, "Non conforming namespaces. approve() namespaces chains don't satisfy required namespaces")
@@ -751,7 +780,7 @@ Item {
 
         function test_SessionRequestMainFlow() {
             // All calls to SDK are expected as events to be made by the wallet connect SDK
-            const sdk = service.wcSDK
+            const sdk = service.dappsModule.wcSdk
             const walletStore = service.walletRootStore
             const store = service.store
 
@@ -762,17 +791,11 @@ Item {
             const params = [`"${DAppsHelpers.strToHex(message)}"`, `"${testAddress}"`]
             const topic = "b536a"
             const session = JSON.parse(Testing.formatSessionRequest(chainId, method, params, topic))
-            // Expect to have calls to getActiveSessions from service initialization
-            const prevRequests = sdk.getActiveSessionsCallbacks.length
+
+            populateDAppData(topic)
             sdk.sessionRequestEvent(session)
 
-            compare(sdk.getActiveSessionsCallbacks.length, prevRequests + 1, "expected DAppsRequestHandler call sdk.getActiveSessions")
-            const callback = sdk.getActiveSessionsCallbacks[prevRequests].callback
-            callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
-
-            compare(sessionRequestSpy.count, 1, "expected service.sessionRequest trigger")
-            const requestId = sessionRequestSpy.signalArguments[0][sessionRequestSpy.argPos.id]
-            const request = service.sessionRequestsModel.findById(requestId)
+            const request = service.sessionRequestsModel.findById(session.id)
             verify(!!request, "expected request to be found")
             compare(request.topic, topic, "expected topic to be set")
             compare(request.method, method, "expected method to be set")
@@ -793,64 +816,6 @@ Item {
         // TODO #14757: add tests with multiple session requests coming in; validate that authentication is serialized and in order
         // function tst_SessionRequestQueueMultiple() {
         // }
-    }
-
-    Component {
-        id: dappsListProviderComponent
-        DAppsListProvider {
-        }
-    }
-
-    TestCase {
-        name: "DAppsListProvider"
-
-        property DAppsListProvider provider: null
-
-        readonly property var dappsListReceivedJsonStr: '[{"url":"https://tst1.com","name":"name1","iconUrl":"https://tst1.com/u/1"},{"url":"https://tst2.com","name":"name2","iconUrl":"https://tst2.com/u/2"}]'
-
-        function init() {
-            // Simulate the SDK not being ready
-            let sdk = createTemporaryObject(sdkComponent, root, {projectId: "12ab", sdkReady: false})
-            verify(!!sdk)
-            let store = createTemporaryObject(dappsStoreComponent, root, {
-                dappsListReceivedJsonStr: dappsListReceivedJsonStr
-            })
-            verify(!!store)
-            const walletStore = createTemporaryObject(walletStoreComponent, root)
-            verify(!!walletStore)
-            provider = createTemporaryObject(dappsListProviderComponent, root, {sdk: sdk, store: store, supportedAccountsModel: walletStore.nonWatchAccounts})
-            verify(!!provider)
-            sdk.getActiveSessionsCallbacks = []
-        }
-
-        function cleanup() {
-        }
-
-        // Implemented as a regression to metamask not having icons which failed dapps list
-        function test_TestUpdateDapps() {
-            // Validate that persistance fallback is working
-            compare(provider.dappsModel.count, 2, "expected dappsModel have the right number of elements")
-            let persistanceList = JSON.parse(dappsListReceivedJsonStr)
-            compare(provider.dappsModel.get(0).url, persistanceList[0].url, "expected url to be set")
-            compare(provider.dappsModel.get(0).iconUrl, persistanceList[0].iconUrl, "expected iconUrl to be set")
-            compare(provider.dappsModel.get(1).name, persistanceList[1].name, "expected name to be set")
-
-            // Validate that SDK's `getActiveSessions` is not called if not ready
-            let sdk = provider.sdk
-            compare(sdk.getActiveSessionsCallbacks.length, 0, "expected no calls to sdk.getActiveSessions yet")
-            sdk.sdkReady = true
-            compare(sdk.getActiveSessionsCallbacks.length, 1, "expected a call to sdk.getActiveSessions when SDK becomes ready")
-            let callback = sdk.getActiveSessionsCallbacks[0].callback
-            const address = ModelUtils.get(provider.supportedAccountsModel, 0, "address")
-            let session = JSON.parse(Testing.formatApproveSessionResponse([1, 2], [address], {dappMetadataJsonString: Testing.noIconsDappMetadataJsonString}))
-            callback({"b536a": session, "b537b": session})
-            compare(provider.dappsModel.count, 1, "expected dappsModel have the SDK's reported dapp, 2 sessions of the same dApp per 2 wallet account, meaning 1 dApp model entry")
-            compare(provider.dappsModel.get(0).iconUrl, "", "expected iconUrl to be missing")
-            let updateCalls = provider.store.updateWalletConnectSessionsCalls
-            compare(updateCalls.length, 1, "expected a call to store.updateWalletConnectSessions")
-            verify(updateCalls[0].activeTopicsJson.includes("b536a"))
-            verify(updateCalls[0].activeTopicsJson.includes("b537b"))
-        }
     }
 
     TestCase {

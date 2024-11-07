@@ -13,5 +13,7 @@ QtObject {
         readonly property int unsupportedNetwork: 6
         readonly property int unknownError: 7
         readonly property int dappReadyForApproval: 8
+        readonly property int userRejected: 9
+        readonly property int rejectFailed: 10
     }
 }

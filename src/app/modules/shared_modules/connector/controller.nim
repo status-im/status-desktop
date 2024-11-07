@@ -34,8 +34,8 @@ QtObject:
   proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
   proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
 
-  proc approveTransactionResponse*(self: Controller, requestId: string, error: bool) {.signal.}
-  proc rejectTransactionResponse*(self: Controller, requestId: string, error: bool) {.signal.}
+  proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -114,15 +114,15 @@ QtObject:
     result = self.service.rejectDappConnect(requestId)
     self.rejectConnectResponse(requestId, not result)
 
-  proc approveTransaction*(self: Controller, requestId: string, signature: string): bool {.slot.} =
+  proc approveTransaction*(self: Controller, sessionTopic: string, requestId: string, signature: string): bool {.slot.} =
     let hash = utils.createHash(signature)
 
     result = self.service.approveTransactionRequest(requestId, hash)
-    self.approveTransactionResponse(requestId, not result)
+    self.approveTransactionResponse(sessionTopic, requestId, not result)
 
-  proc rejectTransaction*(self: Controller, requestId: string): bool {.slot.} =
+  proc rejectTransaction*(self: Controller, sessionTopic: string, requestId: string): bool {.slot.} =
     result = self.service.rejectTransactionSigning(requestId)
-    self.rejectTransactionResponse(requestId, not result)
+    self.rejectTransactionResponse(sessionTopic, requestId, not result)
 
   proc disconnect*(self: Controller, dAppUrl: string): bool {.slot.} =
     result = self.service.recallDAppPermission(dAppUrl)

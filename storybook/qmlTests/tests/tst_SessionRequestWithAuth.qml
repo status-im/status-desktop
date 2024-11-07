@@ -47,6 +47,9 @@ Item {
             sourceId: 0
             data: "data"
             preparedData: "preparedData"
+            dappUrl: "dappUrl"
+            dappIcon: "dappIcon"
+            dappName: "dappName"
         }
     }
 
@@ -88,7 +91,6 @@ Item {
             componentUnderTest.store.userAuthenticationFailed("topic", "id")
             
             compare(componentUnderTest.executeSpy.count, 0)
-            compare(componentUnderTest.rejectedSpy.count, 1)
             compare(componentUnderTest.authFailedSpy.count, 1)
             compare(componentUnderTest.store.authenticateUserCalls.length, 1)
         }

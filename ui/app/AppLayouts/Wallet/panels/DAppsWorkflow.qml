@@ -69,12 +69,11 @@ DappsComboBox {
     signal disconnectRequested(string connectionId)
     signal pairingRequested(string uri)
     signal pairingValidationRequested(string uri)
-    signal connectionAccepted(var pairingId, var chainIds, string selectedAccount)
-    signal connectionDeclined(var pairingId)
+    signal connectionAccepted(string pairingId, var chainIds, string selectedAccount)
+    signal connectionDeclined(string pairingId)
     signal signRequestAccepted(string connectionId, string requestId)
     signal signRequestRejected(string connectionId, string requestId)
-
-    signal subscribeForFeeUpdates(string connectionId, string requestId)
+    signal signRequestIsLive(string connectionId, string requestId)
 
     /// Response to pairingValidationRequested
     function pairingValidated(validationState) {
@@ -349,7 +348,7 @@ DappsComboBox {
             hasExpiryDate: !!request.expirationTimestamp
 
             onOpened: {
-                root.subscribeForFeeUpdates(request.topic, request.requestId)
+                root.signRequestIsLive(request.topic, request.requestId)
             }
 
             onClosed: {
