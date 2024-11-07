@@ -161,19 +161,21 @@ Loader {
             // so we don't enable to right click the unavailable profile
             return false
         }
-        const publicKey = isReply ? quotedMessageFrom : root.senderId
+        const pubKey = isReply ? quotedMessageFrom : root.senderId
         const isBridgedAccount = isReply ? (quotedMessageContentType === Constants.messageContentType.bridgeMessageType) : root.isBridgeMessage
-        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(publicKey, isBridgedAccount)
+        const { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname } = root.contactsStore.getProfileContext(pubKey, isBridgedAccount)
         const chatType = chatContentModule.chatDetails.type
         // set false for now, because the remove from group option is still available after member is removed
         const isAdmin = false // chatContentModule.amIChatAdmin()
 
-        const params = { profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname, chatType, isAdmin,
-            publicKey,
+        const params = {
+            profileType, trustStatus, contactType, ensVerified, onlineStatus,
+            hasLocalNickname, chatType, isAdmin, pubKey,
+            compressedPubKey: root.utilsStore.getCompressedPk(pubKey),
             displayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
             userIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
             colorHash: isReply ? quotedMessageAuthorDetailsColorHash : root.senderColorHash,
-            colorId: Utils.colorIdForPubkey(publicKey)
+            colorId: Utils.colorIdForPubkey(pubKey)
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
@@ -1188,24 +1190,27 @@ Loader {
         id: profileContextMenuComponent
         ProfileContextMenu {
             id: profileContextMenu
-            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.publicKey, null)
+
+            property string pubKey
+
+            onOpenProfileClicked: Global.openProfilePopup(profileContextMenu.pubKey, null)
             onCreateOneToOneChat: () => {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.publicKey, "")
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", profileContextMenu.pubKey, "")
             }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.publicKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.publicKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.publicKey, null)
+            onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.pubKey, null)
+            onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.pubKey, null)
+            onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.pubKey, null)
             onRemoveNickname: () => {
-                root.rootStore.contactsStore.changeContactNickname(profileContextMenu.publicKey, "", profileContextMenu.displayName, true)
+                root.rootStore.contactsStore.changeContactNickname(profileContextMenu.pubKey, "", profileContextMenu.displayName, true)
             }
-            onUnblockContact: Global.unblockContactRequested(profileContextMenu.publicKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.publicKey)
-            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.publicKey)
-            onRemoveContact: Global.removeContactRequested(profileContextMenu.publicKey)
-            onBlockContact: Global.blockContactRequested(profileContextMenu.publicKey)
+            onUnblockContact: Global.unblockContactRequested(profileContextMenu.pubKey)
+            onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.pubKey)
+            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.pubKey)
+            onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
+            onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
             onRemoveFromGroup: () => {
-                root.store.removeMemberFromGroupChat(profileContextMenu.publicKey)
+                root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
             }
             onOpened: root.setMessageActive(root.messageId, true)
             onClosed: {

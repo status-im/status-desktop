@@ -277,7 +277,6 @@ SettingsContentBase {
                 Layout.rightMargin: Theme.padding
 
                 displayName: profileStore.name
-                pubkey: profileStore.pubkey
                 icon: profileStore.profileLargeImage
                 imageSize: ProfileHeader.ImageSize.Big
 

@@ -318,7 +318,9 @@ Item {
 
                         Global.openMenu(memberContextMenuComponent, this, {
                             profileType, trustStatus, contactType, ensVerified, onlineStatus, hasLocalNickname,
-                            publicKey: model.pubKey, emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
+                            pubKey: model.pubKey,
+                            compressedPubKey: model.compressedPubKey,
+                            emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
                             colorHash: model.colorHash, colorId: model.colorId,
                             displayName: memberItem.title || model.displayName,
                             userIcon: icon.name,
@@ -337,22 +339,24 @@ Item {
         ProfileContextMenu {
             id: memberContextMenuView
 
-            onOpenProfileClicked: Global.openProfilePopup(memberContextMenuView.publicKey, null)
+            property string pubKey
+
+            onOpenProfileClicked: Global.openProfilePopup(memberContextMenuView.pubKey, null)
             onCreateOneToOneChat: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", membersContextMenuView.publicKey, "")
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", membersContextMenuView.pubKey, "")
             }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(memberContextMenuView.publicKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(memberContextMenuView.publicKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(memberContextMenuView.publicKey, null)
+            onReviewContactRequest: Global.openReviewContactRequestPopup(memberContextMenuView.pubKey, null)
+            onSendContactRequest: Global.openContactRequestPopup(memberContextMenuView.pubKey, null)
+            onEditNickname: Global.openNicknamePopupRequested(memberContextMenuView.pubKey, null)
             onRemoveNickname: (displayName) => {
-                root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.publicKey, "", displayName, true)
+                root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.pubKey, "", displayName, true)
             }
-            onUnblockContact: Global.unblockContactRequested(memberContextMenuView.publicKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(memberContextMenuView.publicKey)
-            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.publicKey)
-            onRemoveContact: Global.removeContactRequested(memberContextMenuView.publicKey)
-            onBlockContact: Global.blockContactRequested(memberContextMenuView.publicKey)
+            onUnblockContact: Global.unblockContactRequested(memberContextMenuView.pubKey)
+            onMarkAsUntrusted: Global.markAsUntrustedRequested(memberContextMenuView.pubKey)
+            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.pubKey)
+            onRemoveContact: Global.removeContactRequested(memberContextMenuView.pubKey)
+            onBlockContact: Global.blockContactRequested(memberContextMenuView.pubKey)
             onClosed: destroy()
         }
     }
