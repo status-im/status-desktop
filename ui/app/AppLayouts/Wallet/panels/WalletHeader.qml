@@ -137,38 +137,38 @@ Item {
                 id: dappsWorkflow
                 Layout.alignment: Qt.AlignTop
 
-                readonly property WalletConnectService wcService: Global.walletConnectService
+                readonly property DAppsService dAppsService: Global.dAppsService
 
                 spacing: 8
 
                 visible: !root.walletStore.showSavedAddresses
-                         && (wcService.walletConnectFeatureEnabled || wcService.connectorFeatureEnabled)
-                         && wcService.serviceAvailableToCurrentAddress
-                enabled: !!wcService && wcService.isServiceOnline
+                         && (dAppsService.walletConnectFeatureEnabled || dAppsService.connectorFeatureEnabled)
+                         && dAppsService.serviceAvailableToCurrentAddress
+                enabled: !!dAppsService && dAppsService.isServiceOnline
 
-                walletConnectEnabled: wcService.walletConnectFeatureEnabled
-                connectorEnabled: wcService.connectorFeatureEnabled
+                walletConnectEnabled: dAppsService.walletConnectFeatureEnabled
+                connectorEnabled: dAppsService.connectorFeatureEnabled
 
                 loginType: root.loginType
                 selectedAccountAddress: root.walletStore.selectedAddress
-                model: wcService.dappsModel
-                accountsModel: wcService.validAccounts
-                networksModel: wcService.flatNetworks
-                sessionRequestsModel: wcService.sessionRequestsModel
+                model: dAppsService.dappsModel
+                accountsModel: root.walletStore.nonWatchAccounts
+                networksModel: root.walletStore.filteredFlatModel
+                sessionRequestsModel: dAppsService.sessionRequestsModel
 
-                formatBigNumber: (number, symbol, noSymbolOption) => wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+                formatBigNumber: (number, symbol, noSymbolOption) => root.walletStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
-                onDisconnectRequested: (connectionId) => wcService.disconnectDapp(connectionId)
-                onPairingRequested: (uri) => wcService.pair(uri)
-                onPairingValidationRequested: (uri) => wcService.validatePairingUri(uri)
-                onConnectionAccepted: (pairingId, chainIds, selectedAccount) => wcService.approvePairSession(pairingId, chainIds, selectedAccount)
-                onConnectionDeclined: (pairingId) => wcService.rejectPairSession(pairingId)
-                onSignRequestAccepted: (connectionId, requestId) => wcService.sign(connectionId, requestId)
-                onSignRequestRejected: (connectionId, requestId) => wcService.rejectSign(connectionId, requestId, false /*hasError*/)
-                onSubscribeForFeeUpdates: (connectionId, requestId) => wcService.subscribeForFeeUpdates(connectionId, requestId)
+                onDisconnectRequested: (connectionId) => dAppsService.disconnectDapp(connectionId)
+                onPairingRequested: (uri) => dAppsService.pair(uri)
+                onPairingValidationRequested: (uri) => dAppsService.validatePairingUri(uri)
+                onConnectionAccepted: (pairingId, chainIds, selectedAccount) => dAppsService.approvePairSession(pairingId, chainIds, selectedAccount)
+                onConnectionDeclined: (pairingId) => dAppsService.rejectPairSession(pairingId)
+                onSignRequestAccepted: (connectionId, requestId) => dAppsService.sign(connectionId, requestId)
+                onSignRequestRejected: (connectionId, requestId) => dAppsService.rejectSign(connectionId, requestId, false /*hasError*/)
+                onSignRequestIsLive: (connectionId, requestId) => dAppsService.signRequestIsLive(connectionId, requestId)
 
                 Connections {
-                    target: dappsWorkflow.wcService
+                    target: dappsWorkflow.dAppsService
                     function onPairingValidated(validationState) {
                         dappsWorkflow.pairingValidated(validationState)
                     }

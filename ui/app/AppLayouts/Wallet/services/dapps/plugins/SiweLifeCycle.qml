@@ -174,8 +174,6 @@ SQUtils.QObject {
         topic: root.request.topic
         data: ""
         preparedData: ""
-        maxFeesText: "?"
-        maxFeesEthText: "?"
         expirationTimestamp: root.request.params.expiryTimestamp
 
         function onBuildAuthenticationObjectResult(id, authObject, error) {
@@ -232,6 +230,7 @@ SQUtils.QObject {
 
         onAuthFailed: () => {
             try {
+                sdk.rejectSessionAuthenticate(request.requestId, true)
                 const appDomain = SQUtils.StringUtils.extractDomainFromLink(request.dappUrl)
                 const methodStr = SessionRequest.methodToUserString(request.method)
                 if (!methodStr) {

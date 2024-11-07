@@ -2172,56 +2172,56 @@ Item {
         }
     }
 
-    Component {
-        id: dappsConnectorSDK
+    Loader {
+        id: dAppsServiceLoader
 
-        DappsConnectorSDK {
-            active: WalletStores.RootStore.walletSectionInst.walletReady
-            controller: WalletStores.RootStore.dappsConnectorController
-            wcService: Global.walletConnectService
-            walletStore: WalletStores.RootStore
-            store: SharedStores.DAppsStore {
-                controller: WalletStores.RootStore.walletConnectController
-            }
-            loginType: appMain.rootStore.loginType
+        // It seems some of the functionality of the dapp connector depends on the DAppsService
+        active: {
+            return (featureFlagsStore.dappsEnabled || featureFlagsStore.connectorEnabled) && appMain.visible
         }
-    }
 
-    Loader {
-        id: dappsConnectorSDKLoader
-        active: featureFlagsStore.connectorEnabled
-        sourceComponent: dappsConnectorSDK
-    }
-
-    Loader {
-        id: walletConnectServiceLoader
-
-        // It seems some of the functionality of the dapp connector depends on the WalletConnectService
-        active: (featureFlagsStore.dappsEnabled || featureFlagsStore.connectorEnabled) && appMain.visible
-
-        sourceComponent: WalletConnectService {
-            id: walletConnectService
-
-            wcSDK: WalletConnectSDK {
-                enableSdk: WalletStores.RootStore.walletSectionInst.walletReady
-                userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
-                projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
+        sourceComponent: DAppsService {
+            id: dAppsService
+            Component.onCompleted: {
+                Global.dAppsService = dAppsService
             }
-            store: SharedStores.DAppsStore {
-                controller: WalletStores.RootStore.walletConnectController
-            }
-            bcStore: SharedStores.BrowserConnectStore {
-                controller: WalletStores.RootStore.dappsConnectorController
-            }
-            walletRootStore: WalletStores.RootStore
-            blockchainNetworksDown: appMain.networkConnectionStore.blockchainNetworksDown
 
+            // DAppsModule provides the middleware for the dapps
+            dappsModule: DAppsModule {
+                currenciesStore: WalletStores.RootStore.currencyStore
+                groupedAccountAssetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                accountsModel: WalletStores.RootStore.nonWatchAccounts
+                networksModel: SortFilterProxyModel {
+                    sourceModel: WalletStores.RootStore.filteredFlatModel
+                    proxyRoles: [
+                        FastExpressionRole {
+                            name: "isOnline"
+                            expression: !appMain.networkConnectionStore.blockchainNetworksDown.map(Number).includes(model.chainId)
+                            expectedRoles: "chainId"
+                        }
+                    ]
+                }
+                wcSdk: WalletConnectSDK {
+                    enabled: featureFlagsStore.dappsEnabled && WalletStores.RootStore.walletSectionInst.walletReady
+                    userUID: appMain.rootStore.profileSectionStore.profileStore.pubkey
+                    projectId: WalletStores.RootStore.appSettings.walletConnectProjectID
+                }
+                bcSdk: DappsConnectorSDK {
+                    enabled: featureFlagsStore.connectorEnabled && WalletStores.RootStore.walletSectionInst.walletReady
+                    store: SharedStores.BrowserConnectStore {
+                        controller: WalletStores.RootStore.dappsConnectorController
+                    }
+                    networksModel: WalletStores.RootStore.filteredFlatModel
+                    accountsModel: WalletStores.RootStore.nonWatchAccounts
+                }
+                store: SharedStores.DAppsStore {
+                    controller: WalletStores.RootStore.walletConnectController
+                }
+            }
+            selectedAddress: WalletStores.RootStore.selectedAddress
+            accountsModel: WalletStores.RootStore.nonWatchAccounts
             connectorFeatureEnabled: featureFlagsStore.connectorEnabled
             walletConnectFeatureEnabled: featureFlagsStore.dappsEnabled
-
-            Component.onCompleted: {
-                Global.walletConnectService = walletConnectService
-            }
 
             onDisplayToastMessage: (message, type) => {
                 const icon = type === Constants.ephemeralNotificationType.danger ? "warning" : 

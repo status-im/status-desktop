@@ -6,6 +6,7 @@ import Qt.labs.settings 1.0
 import QtTest 1.15
 import QtQml.Models 2.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Controls 0.1
@@ -64,13 +65,13 @@ Item {
 
                     spacing: 8
 
-                    readonly property var wcService: walletConnectService
+                    readonly property var wcService: dappsService
                     loginType: Constants.LoginType.Biometrics
                     selectedAccountAddress: ""
 
                     model: wcService.dappsModel
-                    accountsModel: wcService.validAccounts
-                    networksModel: wcService.flatNetworks
+                    accountsModel: dappModule.accountsModel
+                    networksModel: dappModule.networksModel
                     sessionRequestsModel: wcService.sessionRequestsModel
                     enabled: wcService.isServiceOnline
 
@@ -127,7 +128,7 @@ Item {
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: Layout.preferredWidth
                     radius: Layout.preferredWidth / 2
-                    color: walletConnectService.wcSDK.sdkReady ? "green" : "red"
+                    color: dappModule.wcSdk.sdkReady ? "green" : "red"
                 }
             }
 
@@ -166,7 +167,7 @@ Item {
             ListView {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.min(50, contentHeight)
-                model: walletConnectService.sessionRequestsModel
+                model: dappsService.sessionRequestsModel
                 delegate: RowLayout {
                     StatusBaseText {
                         text: SQUtils.Utils.elideAndFormatWalletAddress(model.topic, 6, 4)
@@ -208,7 +209,7 @@ Item {
 
             NetworkFilter {
                 id: networkFilter
-                flatNetworks: walletConnectService.walletRootStore.filteredFlatModel
+                flatNetworks: dappModule.networksModel
             }
 
             // spacer
@@ -228,7 +229,7 @@ Item {
                     text: "WC feature flag"
                     checked: true
                     onCheckedChanged: {
-                        walletConnectService.walletConnectFeatureEnabled = checked
+                        dappsService.walletConnectFeatureEnabled = checked
                     }
                 }
 
@@ -236,7 +237,7 @@ Item {
                     text: "Connector feature flag"
                     checked: true
                     onCheckedChanged: {
-                        walletConnectService.connectorFeatureEnabled = checked
+                        dappsService.connectorFeatureEnabled = checked
                     }
                 }
             }
@@ -307,7 +308,7 @@ Item {
                         let modals = StoryBook.InspectionUtils.findVisualsByTypeName(dappsWorkflow, "PairWCModal")
                         if (modals.length === 1) {
                             let buttons = StoryBook.InspectionUtils.findVisualsByTypeName(modals[0].footer, "StatusButton")
-                            if (buttons.length === 1 && buttons[0].enabled &&  walletConnectService.wcSDK.sdkReady) {
+                            if (buttons.length === 1 && buttons[0].enabled &&  dappModule.wcSdk.sdkReady) {
                                 d.activeTestCase = d.noTestCase
                                 buttons[0].clicked()
                                 return
@@ -342,14 +343,14 @@ Item {
                 StatusButton {
                     text: qsTr("Reject")
                     onClicked: {
-                        walletConnectService.store.userAuthenticationFailed(authMockDialog.topic, authMockDialog.id)
+                        dappModule.store.userAuthenticationFailed(authMockDialog.topic, authMockDialog.id)
                         authMockDialog.close()
                     }
                 }
                 StatusButton {
                     text: qsTr("Authenticate")
                     onClicked: {
-                        walletConnectService.store.userAuthenticated(authMockDialog.topic, authMockDialog.id, "0x1234567890", "123")
+                        dappModule.store.userAuthenticated(authMockDialog.topic, authMockDialog.id, "0x1234567890", "123")
                         authMockDialog.close()
                     }
                 }
@@ -357,17 +358,35 @@ Item {
         }
     }
 
-    WalletConnectService {
-        id: walletConnectService
-
-        wcSDK: WalletConnectSDK {
-            enableSdk: settings.enableSDK
+    DAppsModule {
+        id: dappModule
+        wcSdk: WalletConnectSDK {
+            enabled: settings.enableSDK && dappsService.walletConnectFeatureEnabled
 
             projectId: projectIdText.projectId
         }
 
-        blockchainNetworksDown: networkFilter.selection
+        bcSdk: DappsConnectorSDK {
+            enabled: false
 
+            projectId: projectIdText.projectId
+            networksModel: dappModule.networksModel
+            accountsModel: dappModule.accountsModel
+            store: SharedStores.BrowserConnectStore {
+                signal connectRequested(string requestId, string dappJson)
+                signal signRequested(string requestId, string requestJson)
+
+                signal connected(string dappJson)
+                signal disconnected(string dappJson)
+
+                // Responses to user actions
+                signal approveConnectResponse(string id, bool error)
+                signal rejectConnectResponse(string id, bool error)
+
+                signal approveTransactionResponse(string topic, string requestId, bool error)
+                signal rejectTransactionResponse(string topic, string requestId, bool error)
+            }
+        }
         store: SharedStores.DAppsStore {
             signal dappsListReceived(string dappsJson)
             signal userAuthenticated(string topic, string id, string password, string pin)
@@ -485,25 +504,29 @@ Item {
             }
         }
 
-        walletRootStore: SQUtils.QObject {
-            property var filteredFlatModel: SortFilterProxyModel {
-                sourceModel: NetworksModel.flatNetworks
-                filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
-            }
-            property var accounts: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
-            readonly property ListModel nonWatchAccounts: accounts
+        currenciesStore: SharedStores.CurrenciesStore {}
+        groupedAccountAssetsModel: GroupedAccountsAssetsModel {}
+        accountsModel: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
 
-            readonly property SharedStores.CurrenciesStore currencyStore: SharedStores.CurrenciesStore {}
-            readonly property WalletStore.WalletAssetsStore walletAssetsStore: WalletStore.WalletAssetsStore {
-                // Silence warnings
-                assetsWithFilteredBalances: ListModel {}
-                // Name mismatch between storybook and production
-                readonly property var groupedAccountAssetsModel: groupedAccountsAssetsModel
-            }
-
-            readonly property string selectedAddress: ""
+        networksModel: SortFilterProxyModel {
+            sourceModel: NetworksModel.flatNetworks
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "isOnline"
+                    expression: !networkFilter.selection.map(Number).includes(model.chainId)
+                    expectedRoles: "chainId"
+                }
+            ]
+            filters: ValueFilter { roleName: "isTest"; value: settings.testNetworks; }
         }
+    }
 
+    DAppsService {
+        id: dappsService
+
+        dappsModule: dappModule
+        accountsModel: customAccountsModel.count > 0 ? customAccountsModel : defaultAccountsModel
+        selectedAddress: ""
         onDisplayToastMessage: (message, isErr) => {
             if(isErr) {
                 console.log(`Storybook.displayToastMessage(${message}, "", "warning", false, Constants.ephemeralNotificationType.danger, "")`)

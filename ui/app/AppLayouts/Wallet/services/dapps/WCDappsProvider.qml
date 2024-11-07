@@ -1,7 +1,7 @@
 import QtQuick 2.15
 
 import StatusQ 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.services.dapps 1.0
 
@@ -19,7 +19,50 @@ DAppsModel {
 
     readonly property int connectorId: Constants.WalletConnect
 
-    property bool enabled: true
+    readonly property bool enabled: sdk.enabled
+
+    signal disconnected(string topic, string dAppUrl)
+    signal connected(string proposalId, string topic, string dAppUrl)
+
+    Connections {
+        target: root.sdk
+        enabled: root.enabled
+
+        function onSessionDelete(topic, err) {
+            const dapp = root.getByTopic(topic)
+            if (!dapp) {
+                console.warn("DApp not found for topic - cannot delete session", topic)
+                return
+            }
+
+            root.store.deactivateWalletConnectSession(topic)
+            d.updateDappsModel()
+            root.disconnected(topic, dapp.url)
+        }
+        function onSdkInit(success, result) {
+            if (!success) {
+                return
+            }
+            d.updateDappsModel()
+        }
+        function onApproveSessionResult(proposalId, session, error) {
+            if (error) {
+                return
+            }
+
+            root.store.addWalletConnectSession(JSON.stringify(session))
+            d.updateDappsModel()
+            root.connected(proposalId, session.topic, session.peer.metadata.url)
+        }
+
+        function onAcceptSessionAuthenticateResult(id, result, error) {
+            if (error) {
+                return
+            }
+            d.updateDappsModel()
+            root.connected(id, result.topic, result.session.peer.metadata.url)
+        }
+    }
 
     Component.onCompleted: {
         if (!enabled) {
@@ -37,33 +80,8 @@ DAppsModel {
         }
     }
 
-    QObject {
+    SQUtils.QObject {
         id: d
-
-        property Connections sdkConnections: Connections {
-            target: root.sdk
-            enabled: root.enabled
-
-            function onSessionDelete(topic, err) {
-                d.updateDappsModel()
-            }
-            function onSdkInit(success, result) {
-                if (success) {
-                    d.updateDappsModel()
-                }
-            }
-            function onApproveSessionResult(topic, success, result) {
-                if (success) {
-                    d.updateDappsModel()
-                }
-            }
-
-            function onAcceptSessionAuthenticateResult(id, result, error) {
-                if (!error) {
-                    d.updateDappsModel()
-                }
-            }
-        }
 
         property var dappsListReceivedFn: null
         property var getActiveSessionsFn: null
@@ -82,7 +100,7 @@ DAppsModel {
                         name: cachedEntry.name,
                         iconUrl: cachedEntry.iconUrl,
                         accountAddresses: [],
-                        topic: "",
+                        topic: cachedEntry.url,
                         connectorId: root.connectorId, 
                         rawSessions: []
                     }
@@ -99,12 +117,16 @@ DAppsModel {
 
             getActiveSessionsFn = () => {
                 sdk.getActiveSessions((allSessionsAllProfiles) => {
+                    if (!allSessionsAllProfiles) {
+                        console.warn("Failed to get active sessions")
+                        return
+                    }
+
                     root.store.dappsListReceived.disconnect(dappsListReceivedFn);
 
                     const dAppsMap = {}
                     const topics = []
-                    const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessionsAllProfiles, supportedAccountsModel)
-
+                    const sessions = DAppsHelpers.filterActiveSessionsForKnownAccounts(allSessionsAllProfiles, root.supportedAccountsModel)
                     for (const sessionID in sessions) {
                         const session = sessions[sessionID]
                         const dapp = session.peer.metadata
@@ -120,7 +142,7 @@ DAppsModel {
                             // more modern syntax (ES-6) is not available yet
                             const combinedAddresses = new Set(existingDApp.accountAddresses.concat(accounts));
                             existingDApp.accountAddresses = Array.from(combinedAddresses);
-                            dapp.rawSessions = [...existingDApp.rawSessions, session]
+                            existingDApp.rawSessions = [...existingDApp.rawSessions, session]
                         } else {
                             dapp.accountAddresses = accounts
                             dapp.topic = sessionID

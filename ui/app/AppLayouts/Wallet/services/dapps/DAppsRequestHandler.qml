@@ -1127,6 +1127,8 @@ SQUtils.QObject {
             }
 
             onAuthFailed: () => {
+                d.unsubscribeForFeeUpdates(request.topic, request.requestId)
+                sdk.rejectSessionRequest(request.topic, request.requestId, true)
                 const appDomain = SQUtils.StringUtils.extractDomainFromLink(request.dappUrl)
                 const methodStr = SessionRequest.methodToUserString(request.method)
                 if (!methodStr) {

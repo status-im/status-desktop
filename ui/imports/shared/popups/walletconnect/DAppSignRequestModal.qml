@@ -115,6 +115,7 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: maxFeesAnimation
                         target: maxFees
+                        fromColor: maxFees.customColor
                     }
                 }
             }
@@ -214,6 +215,7 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: fiatFeesAnimation
                         target: fiatFees
+                        fromColor: fiatFees.customColor
                     }
                 }
                 StatusTextWithLoadingState {
@@ -236,6 +238,7 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: cryptoFeesAnimation
                         target: cryptoFees
+                        fromColor: cryptoFees.customColor
                     }
                 }
             }
