@@ -12,5 +12,3 @@ SignInfoBox 1.0 SignInfoBox.qml
 SwapInputPanel 1.0 SwapInputPanel.qml
 TokenSelectorPanel 1.0 TokenSelectorPanel.qml
 WalletHeader 1.0 WalletHeader.qml
-WalletNftPreview 1.0 WalletNftPreview.qml
-WalletTxProgressBlock 1.0 WalletTxProgressBlock.qml
