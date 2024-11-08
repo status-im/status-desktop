@@ -1211,17 +1211,15 @@ Loader {
             onReviewContactRequest: Global.openReviewContactRequestPopup(profileContextMenu.pubKey, null)
             onSendContactRequest: Global.openContactRequestPopup(profileContextMenu.pubKey, null)
             onEditNickname: Global.openNicknamePopupRequested(profileContextMenu.pubKey, null)
-            onRemoveNickname: () => {
-                root.rootStore.contactsStore.changeContactNickname(profileContextMenu.pubKey, "", profileContextMenu.displayName, true)
-            }
+            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(profileContextMenu.pubKey,
+                                                                                 "", profileContextMenu.displayName, true)
             onUnblockContact: Global.unblockContactRequested(profileContextMenu.pubKey)
             onMarkAsUntrusted: Global.markAsUntrustedRequested(profileContextMenu.pubKey)
             onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(profileContextMenu.pubKey)
             onRemoveContact: Global.removeContactRequested(profileContextMenu.pubKey)
             onBlockContact: Global.blockContactRequested(profileContextMenu.pubKey)
-            onRemoveFromGroup: () => {
-                root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
-            }
+            onRemoveFromGroup: root.store.removeMemberFromGroupChat(profileContextMenu.pubKey)
+
             onOpened: root.setMessageActive(root.messageId, true)
             onClosed: {
                 root.setMessageActive(root.messageId, false)

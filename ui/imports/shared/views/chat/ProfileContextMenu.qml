@@ -33,7 +33,7 @@ StatusMenu {
     signal reviewContactRequest
     signal sendContactRequest
     signal editNickname
-    signal removeNickname(string displayName)
+    signal removeNickname
     signal unblockContact
     signal markAsUntrusted
     signal removeTrustStatus
@@ -129,7 +129,7 @@ StatusMenu {
         icon.name: "delete"
         type: StatusAction.Type.Danger
         enabled: (root.profileType === Constants.profileType.blocked || root.profileType === Constants.profileType.regular) && root.hasLocalNickname
-        onTriggered: root.removeNickname(root.displayName)
+        onTriggered: root.removeNickname()
     }
 
     // Unblock User

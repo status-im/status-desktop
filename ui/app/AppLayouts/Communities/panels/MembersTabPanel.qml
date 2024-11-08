@@ -356,9 +356,8 @@ Item {
             onReviewContactRequest: Global.openReviewContactRequestPopup(memberContextMenuView.pubKey, null)
             onSendContactRequest: Global.openContactRequestPopup(memberContextMenuView.pubKey, null)
             onEditNickname: Global.openNicknamePopupRequested(memberContextMenuView.pubKey, null)
-            onRemoveNickname: (displayName) => {
-                root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.pubKey, "", displayName, true)
-            }
+            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.pubKey,
+                                                                                 "", memberContextMenuView.displayName, true)
             onUnblockContact: Global.unblockContactRequested(memberContextMenuView.pubKey)
             onMarkAsUntrusted: Global.markAsUntrustedRequested(memberContextMenuView.pubKey)
             onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.pubKey)
