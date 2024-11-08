@@ -74,8 +74,8 @@ Control {
                 id: tokenSelectorIcon
                 objectName: "tokenSelectorIcon"
 
-                Layout.preferredWidth: 21
-                Layout.preferredHeight: 21
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
                 image.source: root.icon
             }
 

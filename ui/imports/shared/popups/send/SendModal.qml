@@ -409,6 +409,10 @@ StatusDialog {
                             sourceComponent: CollectiblesSelectionAdaptor {
                                 accountKey: popup.selectedAccount.address
 
+                                networksModel: SortFilterProxyModel {
+                                    sourceModel: popup.store.flatNetworksModel
+                                    filters: ValueFilter { roleName: "isTest"; value: popup.store.areTestNetworksEnabled }
+                                }
                                 collectiblesModel: SortFilterProxyModel {
                                     sourceModel: collectiblesStore ? collectiblesStore.jointCollectiblesBySymbolModel : null
                                     filters: ValueFilter {

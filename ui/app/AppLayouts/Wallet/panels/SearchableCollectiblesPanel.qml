@@ -42,6 +42,10 @@ Control {
 
     readonly property alias currentItem: collectiblesStackView.currentItem
 
+    function clearSearch() {
+        collectiblesSearchBox.text = ""
+    }
+
     SortFilterProxyModel {
         id: sfpm
 
@@ -59,6 +63,14 @@ Control {
         initialItem: ColumnLayout {
             spacing: 0
 
+            StatusBaseText {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.bottomMargin: 4
+                text: qsTr("Your collectibles will appear here")
+                color: Theme.palette.baseColor1
+                visible: !collectiblesListView.count && !collectiblesSearchBox.text
+            }
+
             TokenSearchBox {
                 id: collectiblesSearchBox
 
@@ -66,6 +78,10 @@ Control {
 
                 Layout.fillWidth: true
                 placeholderText: qsTr("Search collectibles")
+
+                visible: collectiblesListView.count || !!collectiblesSearchBox.text
+
+                Keys.forwardTo: [collectiblesListView]
             }
 
             StatusDialogDivider {
@@ -76,9 +92,15 @@ Control {
             StatusListView {
                 id: collectiblesListView
 
+                readonly property bool validSearchResultExists: !!collectiblesSearchBox.text && sfpm.count > 0
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredHeight: contentHeight
+                Layout.leftMargin: 4
+                Layout.rightMargin: 4
+
+                spacing: 4
 
                 clip: true
                 model: sfpm
@@ -100,10 +122,12 @@ Control {
                     image: model.icon
                     goDeeperIconVisible: subitemsCount > 1
                                          || isCommunity
+                    networkIcon: model.iconUrl
                     highlighted: subitemsCount === 1 && !isCommunity
                                  ? ModelUtils.get(model.subitems, 0, "key")
                                    === root.highlightedKey
                                  : false
+                    isAutoHovered: collectiblesListView.validSearchResultExists && model.index === 0 && !collectiblesListViewHoverHandler.hovered
 
                     onClicked: {
                         if (subitemsCount === 1 && !isCommunity) {
@@ -132,6 +156,20 @@ Control {
                     text: section === "community"
                           ? qsTr("Community minted")
                           : qsTr("Other")
+                }
+
+                Keys.onReturnPressed: {
+                    if(validSearchResultExists)
+                        collectiblesListView.itemAtIndex(0).clicked()
+                }
+
+                Keys.onEnterPressed: {
+                    if(validSearchResultExists)
+                        collectiblesListView.itemAtIndex(0).clicked()
+                }
+
+                HoverHandler {
+                    id: collectiblesListViewHoverHandler
                 }
             }
         }
@@ -180,6 +218,8 @@ Control {
 
                 Layout.fillWidth: true
                 placeholderText: qsTr("Search collectibles")
+
+                Keys.forwardTo: [sublist]
             }
 
             StatusDialogDivider {
@@ -190,9 +230,13 @@ Control {
             StatusListView {
                 id: sublist
 
+                readonly property bool validSearchResultExists: !!collectiblesSublistSearchBox.text && sublistSfpm.count > 0
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.preferredHeight: contentHeight
+                Layout.leftMargin: 4
+                Layout.rightMargin: 4
 
                 model: sublistSfpm
 
@@ -205,7 +249,9 @@ Control {
                     balance: model.balance > 1 ? model.balance : ""
                     image: model.icon
                     goDeeperIconVisible: false
+                    networkIcon: model.iconUrl
                     highlighted: model.key === root.highlightedKey
+                    isAutoHovered: sublist.validSearchResultExists && model.index === 0 && !sublistHoverHandler.hovered
 
                     onClicked: {
                         if (isCommunity)
@@ -213,6 +259,20 @@ Control {
                         else
                             root.collectibleSelected(model.key)
                     }
+                }
+
+                Keys.onReturnPressed: {
+                    if(validSearchResultExists)
+                        sublist.itemAtIndex(0).clicked()
+                }
+
+                Keys.onEnterPressed: {
+                    if(validSearchResultExists)
+                        sublist.itemAtIndex(0).clicked()
+                }
+
+                HoverHandler {
+                    id: sublistHoverHandler
                 }
             }
 

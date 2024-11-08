@@ -46,6 +46,7 @@ SplitView {
                 symbol: "ETH"
                 currencyBalanceAsString: "14,456.42 USD"
                 iconSource: Constants.tokenIcon(symbol)
+                isAutoHovered: ctrlIsAutoHovered.checked
 
                 balancesModel: ListModel {
                     readonly property var data: [
@@ -83,6 +84,11 @@ SplitView {
                 Switch {
                     id: ctrlHighlighted
                     text: "Highlighted"
+                    checked: false
+                }
+                Switch {
+                    id: ctrlIsAutoHovered
+                    text: "isAutoHovered"
                     checked: false
                 }
 

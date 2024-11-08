@@ -32,6 +32,16 @@ QObject {
     /** Account key used for filtering **/
     property string accountKey
 
+
+    /**
+      Expected model structure:
+
+        chainId              [int]    - network chain id
+        chainName            [string] - name of network
+        iconUrl              [string] - network icon url
+    **/
+    property var networksModel
+
     /**
       Expected model structure:
 
@@ -64,13 +74,20 @@ QObject {
     **/
     readonly property alias model: communityGroupsGrouppedByCollection
 
+    LeftJoinModel {
+        id: jointCollectiblesByNwChainId
+        leftModel: collectiblesModel ?? null
+        rightModel: networksModel
+        joinRole: "chainId"
+    }
+
     SortFilterProxyModel {
         id: initiallyFilteredAndSorted
 
         objectName: "collectiblesSelectionAdaptor_initiallyFilteredAndSorted"
 
         sourceModel: ObjectProxyModel {
-            sourceModel: collectiblesModel ?? null
+            sourceModel: jointCollectiblesByNwChainId
 
             delegate: QObject {
                 readonly property int balance: balanceAggregator.value /* 3 */

@@ -34,6 +34,12 @@ Control {
         tokenSelectorPanel.highlightedKey = key ?? ""
     }
 
+    QObject {
+        id: d
+
+        readonly property int maxPopupHeight: 330
+    }
+
     contentItem: TokenSelectorButton {
         id: tokenSelectorButton
 
@@ -52,54 +58,62 @@ Control {
         horizontalPadding: 0
         bottomPadding: 0
 
-        contentItem: TokenSelectorPanel {
-            id: tokenSelectorPanel
+        onClosed: tokenSelectorPanel.clear()
 
-            objectName: "tokenSelectorPanel"
+        contentItem: Item {
+            implicitHeight: Math.min(tokenSelectorPanel.implicitHeight, d.maxPopupHeight)
 
-            function findSubitem(key) {
-                const count = collectiblesModel.rowCount()
+            TokenSelectorPanel {
+                id: tokenSelectorPanel
 
-                for (let i = 0; i < count; i++) {
-                    const entry = ModelUtils.get(collectiblesModel, i)
-                    const subitem = ModelUtils.getByKey(
-                                      entry.subitems, "key", key)
-                    if (subitem)
-                        return subitem
+                objectName: "tokenSelectorPanel"
+
+                anchors.fill: parent
+
+                function findSubitem(key) {
+                    const count = collectiblesModel.rowCount()
+
+                    for (let i = 0; i < count; i++) {
+                        const entry = ModelUtils.get(collectiblesModel, i)
+                        const subitem = ModelUtils.getByKey(
+                                          entry.subitems, "key", key)
+                        if (subitem)
+                            return subitem
+                    }
                 }
-            }
 
-            function setCurrentAndClose(name, icon) {
-                tokenSelectorButton.name = name
-                tokenSelectorButton.icon = icon
-                tokenSelectorButton.selected = true
-                dropdown.close()
-            }
+                function setCurrentAndClose(name, icon) {
+                    tokenSelectorButton.name = name
+                    tokenSelectorButton.icon = icon
+                    tokenSelectorButton.selected = true
+                    dropdown.close()
+                }
 
-            onAssetSelected: {
-                const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)
-                highlightedKey = key
+                onAssetSelected: {
+                    const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)
+                    highlightedKey = key
 
-                setCurrentAndClose(entry.symbol, entry.iconSource)
-                root.assetSelected(key)
-            }
+                    setCurrentAndClose(entry.symbol, entry.iconSource)
+                    root.assetSelected(key)
+                }
 
-            onCollectibleSelected: {
-                highlightedKey = key
+                onCollectibleSelected: {
+                    highlightedKey = key
 
-                const subitem = findSubitem(key)
-                setCurrentAndClose(subitem.name, subitem.icon)
+                    const subitem = findSubitem(key)
+                    setCurrentAndClose(subitem.name, subitem.icon)
 
-                root.collectibleSelected(key)
-            }
+                    root.collectibleSelected(key)
+                }
 
-            onCollectionSelected: {
-                highlightedKey = key
+                onCollectionSelected: {
+                    highlightedKey = key
 
-                const subitem = findSubitem(key)
-                setCurrentAndClose(subitem.name, subitem.icon)
+                    const subitem = findSubitem(key)
+                    setCurrentAndClose(subitem.name, subitem.icon)
 
-                root.collectionSelected(key)
+                    root.collectionSelected(key)
+                }
             }
         }
     }

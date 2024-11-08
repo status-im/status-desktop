@@ -39,6 +39,11 @@ Control {
         searchBox.text = ""
     }
 
+    QtObject {
+        id: d
+        readonly property bool validSearchResultExists: !!searchBox.text && sfpm.count > 0
+    }
+
     SortFilterProxyModel {
         id: sfpm
 
@@ -64,6 +69,8 @@ Control {
 
             Layout.fillWidth: true
             placeholderText: qsTr("Search assets")
+
+            Keys.forwardTo: [listView]
         }
 
         StatusDialogDivider {
@@ -81,6 +88,10 @@ Control {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredHeight: contentHeight
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+
+            spacing: 4
 
             model: sfpm
             section.property: "sectionName"
@@ -99,6 +110,7 @@ Control {
                 highlighted: model.tokensKey === root.highlightedKey
                 enabled: model.tokensKey !== root.nonInteractiveKey
                 balancesListInteractive: !ListView.view.moving
+                isAutoHovered: d.validSearchResultExists && index === 0 && !listViewHoverHandler.hovered
 
                 name: model.name
                 symbol: model.symbol
@@ -107,6 +119,20 @@ Control {
                 balancesModel: model.balances
 
                 onClicked: root.selected(model.tokensKey)
+            }
+
+            Keys.onReturnPressed: {
+                if(d.validSearchResultExists)
+                    listView.itemAtIndex(0).clicked()
+            }
+
+            Keys.onEnterPressed: {
+                if(d.validSearchResultExists)
+                    listView.itemAtIndex(0).clicked()
+            }
+
+            HoverHandler {
+                id: listViewHoverHandler
             }
         }
     }

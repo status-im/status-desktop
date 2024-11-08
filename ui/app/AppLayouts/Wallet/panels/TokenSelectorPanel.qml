@@ -40,6 +40,11 @@ Control {
 
     property string highlightedKey: ""
 
+    function clear() {
+        searchableAssetsPanel.clearSearch()
+        searchableCollectiblesPanel.clearSearch()
+    }
+
     contentItem: ColumnLayout {
         StatusTabBar {
             id: tabBar

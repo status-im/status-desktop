@@ -15,6 +15,8 @@ ItemDelegate {
     required property string name
     required property string balance
     required property url image
+    required property string networkIcon
+    required property bool isAutoHovered
 
     property bool goDeeperIconVisible: true
     property bool interactive: true
@@ -36,9 +38,11 @@ ItemDelegate {
 
     background: Rectangle {
         radius: Theme.radius
-        color: (root.interactive && root.hovered) || root.highlighted
-               ? Theme.palette.statusListItem.highlightColor
-               : "transparent"
+        color: (root.interactive && (root.hovered || root.isAutoHovered ))
+               ? Theme.palette.baseColor2
+               : root.highlighted
+                 ? Theme.palette.statusListItem.highlightColor
+                 : "transparent"
 
         HoverHandler {
             cursorShape: root.interactive ? Qt.PointingHandCursor : undefined
@@ -59,7 +63,7 @@ ItemDelegate {
             Layout.fillWidth: true
             spacing: 0
 
-            // name, symbol, total balance
+            // name, symbol, total balance, network icon
             RowLayout {
                 Layout.fillWidth: true
                 spacing: root.spacing
@@ -84,6 +88,15 @@ ItemDelegate {
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     elide: Text.ElideRight
+                }
+
+                StatusRoundedImage {
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+
+                    image.source: Theme.svg("tiny/%1".arg(root.networkIcon))
+                    visible:(root.hovered || root.isAutoHovered) && !root.goDeeperIconVisible
                 }
 
                 StatusIcon {

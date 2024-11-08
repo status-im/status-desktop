@@ -34,11 +34,13 @@ SplitView {
             name: nameTextField.text
             balance: balanceSpinBox.value ? balanceSpinBox.value : ""
             image: Constants.tokenIcon("ETH")
+            networkIcon: "network/Network=Ethereum"
 
             goDeeperIconVisible: goDeeperSwitch.checked
 
             interactive: interactiveSwitch.checked
             highlighted: highlightedSwitch.checked
+            isAutoHovered: ctrlIsAutoHovered.checked
         }
     }
 
@@ -92,6 +94,12 @@ SplitView {
                 Switch {
                     id: goDeeperSwitch
                     text: "Go deeper icon visible"
+                    checked: false
+                }
+
+                Switch {
+                    id: ctrlIsAutoHovered
+                    text: "isAutoHovered"
                     checked: false
                 }
 

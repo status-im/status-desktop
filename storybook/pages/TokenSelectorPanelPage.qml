@@ -92,6 +92,8 @@ Pane {
                     name: "My token",
                     balance: 1,
                     icon: Constants.tokenIcon("CFI"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 }
             ]
         },
@@ -105,18 +107,24 @@ Pane {
                     name: "Furbeard",
                     balance: 1,
                     icon: Constants.tokenIcon("FUEL"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 },
                 {
                     key: "collection_1_key_2",
                     name: "Magicat",
                     balance: 1,
                     icon: Constants.tokenIcon("ENJ"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 },
                 {
                     key: "collection_1_key_3",
                     name: "Happy Meow",
                     balance: 1,
                     icon: Constants.tokenIcon("FUN"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 }
             ]
         },
@@ -129,13 +137,17 @@ Pane {
                     key: "collection_2_key_1",
                     name: "Unicorn 1",
                     balance: 12,
-                    icon: Constants.tokenIcon("CVC")
+                    icon: Constants.tokenIcon("CVC"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 },
                 {
                     key: "collection_2_key_2",
                     name: "Unicorn 2",
                     balance: 1,
-                    icon: Constants.tokenIcon("CVC")
+                    icon: Constants.tokenIcon("CVC"),
+                    chainId: 11155111,
+                    iconUrl: "network/Network=Ethereum"
                 }
             ]
         },
@@ -143,6 +155,8 @@ Pane {
             groupName: "Unicorn",
             icon: Constants.tokenIcon("ELF"),
             type: "other",
+            chainId: 11155111,
+            iconUrl: "network/Network=Ethereum",
             subitems: [
                 {
                     key: "collection_3_key_1",
