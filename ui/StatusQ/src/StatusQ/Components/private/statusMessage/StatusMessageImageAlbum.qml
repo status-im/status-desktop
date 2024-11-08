@@ -24,6 +24,7 @@ RowLayout {
 
         delegate: Loader {
             active: true
+            objectName: "album_image_loader_" + index
             readonly property bool imageLoaded: index < root.album.length
             readonly property string imagePath: imageLoaded ? root.album[index] : ""
             sourceComponent: imageLoaded ? imageComponent : imagePlaceholderComponent

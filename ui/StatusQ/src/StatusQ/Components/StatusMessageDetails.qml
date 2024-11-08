@@ -15,4 +15,5 @@ QtObject {
     property bool messageDeleted: false
     property var album: []
     property int albumCount: 0
+    property var requestPaymentModel: null
 }

@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
+import shared.controls.chat 1.0
+
 import "./private/statusMessage"
 
 Control {
@@ -26,7 +28,8 @@ Control {
         SystemMessageMutualEventSent = 15,
         SystemMessageMutualEventAccepted = 16,
         SystemMessageMutualEventRemoved = 17,
-        BridgeMessage = 18
+        BridgeMessage = 18,
+        Attachment = 19
     }
 
     enum OutgoingStatus {
@@ -89,6 +92,7 @@ Control {
     signal addReactionClicked(var sender, var mouse)
     signal toggleReactionClicked(int emojiId)
     signal imageClicked(var image, var mouse, var imageSource)
+    signal requestPaymentClicked(var symbol, var amount, var address, var chainId)
     signal stickerClicked()
     signal resendClicked()
 
@@ -299,7 +303,7 @@ Control {
                         }
                     }
                     Loader {
-                        active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Image  && !editMode
                         visible: active
                         Layout.fillWidth: true
 
@@ -312,6 +316,7 @@ Control {
                                 anchors.right: parent.right
                                 visible: active
                                 sourceComponent: StatusTextMessage {
+                                    objectName: "StatusMessage_textMessage"
                                     messageDetails: root.messageDetails
                                     isEdited: root.isEdited
                                     allowShowMore: !root.isInPinnedPopup
@@ -326,12 +331,75 @@ Control {
                             Loader {
                                 active: true
                                 sourceComponent: StatusMessageImageAlbum {
+                                    objectName: "StatusMessage_imageAlbum"
                                     width: messageLayout.width
                                     album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
                                     albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 1
                                     imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
                                     shapeType: StatusImageMessage.ShapeType.LEFT_ROUNDED
                                     onImageClicked: root.imageClicked(image, mouse, imageSource)
+                                }
+                            }
+                        }
+                    }
+
+                    Loader {
+                        active: root.messageDetails.contentType === StatusMessage.ContentType.Attachment  && !editMode
+                        visible: active
+                        Layout.fillWidth: true
+
+                        sourceComponent: Column {
+                            id: attachmentsColumn
+                            spacing: 8
+                            Loader {
+                                active: root.messageDetails.messageText !== ""
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                visible: active
+                                sourceComponent: StatusTextMessage {
+                                    objectName: "StatusMessage_textMessage"
+                                    messageDetails: root.messageDetails
+                                    isEdited: root.isEdited
+                                    allowShowMore: !root.isInPinnedPopup
+                                    textField.anchors.rightMargin: root.isInPinnedPopup ? Theme.xlPadding : 0 // margin for the "Unpin" floating button
+                                    highlightedLink: root.highlightedLink
+                                    onLinkActivated: {
+                                        root.linkActivated(link);
+                                    }
+                                }
+                            }
+
+                            Flow {
+                                width: messageLayout.width
+                                height: childrenRect.height + Theme.smallPadding
+                                Loader {
+                                    active: true
+                                    sourceComponent: StatusMessageImageAlbum {
+                                        objectName: "StatusMessage_imageAlbum"
+                                        album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
+                                        albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 0
+                                        imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
+                                        shapeType: StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                        onImageClicked: root.imageClicked(image, mouse, imageSource)
+                                    }
+                                }
+                                Loader {
+                                    active: true
+                                    sourceComponent: RowLayout {
+                                        Repeater {
+                                            model: root.messageDetails.requestPaymentModel
+                                            delegate: RequestPaymentCardDelegate {
+                                                objectName: "StatusMessage_requestPaymentDelegate_" + model.index
+                                                required property var model
+                                                amount: model.amount
+                                                symbol: model.symbol
+                                                address: model.address
+                                                senderName: root.messageDetails.sender.displayName
+                                                senderImageAssetSettings: root.messageDetails.sender.profileImage.assetSettings
+                                                onClicked: root.requestPaymentClicked(model.symbol, model.amount, model.address, model.chainId)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
