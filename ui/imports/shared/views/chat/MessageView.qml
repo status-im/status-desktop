@@ -364,6 +364,8 @@ Loader {
                 return StatusMessage.ContentType.SystemMessageMutualEventAccepted;
             case Constants.messageContentType.systemMessageMutualEventRemoved:
                 return StatusMessage.ContentType.SystemMessageMutualEventRemoved;
+            case Constants.messageContentType.attachmentType:
+                return StatusMessage.ContentType.Attachment;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
