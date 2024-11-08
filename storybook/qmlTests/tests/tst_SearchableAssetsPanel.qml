@@ -3,6 +3,8 @@ import QtTest 1.15
 
 import AppLayouts.Wallet.panels 1.0
 
+import StatusQ.Core.Theme 0.1
+
 import Storybook 1.0
 
 import utils 1.0
@@ -157,6 +159,8 @@ Item {
                 const delegate1 = listView.itemAtIndex(0)
                 verify(delegate1)
                 compare(delegate1.name, "Status Test Token")
+                verify(delegate1.isAutoHovered)
+                compare(delegate1.background.color, Theme.palette.baseColor2)
             }
             {
                 searchBox.text = "zrx"
@@ -166,6 +170,8 @@ Item {
                 const delegate1 = listView.itemAtIndex(0)
                 verify(delegate1)
                 compare(delegate1.name, "0x")
+                verify(delegate1.isAutoHovered)
+                compare(delegate1.background.color, Theme.palette.baseColor2)
             }
             {
                 control.clearSearch()

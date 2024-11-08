@@ -76,6 +76,17 @@ Pane {
             balances: [],
 
             sectionName: "Popular assets"
+        },
+        {
+            tokensKey: "abc_key",
+            communityId: "",
+            name: "0x",
+            currencyBalanceAsString: "41,22 USD",
+            symbol: "ABC",
+            iconSource: Constants.tokenIcon("ABC"),
+            balances: [],
+
+            sectionName: "Popular assets"
         }
     ]
 

@@ -5,6 +5,8 @@ import AppLayouts.Wallet.views 1.0
 
 import Storybook 1.0
 
+import StatusQ.Core.Theme 0.1
+
 Item {
     id: root
 
@@ -21,6 +23,7 @@ Item {
             symbol: "ETH"
             currencyBalanceAsString: "42.02 USD"
             iconSource: ""
+            isAutoHovered: false
             width: 250
 
             readonly property SignalSpy clickSpy: SignalSpy {
@@ -128,6 +131,28 @@ Item {
 
             verify(subBalanceText1.visible)
             verify(subBalanceText2.visible)
+        }
+
+
+        function test_hovered_highlighted_states() {
+            const control = createTemporaryObject(delegateCmp, root,
+                                                  { balancesModel })
+
+            control.highlighted = true
+            compare(control.background.color, Theme.palette.statusListItem.highlightColor)
+
+            mouseMove(control, control.width/2, control.height/2)
+            compare(control.hovered, true)
+            compare(control.background.color, Theme.palette.baseColor2)
+
+            control.highlighted = false
+            mouseMove(control, control.width/2, control.height/2)
+            compare(control.hovered, true)
+            compare(control.background.color, Theme.palette.baseColor2)
+
+            // test isAutoHovered behaviour
+            control.isAutoHovered = true
+            compare(control.background.color, Theme.palette.baseColor2)
         }
     }
 }

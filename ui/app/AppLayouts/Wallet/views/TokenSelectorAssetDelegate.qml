@@ -17,6 +17,7 @@ ItemDelegate {
     required property string symbol
     required property string currencyBalanceAsString
     required property string iconSource
+    required property bool isAutoHovered
 
     // expected structure: [iconUrl: string, balanceAsString: string]
     property alias balancesModel: balancesListView.model
@@ -36,9 +37,11 @@ ItemDelegate {
 
     background: Rectangle {
         radius: Theme.radius
-        color: root.hovered || root.highlighted
-               ? Theme.palette.statusListItem.highlightColor
-               : "transparent"
+        color: root.hovered || root.isAutoHovered
+               ? Theme.palette.baseColor2
+               : root.highlighted
+                 ? Theme.palette.statusListItem.highlightColor
+                 : "transparent"
 
         HoverHandler {
             cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
