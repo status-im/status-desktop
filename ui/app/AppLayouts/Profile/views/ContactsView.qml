@@ -75,18 +75,18 @@ SettingsContentBase {
                 property string pubKey
 
                 onOpenProfileClicked: Global.openProfilePopup(contactContextMenu.pubKey, null, null)
-                onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.pubKey)
                 onReviewContactRequest: Global.openReviewContactRequestPopup(contactContextMenu.pubKey, null)
                 onSendContactRequest: Global.openContactRequestPopup(contactContextMenu.pubKey, null)
                 onEditNickname: Global.openNicknamePopupRequested(contactContextMenu.pubKey, null)
-                onRemoveNickname: (displayName) => {
-                    root.contactsStore.changeContactNickname(contactContextMenu.pubKey, "", displayName, true)
-                }
                 onUnblockContact: Global.unblockContactRequested(contactContextMenu.pubKey)
                 onMarkAsUntrusted: Global.markAsUntrustedRequested(contactContextMenu.pubKey)
-                onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.pubKey)
                 onRemoveContact: Global.removeContactRequested(contactContextMenu.pubKey)
                 onBlockContact: Global.blockContactRequested(contactContextMenu.pubKey)
+
+                onCreateOneToOneChat: root.contactsStore.joinPrivateChat(contactContextMenu.pubKey)
+                onRemoveTrustStatus: root.contactsStore.removeTrustStatus(contactContextMenu.pubKey)
+                onRemoveNickname: root.contactsStore.changeContactNickname(contactContextMenu.pubKey, "",
+                                                                           contactContextMenu.displayName, true)
                 onClosed: destroy()
             }
         }
