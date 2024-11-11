@@ -9,7 +9,8 @@ SQUtils.QObject {
     
     // Signals driven by the dApp
     signal connectRequested(string requestId, string dappJson)
-    signal signRequested(string requestId, string requestJson)
+    signal sendTransaction(string requestId, string requestJson)
+    signal personalSign(string requestId, string dappJson)
 
     signal connected(string dappJson)
     signal disconnected(string dappJson)
@@ -20,6 +21,8 @@ SQUtils.QObject {
 
     signal approveTransactionResponse(string topic, string requestId, bool error)
     signal rejectTransactionResponse(string topic, string requestId, bool error)
+    signal approvePersonalSignResponse(string topic, string requestId, bool error)
+    signal rejectPersonalSignResponse(string topic, string requestId, bool error)
 
     function approveConnection(id, account, chainId) {
         return controller.approveConnection(id, account, chainId)
@@ -45,6 +48,14 @@ SQUtils.QObject {
         return controller.getDApps()
     }
 
+    function approvePersonalSign(topic, requestId, signature) {
+        return controller.approvePersonalSigning(topic, requestId, signature)
+    }
+
+    function rejectPersonalSign(topic, requestId) {
+        return controller.rejectPersonalSigning(topic, requestId)
+    }
+
     Connections {
         target: controller
 
@@ -52,8 +63,12 @@ SQUtils.QObject {
             root.connectRequested(requestId, dappJson)
         }
 
-        function onSignRequested(requestId, requestJson) {
-            root.signRequested(requestId, requestJson)
+        function onSendTransaction(requestId, requestJson) {
+            root.sendTransaction(requestId, requestJson)
+        }
+
+        function onPersonalSign(requestId, dappJson) {
+            root.personalSign(requestId, dappJson)
         }
 
         function onConnected(dappJson) {
@@ -78,6 +93,14 @@ SQUtils.QObject {
 
         function onRejectTransactionResponse(topic, requestId, error) {
             root.rejectTransactionResponse(topic, requestId, error)
+        }
+
+        function onApprovePersonalSignResponse(topic, requestId, error) {
+            root.approvePersonalSignResponse(topic, requestId, error)
+        }
+
+        function onRejectPersonalSignResponse(topic, requestId, error) {
+            root.rejectPersonalSignResponse(topic, requestId, error)
         }
     }
 }
