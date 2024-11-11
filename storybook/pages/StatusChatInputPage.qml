@@ -101,6 +101,7 @@ SplitView {
                 }
 
                 requestPaymentStore: d.requestPaymentStore
+                requestPaymentEnabled: true
 
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])

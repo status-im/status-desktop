@@ -97,6 +97,7 @@ Item {
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
+        requestPaymentEnabled: featureFlags ? featureFlags.requestPaymentEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
@@ -1538,6 +1539,7 @@ Item {
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
+                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)

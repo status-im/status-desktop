@@ -5,4 +5,5 @@ QtObject {
     property bool dappsEnabled
     property bool swapEnabled
     property bool sendViaPersonalChatEnabled
+    property bool requestPaymentEnabled
 }
