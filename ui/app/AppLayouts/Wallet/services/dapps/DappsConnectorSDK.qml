@@ -38,14 +38,37 @@ WalletConnectSDKBase {
         target: root.store
         enabled: root.enabled
 
-        function onSignRequested(requestId, dappInfoString) {
+        function onSendTransaction(requestId, dappInfoString) {
             try {
                 var dappInfo = JSON.parse(dappInfoString)
                 var txArgsParams = JSON.parse(dappInfo.txArgs)
-                let event = d.buildSessionRequest(requestId, dappInfo.url, dappInfo.chainId, SessionRequest.methods.sendTransaction.name, txArgsParams)
+                let event = d.buildTransactionRequest(requestId, dappInfo.url, dappInfo.chainId, txArgsParams)
+                d.sessionRequests.set(requestId, event)
 
                 root.sessionRequestEvent(event)
             } catch (e) {
+                d.sessionRequests.delete(requestId)
+                root.store.rejectTransaction("", requestId, "Failed to parse dappInfo for session request")
+                console.error("Failed to parse dappInfo for session request", e)
+            }
+        }
+
+        function onPersonalSign(requestId, dappInfoString) {
+            try {
+                const dappInfo = JSON.parse(dappInfoString)
+                const mainNet = SQUtils.ModelUtils.getByKey(root.networksModel, "layer", 1)
+                if (!mainNet) {
+                    root.store.rejectPersonalSign(requestId)
+                    console.error("Mainnet not found - personal sign failed")
+                    return
+                }
+
+                const event = d.buildSignRequest(requestId, dappInfo.url, mainNet.chainId, dappInfo.challenge, dappInfo.address)
+                d.sessionRequests.set(requestId, event)
+                root.sessionRequestEvent(event)
+            } catch (e) {
+                d.sessionRequests.delete(requestId)
+                root.store.rejectPersonalSign("", requestId)
                 console.error("Failed to parse dappInfo for session request", e)
             }
         }
@@ -87,6 +110,24 @@ WalletConnectSDKBase {
                 console.error("Failed to reject transaction response", e)
             }
         }
+
+        function onApprovePersonalSignResponse(topic, requestId, error) {
+            try {
+                const errorStr = error ? "Faled to approve personal sign" : ""
+                root.sessionRequestUserAnswerResult(topic, requestId, true, errorStr)
+            } catch (e) {
+                console.error("Failed to approve personal sign response", e)
+            }
+        }
+
+        function onRejectPersonalSignResponse(topic, requestId, error) {
+            try {
+                const errorStr = error ? "Faled to reject personal sign" : ""
+                root.sessionRequestUserAnswerResult(topic, requestId, false, errorStr)
+            } catch (e) {
+                console.error("Failed to reject personal sign response", e)
+            }
+        }
     }
 
     approveSession: function(requestId, account, selectedChains) {
@@ -116,11 +157,37 @@ WalletConnectSDKBase {
     }
 
     acceptSessionRequest: function(topic, requestId, signature) {
-        root.store.approveTransaction(topic, requestId, signature)
+        if (!d.sessionRequests.has(requestId)) {
+            root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
+            console.error("Session request not found")
+            return
+        }
+        const event = d.sessionRequests.get(requestId)
+        if (event.params.request.method === SessionRequest.methods.sendTransaction.name) {
+            root.store.approveTransaction(topic, requestId, signature)
+        } else if (event.params.request.method === SessionRequest.methods.personalSign.name) {
+            root.store.approvePersonalSign(topic, requestId, signature)
+        } else {
+            root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
+            console.error("Unknown request method", event.params.request.method)
+        }
     }
 
     rejectSessionRequest: function(topic, requestId, error) {
-        root.store.rejectTransaction(topic, requestId, error)
+        if (!d.sessionRequests.has(requestId)) {
+                root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
+            console.error("Session request not found")
+            return
+        }
+        const event = d.sessionRequests.get(requestId)
+        if (event.params.request.method === SessionRequest.methods.sendTransaction.name) {
+            root.store.rejectTransaction(topic, requestId, error)
+        } else if (event.params.request.method === SessionRequest.methods.personalSign.name) {
+            root.store.rejectPersonalSign(topic, requestId)
+        } else {
+            root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
+            console.error("Unknown request method", event.params.request.method)
+        }
     }
 
     disconnectSession: function(topic) {
@@ -182,7 +249,34 @@ WalletConnectSDKBase {
             return sessionTemplate(dappUrl, dappName, dappIcon, proposalId, eipAccount, eipChains)
         }
 
-        function buildSessionRequest(requestId, topic, chainId, method, txArgs) {
+        function buildTransactionRequest(requestId, topic, chainId, txArgs) {
+            var paramsObj = {}
+            if (txArgs.gasPrice) {
+                paramsObj.gasPrice = txArgs.gasPrice
+            }
+            if (txArgs.gas) {
+                paramsObj.gasLimit = txArgs.gas
+            }
+            if (txArgs.maxFeePerGas) {
+                paramsObj.maxFeePerGas = txArgs.maxFeePerGas
+            }
+            if (txArgs.maxPriorityFeePerGas) {
+                paramsObj.maxPriorityFeePerGas = txArgs.maxPriorityFeePerGas
+            }
+            if (txArgs.nonce) {
+                paramsObj.nonce = txArgs.nonce
+            }
+            if (!!txArgs.data && txArgs.data !== "0x") {
+                paramsObj.data = txArgs.data
+            }
+            if (txArgs.to) {
+                paramsObj.to = txArgs.to
+            }
+            if (txArgs.from) {
+                paramsObj.from = txArgs.from
+            }
+            paramsObj.value = txArgs.value
+
             return {
                 id: requestId,
                 topic,
@@ -191,17 +285,24 @@ WalletConnectSDKBase {
                     request: {
                         method: SessionRequest.methods.sendTransaction.name,
                         params: [
-                            {
-                                from: txArgs.from,
-                                to: txArgs.to,
-                                value: txArgs.value,
-                                gasLimit: txArgs.gas,
-                                gasPrice: txArgs.gasPrice,
-                                maxFeePerGas: txArgs.maxFeePerGas,
-                                maxPriorityFeePerGas: txArgs.maxPriorityFeePerGas,
-                                nonce: txArgs.nonce,
-                                data: txArgs.data
-                            }
+                            paramsObj
+                        ]
+                    }
+                }
+            }
+        }
+        
+        function buildSignRequest(requestId, topic, chainId, challenge, address) {
+            return {
+                id: requestId,
+                topic,
+                params: {
+                    chainId: `eip155:${chainId}`,
+                    request: {
+                        method: SessionRequest.methods.personalSign.name,
+                        params: [
+                            challenge,
+                            address
                         ]
                     }
                 }

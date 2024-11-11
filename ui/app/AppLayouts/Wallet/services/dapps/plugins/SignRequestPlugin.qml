@@ -169,7 +169,8 @@ SQUtils.QObject {
 
             if (error) {
                 root.signCompleted(topic, id, accept, error)
-                console.error(`Error accepting session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
+                const action = accept ? "accepting" : "rejecting"
+                console.error(`Error ${action} session request for topic: ${topic}, id: ${id}, accept: ${accept}, error: ${error}`)
                 return
             }
 
