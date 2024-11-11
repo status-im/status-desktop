@@ -153,7 +153,7 @@ SplitView {
             readonly property SharedStores.RequestPaymentStore requestPaymentStore: SharedStores.RequestPaymentStore {
                 currencyStore: SharedStores.CurrenciesStore {}
                 flatNetworksModel: NetworksModel.flatNetworks
-                processedAssetsModel: d.walletAssetsStore.renamedTokensBySymbolModel
+                processedAssetsModel: d.walletAssetsStore.jointModel
                 plainAssetsModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
                 accountsModel: WalletAccountsModel {}
             }
