@@ -48,6 +48,7 @@ Rectangle {
     property var stickersPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool closeGifPopupAfterSelection: true
+    property bool areTestNetworksEnabled
 
     property bool emojiEvent: false
     property bool isColonPressed: false
@@ -1034,8 +1035,8 @@ Rectangle {
             StatusAction {
                 text: qsTr("Add payment request")
                 icon.name: "wallet"
-                // TODO_ES disable for testnet (only production)
-                // TODO_ES error message when disabled on testnet (only production)
+                visibleOnDisabled: true
+                enabled: !root.areTestNetworksEnabled
                 onTriggered: control.openPaymentRequestPopup()
             }
 
@@ -1273,7 +1274,6 @@ Rectangle {
                     topPadding: 12
                     imagePreviewArray: control.fileUrlsAndSources
                     linkPreviewModel: control.linkPreviewModel
-                    requestPaymentModel: control.requestPaymentStore.requestPaymentModel
                     showLinkPreviewSettings: control.askToEnableLinkPreview
                     onImageRemoved: (index) => {
                         //Just do a copy and replace the whole thing because it's a plain JS array and thre's no signal when a single item is removed
@@ -1292,7 +1292,6 @@ Rectangle {
                     onDisableLinkPreview: () => control.disableLinkPreview()
                     onDismissLinkPreviewSettings: () => control.dismissLinkPreviewSettings()
                     onDismissLinkPreview: (index) => control.dismissLinkPreview(index)
-                    onPaymentRequestRemoved: (index) => control.requestPaymentStore.removePaymentRequest(index)
                 }
 
                 RowLayout {

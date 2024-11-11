@@ -46,6 +46,7 @@ Item {
     property ProfileStores.ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
+    property bool areTestNetworksEnabled
 
     property string activeChatId: parentModule && parentModule.activeItem.id
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
@@ -323,6 +324,7 @@ Item {
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     chatType: root.activeChatType
+                    areTestNetworksEnabled: root.areTestNetworksEnabled
 
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule && textInput.text !== d.activeChatContentModule.inputAreaModule.preservedProperties.text) {

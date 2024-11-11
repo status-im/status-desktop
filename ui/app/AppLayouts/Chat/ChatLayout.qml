@@ -36,6 +36,7 @@ StackLayout {
     required property SendStores.TransactionStore transactionStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
+    property bool areTestNetworksEnabled
 
     property var sectionItemModel
 

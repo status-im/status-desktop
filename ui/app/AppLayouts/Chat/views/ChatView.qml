@@ -51,6 +51,7 @@ StatusSectionLayout {
     required property var sendModalPopup
     property var sectionItemModel
     property int joinedMembersCount
+    property bool areTestNetworksEnabled
 
     property var emojiPopup
     property var stickersPopup
@@ -270,6 +271,7 @@ StatusSectionLayout {
             sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
+            areTestNetworksEnabled: root.areTestNetworksEnabled
             createChatPropertiesStore: root.createChatPropertiesStore
             contactsStore: root.contactsStore
             stickersLoaded: root.stickersLoaded
