@@ -49,6 +49,7 @@ Rectangle {
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool closeGifPopupAfterSelection: true
     property bool areTestNetworksEnabled
+    property bool requestPaymentEnabled: false
 
     property bool emojiEvent: false
     property bool isColonPressed: false
@@ -962,6 +963,8 @@ Rectangle {
     }
 
     function openPaymentRequestPopup() {
+        if (!control.requestPaymentEnabled)
+            return
         d.requestPaymentPopup = requestPaymentPopupComponent.createObject(control)
         d.requestPaymentPopup.open()
     }
@@ -1035,8 +1038,8 @@ Rectangle {
             StatusAction {
                 text: qsTr("Add payment request")
                 icon.name: "wallet"
-                visibleOnDisabled: true
-                enabled: !root.areTestNetworksEnabled
+                visibleOnDisabled: control.requestPaymentEnabled
+                enabled: control.requestPaymentEnabled && !root.areTestNetworksEnabled
                 onTriggered: control.openPaymentRequestPopup()
             }
 
