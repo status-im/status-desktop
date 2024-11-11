@@ -1,14 +1,11 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components.private 0.1 as SQP
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -29,10 +26,9 @@ StatusDialog {
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
     property string selectedTokenKey: Constants.ethToken
-    onSelectedTokenKeyChanged: Qt.callLater(d.reevaluateSelectedId)
 
     readonly property string amount: {
-        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.marketDetails || !d.selectedHolding.marketDetails.currencyPrice) {
+        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
             return "0"
         }
         return amountToSendInput.text
@@ -49,32 +45,31 @@ StatusDialog {
 
     title: qsTr("Payment request")
 
+    onOpened: {
+        // Setting value here because to prevent not updating when selected token key is filled
+        d.selectedHolding.value = Qt.binding(function() { return root.selectedTokenKey })
+
+        if (!!root.selectedTokenKey) {
+            holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+        }
+    }
+
     QtObject {
         id: d
 
-        // FIXME use ModelEntry
-        property var selectedHolding: SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", root.selectedTokenKey)
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding
+        readonly property ModelEntry selectedHolding: ModelEntry {
+            sourceModel: holdingSelector.model
+            key: "tokensKey"
+        }
+
+        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.store.processedAssetsModel
             flatNetworksModel: root.flatNetworksModel
             currentCurrency: root.store.currencyStore.currentCurrency
+            plainTokensBySymbolModel: root.store.plainAssetsModel
             showAllTokens: true
-        }
-
-        // FIXME drop after using ModelEntry, shouldn't be needed
-        function reevaluateSelectedId() {
-            const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", root.selectedTokenKey)
-
-            if (entry) {
-                holdingSelector.setSelection(entry.symbol, entry.iconSource, entry.tokensKey)
-            } else {
-                root.selectedTokenKey = ""
-                holdingSelector.reset()
-            }
-
-            d.selectedHolding = entry
         }
     }
 
@@ -90,10 +85,7 @@ StatusDialog {
                 disabledColor: Theme.palette.directColor8
                 enabled: amountToSendInput.valid && !amountToSendInput.empty && amountToSendInput.asNumber > 0
                 interactive: true
-                onClicked: {
-                    // TODO_ES handle
-                    root.accept()
-                }
+                onClicked: root.accept()
             }
         }
     }
@@ -113,51 +105,22 @@ StatusDialog {
             Layout.fillWidth: true
 
             readonly property bool ready: valid && !empty
-
-            readonly property string selectedSymbol: root.selectedTokenKey
-
-            // For backward compatibility. To be removed when
-            // dependent components (NetworkSelector, AmountToReceive)
-            // are refactored.
             readonly property double asNumber: {
                 if (!valid)
                     return 0
 
                 return parseFloat(text.replace(LocaleUtils.userInputLocale.decimalPoint, "."))
             }
-            readonly property int minSendCryptoDecimals:
-                !fiatMode ? LocaleUtils.fractionalPartLength(asNumber) : 0
-            readonly property int minReceiveCryptoDecimals:
-                !fiatMode ? minSendCryptoDecimals + 1 : 0
-            readonly property int minSendFiatDecimals:
-                fiatMode ? LocaleUtils.fractionalPartLength(asNumber) : 0
-            readonly property int minReceiveFiatDecimals:
-                fiatMode ? minSendFiatDecimals + 1 : 0
-            // End of to-be-removed part
 
-            multiplierIndex: 9
-                // !!holdingSelector.selectedItem
-                // && !!holdingSelector.selectedItem.decimals
-                // ? holdingSelector.selectedItem.decimals : 0
-
-            // price: d.isSelectedHoldingValidAsset
-                   // ? (d.selectedHolding ?
-                          // d.selectedHolding.marketDetails.currencyPrice.amount : 1)
-                   // : 1
-            price: 1
+            multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
+            price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
             formatFiat: amount => root.store.currencyStore.formatCurrencyAmount(
                             amount, root.store.currencyStore.currentCurrency)
             formatBalance: amount => root.store.currencyStore.formatCurrencyAmount(
-                               amount, selectedSymbol)
+                               amount, root.selectedTokenKey)
 
             showSeparator: true
-            onValidChanged: {
-
-            }
-            onAmountChanged: {
-
-            }
 
             AssetSelector {
                 id: holdingSelector
