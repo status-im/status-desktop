@@ -25,8 +25,13 @@ Flow {
     required property var linkPreviewModel
     required property var gifLinks
 
+    required property var requestPaymentModel
+
     required property bool gifUnfurlingEnabled
     required property bool canAskToUnfurlGifs
+
+    property string senderName
+    property var senderImageAssetSettings
 
     readonly property alias hoveredLink: linksRepeater.hoveredUrl
     property string highlightLink: ""
@@ -34,6 +39,7 @@ Flow {
     signal imageClicked(var image, var mouse, string imageSource, string url)
     signal openContextMenu(var item, string url, string domain)
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+    signal requestPaymentClicked(var symbol, var amount, var address, var chainId)
 
     function resetLocalAskAboutUnfurling() {
         d.localAskAboutUnfurling = true
@@ -54,6 +60,21 @@ Flow {
                  && !root.gifUnfurlingEnabled
                  && d.localAskAboutUnfurling && root.canAskToUnfurlGifs
         sourceComponent: enableLinkComponent
+    }
+
+    Repeater {
+        id: requestPaymentRepeater
+        model: root.requestPaymentModel
+        delegate: RequestPaymentCardDelegate {
+            required property var model
+            objectName: "RrequestPaymentDelegate_" + model.index
+            amount: model.amount
+            symbol: model.symbol
+            address: model.address
+            senderName: root.senderName
+            senderImageAssetSettings: root.senderImageAssetSettings
+            onClicked: root.requestPaymentClicked(model.symbol, model.amount, model.address, model.chainId)
+        }
     }
 
     Repeater {

@@ -70,6 +70,7 @@ Loader {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property var linkPreviewModel
+    property var requestPaymentModel
     property string messageAttachments: ""
     property var transactionParams
     property var emojiReactionsModel
@@ -350,8 +351,6 @@ Loader {
                 return StatusMessage.ContentType.SystemMessageMutualEventAccepted;
             case Constants.messageContentType.systemMessageMutualEventRemoved:
                 return StatusMessage.ContentType.SystemMessageMutualEventRemoved;
-            case Constants.messageContentType.attachmentType:
-                return StatusMessage.ContentType.Attachment;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
@@ -961,6 +960,7 @@ Loader {
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
+                        requestPaymentModel: root.requestPaymentModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
