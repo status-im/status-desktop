@@ -29,31 +29,6 @@ SplitView {
 
     orientation: Qt.Horizontal
 
-    ListModel {
-        id: plainTokensModel
-        ListElement {
-            key: "aave"
-            name: "Aave"
-            symbol: "AAVE"
-            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
-            communityId: ""
-        }
-        ListElement {
-            key: "usdc"
-            name: "USDC"
-            symbol: "USDC"
-            image: ""
-            communityId: ""
-        }
-        ListElement {
-            key: "hst"
-            name: "Decision Token"
-            symbol: "HST"
-            image: "https://etherscan.io/token/images/horizonstate2_28.png"
-            communityId: ""
-        }
-    }
-
     QtObject {
         id: d
         readonly property var tokenBySymbolModel: TokensBySymbolModel {}
@@ -70,7 +45,6 @@ SplitView {
             walletTokensStore: WalletStores.TokensStore {
                 plainTokensBySymbolModel: TokensBySymbolModel {}
             }
-            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
             assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
         }
 
@@ -80,7 +54,8 @@ SplitView {
         readonly property SharedStores.RequestPaymentStore requestPaymentStore: SharedStores.RequestPaymentStore {
             currencyStore: d.currencyStore
             flatNetworksModel: d.flatNetworks
-            processedAssetsModel: d.walletAssetsStore.renamedTokensBySymbolModel
+            processedAssetsModel: d.walletAssetsStore.jointModel
+            plainAssetsModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
             accountsModel: d.accounts
         }
     }
@@ -100,7 +75,7 @@ SplitView {
             onClicked: d.launchPopup()
         }
 
-        Component.onCompleted: d.launchPopup()
+        Component.onCompleted: Qt.callLater(d.launchPopup)
 
         Component {
             id: requestPaymentModalComponent
