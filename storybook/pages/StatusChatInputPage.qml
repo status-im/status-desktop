@@ -147,7 +147,6 @@ SplitView {
                 walletTokensStore: WalletStores.TokensStore {
                     plainTokensBySymbolModel: TokensBySymbolModel {}
                 }
-                readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
 
@@ -155,6 +154,7 @@ SplitView {
                 currencyStore: SharedStores.CurrenciesStore {}
                 flatNetworksModel: NetworksModel.flatNetworks
                 processedAssetsModel: d.walletAssetsStore.renamedTokensBySymbolModel
+                plainAssetsModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
                 accountsModel: WalletAccountsModel {}
             }
 
