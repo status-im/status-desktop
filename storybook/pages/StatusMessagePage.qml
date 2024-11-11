@@ -18,7 +18,6 @@ SplitView {
         id: d
 
         readonly property var exampleAlbum: [ModelsData.banners.coinbase, ModelsData.icons.status]
-        readonly property var requestPaymentModel: RequestPaymentModel {}
 
         readonly property var messagesModel: ListModel {
             ListElement {
@@ -33,6 +32,7 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+                requeestPaymentModel: []
             }
             ListElement {
                 timestamp: 1657937930135
@@ -166,17 +166,6 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
             }
-            ListElement {
-                timestamp: 1667937830123
-                senderId: "zq123456790"
-                senderDisplayName: "Alice"
-                contentType: StatusMessage.ContentType.Attachment
-                message: "This message contains attachments"
-                isContact: true
-                isAReply: false
-                trustIndicator: StatusContactVerificationIcons.TrustedType.None
-                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
-            }
         }
         readonly property var colorHash: ListModel {
             ListElement { colorId: 13; segmentLength: 5 }
@@ -227,11 +216,8 @@ SplitView {
                             colorId: index
                             colorHash: d.colorHash
                         }
-                        album: model.contentType === StatusMessage.ContentType.Image
-                               || model.contentType === StatusMessage.ContentType.Attachment ? d.exampleAlbum : []
-                        albumCount: model.contentType === StatusMessage.ContentType.Image
-                                    || model.contentType === StatusMessage.ContentType.Attachment ? d.exampleAlbum.length : 0
-                        requestPaymentModel: model.contentType === StatusMessage.ContentType.Attachment ? d.requestPaymentModel : null
+                        album: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum : []
+                        albumCount: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum.length : 0
                     }
 
                     replyDetails {
@@ -252,7 +238,6 @@ SplitView {
                     onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
                     onResendClicked: logs.logEvent("StatusMessage::resendClicked")
                     onLinkActivated: logs.logEvent("StatusMessage::linkActivated" + link)
-                    onRequestPaymentClicked: logs.logEvent("StatusMessage::requestPaymentActivated")
                     onImageClicked: logs.logEvent("StatusMessage::imageClicked")
                 }
             }
