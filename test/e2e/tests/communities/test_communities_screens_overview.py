@@ -3,6 +3,7 @@ import pytest
 from allure_commons._allure import step
 
 from constants import RandomCommunity
+from helpers.SettingsHelper import enable_community_creation
 from . import marks
 
 from constants.community import AirdropsElements, TokensElements, PermissionsElements
@@ -20,9 +21,7 @@ pytestmark = marks
                  'Manage community: Manage Airdrops screen overview')
 @pytest.mark.case(703198, 703199, 703200)
 def test_manage_community_screens_overview(main_screen: MainWindow):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()

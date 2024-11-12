@@ -8,6 +8,7 @@ import driver
 from constants import permission_data_member, RandomCommunity
 from constants.community import LimitWarnings
 from gui.main_window import MainWindow
+from helpers.SettingsHelper import enable_community_creation
 from . import marks
 
 pytestmark = marks
@@ -17,9 +18,7 @@ pytestmark = marks
                  'Can create up to 5 member role permissions')
 @pytest.mark.case(739309)
 def test_add_5_member_role_permissions(main_screen: MainWindow):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()

@@ -13,6 +13,7 @@ from constants import UserAccount, RandomCommunity
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
+from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.parsers import remove_tags
 from . import marks
 
@@ -31,9 +32,7 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
                                               channel_emoji_image,
                                               channel_color, new_channel_name, new_channel_description,
                                               new_channel_emoji):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()
