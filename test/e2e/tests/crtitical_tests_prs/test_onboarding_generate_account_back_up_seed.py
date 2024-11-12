@@ -104,7 +104,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
             f'Display name in online identifier is wrong, current: {online_identifier.get_user_name}, expected: {user_account.name}'
         assert online_identifier._identicon_ring.is_visible, \
             f'Identicon ring is not present when it should'
-        assert str(online_identifier.object.pubkey) is not None, \
+        assert str(online_identifier.object.compressedPubKey) is not None, \
             f'Public key is not present'
         assert chat_key in online_identifier.copy_link_to_profile(), f'Public keys should match when they dont'
 
