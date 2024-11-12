@@ -7,17 +7,10 @@ from gui.screens.settings_syncing import SyncingSettingsView
 from . import marks
 
 import configs.testpath
-import constants
-import driver
-from constants import UserAccount
 from constants.syncing import SyncingSettings
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
-from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
-from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, \
-    SyncCodeView, SyncDeviceFoundView, YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import WelcomeToStatusView, SyncCodeView
 
 pytestmark = marks
 

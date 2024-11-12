@@ -13,6 +13,7 @@ from gui.components.changes_detected_popup import PermissionsChangesDetectedToas
 from gui.components.delete_popup import DeletePermissionPopup
 from gui.main_window import MainWindow
 from gui.screens.community_settings import PermissionsIntroView
+from helpers.SettingsHelper import enable_community_creation
 from . import marks
 
 pytestmark = marks
@@ -23,9 +24,7 @@ pytestmark = marks
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.critical
 def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()

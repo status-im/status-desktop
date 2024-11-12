@@ -4,6 +4,7 @@ from allure_commons._allure import step
 
 from constants import RandomCommunity
 from constants.community import Channel
+from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_community_name, random_community_description, random_community_introduction, \
     random_community_leave_message
 from . import marks
@@ -18,9 +19,7 @@ pytestmark = marks
 @pytest.mark.case(703057)
 @pytest.mark.critical
 def test_create_edit_community(main_screen: MainWindow):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Open create community popup'):
         communities_portal = main_screen.left_panel.open_communities_portal()

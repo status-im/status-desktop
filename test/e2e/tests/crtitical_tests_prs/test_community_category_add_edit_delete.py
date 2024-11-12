@@ -5,6 +5,7 @@ from allure_commons._allure import step
 import constants
 from constants import RandomCommunity
 from gui.main_window import MainWindow
+from helpers.SettingsHelper import enable_community_creation
 from . import marks
 
 pytestmark = marks
@@ -25,9 +26,7 @@ pytestmark = marks
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
                                  channel_description, channel_emoji, second_channel_name, second_channel_description,
                                  second_channel_emoji):
-    with step('Enable creation of community option'):
-        settings = main_screen.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()

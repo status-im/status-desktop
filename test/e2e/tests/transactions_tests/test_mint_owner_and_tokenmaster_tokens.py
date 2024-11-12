@@ -12,7 +12,7 @@ from configs import WALLET_SEED
 from constants import ReturningUser, RandomCommunity
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
-from helpers.SettingsHelper import enable_testnet_mode
+from helpers.SettingsHelper import enable_testnet_mode, enable_community_creation
 from tests.communities import marks
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
@@ -34,9 +34,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
 
     enable_testnet_mode(main_window)
 
-    with step('Enable creation of community option'):
-        settings = main_window.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+    enable_community_creation(main_window)
 
     with step('Switch manage community on testnet option'):
         settings = main_window.left_panel.open_settings()

@@ -9,6 +9,7 @@ from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
+from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
 from . import marks
 
@@ -65,8 +66,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             contacts_settings.accept_contact_request(user_one.name)
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
-            settings = main_screen.left_panel.open_settings()
-            settings.left_panel.open_advanced_settings().enable_creation_of_communities()
+            enable_community_creation(main_screen)
 
             main_screen.create_community(community_data=community)
             community_screen = main_screen.left_panel.select_community(community.name)

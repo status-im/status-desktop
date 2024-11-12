@@ -2,16 +2,11 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import UserAccount, RandomUser
 from helpers.OnboardingHelper import open_generate_new_keys_view
-from scripts.utils.generators import random_name_string, random_password_string
 from . import marks
 
-import constants
 from constants.onboarding import very_weak_lower_elements, very_weak_upper_elements, \
     very_weak_numbers_elements, very_weak_symbols_elements, weak_elements, so_so_elements, good_elements, great_elements
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.screens.onboarding import WelcomeToStatusView, KeysView
 
 pytestmark = marks
 
@@ -72,6 +67,4 @@ def test_check_password_strength_and_login(main_window, user_account):
         create_password_view.click_show_icon(0)
         assert confirm_password_view.get_password_from_confirmation_again_field() == expected_password
 
-    with step('Click show icon to hide password and check that there are dots instead'):
-        create_password_view.click_hide_icon(0)
 
