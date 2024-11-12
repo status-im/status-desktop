@@ -61,13 +61,15 @@ SQUtils.QObject {
                 return { request: null, error: SessionRequest.InvalidChainId }
             }
 
-            const validAccount = !!SQUtils.ModelUtils.getFirstModelEntryIf(accountsModel, (account) => {
+            const validAccount = SQUtils.ModelUtils.getFirstModelEntryIf(accountsModel, (account) => {
                 return account.address.toLowerCase() === request.account.toLowerCase();
             })
             if (!validAccount) {
                 console.warn("SessionRequestResolver - resolveEvent - invalid account", request.account)
                 return { request: null, error: SessionRequest.InvalidAccount }
             }
+            // Override the account with the validated one to always match the case
+            request.account = validAccount.address
 
             return { request, error: SessionRequest.NoError }
         } catch (e) {
