@@ -8,6 +8,7 @@ JSONListModel 0.1 JSONListModel.qml
 LazyStackLayout 0.1 LazyStackLayout.qml
 ModelChangeGuard 0.1 ModelChangeGuard.qml
 ModelChangeTracker 0.1 ModelChangeTracker.qml
+ModelEntryChangeTracker 0.1 ModelEntryChangeTracker.qml
 ModelsComparator 0.1 ModelsComparator.qml
 QObject 0.1 QObject.qml
 SearchFilter 0.1 SearchFilter.qml
