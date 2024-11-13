@@ -55,6 +55,10 @@ add_test(NAME QmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 # C++ Tests
 ###########
 
+add_executable(ModelUtilsInternalTest tst_ModelUtilsInternal.cpp)
+target_link_libraries(ModelUtilsInternalTest PRIVATE StatusQ StatusQTestLib)
+add_test(NAME ModelUtilsInternalTest COMMAND ModelUtilsInternalTest)
+
 add_executable(RolesRenamingModelTest tst_RolesRenamingModel.cpp)
 target_link_libraries(RolesRenamingModelTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME RolesRenamingModelTest COMMAND RolesRenamingModelTest)

@@ -86,6 +86,31 @@ QVariantList ModelUtilsInternal::getAll(QAbstractItemModel* model,
     return result;
 }
 
+/*
+ * Finds the index of given value of given value in the model using
+ * QAbstractItemModel::match method with Qt::MatchExactly flag.
+ *
+ * Note: QAbstractItemModel::match Qt::MatchExactly flag performs QVariant-based
+ * matching internally. It means that types are not compared and e.g. 4 (int)
+ * compared to string "4" will give a positive result.
+ */
+int ModelUtilsInternal::indexOf(QAbstractItemModel* model,
+                                const QString& roleName, const QVariant& value)
+{
+    auto role = roleByName(model, roleName);
+
+    if (role == -1 || model->rowCount() == 0)
+        return -1;
+
+    QModelIndexList indexes = model->match(model->index(0, 0), role, value, 1,
+                                           Qt::MatchExactly);
+
+    if (indexes.isEmpty())
+        return -1;
+
+    return indexes.first().row();
+}
+
 bool ModelUtilsInternal::contains(QAbstractItemModel* model,
                                   const QString& roleName,
                                   const QVariant& value,

@@ -32,7 +32,11 @@ public:
                                     const QString& filterRoleName,
                                     const QVariant& filterValue) const;
 
-    Q_INVOKABLE bool contains(QAbstractItemModel *model, const QString &roleName, const QVariant &value, int mode = Qt::CaseSensitive) const;
+    Q_INVOKABLE int indexOf(QAbstractItemModel* model, const QString& roleName,
+                            const QVariant& value);
+
+    Q_INVOKABLE bool contains(QAbstractItemModel *model, const QString &roleName,
+                              const QVariant &value, int mode = Qt::CaseSensitive) const;
 
     ///< performs a strict check whether @lhs and @rhs arrays (QList<T>) contain the same elements;
     /// eg. `["a", "c", "b"]` and `["b", "c", "a"]` are considered equal
