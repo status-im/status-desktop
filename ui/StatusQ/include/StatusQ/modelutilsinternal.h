@@ -35,6 +35,9 @@ public:
     Q_INVOKABLE int indexOf(QAbstractItemModel* model, const QString& roleName,
                             const QVariant& value);
 
+    Q_INVOKABLE QPersistentModelIndex persistentIndex(QAbstractItemModel* model,
+                                                      int index);
+
     Q_INVOKABLE bool contains(QAbstractItemModel *model, const QString &roleName,
                               const QVariant &value, int mode = Qt::CaseSensitive) const;
 

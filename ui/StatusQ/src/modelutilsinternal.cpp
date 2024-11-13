@@ -111,6 +111,16 @@ int ModelUtilsInternal::indexOf(QAbstractItemModel* model,
     return indexes.first().row();
 }
 
+/*
+ * Provides the ability to obtain QPersistentModelIndex on the QML side from
+ * regular index fetched from the model via model.index(row, col) method.
+ */
+QPersistentModelIndex ModelUtilsInternal::persistentIndex(
+        QAbstractItemModel* model, int row)
+{
+    return QPersistentModelIndex(model->index(row, 0));
+}
+
 bool ModelUtilsInternal::contains(QAbstractItemModel* model,
                                   const QString& roleName,
                                   const QVariant& value,

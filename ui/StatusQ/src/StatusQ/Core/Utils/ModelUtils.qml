@@ -64,6 +64,10 @@ QtObject {
         return Internal.ModelUtils.indexOf(model, role, key)
     }
 
+    function persistentIndex(model, index) {
+        return Internal.ModelUtils.persistentIndex(model, index)
+    }
+
     function contains(model, roleName, value, mode = Qt.CaseSensitive) {
         return Internal.ModelUtils.contains(model, roleName, value, mode)
     }
