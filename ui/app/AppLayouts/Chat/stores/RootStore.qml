@@ -640,7 +640,7 @@ QtObject {
         }
     }
 
-    readonly property QtObject _d: QtObject {
+    readonly property QtObject _d: StatusQUtils.QObject {
         id: d
 
         readonly property var userProfileInst: userProfile
@@ -675,16 +675,12 @@ QtObject {
                                                                                                     d.oneToOneChatContact.displayName,
                                                                                                     d.oneToOneChatContact.alias) : ""
 
-        //Update oneToOneChatContact when the contact is updated
-        readonly property var myContactsModelConnection: Connections {
-            target: root.contactsStore.contactsModel ?? null
-            enabled: d.activeChatType === Constants.chatType.oneToOne
+        StatusQUtils.ModelEntryChangeTracker {
+            model: root.contactsStore.contactsModel
+            role: "pubKey"
+            key: d.activeChatId
 
-            function onItemChanged(pubKey) {
-                if (pubKey === d.activeChatId) {
-                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
-                }
-            }
+            onItemChanged: d.oneToOneChatContact = Utils.getContactDetailsAsJson(d.activeChatId, false)
         }
 
         readonly property bool isUserAllowedToSendMessage: {
