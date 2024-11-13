@@ -62,7 +62,7 @@ ActivityNotificationBase {
     onContactIdChanged: root.updateContactDetails()
 
     Connections {
-        target: root.store.contactsStore.myContactsModel
+        target: root.store.contactsStore.contactsModel
 
         function onItemChanged(pubKey) {
             if (pubKey === root.contactId)

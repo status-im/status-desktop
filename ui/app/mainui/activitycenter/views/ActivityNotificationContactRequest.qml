@@ -22,16 +22,6 @@ ActivityNotificationMessage {
 
     readonly property string contactRequestId: notification && notification.message ? notification.message.id : ""
 
-    Connections {
-        target: root.isOutgoingMessage ? root.store.contactsStore.sentContactRequestsModel :
-                                         root.store.contactsStore.receivedContactRequestsModel
-
-        function onItemChanged(pubKey) {
-            if (pubKey === root.contactId)
-                root.updateContactDetails()
-        }
-    }
-
     maximumLineCount: 5
     messageDetails.messageText: !root.isOutgoingMessage && notification ? notification.message.messageText : ""
 

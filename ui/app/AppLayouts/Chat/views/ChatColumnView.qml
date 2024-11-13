@@ -53,11 +53,7 @@ Item {
     property bool stickersLoaded: false
     property bool canPost: true
     property var viewAndPostHoldingsModel
-
-    readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
-    readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isContactRequestSent
     property bool amISectionAdmin: false
-
     property bool sendViaPersonalChatEnabled
 
     signal openStickerPackPopup(string stickerPackId)

@@ -677,29 +677,7 @@ QtObject {
 
         //Update oneToOneChatContact when the contact is updated
         readonly property var myContactsModelConnection: Connections {
-            target: root.contactsStore.myContactsModel ?? null
-            enabled: d.activeChatType === Constants.chatType.oneToOne
-
-            function onItemChanged(pubKey) {
-                if (pubKey === d.activeChatId) {
-                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
-                }
-            }
-        }
-
-        readonly property var receivedContactsReqModelConnection: Connections {
-            target: root.contactsStore.receivedContactRequestsModel ?? null
-            enabled: d.activeChatType === Constants.chatType.oneToOne
-
-            function onItemChanged(pubKey) {
-                if (pubKey === d.activeChatId) {
-                    d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
-                }
-            }
-        }
-
-        readonly property var sentContactReqModelConnection: Connections {
-            target: root.contactsStore.sentContactRequestsModel ?? null
+            target: root.contactsStore.contactsModel ?? null
             enabled: d.activeChatType === Constants.chatType.oneToOne
 
             function onItemChanged(pubKey) {
