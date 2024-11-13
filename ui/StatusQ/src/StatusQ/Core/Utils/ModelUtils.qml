@@ -61,16 +61,7 @@ QtObject {
     }
 
     function indexOf(model, role, key) {
-        if (!model)
-            return -1
-
-        const count = model.rowCount()
-
-        for (let i = 0; i < count; i++)
-            if (Internal.ModelUtils.get(model, i, role) === key)
-                return i
-
-        return -1
+        return Internal.ModelUtils.indexOf(model, role, key)
     }
 
     function contains(model, roleName, value, mode = Qt.CaseSensitive) {
