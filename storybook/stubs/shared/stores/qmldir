@@ -5,6 +5,5 @@ DAppsStore 1.0 DAppsStore.qml
 GifStore 1.0 GifStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 PermissionsStore 1.0 PermissionsStore.qml
-ProfileStore 1.0 ProfileStore.qml
 RootStore 1.0 RootStore.qml
 UtilsStore 1.0 UtilsStore.qml
