@@ -17,27 +17,6 @@ import "../stores"
 ActivityNotificationMessage {
     id: root
 
-    function checkAndUpdateContactDetails(pubKey) {
-        if (pubKey === root.contactId)
-            root.updateContactDetails()
-    }
-
-    Connections {
-        target: root.store.contactsStore.sentContactRequestsModel
-
-        function onItemChanged(pubKey) {
-            root.checkAndUpdateContactDetails(pubKey)
-        }
-    }
-
-    Connections {
-        target: root.store.contactsStore.receivedContactRequestsModel
-
-        function onItemChanged(pubKey) {
-            root.checkAndUpdateContactDetails(pubKey)
-        }
-    }
-
     messageSubheaderComponent: StatusBaseText {
         text: qsTr("Removed you as a contact")
         font.italic: true

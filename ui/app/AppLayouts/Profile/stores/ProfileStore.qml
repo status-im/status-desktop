@@ -45,8 +45,6 @@ QtObject {
 
     readonly property bool isFirstShowcaseInteraction: localAccountSettings.isFirstShowcaseInteraction
 
-    property var details: Utils.getContactDetailsAsJson(pubkey)
-
     // The following signals wrap the settings / preferences save request responses in one unique result (identity + preferences result)
     signal profileSettingsSaveSucceeded()
     signal profileSettingsSaveFailed()
