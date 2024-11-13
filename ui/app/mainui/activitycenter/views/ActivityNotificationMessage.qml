@@ -61,13 +61,12 @@ ActivityNotificationBase {
 
     onContactIdChanged: root.updateContactDetails()
 
-    Connections {
-        target: root.store.contactsStore.contactsModel
+    CoreUtils.ModelEntryChangeTracker {
+        model: root.store.contactsStore.contactsModel
+        role: "pubKey"
+        key: root.contactId
 
-        function onItemChanged(pubKey) {
-            if (pubKey === root.contactId)
-                root.updateContactDetails()
-        }
+        onItemChanged: root.updateContactDetails()
     }
 
     bodyComponent: MouseArea {
