@@ -46,6 +46,7 @@ import AppLayouts.Wallet.popups 1.0 as WalletPopups
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
 
+import mainui.adaptors 1.0
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
 
@@ -103,6 +104,12 @@ Item {
 
     // set from main.qml
     property var sysPalette
+
+    ContactsModelAdaptor {
+        id: contactsModelAdaptor
+
+        allContacts: appMain.profileSectionStore.contactsStore.contactsModel
+    }
 
     // Central UI point for managing app toasts:
     ToastsManager {
@@ -431,6 +438,9 @@ Item {
         walletCollectiblesStore: appMain.walletCollectiblesStore
         buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
+
+        mutualContactsModel: contactsModelAdaptor.mutualContacts
+
         isDevBuild: !production
 
         onOpenExternalLink: globalConns.onOpenLink(link)
@@ -906,8 +916,8 @@ Item {
                     checked: model.active
                     badge.value: model.notificationsCount
                     badge.visible: model.sectionType === Constants.appSection.profile &&
-                                   appMain.rootStore.contactStore.receivedContactRequestsModel.count ? true // pending CR request
-                                                                                                     : model.hasNotification
+                                   (contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.empty ? // pending contact request
+                                        model.hasNotification : true)
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                     badge.border.width: 2
                     onClicked: {
@@ -1395,6 +1405,8 @@ Item {
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
 
+                                mutualContactsModel: contactsModelAdaptor.mutualContacts
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -1466,6 +1478,11 @@ Item {
                             currencyStore: appMain.currencyStore
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             settingsSubSubsection: profileLoader.settingsSubSubsection
+
+                            mutualContactsModel: contactsModelAdaptor.mutualContacts
+                            blockedContactsModel: contactsModelAdaptor.blockedContacts
+                            pendingReceivedRequestContactsModel: contactsModelAdaptor.pendingReceivedRequestContacts
+                            pendingSentRequestContactsModel: contactsModelAdaptor.pendingSentRequestContacts
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection
@@ -1560,6 +1577,8 @@ Item {
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
 
+                                mutualContactsModel: contactsModelAdaptor.mutualContacts
+
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
@@ -1600,6 +1619,9 @@ Item {
                             chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                         }
                         createChatPropertiesStore: appMain.createChatPropertiesStore
+
+                        mutualContactsModel: contactsModelAdaptor.mutualContacts
+
                         emojiPopup: statusEmojiPopup.item
                         stickersPopup: statusStickersPopupLoader.item
                     }

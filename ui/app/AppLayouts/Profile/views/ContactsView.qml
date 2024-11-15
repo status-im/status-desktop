@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -26,6 +27,11 @@ SettingsContentBase {
 
     property ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
+
+    property var mutualContactsModel
+    property var blockedContactsModel
+    property var pendingReceivedRequestContactsModel
+    property var pendingSentRequestContactsModel
 
     property alias searchStr: searchBox.text
     property bool isPending: false
@@ -116,16 +122,16 @@ SettingsContentBase {
                 id: pendingRequestsBtn
                 objectName: "ContactsView_PendingRequest_Button"
                 width: implicitWidth
-                enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
-                         root.contactsStore.sentContactRequestsModel.count > 0
+                enabled: !root.pendingReceivedRequestContactsModel.ModelCount.empty ||
+                         !root.pendingSentRequestContactsModel.ModelCount.empty
                 text: qsTr("Pending Requests")
-                badge.value: root.contactsStore.receivedContactRequestsModel.count
+                badge.value: root.pendingReceivedRequestContactsModel.ModelCount.count
             }
             StatusTabButton {
                 id: blockedBtn
                 objectName: "ContactsView_Blocked_Button"
                 width: implicitWidth
-                enabled: root.contactsStore.blockedContactsModel.count > 0
+                enabled: !root.blockedContactsModel.ModelCount.empty
                 text: qsTr("Blocked")
             }
         }
@@ -151,10 +157,11 @@ SettingsContentBase {
                 spacing: Theme.padding
                 ContactsListPanel {
                     id: verifiedContacts
+
                     Layout.fillWidth: true
                     title: qsTr("Trusted Contacts")
                     visible: !noFriendsItem.visible && count > 0
-                    contactsModel: root.contactsStore.myContactsModel
+                    contactsModel: root.mutualContactsModel
                     searchString: searchBox.text
                     onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
@@ -165,10 +172,11 @@ SettingsContentBase {
 
                 ContactsListPanel {
                     id: mutualContacts
+
                     Layout.fillWidth: true
                     visible: !noFriendsItem.visible && count > 0
                     title: qsTr("Contacts")
-                    contactsModel: root.contactsStore.myContactsModel
+                    contactsModel: root.mutualContactsModel
                     searchString: searchBox.text
                     onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                     panelUsage: Constants.contactsPanelUsage.mutualContacts
@@ -180,9 +188,11 @@ SettingsContentBase {
 
                 Item {
                     id: noFriendsItem
+
                     Layout.fillWidth: true
                     Layout.preferredHeight: visible ?  (root.contentHeight - (2*searchBox.height) - contactsTabBar.height - contactsTabBar.anchors.topMargin) : 0
-                    visible: root.contactsStore.myContactsModel.count === 0
+                    visible: root.mutualContactsModel.ModelCount.empty
+
                     NoFriendsRectangle {
                         anchors.centerIn: parent
                         text: qsTr("You don't have any contacts yet")
@@ -204,13 +214,14 @@ SettingsContentBase {
                 }
                 ContactsListPanel {
                     id: receivedRequests
+
                     objectName: "receivedRequests_ContactsListPanel"
                     Layout.fillWidth: true
                     title: qsTr("Received")
                     searchString: searchBox.text
                     visible: count > 0
                     onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    contactsModel: root.contactsStore.receivedContactRequestsModel
+                    contactsModel: root.pendingReceivedRequestContactsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
                     onSendMessageActionTriggered: {
@@ -228,23 +239,26 @@ SettingsContentBase {
 
                 ContactsListPanel {
                     id: sentRequests
+
                     objectName: "sentRequests_ContactsListPanel"
                     Layout.fillWidth: true
                     title: qsTr("Sent")
                     searchString: searchBox.text
                     visible: count > 0
                     onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    contactsModel: root.contactsStore.sentContactRequestsModel
+                    contactsModel: root.pendingSentRequestContactsModel
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
                 }
             }
 
             // BLOCKED
             ContactsListPanel {
+                id: blockedContacts
+
                 Layout.fillWidth: true
                 searchString: searchBox.text
                 onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                contactsModel: root.contactsStore.blockedContactsModel
+                contactsModel: root.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
                 visible: (stackLayout.currentIndex === 2)
                 onVisibleChanged: {

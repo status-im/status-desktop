@@ -18,21 +18,10 @@ QtObject {
         }
     }
 
-    property string myPublicKey: userProfile.pubKey
+    readonly property string myPublicKey: userProfile.pubKey
 
     // contactsModel holds all available contacts
-    property var contactsModel: d.contactsModuleInst.contactsModel
-
-    readonly property var contactsModelAdaptor: ContactsModelAdaptor {
-        allContacts: contactsModel
-    }
-
-    signal resolvedENS(string resolvedPubKey, string resolvedAddress, string uuid)
-
-    property var myContactsModel: contactsModelAdaptor.mutualContacts
-    property var blockedContactsModel: contactsModelAdaptor.blockedContacts
-    property var receivedContactRequestsModel: contactsModelAdaptor.pendingReceivedRequestContacts
-    property var sentContactRequestsModel: contactsModelAdaptor.pendingSentRequestContacts
+    readonly property var contactsModel: d.contactsModuleInst.contactsModel
 
     readonly property var showcasePublicKey: d.contactsModuleInst.showcasePublicKey
 

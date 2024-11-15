@@ -52,6 +52,9 @@ QtObject {
     property WalletStores.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
+
+    property var mutualContactsModel
+
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -473,7 +476,7 @@ QtObject {
             InviteFriendsToCommunityPopup {
                 rootStore: root.rootStore
 
-                contactsModel: root.rootStore.contactStore.myContactsModel
+                contactsModel: root.mutualContactsModel
 
                 onClosed: destroy()
             }

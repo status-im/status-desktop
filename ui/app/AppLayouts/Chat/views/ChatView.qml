@@ -48,6 +48,9 @@ StatusSectionLayout {
     property CommunitiesStores.CommunitiesStore communitiesStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
+
+    property var mutualContactsModel
+
     required property var sendModalPopup
     property var sectionItemModel
     property int joinedMembersCount
@@ -231,8 +234,11 @@ StatusSectionLayout {
         id: chatHeaderContentViewComponent
         ChatHeaderContentView {
             visible: !!root.rootStore.currentChatContentModule()
+
             rootStore: root.rootStore
+            mutualContactsModel: root.mutualContactsModel
             emojiPopup: root.emojiPopup
+
             onSearchButtonClicked: root.openAppSearch()
             onDisplayEditChannelPopup: {
                 Global.openPopup(contactColumnLoader.item.createChannelPopup, {

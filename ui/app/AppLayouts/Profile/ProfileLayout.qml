@@ -54,6 +54,11 @@ StatusSectionLayout {
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
 
+    property var mutualContactsModel
+    property var blockedContactsModel
+    property var pendingReceivedRequestContactsModel
+    property var pendingSentRequestContactsModel
+
     required property bool isCentralizedMetricsEnabled
 
     backButtonName: root.store.backButtonName
@@ -108,7 +113,7 @@ StatusSectionLayout {
 
         syncingBadgeCount: root.store.devicesStore.devicesModel.count -
                            root.store.devicesStore.devicesModel.pairedCount
-        messagingBadgeCount: root.store.contactsStore.receivedContactRequestsModel.count
+        messagingBadgeCount: root.pendingReceivedRequestContactsModel.ModelCount.count
     }
 
     headerBackground: AccountHeaderGradient {
@@ -233,6 +238,11 @@ StatusSectionLayout {
                 utilsStore: root.utilsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
+
+                mutualContactsModel: root.mutualContactsModel
+                blockedContactsModel: root.blockedContactsModel
+                pendingReceivedRequestContactsModel: root.pendingReceivedRequestContactsModel
+                pendingSentRequestContactsModel: root.pendingSentRequestContactsModel
             }
         }
 
@@ -262,10 +272,11 @@ StatusSectionLayout {
             sourceComponent: MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                messagingStore: root.store.messagingStore
-                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
-                contactsStore: root.store.contactsStore
                 contentWidth: d.contentWidth
+
+                sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
+                requestsCount: root.pendingReceivedRequestContactsModel.ModelCount.count
+                messagingStore: root.store.messagingStore
             }
         }
 

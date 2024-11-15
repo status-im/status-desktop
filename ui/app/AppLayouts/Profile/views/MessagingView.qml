@@ -24,7 +24,8 @@ SettingsContentBase {
     id: root
 
     property MessagingStore messagingStore
-    property ContactsStore contactsStore
+
+    property alias requestsCount: contactRequestsIndicator.requestsCount
 
     ColumnLayout {
         id: generalColumn
@@ -75,10 +76,12 @@ SettingsContentBase {
 
         // CONTACTS SECTION
         StatusContactRequestsIndicatorListItem {
+            id: contactRequestsIndicator
+
             objectName: "MessagingView_ContactsListItem_btn"
             Layout.fillWidth: true
             title: qsTr("Contacts, Requests, and Blocked Users")
-            requestsCount: root.contactsStore.receivedContactRequestsModel.count
+
             onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                                             Constants.settingsSubsection.contacts)
         }

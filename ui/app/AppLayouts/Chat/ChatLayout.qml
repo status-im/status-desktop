@@ -37,6 +37,7 @@ StackLayout {
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
 
+    property var mutualContactsModel
     property var sectionItemModel
 
     MembersModelAdaptor {
@@ -154,8 +155,6 @@ StackLayout {
 
             objectName: "chatViewComponent"
 
-            emojiPopup: root.emojiPopup
-            stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
@@ -164,6 +163,11 @@ StackLayout {
             communitiesStore: root.communitiesStore
             walletAssetsStore: root.walletAssetsStore
             currencyStore: root.currencyStore
+
+            mutualContactsModel: root.mutualContactsModel
+
+            emojiPopup: root.emojiPopup
+            stickersPopup: root.stickersPopup
             sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
