@@ -149,6 +149,7 @@ RightTabBaseView {
                     icon.color: checked ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                     Behavior on icon.color { ColorAnimation { duration: 200; easing.type: Easing.InOutQuad } }
                     highlighted: checked
+                    visible: walletTabBar.currentIndex !== 2 // TODO #16761: Re-enable filter for activity when implemented
                 }
             }
             Loader {
@@ -429,7 +430,7 @@ RightTabBaseView {
                         communitiesStore: root.communitiesStore
                         currencyStore: root.sharedRootStore.currencyStore
                         showAllAccounts: RootStore.showAllAccounts
-                        filterVisible: filterButton.checked
+                        filterVisible: false  // TODO #16761: Re-enable filter for activity when implemented
                     }
                 }
             }
