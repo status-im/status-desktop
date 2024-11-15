@@ -346,6 +346,7 @@ Item {
             usersStore: UsersStore {
                 usersModule: root.chatContentModule.usersModule
             }
+            contactsModel: root.rootStore.contactsStore.myContactsModel
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent

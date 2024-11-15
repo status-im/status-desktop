@@ -3,8 +3,9 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
-import StatusQ.Controls 0.1
+import StatusQ 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -63,6 +64,7 @@ Page {
 
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
+                contactsModel: root.rootStore.contactsStore.myContactsModel
 
                 function createChat() {
                     if (model.count === 0) {
@@ -178,7 +180,7 @@ Page {
         StatusBaseText {
             anchors.centerIn: parent
             width: Math.min(553, parent.width - 2 * Theme.padding)
-            visible: root.rootStore.contactsModel.count === 0
+            visible: root.rootStore.contactsStore.myContactsModel.ModelCount.empty
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap

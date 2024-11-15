@@ -1,6 +1,6 @@
 import NimQml
 
-import ../../../shared_models/[user_model, user_item]
+import ../../../shared_models/[user_model]
 import ./io_interface
 
 import models/showcase_contact_generic_model
@@ -71,12 +71,6 @@ QtObject:
     notify = contactsModelChanged
 
   proc contactInfoRequestFinished(self: View, publicKey: string, ok: bool) {.signal.}
-
-  proc hasPendingContactRequest*(self: View, publicKey: string): bool {.slot.} =
-    if not self.contactsModel.isContactWithIdAdded(publicKey):
-      return false
-    let userItem = self.contactsModel.getItemByPubKey(publicKey)
-    return userItem.contactRequest == ContactRequest.Sent
 
   proc sendContactRequest*(self: View, publicKey: string, message: string) {.slot.} =
     self.delegate.sendContactRequest(publicKey, message)

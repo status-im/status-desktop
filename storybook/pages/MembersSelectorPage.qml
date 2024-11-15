@@ -40,7 +40,11 @@ SplitView {
 
     QtObject {
         function getContactDetailsAsJson() {
-            return JSON.stringify({ ensVerified: false })
+            return JSON.stringify({
+                                      ensVerified: false,
+                                      isCurrentUser: false,
+                                      contactRequestState: Constants.ContactRequestState.Mutual
+                                  })
         }
 
         Component.onCompleted: {
@@ -53,18 +57,18 @@ SplitView {
         }
     }
 
-    ChatStores.RootStore {
-        id: rootStoreMock
+    ListModel {
+        id: contacts
 
-        readonly property var contactsModel: ListModel {
-            id: contactsModel
-
-            Component.onCompleted: {
-                for(let i=0; i < 20; i++) {
-                    append(usersModelEditor.getNewUser(i))
-                }
+        Component.onCompleted: {
+            for(let i=0; i < 20; i++) {
+                append(usersModelEditor.getNewUser(i))
             }
         }
+    }
+
+    ChatStores.RootStore {
+        id: rootStoreMock
 
         readonly property var contactsStore: QtObject {
             readonly property var mainModuleInst: null
@@ -187,6 +191,8 @@ SplitView {
                                 return true
                             }
                         }
+
+                        contactsModel: contacts
                     }
                 }
             }
@@ -205,6 +211,8 @@ SplitView {
                     sourceComponent: MembersEditSelectorView {
                         rootStore: rootStoreMock
                         usersStore: usersStoreMock
+
+                        contactsModel: contacts
                     }
                 }
             }
@@ -241,11 +249,11 @@ SplitView {
         UsersModelEditor {
             id: usersModelEditor
             anchors.fill: parent
-            model: contactsModel
+            model: contacts
 
-            onRemoveClicked: contactsModel.remove(index, 1)
-            onRemoveAllClicked: contactsModel.clear()
-            onAddClicked: contactsModel.append(usersModelEditor.getNewUser(contactsModel.count))
+            onRemoveClicked: contacts.remove(index, 1)
+            onRemoveAllClicked: contacts.clear()
+            onAddClicked: contacts.append(usersModelEditor.getNewUser(contacts.count))
         }
     }
 }

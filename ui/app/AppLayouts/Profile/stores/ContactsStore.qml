@@ -56,10 +56,6 @@ QtObject {
         return root.globalUtilsInst.generateAlias(pubKey)
     }
 
-    function hasPendingContactRequest(pubKey) {
-        return root.contactsModule.hasPendingContactRequest(pubKey)
-    }
-
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
         root.contactsModule.switchToOrCreateOneToOneChat(pubKey)
