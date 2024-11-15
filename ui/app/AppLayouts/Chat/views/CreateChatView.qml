@@ -183,7 +183,7 @@ Page {
         StatusBaseText {
             anchors.centerIn: parent
             width: Math.min(553, parent.width - 2 * Theme.padding)
-            visible: root.mutualContacts.ModelCount.empty
+            visible: root.mutualContactsModel.ModelCount.empty
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
