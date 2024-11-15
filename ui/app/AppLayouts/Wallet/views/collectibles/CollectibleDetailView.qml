@@ -231,11 +231,6 @@ Item {
             }
 
             StatusTabButton {
-                text: qsTr("Activity")
-                width: visible ? implicitWidth: 0
-            }
-
-            StatusTabButton {
                 text: qsTr("Links")
                 width: visible ? implicitWidth: 0
                 visible: !root.isCommunityCollectible && (!!collectible &&
@@ -259,8 +254,7 @@ Item {
                     switch (collectiblesDetailsTab.currentIndex) {
                     case 0: return traitsView
                     case 1: return traitsView
-                    case 2: return activityView
-                    case 3: return linksView
+                    case 2: return linksView
                     }
                 }
 
