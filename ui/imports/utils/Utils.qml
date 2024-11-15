@@ -644,6 +644,44 @@ QtObject {
         return getEtherscanUrl(networkShortName, testnetMode, tx, false /* is TX */)
     }
 
+    // Get Chain Explorer name
+    function getChainExplorerName(networkShortName) {
+        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
+            return qsTr("Arbiscan")
+        }
+        if (networkShortName === Constants.networkShortChainNames.optimism) {
+            return qsTr("Optimistic")
+        }
+        return qsTr("Etherscan")
+    }
+
+    // Get ShortName for ChainID
+    function getNetworkShortName(chainID) {
+        switch (chainID) {
+            case Constants.chains.mainnetChainId:
+            case Constants.chains.sepoliaChainId:
+                return Constants.networkShortChainNames.mainnet
+            case Constants.chains.arbitrumChainId:
+            case Constants.chains.arbitrumSepoliaChainId:
+                return Constants.networkShortChainNames.arbitrum
+            case Constants.chains.optimismChainId:
+            case Constants.chains.optimismSepoliaChainId:
+                return Constants.networkShortChainNames.optimism
+        }
+        return ""
+    }
+
+    // Is given ChainID a testnet
+    function isChainIDTestnet(chainID) {
+        switch (chainID) {
+            case Constants.chains.mainnetChainId:
+            case Constants.chains.arbitrumChainId:
+            case Constants.chains.optimismChainId:
+                return false
+        }
+        return true
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
