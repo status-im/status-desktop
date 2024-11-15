@@ -298,6 +298,8 @@ type
     transaction: Option[TransactionIdentity]
     id: int
 
+    transactions*: seq[TransactionIdentity]
+
     timestamp*: int
 
     activityType*: ActivityType
@@ -325,6 +327,8 @@ type
     payloadType*: PayloadType
     transaction*: Option[TransactionIdentity]
     id*: Option[int]
+
+    transactions*: seq[TransactionIdentity]
 
     timestamp*: Option[int]
 
@@ -390,12 +394,18 @@ proc getMultiTransactionId*(ae: ActivityEntry): Option[int] =
     return none(int)
   return some(ae.id)
 
+proc getTransactions*(ae: ActivityEntry): seq[TransactionIdentity] =
+  if ae.payloadType != PayloadType.MultiTransaction:
+    return @[]
+  return ae.transactions
+
 proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
   return %*(ae)
 
 proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const transactionField = "transaction"
   const idField = "id"
+  const transactionsField = "transactions"
   const activityTypeField = "activityType"
   const activityStatusField = "activityStatus"
   const timestampField = "timestamp"
@@ -421,6 +431,10 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
                   else:
                     none(TransactionIdentity),
     id: if e.hasKey(idField): some(e[idField].getInt()) else: none(int),
+    transactions: if e.hasKey(transactionsField):
+                    fromJson(e[transactionsField], seq[TransactionIdentity])
+                  else:
+                    @[],
     activityType: if e.hasKey(activityTypeField):
                     some(fromJson(e[activityTypeField], ActivityType))
                   else:
@@ -476,6 +490,7 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     payloadType: data.payloadType,
     transaction: data.transaction,
     id: if data.id.isSome: data.id.get() else: 0,
+    transactions: data.transactions,
     activityType: data.activityType.get(),
     activityStatus: data.activityStatus.get(),
     timestamp: data.timestamp.get(),
@@ -501,6 +516,7 @@ proc `$`*(self: ActivityEntry): string =
     payloadType:{$self.payloadType},
     transaction:{transactionStr},
     id:{self.id},
+    transactions:{self.transactions},
     timestamp:{self.timestamp},
     activityType* {$self.activityType},
     activityStatus* {$self.activityStatus},
@@ -559,7 +575,7 @@ proc fromJson*(e: JsonNode, T: typedesc[SessionUpdate]): T {.inline.} =
     removed: removed
   )
 
-rpc(startActivityFilterSession, "wallet"):
+rpc(startActivityFilterSessionV2, "wallet"):
   addresses: seq[string]
   chainIds: seq[ChainId]
   filter: ActivityFilter
@@ -589,7 +605,7 @@ proc newActivityFilterSession*(
   count: int,
 ): (int32, bool) {.inline.} =
   try:
-    let res = startActivityFilterSession(addresses, chainIds, filter, count)
+    let res = startActivityFilterSessionV2(addresses, chainIds, filter, count)
     if res.error != nil:
       error "error starting a new session of activity fitlering: ", res.error
       return (int32(-1), false)
