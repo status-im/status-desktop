@@ -12,6 +12,8 @@ import app/modules/shared/wallet_utils
 
 import web3/ethtypes as eth
 
+import ./transaction_identities_model as txid
+
 # Additional data needed to build an Entry, which is
 # not included in the metadata and needs to be
 # fetched from a different source.
@@ -26,6 +28,8 @@ QtObject:
     ActivityEntry* = ref object of QObject
       metadata: backend.ActivityEntry
       extradata: ExtraData
+
+      transactions: txid.Model
 
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
@@ -57,8 +61,11 @@ QtObject:
     new(result, delete)
     result.metadata = metadata
     result.extradata = extradata
-    result.noAmount = newCurrencyAmount()
 
+    result.transactions = txid.newModel()
+    result.transactions.setItems(metadata.transactions)
+
+    result.noAmount = newCurrencyAmount()
     result.amountCurrency = result.extractCurrencyAmount(currencyService)
 
     result.highlight = metadata.isNew
@@ -69,6 +76,7 @@ QtObject:
     new(result, delete)
     result.metadata = metadata
     result.extradata = extradata
+    result.transactions = txid.newModel()
     result.noAmount = newCurrencyAmount()
 
     result.amountCurrency = result.extractCurrencyAmount(currencyService)
@@ -127,6 +135,8 @@ QtObject:
   proc `$`*(self: ActivityEntry): string =
     return fmt"""ActivityEntry(
       metadata:{$self.metadata},
+      extradata:{$self.extradata},
+      transactions:{$self.transactions},
     )"""
 
   # TODO: is this the right way to pass transaction identity? Why not use the instance?
@@ -138,6 +148,12 @@ QtObject:
   QtProperty[string] id:
     read = getId
 
+  proc getTransactions*(self: ActivityEntry): QVariant {.slot.} =
+    return newQVariant(self.transactions)
+
+  QtProperty[QVariant] transactions:
+    read = getTransactions
+  
   proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
     return self.metadata
 
@@ -179,11 +195,18 @@ QtObject:
   QtProperty[int] timestamp:
     read = getTimestamp
 
+  proc statusChanged*(self: ActivityEntry) {.signal.}
+
   proc getStatus*(self: ActivityEntry): int {.slot.} =
     return self.metadata.activityStatus.int
 
+  proc setStatus*(self: ActivityEntry, status: ActivityStatus) =
+    self.metadata.activityStatus = status
+    self.statusChanged()
+
   QtProperty[int] status:
     read = getStatus
+    notify = statusChanged
 
   proc getChainIdIn*(self: ActivityEntry): int {.slot.} =
     return self.metadata.chainIdIn.get(ChainId(0)).int

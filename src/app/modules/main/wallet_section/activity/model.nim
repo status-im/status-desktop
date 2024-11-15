@@ -5,7 +5,6 @@ import ./entry
 import app/modules/shared_models/currency_amount
 import app_service/service/currency/service
 import backend/activity as backend
-import backend/backend as importing_transactionidentity_comp
 
 type
   ModelRole {.pure.} = enum
@@ -108,7 +107,8 @@ QtObject:
       return false
 
     if m.getPayloadType() == MultiTransaction:
-      return m.getMultiTransactionId().get(0) == d.id.get()
+      let dID = d.id.get()
+      return dID > 0 and m.getMultiTransactionId().get(0) == dID
 
     return m.getTransactionIdentity().isSome() and d.transaction.isSome() and m.getTransactionIdentity().get() == d.transaction.get()
 
@@ -133,6 +133,8 @@ QtObject:
             self.entries[i].setNftName(updates[j].nftName.get())
           if updates[j].nftUrl.isSome():
             self.entries[i].setNftImageUrl(updates[j].nftUrl.get())
+          if updates[j].activityStatus.isSome():
+            self.entries[i].setStatus(updates[j].activityStatus.get())
           break
 
   proc getHasMore*(self: Model): bool {.slot.} =
