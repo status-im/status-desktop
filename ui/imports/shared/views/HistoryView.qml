@@ -37,7 +37,6 @@ ColumnLayout {
     property CurrenciesStore currencyStore
     property bool showAllAccounts: false
     property bool displayValues: true
-    property var sendModal
     property bool filterVisible
     property bool disableShadowOnScroll: false
     property bool hideVerticalScrollbar: false
@@ -279,125 +278,32 @@ ColumnLayout {
         }
     }
 
-    StatusMenu {
-        id: delegateMenu
+    Component {
+        id: txContextMenu
 
-        hideDisabledItems: true
+        TransactionContextMenu {
+            required property var modelData
 
-        property var transaction
-        property var transactionDelegate
+            readonly property var firstTx: SQUtils.ModelUtils.get(modelData.transactions, 0)
+            readonly property int firstTxChainId: !!firstTx ? firstTx.chainId : 0
+            readonly property string firstTxHash: !!firstTx ? firstTx.txHash : ""
 
-        function openMenu(delegate, mouse, data) {
-            if (!delegate || !data)
-                return
+            readonly property string networkShortName: Utils.getNetworkShortName(firstTxChainId)
+            readonly property bool isNetworkTestnet: Utils.isChainIDTestnet(firstTxChainId)
 
-            delegateMenu.transactionDelegate = delegate
-            delegateMenu.transaction = data
-            popup(delegate, mouse.x, mouse.y)
-        }
+            hideDisabledItems: true
 
-        onClosed: {
-            delegateMenu.transaction = null
-            delegateMenu.transactionDelegate = null
-        }
+            networkExplorerName: Utils.getChainExplorerName(networkShortName)
 
-        StatusAction {
-            id: repeatTransactionAction
+            onClosed: destroy()
 
-            text: qsTr("Repeat transaction")
-            icon.name: "rotate"
-
-            property alias tx: delegateMenu.transaction
-
-            enabled: {
-                if (!overview.isWatchOnlyAccount && !tx)
-                    return false
-                return root.walletRootStore.isTxRepeatable(tx)
+            onCopyTxHashRequested: {
+                ClipboardUtils.setText(firstTxHash)
             }
 
-            onTriggered: {
-                if (!tx)
-                    return
-                let asset = root.walletRootStore.getAssetForSendTx(tx)
-
-                const req = Helpers.lookupAddressesForSendModal(root.walletRootStore.accounts,
-                                                              root.walletRootStore.savedAddresses,
-                                                              tx.sender,
-                                                              tx.recipient,
-                                                              asset,
-                                                              tx.isNFT,
-                                                              tx.amount,
-                                                              tx.chainId)
-
-                root.sendModal.preSelectedAccountAddress = req.preSelectedAccount.address
-                root.sendModal.preSelectedRecipient = req.preSelectedRecipient
-                root.sendModal.preSelectedRecipientType = req.preSelectedRecipientType
-                root.sendModal.preSelectedHoldingID = req.preSelectedHoldingID
-                root.sendModal.preSelectedHoldingType = req.preSelectedHoldingType
-                root.sendModal.preSelectedSendType = req.preSelectedSendType
-                root.sendModal.preDefinedAmountToSend = req.preDefinedAmountToSend
-                root.sendModal.preSelectedChainId = req.preSelectedChainId
-                root.sendModal.onlyAssets = false
-                root.sendModal.open()
-            }
-        }
-        StatusSuccessAction {
-            text: qsTr("Copy details")
-            successText: qsTr("Details copied")
-            icon.name: "copy"
-            onTriggered: {
-                if (!delegateMenu.transactionDelegate)
-                    return
-                root.walletRootStore.addressWasShown(delegateMenu.transaction.sender)
-                if (delegateMenu.transaction.sender !== delegateMenu.transaction.recipient) {
-                    root.walletRootStore.addressWasShown(delegateMenu.transaction.recipient)
-                }
-
-                root.walletRootStore.fetchTxDetails(delegateMenu.transaction.id)
-                let detailsObj = root.walletRootStore.getTxDetails()
-                let detailsString = delegateMenu.transactionDelegate.getDetailsString(detailsObj)
-                ClipboardUtils.setText(detailsString)
-            }
-        }
-        StatusMenuSeparator {
-            visible: filterAction.enabled
-        }
-        StatusAction {
-            id: filterAction
-            text: qsTr("Filter by similar")
-            icon.name: "filter"
-            onTriggered: {
-                const store = root.walletRootStore.currentActivityFiltersStore
-                const tx = delegateMenu.transaction
-
-                store.autoUpdateFilter = false
-                store.resetAllFilters()
-
-                const currentAddress = overview.mixedcaseAddress.toUpperCase()
-
-                store.toggleType(tx.txType)
-                // Contract deployment has always ETH symbol. Symbol doesn't affect this type
-                if (tx.txType !== Constants.TransactionType.ContractDeployment) {
-                    const symbol = tx.symbol
-                    if (!!symbol)
-                        store.toggleToken(symbol)
-                    const inSymbol = tx.inSymbol
-                    if (!!inSymbol && inSymbol !== symbol)
-                        store.toggleToken(inSymbol)
-                }
-                if (showAllAccounts || tx.txType !== Constants.TransactionType.Bridge) {
-                    const recipient = tx.recipient.toUpperCase()
-                    if (!!recipient && recipient !== currentAddress && !/0X0+$/.test(recipient))
-                        store.toggleRecents(recipient)
-                }
-                if (tx.isNFT) {
-                    const uid = store.collectiblesList.getUidForData(tx.tokenID, tx.tokenAddress, tx.chainId)
-                    if (!!uid)
-                        store.toggleCollectibles(uid)
-                }
-
-                store.autoUpdateFilter = true
-                store.applyAllFilters()
+            onViewTxOnExplorerRequested: {
+                let link = Utils.getUrlForTxOnNetwork(networkShortName, isNetworkTestnet, firstTxHash)
+                Global.openLink(link)
             }
         }
     }
@@ -460,7 +366,7 @@ ColumnLayout {
                 community: isModelDataValid && !!communityId && !!root.communitiesStore ? root.communitiesStore.getCommunityDetailsAsJson(communityId) : null
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
-                        delegateMenu.openMenu(this, mouse, modelData)
+                        txContextMenu.createObject(this, { modelData }).popup(mouse)
                     }
                 }
             }

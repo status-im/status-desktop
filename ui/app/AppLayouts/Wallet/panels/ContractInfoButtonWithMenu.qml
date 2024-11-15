@@ -28,13 +28,7 @@ StatusFlatButton {
     onClicked: moreMenu.popup(-moreMenu.width + width, height + 4)
 
     function getExplorerName() {
-        if (root.networkShortName === Constants.networkShortChainNames.arbitrum) {
-            return qsTr("Arbiscan")
-        }
-        if (root.networkShortName === Constants.networkShortChainNames.optimism) {
-            return qsTr("Optimistic")
-        }
-        return qsTr("Etherscan")
+        return Utils.getChainExplorerName(root.networkShortName)
     }
 
     StatusMenu {
