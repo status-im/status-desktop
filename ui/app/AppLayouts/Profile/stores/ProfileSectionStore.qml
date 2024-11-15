@@ -20,9 +20,7 @@ QtObject {
 
     readonly property bool fetchingUpdate: aboutModuleInst.fetching
 
-    property ContactsStore contactsStore: ContactsStore {
-        contactsModule: profileSectionModuleInst.contactsModule
-    }
+    property ContactsStore contactsStore: ContactsStore {}
 
     property AdvancedStore advancedStore: AdvancedStore {
         walletModule: profileSectionModuleInst.walletModule

@@ -154,7 +154,8 @@ MembersSelectorBase {
 
     Connections {
         enabled: root.visible
-        target: root.rootStore.contactsStore.mainModuleInst
+        target: root.rootStore.contactsStore
+
         function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
             if (resolvedPubKey === "") {
                 root.suggestionsDialog.forceHide = false
