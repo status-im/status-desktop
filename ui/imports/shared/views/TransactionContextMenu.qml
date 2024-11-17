@@ -16,9 +16,10 @@ StatusMenu {
         icon.name: "link"
         onTriggered: root.viewTxOnExplorerRequested()
     }
-    StatusAction {
+    StatusSuccessAction {
         objectName: "copyTxHashItem"
         text: qsTr("Copy transaction hash")
+        successText: qsTr("Copied")
         icon.name: "copy"
         onTriggered: root.copyTxHashRequested()
     }
