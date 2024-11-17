@@ -3,6 +3,7 @@ import ./io_interface
 import ./preserved_properties
 import ./urls_model
 import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
+import ../../../../../../app/modules/shared_models/payment_request_model as payment_request_model
 import ../../../../../../app/modules/shared_models/emoji_reactions_model as emoji_reactions_model
 
 QtObject:
@@ -13,6 +14,8 @@ QtObject:
       preservedPropertiesVariant: QVariant
       linkPreviewModel: link_preview_model.Model
       linkPreviewModelVariant: QVariant
+      paymentRequestModel: payment_request_model.Model
+      paymentRequestModelVariant: QVariant
       urlsModel: urls_model.Model
       urlsModelVariant: QVariant
       sendingInProgress: bool
@@ -28,6 +31,8 @@ QtObject:
     self.preservedProperties.delete
     self.linkPreviewModelVariant.delete
     self.linkPreviewModel.delete
+    self.paymentRequestModelVariant.delete
+    self.paymentRequestModel.delete
     self.urlsModelVariant.delete
     self.urlsModel.delete
     self.emojiReactionsModel.delete
@@ -41,6 +46,8 @@ QtObject:
     result.preservedPropertiesVariant = newQVariant(result.preservedProperties)
     result.linkPreviewModel = newLinkPreviewModel()
     result.linkPreviewModelVariant = newQVariant(result.linkPreviewModel)
+    result.paymentRequestModel = newPaymentRequestModel()
+    result.paymentRequestModelVariant = newQVariant(result.paymentRequestModel)
     result.urlsModel = newUrlsModel()
     result.urlsModelVariant = newQVariant(result.urlsModel)
     result.askToEnableLinkPreview = false
@@ -58,13 +65,13 @@ QtObject:
     # FIXME: Update this when `setText` is async.
     self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
-    self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews())
+    self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
 
   proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
-    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews())
+    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
@@ -89,6 +96,12 @@ QtObject:
 
   QtProperty[QVariant] preservedProperties:
     read = getPreservedProperties
+
+  proc getPaymentRequestModel*(self: View): QVariant {.slot.} =
+    return self.paymentRequestModelVariant
+
+  QtProperty[QVariant] paymentRequestModel:
+    read = getPaymentRequestModel
 
   proc getLinkPreviewModel*(self: View): QVariant {.slot.} =
     return self.linkPreviewModelVariant
@@ -148,6 +161,15 @@ QtObject:
 
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)
+
+  proc addPaymentRequest*(self: View, receiver: string, amount: string, symbol: string, chainId: int) {.slot.} =
+    self.paymentRequestModel.addPaymentRequest(receiver, amount, symbol, chainId)
+
+  proc removePaymentRequestPreviewData*(self: View, index: int) {.slot.} =
+    self.paymentRequestModel.removeItemWithIndex(index)
+
+  proc removeAllPaymentRequestPreviewData(self: View) {.slot.} =
+    self.paymentRequestModel.clearItems()
 
   proc urlsModelChanged(self: View) {.signal.}
   proc getUrlsModel*(self: View): QVariant {.slot.} =

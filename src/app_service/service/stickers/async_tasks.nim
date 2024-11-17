@@ -89,6 +89,7 @@ const asyncSendStickerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       arg.preferredUsername,
       standardLinkPreviews = JsonNode(),
       statusLinkPreviews = JsonNode(),
+      paymentRequests = JsonNode(),
       communityId = "", # communityId is not necessary when sending a sticker
       arg.stickerHash,
       arg.stickerPackId,

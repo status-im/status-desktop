@@ -73,6 +73,7 @@ type
     communityId: string
     standardLinkPreviews: JsonNode
     statusLinkPreviews: JsonNode
+    paymentRequests: JsonNode
 
 const asyncSendMessageTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSendMessageTaskArg](argEncoded)
@@ -86,6 +87,7 @@ const asyncSendMessageTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       arg.preferredUsername,
       arg.standardLinkPreviews,
       arg.statusLinkPreviews,
+      arg.paymentRequests,
       arg.communityId)
 
     arg.finish(%* {
@@ -109,6 +111,7 @@ type
     preferredUsername: string
     standardLinkPreviews: JsonNode
     statusLinkPreviews: JsonNode
+    paymentRequests: JsonNode
 
 const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSendImagesTaskArg](argEncoded)
@@ -129,6 +132,7 @@ const asyncSendImagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       arg.preferredUsername,
       arg.standardLinkPreviews,
       arg.statusLinkPreviews,
+      arg.paymentRequests
     )
 
     for imagePath in imagePaths:
