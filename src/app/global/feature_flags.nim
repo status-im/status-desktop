@@ -16,6 +16,7 @@ QtObject:
     swapEnabled: bool
     connectorEnabled: bool
     sendViaPersonalChatEnabled: bool
+    requestPaymentEnabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
