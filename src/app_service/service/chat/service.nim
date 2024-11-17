@@ -5,6 +5,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
 import ../message/dto/[link_preview, standard_link_preview, status_link_preview]
+import ../message/dto/payment_request
 import ../activity_center/dto/notification as notification_dto
 import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
@@ -430,7 +431,8 @@ QtObject:
                    msg: string,
                    replyTo: string,
                    preferredUsername: string = "",
-                   linkPreviews: seq[LinkPreview] = @[]) =
+                   linkPreviews: seq[LinkPreview] = @[],
+                   paymentRequests: seq[PaymentRequest] = @[]) =
     try:
       let (standardLinkPreviews, statusLinkPreviews) = extractLinkPreviewsLists(linkPreviews)
 
@@ -446,6 +448,7 @@ QtObject:
         preferredUsername: preferredUsername,
         standardLinkPreviews: %standardLinkPreviews,
         statusLinkPreviews: %statusLinkPreviews,
+        paymentRequests: %paymentRequests,
       )
 
       self.threadpool.start(arg)
@@ -476,6 +479,7 @@ QtObject:
       contentType: int,
       preferredUsername: string = "",
       linkPreviews: seq[LinkPreview] = @[],
+      paymentRequests: seq[PaymentRequest] = @[],
       communityId: string = "") =
     try:
       let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
@@ -495,6 +499,7 @@ QtObject:
         communityId: communityId, # Only send a community ID for the community invites
         standardLinkPreviews: %standardLinkPreviews,
         statusLinkPreviews: %statusLinkPreviews,
+        paymentRequests: %paymentRequests,
       )
 
       self.threadpool.start(arg)

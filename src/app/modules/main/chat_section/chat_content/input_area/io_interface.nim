@@ -2,6 +2,7 @@ import NimQml, tables
 
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/message/dto/payment_request
 import ../../../../../../app_service/service/contacts/dto/contact_details
 
 type
@@ -19,10 +20,10 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, linkPreviews: seq[LinkPreview]) {.base.} =
+method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]) {.base.} =
+method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =

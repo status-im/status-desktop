@@ -7,6 +7,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/message/dto/payment_request
 import ../../../../../../app_service/service/message/dto/urls_unfurling_plan
 import ../../../../../../app_service/service/settings/dto/settings
 import ../../../../../core/eventemitter
@@ -128,7 +129,8 @@ proc sendImages*(self: Controller,
                  msg: string,
                  replyTo: string,
                  preferredUsername: string = "",
-                 linkPreviews: seq[LinkPreview]) =
+                 linkPreviews: seq[LinkPreview],
+                 paymentRequests: seq[PaymentRequest]) =
   self.resetLinkPreviews()
   self.chatService.asyncSendImages(
     self.chatId,
@@ -136,7 +138,8 @@ proc sendImages*(self: Controller,
     msg,
     replyTo,
     preferredUsername,
-    linkPreviews
+    linkPreviews,
+    paymentRequests
   )
 
 proc sendChatMessage*(self: Controller,
@@ -144,14 +147,16 @@ proc sendChatMessage*(self: Controller,
                       replyTo: string,
                       contentType: int,
                       preferredUsername: string = "",
-                      linkPreviews: seq[LinkPreview]) =
+                      linkPreviews: seq[LinkPreview],
+                      paymentRequests: seq[PaymentRequest]) =
   self.resetLinkPreviews()
   self.chatService.asyncSendChatMessage(self.chatId,
     msg,
     replyTo,
     contentType,
     preferredUsername,
-    linkPreviews
+    linkPreviews,
+    paymentRequests
   )
 
 proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =

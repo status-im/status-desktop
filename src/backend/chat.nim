@@ -58,6 +58,7 @@ proc sendChatMessage*(
     preferredUsername: string = "",
     standardLinkPreviews: JsonNode,
     statusLinkPreviews: JsonNode,
+    paymentRequests: JsonNode,
     communityId: string = "",
     stickerHash: string = "",
     stickerPack: string = "0",
@@ -76,6 +77,7 @@ proc sendChatMessage*(
       "communityId": communityId,
       "linkPreviews": standardLinkPreviews,
       "statusLinkPreviews": statusLinkPreviews,
+      "paymentRequests": paymentRequests,
     }
   ])
 
@@ -86,6 +88,7 @@ proc sendImages*(chatId: string,
                  preferredUsername: string,
                  standardLinkPreviews: JsonNode,
                  statusLinkPreviews: JsonNode,
+                 paymentRequests: JsonNode,
                  ): RpcResponse[JsonNode] =
   let imagesJson = %* images.map(image => %*
       {
@@ -97,6 +100,7 @@ proc sendImages*(chatId: string,
         "responseTo": replyTo,
         "linkPreviews": standardLinkPreviews,
         "statusLinkPreviews": statusLinkPreviews,
+        "paymentRequests": paymentRequests,
       }
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
