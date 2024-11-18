@@ -47,6 +47,9 @@ SplitView {
         readonly property int chainIdIn: 1
         readonly property int chainIdOut: 2
 
+        readonly property string interactedContractAddress: "0x6a000f20005980200259b80c5102003040001068"
+        readonly property string approvalSpender: "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"
+
         readonly property bool highlight: _highlight
         function doneHighlighting() {
             _highlight = false
@@ -78,6 +81,7 @@ SplitView {
                     id: delegate
                     Layout.fillWidth: true
                     modelData: root.mockupModelData
+                    showAllAccounts: ctrlAllAccounts.checked
                     currenciesStore: SharedStores.CurrenciesStore {
                         readonly property string currentCurrency: "EUR"
 
@@ -178,6 +182,11 @@ SplitView {
             Switch {
                 id: ctrlMultiTrans
                 text: "Multi transaction"
+            }
+
+            Switch {
+                id: ctrlAllAccounts
+                text: "All Accounts"
             }
 
             Button {

@@ -153,6 +153,9 @@ StatusListItem {
                                             isModelDataValid ?
                                                 Utils.compactAddress(modelData.sender, 4) :
                                                 ""
+    
+    readonly property string interactedContractAddress: isModelDataValid ? Utils.compactAddress(modelData.interactedContractAddress, 4) : ""
+    readonly property string approvalSpender: isModelDataValid ? Utils.compactAddress(modelData.approvalSpender, 4) : ""
 
     property StatusAssetSettings statusIconAsset: StatusAssetSettings {
         width: 12
@@ -167,9 +170,8 @@ StatusListItem {
             case Constants.TransactionStatus.Pending:
                 return Theme.svg("transaction/pending")
             case Constants.TransactionStatus.Complete:
-                return Theme.svg("transaction/confirmed")
             case Constants.TransactionStatus.Finalised:
-                return Theme.svg("transaction/finished")
+                return Theme.svg("transaction/confirmed")
             case Constants.TransactionStatus.Failed:
                 return Theme.svg("transaction/failed")
             default:
@@ -203,7 +205,7 @@ StatusListItem {
 
         readonly property bool isLightTheme: Theme.palette.name === Constants.lightThemeName
         property color animatedBgColor
-        property int txType: walletRootStore.transactionType(root.modelData)
+        property int txType: walletRootStore.getTransactionType(root.modelData)
 
         readonly property var secondIconAsset: StatusAssetSettings {
             width: root.tokenIconAsset.width
@@ -233,318 +235,6 @@ StatusListItem {
         readonly property bool isSecondIconVisible: secondIconSource !== ""
     }
 
-    function getDetailsString(detailsObj) {
-        let details = ""
-        const endl = "\n"
-        const endl2 = endl + endl
-        const type = d.txType
-        const feeEthValue = currenciesStore.getGasEthValue(detailsObj.totalFees.amount, 1)
-
-        // TITLE
-        switch (type) {
-        case Constants.TransactionType.Send:
-            details += qsTr("Send transaction details" + endl2)
-            break
-        case Constants.TransactionType.Receive:
-            details += qsTr("Receive transaction details") + endl2
-            break
-        case Constants.TransactionType.Buy:
-            details += qsTr("Buy transaction details") + endl2
-            break
-        case Constants.TransactionType.Sell:
-            details += qsTr("Sell transaction details") + endl2
-            break
-        case Constants.TransactionType.Destroy:
-            details += qsTr("Destroy transaction details") + endl2
-            break
-        case Constants.TransactionType.Swap:
-            details += qsTr("Swap transaction details") + endl2
-            break
-        case Constants.TransactionType.Bridge:
-            details += qsTr("Bridge transaction details") + endl2
-            break
-        case Constants.TransactionType.ContractDeployment:
-            details += qsTr("Contract deployment details") + endl2
-            break
-        case Constants.TransactionType.Mint:
-            if (isNFT)
-                details += qsTr("Mint collectible details") + endl2
-            else
-                details += qsTr("Mint token details") + endl2
-            break
-        case Constants.TransactionType.Approve:
-            details += qsTr("Set spending cap transaction details") + endl2
-            break
-        default:
-            break
-        }
-
-        details += qsTr("Summary") + endl
-        switch(type) {
-        case Constants.TransactionType.Buy:
-        case Constants.TransactionType.Sell:
-        case Constants.TransactionType.Destroy:
-        case Constants.TransactionType.Swap:
-        case Constants.TransactionType.Bridge:
-        case Constants.TransactionType.ContractDeployment:
-        case Constants.TransactionType.Mint:
-        case Constants.TransactionType.Approve:
-            details += getSubtitle(true, true) + endl2
-            break
-        default:
-            if (networkNameIn != networkNameOut) { // cross chain Send/Receive that involves bridging
-                details += getSubtitle(true, true) + endl2
-            }
-            else
-                details += qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName) + endl2
-            break
-        }
-
-        if (root.isNFT) {
-            details += qsTr("Token ID") + endl + modelData.tokenID + endl2
-            if (!!modelData.nftName) {
-                details += qsTr("Token name") + endl + modelData.nftName + endl2
-            }
-        }
-
-        // PROGRESS
-        const networkLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainId, "layer")
-
-        const isBridge = type === Constants.TransactionType.Bridge
-        switch(transactionStatus) {
-        case Constants.TransactionStatus.Pending:
-            details += qsTr("Status") + endl
-            details += qsTr("Pending on %1").arg(root.networkName) + endl2
-            if (isBridge) {
-                details += qsTr("Pending on %1").arg(root.networkNameIn) + endl2
-            }
-            break
-        case Constants.TransactionStatus.Failed:
-            details += qsTr("Status") + endl
-            details += qsTr("Failed on %1").arg(root.networkName) + endl2
-            if (isBridge) {
-                details += qsTr("Failed on %1").arg(root.networkNameIn) + endl2
-            }
-            break
-        case Constants.TransactionStatus.Complete: {
-            const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
-            const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
-            details += qsTr("Status") + endl
-            details += qsTr("Signed on %1").arg(root.networkName) + endl + timestampString + endl2
-            details += qsTr("Confirmed on %1").arg(root.networkName) + endl
-            details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
-            if (isBridge) {
-                const networkInLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "layer")
-                const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
-                details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
-                details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
-                details += LocaleUtils.formatDateTime(confirmationTimeStampIn * 1000, Locale.LongFormat) + endl2
-            }
-            break
-        }
-        case Constants.TransactionStatus.Finalised: {
-            const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
-            const confirmationTimeStamp = WalletUtils.calculateConfirmationTimestamp(networkLayer, modelData.timestamp)
-            const finalisationTimeStamp = WalletUtils.calculateFinalisationTimestamp(networkLayer, modelData.timestamp)
-            details += qsTr("Status") + endl
-            const epoch = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainId) - detailsObj.blockNumberOut)
-            details += qsTr("Finalised in epoch %1 on %2").arg(epoch.toFixed(0)).arg(root.networkName) + endl2
-            details += qsTr("Signed on %1").arg(root.networkName) + endl + timestampString + endl2
-            details += qsTr("Confirmed on %1").arg(root.networkName) + endl
-            details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
-            details += qsTr("Finalised on %1").arg(root.networkName) + endl
-            details += LocaleUtils.formatDateTime(finalisationTimeStamp * 1000, Locale.LongFormat) + endl2
-            if (isBridge) {
-                const networkInLayer = SQUtils.ModelUtils.getByKey(flatNetworks, "chainId", modelData.chainIdIn, "layer")
-                const confirmationTimeStampIn = WalletUtils.calculateConfirmationTimestamp(networkInLayer, modelData.timestamp)
-                const finalisationTimeStampIn = WalletUtils.calculateFinalisationTimestamp(networkInLayer, modelData.timestamp)
-                const epochIn = Math.abs(walletRootStore.getEstimatedLatestBlockNumber(modelData.chainIdIn) - detailsObj.blockNumberIn)
-                details += qsTr("Finalised in epoch %1 on %2").arg(epochIn.toFixed(0)).arg(root.networkNameIn) + endl2
-                details += qsTr("Signed on %1").arg(root.networkNameIn) + endl + timestampString + endl2
-                details += qsTr("Confirmed on %1").arg(root.networkNameIn) + endl
-                details += LocaleUtils.formatDateTime(confirmationTimeStampIn * 1000, Locale.LongFormat) + endl2
-                details += qsTr("Finalised on %1").arg(root.networkNameIn) + endl
-                details += LocaleUtils.formatDateTime(finalisationTimeStampIn * 1000, Locale.LongFormat) + endl2
-            }
-
-            break
-        }
-        default:
-            break
-        }
-
-        // SUMMARY ADRESSES
-        switch (type) {
-        case Constants.TransactionType.Swap:
-            details += qsTr("From") + endl + modelData.outSymbol + endl2
-            details += qsTr("To") + endl + modelData.inSymbol + endl2
-            details += qsTr("In") + endl + modelData.sender + endl2
-            break
-        case Constants.TransactionType.Bridge:
-            details += qsTr("From") + endl + networkNameOut + endl2
-            details += qsTr("To") + endl + networkNameIn + endl2
-            details += qsTr("In") + endl + modelData.sender + endl2
-            break
-        case Constants.TransactionType.ContractDeployment:
-            details += qsTr("From") + endl + modelData.sender + endl2
-            const failed = root.transactionStatus === Constants.TransactionStatus.Failed
-            const isPending = root.transactionStatus === Constants.TransactionStatus.Pending || !modelData.contract
-            if (failed) {
-                details += qsTr("To\nContract address not created")
-            } else if (isPending) {
-                details += qsTr("To\nAwaiting contract address...")
-            } else {
-                details += qsTr("To\nContract created") + endl + modelData.contract + endl2
-            }
-            break
-        default:
-            details += qsTr("From") + endl + modelData.sender + endl2
-            details += qsTr("To") + endl + modelData.recipient + endl2
-            break
-        }
-        if (!!detailsObj.protocol) {
-            details += qsTr("Using") + endl + detailsObj.protocol + endl2
-        }
-        if (root.isMultiTransaction) {
-            if (!!detailsObj.txHashOut) {
-                details += qsTr("%1 Tx hash").arg(root.networkNameOut) + endl + detailsObj.txHashOut + endl2
-            }
-            if (!!detailsObj.txHashIn) {
-                details += qsTr("%1 Tx hash").arg(root.networkNameIn) + endl + detailsObj.txHashIn + endl2
-            }
-        } else if (!!detailsObj.txHash) {
-            details += qsTr("%1 Tx hash").arg(root.networkName) + endl + detailsObj.txHash + endl2
-        }
-
-        const protocolFromContractAddress = "" // TODO fill protocol contract address for 'from' network for Bridge and Swap
-        if (!!detailsObj.protocol && !!protocolFromContractAddress) {
-            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(detailsObj.protocol) + endl
-            details += protocolFromContractAddress + endl2
-        }
-        if (!!detailsObj.contract && type !== Constants.TransactionType.ContractDeployment && !/0x0+$/.test(detailsObj.contract)) {
-            let symbol = !!modelData.symbol || !modelData.tokenAddress ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.tokenAddress, 4))
-            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(symbol) + endl
-            details += detailsObj.contract + endl2
-        }
-        const protocolToContractAddress = "" // TODO fill protocol contract address for 'to' network for Bridge
-        if (!!protocolToContractAddress && !!detailsObj.protocol) {
-            details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(detailsObj.protocol) + endl
-            details += protocolToContractAddress + endl2
-        }
-        switch (type) {
-        case Constants.TransactionType.Swap:
-            if (!!detailsObj.contractOut) {
-                details += qsTr("%1 %2 contract address").arg(root.networkName).arg(modelData.toSymbol) + endl
-                details += detailsObj.contractOut + endl2
-            }
-            break
-        case Constants.TransactionType.Bridge:
-            if (!!detailsObj.contractOut) {
-                details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(modelData.symbol) + endl
-                details += detailsObj.contractOut + endl2
-            }
-            break
-        default:
-            break
-        }
-
-        // SUMMARY DATA
-        if (type !== Constants.TransactionType.Bridge) {
-            details += qsTr("Network") + endl + networkName + endl2
-        }
-        if (!!detailsObj.tokenType) {
-            details += qsTr("Token format") + endl + detailsObj.tokenType.toUpperCase() + endl2
-        }
-        details += qsTr("Nonce") + endl + detailsObj.nonce + endl2
-        if (type === Constants.TransactionType.Bridge) {
-            details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
-            details += detailsObj.blockNumberOut  + endl2
-            if (detailsObj.blockNumberIn > 0) {
-                details += qsTr("Included in Block on %1").arg(networkNameIn) + endl
-                details += detailsObj.blockNumberIn + endl2
-            }
-        } else {
-            details += qsTr("Included in Block") + endl + detailsObj.blockNumberOut  + endl2
-        }
-
-        // VALUES
-        const fiatTransactionValue = currenciesStore.formatCurrencyAmount(isMultiTransaction ? root.outFiatValue : root.fiatValue, root.currentCurrency)
-        const feeFiatValue = currenciesStore.getFiatValue(feeEthValue, Constants.ethToken)
-        let valuesString = ""
-        if (!root.isNFT) {
-            switch(type) {
-            case Constants.TransactionType.Send:
-                valuesString += qsTr("Amount sent %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
-                break
-            case Constants.TransactionType.Swap:
-            case Constants.TransactionType.Bridge:
-                valuesString += qsTr("Amount sent %1 (%2)").arg(root.outTransactionValue).arg(fiatTransactionValue) + endl2
-                break
-            default:
-                break
-            }
-            if (type === Constants.TransactionType.Swap) {
-                const crypto = currenciesStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
-                const fiat = currenciesStore.formatCurrencyAmount(root.inCryptoValue, modelData.inSymbol)
-                valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
-            } else if (type === Constants.TransactionType.Bridge) {
-                // Reduce crypto value by fee value
-                const valueInCrypto = currenciesStore.getCryptoValue(root.fiatValue - feeFiatValue, modelData.inSymbol)
-                const crypto = currenciesStore.formatCurrencyAmount(valueInCrypto, modelData.inSymbol)
-                const fiat = currenciesStore.formatCurrencyAmount(root.fiatValue - feeFiatValue, root.currentCurrency)
-                valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
-            }
-            switch(type) {
-            case Constants.TransactionType.Send:
-            case Constants.TransactionType.Swap:
-            case Constants.TransactionType.Bridge:
-                const feeValue = LocaleUtils.currencyAmountToLocaleString(detailsObj.totalFees)
-                const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
-                valuesString += qsTr("Fees %1 (%2)").arg(feeValue).arg(feeFiat) + endl2
-                break
-            default:
-                break
-            }
-        }
-
-        if (!root.isNFT || type !== Constants.TransactionType.Receive) {
-            if (type === Constants.TransactionType.Destroy || root.isNFT) {
-                const feeCrypto = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
-                const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
-                valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
-            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && networkLayer === 1)) {
-                valuesString += qsTr("Total %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
-            } else if (type === Constants.TransactionType.ContractDeployment) {
-                const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
-                if (isPending) {
-                    const maxFeeEthValue = currenciesStore.getFeeEthValue(detailsObj.maxTotalFees.amount)
-                    const maxFeeCrypto = currenciesStore.formatCurrencyAmount(maxFeeEthValue, "ETH")
-                    const maxFeeFiat = currenciesStore.formatCurrencyAmount(maxFeeCrypto, root.currentCurrency)
-                    valuesString += qsTr("Estimated max fee %1 (%2)").arg(maxFeeCrypto).arg(maxFeeFiat) + endl2
-                } else {
-                    const feeCrypto = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
-                    const feeFiat = currenciesStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
-                    valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
-                }
-            } else {
-                const feeEth = currenciesStore.formatCurrencyAmount(feeEthValue, "ETH")
-                const txValue = isMultiTransaction ? root.inTransactionValue : root.transactionValue
-                valuesString += qsTr("Total %1 + %2 (%3)").arg(txValue).arg(feeEth).arg(fiatTransactionValue) + endl2
-            }
-        }
-
-        if (valuesString !== "") {
-            const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
-            details += qsTr("Values at %1").arg(timestampString) + endl2
-            details += valuesString + endl2
-        }
-
-        // Remove no-break space
-        details = details.replace(/[\xA0]/g, " ");
-        // Remove empty new lines at the end
-        return details.replace(/[\r\n\s]*$/, '')
-    }
-
     function getSubtitle(allAccounts, description) {
         if (root.isCommunityAssetViaAirdrop) {
             let communityInfo = ""
@@ -553,38 +243,40 @@ StatusListItem {
                 communityInfo += "<img src='" + root.communityImage + "' width='18' height='18' </img> "
             }
             communityInfo += root.communityName
-            return qsTr("%1 (community asset) from %2 via %3").arg(root.transactionValue).arg(communityInfo).arg(root.networkName)
+            return qsTr("%1 (community asset) from %2 on %3").arg(root.transactionValue).arg(communityInfo).arg(root.networkName)
         }
 
         switch(d.txType) {
+        case Constants.TransactionType.Send:
+            // Cross chain send. Use bridge pattern
+            if (root.networkNameIn != root.networkNameOut && root.networkNameIn && root.networkNameOut) {
+                if (allAccounts)
+                    return qsTr("%1 from %2 to %3 on %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 to %2 on %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+            }
+
+            if (allAccounts)
+                return qsTr("%1 from %2 to %3 on %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
+            return qsTr("%1 to %2 on %3").arg(transactionValue).arg(toAddress).arg(networkName)
+
         case Constants.TransactionType.Receive:
             // Cross chain receive. Use bridge pattern
             if (root.networkNameIn != root.networkNameOut && root.networkNameIn && root.networkNameOut) {
                 if (allAccounts)
-                    return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
-                return qsTr("%1 from %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+                    return qsTr("%1 from %2 to %3 on %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
+                return qsTr("%1 from %2 on %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
             }
 
             if (allAccounts)
-                return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
-            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
-        case Constants.TransactionType.Buy:
-            let protocol = "" // TODO fill data for buy
-            if (allAccounts)
-                return qsTr("%1 on %2 via %3 in %4").arg(transactionValue).arg(protocol).arg(networkName).arg(toAddress)
-            return qsTr("%1 on %2 via %3").arg(transactionValue).arg(protocol).arg(networkName)
+                return qsTr("%1 from %2 to %3 on %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
+            return qsTr("%1 from %2 on %3").arg(transactionValue).arg(fromAddress).arg(networkName)
         case Constants.TransactionType.Destroy:
             if (allAccounts)
-                return qsTr("%1 at %2 via %3 in %4").arg(inTransactionValue).arg(toAddress).arg(networkName).arg(toAddress)
-            return qsTr("%1 at %2 via %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
+                return qsTr("%1 at %2 on %3 in %4").arg(inTransactionValue).arg(toAddress).arg(networkName).arg(toAddress)
+            return qsTr("%1 at %2 on %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
         case Constants.TransactionType.Swap:
-            if (root.dAppName !== "") {
-                if (allAccounts)
-                    return qsTr("%1 to %2 using %3 on %4 in %5").arg(outTransactionValue).arg(inTransactionValue).arg(root.dAppName).arg(networkName).arg(fromAddress)
-                return qsTr("%1 to %2 using %3 on %4").arg(outTransactionValue).arg(inTransactionValue).arg(root.dAppName).arg(networkName)
-            }
             if (allAccounts)
-                return qsTr("%1 to %2 on %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(fromAddress)
+                return qsTr("%1 to %2 in %3 on %4").arg(outTransactionValue).arg(inTransactionValue).arg(fromAddress).arg(networkName)
             return qsTr("%1 to %2 on %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
             if (allAccounts)
@@ -602,21 +294,15 @@ StatusListItem {
                 if (allAccounts)
                     return qsTr("%1 in %2 for %3 on %4").arg(transactionValue).arg(toAddress).arg(dAppUrl).arg(networkName)
                 return qsTr("%1 for %2 on %3").arg(transactionValue).arg(dAppUrl).arg(networkName)
-            }            
-            if (allAccounts)
-                return qsTr("%1 in %2 on %3").arg(transactionValue).arg(toAddress).arg(networkName)
-            return qsTr("%1 on %2").arg(transactionValue).arg(networkName)
-        default:
-            // Cross chain send. Use bridge pattern
-            if (root.networkNameIn != root.networkNameOut && root.networkNameIn && root.networkNameOut) {
-                if (allAccounts)
-                    return qsTr("%1 from %2 to %3 via %4 and %5").arg(inTransactionValue).arg(fromAddress).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
-                return qsTr("%1 to %2 via %3 and %4").arg(inTransactionValue).arg(toAddress).arg(networkNameOut).arg(networkNameIn)
             }
-
             if (allAccounts)
-                return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
-            return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
+                return qsTr("%1 in %2 for %3 on %4").arg(transactionValue).arg(fromAddress).arg(approvalSpender).arg(networkName)
+            return qsTr("%1 for %2 on %3").arg(transactionValue).arg(approvalSpender).arg(networkName)
+        default:
+            // Unknown contract interaction
+            if (allAccounts)
+                return qsTr("Between %1 and %2 on %3").arg(fromAddress).arg(interactedContractAddress).arg(networkName)
+            return qsTr("With %1 on %2").arg(interactedContractAddress).arg(networkName)
         }
     }
 
@@ -646,8 +332,6 @@ StatusListItem {
                 return "send"
             case Constants.TransactionType.Receive:
                 return "receive"
-            case Constants.TransactionType.Buy:
-            case Constants.TransactionType.Sell:
             case Constants.TransactionType.Mint:
                 return "token"
             case Constants.TransactionType.Destroy:
@@ -661,7 +345,7 @@ StatusListItem {
             case Constants.TransactionType.Approve:
                 return "approve"
             default:
-                return ""
+                return "contract_deploy"
             }
         }
         bgColor: "transparent"
@@ -697,10 +381,6 @@ StatusListItem {
             return failed ? qsTr("Send failed") : (isPending ? qsTr("Sending") : qsTr("Sent"))
         case Constants.TransactionType.Receive:
             return failed ? qsTr("Receive failed") : (isPending ? qsTr("Receiving") : qsTr("Received"))
-        case Constants.TransactionType.Buy:
-            return failed ? qsTr("Buy failed") : (isPending ? qsTr("Buying") : qsTr("Bought"))
-        case Constants.TransactionType.Sell:
-            return failed ? qsTr("Sell failed") : (isPending ? qsTr("Selling") : qsTr("Sold"))
         case Constants.TransactionType.Destroy:
             return failed ? qsTr("Destroy failed") : (isPending ? qsTr("Destroying") : qsTr("Destroyed"))
         case Constants.TransactionType.Swap:
@@ -716,7 +396,7 @@ StatusListItem {
         case Constants.TransactionType.Approve:
             return failed ? qsTr("Failed to set spending cap") : (isPending ? qsTr("Setting spending cap") : qsTr("Spending cap set"))
         default:
-            return ""
+            return qsTr("Interaction")
         }
     }
     statusListItemTitleArea.anchors.rightMargin: root.rightPadding
@@ -789,9 +469,7 @@ StatusListItem {
 
                         switch(d.txType) {
                         case Constants.TransactionType.Send:
-                        case Constants.TransactionType.Sell:
                             return "−" + root.transactionValue
-                        case Constants.TransactionType.Buy:
                         case Constants.TransactionType.Receive:
                             return "+" + root.transactionValue
                         case Constants.TransactionType.Swap:
@@ -820,7 +498,6 @@ StatusListItem {
 
                         switch(d.txType) {
                         case Constants.TransactionType.Receive:
-                        case Constants.TransactionType.Buy:
                         case Constants.TransactionType.Swap:
                             return Theme.palette.successColor1
                         default:
@@ -842,8 +519,6 @@ StatusListItem {
 
                         switch(d.txType) {
                         case Constants.TransactionType.Send:
-                        case Constants.TransactionType.Sell:
-                        case Constants.TransactionType.Buy:
                             return "−" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case Constants.TransactionType.Receive:
                             return "+" + root.currenciesStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)

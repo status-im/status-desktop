@@ -3,6 +3,9 @@ pragma Singleton
 
 import QtQml 2.15
 
+import utils 1.0
+import Models 1.0
+
 QtObject {
     id: root
 
@@ -17,7 +20,7 @@ QtObject {
     }
 
     function getNameForAddress(address) {
-        return "NAMEFOR: %1".arg(address)
+        return "NAMEFOR: %1".arg(Utils.compactAddress(address, 4))
     }
 
     function getExplorerNameForNetwork(networkName) {
@@ -34,5 +37,19 @@ QtObject {
 
     function getOpenSeaCollectibleUrl(networkShortName, contractAddress, tokenId) {
         return "https://somedummyurl.com"
+    }
+
+    function getDappDetails(chainId, contractAddress) {
+        return {
+            "icon": ModelsData.icons.socks,
+            "url": "https://somedummyurl.com",
+            "name": "SomeDummyName",
+            "approvalContractAddress": "0x6a000f20005980200259b80c5102003040001068",
+            "swapContractAddress": "0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57",
+        }
+    }
+
+    function getTransactionType(transaction) {
+        return transaction.txType
     }
 }
