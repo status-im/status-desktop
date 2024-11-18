@@ -24,6 +24,12 @@ import "../views/collectibles"
 RightTabBaseView {
     id: root
 
+    enum TabIndex {
+        Assets = 0,
+        Collectibles = 1,
+        Activity = 2
+    }
+
     property SharedStores.RootStore sharedRootStore
 
     property alias currentTabIndex: walletTabBar.currentIndex
@@ -149,18 +155,19 @@ RightTabBaseView {
                     icon.color: checked ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                     Behavior on icon.color { ColorAnimation { duration: 200; easing.type: Easing.InOutQuad } }
                     highlighted: checked
-                    visible: walletTabBar.currentIndex !== 2 // TODO #16761: Re-enable filter for activity when implemented
+                    visible: walletTabBar.currentIndex !== RightTabView.TabIndex.Activity // TODO #16761: Re-enable filter for activity when implemented
                 }
             }
+
             Loader {
                 id: mainViewLoader
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 sourceComponent: {
                     switch (walletTabBar.currentIndex) {
-                    case 0: return assetsView
-                    case 1: return collectiblesView
-                    case 2: return historyView
+                        case RightTabView.TabIndex.Assets: return assetsView
+                        case RightTabView.TabIndex.Collectibles: return collectiblesView
+                        case RightTabView.TabIndex.Activity: return historyView
                     }
                 }
 
