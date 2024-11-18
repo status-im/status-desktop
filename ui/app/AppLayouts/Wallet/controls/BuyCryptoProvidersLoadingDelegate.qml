@@ -4,7 +4,6 @@ import utils 1.0
 
 BuyCryptoProvidersDelegate {
     name: Constants.dummyText
-    description: Constants.dummyText
     logoUrl: Constants.dummyText
     urlsNeedParameters: false
     fees: Constants.dummyText

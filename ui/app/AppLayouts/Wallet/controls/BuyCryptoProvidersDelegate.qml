@@ -11,7 +11,6 @@ StatusListItem {
     id: root
 
     required property string name
-    required property string description
     required property string logoUrl
     required property string fees
     required property bool urlsNeedParameters
@@ -19,7 +18,6 @@ StatusListItem {
     property bool isUrlLoading: false
 
     title: root.name
-    subTitle: root.description
     asset.name: root.logoUrl
     asset.isImage: true
     statusListItemSubTitle.maximumLineCount: 1
