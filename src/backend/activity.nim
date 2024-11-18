@@ -320,6 +320,8 @@ type
     transferType*: Option[TransferType]
 
     communityId*: Option[string]
+    interactedContractAddress*: Option[eth.Address]
+    approvalSpender*: Option[eth.Address]
     isNew*: bool
 
   # Mirrors status-go/services/wallet/activity/activity.go EntryData
@@ -355,6 +357,9 @@ type
     nftUrl*: Option[string]
 
     communityId*: Option[string]
+
+    interactedContractAddress*: Option[eth.Address]
+    approvalSpender*: Option[eth.Address]
 
   # Mirrors services/wallet/activity/service.go ErrorCode
   ErrorCode* = enum
@@ -423,6 +428,8 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const nftNameField = "nftName"
   const nftUrlField = "nftUrl"
   const communityIdField = "communityId"
+  const interactedContractAddressField = "interactedContractAddress"
+  const approvalSpenderField = "approvalSpender"
   const isNewField = "isNew"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
@@ -481,6 +488,14 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
     result.chainIdIn = some(fromJson(e[chainIdInField], ChainId))
   if e.hasKey(transferTypeField) and e[transferTypeField].kind != JNull:
     result.transferType = some(fromJson(e[transferTypeField], TransferType))
+  if e.hasKey(interactedContractAddressField) and e[interactedContractAddressField].kind != JNull:
+    var address: eth.Address
+    fromJson(e[interactedContractAddressField], interactedContractAddressField, address)
+    result.interactedContractAddress = some(address)
+  if e.hasKey(approvalSpenderField) and e[approvalSpenderField].kind != JNull:
+    var address: eth.Address
+    fromJson(e[approvalSpenderField], approvalSpenderField, address)
+    result.approvalSpender = some(address)
   result.isNew = e.hasKey(isNewField) and e[isNewField].getBool()
 
 proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.} =
@@ -506,6 +521,8 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     chainIdIn: data.chainIdIn,
     transferType: data.transferType,
     communityId: data.communityId,
+    interactedContractAddress: data.interactedContractAddress,
+    approvalSpender: data.approvalSpender,
     isNew: data.isNew
   )
 
@@ -532,6 +549,8 @@ proc `$`*(self: ActivityEntry): string =
     chainIdIn* {$self.chainIdIn},
     transferType* {$self.transferType},
     communityId* {$self.communityId},
+    interactedContractAddress* {$self.interactedContractAddress},
+    approvalSpender* {$self.approvalSpender},
     isNew* {$self.isNew},
   )"""
 

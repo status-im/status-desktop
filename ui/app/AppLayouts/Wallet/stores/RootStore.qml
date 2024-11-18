@@ -483,7 +483,7 @@ QtObject {
         return prefix + twitterHandle
     }
 
-    function transactionType(transaction) {
+    function getTransactionType(transaction) {
         if (!transaction)
             return Constants.TransactionType.Send
 
