@@ -78,8 +78,11 @@ Item {
                     walletConnectEnabled: wcService.walletConnectFeatureEnabled
                     connectorEnabled: wcService.connectorFeatureEnabled
 
-                    //formatBigNumber: (number, symbol, noSymbolOption) => wcService.walletRootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
-
+                    formatBigNumber: (number, symbol, noSymbolOption) => {
+                        print ("formatBigNumber", number, symbol, noSymbolOption)
+                        return parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
+                                    + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
+                    }
                     onDisconnectRequested: (connectionId) => wcService.disconnectDapp(connectionId)
                     onPairingRequested: (uri) => wcService.pair(uri)
                     onPairingValidationRequested: (uri) => wcService.validatePairingUri(uri)
@@ -87,6 +90,7 @@ Item {
                     onConnectionDeclined: (pairingId) => wcService.rejectPairSession(pairingId)
                     onSignRequestAccepted: (connectionId, requestId) => wcService.sign(connectionId, requestId)
                     onSignRequestRejected: (connectionId, requestId) => wcService.rejectSign(connectionId, requestId, false /*hasError*/)
+                    onSignRequestIsLive: (connectionId, requestId) => wcService.signRequestIsLive(connectionId, requestId)
 
                     Connections {
                         target: dappsWorkflow.wcService
@@ -170,7 +174,7 @@ Item {
                 model: dappsService.sessionRequestsModel
                 delegate: RowLayout {
                     StatusBaseText {
-                        text: SQUtils.Utils.elideAndFormatWalletAddress(model.topic, 6, 4)
+                        text: SQUtils.Utils.elideAndFormatWalletAddress(model.requestItem.topic, 6, 4)
                         Layout.fillWidth: true
                     }
                 }
@@ -393,6 +397,10 @@ Item {
             signal userAuthenticationFailed(string topic, string id)
             signal signingResult(string topic, string id, string data)
             signal activeSessionsReceived(var activeSessionsJsonObj, bool success)
+            // Fees and gas
+            signal estimatedTimeResponse(string topic, int timeCategory, bool success)
+            signal suggestedFeesResponse(string topic, var suggestedFeesJsonObj, bool success)
+            signal estimatedGasResponse(string topic, string gasEstimate, bool success)
 
             function addWalletConnectSession(sessionJson) {
                 console.info("Add Persisted Session", sessionJson)
@@ -479,8 +487,17 @@ Item {
                 signingResult(topic, id, "0xf8672a8402fb7acf82520894e2d622c817878da5143bbe068")
             }
 
-            function getEstimatedTime(chainId, maxFeePerGas) {
-                return Constants.TransactionEstimatedTime.LessThanThreeMins
+            function requestEstimatedTime(topic, chainId, maxFeePerGasHex) {
+                estimatedTimeResponse(topic, Constants.TransactionEstimatedTime.LessThanThreeMins, true)
+            }
+
+            function requestSuggestedFees(topic, chainId) {
+                const suggestedFees = getSuggestedFees()
+                suggestedFeesResponse(topic, suggestedFees, true)
+            }
+
+            function requestGasEstimate(topic, chainId, txObj) {
+                estimatedGasResponse(topic, "0x5208", true)
             }
 
             function getSuggestedFees() {
@@ -488,9 +505,9 @@ Item {
                     gasPrice: 2.0,
                     baseFee: 5.0,
                     maxPriorityFeePerGas: 2.0,
-                    maxFeePerGasL: 1.0,
-                    maxFeePerGasM: 1.1,
-                    maxFeePerGasH: 1.2,
+                    maxFeePerGasLow: 1.0,
+                    maxFeePerGasMedium: 1.1,
+                    maxFeePerGasHigh: 1.2,
                     l1GasFee: 4.0,
                     eip1559Enabled: true
                 }
@@ -569,7 +586,8 @@ Item {
             sessions.forEach(function(session) {
                 sessionsModel.append(session)
 
-                let firstIconUrl = session.peer.metadata.icons.length > 0 ? session.peer.metadata.icons[0] : ""
+                let firstIconUrl = !!session.peer.metadata.icons && session.peer.metadata.icons.length > 0 ?
+                                    session.peer.metadata.icons[0] : ""
                 let persistedDapp = {
                     "name": session.peer.metadata.name,
                     "url": session.peer.metadata.url,

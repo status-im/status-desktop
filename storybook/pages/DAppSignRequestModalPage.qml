@@ -44,9 +44,10 @@ SplitView {
             cryptoFees: "0.001"
             estimatedTime: "3-5 minutes"
             feesLoading: feesLoading.checked
+            estimatedTimeLoading: feesLoading.checked
             hasFees: hasFees.checked
             enoughFundsForTransaction: enoughFeesForTransaction.checked
-            enoughFundsForFees: enoughFeesForGas.checked
+            enoughFundsForFees: enoughFeesForGas.checked  || !feesLoading.checked
 
             // sun emoji
             accountEmoji: "\u2600"
@@ -133,7 +134,7 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Fusce nibh. Etiam quis
             CheckBox {
                 id: feesLoading
                 text: "Fees loading"
-                checked: false
+                checked: true
             }
             CheckBox {
                 id: hasFees

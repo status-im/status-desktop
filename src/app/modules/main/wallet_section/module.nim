@@ -176,7 +176,7 @@ proc newModule*(
   result.filter = initFilter(result.controller)
 
   result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService, keycardService)
-  result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService)
+  result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService, result.events)
 
   result.dappsConnectorService = connector_service.newService(result.events)
   result.dappsConnectorController = connector_controller.newController(result.dappsConnectorService, result.events)
@@ -360,6 +360,7 @@ method load*(self: Module) =
   self.sendModule.load()
   self.networksModule.load()
   self.walletConnectService.init()
+  self.walletConnectController.init()
   self.dappsConnectorService.init()
 
 method isLoaded*(self: Module): bool =

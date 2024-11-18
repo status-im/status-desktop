@@ -10,6 +10,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import shared.stores 1.0
 import utils 1.0
 
+import "./internal"
+
 /// Component that provides the dapps integration for the wallet.
 /// It provides the following features:
 /// - WalletConnect integration
@@ -263,6 +265,12 @@ SQUtils.QObject {
         }
     }
 
+    // The fees broker to handle all fees requests for all components and connections
+    TransactionFeesBroker {
+        id: feesBroker
+        store: root.store
+    }
+
     // bcSignRequestPlugin and wcSignRequestPlugin are used to handle sign requests
     // Almost identical, and it's worth extracting in an inline component, but Qt5.15.2 doesn't support it
     SignRequestPlugin {
@@ -272,10 +280,10 @@ SQUtils.QObject {
         groupedAccountAssetsModel: root.groupedAccountAssetsModel
         networksModel: root.networksModel
         accountsModel: root.accountsModel
-        currentCurrency: root.currenciesStore.currentCurrency
         store: root.store
         requests: root.requestsModel
         dappsModel: root.dappsModel
+        feesBroker: feesBroker
 
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
@@ -293,10 +301,10 @@ SQUtils.QObject {
         groupedAccountAssetsModel: root.groupedAccountAssetsModel
         networksModel: root.networksModel
         accountsModel: root.accountsModel
-        currentCurrency: root.currenciesStore.currentCurrency
         store: root.store
         requests: root.requestsModel
         dappsModel: root.dappsModel
+        feesBroker: feesBroker
 
         getFiatValue: (value, currency) => {
             return root.currenciesStore.getFiatValue(value, currency)
