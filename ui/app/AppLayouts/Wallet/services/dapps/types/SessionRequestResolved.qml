@@ -47,6 +47,7 @@ QObject {
 
     /// maps to Constants.TransactionEstimatedTime values
     property int estimatedTimeCategory: 0
+    signal expired()
 
     function isExpired() {
         return !!expirationTimestamp && expirationTimestamp > 0 && Math.floor(Date.now() / 1000) >= expirationTimestamp
@@ -54,6 +55,7 @@ QObject {
 
     function setExpired() {
         expirationTimestamp = Math.floor(Date.now() / 1000)
+        expired()
     }
 
     function setActive() {

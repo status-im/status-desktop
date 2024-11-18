@@ -1,6 +1,7 @@
 import NimQml
 import chronicles, times, json
 
+import app/core/eventemitter
 import app/global/global_singleton
 import app_service/common/utils
 import app_service/service/wallet_connect/service as wallet_connect_service
@@ -19,17 +20,39 @@ QtObject:
     Controller* = ref object of QObject
       service: wallet_connect_service.Service
       walletAccountService: wallet_account_service.Service
+      events: EventEmitter
 
   proc delete*(self: Controller) =
     self.QObject.delete
 
-  proc newController*(service: wallet_connect_service.Service, walletAccountService: wallet_account_service.Service): Controller =
+  proc newController*(
+    service: wallet_connect_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    events: EventEmitter): Controller =
     new(result, delete)
 
     result.service = service
     result.walletAccountService = walletAccountService
+    result.events = events
 
     result.QObject.setup
+
+  proc estimatedTimeResponse*(self: Controller, topic: string, estimatedTime: int) {.signal.}
+  proc suggestedFeesResponse*(self: Controller, topic: string, suggestedFeesJson: string) {.signal.}
+  proc estimatedGasResponse*(self: Controller, topic: string, gasEstimate: string) {.signal.}
+
+  proc init*(self: Controller) =
+    self.events.on(SIGNAL_ESTIMATED_TIME_RESPONSE) do(e: Args):
+      let args = EstimatedTimeArgs(e)
+      self.estimatedTimeResponse(args.topic, args.estimatedTime)
+
+    self.events.on(SIGNAL_SUGGESTED_FEES_RESPONSE) do(e: Args):
+      let args = SuggestedFeesArgs(e)
+      self.suggestedFeesResponse(args.topic, $(args.suggestedFees))
+
+    self.events.on(SIGNAL_ESTIMATED_GAS_RESPONSE) do(e: Args):
+      let args = EstimatedGasArgs(e)
+      self.estimatedGasResponse(args.topic, args.estimatedGas)
 
   ## signals emitted by this controller
   proc userAuthenticationResult*(self: Controller, topic: string, id: string, error: bool, password: string, pin: string, payload: string) {.signal.}
@@ -195,12 +218,15 @@ QtObject:
       error "sendTransaction failed: ", msg=e.msg
       self.signingResultReceived(topic, id, res)
 
-  proc getEstimatedTime(self: Controller, chainId: int, maxFeePerGasHex: string): int {.slot.} =
-    return self.service.getEstimatedTime(chainId, maxFeePerGasHex).int
+  proc requestEstimatedTime(self: Controller, topic: string, chainId: int, maxFeePerGasHex: string) {.slot.} =
+    self.service.getEstimatedTime(topic, chainId, maxFeePerGasHex)
 
-  proc getSuggestedFeesJson(self: Controller, chainId: int): string {.slot.} =
-    let dto = self.service.getSuggestedFees(chainId)
-    return dto.toJson()
+  proc requestSuggestedFeesJson(self: Controller, topic: string, chainId: int) {.slot.} =
+    self.service.requestSuggestedFees(topic, chainId)
+
+  proc requestGasEstimate(self: Controller, topic: string, chainId: int, txJson: string) {.slot.} =
+    let txObj = parseJson(txJson)
+    self.service.requestGasEstimate(topic, txObj, chainId)
 
   proc hexToDecBigString*(self: Controller, hex: string): string {.slot.} =
     try:

@@ -296,12 +296,12 @@ QtObject {
             }
             case methods.signTypedData_v4.name: {
                 const stringPayload = methods.signTypedData_v4.getMessageFromData(data)
-                payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                payload = JSON.parse(stringPayload)
                 break
             }
             case methods.signTypedData.name: {
                 const stringPayload = methods.signTypedData.getMessageFromData(data)
-                payload = JSON.stringify(JSON.parse(stringPayload), null, 2)
+                payload = JSON.parse(stringPayload)
                 break
             }
             case methods.signTransaction.name:
@@ -332,22 +332,34 @@ QtObject {
     function parseTransaction(tx, hexToDec) {
         let parsedTransaction = Object.assign({}, tx)
         if (parsedTransaction.hasOwnProperty("value")) {
-            parsedTransaction.value = hexToEth(parsedTransaction.value, hexToDec).toString()
-        }
-        if (parsedTransaction.hasOwnProperty("maxFeePerGas")) {
-            parsedTransaction.maxFeePerGas = hexToGwei(parsedTransaction.maxFeePerGas, hexToDec).toString()
-        }
-        if (parsedTransaction.hasOwnProperty("maxPriorityFeePerGas")) {
-            parsedTransaction.maxPriorityFeePerGas = hexToGwei(parsedTransaction.maxPriorityFeePerGas, hexToDec).toString()
-        }
-        if (parsedTransaction.hasOwnProperty("gasPrice")) {
-            parsedTransaction.gasPrice = hexToGwei(parsedTransaction.gasPrice, hexToDec)
+            parsedTransaction.value = hexToEth(parsedTransaction.value, hexToDec)
         }
         if (parsedTransaction.hasOwnProperty("gasLimit")) {
             parsedTransaction.gasLimit = parseInt(hexToDec(parsedTransaction.gasLimit))
         }
+        if (parsedTransaction.hasOwnProperty("gas")) {
+            parsedTransaction.gas = parseInt(hexToDec(parsedTransaction.gas))
+        }
         if (parsedTransaction.hasOwnProperty("nonce")) {
             parsedTransaction.nonce = parseInt(hexToDec(parsedTransaction.nonce))
+        }
+        if (parsedTransaction.hasOwnProperty("from")) {
+            parsedTransaction.from = parsedTransaction.from
+        }
+        if (parsedTransaction.hasOwnProperty("to")) {
+            parsedTransaction.to = parsedTransaction.to
+        }
+        if (parsedTransaction.hasOwnProperty("data")) {
+            parsedTransaction.data = parsedTransaction.data
+        }
+        if (parsedTransaction.hasOwnProperty("maxFeePerGas")) {
+            delete parsedTransaction.maxFeePerGas
+        }
+        if (parsedTransaction.hasOwnProperty("maxPriorityFeePerGas")) {
+            delete parsedTransaction.maxPriorityFeePerGas
+        }
+        if (parsedTransaction.hasOwnProperty("gasPrice")) {
+            delete parsedTransaction.gasPrice
         }
         return parsedTransaction
     }

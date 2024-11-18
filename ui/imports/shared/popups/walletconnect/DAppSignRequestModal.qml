@@ -38,6 +38,7 @@ SignTransactionModalBase {
     required property string cryptoFees
     required property string estimatedTime
     required property bool hasFees
+    required property bool estimatedTimeLoading
 
     property bool enoughFundsForTransaction: true
     property bool enoughFundsForFees: false
@@ -98,15 +99,17 @@ SignTransactionModalBase {
                     objectName: "footerFiatFeesText"
                     text: formatBigNumber(root.fiatFees, root.currentCurrency)
                     loading: root.feesLoading && root.hasFees
-                    customColor: !root.hasFees || root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
                     elide: Qt.ElideMiddle
                     Binding on text {
                         when: !root.hasFees
                         value: qsTr("No fees")
                     }
+                    Binding on customColor {
+                        value: !root.hasFees || root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
+                    }
 
                     onTextChanged: {
-                        if (text === "") {
+                        if (text === "" || loading) {
                             return
                         }
                         maxFeesAnimation.restart()
@@ -115,6 +118,8 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: maxFeesAnimation
                         target: maxFees
+                        targetProperty: "customColor"
+                        running: !maxFees.loading && root.hasFees
                         fromColor: maxFees.customColor
                     }
                 }
@@ -131,10 +136,10 @@ SignTransactionModalBase {
                     id: estimatedTime
                     objectName: "footerEstimatedTime"
                     text: root.estimatedTime
-                    loading: root.feesLoading
+                    loading: root.estimatedTimeLoading
 
                     onTextChanged: {
-                        if (text === "") {
+                        if (text === "" || loading) {
                             return
                         }
                         estimatedTimeAnimation.restart()
@@ -143,6 +148,8 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: estimatedTimeAnimation
                         target: estimatedTime
+                        targetProperty: "customColor"
+                        running: !estimatedTime.loading
                     }
                 }
             }
@@ -203,10 +210,12 @@ SignTransactionModalBase {
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading
-                    customColor: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
 
+                    Binding on customColor {
+                        value: root.enoughFundsForFees ? Theme.palette.directColor1 : Theme.palette.dangerColor1
+                    }
                     onTextChanged: {
-                        if (text === "") {
+                        if (text === "" || loading) {
                             return
                         }
                         fiatFeesAnimation.restart()
@@ -215,6 +224,7 @@ SignTransactionModalBase {
                     AnimatedText {
                         id: fiatFeesAnimation
                         target: fiatFees
+                        targetProperty: "customColor"
                         fromColor: fiatFees.customColor
                     }
                 }
@@ -225,11 +235,13 @@ SignTransactionModalBase {
                     text: formatBigNumber(root.cryptoFees, Constants.ethToken)
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Theme.additionalTextSize
-                    customColor: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
                     loading: root.feesLoading
 
+                    Binding on customColor {
+                        value: root.enoughFundsForFees ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
+                    }
                     onTextChanged: {
-                        if (text === "") {
+                        if (text === "" || loading) {
                             return
                         }
                         cryptoFeesAnimation.restart()
@@ -239,6 +251,8 @@ SignTransactionModalBase {
                         id: cryptoFeesAnimation
                         target: cryptoFees
                         fromColor: cryptoFees.customColor
+                        targetProperty: "customColor"
+                        running: !maxFees.loading && root.hasFees
                     }
                 }
             }

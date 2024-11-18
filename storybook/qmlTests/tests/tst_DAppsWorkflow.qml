@@ -150,6 +150,11 @@ Item {
             signal userAuthenticationFailed(string topic, string id)
             signal signingResult(string topic, string id, string data)
 
+            signal estimatedTimeResponse(string topic, int timeCategory, bool success)
+            signal suggestedFeesResponse(string topic, var suggestedFeesJsonObj, bool success)
+            signal estimatedGasResponse(string topic, string gasEstimate, bool success)
+
+
             // By default, return no dapps in store
             function getDapps() {
                 dappsListReceived(dappsListReceivedJsonStr)
@@ -181,23 +186,27 @@ Item {
                 updateWalletConnectSessionsCalls.push({activeTopicsJson})
             }
 
-            function getEstimatedTime(chainId, maxFeePerGas) {
-                return Constants.TransactionEstimatedTime.LessThanThreeMins
+            function requestEstimatedTime(topic, chainId, maxFeePerGas) {
+                estimatedTimeResponse(topic, Constants.TransactionEstimatedTime.LessThanThreeMins, true)
             }
 
             property var mockedSuggestedFees: ({
                 gasPrice: 2.0,
                 baseFee: 5.0,
                 maxPriorityFeePerGas: 2.0,
-                maxFeePerGasL: 1.0,
-                maxFeePerGasM: 1.1,
-                maxFeePerGasH: 1.2,
+                maxFeePerGasLow: 1.0,
+                maxFeePerGasMedium: 1.1,
+                maxFeePerGasHigh: 1.2,
                 l1GasFee: 0.0,
                 eip1559Enabled: true
             })
 
-            function getSuggestedFees() {
-                return mockedSuggestedFees
+            function requestSuggestedFees(topic, chainId) {
+                suggestedFeesResponse(topic, mockedSuggestedFees, true)
+            }
+
+            function requestGasEstimate(topic, chainId, tx) {
+                estimatedGasResponse(topic, "0x5208", true)
             }
 
             function hexToDec(hex) {
@@ -447,7 +456,7 @@ Item {
 
             // Override the suggestedFees
             if (!!data.maxFeePerGasM) {
-                handler.store.mockedSuggestedFees.maxFeePerGasM = data.maxFeePerGasM
+                handler.store.mockedSuggestedFees.maxFeePerGasMedium = data.maxFeePerGasM
             }
             if (!!data.l1GasFee) {
                 handler.store.mockedSuggestedFees.l1GasFee = data.l1GasFee
@@ -473,10 +482,11 @@ Item {
             callback({"b536a": JSON.parse(Testing.formatApproveSessionResponse([chainId, 7], [testAddress]))})
 
             let request = handler.requestsModel.findById(session.id)
+            request.setActive()
             verify(!!request, "expected request to be found")
-            compare(request.fiatMaxFees.toFixed(), data.expect.fee, "expected ethMaxFees to be set")
+            compare(request.fiatMaxFees.toFixed(), data.expect.fee, "expected fiatMaxFees to be set")
             // storybook's CurrenciesStore mock up getFiatValue returns the balance
-            compare(request.ethMaxFees, data.expect.fee, "expected fiatMaxFees to be set")
+            compare(request.ethMaxFees, data.expect.fee, "expected ethMaxFees to be set")
             verify(request.haveEnoughFunds, "expected haveEnoughFunds to be set")
             compare(request.haveEnoughFees, data.expect.haveEnoughForFees, "expected haveEnoughForFees to be set")
             verify(!!request.feesInfo, "expected feesInfo to be set")

@@ -14,6 +14,10 @@ QObject {
 
     signal signingResult(string topic, string id, string data)
 
+    signal estimatedTimeResponse(string topic, int timeCategory, bool success)
+    signal suggestedFeesResponse(string topic, var suggestedFeesJsonObj, bool success)
+    signal estimatedGasResponse(string topic, string gasEstimate, bool success)
+
     function addWalletConnectSession(sessionJson) {
         return controller.addWalletConnectSession(sessionJson)
     }
@@ -80,14 +84,24 @@ QObject {
 
     // Empty maxFeePerGas will fetch the current chain's maxFeePerGas
     // Returns ui/imports/utils -> Constants.TransactionEstimatedTime values
-    function getEstimatedTime(chainId, maxFeePerGasHex) {
-        return controller.getEstimatedTime(chainId, maxFeePerGasHex)
+    function requestEstimatedTime(topic, chainId, maxFeePerGasHex) {
+        controller.requestEstimatedTime(topic, chainId, maxFeePerGasHex)
     }
 
     // Returns nim's SuggestedFeesDto; see src/app_service/service/transaction/dto.nim
     // Returns all value initialized to 0 if error
-    function getSuggestedFees(chainId) {
-        return JSON.parse(controller.getSuggestedFeesJson(chainId))
+    function requestSuggestedFees(topic, chainId) {
+        controller.requestSuggestedFeesJson(topic, chainId)
+    }
+
+    function requestGasEstimate(topic, chainId, txObj) {
+        try {
+            let tx = prepareTxForStatusGo(txObj)
+            controller.requestGasEstimate(topic, chainId, JSON.stringify(tx))
+        } catch (e) {
+            console.error("Failed to prepare tx for status-go", e)
+            root.estimatedGasResponse(topic, "", false)
+        }
     }
 
     function signTransaction(topic, id, address, chainId, password, txObj) {
@@ -149,6 +163,25 @@ QObject {
 
         function onSigningResultReceived(topic, id, data) {
             root.signingResult(topic, id, data)
+        }
+
+        function onEstimatedTimeResponse(topic, timeCategory) {
+            root.estimatedTimeResponse(topic, timeCategory, !!timeCategory)
+        }
+
+        function onSuggestedFeesResponse(topic, suggestedFeesJson) {
+            try {
+                const jsonObj = JSON.parse(suggestedFeesJson)
+                root.suggestedFeesResponse(topic, jsonObj, true)
+            } catch (e) {
+                console.error("Failed to parse suggestedFeesJson", e)
+                root.suggestedFeesResponse(topic, {}, false)
+                return
+            }
+        }
+
+        function onEstimatedGasResponse(topic, gasEstimate) {
+            root.estimatedGasResponse(topic, gasEstimate, !!gasEstimate)
         }
     }
 }

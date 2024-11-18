@@ -14,9 +14,14 @@ import app/global/global_singleton
 
 import app/core/eventemitter
 import app/core/signals/types
-import app/core/tasks/[threadpool]
+import app/core/[main]
+import app/core/tasks/[qt, threadpool]
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+
+include app_service/common/json_utils
+include app/core/tasks/common
+include async_tasks
 
 logScope:
   topics = "wallet-connect-service"
@@ -24,10 +29,29 @@ logScope:
 # include async_tasks
 
 const UNIQUE_WALLET_CONNECT_MODULE_IDENTIFIER* = "WalletSection-WCModule"
+const SIGNAL_ESTIMATED_TIME_RESPONSE* = "estimatedTimeResponse"
+const SIGNAL_SUGGESTED_FEES_RESPONSE* = "suggestedFeesResponse"
+const SIGNAL_ESTIMATED_GAS_RESPONSE* = "estimatedGasResponse"
 
 type
   AuthenticationResponseFn* = proc(keyUid: string, password: string, pin: string)
   SignResponseFn* = proc(keyUid: string, signature: string)
+
+type
+  EstimatedTimeArgs* = ref object of Args
+    topic*: string
+    chainId*: int
+    estimatedTime*: int
+  
+  SuggestedFeesArgs* = ref object of Args
+    topic*: string
+    chainId*: int
+    suggestedFees*: JsonNode
+
+  EstimatedGasArgs* = ref object of Args
+    topic*: string
+    chainId*: int
+    estimatedGas*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -206,64 +230,107 @@ QtObject:
     return response.getStr
 
   # empty maxFeePerGasHex will fetch the current chain's maxFeePerGas
-  proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGasHex: string): EstimatedTime =
-    var maxFeePerGas: float64
-    if maxFeePerGasHex.isEmptyOrWhitespace:
-      let chainFees = self.transactions.suggestedFees(chainId)
-      if chainFees.isNil:
-        return EstimatedTime.Unknown
+  proc getEstimatedTime*(self: Service, topic: string, chainId: int, maxFeePerGasHex: string) =
+    let request = AsyncGetEstimatedTimeArgs(
+      tptr: asyncGetEstimatedTimeTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "estimatedTimeResponse",
+      topic: topic,
+      chainId: chainId,
+      maxFeePerGasHex: maxFeePerGasHex
+    )
+    self.threadpool.start(request)
 
-      # For non-EIP-1559 chains, we use the high fee
-      if chainFees.eip1559Enabled:
-        maxFeePerGas = chainFees.maxFeePerGasM
-      else:
-        maxFeePerGas = chainFees.maxFeePerGasL
-    else:
-      try:
-        let maxFeePerGasInt = parseHexInt(maxFeePerGasHex)
-        maxFeePerGas = maxFeePerGasInt.float
-      except ValueError:
-        error "failed to parse maxFeePerGasHex", maxFeePerGasHex
-        return EstimatedTime.Unknown
+  proc estimatedTimeResponse*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      let args = EstimatedTimeArgs(
+        topic: responseObj["topic"].getStr,
+        chainId: responseObj["chainId"].getInt,
+        estimatedTime: responseObj["estimatedTime"].getInt
+      )
+      self.events.emit(SIGNAL_ESTIMATED_TIME_RESPONSE, args)
+    except Exception as e:
+      error "failed to parse estimated time response", msg = e.msg
 
-    return self.transactions.getEstimatedTime(chainId, $(maxFeePerGas))
+  proc requestSuggestedFees*(self: Service, topic: string, chainId: int) =
+    let request = AsyncSuggestedFeesArgs(
+      tptr: asyncSuggestedFeesTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "suggestedFeesResponse",
+      topic: topic,
+      chainId: chainId
+    )
+    self.threadpool.start(request)
 
-proc getSuggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
-  return self.transactions.suggestedFees(chainId)
+  proc suggestedFeesResponse*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      let args = SuggestedFeesArgs(
+        topic: responseObj["topic"].getStr,
+        chainId: responseObj["chainId"].getInt,
+        suggestedFees: responseObj["suggestedFees"]
+      )
+      self.events.emit(SIGNAL_SUGGESTED_FEES_RESPONSE, args)
+    except Exception as e:
+      error "failed to parse suggested fees response", msg = e.msg
 
-proc disconnectKeycardReponseSignal(self: Service) =
-  self.events.disconnect(self.connectionKeycardResponse)
+  proc disconnectKeycardReponseSignal(self: Service) =
+    self.events.disconnect(self.connectionKeycardResponse)
 
-proc connectKeycardReponseSignal(self: Service) =
-  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
-    let args = KeycardLibArgs(e)
-    self.disconnectKeycardReponseSignal()
-    if self.signCallback == nil:
-      error "unexpected user authenticated event; no callback set"
-      return
-    defer:
-      self.signCallback = nil
-    let currentFlow = self.keycardService.getCurrentFlow()
-    if currentFlow != KCSFlowType.Sign:
-      error "unexpected keycard flow type: ", currentFlow
-      self.signCallback("", "")
-      return
-    let signature = "0x" &
-      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.r) &
-      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.s) &
-      singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.v)
-    self.signCallback(args.flowEvent.keyUid, signature)
+  proc connectKeycardReponseSignal(self: Service) =
+    self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+      let args = KeycardLibArgs(e)
+      self.disconnectKeycardReponseSignal()
+      if self.signCallback == nil:
+        error "unexpected user authenticated event; no callback set"
+        return
+      defer:
+        self.signCallback = nil
+      let currentFlow = self.keycardService.getCurrentFlow()
+      if currentFlow != KCSFlowType.Sign:
+        error "unexpected keycard flow type: ", currentFlow
+        self.signCallback("", "")
+        return
+      let signature = "0x" &
+        singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.r) &
+        singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.s) &
+        singletonInstance.utils.removeHexPrefix(args.flowEvent.txSignature.v)
+      self.signCallback(args.flowEvent.keyUid, signature)
 
-proc cancelCurrentFlow*(self: Service) =
-    self.keycardService.cancelCurrentFlow()
+  proc cancelCurrentFlow*(self: Service) =
+      self.keycardService.cancelCurrentFlow()
 
-proc runSigningOnKeycard*(self: Service, keyUid: string, path: string, hashedMessageToSign: string, pin: string, callback: SignResponseFn): bool =
-  if pin.len == 0:
-    return false
-  if self.signCallback != nil:
-    return false
-  self.signCallback = callback
-  self.cancelCurrentFlow()
-  self.connectKeycardReponseSignal()
-  self.keycardService.startSignFlow(path, hashedMessageToSign, pin)
-  return true
+  proc runSigningOnKeycard*(self: Service, keyUid: string, path: string, hashedMessageToSign: string, pin: string, callback: SignResponseFn): bool =
+    if pin.len == 0:
+      return false
+    if self.signCallback != nil:
+      return false
+    self.signCallback = callback
+    self.cancelCurrentFlow()
+    self.connectKeycardReponseSignal()
+    self.keycardService.startSignFlow(path, hashedMessageToSign, pin)
+    return true
+
+  proc requestGasEstimate*(self: Service, topic: string, tx: JsonNode, chainId: int) =
+    let request = AsyncEstimateGasArgs(
+      tptr: asyncEstimateGasTask,
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "estimatedGasResponse",
+      topic: topic,
+      chainId: chainId,
+      txJson: $tx
+    )
+    self.threadpool.start(request)
+
+  proc estimatedGasResponse*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      let args = EstimatedGasArgs(
+        topic: responseObj["topic"].getStr,
+        chainId: responseObj["chainId"].getInt,
+        estimatedGas: responseObj["estimatedGas"].getStr
+      )
+      self.events.emit(SIGNAL_ESTIMATED_GAS_RESPONSE, args)
+    except Exception as e:
+      error "failed to parse estimated gas response", msg = e.msg 

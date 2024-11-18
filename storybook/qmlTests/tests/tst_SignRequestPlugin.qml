@@ -47,6 +47,10 @@ Item {
                 signal userAuthenticationFailed(string topic, string id)
                 signal signingResult(string topic, string id, string data)
 
+                signal estimatedTimeResponse(string topic, int timeCategory, bool success)
+                signal suggestedFeesResponse(string topic, var suggestedFeesJsonObj, bool success)
+                signal estimatedGasResponse(string topic, string gasEstimate, bool success)
+
                 function hexToDec(hex) {
                     return parseInt(hex, 16)
                 }
@@ -122,7 +126,6 @@ Item {
                     address: "0x123"
                 }
             }
-            currentCurrency: "USD"
             requests: SessionRequestsModel {}
             getFiatValue: (balance, cryptoSymbol) => {
                 return parseFloat(balance)

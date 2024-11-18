@@ -6,6 +6,7 @@ SequentialAnimation {
     id: root
 
     property var target: null
+    property string targetProperty: "color"
     property color fromColor: Theme.palette.directColor1
     property color toColor: Theme.palette.getColor(fromColor, 0.1)
     property int duration: 500 // in milliseconds
@@ -14,7 +15,7 @@ SequentialAnimation {
 
     ColorAnimation {
         target: root.target
-        property: "color"
+        property: root.targetProperty
         from: root.fromColor
         to: root.toColor
         duration: root.duration
@@ -22,7 +23,7 @@ SequentialAnimation {
 
     ColorAnimation {
         target: root.target
-        property: "color"
+        property: root.targetProperty
         from: root.toColor
         to: root.fromColor
         duration: root.duration

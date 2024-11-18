@@ -323,6 +323,7 @@ DappsComboBox {
             cryptoFees: request.ethMaxFees ? request.ethMaxFees.toFixed() : ""
             estimatedTime: WalletUtils.getLabelForEstimatedTxTime(request.estimatedTimeCategory)
             feesLoading: hasFees && (!fiatFees || !cryptoFees)
+            estimatedTimeLoading: request.estimatedTimeCategory === Constants.TransactionEstimatedTime.Unknown
             hasFees: signingTransaction
             enoughFundsForTransaction: request.haveEnoughFunds
             enoughFundsForFees: request.haveEnoughFees
