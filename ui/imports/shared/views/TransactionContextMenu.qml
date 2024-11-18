@@ -12,7 +12,7 @@ StatusMenu {
 
     StatusAction {
         objectName: "viewTxOnExplorerItem"
-        text: qsTr("View on ") + networkExplorerName
+        text: qsTr("View on %1").arg(networkExplorerName)
         icon.name: "link"
         onTriggered: root.viewTxOnExplorerRequested()
     }
