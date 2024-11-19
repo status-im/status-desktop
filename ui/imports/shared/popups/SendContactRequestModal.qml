@@ -29,7 +29,7 @@ CommonContactDialog {
         messageInput.input.edit.forceActiveFocus()
 
         // (request) update from mailserver
-        if (d.userDisplayName === "") {
+        if (root.contactDetails.displayName === "") {
             root.rootStore.contactStore.requestContactInfo(root.publicKey)
             root.loadingContactDetails = true
         }
