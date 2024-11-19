@@ -29,13 +29,14 @@ type ConnectorRevokeDAppPermissionSignal* = ref object of Signal
   name*: string
   iconUrl*: string
 
-type ConnectorPersonalSignSignal* = ref object of Signal
+type ConnectorSignSignal* = ref object of Signal
   url*: string
   name*: string
   iconUrl*: string
   requestId*: string
   challenge*: string
   address*: string
+  signMethod*: string
 
 proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
@@ -67,11 +68,12 @@ proc fromEvent*(T: type ConnectorRevokeDAppPermissionSignal, event: JsonNode): C
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
 
-proc fromEvent*(T: type ConnectorPersonalSignSignal, event: JsonNode): ConnectorPersonalSignSignal =
-  result = ConnectorPersonalSignSignal()
+proc fromEvent*(T: type ConnectorSignSignal, event: JsonNode): ConnectorSignSignal =
+  result = ConnectorSignSignal()
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
   result.requestId = event["event"]{"requestId"}.getStr()
   result.challenge = event["event"]{"challenge"}.getStr()
   result.address = event["event"]{"address"}.getStr()
+  result.signMethod = event["event"]{"method"}.getStr()

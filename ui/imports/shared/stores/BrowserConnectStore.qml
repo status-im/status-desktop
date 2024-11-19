@@ -10,7 +10,7 @@ SQUtils.QObject {
     // Signals driven by the dApp
     signal connectRequested(string requestId, string dappJson)
     signal sendTransaction(string requestId, string requestJson)
-    signal personalSign(string requestId, string dappJson)
+    signal sign(string requestId, string dappJson)
 
     signal connected(string dappJson)
     signal disconnected(string dappJson)
@@ -21,8 +21,8 @@ SQUtils.QObject {
 
     signal approveTransactionResponse(string topic, string requestId, bool error)
     signal rejectTransactionResponse(string topic, string requestId, bool error)
-    signal approvePersonalSignResponse(string topic, string requestId, bool error)
-    signal rejectPersonalSignResponse(string topic, string requestId, bool error)
+    signal approveSignResponse(string topic, string requestId, bool error)
+    signal rejectSignResponse(string topic, string requestId, bool error)
 
     function approveConnection(id, account, chainId) {
         return controller.approveConnection(id, account, chainId)
@@ -48,12 +48,12 @@ SQUtils.QObject {
         return controller.getDApps()
     }
 
-    function approvePersonalSign(topic, requestId, signature) {
-        return controller.approvePersonalSigning(topic, requestId, signature)
+    function approveSign(topic, requestId, signature) {
+        return controller.approveSigning(topic, requestId, signature)
     }
 
-    function rejectPersonalSign(topic, requestId) {
-        return controller.rejectPersonalSigning(topic, requestId)
+    function rejectSign(topic, requestId) {
+        return controller.rejectSigning(topic, requestId)
     }
 
     Connections {
@@ -67,8 +67,8 @@ SQUtils.QObject {
             root.sendTransaction(requestId, requestJson)
         }
 
-        function onPersonalSign(requestId, dappJson) {
-            root.personalSign(requestId, dappJson)
+        function onSign(requestId, dappJson) {
+            root.sign(requestId, dappJson)
         }
 
         function onConnected(dappJson) {
@@ -95,12 +95,12 @@ SQUtils.QObject {
             root.rejectTransactionResponse(topic, requestId, error)
         }
 
-        function onApprovePersonalSignResponse(topic, requestId, error) {
-            root.approvePersonalSignResponse(topic, requestId, error)
+        function onApproveSignResponse(topic, requestId, error) {
+            root.approveSignResponse(topic, requestId, error)
         }
 
-        function onRejectPersonalSignResponse(topic, requestId, error) {
-            root.rejectPersonalSignResponse(topic, requestId, error)
+        function onRejectSignResponse(topic, requestId, error) {
+            root.rejectSignResponse(topic, requestId, error)
         }
     }
 }

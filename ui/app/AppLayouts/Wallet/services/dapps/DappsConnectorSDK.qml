@@ -53,22 +53,22 @@ WalletConnectSDKBase {
             }
         }
 
-        function onPersonalSign(requestId, dappInfoString) {
+        function onSign(requestId, dappInfoString) {
             try {
                 const dappInfo = JSON.parse(dappInfoString)
                 const mainNet = SQUtils.ModelUtils.getByKey(root.networksModel, "layer", 1)
                 if (!mainNet) {
-                    root.store.rejectPersonalSign(requestId)
-                    console.error("Mainnet not found - personal sign failed")
+                    root.store.rejectSign(requestId)
+                    console.error("Mainnet not found - sign failed")
                     return
                 }
 
-                const event = d.buildSignRequest(requestId, dappInfo.url, mainNet.chainId, dappInfo.challenge, dappInfo.address)
+                const event = d.buildSignRequest(requestId, dappInfo.url, mainNet.chainId, dappInfo.challenge, dappInfo.address, dappInfo.method)
                 d.sessionRequests.set(requestId, event)
                 root.sessionRequestEvent(event)
             } catch (e) {
                 d.sessionRequests.delete(requestId)
-                root.store.rejectPersonalSign("", requestId)
+                root.store.rejectSign("", requestId)
                 console.error("Failed to parse dappInfo for session request", e)
             }
         }
@@ -111,21 +111,21 @@ WalletConnectSDKBase {
             }
         }
 
-        function onApprovePersonalSignResponse(topic, requestId, error) {
+        function onApproveSignResponse(topic, requestId, error) {
             try {
-                const errorStr = error ? "Faled to approve personal sign" : ""
+                const errorStr = error ? "Faled to approve sign" : ""
                 root.sessionRequestUserAnswerResult(topic, requestId, true, errorStr)
             } catch (e) {
-                console.error("Failed to approve personal sign response", e)
+                console.error("Failed to approve sign response", e)
             }
         }
 
-        function onRejectPersonalSignResponse(topic, requestId, error) {
+        function onRejectSignResponse(topic, requestId, error) {
             try {
-                const errorStr = error ? "Faled to reject personal sign" : ""
+                const errorStr = error ? "Faled to reject sign" : ""
                 root.sessionRequestUserAnswerResult(topic, requestId, false, errorStr)
             } catch (e) {
-                console.error("Failed to reject personal sign response", e)
+                console.error("Failed to reject sign response", e)
             }
         }
     }
@@ -165,8 +165,9 @@ WalletConnectSDKBase {
         const event = d.sessionRequests.get(requestId)
         if (event.params.request.method === SessionRequest.methods.sendTransaction.name) {
             root.store.approveTransaction(topic, requestId, signature)
-        } else if (event.params.request.method === SessionRequest.methods.personalSign.name) {
-            root.store.approvePersonalSign(topic, requestId, signature)
+        } else if (event.params.request.method === SessionRequest.methods.personalSign.name ||
+                   event.params.request.method === SessionRequest.methods.signTypedData_v4.name) {
+            root.store.approveSign(topic, requestId, signature)
         } else {
             root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
             console.error("Unknown request method", event.params.request.method)
@@ -182,8 +183,9 @@ WalletConnectSDKBase {
         const event = d.sessionRequests.get(requestId)
         if (event.params.request.method === SessionRequest.methods.sendTransaction.name) {
             root.store.rejectTransaction(topic, requestId, error)
-        } else if (event.params.request.method === SessionRequest.methods.personalSign.name) {
-            root.store.rejectPersonalSign(topic, requestId)
+        } else if (event.params.request.method === SessionRequest.methods.personalSign.name ||
+                   event.params.request.method === SessionRequest.methods.signTypedData_v4.name) {
+            root.store.rejectSign(topic, requestId)
         } else {
             root.sessionRequestUserAnswerResult(topic, requestId, false, "Unknown request method")
             console.error("Unknown request method", event.params.request.method)
@@ -292,18 +294,25 @@ WalletConnectSDKBase {
             }
         }
         
-        function buildSignRequest(requestId, topic, chainId, challenge, address) {
+        function buildSignRequest(requestId, topic, chainId, challenge, address, method) {
+            let params = []
+            if (method == SessionRequest.methods.personalSign.name) {
+                params = [challenge, address]
+            } else if (method == SessionRequest.methods.signTypedData_v4.name) {
+                params = [address, challenge]
+            } else {
+                console.error("Unknown sign method", method)
+                return
+            }
+
             return {
                 id: requestId,
                 topic,
                 params: {
                     chainId: `eip155:${chainId}`,
                     request: {
-                        method: SessionRequest.methods.personalSign.name,
-                        params: [
-                            challenge,
-                            address
-                        ]
+                        method,
+                        params
                     }
                 }
             }
