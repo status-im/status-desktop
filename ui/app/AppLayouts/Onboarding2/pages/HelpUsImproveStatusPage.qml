@@ -20,6 +20,8 @@ OnboardingPage {
     signal shareUsageDataRequested(bool enabled)
     signal privacyPolicyRequested()
 
+    pageClassName: "HelpUsImproveStatusPage"
+
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
@@ -42,8 +44,8 @@ OnboardingPage {
             }
 
             StatusImage {
-                Layout.preferredWidth: 300
-                Layout.preferredHeight: 300
+                Layout.preferredWidth: 320
+                Layout.preferredHeight: 320
                 Layout.topMargin: 36
                 Layout.bottomMargin: 36
                 Layout.alignment: Qt.AlignHCenter

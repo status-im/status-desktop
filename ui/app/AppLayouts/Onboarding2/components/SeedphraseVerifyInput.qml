@@ -3,7 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -42,21 +41,17 @@ StatusTextField {
         readonly property bool isEmpty: root.text === ""
     }
 
-    Keys.onPressed: (event) => {
+    Keys.onPressed: {
         switch (event.key) {
+            case Qt.Key_Tab:
             case Qt.Key_Return:
             case Qt.Key_Enter: {
-                if (!!text && filteredModel.count > 0) {
+                if (filteredModel.count > 0) {
+                    event.accepted = true
                     root.text = filteredModel.get(suggestionsList.currentIndex).seedWord
+                    root.accepted()
+                    return
                 }
-                break
-            }
-            case Qt.Key_Down: {
-                suggestionsList.incrementCurrentIndex()
-                break
-            }
-            case Qt.Key_Up: {
-                suggestionsList.decrementCurrentIndex()
                 break
             }
             case Qt.Key_Space: {
@@ -65,13 +60,14 @@ StatusTextField {
             }
         }
     }
+    Keys.forwardTo: [suggestionsList]
 
     StatusDropdown {
         x: 0
         y: parent.height + 4
         width: parent.width
-        contentHeight: ((suggestionsList.count <= 5) ? suggestionsList.count : 5) * d.delegateHeight
-        visible: filteredModel.count > 0 && root.cursorVisible && !root.valid
+        contentHeight: ((suggestionsList.count <= 5) ? suggestionsList.count : 5) * d.delegateHeight // max 5 delegates
+        visible: filteredModel.count > 0 && root.cursorVisible && !d.isEmpty && !root.valid
         verticalPadding: Theme.halfPadding
         horizontalPadding: 0
         contentItem: StatusListView {
@@ -80,8 +76,9 @@ StatusTextField {
             model: SortFilterProxyModel {
                 id: filteredModel
                 sourceModel: root.seedSuggestions
-                filters: SQUtils.SearchFilter {
-                    searchPhrase: root.text
+                filters: RegExpFilter {
+                    pattern: `^${root.text}`
+                    caseSensitivity: Qt.CaseInsensitive
                 }
                 sorters: StringSorter {
                     roleName: "seedWord"

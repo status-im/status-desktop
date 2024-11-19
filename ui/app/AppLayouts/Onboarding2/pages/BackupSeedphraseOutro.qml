@@ -14,6 +14,8 @@ OnboardingPage {
 
     signal backupSeedphraseRemovalConfirmed()
 
+    pageClassName: "BackupSeedphraseOutro"
+
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

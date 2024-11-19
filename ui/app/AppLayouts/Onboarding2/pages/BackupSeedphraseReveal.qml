@@ -14,9 +14,15 @@ OnboardingPage {
     id: root
 
     required property var seedWords
-    property bool seedphraseRevealed
 
     signal backupSeedphraseConfirmed()
+
+    pageClassName: "BackupSeedphraseReveal"
+
+    QtObject {
+        id: d
+        property bool seedphraseRevealed
+    }
 
     contentItem: Item {
         ColumnLayout {
@@ -78,7 +84,7 @@ OnboardingPage {
                             }
                         }
                     }
-                    layer.enabled: !root.seedphraseRevealed
+                    layer.enabled: !d.seedphraseRevealed
                     layer.effect: GaussianBlur {
                         radius: 16
                         samples: 33
@@ -91,8 +97,8 @@ OnboardingPage {
                     text: qsTr("Reveal recovery phrase")
                     icon.name: "show"
                     type: StatusBaseButton.Type.Primary
-                    visible: !root.seedphraseRevealed
-                    onClicked: root.seedphraseRevealed = true
+                    visible: !d.seedphraseRevealed
+                    onClicked: d.seedphraseRevealed = true
                 }
             }
 
@@ -107,8 +113,11 @@ OnboardingPage {
             StatusButton {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Confirm recovery phrase")
-                enabled: root.seedphraseRevealed
-                onClicked: root.backupSeedphraseConfirmed()
+                enabled: d.seedphraseRevealed
+                onClicked: {
+                    root.backupSeedphraseConfirmed()
+                    d.seedphraseRevealed = false
+                }
             }
         }
     }

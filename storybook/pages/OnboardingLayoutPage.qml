@@ -47,6 +47,8 @@ SplitView {
             // create keycard profile
             Constants.startupState.keycardEmpty
         ]
+
+        readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
     }
 
     OnboardingLayout {
@@ -59,14 +61,30 @@ SplitView {
             }
 
             function getPasswordStrengthScore(password) {
+                logs.logEvent("StartupStore.getPasswordStrengthScore", ["password"], arguments)
                 return Math.min(password.length-1, 4)
             }
             function validMnemonic(mnemonic) {
-                return true
+                logs.logEvent("StartupStore.validMnemonic", ["mnemonic"], arguments)
+                return mnemonic === keycardMock.mnemonic
             }
             function getPin() {
+                logs.logEvent("StartupStore.getPin()")
                 return ctrlPin.text
             }
+            function getSeedPhrase() {
+                logs.logEvent("StartupStore.getSeedPhrase()")
+                // FIXME needed? cf getMnemonic()
+            }
+
+            function validateLocalPairingConnectionString(connectionString) {
+                logs.logEvent("StartupStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
+                return !Number.isNaN(parseInt(connectionString))
+            }
+            function setConnectionString(connectionString) {
+                logs.logEvent("StartupStore.setConnectionString", ["connectionString"], arguments)
+            }
+
             readonly property var startupModuleInst: QtObject {
                 property int remainingAttempts: 5
             }
@@ -89,25 +107,32 @@ SplitView {
             readonly property var words: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
 
             function getMnemonic() {
+                logs.logEvent("PrivacyStore.getMnemonic()")
                 return words.join(" ")
             }
 
             function mnemonicWasShown() {
                 console.warn("!!! MNEMONIC SHOWN")
-                logs.logEvent("mnemonicWasShown")
+                logs.logEvent("PrivacyStore.mnemonicWasShown()")
+            }
+
+            function removeMnemonic() {
+                console.warn("!!! REMOVE MNEMONIC")
+                logs.logEvent("PrivacyStore.removeMnemonic()")
             }
         }
 
         splashScreenDurationMs: 3000
+        biometricsAvailable: ctrlBiometrics.checked
 
         QtObject {
             id: localAppSettings
             property bool metricsPopupSeen
         }
 
-        onFinished: (success, primaryPath, secondaryPath) => {
-            console.warn("!!! ONBOARDING FINISHED; success:", success, "; primary path:", primaryPath, "; secondary:", secondaryPath)
-            logs.logEvent("onFinished", ["success", "primaryPath", "secondaryPath"], arguments)
+        onFinished: (primaryPath, secondaryPath, data) => {
+            console.warn("!!! ONBOARDING FINISHED; primary path:", primaryPath, "; secondary:", secondaryPath, "; data:", JSON.stringify(data))
+            logs.logEvent("onFinished", ["primaryPath", "secondaryPath", "data"], arguments)
 
             console.warn("!!! RESTARTING FLOW")
             restartFlow()
@@ -151,7 +176,7 @@ SplitView {
             ColumnLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: "Current page: %1".arg(onboarding.stack.currentItem ? onboarding.stack.currentItem.title : "")
+                    text: "Current page: %1".arg(onboarding.stack.currentItem ? onboarding.stack.currentItem.pageClassName : "")
                 }
                 Label {
                     text: `Current path: ${onboarding.primaryPath} -> ${onboarding.secondaryPath}`
@@ -177,13 +202,18 @@ SplitView {
                     Button {
                         text: "Copy seedphrase"
                         focusPolicy: Qt.NoFocus
-                        onClicked: ClipboardUtils.setText("dog dog dog dog dog dog dog dog dog dog dog dog")
+                        onClicked: ClipboardUtils.setText(keycardMock.mnemonic)
                     }
                     Button {
                         text: "Copy PIN (\"%1\")".arg(ctrlPin.text)
                         focusPolicy: Qt.NoFocus
                         enabled: ctrlPin.acceptableInput
                         onClicked: ClipboardUtils.setText(ctrlPin.text)
+                    }
+                    Switch {
+                        id: ctrlBiometrics
+                        text: "Biometrics?"
+                        checked: true
                     }
                 }
                 RowLayout {
@@ -199,7 +229,7 @@ SplitView {
                         text: "State:"
                     }
                     ComboBox {
-                        Layout.preferredWidth: 250
+                        Layout.preferredWidth: 300
                         id: ctrlKeycardState
                         focusPolicy: Qt.NoFocus
                         model: keycardMock.keycardStates
