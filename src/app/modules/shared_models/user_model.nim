@@ -190,17 +190,7 @@ QtObject:
     self.countChanged()
 
   proc addItem*(self: Model, item: UserItem) =
-    # we need to maintain online contact on top, that means
-    # if we add an item online status we add it as the last online item (before the first offline item)
-    # if we add an item with offline status we add it as the first offline item (after the last online item)
-    var position = -1
-    for i in 0 ..< self.items.len:
-      if self.items[i].onlineStatus == OnlineStatus.Inactive:
-        position = i
-        break
-
-    if position == -1:
-      position = self.items.len
+    let position = self.items.len
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
