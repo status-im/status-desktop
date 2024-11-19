@@ -19,6 +19,8 @@ OnboardingPage {
     signal createKeycardProfileWithNewSeedphrase()
     signal createKeycardProfileWithExistingSeedphrase()
 
+    pageClassName: "CreateKeycardProfilePage"
+
     contentItem: Item {
         ColumnLayout {
             width: parent.width
@@ -44,7 +46,7 @@ OnboardingPage {
                 Layout.maximumWidth: Math.min(380, root.availableWidth)
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 56
-                spacing: 20
+                spacing: Theme.bigPadding
 
                 OnboardingFrame {
                     Layout.fillWidth: true
@@ -83,10 +85,8 @@ OnboardingPage {
                     }
                 }
 
-                OnboardingFrame {
+                OnboardingButtonFrame {
                     Layout.fillWidth: true
-                    padding: 1
-                    dropShadow: false
                     contentItem: ColumnLayout {
                         spacing: 0
                         ListItemButton {

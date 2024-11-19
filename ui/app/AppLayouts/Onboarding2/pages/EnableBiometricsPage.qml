@@ -16,11 +16,22 @@ OnboardingPage {
 
     signal enableBiometricsRequested(bool enable)
 
+    pageClassName: "EnableBiometricsPage"
+
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: 20
+            spacing: Theme.bigPadding
             width: Math.min(400, root.availableWidth)
+
+            StatusImage {
+                Layout.preferredWidth: 270
+                Layout.preferredHeight: 260
+                Layout.alignment: Qt.AlignHCenter
+                mipmap: true
+                smooth: false
+                source: Theme.png("onboarding/enable_biometrics")
+            }
 
             StatusBaseText {
                 Layout.fillWidth: true
@@ -39,23 +50,15 @@ OnboardingPage {
                 horizontalAlignment: Text.AlignHCenter
             }
 
-            StatusImage {
-                Layout.preferredWidth: 260
-                Layout.preferredHeight: 260
-                Layout.topMargin: 20
-                Layout.bottomMargin: 20
-                Layout.alignment: Qt.AlignHCenter
-                mipmap: true
-                source: Theme.png("onboarding/enable_biometrics")
-            }
-
             StatusButton {
+                Layout.topMargin: Theme.halfPadding
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Yes, use biometrics")
                 onClicked: root.enableBiometricsRequested(true)
             }
 
             StatusFlatButton {
+                Layout.topMargin: -Theme.halfPadding
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Maybe later")
                 onClicked: root.enableBiometricsRequested(false)

@@ -25,11 +25,12 @@ StatusInput {
         switch (root.mode) {
         case StatusSyncCodeInput.Mode.WriteMode:
             return root.valid ? validCodeIconComponent
-                              : pasteButtonComponent
+                              : input.edit.canPaste ? pasteButtonComponent : null
         case StatusSyncCodeInput.Mode.ReadMode:
             return copyButtonComponent
         }
     }
+    rightPadding: 12
 
     Component {
         id: copyButtonComponent

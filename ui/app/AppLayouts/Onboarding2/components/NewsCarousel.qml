@@ -90,7 +90,7 @@ Control {
                             NumberAnimation on width {
                                 from: 0
                                 to: pageIndicatorDelegate.availableWidth
-                                duration: 2000
+                                duration: 3000
                                 running: pageIndicatorDelegate.isCurrentPage
                                 onStopped: {
                                     if (pageIndicatorDelegate.isCurrentPage)

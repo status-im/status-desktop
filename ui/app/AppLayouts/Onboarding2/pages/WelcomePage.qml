@@ -15,6 +15,7 @@ import utils 1.0
 OnboardingPage {
     id: root
 
+    pageClassName: "WelcomePage"
     title: qsTr("Welcome to Status")
 
     signal createProfileRequested()
