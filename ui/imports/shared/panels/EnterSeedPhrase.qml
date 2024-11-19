@@ -30,8 +30,8 @@ ColumnLayout {
 
     function setWrongSeedPhraseMessage(message) {
         invalidSeedTxt.text = message
-        // Validate again the seed phrase
-        // This is needed because the message can be set to empty and the seed phrase is still invalid
+        // Validate again the recovery phrase
+        // This is needed because the message can be set to empty and the recovery phrase is still invalid
         if (message === "")
             d.validate()
     }

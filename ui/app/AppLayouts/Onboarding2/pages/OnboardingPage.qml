@@ -4,6 +4,8 @@ import QtQuick.Controls 2.15
 import StatusQ.Core.Theme 0.1
 
 Page {
+    required property string pageClassName
+
     signal openLink(string link)
     signal openLinkWithConfirmation(string link, string domain)
 

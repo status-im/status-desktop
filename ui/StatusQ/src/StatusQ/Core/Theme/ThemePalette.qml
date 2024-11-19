@@ -14,7 +14,7 @@ QtObject {
     property color blue: getColor('blue')
     property color darkBlue: getColor('blue2')
 
-    property color dropShadow: getColor('black', 0.12)
+    property color dropShadow
     property color dropShadow2
     property color backdropColor: getColor('black', 0.4)
 

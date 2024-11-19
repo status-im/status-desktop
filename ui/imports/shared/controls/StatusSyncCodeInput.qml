@@ -1,5 +1,6 @@
 import QtQuick 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -25,11 +26,12 @@ StatusInput {
         switch (root.mode) {
         case StatusSyncCodeInput.Mode.WriteMode:
             return root.valid ? validCodeIconComponent
-                              : pasteButtonComponent
+                              : ClipboardUtils.hasText ? pasteButtonComponent : null
         case StatusSyncCodeInput.Mode.ReadMode:
             return copyButtonComponent
         }
     }
+    rightPadding: 12
 
     Component {
         id: copyButtonComponent
@@ -38,11 +40,7 @@ StatusInput {
             objectName: "syncCodeCopyButton"
             size: StatusBaseButton.Size.Tiny
             text: qsTr("Copy")
-            onClicked: {
-                root.input.edit.selectAll();
-                root.input.edit.copy();
-                root.input.edit.deselect();
-            }
+            onClicked: ClipboardUtils.setText(root.text)
         }
     }
 
@@ -52,12 +50,9 @@ StatusInput {
         StatusButton {
             objectName: "syncCodePasteButton"
             size: StatusBaseButton.Size.Tiny
-            enabled: !root.readOnly && root.input.edit.canPaste
+            enabled: !root.readOnly && ClipboardUtils.hasText
             text: qsTr("Paste")
-            onClicked: {
-                root.input.edit.selectAll();
-                root.input.edit.paste();
-            }
+            onClicked: root.input.text = ClipboardUtils.text
         }
     }
 

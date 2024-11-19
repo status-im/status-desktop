@@ -18,6 +18,8 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgWidth: width
+        bgHeight: height
         bgRadius: bgWidth / 2
     }
 
