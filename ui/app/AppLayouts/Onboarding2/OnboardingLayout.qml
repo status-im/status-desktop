@@ -26,12 +26,13 @@ Page {
     required property ProfileStores.PrivacyStore privacyStore
 
     property int splashScreenDurationMs: 30000
+    property bool biometricsAvailable: Qt.platform.os === Constants.mac
 
     readonly property alias stack: stack
     readonly property alias primaryPath: d.primaryPath
     readonly property alias secondaryPath: d.secondaryPath
 
-    signal finished(bool success, int primaryPath, int secondaryPath)
+    signal finished(int primaryPath, int secondaryPath, var data)
     signal keycardFactoryResetRequested() // TODO integrate/switch to an external flow
     signal keycardReloaded()
 
@@ -57,8 +58,9 @@ Page {
 
         // state collected
         property string password
-        property bool enableBiometrics
         property string keycardPin
+        property bool enableBiometrics
+        property string syncConnectionString
 
         function resetState() {
             d.primaryPath = OnboardingLayout.PrimaryPath.Unknown
@@ -66,17 +68,22 @@ Page {
             d.password = ""
             d.keycardPin = ""
             d.enableBiometrics = false
-            d.settings.seedphraseRevealed = false
+            d.syncConnectionString = ""
         }
 
         readonly property Settings settings: Settings {
             property bool keycardPromoShown // whether we've seen the keycard promo banner on KeycardIntroPage
-            property bool seedphraseRevealed
 
             function reset() {
                 keycardPromoShown = false
-                seedphraseRevealed = false
             }
+        }
+
+        function pushOrSkipBiometricsPage(subtitle: string) {
+            if (root.biometricsAvailable)
+                stack.push(enableBiometricsPage, {subtitle})
+            else
+                mainHandler.onEnableBiometricsRequested(false)
         }
     }
 
@@ -88,12 +95,16 @@ Page {
 
     enum SecondaryPath {
         Unknown,
+
         CreateProfileWithPassword,
         CreateProfileWithSeedphrase,
         CreateProfileWithKeycard,
         CreateProfileWithKeycardNewSeedphrase,
-        CreateProfileWithKeycardExistingSeedphrase
-        // TODO secondary Login paths
+        CreateProfileWithKeycardExistingSeedphrase,
+
+        LoginWithSeedphrase,
+        LoginWithSyncing,
+        LoginWithKeycard
     }
 
     // page stack
@@ -104,17 +115,17 @@ Page {
 
         pushEnter: Transition {
             ParallelAnimation {
-                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 50; easing.type: Easing.InQuint }
-                NumberAnimation { property: "x"; from: (stack.mirrored ? -0.3 : 0.3) * stack.width; to: 0; duration: 400; easing.type: Easing.OutCubic }
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: d.opacityDuration; easing.type: Easing.InQuint }
+                NumberAnimation { property: "x"; from: (stack.mirrored ? -0.3 : 0.3) * stack.width; to: 0; duration: d.swipeDuration; easing.type: Easing.OutCubic }
             }
         }
         pushExit: Transition {
-            NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 50; easing.type: Easing.OutQuint }
+            NumberAnimation { property: "opacity"; from: 1; to: 0; duration: d.opacityDuration; easing.type: Easing.OutQuint }
         }
         popEnter: Transition {
             ParallelAnimation {
-                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 50; easing.type: Easing.InQuint }
-                NumberAnimation { property: "x"; from: (stack.mirrored ? -0.3 : 0.3) * -stack.width; to: 0; duration: 400; easing.type: Easing.OutCubic }
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: d.opacityDuration; easing.type: Easing.InQuint }
+                NumberAnimation { property: "x"; from: (stack.mirrored ? -0.3 : 0.3) * -stack.width; to: 0; duration: d.swipeDuration; easing.type: Easing.OutCubic }
             }
         }
         popExit: pushExit
@@ -130,23 +141,22 @@ Page {
         onClicked: stack.pop()
     }
 
-    // back button
-    StatusButton {
-        objectName: "onboardingBackButton"
-        isRoundIcon: true
+    StatusBackButton {
         width: 44
         height: 44
         anchors.left: parent.left
         anchors.leftMargin: Theme.padding
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Theme.padding
-        icon.name: "arrow-left"
-        visible: stack.depth > 1 && !stack.busy
+        opacity: stack.depth > 1 && !stack.busy ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 100 } }
         onClicked: stack.pop()
     }
 
     // main signal handler
     Connections {
+        id: mainHandler
         target: stack.currentItem
         ignoreUnknownSignals: true
 
@@ -175,6 +185,7 @@ Page {
         function onLoginRequested() {
             console.warn("!!! PRIMARY: LOG IN")
             d.primaryPath = OnboardingLayout.PrimaryPath.Login
+            stack.push(helpUsImproveStatusPage)
         }
 
         // help us improve page
@@ -187,7 +198,7 @@ Page {
             if (d.primaryPath === OnboardingLayout.PrimaryPath.CreateProfile)
                 stack.push(createProfilePage)
             else if (d.primaryPath === OnboardingLayout.PrimaryPath.Login)
-                ; // TODO Login path
+                stack.push(loginPage)
         }
 
         // create profile page
@@ -199,7 +210,7 @@ Page {
         function onCreateProfileWithSeedphraseRequested() {
             console.warn("!!! SECONDARY: CREATE PROFILE WITH SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase
-            stack.push(seedphrasePage, { title: qsTr("Create profile with a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
+            stack.push(seedphrasePage, { title: qsTr("Create profile using a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
         }
         function onCreateProfileWithEmptyKeycardRequested() {
             console.warn("!!! SECONDARY: CREATE PROFILE WITH KEYCARD")
@@ -207,18 +218,36 @@ Page {
             stack.push(keycardIntroPage)
         }
 
+        // login page
+        function onLoginWithSeedphraseRequested() {
+            console.warn("!!! SECONDARY: LOGIN WITH SEEDPHRASE")
+            d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithSeedphrase
+            stack.push(seedphrasePage, { title: qsTr("Log in with your Status recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
+        }
+        function onLoginWithSyncingRequested() {
+            console.warn("!!! SECONDARY: LOGIN WITH SYNCING")
+            d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithSyncing
+            stack.push(loginBySyncPage)
+        }
+        function onLoginWithKeycardRequested() {
+            console.warn("!!! SECONDARY: LOGIN WITH KEYCARD")
+            d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithKeycard
+            stack.push(keycardIntroPage)
+        }
+
         // create password page
         function onSetPasswordRequested(password: string) {
             console.warn("!!! SET PASSWORD REQUESTED")
             d.password = password
+            // TODO set the password immediately?
             stack.clear()
-            stack.push(enableBiometricsPage, {subtitle: qsTr("Use biometrics to fill in your password?")}) // FIXME make optional on unsupported platforms
+            d.pushOrSkipBiometricsPage(qsTr("Use biometrics to fill in your password?"))
         }
 
         // seedphrase page
         function onSeedphraseValidated() {
             console.warn("!!! SEEDPHRASE VALIDATED")
-            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase) {
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase || d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithSeedphrase) {
                 console.warn("!!! AFTER SEEDPHRASE -> PASSWORD PAGE")
                 stack.push(createPasswordPage)
             } else if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
@@ -238,15 +267,31 @@ Page {
         }
         function onKeycardFactoryResetRequested() {
             console.warn("!!! KEYCARD FACTORY RESET REQUESTED")
+            // TODO start keycard factory reset in a popup here
             root.keycardFactoryResetRequested()
         }
-        function onLoginWithKeycardRequested() {
-            console.warn("!!! LOGIN WITH KEYCARD REQUESTED")
-            stack.push(keycardEnterPinPage)
+        function onLoginWithThisKeycardRequested() {
+            console.warn("!!! LOGIN WITH THIS KEYCARD REQUESTED")
+            d.primaryPath = OnboardingLayout.PrimaryPath.Login
+            d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithKeycard
+            if (root.startupStore.getPin() !== "")
+                stack.push(keycardEnterPinPage)
+            else
+                stack.push(keycardCreatePinPage)
         }
         function onEmptyKeycardDetected() {
             console.warn("!!! EMPTY KEYCARD DETECTED")
-            stack.replace(createKeycardProfilePage) // NB: replacing the keycardIntroPage
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithKeycard)
+                stack.replace(keycardEmptyPage) // NB: replacing the loginPage
+            else
+                stack.replace(createKeycardProfilePage) // NB: replacing the keycardIntroPage
+        }
+        function onNotEmptyKeycardDetected() {
+            console.warn("!!! NOT EMPTY KEYCARD DETECTED")
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithKeycard)
+                stack.push(keycardEnterPinPage)
+            else
+                stack.push(keycardNotEmptyPage)
         }
 
         function onCreateKeycardProfileWithNewSeedphrase() {
@@ -267,19 +312,19 @@ Page {
         function onKeycardPinCreated(pin) {
             console.warn("!!! KEYCARD PIN CREATED:", pin)
             d.keycardPin = pin
+            // TODO set the PIN immediately?
             Backpressure.debounce(root, 2000, function() {
                 stack.clear()
-                stack.push(enableBiometricsPage, // FIXME make optional on unsupported platforms
-                           {subtitle: qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.")})
+                d.pushOrSkipBiometricsPage(qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions."))
             })()
         }
 
         function onKeycardPinEntered(pin) {
             console.warn("!!! KEYCARD PIN ENTERED:", pin)
             d.keycardPin = pin
+            // TODO set the PIN immediately?
             stack.clear()
-            stack.push(enableBiometricsPage, // FIXME make optional on unsupported platforms
-                       {subtitle: qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.")})
+            d.pushOrSkipBiometricsPage(qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions."))
         }
 
         // backup seedphrase pages
@@ -295,7 +340,6 @@ Page {
 
         function onBackupSeedphraseConfirmed() {
             console.warn("!!! BACKUP SEED CONFIRMED")
-            d.settings.seedphraseRevealed = true
             root.privacyStore.mnemonicWasShown()
             stack.push(backupSeedVerifyPage)
         }
@@ -309,6 +353,19 @@ Page {
             console.warn("!!! BACKUP SEED REMOVAL CONFIRMED")
             root.privacyStore.removeMnemonic()
             stack.replace(splashScreen, { runningProgressAnimation: true })
+        }
+
+        // login with sync pages
+        function onSyncProceedWithConnectionString(connectionString) {
+            console.warn("!!! SYNC PROCEED WITH CONNECTION STRING:", connectionString)
+            d.syncConnectionString = connectionString
+            root.startupStore.setConnectionString(connectionString)
+            // TODO backend: start the sync
+            Backpressure.debounce(root, 1000, function() {
+                stack.clear()
+                // TODO show the sync in progress screen instead of the final splash page?
+                stack.replace(splashScreen, { runningProgressAnimation: true })
+            })()
         }
 
         // enable biometrics page
@@ -346,30 +403,26 @@ Page {
         id: createPasswordPage
         CreatePasswordPage {
             passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
-            StackView.onRemoved: {
-                d.password = ""
-            }
         }
     }
 
     Component {
         id: enableBiometricsPage
-        EnableBiometricsPage {
-            StackView.onRemoved: d.enableBiometrics = false
-        }
+        EnableBiometricsPage {}
     }
 
     Component {
         id: splashScreen
         DidYouKnowSplashScreen {
-            readonly property string title: "Splash"
+            readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
                 duration: root.splashScreenDurationMs
                 running: runningProgressAnimation
-                onStopped: root.finished(true, d.primaryPath, d.secondaryPath)
+                onStopped: root.finished(d.primaryPath, d.secondaryPath,
+                                         {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics, "syncConnectionString": d.syncConnectionString})
             }
         }
     }
@@ -384,7 +437,10 @@ Page {
     Component {
         id: createKeycardProfilePage
         CreateKeycardProfilePage {
-            StackView.onActivated: d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycard
+            StackView.onActivated: {
+                d.primaryPath = OnboardingLayout.PrimaryPath.CreateProfile
+                d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycard
+            }
         }
     }
 
@@ -397,8 +453,20 @@ Page {
                 // NB just to make sure we don't miss the signal when we (re)load the page in the final state already
                 if (keycardState === Constants.startupState.keycardEmpty)
                     emptyKeycardDetected()
+                else if (keycardState === Constants.startupState.keycardNotEmpty)
+                    notEmptyKeycardDetected()
             }
         }
+    }
+
+    Component {
+        id: keycardEmptyPage
+        KeycardEmptyPage {}
+    }
+
+    Component {
+        id: keycardNotEmptyPage
+        KeycardNotEmptyPage {}
     }
 
     Component {
@@ -427,7 +495,6 @@ Page {
     Component {
         id: backupSeedRevealPage
         BackupSeedphraseReveal {
-            seedphraseRevealed: d.settings.seedphraseRevealed
             seedWords: d.seedWords
         }
     }
@@ -449,6 +516,20 @@ Page {
     Component {
         id: backupSeedOutroPage
         BackupSeedphraseOutro {}
+    }
+
+    Component {
+        id: loginPage
+        LoginPage {
+            StackView.onActivated: d.secondaryPath = OnboardingLayout.SecondaryPath.Unknown // reset when we get back here
+        }
+    }
+
+    Component {
+        id: loginBySyncPage
+        LoginBySyncingPage {
+            validateConnectionString: root.startupStore.validateLocalPairingConnectionString
+        }
     }
 
     // common popups

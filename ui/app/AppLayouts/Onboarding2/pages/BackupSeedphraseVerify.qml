@@ -21,6 +21,8 @@ OnboardingPage {
 
     signal backupSeedphraseVerified()
 
+    pageClassName: "BackupSeedphraseVerify"
+
     QtObject {
         id: d
         readonly property var seedSuggestions: BIP39_en {} // [{seedWord:string}, ...]
@@ -87,9 +89,13 @@ OnboardingPage {
                             seedSuggestions: d.seedSuggestions
                             Component.onCompleted: if (index === 0) forceActiveFocus()
                             onAccepted: {
-                                const nextItem = seedRepeater.itemAt(index + 1) ?? seedRepeater.itemAt(0)
-                                if (!!nextItem) {
-                                    nextItem.input.forceActiveFocus()
+                                if (seedRepeater.allValid) { // move to next page
+                                    root.backupSeedphraseVerified()
+                                } else { // move to next field
+                                    const nextItem = seedRepeater.itemAt(index + 1) ?? seedRepeater.itemAt(0)
+                                    if (!!nextItem) {
+                                        nextItem.input.forceActiveFocus()
+                                    }
                                 }
                             }
                         }

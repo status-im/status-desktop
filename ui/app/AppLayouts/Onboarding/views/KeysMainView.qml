@@ -386,7 +386,7 @@ Item {
             }
             PropertyChanges {
                 target: button3
-                text: qsTr("Enter a seed phrase")
+                text: qsTr("Enter a recovery phrase")
             }
         },
         State {
@@ -421,7 +421,7 @@ Item {
             }
             PropertyChanges {
                 target: button3
-                text: qsTr("Import a seed phrase")
+                text: qsTr("Import a recovery phrase")
             }
         },
         State {
@@ -429,7 +429,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileImportSeedPhrase
             PropertyChanges {
                 target: txtTitle
-                text: qsTr("Import a seed phrase")
+                text: qsTr("Import a recovery phrase")
             }
             PropertyChanges {
                 target: keysImg
@@ -439,12 +439,12 @@ Item {
             }
             PropertyChanges {
                 target: txtDesc
-                text: qsTr("Seed phrases are used to back up and restore your keys.\nOnly use this option if you already have a seed phrase.")
+                text: qsTr("Seed phrases are used to back up and restore your keys.\nOnly use this option if you already have a recovery phrase.")
                 height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
                 target: button1
-                text: qsTr("Import a seed phrase")
+                text: qsTr("Import a recovery phrase")
             }
             PropertyChanges {
                 target: betaTagButton1
@@ -452,7 +452,7 @@ Item {
             }
             PropertyChanges {
                 target: button2
-                text: qsTr("Import a seed phrase into a new Keycard")
+                text: qsTr("Import a recovery phrase into a new Keycard")
             }
             PropertyChanges {
                 target: button3
@@ -547,7 +547,7 @@ Item {
             }
             PropertyChanges {
                 target: button1
-                text: qsTr("Create replacement Keycard with seed phrase")
+                text: qsTr("Create replacement Keycard with recovery phrase")
             }
             PropertyChanges {
                 target: betaTagButton1

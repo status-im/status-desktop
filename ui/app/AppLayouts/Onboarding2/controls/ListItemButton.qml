@@ -1,12 +1,11 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusListItem {
-    radius: 20
+    radius: 12
     asset.width: 32
     asset.height: 32
     asset.bgRadius: 0
