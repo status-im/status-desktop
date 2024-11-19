@@ -7,8 +7,6 @@ import app/core/signals/types
 
 import app_service/service/connector/service as connector_service
 
-import app_service/common/utils
-
 const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
@@ -132,9 +130,7 @@ QtObject:
     self.rejectConnectResponse(requestId, not result)
 
   proc approveTransaction*(self: Controller, sessionTopic: string, requestId: string, signature: string): bool {.slot.} =
-    let hash = utils.createHash(signature)
-
-    result = self.service.approveTransactionRequest(requestId, hash)
+    result = self.service.approveTransactionRequest(requestId, signature)
     self.approveTransactionResponse(sessionTopic, requestId, not result)
 
   proc rejectTransaction*(self: Controller, sessionTopic: string, requestId: string): bool {.slot.} =
