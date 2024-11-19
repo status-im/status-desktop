@@ -13,7 +13,7 @@ const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
-const SIGNAL_CONNECTOR_PERSONAL_SIGN* = "ConnectorPersonalSign"
+const SIGNAL_CONNECTOR_SIGN* = "ConnectorSign"
 
 logScope:
   topics = "connector-controller"
@@ -32,14 +32,14 @@ QtObject:
   proc disconnected*(self: Controller, payload: string) {.signal.}
 
   proc sendTransaction*(self: Controller, requestId: string, payload: string) {.signal.}
-  proc personalSign(self: Controller, requestId: string, payload: string) {.signal.}
+  proc sign(self: Controller, requestId: string, payload: string) {.signal.}
   proc approveConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
   proc rejectConnectResponse*(self: Controller, payload: string, error: bool) {.signal.}
 
   proc approveTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
   proc rejectTransactionResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
-  proc approvePersonalSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
-  proc rejectPersonalSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc approveSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
+  proc rejectSignResponse*(self: Controller, topic: string, requestId: string, error: bool) {.signal.}
 
   proc newController*(service: connector_service.Service, events: EventEmitter): Controller =
     new(result, delete)
@@ -97,17 +97,18 @@ QtObject:
 
       controller.disconnected(dappInfo.toJson())
 
-    result.events.on(SIGNAL_CONNECTOR_PERSONAL_SIGN) do(e: Args):
-      let params = ConnectorPersonalSignSignal(e)
+    result.events.on(SIGNAL_CONNECTOR_SIGN) do(e: Args):
+      let params = ConnectorSignSignal(e)
       let dappInfo = %*{
         "icon": params.iconUrl,
         "name": params.name,
         "url": params.url,
         "challenge": params.challenge,
         "address": params.address,
+        "method": params.signMethod,
       }
 
-      controller.personalSign(params.requestId, dappInfo.toJson())
+      controller.sign(params.requestId, dappInfo.toJson())
 
     result.QObject.setup
 
@@ -146,11 +147,11 @@ QtObject:
   proc getDApps*(self: Controller): string {.slot.} =
     return self.service.getDApps()
 
-  proc approvePersonalSigning*(self: Controller, sessionTopic: string, requestId: string, signature: string): bool {.slot.} =
-    result = self.service.approvePersonalSignRequest(requestId, signature)
-    self.approvePersonalSignResponse(sessionTopic, requestId, not result)
+  proc approveSigning*(self: Controller, sessionTopic: string, requestId: string, signature: string): bool {.slot.} =
+    result = self.service.approveSignRequest(requestId, signature)
+    self.approveSignResponse(sessionTopic, requestId, not result)
 
 
-  proc rejectPersonalSigning*(self: Controller, sessionTopic: string, requestId: string): bool {.slot.} =
-    result = self.service.rejectPersonalSigning(requestId)
-    self.rejectPersonalSignResponse(sessionTopic, requestId, not result)
+  proc rejectSigning*(self: Controller, sessionTopic: string, requestId: string): bool {.slot.} =
+    result = self.service.rejectSigning(requestId)
+    self.rejectSignResponse(sessionTopic, requestId, not result)

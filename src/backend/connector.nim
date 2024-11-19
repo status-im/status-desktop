@@ -23,7 +23,7 @@ type RejectedArgs* = ref object of RootObj
 type RecallDAppPermissionArgs* = ref object of RootObj
   dAppUrl* {.serializedFieldName("dAppUrl").}: string
 
-type PersonalSignAcceptedArgs* = ref object of RootObj
+type SignAcceptedArgs* = ref object of RootObj
   requestId* {.serializedFieldName("requestId").}: string
   signature* {.serializedFieldName("signature").}: string
 
@@ -45,10 +45,10 @@ rpc(recallDAppPermission, "connector"):
 rpc(getPermittedDAppsList, "connector"):
   discard
 
-rpc(personalSignAccepted, "connector"):
-  args: PersonalSignAcceptedArgs
+rpc(signAccepted, "connector"):
+  args: SignAcceptedArgs
 
-rpc(personalSignRejected, "connector"):
+rpc(signRejected, "connector"):
   args: RejectedArgs
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
@@ -69,8 +69,8 @@ proc sendTransactionRejectedFinishedRpc*(args: RejectedArgs): bool =
 proc recallDAppPermissionFinishedRpc*(dAppUrl: string): bool =
   return isSuccessResponse(recallDAppPermission(dAppUrl))
 
-proc sendPersonalSignAcceptedFinishedRpc*(args: PersonalSignAcceptedArgs): bool =
-  return isSuccessResponse(personalSignAccepted(args))
+proc sendSignAcceptedFinishedRpc*(args: SignAcceptedArgs): bool =
+  return isSuccessResponse(signAccepted(args))
 
-proc sendPersonalSignRejectedFinishedRpc*(args: RejectedArgs): bool =
-  return isSuccessResponse(personalSignRejected(args))
+proc sendSignRejectedFinishedRpc*(args: RejectedArgs): bool =
+  return isSuccessResponse(signRejected(args))

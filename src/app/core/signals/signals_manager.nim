@@ -145,7 +145,7 @@ QtObject:
       of SignalType.ConnectorSendTransaction: ConnectorSendTransactionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
-      of SignalType.ConnectorPersonalSign: ConnectorPersonalSignSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorSign: ConnectorSignSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType

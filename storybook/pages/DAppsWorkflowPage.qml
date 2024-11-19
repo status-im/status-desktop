@@ -378,7 +378,8 @@ Item {
             accountsModel: dappModule.accountsModel
             store: SharedStores.BrowserConnectStore {
                 signal connectRequested(string requestId, string dappJson)
-                signal signRequested(string requestId, string requestJson)
+                signal sendTransaction(string requestId, string requestJson)
+                signal sign(string requestId, string dappJson)
 
                 signal connected(string dappJson)
                 signal disconnected(string dappJson)
@@ -389,6 +390,8 @@ Item {
 
                 signal approveTransactionResponse(string topic, string requestId, bool error)
                 signal rejectTransactionResponse(string topic, string requestId, bool error)
+                signal approveSignResponse(string topic, string requestId, bool error)
+                signal rejectSignResponse(string topic, string requestId, bool error)
             }
         }
         store: SharedStores.DAppsStore {

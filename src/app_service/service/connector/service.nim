@@ -16,7 +16,7 @@ const SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS* = "ConnectorSendRequestAccounts"
 const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION* = "ConnectorSendTransaction"
 const SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION* = "ConnectorGrantDAppPermission"
 const SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION* = "ConnectorRevokeDAppPermission"
-const SIGNAL_CONNECTOR_EVENT_CONNECTOR_PERSONAL_SIGN* = "ConnectorPersonalSign"
+const SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN* = "ConnectorSign"
 
 # Enum with events
 type Event* = enum
@@ -84,17 +84,17 @@ QtObject:
 
       self.events.emit(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION, data)
     )
-    self.events.on(SignalType.ConnectorPersonalSign.event, proc(e: Args) =
+    self.events.on(SignalType.ConnectorSign.event, proc(e: Args) =
       if self.eventHandler == nil:
         return
 
-      var data = ConnectorPersonalSignSignal(e)
+      var data = ConnectorSignSignal(e)
 
       if not data.requestId.len() == 0:
-        error "ConnectorPersonalSignSignal failed, requestId is empty"
+        error "ConnectorSignSignal failed, requestId is empty"
         return
 
-      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_PERSONAL_SIGN, data)
+      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN, data)
     )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
@@ -165,17 +165,17 @@ QtObject:
       error "getDApps failed: ", err=e.msg
       return "[]"
 
-  proc approvePersonalSignRequest*(self: Service, requestId: string, signature: string): bool =
+  proc approveSignRequest*(self: Service, requestId: string, signature: string): bool =
     try:
-      var args = PersonalSignAcceptedArgs()
+      var args = SignAcceptedArgs()
       args.requestId = requestId
       args.signature = signature
 
-      return status_go.sendPersonalSignAcceptedFinishedRpc(args)
+      return status_go.sendSignAcceptedFinishedRpc(args)
 
     except Exception as e:
-      error "sendPersonalSigAcceptedFinishedRpc failed: ", err=e.msg
+      error "sendSigAcceptedFinishedRpc failed: ", err=e.msg
       return false
 
-  proc rejectPersonalSigning*(self: Service, requestId: string): bool =
-    rejectRequest(self, requestId, status_go.sendPersonalSignRejectedFinishedRpc, "sendPersonalSignRejectedFinishedRpc failed: ")
+  proc rejectSigning*(self: Service, requestId: string): bool =
+    rejectRequest(self, requestId, status_go.sendSignRejectedFinishedRpc, "sendSignRejectedFinishedRpc failed: ")
