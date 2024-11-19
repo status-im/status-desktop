@@ -53,16 +53,12 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
-  proc itemChanged(self: Model, pubKey: string) {.signal.}
 
   proc setItems*(self: Model, items: seq[UserItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
-
-    for item in items:
-      self.itemChanged(item.pubKey)
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -193,9 +189,6 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-    for item in items:
-      self.itemChanged(item.pubKey)
-
   proc addItem*(self: Model, item: UserItem) =
     # we need to maintain online contact on top, that means
     # if we add an item online status we add it as the last online item (before the first offline item)
@@ -216,7 +209,6 @@ QtObject:
     self.items.insert(item, position)
     self.endInsertRows()
     self.countChanged()
-    self.itemChanged(item.pubKey)
 
   proc clear*(self: Model) =
      self.beginResetModel()
@@ -244,8 +236,6 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
-
-    self.itemChanged(pubKey)
 
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexByPubKey(id) != -1
@@ -275,7 +265,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
-    self.itemChanged(pubKey)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -287,7 +276,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
-    self.itemChanged(pubKey)
 
   proc updateItem*(
       self: Model,
@@ -360,7 +348,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
-    self.itemChanged(pubKey)
 
   proc updateItem*(
       self: Model,
@@ -413,7 +400,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TrustStatus.int, ModelRole.IsUntrustworthy.int, ModelRole.IsVerified.int])
-    self.itemChanged(pubKey)
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -428,7 +414,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
-    self.itemChanged(pubKey)
 
 
 # TODO: rename me to removeItemByPubkey
