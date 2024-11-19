@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -22,11 +21,13 @@ OnboardingPage {
     signal createProfileWithSeedphraseRequested()
     signal createProfileWithEmptyKeycardRequested()
 
+    pageClassName: "CreateProfilePage"
+
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
             width: Math.min(380, root.availableWidth)
-            spacing: 20
+            spacing: Theme.bigPadding
 
             StatusBaseText {
                 Layout.fillWidth: true
@@ -38,7 +39,7 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: -12
+                Layout.topMargin: -Theme.padding
                 text: qsTr("How would you like to start using Status?")
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
@@ -82,11 +83,9 @@ OnboardingPage {
                 }
             }
 
-            OnboardingFrame {
-                id: buttonFrame
+            OnboardingButtonFrame {
                 Layout.fillWidth: true
-                padding: 1
-                dropShadow: false
+                id: buttonFrame
                 contentItem: ColumnLayout {
                     spacing: 0
                     ListItemButton {

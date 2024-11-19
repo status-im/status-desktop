@@ -157,7 +157,7 @@ OnboardingBasePage {
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
                     msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
-your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase.")
+your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your recovery phrase.")
                 } else {
                     msgDialog.title = qsTr("Login failed")
                     msgDialog.text = qsTr("Login failed. Please re-enter your password and try again.")
@@ -167,7 +167,7 @@ your password, passcode or Keycard, uninstall the app, reinstall and access your
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
                     msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
-your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In \
+your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your recovery phrase. In \
 case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.")
                 } else {
                     msgDialog.title = qsTr("Error importing seed")
@@ -179,7 +179,7 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
                 msgDialog.text = qsTr("Really sorry about this inconvenience.\n\
 Most likely that your account is damaged while converting to a regular Status account.\n\
 First try to login after app restart, if that doesn't work, you can alway recover your account\n\
-following the \"Add existing Status user\" flow, using your seed phrase.")
+following the \"Add existing Status user\" flow, using your recovery phrase.")
             }
 
             msgDialog.open()
@@ -202,7 +202,6 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
 
         StatusBaseText {
             anchors.fill: parent
-            font.pixelSize: 15
             color: Theme.palette.directColor1
             text: msgDialog.text
             wrapMode: Text.WordWrap
@@ -210,7 +209,7 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
 
         standardButtons: Dialog.Ok
         onAccepted: {
-            if (msgDialog.errType == Constants.startupErrorType.convertToRegularAccError) {
+            if (msgDialog.errType === Constants.startupErrorType.convertToRegularAccError) {
                 Qt.quit();
             }
             console.log("TODO: restart flow...")

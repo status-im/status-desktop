@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import shared.popups 1.0
 import shared.views 1.0

@@ -17,11 +17,12 @@ KeycardBasePage {
     required property string keycardState // Constants.startupState.keycardXXX
     property bool displayPromoBanner
 
-    signal reloadKeycardRequested()
     signal keycardFactoryResetRequested()
-    signal loginWithKeycardRequested()
-
+    signal reloadKeycardRequested()
     signal emptyKeycardDetected()
+    signal notEmptyKeycardDetected()
+
+    pageClassName: "KeycardIntroPage"
 
     OnboardingFrame {
         id: promoBanner
@@ -78,44 +79,20 @@ KeycardBasePage {
 
     buttons: [
         MaybeOutlineButton {
-            id: btnLogin
-            text: qsTr("Log in with this Keycard")
-            onClicked: root.loginWithKeycardRequested()
-        },
-        MaybeOutlineButton {
             id: btnFactoryReset
+            visible: false
             text: qsTr("Factory reset Keycard")
+            anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.keycardFactoryResetRequested()
         },
         MaybeOutlineButton {
             id: btnReload
-            text: qsTr("I’ve inserted a Keycard")
+            visible: false
+            text: qsTr("I’ve inserted a different Keycard")
+            anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.reloadKeycardRequested()
         }
     ]
-
-    // inside a Column (or another Positioner), make all but the first button outline
-    component MaybeOutlineButton: StatusButton {
-        id: maybeOutlineButton
-        width: 320
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: false
-        Binding on normalColor {
-            value: "transparent"
-            when: !maybeOutlineButton.Positioner.isFirstItem
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-        Binding on borderWidth {
-            value: 1
-            when: !maybeOutlineButton.Positioner.isFirstItem
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-        Binding on borderColor {
-            value: Theme.palette.baseColor2
-            when: !maybeOutlineButton.Positioner.isFirstItem
-            restoreMode: Binding.RestoreBindingOrValue
-        }
-    }
 
     states: [
         // normal/intro states
@@ -139,15 +116,18 @@ KeycardBasePage {
             PropertyChanges {
                 target: root
                 title: qsTr("Insert your Keycard")
-                infoText.text: qsTr("Need a little %1?").arg(Utils.getStyledLink(qsTr("help"), "https://keycard.tech/docs/", infoText.hoveredLink,
-                                                                                 Theme.palette.baseColor1, Theme.palette.primaryColor1))
+                infoText.text: qsTr("Need a little %1?").arg(Utils.getStyledLink(qsTr("help"), "https://keycard.tech/docs/",
+                                                                                 infoText.hoveredLink,
+                                                                                 Theme.palette.baseColor1,
+                                                                                 Theme.palette.primaryColor1))
                 image.source: Theme.png("onboarding/keycard/insert")
             }
         },
         State {
             name: "reading"
             when: root.keycardState === Constants.startupState.keycardReadingKeycard ||
-                  root.keycardState === Constants.startupState.keycardInsertedKeycard
+                  root.keycardState === Constants.startupState.keycardInsertedKeycard ||
+                  root.keycardState === Constants.startupState.keycardRecognizedKeycard
             PropertyChanges {
                 target: root
                 title: qsTr("Reading Keycard...")
@@ -156,9 +136,42 @@ KeycardBasePage {
         },
         // error states
         State {
-            name: "error"
+            name: "notKeycard"
+            when: root.keycardState === Constants.startupState.keycardWrongKeycard ||
+                  root.keycardState === Constants.startupState.keycardNotKeycard
             PropertyChanges {
                 target: root
+                title: qsTr("Oops this isn’t a Keycard")
+                subtitle: qsTr("Remove card and insert a Keycard")
+                image.source: Theme.png("onboarding/keycard/invalid")
+            }
+            PropertyChanges {
+                target: btnReload
+                visible: true
+            }
+        },
+        State {
+            name: "noService"
+            when: root.keycardState === Constants.startupState.keycardNoPCSCService
+            PropertyChanges {
+                target: root
+                title: qsTr("Smartcard reader service unavailable")
+                subtitle: qsTr("The Smartcard reader service (PCSC service), required for using Keycard, is not currently working. Ensure PCSC is installed and running and try again.")
+                image.source: Theme.png("onboarding/keycard/error")
+            }
+            PropertyChanges {
+                target: btnReload
+                visible: true
+                text: qsTr("Retry")
+            }
+        },
+        State {
+            name: "occupied"
+            when: root.keycardState === Constants.startupState.keycardMaxPairingSlotsReached
+            PropertyChanges {
+                target: root
+                title: qsTr("All pairing slots occupied")
+                subtitle: qsTr("Factory reset this Keycard or insert a different one")
                 image.source: Theme.png("onboarding/keycard/error")
             }
             PropertyChanges {
@@ -171,61 +184,36 @@ KeycardBasePage {
             }
         },
         State {
-            name: "notKeycard"
-            extend: "error"
-            when: root.keycardState === Constants.startupState.keycardWrongKeycard ||
-                  root.keycardState === Constants.startupState.keycardNotKeycard
-            PropertyChanges {
-                target: root
-                title: qsTr("Oops this isn’t a Keycard")
-                subtitle: qsTr("Remove card and insert a Keycard")
-                image.source: Theme.png("onboarding/keycard/invalid")
-            }
-            PropertyChanges {
-                target: btnFactoryReset
-                visible: false
-            }
-        },
-        State {
-            name: "occupied"
-            extend: "error"
-            when: root.keycardState === Constants.startupState.keycardMaxPairingSlotsReached
-            PropertyChanges {
-                target: root
-                title: qsTr("All pairing slots occupied")
-                subtitle: qsTr("Factory reset this Keycard or insert a different one")
-            }
-        },
-        State {
             name: "locked"
-            extend: "error"
             when: root.keycardState === Constants.startupState.keycardLocked
             PropertyChanges {
                 target: root
-                title: qsTr("Keycard locked")
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
                 subtitle: qsTr("The Keycard you have inserted is locked, you will need to factory reset it or insert a different one")
+                image.source: Theme.png("onboarding/keycard/error")
+            }
+            PropertyChanges {
+                target: btnFactoryReset
+                visible: true
+            }
+            PropertyChanges {
+                target: btnReload
+                visible: true
+            }
+        },
+        // exit states
+        State {
+            name: "empty"
+            when: root.keycardState === Constants.startupState.keycardEmpty
+            StateChangeScript {
+                script: root.emptyKeycardDetected()
             }
         },
         State {
             name: "notEmpty"
-            extend: "error"
             when: root.keycardState === Constants.startupState.keycardNotEmpty
-            PropertyChanges {
-                target: root
-                title: qsTr("Keycard is not empty")
-                subtitle: qsTr("You can’t use it to store new keys right now")
-            }
-            PropertyChanges {
-                target: btnLogin
-                visible: true
-            }
-        },
-        // success/exit state
-        State {
-            name: "emptyDetected"
-            when: root.keycardState === Constants.startupState.keycardEmpty
             StateChangeScript {
-                script: root.emptyKeycardDetected()
+                script: root.notEmptyKeycardDetected()
             }
         }
     ]

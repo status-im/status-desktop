@@ -7,6 +7,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
 
@@ -23,6 +24,7 @@ KeycardBasePage {
     signal keycardFactoryResetRequested()
     signal keycardLocked()
 
+    pageClassName: "KeycardEnterPinPage"
     image.source: Theme.png("onboarding/keycard/reading")
 
     QtObject {
@@ -134,7 +136,9 @@ KeycardBasePage {
             }
             StateChangeScript {
                 script: {
-                    root.keycardPinEntered(pinInput.pinInput)
+                    Backpressure.debounce(root, 2000, function() {
+                        root.keycardPinEntered(pinInput.pinInput)
+                    })()
                 }
             }
         },

@@ -19,6 +19,8 @@ OnboardingPage {
 
     title: qsTr("Create profile password")
 
+    pageClassName: "CreatePasswordPage"
+
     QtObject {
         id: d
 
