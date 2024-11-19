@@ -139,6 +139,9 @@ SortFilterProxyModel {
 
     // Update model after retranslation
     onEntriesChanged: {
+        if (baseModel.count === 0)
+            return
+
         entries.forEach((elem, index) => {
             baseModel.setProperty(index, "text", elem.text)
 
