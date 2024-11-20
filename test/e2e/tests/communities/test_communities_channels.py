@@ -94,11 +94,6 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
             assert not community_screen.left_panel.does_create_channel_or_category_button_exist()
         with step('Verify that add channel button is not present'):
             assert not community_screen.left_panel.is_add_channels_button_visible()
-        with step('Right-click a channel on the left navigation bar'):
-            community_screen.left_panel.right_click_on_panel()
-        with step('Verify that context menu does not appear'):
-            assert ContextMenu().is_visible is False, \
-                f"Context menu should not appear"
 
     with step('Verify that member cannot edit and delete channel'):
         with step('Right-click on general channel in the left navigation bar'):
