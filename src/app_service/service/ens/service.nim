@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, stint, chronicles
+import NimQml, Tables, json, sequtils, strutils, stint, sugar, chronicles
 import web3/ethtypes, stew/byteutils, nimcrypto, json_serialization
 
 import app/core/eventemitter
@@ -132,6 +132,10 @@ QtObject:
       return
 
     let key = makeKey(ensDto.username, chainId)
+    if not self.pendingEnsUsernames.hasKey(key):
+      error "Error updating ens username status", message = "unknown key: " & key
+      return
+
     if status == TxStatusSuccess:
       self.pendingEnsUsernames[key].txStatus = TxStatusSuccess
       let data = EnsTransactionArgs(txHash: transactionHash, ensUsername: ensDto.username, transactionType: $ensDto.txType)
@@ -293,7 +297,7 @@ QtObject:
         chainId: self.getChainId(),
         isStatus: isStatus,
         myPublicKey: self.settingsService.getPublicKey(),
-        myWalletAddress: self.walletAccountService.getWalletAccount(0).address
+        myAddresses: self.walletAccountService.getWalletAccounts().map(a => a.address)
       )
       self.threadpool.start(arg)
 
@@ -340,7 +344,13 @@ QtObject:
     result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
 
   proc getEnsRegisteredAddress*(self: Service): string =
-    return status_ens.getRegistrarAddress(self.getChainId()).result.getStr
+    try:
+      let res = status_ens.getRegistrarAddress(self.getChainId())
+      if res.error != nil:
+        raise newException(ValueError, res.error.message)
+      return res.result.getStr
+    except Exception as e:
+      error "Error getting ENS registered address", err=e.msg
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:
