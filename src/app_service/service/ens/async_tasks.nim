@@ -8,7 +8,7 @@ type
     chainId*: int
     isStatus*: bool
     myPublicKey*: string
-    myWalletAddress*: string
+    myAddresses*: seq[string]
 
 proc checkEnsAvailabilityTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[CheckEnsAvailabilityTaskArg](argEncoded)
@@ -21,12 +21,13 @@ proc checkEnsAvailabilityTask(argEncoded: string) {.gcsafe, nimcall.} =
       availability = ENS_AVAILABILITY_STATUS_AVAILABLE
     else:
       let ensPubkey = ens_utils.publicKeyOf(arg.chainId, arg.ensUsername)
+      let ownerIsAmongMyAddresses = arg.myAddresses.filter(address => cmpIgnoreCase(address, ownerAddr) == 0).len == 1
       if ownerAddr != "":
-        if ensPubkey == "" and ownerAddr == arg.myWalletAddress:
+        if ensPubkey == "" and ownerIsAmongMyAddresses:
           availability = ENS_AVAILABILITY_STATUS_OWNED # "Continuing will connect this username with your chat key."
         elif ensPubkey == arg.myPublicKey:
           availability = ENS_AVAILABILITY_STATUS_CONNECTED
-        elif ownerAddr == arg.myWalletAddress:
+        elif ownerIsAmongMyAddresses:
           availability = ENS_AVAILABILITY_STATUS_CONNECTED_DIFFERENT_KEY #  "Continuing will require a transaction to connect the username with your current chat key.",
         else:
           availability = ENS_AVAILABILITY_STATUS_TAKEN
