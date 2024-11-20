@@ -10,9 +10,9 @@ import ../../../app_service/service/community_tokens/community_collectible_owner
 
 type
   SectionType* {.pure.} = enum
-    Chat = 0
+    Wallet = 0,
+    Chat,
     Community,
-    Wallet,
     ProfileSettings,
     NodeManagement,
     CommunitiesPortal,

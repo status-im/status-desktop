@@ -669,12 +669,18 @@ Item {
         anchors.fill: parent
 
         leftPanel: StatusAppNavBar {
-            chatItemsModel: SortFilterProxyModel {
+            topSectionModel: SortFilterProxyModel {
                 sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
                 filters: [
-                    ValueFilter {
-                        roleName: "sectionType"
-                        value: Constants.appSection.chat
+                    AnyOf {
+                        ValueFilter {
+                            roleName: "sectionType"
+                            value: Constants.appSection.wallet
+                        }
+                        ValueFilter {
+                            roleName: "sectionType"
+                            value: Constants.appSection.chat
+                        }
                     },
                     ValueFilter {
                         roleName: "enabled"
@@ -682,7 +688,7 @@ Item {
                     }
                 ]
             }
-            chatItemDelegate: navbarButton
+            topSectionDelegate: navbarButton
 
             communityItemsModel: SortFilterProxyModel {
                 sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
@@ -814,7 +820,7 @@ Item {
                 filters: [
                     RangeFilter {
                         roleName: "sectionType"
-                        minimumValue: Constants.appSection.wallet
+                        minimumValue: Constants.appSection.profile
                         maximumValue: Constants.appSection.loadingSection
                     },
                     ValueFilter {
@@ -1435,6 +1441,7 @@ Item {
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
+                            hideSignPhraseModal: userAgreementLoader.active
                         }
                         onLoaded: {
                             item.resetView()
