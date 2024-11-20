@@ -40,6 +40,7 @@ type ConnectorSignSignal* = ref object of Signal
 
 proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): ConnectorSendRequestAccountsSignal =
   result = ConnectorSendRequestAccountsSignal()
+  result.signalType = SignalType.ConnectorSendRequestAccounts
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
@@ -47,6 +48,7 @@ proc fromEvent*(T: type ConnectorSendRequestAccountsSignal, event: JsonNode): Co
 
 proc fromEvent*(T: type ConnectorSendTransactionSignal, event: JsonNode): ConnectorSendTransactionSignal =
   result = ConnectorSendTransactionSignal()
+  result.signalType = SignalType.ConnectorSendTransaction
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
@@ -56,6 +58,7 @@ proc fromEvent*(T: type ConnectorSendTransactionSignal, event: JsonNode): Connec
 
 proc fromEvent*(T: type ConnectorGrantDAppPermissionSignal, event: JsonNode): ConnectorGrantDAppPermissionSignal =
   result = ConnectorGrantDAppPermissionSignal()
+  result.signalType = SignalType.ConnectorGrantDAppPermission
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
@@ -64,12 +67,14 @@ proc fromEvent*(T: type ConnectorGrantDAppPermissionSignal, event: JsonNode): Co
 
 proc fromEvent*(T: type ConnectorRevokeDAppPermissionSignal, event: JsonNode): ConnectorRevokeDAppPermissionSignal =
   result = ConnectorRevokeDAppPermissionSignal()
+  result.signalType = SignalType.ConnectorRevokeDAppPermission
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()
 
 proc fromEvent*(T: type ConnectorSignSignal, event: JsonNode): ConnectorSignSignal =
   result = ConnectorSignSignal()
+  result.signalType = SignalType.ConnectorSign
   result.url = event["event"]{"url"}.getStr()
   result.name = event["event"]{"name"}.getStr()
   result.iconUrl = event["event"]{"iconUrl"}.getStr()

@@ -3,7 +3,7 @@ import base
 
 type WakuFetchingBackupProgress* = object
   dataNumber*: int
-  totalNumber*: int 
+  totalNumber*: int
 
 type WakuFetchingBackupProgressSignal* = ref object of Signal
   clock*: uint64
@@ -11,6 +11,7 @@ type WakuFetchingBackupProgressSignal* = ref object of Signal
 
 proc fromEvent*(T: type WakuFetchingBackupProgressSignal, event: JsonNode): WakuFetchingBackupProgressSignal =
   result = WakuFetchingBackupProgressSignal()
+  result.signalType = SignalType.WakuFetchingBackupProgress
   result.fetchingBackupProgress = initTable[string, WakuFetchingBackupProgress]()
 
   let e = event["event"]

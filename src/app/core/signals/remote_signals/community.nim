@@ -213,7 +213,7 @@ proc fromEvent*(T: type CommunityMemberReevaluationStatusSignal, event: JsonNode
   result = CommunityMemberReevaluationStatusSignal()
   result.signalType = SignalType.MemberReevaluationStatus
   result.communityId = event["event"]{"communityId"}.getStr()
-  
+
   result.status = CommunityMemberReevaluationStatus.None
   var statusInt: int
   if (event["event"].getProp("status", statusInt) and (statusInt >= ord(low(CommunityMemberReevaluationStatus)) and
@@ -275,6 +275,7 @@ proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal,
 
 proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: JsonNode): CommunityTokenTransactionStatusChangedSignal =
   result = CommunityTokenTransactionStatusChangedSignal()
+  result.signalType = SignalType.CommunityTokenTransactionStatusChanged
   result.transactionType = event["event"]{"transactionType"}.getStr()
   result.success = event["event"]{"success"}.getBool()
   result.hash = event["event"]{"hash"}.getStr()
@@ -289,6 +290,7 @@ proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: Jso
 
 proc fromEvent*(T: type CommunityTokenActionSignal, event: JsonNode): CommunityTokenActionSignal =
   result = CommunityTokenActionSignal()
+  result.signalType = SignalType.CommunityTokenAction
   result.actionType = CommunityTokenActionType.Unknown
   if event["event"].hasKey("communityToken"):
     result.communityToken = toCommunityTokenDto(event["event"]{"communityToken"})

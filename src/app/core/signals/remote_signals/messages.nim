@@ -48,6 +48,7 @@ proc fromEvent*(T: type MessageDeliveredSignal, event: JsonNode): MessageDeliver
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
+  signal.signalType = SignalType.Message
   signal.messages = @[]
   signal.contacts = @[]
 

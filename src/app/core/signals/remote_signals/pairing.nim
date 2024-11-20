@@ -15,6 +15,7 @@ type LocalPairingSignal* = ref object of Signal
 
 proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal =
   result = LocalPairingSignal()
+  result.signalType = SignalType.LocalPairing
   let e = event["event"]
   if e.contains("type"):
     result.eventType = e["type"].getStr().parse()

@@ -8,7 +8,8 @@ type WakuBackedUpSettingsSignal* = ref object of Signal
 
 proc fromEvent*(T: type WakuBackedUpSettingsSignal, event: JsonNode): WakuBackedUpSettingsSignal =
   result = WakuBackedUpSettingsSignal()
-  
+  result.signalType = SignalType.WakuBackedUpSettings
+
   let e = event["event"]
   if e.contains("backedUpSettings"):
-    result.backedUpSettings = e["backedUpSettings"].toSettingsDto()  
+    result.backedUpSettings = e["backedUpSettings"].toSettingsDto()
