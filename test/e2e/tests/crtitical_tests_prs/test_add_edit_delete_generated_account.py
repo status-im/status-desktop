@@ -24,7 +24,6 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
     with step('Create generated wallet account'):
         name = random_wallet_acc_keypair_name()
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).save_changes()
         authenticate_with_password(user_account)

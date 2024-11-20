@@ -32,7 +32,6 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
 
     with step('To import an account within private key open add account popup and set name, emoji and color'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(random_wallet_acc_keypair_name()).set_emoji(emoji)
 

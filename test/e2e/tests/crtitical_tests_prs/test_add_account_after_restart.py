@@ -35,7 +35,6 @@ def test_add_generated_account_restart_add_again(
 ):
     with step('Add the first generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).save_changes()
         authenticate_with_password(user_account)
@@ -61,7 +60,7 @@ def test_add_generated_account_restart_add_again(
 
     with step('Add second generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
-        assert not SigningPhrasePopup().is_ok_got_it_button_visible(), \
+        assert not SigningPhrasePopup().ok_got_it_button.is_visible, \
             f"Signing phrase should not be present because it has been hidden in the first step"
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).save_changes()

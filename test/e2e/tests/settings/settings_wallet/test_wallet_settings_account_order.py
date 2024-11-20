@@ -44,7 +44,6 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
     name_2, emoji_2, acc_emoji_2 = 'Generated 2', 'thumbsup', '👍 '
 
     wallet = main_screen.left_panel.open_wallet()
-    SigningPhrasePopup().wait_until_appears().confirm_phrase()
 
     colors = []
 
