@@ -5,6 +5,7 @@ from allure_commons._allure import step
 from constants import RandomCommunity
 from constants.community import Channel
 from helpers.SettingsHelper import enable_community_creation
+from scripts.utils.browser import get_response, get_page_content
 from scripts.utils.generators import random_community_name, random_community_description, random_community_introduction, \
     random_community_leave_message
 from . import marks
@@ -52,6 +53,25 @@ def test_create_edit_community(main_screen: MainWindow):
         edit_community_form.edit(new_name, new_description,
                                  new_introduction, new_leaving_message,
                                  new_logo, new_banner)
+
+    with step('Copy community link and verify that it does not give 404 error'):
+        invite_modal =  main_screen.left_panel.open_community_context_menu(
+            name=new_name).select_invite_people()
+        community_link = invite_modal.copy_community_link()
+        assert get_response(community_link).status_code == 200
+
+    with step('Verify that community title and description are displayed on webpage and correct'):
+        web_content = get_page_content(community_link)
+
+        content_list = []
+
+        for item in web_content.find_all('meta'):
+            if 'content' in item.attrs:
+                content_list.append(item.attrs['content'])
+
+        assert f'Join {new_name} community in Status' in content_list
+        assert new_description in content_list
+        invite_modal.close()
 
     with step('Verify community parameters on settings overview'):
         overview_setting = community_setting.left_panel.open_overview()
