@@ -153,17 +153,23 @@ QtObject:
 
   proc init*(self: Service) =
     self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-      let args = TransactionSentArgs(e)
-      if args.txType != SendType.StickersBuy:
+      let args = TransactionArgs(e)
+      let txType = SendType(args.sendDetails.sendType)
+      if txType != SendType.StickersBuy:
         return
-      self.marketStickerPacks[$args.packId].status = StickerPackStatus.Pending
-      self.marketStickerPacks[$args.packId].txHash = args.txHash
-      let data = StickerBuyResultArgs(chainId: args.chainId, packId: args.packId, txHash: args.txHash, error: args.error)
+      self.marketStickerPacks[$args.sendDetails.packId].status = StickerPackStatus.Pending
+      self.marketStickerPacks[$args.sendDetails.packId].txHash = args.sentTransaction.hash
+      let data = StickerBuyResultArgs(
+        chainId: args.sendDetails.fromChain,
+        packId: args.sendDetails.packId,
+        txHash: args.sentTransaction.hash,
+        error: if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
+      )
       self.events.emit(SIGNAL_STICKER_TRANSACTION_SENT, data)
 
     self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
-      let args = TransactionStatusArgs(e)
-      self.updateStickersPack(args.data.hash, args.data.status)
+      let args = TransactionArgs(e)
+      self.updateStickersPack(args.sentTransaction.hash, args.status)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
     let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
@@ -221,6 +227,10 @@ QtObject:
       if pack.stickers.any(proc(sticker: StickerDto): bool = return sticker.hash == hash):
         return packId
     return "0"
+
+  proc getStickersByPackId*(self: Service, packId: string): StickerPackDto =
+    if self.marketStickerPacks.hasKey(packId):
+      return self.marketStickerPacks[packId]
 
   proc getRecentStickers*(self: Service): seq[StickerDto] =
     try:

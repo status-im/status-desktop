@@ -2,14 +2,14 @@ import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chr
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
-import ../shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
-import ../shared_models/[color_hash_item, color_hash_model]
-import ../shared_modules/keycard_popup/module as keycard_shared_module
-import ../../global/app_sections_config as conf
-import ../../global/app_signals
-import ../../global/global_singleton
-import ../../global/utils as utils
-import ../../../constants
+import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
+import app/modules/shared_models/[color_hash_item, color_hash_model]
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
+import app/global/app_sections_config as conf
+import app/global/app_signals
+import app/global/global_singleton
+import app/global/utils as utils
+import constants
 
 import chat_section/model as chat_model
 import chat_section/item as chat_item
@@ -27,51 +27,51 @@ import communities/tokens/models/token_model
 import network_connection/module as network_connection_module
 import shared_urls/module as shared_urls_module
 
-import ../../../app_service/service/contacts/dto/contacts
-import ../../../app_service/service/community_tokens/community_collectible_owner
+import app_service/service/contacts/dto/contacts
+import app_service/service/community_tokens/community_collectible_owner
 
-import ../../../app_service/service/keychain/service as keychain_service
-import ../../../app_service/service/chat/service as chat_service
-import ../../../app_service/service/community/service as community_service
-import ../../../app_service/service/message/service as message_service
-import ../../../app_service/service/token/service as token_service
-import ../../../app_service/service/collectible/service as collectible_service
-import ../../../app_service/service/currency/service as currency_service
-import ../../../app_service/service/ramp/service as ramp_service
-import ../../../app_service/service/transaction/service as transaction_service
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/provider/service as provider_service
-import ../../../app_service/service/profile/service as profile_service
-import ../../../app_service/service/accounts/service as accounts_service
-import ../../../app_service/service/accounts/utils as accounts_utils
-import ../../../app_service/service/settings/service as settings_service
-import ../../../app_service/service/contacts/service as contacts_service
-import ../../../app_service/service/about/service as about_service
-import ../../../app_service/service/language/service as language_service
-import ../../../app_service/service/privacy/service as privacy_service
-import ../../../app_service/service/stickers/service as stickers_service
-import ../../../app_service/service/activity_center/service as activity_center_service
-import ../../../app_service/service/saved_address/service as saved_address_service
-import ../../../app_service/service/node/service as node_service
-import ../../../app_service/service/node_configuration/service as node_configuration_service
-import ../../../app_service/service/devices/service as devices_service
-import ../../../app_service/service/mailservers/service as mailservers_service
-import ../../../app_service/service/gif/service as gif_service
-import ../../../app_service/service/ens/service as ens_service
-import ../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../app_service/service/network/service as network_service
-import ../../../app_service/service/general/service as general_service
-import ../../../app_service/service/keycard/service as keycard_service
-import ../../../app_service/service/shared_urls/service as urls_service
-import ../../../app_service/service/network_connection/service as network_connection_service
-import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
-import ../../../app_service/common/types
-import ../../../app_service/common/utils as common_utils
+import app_service/service/keychain/service as keychain_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/message/service as message_service
+import app_service/service/token/service as token_service
+import app_service/service/collectible/service as collectible_service
+import app_service/service/currency/service as currency_service
+import app_service/service/ramp/service as ramp_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/provider/service as provider_service
+import app_service/service/profile/service as profile_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/accounts/utils as accounts_utils
+import app_service/service/settings/service as settings_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/about/service as about_service
+import app_service/service/language/service as language_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/stickers/service as stickers_service
+import app_service/service/activity_center/service as activity_center_service
+import app_service/service/saved_address/service as saved_address_service
+import app_service/service/node/service as node_service
+import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/devices/service as devices_service
+import app_service/service/mailservers/service as mailservers_service
+import app_service/service/gif/service as gif_service
+import app_service/service/ens/service as ens_service
+import app_service/service/community_tokens/service as community_tokens_service
+import app_service/service/network/service as network_service
+import app_service/service/general/service as general_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/shared_urls/service as urls_service
+import app_service/service/network_connection/service as network_connection_service
+import app_service/service/visual_identity/service as procs_from_visual_identity_service
+import app_service/common/types
+import app_service/common/utils as common_utils
 import app_service/service/network/network_item
 
-import ../../core/notifications/details
-import ../../core/eventemitter
-import ../../core/custom_urls/urls_manager
+import app/core/notifications/details
+import app/core/eventemitter
+import app/core/custom_urls/urls_manager
 
 export io_interface
 
@@ -101,6 +101,7 @@ type
     walletAccountService: wallet_account_service.Service
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
+    stickersService: stickers_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
@@ -207,6 +208,7 @@ proc newModule*[T](
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.keychainService = keychainService
+  result.stickersService = stickersService
 
   # Submodules
   result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
@@ -334,7 +336,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     # If there are tokens already in the model, we should keep the existing community tokens, until
     # getCommunityTokensDetailsAsync will trigger onCommunityTokensDetailsLoaded
     if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
-      communityTokensItems = existingCommunity.communityTokens.items   
+      communityTokensItems = existingCommunity.communityTokens.items
 
   let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
     communityDetails.id,
@@ -436,6 +438,86 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     activeMembersCount = int(communityDetails.activeMembersCount),
   )
 
+proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetailsDto, sentTransaction: RouterSentTransaction) =
+    var
+      addressFrom = sendDetails.fromAddress
+      addressTo = sendDetails.toAddress
+      txTo = "" # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
+      fromChain = sendDetails.fromChain
+      toChain = sendDetails.toChain
+      fromAmount = sendDetails.fromAmount.toString(10)
+      toAmount = sendDetails.toAmount.toString(10)
+      fromAsset = sendDetails.fromToken
+      toAsset = sendDetails.toToken
+      error = ""
+
+    if not sendDetails.errorResponse.isNil:
+      error = sendDetails.errorResponse.details
+
+    if sentTransaction.hash.len > 0:
+      txTo = sentTransaction.toAddress
+      if sentTransaction.fromChain > 0:
+        fromChain = sentTransaction.fromChain
+      if sentTransaction.toChain > 0:
+        toChain = sentTransaction.toChain
+      let
+        txAmountIn = sentTransaction.amountIn.toString(10)
+        txAmountOut = sentTransaction.amountOut.toString(10)
+      if txAmountIn != "0":
+        fromAmount = txAmountIn
+      if txAmountOut != "0":
+        toAmount = txAmountOut
+      if sentTransaction.fromToken.len > 0:
+        fromAsset = sentTransaction.fromToken
+      if sentTransaction.toToken.len > 0:
+        toAsset = sentTransaction.toToken
+
+
+    var accFromName = ""
+    var accDto = self.walletAccountService.getAccountByAddress(addressFrom)
+    if not accDto.isNil:
+      accFromName = accDto.name
+
+    var accToName = ""
+    accDto = self.walletAccountService.getAccountByAddress(addressTo)
+    if not accDto.isNil:
+      accToName = accDto.name
+
+    var txToName = ""
+    let txType = SendType(sendDetails.sendType)
+    if txType == SendType.Bridge:
+      txToName = "Hop" # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
+    elif txType == SendType.Swap:
+      txToName = "ParaSwap" # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
+    else:
+      accDto = self.walletAccountService.getAccountByAddress(txTo)
+      if not accDto.isNil:
+        txToName = accDto.name
+
+    self.view.showTransactionToast(
+      sendDetails.uuid,
+      sendDetails.sendType,
+      fromChain,
+      toChain,
+      addressFrom,
+      accFromName,
+      addressTo,
+      accToName,
+      txTo,
+      txToName,
+      sentTransaction.hash,
+      sentTransaction.approvalTx,
+      fromAmount,
+      toAmount,
+      fromAsset,
+      toAsset,
+      sendDetails.username,
+      sendDetails.publicKey,
+      sendDetails.packId,
+      status,
+      error,
+    )
+
 proc connectForNotificationsOnly[T](self: Module[T]) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     let args = AccountArgs(e)
@@ -464,21 +546,25 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
       kpName = args.keypairs[0].name
     self.view.showToastKeypairsImported(kpName, args.keypairs.len, args.error)
 
+  self.events.on(SIGNAL_SENDING_TRANSACTIONS_STARTED) do(e:Args):
+    let args = TransactionArgs(e)
+    # we allow this notification only if an error occurs, otherwise skip it and display notification after the tx gets submitted to the network
+    if args.sendDetails.errorResponse.isNil:
+      return
+    self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
+
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-    let args = TransactionSentArgs(e)
-    self.view.showToastTransactionSent(args.chainId, args.txHash, args.uuid, args.error,
-      ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount,
-      args.toTokenKey, args.toAmount)
+    let args = TransactionArgs(e)
+    self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
+
+  self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+    let args = TransactionArgs(e)
+    self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
 
   self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
     let args = WalletAddressesArgs(e)
     for address in args.addresses:
       self.addressWasShown(address)
-
-  self.events.on(SIGNAL_TRANSACTION_SENDING_COMPLETE) do(e:Args):
-    let args = TransactionMinedArgs(e)
-    self.view.showToastTransactionSendingComplete(args.chainId, args.transactionHash, args.data, args.success,
-    ord(args.txType), args.fromAddress, args.toAddress, args.fromTokenKey, args.fromAmount, args.toTokenKey, args.toAmount)
 
   self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
     self.view.showToastPairingFallbackCompleted()

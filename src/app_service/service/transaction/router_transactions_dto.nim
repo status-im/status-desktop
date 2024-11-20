@@ -3,15 +3,10 @@ import json, stint
 include  ../../common/json_utils
 
 const
+  TxStatusSending* = "Sending"
   TxStatusPending* = "Pending"
   TxStatusSuccess* = "Success"
   TxStatusFailed* = "Failed"
-
-type
-  TransactionStatusChange* = ref object
-    status*: string
-    hash*: string
-    chainId*: int
 
 type
   ErrorResponse* = ref object
@@ -21,6 +16,8 @@ type
   SendDetailsDto* = ref object
     uuid*: string
     sendType*: int
+    fromChain*: int
+    toChain*: int
     fromAddress*: string
     toAddress*: string
     fromToken*: string
@@ -54,7 +51,9 @@ type
     toChain*: int
     fromToken*: string
     toToken*: string
-    amount*: UInt256 # amount of the transaction
+    amount*: UInt256 # amount sent
+    amountIn*: UInt256 # amount that is "data" of tx (important for erc20 tokens)
+    amountOut*: UInt256 # amount that will be received
     hash*: string
     approvalTx*: bool
 
@@ -63,11 +62,13 @@ type
     sendDetails*: SendDetailsDto
     sentTransactions*: seq[RouterSentTransaction]
 
-proc toTransactionStatusChange*(jsonObj: JsonNode): TransactionStatusChange =
-  result = TransactionStatusChange()
-  discard jsonObj.getProp("status", result.status)
-  discard jsonObj.getProp("hash", result.hash)
-  discard jsonObj.getProp("chainId", result.chainId)
+type
+  TransactionStatusChange* = ref object
+    status*: string
+    hash*: string
+    chainId*: int
+    sendDetails*: SendDetailsDto
+    sentTransactions*: seq[RouterSentTransaction]
 
 proc toErrorResponse*(jsonObj: JsonNode): ErrorResponse =
   result = ErrorResponse()
@@ -80,6 +81,8 @@ proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
   result = SendDetailsDto()
   discard jsonObj.getProp("uuid", result.uuid)
   discard jsonObj.getProp("sendType", result.sendType)
+  discard jsonObj.getProp("fromChain", result.fromChain)
+  discard jsonObj.getProp("toChain", result.toChain)
   discard jsonObj.getProp("fromAddress", result.fromAddress)
   discard jsonObj.getProp("toAddress", result.toAddress)
   discard jsonObj.getProp("fromToken", result.fromToken)
@@ -130,9 +133,25 @@ proc toRouterSentTransaction*(jsonObj: JsonNode): RouterSentTransaction =
   var tmpObj: JsonNode
   if jsonObj.getProp("amount", tmpObj):
     result.amount = stint.fromHex(UInt256, tmpObj.getStr)
+  if jsonObj.getProp("amountIn", tmpObj):
+    result.amountIn = stint.fromHex(UInt256, tmpObj.getStr)
+  if jsonObj.getProp("amountOut", tmpObj):
+    result.amountOut = stint.fromHex(UInt256, tmpObj.getStr)
 
 proc toRouterSentTransactionsDto*(jsonObj: JsonNode): RouterSentTransactionsDto =
   result = RouterSentTransactionsDto()
+  var tmpObj: JsonNode
+  if jsonObj.getProp("sendDetails", tmpObj) and tmpObj.kind == JObject:
+    result.sendDetails = toSendDetailsDto(tmpObj)
+  if jsonObj.getProp("sentTransactions", tmpObj) and tmpObj.kind == JArray:
+    for tx in tmpObj:
+      result.sentTransactions.add(toRouterSentTransaction(tx))
+
+proc toTransactionStatusChange*(jsonObj: JsonNode): TransactionStatusChange =
+  result = TransactionStatusChange()
+  discard jsonObj.getProp("status", result.status)
+  discard jsonObj.getProp("hash", result.hash)
+  discard jsonObj.getProp("chainId", result.chainId)
   var tmpObj: JsonNode
   if jsonObj.getProp("sendDetails", tmpObj) and tmpObj.kind == JObject:
     result.sendDetails = toSendDetailsDto(tmpObj)

@@ -44,7 +44,6 @@ const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
-const SIGNAL_TRANSACTION_SENDING_COMPLETE* = "transactionSendingComplete"
 const SIGNAL_TRANSACTION_STATUS_CHANGED* = "transactionStatusChanged"
 
 const InternalErrorCode = -1
@@ -105,24 +104,6 @@ proc `$`*(self: TransactionMinedArgs): string =
     raiseAssert "static fmt"
 
 type
-  TransactionSentArgs* = ref object of Args
-    chainId*: int
-    txHash*: string
-    uuid*: string
-    error*: string
-    txType*: SendType
-    fromAddress*: string
-    toAddress*: string
-    fromTokenKey*: string
-    fromAmount*: string
-    toTokenKey*: string
-    toAmount*: string
-    approvalTx*: bool
-    username*: string
-    publicKey*: string
-    packId*: string
-
-type
   OwnerTokenSentArgs* = ref object of Args
     chainId*: int
     txHash*: string
@@ -147,12 +128,10 @@ type
     data*: RouterTransactionsForSigningDto
 
 type
-  RouterTransactionsSendingStartedArgs* = ref object of Args
-    data*: SendDetailsDto
-
-type
-  TransactionStatusArgs* = ref object of Args
-    data*: TransactionStatusChange
+  TransactionArgs* = ref object of Args
+    status*: string
+    sendDetails*: SendDetailsDto
+    sentTransaction*: RouterSentTransaction
 
 QtObject:
   type Service* = ref object of QObject
@@ -201,9 +180,10 @@ QtObject:
 
     self.events.on(SignalType.WalletRouterSendingTransactionsStarted.event) do(e:Args):
       var data = WalletSignal(e)
-      self.events.emit(SIGNAL_SENDING_TRANSACTIONS_STARTED, RouterTransactionsSendingStartedArgs(data: data.routerTransactionsSendingDetails))
-      # TODO: the line below is to aling with the old implementation, remove it
-      self.sendTransactionsSignal(data.routerTransactionsSendingDetails)
+      self.events.emit(SIGNAL_SENDING_TRANSACTIONS_STARTED, TransactionArgs(
+        status: TxStatusSending,
+        sendDetails: data.routerTransactionsSendingDetails
+      ))
 
     self.events.on(SignalType.WalletRouterSignTransactions.event) do(e:Args):
       var data = WalletSignal(e)
@@ -219,18 +199,26 @@ QtObject:
 
     self.events.on(SignalType.WalletTransactionStatusChanged.event) do(e:Args):
       var data = WalletSignal(e)
-      self.events.emit(SIGNAL_TRANSACTION_STATUS_CHANGED, TransactionStatusArgs(data: data.transactionStatusChange))
+      if data.transactionStatusChange.isNil:
+        return
+      for tx in data.transactionStatusChange.sentTransactions:
+        self.events.emit(SIGNAL_TRANSACTION_STATUS_CHANGED, TransactionArgs(
+          status: data.transactionStatusChange.status,
+          sendDetails: data.transactionStatusChange.sendDetails,
+          sentTransaction: tx
+        ))
 
-    self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
-      try:
-        var receivedData = TransactionMinedArgs(e)
-        let tokenMetadata = receivedData.data.parseJson().toTokenTransferMetadata()
-        if tokenMetadata.isOwnerToken:
-          let status = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
-          self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: receivedData.chainId, txHash: receivedData.transactionHash, tokenName: tokenMetadata.tokenName, status: status))
-        self.events.emit(SIGNAL_TRANSACTION_SENDING_COMPLETE, receivedData)
-      except Exception as e:
-        debug "Not the owner token transfer", msg=e.msg
+    # TODO: handle this for community related tx (minting, airdropping...)
+    # self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
+    #   try:
+    #     var receivedData = TransactionMinedArgs(e)
+    #     let tokenMetadata = receivedData.data.parseJson().toTokenTransferMetadata()
+    #     if tokenMetadata.isOwnerToken:
+    #       let status = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+    #       self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(chainId: receivedData.chainId, txHash: receivedData.transactionHash, tokenName: tokenMetadata.tokenName, status: status))
+    #     self.events.emit(SIGNAL_TRANSACTION_SENDING_COMPLETE, receivedData)
+    #   except Exception as e:
+    #     debug "Not the owner token transfer", msg=e.msg
 
   proc getPendingTransactions*(self: Service): seq[TransactionDto] =
     try:
@@ -330,21 +318,8 @@ QtObject:
     # that's why we need to mark the addresses as shown here (safer).
     self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[sendDetails.fromAddress, sendDetails.toAddress]))
 
-    if not sendDetails.errorResponse.isNil and sendDetails.errorResponse.details.len > 0:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(
-        uuid: sendDetails.uuid,
-        error: sendDetails.errorResponse.details,
-        txType: SendType(sendDetails.sendType),
-        fromAddress: sendDetails.fromAddress,
-        toAddress: sendDetails.toAddress,
-        fromTokenKey: sendDetails.fromToken,
-        fromAmount: sendDetails.fromAmount.toString(10),
-        toTokenKey: sendDetails.toToken,
-        toAmount: sendDetails.toAmount.toString(10),
-        username: sendDetails.username,
-        publicKey: sendDetails.publicKey,
-        packId: sendDetails.packId
-      ))
+    if sentTransactions.len == 0:
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionArgs(sendDetails: sendDetails))
       return
 
     for tx in sentTransactions:
@@ -357,21 +332,10 @@ QtObject:
           status: ContractTransactionStatus.InProgress
         ))
       else:
-        self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(
-          chainId: tx.fromChain,
-          txHash: tx.hash,
-          uuid: sendDetails.uuid,
-          txType: SendType(sendDetails.sendType),
-          fromAddress: tx.fromAddress,
-          toAddress: tx.toAddress,
-          fromTokenKey: tx.fromToken,
-          fromAmount: tx.amount.toString(10),
-          toTokenKey: tx.toToken,
-          toAmount: tx.amount.toString(10),
-          approvalTx: tx.approvalTx,
-          username: sendDetails.username,
-          publicKey: sendDetails.publicKey,
-          packId: sendDetails.packId
+        self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionArgs(
+          status: TxStatusSending, # here should be TxStatusPending state, but that's not what Figma wants
+          sendDetails: sendDetails,
+          sentTransaction: tx
         ))
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =

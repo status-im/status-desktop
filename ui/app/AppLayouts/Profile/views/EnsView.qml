@@ -435,49 +435,5 @@ Item {
         }
     }
 
-    Connections {
-        target: ensView.ensUsernamesStore.ensUsernamesModule
-        function onTransactionCompleted(success: bool, txHash: string, username: string, trxType: string) {
-            let title = ""
-            switch(trxType){
-            case d.registerENS:
-                title = !success ?
-                            qsTr("ENS Registration failed")
-                          :
-                            qsTr("ENS Registration completed");
-                break;
-            case d.setPubKey:
-                title = !success ?
-                            qsTr("Updating ENS pubkey failed")
-                          :
-                            qsTr("Updating ENS pubkey completed");
-                break;
-            case d.releaseENS:
-                title = !success ?
-                            qsTr("Releasing ENS name failed")
-                          :
-                            qsTr("ENS name released");
-                break
-            default:
-                console.error("unknown transaction type: ", trxType);
-                return
-            }
-
-            let icon = "block-icon";
-            let ephType = Constants.ephemeralNotificationType.normal;
-            if (success) {
-                icon = "check-circle";
-                ephType = Constants.ephemeralNotificationType.success;
-            }
-
-            let url = `${ensView.ensUsernamesStore.getEtherscanTxLink()}/${txHash}`;
-            Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       qsTr("View on etherscan"),
-                                       icon,
-                                       false,
-                                       ephType,
-                                       url)
-        }
-    }
 }
 
