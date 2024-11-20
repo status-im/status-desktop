@@ -54,8 +54,14 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-    let args = TransactionSentArgs(e)
-    self.delegate.transactionWasSent(args.uuid, args.chainId, args.approvalTx, args.txHash, args.error)
+    let args = TransactionArgs(e)
+    self.delegate.transactionWasSent(
+      args.sendDetails.uuid,
+      args.sendDetails.fromChain,
+      args.sentTransaction.approvalTx,
+      args.sentTransaction.hash,
+      if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
+    )
 
   self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e:Args):
     let args = OwnerTokenSentArgs(e)
@@ -76,8 +82,8 @@ proc init*(self: Controller) =
     self.delegate.prepareSignaturesForTransactions(data.data)
 
   self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
-    let args = TransactionStatusArgs(e)
-    self.delegate.transactionSendingComplete(args.data.hash, args.data.status)
+    let args = TransactionArgs(e)
+    self.delegate.transactionSendingComplete(args.sentTransaction.hash, args.status)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()

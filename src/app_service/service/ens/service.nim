@@ -146,48 +146,55 @@ QtObject:
 
   proc doConnect(self: Service) =
     self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-      let args = TransactionSentArgs(e)
-      if args.txType != SendType.ENSRegister and args.txType != SendType.ENSSetPubKey and args.txType != SendType.ENSRelease:
+      let args = TransactionArgs(e)
+      let txType = SendType(args.sendDetails.sendType)
+      if txType != SendType.ENSRegister and txType != SendType.ENSSetPubKey and txType != SendType.ENSRelease:
         return
 
-      var err = args.error
+      var err = if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
       var dto = EnsUsernameDto(
-        chainId: args.chainId,
-        username: args.username,
-        txHash: args.txHash,
-        txStatus: TxStatusPending
+        chainId: args.sendDetails.fromChain,
+        username: args.sendDetails.username,
+        txHash: args.sentTransaction.hash,
+        txStatus: args.status
       )
 
-      if args.txType == SendType.ENSRegister:
+      if txType == SendType.ENSRegister:
         dto.txType = RegisterENS
         if err.len == 0:
-          let ensUsernameFinal = self.formatUsername(args.username, true)
-          if not self.add(args.chainId, ensUsernameFinal):
+          let ensUsernameFinal = self.formatUsername(args.sendDetails.username, true)
+          if not self.add(args.sendDetails.fromChain, ensUsernameFinal):
             err = "failed to add ens username"
             error "error", err
-      elif args.txType == SendType.ENSSetPubKey:
+      elif txType == SendType.ENSSetPubKey:
         dto.txType = SetPubKey
         if err.len == 0:
-          let usernameWithDomain = args.username.addDomain()
-          if not self.add(args.chainId, usernameWithDomain):
+          let usernameWithDomain = args.sendDetails.username.addDomain()
+          if not self.add(args.sendDetails.fromChain, usernameWithDomain):
             err = "failed to set ens username"
             error "error", err
-      elif args.txType == SendType.ENSRelease:
+      elif txType == SendType.ENSRelease:
         dto.txType = ReleaseENS
         if err.len == 0:
-          let ensUsernameFinal = self.formatUsername(args.username, true)
-          if not self.remove(args.chainId, ensUsernameFinal):
+          let ensUsernameFinal = self.formatUsername(args.sendDetails.username, true)
+          if not self.remove(args.sendDetails.fromChain, ensUsernameFinal):
             err = "failed to remove ens username"
             error "error", err
 
-      self.pendingEnsUsernames[makeKey(dto.username, args.chainId)] = dto
+      self.pendingEnsUsernames[makeKey(dto.username, args.sendDetails.fromChain)] = dto
 
-      let data = EnsTxResultArgs(transactionType: $dto.txType, chainId: args.chainId, ensUsername: args.username, txHash: args.txHash, error: err)
+      let data = EnsTxResultArgs(
+        transactionType: $dto.txType,
+        chainId: args.sendDetails.fromChain,
+        ensUsername: args.sendDetails.username,
+        txHash: args.sentTransaction.hash,
+        error: err
+      )
       self.events.emit(SIGNAL_ENS_TRANSACTION_SENT, data)
 
     self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
-      let args = TransactionStatusArgs(e)
-      self.updateEnsUsernames(args.data.chainId, args.data.hash, args.data.status)
+      let args = TransactionArgs(e)
+      self.updateEnsUsernames(args.sentTransaction.fromChain, args.sentTransaction.hash, args.status)
 
   proc init*(self: Service) =
     self.doConnect()

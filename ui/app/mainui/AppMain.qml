@@ -237,121 +237,276 @@ Item {
             )
         }
 
-        function onShowToastTransactionSent(chainId: int, txHash: string, uuid: string, error: string, txType: int,
-                                            fromAddr: string, toAddr: string, fromTokenKey: string, fromAmount: string,
-                                            toTokenKey: string, toAmount: string) {
-            switch(txType) {
-            case Constants.SendType.Approve: {
-                const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
-                const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
-                if(!!fromToken && !!fromAccountName && !!networkName) {
-                    const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    let toastTitle = qsTr("Setting spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                    let toastSubtitle = qsTr("View on %1").arg(networkName)
-                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
-                    let toastType = Constants.ephemeralNotificationType.normal
-                    let icon = ""
-                    if(error) {
-                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                        toastSubtitle = ""
-                        urlLink = ""
-                        toastType = Constants.ephemeralNotificationType.danger
-                        icon = "warning"
-                    }
-                    Global.displayToastMessage(toastTitle, toastSubtitle, icon, !error, toastType, urlLink)
-                }
-                break
-            }
-            case Constants.SendType.Swap: {
-                const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
-                const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toTokenKey)
-                const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
-                if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
-                    const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
-                    let toastTitle = qsTr("Swapping %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                    let toastSubtitle = qsTr("View on %1").arg(networkName)
-                    let urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
-                    let toastType = Constants.ephemeralNotificationType.normal
-                    let icon = ""
-                    if(error) {
-                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                        toastSubtitle = ""
-                        urlLink = ""
-                        toastType = Constants.ephemeralNotificationType.danger
-                        icon = "warning"
-                    }
-                    Global.displayToastMessage(toastTitle, toastSubtitle, icon, !error, toastType, urlLink)
-                }
-                break
-            }
-            default: {
-                if (!error) {
-                    let networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
-                    if(!!networkName) {
-                        Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                   qsTr("View on %1").arg(networkName),
-                                                   "",
-                                                   true,
-                                                   Constants.ephemeralNotificationType.normal,
-                                                   "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash))
-                    }
-                }
-                break
-            }
-            }
-        }
+        function onShowTransactionToast(uuid: string,
+                                        txType: int,
+                                        fromChainId: int,
+                                        toChainId: int,
+                                        fromAddr: string,
+                                        fromName: string,
+                                        toAddr: string,
+                                        toName: string,
+                                        txToAddr: string,
+                                        txToName: string,
+                                        txHash: string,
+                                        approvalTx: bool,
+                                        fromAmount: string,
+                                        toAmount: string,
+                                        fromAsset: string,
+                                        toAsset: string,
+                                        username: string,
+                                        publicKey: string,
+                                        packId: string,
+                                        status: string,
+                                        error: string) {
 
-        function onShowToastTransactionSendingComplete(chainId: int, txHash: string, data: string, success: bool,
-                                                       txType: int, fromAddr: string, toAddr: string, fromTokenKey: string,
-                                                       fromAmount: string, toTokenKey: string, toAmount: string) {
-            switch(txType) {
-            case Constants.SendType.Approve: {
-                const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
-                const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
-                if(!!fromToken && !!fromAccountName && !!networkName) {
-                    const approvalAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    let toastTitle = qsTr("Spending cap set: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                    const toastSubtitle =  qsTr("View on %1").arg(networkName)
-                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
-                    let toastType = Constants.ephemeralNotificationType.success
-                    let icon = "checkmark-circle"
-                    if(!success) {
-                        toastTitle = qsTr("Failed to set spending cap: %1 in %2 for %3 on %4").arg(approvalAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                        toastType = Constants.ephemeralNotificationType.danger
-                        icon = "warning"
+            let toastTitle = ""
+            let toastSubtitle = ""
+            let toastIcon = ""
+            let toastLoading = false
+            let toastType = Constants.ephemeralNotificationType.normal
+            let toastLink = ""
+
+            const sender = !!fromName? fromName : SQUtils.Utils.elideAndFormatWalletAddress(fromAddr)
+            let senderChainName = qsTr("unknown")
+            let sentAmount = ""
+
+            const recipient = !!toName? toName : SQUtils.Utils.elideAndFormatWalletAddress(toAddr)
+            const txRecipient = !!txToName? txToName : SQUtils.Utils.elideAndFormatWalletAddress(txToAddr)
+            let recipientChainName = qsTr("unknown")
+            let receivedAmount = ""
+
+            let assetName = qsTr("unknown")
+            let ensName = d.ensName(username)
+            let stickersPackName = qsTr("unknown")
+
+            if (!!txHash) {
+                toastLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(fromChainId)).arg(txHash)
+            }
+
+            const fromChainName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", fromChainId, "chainName")
+            if (!!fromChainName) {
+                senderChainName = fromChainName
+                toastSubtitle = qsTr("View on %1").arg(senderChainName)
+            }
+            const toChainName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", toChainId, "chainName")
+            if (!!toChainName) {
+                recipientChainName = toChainName
+            }
+
+            const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromAsset)
+            if (!!fromToken) {
+                sentAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
+            }
+
+            const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toAsset)
+            if (!!toToken) {
+                receivedAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
+            }
+
+            if (txType === Constants.SendType.ERC721Transfer || txType === Constants.SendType.ERC1155Transfer) {
+                const key = "%1+%2+%3".arg(fromChainId).arg(txToAddr).arg(fromAsset)
+                const entry = SQUtils.ModelUtils.getByKey(appMain.walletCollectiblesStore.allCollectiblesModel, "symbol", key)
+                if (!!entry) {
+                    assetName = entry.name
+                }
+            }
+
+            if (txType === Constants.SendType.StickersBuy) {
+                const idx = appMain.rootChatStore.stickersModuleInst.stickerPacks.findIndexById(packId, false)
+                if(idx >= 0) {
+                    const entry = SQUtils.ModelUtils.get(appMain.rootChatStore.stickersModuleInst.stickerPacks, idx)
+                    if (!!entry) {
+                        stickersPackName = entry.name
                     }
-                    Global.displayToastMessage(toastTitle, toastSubtitle, icon, false, toastType, urlLink)
+                }
+            }
+
+            switch(status) {
+            case Constants.txStatus.sending: {
+                toastTitle = qsTr("Sending %1 from %2 to %3")
+                toastLoading = true
+
+                switch(txType) {
+                case Constants.SendType.Transfer: {
+                    toastTitle = toastTitle.arg(sentAmount).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ENSRegister: {
+                    toastTitle = qsTr("Registering %1 ENS name using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSRelease: {
+                    toastTitle = qsTr("Releasing %1 ENS username using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSSetPubKey: {
+                    toastTitle = qsTr("Setting public key %1 using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.StickersBuy: {
+                    toastTitle = qsTr("Purchasing %1 sticker pack using %2").arg(stickersPackName).arg(sender)
+                    break
+                }
+                case Constants.SendType.Bridge: {
+                    toastTitle = qsTr("Bridging %1 from %2 to %3 in %4").arg(sentAmount).arg(senderChainName).arg(recipientChainName).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Setting spending cap: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
+                    }
+                    break
+                }
+                case Constants.SendType.ERC721Transfer: {
+                    toastTitle = toastTitle.arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ERC1155Transfer: {
+                    toastTitle = qsTr("Sending %1 %2 from %3 to %4").arg(fromAmount).arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.Swap: {
+                    toastTitle = qsTr("Swapping %1 to %2 in %3").arg(sentAmount).arg(receivedAmount).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Setting spending cap: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
+                    }
+                    break
+                }
+                case Constants.SendType.Approve: {
+                    console.warn("tx type approve not yet identified as a stand alone path")
+                    break
+                }
+                default:
+                    console.warn("status: sending - tx type not supproted")
+                    return
                 }
                 break
             }
-            case Constants.SendType.Swap: {
-                const fromToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", fromTokenKey)
-                const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toTokenKey)
-                const fromAccountName = SQUtils.ModelUtils.getByKey(appMain.transactionStore.accounts, "address", fromAddr, "name")
-                const networkName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", chainId, "chainName")
-                if(!!fromToken && !!toToken && !!fromAccountName && !!networkName) {
-                    const fromSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(fromAmount, fromToken.symbol, fromToken.decimals)
-                    const toSwapAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
-                    let toastTitle = qsTr("Swapped %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                    const toastSubtitle = qsTr("View on %1").arg(networkName)
-                    const urlLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(chainId)).arg(txHash)
-                    let toastType = Constants.ephemeralNotificationType.success
-                    let icon = "checkmark-circle"
-                    if(!success) {
-                        toastTitle = qsTr("Failed to swap %1 to %2 in %3 using %4 on %5").arg(fromSwapAmount).arg(toSwapAmount).arg(fromAccountName).arg(Constants.swap.paraswapHostname).arg(networkName)
-                        toastType = Constants.ephemeralNotificationType.danger
-                        icon = "warning"
+            case Constants.txStatus.pending: {
+                // So far we don't display notification when it's accepted by the network and its status is pending
+                // discussed in wallet group chat, we considered that pending status will be displayed almost at the
+                // same time as sending and decided to skip it.
+                return
+            }
+            case Constants.txStatus.success: {
+                toastTitle = qsTr("Sent %1 from %2 to %3")
+                toastIcon = "checkmark-circle"
+                toastType = Constants.ephemeralNotificationType.success
+
+                switch(txType) {
+                case Constants.SendType.Transfer: {
+                    toastTitle = toastTitle.arg(sentAmount).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ENSRegister: {
+                    toastTitle = qsTr("Registered %1 ENS name using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSRelease: {
+                    toastTitle = qsTr("Released %1 ENS username using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSSetPubKey: {
+                    toastTitle = qsTr("Set public key %1 using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.StickersBuy: {
+                    toastTitle = qsTr("Purchased %1 sticker pack using %2").arg(stickersPackName).arg(sender)
+                    break
+                }
+                case Constants.SendType.Bridge: {
+                    toastTitle = qsTr("Bridged %1 from %2 to %3 in %4").arg(sentAmount).arg(senderChainName).arg(recipientChainName).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Spending spending cap: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
                     }
-                    Global.displayToastMessage(toastTitle, toastSubtitle, icon, false, toastType, urlLink)
+                    break
+                }
+                case Constants.SendType.ERC721Transfer: {
+                    toastTitle = toastTitle.arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ERC1155Transfer: {
+                    toastTitle = qsTr("Sent %1 %2 from %3 to %4").arg(fromAmount).arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.Swap: {
+                    toastTitle = qsTr("Swapped %1 to %2 in %3").arg(sentAmount).arg(receivedAmount).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Spending cap set: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
+                    }
+                    break
+                }
+                case Constants.SendType.Approve: {
+                    console.warn("tx type approve not yet identified as a stand alone path")
+                    break
+                }
+                default:
+                    console.warn("status: success - tx type not supproted")
+                    return
                 }
                 break
             }
-            default: break
+            case Constants.txStatus.failed: {
+                toastTitle = qsTr("Send failed: %1 from %2 to %3")
+                toastIcon = "warning"
+                toastType = Constants.ephemeralNotificationType.danger
+
+                switch(txType) {
+                case Constants.SendType.Transfer: {
+                    toastTitle = toastTitle.arg(sentAmount).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ENSRegister: {
+                    toastTitle = qsTr("ENS username registeration failed: %1 using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSRelease: {
+                    toastTitle = qsTr("ENS username release failed: %1 using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.ENSSetPubKey: {
+                    toastTitle = qsTr("Set public key failed: %1 using %2").arg(ensName).arg(sender)
+                    break
+                }
+                case Constants.SendType.StickersBuy: {
+                    toastTitle = qsTr("Sticker pack purchase failed: %1 using %2").arg(stickersPackName).arg(sender)
+                    break
+                }
+                case Constants.SendType.Bridge: {
+                    toastTitle = qsTr("Bridge failed: %1 from %2 to %3 in %4").arg(sentAmount).arg(senderChainName).arg(recipientChainName).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Spending spending failed: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
+                    }
+                    break
+                }
+                case Constants.SendType.ERC721Transfer: {
+                    toastTitle = toastTitle.arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.ERC1155Transfer: {
+                    toastTitle = qsTr("Send failed: %1 %2 from %3 to %4").arg(fromAmount).arg(assetName).arg(sender).arg(recipient)
+                    break
+                }
+                case Constants.SendType.Swap: {
+                    toastTitle = qsTr("Swap failed: %1 to %2 in %3").arg(sentAmount).arg(receivedAmount).arg(sender)
+                    if (approvalTx) {
+                        toastTitle = qsTr("Spending cap failed: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
+                    }
+                    break
+                }
+                case Constants.SendType.Approve: {
+                    console.warn("tx type approve not yet identified as a stand alone path")
+                    break
+                }
+                default:
+                    console.warn("status: failed - tx type not supproted")
+                    return
+                }
+                break
             }
+            default:
+                console.warn("not supported status")
+                return
+            }
+
+            Global.displayToastMessage(toastTitle, toastSubtitle, toastIcon, toastLoading, toastType, toastLink)
         }
 
         function onCommunityMemberStatusEphemeralNotification(communityName: string, memberName: string, state: CommunityMembershipRequestState) {
@@ -407,6 +562,13 @@ Item {
             } else {
                 activityCenterPopupObj.open()
             }
+        }
+
+        function ensName(username) {
+            if (!username.endsWith(".stateofus.eth") && !username.endsWith(".eth")) {
+                return "%1.%2".arg(username).arg("stateofus.eth")
+            }
+            return username
         }
     }
 

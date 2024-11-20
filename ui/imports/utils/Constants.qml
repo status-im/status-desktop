@@ -1104,6 +1104,13 @@ QtObject {
         High
     }
 
+    readonly property QtObject txStatus: QtObject {
+        readonly property string sending: "Sending"
+        readonly property string pending: "Pending"
+        readonly property string success: "Success"
+        readonly property string failed: "Failed"
+    }
+
     enum LoginType {
         Password,
         Biometrics,
