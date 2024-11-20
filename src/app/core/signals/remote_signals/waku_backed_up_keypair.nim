@@ -8,6 +8,7 @@ type WakuBackedUpKeypairSignal* = ref object of Signal
 
 proc fromEvent*(T: type WakuBackedUpKeypairSignal, event: JsonNode): WakuBackedUpKeypairSignal =
   result = WakuBackedUpKeypairSignal()
+  result.signalType = SignalType.WakuBackedUpKeypair
 
   let e = event["event"]
   if e.contains("backedUpKeypair"):

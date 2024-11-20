@@ -92,7 +92,7 @@ QtObject:
         SignalType.NodeStarted,
         SignalType.NodeStopped,
         SignalType.NodeLogin:
-          NodeSignal.fromEvent(jsonSignal)
+          NodeSignal.fromEvent(signalType, jsonSignal)
       of SignalType.PeerStats: PeerStatsSignal.fromEvent(jsonSignal)
       of SignalType.DiscoverySummary: DiscoverySummarySignal.fromEvent(jsonSignal)
       of SignalType.MailserverRequestCompleted: MailserverRequestCompletedSignal.fromEvent(jsonSignal)
@@ -146,6 +146,5 @@ QtObject:
       of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
       of SignalType.ConnectorSign: ConnectorSignSignal.fromEvent(jsonSignal)
-      else: Signal()
-
-    result.signalType = signalType
+      else:
+        Signal(signalType: signalType)

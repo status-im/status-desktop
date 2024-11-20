@@ -8,7 +8,8 @@ type WakuBackedUpProfileSignal* = ref object of Signal
 
 proc fromEvent*(T: type WakuBackedUpProfileSignal, event: JsonNode): WakuBackedUpProfileSignal =
   result = WakuBackedUpProfileSignal()
-  
+  result.signalType = SignalType.WakuBackedUpProfile
+
   let e = event["event"]
   if e.contains("backedUpProfile"):
-    result.backedUpProfile = e["backedUpProfile"].toWakuBackedUpProfileDto()  
+    result.backedUpProfile = e["backedUpProfile"].toWakuBackedUpProfileDto()

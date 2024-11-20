@@ -6,7 +6,9 @@ import signal_type
 import app_service/service/transaction/dtoV2
 import app_service/service/transaction/router_transactions_dto
 
-const SignTransactionsEventType* = "sing-transactions"
+const
+  EventPendingTransactionUpdate* = "pending-transaction-update"
+  EventPendingTransactionStatusChanged* = "pending-transaction-status-changed"
 
 type WalletSignal* = ref object of Signal
   content*: string
@@ -33,7 +35,7 @@ type WalletSignal* = ref object of Signal
 
 proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
-  result.signalType = SignalType.Wallet
+  result.signalType = signalType
   let event = jsonSignal["event"]
   if event.kind == JNull:
     return
@@ -52,6 +54,18 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
     const requestIdName = "requestId"
     if event.contains(requestIdName):
       result.requestId = some(event[requestIdName].getInt())
+
+    ## handling tx status change
+    if result.eventType == EventPendingTransactionStatusChanged:
+      result.signalType = SignalType.WalletTransactionStatusChanged
+      if result.message.len == 0:
+        return
+      var statusChangedPayload: JsonNode
+      try:
+        statusChangedPayload = result.message.parseJson
+      except CatchableError:
+        return
+      result.transactionStatusChange = toTransactionStatusChange(statusChangedPayload)
     return
   if signalType == SignalType.WalletSignTransactions:
     if event.kind != JArray:
@@ -73,9 +87,6 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
     result.routerTransactionsSendingDetails = toSendDetailsDto(event)
     return
   if signalType == SignalType.WalletTransactionStatusChanged:
-    if event.kind != JObject:
-      return
-    result.transactionStatusChange = toTransactionStatusChange(event)
     return
   if signalType == SignalType.WalletSuggestedRoutes:
     try:

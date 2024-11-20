@@ -8,6 +8,7 @@ type WakuBackedUpWatchOnlyAccountSignal* = ref object of Signal
 
 proc fromEvent*(T: type WakuBackedUpWatchOnlyAccountSignal, event: JsonNode): WakuBackedUpWatchOnlyAccountSignal =
   result = WakuBackedUpWatchOnlyAccountSignal()
+  result.signalType = SignalType.WakuBackedUpWatchOnlyAccount
 
   let e = event["event"]
   if e.contains("backedUpWatchOnlyAccount"):
