@@ -8,6 +8,7 @@ import constants
 import driver
 from constants import RandomUser
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
+from gui.components.signing_phrase_popup import SigningPhrasePopup
 from . import marks
 
 import configs.timeouts
@@ -92,6 +93,8 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
+        assert SigningPhrasePopup().ok_got_it_button.is_visible
+        SigningPhrasePopup().confirm_phrase()
 
     with step('Verify that user avatar background color'):
         avatar_color = str(main_window.left_panel.profile_button.object.identicon.asset.color.name).upper()

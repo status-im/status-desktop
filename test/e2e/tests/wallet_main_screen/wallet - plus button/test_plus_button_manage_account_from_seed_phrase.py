@@ -27,7 +27,6 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
     with step('Create imported seed phrase wallet account'):
         mnemonic_data = random_mnemonic()
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).open_add_new_account_popup().import_new_seed_phrase(mnemonic_data.split())
         account_popup.save_changes()

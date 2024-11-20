@@ -40,7 +40,6 @@ def test_wallet_sort_assets(main_screen: MainWindow, address, name, dai, wrapped
 
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
@@ -159,7 +158,6 @@ def test_custom_ordering(main_screen: MainWindow, address, name, dai, wrappedeth
 
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()

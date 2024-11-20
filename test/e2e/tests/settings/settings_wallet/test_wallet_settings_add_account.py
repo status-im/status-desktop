@@ -6,7 +6,6 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
 from constants.wallet import WalletAccountPopup
 from . import marks
@@ -53,7 +52,6 @@ def test_add_new_account_from_wallet_settings(
     with step('Verify that the account is correctly displayed in accounts list on main wallet screen'):
 
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         expected_account = constants.user.account_list_item(account_name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:

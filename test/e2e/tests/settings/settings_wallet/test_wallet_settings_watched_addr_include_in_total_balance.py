@@ -29,7 +29,6 @@ pytestmark = marks
 def test_settings_include_in_total_balance(main_screen: MainWindow, name, watched_address):
     with (step('Open wallet on main screen and check the total balance for new account is 0')):
         wallet_main_screen = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         total_balance_before = float(wallet_main_screen.left_panel.get_total_balance_value().replace("\xa0", ""
                                                                                                      ).replace(",",
                                                                                                                ""))

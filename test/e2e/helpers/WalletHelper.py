@@ -11,10 +11,9 @@ with step('Authenticate user action with password'):
         AuthenticatePopup().wait_until_appears().authenticate(user_account.password)
         AuthenticatePopup().wait_until_hidden()
 
-with step('Close signing phrase popup and open wallet send popup'):
+with step('Open wallet send popup'):
     def open_send_modal_for_account(main_window, account_name):
         wallet = main_window.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         assert \
             driver.waitFor(lambda: wallet.left_panel.is_total_balance_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC), \
             f"Total balance is not visible"

@@ -18,7 +18,6 @@ def test_share_wallet_address(main_screen: MainWindow):
     with step('Open wallet and choose default account'):
         default_name = WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         wallet_account = wallet.left_panel.select_account(default_name)
         wallet.left_panel.copy_account_address_in_context_menu(default_name)
         wallet_address = pyperclip.paste()

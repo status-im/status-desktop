@@ -22,7 +22,6 @@ def test_context_menu_edit_default_account(main_screen: MainWindow, user_account
 
     with step('Select wallet account'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         wallet.left_panel.select_account(name)
 
     with step("Verify default status account can't be deleted"):

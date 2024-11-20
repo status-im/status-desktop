@@ -6,6 +6,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from gui.components.signing_phrase_popup import SigningPhrasePopup
 from helpers.OnboardingHelper import open_generate_new_keys_view
 from . import marks
 
@@ -48,6 +49,8 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
             BetaConsentPopup().confirm()
+        if SigningPhrasePopup().is_visible:
+            SigningPhrasePopup().confirm_phrase()
 
     with step('Verify that the user logged in correctly'):
         user_image = main_window.left_panel.open_online_identifier()

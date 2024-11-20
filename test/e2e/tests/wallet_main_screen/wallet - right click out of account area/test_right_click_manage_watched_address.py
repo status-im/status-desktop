@@ -28,9 +28,8 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
                                                             emoji_unicode: str,
                                                             name: str, new_name: str, new_color: str, new_emoji: str,
                                                             new_emoji_unicode: str):
-    with step('Open wallet main screen and close signing phrase dialog'):
+    with step('Open wallet main screen'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
 
     with step('Create watched address from context menu'):
         account_popup = wallet.left_panel.add_watched_address_from_context.click()

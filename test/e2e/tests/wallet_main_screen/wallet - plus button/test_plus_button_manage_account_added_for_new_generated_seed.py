@@ -24,7 +24,6 @@ def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, 
 
     with step('Create generated seed phrase wallet account'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_origin_new_seed_phrase(
             keypair_name).save_changes()

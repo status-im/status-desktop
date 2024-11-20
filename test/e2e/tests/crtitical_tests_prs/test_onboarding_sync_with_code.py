@@ -3,6 +3,7 @@ import pyperclip
 import pytest
 from allure_commons._allure import step
 
+from gui.components.signing_phrase_popup import SigningPhrasePopup
 from . import marks
 
 import configs.testpath
@@ -79,6 +80,8 @@ def test_sync_device_during_onboarding(multiple_instances):
             SplashScreen().wait_until_appears().wait_until_hidden()
             if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
                 BetaConsentPopup().confirm()
+            assert SigningPhrasePopup().ok_got_it_button.is_visible
+            SigningPhrasePopup().confirm_phrase()
 
         with step('Verify user details are the same with user in first instance'):
             online_identifier = main_window.left_panel.open_online_identifier()

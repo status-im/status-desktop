@@ -25,7 +25,6 @@ def test_plus_button_add_watched_address(
         name: str):
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()

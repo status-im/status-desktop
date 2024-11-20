@@ -26,7 +26,6 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
 
     with step('Import an account within private key'):
         wallet = main_screen.left_panel.open_wallet()
-        SigningPhrasePopup().wait_until_appears().confirm_phrase()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).set_origin_private_key(
             address_pair.private_key, address_pair.private_key[:5]).save_changes()
