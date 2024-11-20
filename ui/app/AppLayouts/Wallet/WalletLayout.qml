@@ -87,10 +87,6 @@ Item {
         d.displayAllAddresses()
 
         d.resetRightPanelStackView()
-
-        if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
-            signPhrasePopup.open();
-        }
     }
 
     function openDesiredView(leftPanelSelection, rightPanelSelection, data) {
@@ -189,6 +185,7 @@ Item {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
         onAcceptClicked: { RootStore.setHideSignPhraseModal(true); }
+        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal
     }
 
     SeedPhraseBackupWarning {

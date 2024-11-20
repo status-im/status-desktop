@@ -501,8 +501,8 @@ method load*[T](
 
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-  if (activeSectionId == ""):
-    activeSectionId = singletonInstance.userProfile.getPubKey()
+  if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
+    activeSectionId = conf.WALLET_SECTION_ID
 
   let loadingItem = initItem(
     LOADING_SECTION_ID,
@@ -647,8 +647,6 @@ method onChatsLoaded*[T](
   let myPubKey = singletonInstance.userProfile.getPubKey()
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-  if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
-    activeSectionId = myPubKey
 
   # Create personal chat section
   self.chatSectionModules[myPubKey] = chat_section_module.newModule(

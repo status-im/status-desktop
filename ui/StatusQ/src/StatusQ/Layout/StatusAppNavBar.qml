@@ -11,8 +11,8 @@ Rectangle {
     id: root
     objectName: "statusAppNavBar"
 
-    property alias chatItemsModel: chatItemsListView.model
-    property alias chatItemDelegate: chatItemsListView.delegate
+    property alias topSectionModel: topSectionListview.model
+    property alias topSectionDelegate: topSectionListview.delegate
 
     property alias communityItemsModel: communityItemsListView.model
     property alias communityItemDelegate: communityItemsListView.delegate
@@ -51,7 +51,7 @@ Rectangle {
         spacing: d.spacing
 
         ListView {
-            id: chatItemsListView
+            id: topSectionListview
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -75,7 +75,7 @@ Rectangle {
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.directColor7
 
-            visible: chatItemsListView.count && communityItemsListView.contentHeight > communityItemsListView.height
+            visible: topSectionListview.count && communityItemsListView.contentHeight > communityItemsListView.height
         }
 
         ListView {
@@ -101,7 +101,7 @@ Rectangle {
             Layout.preferredWidth: d.separatorWidth
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.directColor7
-            visible: chatItemsListView.count || communityItemsListView.count
+            visible: topSectionListview.count || communityItemsListView.count
         }
 
         ListView {

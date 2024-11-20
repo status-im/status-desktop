@@ -320,9 +320,9 @@ QtObject {
     readonly property int chatSectionLeftColumnWidth: 304
 
     readonly property QtObject appSection: QtObject {
-        readonly property int chat: 0
-        readonly property int community: 1
-        readonly property int wallet: 2
+        readonly property int chat: 1
+        readonly property int community: 2
+        readonly property int wallet: 0
         readonly property int profile: 3
         readonly property int node: 4
         readonly property int communitiesPortal: 5
