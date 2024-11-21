@@ -14,6 +14,10 @@ labels: feature
 [comment]: # (Describe the use cases the implementation should cover. E.g. New users, existing users, public chat, group chat, etc)
 *Summary*: ...
 
+### Metrics
+
+Does that feature need metrics to be added? If yes, describe which events should be tracked and add them to Mixpanel
+
 ### Acceptance Criteria
 
 [comment]: # (Rules for the future PR to be accepted.)
