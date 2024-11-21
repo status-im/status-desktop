@@ -1,5 +1,6 @@
 ActivityFilterPanel 1.0 ActivityFilterPanel.qml
 BuyCryptoProvidersListPanel 1.0 BuyCryptoProvidersListPanel.qml
+BuyReceiveBanner 1.0 BuyReceiveBanner.qml
 ContractInfoButtonWithMenu 1.0 ContractInfoButtonWithMenu.qml
 DAppsWorkflow 1.0 DAppsWorkflow.qml
 ManageAssetsPanel 1.0 ManageAssetsPanel.qml

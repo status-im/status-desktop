@@ -2,6 +2,7 @@ AccountHeaderGradient 1.0 AccountHeaderGradient.qml
 ActivityFilterTagItem 1.0 ActivityFilterTagItem.qml
 AssetSelector 1.0 AssetSelector.qml
 AssetSelectorCompact 1.0 AssetSelectorCompact.qml
+BannerCard 1.0 BannerCard.qml
 BuyCryptoProvidersDelegate 1.0 BuyCryptoProvidersDelegate.qml
 BuyCryptoProvidersLoadingDelegate 1.0 BuyCryptoProvidersLoadingDelegate.qml
 CollectibleBalanceTag 1.0 CollectibleBalanceTag.qml
