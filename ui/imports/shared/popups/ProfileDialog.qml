@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Popups.Dialog 0.1
@@ -11,7 +11,7 @@ StatusDialog {
 
     property var parentPopup
 
-    property alias publicKey: profileView.publicKey
+    property alias contactDetails: profileView.contactDetails
 
     property alias profileStore: profileView.profileStore
     property alias contactsStore: profileView.contactsStore
@@ -28,9 +28,6 @@ StatusDialog {
 
     property alias assetsModel: profileView.assetsModel
     property alias collectiblesModel: profileView.collectiblesModel
-    
-    property alias dirtyValues: profileView.dirtyValues
-    property alias dirty: profileView.dirty
 
     implicitHeight: implicitContentHeight + (header.visible ? header.height : 0)
     width: 640

@@ -105,6 +105,25 @@ Item {
     // set from main.qml
     property var sysPalette
 
+    AllContactsAdaptor {
+        id: allContacsAdaptor
+
+        contactsModel: appMain.rootStore.contactStore.contactsModel
+
+        selfPubKey: appMain.profileStore.pubkey
+        selfDisplayName : appMain.profileStore.displayName
+        selfName: appMain.profileStore.name
+        selfPreferredDisplayName: appMain.profileStore.preferredName
+        selfAlias: appMain.profileStore.username
+        selfIcon: appMain.profileStore.icon
+        selfColorId: appMain.profileStore.colorId
+        selfColorHash: appMain.profileStore.colorHash
+        selfOnlineStatus: appMain.profileStore.currentUserStatus
+        selfThumbnailImage: appMain.profileStore.thumbnailImage
+        selfLargeImage: appMain.profileStore.largeImage
+        selfBio: appMain.profileStore.bio
+    }
+
     ContactsModelAdaptor {
         id: contactsModelAdaptor
 
@@ -601,6 +620,7 @@ Item {
         buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
 
+        allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
 
         isDevBuild: !production

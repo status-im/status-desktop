@@ -13,6 +13,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Profile.helpers 1.0
 import AppLayouts.Wallet.stores 1.0
 
 import Storybook 1.0
@@ -22,21 +23,15 @@ SplitView {
     id: root
 
     property bool globalUtilsReady: false
-    property bool mainModuleReady: false
 
     // globalUtilsInst mock
     QtObject {
-        function getColorId(publicKey) { return colorId.value }
-
-        function getColorHashAsJson(publicKey, skipEnsVerification=false) {
-            if (skipEnsVerification)
-                return
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
         function addTimestampToURL(url) {
             return url
+        }
+
+        function isCompressedPubKey() {
+            return false
         }
 
         Component.onCompleted: {
@@ -47,45 +42,6 @@ SplitView {
         Component.onDestruction: {
             root.globalUtilsReady = false
             Utils.globalUtilsInst = {}
-        }
-    }
-
-    // mainModuleInst mock
-    QtObject {
-        function isEnsVerified(publicKey) {
-            return ensVerified.checked
-        }
-
-        function getContactDetailsAsJson(publicKey, getVerificationRequest=true, getOnlineStatus=false, includeDetails=false) {
-            return JSON.stringify({ displayName: displayName.text,
-                                      optionalName: "",
-                                      displayIcon: "",
-                                      publicKey: publicKey,
-                                      name: name.text,
-                                      ensVerified: ensVerified.checked,
-                                      alias: "Mock Alias Triplet",
-                                      lastUpdated: Date.now(),
-                                      lastUpdatedLocally: Date.now(),
-                                      localNickname: localNickname.text,
-                                      thumbnailImage: "",
-                                      largeImage: userImage.checked ? Theme.png("status-logo") : "",
-                                      isContact: ctrlIsContact.checked,
-                                      isBlocked: ctrlIsBlocked.checked,
-                                      isSyncing: false,
-                                      trustStatus: ctrlTrustStatus.currentValue,
-                                      verificationStatus: ctrlVerificationStatus.currentValue,
-                                      contactRequestState: ctrlContactRequestState.currentValue,
-                                      bio: bio.text,
-                                      onlineStatus: ctrlOnlineStatus.currentValue
-                                  })
-        }
-        Component.onCompleted: {
-            Utils.mainModuleInst = this
-            root.mainModuleReady = true
-        }
-        Component.onDestruction: {
-            root.mainModuleReady = false
-            Utils.mainModuleInst = {}
         }
     }
 
@@ -147,144 +103,6 @@ SplitView {
 
     Logs { id: logs }
 
-    Popups {
-        popupParent: root
-        sharedRootStore: SharedStores.RootStore {}
-        rootStore: AppLayoutStores.RootStore {
-            property var contactStore: QtObject {
-                property var contactsModule: null
-
-                function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
-                    logs.logEvent("rootStore::contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
-                    localNickname.text = newNickname
-                }
-
-                function blockContact(publicKey) {
-                    logs.logEvent("rootStore::contactStore::blockContact", ["publicKey"], arguments)
-                    ctrlIsBlocked.checked = true
-                }
-
-                function unblockContact(publicKey) {
-                    logs.logEvent("rootStore::contactStore::unblockContact", ["publicKey"], arguments)
-                    ctrlIsBlocked.checked = false
-                }
-
-                function sendContactRequest(publicKey, message) {
-                    logs.logEvent("rootStore::contactStore::sendContactRequest", ["publicKey", "message"], arguments)
-                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Sent)
-                }
-
-                function acceptContactRequest(publicKey, contactRequestId) {
-                    logs.logEvent("rootStore::contactStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
-                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Mutual)
-                }
-
-                function getLatestContactRequestForContactAsJson(pubKey) {
-                    logs.logEvent("rootStore::contactStore::getLatestContactRequestForContactAsJson", ["pubKey"], arguments)
-                    return {
-                        id: "123456789",
-                        from: pubKey,
-                        clock: Date.now(),
-                        text: "Hey Jo, it’s Alex here, we met at devcon last week!",
-                        contactRequestState: Constants.ContactRequestState.Received
-                    }
-                }
-
-                function sendVerificationRequest(publicKey, challenge) {
-                    logs.logEvent("rootStore::contactStore::sendVerificationRequest", ["publicKey", "challenge"], arguments)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                }
-
-                function markUntrustworthy(publicKey) {
-                    logs.logEvent("rootStore::contactStore::markUntrustworthy", ["publicKey"], arguments)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                }
-
-                function markAsTrusted(publicKey) {
-                    logs.logEvent("rootStore::contactStore::markAsTrusted", ["publicKey"], arguments)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
-                }
-
-                function removeContact(publicKey) {
-                    logs.logEvent("rootStore::contactStore::removeContact", ["publicKey"], arguments)
-                    ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
-                    ctrlIsContact.checked = false
-                }
-
-                function verifiedTrusted(publicKey) {
-                    logs.logEvent("rootStore::contactStore::verifiedTrusted", ["publicKey"], arguments)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.trusted)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.trusted)
-                }
-
-                function removeTrustStatus(publicKey) {
-                    logs.logEvent("rootStore::contactStore::removeTrustStatus", ["publicKey"], arguments)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                }
-
-                function removeTrustVerificationStatus(publicKey) {
-                    logs.logEvent("rootStore::contactStore::removeTrustVerificationStatus", ["publicKey"], arguments)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                }
-
-                function cancelVerificationRequest(pubKey) {
-                    logs.logEvent("rootStore::contactStore::cancelVerificationRequest", ["pubKey"], arguments)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                }
-
-                function declineVerificationRequest(pubKey) {
-                    logs.logEvent("rootStore::contactStore::declineVerificationRequest", ["pubKey"], arguments)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                }
-
-                function acceptVerificationRequest(pubKey, response) {
-                    logs.logEvent("rootStore::contactStore::acceptVerificationRequest", ["pubKey"], arguments)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.verifying)
-                }
-
-                function verifiedUntrustworthy(pubKey) {
-                    logs.logEvent("rootStore::contactStore::verifiedUntrustworthy", ["pubKey"], arguments)
-                    ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                    ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
-                }
-
-                function getSentVerificationDetailsAsJson(pubKey) {
-                    return {
-                        requestStatus: ctrlVerificationStatus.currentValue,
-                        challenge: "The real Alex would know this 100%! What’s my favourite colour?",
-                        response: ctrlIncomingVerificationStatus.currentValue === Constants.verificationStatus.verified ? "Yellow!" : "",
-                        displayName: ProfileUtils.displayName(localNickname.text, name.text, displayName.text),
-                        icon: Theme.png("status-logo"),
-                        requestedAt: Date.now() - 86400000,
-                        repliedAt: Date.now()
-                    }
-                }
-
-                function getVerificationDetailsFromAsJson(pubKey) {
-                    return {
-                        from: "0xdeadbeef",
-                        challenge: "The real Alex would know this 100%! What’s my favourite colour?",
-                        response: "",
-                        requestedAt: Date.now() - 86400000,
-                    }
-                }
-            }
-        }
-        communityTokensStore: SharedStores.CommunityTokensStore {}
-    }
-
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -299,15 +117,38 @@ SplitView {
                 clip: true
 
                 Loader {
-                    active: root.globalUtilsReady && root.mainModuleReady
+                    active: root.globalUtilsReady
                     width: parent.availableWidth
                     height: parent.availableHeight
 
                     sourceComponent: ProfileDialogView {
                         implicitWidth: 640
 
+                        contactDetails: ContactDetails {
+                            publicKey: "0x0000x"
+
+                            displayName: displayNameTextField.text
+                            localNickname: localNicknameTextField.text
+                            ensVerified: ensVerifiedCheckBox.checked
+                            ensName: ensNameTextField.text
+                            name: ensNameTextField.text
+
+                            isCurrentUser: ownProfileSwitch.checked
+
+                            largeImage: userImageCheckBox.checked ? Theme.png("status-logo") : ""
+
+                            onlineStatus: onlineStatusComboBox.currentValue
+
+                            isBlocked: isBlockedCheckBox.checked
+
+                            colorHash: [{colorId: 0, segmentLength: 1},
+                                        {colorId: 4, segmentLength: 2}]
+
+                            colorId: colorIdSpinBox.value
+
+                        }
+
                         readOnly: ctrlReadOnly.checked
-                        publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
 
                         onCloseRequested: logs.logEvent("closeRequested()")
 
@@ -323,50 +164,38 @@ SplitView {
                         collectiblesModel: CollectiblesModel {}
 
                         profileStore: ProfileStores.ProfileStore {
-                            readonly property string pubkey: "0xdeadbeef"
-                            readonly property string ensName: name.text
-
                             function getQrCodeSource() {
                                 return "https://upload.wikimedia.org/wikipedia/commons/4/41/QR_Code_Example.svg"
                             }
                         }
 
                         contactsStore: ProfileStores.ContactsStore {
-                            readonly property string myPublicKey: "0xdeadbeef"
-
                             function joinPrivateChat(publicKey) {
                                 logs.logEvent("contactsStore::joinPrivateChat", ["publicKey"], arguments)
                             }
 
                             function markUntrustworthy(publicKey) {
                                 logs.logEvent("contactsStore::markUntrustworthy", ["publicKey"], arguments)
-                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.untrustworthy)
                             }
 
                             function removeContact(publicKey) {
                                 logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
-                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.None)
-                                ctrlIsContact.checked = false
                             }
 
                             function acceptContactRequest(publicKey, contactRequestId) {
                                 logs.logEvent("contactsStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
-                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Mutual)
                             }
 
                             function dismissContactRequest(publicKey, contactRequestId) {
                                 logs.logEvent("contactsStore::dismissContactRequest", ["publicKey, contactRequestId"], arguments)
-                                ctrlContactRequestState.currentIndex = ctrlContactRequestState.indexOfValue(Constants.ContactRequestState.Dismissed)
                             }
 
                             function removeTrustStatus(publicKey) {
                                 logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
-                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
                             }
 
                             function removeTrustVerificationStatus(publicKey) {
                                 logs.logEvent("contactsStore::removeTrustVerificationStatus", ["publicKey"], arguments)
-                                ctrlTrustStatus.currentIndex = ctrlTrustStatus.indexOfValue(Constants.trustStatus.unknown)
                             }
 
                             function verifiedUntrustworthy(publicKey) {
@@ -380,8 +209,6 @@ SplitView {
 
                             function cancelVerificationRequest(pubKey) {
                                 logs.logEvent("contactsStore::cancelVerificationRequest", ["pubKey"], arguments)
-                                ctrlVerificationStatus.currentIndex = ctrlVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
-                                ctrlIncomingVerificationStatus.currentIndex = ctrlIncomingVerificationStatus.indexOfValue(Constants.verificationStatus.unverified)
                             }
 
                             function getLinkToProfile(publicKey) {
@@ -390,7 +217,6 @@ SplitView {
 
                             function changeContactNickname(publicKey, newNickname, displayName, isEdit) {
                                 logs.logEvent("contactsStore::changeContactNickname", ["publicKey", "newNickname", "displayName", "isEdit"], arguments)
-                                localNickname.text = newNickname
                             }
 
                             function requestProfileShowcase(publicKey) {
@@ -431,48 +257,64 @@ SplitView {
                 RowLayout {
                     Layout.fillWidth: true
                     Switch {
-                        id: switchOwnProfile
+                        id: ownProfileSwitch
+
                         text: "Own profile"
                         checked: false
                     }
                     Switch {
                         id: ctrlReadOnly
+
                         text: "Readonly (preview)"
-                        visible: switchOwnProfile.checked
+                        visible: ownProfileSwitch.checked
                         checked: false
                     }
                 }
                 RowLayout {
                     Layout.fillWidth: true
                     Label { text: "localNickname:" }
+
                     TextField {
-                        id: localNickname
+                        id: localNicknameTextField
+
                         text: "Alex"
                         placeholderText: "Local Nickname"
                     }
-                    Label { text: "displayName:" }
+
+                    Label {
+                        text: "displayName:"
+                    }
+
                     TextField {
-                        id: displayName
+                        id: displayNameTextField
+
                         text: "Alex Pella"
                         placeholderText: "Display Name"
                     }
+
                     CheckBox {
-                        id: ensVerified
+                        id: ensVerifiedCheckBox
+
                         checked: true
                         text: "ensVerified"
                     }
 
-                    Label { text: "name:" }
+                    Label {
+                        text: "name:"
+                    }
+
                     TextField {
-                        id: name
-                        enabled: ensVerified.checked
-                        text: ensVerified.checked ? "8⃣6⃣.eth" : ""
+                        id: ensNameTextField
+
+                        enabled: ensVerifiedCheckBox.checked
+                        text: ensVerifiedCheckBox.checked ? "8⃣6⃣.eth" : ""
                         placeholderText: "ENS name"
                     }
                 }
                 RowLayout {
                     CheckBox {
-                        id: userImage
+                        id: userImageCheckBox
+
                         text: "User image"
                         checked: true
                     }
@@ -481,18 +323,25 @@ SplitView {
                         text: "or"
                     }
                     Label {
-                        enabled: !userImage.checked
+                        enabled: !userImageCheckBox.checked
+
                         text: "colorId"
                     }
                     SpinBox {
-                        id: colorId
-                        enabled: !userImage.checked
+                        id: colorIdSpinBox
+
+                        enabled: !userImageCheckBox.checked
                         from: 0
                         to: 11 // Theme.palette.userCustomizationColors.length
                     }
-                    Label { text: "onlineStatus" }
+
+                    Label {
+                        text: "onlineStatus"
+                    }
+
                     ComboBox {
-                        id: ctrlOnlineStatus
+                        id: onlineStatusComboBox
+
                         textRole: "text"
                         valueRole: "value"
                         model: [
@@ -504,15 +353,19 @@ SplitView {
                 }
                 RowLayout {
                     Layout.fillWidth: true
-                    enabled: !switchOwnProfile.checked
+                    enabled: !ownProfileSwitch.checked
+
                     CheckBox {
                         id: ctrlIsContact
+
                         enabled: true
                         checked: ctrlContactRequestState.currentValue === Constants.ContactRequestState.Mutual
                         text: "isContact"
                     }
+
                     ComboBox {
                         id: ctrlContactRequestState
+
                         textRole: "text"
                         valueRole: "value"
                         model: [
@@ -523,9 +376,14 @@ SplitView {
                             { value: Constants.ContactRequestState.Dismissed, text: "Dismissed" }
                         ]
                     }
-                    Label { text: "trustStatus:" }
+
+                    Label {
+                        text: "trustStatus:"
+                    }
+
                     ComboBox {
                         id: ctrlTrustStatus
+
                         textRole: "text"
                         valueRole: "value"
                         model: [
@@ -534,8 +392,10 @@ SplitView {
                             { value: Constants.trustStatus.untrustworthy, text: "untrustworthy" }
                         ]
                     }
+
                     CheckBox {
-                        id: ctrlIsBlocked
+                        id: isBlockedCheckBox
+
                         text: "isBlocked"
                     }
                 }
@@ -615,3 +475,5 @@ Say hi, or find me on Twitter, GitHub, or Mastodon.
 // https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=724%3A15511&t=h8DUW6Eysawqe5u0-0
 // https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=6%3A16845&t=h8DUW6Eysawqe5u0-0
 // https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=4%3A25437&t=h8DUW6Eysawqe5u0-0
+
+// status: decent

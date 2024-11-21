@@ -49,12 +49,6 @@ SettingsContentBase {
     property bool toastClashesWithDirtyBubble
     readonly property alias sideBySidePreviewComponent: myProfilePreviewComponent
 
-    readonly property QtObject liveValues: QtObject {
-        readonly property string displayName: descriptionPanel.displayName.text
-        readonly property string bio: descriptionPanel.bio.text
-        readonly property url profileLargeImage: profileHeader.previewIcon
-    }
-
     enum TabIndex {
         Identity = 0,
         Communities = 1,
@@ -132,6 +126,17 @@ SettingsContentBase {
 
     property QObject priv: QObject {
         id: priv
+
+        readonly property ContactDetails liveContactDetails: ContactDetails {
+            publicKey: root.profileStore.pubkey
+            colorId: root.profileStore.colorId
+            colorHash: root.profileStore.colorHash
+            onlineStatus: root.profileStore.currentUserStatus
+
+            displayName: descriptionPanel.displayName.text
+            bio: descriptionPanel.bio.text
+            largeImage: profileHeader.previewIcon
+        }
 
         readonly property bool hasAnyProfileShowcaseChanges: showcaseModels.dirty
         readonly property bool isIdentityTabDirty: (!descriptionPanel.isEnsName &&
@@ -403,16 +408,16 @@ SettingsContentBase {
 
         Component {
             id: profilePreview
+
             ProfileDialog {
-                publicKey: root.contactsStore.myPublicKey
+                contactDetails: priv.liveContactDetails
+
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
                 walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
-                dirtyValues: root.liveValues
-                dirty: root.dirty
 
                 showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel
                 showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel
@@ -427,13 +432,14 @@ SettingsContentBase {
 
         Component {
             id: myProfilePreviewComponent
+
             MyProfilePreview {
+                contactDetails: priv.liveContactDetails
+
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
                 sendToAccountEnabled: root.sendToAccountEnabled
-                dirtyValues: root.liveValues
-                dirty: root.dirty
 
                 showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel
                 showcaseAccountsModel: priv.showcaseModels.accountsVisibleModel

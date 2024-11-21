@@ -23,6 +23,7 @@ import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.helpers 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
@@ -53,6 +54,7 @@ QtObject {
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
 
+    property var allContactsModel
     property var mutualContactsModel
 
     property bool isDevBuild
@@ -548,7 +550,16 @@ QtObject {
             ProfileDialog {
                 id: profilePopup
 
-                property bool isCurrentUser: publicKey === rootStore.profileSectionStore.profileStore.pubkey
+                property alias publicKey: contactModelEntry.publicKey
+                readonly property bool isCurrentUser: contactDetails.isCurrentUser
+
+                ContactModelEntry {
+                    id: contactModelEntry
+
+                    contactsModel: root.allContactsModel
+                }
+
+                contactDetails: contactModelEntry.contactDetails
 
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
@@ -557,10 +568,14 @@ QtObject {
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
-                showcaseCommunitiesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCommunitiesModel : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
-                showcaseAccountsModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseAccountsModel : rootStore.profileSectionStore.contactShowcaseAccountsModel
-                showcaseCollectiblesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCollectiblesModel : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
-                showcaseSocialLinksModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseSocialLinksModel : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
+                showcaseCommunitiesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCommunitiesModel
+                                                        : rootStore.profileSectionStore.contactShowcaseCommunitiesModel
+                showcaseAccountsModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseAccountsModel
+                                                     : rootStore.profileSectionStore.contactShowcaseAccountsModel
+                showcaseCollectiblesModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseCollectiblesModel
+                                                         : rootStore.profileSectionStore.contactShowcaseCollectiblesModel
+                showcaseSocialLinksModel: isCurrentUser ? rootStore.profileSectionStore.ownShowcaseSocialLinksModel
+                                                        : rootStore.profileSectionStore.contactShowcaseSocialLinksModel
                 
                 assetsModel: rootStore.globalAssetsModel
                 collectiblesModel: rootStore.globalCollectiblesModel
