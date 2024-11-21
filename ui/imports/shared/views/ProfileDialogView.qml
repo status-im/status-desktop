@@ -30,9 +30,10 @@ import AppLayouts.Wallet.stores 1.0 as WalletStores
 Pane {
     id: root
 
+    required property ContactDetails contactDetails
     property bool readOnly // inside settings/profile/preview
 
-    property string publicKey: contactsStore.myPublicKey
+    readonly property string publicKey: contactDetails.publicKey
     readonly property alias isCurrentUser: d.isCurrentUser
 
     property ProfileStores.ProfileStore profileStore
@@ -41,9 +42,6 @@ Pane {
     property WalletStores.RootStore walletStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
-
-    property var dirtyValues: ({})
-    property bool dirty: false
 
     property var showcaseCommunitiesModel
     property var showcaseAccountsModel
@@ -65,17 +63,10 @@ Pane {
         id: background
     }
 
-    ContactDetails {
-        id: contactDetails
-        publicKey: root.publicKey
-        contactsStore: root.contactsStore
-        profileStore: root.profileStore
-    }
-
     QtObject {
         id: d
 
-        readonly property bool isCurrentUser: root.profileStore.pubkey === root.publicKey
+        readonly property bool isCurrentUser: contactDetails.isCurrentUser
         readonly property string userDisplayName: contactDetails.displayName
         readonly property string userNickName: contactDetails.localNickname
         readonly property string prettyEnsName: contactDetails.name
@@ -225,10 +216,8 @@ Pane {
                 id: userImage
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
-                name: root.dirty ? root.dirtyValues.displayName
-                                 : d.mainDisplayName
-                image: root.dirty ? root.dirtyValues.profileLargeImage
-                                  : Utils.addTimestampToURL(contactDetails.largeImage)
+                name: d.mainDisplayName
+                image: Utils.addTimestampToURL(contactDetails.largeImage)
                 colorId: contactDetails.colorId
                 colorHash: contactDetails.colorHash
 
@@ -399,7 +388,7 @@ Pane {
                     font.bold: true
                     font.pixelSize: 22
                     elide: Text.ElideRight
-                    text: StatusQUtils.Emoji.parse(root.dirty ? root.dirtyValues.displayName : d.mainDisplayName, StatusQUtils.Emoji.size.middle)
+                    text: StatusQUtils.Emoji.parse(d.mainDisplayName, StatusQUtils.Emoji.size.middle)
                 }
                 StatusContactVerificationIcons {
                     id: verificationIcons
@@ -465,7 +454,7 @@ Pane {
                     id: bioText
                     width: bioScrollView.availableWidth
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    text: root.dirty ? root.dirtyValues.bio.trim() : contactDetails.bio.trim()
+                    text: contactDetails.bio.trim()
                 }
             }
             EmojiHash {
@@ -527,8 +516,7 @@ Pane {
                     Layout.preferredHeight: 300
 
                     currentTabIndex: showcaseTabBar.currentIndex
-                    mainDisplayName: root.dirty ? root.dirtyValues.displayName
-                                     : d.mainDisplayName
+                    mainDisplayName: d.mainDisplayName
                     readOnly: root.readOnly
                     
                     communitiesModel: root.showcaseCommunitiesModel
