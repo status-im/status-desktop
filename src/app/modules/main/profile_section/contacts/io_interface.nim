@@ -62,9 +62,6 @@ method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
 
 # Controller Delegate Interface
 
-method contactAdded*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method contactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

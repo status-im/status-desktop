@@ -35,7 +35,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactAdded(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
     var args = ContactArgs(e)
