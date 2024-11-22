@@ -269,7 +269,7 @@ Item {
 
         StatusChatInfoButton {
             readonly property string emojiIcon: chatContentModule? chatContentModule.chatDetails.emoji : "" // Needed for test
-            readonly property string assetName: chatContentModule && Utils.addTimestampToURL(chatContentModule.chatDetails.icon)
+            readonly property string assetName: chatContentModule && chatContentModule.chatDetails.icon
 
             objectName: "chatInfoBtnInHeader"
             title: chatContentModule? chatContentModule.chatDetails.name : ""
