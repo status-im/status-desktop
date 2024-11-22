@@ -24,7 +24,7 @@ Item {
 
     QtObject {
         id: d
-        readonly property string profilePairTypeValue: Constants.keycard.keyPairType.profile
+        readonly property int profilePairTypeValue: Constants.keycard.keyPairType.profile
     }
 
     ColumnLayout {
