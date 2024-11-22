@@ -15,7 +15,7 @@ Control {
     property alias image: image.source
     property alias title: title.text
     property alias subTitle: subTitle.text
-    property alias closeEnabled: closeButton.visible
+    property bool closeEnabled: true
 
     signal clicked()
     signal close()
@@ -86,13 +86,17 @@ Control {
             Layout.preferredWidth: 16
             Layout.preferredHeight: 16
             icon: "close"
-            color: Theme.palette.baseColor1
+            color: closeHoverHandler.hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            visible: root.closeEnabled && root.hovered
             TapHandler {
                 id: closeHandler
                 acceptedButtons: Qt.LeftButton
                 onTapped: {
                     root.close()
                 }
+            }
+            HoverHandler {
+                id: closeHoverHandler
             }
         }
     }

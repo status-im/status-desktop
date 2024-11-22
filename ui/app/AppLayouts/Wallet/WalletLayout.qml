@@ -179,6 +179,17 @@ Item {
                     RootStore.selectedAddress :
                     StatusQUtils.ModelUtils.get(RootStore.nonWatchAccounts, 0, "address")
         }
+
+        function launchBuyCryptoModal() {
+            const walletStore = RootStore
+
+            d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
+            d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+            if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
+                d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
+            }
+            Global.openBuyCryptoModalRequested(d.buyFormData)
+        }
     }
 
     SignPhraseModal {
@@ -235,6 +246,7 @@ Item {
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
+            onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
         }
     }
 
@@ -364,14 +376,7 @@ Item {
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
-            onLaunchBuyCryptoModal: {
-                d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
-                d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
-                if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
-                    d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
-                }
-                Global.openBuyCryptoModalRequested(d.buyFormData)
-            }
+            onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
             ModelEntry {
                 id: selectedCommunityForCollectible

@@ -36,6 +36,7 @@ ColumnLayout {
     property bool isFetching: false // Indicates if a collectibles page is being loaded from the backend
     property bool isUpdating: false // Indicates if the collectibles list is being updated
     property bool isError: false // Indicates an error occurred while updating/fetching the collectibles list
+    property alias bannerComponent: banner.sourceComponent
 
     // allows/disables choosing custom sort order from a sorter
     property bool customOrderAvailable
@@ -434,6 +435,11 @@ ColumnLayout {
         StatusDialogDivider {
             Layout.fillWidth: true
         }
+    }
+
+    Loader {
+        id: banner
+        Layout.fillWidth: true
     }
 
     ShapeRectangle {

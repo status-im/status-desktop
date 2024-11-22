@@ -91,6 +91,7 @@ Item {
             const buyCard = findChild(componentUnderTest, "buyCard")
             verify(!!buyCard)
             const closeButton = findChild(buyCard, "bannerCard_closeButton")
+            mouseMove(buyCard, buyCard.width / 2, buyCard.height / 2)
             verify(!!closeButton)
             verify(closeButton.visible)
 
@@ -103,6 +104,7 @@ Item {
             const receiveCard = findChild(componentUnderTest, "receiveCard")
             verify(!!receiveCard)
             const closeButton = findChild(receiveCard, "bannerCard_closeButton")
+            mouseMove(receiveCard, receiveCard.width / 2, receiveCard.height / 2)
             verify(!!closeButton)
             verify(closeButton.visible)
 
@@ -127,6 +129,7 @@ Item {
             const buyCard = findChild(componentUnderTest, "buyCard")
             verify(!!buyCard)
             const closeButton = findChild(buyCard, "bannerCard_closeButton")
+            mouseMove(buyCard, buyCard.width / 2, buyCard.height / 2)
             verify(!!closeButton)
             verify(closeButton.visible)
 

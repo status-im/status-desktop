@@ -64,6 +64,8 @@ Control {
     property bool communitySwapVisible: false
 
     property string balanceError
+    // banner component to be displayed on top of the list
+    property alias bannerComponent: banner.sourceComponent
 
     // global market data error, presented for all tokens expecting market data
     property string marketDataError
@@ -216,6 +218,11 @@ Control {
             }
 
             StatusDialogDivider { Layout.fillWidth: true }
+        }
+
+        Loader {
+            id: banner
+            Layout.fillWidth: true
         }
 
         DelegateModel {

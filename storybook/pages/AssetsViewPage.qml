@@ -8,8 +8,11 @@ import utils 1.0
 import Storybook 1.0
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.panels 1.0
 
 import Qt.labs.settings 1.1
+
+import StatusQ.Popups.Dialog 0.1
 
 SplitView {
     id: root
@@ -196,6 +199,20 @@ SplitView {
                 onHideRequested: logs.logEvent(`hide requested: ${key}`)
                 onHideCommunityAssetsRequested: logs.logEvent(`hide community assets requested: ${communityKey}`)
                 onManageTokensRequested: logs.logEvent(`manage tokens requested`)
+
+                bannerComponent: buyReceiveBannerComponent
+
+                Component {
+                    id: buyReceiveBannerComponent
+                    BuyReceiveBanner {
+                        id: banner
+                        topPadding: anyVisibleItems ? 8 : 0
+                        bottomPadding: anyVisibleItems ? 20 : 0
+
+                        onCloseBuy: buyEnabled = false
+                        onCloseReceive: receiveEnabled = false
+                    }
+                }
             }
         }
 
@@ -226,6 +243,7 @@ SplitView {
                 id: sorterVisibleCheckBox
 
                 text: "sorter visible"
+                checked: false
             }
             CheckBox {
                 id: customOrderAvailableCheckBox

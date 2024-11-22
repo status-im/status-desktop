@@ -42,6 +42,9 @@ ColumnLayout {
     property bool hideVerticalScrollbar: false
     property int firstItemOffset: 0
 
+    // banner component to be displayed on top of the list
+    property alias bannerComponent: banner.sourceComponent
+
     property real yPosition: transactionListRoot.visibleArea.yPosition * transactionListRoot.contentHeight
 
     function resetView() {
@@ -127,16 +130,6 @@ ColumnLayout {
         wrapMode: Text.WordWrap
     }
 
-    ShapeRectangle {
-        id: noTxs
-        Layout.fillWidth: true
-        Layout.preferredHeight: 42
-        Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
-        visible: !d.isInitialLoading && !root.walletRootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
-        font.pixelSize: Theme.primaryTextFontSize
-        text: qsTr("Activity for this account will appear here")
-    }
-
     Loader {
         id: filterPanelLoader
         active: root.filterVisible && (d.isInitialLoading || transactionListRoot.count > 0 || root.walletRootStore.currentActivityFiltersStore.filtersSet)
@@ -149,6 +142,21 @@ ColumnLayout {
             hideNoResults: newTransactions.visible
             isLoading: d.isInitialLoading
         }
+    }
+
+    Loader {
+        id: banner
+        Layout.fillWidth: true
+    }
+
+    ShapeRectangle {
+        id: noTxs
+        Layout.fillWidth: true
+        Layout.preferredHeight: 42
+        Layout.topMargin: !nonArchivalNodeError.visible? root.firstItemOffset : 0
+        visible: !d.isInitialLoading && !root.walletRootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
+        font.pixelSize: Theme.primaryTextFontSize
+        text: qsTr("Activity for this account will appear here")
     }
 
     Item {

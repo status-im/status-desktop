@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
@@ -35,6 +36,7 @@ RightTabBaseView {
     property alias currentTabIndex: walletTabBar.currentIndex
 
     signal launchShareAddressModal()
+    signal launchBuyCryptoModal()
     signal launchSwapModal(string tokensKey)
 
     function resetView() {
@@ -76,6 +78,30 @@ RightTabBaseView {
             }
 
             readonly property var detailedCollectibleActivityController: RootStore.tmpActivityController0
+        }
+
+        Settings {
+            id: walletSettings
+            category: "walletSettings-" + root.contactsStore.myPublicKey
+            property real collectiblesViewCustomOrderApplyTimestamp: 0
+            property bool buyBannerEnabled: true
+            property bool receiveBannerEnabled: true
+        }
+
+        Component {
+            id: buyReceiveBannerComponent
+            BuyReceiveBanner {
+                id: banner
+                topPadding: anyVisibleItems ? 8 : 0
+                bottomPadding: anyVisibleItems ? 20 : 0
+
+                onBuyClicked: root.launchBuyCryptoModal()
+                onReceiveClicked: root.launchShareAddressModal()
+                buyEnabled: walletSettings.buyBannerEnabled
+                receiveEnabled: walletSettings.receiveBannerEnabled
+                onCloseBuy: walletSettings.buyBannerEnabled = false
+                onCloseReceive: walletSettings.receiveBannerEnabled = false
+            }
         }
 
         Component {
@@ -258,6 +284,7 @@ RightTabBaseView {
                         sorterVisible: filterButton.checked
                         customOrderAvailable: RootStore.walletAssetsStore.assetsController.hasSettings
                         model: assetsViewAdaptor.model
+                        bannerComponent: buyReceiveBannerComponent
 
                         marketDataError: !!root.networkConnectionStore
                                          ? root.networkConnectionStore.getMarketNetworkDownText()
@@ -360,12 +387,6 @@ RightTabBaseView {
                         Component.onCompleted: refreshSortSettings()
                         Component.onDestruction: saveSortSettings()
 
-                        readonly property Settings walletSettings: Settings {
-                            id: walletSettings
-                            category: "walletSettings-" + root.contactsStore.myPublicKey
-                            property real collectiblesViewCustomOrderApplyTimestamp: 0
-                        }
-
                         readonly property Settings settings: Settings {
                             id: settings
                             property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
@@ -381,6 +402,7 @@ RightTabBaseView {
                         sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
                         filterVisible: filterButton.checked
                         customOrderAvailable: controller.hasSettings
+                        bannerComponent: buyReceiveBannerComponent
                         onCollectibleClicked: {
                             RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                             RootStore.setCurrentViewedHolding(uid, uid, tokenType, communityId)
@@ -438,6 +460,7 @@ RightTabBaseView {
                         currencyStore: root.sharedRootStore.currencyStore
                         showAllAccounts: RootStore.showAllAccounts
                         filterVisible: false  // TODO #16761: Re-enable filter for activity when implemented
+                        bannerComponent: buyReceiveBannerComponent
                     }
                 }
             }
