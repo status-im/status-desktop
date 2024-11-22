@@ -29,7 +29,7 @@ Control {
             objectName: "buyCard"
             Layout.fillWidth: true
             Layout.preferredWidth: root.buyEnabled ? layout.width / layout.children.length : 0
-            title: qsTr("Ways to buy crypto")
+            title: qsTr("Ways to buy assets")
             subTitle: qsTr("Via card or bank transfer")
             image: Theme.png("wallet/wallet-green")
             closeEnabled: root.closeEnabled
@@ -51,7 +51,7 @@ Control {
             objectName: "receiveCard"
             Layout.fillWidth: true
             Layout.preferredWidth: root.receiveEnabled ? layout.width / layout.children.length : 0
-            title: qsTr("Receive crypto")
+            title: qsTr("Receive assets")
             subTitle: qsTr("Deposit to your Wallet address")
             image: Theme.png("wallet/flying-coin")
             closeEnabled: root.closeEnabled

@@ -39,7 +39,7 @@ Item {
 
         function test_hoverState() {
             compare(componentUnderTest.hovered, false)
-            mouseMove(componentUnderTest)
+            mouseMove(componentUnderTest, componentUnderTest.width / 2, componentUnderTest.height / 2)
             compare(componentUnderTest.hovered, true)
             
             const closeButton = findChild(componentUnderTest, "bannerCard_closeButton")
@@ -68,6 +68,7 @@ Item {
             componentUnderTest.close.connect(() => {
                 closed = true
             })
+            mouseMove(closeButton, closeButton.width / 2, closeButton.height / 2)
             mouseClick(closeButton)
             compare(closed, true)
             compare(clicked, false)

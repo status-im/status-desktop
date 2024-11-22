@@ -14,6 +14,7 @@ import utils 1.0
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Communities.stores 1.0 as CommunitiesStore
+import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.stores 1.0
 
@@ -128,6 +129,15 @@ SplitView {
         isUpdating: ctrlUpdatingCheckbox.checked
         isFetching: ctrlFetchingCheckbox.checked
         isError: ctrlErrorCheckbox.checked
+        bannerComponent: BuyReceiveBanner {
+            id: buyReceiveBanner
+            buyEnabled: buyBannerCheckbox.checked
+            receiveEnabled: receiveBannerCheckbox.checked
+            onBuyClicked: logs.logEvent("onBuyClicked")
+            onReceiveClicked: logs.logEvent("onReceiveClicked")
+            onCloseBuy: buyBannerCheckbox.checked = false
+            onCloseReceive: receiveBannerCheckbox.checked = false
+        }
 
         Settings {
             id: settingsStore
@@ -177,6 +187,16 @@ SplitView {
                 id: ctrlErrorCheckbox
                 checked: false
                 text: "isError"
+            }
+            CheckBox {
+                id: buyBannerCheckbox
+                checked: true
+                text: "buy banner visible"
+            }
+            CheckBox {
+                id: receiveBannerCheckbox
+                checked: true
+                text: "sell banner visible"
             }
 
             ColumnLayout {
