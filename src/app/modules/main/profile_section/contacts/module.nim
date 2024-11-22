@@ -157,7 +157,7 @@ method removeContact*(self: Module, publicKey: string) =
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
-proc addOrUpdateContactItem*(self: Module, publicKey: string) =
+method addOrUpdateContactItem*(self: Module, publicKey: string) =
   let ind = self.view.contactsModel().findIndexByPubKey(publicKey)
   let item = self.createItemFromPublicKey(publicKey)
   if ind == -1:
