@@ -25,6 +25,7 @@ import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import "../helpers"
 import "../controls"
@@ -294,6 +295,15 @@ Item {
 
                     usersModel: d.activeUsersStore.usersModel
                     sharedStore: root.sharedRootStore
+                    requestPaymentStore: SharedStores.RequestPaymentStore {
+                        currencyStore: root.rootStore.currencyStore
+                        flatNetworksModel: WalletStore.RootStore.filteredFlatModel
+                        processedAssetsModel: WalletStore.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                        plainAssetsModel: WalletStore.RootStore.tokensStore.plainTokensBySymbolModel
+                        accountsModel: WalletStore.RootStore.nonWatchAccounts
+
+                        requestPaymentModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
+                    }
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     urlsList: d.urlsList

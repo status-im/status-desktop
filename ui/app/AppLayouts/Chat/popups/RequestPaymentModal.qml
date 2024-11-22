@@ -66,7 +66,7 @@ StatusDialog {
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.store.processedAssetsModel
-            flatNetworksModel: root.flatNetworksModel
+            flatNetworksModel: root.store.flatNetworksModel
             currentCurrency: root.store.currencyStore.currentCurrency
             plainTokensBySymbolModel: root.store.plainAssetsModel
             showAllTokens: true

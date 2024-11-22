@@ -1021,7 +1021,12 @@ Rectangle {
 
             onAccepted: {
                 control.requestPaymentStore.addPaymentRequest(selectedTokenKey, amount, selectedAccountAddress, selectedNetworkChainId)
+                destroy()
             }
+
+            onRejected: destroy()
+
+            Component.onCompleted: d.requestPaymentPopup = null
         }
     }
 
