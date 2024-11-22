@@ -157,7 +157,7 @@ method removeContact*(self: Module, publicKey: string) =
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
-proc addOrUpdateContactItem(self: Module, publicKey: string) =
+proc addOrUpdateContactItem*(self: Module, publicKey: string) =
   let ind = self.view.contactsModel().findIndexByPubKey(publicKey)
   let item = self.createItemFromPublicKey(publicKey)
   if ind == -1:
@@ -185,18 +185,6 @@ proc addOrUpdateContactItem(self: Module, publicKey: string) =
     item.isContactRequestSent,
     item.isRemoved,
   )
-
-method contactBlocked*(self: Module, publicKey: string) =
-  self.addOrUpdateContactItem(publicKey)
-
-method contactUnblocked*(self: Module, publicKey: string) =
-  self.addOrUpdateContactItem(publicKey)
-
-method contactRemoved*(self: Module, publicKey: string) =
-  self.addOrUpdateContactItem(publicKey)
-
-method contactUpdated*(self: Module, publicKey: string) =
-  self.addOrUpdateContactItem(publicKey)
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
