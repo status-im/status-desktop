@@ -61,7 +61,7 @@ StatusListItem {
     readonly property bool isMultiTransaction: isModelDataValid && modelData.isMultiTransaction
     readonly property string currentCurrency: currenciesStore.currentCurrency
     readonly property double cryptoValue: isModelDataValid ? modelData.amount : 0.0
-    readonly property double fiatValue: isModelDataValid && !isMultiTransaction ? currenciesStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
+    readonly property double fiatValue: isModelDataValid ? currenciesStore.getFiatValue(cryptoValue, modelData.symbol) : 0.0
     readonly property double inCryptoValue: isModelDataValid ? modelData.inAmount : 0.0
     readonly property double inFiatValue: isModelDataValid && isMultiTransaction ? currenciesStore.getFiatValue(inCryptoValue, modelData.inSymbol): 0.0
     readonly property double outCryptoValue: isModelDataValid ? modelData.outAmount : 0.0
