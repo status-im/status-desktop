@@ -158,7 +158,11 @@ method changeContactNickname*(self: Module, publicKey: string, nickname: string)
   self.controller.changeContactNickname(publicKey, nickname)
 
 proc updateContactItem(self: Module, publicKey: string) =
+  let ind = self.view.contactsModel().findIndexByPubKey(publicKey)
   let item = self.createItemFromPublicKey(publicKey)
+  if ind == -1:
+    self.view.contactsModel().addItem(item)
+    return
   self.view.contactsModel().updateItem(
     publicKey,
     item.displayName,

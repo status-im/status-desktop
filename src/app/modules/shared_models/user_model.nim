@@ -189,7 +189,18 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc findIndexByPubKey*(self: Model, pubKey: string): int =
+    for i in 0 ..< self.items.len:
+      if self.items[i].pubKey == pubKey:
+        return i
+
+    return -1
+
   proc addItem*(self: Model, item: UserItem) =
+    let ind = self.findIndexByPubKey(item.pubKey)
+    if ind != -1:
+      return
+
     let position = self.items.len
 
     let parentModelIndex = newQModelIndex()
@@ -204,13 +215,6 @@ QtObject:
      self.beginResetModel()
      self.items = @[]
      self.endResetModel()
-
-  proc findIndexByPubKey(self: Model, pubKey: string): int =
-    for i in 0 ..< self.items.len:
-      if self.items[i].pubKey == pubKey:
-        return i
-
-    return -1
 
   proc getItemByPubKey*(self: Model, pubKey: string): UserItem =
     for item in self.items:
