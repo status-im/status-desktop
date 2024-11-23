@@ -135,11 +135,6 @@ QtObject:
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
     return (keyUID in self.openedAccounts().mapIt(it.keyUid))
 
-  proc toStatusGoSupportedLogLevel*(logLevel: string): string =
-    if logLevel == "TRACE":
-      return "DEBUG"
-    return logLevel
-
   # FIXME: remove this method, settings should be processed in status-go
   # https://github.com/status-im/status-go/issues/5359
   proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
@@ -182,7 +177,7 @@ QtObject:
         rootDataDir: main_constants.STATUSGODIR,
         kdfIterations: KDF_ITERATIONS,
         customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
-        logLevel: some(toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)),
+        logLevel: some(main_constants.getStatusGoLogLevel()),
         wakuV2LightClient: false,
         wakuV2EnableMissingMessageVerification: true,
         wakuV2EnableStoreConfirmationForMessagesSent: true,
@@ -389,7 +384,7 @@ QtObject:
     )
 
     if main_constants.runtimeLogLevelSet():
-      request.runtimeLogLevel = toStatusGoSupportedLogLevel(main_constants.LOG_LEVEL)
+      request.runtimeLogLevel = main_constants.getStatusGoLogLevel()
 
     let response = status_account.loginAccount(request)
 

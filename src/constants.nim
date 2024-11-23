@@ -76,4 +76,9 @@ proc hasLogLevelOption*(): bool =
 proc runtimeLogLevelSet*(): bool =
   return existsEnv(RUN_TIME_PREFIX & "_LOG_LEVEL") or hasLogLevelOption()
 
+proc getStatusGoLogLevel*(): string =
+  if LOG_LEVEL == "TRACE":
+    return "DEBUG"
+  return LOG_LEVEL
+
 const MAIN_STATUS_SHARD_CLUSTER_ID* = 16
