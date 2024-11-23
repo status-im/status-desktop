@@ -16,11 +16,10 @@ import Models 1.0
 
 import mainui 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.stores 1.0 as AppLayoutStores
 import shared.stores 1.0 as SharedStores
-
-// TODO_ES remove unneeded imports
 
 SplitView {
     id: root
@@ -51,12 +50,12 @@ SplitView {
         readonly property string selectedAccountAddress: ctrlAccount.currentValue ?? ""
         readonly property int selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue ?? -1
 
-        readonly property SharedStores.RequestPaymentStore requestPaymentStore: SharedStores.RequestPaymentStore {
-            currencyStore: d.currencyStore
+        readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
+            assetsModel: d.walletAssetsStore.groupedAccountAssetsModel
             flatNetworksModel: d.flatNetworks
-            processedAssetsModel: d.walletAssetsStore.jointModel
-            plainAssetsModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-            accountsModel: d.accounts
+            currentCurrency: d.currencyStore.currentCurrency
+            plainTokensBySymbolModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+            showAllTokens: true
         }
     }
 
@@ -86,7 +85,10 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
 
-                store: d.requestPaymentStore
+                currencyStore: d.currencyStore
+                flatNetworksModel: d.flatNetworks
+                accountsModel: d.accounts
+                assetsModel: d.tokenAdaptor.outputAssetsModel
 
                 Connections {
                     target: d

@@ -100,7 +100,6 @@ SplitView {
                     }
                 }
 
-                requestPaymentStore: d.requestPaymentStore
                 requestPaymentEnabled: true
 
                 onSendMessage: {
@@ -149,14 +148,6 @@ SplitView {
                     plainTokensBySymbolModel: TokensBySymbolModel {}
                 }
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-            }
-
-            readonly property SharedStores.RequestPaymentStore requestPaymentStore: SharedStores.RequestPaymentStore {
-                currencyStore: SharedStores.CurrenciesStore {}
-                flatNetworksModel: NetworksModel.flatNetworks
-                processedAssetsModel: d.walletAssetsStore.jointModel
-                plainAssetsModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-                accountsModel: WalletAccountsModel {}
             }
 
             property bool linkPreviewsEnabled: linkPreviewSwitch.checked && !askToEnableLinkPreviewSwitch.checked

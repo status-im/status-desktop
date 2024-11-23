@@ -22,6 +22,7 @@ import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Communities.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -52,6 +53,7 @@ QtObject {
     property WalletStores.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
+    property ChatStores.RootStore chatStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -103,6 +105,7 @@ QtObject {
         Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
+        Global.openPaymentRequestModalRequested.connect(() => openPopup(requestPaymentPopupComponent))
     }
 
     property var currentPopup
@@ -1270,6 +1273,25 @@ QtObject {
                     }
                 }
                 standardButtons: Dialog.Ok
+                destroyOnClose: true
+            }
+        },
+        Component {
+            id: requestPaymentPopupComponent
+            RequestPaymentModal {
+                readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
+                    assetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                    flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                    currentCurrency: root.rootStore.currencyStore.currentCurrency
+                    plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
+                    showAllTokens: true
+                }
+                currencyStore: root.rootStore.currencyStore
+                flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                accountsModel: WalletStores.RootStore.nonWatchAccounts
+                assetsModel: tokenAdaptor.outputAssetsModel
+
+                onAccepted: root.chatStore.addPaymentRequest(selectedTokenKey, amount, selectedAccountAddress, selectedNetworkChainId)
                 destroyOnClose: true
             }
         }

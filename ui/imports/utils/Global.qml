@@ -92,6 +92,8 @@ QtObject {
 
     signal privacyPolicyRequested()
 
+    signal openPaymentRequestModalRequested()
+
     // Swap
     signal openSwapModalRequested(var formDataParams)
 

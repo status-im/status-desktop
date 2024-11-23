@@ -39,10 +39,10 @@ Rectangle {
     signal disableLinkPreview()
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
+    signal openPaymentRequestModal()
     
     property var usersModel
     property SharedStores.RootStore sharedStore
-    property SharedStores.RequestPaymentStore requestPaymentStore
 
     property var emojiPopup: null
     property var stickersPopup: null
@@ -160,7 +160,6 @@ Rectangle {
         property bool stickersPopupOpened: false
 
         property var imageDialog: null
-        property var requestPaymentPopup: null
 
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
@@ -962,13 +961,6 @@ Rectangle {
         d.imageDialog.open()
     }
 
-    function openPaymentRequestPopup() {
-        if (!control.requestPaymentEnabled)
-            return
-        d.requestPaymentPopup = requestPaymentPopupComponent.createObject(control)
-        d.requestPaymentPopup.open()
-    }
-
     DropAreaPanel {
         enabled: control.visible && control.enabled
         parent: Overlay.overlay
@@ -1015,22 +1007,6 @@ Rectangle {
     }
 
     Component {
-        id: requestPaymentPopupComponent
-        RequestPaymentModal {
-            store: control.requestPaymentStore
-
-            onAccepted: {
-                control.requestPaymentStore.addPaymentRequest(selectedTokenKey, amount, selectedAccountAddress, selectedNetworkChainId)
-                destroy()
-            }
-
-            onRejected: destroy()
-
-            Component.onCompleted: d.requestPaymentPopup = null
-        }
-    }
-
-    Component {
         id: chatCommandMenuComponent
 
         StatusMenu {
@@ -1045,7 +1021,7 @@ Rectangle {
                 icon.name: "wallet"
                 visibleOnDisabled: control.requestPaymentEnabled
                 enabled: control.requestPaymentEnabled && !root.areTestNetworksEnabled
-                onTriggered: control.openPaymentRequestPopup()
+                onTriggered: control.openPaymentRequestModal()
             }
 
             closeHandler: () => commandBtn.highlighted = false

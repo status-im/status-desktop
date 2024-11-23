@@ -295,15 +295,6 @@ Item {
 
                     usersModel: d.activeUsersStore.usersModel
                     sharedStore: root.sharedRootStore
-                    requestPaymentStore: SharedStores.RequestPaymentStore {
-                        currencyStore: root.rootStore.currencyStore
-                        flatNetworksModel: WalletStore.RootStore.filteredFlatModel
-                        processedAssetsModel: WalletStore.RootStore.walletAssetsStore.groupedAccountAssetsModel
-                        plainAssetsModel: WalletStore.RootStore.tokensStore.plainTokensBySymbolModel
-                        accountsModel: WalletStore.RootStore.nonWatchAccounts
-
-                        requestPaymentModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
-                    }
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     urlsList: d.urlsList
@@ -405,6 +396,7 @@ Item {
                         d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
                     }
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
+                    onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested()
                 }
 
                 ChatPermissionQualificationPanel {

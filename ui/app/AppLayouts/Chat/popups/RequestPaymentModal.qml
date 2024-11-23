@@ -21,8 +21,13 @@ import utils 1.0
 StatusDialog {
     id: root
 
-    required property SharedStores.RequestPaymentStore store
+    // models
+    required property SharedStores.CurrenciesStore currencyStore
+    required property var flatNetworksModel
+    required property var accountsModel
+    required property var assetsModel
 
+    // input / output
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
     property string selectedTokenKey: Constants.ethToken
@@ -63,14 +68,6 @@ StatusDialog {
         }
 
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item
-
-        readonly property var adaptor: TokenSelectorViewAdaptor {
-            assetsModel: root.store.processedAssetsModel
-            flatNetworksModel: root.store.flatNetworksModel
-            currentCurrency: root.store.currencyStore.currentCurrency
-            plainTokensBySymbolModel: root.store.plainAssetsModel
-            showAllTokens: true
-        }
     }
 
     footer: StatusDialogFooter {
@@ -83,7 +80,7 @@ StatusDialog {
                 objectName: "sendButton"
                 text: qsTr("Add to message")
                 disabledColor: Theme.palette.directColor8
-                enabled: amountToSendInput.valid && !amountToSendInput.empty && amountToSendInput.asNumber > 0
+                enabled: amountToSendInput.valid && !amountToSendInput.empty && amountToSendInput.amount > 0
                 interactive: true
                 onClicked: root.accept()
             }
@@ -105,19 +102,13 @@ StatusDialog {
             Layout.fillWidth: true
 
             readonly property bool ready: valid && !empty
-            readonly property double asNumber: {
-                if (!valid)
-                    return 0
-
-                return parseFloat(text.replace(LocaleUtils.userInputLocale.decimalPoint, "."))
-            }
 
             multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
             price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
-            formatFiat: amount => root.store.currencyStore.formatCurrencyAmount(
-                            amount, root.store.currencyStore.currentCurrency)
-            formatBalance: amount => root.store.currencyStore.formatCurrencyAmount(
+            formatFiat: amount => root.currencyStore.formatCurrencyAmount(
+                            amount, root.currencyStore.currentCurrency)
+            formatBalance: amount => root.currencyStore.formatCurrencyAmount(
                                amount, root.selectedTokenKey)
 
             showSeparator: true
@@ -127,8 +118,9 @@ StatusDialog {
 
                 anchors.top: parent.top
                 anchors.right: parent.right
+                anchors.topMargin: -(Theme.halfPadding / 2)
 
-                model: d.adaptor.outputAssetsModel
+                model: root.assetsModel
                 onSelected: root.selectedTokenKey = key
             }
         }
@@ -141,7 +133,7 @@ StatusDialog {
 
         AccountSelector {
             id: accountSelector
-            model: root.store.accountsModel
+            model: root.accountsModel
             Layout.fillWidth: true
             Layout.preferredHeight: 64
 
@@ -182,12 +174,12 @@ StatusDialog {
             Layout.preferredHeight: 64
 
             readonly property ModelEntry singleSelectionItem: ModelEntry {
-                sourceModel: root.store.flatNetworksModel
+                sourceModel: root.flatNetworksModel
                 key: "chainId"
                 value: root.selectedNetworkChainId ?? -1
             }
 
-            model: root.store.flatNetworksModel
+            model: root.flatNetworksModel
 
             control.background: SQP.StatusComboboxBackground {
                 active: networkSelector.control.down || networkSelector.control.hovered

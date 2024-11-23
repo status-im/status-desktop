@@ -7,6 +7,5 @@ GifStore 1.0 GifStore.qml
 MetricsStore 1.0 MetricsStore.qml
 NetworkConnectionStore 1.0 NetworkConnectionStore.qml
 PermissionsStore 1.0 PermissionsStore.qml
-RequestPaymentStore 1.0 RequestPaymentStore.qml
 RootStore 1.0 RootStore.qml
 UtilsStore 1.0 UtilsStore.qml
