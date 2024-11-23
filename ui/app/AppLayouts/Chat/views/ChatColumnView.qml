@@ -57,7 +57,7 @@ Item {
     property var viewAndPostHoldingsModel
     property bool amISectionAdmin: false
     property bool sendViaPersonalChatEnabled
-    property bool requestPaymentEnabled
+    property bool paymentRequestEnabled
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -327,7 +327,7 @@ Item {
                     stickersPopup: root.stickersPopup
                     chatType: root.activeChatType
                     areTestNetworksEnabled: root.areTestNetworksEnabled
-                    requestPaymentEnabled: root.requestPaymentEnabled
+                    paymentRequestEnabled: root.paymentRequestEnabled
 
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule && textInput.text !== d.activeChatContentModule.inputAreaModule.preservedProperties.text) {

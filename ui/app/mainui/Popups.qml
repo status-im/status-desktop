@@ -105,7 +105,7 @@ QtObject {
         Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
-        Global.openPaymentRequestModalRequested.connect(() => openPopup(requestPaymentPopupComponent))
+        Global.openPaymentRequestModalRequested.connect(() => openPopup(paymentRequestPopupComponent))
     }
 
     property var currentPopup
@@ -1277,8 +1277,8 @@ QtObject {
             }
         },
         Component {
-            id: requestPaymentPopupComponent
-            RequestPaymentModal {
+            id: paymentRequestPopupComponent
+            PaymentRequestModal {
                 readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
                     assetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
                     flatNetworksModel: WalletStores.RootStore.filteredFlatModel

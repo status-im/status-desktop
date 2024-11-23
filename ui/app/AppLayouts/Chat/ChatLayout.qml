@@ -37,7 +37,7 @@ StackLayout {
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
     property bool areTestNetworksEnabled
-    property bool requestPaymentEnabled
+    property bool paymentRequestEnabled
 
     property var sectionItemModel
 
@@ -176,7 +176,7 @@ StackLayout {
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
-            requestPaymentEnabled: root.requestPaymentEnabled
+            paymentRequestEnabled: root.paymentRequestEnabled
 
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision

@@ -33,7 +33,7 @@ SplitView {
         readonly property var tokenBySymbolModel: TokensBySymbolModel {}
 
         function launchPopup() {
-            requestPaymentModalComponent.createObject(root)
+            paymentRequestModalComponent.createObject(root)
         }
 
         readonly property var accounts: WalletAccountsModel {}
@@ -69,7 +69,7 @@ SplitView {
             id: reopenButton
             anchors.centerIn: parent
             text: "Reopen"
-            enabled: !requestPaymentModalComponent.visible
+            enabled: !paymentRequestModalComponent.visible
 
             onClicked: d.launchPopup()
         }
@@ -77,9 +77,9 @@ SplitView {
         Component.onCompleted: Qt.callLater(d.launchPopup)
 
         Component {
-            id: requestPaymentModalComponent
-            RequestPaymentModal {
-                id: requestPaymentModal
+            id: paymentRequestModalComponent
+            PaymentRequestModal {
+                id: paymentRequestModal
                 visible: true
                 modal: false
                 closePolicy: Popup.CloseOnEscape
@@ -93,17 +93,17 @@ SplitView {
                 Connections {
                     target: d
                     function onSelectedNetworkChainIdChanged() {
-                        requestPaymentModal.selectedNetworkChainId = d.selectedNetworkChainId
+                        paymentRequestModal.selectedNetworkChainId = d.selectedNetworkChainId
                     }
                     function onSelectedAccountAddressChanged() {
-                        requestPaymentModal.selectedAccountAddress = d.selectedAccountAddress
+                        paymentRequestModal.selectedAccountAddress = d.selectedAccountAddress
                     }
                 }
                 Component.onCompleted: {
                     if (d.selectedNetworkChainId > -1)
-                        requestPaymentModal.selectedNetworkChainId = d.selectedNetworkChainId
+                        paymentRequestModal.selectedNetworkChainId = d.selectedNetworkChainId
                     if (!!d.selectedAccountAddress)
-                        requestPaymentModal.selectedAccountAddress = d.selectedAccountAddress
+                        paymentRequestModal.selectedAccountAddress = d.selectedAccountAddress
                 }
             }
         }

@@ -5,7 +5,7 @@ const DEFAULT_FLAG_DAPPS_ENABLED = true
 const DEFAULT_FLAG_SWAP_ENABLED = true
 const DEFAULT_FLAG_CONNECTOR_ENABLED* = false
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED = true
-const DEFAULT_FLAG_REQUEST_PAYMENT_ENABLED = true
+const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 
 proc boolToEnv*(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
@@ -16,7 +16,7 @@ QtObject:
     swapEnabled: bool
     connectorEnabled: bool
     sendViaPersonalChatEnabled: bool
-    requestPaymentEnabled: bool
+    paymentRequestEnabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
@@ -24,7 +24,7 @@ QtObject:
     self.swapEnabled = getEnv("FLAG_SWAP_ENABLED", boolToEnv(DEFAULT_FLAG_SWAP_ENABLED)) != "0"
     self.connectorEnabled = getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
     self.sendViaPersonalChatEnabled = getEnv("FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED", boolToEnv(DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)) != "0"
-    self.requestPaymentEnabled = getEnv("FLAG_REQUEST_PAYMENT_ENABLED", boolToEnv(DEFAULT_FLAG_REQUEST_PAYMENT_ENABLED)) != "0"
+    self.paymentRequestEnabled = getEnv("FLAG_PAYMENT_REQUEST_ENABLED", boolToEnv(DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)) != "0"
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
@@ -57,8 +57,8 @@ QtObject:
   QtProperty[bool] sendViaPersonalChatEnabled:
     read = getSendViaPersonalChatEnabled
 
-  proc getRequestPaymentEnabled*(self: FeatureFlags): bool {.slot.} =
-    return self.requestPaymentEnabled
+  proc getPaymentRequestEnabled*(self: FeatureFlags): bool {.slot.} =
+    return self.paymentRequestEnabled
 
-  QtProperty[bool] requestPaymentEnabled:
-    read = getRequestPaymentEnabled
+  QtProperty[bool] paymentRequestEnabled:
+    read = getPaymentRequestEnabled

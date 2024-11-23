@@ -39,7 +39,7 @@ StatusDialog {
         return amountToSendInput.text
     }
 
-    objectName: "requestPaymentModal"
+    objectName: "paymentRequestModal"
 
     implicitWidth: 480
     implicitHeight: 470

@@ -97,7 +97,7 @@ Item {
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
-        requestPaymentEnabled: featureFlags ? featureFlags.requestPaymentEnabled : false
+        paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
