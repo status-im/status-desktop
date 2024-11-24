@@ -78,10 +78,15 @@ StatusDialog {
         }
         rightButtons: ObjectModel {
             StatusButton {
-                objectName: "sendButton"
+                objectName: "addButton"
                 text: qsTr("Add to message")
                 disabledColor: Theme.palette.directColor8
-                enabled: amountToSendInput.valid && !amountToSendInput.empty && amountToSendInput.amount > 0
+                enabled: amountToSendInput.valid
+                         && !amountToSendInput.empty
+                         && amountToSendInput.amount > 0
+                         && root.selectedAccountAddress !== ""
+                         && root.selectedNetworkChainId > 0
+                         && root.selectedTokenKey !== ""
                 interactive: true
                 onClicked: root.accept()
             }
@@ -100,6 +105,7 @@ StatusDialog {
 
         AmountToSend {
             id: amountToSendInput
+            objectName: "amountInput"
             Layout.fillWidth: true
 
             readonly property bool ready: valid && !empty
@@ -116,6 +122,7 @@ StatusDialog {
 
             AssetSelector {
                 id: holdingSelector
+                objectName: "assetSelector"
 
                 anchors.top: parent.top
                 anchors.right: parent.right
@@ -139,6 +146,7 @@ StatusDialog {
             Layout.preferredHeight: 64
 
             size: StatusComboBox.Size.Large
+            selectedAddress: root.selectedAccountAddress
 
             control.background: SQP.StatusComboboxBackground {
                 active: accountSelector.control.down || accountSelector.control.hovered
@@ -160,7 +168,12 @@ StatusDialog {
                 statusListItemTitle.customColor: Theme.palette.directColor1
                 enabled: false
             }
-            onCurrentAccountAddressChanged: root.selectedAccountAddress = currentAccountAddress
+            onCurrentAccountAddressChanged: {
+                if (root.selectedAccountAddress === "")
+                    selectedAddress = "" // Remove binding to prevent internal binding loop
+
+                root.selectedAccountAddress = currentAccountAddress
+            }
         }
 
         StatusBaseText {
