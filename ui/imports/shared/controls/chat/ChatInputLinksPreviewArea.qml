@@ -37,10 +37,10 @@ Control {
         string symbol
         string amount
     */
-    required property var requestPaymentModel
+    required property var paymentRequestModel
 
     readonly property alias hoveredUrl: d.hoveredUrl
-    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0 || requestPaymentRepeater.count > 0
+    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0 || paymentRequestRepeater.count > 0
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)
@@ -105,9 +105,9 @@ Control {
                     visible: !!imagePreviewArray && imagePreviewArray.length > 0
                 }
                 Repeater {
-                    id: requestPaymentRepeater
-                    model: root.requestPaymentModel
-                    delegate: RequestPaymentMiniCardDelegate {
+                    id: paymentRequestRepeater
+                    model: root.paymentRequestModel
+                    delegate: PaymentRequestMiniCardDelegate {
                         required property var model
 
                         amount: model.amount

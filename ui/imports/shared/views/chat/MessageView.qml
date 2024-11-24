@@ -992,7 +992,7 @@ Loader {
                         gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                         canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
-                        onRequestPaymentClicked: Global.paymentRequestClicked(receiver, symbol, amount, chainId)
+                        onPaymentRequestClicked: Global.paymentRequestClicked(receiver, symbol, amount, chainId)
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)

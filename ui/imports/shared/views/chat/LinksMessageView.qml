@@ -40,7 +40,7 @@ Flow {
     signal imageClicked(var image, var mouse, string imageSource, string url)
     signal openContextMenu(var item, string url, string domain)
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
-    signal requestPaymentClicked(var symbol, var amount, var receiver, var chainId)
+    signal paymentRequestClicked(var symbol, var amount, var receiver, var chainId)
 
     function resetLocalAskAboutUnfurling() {
         d.localAskAboutUnfurling = true
@@ -64,18 +64,18 @@ Flow {
     }
 
     Repeater {
-        id: requestPaymentRepeater
+        id: paymentRequestRepeater
         model: root.paymentRequestModel
-        delegate: RequestPaymentCardDelegate {
+        delegate: PaymentRequestCardDelegate {
             required property var model
-            objectName: "RrequestPaymentDelegate_" + model.index
+            objectName: "RpaymentRequestDelegate_" + model.index
             amount: model.amount
             symbol: model.symbol
             address: model.receiver
             senderName: root.senderName
             senderThumbnailImage: root.senderThumbnailImage
             senderColorId: root.senderColorId
-            onClicked: root.requestPaymentClicked(model.symbol, model.amount, model.receiver, model.chainId)
+            onClicked: root.paymentRequestClicked(model.symbol, model.amount, model.receiver, model.chainId)
         }
     }
 

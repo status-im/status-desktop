@@ -32,7 +32,7 @@ SplitView {
                     width: parent.width
                     imagePreviewArray: ["https://picsum.photos/200/300?random=1", "https://picsum.photos/200/300?random=1"]
                     linkPreviewModel: showLinkPreviewSettings ? emptyModel : mockedLinkPreviewModel
-                    requestPaymentModel: mockedRequestPaymentModel
+                    paymentRequestModel: mockedPaymentRequestModel
                     showLinkPreviewSettings: !linkPreviewEnabledSwitch.checked
                     visible: hasContent
 
@@ -84,8 +84,8 @@ SplitView {
         id: mockedLinkPreviewModel
     }
 
-    RequestPaymentModel {
-        id: mockedRequestPaymentModel
+    PaymentRequestModel {
+        id: mockedPaymentRequestModel
     }
 }
 

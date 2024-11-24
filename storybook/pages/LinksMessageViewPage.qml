@@ -13,8 +13,8 @@ SplitView {
         id: mockedLinkPreviewModel
     }
 
-    RequestPaymentModel {
-        id: mockedRequestPaymentModel
+    PaymentRequestModel {
+        id: mockedPaymentRequestModel
     }
 
     Pane {
@@ -31,7 +31,7 @@ SplitView {
             playAnimations: true
             linkPreviewModel: mockedLinkPreviewModel
             gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
-            requestPaymentModel: mockedRequestPaymentModel
+            paymentRequestModel: mockedPaymentRequestModel
 
             senderName: "Alice"
 
