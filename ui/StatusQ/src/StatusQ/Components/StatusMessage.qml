@@ -49,6 +49,7 @@ Control {
     property string messageAttachments: ""
     property var reactionIcons: []
     property var linkPreviewModel
+    property var paymentRequestModel
     property var gifLinks
 
     property string messageId: ""
@@ -377,7 +378,8 @@ Control {
                         Layout.preferredHeight: implicitHeight
                         active: !root.editMode &&
                                 ((!!root.linkPreviewModel && root.linkPreviewModel.count > 0)
-                                || (!!root.gifLinks && root.gifLinks.length > 0))
+                                || (!!root.gifLinks && root.gifLinks.length > 0)
+                                || (!!root.paymentRequestModel && root.paymentRequestModel.count > 0))
                         visible: active 
                     }
                     Loader {

@@ -40,7 +40,7 @@ Control {
     required property var requestPaymentModel
 
     readonly property alias hoveredUrl: d.hoveredUrl
-    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0
+    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0 || requestPaymentRepeater.count > 0
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)

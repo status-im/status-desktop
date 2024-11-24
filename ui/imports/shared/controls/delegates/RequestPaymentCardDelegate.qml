@@ -20,7 +20,8 @@ CalloutCard {
     required property string address
 
     property string senderName
-    property var senderImageAssetSettings
+    property string senderThumbnailImage
+    property int senderColorId
 
     property bool highlight: false
 
@@ -97,7 +98,13 @@ CalloutCard {
                 StatusSmartIdenticon {
                     width: symbolImage.width
                     height: symbolImage.height
-                    asset: root.senderImageAssetSettings
+                    asset.width: symbolImage.width
+                    asset.height: symbolImage.height
+                    asset.isImage: !!root.senderThumbnailImage
+                    asset.name: root.senderThumbnailImage
+                    asset.isLetterIdenticon: root.senderThumbnailImage === ""
+                    asset.color: Theme.palette.userCustomizationColors[root.senderColorId]
+                    asset.charactersLen: 2
                     name: root.senderName
                 }
             }
