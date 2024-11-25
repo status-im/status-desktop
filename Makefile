@@ -439,6 +439,8 @@ $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
 	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
+		SENTRY_CONTEXT_NAME="status-desktop" \
+		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 status-go: $(STATUSGO)
