@@ -363,9 +363,20 @@ Page {
             // TODO backend: start the sync
             Backpressure.debounce(root, 1000, function() {
                 stack.clear()
-                // TODO show the sync in progress screen instead of the final splash page?
-                stack.replace(splashScreen, { runningProgressAnimation: true })
+                stack.replace(syncProgressPage)
             })()
+        }
+
+        function onRestartSyncRequested() {
+            console.warn("!!! RESTART SYNC REQUESTED")
+            // TODO backend: start the sync
+            stack.clear()
+            stack.replace(syncProgressPage)
+        }
+
+        function onLoginToAppRequested() {
+            console.warn("!!! LOGIN TO APP REQUESTED")
+            stack.replace(splashScreen, { runningProgressAnimation: true })
         }
 
         // enable biometrics page
@@ -526,6 +537,14 @@ Page {
         id: loginBySyncPage
         LoginBySyncingPage {
             validateConnectionString: root.startupStore.validateLocalPairingConnectionString
+        }
+    }
+
+    Component {
+        id: syncProgressPage
+        SyncProgressPage {
+            syncState: SyncProgressPage.SyncState.InProgress // TODO integrate backend
+            timeoutInterval: root.splashScreenDurationMs
         }
     }
 
