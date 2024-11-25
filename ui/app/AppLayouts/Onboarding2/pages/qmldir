@@ -13,7 +13,9 @@ KeycardEmptyPage 1.0 KeycardEmptyPage.qml
 KeycardEnterPinPage 1.0 KeycardEnterPinPage.qml
 KeycardIntroPage 1.0 KeycardIntroPage.qml
 KeycardNotEmptyPage 1.0 KeycardNotEmptyPage.qml
+KeycardAddKeyPairPage 1.0 KeycardAddKeyPairPage.qml
 LoginPage 1.0 LoginPage.qml
 LoginBySyncingPage 1.0 LoginBySyncingPage.qml
 SeedphrasePage 1.0 SeedphrasePage.qml
 WelcomePage 1.0 WelcomePage.qml
+SyncProgressPage 1.0 SyncProgressPage.qml
