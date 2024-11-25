@@ -1395,6 +1395,8 @@ Item {
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
+                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                                paymentRequestEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1560,6 +1562,7 @@ Item {
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
+                                paymentRequestEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);

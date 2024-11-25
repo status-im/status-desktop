@@ -272,14 +272,6 @@ QtObject {
         return result
     }
 
-    function addPaymentRequest(symbol, amount, address, chainId) {
-        currentChatContentModule().inputAreaModule.paymentRequestModel.addPaymentRequest(address, amount, symbol, chainId)
-    }
-
-    function removePaymentRequest(index) {
-        currentChatContentModule().inputAreaModule.paymentRequestModel.removeItemWithIndex(index)
-    }
-
     function openCloseCreateChatView() {
         if (root.openCreateChat) {
              Global.closeCreateChatView()

@@ -72,6 +72,7 @@ Rectangle {
     property var fileUrlsAndSources: []
 
     property var linkPreviewModel: null
+    property var paymentRequestModel: null
 
     property var urlsList: []
 
@@ -1020,7 +1021,7 @@ Rectangle {
                 text: qsTr("Add payment request")
                 icon.name: "wallet"
                 visibleOnDisabled: control.paymentRequestEnabled
-                enabled: control.paymentRequestEnabled && !root.areTestNetworksEnabled
+                enabled: control.paymentRequestEnabled && !control.areTestNetworksEnabled
                 onTriggered: control.openPaymentRequestModal()
             }
 

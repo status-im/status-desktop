@@ -51,7 +51,7 @@ SplitView {
         readonly property int selectedNetworkChainId: ctrlSelectedNetworkChainId.currentValue ?? -1
 
         readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
-            assetsModel: d.walletAssetsStore.groupedAccountAssetsModel
+            assetsModel: d.walletAssetsStore.baseGroupedAccountAssetModel
             flatNetworksModel: d.flatNetworks
             currentCurrency: d.currencyStore.currentCurrency
             plainTokensBySymbolModel: d.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
@@ -85,7 +85,8 @@ SplitView {
                 closePolicy: Popup.CloseOnEscape
                 destroyOnClose: true
 
-                currencyStore: d.currencyStore
+                currentCurrency: d.currencyStore.currentCurrency
+                formatCurrencyAmount: d.currencyStore.formatCurrencyAmount
                 flatNetworksModel: d.flatNetworks
                 accountsModel: d.accounts
                 assetsModel: d.tokenAdaptor.outputAssetsModel

@@ -53,7 +53,6 @@ QtObject {
     property WalletStores.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
-    property ChatStores.RootStore chatStore
     property bool isDevBuild
 
     signal openExternalLink(string link)
@@ -105,7 +104,7 @@ QtObject {
         Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
-        Global.openPaymentRequestModalRequested.connect(() => openPopup(paymentRequestPopupComponent))
+        Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
     }
 
     property var currentPopup
@@ -404,6 +403,10 @@ QtObject {
         openPopup(buyCryptoModal, {
             buyCryptoInputParamsForm: parameters
         })
+    }
+
+    function openPaymentRequestModal(inputAreaModule) {
+        openPopup(paymentRequestModalComponent, {inputAreaModule: inputAreaModule})
     }
 
     readonly property list<Component> _components: [
@@ -1277,21 +1280,25 @@ QtObject {
             }
         },
         Component {
-            id: paymentRequestPopupComponent
+            id: paymentRequestModalComponent
             PaymentRequestModal {
+                id: paymentRequestModal
                 readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
-                    assetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
+                    assetsModel: WalletStores.RootStore.walletAssetsStore._renamedTokensBySymbolModel
                     flatNetworksModel: WalletStores.RootStore.filteredFlatModel
-                    currentCurrency: root.rootStore.currencyStore.currentCurrency
+                    currentCurrency: root.currencyStore.currentCurrency
                     plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
+                    enabledChainIds: [paymentRequestModal.selectedNetworkChainId]
                     showAllTokens: true
                 }
-                currencyStore: root.rootStore.currencyStore
+                property var inputAreaModule: null
+                currentCurrency: root.currencyStore.currentCurrency
+                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 flatNetworksModel: WalletStores.RootStore.filteredFlatModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 assetsModel: tokenAdaptor.outputAssetsModel
 
-                onAccepted: root.chatStore.addPaymentRequest(selectedTokenKey, amount, selectedAccountAddress, selectedNetworkChainId)
+                onAccepted: inputAreaModule.addPaymentRequest(selectedAccountAddress, amount, selectedTokenKey, selectedNetworkChainId)
                 destroyOnClose: true
             }
         }

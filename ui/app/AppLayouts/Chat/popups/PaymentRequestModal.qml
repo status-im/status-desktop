@@ -15,17 +15,18 @@ import AppLayouts.Wallet.adaptors 1.0
 
 import shared.popups.send.views 1.0
 import shared.controls 1.0
-import shared.stores 1.0 as SharedStores
+import StatusQ.Core.Utils 0.1 as SQUtils
 import utils 1.0
 
 StatusDialog {
     id: root
 
     // models
-    required property SharedStores.CurrenciesStore currencyStore
+    required property string currentCurrency
     required property var flatNetworksModel
     required property var accountsModel
     required property var assetsModel
+    property var formatCurrencyAmount: function() {}
 
     // input / output
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
@@ -36,7 +37,7 @@ StatusDialog {
         if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
             return "0"
         }
-        return amountToSendInput.text
+        return SQUtils.AmountsArithmetic.toNumber(amountToSendInput.amount, amountToSendInput.multiplierIndex)
     }
 
     objectName: "paymentRequestModal"
@@ -106,9 +107,9 @@ StatusDialog {
             multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
             price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
-            formatFiat: amount => root.currencyStore.formatCurrencyAmount(
-                            amount, root.currencyStore.currentCurrency)
-            formatBalance: amount => root.currencyStore.formatCurrencyAmount(
+            formatFiat: amount => root.formatCurrencyAmount(
+                            amount, root.currentCurrency)
+            formatBalance: amount => root.formatCurrencyAmount(
                                amount, root.selectedTokenKey)
 
             showSeparator: true
@@ -159,6 +160,7 @@ StatusDialog {
                 statusListItemTitle.customColor: Theme.palette.directColor1
                 enabled: false
             }
+            onCurrentAccountAddressChanged: root.selectedAccountAddress = currentAccountAddress
         }
 
         StatusBaseText {

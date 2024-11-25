@@ -297,6 +297,7 @@ Item {
                     sharedStore: root.sharedRootStore
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
+                    paymentRequestModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
                     urlsList: d.urlsList
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
@@ -372,6 +373,7 @@ Item {
                             chatInput.setText("")
                             chatInput.textInput.textFormat = TextEdit.PlainText;
                             chatInput.textInput.textFormat = TextEdit.RichText;
+                            d.activeChatContentModule.inputAreaModule.removeAllPaymentRequestPreviewData()
                         }
                     }
 
@@ -396,7 +398,7 @@ Item {
                         d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
                     }
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
-                    onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested()
+                    onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested(d.activeChatContentModule.inputAreaModule)
                 }
 
                 ChatPermissionQualificationPanel {
