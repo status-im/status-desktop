@@ -439,7 +439,7 @@ Item {
             }
             PropertyChanges {
                 target: txtDesc
-                text: qsTr("Seed phrases are used to back up and restore your keys.\nOnly use this option if you already have a recovery phrase.")
+                text: qsTr("Recovery phrases are used to back up and restore your keys.\nOnly use this option if you already have a recovery phrase.")
                 height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
