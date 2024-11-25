@@ -276,7 +276,7 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
       sleep 700
     let response = status_go.initializeApplication($payload)
     let jsonResponse = parseJson(response)
-    let error = jsonResponse["error"].getStr()
+    let error = jsonResponse{"error"}.getStr()
     if error.len > 0:
       raise newException(RpcException, error)
     result.result = jsonResponse
