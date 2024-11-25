@@ -8349,8 +8349,12 @@
         <file>assets/png/onboarding/status_key.png</file>
         <file>assets/png/onboarding/status_keycard.png</file>
         <file>assets/png/onboarding/status_keycard_multiple.png</file>
+        <file>assets/png/onboarding/status_keycard_adding_keypair.png</file>
         <file>assets/png/onboarding/status_seedphrase.png</file>
         <file>assets/png/onboarding/status_sync.png</file>
+        <file>assets/png/onboarding/status_sync_progress.png</file>
+        <file>assets/png/onboarding/status_sync_success.png</file>
+        <file>assets/png/onboarding/status_sync_failed.png</file>
         <file>assets/png/onboarding/enable_biometrics.png</file>
         <file>assets/png/onboarding/keycard/empty.png</file>
         <file>assets/png/onboarding/keycard/insert.png</file>

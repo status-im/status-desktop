@@ -35,16 +35,19 @@ SplitView {
 
         readonly property var keycardStates: [
             // initial
-            //Constants.startupState.keycardNoPCSCService,
+            Constants.startupState.keycardNoPCSCService,
             Constants.startupState.keycardPluginReader,
             Constants.startupState.keycardInsertKeycard,
-            Constants.startupState.keycardInsertedKeycard, Constants.startupState.keycardReadingKeycard,
+            Constants.startupState.keycardInsertedKeycard,
+            Constants.startupState.keycardReadingKeycard,
+            Constants.startupState.keycardRecognizedKeycard,
             // initial errors
-            Constants.startupState.keycardWrongKeycard, Constants.startupState.keycardNotKeycard,
+            Constants.startupState.keycardWrongKeycard,
+            Constants.startupState.keycardNotKeycard,
             Constants.startupState.keycardMaxPairingSlotsReached,
             Constants.startupState.keycardLocked,
+            // exit states
             Constants.startupState.keycardNotEmpty,
-            // create keycard profile
             Constants.startupState.keycardEmpty
         ]
 
@@ -57,7 +60,7 @@ SplitView {
         SplitView.fillHeight: true
         startupStore: OOBS.StartupStore {
             readonly property var currentStartupState: QtObject {
-                property string stateType: keycardMock.stateType
+                property string stateType: keycardMock.stateType // Constants.startupState.keycardXXX
             }
 
             function getPasswordStrengthScore(password) {

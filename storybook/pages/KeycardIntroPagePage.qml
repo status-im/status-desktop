@@ -78,8 +78,10 @@ Item {
                 Constants.startupState.keycardReadingKeycard,
                 Constants.startupState.keycardRecognizedKeycard,
                 // initial errors
-                Constants.startupState.keycardWrongKeycard, Constants.startupState.keycardNotKeycard,
-                Constants.startupState.keycardLocked, Constants.startupState.keycardMaxPairingSlotsReached,
+                Constants.startupState.keycardWrongKeycard,
+                Constants.startupState.keycardNotKeycard,
+                Constants.startupState.keycardMaxPairingSlotsReached,
+                Constants.startupState.keycardLocked,
                 // exit states
                 Constants.startupState.keycardNotEmpty,
                 Constants.startupState.keycardEmpty
