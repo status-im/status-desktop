@@ -684,7 +684,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
             compare(root.swapAdaptor.swapOutputData.hasError, true)
             verify(errorTag.visible)
-            verify(errorTag.text, qsTr("Insufficient funds to pay gas fees"))
+            verify(errorTag.text, qsTr("Not enough ETH to pay gas fees"))
             verify(!signButton.interactive)
             compare(signButton.text, qsTr("Swap"))
 
@@ -1314,7 +1314,7 @@ Item {
                     let errortext = amountEnteredGreaterThanMaxBalance ? qsTr("Insufficient funds for swap"): qsTr("An error has occured, please try again")
                     compare(errorTag.visible, amountEnteredGreaterThanMaxBalance)
                     compare(errorTag.text, root.swapAdaptor.errorMessage)
-                    compare(errorTag.buttonText, root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH"))
+                    compare(errorTag.buttonText, root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Add assets") : qsTr("Add ETH"))
                     compare(errorTag.buttonVisible, amountEnteredGreaterThanMaxBalance)
                 }
 

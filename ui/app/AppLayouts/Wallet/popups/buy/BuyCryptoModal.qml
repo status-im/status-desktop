@@ -88,7 +88,7 @@ StatusStackModal {
         readonly property ModelEntry selectedTokenEntry: ModelEntry {
             sourceModel: root.plainTokensBySymbolModel
             key: "key"
-            value: root.buyCryptoInputParamsForm.selectedTokenKey
+            value: root.buyCryptoInputParamsForm.selectedTokenKey || Constants.ethToken
         }
 
         readonly property ModelEntry selectedProviderEntry: ModelEntry {
@@ -140,7 +140,7 @@ StatusStackModal {
     width: 560
     height: 515
     padding: Theme.xlPadding
-    stackTitle: qsTr("Buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
+    stackTitle: !!root.buyCryptoInputParamsForm.selectedTokenKey ? qsTr("Ways to buy %1 for %2").arg(d.selectedTokenEntry.item.name).arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: ""): qsTr("Ways to buy assets for %1").arg(!!d.selectedAccountEntry.item ? d.selectedAccountEntry.item.name: "")
     rightButtons: [d.buyButton, finishButton]
     finishButton: StatusButton {
         text: qsTr("Done")

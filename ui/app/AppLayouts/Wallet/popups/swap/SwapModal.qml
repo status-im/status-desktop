@@ -310,13 +310,15 @@ StatusDialog {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Theme.smallPadding
                 text: root.swapAdaptor.errorMessage
-                buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Buy crypto") : qsTr("Buy ETH")
+                buttonText: root.swapAdaptor.isTokenBalanceInsufficient ? qsTr("Add assets") : qsTr("Add ETH")
                 buttonVisible: visible && (root.swapAdaptor.isTokenBalanceInsufficient || root.swapAdaptor.isEthBalanceInsufficient)
                 onButtonClicked: {
                     // value dont update correctly if not done from here
                     d.buyFormData.selectedWalletAddress = root.swapInputParamsForm.selectedAccountAddress
                     d.buyFormData.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
-                    d.buyFormData.selectedTokenKey =root.swapInputParamsForm.fromTokensKey
+                    d.buyFormData.selectedTokenKey = root.swapAdaptor.isTokenBalanceInsufficient ?
+                                root.swapInputParamsForm.fromTokensKey :
+                                Constants.ethToken
                     Global.openBuyCryptoModalRequested(d.buyFormData)
                 }
             }

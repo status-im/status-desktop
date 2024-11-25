@@ -12,7 +12,7 @@ Item {
         id: componentUnderTest
         ErrorTag {
             anchors.centerIn: parent
-            text: "Insufficient funds to pay gas fees"
+            text: "Not enough ETH to pay gas fees"
         }
     }
 
@@ -49,7 +49,7 @@ Item {
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
             const origWidth = controlUnderTest.width
-            controlUnderTest.buttonText = "Buy crypto"
+            controlUnderTest.buttonText = "Add assets"
             controlUnderTest.buttonVisible = true
             waitForRendering(controlUnderTest)
             const widthWithButton = controlUnderTest.width
@@ -61,7 +61,7 @@ Item {
 
         function test_buttonClick() {
             verify(!!controlUnderTest)
-            controlUnderTest.buttonText = "Buy crypto"
+            controlUnderTest.buttonText = "Add assets"
             controlUnderTest.buttonVisible = true
             const button = findChild(controlUnderTest, "rightComponentButton")
             verify(!!button)
