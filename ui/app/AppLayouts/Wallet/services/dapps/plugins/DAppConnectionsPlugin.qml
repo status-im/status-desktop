@@ -195,9 +195,8 @@ SQUtils.QObject {
             const proposal = d.activeProposals.get(key.toString()).context
             const dAppUrl = proposal.params.proposer.metadata.url
 
-            if(error || !approvedNamespaces) {
-                // Check that it contains Non conforming namespaces"
-                if (error.includes("Non conforming namespaces")) {
+            if(error || !approvedNamespaces || !approvedNamespaces.eip155) {
+                if (!approvedNamespaces.eip155 || error.includes("Non conforming namespaces")) {
                     root.newConnectionFailed(proposal.id, dAppUrl, Pairing.errors.unsupportedNetwork)
                 } else {
                     root.newConnectionFailed(proposal.id, dAppUrl, Pairing.errors.unknownError)
