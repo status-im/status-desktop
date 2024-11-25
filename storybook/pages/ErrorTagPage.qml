@@ -49,7 +49,7 @@ SplitView {
                 TextField {
                     Layout.fillWidth: true
                     id: ctrlText
-                    text: "Insufficient funds to pay gas fees"
+                    text: "Not enough ETH to pay gas fees"
                 }
             }
             RowLayout {
@@ -58,7 +58,7 @@ SplitView {
                 TextField {
                     Layout.fillWidth: true
                     id: ctrlButtonText
-                    text: "Buy ETH"
+                    text: "Add ETH"
                 }
             }
             RowLayout {

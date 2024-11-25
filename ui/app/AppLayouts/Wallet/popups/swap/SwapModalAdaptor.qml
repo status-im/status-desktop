@@ -178,7 +178,7 @@ QObject {
             if (isBalanceInsufficientForSwap) {
                 return qsTr("Insufficient funds for swap")
             } else if (isBalanceInsufficientForFees) {
-                return qsTr("Insufficient funds to pay gas fees")
+                return qsTr("Not enough ETH to pay gas fees")
             } else if (root.swapOutputData.hasError) {
                 // TOOD #15874: Unify with WalletUtils router error code handling
                 switch (root.swapOutputData.errCode) {

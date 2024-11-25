@@ -193,7 +193,7 @@ Item {
             verify(!!selectParamsPanel)
 
             // title should not change
-            verify(controlUnderTest.stackTitle, qsTr("Buy assets for %1").arg(!!controlUnderTest.selectedAccountEntry.item ? controlUnderTest.selectedAccountEntry.item.name: ""))
+            verify(controlUnderTest.stackTitle, qsTr("Ways to buy assets %1").arg(!!controlUnderTest.selectedAccountEntry.item ? controlUnderTest.selectedAccountEntry.item.name: ""))
 
             compare(controlUnderTest.rightButtons.length, 2)
             verify(controlUnderTest.rightButtons[0].visible)
@@ -310,7 +310,7 @@ Item {
             // Launch modal
             launchPopup()
 
-            verify(controlUnderTest.stackTitle, qsTr("Buy assets for %1").arg(!!controlUnderTest.selectedAccountEntry.item ? controlUnderTest.selectedAccountEntry.item.name: ""))
+            verify(controlUnderTest.stackTitle, qsTr("Ways to buy assets for %1").arg(!!controlUnderTest.selectedAccountEntry.item ? controlUnderTest.selectedAccountEntry.item.name: ""))
 
             // // find tab bar
             // const tabBar = findChild(controlUnderTest, "tabBar")

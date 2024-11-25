@@ -367,7 +367,6 @@ Item {
             onLaunchBuyCryptoModal: {
                 d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
-                d.buyFormData.selectedTokenKey = Constants.ethToken
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
                 }
