@@ -68,7 +68,7 @@ Flow {
         model: root.paymentRequestModel
         delegate: PaymentRequestCardDelegate {
             required property var model
-            objectName: "RpaymentRequestDelegate_" + model.index
+            objectName: "PaymentRequestDelegate_" + model.index
             amount: model.amount
             symbol: model.symbol
             address: model.receiver

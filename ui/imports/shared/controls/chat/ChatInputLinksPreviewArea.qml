@@ -47,7 +47,7 @@ Control {
     signal linkReload(string link)
     signal linkClicked(string link)
 
-    signal paymentRequestRemoved(int index)
+    signal removePaymentRequest(int index)
 
     signal enableLinkPreview()
     signal enableLinkPreviewForThisMessage()
@@ -112,7 +112,7 @@ Control {
 
                         amount: model.amount
                         symbol: model.symbol
-                        onClose: root.paymentRequestRemoved(model.index)
+                        onClose: root.removePaymentRequest(model.index)
                     }
                 }
                 Repeater {

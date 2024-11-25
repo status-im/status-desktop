@@ -71,13 +71,25 @@ CalloutCard {
                     font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                 }
-                StatusBaseText {
+                RowLayout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    font.pixelSize: Theme.tertiaryTextFontSize
-                    color: Theme.palette.baseColor1
-                    verticalAlignment: Text.AlignVCenter
-                    text: "%1 %2".arg(root.amount).arg(root.symbol)
+                    StatusBaseText {
+                        Layout.maximumWidth: parent.width * 0.8
+                        Layout.fillHeight: true
+                        font.pixelSize: Theme.tertiaryTextFontSize
+                        color: Theme.palette.baseColor1
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        text: root.amount
+                    }
+                    StatusBaseText {
+                        Layout.fillHeight: true
+                        font.pixelSize: Theme.tertiaryTextFontSize
+                        color: Theme.palette.baseColor1
+                        verticalAlignment: Text.AlignVCenter
+                        text: root.symbol
+                    }
                 }
             }
 

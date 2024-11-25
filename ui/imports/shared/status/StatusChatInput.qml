@@ -37,6 +37,7 @@ Rectangle {
     signal disableLinkPreview()
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
+    signal removePaymentRequest(int index)
     
     property var usersModel
     property SharedStores.RootStore sharedStore
@@ -1224,6 +1225,7 @@ Rectangle {
                     topPadding: 12
                     imagePreviewArray: control.fileUrlsAndSources
                     linkPreviewModel: control.linkPreviewModel
+                    paymentRequestModel: control.paymentRequestModel
                     showLinkPreviewSettings: control.askToEnableLinkPreview
                     onImageRemoved: (index) => {
                         //Just do a copy and replace the whole thing because it's a plain JS array and thre's no signal when a single item is removed
@@ -1242,6 +1244,7 @@ Rectangle {
                     onDisableLinkPreview: () => control.disableLinkPreview()
                     onDismissLinkPreviewSettings: () => control.dismissLinkPreviewSettings()
                     onDismissLinkPreview: (index) => control.dismissLinkPreview(index)
+                    onRemovePaymentRequest: (index) => control.removePaymentRequest(index)
                 }
 
                 RowLayout {
