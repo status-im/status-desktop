@@ -6,7 +6,7 @@ from helpers.OnboardingHelper import open_generate_new_keys_view
 from . import marks
 
 from constants.onboarding import very_weak_lower_elements, very_weak_upper_elements, \
-    very_weak_numbers_elements, very_weak_symbols_elements, weak_elements, so_so_elements, good_elements, great_elements
+    very_weak_numbers_elements, very_weak_symbols_elements, weak_elements, okay_elements, good_elements, strong_elements
 
 pytestmark = marks
 
@@ -20,9 +20,9 @@ def test_check_password_strength_and_login(main_window, user_account):
               ('1234567890', very_weak_numbers_elements),
               ('+_!!!!!!!!', very_weak_symbols_elements),
               ('+1_3!48888', weak_elements),
-              ('+1_3!48a11', so_so_elements),
+              ('+1_3!48a11', okay_elements),
               ('+1_3!48aT1', good_elements),
-              ('+1_3!48aTq', great_elements)]
+              ('+1_3!48aTq', strong_elements)]
     expected_password = ""
 
     keys_screen = open_generate_new_keys_view()
@@ -38,7 +38,7 @@ def test_check_password_strength_and_login(main_window, user_account):
             expected_password = input_text
             create_password_view.set_password_in_first_field(input_text)
             assert create_password_view.strength_indicator_color == expected_indicator[1]
-            assert create_password_view.strength_indicator_text == expected_indicator[0]
+            assert str(create_password_view.strength_indicator_text) == expected_indicator[0]
             assert sorted(create_password_view.green_indicator_messages) == sorted(expected_indicator[2])
             assert not create_password_view.is_create_password_button_enabled
 
