@@ -44,10 +44,12 @@ ColumnLayout {
             currentIndex: 0
 
             StatusSwitchTabButton {
+                objectName: "firstTab_StatusSwitchTabButton"
                 text: root.firstTabName
             }
 
             StatusSwitchTabButton {
+                objectName: "secondTab_StatusSwitchTabButton"
                 text: root.secondTabName
             }
         }
@@ -113,6 +115,7 @@ ColumnLayout {
                 text: qsTr("Ensure both devices are on the same local network")
             }
             StatusButton {
+                objectName: "continue_StatusButton"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Theme.padding
                 text: qsTr("Continue")
