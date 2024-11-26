@@ -992,7 +992,13 @@ Loader {
                         gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                         canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
-                        onPaymentRequestClicked: Global.paymentRequestClicked(receiver, symbol, amount, chainId)
+                        onPaymentRequestClicked: (index) => {
+                            const receiver = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "receiver")
+                            const amount = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "amount")
+                            const symbol = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "symbol")
+                            const chainId = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "chainId")
+                            Global.paymentRequestClicked(receiver, symbol, amount, chainId)
+                        }
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)

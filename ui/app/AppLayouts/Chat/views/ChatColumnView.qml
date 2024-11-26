@@ -391,7 +391,7 @@ Item {
                         d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
                     }
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
-                    onRemovePaymentRequest: (index) => d.activeChatContentModule.inputAreaModule.removePaymentRequestPreviewData(index)
+                    onRemovePaymentRequestPreviewRequested: (index) => d.activeChatContentModule.inputAreaModule.removePaymentRequestPreviewData(index)
                 }
 
                 ChatPermissionQualificationPanel {

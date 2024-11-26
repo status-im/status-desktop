@@ -40,7 +40,7 @@ Flow {
     signal imageClicked(var image, var mouse, string imageSource, string url)
     signal openContextMenu(var item, string url, string domain)
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
-    signal paymentRequestClicked(var symbol, var amount, var receiver, var chainId)
+    signal paymentRequestClicked(int index)
 
     function resetLocalAskAboutUnfurling() {
         d.localAskAboutUnfurling = true
@@ -75,7 +75,7 @@ Flow {
             senderName: root.senderName
             senderThumbnailImage: root.senderThumbnailImage
             senderColorId: root.senderColorId
-            onClicked: root.paymentRequestClicked(model.symbol, model.amount, model.receiver, model.chainId)
+            onClicked: root.paymentRequestClicked(model.index)
         }
     }
 

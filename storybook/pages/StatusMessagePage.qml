@@ -32,7 +32,6 @@ SplitView {
                 isAReply: false
                 trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
-                requeestPaymentModel: []
             }
             ListElement {
                 timestamp: 1657937930135

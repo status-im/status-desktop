@@ -37,7 +37,7 @@ Rectangle {
     signal disableLinkPreview()
     signal dismissLinkPreviewSettings()
     signal dismissLinkPreview(int index)
-    signal removePaymentRequest(int index)
+    signal removePaymentRequestPreviewRequested(int index)
     
     property var usersModel
     property SharedStores.RootStore sharedStore
@@ -1244,7 +1244,7 @@ Rectangle {
                     onDisableLinkPreview: () => control.disableLinkPreview()
                     onDismissLinkPreviewSettings: () => control.dismissLinkPreviewSettings()
                     onDismissLinkPreview: (index) => control.dismissLinkPreview(index)
-                    onRemovePaymentRequest: (index) => control.removePaymentRequest(index)
+                    onRemovePaymentRequestPreviewRequested: (index) => control.removePaymentRequestPreviewRequested(index)
                 }
 
                 RowLayout {
