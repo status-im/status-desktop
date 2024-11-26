@@ -176,7 +176,11 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
-            mouseClick(amountToSendInput)
+
+            const amountToSend_textField = findChild(controlUnderTest, "amountToSend_textField")
+            verify(!!amountToSend_textField)
+
+            mouseClick(amountToSend_textField)
             waitForRendering(amountToSendInput)
             verify(amountToSendInput.cursorVisible)
 
@@ -221,7 +225,11 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
-            mouseClick(amountToSendInput)
+
+            const amountToSend_textField = findChild(controlUnderTest, "amountToSend_textField")
+            verify(!!amountToSend_textField)
+
+            mouseClick(amountToSend_textField)
             waitForRendering(amountToSendInput)
             verify(amountToSendInput.cursorVisible)
 
@@ -398,10 +406,13 @@ Item {
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
 
+            const amountToSend_textField = findChild(controlUnderTest, "amountToSend_textField")
+            verify(!!amountToSend_textField)
+
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
-            mouseClick(amountToSendInput)
+            mouseClick(amountToSend_textField)
             // enter 5.42 as entered amount
             keyClick(Qt.Key_5)
             keyClick(Qt.Key_Period)

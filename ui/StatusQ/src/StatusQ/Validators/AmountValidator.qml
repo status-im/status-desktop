@@ -24,6 +24,7 @@ GenericValidator {
     property string decimalPoint: Qt.locale(locale).decimalPoint
     property int maxIntegralDigits: 10
     property int maxDecimalDigits: 10
+    property int maxDigits: maxIntegralDigits + maxDecimalDigits
 
     validate: {
         if (input.length === 0)
@@ -51,6 +52,9 @@ GenericValidator {
 
         const [integral, decimal] = pointsCount ? delocalized.split(".")
                                                 : [delocalized, ""]
+
+        if ((integral.length + decimal.length) > root.maxDigits)
+            return GenericValidator.Invalid
 
         if (integral.length > root.maxIntegralDigits)
             return GenericValidator.Invalid
