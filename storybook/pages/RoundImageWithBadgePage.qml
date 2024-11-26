@@ -16,7 +16,8 @@ SplitView {
             height: width
             imageUrl: addressField.text
             badgeIcon: badgeField.text
-            fallbackIcon: fallbackIconField.text
+            badgeSize: badgeSizeSlider.value
+            badgeMargin: badgeMarginSlider.value
         }
     }
 
@@ -34,7 +35,7 @@ SplitView {
             Label { text: "Badge name" }
             TextField {
                 id: badgeField
-                text: "walletConnect"
+                text: "https://random.imagecdn.app/20/20"
                 Layout.fillWidth: true
             }
             Label { text: "Fallback icon name" }
@@ -42,6 +43,24 @@ SplitView {
                 id: fallbackIconField
                 text: "dapp"
                 Layout.fillWidth: true
+            }
+            Label {
+                text: "Badge size"
+            }
+            Slider {
+                id: badgeSizeSlider
+                from: 0
+                to: roundImageWithBadge.width
+                value: roundImageWithBadge.badgeSize
+            }
+            Label {
+                text: "Badge margin"
+            }
+            Slider {
+                id: badgeMarginSlider
+                from: 0
+                to: roundImageWithBadge.width
+                value: roundImageWithBadge.badgeMargin
             }
         }
     }

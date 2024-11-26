@@ -1430,4 +1430,10 @@ QtObject {
         WalletConnect = 1,
         StatusConnect = 2
     }
+
+    property var dappImageByType: [
+        "",
+        Theme.svg("walletconnect"),
+        Theme.png("status-logo")
+    ]
 }

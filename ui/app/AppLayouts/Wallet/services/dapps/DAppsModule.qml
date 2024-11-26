@@ -51,7 +51,7 @@ SQUtils.QObject {
 
     // Connection signals
     /// Emitted when a new DApp requests a connection
-    signal connectDApp(var chains, string dAppUrl, string dAppName, string dAppIcon, string key)
+    signal connectDApp(var chains, string dAppUrl, string dAppName, string dAppIcon, int connectorId, string key)
     /// Emitted when a new DApp is connected
     signal dappConnected(string proposalId, string newTopic, string url, int connectorId)
     /// Emitted when a DApp is disconnected
@@ -168,8 +168,8 @@ SQUtils.QObject {
         onDisconnected: (topic, url) => {
             root.dappDisconnected(topic, url)
         }
-        onNewConnectionProposed: (key, chains, dAppUrl, dAppName, dAppIcon) => {
-            root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, key)
+        onNewConnectionProposed: (key, chains, dAppUrl, dAppName, dAppIcon, connectorId) => {
+            root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, connectorId, key)
         }
         onNewConnectionFailed: (key, dappUrl, error) => {
             root.newConnectionFailed(key, dappUrl, error)
@@ -220,7 +220,7 @@ SQUtils.QObject {
 
         onConnectDApp: (chains, dAppUrl, dAppName, dAppIcon, key) => {
             siwePlugin.connectionRequests.set(key.toString(), {chains, dAppUrl, dAppName, dAppIcon})
-            root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, key)
+            root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, Constants.DAppConnectors.WalletConnect, key)
         }
 
         onSiweFailed: (id, error, topic) => {

@@ -33,6 +33,7 @@ SplitView {
                 name: "SMALL Model"
                 url: "https://dapp.test/1"
                 iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png"
+                connectorBadge: "https://random.imagecdn.app/20/20"
             }
         }
 
@@ -42,56 +43,67 @@ SplitView {
                 name: ""
                 url: "https://dapp.test/1"
                 iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png"
+                connectorBadge: "https://random.imagecdn.app/20/20"
             }
             ListElement {
                 name: "Test dApp 2"
                 url: "https://dapp.test/2"
                 iconUrl: ""
+                connectorBadge: "https://random.imagecdn.app/20/20"
             }
             ListElement {
                 name: ""
                 url: "https://dapp.test/3"
                 iconUrl: ""
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 4 - very long name !!!!!!!!!!!!!!!!"
                 url: "https://dapp.test/4"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 5 - very long url"
                 url: "https://dapp.test/very_long/url/unusual"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 6"
                 url: "https://dapp.test/6"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 7"
                 url: "https://dapp.test/7"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 8"
                 url: "https://dapp.test/8"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 9"
                 url: "https://dapp.test/9"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 10"
                 url: "https://dapp.test/10"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
             ListElement {
                 name: "Test dApp 11"
                 url: "https://dapp.test/11"
                 iconUrl: "https://react-app.walletconnect.com/assets/eip155-1.png"
+                connectorBadge: ""
             }
         }
     }

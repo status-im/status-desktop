@@ -93,8 +93,8 @@ DappsComboBox {
     }
 
     /// Request to connect to a dApp
-    function connectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId) {
-        connectDappLoader.connect(dappChains, dappUrl, dappName, dappIcon, pairingId)
+    function connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId) {
+        connectDappLoader.connect(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId)
     }
 
     onPairDapp: {
@@ -171,6 +171,7 @@ DappsComboBox {
         property url dappUrl
         property string dappName
         property url dappIcon
+        property string connectorIcon
         property var key
         property var topic
 
@@ -181,14 +182,15 @@ DappsComboBox {
                         connectionQueue[0].dappUrl,
                         connectionQueue[0].dappName,
                         connectionQueue[0].dappIcon,
+                        connectionQueue[0].connectorIcon,
                         connectionQueue[0].key)
                 connectionQueue.shift()
             }
         }
 
-        function connect(dappChains, dappUrl, dappName, dappIcon, key) {
+        function connect(dappChains, dappUrl, dappName, dappIcon, connectorIcon, key) {
             if (connectDappLoader.active) {
-                connectionQueue.push({ dappChains, dappUrl, dappName, dappIcon, key })
+                connectionQueue.push({ dappChains, dappUrl, dappName, dappIcon, key, connectorIcon })
                 return
             }
 
@@ -196,6 +198,7 @@ DappsComboBox {
             connectDappLoader.dappUrl = dappUrl
             connectDappLoader.dappName = dappName
             connectDappLoader.dappIcon = dappIcon
+            connectDappLoader.connectorIcon = connectorIcon
             connectDappLoader.key = key
 
             if (pairWCLoader.item) {
@@ -240,6 +243,7 @@ DappsComboBox {
             dAppUrl: connectDappLoader.dappUrl
             dAppName: connectDappLoader.dappName
             dAppIconUrl: connectDappLoader.dappIcon
+            dAppConnectorBadge: connectDappLoader.connectorIcon
             connectButtonEnabled: root.enabled
 
             onConnect: {

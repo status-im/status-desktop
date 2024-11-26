@@ -180,8 +180,8 @@ Item {
 
                         dappsWorkflow.connectionSuccessful(pairingId, newConnectionId)
                     }
-                    function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId) {
-                        dappsWorkflow.connectDApp(dappChains, dappUrl, dappName, dappIcon, pairingId)
+                    function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId) {
+                        dappsWorkflow.connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId)
                     }
                 }
             }
