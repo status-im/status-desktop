@@ -19,6 +19,8 @@ SplitView {
 
             anchors.centerIn: parent
 
+            width: 400
+
             interactive: interactiveCheckBox.checked
             fiatInputInteractive: fiatInteractiveCheckBox.checked
             markAsInvalid: markAsInvalidCheckBox.checked
@@ -26,7 +28,7 @@ SplitView {
             mainInputLoading: ctrlMainInputLoading.checked
             bottomTextLoading: ctrlBottomTextLoading.checked
 
-            caption: "Amount to send"
+            caption: captionField.text
 
             decimalPoint: decimalPointRadioButton.checked ? "." : ","
             price: parseFloat(priceTextField.text)
@@ -35,6 +37,10 @@ SplitView {
 
             formatFiat: balance => `${balance.toLocaleString(Qt.locale())} USD`
             formatBalance: balance => `${balance.toLocaleString(Qt.locale())} ETH`
+
+            dividerVisible: ctrlDividerVisible.checked
+            selectedSymbol: ctrlShowMainInputSymbol.checked ? amountToSend.fiatMode ? "USD": "ETH": ""
+            progressivePixelReduction: ctrlProgressivePixelReduction.checked
         }
     }
 
@@ -45,6 +51,19 @@ SplitView {
 
         ColumnLayout {
             spacing: 15
+
+
+            RowLayout {
+                Label {
+                    text: "Caption"
+                }
+
+                TextField {
+                    id: captionField
+
+                    text: "Amount to send"
+                }
+            }
 
             RowLayout {
                 Label {
@@ -118,6 +137,22 @@ SplitView {
                 CheckBox {
                     id: ctrlBottomTextLoading
                     text: "Bottom text loading"
+                }
+
+                CheckBox {
+                    id: ctrlDividerVisible
+                    text: "Divider"
+                }
+
+                CheckBox {
+                    id: ctrlProgressivePixelReduction
+                    text: "Progressive Pixel Reduction"
+                    checked: true
+                }
+
+                CheckBox {
+                    id: ctrlShowMainInputSymbol
+                    text: "Show Main Input Symbol"
                 }
             }
 

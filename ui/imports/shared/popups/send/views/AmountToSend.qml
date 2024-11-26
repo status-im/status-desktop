@@ -55,6 +55,19 @@ Control {
     property alias caption: captionText.text
     property bool interactive: true
 
+    /* Boolean flag decides whether divider is shown between main input
+       area and bottom text */
+    property bool dividerVisible
+
+    /* Boolean flag decides whether the main input text area's fontsize reduces
+       as more and more characters are added.
+       True by default */
+    property bool progressivePixelReduction: true
+
+    /* This string holds the current main input area's currency symbol (fiat or crypto)
+       Not set = not shown */
+    property string selectedSymbol
+
     readonly property bool cursorVisible: textField.cursorVisible
     readonly property alias placeholderText: textField.placeholderText
 
@@ -155,6 +168,22 @@ Control {
                             multiplier),
                         SQUtils.AmountsArithmetic.fromNumber(price)).toFixed()
         }
+
+        /* Incase we dont have progressing font size reduction we only
+           allow users to enter digits until there is place left */
+        function getMaxDigitsAllowed() {
+            if (root.progressivePixelReduction)  {
+                return validator.maxDecimalDigits + validator.maxIntegralDigits
+            } else {
+                let availableSpaceForAmount = root.availableWidth - currencyField.contentWidth - layout.spacing
+                return Math.floor(availableSpaceForAmount/textMetrics.tightBoundingRect.width)
+            }
+        }
+
+        readonly property TextMetrics textMetrics: TextMetrics {
+            font: textField.font
+            text: "0"
+        }
     }
 
     contentItem: ColumnLayout {
@@ -173,12 +202,13 @@ Control {
         }
 
         RowLayout {
+            id: layout
+            spacing: 4
+
             StatusTextField {
                 id: textField
 
                 objectName: "amountToSend_textField"
-
-                Layout.fillWidth: true
 
                 implicitHeight: 44
                 padding: 0
@@ -198,11 +228,16 @@ Control {
                             + "0".repeat(root.fiatDecimalPlaces)
                 }
 
-                font.pixelSize: Utils.getFontSizeBasedOnLetterCount(text)
+                font.pixelSize:{
+                    if (!root.progressivePixelReduction)
+                        return 34
+                    return Utils.getFontSizeBasedOnLetterCount(text)
+                }
 
                 validator: AmountValidator {
                     id: validator
 
+                    maxDigits: d.getMaxDigitsAllowed()
                     maxDecimalDigits: d.fiatMode ? root.fiatDecimalPlaces
                                                  : root.multiplierIndex
                     locale: root.locale.name
@@ -215,6 +250,26 @@ Control {
                 Layout.preferredHeight: textField.height
                 visible: root.mainInputLoading
             }
+            StatusBaseText {
+                id: currencyField
+
+                objectName: "amountToSend_currencyField"
+
+                Layout.alignment: Qt.AlignVCenter
+                Layout.topMargin: 10
+
+                color: Theme.palette.directColor5
+                text: selectedSymbol
+                font.pixelSize: Theme.additionalTextSize
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            Layout.bottomMargin: 12
+            color: Theme.palette.baseColor2
+            visible: root.dividerVisible
         }
 
         StatusBaseText {

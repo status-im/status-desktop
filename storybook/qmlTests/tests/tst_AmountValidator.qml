@@ -171,5 +171,27 @@ Item {
             compare(textField.acceptableInput, true)
             compare(textField.text, ".22")
         }
+
+        function test_maxTotalDigits() {
+            textField.text = "1234567891."
+            textField.forceActiveFocus()
+            textField.validator.maxDecimalDigits = 18
+            textField.validator.maxDigits = 15
+            textField.cursorPosition = 11
+
+            type(Qt.Key_1)
+            type(Qt.Key_2)
+            type(Qt.Key_3)
+            type(Qt.Key_4)
+            type(Qt.Key_5)
+
+            compare(textField.acceptableInput, true)
+            compare(textField.text, "1234567891.12345")
+
+            type(Qt.Key_6)
+
+            compare(textField.acceptableInput, true)
+            compare(textField.text, "1234567891.12345")
+        }
     }
 }

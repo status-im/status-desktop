@@ -20,6 +20,7 @@ Item {
 
                 maxIntegralDigits: maxIntegralDigitsSpinBox.value
                 maxDecimalDigits: maxDecimalDigitsSpinBox.value
+                maxDigits: maxTotalDigitsSpinBox.value
             }
         }
 
@@ -78,6 +79,20 @@ Item {
                 id: maxDecimalDigitsSpinBox
 
                 value: 5
+            }
+        }
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            Label {
+                text: "Max total digits:"
+            }
+
+            SpinBox {
+                id: maxTotalDigitsSpinBox
+
+                value: maxIntegralDigitsSpinBox.value + maxDecimalDigitsSpinBox.value
             }
         }
     }
