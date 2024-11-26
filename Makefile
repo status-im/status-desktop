@@ -365,7 +365,7 @@ storybook-build: | storybook-configure
 
 run-storybook: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook"
-	$(STORYBOOK_BUILD_PATH)/bin/Storybook
+	$(STORYBOOK_BUILD_PATH)/bin/Storybook ${ARGS}
 
 run-storybook-tests: storybook-build
 	echo -e "\033[92mRunning:\033[39m Storybook Tests"

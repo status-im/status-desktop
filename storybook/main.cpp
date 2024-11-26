@@ -41,6 +41,13 @@ int main(int argc, char *argv[])
     QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
     QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
 
+    QCommandLineParser cmdParser;
+    cmdParser.addHelpOption();
+    cmdParser.addPositionalArgument(QStringLiteral("page"), QStringLiteral("Open the given page on startup"));
+    if (!cmdParser.parse(app.arguments())) {
+        qWarning() << "Error (ignored) while parsing cmd line arguments:" << cmdParser.errorText();
+    }
+
     qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", QByteArrayLiteral("1"));
     auto chromiumFlags = qgetenv("QTWEBENGINE_CHROMIUM_FLAGS");
     if(!chromiumFlags.contains("--disable-seccomp-filter-sandbox")) {
@@ -62,8 +69,8 @@ int main(int argc, char *argv[])
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
 
-    engine.rootContext()->setContextProperty(
-                "pagesFolder", QML_IMPORT_ROOT + QStringLiteral("/pages"));
+    engine.rootContext()->setContextProperty(QStringLiteral("pagesFolder"),
+                                             QML_IMPORT_ROOT + QStringLiteral("/pages"));
 
     qmlRegisterType<PagesModelInitialized>("Storybook", 1, 0, "PagesModel");
     qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
@@ -117,6 +124,11 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
+    const auto args = cmdParser.positionalArguments();
+    if (!args.isEmpty())
+        engine.setInitialProperties({{QStringLiteral("currentPage"), args.constFirst()}});
+
     engine.load(url);
 
     return QGuiApplication::exec();
