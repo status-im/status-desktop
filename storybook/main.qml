@@ -26,7 +26,12 @@ ApplicationWindow {
     palette.base: Theme.palette.indirectColor1
     font.pixelSize: 13
 
-    onCurrentPageChanged: testsReRunTimer.restart()
+    onCurrentPageChanged: {
+        testsReRunTimer.restart()
+        settings.setValue("currentPage", currentPage)
+    }
+
+    Component.onCompleted: currentPage = settings.value("currentPage")
 
     QtObject {
         id: d
@@ -335,7 +340,6 @@ ApplicationWindow {
     Settings {
         id: settings
 
-        property alias currentPage: root.currentPage
         property alias loadAsynchronously: settingsLayout.loadAsynchronously
         property alias runTestsAutomatically: settingsLayout.runTestsAutomatically
         property alias darkMode: darkModeCheckBox.checked
