@@ -36,7 +36,7 @@ SQUtils.QObject {
     readonly property bool isServiceOnline: dappsModule.isServiceOnline
 
     // signals
-    signal connectDApp(var dappChains, url dappUrl, string dappName, url dappIcon, string key)
+    signal connectDApp(var dappChains, url dappUrl, string dappName, url dappIcon, string connectorIcon, string key)
     // Emitted as a response to DAppsService.approveSession
     // @param key The key of the session proposal
     // @param error The error message
@@ -107,7 +107,15 @@ SQUtils.QObject {
             objectName: "DAppsModelFiltered"
             sourceModel: root.dappsModule.dappsModel
             readonly property string selectedAddress: root.selectedAddress
+            readonly property var connectorIcons: Constants.dappImageByType
 
+            proxyRoles: [
+                FastExpressionRole {
+                    name: "connectorBadge"
+                    expression: dappsFilteredModel.connectorIcons[connectorId]
+                    expectedRoles: "connectorId"
+                }
+            ]
             filters: FastExpressionFilter {
                 enabled: !!dappsFilteredModel.selectedAddress
 
@@ -189,8 +197,9 @@ SQUtils.QObject {
             }
         }
 
-        function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, key) {
-            root.connectDApp(dappChains, dappUrl, dappName, dappIcon, key)
+        function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, connectorId, key) {
+            const connectorIcon = Constants.dappImageByType[connectorId]
+            root.connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, key)
         }
 
         function onDappConnected(proposal, topic, url, connectorId) {

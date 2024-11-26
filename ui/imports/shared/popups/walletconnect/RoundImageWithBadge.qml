@@ -12,8 +12,9 @@ Item {
     id: root
 
     property url imageUrl: ""
-    property string badgeIcon: "walletconnect"
-    property string fallbackIcon: "dapp"
+    property url badgeIcon: ""
+    property real badgeSize: 0
+    property real badgeMargin: 0
 
     readonly property bool iconLoaded: !mainImage.isError && !mainImage.isLoading && mainImage.image.source !== ""
 
@@ -47,40 +48,37 @@ Item {
                     color: Theme.palette.primaryColor1
                     icon: "dapp"
                 }
-            }        }
+            }
+        }
 
-        layer.enabled: true
+        layer.enabled: badge.visible
         layer.effect: OpacityMask {
             id: mask
             invert: true
 
             maskSource: Item {
-                width: mask.width + 2
-                height: mask.height + 2
+                width: mask.width
+                height: mask.height
 
                 Rectangle {
-                    x: badge.x + 1
-                    y: badge.y + 1
+                    x: badge.x - badgeMargin
+                    y: badge.y - badgeMargin
 
-                    width: badge.width + 2
-                    height: badge.width + 2
-                    radius: badge.width / 2
+                    width: badge.width + badgeMargin * 2
+                    height: badge.width + badgeMargin * 2
+                    radius: width / 2
                 }
             }
         }
     }
 
-    StatusRoundIcon {
+    StatusRoundedImage {
         id: badge
-        width: root.width / 3.6
+        width: root.badgeSize
         height: width
+        visible: image.source != "" && !isLoading && !isError
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        asset.name: root.badgeIcon
-        asset.color: "transparent"
-        asset.width: width
-        asset.height: height
-        asset.bgWidth: width
-        asset.bgHeight: height
+        image.source: root.badgeIcon
     }
 }

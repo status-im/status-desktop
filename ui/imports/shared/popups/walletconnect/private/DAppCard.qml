@@ -16,16 +16,21 @@ ColumnLayout {
     property alias name: appNameText.text
     property url dAppUrl: ""
     property url iconUrl: ""
+    // Property specifing the icon for the connector badge
+    property alias connectorBadge: dappIcon.badgeIcon
     property bool connectionSuccessful
     property bool connectionAttempted
 
     spacing: Theme.padding
 
     RoundImageWithBadge {
+        id: dappIcon
         objectName: "dappIcon"
         Layout.alignment: Qt.AlignHCenter
         Layout.preferredWidth: 72
         Layout.preferredHeight: Layout.preferredWidth
+        badgeSize: 20
+        badgeMargin: 1
 
         imageUrl: iconUrl
     }

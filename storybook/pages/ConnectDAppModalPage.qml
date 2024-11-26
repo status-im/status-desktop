@@ -62,6 +62,7 @@ Item {
                 dAppUrl: dAppUrlField.text
                 dAppName:  dAppNameField.text
                 dAppIconUrl: hasIconCheckbox.checked ? "https://avatars.githubusercontent.com/u/37784886" : ""
+                dAppConnectorBadge: Constants.dappImageByType[dAppBadgeComboBox.currentIndex]
                 connectionStatus: pairedCheckbox.checked ? pairedStatusCheckbox.checked ? connectionSuccessfulStatus : connectionFailedStatus : notConnectedStatus
             }
         }
@@ -105,6 +106,14 @@ Item {
                 id: dAppUrlField
 
                 text: "https://react-app.walletconnect.com"
+            }
+            Label {
+                text: "Dapp badge"
+            }
+            ComboBox {
+                id: dAppBadgeComboBox
+                model: ["none", "WalletConnect", "BrowserConnect"]
+                currentIndex: 1
             }
             Item { Layout.fillHeight: true }
         }

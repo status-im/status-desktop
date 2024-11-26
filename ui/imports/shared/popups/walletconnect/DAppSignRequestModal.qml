@@ -49,6 +49,9 @@ SignTransactionModalBase {
         imageUrl: root.dappIcon
         width: 40
         height: 40
+        badgeSize: 16
+        badgeMargin: 2
+        badgeIcon: Theme.svg("sign-blue")
     }
 
     gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color

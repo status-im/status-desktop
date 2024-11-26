@@ -658,7 +658,8 @@ Item {
                 "dappUrl": 1,
                 "dappName": 2,
                 "dappIcon": 3,
-                "key": 4,
+                "connectorBadge": 4,
+                "key": 5,
             }
         }
 
@@ -745,6 +746,7 @@ Item {
             compare(connectArgs[connectDAppSpy.argPos.dappUrl], Testing.dappUrl, "expected dappUrl to be set")
             compare(connectArgs[connectDAppSpy.argPos.dappName], Testing.dappName, "expected dappName to be set")
             compare(connectArgs[connectDAppSpy.argPos.dappIcon], Testing.dappFirstIcon, "expected dappIcon to be set")
+            compare(connectArgs[connectDAppSpy.argPos.connectorBadge], Constants.dappImageByType[Constants.WalletConnect], "expected connectorBadge to be set")
             verify(!!connectArgs[connectDAppSpy.argPos.key], "expected key to be set")
 
             let selectedAccount = accountsModel.get(1).address

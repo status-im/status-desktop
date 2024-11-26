@@ -8,6 +8,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import shared.popups.walletconnect 1.0
+
 MouseArea {
     id: root
     implicitHeight: 50
@@ -15,8 +17,9 @@ MouseArea {
     hoverEnabled: true
 
     required property string name
-    required property string url
-    required property string iconUrl
+    required property url url
+    required property url iconUrl
+    required property url connectorBadge
 
     signal disconnectDapp(string dappUrl)
 
@@ -25,40 +28,18 @@ MouseArea {
         anchors.margins: 8
 
         Item {
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
+            Layout.preferredWidth: 40
+            Layout.preferredHeight: 40
 
-            StatusImage {
+            RoundImageWithBadge {
                 id: iconImage
 
                 anchors.fill: parent
 
-                source: root.iconUrl
-                visible: !fallbackImage.visible
-            }
-
-            StatusSmartIdenticon {
-                id: fallbackImage
-
-                anchors.fill: parent
-
-                name: dAppCaption.text ?? "dapp"
-                asset.charactersLen: 2
-                asset.color: Theme.palette.primaryColor1
-                asset.letterIdenticonBgWithAlpha: true
-                asset.useAcronymForLetterIdenticon: false
-
-                visible: iconImage.isLoading || iconImage.isError || !root.iconUrl
-            }
-
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: Rectangle {
-                    width: iconImage.width
-                    height: iconImage.height
-                    radius: width / 2
-                    visible: false
-                }
+                imageUrl: root.iconUrl
+                badgeIcon: root.connectorBadge
+                badgeSize: 14
+                badgeMargin: 2
             }
         }
 

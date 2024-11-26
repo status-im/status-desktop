@@ -41,7 +41,7 @@ SQUtils.QObject {
     // Output signal when a new connection is proposed
     signal connected(string proposalId, string topic, string dAppUrl, int connectorId)
     // Output signal when a new connection is proposed by the SDK
-    signal newConnectionProposed(string key, var chains, string dAppUrl, string dAppName, string dAppIcon)
+    signal newConnectionProposed(string key, var chains, string dAppUrl, string dAppName, string dAppIcon, int connectorId)
     // Output signal when a new connection is failed
     signal newConnectionFailed(string key, string dappUrl, int errorCode)
 
@@ -68,7 +68,7 @@ SQUtils.QObject {
         store: root.dappsStore
         supportedAccountsModel: root.accountsModel
         onConnected: (proposalId, topic, dappUrl) => {
-            root.connected(proposalId, topic, dappUrl, Constants.WalletConnect)
+            root.connected(proposalId, topic, dappUrl, Constants.DAppConnectors.WalletConnect)
         }
         onDisconnected: (topic, dappUrl) => {
             root.disconnected(topic, dappUrl)
@@ -79,7 +79,7 @@ SQUtils.QObject {
         id: connectorDAppsProvider
         bcSDK: root.bcSDK
         onConnected: (pairingId, topic, dappUrl) => {
-            root.connected(pairingId, topic, dappUrl, Constants.StatusConnect)
+            root.connected(pairingId, topic, dappUrl, Constants.DAppConnectors.StatusConnect)
         }
         onDisconnected: (topic, dappUrl) => {
             root.disconnected(topic, dappUrl)
@@ -140,7 +140,7 @@ SQUtils.QObject {
         function onSessionProposal(sessionProposal) {
             const key = sessionProposal.id
             d.activeProposals.set(key.toString(), { context: sessionProposal, promise: bcConnectionPromise })
-            root.newConnectionProposed(key, [1], sessionProposal.params.proposer.metadata.url, sessionProposal.params.proposer.metadata.name, sessionProposal.params.proposer.metadata.icons[0])
+            root.newConnectionProposed(key, [1], sessionProposal.params.proposer.metadata.url, sessionProposal.params.proposer.metadata.name, sessionProposal.params.proposer.metadata.icons[0], Constants.DAppConnectors.StatusConnect)
         }
 
         function onApproveSessionResult(proposalId, session, err) {
@@ -214,7 +214,7 @@ SQUtils.QObject {
                 const dAppIcons = proposal.params.proposer.metadata.icons
                 const dAppIcon = dAppIcons && dAppIcons.length > 0 ? dAppIcons[0] : ""
 
-                root.newConnectionProposed(key, chains, dAppUrl, dAppName, dAppIcon)
+                root.newConnectionProposed(key, chains, dAppUrl, dAppName, dAppIcon, Constants.DAppConnectors.WalletConnect)
             }
         }
 
@@ -268,7 +268,7 @@ SQUtils.QObject {
                 return
             }
 
-            const sdk = dApp.connectorId === Constants.WalletConnect ? root.wcSDK : root.bcSDK
+            const sdk = dApp.connectorId === Constants.DAppConnectors.WalletConnect ? root.wcSDK : root.bcSDK
             sdkDisconnect(dApp, sdk)
         }
 
