@@ -75,12 +75,13 @@ ItemDelegate {
     /*!
        \qmlproperty string StatusMemberListItem::status
        This property holds the connectivity status of the member represented.
-       0 - offline
-       1 - online
-       2 - doNotDisturb
-       3 - idle
+
+    int unknown: -1
+    int inactive: 0
+    int online: 1
+
     */
-    // FIXME: move Constants.userStatus from status-desktop
+    // FIXME: move Constants.onlineStatus from status-desktop
     property int status: 0
     /*!
        \qmlproperty string StatusMemberListItem::isAdmin
@@ -228,7 +229,7 @@ ItemDelegate {
 
                     StatusToolTip {
                         text: parent.text
-                        delay: 0
+                        delay: 50
                         visible: parent.truncated && primaryTextHandler.hovered
                     }
                 }
@@ -252,7 +253,7 @@ ItemDelegate {
 
                 StatusToolTip {
                     text: parent.text
-                    delay: 0
+                    delay: 50
                     visible: parent.truncated && secondaryTextHandler.hovered
                 }
             }

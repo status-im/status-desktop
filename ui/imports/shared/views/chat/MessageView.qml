@@ -156,7 +156,7 @@ Loader {
     property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
-    function openProfileContextMenu(sender, mouse, isReply = false) {
+    function openProfileContextMenu(sender, isReply = false) {
         if (isViewMemberMessagesePopup)
             return false
 
@@ -786,21 +786,10 @@ Loader {
                     Global.activateDeepLink(link)
                 }
 
-                onProfilePictureClicked: {
-                    root.openProfileContextMenu(sender, mouse)
-                }
-
-                onReplyProfileClicked: {
-                    root.openProfileContextMenu(sender, mouse, true)
-                }
-
-                onReplyMessageClicked: {
-                    root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
-                }
-
-                onSenderNameClicked: {
-                    root.openProfileContextMenu(sender, mouse)
-                }
+                onProfilePictureClicked: (sender, mouse) => root.openProfileContextMenu(sender)
+                onReplyProfileClicked: (sender, mouse) => root.openProfileContextMenu(sender, true)
+                onReplyMessageClicked: (mouse) => root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
+                onSenderNameClicked: (sender) => root.openProfileContextMenu(sender)
 
                 onToggleReactionClicked: {
                     if (root.isChatBlocked)

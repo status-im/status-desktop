@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +28,7 @@ Item {
     property int outgoingStatus: StatusMessage.OutgoingStatus.Unknown
     property bool showOutgointStatusLabel: false
 
-    signal clicked(var sender, var mouse)
+    signal clicked(var sender)
     signal resendClicked()
 
     implicitHeight: layout.implicitHeight
@@ -46,7 +46,7 @@ Item {
         spacing: 4
         width: parent.width
 
-        StatusBaseText {
+        TextEdit {
             id: primaryDisplayName
             objectName: "StatusMessageHeader_DisplayName"
             verticalAlignment: Text.AlignVCenter
@@ -54,21 +54,31 @@ Item {
             Layout.maximumWidth: Math.ceil(implicitWidth)
             Layout.bottomMargin: 2 // offset for the underline to stay vertically centered
             font.weight: Font.Medium
-            font.underline: mouseArea.containsMouse
+            font.underline: root.displayNameClickable && hhandler.hovered
+            font.family: Theme.baseFont.name
             font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.primaryColor1
+            selectionColor: Theme.palette.primaryColor2
+            selectedTextColor: Theme.palette.primaryColor3
             text: root.amISender ? qsTr("You") : Emoji.parse(root.sender.displayName)
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
+            readOnly: true
+            selectByMouse: true
+            textFormat: TextEdit.AutoText
+
+            // to make the text easier to select, but w/o inflating the spacing with other items in the parent RowLayout
+            leftPadding: 4
+            rightPadding: 4
+            Layout.leftMargin: -4
+            Layout.rightMargin: -4
+
+            HoverHandler {
+                id: hhandler
+                cursorShape: !!parent.selectedText ? Qt.IBeamCursor : root.displayNameClickable ? Qt.PointingHandCursor : undefined
+            }
+            TapHandler {
                 enabled: root.displayNameClickable
-                hoverEnabled: true
-                onClicked: {
-                    root.clicked(this, mouse)
-                }
+                onSingleTapped: root.clicked(this)
             }
         }
 
@@ -77,7 +87,6 @@ Item {
             active: root.messageOriginInfo
             asynchronous: true
             sourceComponent: StatusBaseText {
-                id: messageOriginInfo
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.asideTextFontSize
@@ -90,7 +99,6 @@ Item {
             active: !root.amISender
             asynchronous: true
             sourceComponent: StatusContactVerificationIcons {
-                id: verificationIcons
                 isContact: root.isContact
                 trustIndicator: root.trustIndicator
             }
@@ -148,7 +156,6 @@ Item {
         Component {
             id: dotComponent
             StatusBaseText {
-                id: dot
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Theme.asideTextFontSize
                 color: Theme.palette.baseColor1

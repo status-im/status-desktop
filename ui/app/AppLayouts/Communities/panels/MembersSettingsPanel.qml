@@ -26,7 +26,6 @@ SettingsPage {
     property int memberRole
     property bool editable: true
 
-    signal membershipRequestsClicked()
     signal kickUserClicked(string id)
     signal banUserClicked(string id, bool deleteAllMessages)
     signal unbanUserClicked(string id)
@@ -123,12 +122,6 @@ SettingsPage {
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
                 memberRole: root.memberRole
-                placeholderText: {
-                    if (root.membersModel.ModelCount.count === 0)
-                        return qsTr("No members to search")
-
-                    return qsTr("Search %1's %n member(s)", "", root.membersModel ? root.membersModel.ModelCount.count : 0).arg(root.communityName)
-                }
                 panelType: MembersTabPanel.TabType.AllMembers
 
                 Layout.fillWidth: true
@@ -156,12 +149,6 @@ SettingsPage {
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
                 memberRole: root.memberRole
-                placeholderText: {
-                    if (root.pendingMembersModel.ModelCount.count === 0)
-                        return qsTr("No pending requests to search")
-
-                    return qsTr("Search %1's %n pending request(s)", "", root.pendingMembersModel.ModelCount.count).arg(root.communityName)
-                }
                 panelType: MembersTabPanel.TabType.PendingRequests
 
                 Layout.fillWidth: true
@@ -176,12 +163,6 @@ SettingsPage {
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
                 memberRole: root.memberRole
-                placeholderText: {
-                    if (root.declinedMembersModel.ModelCount.count === 0)
-                        return qsTr("No rejected members to search")
-
-                    return qsTr("Search %1's %n rejected member(s)", "", root.declinedMembersModel.ModelCount.count).arg(root.communityName)
-                }
                 panelType: MembersTabPanel.TabType.DeclinedRequests
 
                 Layout.fillWidth: true
@@ -195,12 +176,6 @@ SettingsPage {
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
                 memberRole: root.memberRole
-                placeholderText: {
-                    if (root.bannedMembersModel.ModelCount.count === 0)
-                        return qsTr("No banned members to search")
-
-                    return qsTr("Search %1's %n banned member(s)", "", root.bannedMembersModel.ModelCount.count).arg(root.communityName)
-                }
                 panelType: MembersTabPanel.TabType.BannedMembers
 
                 Layout.fillWidth: true

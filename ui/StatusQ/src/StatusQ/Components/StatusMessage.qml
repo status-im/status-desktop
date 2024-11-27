@@ -81,9 +81,8 @@ Control {
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
 
-    signal clicked(var sender, var mouse)
     signal profilePictureClicked(var sender, var mouse)
-    signal senderNameClicked(var sender, var mouse)
+    signal senderNameClicked(var sender)
     signal replyProfileClicked(var sender, var mouse)
     signal replyMessageClicked(var mouse)
 
@@ -265,7 +264,7 @@ Control {
                             amISender: root.messageDetails.amISender
                             messageOriginInfo: root.messageDetails.messageOriginInfo
                             resendError: root.messageDetails.amISender ? root.resendError : ""
-                            onClicked: root.senderNameClicked(sender, mouse)
+                            onClicked: (sender) => root.senderNameClicked(sender)
                             onResendClicked: root.resendClicked()
                             timestamp: root.timestamp
                             showFullTimestamp: root.isInPinnedPopup

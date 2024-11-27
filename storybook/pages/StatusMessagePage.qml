@@ -67,6 +67,17 @@ SplitView {
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
             }
             ListElement {
+                timestamp: 1667937930159
+                senderId: "zqdeadbeef86"
+                senderDisplayName: "8⃣6⃣.stateofus.eth"
+                contentType: StatusMessage.ContentType.Text
+                message: "Test message for a user with emoji + ENS name"
+                isContact: false
+                isAReply: false
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
+            ListElement {
                 timestamp: 1719769718000
                 senderId: "zq123456790"
                 senderDisplayName: "Alice"
@@ -186,6 +197,7 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+            clip: true
 
             ListView {
                 anchors.margins: 16
@@ -236,7 +248,7 @@ SplitView {
                     onReplyProfileClicked: logs.logEvent("StatusMessage::replyProfileClicked")
                     onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
                     onResendClicked: logs.logEvent("StatusMessage::resendClicked")
-                    onLinkActivated: logs.logEvent("StatusMessage::linkActivated" + link)
+                    onLinkActivated: logs.logEvent("StatusMessage::linkActivated", ["link"], arguments)
                     onImageClicked: logs.logEvent("StatusMessage::imageClicked")
                 }
             }
@@ -254,3 +266,4 @@ SplitView {
 }
 
 // category: Components
+// status: good
