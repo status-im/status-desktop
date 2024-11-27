@@ -13,6 +13,10 @@ SplitView {
         id: mockedLinkPreviewModel
     }
 
+    PaymentRequestModel {
+        id: mockedPaymentRequestModel
+    }
+
     Pane {
         id: messageViewWrapper
         SplitView.fillWidth: true
@@ -27,6 +31,9 @@ SplitView {
             playAnimations: true
             linkPreviewModel: mockedLinkPreviewModel
             gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
+            paymentRequestModel: mockedPaymentRequestModel
+
+            senderName: "Alice"
 
             gifUnfurlingEnabled: false
             canAskToUnfurlGifs: true

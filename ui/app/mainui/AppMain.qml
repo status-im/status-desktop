@@ -677,6 +677,21 @@ Item {
             sendModal.open(address)
         }
 
+        function onPaymentRequestClicked(receiverAddress: string, symbol: string, amount: string, chainId: int) {
+            if (!!symbol) {
+                sendModal.preSelectedHoldingID = symbol
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+            }
+            if (!!amount) {
+                sendModal.preDefinedAmountToSend = amount
+            }
+            if (!!chainId) {
+                sendModal.preSelectedChainId = chainId
+            }
+
+            sendModal.open(receiverAddress)
+        }
+
         function onSwitchToCommunity(communityId: string) {
             appMain.communitiesStore.setActiveCommunity(communityId)
         }

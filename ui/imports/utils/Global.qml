@@ -73,6 +73,7 @@ QtObject {
     signal appSectionBySectionTypeChanged(int sectionType, int subsection, int subSubsection, var data)
 
     signal openSendModal(string address)
+    signal paymentRequestClicked(string receiverAddress, string symbol, string amount, int chainId)
     signal switchToCommunity(string communityId)
     signal switchToCommunitySettings(string communityId)
     signal switchToCommunityChannelsView(string communityId)

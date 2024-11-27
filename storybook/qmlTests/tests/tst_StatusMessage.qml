@@ -35,7 +35,7 @@ Item {
     property StatusMessage controlUnderTest: null
 
     TestCase {
-        name: "TokenSelectorView"
+        name: "StatusMessage"
         when: windowShown
 
         function init() {

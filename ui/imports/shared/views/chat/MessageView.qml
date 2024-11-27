@@ -70,6 +70,7 @@ Loader {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property var linkPreviewModel
+    property var paymentRequestModel
     property string messageAttachments: ""
     property var transactionParams
     property var emojiReactionsModel
@@ -720,6 +721,7 @@ Loader {
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
                 linkPreviewModel: root.linkPreviewModel
+                paymentRequestModel: root.paymentRequestModel
                 gifLinks: root.gifLinks
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
@@ -973,6 +975,10 @@ Loader {
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
+                        senderName: root.senderDisplayName
+                        senderThumbnailImage: root.senderIcon || ""
+                        senderColorId: Utils.colorIdForPubkey(root.senderId)
+                        paymentRequestModel: root.paymentRequestModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
@@ -986,6 +992,13 @@ Loader {
                         gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                         canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+                        onPaymentRequestClicked: (index) => {
+                            const receiver = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "receiver")
+                            const amount = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "amount")
+                            const symbol = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "symbol")
+                            const chainId = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "chainId")
+                            Global.paymentRequestClicked(receiver, symbol, amount, chainId)
+                        }
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)
