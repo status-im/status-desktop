@@ -3,7 +3,9 @@ import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/message/dto/message
 import ../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/dto/payment_request
 import ./link_preview_model as link_preview_model
+import ./payment_request_model as payment_request_model
 import ./emoji_reactions_model as emoji_reactions_model
 
 export types.ContentType
@@ -72,6 +74,7 @@ type
     albumMessageIds: seq[string]
     albumImagesCount: int
     bridgeName: string
+    paymentRequestModel: payment_request_model.Model
 
 proc initItem*(
     id,
@@ -126,6 +129,7 @@ proc initItem*(
     albumImagesCount: int,
     bridgeMessage: BridgeMessage,
     quotedBridgeMessage: BridgeMessage,
+    paymentRequests: seq[PaymentRequest],
     ): Item =
   result = Item()
   result.id = id
@@ -184,6 +188,7 @@ proc initItem*(
   result.albumMessageImages = albumMessageImages
   result.albumMessageIds = albumMessageIds
   result.albumImagesCount = albumImagesCount
+  result.paymentRequestModel = newPaymentRequestModel(paymentRequests)
 
   if quotedMessageContentType == ContentType.DiscordMessage:
     result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
@@ -281,6 +286,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     albumImagesCount = 0,
     bridgeMessage = BridgeMessage(),
     quotedBridgeMessage = BridgeMessage(),
+    paymentRequests = @[],
   )
 
 proc `$`*(self: Item): string =
@@ -507,6 +513,9 @@ proc `links=`*(self: Item, links: seq[string]) {.inline.} =
 
 proc linkPreviewModel*(self: Item): link_preview_model.Model {.inline.} =
   return self.linkPreviewModel
+
+proc paymentRequestModel*(self: Item): payment_request_model.Model {.inline.} =
+  return self.paymentRequestModel
 
 proc emojiReactionsModel*(self: Item): emoji_reactions_model.Model {.inline.} =
   return self.emojiReactionsModel

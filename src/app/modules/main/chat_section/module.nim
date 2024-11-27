@@ -216,6 +216,7 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     message.albumImagesCount,
     message.bridgeMessage,
     message.quotedMessage.bridgeMessage,
+    message.paymentRequests
   )
 
 method delete*(self: Module) =
