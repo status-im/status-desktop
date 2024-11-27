@@ -3,7 +3,7 @@ import os
 
 const DEFAULT_FLAG_DAPPS_ENABLED = true
 const DEFAULT_FLAG_SWAP_ENABLED = true
-const DEFAULT_FLAG_CONNECTOR_ENABLED* = false
+const DEFAULT_FLAG_CONNECTOR_ENABLED* = true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED = true
 
 proc boolToEnv*(defaultValue: bool): string =
