@@ -24,7 +24,7 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    property string placeholderText
+    property string placeholderText: qsTr("Search by member name or chat key")
     property var model
     property RootStore rootStore
     property SharedStores.UtilsStore utilsStore
@@ -60,7 +60,7 @@ Item {
             Layout.preferredWidth: 400
             Layout.leftMargin: 12
             placeholderText: root.placeholderText
-            enabled: !!model && model.count > 0
+            enabled: !!root.model && !root.model.ModelCount.empty
         }
 
         StatusListView {
@@ -71,7 +71,15 @@ Item {
             Layout.fillHeight: true
 
             model: SortFilterProxyModel {
+                id: filteredModel
                 sourceModel: root.model
+
+                function searchPredicate(ensName, displayName, aliasName) {
+                    const lowerCaseSearchString = memberSearch.text.toLowerCase()
+                    const secondaryName = ProfileUtils.displayName("", ensName, displayName, aliasName)
+
+                    return secondaryName.toLowerCase().includes(lowerCaseSearchString)
+                }
 
                 sorters : [
                     StringSorter {
@@ -81,21 +89,23 @@ Item {
                 ]
 
                 filters: AnyOf {
+                    enabled: memberSearch.text !== ""
+                    // substring search for either nickname or the other primary/secondary display name
                     SearchFilter {
                         roleName: "localNickname"
                         searchPhrase: memberSearch.text
                     }
-                    SearchFilter {
-                        roleName: "displayName"
-                        searchPhrase: memberSearch.text
+                    FastExpressionFilter {
+                        expression: {
+                            memberSearch.text
+                            return filteredModel.searchPredicate(model.ensName, model.displayName, model.alias)
+                        }
+                        expectedRoles: ["ensName", "displayName", "alias"]
                     }
-                    SearchFilter {
-                        roleName: "ensName"
-                        searchPhrase: memberSearch.text
-                    }
-                    SearchFilter {
-                        roleName: "alias"
-                        searchPhrase: memberSearch.text
+                    // exact search for the full key
+                    ValueFilter {
+                        roleName: "compressedPubKey"
+                        value: memberSearch.text
                     }
                 }
             }
@@ -346,25 +356,24 @@ Item {
         ProfileContextMenu {
             id: memberContextMenuView
 
-            property string pubKey
+            required property string pubKey
 
-            onOpenProfileClicked: Global.openProfilePopup(memberContextMenuView.pubKey, null)
+            onOpenProfileClicked: Global.openProfilePopup(pubKey, null)
             onCreateOneToOneChat: {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", membersContextMenuView.pubKey, "")
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
             }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(memberContextMenuView.pubKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(memberContextMenuView.pubKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(memberContextMenuView.pubKey, null)
-            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(memberContextMenuView.pubKey,
-                                                                                 "", memberContextMenuView.displayName, true)
-            onUnblockContact: Global.unblockContactRequested(memberContextMenuView.pubKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(memberContextMenuView.pubKey)
-            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(memberContextMenuView.pubKey)
-            onRemoveContact: Global.removeContactRequested(memberContextMenuView.pubKey)
-            onBlockContact: Global.blockContactRequested(memberContextMenuView.pubKey)
-            onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(memberContextMenuView.pubKey, null)
-            onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(memberContextMenuView.pubKey, null)
+            onReviewContactRequest: Global.openReviewContactRequestPopup(pubKey, null)
+            onSendContactRequest: Global.openContactRequestPopup(pubKey, null)
+            onEditNickname: Global.openNicknamePopupRequested(pubKey, null)
+            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(pubKey, "", displayName, true)
+            onUnblockContact: Global.unblockContactRequested(pubKey)
+            onMarkAsUntrusted: Global.markAsUntrustedRequested(pubKey)
+            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(pubKey)
+            onRemoveContact: Global.removeContactRequested(pubKey)
+            onBlockContact: Global.blockContactRequested(pubKey)
+            onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(pubKey, null)
+            onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(pubKey, null)
             onClosed: destroy()
         }
     }

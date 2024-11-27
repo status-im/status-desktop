@@ -239,7 +239,7 @@ StatusSectionLayout {
                                     StatusQUtils.Utils.filterXSS(item.introMessage),
                                     StatusQUtils.Utils.filterXSS(item.outroMessage),
                                     item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess
-                                                                    : Constants.communityChatPublicAccess,
+                                                                      : Constants.communityChatPublicAccess,
                                     item.color.toString().toUpperCase(),
                                     item.selectedTags,
                                     Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
@@ -298,7 +298,7 @@ StatusSectionLayout {
                 declinedMembersModel: root.declinedMembers
 
                 editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
-                memberRole: community.memberRole
+                memberRole: root.community.memberRole
                 communityName: root.community.name
 
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
