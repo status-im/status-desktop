@@ -11,6 +11,7 @@ import StatusQ.Validators 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.panels 1.0
 
 Control {
     id: root
@@ -72,6 +73,9 @@ Control {
                              `${balance.toLocaleString(Qt.locale())} FIAT`
     property var formatBalance: balance =>
                                 `${balance.toLocaleString(Qt.locale())} CRYPTO`
+
+    /* Shows separator between top and bottom text */
+    property bool showSeparator: false
 
     /* Allows to set value to be displayed. The value is expected to be a not
        localized string like "1", "1.1" or "0.000000023400234222". Provided
@@ -215,6 +219,12 @@ Control {
                 Layout.preferredHeight: textField.height
                 visible: root.mainInputLoading
             }
+        }
+
+        Separator {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            visible: root.showSeparator
         }
 
         StatusBaseText {

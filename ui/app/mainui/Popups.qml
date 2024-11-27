@@ -22,6 +22,7 @@ import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Communities.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -103,6 +104,7 @@ QtObject {
         Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
+        Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
     }
 
     property var currentPopup
@@ -401,6 +403,10 @@ QtObject {
         openPopup(buyCryptoModal, {
             buyCryptoInputParamsForm: parameters
         })
+    }
+
+    function openPaymentRequestModal(inputAreaModule) {
+        openPopup(paymentRequestModalComponent, {inputAreaModule: inputAreaModule})
     }
 
     readonly property list<Component> _components: [
@@ -1270,6 +1276,29 @@ QtObject {
                     }
                 }
                 standardButtons: Dialog.Ok
+                destroyOnClose: true
+            }
+        },
+        Component {
+            id: paymentRequestModalComponent
+            PaymentRequestModal {
+                id: paymentRequestModal
+                readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
+                    assetsModel: WalletStores.RootStore.walletAssetsStore._renamedTokensBySymbolModel
+                    flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                    currentCurrency: root.currencyStore.currentCurrency
+                    plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
+                    enabledChainIds: [paymentRequestModal.selectedNetworkChainId]
+                    showAllTokens: true
+                }
+                property var inputAreaModule: null
+                currentCurrency: root.currencyStore.currentCurrency
+                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
+                flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                accountsModel: WalletStores.RootStore.nonWatchAccounts
+                assetsModel: tokenAdaptor.outputAssetsModel
+
+                onAccepted: inputAreaModule.addPaymentRequest(selectedAccountAddress, amount, selectedTokenKey, selectedNetworkChainId)
                 destroyOnClose: true
             }
         }

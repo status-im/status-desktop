@@ -25,6 +25,7 @@ import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 import "../helpers"
 import "../controls"
@@ -46,6 +47,7 @@ Item {
     property ProfileStores.ContactsStore contactsStore
     property var emojiPopup
     property var stickersPopup
+    property bool areTestNetworksEnabled
 
     property string activeChatId: parentModule && parentModule.activeItem.id
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
@@ -55,6 +57,7 @@ Item {
     property var viewAndPostHoldingsModel
     property bool amISectionAdmin: false
     property bool sendViaPersonalChatEnabled
+    property bool paymentRequestEnabled
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -294,6 +297,7 @@ Item {
                     sharedStore: root.sharedRootStore
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
+                    paymentRequestModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
                     urlsList: d.urlsList
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)
@@ -323,6 +327,8 @@ Item {
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     chatType: root.activeChatType
+                    areTestNetworksEnabled: root.areTestNetworksEnabled
+                    paymentRequestEnabled: root.paymentRequestEnabled
 
                     textInput.onTextChanged: {
                         if (!!d.activeChatContentModule && textInput.text !== d.activeChatContentModule.inputAreaModule.preservedProperties.text) {
@@ -367,6 +373,7 @@ Item {
                             chatInput.setText("")
                             chatInput.textInput.textFormat = TextEdit.PlainText;
                             chatInput.textInput.textFormat = TextEdit.RichText;
+                            d.activeChatContentModule.inputAreaModule.removeAllPaymentRequestPreviewData()
                         }
                     }
 
@@ -391,6 +398,7 @@ Item {
                         d.activeChatContentModule.inputAreaModule.setLinkPreviewEnabledForCurrentMessage(false)
                     }
                     onDismissLinkPreview: (index) => d.activeChatContentModule.inputAreaModule.removeLinkPreviewData(index)
+                    onOpenPaymentRequestModal: () => Global.openPaymentRequestModalRequested(d.activeChatContentModule.inputAreaModule)
                     onRemovePaymentRequestPreviewRequested: (index) => d.activeChatContentModule.inputAreaModule.removePaymentRequestPreviewData(index)
                 }
 

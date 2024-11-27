@@ -97,6 +97,7 @@ Item {
         dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
         swapEnabled: featureFlags ? featureFlags.swapEnabled : false
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
+        paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
     }
 
     required property bool isCentralizedMetricsEnabled
@@ -1577,6 +1578,8 @@ Item {
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
+                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                                paymentRequestEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -1722,6 +1725,7 @@ Item {
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
+                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
                                                            (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
@@ -1742,6 +1746,7 @@ Item {
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
+                                paymentRequestEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
