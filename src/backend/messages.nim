@@ -66,8 +66,8 @@ proc markCertainMessagesFromChatWithIdAsRead*(chatId: string, messageIds: seq[st
 proc deleteMessageAndSend*(messageID: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("deleteMessageAndSend".prefix, %* [messageID])
 
-proc editMessage*(messageId: string, contentType: int, msg: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("editMessage".prefix, %* [{"id": messageId, "text": msg, "content-type": contentType}])
+proc editMessage*(messageId: string, msg: string): RpcResponse[JsonNode] =
+  result = callPrivateRPC("editMessage".prefix, %* [{"id": messageId, "text": msg}])
 
 proc resendChatMessage*(messageId: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("reSendChatMessage".prefix, %* [messageId])

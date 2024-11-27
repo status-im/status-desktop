@@ -292,8 +292,8 @@ proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], commun
 proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
-proc editMessage*(self: Controller, messageId: string, contentType: int, updatedMsg: string) =
-  self.messageService.editMessage(messageId, contentType, updatedMsg)
+proc editMessage*(self: Controller, messageId: string, updatedMsg: string) =
+  self.messageService.editMessage(messageId, updatedMsg)
 
 proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId

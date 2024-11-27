@@ -120,8 +120,8 @@ QtObject:
   proc setEditModeOff*(self: View, messageId: string) {.slot.} =
    self.model.setEditModeOff(messageId)
 
-  proc editMessage*(self: View, messageId: string, contentType: int, updatedMsg: string) {.slot.} =
-    self.delegate.editMessage(messageId, contentType, updatedMsg)
+  proc editMessage*(self: View, messageId: string, updatedMsg: string) {.slot.} =
+    self.delegate.editMessage(messageId, updatedMsg)
 
   proc switchToMessage(self: View, messageIndex: int) {.signal.}
   proc emitSwitchToMessageSignal*(self: View, messageIndex: int) =
