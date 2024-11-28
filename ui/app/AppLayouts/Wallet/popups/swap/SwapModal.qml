@@ -1,9 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
@@ -18,6 +20,7 @@ import shared.panels 1.0
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.popups.buy 1.0
+import AppLayouts.Wallet.adaptors 1.0
 
 StatusDialog {
     id: root
@@ -58,9 +61,35 @@ StatusDialog {
             selectedTokenKey: root.swapInputParamsForm.fromTokensKey
         }
 
+        readonly property WalletAccountsSelectorAdaptor accountsSelectorAdaptor : WalletAccountsSelectorAdaptor {
+            accounts: root.swapAdaptor.swapStore.accounts
+            assetsModel: root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel
+            tokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
+            filteredFlatNetworksModel: SortFilterProxyModel {
+                sourceModel: root.swapAdaptor.swapStore.flatNetworks
+                filters: ValueFilter { roleName: "isTest"; value: root.swapAdaptor.swapStore.areTestNetworksEnabled }
+            }
+
+            selectedTokenKey: root.swapInputParamsForm.fromTokensKey
+            selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+
+            fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
+                return root.swapAdaptor.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
+            }
+        }
+
+        readonly property var selectedAccount: selectedAccountEntry.item
+
         function addMetricsEvent(subEventName) {
             Global.addCentralizedMetricIfEnabled("swap", {subEvent: subEventName})
         }
+    }
+
+    ModelEntry {
+        id: selectedAccountEntry
+        sourceModel: d.accountsSelectorAdaptor.processedWalletAccounts
+        key: "address"
+        value: root.swapInputParamsForm.selectedAccountAddress
     }
 
     Connections {
@@ -109,7 +138,7 @@ StatusDialog {
         AccountSelectorHeader {
             id: selector
             control.popup.width: 512
-            model: root.swapAdaptor.nonWatchAccounts
+            model: d.accountsSelectorAdaptor.processedWalletAccounts
             selectedAddress: root.swapInputParamsForm.selectedAccountAddress
             onCurrentAccountAddressChanged: {
                 if (currentAccountAddress !== "" && currentAccountAddress !== root.swapInputParamsForm.selectedAccountAddress) {
@@ -409,7 +438,7 @@ StatusDialog {
                     objectName: "signButton"
                     readonly property string fromTokenSymbol: !!root.swapAdaptor.fromToken ? root.swapAdaptor.fromToken.symbol ?? "" : ""
                     loadingWithText: root.swapAdaptor.approvalPending
-                    icon.name: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
+                    icon.name: d.selectedAccount.migratedToKeycard ? Constants.authenticationIconByType[Constants.LoginType.Keycard]
                                                                                   : Constants.authenticationIconByType[root.loginType]
                     text: {
                         if(root.swapAdaptor.validSwapProposalReceived) {
@@ -461,7 +490,7 @@ StatusDialog {
 
             formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
-            loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            loginType: d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
@@ -470,11 +499,11 @@ StatusDialog {
                                                                   "chainId", root.swapInputParamsForm.selectedNetworkChainId,
                                                                   "address")
 
-            accountName: root.swapAdaptor.selectedAccount.name
-            accountAddress: root.swapAdaptor.selectedAccount.address
-            accountEmoji: root.swapAdaptor.selectedAccount.emoji
-            accountColor: Utils.getColorForId(root.swapAdaptor.selectedAccount.colorId)
-            accountBalanceFormatted: root.swapAdaptor.selectedAccount.accountBalance.formattedBalance
+            accountName: d.selectedAccount.name
+            accountAddress: d.selectedAccount.address
+            accountEmoji: d.selectedAccount.emoji
+            accountColor: Utils.getColorForId(d.selectedAccount.colorId)
+            accountBalanceFormatted: d.selectedAccount.accountBalance.formattedBalance
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
@@ -513,7 +542,7 @@ StatusDialog {
 
             formatBigNumber: (number, symbol, noSymbolOption) => root.swapAdaptor.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
-            loginType: root.swapAdaptor.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
+            loginType: d.selectedAccount.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             feesLoading: root.swapAdaptor.swapProposalLoading
 
             fromTokenSymbol: root.swapAdaptor.fromToken.symbol
@@ -528,10 +557,10 @@ StatusDialog {
                                                                 "chainId", root.swapInputParamsForm.selectedNetworkChainId,
                                                                 "address")
 
-            accountName: root.swapAdaptor.selectedAccount.name
-            accountAddress: root.swapAdaptor.selectedAccount.address
-            accountEmoji: root.swapAdaptor.selectedAccount.emoji
-            accountColor: Utils.getColorForId(root.swapAdaptor.selectedAccount.colorId)
+            accountName: d.selectedAccount.name
+            accountAddress: d.selectedAccount.address
+            accountEmoji: d.selectedAccount.emoji
+            accountColor: Utils.getColorForId(d.selectedAccount.colorId)
 
             networkShortName: networkFilter.singleSelectionItemData.shortName
             networkName: networkFilter.singleSelectionItemData.chainName
