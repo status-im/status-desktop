@@ -19,19 +19,16 @@ KeycardBasePage {
 
     buttons: [
         MaybeOutlineButton {
-            id: btnReload
-            text: qsTr("I’ve inserted a Keycard")
+            text: qsTr("I’ve inserted a different Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.reloadKeycardRequested()
         },
         MaybeOutlineButton {
-            id: btnLogin
             text: qsTr("Log in with this Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.loginWithThisKeycardRequested()
         },
         MaybeOutlineButton {
-            id: btnFactoryReset
             text: qsTr("Factory reset Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.keycardFactoryResetRequested()
