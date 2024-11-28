@@ -80,10 +80,18 @@ Page {
         }
 
         function pushOrSkipBiometricsPage(subtitle: string) {
-            if (root.biometricsAvailable)
+            if (root.biometricsAvailable) {
+                dbg.debugFlow("ENTERING BIOMETRICS PAGE")
                 stack.push(enableBiometricsPage, {subtitle})
-            else
+            } else {
+                dbg.debugFlow("SKIPPING BIOMETRICS PAGE")
                 mainHandler.onEnableBiometricsRequested(false)
+            }
+        }
+
+        function pushSplashScreenPage() {
+            dbg.debugFlow("ENTERING SPLASHSCREEN PAGE")
+            stack.replace(splashScreen, { runningProgressAnimation: true })
         }
     }
 
@@ -105,6 +113,16 @@ Page {
         LoginWithSeedphrase,
         LoginWithSyncing,
         LoginWithKeycard
+    }
+
+    LoggingCategory {
+        id: dbg
+        name: "app.status.onboarding"
+
+        function debugFlow(message) {
+            const currentPageName  = stack.currentItem ? stack.currentItem.pageClassName : "<empty stack>"
+            console.info(dbg, "!!!", currentPageName, "->", message)
+        }
     }
 
     // page stack
@@ -162,35 +180,37 @@ Page {
 
         // common popups
         function onPrivacyPolicyRequested() {
-            console.warn("!!! AUX: PRIVACY POLICY")
+            dbg.debugFlow("AUX: PRIVACY POLICY")
             privacyPolicyPopup.createObject(root).open()
         }
         function onTermsOfUseRequested() {
-            console.warn("!!! AUX: TERMS OF USE")
+            dbg.debugFlow("AUX: TERMS OF USE")
             termsOfUsePopup.createObject(root).open()
         }
         function onOpenLink(link: string) {
+            dbg.debugFlow(`OPEN LINK: ${link}`)
             Global.openLink(link)
         }
         function onOpenLinkWithConfirmation(link: string, domain: string) {
+            dbg.debugFlow(`OPEN LINK WITH CONFIRM: ${link}`)
             Global.openLinkWithConfirmation(link, domain)
         }
 
         // welcome page
         function onCreateProfileRequested() {
-            console.warn("!!! PRIMARY: CREATE PROFILE")
+            dbg.debugFlow("PRIMARY: CREATE PROFILE")
             d.primaryPath = OnboardingLayout.PrimaryPath.CreateProfile
             stack.push(helpUsImproveStatusPage)
         }
         function onLoginRequested() {
-            console.warn("!!! PRIMARY: LOG IN")
+            dbg.debugFlow("PRIMARY: LOG IN")
             d.primaryPath = OnboardingLayout.PrimaryPath.Login
             stack.push(helpUsImproveStatusPage)
         }
 
         // help us improve page
         function onShareUsageDataRequested(enabled: bool) {
-            console.warn("!!! SHARE USAGE DATA:", enabled)
+            dbg.debugFlow(`SHARE USAGE DATA: ${enabled}`)
             metricsStore.toggleCentralizedMetrics(enabled)
             Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})
             localAppSettings.metricsPopupSeen = true
@@ -203,41 +223,41 @@ Page {
 
         // create profile page
         function onCreateProfileWithPasswordRequested() {
-            console.warn("!!! SECONDARY: CREATE PROFILE WITH PASSWORD")
+            dbg.debugFlow("SECONDARY: CREATE PROFILE WITH PASSWORD")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithPassword
             stack.push(createPasswordPage)
         }
         function onCreateProfileWithSeedphraseRequested() {
-            console.warn("!!! SECONDARY: CREATE PROFILE WITH SEEDPHRASE")
+            dbg.debugFlow("SECONDARY: CREATE PROFILE WITH SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Create profile using a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
         }
         function onCreateProfileWithEmptyKeycardRequested() {
-            console.warn("!!! SECONDARY: CREATE PROFILE WITH KEYCARD")
+            dbg.debugFlow("SECONDARY: CREATE PROFILE WITH KEYCARD")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycard
             stack.push(keycardIntroPage)
         }
 
         // login page
         function onLoginWithSeedphraseRequested() {
-            console.warn("!!! SECONDARY: LOGIN WITH SEEDPHRASE")
+            dbg.debugFlow("SECONDARY: LOGIN WITH SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Log in with your Status recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
         }
         function onLoginWithSyncingRequested() {
-            console.warn("!!! SECONDARY: LOGIN WITH SYNCING")
+            dbg.debugFlow("SECONDARY: LOGIN WITH SYNCING")
             d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithSyncing
             stack.push(loginBySyncPage)
         }
         function onLoginWithKeycardRequested() {
-            console.warn("!!! SECONDARY: LOGIN WITH KEYCARD")
+            dbg.debugFlow("SECONDARY: LOGIN WITH KEYCARD")
             d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithKeycard
             stack.push(keycardIntroPage)
         }
 
         // create password page
         function onSetPasswordRequested(password: string) {
-            console.warn("!!! SET PASSWORD REQUESTED")
+            dbg.debugFlow("SET PASSWORD REQUESTED")
             d.password = password
             // TODO set the password immediately?
             stack.clear()
@@ -246,12 +266,12 @@ Page {
 
         // seedphrase page
         function onSeedphraseValidated() {
-            console.warn("!!! SEEDPHRASE VALIDATED")
+            dbg.debugFlow("SEEDPHRASE VALIDATED")
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase || d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithSeedphrase) {
-                console.warn("!!! AFTER SEEDPHRASE -> PASSWORD PAGE")
+                dbg.debugFlow("AFTER SEEDPHRASE -> PASSWORD PAGE")
                 stack.push(createPasswordPage)
             } else if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
-                console.warn("!!! AFTER SEEDPHRASE -> KEYCARD PIN PAGE")
+                dbg.debugFlow("AFTER SEEDPHRASE -> KEYCARD PIN PAGE")
                 if (root.startupStore.getPin() !== "")
                     stack.push(keycardEnterPinPage)
                 else
@@ -261,17 +281,17 @@ Page {
 
         // keycard pages
         function onReloadKeycardRequested() {
-            console.warn("!!! RELOAD KEYCARD REQUESTED")
+            dbg.debugFlow("RELOAD KEYCARD REQUESTED")
             root.keycardReloaded()
             stack.replace(keycardIntroPage)
         }
         function onKeycardFactoryResetRequested() {
-            console.warn("!!! KEYCARD FACTORY RESET REQUESTED")
+            dbg.debugFlow("KEYCARD FACTORY RESET REQUESTED")
             // TODO start keycard factory reset in a popup here
             root.keycardFactoryResetRequested()
         }
         function onLoginWithThisKeycardRequested() {
-            console.warn("!!! LOGIN WITH THIS KEYCARD REQUESTED")
+            dbg.debugFlow("LOGIN WITH THIS KEYCARD REQUESTED")
             d.primaryPath = OnboardingLayout.PrimaryPath.Login
             d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithKeycard
             if (root.startupStore.getPin() !== "")
@@ -280,14 +300,14 @@ Page {
                 stack.push(keycardCreatePinPage)
         }
         function onEmptyKeycardDetected() {
-            console.warn("!!! EMPTY KEYCARD DETECTED")
+            dbg.debugFlow("EMPTY KEYCARD DETECTED")
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithKeycard)
                 stack.replace(keycardEmptyPage) // NB: replacing the loginPage
             else
                 stack.replace(createKeycardProfilePage) // NB: replacing the keycardIntroPage
         }
         function onNotEmptyKeycardDetected() {
-            console.warn("!!! NOT EMPTY KEYCARD DETECTED")
+            dbg.debugFlow("NOT EMPTY KEYCARD DETECTED")
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithKeycard)
                 stack.push(keycardEnterPinPage)
             else
@@ -295,7 +315,7 @@ Page {
         }
 
         function onCreateKeycardProfileWithNewSeedphrase() {
-            console.warn("!!! CREATE KEYCARD PROFILE WITH NEW SEEDPHRASE")
+            dbg.debugFlow("CREATE KEYCARD PROFILE WITH NEW SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase
 
             if (root.startupStore.getPin())
@@ -304,13 +324,13 @@ Page {
                 stack.push(keycardCreatePinPage)
         }
         function onCreateKeycardProfileWithExistingSeedphrase() {
-            console.warn("!!! CREATE KEYCARD PROFILE WITH EXISTING SEEDPHRASE")
+            dbg.debugFlow("CREATE KEYCARD PROFILE WITH EXISTING SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Create profile on empty Keycard using a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
         }
 
         function onKeycardPinCreated(pin) {
-            console.warn("!!! KEYCARD PIN CREATED:", pin)
+            dbg.debugFlow(`KEYCARD PIN CREATED: ${pin}`)
             d.keycardPin = pin
             // TODO set the PIN immediately?
             Backpressure.debounce(root, 2000, function() {
@@ -320,7 +340,7 @@ Page {
         }
 
         function onKeycardPinEntered(pin) {
-            console.warn("!!! KEYCARD PIN ENTERED:", pin)
+            dbg.debugFlow(`KEYCARD PIN ENTERED: ${pin}`)
             d.keycardPin = pin
             // TODO set the PIN immediately?
             stack.clear()
@@ -329,35 +349,35 @@ Page {
 
         // backup seedphrase pages
         function onBackupSeedphraseRequested() {
-            console.warn("!!! BACKUP SEED REQUESTED")
+            dbg.debugFlow("BACKUP SEED REQUESTED")
             stack.push(backupSeedAcksPage)
         }
 
         function onBackupSeedphraseContinue() {
-            console.warn("!!! BACKUP SEED CONTINUE")
+            dbg.debugFlow("BACKUP SEED CONTINUE")
             stack.push(backupSeedRevealPage)
         }
 
         function onBackupSeedphraseConfirmed() {
-            console.warn("!!! BACKUP SEED CONFIRMED")
+            dbg.debugFlow("BACKUP SEED CONFIRMED")
             root.privacyStore.mnemonicWasShown()
             stack.push(backupSeedVerifyPage)
         }
 
         function onBackupSeedphraseVerified() {
-            console.warn("!!! BACKUP SEED VERIFIED")
+            dbg.debugFlow("BACKUP SEED VERIFIED")
             stack.push(backupSeedOutroPage)
         }
 
         function onBackupSeedphraseRemovalConfirmed() {
-            console.warn("!!! BACKUP SEED REMOVAL CONFIRMED")
+            dbg.debugFlow("BACKUP SEED REMOVAL CONFIRMED")
             root.privacyStore.removeMnemonic()
-            stack.replace(splashScreen, { runningProgressAnimation: true })
+            d.pushSplashScreenPage()
         }
 
         // login with sync pages
         function onSyncProceedWithConnectionString(connectionString) {
-            console.warn("!!! SYNC PROCEED WITH CONNECTION STRING:", connectionString)
+            dbg.debugFlow(`SYNC PROCEED WITH CONNECTION STRING: ${connectionString}`)
             d.syncConnectionString = connectionString
             root.startupStore.setConnectionString(connectionString)
             // TODO backend: start the sync
@@ -368,25 +388,25 @@ Page {
         }
 
         function onRestartSyncRequested() {
-            console.warn("!!! RESTART SYNC REQUESTED")
+            dbg.debugFlow("RESTART SYNC REQUESTED")
             // TODO backend: start the sync
             stack.clear()
             stack.replace(syncProgressPage)
         }
 
         function onLoginToAppRequested() {
-            console.warn("!!! LOGIN TO APP REQUESTED")
-            stack.replace(splashScreen, { runningProgressAnimation: true })
+            dbg.debugFlow("LOGIN TO APP REQUESTED")
+            d.pushSplashScreenPage()
         }
 
         // enable biometrics page
         function onEnableBiometricsRequested(enabled: bool) {
-            console.warn("!!! ENABLE BIOMETRICS:", enabled)
+            dbg.debugFlow(`ENABLE BIOMETRICS: ${enabled}`)
             d.enableBiometrics = enabled
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase)
                 stack.push(backupSeedIntroPage)
             else
-                stack.replace(splashScreen, { runningProgressAnimation: true })
+                d.pushSplashScreenPage()
         }
     }
 
@@ -432,8 +452,11 @@ Page {
                 to: 1
                 duration: root.splashScreenDurationMs
                 running: runningProgressAnimation
-                onStopped: root.finished(d.primaryPath, d.secondaryPath,
-                                         {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics, "syncConnectionString": d.syncConnectionString})
+                onStopped: {
+                    dbg.debugFlow(`ONBOARDING FINISHED; ${d.primaryPath} -> ${d.secondaryPath}`)
+                    root.finished(d.primaryPath, d.secondaryPath,
+                                  {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics, "syncConnectionString": d.syncConnectionString})
+                }
             }
         }
     }

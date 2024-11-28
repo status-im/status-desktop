@@ -157,11 +157,11 @@ SplitView {
     Connections {
         target: Global
         function onOpenLink(link: string) {
-            console.debug("Opening link in an external web browser:", link)
+            console.warn("Opening link in an external web browser:", link)
             Qt.openUrlExternally(link)
         }
         function onOpenLinkWithConfirmation(link: string, domain: string) {
-            console.debug("Opening link in an external web browser:", link, domain)
+            console.warn("Opening link in an external web browser:", link, domain)
             Qt.openUrlExternally(link)
         }
     }
