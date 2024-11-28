@@ -113,7 +113,7 @@ QtObject:
   proc parseSingleUInt(chainIDsString: string): uint =
     try:
       let chainIds = parseJson(chainIDsString)
-      if chainIds.kind == JArray and chainIds.len == 1 and chainIds[0].kind == JInt:
+      if chainIds.kind == JArray and chainIds.len > 0 and chainIds[0].kind == JInt:
         return uint(chainIds[0].getInt())
       else:
         raise newException(ValueError, "Invalid JSON array format")
@@ -121,9 +121,14 @@ QtObject:
       raise newException(ValueError, "Failed to parse JSON")
 
   proc approveConnection*(self: Controller, requestId: string, account: string, chainIDString: string): bool {.slot.} =
-    let chainId = parseSingleUInt(chainIDString)
-    result = self.service.approveDappConnect(requestId, account, chainId)
-    self.approveConnectResponse(requestId, not result)
+    try:
+      let chainId = parseSingleUInt(chainIDString)
+      result = self.service.approveDappConnect(requestId, account, chainId)
+      self.approveConnectResponse(requestId, not result)
+    except ValueError:
+      echo "Failed to parse chain ID"
+      self.approveConnectResponse(requestId, true)
+
 
   proc rejectConnection*(self: Controller, requestId: string): bool {.slot.} =
     result = self.service.rejectDappConnect(requestId)
