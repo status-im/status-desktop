@@ -77,7 +77,7 @@ proc sendChatMessage*(
       "communityId": communityId,
       "linkPreviews": standardLinkPreviews,
       "statusLinkPreviews": statusLinkPreviews,
-      "payment_requests": paymentRequests,
+      "paymentRequests": paymentRequests,
     }
   ])
 
@@ -100,7 +100,7 @@ proc sendImages*(chatId: string,
         "responseTo": replyTo,
         "linkPreviews": standardLinkPreviews,
         "statusLinkPreviews": statusLinkPreviews,
-        "payment_requests": paymentRequests,
+        "paymentRequests": paymentRequests,
       }
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])

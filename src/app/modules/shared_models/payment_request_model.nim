@@ -38,14 +38,11 @@ QtObject:
   proc getPaymentRequests*(self: Model): seq[PaymentRequest] =
     return self.items
 
-  proc countChanged(self: Model) {.signal.}
-
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
-    notify = countChanged
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
@@ -80,7 +77,7 @@ QtObject:
     else:
       result = newQVariant()
 
-  proc removeItemWithIndex*(self: Model, ind: int) =
+  proc removeItemWithIndex*(self: Model, ind: int) {.slot.} =
     if(ind < 0 or ind >= self.items.len):
       return
 
@@ -98,9 +95,8 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(paymentRequest)
     self.endInsertRows()
-    self.countChanged()
 
-  proc addPaymentRequest*(self: Model, receiver: string, amount: string, symbol: string, chainId: int) =
+  proc addPaymentRequest*(self: Model, receiver: string, amount: string, symbol: string, chainId: int) {.slot.}=
     let paymentRequest = newPaymentRequest(receiver, amount, symbol, chainId)
     self.insertItem(paymentRequest)
 
@@ -108,4 +104,3 @@ QtObject:
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
-    self.countChanged()
