@@ -1,11 +1,12 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Backpressure 0.1
 
 import Models 1.0
@@ -32,6 +33,10 @@ SplitView {
 
         readonly property WalletAssetsStore walletAssetStore: WalletAssetsStore {
             assetsWithFilteredBalances: groupedAccountsAssetsModel
+            walletTokensStore: TokensStore {
+                plainTokensBySymbolModel: TokensBySymbolModel{}
+                getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => 0
+            }
         }
 
         readonly property var walletAccountsModel: WalletAccountsModel{}
@@ -67,6 +72,14 @@ SplitView {
             simpleSend.estimatedFiatFees = "1.45 EUR"
             simpleSend.estimatedCryptoFees = "0.0007 ETH"
         })
+
+        function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
+            if (isNaN(amount)) {
+                return "N/A"
+            }
+            var currencyAmount = d.getCurrencyAmount(amount, symbol)
+            return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
+        }
     }
 
     PopupBackground {
@@ -96,7 +109,7 @@ SplitView {
 
         interactive: interactiveCheckbox.checked
 
-        accountsModel: d.walletAccountsModel
+        accountsModel: accountsSelectorAdaptor.processedWalletAccounts
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
@@ -105,13 +118,7 @@ SplitView {
         recentRecipientsModel: WalletTransactionsModel{}
 
         currentCurrency: "USD"
-        fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
-            if (isNaN(amount)) {
-                return "N/A"
-            }
-            var currencyAmount = d.getCurrencyAmount(amount, symbol)
-            return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
-        }
+        fnFormatCurrencyAmount: d.formatCurrencyAmount
 
         fnResolveENS: Backpressure.debounce(root, 500, function (ensName, uuid) {
             if (!!ensName && ensName.endsWith(".eth")) {
@@ -143,6 +150,24 @@ SplitView {
         }
         Binding on selectedTokenKey {
             value: tokensCombobox.currentValue ?? ""
+        }
+    }
+
+    WalletAccountsSelectorAdaptor {
+        id: accountsSelectorAdaptor
+
+        accounts: d.walletAccountsModel
+        assetsModel: GroupedAccountsAssetsModel {}
+        tokensBySymbolModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
+        filteredFlatNetworksModel: d.filteredNetworksModel
+
+        selectedTokenKey: simpleSend.selectedTokenKey
+        selectedNetworkChainId: simpleSend.selectedChainId
+
+        fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
+            let bigIntBalance = AmountsArithmetic.fromString(balance)
+            let decimalBalance = AmountsArithmetic.toNumber(bigIntBalance, decimals)
+            return d.formatCurrencyAmount(decimalBalance, symbol, options)
         }
     }
 

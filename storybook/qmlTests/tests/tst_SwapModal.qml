@@ -171,26 +171,28 @@ Item {
 
         function test_floating_header_default_account() {
             verify(!!controlUnderTest)
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
             /* using a for loop set different accounts as default index and
             check if the correct values are displayed in the floating header*/
-            for (let i = 0; i< swapAdaptor.nonWatchAccounts.count; i++) {
-                const nonWatchAccount = swapAdaptor.nonWatchAccounts.get(i)
-                root.swapFormData.selectedAccountAddress = nonWatchAccount.address
+            for (let i = 0; i< walletAccounts.count; i++) {
+                const accountToTest = walletAccounts.get(i)
+                root.swapFormData.selectedAccountAddress = accountToTest.address
 
                 // Launch popup
                 launchAndVerfyModal()
 
                 const floatingHeaderBackground = findChild(controlUnderTest, "headerBackground")
                 verify(!!floatingHeaderBackground)
-                compare(floatingHeaderBackground.color.toString().toUpperCase(), Utils.getColorForId(nonWatchAccount.colorId).toString().toUpperCase())
+                compare(floatingHeaderBackground.color.toString().toUpperCase(), Utils.getColorForId(accountToTest.colorId).toString().toUpperCase())
 
                 const headerContentItemText = findChild(controlUnderTest, "textContent")
                 verify(!!headerContentItemText)
-                compare(headerContentItemText.text, nonWatchAccount.name)
+                compare(headerContentItemText.text, accountToTest.name)
 
                 const headerContentItemEmoji = findChild(controlUnderTest, "assetContent")
                 verify(!!headerContentItemEmoji)
-                compare(headerContentItemEmoji.asset.emoji, nonWatchAccount.emoji)
+                compare(headerContentItemEmoji.asset.emoji, accountToTest.emoji)
             }
             closeAndVerfyModal()
         }
@@ -228,6 +230,7 @@ Item {
             launchAndVerfyModal()
             const accountsModalHeader = getAndVerifyAccountsModalHeader()
             launchAccountSelectionPopup(accountsModalHeader)
+            let walletAccounts = accountsModalHeader.model
 
             const comboBoxList = findChild(controlUnderTest, "accountSelectorList")
             verify(!!comboBoxList)
@@ -235,7 +238,7 @@ Item {
 
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
-                let accountToBeTested = swapAdaptor.nonWatchAccounts.get(i)
+                let accountToBeTested = walletAccounts.get(i)
                 let elidedAddress = SQUtils.Utils.elideAndFormatWalletAddress(accountToBeTested.address)
                 compare(delegateUnderTest.title, accountToBeTested.name)
                 compare(delegateUnderTest.subTitle, elidedAddress)
@@ -302,7 +305,6 @@ Item {
 
             for(let i =0; i< comboBoxList.model.count; i++) {
                 let delegateUnderTest = comboBoxList.itemAtIndex(i)
-                verify(!!delegateUnderTest.model.fromToken)
                 verify(!!delegateUnderTest.model.accountBalance)
                 compare(delegateUnderTest.inlineTagModel, 1)
 
@@ -315,9 +317,9 @@ Item {
                 compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), delegateUnderTest.model.accountBalance.chainColor.toString().toUpperCase())
                 compare(inlineTagDelegate_0.titleText.color, balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1)
 
-                let bigIntBalance = SQUtils.AmountsArithmetic.toNumber(balance, delegateUnderTest.model.fromToken.decimals)
-                compare(inlineTagDelegate_0.title, balance === "0" ? "0 %1".arg(delegateUnderTest.model.fromToken.symbol)
-                                                                   : root.swapAdaptor.formatCurrencyAmount(bigIntBalance, delegateUnderTest.model.fromToken.symbol))
+                let bigIntBalance = SQUtils.AmountsArithmetic.toNumber(balance, controlUnderTest.swapAdaptor.fromToken.decimals)
+                compare(inlineTagDelegate_0.title, balance === "0" ? "0 %1".arg(controlUnderTest.swapAdaptor.fromToken.symbol)
+                                                                   : root.swapAdaptor.currencyStore.formatCurrencyAmount(bigIntBalance, controlUnderTest.swapAdaptor.fromToken.symbol))
             }
 
             closeAndVerfyModal()
@@ -327,13 +329,16 @@ Item {
             // Launch popup
             launchAndVerfyModal()
 
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             const payPanel = findChild(controlUnderTest, "payPanel")
             verify(!!payPanel)
             const amountToSendInput = findChild(payPanel, "amountToSendInput")
             verify(!!amountToSendInput)
             verify(amountToSendInput.cursorVisible)
 
-            for(let i =0; i< swapAdaptor.nonWatchAccounts.count; i++) {
+            for(let i =0; i< walletAccounts.count; i++) {
                 // launch account selection dropdown
                 const accountsModalHeader = getAndVerifyAccountsModalHeader()
                 launchAccountSelectionPopup(accountsModalHeader)
@@ -348,20 +353,20 @@ Item {
                 verify(accountsModalHeader.control.popup.closed)
 
                 // The input params form's slected Index should be updated  as per this selection
-                compare(root.swapFormData.selectedAccountAddress, swapAdaptor.nonWatchAccounts.get(i).address)
+                compare(root.swapFormData.selectedAccountAddress, walletAccounts.get(i).address)
 
                 // The comboBox item should  reflect chosen account
                 const floatingHeaderBackground = findChild(accountsModalHeader, "headerBackground")
                 verify(!!floatingHeaderBackground)
-                compare(floatingHeaderBackground.color.toString().toUpperCase(), swapAdaptor.nonWatchAccounts.get(i).color.toString().toUpperCase())
+                compare(floatingHeaderBackground.color.toString().toUpperCase(), walletAccounts.get(i).color.toString().toUpperCase())
 
                 const headerContentItemText = findChild(accountsModalHeader, "textContent")
                 verify(!!headerContentItemText)
-                compare(headerContentItemText.text, swapAdaptor.nonWatchAccounts.get(i).name)
+                compare(headerContentItemText.text, walletAccounts.get(i).name)
 
                 const headerContentItemEmoji = findChild(accountsModalHeader, "assetContent")
                 verify(!!headerContentItemEmoji)
-                compare(headerContentItemEmoji.asset.emoji, swapAdaptor.nonWatchAccounts.get(i).emoji)
+                compare(headerContentItemEmoji.asset.emoji, walletAccounts.get(i).emoji)
 
                 waitForRendering(amountToSendInput)
 
@@ -477,7 +482,7 @@ Item {
                     verify(!!fromToken)
                     let bigIntBalance = SQUtils.AmountsArithmetic.toNumber(accountBalance.balance, fromToken.decimals)
                     compare(inlineTagDelegate_0.title, bigIntBalance === 0 ? "0 %1".arg(fromToken.symbol)
-                                                                           : root.swapAdaptor.formatCurrencyAmount(bigIntBalance, fromToken.symbol))
+                                                                           : root.swapAdaptor.currencyStore.formatCurrencyAmount(bigIntBalance, fromToken.symbol))
                 }
                 // close account selection dropdown
                 accountsModalHeader.control.popup.close()
@@ -918,7 +923,11 @@ Item {
             // try setting value before popup is launched and check values
             let valueToExchange = 0.001
             let valueToExchangeString = valueToExchange.toString()
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.fromTokensKey = "ETH"
             root.swapFormData.fromTokenAmount = valueToExchangeString
@@ -968,11 +977,14 @@ Item {
         }
 
         function test_modal_pay_input_wrong_value_1() {
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             let invalidValues = ["ABC", "0.0.010201", "12PASA", "100,9.01"]
             for (let i =0; i<invalidValues.length; i++) {
                 let invalidValue = invalidValues[i]
                 // try setting value before popup is launched and check values
-                root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+                root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
                 root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
                 root.swapFormData.fromTokensKey =
                         root.swapFormData.fromTokenAmount = invalidValue
@@ -1013,10 +1025,13 @@ Item {
         }
 
         function test_modal_pay_input_wrong_value_2() {
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             // try setting value before popup is launched and check values
             let valueToExchange = 100
             let valueToExchangeString = valueToExchange.toString()
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.fromTokensKey = "ETH"
             root.swapFormData.fromTokenAmount = valueToExchangeString
@@ -1103,10 +1118,13 @@ Item {
         }
 
         function test_modal_receive_input_presetValues() {
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             let valueToReceive = 0.001
             let valueToReceiveString = valueToReceive.toString()
             // try setting value before popup is launched and check values
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.toTokenKey = "STT"
             root.swapFormData.toTokenAmount = valueToReceiveString
@@ -1164,12 +1182,15 @@ Item {
             root.swapFormData.fromTokenAmount = valueToExchangeString
             root.swapFormData.toTokenKey = "STT"
 
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             formValuesChanged.wait()
 
             // Launch popup
             launchAndVerfyModal()
             // The default is the first account. Setting the second account to test switching accounts
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(1).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(1).address
 
             waitForItemPolished(controlUnderTest.contentItem)
 
@@ -1215,13 +1236,17 @@ Item {
         function test_modal_max_button_click_with_no_preset_pay_value() {
             // Launch popup
             launchAndVerfyModal()
+
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             // The default is the first account. Setting the second account to test switching accounts
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(1).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(1).address
             formValuesChanged.clear()
             
             // try setting value before popup is launched and check values
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.fromTokensKey = "ETH"
             root.swapFormData.toTokenKey = "STT"
 
@@ -1266,6 +1291,10 @@ Item {
         }
 
         function test_modal_pay_input_switching_accounts() {
+
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             // test with pay value being set and not set
             let payValuesToTestWith = ["", "0.2"]
 
@@ -1275,7 +1304,7 @@ Item {
 
                 // Asset chosen but no pay value set state -------------------------------------------------------------------------------
                 root.swapFormData.fromTokenAmount = valueToExchangeString
-                root.swapFormData.selectedAccountAddress = swapAdaptor.nonWatchAccounts.get(0).address
+                root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
                 root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
                 root.swapFormData.fromTokensKey = "ETH"
 
@@ -1292,8 +1321,8 @@ Item {
                 const errorTag = findChild(controlUnderTest, "errorTag")
                 verify(!!errorTag)
 
-                for (let i=0; i< root.swapAdaptor.nonWatchAccounts.count; i++) {
-                    root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(i).address
+                for (let i=0; i< walletAccounts.count; i++) {
+                    root.swapFormData.selectedAccountAddress = walletAccounts.get(i).address
 
                     waitForItemPolished(controlUnderTest.contentItem)
 
@@ -1382,11 +1411,14 @@ Item {
             const receiveBottomItemText = findChild(receivePanel, "bottomItemText")
             verify(!!receiveBottomItemText)
 
+            const accountsModalHeader = getAndVerifyAccountsModalHeader()
+            let walletAccounts = accountsModalHeader.model
+
             root.swapAdaptor.reset()
 
             // set network and address by default same
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-            root.swapFormData.selectedAccountAddress = root.swapAdaptor.nonWatchAccounts.get(0).address
+            root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
             root.swapFormData.fromTokensKey = data.fromToken
             root.swapFormData.fromTokenAmount = data.fromTokenAmount
             root.swapFormData.toTokenKey = data.toToken

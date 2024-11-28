@@ -668,20 +668,21 @@ Item {
         flatNetworksModel: WalletStores.RootStore.flatNetworks
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
         groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
-        currentCurrency: appMain.currencyStore.currentCurrency
+        plainTokensBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
         tokenBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
-        fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
-            return appMain.currencyStore.formatCurrencyAmount(amount, symbol)
-        }
+        savedAddressesModel: WalletStores.RootStore.savedAddresses
+        recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
+
+        currentCurrency: appMain.currencyStore.currentCurrency
+        fnFormatCurrencyAmount: appMain.currencyStore.formatCurrencyAmount
+        fnFormatCurrencyAmountFromBigInt: appMain.currencyStore.formatCurrencyAmountFromBigInt
+
         // TODO remove this call to mainModule under #16919
         fnResolveENS: function(ensName, uuid) {
             mainModule.resolveENS(name, uuid)
         }
-
-        savedAddressesModel: WalletStores.RootStore.savedAddresses
-        recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use

@@ -1,48 +1,19 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
-import Models 1.0
-
 import SortFilterProxyModel 0.2
-
-import shared.controls 1.0
-import shared.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0
 import AppLayouts.Wallet.adaptors 1.0
 
+import Storybook 1.0
+import Models 1.0
+
+import shared.stores 1.0
 import utils 1.0
 
-SplitView {
+Item {
     id: root
-
-    orientation: Qt.Vertical
-
-    QtObject {
-        id: d
-
-        readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property var assetsStore: WalletAssetsStore {
-            id: thisWalletAssetStore
-            walletTokensStore: TokensStore {
-                plainTokensBySymbolModel: TokensBySymbolModel {}
-            }
-            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
-            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
-        }
-
-        readonly property var currencyStore: CurrenciesStore{}
-        readonly property var nonWatchWalletAcounts: SortFilterProxyModel {
-            sourceModel: walletAccountsModel
-            filters: ValueFilter { roleName: "canSend"; value: true }
-        }
-
-        readonly property var filteredFlatNetworksModel: SortFilterProxyModel {
-            sourceModel: d.flatNetworks
-            filters: ValueFilter { roleName: "isTest"; value: true }
-        }
-    }
 
     ListModel {
         id: walletAccountsModel
@@ -124,88 +95,93 @@ SplitView {
         Component.onCompleted: append(data)
     }
 
-    WalletAccountsSelectorAdaptor {
-        id: walletAccountsSelectorAdaptor
+    QtObject {
+        id: d
 
+        readonly property var assetsStore: WalletAssetsStore {
+            id: thisWalletAssetStore
+            walletTokensStore: TokensStore {
+                plainTokensBySymbolModel: TokensBySymbolModel {}
+            }
+            readonly property var baseGroupedAccountAssetModel: GroupedAccountsAssetsModel {}
+            assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+        }
+        readonly property var currencyStore: CurrenciesStore{}
+    }
+
+    WalletAccountsSelectorAdaptor {
+        id: adaptor
         accounts: walletAccountsModel
         assetsModel: d.assetsStore.groupedAccountAssetsModel
         tokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
-        filteredFlatNetworksModel: d.filteredFlatNetworksModel
-
-        selectedTokenKey: selectedTokenComboBox.currentValue
-        selectedNetworkChainId: networksComboBox.currentValue
+        filteredFlatNetworksModel: SortFilterProxyModel {
+            sourceModel: NetworksModel.flatNetworks
+            filters: ValueFilter { roleName: "isTest"; value: true }
+        }
 
         fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
             return d.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
         }
+
+        selectedTokenKey: selectedTokenComboBox.currentValue
+        selectedNetworkChainId: networksComboBox.currentValue
     }
 
-    Item {
-        SplitView.preferredWidth: 150
-        SplitView.fillHeight: true
-        ColumnLayout {
-            spacing: 16
-            width: 150
+    ColumnLayout {
+        anchors.fill: parent
 
-            WalletAccountsModel {
-                id: accountsModel
-            }
-
-            Label {
-                text: "Default style"
-                font.bold: true
-                Layout.fillWidth: true
-            }
-            AccountSelector {
-                id: accountSelector
-                Layout.fillWidth: true
-                model: WalletAccountsModel {}
-                onCurrentAccountAddressChanged: {
-                    accountSelector2.selectedAddress = currentAccountAddress
-                }
-            }
-
-            Label {
-                text: "Header style"
-                font.bold: true
-                Layout.fillWidth: true
-            }
-            AccountSelectorHeader {
-                id: accountSelector2
-                model: walletAccountsSelectorAdaptor.processedWalletAccounts
-                onCurrentAccountAddressChanged: {
-                    accountSelector.selectedAddress = currentAccountAddress
-                }
-            }
+        Label { text: "Selected Token" }
+        ComboBox {
+            id: selectedTokenComboBox
+            textRole: "name"
+            valueRole: "key"
+            model: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
+            currentIndex: 0
+            onCountChanged: currentIndex = 0
         }
 
-    }
+        Label { text: "Selected Network" }
+        ComboBox {
+            id: networksComboBox
+            textRole: "chainName"
+            valueRole: "chainId"
+            model: adaptor.filteredFlatNetworksModel
+            currentIndex: 0
+            onCountChanged: currentIndex = 0
+        }
 
-    Item {
-        SplitView.preferredWidth: 300
-        SplitView.preferredHeight: childrenRect.height
+        RowLayout {
+            GenericListView {
+                label: "Input Accounts model"
 
-        ColumnLayout {
+                model: walletAccountsModel
 
-            Label { text: "Selected Token" }
-            ComboBox {
-                id: selectedTokenComboBox
-                textRole: "name"
-                valueRole: "key"
-                model: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
-                currentIndex: -1
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                roles: ["name", "address", "currencyBalance", "position", "canSend"]
+
+                skipEmptyRoles: true
             }
 
-            Label { text: "Selected Network" }
-            ComboBox {
-                id: networksComboBox
-                textRole: "chainName"
-                valueRole: "chainId"
-                model: d.filteredFlatNetworksModel
-                currentIndex: -1
+            GenericListView {
+                label: "Adapter's output model"
+
+                model: adaptor.processedWalletAccounts
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                roles: ["name", "address", "currencyBalance", "position", "canSend", "accountBalance", "currencyBalanceDouble"]
+
+                skipEmptyRoles: true
+
+                insetComponent: Label {
+                    text: "balance " + (model ? model.accountBalance.formattedBalance: "")
+                }
             }
         }
     }
 }
 
-// category: Components
+// category: Adaptors
