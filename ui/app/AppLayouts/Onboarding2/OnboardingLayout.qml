@@ -79,10 +79,10 @@ Page {
             }
         }
 
-        function pushOrSkipBiometricsPage(subtitle: string) {
+        function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
                 dbg.debugFlow("ENTERING BIOMETRICS PAGE")
-                stack.push(enableBiometricsPage, {subtitle})
+                stack.push(enableBiometricsPage)
             } else {
                 dbg.debugFlow("SKIPPING BIOMETRICS PAGE")
                 mainHandler.onEnableBiometricsRequested(false)
@@ -261,7 +261,7 @@ Page {
             d.password = password
             // TODO set the password immediately?
             stack.clear()
-            d.pushOrSkipBiometricsPage(qsTr("Use biometrics to fill in your password?"))
+            d.pushOrSkipBiometricsPage()
         }
 
         // seedphrase page
@@ -309,19 +309,15 @@ Page {
         function onNotEmptyKeycardDetected() {
             dbg.debugFlow("NOT EMPTY KEYCARD DETECTED")
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.LoginWithKeycard)
-                stack.push(keycardEnterPinPage)
+                stack.replace(keycardEnterPinPage)
             else
-                stack.push(keycardNotEmptyPage)
+                stack.replace(keycardNotEmptyPage)
         }
 
         function onCreateKeycardProfileWithNewSeedphrase() {
             dbg.debugFlow("CREATE KEYCARD PROFILE WITH NEW SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase
-
-            if (root.startupStore.getPin())
-                stack.push(keycardEnterPinPage)
-            else
-                stack.push(keycardCreatePinPage)
+            stack.push(backupSeedIntroPage)
         }
         function onCreateKeycardProfileWithExistingSeedphrase() {
             dbg.debugFlow("CREATE KEYCARD PROFILE WITH EXISTING SEEDPHRASE")
@@ -333,18 +329,34 @@ Page {
             dbg.debugFlow(`KEYCARD PIN CREATED: ${pin}`)
             d.keycardPin = pin
             // TODO set the PIN immediately?
-            Backpressure.debounce(root, 2000, function() {
+
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
+                dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
                 stack.clear()
-                d.pushOrSkipBiometricsPage(qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions."))
-            })()
+                // TODO backend: transfer the keypair
+                stack.push(addKeypairPage)
+            } else {
+                Backpressure.debounce(root, 2000, function() {
+                    stack.clear()
+                    d.pushOrSkipBiometricsPage()
+                })()
+            }
         }
 
         function onKeycardPinEntered(pin) {
             dbg.debugFlow(`KEYCARD PIN ENTERED: ${pin}`)
             d.keycardPin = pin
             // TODO set the PIN immediately?
-            stack.clear()
-            d.pushOrSkipBiometricsPage(qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions."))
+
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
+                dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
+                stack.clear()
+                // TODO backend: transfer the keypair
+                stack.push(addKeypairPage)
+            } else {
+                stack.clear()
+                d.pushOrSkipBiometricsPage()
+            }
         }
 
         // backup seedphrase pages
@@ -372,7 +384,14 @@ Page {
         function onBackupSeedphraseRemovalConfirmed() {
             dbg.debugFlow("BACKUP SEED REMOVAL CONFIRMED")
             root.privacyStore.removeMnemonic()
-            d.pushSplashScreenPage()
+
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
+                if (root.startupStore.getPin())
+                    stack.push(keycardEnterPinPage)
+                else
+                    stack.push(keycardCreatePinPage)
+            } else
+                d.pushSplashScreenPage()
         }
 
         // login with sync pages
@@ -399,14 +418,24 @@ Page {
             d.pushSplashScreenPage()
         }
 
+        // keypair transfer page
+        function onKeypairAddContinueRequested() {
+            dbg.debugFlow("KEYPAIR TRANSFER COMPLETED")
+            stack.clear()
+            d.pushOrSkipBiometricsPage()
+        }
+        function onKeypairAddTryAgainRequested() {
+            dbg.debugFlow("RESTART KEYPAIR TRANSFER REQUESTED")
+            // TODO backend: restart the transfer
+            stack.clear()
+            stack.push(addKeypairPage)
+        }
+
         // enable biometrics page
         function onEnableBiometricsRequested(enabled: bool) {
             dbg.debugFlow(`ENABLE BIOMETRICS: ${enabled}`)
             d.enableBiometrics = enabled
-            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase)
-                stack.push(backupSeedIntroPage)
-            else
-                d.pushSplashScreenPage()
+            d.pushSplashScreenPage()
         }
     }
 
@@ -567,6 +596,14 @@ Page {
         id: syncProgressPage
         SyncProgressPage {
             syncState: SyncProgressPage.SyncState.InProgress // TODO integrate backend
+            timeoutInterval: root.splashScreenDurationMs
+        }
+    }
+
+    Component {
+        id: addKeypairPage
+        KeycardAddKeyPairPage {
+            addKeyPairState: KeycardAddKeyPairPage.AddKeyPairState.InProgress // TODO integrate backend
             timeoutInterval: root.splashScreenDurationMs
         }
     }

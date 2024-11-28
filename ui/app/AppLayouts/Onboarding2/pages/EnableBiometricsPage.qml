@@ -12,7 +12,7 @@ OnboardingPage {
 
     title: qsTr("Enable biometrics")
 
-    property string subtitle
+    property string subtitle: qsTr("Would you like to enable biometrics to fill in your password? You will use biometrics for signing in to Status and for signing transactions.")
 
     signal enableBiometricsRequested(bool enable)
 

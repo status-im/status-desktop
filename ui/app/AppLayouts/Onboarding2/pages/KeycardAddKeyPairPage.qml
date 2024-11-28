@@ -44,10 +44,6 @@ OnboardingPage {
                 sourceComponent: loadingIndicator
             }
             PropertyChanges {
-                target: image
-                source: Theme.png("onboarding/status_sync_progress")
-            }
-            PropertyChanges {
                 target: subImageText
                 text: qsTr("Please keep the Keycard plugged in until the migration is complete")
                 visible: true
@@ -69,10 +65,6 @@ OnboardingPage {
                 sourceComponent: successIcon
             }
             PropertyChanges {
-                target: image
-                source: Theme.png("onboarding/status_sync_success")
-            }
-            PropertyChanges {
                 target: continueButton
                 visible: true
             }
@@ -91,10 +83,6 @@ OnboardingPage {
             PropertyChanges {
                 target: iconLoader
                 sourceComponent: failedIcon
-            }
-            PropertyChanges {
-                target: image
-                source: Theme.png("onboarding/status_sync_failed")
             }
             PropertyChanges {
                 target: tryAgainButton
@@ -136,11 +124,11 @@ OnboardingPage {
             StatusImage {
                 id: image
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: Math.min(224, parent.width)
-                Layout.preferredHeight: Math.min(214, height)
+                Layout.preferredWidth: Math.min(185, parent.width)
+                Layout.preferredHeight: Math.min(314, height)
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
-                source: Theme.png("onboarding/status_generate_keys")
+                source: Theme.png("onboarding/status_keycard_adding_keypair")
                 mipmap: true
             }
 
