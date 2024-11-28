@@ -450,11 +450,13 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       fromAsset = sendDetails.fromToken
       toAsset = sendDetails.toToken
       error = ""
+      txHash = ""
+      isApprovalTx = false
 
     if not sendDetails.errorResponse.isNil:
       error = sendDetails.errorResponse.details
 
-    if sentTransaction.hash.len > 0:
+    if not sentTransaction.isNil and sentTransaction.hash.len > 0:
       txTo = sentTransaction.toAddress
       if sentTransaction.fromChain > 0:
         fromChain = sentTransaction.fromChain
@@ -471,6 +473,8 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
         fromAsset = sentTransaction.fromToken
       if sentTransaction.toToken.len > 0:
         toAsset = sentTransaction.toToken
+      txHash = sentTransaction.hash
+      isApprovalTx = sentTransaction.approvalTx
 
 
     var accFromName = ""
@@ -505,8 +509,8 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       accToName,
       txTo,
       txToName,
-      sentTransaction.hash,
-      sentTransaction.approvalTx,
+      txHash,
+      isApprovalTx,
       fromAmount,
       toAmount,
       fromAsset,
