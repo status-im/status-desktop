@@ -41,6 +41,7 @@ KeycardBasePage {
         contentItem: RowLayout {
             spacing: 0
             StatusImage {
+                Layout.bottomMargin: -2
                 Layout.preferredWidth: 154
                 Layout.preferredHeight: 82
                 source: Theme.png("onboarding/status_keycard_multiple")
@@ -116,10 +117,10 @@ KeycardBasePage {
             PropertyChanges {
                 target: root
                 title: qsTr("Insert your Keycard")
-                infoText.text: qsTr("Need a little %1?").arg(Utils.getStyledLink(qsTr("help"), "https://keycard.tech/docs/",
-                                                                                 infoText.hoveredLink,
-                                                                                 Theme.palette.baseColor1,
-                                                                                 Theme.palette.primaryColor1))
+                infoText.text: qsTr("Get help via %1 🔗").arg(Utils.getStyledLink("https://keycard.tech", "https://keycard.tech/docs/",
+                                                                                infoText.hoveredLink,
+                                                                                Theme.palette.baseColor1,
+                                                                                Theme.palette.primaryColor1))
                 image.source: Theme.png("onboarding/keycard/insert")
             }
         },

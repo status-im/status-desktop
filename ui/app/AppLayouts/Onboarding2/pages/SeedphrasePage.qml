@@ -23,8 +23,8 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(580, root.availableWidth)
-            spacing: 20
+            width: Math.min(600, root.availableWidth)
+            spacing: Theme.xlPadding
 
             StatusBaseText {
                 Layout.fillWidth: true
@@ -36,7 +36,7 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: -12
+                Layout.topMargin: -Theme.bigPadding
                 text: root.subtitle
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
@@ -45,7 +45,7 @@ OnboardingPage {
 
             EnterSeedPhrase {
                 id: seedPanel
-                Layout.fillWidth: true
+                Layout.preferredWidth: 580
                 isSeedPhraseValid: root.isSeedPhraseValid
                 onSubmitSeedPhrase: root.seedphraseValidated()
             }
