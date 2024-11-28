@@ -26,8 +26,6 @@ type
     IsBlocked
     ContactRequest
     IsCurrentUser
-    DefaultDisplayName
-    OptionalName
     LastUpdated
     LastUpdatedLocally
     Bio
@@ -35,7 +33,6 @@ type
     LargeImage
     IsContactRequestReceived
     IsContactRequestSent
-    IsSyncing
     IsRemoved
     TrustStatus
 
@@ -56,16 +53,12 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
-  proc itemChanged(self: Model, pubKey: string) {.signal.}
 
   proc setItems*(self: Model, items: seq[UserItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
-
-    for item in items:
-      self.itemChanged(item.pubKey)
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -102,8 +95,6 @@ QtObject:
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
       ModelRole.IsCurrentUser.int: "isCurrentUser",
-      ModelRole.DefaultDisplayName.int: "defaultDisplayName",
-      ModelRole.OptionalName.int: "optionalName",
       ModelRole.LastUpdated.int: "lastUpdated",
       ModelRole.LastUpdatedLocally.int: "lastUpdatedLocally",
       ModelRole.Bio.int: "bio",
@@ -111,7 +102,6 @@ QtObject:
       ModelRole.LargeImage.int: "largeImage",
       ModelRole.IsContactRequestReceived.int: "isContactRequestReceived",
       ModelRole.IsContactRequestSent.int: "isContactRequestSent",
-      ModelRole.IsSyncing.int: "isSyncing",
       ModelRole.IsRemoved.int: "isRemoved",
       ModelRole.TrustStatus.int: "trustStatus",
     }.toTable
@@ -164,10 +154,6 @@ QtObject:
       result = newQVariant(item.contactRequest.int)
     of ModelRole.IsCurrentUser:
       result = newQVariant(item.isCurrentUser)
-    of ModelRole.DefaultDisplayName:
-      result = newQVariant(item.defaultDisplayName)
-    of ModelRole.OptionalName:
-      result = newQVariant(item.optionalName)
     of ModelRole.LastUpdated:
       result = newQVariant(item.lastUpdated)
     of ModelRole.LastUpdatedLocally:
@@ -182,8 +168,6 @@ QtObject:
       result = newQVariant(item.isContactRequestReceived)
     of ModelRole.IsContactRequestSent:
       result = newQVariant(item.isContactRequestSent)
-    of ModelRole.IsSyncing:
-      result = newQVariant(item.isSyncing)
     of ModelRole.IsRemoved:
       result = newQVariant(item.isRemoved)
     of ModelRole.TrustStatus:
@@ -205,21 +189,19 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-    for item in items:
-      self.itemChanged(item.pubKey)
+  proc findIndexByPubKey*(self: Model, pubKey: string): int =
+    for i in 0 ..< self.items.len:
+      if self.items[i].pubKey == pubKey:
+        return i
+
+    return -1
 
   proc addItem*(self: Model, item: UserItem) =
-    # we need to maintain online contact on top, that means
-    # if we add an item online status we add it as the last online item (before the first offline item)
-    # if we add an item with offline status we add it as the first offline item (after the last online item)
-    var position = -1
-    for i in 0 ..< self.items.len:
-      if(self.items[i].onlineStatus == OnlineStatus.Inactive):
-        position = i
-        break
+    let ind = self.findIndexByPubKey(item.pubKey)
+    if ind != -1:
+      return
 
-    if(position == -1):
-      position = self.items.len
+    let position = self.items.len
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
@@ -228,19 +210,16 @@ QtObject:
     self.items.insert(item, position)
     self.endInsertRows()
     self.countChanged()
-    self.itemChanged(item.pubKey)
 
   proc clear*(self: Model) =
      self.beginResetModel()
      self.items = @[]
      self.endResetModel()
 
-  proc findIndexByPubKey(self: Model, pubKey: string): int =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].pubKey == pubKey):
-        return i
-
-    return -1
+  proc getItemByPubKey*(self: Model, pubKey: string): UserItem =
+    for item in self.items:
+      if item.pubKey == pubKey:
+        return item
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
@@ -252,9 +231,6 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-    self.itemChanged(pubKey)
-
-# TODO: rename to `containsItem`
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexByPubKey(id) != -1
 
@@ -283,7 +259,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
-    self.itemChanged(pubKey)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -295,7 +270,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
-    self.itemChanged(pubKey)
 
   proc updateItem*(
       self: Model,
@@ -307,6 +281,18 @@ QtObject:
       alias: string,
       icon: string,
       trustStatus: TrustStatus,
+      onlineStatus: OnlineStatus,
+      isContact: bool,
+      isBlocked: bool,
+      contactRequest: ContactRequest,
+      lastUpdated: int64,
+      lastUpdatedLocally: int64,
+      bio: string,
+      thumbnailImage: string,
+      largeImage: string,
+      isContactRequestReceived: bool,
+      isContactRequestSent: bool,
+      isRemoved: bool,
     ) =
     let ind = self.findIndexByPubKey(pubKey)
     if ind == -1:
@@ -326,6 +312,18 @@ QtObject:
     updateRole(alias, Alias)
     updateRole(icon, Icon)
     updateRole(trustStatus, TrustStatus)
+    updateRole(onlineStatus, OnlineStatus)
+    updateRole(isContact, IsContact)
+    updateRole(isBlocked, IsBlocked)
+    updateRole(contactRequest, ContactRequest)
+    updateRole(lastUpdated, LastUpdated)
+    updateRole(lastUpdatedLocally, LastUpdatedLocally)
+    updateRole(bio, Bio)
+    updateRole(thumbnailImage, ThumbnailImage)
+    updateRole(largeImage, LargeImage)
+    updateRole(isContactRequestReceived, IsContactRequestReceived)
+    updateRole(isContactRequestSent, IsContactRequestSent)
+    updateRole(isRemoved, IsRemoved)
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -334,13 +332,54 @@ QtObject:
       roles.add(ModelRole.IsUntrustworthy.int)
       roles.add(ModelRole.IsVerified.int)
 
+    # The image is actually a URL that doesn't change. We need to force refresh it just in case
+    roles.add(ModelRole.ThumbnailImage.int)
+    roles.add(ModelRole.LargeImage.int)
+
     if roles.len == 0:
       return
 
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, roles)
-    self.itemChanged(pubKey)
+
+  proc updateItem*(
+      self: Model,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      isEnsVerified: bool,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      trustStatus: TrustStatus,
+    ) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if ind == -1:
+      return
+    let item = self.items[ind]
+    self.updateItem(
+      pubKey,
+      displayName,
+      ensName,
+      isEnsVerified,
+      localNickname,
+      alias,
+      icon,
+      trustStatus,
+      item.onlineStatus,
+      item.isContact,
+      item.isBlocked,
+      item.contactRequest,
+      item.lastUpdated,
+      item.lastUpdatedLocally,
+      item.bio,
+      item.thumbnailImage,
+      item.largeImage,
+      item.isContactRequestReceived,
+      item.isContactRequestSent,
+      item.isRemoved,
+    )
 
   proc updateTrustStatus*(self: Model, pubKey: string, trustStatus: TrustStatus) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -355,7 +394,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TrustStatus.int, ModelRole.IsUntrustworthy.int, ModelRole.IsVerified.int])
-    self.itemChanged(pubKey)
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
     let ind = self.findIndexByPubKey(pubKey)
@@ -370,7 +408,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
-    self.itemChanged(pubKey)
 
 
 # TODO: rename me to removeItemByPubkey
@@ -384,6 +421,3 @@ QtObject:
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
-
-  proc containsItemWithPubKey*(self: Model, pubKey: string): bool =
-    return self.findIndexByPubKey(pubKey) != -1

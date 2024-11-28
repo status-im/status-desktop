@@ -37,8 +37,6 @@ type
     contactRequest: ContactRequest
     #Contact extra details
     isCurrentUser: bool
-    defaultDisplayName: string
-    optionalName: string
     lastUpdated: int64
     lastUpdatedLocally: int64
     bio: string
@@ -46,7 +44,6 @@ type
     largeImage: string
     isContactRequestReceived: bool
     isContactRequestSent: bool
-    isSyncing: bool
     isRemoved: bool
     trustStatus: TrustStatus
 
@@ -66,8 +63,6 @@ proc setup*(self: UserItem,
   contactRequest: ContactRequest,
   #TODO: #14964 - remove defaults
   isCurrentUser: bool = false,
-  defaultDisplayName: string = "",
-  optionalName: string = "",
   lastUpdated: int64 = 0,
   lastUpdatedLocally: int64 = 0,
   bio: string = "",
@@ -75,7 +70,6 @@ proc setup*(self: UserItem,
   largeImage: string = "",
   isContactRequestReceived: bool = false,
   isContactRequestSent: bool = false,
-  isSyncing: bool = false,
   isRemoved: bool = false,
   trustStatus: TrustStatus = TrustStatus.Unknown,
   ) =
@@ -93,8 +87,6 @@ proc setup*(self: UserItem,
   self.isBlocked = isBlocked
   self.contactRequest = contactRequest
   self.isCurrentUser = isCurrentUser
-  self.defaultDisplayName = defaultDisplayName
-  self.optionalName = optionalName
   self.lastUpdated = lastUpdated
   self.lastUpdatedLocally = lastUpdatedLocally
   self.bio = bio
@@ -102,7 +94,6 @@ proc setup*(self: UserItem,
   self.largeImage = largeImage
   self.isContactRequestReceived = isContactRequestReceived
   self.isContactRequestSent = isContactRequestSent
-  self.isSyncing = isSyncing
   self.isRemoved = isRemoved
   self.trustStatus = trustStatus
 
@@ -123,8 +114,6 @@ proc initUserItem*(
     isBlocked: bool,
     contactRequest: ContactRequest = ContactRequest.None,
     isCurrentUser: bool = false,
-    defaultDisplayName: string = "",
-    optionalName: string = "",
     lastUpdated: int64 = 0,
     lastUpdatedLocally: int64 = 0,
     bio: string = "",
@@ -132,7 +121,6 @@ proc initUserItem*(
     largeImage: string = "",
     isContactRequestReceived: bool = false,
     isContactRequestSent: bool = false,
-    isSyncing: bool = false,
     isRemoved: bool = false,
     trustStatus: TrustStatus = TrustStatus.Unknown,
     ): UserItem =
@@ -152,8 +140,6 @@ proc initUserItem*(
     isBlocked = isBlocked,
     contactRequest = contactRequest,
     isCurrentUser = isCurrentUser,
-    defaultDisplayName = defaultDisplayName,
-    optionalName = optionalName,
     lastUpdated = lastUpdated,
     lastUpdatedLocally = lastUpdatedLocally,
     bio = bio,
@@ -161,7 +147,6 @@ proc initUserItem*(
     largeImage = largeImage,
     isContactRequestReceived = isContactRequestReceived,
     isContactRequestSent = isContactRequestSent,
-    isSyncing = isSyncing,
     isRemoved = isRemoved,
     trustStatus = trustStatus,
     )
@@ -182,8 +167,6 @@ proc `$`*(self: UserItem): string =
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
     isCurrentUser: {self.isCurrentUser},
-    defaultDisplayName: {self.defaultDisplayName},
-    optionalName: {self.optionalName},
     lastUpdated: {self.lastUpdated},
     lastUpdatedLocally: {self.lastUpdatedLocally},
     bio: {self.bio},
@@ -191,7 +174,6 @@ proc `$`*(self: UserItem): string =
     largeImage: {self.largeImage},
     isContactRequestReceived: {self.isContactRequestReceived},
     isContactRequestSent: {self.isContactRequestSent},
-    isSyncing: {self.isSyncing},
     isRemoved: {self.isRemoved},
     trustStatus: {$self.trustStatus.int},
     ]"""
@@ -277,18 +259,6 @@ proc isCurrentUser*(self: UserItem): bool {.inline.} =
 proc `isCurrentUser=`*(self: UserItem, value: bool) {.inline.} =
   self.isCurrentUser = value
 
-proc defaultDisplayName*(self: UserItem): string {.inline.} =
-  self.defaultDisplayName
-
-proc `defaultDisplayName=`*(self: UserItem, value: string) {.inline.} =
-  self.defaultDisplayName = value
-
-proc optionalName*(self: UserItem): string {.inline.} =
-  self.optionalName
-
-proc `optionalName=`*(self: UserItem, value: string) {.inline.} =
-  self.optionalName = value
-
 proc lastUpdated*(self: UserItem): int64 {.inline.} =
   self.lastUpdated
 
@@ -330,12 +300,6 @@ proc isContactRequestSent*(self: UserItem): bool {.inline.} =
 
 proc `isContactRequestSent=`*(self: UserItem, value: bool) {.inline.} =
   self.isContactRequestSent = value
-
-proc isSyncing*(self: UserItem): bool {.inline.} =
-  self.isSyncing
-
-proc `isSyncing=`*(self: UserItem, value: bool) {.inline.} =
-  self.isSyncing = value
 
 proc isRemoved*(self: UserItem): bool {.inline.} =
   self.isRemoved

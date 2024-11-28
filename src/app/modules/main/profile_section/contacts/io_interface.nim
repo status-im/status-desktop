@@ -62,25 +62,13 @@ method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
 
 # Controller Delegate Interface
 
-method contactAdded*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactBlocked*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactUnblocked*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
+method addOrUpdateContactItem*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, trustStatus: TrustStatus) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =

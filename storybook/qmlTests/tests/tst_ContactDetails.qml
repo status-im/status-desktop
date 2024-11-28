@@ -46,15 +46,13 @@ Item {
                     isUntrustworthy: false,
                     isBlocked: false,
                     contactRequest: 3,
-                    defaultDisplayName: "defaultDisplayName",
-                    optionalName: "optionalName",
+                    preferredDisplayName: "preferredDisplayName",
                     lastUpdated: 1234567890,
                     lastUpdatedLocally: 1234567890,
                     thumbnailImage: "thumbnailImage",
                     largeImage: "largeImage",
                     isContactRequestReceived: false,
                     isContactRequestSent: false,
-                    isSyncing: false,
                     isRemoved: false,
                     trustStatus: 1,
                     bio: "bio"
@@ -74,7 +72,7 @@ Item {
             readonly property int colorId: 1
             readonly property var colorHash: {1}
             readonly property int currentUserStatus: 1
-            readonly property string defaultDisplayName: "myDefaultDisplayName"
+            readonly property string preferredDisplayName: "myPreferredDisplayName"
             readonly property string thumbnailImage: "myThumbnailImage"
             readonly property string largeImage: "myLargeImage"
             readonly property string bio: "myBio"
@@ -149,13 +147,11 @@ Item {
             compare(contactDetails.isUntrustworthy, false, "Expected the isUntrustworthy flag to be set")
             compare(contactDetails.isBlocked, false, "Expected the isBlocked flag to be set")
             compare(contactDetails.contactRequestState, 3, "Expected the contactRequestState flag to be set")
-            compare(contactDetails.defaultDisplayName, "defaultDisplayName", "Expected the defaultDisplayName to be set")
-            compare(contactDetails.optionalName, "optionalName", "Expected the optionalName to be set")
+            compare(contactDetails.preferredDisplayName, "preferredDisplayName", "Expected the preferredDisplayName to be set")
             compare(contactDetails.lastUpdated, 1234567890, "Expected the lastUpdated to be set")
             compare(contactDetails.lastUpdatedLocally, 1234567890, "Expected the lastUpdatedLocally to be set")
             compare(contactDetails.isContactRequestReceived, false, "Expected the isContactRequestReceived flag to be set")
             compare(contactDetails.isContactRequestSent, false, "Expected the isContactRequestSent flag to be set")
-            compare(contactDetails.isSyncing, false, "Expected the isSyncing to be set")
             compare(contactDetails.removed, false, "Expected the removed flag to be set")
             compare(contactDetails.trustStatus, 1, "Expected the trustStatus flag to be set")
         }
@@ -256,15 +252,13 @@ Item {
                 isUntrustworthy: true,
                 isBlocked: true,
                 contactRequest: 2,
-                defaultDisplayName: "newDefaultDisplayName",
-                optionalName: "newOptionalName",
+                preferredDisplayName: "newPreferredDisplayName",
                 lastUpdated: 1234567891,
                 lastUpdatedLocally: 1234567891,
                 thumbnailImage: "newThumbnailImage",
                 largeImage: "newLargeImage",
                 isContactRequestReceived: true,
                 isContactRequestSent: true,
-                isSyncing: true,
                 isRemoved: true,
                 trustStatus: 2,
                 bio: "newBio"
@@ -289,13 +283,11 @@ Item {
             compare(contactDetails.isUntrustworthy, true, "Expected the isUntrustworthy flag to be set")
             compare(contactDetails.isBlocked, true, "Expected the isBlocked flag to be set")
             compare(contactDetails.contactRequestState, 2, "Expected the contactRequestState flag to be set")
-            compare(contactDetails.defaultDisplayName, "newDefaultDisplayName", "Expected the defaultDisplayName to be set")
-            compare(contactDetails.optionalName, "newOptionalName", "Expected the optionalName to be set")
+            compare(contactDetails.preferredDisplayName, "newPreferredDisplayName", "Expected the preferredDisplayName to be set")
             compare(contactDetails.lastUpdated, 1234567891, "Expected the lastUpdated to be set")
             compare(contactDetails.lastUpdatedLocally, 1234567891, "Expected the lastUpdatedLocally to be set")
             compare(contactDetails.isContactRequestReceived, true, "Expected the isContactRequestReceived flag to be set")
             compare(contactDetails.isContactRequestSent, true, "Expected the isContactRequestSent flag to be set")
-            compare(contactDetails.isSyncing, true, "Expected the isSyncing to be set")
             compare(contactDetails.removed, true, "Expected the removed flag to be set")
             compare(contactDetails.trustStatus, 2, "Expected the trustStatus flag to be set")
         }

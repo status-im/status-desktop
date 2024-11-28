@@ -32,15 +32,13 @@ QObject {
     readonly property bool isUntrustworthy: d.contactDetails.isUntrustworthy ?? false
     readonly property bool isBlocked: d.contactDetails.isBlocked ?? false
     readonly property int contactRequestState: d.contactDetails.contactRequest ?? Constants.ContactRequestState.None
-    readonly property string defaultDisplayName: d.contactDetails.defaultDisplayName ?? ""
-    readonly property string optionalName: d.contactDetails.optionalName ?? ""
+    readonly property string preferredDisplayName: d.contactDetails.preferredDisplayName ?? ""
     readonly property int lastUpdated: d.contactDetails.lastUpdated ?? 0
     readonly property int lastUpdatedLocally: d.contactDetails.lastUpdatedLocally ?? 0
     readonly property string thumbnailImage: d.contactDetails.thumbnailImage ?? ""
     readonly property string largeImage: d.contactDetails.largeImage ?? ""
     readonly property bool isContactRequestReceived: d.contactDetails.isContactRequestReceived ?? false
     readonly property bool isContactRequestSent: d.contactDetails.isContactRequestSent ?? false
-    readonly property bool isSyncing: d.contactDetails.isSyncing ?? false
     readonly property bool removed: d.contactDetails.isRemoved ?? false
     readonly property int trustStatus: d.contactDetails.trustStatus ?? Constants.trustStatus.unknown
     readonly property string bio: d.contactDetails.bio ?? ""
@@ -76,6 +74,8 @@ QObject {
             readonly property string ensName: root.profileStore.name
             readonly property bool isEnsVerified: root.profileStore.name !== "" && Utils.isValidEns(root.profileStore.name)
             readonly property string localNickname: ""
+            readonly property string preferredDisplayName: root.profileStore.preferredDisplayName
+            readonly property string name: preferredDisplayName
             readonly property string alias: root.profileStore.username
             readonly property string icon: root.profileStore.icon
             readonly property int colorId: root.profileStore.colorId
@@ -87,16 +87,12 @@ QObject {
             readonly property bool isUntrustworthy: false
             readonly property bool isBlocked: false
             readonly property int contactRequestState: Constants.ContactRequestState.None
-            readonly property string defaultDisplayName: root.profileStore.defaultDisplayName
-            readonly property string optionalName: defaultDisplayName
-            readonly property string name: defaultDisplayName
             readonly property int lastUpdated: 0
             readonly property int lastUpdatedLocally: 0
             readonly property string thumbnailImage: root.profileStore.thumbnailImage
             readonly property string largeImage: root.profileStore.largeImage
             readonly property bool isContactRequestReceived: Constants.ContactRequestState.None
             readonly property bool isContactRequestSent: Constants.ContactRequestState.None
-            readonly property bool isSyncing: false
             readonly property bool removed: false
             readonly property int trustStatus: Constants.trustStatus.unknown
             readonly property string bio: root.profileStore.bio

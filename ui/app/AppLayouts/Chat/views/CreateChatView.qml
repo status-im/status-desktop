@@ -3,8 +3,9 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
-import StatusQ.Controls 0.1
+import StatusQ 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -22,6 +23,9 @@ Page {
     property SharedStores.UtilsStore utilsStore
     property ChatStores.RootStore rootStore
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore
+
+    property var mutualContactsModel
+
     property var emojiPopup: null
     property var stickersPopup: null
 
@@ -63,6 +67,7 @@ Page {
 
                 rootStore: root.rootStore
                 utilsStore: root.utilsStore
+                contactsModel: root.mutualContactsModel
 
                 function createChat() {
                     if (model.count === 0) {
@@ -178,7 +183,7 @@ Page {
         StatusBaseText {
             anchors.centerIn: parent
             width: Math.min(553, parent.width - 2 * Theme.padding)
-            visible: root.rootStore.contactsModel.count === 0
+            visible: root.mutualContacts.ModelCount.empty
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap

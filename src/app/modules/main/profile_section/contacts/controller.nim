@@ -35,19 +35,19 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactAdded(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactBlocked(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactUnblocked(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactRemoved(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -67,7 +67,7 @@ proc init*(self: Controller) =
     
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.contactUpdated(args.contactId)
+    self.delegate.addOrUpdateContactItem(args.contactId)
 
   self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
     let args = ContactsStatusUpdatedArgs(e)

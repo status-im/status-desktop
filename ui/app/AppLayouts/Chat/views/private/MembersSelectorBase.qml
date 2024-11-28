@@ -19,6 +19,8 @@ InlineSelectorPanel {
 
     property ChatStores.RootStore rootStore
 
+    property alias contactsModel: suggestionsModel.sourceModel
+
     readonly property int membersLimit: 20 // see: https://github.com/status-im/status-mobile/issues/13066
     property bool limitReached: model.count >= membersLimit
 
@@ -29,9 +31,7 @@ InlineSelectorPanel {
     warningLabel.visible: limitReached
 
     suggestionsModel: SortFilterProxyModel {
-        id: _suggestionsModel
-
-        sourceModel: root.rootStore.contactsModel
+        id: suggestionsModel
 
         function searchPredicate(displayName, localNickname, nameAlias) {
             return displayName.toLowerCase().includes(root.edit.text.toLowerCase()) ||
@@ -52,14 +52,14 @@ InlineSelectorPanel {
                 enabled: root.edit.text !== "" && root.pastedChatKey == ""
                 expression: {
                     root.edit.text // ensure expression is reevaluated when edit.text changes
-                    return _suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
+                    return suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
                 }
                 expectedRoles: ["displayName", "localNickname", "alias"]
             },
             FastExpressionFilter {
                 expression: {
                     root.model.count // ensure expression is reevaluated when members model changes
-                    return _suggestionsModel.notAMemberPredicate(model.pubKey)
+                    return suggestionsModel.notAMemberPredicate(model.pubKey)
                 }
                 expectedRoles: ["pubKey"]
             },

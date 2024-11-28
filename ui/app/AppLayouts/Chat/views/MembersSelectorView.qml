@@ -100,10 +100,10 @@ MembersSelectorBase {
                 return
             }
 
-            const hasPendingContactRequest = root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)
+            const hasPendingContactRequest = contactDetails.contactRequestState === Constants.ContactRequestState.Sent
 
             if ((root.model.count === 0 && hasPendingContactRequest) ||
-                    contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey || contactDetails.isBlocked) {
+                    contactDetails.isCurrentUser || contactDetails.isBlocked) {
                 // List is empty and we have a contact request
                 // OR it's our own chat key or a banned user
                 // Then open the contact's profile popup
@@ -154,7 +154,8 @@ MembersSelectorBase {
 
     Connections {
         enabled: root.visible
-        target: root.rootStore.contactsStore.mainModuleInst
+        target: root.rootStore.contactsStore
+
         function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
             if (resolvedPubKey === "") {
                 root.suggestionsDialog.forceHide = false

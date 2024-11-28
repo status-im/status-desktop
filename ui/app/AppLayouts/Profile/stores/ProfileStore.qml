@@ -24,9 +24,7 @@ QtObject {
     readonly property var thumbnailImage: userProfile.thumbnailImage
     readonly property var largeImage: userProfile.largeImage
     readonly property int colorId: Utils.colorIdForPubkey(root.pubkey)
-
     readonly property var colorHash: Utils.getColorHashAsJson(root.pubkey)
-    readonly property string defaultDisplayName: ProfileUtils.displayName("", name, displayName, username)
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson

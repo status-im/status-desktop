@@ -30,8 +30,6 @@ QtObject {
 
     property bool openCreateChat: false
 
-    property var contactsModel: root.contactsStore.myContactsModel
-
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)

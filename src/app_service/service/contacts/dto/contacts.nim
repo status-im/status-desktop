@@ -31,7 +31,6 @@ type ContactsDto* = object
   added*: bool
   blocked*: bool
   hasAddedUs*: bool
-  isSyncing*: bool
   removed*: bool
   trustStatus*: TrustStatus
   contactRequestState*: ContactRequestState
@@ -58,7 +57,6 @@ proc `$`*(self: ContactsDto): string =
     added:{self.added},
     blocked:{self.blocked},
     hasAddedUs:{self.hasAddedUs},
-    isSyncing:{self.isSyncing},
     removed:{self.removed},
     trustStatus:{self.trustStatus},
     contactRequestState:{self.contactRequestState},
@@ -116,7 +114,6 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)
   discard jsonObj.getProp("hasAddedUs", result.hasAddedUs)
-  discard jsonObj.getProp("IsSyncing", result.isSyncing)
   discard jsonObj.getProp("Removed", result.removed)
 
 proc userExtractedName(contact: ContactsDto): string =

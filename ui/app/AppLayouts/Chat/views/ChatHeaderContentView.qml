@@ -22,6 +22,9 @@ Item {
     property alias searchButton: searchButton
 
     property RootStore rootStore
+
+    property var mutualContactsModel
+
     property var chatContentModule: root.rootStore.currentChatContentModule() || null
     property var emojiPopup
     property int padding: Theme.halfPadding
@@ -346,6 +349,7 @@ Item {
             usersStore: UsersStore {
                 usersModule: root.chatContentModule.usersModule
             }
+            contactsModel: root.mutualContactsModel
 
             onConfirmed: root.state = d.stateInfoButtonContent
             onRejected: root.state = d.stateInfoButtonContent
