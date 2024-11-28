@@ -148,6 +148,7 @@ KeycardBasePage {
             PropertyChanges {
                 target: btnReload
                 visible: true
+                text: qsTr("I’ve inserted a Keycard")
             }
         },
         State {
