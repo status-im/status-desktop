@@ -139,8 +139,17 @@ SQUtils.QObject {
 
         function onSessionProposal(sessionProposal) {
             const key = sessionProposal.id
+            const namespaces = sessionProposal.params.requiredNamespaces
+            const { chains, _ } = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(namespaces)
             d.activeProposals.set(key.toString(), { context: sessionProposal, promise: bcConnectionPromise })
-            root.newConnectionProposed(key, [1], sessionProposal.params.proposer.metadata.url, sessionProposal.params.proposer.metadata.name, sessionProposal.params.proposer.metadata.icons[0], Constants.DAppConnectors.StatusConnect)
+            root.newConnectionProposed(
+                key,
+                chains,
+                sessionProposal.params.proposer.metadata.url,
+                sessionProposal.params.proposer.metadata.name,
+                sessionProposal.params.proposer.metadata.icons[0],
+                Constants.DAppConnectors.StatusConnect
+            )
         }
 
         function onApproveSessionResult(proposalId, session, err) {

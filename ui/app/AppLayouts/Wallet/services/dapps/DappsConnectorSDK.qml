@@ -334,7 +334,7 @@ WalletConnectSDKBase {
                             url
                         }
                     },
-                    requiredNamespaces: supportedNamespaces
+                    requiredNamespaces: JSON.parse(supportedNamespaces)
                 }
             }
             return proposal
