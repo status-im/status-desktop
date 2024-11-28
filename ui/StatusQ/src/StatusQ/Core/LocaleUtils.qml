@@ -136,6 +136,12 @@ QtObject {
         return str.replace(d.nonDigitCharacterRegExp, "").length
     }
 
+    enum RoundingMode {
+        Default,
+        Up,
+        Down
+    }
+
     function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
         if (!currencyAmount) {
             return qsTr("N/A")
@@ -162,6 +168,7 @@ QtObject {
         var optRawAmount = false
         var optDisplayDecimals = currencyAmount.displayDecimals
         var optStripTrailingZeroes = currencyAmount.stripTrailingZeroes
+        var optRoundingMode = LocaleUtils.RoundingMode.Default
         if (options) {
             if (options.noSymbol !== undefined && options.noSymbol === true) {
                 optNoSymbol = true
@@ -174,6 +181,9 @@ QtObject {
             }
             if (options.stripTrailingZeroes !== undefined) {
                 optStripTrailingZeroes = options.stripTrailingZeroes
+            }
+            if (options.roundingMode !== undefined) {
+                optRoundingMode = options.roundingMode
             }
         }
 
@@ -207,6 +217,16 @@ QtObject {
                     displayDecimals = Math.min(optDisplayDecimals, Math.max(0, maxDigits - numIntegerDigits))
                 }
             }
+            if (optRoundingMode !== LocaleUtils.RoundingMode.Default) {
+                let intAmount = amount * 10**displayDecimals
+                if (optRoundingMode === LocaleUtils.RoundingMode.Up) {
+                    intAmount = Math.ceil(intAmount)
+                } else if (optRoundingMode === LocaleUtils.RoundingMode.Down) {
+                    intAmount = Math.floor(intAmount)
+                }
+                amount = intAmount / 10**displayDecimals
+            }
+
             amountStr = numberToLocaleString(amount, displayDecimals, locale)
             if (optStripTrailingZeroes) {
                 amountStr = stripTrailingZeroes(amountStr, locale)

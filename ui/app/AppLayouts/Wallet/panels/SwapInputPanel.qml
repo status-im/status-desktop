@@ -287,7 +287,8 @@ Control {
                 formattedValue: d.maxInputBalance === 0 ? LocaleUtils.userInputLocale.zeroDigit
                                                         : root.currencyStore.formatCurrencyAmount(
                                                               maxSafeValue, d.inputSymbol,
-                                                              { noSymbol: !amountToSendInput.fiatMode })
+                                                              { noSymbol: !amountToSendInput.fiatMode,
+                                                                roundingMode: LocaleUtils.RoundingMode.Down })
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
                 // FIXME: This should be enabled after #15709 is resolved
