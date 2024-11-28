@@ -465,7 +465,8 @@ StatusDialog {
 
                         formattedValue: d.currencyStore.formatCurrencyAmount(
                                             maxSafeValue, d.inputSymbol,
-                                            { noSymbol: !amountToSend.fiatMode })
+                                            {   noSymbol: !amountToSend.fiatMode,
+                                                roundingMode: LocaleUtils.RoundingMode.Down })
 
                         markAsInvalid: amountToSend.markAsInvalid
 

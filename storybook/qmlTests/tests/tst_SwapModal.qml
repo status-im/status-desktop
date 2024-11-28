@@ -958,7 +958,7 @@ Item {
             verify(tokenSelectorIcon.visible)
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(expectedToken.currentBalance === 0 ? "0"
-                                                                                              : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true})))
+                                                                                              : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
             compare(payPanel.selectedHoldingId, expectedToken.symbol)
             compare(payPanel.value, valueToExchange)
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
@@ -1056,7 +1056,7 @@ Item {
             verify(tokenSelectorIcon.visible)
             verify(maxTagButton.visible)
             compare(maxTagButton.text, qsTr("Max. %1").arg(expectedToken.currentBalance === 0 ? "0"
-                                                                                              : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true})))
+                                                                                              : root.swapAdaptor.currencyStore.formatCurrencyAmount(WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol), expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
             compare(payPanel.selectedHoldingId, expectedToken.symbol)
             compare(payPanel.value, valueToExchange)
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
@@ -1191,7 +1191,7 @@ Item {
             let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
             let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
             compare(maxTagButton.text, qsTr("Max. %1").arg(truncmaxPossibleValue === 0 ? Qt.locale().zeroDigit
-                                                                                       : root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                                                                                       : root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
             waitForItemPolished(amountToSendInput)
             verify(amountToSendInput.interactive)
             tryCompare(amountToSendInput, "cursorVisible", true)
@@ -1244,7 +1244,7 @@ Item {
             verify(maxTagButton.visible)
             let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
             compare(maxTagButton.text, qsTr("Max. %1").arg(maxPossibleValue === 0 ? "0"
-                                                                                  : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                                                                                  : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
             verify(amountToSendInput.interactive)
             verify(amountToSendInput.cursorVisible)
             compare(amountToSendInput.text, "")
@@ -1302,7 +1302,7 @@ Item {
                     // check states for the pay input selector
                     tryCompare(maxTagButton, "visible", true)
                     let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
-                    tryCompare(maxTagButton, "text", qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                    tryCompare(maxTagButton, "text", qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
                     compare(payPanel.selectedHoldingId, expectedToken.symbol)
                     tryCompare(payPanel, "valueValid", !!valueToExchangeString && valueToExchange <= maxPossibleValue)
 
@@ -1697,7 +1697,7 @@ Item {
                     let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(balance, expectedToken.symbol)
                     compare(maxTagButton.text, qsTr("Max. %1").arg(
                                 maxPossibleValue === 0 ? "0" :
-                                                         root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true})))
+                                                         root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
                     compare(payPanel.selectedHoldingId.toLowerCase(), expectedToken.symbol.toLowerCase())
                     compare(payPanel.valueValid, valueToExchange <= maxPossibleValue)
                     tryCompare(payPanel, "rawValue", SQUtils.AmountsArithmetic.fromNumber(valueToExchangeString, expectedToken.decimals).toString())
