@@ -55,11 +55,17 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     let args = TransactionArgs(e)
+    var 
+      txHash = ""
+      isApprovalTx = false
+    if not args.sentTransaction.isNil:
+      txHash = args.sentTransaction.hash
+      isApprovalTx = args.sentTransaction.approvalTx
     self.delegate.transactionWasSent(
       args.sendDetails.uuid,
       args.sendDetails.fromChain,
-      args.sentTransaction.approvalTx,
-      args.sentTransaction.hash,
+      isApprovalTx,
+      txHash,
       if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
     )
 
