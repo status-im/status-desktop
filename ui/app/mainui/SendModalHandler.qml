@@ -41,8 +41,6 @@ QtObject {
 
     /** For simple send modal flows, decoupling from transaction store **/
 
-    /** curently selected fiat currency symbol **/
-    required property string currentCurrency
     /** Expected model structure:
     - name: name of account
     - address: wallet address
@@ -62,6 +60,13 @@ QtObject {
     - balances: submodel[ chainId:int, account:string, balance:BigIntString, iconUrl:string ]
     **/
     required property var groupedAccountAssetsModel
+    /** Expected token by symbol model structure:
+    - key: id for the token,
+    - name: name of the token,
+    - symbol: symbol of the token,
+    - decimals: decimals for the token
+    */
+    required property var plainTokensBySymbolModel
     /** Expected model structure:
     - symbol              [string] - unique identifier of a collectible
     - collectionUid       [string] - unique identifier of a collection
@@ -96,8 +101,6 @@ QtObject {
     /** whether community tokens are shown in send modal
     based on a global setting **/
     required property bool showCommunityAssetsInSend
-    /** required function to format currency amount to locale string **/
-    required property var fnFormatCurrencyAmount
 
     required property var savedAddressesModel
     required property var recentRecipientsModel
@@ -106,6 +109,13 @@ QtObject {
     required property var fnResolveENS
     /** required signal to receive resolved ens name address **/
     signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
+
+    /** curently selected fiat currency symbol **/
+    required property string currentCurrency
+    /** required function to format currency amount to locale string **/
+    required property var fnFormatCurrencyAmount
+    /** required function to format to currency amount from big int **/
+    required property var fnFormatCurrencyAmountFromBigInt
 
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
@@ -243,14 +253,13 @@ QtObject {
         SimpleSendModal {
             id: simpleSendModal
 
-            /** TODO: use the newly defined WalletAccountsSelectorAdaptor
-            in https://github.com/status-im/status-desktop/pull/16834 **/
-            accountsModel: root.walletAccountsModel
+            accountsModel: backendHandler.accountsSelectorAdaptor.processedWalletAccounts
             assetsModel: backendHandler.assetsSelectorViewAdaptor.outputAssetsModel
             collectiblesModel: backendHandler.collectiblesSelectionAdaptor.model
             networksModel: backendHandler.filteredFlatNetworksModel
             savedAddressesModel: root.savedAddressesModel
             recentRecipientsModel: root.recentRecipientsModel
+
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
@@ -313,6 +322,18 @@ QtObject {
                         return
                     }
                     close()
+                }
+
+                readonly property var accountsSelectorAdaptor: WalletAccountsSelectorAdaptor {
+                    accounts: root.walletAccountsModel
+                    assetsModel: root.groupedAccountAssetsModel
+                    tokensBySymbolModel: root.plainTokensBySymbolModel
+                    filteredFlatNetworksModel: backendHandler.filteredFlatNetworksModel
+
+                    selectedTokenKey: simpleSendModal.selectedTokenKey
+                    selectedNetworkChainId: simpleSendModal.selectedChainId
+
+                    fnFormatCurrencyAmountFromBigInt: root.fnFormatCurrencyAmountFromBigInt
                 }
 
                 readonly property var assetsSelectorViewAdaptor: TokenSelectorViewAdaptor {

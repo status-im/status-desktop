@@ -23,9 +23,6 @@ StatusDialog {
     id: root
 
     /**
-    TODO: use the newly defined WalletAccountsSelectorAdaptor
-    in https://github.com/status-im/status-desktop/pull/16834
-    This will also remove watch only accounts from the list
     Expected model structure:
     - name: name of account
     - address: wallet address
