@@ -99,6 +99,14 @@ StatusDialog {
                                     qsTr("Connection request")
 
     padding: 0
+    closePolicy: Popup.NoAutoClose
+
+    header: StatusDialogHeader {
+        visible: root.title || root.subtitle
+        headline.title: root.title
+        headline.subtitle: root.subtitle
+        actions.closeButton.visible: false
+    }
 
     StatusScrollView {
         id: scrollView
