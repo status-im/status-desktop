@@ -21,7 +21,7 @@ ColumnLayout {
     property string  syncCodeLabel: qsTr("Type or paste pairing code")
     property alias showBetaTag: betaTag.visible
 
-    property var validateConnectionString: function(stringValue) { return true }
+    property var validateConnectionString: function(stringValue) { return false }
 
     readonly property bool syncViaQr: !switchTabBar.currentIndex
 
