@@ -54,7 +54,7 @@ OnboardingPage {
                         spacing: 24
                         StatusImage {
                             Layout.alignment: Qt.AlignHCenter
-                            Layout.preferredWidth: Math.min(268, parent.width)
+                            Layout.preferredWidth: Math.min(252, parent.width)
                             Layout.preferredHeight: Math.min(164, height)
                             source: Theme.png("onboarding/status_generate_keycard")
                             mipmap: true
