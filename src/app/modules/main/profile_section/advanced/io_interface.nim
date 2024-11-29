@@ -110,3 +110,6 @@ method setMaxLogBackups*(self: AccessInterface, value: int) {.base.} =
 
 method onLogMaxBackupsChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method statusgoIntendedPanic*(self: AccessInterface, message: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

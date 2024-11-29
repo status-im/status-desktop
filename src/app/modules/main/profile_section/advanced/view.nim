@@ -140,3 +140,6 @@ QtObject:
 
   proc setMaxLogBackups*(self: View, value: int) {.slot.} =
     self.delegate.setMaxLogBackups(value)
+
+  proc statusgoIntendedPanic*(self: View, message: string) {.slot.} =
+    self.delegate.statusgoIntendedPanic(message)

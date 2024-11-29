@@ -200,4 +200,13 @@ QtObject {
 
         localAppSettings.scrollDeceleration = value
     }
+
+    function statusgoIntendedPanic() {
+        if (!advancedModule)
+            return
+
+        const message = Utils.uuid()
+        console.log("triggering status-go panic with message:", message)
+        advancedModule.statusgoIntendedPanic(message)
+    }
 }
