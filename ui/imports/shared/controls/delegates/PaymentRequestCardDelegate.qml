@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import shared.controls.chat 1.0
 
@@ -18,6 +19,8 @@ CalloutCard {
     required property string amount
     required property string symbol
     required property string address
+
+    required property bool areTestNetworksEnabled
 
     property string senderName
     property string senderThumbnailImage
@@ -42,9 +45,8 @@ CalloutCard {
 
     QtObject {
         id: d
-        property real bannerImageMargins: 1 / Screen.devicePixelRatio // image size isn't pixel perfect..
-        property bool highlight: root.highlight || root.hovered
-        property string bannerImageSource: ""
+        readonly property bool highlight: (root.highlight || root.hovered) && isAvailable
+        readonly property bool isAvailable: !root.areTestNetworksEnabled
     }
 
     contentItem: ColumnLayout {
@@ -132,11 +134,22 @@ CalloutCard {
         }
     }
 
+    StatusToolTip {
+        text: qsTr("Not available in the testnet mode")
+        visible: !d.isAvailable && root.hovered
+        y: -height
+    }
+
     MouseArea {
+        id: ma
         anchors.fill: root
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: root.clicked(mouse)
+        onClicked: {
+            if (!d.isAvailable)
+                return
+            root.clicked(mouse)
+        }
     }
 }

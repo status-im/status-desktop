@@ -39,6 +39,8 @@ Control {
     */
     required property var paymentRequestModel
 
+    property var formatBalance: null
+
     readonly property alias hoveredUrl: d.hoveredUrl
     readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0 || paymentRequestRepeater.count > 0
 
@@ -47,7 +49,7 @@ Control {
     signal linkReload(string link)
     signal linkClicked(string link)
 
-    signal removePaymentRequestPreviewRequested(int index)
+    signal removePaymentRequestPreview(int index)
 
     signal enableLinkPreview()
     signal enableLinkPreviewForThisMessage()
@@ -110,9 +112,13 @@ Control {
                     delegate: PaymentRequestMiniCardDelegate {
                         required property var model
 
-                        amount: model.amount
+                        amount: {
+                            if (!root.formatBalance)
+                                return model.amount
+                            return root.formatBalance(model.amount, model.symbol)
+                        }
                         symbol: model.symbol
-                        onClose: root.removePaymentRequestPreviewRequested(model.index)
+                        onClose: root.removePaymentRequestPreview(model.index)
                     }
                 }
                 Repeater {

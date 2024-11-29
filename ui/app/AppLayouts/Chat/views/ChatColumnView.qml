@@ -203,6 +203,14 @@ Item {
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
             Qt.callLater(d.restoreInputState, preservedText)
         }
+
+        function formatBalance(amount, symbol) {
+            let asset = ModelUtils.getByKey(WalletStore.RootStore.tokensStore.flatTokensModel, "symbol", symbol)
+            if (!asset)
+                return "0"
+            const num = AmountsArithmetic.toNumber(amount, asset.decimals)
+            return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSynbol: true})
+        }
     }
 
     EmptyChatPanel {
@@ -241,11 +249,13 @@ Item {
                         utilsStore: root.utilsStore
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
+                        formatBalance: d.formatBalance
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+                        areTestNetworksEnabled: root.areTestNetworksEnabled
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
@@ -298,6 +308,7 @@ Item {
 
                     linkPreviewModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.linkPreviewModel : null
                     paymentRequestModel: !!d.activeChatContentModule ? d.activeChatContentModule.inputAreaModule.paymentRequestModel : null
+                    formatBalance: d.formatBalance
                     urlsList: d.urlsList
                     askToEnableLinkPreview: {
                         if(!d.activeChatContentModule || !d.activeChatContentModule.inputAreaModule || !d.activeChatContentModule.inputAreaModule.preservedProperties)

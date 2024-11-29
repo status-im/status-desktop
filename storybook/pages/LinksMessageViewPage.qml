@@ -32,6 +32,7 @@ SplitView {
             linkPreviewModel: mockedLinkPreviewModel
             gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
             paymentRequestModel: mockedPaymentRequestModel
+            areTestNetworksEnabled: false
 
             senderName: "Alice"
 
@@ -76,6 +77,11 @@ SplitView {
                     text: qsTr("Is online")
                     checked: linksMessageView.isOnline
                     onToggled: linksMessageView.isOnline = !linksMessageView.isOnline
+                }
+                CheckBox {
+                    text: qsTr("Testnet enabled")
+                    checked: linksMessageView.areTestNetworksEnabled
+                    onToggled: linksMessageView.areTestNetworksEnabled = !linksMessageView.areTestNetworksEnabled
                 }
             }
         }
