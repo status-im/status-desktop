@@ -148,3 +148,6 @@ method setMaxLogBackups*(self: Module, value: int) =
 
 method onLogMaxBackupsChanged*(self: Module) =
   self.view.logMaxBackupsChanged()
+
+method statusgoIntendedPanic*(self: Module, message: string) =
+  self.controller.statusgoIntendedPanic(message)

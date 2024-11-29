@@ -94,3 +94,6 @@ proc hashMessageForSigning*(message: string): string =
   except Exception as e:
     error "hashMessage: failed to parse json response", error = e.msg
     return ""
+
+proc intendedPanic*(message: string) =
+  discard status_go.intendedPanic(message)

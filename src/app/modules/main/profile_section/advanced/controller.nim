@@ -6,6 +6,7 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import ../../../../../backend/general as backend_general
 
 logScope:
   topics = "profile-section-advanced-module-controller"
@@ -148,3 +149,6 @@ proc enableCommunityHistoryArchiveSupport*(self: Controller): bool =
 
 proc disableCommunityHistoryArchiveSupport*(self: Controller): bool =
   self.nodeConfigurationService.disableCommunityHistoryArchiveSupport()
+
+proc statusgoIntendedPanic*(self: Controller, message: string) =
+  backend_general.intendedPanic(message)

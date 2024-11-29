@@ -481,6 +481,20 @@ SettingsContentBase {
                 text: qsTr("RPC statistics")
                 onClicked: rpcStatsModal.open()
             }
+
+            Separator {
+                width: parent.width
+                height: Theme.padding
+            }
+
+            StatusButton {
+                Layout.leftMargin: Theme.padding
+                type: StatusBaseButton.Type.Danger
+                text: qsTr("Trigger status-go panic")
+                onClicked: {
+                    root.advancedStore.statusgoIntendedPanic()
+                }
+            }
         }
 
         FleetsModal {
