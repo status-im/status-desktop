@@ -104,7 +104,6 @@ QtObject {
     readonly property var activityController: walletSectionInst.activityController
     readonly property var tmpActivityController0: walletSectionInst.tmpActivityController0
     readonly property var tmpActivityController1: walletSectionInst.tmpActivityController1
-    readonly property var activityDetailsController: walletSectionInst.activityDetailsController
     readonly property var walletConnectController: walletSectionInst.walletConnectController
     readonly property var dappsConnectorController: walletSectionInst.dappsConnectorController
 
@@ -538,15 +537,6 @@ QtObject {
     function updateTransactionFilterIfDirty() {
         if (root.transactionActivityStatus.isFilterDirty)
             root.walletSectionInst.activityController.updateFilter()
-    }
-
-    function getTxDetails() {
-        return root.walletSectionInst.activityDetailsController.activityDetails
-    }
-
-    function fetchTxDetails(txID) {
-        root.walletSectionInst.activityController.fetchTxDetails(txID)
-        root.walletSectionInst.activityDetailsController.fetchExtraTxDetails()
     }
 
     function fetchDecodedTxData(txHash, input) {
