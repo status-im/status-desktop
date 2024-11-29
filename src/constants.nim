@@ -66,6 +66,7 @@ let
   WS_API_ENABLED* = desktopConfig.wsApiEnabled
   SENTRY_DSN_STATUS_GO* = BUILD_SENTRY_DSN_STATUS_GO
   SENTRY_DSN_STATUS_GO_DESKTOP* = BUILD_SENTRY_DSN_STATUS_DESKTOP
+  API_LOGGING* = desktopConfig.apiLogging
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
@@ -75,5 +76,10 @@ proc hasLogLevelOption*(): bool =
 
 proc runtimeLogLevelSet*(): bool =
   return existsEnv(RUN_TIME_PREFIX & "_LOG_LEVEL") or hasLogLevelOption()
+
+proc getStatusGoLogLevel*(): string =
+  if LOG_LEVEL == "TRACE":
+    return "DEBUG"
+  return LOG_LEVEL
 
 const MAIN_STATUS_SHARD_CLUSTER_ID* = 16

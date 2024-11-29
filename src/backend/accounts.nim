@@ -264,6 +264,10 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
       "mixpanelAppId": MIXPANEL_APP_ID, 
       "mixpanelToken": MIXPANEL_TOKEN,
       "sentryDSN": SENTRY_DSN_STATUS_GO,
+      "logEnabled": true,
+      "logDir": "", # Empty value defaults to `dataDir`
+      "logLevel": status_const.getStatusGoLogLevel(),
+      "apiLoggingEnabled": status_const.API_LOGGING,
     }
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
@@ -271,7 +275,11 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
     if status_const.IS_MACOS and status_const.IS_INTEL:
       sleep 700
     let response = status_go.initializeApplication($payload)
-    result.result = Json.decode(response, JsonNode)
+    let jsonResponse = parseJson(response)
+    let error = jsonResponse{"error"}.getStr()
+    if error.len > 0:
+      raise newException(RpcException, error)
+    result.result = jsonResponse
   except RpcException as e:
     error "error doing rpc request", methodName = "openedAccounts", exception=e.msg
     raise newException(RpcException, e.msg)

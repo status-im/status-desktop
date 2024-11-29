@@ -33,6 +33,7 @@ const BASE_NAME_MIXPANEL_APP_ID = "MIXPANEL_APP_ID"
 const BASE_NAME_MIXPANEL_TOKEN = "MIXPANEL_TOKEN"
 const BASE_NAME_SENTRY_DSN_STATUS_GO = "SENTRY_DSN_STATUS_GO"
 const BASE_NAME_SENTRY_DSN_STATUS_DESKTOP = "SENTRY_DSN_STATUS_DESKTOP"
+const BASE_NAME_API_LOGGING = "API_LOGGING"
 
 
 ################################################################################
@@ -249,6 +250,11 @@ type StatusDesktopConfig = object
     desc: "Enable WebSocket RPC API"
     name: "WS_API"
     abbr: "ws-api" .}: bool
+  apiLogging* {.
+    defaultValue: false
+    desc: "Enables status-go API logging"
+    name: $BASE_NAME_API_LOGGING
+    abbr: "api-logging" .}: bool
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process
