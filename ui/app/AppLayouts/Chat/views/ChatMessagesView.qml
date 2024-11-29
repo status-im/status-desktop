@@ -75,7 +75,7 @@ Item {
         }
 
         function markAllMessagesReadIfMostRecentMessageIsInViewport() {
-            if (!isMostRecentMessageInViewport || !chatLogView.visible || keepUnread) {
+            if (Qt.application.state != Qt.ApplicationActive || !isMostRecentMessageInViewport || !chatLogView.visible || keepUnread) {
                 return
             }
 
@@ -90,6 +90,15 @@ Item {
         }
 
         onIsMostRecentMessageInViewportChanged: markAllMessagesReadIfMostRecentMessageIsInViewport()
+    }
+
+    Connections {
+        target: Qt.application
+        onStateChanged: {
+            if (Qt.application.state == Qt.ApplicationActive) {
+                d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+            }
+        }
     }
 
     Connections {
@@ -137,7 +146,7 @@ Item {
 
             // HACK: we call `addNewMessagesMarker` later because messages model
             // may not be yet propagated with unread messages when this signal is emitted
-            if (chatLogView.visible && !d.isMostRecentMessageInViewport) {
+            if (chatLogView.visible && (Qt.application.state != Qt.ApplicationActive || !d.isMostRecentMessageInViewport)) {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
             }
         }
