@@ -38,5 +38,5 @@ def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, 
 
     authenticate_with_password(user_account)
 
-    assert WalletTransactions.TRANSACTION_PENDING_TOAST_MESSAGE.value in ' '.join(
+    assert WalletTransactions.TRANSACTION_SENDING_TOAST_MESSAGE.value + ' ' + str(amount) + ' ' + asset in ' '.join(
         main_window.wait_for_notification())
