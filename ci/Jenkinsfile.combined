@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.7'
+library 'status-jenkins-lib@v1.9.14'
 
 /* Object to store public URLs for description. */
 urls = [:]
@@ -32,6 +32,9 @@ pipeline {
 
   stages {
     stage('Build') {
+      environment {
+        SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
+      }
       parallel {
         stage('Linux/x86_64 and E2E') {
           stages {
