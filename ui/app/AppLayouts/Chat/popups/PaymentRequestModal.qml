@@ -37,7 +37,7 @@ StatusDialog {
         if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
             return "0"
         }
-        return SQUtils.AmountsArithmetic.toNumber(amountToSendInput.amount, amountToSendInput.multiplierIndex)
+        return amountToSendInput.amount
     }
 
     objectName: "paymentRequestModal"
@@ -58,6 +58,7 @@ StatusDialog {
         if (!!root.selectedTokenKey) {
             holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
         }
+        amountToSendInput.forceActiveFocus()
     }
 
     QtObject {

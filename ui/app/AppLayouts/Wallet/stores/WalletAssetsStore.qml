@@ -47,6 +47,7 @@ QtObject {
     /* This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
     it can be easily joined with the Account Assets model */
     readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
+        objectName: "renamedTokensBySymbolModel"
         sourceModel: walletTokensStore.plainTokensBySymbolModel
         mapping: [
             RoleRename {

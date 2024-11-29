@@ -405,8 +405,8 @@ QtObject {
         })
     }
 
-    function openPaymentRequestModal(inputAreaModule) {
-        openPopup(paymentRequestModalComponent, {inputAreaModule: inputAreaModule})
+    function openPaymentRequestModal(callback) {
+        openPopup(paymentRequestModalComponent, {callback: callback})
     }
 
     readonly property list<Component> _components: [
@@ -1284,21 +1284,27 @@ QtObject {
             PaymentRequestModal {
                 id: paymentRequestModal
                 readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
-                    assetsModel: WalletStores.RootStore.walletAssetsStore._renamedTokensBySymbolModel
+                    assetsModel: null
                     flatNetworksModel: WalletStores.RootStore.filteredFlatModel
                     currentCurrency: root.currencyStore.currentCurrency
                     plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
                     enabledChainIds: [paymentRequestModal.selectedNetworkChainId]
                     showAllTokens: true
                 }
-                property var inputAreaModule: null
+                property var callback: null
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 flatNetworksModel: WalletStores.RootStore.filteredFlatModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 assetsModel: tokenAdaptor.outputAssetsModel
 
-                onAccepted: inputAreaModule.addPaymentRequest(selectedAccountAddress, amount, selectedTokenKey, selectedNetworkChainId)
+                onAccepted: {
+                    if (!callback) {
+                        console.error("No callback set for Payment Request")
+                        return
+                    }
+                    callback(selectedAccountAddress, amount, selectedTokenKey, selectedNetworkChainId)
+                }
                 destroyOnClose: true
             }
         }

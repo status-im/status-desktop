@@ -1012,18 +1012,29 @@ Rectangle {
         id: chatCommandMenuComponent
 
         StatusMenu {
+            id: chatCommandMenu
             StatusAction {
                 text: qsTr("Add image")
                 icon.name: "image"
                 onTriggered: control.openImageDialog()
             }
 
-            StatusAction {
-                text: qsTr("Add payment request")
-                icon.name: "wallet"
-                visibleOnDisabled: control.paymentRequestEnabled
-                enabled: control.paymentRequestEnabled && !control.areTestNetworksEnabled
-                onTriggered: control.openPaymentRequestModal()
+            MouseArea {
+                implicitWidth: paymentRequestMenuItem.width
+                implicitHeight: paymentRequestMenuItem.height
+                hoverEnabled: true
+                visible: control.paymentRequestEnabled
+                StatusMenuItem {
+                    id: paymentRequestMenuItem
+                    text: parent.containsMouse && !enabled ? qsTr("Not available in Testnet mode") : qsTr("Add payment request")
+                    icon.name: "wallet"
+                    icon.color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                    enabled: !control.areTestNetworksEnabled
+                    onTriggered: {
+                        control.openPaymentRequestModal()
+                        chatCommandMenu.close()
+                    }
+                }
             }
 
             closeHandler: () => commandBtn.highlighted = false

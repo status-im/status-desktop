@@ -101,6 +101,7 @@ SplitView {
                 }
 
                 paymentRequestEnabled: true
+                areTestNetworksEnabled: testnetEnabledCheckBox.checked
 
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
@@ -182,6 +183,12 @@ SplitView {
                 id: enabledCheckBox
                 text: "enabled"
                 checked: true
+            }
+
+            CheckBox {
+                id: testnetEnabledCheckBox
+                text: "testnet enabled"
+                checked: false
             }
 
             TabBar {
