@@ -34,7 +34,14 @@ Item {
     property alias headerButton: headerButton
     property alias networkFilter: networkFilter
 
+    property bool dAppsEnabled: true
+    property bool walletConnectEnabled: true
+    property bool browserConnectEnabled: true
+    property var dAppsModel
+
     signal buttonClicked()
+    signal dappPairRequested()
+    signal dappDisconnectRequested(string dappUrl)
 
     implicitHeight: 88
 
@@ -133,57 +140,17 @@ Item {
                 }
             }
 
-            DAppsWorkflow {
+            DappsComboBox {
                 id: dappsWorkflow
                 Layout.alignment: Qt.AlignTop
-
-                readonly property DAppsService dAppsService: Global.dAppsService
-
                 spacing: 8
 
-                visible: !root.walletStore.showSavedAddresses
-                         && (dAppsService.walletConnectFeatureEnabled || dAppsService.connectorFeatureEnabled)
-                         && dAppsService.serviceAvailableToCurrentAddress
-                enabled: !!dAppsService && dAppsService.isServiceOnline
-
-                walletConnectEnabled: dAppsService.walletConnectFeatureEnabled
-                connectorEnabled: dAppsService.connectorFeatureEnabled
-
-                loginType: root.loginType
-                selectedAccountAddress: root.walletStore.selectedAddress
-                model: dAppsService.dappsModel
-                accountsModel: root.walletStore.nonWatchAccounts
-                networksModel: root.walletStore.filteredFlatModel
-                sessionRequestsModel: dAppsService.sessionRequestsModel
-
-                formatBigNumber: (number, symbol, noSymbolOption) => root.walletStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
-
-                onDisconnectRequested: (connectionId) => dAppsService.disconnectDapp(connectionId)
-                onPairingRequested: (uri) => dAppsService.pair(uri)
-                onPairingValidationRequested: (uri) => dAppsService.validatePairingUri(uri)
-                onConnectionAccepted: (pairingId, chainIds, selectedAccount) => dAppsService.approvePairSession(pairingId, chainIds, selectedAccount)
-                onConnectionDeclined: (pairingId) => dAppsService.rejectPairSession(pairingId)
-                onSignRequestAccepted: (connectionId, requestId) => dAppsService.sign(connectionId, requestId)
-                onSignRequestRejected: (connectionId, requestId) => dAppsService.rejectSign(connectionId, requestId, false /*hasError*/)
-                onSignRequestIsLive: (connectionId, requestId) => dAppsService.signRequestIsLive(connectionId, requestId)
-
-                Connections {
-                    target: dappsWorkflow.dAppsService
-                    function onPairingValidated(validationState) {
-                        dappsWorkflow.pairingValidated(validationState)
-                    }
-                    function onApproveSessionResult(pairingId, err, newConnectionId) {
-                        if (err) {
-                            dappsWorkflow.connectionFailed(pairingId)
-                            return
-                        }
-
-                        dappsWorkflow.connectionSuccessful(pairingId, newConnectionId)
-                    }
-                    function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId) {
-                        dappsWorkflow.connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId)
-                    }
-                }
+                visible: !root.walletStore.showSavedAddresses && root.dAppsEnabled
+                walletConnectEnabled: root.walletConnectEnabled
+                connectorEnabled: root.browserConnectEnabled
+                model: root.dAppsModel
+                onPairDapp: root.dappPairRequested()
+                onDisconnectDapp: (dappUrl) => root.dappDisconnectRequested(dappUrl)
             }
 
             StatusButton {

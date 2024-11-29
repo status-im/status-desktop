@@ -24,7 +24,9 @@ import AppLayouts.Wallet.services.dapps.types 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.popups.dapps 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
 import AppLayouts.stores 1.0 as AppLayoutStores
@@ -52,31 +54,39 @@ Item {
 
             Rectangle {
                 Layout.alignment: Qt.AlignCenter
-                Layout.preferredWidth: dappsWorkflow.implicitHeight + 20
-                Layout.preferredHeight: dappsWorkflow.implicitHeight + 20
+                Layout.preferredWidth: dappsComboBox.implicitHeight + 20
+                Layout.preferredHeight: dappsComboBox.implicitHeight + 20
 
                 border.color: "blue"
                 border.width: 1
 
+                DappsComboBox {
+                    id: dappsComboBox
+                    anchors.centerIn: parent
+                    spacing: 8
+                    enabled: dappsService.isServiceOnline
+
+                    onPairDapp: dappsWorkflow.openPairing()
+                    onDisconnectDapp: dappsWorkflow.disconnectDapp(dappUrl)
+                    model: dappsService.dappsModel
+                    walletConnectEnabled: dappsService.walletConnectFeatureEnabled
+                    connectorEnabled: dappsService.connectorFeatureEnabled
+                }
+
                 DAppsWorkflow {
                     id: dappsWorkflow
 
-                    anchors.centerIn: parent
-
-                    spacing: 8
+                    visualParent: root
+                    enabled: dappsService.isServiceOnline
 
                     readonly property var wcService: dappsService
                     loginType: Constants.LoginType.Biometrics
                     selectedAccountAddress: ""
 
-                    model: wcService.dappsModel
+                    dAppsModel: wcService.dappsModel
                     accountsModel: dappModule.accountsModel
                     networksModel: dappModule.networksModel
                     sessionRequestsModel: wcService.sessionRequestsModel
-                    enabled: wcService.isServiceOnline
-
-                    walletConnectEnabled: wcService.walletConnectFeatureEnabled
-                    connectorEnabled: wcService.connectorFeatureEnabled
 
                     formatBigNumber: (number, symbol, noSymbolOption) => {
                         print ("formatBigNumber", number, symbol, noSymbolOption)
@@ -565,7 +575,7 @@ Item {
         function startTestCase() {
             d.activeTestCase = settings.testCase
             if(root.visible) {
-                dappsWorkflow.popup.open()
+                dappsComboBox.popup.open()
             }
         }
 

@@ -43,6 +43,7 @@ import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
+import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
 
@@ -1636,6 +1637,13 @@ Item {
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
                             hideSignPhraseModal: userAgreementLoader.active
+                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                            walletConnectEnabled: featureFlagsStore.dappsEnabled
+                            browserConnectEnabled: featureFlagsStore.connectorEnabled
+                            dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
+
+                            onDappPairRequested: dAppsServiceLoader.dappPairRequested()
+                            onDappDisconnectRequested: (dappUrl) => dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                         }
                         onLoaded: {
                             item.resetView()
@@ -2386,6 +2394,9 @@ Item {
     Loader {
         id: dAppsServiceLoader
 
+        signal dappPairRequested()
+        signal dappDisconnectRequested(string dappUrl)
+
         // It seems some of the functionality of the dapp connector depends on the DAppsService
         active: {
             return (featureFlagsStore.dappsEnabled || featureFlagsStore.connectorEnabled) && appMain.visible
@@ -2393,8 +2404,41 @@ Item {
 
         sourceComponent: DAppsService {
             id: dAppsService
-            Component.onCompleted: {
-                Global.dAppsService = dAppsService
+
+            DAppsPopups.DAppsWorkflow {
+                id: dappsWorkflow
+
+                enabled: dAppsService.isServiceOnline
+                visualParent: appMain
+                loginType: appMain.rootStore.loginType
+                selectedAccountAddress: WalletStores.RootStore.selectedAddress
+                dAppsModel: dAppsService.dappsModel
+                accountsModel: WalletStores.RootStore.nonWatchAccounts
+                networksModel: WalletStores.RootStore.filteredFlatModel
+                sessionRequestsModel: dAppsService.sessionRequestsModel
+
+                formatBigNumber: (number, symbol, noSymbolOption) => WalletStores.RootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
+
+                onDisconnectRequested: (connectionId) => dAppsService.disconnectDapp(connectionId)
+                onPairingRequested: (uri) => dAppsService.pair(uri)
+                onPairingValidationRequested: (uri) => dAppsService.validatePairingUri(uri)
+                onConnectionAccepted: (pairingId, chainIds, selectedAccount) => dAppsService.approvePairSession(pairingId, chainIds, selectedAccount)
+                onConnectionDeclined: (pairingId) => dAppsService.rejectPairSession(pairingId)
+                onSignRequestAccepted: (connectionId, requestId) => dAppsService.sign(connectionId, requestId)
+                onSignRequestRejected: (connectionId, requestId) => dAppsService.rejectSign(connectionId, requestId, false /*hasError*/)
+                onSignRequestIsLive: (connectionId, requestId) => dAppsService.signRequestIsLive(connectionId, requestId)
+
+                Connections {
+                    target: dAppsServiceLoader
+
+                    function onDappPairRequested() {
+                        dappsWorkflow.openPairing()
+                    }
+
+                    function onDappDisconnectRequested(dappUrl) {
+                        dappsWorkflow.disconnectDapp(dappUrl)
+                    }
+                }
             }
 
             // DAppsModule provides the middleware for the dapps
@@ -2438,6 +2482,20 @@ Item {
                 const icon = type === Constants.ephemeralNotificationType.danger ? "warning" : 
                             type === Constants.ephemeralNotificationType.success ? "checkmark-circle" : "info"
                 Global.displayToastMessage(message, "", icon, false, type, "")
+            }
+            onPairingValidated: (validationState) => {
+                dappsWorkflow.pairingValidated(validationState)
+            }
+            onApproveSessionResult: (pairingId, err, newConnectionId) => {
+                if (err) {
+                    dappsWorkflow.connectionFailed(pairingId)
+                    return
+                }
+
+                dappsWorkflow.connectionSuccessful(pairingId, newConnectionId)
+            }
+            onConnectDApp: (dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId) => {
+                dappsWorkflow.connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId)
             }
         }
     }

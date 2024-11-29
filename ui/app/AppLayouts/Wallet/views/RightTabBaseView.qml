@@ -20,6 +20,11 @@ FocusScope {
     property NetworkConnectionStore networkConnectionStore
 
     property bool swapEnabled
+    property bool dAppsEnabled
+    property bool walletConnectEnabled
+    property bool browserConnectEnabled
+
+    property var dAppsModel
 
     property var sendModal
 
@@ -28,6 +33,9 @@ FocusScope {
     property alias networkFilter: header.networkFilter
 
     default property alias content: contentWrapper.children
+
+    signal dappPairRequested()
+    signal dappDisconnectRequested(string dappUrl)
 
     ColumnLayout {
         anchors.fill: parent
@@ -40,6 +48,13 @@ FocusScope {
             walletStore: WalletStores.RootStore
             networkConnectionStore: root.networkConnectionStore
             loginType: root.store.loginType
+            dAppsEnabled: root.dAppsEnabled
+            dAppsModel: root.dAppsModel
+            walletConnectEnabled: root.walletConnectEnabled
+            browserConnectEnabled: root.browserConnectEnabled
+
+            onDappPairRequested: root.dappPairRequested()
+            onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
         }
 
         Item {
