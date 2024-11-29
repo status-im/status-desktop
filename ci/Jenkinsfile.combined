@@ -32,6 +32,9 @@ pipeline {
 
   stages {
     stage('Build') {
+      environment {
+        SENTRY_PRODUCTION = utils.isReleaseBuild() ? true : false
+      }
       parallel {
         stage('Linux/x86_64 and E2E') {
           stages {
