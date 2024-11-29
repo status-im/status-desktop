@@ -73,7 +73,7 @@ class WalletOrigin(Enum):
 
 
 class WalletTransactions(Enum):
-    TRANSACTION_PENDING_TOAST_MESSAGE = 'Transaction pending'
+    TRANSACTION_SENDING_TOAST_MESSAGE = 'Sending'
 
 
 class WalletScreensHeaders(Enum):

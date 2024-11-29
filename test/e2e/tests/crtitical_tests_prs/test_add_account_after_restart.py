@@ -1,10 +1,12 @@
 import time
 
 import allure
+import pyperclip
 import pytest
 from allure import step
 
 from constants import RandomUser
+from constants.wallet import WalletNetworkSettings
 from helpers.WalletHelper import authenticate_with_password
 from . import marks
 
@@ -33,6 +35,18 @@ def test_add_generated_account_restart_add_again(
         color: str, emoji: str, emoji_unicode: str, name: str,
         color2: str, emoji2: str, emoji_unicode2: str, name2: str,
 ):
+    with step('Open wallet and choose default account'):
+        default_name = WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value
+        wallet = main_screen.left_panel.open_wallet()
+        wallet_account = wallet.left_panel.select_account(default_name)
+        wallet.left_panel.copy_account_address_in_context_menu(default_name)
+        wallet_address = pyperclip.paste()
+
+    with step('Check QR code and address in Receive modal from footer'):
+        receive_popup = wallet_account.open_receive_popup()
+        assert receive_popup.qr_code.is_visible, f'QR code is not present in Receive modal'
+        assert wallet_address == receive_popup.copy_address(), f'Addresses do not match'
+
     with step('Add the first generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
