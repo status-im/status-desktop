@@ -138,11 +138,8 @@ QtObject:
       transactions:{$self.transactions},
     )"""
 
-  # TODO: is this the right way to pass transaction identity? Why not use the instance?
   proc getId*(self: ActivityEntry): string {.slot.} =
-    if self.isMultiTransaction():
-      return $(self.metadata.getMultiTransactionId().get())
-    return $(self.metadata.getTransactionIdentity().get().hash)
+    return self.metadata.getKey()
 
   QtProperty[string] id:
     read = getId

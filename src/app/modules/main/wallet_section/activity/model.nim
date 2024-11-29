@@ -101,17 +101,6 @@ QtObject:
     self.countChanged()
     self.setHasMore(hasMore)
 
-  proc sameIdentity(e: entry.ActivityEntry, d: backend.Data): bool =
-    let m = e.getMetadata()
-    if m.getPayloadType() != d.payloadType:
-      return false
-
-    if m.getPayloadType() == MultiTransaction:
-      let dID = d.id.get()
-      return dID > 0 and m.getMultiTransactionId().get(0) == dID
-
-    return m.getTransactionIdentity().isSome() and d.transaction.isSome() and m.getTransactionIdentity().get() == d.transaction.get()
-
   proc addNewEntries*(self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
@@ -128,7 +117,7 @@ QtObject:
   proc updateEntries*(self: Model, updates: seq[backend.Data]) =
     for i in countdown(self.entries.high, 0):
       for j in countdown(updates.high, 0):
-        if sameIdentity(self.entries[i], updates[j]):
+        if self.entries[i].getId() == updates[j].key:
           if updates[j].nftName.isSome():
             self.entries[i].setNftName(updates[j].nftName.get())
           if updates[j].nftUrl.isSome():
@@ -143,12 +132,6 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
-
-  proc getIndex*(self: Model, txHash: string): int {.slot.} =
-    for i, e in self.entries:
-      if e.getId() == txHash:
-        return i
-    return -1
     
   proc refreshItemsContainingAddress*(self: Model, address: string) =
     for i in 0..self.entries.high:

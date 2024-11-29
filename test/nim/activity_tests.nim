@@ -2,10 +2,10 @@ import unittest, json, options
 
 import backend/activity
 
-const testOneNewJsonData = "{\"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890, \"isNew\": true}}]}"
-const testOneNewJsonDataMissingIsNew = "{\"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890}}]}"
+const testOneNewJsonData = "{\"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"key\": \"12ABCD\", \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890, \"isNew\": true}}]}"
+const testOneNewJsonDataMissingIsNew = "{\"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"key\": \"12ABCD\", \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890}}]}"
 const oneRemovedJsonTestData = "{\"removed\":[{\"chainId\": 7, \"hash\": \"0x5\", \"address\": \"0x6\"}]}"
-const testAllSetJsonData = "{\"hasNewOnTop\": true, \"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890, \"isNew\": true}}], \"removed\":[{\"chainId\": 7, \"hash\": \"0x5\", \"address\": \"0x6\"}]}"
+const testAllSetJsonData = "{\"hasNewOnTop\": true, \"new\": [{\"pos\": 3, \"entry\": {\"payloadType\": 1, \"key\": \"12ABCD\", \"id\": 12, \"activityType\": 1, \"activityStatus\": 2, \"timestamp\": 1234567890, \"isNew\": true}}], \"removed\":[{\"chainId\": 7, \"hash\": \"0x5\", \"address\": \"0x6\"}]}"
 
 suite "activity filter API json parsing":
 

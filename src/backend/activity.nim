@@ -295,6 +295,7 @@ type
   ActivityEntry* = object
     # Identification
     payloadType: PayloadType
+    key: string
     transaction: Option[TransactionIdentity]
     id: int
 
@@ -327,6 +328,7 @@ type
   # Mirrors status-go/services/wallet/activity/activity.go EntryData
   Data* = object
     payloadType*: PayloadType
+    key*: string
     transaction*: Option[TransactionIdentity]
     id*: Option[int]
 
@@ -389,6 +391,9 @@ type
 proc getPayloadType*(ae: ActivityEntry): PayloadType =
   return ae.payloadType
 
+proc getKey*(ae: ActivityEntry): string =
+  return ae.key
+
 proc getTransactionIdentity*(ae: ActivityEntry): Option[TransactionIdentity] =
   if ae.payloadType == PayloadType.MultiTransaction:
     return none(TransactionIdentity)
@@ -408,6 +413,7 @@ proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
   return %*(ae)
 
 proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
+  const keyField = "key"
   const transactionField = "transaction"
   const idField = "id"
   const transactionsField = "transactions"
@@ -433,6 +439,7 @@ proc fromJson*(e: JsonNode, T: typedesc[Data]): Data {.inline.} =
   const isNewField = "isNew"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
+    key: e[keyField].getStr(),
     transaction:  if e.hasKey(transactionField):
                     fromJson(e[transactionField], Option[TransactionIdentity])
                   else:
@@ -503,6 +510,7 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
   let zeroValue: UInt256 = "0x0".parse(UInt256, 16)
   result = T(
     payloadType: data.payloadType,
+    key: data.key,
     transaction: data.transaction,
     id: if data.id.isSome: data.id.get() else: 0,
     transactions: data.transactions,
@@ -531,6 +539,7 @@ proc `$`*(self: ActivityEntry): string =
                        else: "none(TransactionIdentity)"
   return fmt"""ActivityEntry(
     payloadType:{$self.payloadType},
+    key:{$self.key},
     transaction:{transactionStr},
     id:{self.id},
     transactions:{self.transactions},
