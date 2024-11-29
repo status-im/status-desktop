@@ -90,9 +90,9 @@ OnboardingPage {
                     spacing: 0
                     ListItemButton {
                         Layout.fillWidth: true
-                        title: qsTr("Use a recovery phrase")
+                        text: qsTr("Use a recovery phrase")
                         subTitle: qsTr("If you already have an Ethereum wallet")
-                        asset.name: Theme.png("onboarding/create_profile_seed")
+                        icon.source: Theme.png("onboarding/create_profile_seed")
                         onClicked: root.createProfileWithSeedphraseRequested()
                     }
                     Rectangle {
@@ -104,9 +104,9 @@ OnboardingPage {
                     }
                     ListItemButton {
                         Layout.fillWidth: true
-                        title: qsTr("Use an empty Keycard")
+                        text: qsTr("Use an empty Keycard")
                         subTitle: qsTr("Store your new profile keys on Keycard")
-                        asset.name: Theme.png("onboarding/create_profile_keycard")
+                        icon.source: Theme.png("onboarding/create_profile_keycard")
                         onClicked: root.createProfileWithEmptyKeycardRequested()
                     }
                 }

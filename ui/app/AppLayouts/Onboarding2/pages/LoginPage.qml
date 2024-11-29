@@ -92,9 +92,9 @@ OnboardingPage {
                     spacing: 0
                     ListItemButton {
                         Layout.fillWidth: true
-                        title: qsTr("Log in by syncing")
+                        text: qsTr("Log in by syncing")
                         subTitle: qsTr("If you have Status on another device")
-                        asset.name: Theme.svg("mobile-sync") // FIXME correct icon
+                        icon.source: Theme.svg("mobile-sync") // FIXME correct icon
                         onClicked: loginWithSyncAck.createObject(root).open()
                     }
                     Rectangle {
@@ -106,9 +106,9 @@ OnboardingPage {
                     }
                     ListItemButton {
                         Layout.fillWidth: true
-                        title: qsTr("Log in with Keycard")
+                        text: qsTr("Log in with Keycard")
                         subTitle: qsTr("If your profile keys are stored on a Keycard")
-                        asset.name: Theme.png("onboarding/create_profile_keycard")
+                        icon.source: Theme.png("onboarding/create_profile_keycard")
                         onClicked: root.loginWithKeycardRequested()
                     }
                 }
