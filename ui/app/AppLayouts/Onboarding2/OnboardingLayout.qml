@@ -385,13 +385,10 @@ Page {
             dbg.debugFlow("BACKUP SEED REMOVAL CONFIRMED")
             root.privacyStore.removeMnemonic()
 
-            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
-                if (root.startupStore.getPin())
-                    stack.push(keycardEnterPinPage)
-                else
-                    stack.push(keycardCreatePinPage)
-            } else
-                d.pushSplashScreenPage()
+            if (root.startupStore.getPin())
+                stack.replace(keycardEnterPinPage)
+            else
+                stack.replace(keycardCreatePinPage)
         }
 
         // login with sync pages
@@ -415,7 +412,8 @@ Page {
 
         function onLoginToAppRequested() {
             dbg.debugFlow("LOGIN TO APP REQUESTED")
-            d.pushSplashScreenPage()
+            stack.clear()
+            d.pushOrSkipBiometricsPage()
         }
 
         // keypair transfer page
