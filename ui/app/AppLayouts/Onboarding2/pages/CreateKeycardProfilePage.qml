@@ -91,9 +91,9 @@ OnboardingPage {
                         spacing: 0
                         ListItemButton {
                             Layout.fillWidth: true
-                            title: qsTr("Use an existing recovery phrase")
+                            text: qsTr("Use an existing recovery phrase")
                             subTitle: qsTr("To create your Keycard-stored profile ")
-                            asset.name: Theme.png("onboarding/create_profile_seed")
+                            icon.source: Theme.png("onboarding/create_profile_seed")
                             onClicked: root.createKeycardProfileWithExistingSeedphrase()
                         }
                     }
