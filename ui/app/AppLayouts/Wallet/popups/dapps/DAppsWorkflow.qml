@@ -16,9 +16,13 @@ import shared.popups.walletconnect 1.0
 
 import utils 1.0
 
-DappsComboBox {
+SQUtils.QObject {
     id: root
 
+    // Parent item for the popups
+    required property Item visualParent
+    // Whether the dapps can interract with the wallet
+    required property bool enabled
     // Values mapped to Constants.LoginType
     required property int loginType
     /*
@@ -60,6 +64,15 @@ DappsComboBox {
         requestItem   [SessionRequestResolved]  - request object
     */ 
     property SessionRequestsModel sessionRequestsModel
+    /*
+      ObjectModel containing dApps
+        name          [string] - dApp name
+        iconUrl       [string] - dApp icon url
+        dAppUrl       [string] - dApp url
+        topic         [string] - dApp topic
+    */
+    property var dAppsModel
+
     property string selectedAccountAddress
 
     property var formatBigNumber: (number, symbol, noSymbolOption) => console.error("formatBigNumber not set")
@@ -97,11 +110,11 @@ DappsComboBox {
         connectDappLoader.connect(dappChains, dappUrl, dappName, dappIcon, connectorIcon, pairingId)
     }
 
-    onPairDapp: {
+    function openPairing() {
         pairWCLoader.active = true
     }
 
-    onDisconnectDapp: (dappUrl) => {
+    function disconnectDapp(dappUrl) {
         disconnectdAppDialogLoader.dAppUrl = dappUrl
         disconnectdAppDialogLoader.active = true
     }
@@ -112,9 +125,10 @@ DappsComboBox {
         property string dAppUrl
 
         active: false
+        parent: root.visualParent
 
         onLoaded: {
-            const dApp = SQUtils.ModelUtils.getByKey(root.model, "url", dAppUrl);
+            const dApp = SQUtils.ModelUtils.getByKey(root.dAppsModel, "url", dAppUrl);
             if (dApp) {
                 item.dappName = dApp.name;
                 item.dappIcon = dApp.iconUrl;
@@ -133,7 +147,7 @@ DappsComboBox {
             }
 
             onAccepted: {
-                SQUtils.ModelUtils.forEach(model, (dApp) => {
+                SQUtils.ModelUtils.forEach(root.dAppsModel, (dApp) => {
                     if (dApp.url === dAppUrl) {
                         root.disconnectRequested(dApp.topic)
                     }
@@ -146,6 +160,7 @@ DappsComboBox {
         id: pairWCLoader
 
         active: false
+        parent: root.visualParent
 
         onLoaded: {
             item.open()
@@ -165,6 +180,7 @@ DappsComboBox {
         id: connectDappLoader
 
         active: false
+        parent: root.visualParent
 
         // Array of chaind ids
         property var dappChains
@@ -304,7 +320,7 @@ DappsComboBox {
                 root.signRequestRejected(request.topic, request.requestId)
             }
 
-            parent: root
+            parent: root.visualParent
 
             loginType: account.migratedToKeycard ? Constants.LoginType.Keycard : root.loginType
             formatBigNumber: root.formatBigNumber

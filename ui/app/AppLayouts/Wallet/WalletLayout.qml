@@ -42,6 +42,14 @@ Item {
     property bool appMainVisible
 
     property bool swapEnabled
+    property bool dAppsEnabled
+    property bool walletConnectEnabled: true
+    property bool browserConnectEnabled: true
+
+    property var dAppsModel
+
+    signal dappPairRequested()
+    signal dappDisconnectRequested(string dappUrl)
 
     onAppMainVisibleChanged: {
         resetView()
@@ -232,6 +240,11 @@ Item {
             networkConnectionStore: root.networkConnectionStore
 
             swapEnabled: root.swapEnabled
+            dAppsEnabled: root.dAppsEnabled
+            walletConnectEnabled: root.walletConnectEnabled
+            browserConnectEnabled: root.browserConnectEnabled
+
+            dAppsModel: root.dAppsModel
 
             headerButton.text: RootStore.overview.ens || StatusQUtils.Utils.elideAndFormatWalletAddress(RootStore.overview.mixedcaseAddress)
             headerButton.visible: !RootStore.overview.isAllAccounts
@@ -246,6 +259,8 @@ Item {
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
+            onDappPairRequested: root.dappPairRequested()
+            onDappDisconnectRequested: (dappUrl) => root.dappDisconnectRequested(dappUrl)
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
         }
     }

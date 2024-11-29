@@ -14,6 +14,7 @@ import AppLayouts.Wallet.services.dapps.types 1.0
 import AppLayouts.Profile.stores 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Wallet.popups.dapps 1.0
 
 import shared.stores 1.0
 
@@ -937,7 +938,9 @@ Item {
         id: componentUnderTest
         DAppsWorkflow {
             loginType: Constants.LoginType.Password
-            model: ListModel {}
+            visualParent: root
+            enabled: true
+            dAppsModel: ListModel {}
             accountsModel: ListModel {}
             networksModel: ListModel {}
             sessionRequestsModel: SessionRequestsModel {}
@@ -1019,41 +1022,10 @@ Item {
             signRequestRejectedSpy.clear()
         }
 
-        function test_OpenAndCloseDappList() {
-            waitForRendering(controlUnderTest)
-
-            mouseClick(controlUnderTest)
-            waitForRendering(controlUnderTest)
-            let popup = findChild(controlUnderTest, "dappsListPopup")
-            verify(!!popup)
-            verify(popup.opened)
-
-            popup.close()
-            waitForRendering(controlUnderTest)
-            verify(!popup.opened)
-        }
-
         function openPairModal() {
-            waitForRendering(controlUnderTest)
 
-            mouseClick(controlUnderTest)
-
-            let popup = findChild(controlUnderTest, "dappsListPopup")
-            verify(!!popup)
-            verify(popup.opened)
-
-            let connectButton = findChild(popup, "connectDappButton")
-            verify(!!connectButton)
-
-            mouseClick(connectButton)
-            const btnWalletConnect = findChild(controlUnderTest, "btnWalletConnect")
-            verify(!!btnWalletConnect)
-            mouseClick(btnWalletConnect)
-
-            verify(pairWCReadySpy.count === 1, "expected pairWCReady signal to be emitted")
-
+            controlUnderTest.openPairing()
             let pairWCModal = findChild(controlUnderTest, "pairWCModal")
-            verify(!!pairWCModal)
             return pairWCModal
         }
 
@@ -1087,7 +1059,6 @@ Item {
         }
 
         function test_OpenDappRequestModal() {
-            waitForRendering(controlUnderTest)
             const request = buildSessionRequestResolved(dappsWorkflowTest, "0x1", "1", "b536a")
             controlUnderTest.accountsModel.append({
                     address: request.accountAddress,
@@ -1103,7 +1074,7 @@ Item {
                     layer: 1
             })
             controlUnderTest.sessionRequestsModel.enqueue(request)
-            waitForRendering(controlUnderTest)
+            waitForRendering(controlUnderTest.visualParent, 200)
             let popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(!!popup)
             verify(popup.opened)
@@ -1113,13 +1084,11 @@ Item {
             compare(popup.accountAddress, request.accountAddress)
 
             popup.close()
-            waitForRendering(controlUnderTest)
             verify(!popup.opened)
             verify(!popup.visible)
         }
 
         function showRequestModal(topic, requestId) {
-            waitForRendering(controlUnderTest)
             const request = buildSessionRequestResolved(dappsWorkflowTest, "0x1", "1", topic, requestId)
             controlUnderTest.accountsModel.append({
                     address: request.accountAddress,
@@ -1135,7 +1104,7 @@ Item {
                     layer: 1
             })
             controlUnderTest.sessionRequestsModel.enqueue(request)
-            waitForRendering(controlUnderTest)
+            waitForRendering(controlUnderTest.visualParent, 200)
             const popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(popup.opened)
 
@@ -1177,7 +1146,6 @@ Item {
             compare(signRequestAcceptedSpy.signalArguments[0][0], topic, "expected id to be set")
             compare(signRequestAcceptedSpy.signalArguments[0][1], requestId, "expected requestId to be set")
 
-            waitForRendering(controlUnderTest)
             verify(!popup.opened)
             verify(!popup.visible)
         }
@@ -1248,8 +1216,8 @@ Item {
 
             controlUnderTest.sessionRequestsModel.removeRequest(topic, requestId)
             verify(!controlUnderTest.sessionRequestsModel.findRequest(topic, requestId))
+            waitForRendering(controlUnderTest.visualParent, 200)
 
-            waitForRendering(controlUnderTest)
             popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(!popup)
         }

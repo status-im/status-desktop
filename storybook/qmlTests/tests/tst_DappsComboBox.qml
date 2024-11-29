@@ -13,15 +13,12 @@ Item {
     Component {
         id: componentUnderTest
         DappsComboBox {
+            property SignalSpy dappsListReadySpy: SignalSpy { target: controlUnderTest; signalName: "dappsListReady" }
+            property SignalSpy pairDappSpy: SignalSpy { target: controlUnderTest; signalName: "pairDapp" }
+
             anchors.centerIn: parent
             model: ListModel {}
         }
-    }
-
-    SignalSpy {
-        id: dappsListReadySpy
-        target: controlUnderTest
-        signalName: "dappsListReady"
     }
 
     property DappsComboBox controlUnderTest: null
@@ -32,7 +29,6 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
-            dappsListReadySpy.clear()
         }
 
         function test_basicGeometry() {
@@ -67,7 +63,7 @@ Item {
             compare(popup.y, controlUnderTest.height + 4)
             compare(popup.width, 312)
             verify(popup.height > 0)
-            compare(dappsListReadySpy.count, 1)
+            compare(controlUnderTest.dappsListReadySpy.count, 1)
 
             const background = findChild(controlUnderTest, "dappsBackground")
             compare(background.active, true)
@@ -125,6 +121,20 @@ Item {
 
             controlUnderTest.connectorEnabled = true
             compare(connectorButton.enabled, true)
+        }
+
+        function test_openPairModal() {
+            mouseClick(controlUnderTest)
+            const dappListPopup = findChild(controlUnderTest, "dappsListPopup")
+            verify(!!dappListPopup)
+
+            dappListPopup.connectDapp()
+            const wcButton = findChild(controlUnderTest, "btnWalletConnect")
+            verify(!!wcButton)
+
+            mouseClick(wcButton)
+            compare(dappListPopup.visible, false)
+            compare(controlUnderTest.pairDappSpy.count, 1)
         }
     }
 }
