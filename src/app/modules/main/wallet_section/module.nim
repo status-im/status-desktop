@@ -15,7 +15,6 @@ import ./overview/module as overview_module
 import ./send/module as send_module
 
 import ./activity/controller as activityc
-import ./activity/details_controller as activity_detailsc
 
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import app/modules/shared_modules/wallet_connect/controller as wc_controller
@@ -95,7 +94,6 @@ type
     # We need one for each app "layer" that simultaneously needs to show a different list of activity
     # entries (e.g. send popup is one "layer" above the collectible details activity tab)
     tmpActivityControllers: ActivityControllerArray
-    activityDetailsController: activity_detailsc.Controller
 
     threadpool: ThreadPool
 
@@ -150,22 +148,18 @@ proc newModule*(
   result.networksService = networkService
 
   result.transactionService = transactionService
-  result.activityDetailsController = activity_detailsc.newController(currencyService)
   result.activityController = activityc.newController(
-    result.activityDetailsController,
     currencyService,
     tokenService,
     savedAddressService,
     events)
   result.tmpActivityControllers = [
     activityc.newController(
-      result.activityDetailsController,
       currencyService,
       tokenService,
       savedAddressService,
       events),
     activityc.newController(
-      result.activityDetailsController,
       currencyService,
       tokenService,
       savedAddressService,
@@ -180,7 +174,7 @@ proc newModule*(
 
   result.dappsConnectorService = connector_service.newService(result.events)
   result.dappsConnectorController = connector_controller.newController(result.dappsConnectorService, result.events)
-  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.activityDetailsController, result.collectibleDetailsController, result.walletConnectController, result.dappsConnectorController)
+  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.collectibleDetailsController, result.walletConnectController, result.dappsConnectorController)
   result.viewVariant = newQVariant(result.view)
 
 method delete*(self: Module) =
@@ -197,7 +191,6 @@ method delete*(self: Module) =
   self.activityController.delete
   for i in 0..self.tmpActivityControllers.len-1:
     self.tmpActivityControllers[i].delete
-  self.activityDetailsController.delete
   self.collectibleDetailsController.delete
 
   if not self.addAccountModule.isNil:

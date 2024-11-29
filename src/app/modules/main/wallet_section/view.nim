@@ -1,7 +1,6 @@
 import NimQml, json
 
 import ./activity/controller as activityc
-import ./activity/details_controller as activity_detailsc
 import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import app/modules/shared_models/currency_amount
@@ -22,7 +21,6 @@ QtObject:
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
       tmpActivityControllers: ActivityControllerArray
-      activityDetailsController: activity_detailsc.Controller
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
       keypairOperabilityForObservedAccount: string
@@ -46,7 +44,6 @@ QtObject:
   proc newView*(delegate: io_interface.AccessInterface,
     activityController: activityc.Controller,
     tmpActivityControllers: ActivityControllerArray,
-    activityDetailsController: activity_detailsc.Controller,
     collectibleDetailsController: collectible_detailsc.Controller,
     wcController: wc_controller.Controller,
     dappsConnectorController: connector_controller.Controller): View =
@@ -54,7 +51,6 @@ QtObject:
     result.delegate = delegate
     result.activityController = activityController
     result.tmpActivityControllers = tmpActivityControllers
-    result.activityDetailsController = activityDetailsController
     result.collectibleDetailsController = collectibleDetailsController
     result.wcController = newQVariant(wcController)
     result.dappsConnectorController = newQVariant(dappsConnectorController)
@@ -180,11 +176,6 @@ QtObject:
     return newQVariant(self.tmpActivityControllers[1])
   QtProperty[QVariant] tmpActivityController1:
     read = getTmpActivityController1
-
-  proc getActivityDetailsController(self: View): QVariant {.slot.} =
-    return newQVariant(self.activityDetailsController)
-  QtProperty[QVariant] activityDetailsController:
-    read = getActivityDetailsController
 
   proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
     return self.delegate.getLatestBlockNumber(chainId)

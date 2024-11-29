@@ -10,8 +10,6 @@ import events_handler
 import status
 import utils
 
-import details_controller as details_controller
-
 import web3/conversions
 
 import app/core/eventemitter
@@ -48,8 +46,6 @@ QtObject:
       currencyService: currency_service.Service
       tokenService: token_service.Service
       savedAddressService: saved_address_service.Service
-
-      detailsController: details_controller.Controller
 
       eventsHandler: EventsHandler
       status: Status
@@ -89,18 +85,6 @@ QtObject:
     for backendEntry in backendEntities:
       let ae = entry.newActivityEntry(backendEntry, self.addresses, self.currencyService)
       result.add(ae)
-
-  proc fetchTxDetails*(self: Controller, txID: string) {.slot.} =
-    let index = self.model.getIndex(txID)
-    if index == -1:
-      error "entry index not found"
-      return
-    let entry = self.model.getEntry(index)
-    if entry == nil:
-      error "entry not found"
-      return
-
-    self.detailsController.setActivityEntry(entry)
 
   proc processResponse(self: Controller, response: JsonNode) =
     defer: self.status.setLoadingData(false)
@@ -318,8 +302,7 @@ QtObject:
         error "Error converting activity entries: ", e.msg
     )
 
-  proc newController*(detailsController: details_controller.Controller,
-                      currencyService: currency_service.Service,
+  proc newController*(currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
                       events: EventEmitter): Controller =
@@ -336,7 +319,6 @@ QtObject:
     result.status = newStatus()
 
     result.currencyService = currencyService
-    result.detailsController = detailsController
 
     result.filterTokenCodes = initHashSet[string]()
 
