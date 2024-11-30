@@ -81,6 +81,7 @@ pipeline {
     WINDOWS_CODESIGN_TIMESTAMP_URL = "${params.WINDOWS_CODESIGN_TIMESTAMP_URL}"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
+    SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
   }
 
   stages {
