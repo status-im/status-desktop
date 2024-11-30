@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.7'
+library 'status-jenkins-lib@v1.9.14'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -81,6 +81,7 @@ pipeline {
     WINDOWS_CODESIGN_TIMESTAMP_URL = "${params.WINDOWS_CODESIGN_TIMESTAMP_URL}"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
+    SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
   }
 
   stages {
