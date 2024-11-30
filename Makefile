@@ -236,8 +236,8 @@ endif
 NIM_PARAMS += --outdir:./bin
 
 # App version
-DESKTOP_VERSION=`git describe --tags`
-STATUSGO_VERSION=`(cd vendor/status-go; git describe --tags --abbrev=0)`
+DESKTOP_VERSION = $(shell ./scripts/version.sh)
+STATUSGO_VERSION=`(cd vendor/status-go; make version)`
 NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 NIM_PARAMS += -d:STATUSGO_VERSION="$(STATUSGO_VERSION)"
 
@@ -249,6 +249,16 @@ ifeq ($(OUTPUT_CSV), true)
   NIM_PARAMS += -d:output_csv
   $(shell touch .update.timestamp)
 endif
+
+##
+## Versioning
+## 
+
+version:
+	@echo $(DESKTOP_VERSION)
+
+status-go-version:
+	@echo $(STATUSGO_VERSION)
 
 
 ##
