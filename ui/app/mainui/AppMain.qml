@@ -138,6 +138,8 @@ Item {
         rootChatStore: appMain.rootChatStore
         communityTokensStore: appMain.communityTokensStore
         profileStore: appMain.profileStore
+
+        onSendRequested: sendModalHandler.openSend()
     }
 
     Connections {
@@ -631,9 +633,12 @@ Item {
                 appMainLocalSettings.whitelistedUnfurledDomains = whitelistedHostnames
             }
         }
+        onTransferOwnershipRequested: sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
     SendModalHandler {
+        id: sendModalHandler
+
         popupParent: appMain
         loginType: appMain.rootStore.loginType
         transactionStore: appMain.transactionStore
@@ -649,6 +654,12 @@ Item {
         // for sticker flows
         stickersMarketAddress: appMain.rootChatStore.stickersStore.getStickersMarketAddress()
         stickersNetworkId: appMain.rootChatStore.appNetworkId
+
+        Component.onCompleted: {
+            // It's requested from many nested places, so as a workaround we use
+            // Global to shorten the path via global signal.
+            Global.sendToRecipientRequested.connect(sendToRecipient)
+        }
     }
 
     Connections {
@@ -861,7 +872,7 @@ Item {
         sourceComponent: StatusStickersPopup {
             store: appMain.rootChatStore
             isWalletEnabled: appMain.profileStore.isWalletEnabled
-            onBuyClicked: Global.buyStickerPackRequested(packId, price)
+            onBuyClicked: sendModalHandler.buyStickerPack(packId, price)
         }
     }
 
@@ -1612,6 +1623,8 @@ Item {
                                 onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
+
+                                onBuyStickerPackRequested: sendModalHandler.buyStickerPack(packId, price)
                             }
                         }
                     }
@@ -1645,6 +1658,10 @@ Item {
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
                             hideSignPhraseModal: userAgreementLoader.active
+
+                            onSendTokenRequested: sendModalHandler.sendToken(
+                                                      senderAddress, tokenId, tokenType)
+                            onBridgeTokenRequested: sendModalHandler.bridgeToken(tokenId, tokenType)
                         }
                         onLoaded: {
                             item.resetView()
@@ -1685,6 +1702,10 @@ Item {
                             }
 
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
+
+                            onConnectUsernameRequested: sendModalHandler.connectUsername(ensName)
+                            onRegisterUsernameRequested: sendModalHandler.registerUsername(ensName)
+                            onReleaseUsernameRequested: sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
                         }
                     }
 
@@ -1781,6 +1802,8 @@ Item {
                                 onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
+
+                                onBuyStickerPackRequested: sendModalHandler.buyStickerPack(packId, price)
                             }
                         }
                     }

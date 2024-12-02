@@ -107,15 +107,7 @@ QtObject {
     signal openCommunityMemberMessagesPopupRequested(var store, var chatCommunitySectionModule, var memberPubKey, var displayName)
 
     // Intent based launch send modal signals
-    signal launchSendRequested()
-    signal connectUsernameRequested(string ensName)
-    signal registerUsernameRequested(string ensName)
-    signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)    
-    signal buyStickerPackRequested(string packId, int price)
-    signal transferOwnershipRequested(string tokenId, string senderAddress)
     signal sendToRecipientRequested(string recipientAddress)
-    signal bridgeTokenRequested(string tokenId, int tokenType)
-    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
 
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)

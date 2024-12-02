@@ -40,6 +40,8 @@ QtObject {
     readonly property string crownOffAssetName: "crown-off"
     readonly property string warningAssetName: "warning"
 
+    signal sendRequested
+
     // Community Transfer Ownership related toasts:
     readonly property Connections _communityTokensStoreConnections: Connections {
         target: root.communityTokensStore
@@ -238,7 +240,7 @@ QtObject {
             Global.openFinaliseOwnershipPopup(actionData)
             return
         case ToastsManager.ActionType.OpenSendModalPopup:
-            Global.launchSendRequested()
+            root.sendRequested()
             return
         case ToastsManager.ActionType.ViewTransactionDetails:
             if(actionData) {

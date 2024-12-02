@@ -62,6 +62,7 @@ QtObject {
     signal openExternalLink(string link)
     signal saveDomainToUnfurledWhitelist(string domain)
     signal ownershipDeclined(string communityId, string communityName)
+    signal transferOwnershipRequested(string tokenId, string senderAddress)
 
     property var activePopupComponents: []
 
@@ -1058,9 +1059,8 @@ QtObject {
         Component {
             id: transferOwnershipPopup
             TransferOwnershipPopup {
-                onTransferOwnershipRequested: {
-                    Global.transferOwnershipRequested(tokenId, senderAddress)
-                }
+                onTransferOwnershipRequested: root.transferOwnershipRequested(
+                                                  tokenId, senderAddress)
                 onClosed: destroy()
             }
         },

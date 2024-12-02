@@ -117,6 +117,8 @@ StatusSectionLayout {
     signal requestToJoinClicked
     signal invitationPendingClicked
 
+    signal buyStickerPackRequested(string packId, int price)
+
     Connections {
         target: root.rootStore.stickersStore.stickersModule
 
@@ -357,9 +359,7 @@ StatusSectionLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
-            onBuyClicked: {
-                Global.buyStickerPackRequested(packId, price)
-            }
+            onBuyClicked: root.buyStickerPackRequested(packId, price)
             onClosed: destroy()
         }
     }
