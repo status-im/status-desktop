@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml, chronicles, json
 
 import io_interface
 import view, controller
@@ -320,8 +320,17 @@ method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
   self.view.emitObtainingPasswordSuccess(password)
 
 method finishAppLoading*[T](self: Module[T]) =
-  self.delegate.finishAppLoading()
   self.delegate.appReady()
+  let currStateObj = self.view.currentStartupStateObj()
+  if not currStateObj.isNil:
+    var eventType = "user-logged-in"
+    if currStateObj.flowType() != FlowType.AppLogin:
+      eventType = "onboarding-completed"
+    singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
+      $(%*{"flowType": currStateObj.flowType()}))
+
+  self.delegate.finishAppLoading()
+
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
