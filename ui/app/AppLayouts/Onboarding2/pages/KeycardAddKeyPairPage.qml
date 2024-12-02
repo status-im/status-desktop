@@ -48,6 +48,10 @@ OnboardingPage {
                 text: qsTr("Please keep the Keycard plugged in until the migration is complete")
                 visible: true
             }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/status_keycard_adding_keypair")
+            }
         },
         State {
             name: "success"
@@ -67,6 +71,10 @@ OnboardingPage {
             PropertyChanges {
                 target: continueButton
                 visible: true
+            }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/status_keycard_adding_keypair_success")
             }
         },
         State {
@@ -88,13 +96,17 @@ OnboardingPage {
                 target: tryAgainButton
                 visible: true
             }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/status_keycard_adding_keypair_failed")
+            }
         }
     ]
 
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(400, root.availableWidth)
+            width: Math.min(350, root.availableWidth)
             spacing: Theme.halfPadding
 
             Loader {
@@ -124,8 +136,8 @@ OnboardingPage {
             StatusImage {
                 id: image
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: Math.min(185, parent.width)
-                Layout.preferredHeight: Math.min(314, height)
+                Layout.preferredWidth: Math.min(231, parent.width)
+                Layout.preferredHeight: Math.min(211, height)
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
                 source: Theme.png("onboarding/status_keycard_adding_keypair")
