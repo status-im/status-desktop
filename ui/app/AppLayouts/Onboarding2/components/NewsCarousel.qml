@@ -24,17 +24,19 @@ Control {
         readonly property string secondaryText: root.newsModel.get(pageIndicator.currentIndex).secondary
 
         Image {
-            readonly property int size: Math.min(parent.width / 3 * 2, parent.height / 2, 370)
+            id: image
             anchors.centerIn: parent
-            width: size
-            height: size
+            width: Math.min(parent.width / 3 * 2, 375)
+            height: Math.min(parent.height / 3 * 2, 473)
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
             source: Theme.png(root.newsModel.get(pageIndicator.currentIndex).image)
         }
 
         ColumnLayout {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 48 - root.padding
+            anchors.bottomMargin: Theme.xlPadding
             width: Math.min(300, parent.width)
             spacing: 4
 
@@ -44,6 +46,7 @@ Control {
                 horizontalAlignment: Text.AlignHCenter
                 font.weight: Font.DemiBold
                 color: Theme.palette.white
+                wrapMode: Text.WordWrap
             }
 
             StatusBaseText {
@@ -58,6 +61,7 @@ Control {
             PageIndicator {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Theme.halfPadding
+                Layout.maximumWidth: parent.width
                 id: pageIndicator
                 interactive: true
                 count: root.newsModel.count
