@@ -50,6 +50,10 @@ Item {
     signal dappPairRequested()
     signal dappDisconnectRequested(string dappUrl)
 
+    // TODO: remove tokenType parameter from signals below
+    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
+    signal bridgeTokenRequested(string tokenId, int tokenType)
+
     onAppMainVisibleChanged: {
         resetView()
     }
@@ -263,6 +267,8 @@ Item {
             onDappPairRequested: root.dappPairRequested()
             onDappDisconnectRequested: (dappUrl) => root.dappDisconnectRequested(dappUrl)
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
+
+            onSendTokenRequested: root.sendTokenRequested(senderAddress, tokenId, tokenType)
         }
     }
 
@@ -367,13 +373,13 @@ Item {
                                    }
 
                                    // Common send modal popup:
-                                   Global.sendTokenRequested(fromAddress,
+                                   root.sendTokenRequested(fromAddress,
                                                              walletStore.currentViewedHoldingTokensKey,
                                                              walletStore.currentViewedHoldingType)
                                }
             onLaunchBridgeModal: {
-                Global.bridgeTokenRequested(walletStore.currentViewedHoldingID,
-                                            walletStore.currentViewedHoldingType)
+                root.bridgeTokenRequested(walletStore.currentViewedHoldingID,
+                                          walletStore.currentViewedHoldingType)
             }
             onLaunchSwapModal: {
                 d.swapFormData.fromTokensKey =  ""

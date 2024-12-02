@@ -38,6 +38,8 @@ RightTabBaseView {
     signal launchShareAddressModal()
     signal launchBuyCryptoModal()
     signal launchSwapModal(string tokensKey)
+    signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
+
 
     function resetView() {
         resetStack()
@@ -309,8 +311,8 @@ RightTabBaseView {
                         swapVisible: root.swapEnabled
 
                         onSendRequested: {
-                            Global.sendTokenRequested(RootStore.overview.mixedcaseAddress.toLowerCase(),
-                                                      key, Constants.TokenType.ERC20)
+                            root.sendTokenRequested(RootStore.overview.mixedcaseAddress.toLowerCase(),
+                                                    key, Constants.TokenType.ERC20)
                         }
 
                         onSwapRequested: root.launchSwapModal(key)
@@ -427,9 +429,7 @@ RightTabBaseView {
                                                  return
                                              }
 
-                                             Global.sendTokenRequested(fromAddress ,
-                                                                       symbol,
-                                                                       tokenType)
+                                             root.sendTokenRequested(fromAddress, symbol, tokenType)
                                          }
                         onReceiveRequested: (symbol) => root.launchShareAddressModal()
                         onSwitchToCommunityRequested: (communityId) => Global.switchToCommunity(communityId)
