@@ -790,7 +790,7 @@ endif
 	ISCC \
 	   -O"$(INSTALLER_OUTPUT)" \
 	   -D"BaseName=$(shell basename $(STATUS_CLIENT_EXE) .exe)" \
-	   -D"Version=$(shell cat VERSION)" \
+	   -D"Version=$(DESKTOP_VERSION)" \
 	   $(OUTPUT)/status.iss
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)
