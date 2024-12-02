@@ -107,6 +107,22 @@ Control {
         textField.text = d.localize(trimmed)
     }
 
+    function setRawValue(valueString) {
+        if (!valueString)
+            valueString = "0"
+
+        if (d.fiatMode) {
+            setValue(valueString)
+            return
+        }
+
+        const divisor = SQUtils.AmountsArithmetic.fromExponent(root.multiplierIndex)
+        const stringNumber = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(valueString), divisor).toFixed(root.multiplierIndex)
+        const trimmed = d.removeDecimalTrailingZeros(stringNumber)
+
+        textField.text = d.localize(trimmed)
+    }
+
     function clear() {
         textField.clear()
     }

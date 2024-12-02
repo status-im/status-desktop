@@ -379,7 +379,7 @@ Control {
                         active: !root.editMode &&
                                 ((!!root.linkPreviewModel && root.linkPreviewModel.count > 0)
                                 || (!!root.gifLinks && root.gifLinks.length > 0)
-                                || (!!root.paymentRequestModel && root.paymentRequestModel.count > 0))
+                                || (!!root.paymentRequestModel && root.paymentRequestModel.ModelCount.count > 0))
                         visible: active 
                     }
                     Loader {

@@ -74,6 +74,7 @@ Loader {
     property string messageAttachments: ""
     property var transactionParams
     property var emojiReactionsModel
+    property var formatBalance
 
     // These 2 properties can be dropped when the new unfurling flow supports GIFs
     property var links
@@ -137,6 +138,8 @@ Loader {
     property bool hasMention: false
 
     property bool sendViaPersonalChatEnabled
+
+    property bool areTestNetworksEnabled
 
     property bool stickersLoaded: false
     property string sticker
@@ -982,6 +985,8 @@ Loader {
                         playAnimations: root.Window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
+                        areTestNetworksEnabled: root.areTestNetworksEnabled
+                        formatBalance: root.formatBalance
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
@@ -993,11 +998,8 @@ Loader {
                         canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
                         onPaymentRequestClicked: (index) => {
-                            const receiver = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "receiver")
-                            const amount = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "amount")
-                            const symbol = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "symbol")
-                            const chainId = StatusQUtils.ModelUtils.get(paymentRequestModel, index, "chainId")
-                            Global.paymentRequestClicked(receiver, symbol, amount, chainId)
+                            const request = StatusQUtils.ModelUtils.get(paymentRequestModel, index)
+                            Global.paymentRequestClicked(request.receiver, request.symbol, request.amount, request.chainId)
                         }
 
                         Component.onCompleted: {

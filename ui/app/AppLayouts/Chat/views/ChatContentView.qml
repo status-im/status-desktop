@@ -38,8 +38,10 @@ ColumnLayout {
     property ContactsStore contactsStore
     property string chatId
     property int chatType: Constants.chatType.unknown
+    property var formatBalance
 
     readonly property alias chatMessagesLoader: chatMessagesLoader
+    property bool areTestNetworksEnabled
 
     property var emojiPopup
     property var stickersPopup
@@ -94,6 +96,7 @@ ColumnLayout {
             rootStore: root.rootStore
             contactsStore: root.contactsStore
             messageStore: root.messageStore
+            formatBalance: root.formatBalance
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             usersStore: root.usersStore
@@ -103,6 +106,7 @@ ColumnLayout {
             isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            areTestNetworksEnabled: root.areTestNetworksEnabled
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)
             }
