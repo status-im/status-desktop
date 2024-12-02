@@ -60,8 +60,10 @@ StackLayout {
 
     property var emojiPopup
     property var stickersPopup
+
     signal profileButtonClicked()
     signal openAppSearch()
+    signal buyStickerPackRequested(string packId, int price)
 
     // Community transfer ownership related props/signals:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
@@ -243,6 +245,8 @@ StackLayout {
                 Global.communityIntroPopupRequested(communityId, root.sectionItemModel.name, root.sectionItemModel.introMessage,
                                                     root.sectionItemModel.image, root.isInvitationPending)
             }
+
+            onBuyStickerPackRequested: root.buyStickerPackRequested(packId, price)
         }
     }
 

@@ -28,27 +28,15 @@ QtObject {
     required property string stickersMarketAddress
     required property string stickersNetworkId
 
-    Component.onCompleted: {
-        Global.launchSendRequested.connect(openSend)
-        Global.connectUsernameRequested.connect(connectUsernameRequested)
-        Global.registerUsernameRequested.connect(registerUsernameRequested)
-        Global.releaseUsernameRequested.connect(releaseUsernameRequested)
-        Global.buyStickerPackRequested.connect(buyStickerPackRequested)
-        Global.transferOwnershipRequested.connect(transferOwnershipRequested)
-        Global.sendToRecipientRequested.connect(sendToRecipientRequested)
-        Global.bridgeTokenRequested.connect(bridgeTokenRequested)
-        Global.sendTokenRequested.connect(sendTokenRequested)
-    }
-
     function openSend(params = {}) {
-        let sendModalInst = sendModalComponent.createObject(popupParent, params)
-        if (sendModalInst.opened) {
+        if (!!root._sendModalInstance) {
             return
         }
-        sendModalInst.open()
+        _sendModalInstance = sendModalComponent.createObject(popupParent, params)
+        _sendModalInstance.open()
     }
 
-    function connectUsernameRequested(ensName) {
+    function connectUsername(ensName) {
         let params = {
             preSelectedSendType: Constants.SendType.ENSSetPubKey,
             preSelectedHoldingID: Constants.ethToken ,
@@ -62,7 +50,7 @@ QtObject {
         openSend(params)
     }
 
-    function registerUsernameRequested(ensName) {
+    function registerUsername(ensName) {
         let params = {
             preSelectedSendType: Constants.SendType.ENSRegister,
             preSelectedHoldingID: root.getStatusTokenKey(),
@@ -76,7 +64,7 @@ QtObject {
         openSend(params)
     }
 
-    function releaseUsernameRequested(ensName, senderAddress, chainId) {
+    function releaseUsername(ensName, senderAddress, chainId) {
         let params = {
             preSelectedSendType: Constants.SendType.ENSRelease,
             preSelectedAccountAddress: senderAddress,
@@ -92,7 +80,7 @@ QtObject {
         openSend(params)
     }
 
-    function buyStickerPackRequested(packId, price) {
+    function buyStickerPack(packId, price) {
         let params = {
             preSelectedSendType: Constants.SendType.StickersBuy,
             preSelectedHoldingID: root.getStatusTokenKey(),
@@ -106,7 +94,7 @@ QtObject {
         openSend(params)
     }
 
-    function transferOwnershipRequested(tokenId, senderAddress) {
+    function transferOwnership(tokenId, senderAddress) {
         let params = {
             preSelectedSendType: Constants.SendType.ERC721Transfer,
             preSelectedAccountAddress: senderAddress,
@@ -116,14 +104,14 @@ QtObject {
         openSend(params)
     }
 
-    function sendToRecipientRequested(recipientAddress) {
+    function sendToRecipient(recipientAddress) {
         let params = {
             preSelectedRecipient: recipientAddress
         }
         openSend(params)
     }
 
-    function bridgeTokenRequested(tokenId, tokenType) {
+    function bridgeToken(tokenId, tokenType) {
         let params = {
             preSelectedSendType: Constants.SendType.Bridge,
             preSelectedHoldingID: tokenId ,
@@ -133,7 +121,7 @@ QtObject {
         openSend(params)
     }
 
-    function sendTokenRequested(senderAddress, tokenId, tokenType) {
+    function sendToken(senderAddress, tokenId, tokenType) {
         let sendType = Constants.SendType.Transfer
         if (tokenType === Constants.TokenType.ERC721)  {
             sendType = Constants.SendType.ERC721Transfer
@@ -161,4 +149,7 @@ QtObject {
             onClosed: destroy()
         }
     }
+
+    // internally used to handle the instance thats launched
+    property var _sendModalInstance
 }

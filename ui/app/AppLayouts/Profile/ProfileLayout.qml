@@ -60,6 +60,10 @@ StatusSectionLayout {
 
     required property bool isCentralizedMetricsEnabled
 
+    signal connectUsernameRequested(string ensName)
+    signal registerUsernameRequested(string ensName)
+    signal releaseUsernameRequested(string ensName, string senderAddress, int chainId)
+
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
@@ -261,9 +265,9 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
-                onConnectUsernameRequested: Global.connectUsernameRequested(ensName)
-                onRegisterUsernameRequested: Global.registerUsernameRequested(ensName)
-                onReleaseUsernameRequested: Global.releaseUsernameRequested(ensName, senderAddress, chainId)
+                onConnectUsernameRequested: root.connectUsernameRequested(ensName)
+                onRegisterUsernameRequested: root.registerUsernameRequested(ensName)
+                onReleaseUsernameRequested: root.releaseUsernameRequested(ensName, senderAddress, chainId)
             }
         }
 
