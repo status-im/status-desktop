@@ -30,22 +30,17 @@ OnboardingPage {
             ListElement {
                 primary: qsTr("Own, buy and swap your crypto")
                 secondary: qsTr("Use the leading multi-chain self-custodial wallet")
-                image: "onboarding/status_key"
+                image: "onboarding/carousel/crypto"
             }
             ListElement {
                 primary: qsTr("Chat privately with friends")
                 secondary: qsTr("With full metadata privacy and e2e encryption")
-                image: "onboarding/status_chat"
-            }
-            ListElement {
-                primary: qsTr("Discover web3")
-                secondary: qsTr("Explore and interact with the decentralised web")
-                image: "onboarding/status_totebag_artwork_1"
+                image: "onboarding/carousel/chat"
             }
             ListElement {
                 primary: qsTr("Store your assets on Keycard")
                 secondary: qsTr("Be safe with secure cold wallet")
-                image: "onboarding/status_keycard"
+                image: "onboarding/carousel/keycard"
             }
         }
     }
@@ -61,14 +56,14 @@ OnboardingPage {
 
             ColumnLayout {
                 width: Math.min(400, parent.width)
-                spacing: 18
+                spacing: 28
                 anchors.centerIn: parent
 
                 StatusImage {
                     Layout.preferredWidth: 90
                     Layout.preferredHeight: 90
                     Layout.alignment: Qt.AlignHCenter
-                    source: Theme.png("status-logo-icon")
+                    source: Theme.png("status")
                     mipmap: true
                     layer.enabled: true
                     layer.effect: DropShadow {
@@ -102,7 +97,7 @@ OnboardingPage {
             ColumnLayout {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 48 - root.padding
+                anchors.bottomMargin: Theme.xlPadding
                 width: Math.min(320, parent.width)
                 spacing: 12
 
