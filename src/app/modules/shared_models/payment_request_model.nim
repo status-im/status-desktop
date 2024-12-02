@@ -37,7 +37,10 @@ QtObject:
 
   proc getPaymentRequests*(self: Model): seq[PaymentRequest] =
     return self.items
-  
+
+  method rowCount(self: Model, index: QModelIndex = nil): int =
+    return self.items.len
+
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Symbol.int: "symbol",
@@ -86,7 +89,6 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(paymentRequest)
     self.endInsertRows()
-    self.countChanged()
 
   proc addPaymentRequest*(self: Model, receiver: string, amount: string, symbol: string, chainId: int) {.slot.}=
     let paymentRequest = newPaymentRequest(receiver, amount, symbol, chainId)
@@ -96,4 +98,3 @@ QtObject:
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
-    self.countChanged()

@@ -2,7 +2,7 @@ import json, chronicles
 import stew/shims/strformat
 include ../../../common/json_utils
 
-type PaymentRequest* = ref object
+type PaymentRequest* = object
     receiver*: string
     amount*: string
     symbol*: string
