@@ -12,7 +12,8 @@ import shared.panels 1.0
 OnboardingPage {
     id: root
 
-    property string subtitle
+    title: qsTr("Create profile using a recovery phrase")
+    property string subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")
 
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
@@ -24,7 +25,7 @@ OnboardingPage {
         ColumnLayout {
             anchors.centerIn: parent
             width: Math.min(600, root.availableWidth)
-            spacing: Theme.xlPadding
+            spacing: Theme.bigPadding
 
             StatusBaseText {
                 Layout.fillWidth: true
@@ -36,7 +37,7 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: -Theme.bigPadding
+                Layout.topMargin: -Theme.padding
                 text: root.subtitle
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
@@ -52,6 +53,7 @@ OnboardingPage {
 
             StatusButton {
                 Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: -Theme.halfPadding
                 enabled: seedPanel.seedPhraseIsValid
                 text: qsTr("Continue")
                 onClicked: root.seedphraseValidated()
