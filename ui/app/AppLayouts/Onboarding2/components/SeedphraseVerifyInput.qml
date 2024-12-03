@@ -46,6 +46,10 @@ StatusTextField {
             case Qt.Key_Tab:
             case Qt.Key_Return:
             case Qt.Key_Enter: {
+                if (root.text === "") {
+                    event.accepted = true
+                    return
+                }
                 if (filteredModel.count > 0) {
                     event.accepted = true
                     root.text = filteredModel.get(suggestionsList.currentIndex).seedWord
