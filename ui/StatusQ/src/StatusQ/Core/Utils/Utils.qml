@@ -289,6 +289,11 @@ QtObject {
         console.log(indexes) -> Array[0, 4, 5] // example output
       */
     function nSamples(n, totalCount) {
+        if (n > totalCount) {
+            console.error("'n' must be less than or equal to 'totalCount'")
+            return
+        }
+
         let set = new Set()
         while (set.size < n) {
             set.add(~~(Math.random() * totalCount))
