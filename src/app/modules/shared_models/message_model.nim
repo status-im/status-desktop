@@ -75,6 +75,7 @@ type
     AlbumMessageImages
     AlbumImagesCount
     BridgeName
+    PaymentRequestModel
 
 QtObject:
   type
@@ -182,6 +183,7 @@ QtObject:
       ModelRole.AlbumMessageImages.int: "albumMessageImages",
       ModelRole.AlbumImagesCount.int: "albumImagesCount",
       ModelRole.BridgeName.int: "bridgeName",
+      ModelRole.PaymentRequestModel.int: "paymentRequestModel",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -358,6 +360,8 @@ QtObject:
       result = newQVariant(item.albumImagesCount)
     of ModelRole.BridgeName:
       result = newQVariant(item.bridgeName)
+    of ModelRole.PaymentRequestModel:
+      result = newQVariant(item.paymentRequestModel)
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)

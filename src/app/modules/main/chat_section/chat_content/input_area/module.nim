@@ -8,6 +8,7 @@ import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../../../../app_service/service/message/dto/payment_request
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -65,17 +66,18 @@ method getModuleAsVariant*(self: Module): QVariant =
 proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
-method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview]) =
-  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews)
+method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) =
+  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
 
 method sendChatMessage*(
     self: Module,
     msg: string,
     replyTo: string,
     contentType: int,
-    linkPreviews: seq[LinkPreview]) =
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest]) =
   self.controller.sendChatMessage(msg, replyTo, contentType,
-    singletonInstance.userProfile.getPreferredName(), linkPreviews)
+    singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
 
 method requestAddressForTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
   self.controller.requestAddressForTransaction(fromAddress, amount, tokenAddress)

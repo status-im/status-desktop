@@ -160,6 +160,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.albumImagesCount,
     message.bridgeMessage,
     message.quotedMessage.bridgeMessage,
+    message.paymentRequests
     ))
 
 method convertToItems*(

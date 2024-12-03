@@ -235,6 +235,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.albumImagesCount,
     message.bridgeMessage,
     message.quotedMessage.bridgeMessage,
+    message.paymentRequests
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

@@ -2,7 +2,7 @@
 
 import json, strutils, chronicles
 import ../../../common/types
-import link_preview
+import link_preview, payment_request
 
 include ../../../common/json_utils
 
@@ -133,6 +133,7 @@ type MessageDto* = object
   transactionParameters*: TransactionParameters
   mentioned*: bool
   replied*: bool
+  paymentRequests*: seq[PaymentRequest]
 
 proc toParsedText*(jsonObj: JsonNode): ParsedText =
   result = ParsedText()
@@ -313,6 +314,11 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   if jsonObj.getProp("statusLinkPreviews", statusLinkPreviewsArr):
     for element in statusLinkPreviewsArr.getElems():
       result.linkPreviews.add(element.toLinkPreview(false))
+
+  var paymentRequestsArr: JsonNode
+  if jsonObj.getProp("paymentRequests", paymentRequestsArr):
+    for element in paymentRequestsArr.getElems():
+      result.paymentRequests.add(element.toPaymentRequest())
 
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
