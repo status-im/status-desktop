@@ -3,13 +3,20 @@ import QtQuick 2.15
 import utils 1.0
 
 ListModel {
+
+    readonly property string accountAddress1: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+    readonly property string accountAddress2: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+    readonly property string accountAddress3: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882"
+    readonly property string accountAddress4: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8883"
+    readonly property string accountAddress5: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884"
+
     readonly property var data: [
         {
             name: "helloworld",
             emoji: "😋",
             colorId: Constants.walletAccountColors.primary,
             color: "#2A4AF5",
-            address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+            address: accountAddress1,
             walletType: "",
             canSend: true,
             position: 0,
@@ -53,7 +60,7 @@ ListModel {
             emoji: "🚗",
             colorId: Constants.walletAccountColors.army,
             color: "#216266",
-            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+            address: accountAddress2,
             walletType: Constants.generatedWalletType,
             canSend: true,
             position: 3,
@@ -79,7 +86,7 @@ ListModel {
             emoji: "🎨",
             colorId: Constants.walletAccountColors.magenta,
             color: "#EC266C",
-            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
+            address: accountAddress3,
             walletType: Constants.seedWalletType,
             canSend: true,
             position: 1,
@@ -114,7 +121,7 @@ ListModel {
             emoji: "⌚",
             colorId: Constants.walletAccountColors.copper,
             color: "#CB6256",
-            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8883",
+            address: accountAddress4,
             walletType: Constants.watchWalletType,
             canSend: false,
             position: 2,
@@ -131,7 +138,7 @@ ListModel {
             emoji: "🔑",
             colorId: Constants.walletAccountColors.camel,
             color: "#C78F67",
-            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884",
+            address: accountAddress5,
             walletType: Constants.keyWalletType,
             canSend: true,
             position: 4,

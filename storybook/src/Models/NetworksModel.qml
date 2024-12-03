@@ -12,6 +12,14 @@ QtObject {
     readonly property int testnetNet: 5
     readonly property int customNet: 6
 
+    readonly property int mainnetChainId: 1
+    readonly property int sepMainnetChainId: 11155111
+    readonly property int optChainId: 10
+    readonly property int sepOptChainId: 11155420
+    readonly property int arbChainId: 42161
+    readonly property int sepArbChainId: 421614
+
+
     function getShortChainName(chainId) {
         if(chainId === root.ethNet)
             return "eth"
@@ -55,7 +63,7 @@ QtObject {
     readonly property var flatNetworks: ListModel {
         Component.onCompleted: append([
             {
-                chainId: 1,
+                chainId: mainnetChainId,
                 chainName: "Mainnet",
                 blockExplorerURL: "https://etherscan.io/",
                 iconUrl: "network/Network=Ethereum",
@@ -69,7 +77,7 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 11155111,
+                chainId: sepMainnetChainId,
                 chainName: "Sepolia Mainnet",
                 blockExplorerURL: "https://sepolia.etherscan.io/",
                 iconUrl: "network/Network=Ethereum",
@@ -83,7 +91,7 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 10,
+                chainId: optChainId,
                 chainName: "Optimism",
                 blockExplorerURL: "https://optimistic.etherscan.io",
                 iconUrl: "network/Network=Optimism",
@@ -97,7 +105,7 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 11155420,
+                chainId: sepOptChainId,
                 chainName: "Optimism Sepolia",
                 blockExplorerURL: "https://sepolia-optimism.etherscan.io/",
                 iconUrl: "network/Network=Optimism",
@@ -111,7 +119,7 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 42161,
+                chainId: arbChainId,
                 chainName: "Arbitrum",
                 blockExplorerURL: "https://arbiscan.io/",
                 iconUrl: "network/Network=Arbitrum",
@@ -125,7 +133,7 @@ QtObject {
                 isRouteEnabled: true,
             },
             {
-                chainId: 421614,
+                chainId: sepArbChainId,
                 chainName: "Arbitrum Sepolia",
                 blockExplorerURL: "https://sepolia-explorer.arbitrum.io/",
                 iconUrl: "network/Network=Arbitrum",
