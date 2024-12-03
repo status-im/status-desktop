@@ -20,9 +20,17 @@ Control {
     property string name
     property url icon
 
+    /** Sets size of the Token Selector Button **/
+    property int size: TokenSelectorButton.Size.Normal
+
     signal clicked
 
-    padding: 10
+    enum Size {
+        Small,
+        Normal
+    }
+
+    padding: root.selected ? 0 : 10
 
     background: StatusComboboxBackground {
         border.width: 0
@@ -83,7 +91,9 @@ Control {
                 Layout.fillWidth: true
 
                 objectName: "tokenSelectorContentItemText"
-                font.pixelSize: 28
+                font.pixelSize: root.size === TokenSelectorButton.Size.Normal ? 28 : 22
+                lineHeightMode: Text.FixedHeight
+                lineHeight: root.size === TokenSelectorButton.Size.Normal ? 38 : 30
                 color: root.hovered ? Theme.palette.blue : Theme.palette.darkBlue
 
                 elide: Text.ElideRight
