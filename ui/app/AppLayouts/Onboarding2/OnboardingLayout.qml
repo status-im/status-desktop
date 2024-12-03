@@ -230,7 +230,7 @@ Page {
         function onCreateProfileWithSeedphraseRequested() {
             dbg.debugFlow("SECONDARY: CREATE PROFILE WITH SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase
-            stack.push(seedphrasePage, { title: qsTr("Create profile using a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
+            stack.push(seedphrasePage, { title: qsTr("Create profile using a recovery phrase")})
         }
         function onCreateProfileWithEmptyKeycardRequested() {
             dbg.debugFlow("SECONDARY: CREATE PROFILE WITH KEYCARD")
@@ -242,7 +242,7 @@ Page {
         function onLoginWithSeedphraseRequested() {
             dbg.debugFlow("SECONDARY: LOGIN WITH SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.LoginWithSeedphrase
-            stack.push(seedphrasePage, { title: qsTr("Log in with your Status recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
+            stack.push(seedphrasePage, { title: qsTr("Log in with your Status recovery phrase")})
         }
         function onLoginWithSyncingRequested() {
             dbg.debugFlow("SECONDARY: LOGIN WITH SYNCING")
@@ -322,7 +322,7 @@ Page {
         function onCreateKeycardProfileWithExistingSeedphrase() {
             dbg.debugFlow("CREATE KEYCARD PROFILE WITH EXISTING SEEDPHRASE")
             d.secondaryPath = OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase
-            stack.push(seedphrasePage, { title: qsTr("Create profile on empty Keycard using a recovery phrase"), subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")})
+            stack.push(seedphrasePage, { title: qsTr("Create profile on empty Keycard using a recovery phrase")})
         }
 
         function onKeycardPinCreated(pin) {
