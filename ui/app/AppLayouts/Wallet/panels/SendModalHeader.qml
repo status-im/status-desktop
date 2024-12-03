@@ -92,6 +92,10 @@ RowLayout {
         Layout.fillWidth: true
         Layout.maximumWidth: implicitWidth
 
+        size: root.isStickyHeader ?
+                  TokenSelectorButton.Size.Small:
+                  TokenSelectorButton.Size.Normal
+
         assetsModel: root.assetsModel
         collectiblesModel: root.collectiblesModel
 
