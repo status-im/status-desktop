@@ -65,10 +65,7 @@ Control {
                 Component.onCompleted: currentIndex = 0 // start switching pages
 
                 function switchToNextOrFirstPage() {
-                    if (currentIndex < count - 1)
-                        currentIndex++
-                    else
-                        currentIndex = 0
+                    currentIndex = (currentIndex + 1) % count
                 }
 
                 delegate: Control {

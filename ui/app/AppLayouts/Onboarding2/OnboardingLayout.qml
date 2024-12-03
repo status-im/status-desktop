@@ -505,10 +505,7 @@ Page {
             seedWordsToVerify: {
                 let result = []
                 const randomIndexes = SQUtils.Utils.nSamples(d.numWordsToVerify, d.seedWords.length)
-                for (const i of randomIndexes) {
-                    result.push({seedWordNumber: i+1, seedWord: d.seedWords[i]})
-                }
-                return result
+                return randomIndexes.map(i => ({ seedWordNumber: i+1, seedWord: d.seedWords[i] }))
             }
         }
     }
