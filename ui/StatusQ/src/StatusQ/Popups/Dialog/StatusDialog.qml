@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 import QtQml 2.15
@@ -32,7 +33,8 @@ Dialog {
     anchors.centerIn: Overlay.overlay
 
     padding: 16
-    margins: 64
+    // by design
+    margins: root.contentItem.Window.window.height <= 780 ? 28: 64
     modal: true
 
     // workaround for https://bugreports.qt.io/browse/QTBUG-87804
