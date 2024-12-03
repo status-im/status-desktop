@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.controls 1.0
 import shared.panels 1.0
@@ -25,8 +26,18 @@ Flow {
     required property var linkPreviewModel
     required property var gifLinks
 
+    required property var paymentRequestModel
+
     required property bool gifUnfurlingEnabled
     required property bool canAskToUnfurlGifs
+
+    required property bool areTestNetworksEnabled
+
+    property var formatBalance: null
+
+    property string senderName
+    property string senderThumbnailImage
+    property int senderColorId
 
     readonly property alias hoveredLink: linksRepeater.hoveredUrl
     property string highlightLink: ""
@@ -34,6 +45,7 @@ Flow {
     signal imageClicked(var image, var mouse, string imageSource, string url)
     signal openContextMenu(var item, string url, string domain)
     signal setNeverAskAboutUnfurlingAgain(bool neverAskAgain)
+    signal paymentRequestClicked(int index)
 
     function resetLocalAskAboutUnfurling() {
         d.localAskAboutUnfurling = true
@@ -57,8 +69,29 @@ Flow {
     }
 
     Repeater {
+        id: paymentRequestRepeater
+        model: root.paymentRequestModel
+        delegate: PaymentRequestCardDelegate {
+            required property var model
+            objectName: "PaymentRequestDelegate_" + model.index
+            areTestNetworksEnabled: root.areTestNetworksEnabled
+            amount: {
+                if (!root.formatBalance)
+                    return model.amount
+                return root.formatBalance(model.amount, model.symbol)
+            }
+            symbol: model.symbol
+            address: model.receiver
+            senderName: root.senderName
+            senderThumbnailImage: root.senderThumbnailImage
+            senderColorId: root.senderColorId
+            onClicked: root.paymentRequestClicked(model.index)
+        }
+    }
+
+    Repeater {
         id: tempRepeater
-        visible: root.canAskToUnfurlGifs
+        visible: root.cankToUnfurlGifs
         model: root.gifUnfurlingEnabled ? gifLinks : []
 
         delegate: LinkPreviewGifDelegate {

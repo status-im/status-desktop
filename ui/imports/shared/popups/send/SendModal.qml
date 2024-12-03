@@ -41,6 +41,7 @@ StatusDialog {
     property alias preSelectedRecipientType: recipientInputLoader.selectedRecipientType
 
     property string preDefinedAmountToSend
+    property string preDefinedRawAmountToSend
     property int preSelectedChainId: 0
     property string stickersPackId
 
@@ -99,8 +100,8 @@ StatusDialog {
             return Constants.NoError
         }
 
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset ? selectedHolding.currencyBalance : 0
-        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset ? selectedHolding.currentBalance : 0
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.currencyBalance ? selectedHolding.currencyBalance : 0
+        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.currencyBalance ? selectedHolding.currentBalance : 0
         readonly property double maxInputBalance: amountToSend.fiatMode ? maxFiatBalance : maxCryptoBalance
 
         readonly property string tokenSymbol: !!d.selectedHolding && !!d.selectedHolding.symbol ? d.selectedHolding.symbol: ""
@@ -234,13 +235,24 @@ StatusDialog {
 
             if (popup.preSelectedHoldingType === Constants.TokenType.Native
                     || popup.preSelectedHoldingType === Constants.TokenType.ERC20) {
-                const entry = SQUtils.ModelUtils.getByKey(
+                let iconSource = ""
+                let entry = SQUtils.ModelUtils.getByKey(
                                 assetsAdaptor.outputAssetsModel, "tokensKey",
                                 popup.preSelectedHoldingID)
+
+                if (entry) {
+                    iconSource = entry.iconSource
+                } else {
+                    entry = SQUtils.ModelUtils.getByKey(
+                                popup.store.walletAssetStore.renamedTokensBySymbolModel, "tokensKey",
+                                popup.preSelectedHoldingID)
+                    iconSource = Constants.tokenIcon(entry.symbol)
+                }
+
                 d.selectedHoldingType = Constants.TokenType.ERC20
                 d.selectedHolding = entry
 
-                holdingSelector.setSelection(entry.symbol, entry.iconSource,
+                holdingSelector.setSelection(entry.symbol, iconSource,
                                              popup.preSelectedHoldingID)
                 holdingSelector.selectedItem = entry
             } else {
@@ -260,6 +272,7 @@ StatusDialog {
                 holdingSelector.currentTab = TokenSelectorPanel.Tabs.Collectibles
             }
         }
+
         if(!!popup.preDefinedAmountToSend) {
             // TODO: At this stage the number should not be localized. However
             // in many places when initializing popup the number is provided
@@ -267,8 +280,11 @@ StatusDialog {
             // number consistently. Only the displaying component should apply
             // final localized formatting.
             const delocalized = popup.preDefinedAmountToSend.replace(LocaleUtils.userInputLocale.decimalPoint, ".")
-
             amountToSend.setValue(delocalized)
+        }
+
+        if (!!popup.preDefinedRawAmountToSend) {
+            amountToSend.setRawValue(popup.preDefinedRawAmountToSend)
         }
         
         if (!!popup.preSelectedChainId) {

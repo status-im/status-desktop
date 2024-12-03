@@ -17,6 +17,8 @@ SplitView {
     QtObject {
         id: d
 
+        readonly property var exampleAlbum: [ModelsData.banners.coinbase, ModelsData.icons.status]
+
         readonly property var messagesModel: ListModel {
             ListElement {
                 timestamp: 1656937930123
@@ -152,6 +154,17 @@ SplitView {
                 trustIndicator: StatusContactVerificationIcons.TrustedType.None
                 outgoingStatus: StatusMessage.OutgoingStatus.Delivered
             }
+            ListElement {
+                timestamp: 1667937830123
+                senderId: "zq123456790"
+                senderDisplayName: "Alice"
+                contentType: StatusMessage.ContentType.Image
+                message: "This message contains images"
+                isContact: true
+                isAReply: false
+                trustIndicator: StatusContactVerificationIcons.TrustedType.None
+                outgoingStatus: StatusMessage.OutgoingStatus.Delivered
+            }
         }
         readonly property var colorHash: ListModel {
             ListElement { colorId: 13; segmentLength: 5 }
@@ -202,6 +215,8 @@ SplitView {
                             colorId: index
                             colorHash: d.colorHash
                         }
+                        album: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum : []
+                        albumCount: model.contentType === StatusMessage.ContentType.Image ? d.exampleAlbum.length : 0
                     }
 
                     replyDetails {
@@ -222,6 +237,7 @@ SplitView {
                     onReplyMessageClicked: logs.logEvent("StatusMessage::replyMessageClicked")
                     onResendClicked: logs.logEvent("StatusMessage::resendClicked")
                     onLinkActivated: logs.logEvent("StatusMessage::linkActivated" + link)
+                    onImageClicked: logs.logEvent("StatusMessage::imageClicked")
                 }
             }
         }

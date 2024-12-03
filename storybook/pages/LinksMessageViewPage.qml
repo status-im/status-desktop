@@ -13,6 +13,10 @@ SplitView {
         id: mockedLinkPreviewModel
     }
 
+    PaymentRequestModel {
+        id: mockedPaymentRequestModel
+    }
+
     Pane {
         id: messageViewWrapper
         SplitView.fillWidth: true
@@ -27,6 +31,10 @@ SplitView {
             playAnimations: true
             linkPreviewModel: mockedLinkPreviewModel
             gifLinks: [ "https://media.tenor.com/qN_ytiwLh24AAAAC/cold.gif" ]
+            paymentRequestModel: mockedPaymentRequestModel
+            areTestNetworksEnabled: false
+
+            senderName: "Alice"
 
             gifUnfurlingEnabled: false
             canAskToUnfurlGifs: true
@@ -69,6 +77,11 @@ SplitView {
                     text: qsTr("Is online")
                     checked: linksMessageView.isOnline
                     onToggled: linksMessageView.isOnline = !linksMessageView.isOnline
+                }
+                CheckBox {
+                    text: qsTr("Testnet enabled")
+                    checked: linksMessageView.areTestNetworksEnabled
+                    onToggled: linksMessageView.areTestNetworksEnabled = !linksMessageView.areTestNetworksEnabled
                 }
             }
         }

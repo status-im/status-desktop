@@ -39,9 +39,11 @@ Item {
     property UsersStore usersStore
     property ContactsStore contactsStore
     property string channelEmoji
+    property var formatBalance
 
     property var emojiPopup
     property var stickersPopup
+    property bool areTestNetworksEnabled
 
     property string chatId: ""
     property bool stickersLoaded: false
@@ -283,10 +285,12 @@ Item {
             stickersPopup: root.stickersPopup
             chatLogView: ListView.view
             chatContentModule: root.chatContentModule
+            formatBalance: root.formatBalance
 
             isChatBlocked: root.isChatBlocked
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            areTestNetworksEnabled: root.areTestNetworksEnabled
 
             chatId: root.chatId
             messageId: model.id
@@ -326,6 +330,7 @@ Item {
             deletedByContactColorHash: model.deletedByContactColorHash
             linkPreviewModel: model.linkPreviewModel
             links: model.links
+            paymentRequestModel: model.paymentRequestModel
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentioned

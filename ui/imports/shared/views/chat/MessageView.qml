@@ -70,9 +70,11 @@ Loader {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property var linkPreviewModel
+    property var paymentRequestModel
     property string messageAttachments: ""
     property var transactionParams
     property var emojiReactionsModel
+    property var formatBalance
 
     // These 2 properties can be dropped when the new unfurling flow supports GIFs
     property var links
@@ -136,6 +138,8 @@ Loader {
     property bool hasMention: false
 
     property bool sendViaPersonalChatEnabled
+
+    property bool areTestNetworksEnabled
 
     property bool stickersLoaded: false
     property string sticker
@@ -720,6 +724,7 @@ Loader {
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
                 linkPreviewModel: root.linkPreviewModel
+                paymentRequestModel: root.paymentRequestModel
                 gifLinks: root.gifLinks
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
@@ -973,9 +978,15 @@ Loader {
 
                         linkPreviewModel: root.linkPreviewModel
                         gifLinks: root.gifLinks
+                        senderName: root.senderDisplayName
+                        senderThumbnailImage: root.senderIcon || ""
+                        senderColorId: Utils.colorIdForPubkey(root.senderId)
+                        paymentRequestModel: root.paymentRequestModel
                         playAnimations: root.Window.active && root.messageStore.isChatActive
                         isOnline: root.rootStore.mainModuleInst.isOnline
                         highlightLink: delegate.hoveredLink
+                        areTestNetworksEnabled: root.areTestNetworksEnabled
+                        formatBalance: root.formatBalance
                         onImageClicked: (image, mouse, imageSource, url) => {
                             d.onImageClicked(image, mouse, imageSource, url)
                         }
@@ -986,6 +997,10 @@ Loader {
                         gifUnfurlingEnabled: root.sharedRootStore.gifUnfurlingEnabled
                         canAskToUnfurlGifs: !root.sharedRootStore.neverAskAboutUnfurlingAgain
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
+                        onPaymentRequestClicked: (index) => {
+                            const request = StatusQUtils.ModelUtils.get(paymentRequestModel, index)
+                            Global.paymentRequestClicked(request.receiver, request.symbol, request.amount, request.chainId)
+                        }
 
                         Component.onCompleted: {
                             root.messageStore.messageModule.forceLinkPreviewsLocalData(root.messageId)

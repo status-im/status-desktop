@@ -708,6 +708,21 @@ Item {
             sendModal.open(address)
         }
 
+        function onPaymentRequestClicked(receiverAddress: string, symbol: string, amount: string, chainId: int) {
+            if (!!symbol) {
+                sendModal.preSelectedHoldingID = symbol
+                sendModal.preSelectedHoldingType = Constants.TokenType.ERC20
+            }
+            if (!!amount) {
+                sendModal.preDefinedRawAmountToSend = amount
+            }
+            if (!!chainId) {
+                sendModal.preSelectedChainId = chainId
+            }
+
+            sendModal.open(receiverAddress)
+        }
+
         function onSwitchToCommunity(communityId: string) {
             appMain.communitiesStore.setActiveCommunity(communityId)
         }
@@ -1875,6 +1890,7 @@ Item {
             property int preSelectedHoldingType: Constants.TokenType.Unknown
             property int preSelectedSendType: Constants.SendType.Unknown
             property string preDefinedAmountToSend
+            property string preDefinedRawAmountToSend
             property int preSelectedChainId: 0
             property bool onlyAssets: false
 
@@ -1903,6 +1919,7 @@ Item {
                     sendModal.preSelectedAccountAddress = ""
                     sendModal.preSelectedRecipient = undefined
                     sendModal.preDefinedAmountToSend = ""
+                    sendModal.preDefinedRawAmountToSend = ""
                     sendModal.preSelectedChainId = 0
 
                     sendModal.stickersPackId = ""
@@ -1928,6 +1945,9 @@ Item {
                 }
                 if (sendModal.preDefinedAmountToSend != "") {
                     item.preDefinedAmountToSend = sendModal.preDefinedAmountToSend
+                }
+                if (sendModal.preDefinedRawAmountToSend != "") {
+                    item.preDefinedRawAmountToSend = sendModal.preDefinedRawAmountToSend
                 }
                 if (!!sendModal.preSelectedChainId) {
                     item.preSelectedChainId = sendModal.preSelectedChainId

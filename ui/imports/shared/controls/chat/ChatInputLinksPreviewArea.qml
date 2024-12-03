@@ -32,14 +32,24 @@ Control {
     */
     required property var linkPreviewModel
     required property bool showLinkPreviewSettings
+    /*
+    Expected roles:
+        string symbol
+        string amount
+    */
+    required property var paymentRequestModel
+
+    property var formatBalance: null
 
     readonly property alias hoveredUrl: d.hoveredUrl
-    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0
+    readonly property bool hasContent: imagePreviewArray.length > 0 || showLinkPreviewSettings || linkPreviewRepeater.count > 0 || paymentRequestRepeater.count > 0
 
     signal imageRemoved(int index)
     signal imageClicked(var chatImage)
     signal linkReload(string link)
     signal linkClicked(string link)
+
+    signal removePaymentRequestPreview(int index)
 
     signal enableLinkPreview()
     signal enableLinkPreviewForThisMessage()
@@ -95,6 +105,21 @@ Control {
                     onImageClicked: root.imageClicked(chatImage)
                     onImageRemoved: root.imageRemoved(index)
                     visible: !!imagePreviewArray && imagePreviewArray.length > 0
+                }
+                Repeater {
+                    id: paymentRequestRepeater
+                    model: root.paymentRequestModel
+                    delegate: PaymentRequestMiniCardDelegate {
+                        required property var model
+
+                        amount: {
+                            if (!root.formatBalance)
+                                return model.amount
+                            return root.formatBalance(model.amount, model.symbol)
+                        }
+                        symbol: model.symbol
+                        onClose: root.removePaymentRequestPreview(model.index)
+                    }
                 }
                 Repeater {
                     id: linkPreviewRepeater
