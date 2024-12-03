@@ -1,0 +1,140 @@
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+
+import StatusQ 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
+import AppLayouts.Wallet.controls 1.0
+
+RowLayout {
+    id: root
+
+    /**
+    Expected model structure:
+    - tokensKey: unique string ID of the token (asset); e.g. "ETH" or contract address
+    - name: user visible token name (e.g. "Ethereum")
+    - symbol: user visible token symbol (e.g. "ETH")
+    - decimals: number of decimal places
+    - communityId:optional; ID of the community this token belongs to, if any
+    - marketDetails: object containing props like `currencyPrice` for the computed values below
+    - balances: submodel[ chainId:int, account:string, balance:BigIntString, iconUrl:string ]
+    - currentBalance: amount of tokens
+    - currencyBalance: e.g. `1000.42` in user's fiat currency
+    - currencyBalanceAsString: e.g. "1 000,42 CZK" formatted as a string according to the user's locale
+    - balanceAsString: `1.42` formatted as e.g. "1,42" in user's locale
+    - iconSource: string
+    **/
+    required property var assetsModel
+    /**
+    Expected model structure:
+    - groupName: group name (from collection or community name)
+    - icon: from imageUrl or mediaUrl
+    - type: can be "community" or "other"
+    - subitems: submodel of collectibles/collections of the group
+    - key: key of collection (community type) or collectible (other type)
+    - name: name of the subitem (of collectible or collection)
+    - balance: balance of collection (in case of community collectibles)
+               or collectible (in case of ERC-1155)
+    - icon: icon of the subitem
+    **/
+    required property var collectiblesModel
+    /**
+    Expected model structure:
+    - chainId: network chain id
+    - chainName: name of network
+    - iconUrl: network icon url
+    **/
+    required property var networksModel
+
+    /** input property holds header is being scrolled **/
+    property bool isScrolling
+
+    /** input property holds if the header is the sticky header **/
+    property bool isStickyHeader
+
+    /** property that exposes the selected network **/
+    readonly property int selectedNetworkChainId: selectedNetworkEntry.item.chainId
+
+    /** signal to propagate that an asset was selected **/
+    signal assetSelected(string key)
+    /** signal to propagate that a collection was selected **/
+    signal collectionSelected(string key)
+    /** signal to propagate that a collectible was selected **/
+    signal collectibleSelected(string key)
+
+    implicitHeight: sendModalTitleText.height
+
+    spacing: 8
+
+    // if not closed during scrolling they move with the header and it feels undesirable
+    onIsScrollingChanged: {
+        tokenSelector.popup.close()
+        networkFilter.control.popup.close()
+    }
+
+    StatusBaseText {
+        id: sendModalTitleText
+
+        Layout.preferredWidth: contentWidth
+
+        lineHeightMode: Text.FixedHeight
+        lineHeight: root.isStickyHeader ? 30 : 38
+        font.pixelSize: root.isStickyHeader ? 22 : 28
+        elide: Text.ElideRight
+
+        text: qsTr("Send")
+    }
+
+    TokenSelector {
+        id: tokenSelector
+
+        Layout.fillWidth: true
+        Layout.maximumWidth: implicitWidth
+
+        assetsModel: root.assetsModel
+        collectiblesModel: root.collectiblesModel
+
+        onCollectibleSelected: root.collectibleSelected(key)
+        onCollectionSelected: root.collectionSelected(key)
+        onAssetSelected: root.assetSelected(key)
+    }
+
+    // Horizontal spacer
+    RowLayout {}
+
+    StatusBaseText {
+        Layout.alignment: Qt.AlignRight
+
+        text: qsTr("On:")
+        color: Theme.palette.baseColor1
+        font.pixelSize: 13
+        lineHeight: 38
+        lineHeightMode: Text.FixedHeight
+        verticalAlignment: Text.AlignVCenter
+
+        visible: networkFilter.visible
+    }
+
+    NetworkFilter {
+        id: networkFilter
+
+        Layout.alignment: Qt.AlignTop
+
+        control.bottomPadding: 0
+
+        flatNetworks: root.networksModel
+
+        multiSelection: false
+        showSelectionIndicator: false
+        showTitle: false
+
+    }
+
+    ModelEntry {
+        id: selectedNetworkEntry
+        sourceModel: root.networksModel
+        key: "chainId"
+        value: networkFilter.selection[0]
+    }
+}
