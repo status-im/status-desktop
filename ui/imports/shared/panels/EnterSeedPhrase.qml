@@ -19,7 +19,6 @@ ColumnLayout {
     //* This component is not refactored, just pulled out to a shared location *
     //**************************************************************************
     spacing: Theme.padding
-    clip: true
 
     readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
     property var isSeedPhraseValid: function (mnemonic) { return false }
@@ -180,7 +179,7 @@ ColumnLayout {
         objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
-        clip: false
+        Layout.topMargin: Theme.halfPadding
         flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
