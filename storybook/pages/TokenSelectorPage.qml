@@ -190,6 +190,9 @@ Pane {
 
         anchors.centerIn: parent
 
+        size: smallCheckbox.checked ? TokenSelectorButton.Size.Small :
+                                      TokenSelectorButton.Size.Normal
+
         assetsModel: assetsModelCheckBox.checked ? assetsModel : null
         collectiblesModel: collectiblesModelCheckBox.checked ? collectiblesModel : null
 
@@ -214,6 +217,12 @@ Pane {
 
             checked: true
             text: "Collectibles model assigned"
+        }
+
+        CheckBox {
+            id: smallCheckbox
+
+            text: "small"
         }
     }
 }
