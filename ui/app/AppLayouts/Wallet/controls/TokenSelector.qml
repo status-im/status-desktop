@@ -20,6 +20,9 @@ Control {
     /** Exposes insatnce of popup **/
     property var popup: dropdown
 
+    /** Sets size of the TokenSelectorButton **/
+    property alias size: tokenSelectorButton.size
+
     readonly property bool isTokenSelected: tokenSelectorButton.selected
 
     signal assetSelected(string key)
