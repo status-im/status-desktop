@@ -11,6 +11,7 @@ import shared.stores 1.0 as SharedStores
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
 SplitView {
@@ -99,6 +100,9 @@ SplitView {
                     }
                 }
 
+                paymentRequestFeatureEnabled: true
+                areTestNetworksEnabled: testnetEnabledCheckBox.checked
+
                 onSendMessage: {
                     logs.logEvent("StatusChatInput::sendMessage", ["MessageWithPk"], [chatInput.getTextWithPublicKeys()])
                     logs.logEvent("StatusChatInput::sendMessage", ["PlainText"], [SQUtils.StringUtils.plainText(chatInput.getTextWithPublicKeys())])
@@ -138,6 +142,15 @@ SplitView {
 
         QtObject {
             id: d
+
+            readonly property var walletAssetsStore: WalletStores.WalletAssetsStore {
+                id: thisWalletAssetStore
+                walletTokensStore: WalletStores.TokensStore {
+                    plainTokensBySymbolModel: TokensBySymbolModel {}
+                }
+                assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
+            }
+
             property bool linkPreviewsEnabled: linkPreviewSwitch.checked && !askToEnableLinkPreviewSwitch.checked
             onLinkPreviewsEnabledChanged: {
                 loadLinkPreviews(chatInputLoader.item ? chatInputLoader.item.unformattedText : "")
@@ -170,6 +183,12 @@ SplitView {
                 id: enabledCheckBox
                 text: "enabled"
                 checked: true
+            }
+
+            CheckBox {
+                id: testnetEnabledCheckBox
+                text: "testnet enabled"
+                checked: false
             }
 
             TabBar {

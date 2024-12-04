@@ -11,6 +11,7 @@ import StatusQ.Validators 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.panels 1.0
 
 Control {
     id: root
@@ -284,7 +285,7 @@ Control {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
             Layout.bottomMargin: 12
-            color: Theme.palette.baseColor2
+            color: Theme.palette.separator
             visible: root.dividerVisible
         }
 

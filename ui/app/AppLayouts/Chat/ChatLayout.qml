@@ -36,6 +36,8 @@ StackLayout {
     required property SendStores.TransactionStore transactionStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
+    property bool areTestNetworksEnabled
+    property bool paymentRequestFeatureEnabled
 
     property var mutualContactsModel
     property var sectionItemModel
@@ -171,12 +173,14 @@ StackLayout {
             sendModalPopup: root.sendModalPopup
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
+            areTestNetworksEnabled: root.areTestNetworksEnabled
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
                              root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
 
             hasUnrestrictedViewOnlyPermission: {
                 viewOnlyUnrestrictedPermissionHelper.revision

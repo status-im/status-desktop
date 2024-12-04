@@ -54,6 +54,7 @@ StatusSectionLayout {
     required property var sendModalPopup
     property var sectionItemModel
     property int joinedMembersCount
+    property bool areTestNetworksEnabled
 
     property var emojiPopup
     property var stickersPopup
@@ -80,6 +81,7 @@ StatusSectionLayout {
     property var collectiblesModel
 
     property bool sendViaPersonalChatEnabled
+    property bool paymentRequestFeatureEnabled
 
     readonly property bool contentLocked: {
         if (!rootStore.chatCommunitySectionModule.isCommunity()) {
@@ -276,6 +278,7 @@ StatusSectionLayout {
             sharedRootStore: root.sharedRootStore
             utilsStore: root.utilsStore
             rootStore: root.rootStore
+            areTestNetworksEnabled: root.areTestNetworksEnabled
             createChatPropertiesStore: root.createChatPropertiesStore
             contactsStore: root.contactsStore
             stickersLoaded: root.stickersLoaded
@@ -285,6 +288,7 @@ StatusSectionLayout {
             canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
             amISectionAdmin: root.amISectionAdmin
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }

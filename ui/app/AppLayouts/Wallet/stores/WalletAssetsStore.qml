@@ -44,9 +44,10 @@ QtObject {
                                         false, Constants.ephemeralNotificationType.success, "")
     }
 
-    /* PRIVATE: This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
+    /* This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
     it can be easily joined with the Account Assets model */
-    readonly property var _renamedTokensBySymbolModel: RolesRenamingModel {
+    readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
+        objectName: "renamedTokensBySymbolModel"
         sourceModel: walletTokensStore.plainTokensBySymbolModel
         mapping: [
             RoleRename {
@@ -87,7 +88,7 @@ QtObject {
 
     /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
     property LeftJoinModel _jointTokensBySymbolModel: LeftJoinModel {
-        leftModel: _renamedTokensBySymbolModel
+        leftModel: renamedTokensBySymbolModel
         rightModel: _renamedCommunitiesModel
         joinRole: "communityId"
     }
