@@ -196,7 +196,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
 
             with step('Verify that message was sent without preview'):
                 sent_message = messages_screen.chat.messages(0)
-                assert driver.waitFor(lambda: sent_message[0].link_preview is None,
+                assert driver.waitFor(lambda: sent_message[0].link_preview_title_object is None,
                                       timeout), f'Message was wrongly sent with preview'
 
             with step(f'Paste external link again and verify that there are still 3 options'):
@@ -214,9 +214,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 messages_screen.group_chat.type_message(message)
 
             with step('Wait until link preview is ready'):
-                assert driver.waitFor(
-                    lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
-                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
             with step(f'Paste image to the same message'):
                 messages_screen.group_chat.choose_image(str(path))
