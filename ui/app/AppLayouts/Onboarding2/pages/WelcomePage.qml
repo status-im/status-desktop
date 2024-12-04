@@ -28,7 +28,7 @@ OnboardingPage {
         id: d
         readonly property ListModel newsModel: ListModel {
             ListElement {
-                primary: qsTr("Own, buy and swap your crypto")
+                primary: qsTr("Own your crypto")
                 secondary: qsTr("Use the leading multi-chain self-custodial wallet")
                 image: "onboarding/carousel/crypto"
             }
