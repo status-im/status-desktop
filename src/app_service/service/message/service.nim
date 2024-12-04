@@ -1157,12 +1157,12 @@ proc bulkReplacePubKeysWithDisplayNames(self: Service, messages: var seq[Message
   for i in 0..<messages.len:
     messages[i].text = message_common.replacePubKeysWithDisplayNames(allKnownContacts, messages[i].text)
 
-proc editMessage*(self: Service, messageId: string, contentType: int, msg: string) =
+proc editMessage*(self: Service, messageId: string, msg: string) =
   try:
     let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
     let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
 
-    let response = status_go.editMessage(messageId, contentType, processedMsg)
+    let response = status_go.editMessage(messageId, processedMsg)
 
     var messagesArr: JsonNode
     var messages: seq[MessageDto]
