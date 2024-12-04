@@ -1119,9 +1119,10 @@ Item {
                     tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
                     checked: model.active
                     badge.value: model.notificationsCount
-                    badge.visible: model.sectionType === Constants.appSection.profile &&
-                                   (contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.empty ? // pending contact request
-                                        model.hasNotification : true)
+                    badge.visible: (model.sectionType === Constants.appSection.profile &&
+                                   contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) ? // pending contact request
+                                        true :
+                                        model.hasNotification // Otherwise, use the value coming from the model
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                     badge.border.width: 2
                     onClicked: {
