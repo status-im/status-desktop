@@ -74,6 +74,7 @@ class WalletOrigin(Enum):
 
 class WalletTransactions(Enum):
     TRANSACTION_SENDING_TOAST_MESSAGE = 'Sending'
+    ENS_TRANSACTION_REGISTERING_TOAST_MESSAGE = 'Registering'
 
 
 class WalletScreensHeaders(Enum):
