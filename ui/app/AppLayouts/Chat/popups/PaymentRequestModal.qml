@@ -55,7 +55,7 @@ StatusDialog {
     objectName: "paymentRequestModal"
 
     implicitWidth: 480
-    implicitHeight: 470
+    implicitHeight: 480
 
     modal: true
     padding: 0
