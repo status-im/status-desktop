@@ -61,6 +61,7 @@ StatusDialog {
     - chainId: network chain id
     - chainName: name of network
     - iconUrl: network icon url
+    Only networks valid as per mainnet/testnet selection
     **/
     required property var networksModel
 
