@@ -236,9 +236,8 @@ endif
 NIM_PARAMS += --outdir:./bin
 
 # App version
-VERSIONFILE=VERSION
-DESKTOP_VERSION=`cat $(VERSIONFILE)`
-STATUSGO_VERSION=`(cd vendor/status-go; git describe --tags --abbrev=0)`
+DESKTOP_VERSION = $(shell ./scripts/version.sh)
+STATUSGO_VERSION = $(shell cd vendor/status-go; make version)
 NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 NIM_PARAMS += -d:STATUSGO_VERSION="$(STATUSGO_VERSION)"
 
@@ -250,6 +249,16 @@ ifeq ($(OUTPUT_CSV), true)
   NIM_PARAMS += -d:output_csv
   $(shell touch .update.timestamp)
 endif
+
+##
+## Versioning
+## 
+
+version:
+	@echo $(DESKTOP_VERSION)
+
+status-go-version:
+	@echo $(STATUSGO_VERSION)
 
 
 ##
@@ -781,7 +790,7 @@ endif
 	ISCC \
 	   -O"$(INSTALLER_OUTPUT)" \
 	   -D"BaseName=$(shell basename $(STATUS_CLIENT_EXE) .exe)" \
-	   -D"Version=$(shell cat VERSION)" \
+	   -D"Version=$(DESKTOP_VERSION)" \
 	   $(OUTPUT)/status.iss
 ifdef WINDOWS_CODESIGN_PFX_PATH
 	scripts/sign-windows-bin.sh $(INSTALLER_OUTPUT)

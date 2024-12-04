@@ -40,6 +40,8 @@ OTHER_FILES += $$files("$$PWD/../vendor/SortFilterProxyModel/*.h", true)
 
 OTHER_FILES += $$files("$$PWD/../vendor/nimqml/src/*.nim", true)
 
+OTHER_FILES += $$files("$$PWD/../Makefile")
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/imports \
                   $$PWD/StatusQ \
@@ -48,10 +50,5 @@ QML_IMPORT_PATH = $$PWD/imports \
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH = $$PWD/imports
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
 
 RESOURCES += resources.qrc StatusQ/src/assets.qrc StatusQ/src/statusq.qrc

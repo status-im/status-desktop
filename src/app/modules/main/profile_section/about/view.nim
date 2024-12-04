@@ -21,6 +21,9 @@ QtObject:
   proc getCurrentVersion*(self: View): string {.slot.} =
     return self.delegate.getAppVersion()
 
+  proc getGitCommit*(self: View): string {.slot.} =
+    return self.delegate.getGitCommit()
+
   proc nodeVersion*(self: View): string {.slot.} =
     return self.delegate.getNodeVersion()
 

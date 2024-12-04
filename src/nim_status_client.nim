@@ -44,7 +44,7 @@ proc determineStatusAppIconPath(): string =
   if defined(production):
     return "/../status.png"
 
-  return "/../status-dev.png" 
+  return "/../status-dev.png"
 
 proc prepareLogging() =
   # Outputs logs in the node tab

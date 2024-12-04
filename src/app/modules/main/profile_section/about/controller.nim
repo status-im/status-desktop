@@ -27,13 +27,16 @@ proc init*(self: Controller) =
     self.delegate.versionFetched(args.available, args.version, args.url)
 
 proc getAppVersion*(self: Controller): string =
-  return self.aboutService.getAppVersion()
+  self.aboutService.getAppVersion()
+
+proc getGitCommit*(self: Controller): string =
+  self.aboutService.getGitCommit()
 
 proc checkForUpdates*(self: Controller) =
   self.aboutService.checkForUpdates()
 
 proc getNodeVersion*(self: Controller): string =
-  return self.aboutService.getNodeVersion()
+  self.aboutService.getNodeVersion()
 
 proc getStatusGoVersion*(self: Controller): string =
   self.aboutService.getStatusGoVersion()

@@ -69,8 +69,9 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true)
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION)}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION)}"
     /* prevent sharing cache dir across different jobs */
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     SENTRY_PRODUCTION = "${utils.isReleaseBuild() ? 'true' : 'false'}"
