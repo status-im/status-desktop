@@ -90,7 +90,7 @@ proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
     "storeResult": false
   }
   try:
-    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts)
+    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts, false) # TODO: think should we need to use arg.storeResult or not and if yes, is it everywhere set proprely
     output["result"] = response.result
     output["storeResult"] = %* arg.storeResult
   except Exception as e:
