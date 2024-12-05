@@ -36,6 +36,7 @@ StatusDialog {
 
     signal pair(string uri)
     signal pairUriChanged(string uri)
+    signal pairInstructionsRequested()
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
@@ -72,12 +73,7 @@ StatusDialog {
             normalColor: linkColor
 
             onClicked: {
-                Global.openPopup(uriCopyInstructionsPopup)
-            }
-
-            Component {
-                id: uriCopyInstructionsPopup
-                DAppsUriCopyInstructionsPopup{}
+                root.pairInstructionsRequested()
             }
         }
     }
