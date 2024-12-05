@@ -34,10 +34,15 @@ Control {
     property alias currentTab: tokenSelectorPanel.currentTab
 
     function setSelection(name: string, icon: url, key: string) {
-        tokenSelectorButton.selected = true
-        tokenSelectorButton.name = name
-        tokenSelectorButton.icon = icon
-        tokenSelectorPanel.highlightedKey = key ?? ""
+        // reset token selector in case of empty call
+        if (!key && !name && !icon) {
+            tokenSelectorButton.selected = false
+        } else {
+            tokenSelectorButton.selected = true
+            tokenSelectorButton.name = name
+            tokenSelectorButton.icon = icon
+            tokenSelectorPanel.highlightedKey = key ?? ""
+        }
     }
 
     QObject {
