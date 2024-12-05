@@ -86,7 +86,8 @@ pipeline {
     stage('Publish') {
       when { expression { params.PUBLISH } }
       steps { script {
-        github.publishReleaseFiles(repo: 'status-desktop');
+        def version = sh(script: './scripts/version.sh', returnStdout: true).trim()
+        github.publishReleaseFiles(repo: 'status-desktop', version: version);
       } }
     }
   }
