@@ -31,6 +31,10 @@ ComboBox {
     background: SQP.StatusComboboxBackground {
         objectName: "dappsBackground"
         active: root.down || root.hovered
+        Binding on color {
+            when: !root.enabled
+            value: Theme.palette.baseColor2
+        }
     }
 
     indicator: null
