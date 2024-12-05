@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
+import utils 1.0
+
 RowLayout {
     id: root
 
@@ -53,8 +55,12 @@ RowLayout {
     /** input property holds if the header is the sticky header **/
     property bool isStickyHeader
 
-    /** property that exposes the selected network **/
-    readonly property int selectedNetworkChainId: selectedNetworkEntry.item.chainId
+    /** input property for programatic selection of network **/
+    property int selectedChainId
+
+    /** input property for programatic selection of token
+    (asset/collectible/collection) **/
+    property string selectedTokenKey
 
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
@@ -62,6 +68,36 @@ RowLayout {
     signal collectionSelected(string key)
     /** signal to propagate that a collectible was selected **/
     signal collectibleSelected(string key)
+    /** signal to propagate that a network was selected **/
+    signal networkSelected(string chainId)
+
+    QtObject {
+        id: d
+        readonly property bool selectedTokenNotAvailableOnAssetsOrCollectiblesList: !selectedAssetEntry.available && !selectedCollectibleEntry.available
+        onSelectedTokenNotAvailableOnAssetsOrCollectiblesListChanged: {
+            if(selectedTokenNotAvailableOnAssetsOrCollectiblesList) {
+                // reset token selector in case selected tokens doesnt exist in either models
+                tokenSelector.setSelection("", "", "")
+            }
+        }
+
+        function updateAssetInTokenSelector(available, item) {
+            if(available) {
+                tokenSelector.setSelection(item.symbol,
+                                           Constants.tokenIcon(item.symbol),
+                                           item.tokensKey)
+            }
+        }
+
+        function updateCollectibleInTokenSelector(available, item) {
+            if(available) {
+                const id = item.communityId ? item.collectionUid : item.uid
+                tokenSelector.setSelection(item.name,
+                                           item.imageUrl || item.mediaUrl,
+                                           id)
+            }
+        }
+    }
 
     implicitHeight: sendModalTitleText.height
 
@@ -133,12 +169,34 @@ RowLayout {
         showSelectionIndicator: false
         showTitle: false
 
+        Binding on selection {
+            value: [root.selectedChainId]
+            when: root.selectedChainId !== 0
+        }
+        onSelectionChanged: {
+            if (root.selectedChainId !== selection[0]) {
+                root.networkSelected(selection[0])
+            }
+        }
+
+        onToggleNetwork: root.networkSelected(chainId)
     }
 
     ModelEntry {
-        id: selectedNetworkEntry
-        sourceModel: root.networksModel
-        key: "chainId"
-        value: networkFilter.selection[0]
+        id: selectedAssetEntry
+        sourceModel: root.assetsModel
+        key: "tokensKey"
+        value: root.selectedTokenKey
+        onAvailableChanged: d.updateAssetInTokenSelector(available, item)
+        onItemChanged: d.updateAssetInTokenSelector(available, item)
+    }
+
+    ModelEntry {
+        id: selectedCollectibleEntry
+        sourceModel: root.collectiblesModel
+        key: "symbol"
+        value: root.selectedTokenKey
+        onAvailableChanged: d.updateCollectibleInTokenSelector(available, item)
+        onItemChanged: d.updateCollectibleInTokenSelector(available, item)
     }
 }

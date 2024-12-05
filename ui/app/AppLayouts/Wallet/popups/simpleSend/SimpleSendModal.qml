@@ -65,10 +65,14 @@ StatusDialog {
     **/
     required property var networksModel
 
-    /** TODO: rethink property definitions needed to pre set values +
-    expose values to outside world **/
-    property int selectedChainId: sendModalHeader.selectedNetworkChainId
-    property string selectedAccountAddress: accountSelector.currentAccountAddress
+    /** property to set and expose currently selected account **/
+    property string selectedAccountAddress
+
+    /** property to set and expose currently selected network **/
+    property int selectedChainId
+
+    /** property to set and expose currently selected token key **/
+    property string selectedTokenKey
 
     QtObject {
         id: d
@@ -106,6 +110,13 @@ StatusDialog {
             anchors.leftMargin: -Theme.xlPadding
 
             model: root.accountsModel
+
+            selectedAddress: root.selectedAccountAddress
+            onCurrentAccountAddressChanged: {
+                if(currentAccountAddress !== root.selectedAccountAddress) {
+                    root.selectedAccountAddress = currentAccountAddress
+                }
+            }
         }
 
         // Sticky header only visible when scrolling
@@ -117,14 +128,19 @@ StatusDialog {
             anchors.leftMargin: -Theme.xlPadding
             z: 1
 
+            isScrolling: d.isScrolling
+
             networksModel: root.networksModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
-            isScrolling: d.isScrolling
 
-            onCollectibleSelected: console.log("collectible selected:", key)
-            onCollectionSelected: console.log("collection selected:", key)
-            onAssetSelected: console.log("asset selected:", key)
+            selectedChainId: root.selectedChainId
+            selectedTokenKey: root.selectedTokenKey
+
+            onCollectibleSelected: root.selectedTokenKey = key
+            onCollectionSelected: root.selectedTokenKey = key
+            onAssetSelected: root.selectedTokenKey = key
+            onNetworkSelected: root.selectedChainId = chainId
         }
 
         // Main scrollable Layout
@@ -162,9 +178,13 @@ StatusDialog {
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
 
-                    onCollectibleSelected: console.log("collectible selected:", key)
-                    onCollectionSelected: console.log("collection selected:", key)
-                    onAssetSelected: console.log("asset selected:", key)
+                    selectedChainId: root.selectedChainId
+                    selectedTokenKey: root.selectedTokenKey
+
+                    onCollectibleSelected: root.selectedTokenKey = key
+                    onCollectionSelected: root.selectedTokenKey = key
+                    onAssetSelected: root.selectedTokenKey = key
+                    onNetworkSelected: root.selectedChainId = chainId
                 }
 
                 // TODO: Remove these Dummy items added only to test dialog resizing

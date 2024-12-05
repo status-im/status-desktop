@@ -1,7 +1,10 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import SortFilterProxyModel 0.2
+
+import StatusQ 0.1
 
 import Models 1.0
 import Storybook 1.0
@@ -61,19 +64,28 @@ SplitView {
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
-        Component.onCompleted: simpleSend.open()
+
+        Binding on selectedAccountAddress {
+            value: accountsCombobox.currentValue ?? ""
+        }
+        Binding on selectedChainId {
+            value: networksCombobox.currentValue ?? 0
+        }
+        Binding on selectedTokenKey {
+            value: tokensCombobox.currentValue ?? ""
+        }
     }
 
     TokenSelectorViewAdaptor {
         id: assetsSelectorViewAdaptor
 
         assetsModel: d.walletAssetStore.groupedAccountAssetsModel
-
         flatNetworksModel: NetworksModel.flatNetworks
 
         currentCurrency: "USD"
-        accountAddress: simpleSend.selectedAccountAddress
         showCommunityAssets: true
+
+        accountAddress: simpleSend.selectedAccountAddress
         enabledChainIds: [simpleSend.selectedChainId]
     }
 
@@ -81,6 +93,7 @@ SplitView {
         id: collectiblesSelectionAdaptor
 
         accountKey: simpleSend.selectedAccountAddress
+        enabledChainIds: [simpleSend.selectedChainId]
 
         networksModel: d.filteredNetworksModel
         collectiblesModel: collectiblesBySymbolModel
@@ -95,7 +108,7 @@ SplitView {
                 tokenId: "id_3",
                 symbol: "abc",
                 chainId: NetworksModel.mainnetChainId,
-                name: "Multi-sequencer Test NFT 1",
+                name: "Multi-seq NFT 1",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
                 collectionUid: "collection_2",
@@ -116,7 +129,7 @@ SplitView {
                 tokenId: "id_4",
                 symbol: "def",
                 chainId: NetworksModel.mainnetChainId,
-                name: "Multi-sequencer Test NFT 2",
+                name: "Multi-seq NFT 2",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
                 collectionUid: "collection_2",
@@ -137,7 +150,7 @@ SplitView {
                 tokenId: "id_5",
                 symbol: "ghi",
                 chainId: NetworksModel.mainnetChainId,
-                name: "Multi-sequencer Test NFT 3",
+                name: "Multi-seq NFT 3",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
                 collectionUid: "collection_2",
@@ -402,10 +415,93 @@ SplitView {
     LogsAndControlsPanel {
         SplitView.minimumHeight: 100
         SplitView.minimumWidth: 300
+        SplitView.maximumWidth: 380
 
-        CheckBox {
-            id: testNetworksCheckbox
-            text: "are test networks enabled"
+        ColumnLayout {
+            spacing: 20
+
+            Text {
+                text: "Values to set before popup is launched"
+            }
+
+            Text {
+                text: "Accounts Selection"
+            }
+            ComboBox {
+                id: accountsCombobox
+                model: SortFilterProxyModel {
+                    sourceModel: d.walletAccountsModel
+                    filters: ValueFilter {
+                        roleName: "walletType"
+                        value: Constants.watchWalletType
+                        inverted: true
+                    }
+                }
+                textRole: "name"
+                valueRole: "address"
+                currentIndex: 0
+            }
+            Text {
+                text: "account selected is: \n"
+                      + simpleSend.selectedAccountAddress
+            }
+
+            CheckBox {
+                id: testNetworksCheckbox
+                text: "are test networks enabled"
+            }
+            Text {
+                text: "Networks Selection"
+            }
+            ComboBox {
+                id: networksCombobox
+                model: d.filteredNetworksModel
+                textRole: "chainName"
+                valueRole: "chainId"
+                currentIndex: 0
+            }
+            Text {
+                text: "network selected is: " + simpleSend.selectedChainId
+            }
+
+            Text {
+                text: "Tokens selection"
+            }
+            ComboBox {
+                id: tokensCombobox
+                model: ConcatModel {
+                    sources: [
+                        SourceModel {
+                            model: assetsSelectorViewAdaptor.outputAssetsModel
+                            markerRoleValue: "first_model"
+                        },
+                        SourceModel {
+                            model: collectiblesKeyModel
+                            markerRoleValue: "second_model"
+                        }
+                    ]
+
+                    markerRoleName: "which_model"
+                    expectedRoles: ["tokensKey", "name"]
+                }
+                textRole: "name"
+                valueRole: "tokensKey"
+            }
+            Text {
+                text: "token selected is: " + simpleSend.selectedTokenKey
+            }
+
+            RolesRenamingModel {
+                id: collectiblesKeyModel
+                sourceModel: collectiblesSelectionAdaptor.model
+
+                mapping: [
+                    RoleRename {
+                        from: "symbol"
+                        to: "tokensKey"
+                    }
+                ]
+            }
         }
     }
 }
