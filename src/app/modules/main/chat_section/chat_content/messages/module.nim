@@ -46,6 +46,7 @@ type
     initialMessagesLoaded: bool
     firstUnseenMessageState: FirstUnseenMessageState
     getMessageRequestId: UUID
+    pinnedMessages: Table[string, string] # messageId -> pinnedBy
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
     belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -61,6 +62,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.moduleLoaded = false
   result.initialMessagesLoaded = false
   result.firstUnseenMessageState = (false, false, false)
+  result.pinnedMessages = initTable[string, string]()
 
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
@@ -401,9 +403,17 @@ method reevaluateViewLoadingState*(self: Module) =
                 self.view.getMessageSearchOngoing()
   self.view.setLoading(loading)
 
+proc applyPinToMessages*(self: Module, messageItems: var seq[Item]) =
+  for item in messageItems:
+    if self.pinnedMessages.hasKey(item.id):
+      item.pinned = true
+      item.pinnedBy = self.pinnedMessages[item.id]
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   if messages.len > 0:
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
+
+    self.applyPinToMessages(viewItems)
 
     if self.controller.getChatDetails().hasMoreMessagesToRequest():
       viewItems.add(self.createFetchMoreMessagesItem())
@@ -425,7 +435,9 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
     self.onPinMessage(p.message.id, p.pinnedBy)
 
 method messagesAdded*(self: Module, messages: seq[MessageDto]) =
-  let items = self.createMessageItemsFromMessageDtos(messages)
+  var items = self.createMessageItemsFromMessageDtos(messages)
+
+  self.applyPinToMessages(items)
 
   self.view.model().insertItemsBasedOnClock(items)
 
@@ -509,10 +521,13 @@ method markMessageAsUnread*(self: Module, messageId: string) =
   self.controller.markMessageAsUnread(messageId)
 
 method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
-  self.view.model().pinUnpinMessage(messageId, true, actionInitiatedBy)
+  self.view.model().pinUnpinMessage(messageId, pinned=true, actionInitiatedBy)
+  self.pinnedMessages[messageId] = actionInitiatedBy
 
 method onUnpinMessage*(self: Module, messageId: string) =
   self.view.model().pinUnpinMessage(messageId, false, "")
+  if self.pinnedMessages.hasKey(messageId):
+    self.pinnedMessages.del(messageId)
 
 method onMarkMessageAsUnread*(self: Module, messageId: string) =
   self.view.model().markMessageAsUnread(messageId)
