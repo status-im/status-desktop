@@ -11,7 +11,7 @@ Rectangle {
     property string details
     readonly property string detailsVisible: d.detailsVisible
 
-    implicitWidth: layout.implicitWidthj
+    implicitWidth: layout.implicitWidth
                    + layout.anchors.leftMargin
                    + layout.anchors.rigthMargin
 
@@ -19,7 +19,7 @@ Rectangle {
                     + layout.anchors.topMargin
                     + layout.anchors.bottomMargin
 
-    radius: 8
+    radius: Theme.radius
     color: Theme.palette.baseColor4
 
     QtObject {
@@ -34,8 +34,8 @@ Rectangle {
         color: Theme.palette.baseColor1
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.topMargin: 8
-        anchors.rightMargin: 8
+        anchors.topMargin: Theme.halfPadding
+        anchors.rightMargin: Theme.halfPadding
         textToCopy: root.details
     }
 
@@ -43,14 +43,14 @@ Rectangle {
         id: layout
 
         anchors.fill: parent
-        anchors.margins: 10
+        anchors.margins: Theme.smallPadding
         spacing: 4
 
         StatusBaseText {
             Layout.fillWidth: true
             horizontalAlignment: Qt.AlignHCenter
             text: root.title
-            font.pixelSize: 13
+            font.pixelSize: Theme.additionalTextSize
             font.weight: Font.Medium
         }
 
@@ -60,7 +60,7 @@ Rectangle {
             visible: !d.detailsVisible
             text: qsTr("Show error details")
             color: Theme.palette.primaryColor1
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
 
             MouseArea {
                 anchors.fill: parent
@@ -76,7 +76,7 @@ Rectangle {
             visible: d.detailsVisible
             text: root.details
             color: Theme.palette.baseColor1
-            font.pixelSize: 12
+            font.pixelSize: Theme.tertiaryTextFontSize
             wrapMode: Text.WordWrap
         }
     }
