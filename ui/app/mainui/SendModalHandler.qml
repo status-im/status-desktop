@@ -222,6 +222,7 @@ QtObject {
     readonly property Component simpleSendModalComponent: Component {
         SimpleSendModal {
             id: simpleSendModal
+
             /** TODO: use the newly defined WalletAccountsSelectorAdaptor
             in https://github.com/status-im/status-desktop/pull/16834 **/
             accountsModel: root.walletAccountsModel
@@ -248,6 +249,7 @@ QtObject {
                 id: collectiblesSelectionAdaptor
 
                 accountKey: simpleSendModal.selectedAccountAddress
+                enabledChainIds: [simpleSendModal.selectedChainId]
 
                 networksModel: root.filteredFlatNetworksModel
                 collectiblesModel: root.collectiblesBySymbolModel
