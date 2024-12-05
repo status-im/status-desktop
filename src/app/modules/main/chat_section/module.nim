@@ -882,7 +882,7 @@ method onCategoryNameChanged*(self: Module, category: Category) =
   self.view.chatsModel().renameCategory(category.id, category.name)
 
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
-  if(not self.chatContentModules.contains(chatId)):
+  if not self.chatContentModules.contains(chatId):
     return
   self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
@@ -1197,6 +1197,7 @@ method blockContact*(self: Module, publicKey: string) =
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
   self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=true)
+  self.onCommunityChannelDeletedOrChatLeft(publicKey)
 
 method onContactUnblocked*(self: Module, publicKey: string) =
   self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=false)
