@@ -59,7 +59,7 @@ QtObject:
 
   proc updateDeployState*(self: TokenModel, chainId: int, contractAddress: string, deployState: DeployState) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
-    if itemIdx == -1 and self.items[itemIdx].tokenDto.deployState == deployState:
+    if itemIdx == -1 or self.items[itemIdx].tokenDto.deployState == deployState:
       return
 
     self.items[itemIdx].tokenDto.deployState = deployState
@@ -69,7 +69,7 @@ QtObject:
 
   proc updateAddress*(self: TokenModel, chainId: int, oldContractAddress: string, newContractAddress: string) =
     let itemIdx = self.getItemIndex(chainId, oldContractAddress)
-    if itemIdx == -1 and self.items[itemIdx].tokenDto.address == newContractAddress:
+    if itemIdx == -1 or self.items[itemIdx].tokenDto.address == newContractAddress:
       return
 
     self.items[itemIdx].tokenDto.address = newContractAddress
@@ -79,7 +79,7 @@ QtObject:
 
   proc updateBurnState*(self: TokenModel, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
-    if itemIdx == -1 and self.items[itemIdx].burnState == burnState:
+    if itemIdx == -1 or self.items[itemIdx].burnState == burnState:
       return
   
     self.items[itemIdx].burnState = burnState
@@ -89,7 +89,7 @@ QtObject:
 
   proc updateRemoteDestructedAddresses*(self: TokenModel, chainId: int, contractAddress: string, remoteDestructedAddresses: seq[string]) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
-    if itemIdx == -1 and self.items[itemIdx].remoteDestructedAddresses == remoteDestructedAddresses:
+    if itemIdx == -1 or self.items[itemIdx].remoteDestructedAddresses == remoteDestructedAddresses:
       return
 
     self.items[itemIdx].remoteDestructedAddresses = remoteDestructedAddresses
@@ -113,7 +113,7 @@ QtObject:
 
   proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: Uint256) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
-    if itemIdx == -1 and self.items[itemIdx].remainingSupply == remainingSupply:
+    if itemIdx == -1 or self.items[itemIdx].remainingSupply == remainingSupply:
       return
 
     self.items[itemIdx].remainingSupply = remainingSupply
@@ -143,7 +143,7 @@ QtObject:
 
   proc setCommunityTokenHoldersLoading*(self: TokenModel, chainId: int, contractAddress: string, value: bool) =
     let itemIdx = self.getItemIndex(chainId, contractAddress)
-    if itemIdx == -1 and self.items[itemIdx].tokenHoldersLoading == value:
+    if itemIdx == -1 or self.items[itemIdx].tokenHoldersLoading == value:
       return
 
     self.items[itemIdx].tokenHoldersLoading = value
