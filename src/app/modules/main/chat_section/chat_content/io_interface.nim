@@ -1,9 +1,9 @@
 import NimQml
 
 import ../item as chat_item
-import ../../../../../app_service/service/message/dto/pinned_message
-import ../../../../../app_service/service/chat/dto/chat
-
+import app_service/service/message/dto/pinned_message
+import app_service/service/chat/dto/chat
+import app_service/service/message/dto/message
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
@@ -31,7 +31,10 @@ method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[Pinne
 method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPinMessage*(self: AccessInterface, mmessageId: string, actionInitiatedBy: string) {.base.} =
+method onPinMessage*(self: AccessInterface, messageId: string, actionInitiatedBy: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMuted*(self: AccessInterface) {.base.} =
