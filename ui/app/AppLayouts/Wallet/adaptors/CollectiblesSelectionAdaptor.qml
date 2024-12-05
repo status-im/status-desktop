@@ -46,6 +46,7 @@ QObject {
       Expected model structure:
 
         symbol              [string] - unique identifier of a collectible
+        chainId             [int] - unique identifier of a network
         collectionUid       [string] - unique identifier of a collection
         contractAddress     [string] - collectible's contract address
         name                [string] - collectible's name e.g. "Magicat"
@@ -73,6 +74,9 @@ QObject {
             icon            [url]    - icon of the subitem
     **/
     readonly property alias model: communityGroupsGrouppedByCollection
+
+    // In case collectibles are to be shown only on specific networks
+    property var enabledChainIds: []
 
     LeftJoinModel {
         id: jointCollectiblesByNwChainId
@@ -126,10 +130,18 @@ QObject {
             exposedRoles: ["balance", "groupingValue", "icon", "key"]
         }
 
-        filters: RangeFilter { /* 5 */
-            roleName: "balance"
-            minimumValue: 1
-        }
+        filters: [
+            RangeFilter { /* 5 */
+                roleName: "balance"
+                minimumValue: 1
+            },
+            // remove tokens not available on selected network(s)
+            FastExpressionFilter {
+                expression: root.enabledChainIds.includes(model.chainId)
+                expectedRoles: ["chainId"]
+                enabled: root.enabledChainIds.length
+            }
+        ]
 
         sorters: [ /* 6 */
             RoleSorter {
