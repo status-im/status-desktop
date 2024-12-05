@@ -50,8 +50,12 @@ Rectangle {
     **/
     property bool isScrolling
 
-    /** property that exposes the selected network **/
-    readonly property int selectedNetworkChainId: sendModalHeader.selectedNetworkChainId
+    /** input property for programatic selection of network **/
+    property int selectedChainId: -1
+
+    /** input property for programatic selection of token
+    (asset/collectible/collection) **/
+    property string selectedTokenKey
 
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
@@ -59,6 +63,8 @@ Rectangle {
     signal collectionSelected(string key)
     /** signal to propagate that a collectible was selected **/
     signal collectibleSelected(string key)
+    /** signal to propagate that a network was selected **/
+    signal networkSelected(string chainId)
 
     enabled: root.isScrolling
     color: Theme.palette.baseColor3
@@ -107,9 +113,13 @@ Rectangle {
         assetsModel: root.assetsModel
         collectiblesModel: root.collectiblesModel
 
+        selectedChainId: root.selectedChainId
+        selectedTokenKey: root.selectedTokenKey
+
         onCollectibleSelected: root.collectibleSelected(key)
         onCollectionSelected: root.collectionSelected(key)
         onAssetSelected: root.assetSelected(key)
+        onNetworkSelected: root.networkSelected(chainId)
     }
 
     StatusDialogDivider {
