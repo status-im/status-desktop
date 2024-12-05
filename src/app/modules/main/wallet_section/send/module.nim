@@ -243,7 +243,6 @@ proc signOnKeycard(self: Module) =
     break
   if self.tmpSendTransactionDetails.txHashBeingProcessed.len == 0:
     self.sendSignedTransactions()
-    self.clearTmpData()
 
 proc getRSVFromSignature(self: Module, signature: string): (string, string, string) =
   let finalSignature = singletonInstance.utils.removeHexPrefix(signature)
@@ -299,6 +298,8 @@ method onTransactionSigned*(self: Module, keycardFlowType: string, keycardEvent:
 
 method transactionWasSent*(self: Module, uuid: string, chainId: int = 0, approvalTx: bool = false, txHash: string = "", error: string = "") =
   self.tmpKeepPinPass = approvalTx # need to automate the swap flow with approval
+  defer:
+    self.clearTmpData(self.tmpKeepPinPass)
   if txHash.len == 0:
     self.view.sendTransactionSentSignal(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error)
     return
@@ -408,5 +409,4 @@ method splitAndFormatAddressPrefix*(self: Module, text : string, updateInStore: 
   return editedText
 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
-  self.clearTmpData(self.tmpKeepPinPass)
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
