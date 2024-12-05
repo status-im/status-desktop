@@ -43,6 +43,7 @@ Item {
 
     property bool swapEnabled
     property bool dAppsEnabled
+    property bool dAppsVisible
     property bool walletConnectEnabled: true
     property bool browserConnectEnabled: true
 
@@ -241,6 +242,7 @@ Item {
 
             swapEnabled: root.swapEnabled
             dAppsEnabled: root.dAppsEnabled
+            dAppsVisible: root.dAppsVisible
             walletConnectEnabled: root.walletConnectEnabled
             browserConnectEnabled: root.browserConnectEnabled
 

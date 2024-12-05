@@ -1656,7 +1656,8 @@ Item {
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
                             hideSignPhraseModal: userAgreementLoader.active
-                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                            dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
+                            dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
                             walletConnectEnabled: featureFlagsStore.dappsEnabled
                             browserConnectEnabled: featureFlagsStore.connectorEnabled
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
