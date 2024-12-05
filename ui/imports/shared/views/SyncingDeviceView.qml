@@ -47,6 +47,7 @@ Item {
         spacing: 0
 
         UserImage {
+            Layout.alignment: Qt.AlignHCenter
             name: root.userDisplayName
             colorId: root.userColorId
             colorHash: root.userColorHash
