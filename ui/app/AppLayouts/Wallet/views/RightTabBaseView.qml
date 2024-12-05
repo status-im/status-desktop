@@ -21,6 +21,7 @@ FocusScope {
 
     property bool swapEnabled
     property bool dAppsEnabled
+    property bool dAppsVisible
     property bool walletConnectEnabled
     property bool browserConnectEnabled
 
@@ -47,6 +48,7 @@ FocusScope {
             networkConnectionStore: root.networkConnectionStore
             loginType: root.store.loginType
             dAppsEnabled: root.dAppsEnabled
+            dAppsVisible: root.dAppsVisible
             dAppsModel: root.dAppsModel
             walletConnectEnabled: root.walletConnectEnabled
             browserConnectEnabled: root.browserConnectEnabled
