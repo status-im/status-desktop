@@ -17,8 +17,8 @@ Item {
 
     property var devicesModel
     property string userDisplayName
-    property string userColorId
-    property string userColorHash
+    property int userColorId
+    property var userColorHash
     property string userPublicKey
     property string userImage
     property string installationId
@@ -34,7 +34,6 @@ Item {
     QtObject {
         id: d
 
-        readonly property int deviceDelegateWidth: 220
         readonly property bool pairingFailed: root.localPairingState === Constants.LocalPairingState.Error
         readonly property bool pairingSuccess: root.localPairingState === Constants.LocalPairingState.Finished
         readonly property bool pairingInProgress: !d.pairingFailed && !d.pairingSuccess
@@ -60,7 +59,7 @@ Item {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.topMargin: 8
+            Layout.topMargin: Theme.halfPadding
             horizontalAlignment: Text.AlignHCenter
             color: Theme.palette.directColor1
             font.weight: Font.Bold
@@ -72,9 +71,9 @@ Item {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.topMargin: 31
+            Layout.topMargin: Theme.xlPadding
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 17
+            font.pixelSize: Theme.secondaryAdditionalTextSize
             color: d.pairingFailed ? Theme.palette.dangerColor1 : Theme.palette.directColor1
             text: {
                 if (d.pairingInProgress)
@@ -89,9 +88,9 @@ Item {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.bottomMargin: 25
+            Layout.topMargin: 4
+            Layout.bottomMargin: Theme.bigPadding
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 15
             color: Theme.palette.baseColor1
             visible: !!text
             text: {
@@ -105,7 +104,7 @@ Item {
 
         StatusSyncDeviceDelegate {
             Layout.alignment: Qt.AlignHCenter
-            implicitWidth: d.deviceDelegateWidth
+            Layout.fillWidth: true
             visible: !d.pairingFailed
             subTitle: d.pairingInProgress ? qsTr("Syncing with device")
                                           : qsTr("Synced device")
@@ -119,7 +118,7 @@ Item {
         }
 
         ErrorDetails {
-            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
             Layout.leftMargin: 60
             Layout.rightMargin: 60
             Layout.preferredWidth: 360
@@ -130,11 +129,10 @@ Item {
         }
 
         Rectangle {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 25
-            Layout.bottomMargin: 25
-            implicitHeight: 1
-            implicitWidth: d.deviceDelegateWidth
+            Layout.topMargin: Theme.bigPadding
+            Layout.bottomMargin: Theme.bigPadding
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
             color: Theme.palette.baseColor4
             opacity: listView.count ? 1 : 0
         }
@@ -143,11 +141,9 @@ Item {
             id: listView
 
             Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             Layout.fillHeight: true
-
-            implicitWidth: contentWidth
-            implicitHeight: contentHeight
-            contentWidth: d.deviceDelegateWidth
+            Layout.preferredHeight: contentHeight
 
             spacing: 4
             clip: true
