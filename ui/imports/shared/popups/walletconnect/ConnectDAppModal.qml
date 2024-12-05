@@ -196,8 +196,8 @@ StatusDialog {
                     if (d.connectionInProgress)
                         return false
                     if (!d.connectionAttempted)
-                        return root.selectedChains.length > 0
-                    return root.connectButtonEnabled
+                        return root.selectedChains.length > 0 && root.connectButtonEnabled
+                    return true
                 }
 
                 onClicked: {
