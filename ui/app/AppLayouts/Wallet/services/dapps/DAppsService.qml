@@ -72,6 +72,7 @@ SQUtils.QObject {
 
     /// Validates the pairing URI
     function validatePairingUri(uri) {
+        timeoutTimer.start()
         d.validatePairingUri(uri)
     }
 
@@ -190,14 +191,17 @@ SQUtils.QObject {
             root.pairingValidated(state)
         }
 
-        function onPairingResponse(key, state) {
-            timeoutTimer.stop()
+        function onPairingResponse(state) {
             if (state != Pairing.errors.uriOk) {
                 d.reportPairErrorState(state)
+                return
             }
+
+            timeoutTimer.restart()
         }
 
         function onConnectDApp(dappChains, dappUrl, dappName, dappIcon, connectorId, key) {
+            timeoutTimer.stop()
             const connectorIcon = Constants.dappImageByType[connectorId]
             root.connectDApp(dappChains, dappUrl, dappName, dappIcon, connectorIcon, key)
         }
