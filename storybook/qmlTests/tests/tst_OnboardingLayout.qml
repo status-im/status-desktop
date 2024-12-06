@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtTest 1.15
 
-import StatusQ 0.1
+import StatusQ 0.1 // ClipboardUtils
 
 import AppLayouts.Onboarding2 1.0
 import AppLayouts.Onboarding2.pages 1.0
@@ -11,8 +11,6 @@ import shared.stores 1.0 as SharedStores
 import AppLayouts.Onboarding.stores 1.0 as OOBS
 
 import utils 1.0
-
-import Storybook 1.0
 
 Item {
     id: root
@@ -111,6 +109,12 @@ Item {
         }
     }
 
+    SignalSpy {
+        id: finishedSpy
+        target: controlUnderTest
+        signalName: "finished"
+    }
+
     property OnboardingLayout controlUnderTest: null
 
     TestCase {
@@ -126,6 +130,7 @@ Item {
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
             dynamicSpy.cleanup()
+            finishedSpy.clear()
         }
 
         function keyClickSequence(keys) {
@@ -262,12 +267,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 6: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.CreateProfile)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.CreateProfileWithPassword)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithPassword)
         }
 
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
@@ -356,12 +359,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 7: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.CreateProfile)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.CreateProfileWithSeedphrase)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndNewSeedphrase_data() {
@@ -526,12 +527,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 14: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.CreateProfile)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndExistingSeedphrase_data() {
@@ -634,12 +633,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 10: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.CreateProfile)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
         }
 
         // FLOW: Log in -> Log in with recovery phrase
@@ -725,12 +722,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 7: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.Login)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.LoginWithSeedphrase)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithSeedphrase)
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -814,12 +809,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 7: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.Login)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.LoginWithSyncing)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithSyncing)
         }
 
         // FLOW: Log in -> Log in with Keycard
@@ -876,12 +869,10 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // PAGE 7: Splash
-            page = getCurrentPage(stack, "Splash")
-            dynamicSpy.setup(controlUnderTest, "finished")
-            tryCompare(dynamicSpy, "count", 1)
-            compare(dynamicSpy.signalArguments[0][0], OnboardingLayout.PrimaryPath.Login)
-            compare(dynamicSpy.signalArguments[0][1], OnboardingLayout.SecondaryPath.LoginWithKeycard)
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithKeycard)
         }
     }
 }
