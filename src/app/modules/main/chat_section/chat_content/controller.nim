@@ -184,6 +184,12 @@ proc init*(self: Controller) =
       return
     self.delegate.onGroupChatDetailsUpdated(args.newName, args.newColor, args.newImage)
 
+  self.events.on(SIGNAL_MESSAGE_EDITED) do(e: Args):
+    let args = MessageEditedArgs(e)
+    if(self.chatId != args.chatId):
+      return
+    self.delegate.onMessageEdited(args.message)
+
 proc getMyChatId*(self: Controller): string =
   return self.chatId
 
