@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Onboarding2.controls 1.0
+
 OnboardingPage {
     id: root
 
@@ -21,6 +23,8 @@ OnboardingPage {
 
     signal keypairAddContinueRequested()
     signal keypairAddTryAgainRequested()
+    signal reloadKeycardRequested()
+    signal createProfilePageRequested()
 
     pageClassName: "KeycardAddKeyPairPage"
 
@@ -93,7 +97,7 @@ OnboardingPage {
                 sourceComponent: failedIcon
             }
             PropertyChanges {
-                target: tryAgainButton
+                target: buttonColumn
                 visible: true
             }
             PropertyChanges {
@@ -163,13 +167,28 @@ OnboardingPage {
                 onClicked: root.keypairAddContinueRequested()
             }
 
-            StatusButton {
+            Column {
+                id: buttonColumn
+                Layout.preferredWidth: 280
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 240
-                id: tryAgainButton
-                text: qsTr("Try again")
+                spacing: 12
                 visible: false
-                onClicked: root.keypairAddTryAgainRequested()
+
+                MaybeOutlineButton {
+                    width: parent.width
+                    text: qsTr("Try again")
+                    onClicked: root.keypairAddTryAgainRequested()
+                }
+                MaybeOutlineButton {
+                    text: qsTr("I’ve inserted a different Keycard")
+                    width: parent.width
+                    onClicked: root.reloadKeycardRequested()
+                }
+                MaybeOutlineButton {
+                    text: qsTr("Create profile without Keycard")
+                    width: parent.width
+                    onClicked: root.createProfilePageRequested()
+                }
             }
         }
     }

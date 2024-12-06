@@ -21,8 +21,13 @@ import AppLayouts.Onboarding.stores 1.0 as OOBS
 Page {
     id: root
 
-    property OOBS.StartupStore startupStore: OOBS.StartupStore {} // TODO backend: replace with a new OnboardingStore, with just the needed props/functions?
-    required property SharedStores.MetricsStore metricsStore // TODO backend: externalize the metrics handling too?
+    // FIXME refactor to a hasPin() (instead of getPin())
+    // TODO backend: replace with a new OnboardingStore, with just the needed props/functions?
+    required property OOBS.StartupStore startupStore
+
+    // TODO backend: externalize the metrics handling too?
+    required property SharedStores.MetricsStore metricsStore
+
     required property ProfileStores.PrivacyStore privacyStore
 
     property int splashScreenDurationMs: 30000
@@ -33,7 +38,7 @@ Page {
     readonly property alias secondaryPath: d.secondaryPath
 
     signal finished(int primaryPath, int secondaryPath, var data)
-    signal keycardFactoryResetRequested() // TODO integrate/switch to an external flow
+    signal keycardFactoryResetRequested() // TODO integrate/switch to an external flow, needed?
     signal keycardReloaded()
 
     function restartFlow() {
@@ -60,6 +65,7 @@ Page {
         property string password
         property string keycardPin
         property bool enableBiometrics
+        // TODO collect seedphrase too?
 
         function resetState() {
             d.primaryPath = OnboardingLayout.PrimaryPath.Unknown
@@ -427,6 +433,10 @@ Page {
             stack.clear()
             stack.push(addKeypairPage)
         }
+        function onCreateProfilePageRequested() {
+            dbg.debugFlow("KEYPAIR TRANSFER -> CREATE PROFILE")
+            stack.replace([welcomePage, createProfilePage])
+        }
 
         // enable biometrics page
         function onEnableBiometricsRequested(enabled: bool) {
@@ -452,7 +462,11 @@ Page {
     Component {
         id: createProfilePage
         CreateProfilePage {
-            StackView.onActivated: d.secondaryPath = OnboardingLayout.SecondaryPath.Unknown // reset when we get back here
+            StackView.onActivated: {
+                // reset when we get back here
+                d.primaryPath = OnboardingLayout.PrimaryPath.CreateProfile
+                d.secondaryPath = OnboardingLayout.SecondaryPath.Unknown
+            }
         }
     }
 
@@ -578,7 +592,11 @@ Page {
     Component {
         id: loginPage
         LoginPage {
-            StackView.onActivated: d.secondaryPath = OnboardingLayout.SecondaryPath.Unknown // reset when we get back here
+            StackView.onActivated: {
+                // reset when we get back here
+                d.primaryPath = OnboardingLayout.PrimaryPath.Login
+                d.secondaryPath = OnboardingLayout.SecondaryPath.Unknown
+            }
         }
     }
 
