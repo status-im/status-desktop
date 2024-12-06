@@ -71,7 +71,7 @@ SplitView {
                 logs.logEvent("StartupStore.validMnemonic", ["mnemonic"], arguments)
                 return mnemonic === keycardMock.mnemonic
             }
-            function getPin() {
+            function getPin() { // FIXME refactor to a hasPin(); there's no way to extract the PIN from the Keycard once written
                 logs.logEvent("StartupStore.getPin()")
                 return ctrlPin.text
             }

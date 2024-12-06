@@ -21,8 +21,8 @@ import AppLayouts.Onboarding.stores 1.0 as OOBS
 Page {
     id: root
 
-    property OOBS.StartupStore startupStore: OOBS.StartupStore {} // TODO replace with a new OnboardingStore, with just the needed props/functions?
-    required property SharedStores.MetricsStore metricsStore // TODO externalize the centralized metrics handling too?
+    property OOBS.StartupStore startupStore: OOBS.StartupStore {} // TODO backend: replace with a new OnboardingStore, with just the needed props/functions?
+    required property SharedStores.MetricsStore metricsStore // TODO backend: externalize the metrics handling too?
     required property ProfileStores.PrivacyStore privacyStore
 
     property int splashScreenDurationMs: 30000
@@ -60,7 +60,6 @@ Page {
         property string password
         property string keycardPin
         property bool enableBiometrics
-        property string syncConnectionString
 
         function resetState() {
             d.primaryPath = OnboardingLayout.PrimaryPath.Unknown
@@ -68,7 +67,6 @@ Page {
             d.password = ""
             d.keycardPin = ""
             d.enableBiometrics = false
-            d.syncConnectionString = ""
         }
 
         readonly property Settings settings: Settings {
@@ -260,7 +258,7 @@ Page {
         function onSetPasswordRequested(password: string) {
             dbg.debugFlow("SET PASSWORD REQUESTED")
             d.password = password
-            // TODO set the password immediately?
+            // TODO backend: set the password immediately?
             stack.clear()
             d.pushOrSkipBiometricsPage()
         }
@@ -289,6 +287,7 @@ Page {
         function onKeycardFactoryResetRequested() {
             dbg.debugFlow("KEYCARD FACTORY RESET REQUESTED")
             // TODO start keycard factory reset in a popup here
+            // cf. KeycardStore.runFactoryResetPopup()
             root.keycardFactoryResetRequested()
         }
         function onLoginWithThisKeycardRequested() {
@@ -329,7 +328,7 @@ Page {
         function onKeycardPinCreated(pin) {
             dbg.debugFlow(`KEYCARD PIN CREATED: ${pin}`)
             d.keycardPin = pin
-            // TODO set the PIN immediately?
+            // TODO backend: set the PIN immediately?
 
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase ||
                     d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
@@ -348,7 +347,7 @@ Page {
         function onKeycardPinEntered(pin) {
             dbg.debugFlow(`KEYCARD PIN ENTERED: ${pin}`)
             d.keycardPin = pin
-            // TODO set the PIN immediately?
+            // TODO backend: set the PIN immediately?
 
             if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase ||
                     d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
@@ -397,7 +396,6 @@ Page {
         // login with sync pages
         function onSyncProceedWithConnectionString(connectionString) {
             dbg.debugFlow(`SYNC PROCEED WITH CONNECTION STRING: ${connectionString}`)
-            d.syncConnectionString = connectionString
             root.startupStore.setConnectionString(connectionString)
             // TODO backend: start the sync
             stack.clear()
@@ -482,8 +480,8 @@ Page {
                 running: runningProgressAnimation
                 onStopped: {
                     dbg.debugFlow(`ONBOARDING FINISHED; ${d.primaryPath} -> ${d.secondaryPath}`)
-                    root.finished(d.primaryPath, d.secondaryPath,
-                                  {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics, "syncConnectionString": d.syncConnectionString})
+                    root.finished(d.primaryPath, d.secondaryPath, // TODO collect seedphrase?
+                                  {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics})
                 }
             }
         }
@@ -594,7 +592,7 @@ Page {
     Component {
         id: syncProgressPage
         SyncProgressPage {
-            syncState: SyncProgressPage.SyncState.InProgress // TODO integrate backend
+            syncState: SyncProgressPage.SyncState.InProgress // TODO backend: integrate
             timeoutInterval: root.splashScreenDurationMs
         }
     }
@@ -602,7 +600,7 @@ Page {
     Component {
         id: addKeypairPage
         KeycardAddKeyPairPage {
-            addKeyPairState: KeycardAddKeyPairPage.AddKeyPairState.InProgress // TODO integrate backend
+            addKeyPairState: KeycardAddKeyPairPage.AddKeyPairState.InProgress // TODO backend: integrate
             timeoutInterval: root.splashScreenDurationMs
         }
     }
