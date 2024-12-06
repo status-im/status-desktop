@@ -8,6 +8,8 @@ import utils 1.0
 QtObject {
     id: root
 
+    signal contactInfoRequestFinished(string publicKey, bool ok)
+
     readonly property QtObject _d: QtObject {
         id: d
 
@@ -18,6 +20,7 @@ QtObject {
         Component.onCompleted: {
             mainModuleInst.resolvedENS.connect(root.resolvedENS)
             contactsModuleInst.trustStatusRemoved.connect(root.trustStatusRemoved)
+            contactsModuleInst.contactInfoRequestFinished.connect(root.contactInfoRequestFinished)
         }
     }
 
