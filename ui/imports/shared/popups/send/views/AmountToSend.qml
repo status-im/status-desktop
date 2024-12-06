@@ -76,6 +76,10 @@ Control {
     property bool mainInputLoading
     property bool bottomTextLoading
 
+    /* This allows user to add a component to the right of bottom text
+       Not set = not shown */
+    property alias bottomRightComponent: bottomRightComponent.sourceComponent
+
     /* Allows mark input as invalid when it's valid number but doesn't satisfy
      * arbitrary external criteria, e.g. is higher than maximum expected value. */
     property bool markAsInvalid: false
@@ -193,13 +197,10 @@ Control {
                 return validator.maxDecimalDigits + validator.maxIntegralDigits
             } else {
                 let availableSpaceForAmount = root.availableWidth - currencyField.contentWidth - layout.spacing
-                return Math.floor(availableSpaceForAmount/textMetrics.tightBoundingRect.width)
+                // k is a coefficient based on the font style (typically 𝑘 ≈ 0.6)
+                let digitWidth = textField.font.pixelSize * 0.6
+                return Math.floor(availableSpaceForAmount/digitWidth)
             }
-        }
-
-        readonly property TextMetrics textMetrics: TextMetrics {
-            font: textField.font
-            text: "0"
         }
     }
 
@@ -285,66 +286,73 @@ Control {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
             Layout.bottomMargin: 12
-            color: Theme.palette.separator
+            color: Theme.palette.directColor8
             visible: root.dividerVisible
         }
 
-        StatusBaseText {
-            id: bottomItem
-
-            objectName: "bottomItemText"
-
+        RowLayout {
             Layout.fillWidth: true
+            StatusBaseText {
+                id: bottomItem
 
-            text: {
-                const divisor = SQUtils.AmountsArithmetic.fromExponent(
-                                  d.fiatMode ? root.multiplierIndex
-                                             : root.fiatDecimalPlaces)
-                const divided = SQUtils.AmountsArithmetic.div(
-                                  SQUtils.AmountsArithmetic.fromString(
-                                      d.secondaryValue), divisor)
-                const asNumber = SQUtils.AmountsArithmetic.toNumber(divided)
+                objectName: "bottomItemText"
 
-                return d.fiatMode ? root.formatBalance(asNumber)
-                                  : root.formatFiat(asNumber)
-            }
+                Layout.fillWidth: true
 
-            elide: Text.ElideMiddle
-            font.pixelSize: 13
-            color: Theme.palette.directColor5
-
-            MouseArea {
-                objectName: "amountToSend_mouseArea"
-
-                anchors.fill: parent
-                cursorShape: enabled ? Qt.PointingHandCursor : undefined
-                enabled: root.fiatInputInteractive
-
-                onClicked: {
-                    const secondaryValue = d.secondaryValue
-
-                    d.fiatMode = !d.fiatMode
-
-                    if (textField.length === 0)
-                        return
-
-                    const decimalPlaces = d.fiatMode ? root.fiatDecimalPlaces
-                                                     : root.multiplierIndex
+                text: {
                     const divisor = SQUtils.AmountsArithmetic.fromExponent(
-                                      decimalPlaces)
+                                      d.fiatMode ? root.multiplierIndex
+                                                 : root.fiatDecimalPlaces)
+                    const divided = SQUtils.AmountsArithmetic.div(
+                                      SQUtils.AmountsArithmetic.fromString(
+                                          d.secondaryValue), divisor)
+                    const asNumber = SQUtils.AmountsArithmetic.toNumber(divided)
 
-                    const stringNumber = SQUtils.AmountsArithmetic.div(
-                        SQUtils.AmountsArithmetic.fromString(secondaryValue),
-                        divisor).toFixed(decimalPlaces)
-
-                    const trimmed = d.fiatMode
-                                  ? stringNumber
-                                  : d.removeDecimalTrailingZeros(stringNumber)
-
-                    textField.text = d.localize(trimmed)
+                    return d.fiatMode ? root.formatBalance(asNumber)
+                                      : root.formatFiat(asNumber)
                 }
+
+                elide: Text.ElideMiddle
+                font.pixelSize: 13
+                color: Theme.palette.directColor5
+
+                MouseArea {
+                    objectName: "amountToSend_mouseArea"
+
+                    anchors.fill: parent
+                    cursorShape: enabled ? Qt.PointingHandCursor : undefined
+                    enabled: root.fiatInputInteractive
+
+                    onClicked: {
+                        const secondaryValue = d.secondaryValue
+
+                        d.fiatMode = !d.fiatMode
+
+                        if (textField.length === 0)
+                            return
+
+                        const decimalPlaces = d.fiatMode ? root.fiatDecimalPlaces
+                                                         : root.multiplierIndex
+                        const divisor = SQUtils.AmountsArithmetic.fromExponent(
+                                          decimalPlaces)
+
+                        const stringNumber = SQUtils.AmountsArithmetic.div(
+                                               SQUtils.AmountsArithmetic.fromString(secondaryValue),
+                                               divisor).toFixed(decimalPlaces)
+
+                        const trimmed = d.fiatMode
+                                      ? stringNumber
+                                      : d.removeDecimalTrailingZeros(stringNumber)
+
+                        textField.text = d.localize(trimmed)
+                    }
+                }
+                visible: !root.bottomTextLoading
             }
-            visible: !root.bottomTextLoading
+            Loader {
+                id: bottomRightComponent
+                Layout.alignment: Qt.AlignVCenter
+            }
         }
 
         LoadingComponent {

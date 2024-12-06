@@ -660,6 +660,7 @@ Item {
 
         simpleSendEnabled: appMain.featureFlagsStore.simpleSendEnabled
 
+        // for simple send
         walletAccountsModel: WalletStores.RootStore.accounts
         flatNetworksModel: WalletStores.RootStore.flatNetworks
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
@@ -667,6 +668,9 @@ Item {
         currentCurrency: appMain.currencyStore.currentCurrency
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
+        fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
+            return appMain.currencyStore.formatCurrencyAmount(amount, symbol)
+        }
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
