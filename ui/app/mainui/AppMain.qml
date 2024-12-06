@@ -671,6 +671,8 @@ Item {
         fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
             return appMain.currencyStore.formatCurrencyAmount(amount, symbol)
         }
+        savedAddressesModel: WalletStores.RootStore.savedAddresses
+        recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
