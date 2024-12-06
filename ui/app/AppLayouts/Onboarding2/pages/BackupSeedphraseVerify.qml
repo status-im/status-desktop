@@ -83,6 +83,8 @@ OnboardingPage {
                             text: modelData.seedWordNumber
                         }
                         SeedphraseVerifyInput {
+                            readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx into the seedWords
+                            objectName: "seedInput_%1".arg(index)
                             Layout.fillWidth: true
                             id: seedInput
                             valid: text === modelData.seedWord
@@ -104,6 +106,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Continue")
                 enabled: seedRepeater.allValid

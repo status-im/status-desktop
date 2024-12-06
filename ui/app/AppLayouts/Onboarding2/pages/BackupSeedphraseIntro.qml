@@ -45,6 +45,7 @@ OnboardingPage {
                 text: qsTr("Your recovery phrase is a 12 word passcode to your funds that cannot be recovered if lost. Write it down offline and store it somewhere secure.")
             }
             StatusButton {
+                objectName: "btnBackupSeedphrase"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Backup recovery phrase")
                 onClicked: root.backupSeedphraseRequested()

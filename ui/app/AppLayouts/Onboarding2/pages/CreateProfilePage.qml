@@ -75,6 +75,7 @@ OnboardingPage {
                         color: Theme.palette.baseColor1
                     }
                     StatusButton {
+                        objectName: "btnCreateWithPassword"
                         Layout.fillWidth: true
                         text: qsTr("Let’s go!")
                         font.pixelSize: Theme.additionalTextSize
@@ -89,6 +90,7 @@ OnboardingPage {
                 contentItem: ColumnLayout {
                     spacing: 0
                     ListItemButton {
+                        objectName: "btnCreateWithSeedPhrase"
                         Layout.fillWidth: true
                         text: qsTr("Use a recovery phrase")
                         subTitle: qsTr("If you already have an Ethereum wallet")
@@ -103,6 +105,7 @@ OnboardingPage {
                         color: Theme.palette.statusMenu.separatorColor
                     }
                     ListItemButton {
+                        objectName: "btnCreateWithEmptyKeycard"
                         Layout.fillWidth: true
                         text: qsTr("Use an empty Keycard")
                         subTitle: qsTr("Store your new profile keys on Keycard")

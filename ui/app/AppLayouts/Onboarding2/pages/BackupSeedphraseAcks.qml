@@ -62,21 +62,25 @@ OnboardingPage {
                 }
                 contentItem: ColumnLayout {
                     StatusCheckBox {
+                        objectName: "ack1"
                         Layout.fillWidth: true
                         id: ack1
                         text: qsTr("I have a pen and paper")
                     }
                     StatusCheckBox {
+                        objectName: "ack2"
                         Layout.fillWidth: true
                         id: ack2
                         text: qsTr("I am ready to write down my recovery phrase")
                     }
                     StatusCheckBox {
+                        objectName: "ack3"
                         Layout.fillWidth: true
                         id: ack3
                         text: qsTr("I know where I’ll store it")
                     }
                     StatusCheckBox {
+                        objectName: "ack4"
                         Layout.fillWidth: true
                         id: ack4
                         text: qsTr("I know I can only reveal it once")
@@ -84,6 +88,7 @@ OnboardingPage {
                 }
             }
             StatusButton {
+                objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Continue")
                 enabled: ack1.checked && ack2.checked && ack3.checked && ack4.checked

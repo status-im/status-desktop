@@ -24,7 +24,6 @@ Control {
         readonly property string secondaryText: root.newsModel.get(pageIndicator.currentIndex).secondary
 
         Image {
-            id: image
             anchors.centerIn: parent
             width: Math.min(parent.width / 3 * 2, 375)
             height: Math.min(parent.height / 3 * 2, 473)

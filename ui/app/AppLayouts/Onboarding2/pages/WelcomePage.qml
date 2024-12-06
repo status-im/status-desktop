@@ -102,11 +102,13 @@ OnboardingPage {
                 spacing: 12
 
                 StatusButton {
+                    objectName: "btnCreateProfile"
                     Layout.fillWidth: true
                     text: qsTr("Create profile")
                     onClicked: root.createProfileRequested()
                 }
                 StatusButton {
+                    objectName: "btnLogin"
                     Layout.fillWidth: true
                     text: qsTr("Log in")
                     onClicked: root.loginRequested()
@@ -115,11 +117,12 @@ OnboardingPage {
                     borderColor: Theme.palette.baseColor2
                 }
                 StatusBaseText {
+                    objectName: "approvalLinks"
                     Layout.fillWidth: true
                     Layout.topMargin: Theme.halfPadding
                     text: qsTr("By proceeding you accept Status<br>%1 and %2")
-                    .arg(Utils.getStyledLink(qsTr("Terms of Use"), "#terms", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
-                    .arg(Utils.getStyledLink(qsTr("Privacy Policy"), "#privacy", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
+                        .arg(Utils.getStyledLink(qsTr("Terms of Use"), "#terms", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
+                        .arg(Utils.getStyledLink(qsTr("Privacy Policy"), "#privacy", hoveredLink, Theme.palette.primaryColor1, Theme.palette.primaryColor1, false))
                     textFormat: Text.RichText
                     font.pixelSize: Theme.tertiaryTextFontSize
                     lineHeightMode: Text.FixedHeight

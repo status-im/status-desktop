@@ -154,6 +154,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 240
                 id: continueButton

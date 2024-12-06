@@ -77,6 +77,7 @@ OnboardingPage {
                         color: Theme.palette.baseColor1
                     }
                     StatusButton {
+                        objectName: "btnWithSeedphrase"
                         Layout.fillWidth: true
                         text: qsTr("Enter recovery phrase")
                         font.pixelSize: Theme.additionalTextSize
@@ -91,6 +92,7 @@ OnboardingPage {
                 contentItem: ColumnLayout {
                     spacing: 0
                     ListItemButton {
+                        objectName: "btnBySyncing"
                         Layout.fillWidth: true
                         text: qsTr("Log in by syncing")
                         subTitle: qsTr("If you have Status on another device")
@@ -105,6 +107,7 @@ OnboardingPage {
                         color: Theme.palette.statusMenu.separatorColor
                     }
                     ListItemButton {
+                        objectName: "btnWithKeycard"
                         Layout.fillWidth: true
                         text: qsTr("Log in with Keycard")
                         subTitle: qsTr("If your profile keys are stored on a Keycard")
@@ -119,6 +122,7 @@ OnboardingPage {
     Component {
         id: loginWithSyncAck
         StatusDialog {
+            objectName: "loginWithSyncAckPopup"
             title: qsTr("Log in by syncing")
             width: 480
             padding: 20
@@ -134,16 +138,19 @@ OnboardingPage {
                     Layout.fillWidth: true
                     spacing: Theme.padding
                     StatusCheckBox {
+                        objectName: "ack1"
                         Layout.fillWidth: true
                         id: ack1
                         text: qsTr("Connect both devices to the same network")
                     }
                     StatusCheckBox {
+                        objectName: "ack2"
                         Layout.fillWidth: true
                         id: ack2
                         text: qsTr("Make sure you are logged in on the other device")
                     }
                     StatusCheckBox {
+                        objectName: "ack3"
                         Layout.fillWidth: true
                         id: ack3
                         text: qsTr("Disable the firewall and VPN on both devices")
@@ -158,6 +165,7 @@ OnboardingPage {
                         onClicked: close()
                     }
                     StatusButton {
+                        objectName: "btnContinue"
                         text: qsTr("Continue")
                         enabled: ack1.checked && ack2.checked && ack3.checked
                         onClicked: {

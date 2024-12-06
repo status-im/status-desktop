@@ -120,7 +120,7 @@ Page {
         name: "app.status.onboarding"
 
         function debugFlow(message) {
-            const currentPageName  = stack.currentItem ? stack.currentItem.pageClassName : "<empty stack>"
+            const currentPageName = stack.currentItem ? stack.currentItem.pageClassName : "<empty stack>"
             console.info(dbg, "!!!", currentPageName, "->", message)
         }
     }
@@ -128,6 +128,7 @@ Page {
     // page stack
     StackView {
         id: stack
+        objectName: "stack"
         anchors.fill: parent
         initialItem: welcomePage
 
@@ -330,7 +331,8 @@ Page {
             d.keycardPin = pin
             // TODO set the PIN immediately?
 
-            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase ||
+                    d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
                 dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
                 stack.clear()
                 // TODO backend: transfer the keypair
@@ -348,7 +350,8 @@ Page {
             d.keycardPin = pin
             // TODO set the PIN immediately?
 
-            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase) {
+            if (d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardNewSeedphrase ||
+                    d.secondaryPath === OnboardingLayout.SecondaryPath.CreateProfileWithKeycardExistingSeedphrase) {
                 dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
                 stack.clear()
                 // TODO backend: transfer the keypair
@@ -397,15 +400,13 @@ Page {
             d.syncConnectionString = connectionString
             root.startupStore.setConnectionString(connectionString)
             // TODO backend: start the sync
-            Backpressure.debounce(root, 1000, function() {
-                stack.clear()
-                stack.replace(syncProgressPage)
-            })()
+            stack.clear()
+            stack.replace(syncProgressPage)
         }
 
         function onRestartSyncRequested() {
             dbg.debugFlow("RESTART SYNC REQUESTED")
-            // TODO backend: start the sync
+            // TODO backend: restart the sync
             stack.clear()
             stack.replace(syncProgressPage)
         }

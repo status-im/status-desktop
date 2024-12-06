@@ -54,11 +54,13 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnShare"
                 Layout.fillWidth: true
                 text: qsTr("Share usage data")
                 onClicked: root.shareUsageDataRequested(true)
             }
             StatusButton {
+                objectName: "btnDontShare"
                 Layout.fillWidth: true
                 text: qsTr("Not now")
                 normalColor: "transparent"
@@ -70,6 +72,7 @@ OnboardingPage {
     }
 
     StatusButton {
+        objectName: "infoButton"
         width: 32
         height: 32
         icon.width: 20
@@ -86,6 +89,7 @@ OnboardingPage {
     Component {
         id: helpUsImproveDetails
         StatusDialog {
+            objectName: "helpUsImproveDetailsPopup"
             title: qsTr("Help us improve Status")
             width: 480
             standardButtons: Dialog.Ok

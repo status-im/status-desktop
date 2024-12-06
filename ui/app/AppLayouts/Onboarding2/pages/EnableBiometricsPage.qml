@@ -51,6 +51,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnEnableBiometrics"
                 Layout.topMargin: Theme.halfPadding
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Yes, use biometrics")
@@ -58,6 +59,7 @@ OnboardingPage {
             }
 
             StatusFlatButton {
+                objectName: "btnDontEnableBiometrics"
                 Layout.topMargin: -Theme.halfPadding
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Maybe later")

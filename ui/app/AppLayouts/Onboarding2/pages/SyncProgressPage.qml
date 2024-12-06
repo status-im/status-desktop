@@ -166,6 +166,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnLogin"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 240
                 id: loginButton
