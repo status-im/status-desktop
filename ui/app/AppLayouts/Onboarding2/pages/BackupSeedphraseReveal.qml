@@ -52,6 +52,7 @@ OnboardingPage {
                 Layout.preferredHeight: seedGrid.height
 
                 GridLayout {
+                    objectName: "seedGrid"
                     id: seedGrid
                     width: parent.width
                     columns: 2
@@ -93,6 +94,7 @@ OnboardingPage {
                 }
 
                 StatusButton {
+                    objectName: "btnReveal"
                     anchors.centerIn: parent
                     text: qsTr("Reveal recovery phrase")
                     icon.name: "show"
@@ -111,6 +113,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                objectName: "btnConfirm"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Confirm recovery phrase")
                 enabled: d.seedphraseRevealed

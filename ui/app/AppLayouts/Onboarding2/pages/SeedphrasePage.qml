@@ -24,7 +24,7 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(600, root.availableWidth)
+            width: Math.min(610, root.availableWidth)
             spacing: Theme.bigPadding
 
             StatusBaseText {
@@ -47,11 +47,13 @@ OnboardingPage {
             EnterSeedPhrase {
                 id: seedPanel
                 Layout.preferredWidth: 580
+                Layout.alignment: Qt.AlignHCenter
                 isSeedPhraseValid: root.isSeedPhraseValid
                 onSubmitSeedPhrase: root.seedphraseValidated()
             }
 
             StatusButton {
+                objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: -Theme.halfPadding
                 enabled: seedPanel.seedPhraseIsValid

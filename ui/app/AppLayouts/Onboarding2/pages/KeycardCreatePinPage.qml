@@ -102,7 +102,7 @@ KeycardBasePage {
             }
             StateChangeScript {
                 script: {
-                    pinInput.setPin("123456") // set a fake PIN, doesn't matter at this point
+                    pinInput.setPin(d.pin)
                     root.keycardPinCreated(d.pin)
                 }
             }

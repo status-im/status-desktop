@@ -51,6 +51,7 @@ OnboardingPage {
                 onReturnPressed: d.submit()
             }
             StatusButton {
+                objectName: "btnConfirmPassword"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Confirm password")
                 enabled: passView.ready
@@ -60,6 +61,7 @@ OnboardingPage {
     }
 
     StatusButton {
+        objectName: "infoButton"
         width: 32
         height: 32
         icon.width: 20
@@ -76,6 +78,7 @@ OnboardingPage {
     Component {
         id: passwordDetailsPopup
         StatusSimpleTextPopup {
+            objectName: "passwordDetailsPopup"
             title: qsTr("Create profile password")
             width: 480
             destroyOnClose: true
