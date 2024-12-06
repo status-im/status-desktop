@@ -91,6 +91,7 @@ ColumnLayout {
             Layout.topMargin: Theme.padding
             spacing: Theme.padding
             StatusSyncCodeInput {
+                objectName: "syncCodeInput"
                 id: syncCode
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 440

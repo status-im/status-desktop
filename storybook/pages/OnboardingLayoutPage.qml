@@ -18,6 +18,7 @@ import utils 1.0
 import AppLayouts.Onboarding2 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
+import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
 
 // compat
@@ -33,7 +34,7 @@ SplitView {
         id: keycardMock
         property string stateType: ctrlKeycardState.currentValue
 
-        readonly property var keycardStates: [
+        readonly property var keycardStates: [ // FIXME replace with proper/separate enums for the intro/pin pages
             // initial
             Constants.startupState.keycardNoPCSCService,
             Constants.startupState.keycardPluginReader,
@@ -133,12 +134,13 @@ SplitView {
             property bool metricsPopupSeen
         }
 
-        onFinished: (primaryPath, secondaryPath, data) => {
-            console.warn("!!! ONBOARDING FINISHED; primary path:", primaryPath, "; secondary:", secondaryPath, "; data:", JSON.stringify(data))
-            logs.logEvent("onFinished", ["primaryPath", "secondaryPath", "data"], arguments)
+        onFinished: (primaryFlow, secondaryFlow, data) => {
+            console.warn("!!! ONBOARDING FINISHED; primary flow:", primaryFlow, "; secondary:", secondaryFlow, "; data:", JSON.stringify(data))
+            logs.logEvent("onFinished", ["primaryFlow", "secondaryFlow", "data"], arguments)
 
-            console.warn("!!! RESTARTING FLOW")
-            restartFlow()
+            console.warn("!!! SIMULATION: SHOWING SPLASH")
+            stack.clear()
+            stack.push(splashScreen, { runningProgressAnimation: true })
             ctrlKeycardState.currentIndex = 0
         }
         onKeycardFactoryResetRequested: {
@@ -151,6 +153,25 @@ SplitView {
             logs.logEvent("onKeycardReloaded")
             console.warn("!!! RELOAD KEYCARD")
             ctrlKeycardState.currentIndex = 0
+        }
+    }
+
+    Component {
+        id: splashScreen
+        DidYouKnowSplashScreen {
+            readonly property string pageClassName: "Splash"
+            property bool runningProgressAnimation
+            NumberAnimation on progress {
+                from: 0.0
+                to: 1
+                duration: onboarding.splashScreenDurationMs
+                running: runningProgressAnimation
+                onStopped: {
+                    console.warn("!!! SPLASH SCREEN DONE")
+                    console.warn("!!! RESTARTING FLOW")
+                    onboarding.restartFlow()
+                }
+            }
         }
     }
 
@@ -182,7 +203,7 @@ SplitView {
                     text: "Current page: %1".arg(onboarding.stack.currentItem ? onboarding.stack.currentItem.pageClassName : "")
                 }
                 Label {
-                    text: `Current path: ${onboarding.primaryPath} -> ${onboarding.secondaryPath}`
+                    text: `Current flow: ${onboarding.primaryFlow} -> ${onboarding.secondaryFlow}`
                 }
                 Label {
                     text: "Stack depth: %1".arg(onboarding.stack.depth)
