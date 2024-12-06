@@ -5,6 +5,7 @@ import QtQuick.Controls 2.15
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 
 import Models 1.0
 import Storybook 1.0
@@ -33,6 +34,15 @@ SplitView {
         }
 
         readonly property var walletAccountsModel: WalletAccountsModel{}
+
+        function getCurrencyAmount(amount, symbol) {
+            return ({
+                        amount: amount,
+                        symbol: symbol ? symbol.toUpperCase() : root.currentCurrency,
+                        displayDecimals: 2,
+                        stripTrailingZeroes: false
+                    })
+        }
     }
 
     PopupBackground {
@@ -60,10 +70,21 @@ SplitView {
         modal: false
         closePolicy: Popup.CloseOnEscape
 
+        interactive: interactiveCheckbox.checked
+
         accountsModel: d.walletAccountsModel
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
+
+        currentCurrency: "USD"
+        fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
+            if (isNaN(amount)) {
+                return "N/A"
+            }
+            var currencyAmount = d.getCurrencyAmount(amount, symbol)
+            return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
+        }
 
         Binding on selectedAccountAddress {
             value: accountsCombobox.currentValue ?? ""
@@ -123,7 +144,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: Qt.resolvedUrl(""),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_4",
@@ -144,7 +166,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: Qt.resolvedUrl(""),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_5",
@@ -165,7 +188,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: Qt.resolvedUrl(""),
+                tokenType: Constants.TokenType.ERC721
             },
             // collection 1
             {
@@ -192,7 +216,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: Qt.resolvedUrl(""),
+                tokenType: Constants.TokenType.ERC1155
             },
             {
                 tokenId: "id_2",
@@ -213,7 +238,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "",
                 communityName: "",
-                communityImage: Qt.resolvedUrl("")
+                communityImage: Qt.resolvedUrl(""),
+                tokenType: Constants.TokenType.ERC1155
             },
             // collection 3, community token
             {
@@ -235,7 +261,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_1",
                 communityName: "My community",
-                communityImage: Constants.tokenIcon("KIN", false)
+                communityImage: Constants.tokenIcon("KIN", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_7",
@@ -256,7 +283,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_1",
                 communityName: "My community",
-                communityImage: Constants.tokenIcon("KIN", false)
+                communityImage: Constants.tokenIcon("KIN", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_8",
@@ -277,7 +305,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_1",
                 communityName: "My community",
-                communityImage: Constants.tokenIcon("KIN", false)
+                communityImage: Constants.tokenIcon("KIN", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_9",
@@ -298,7 +327,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_1",
                 communityName: "My community",
-                communityImage: Constants.tokenIcon("KIN", false)
+                communityImage: Constants.tokenIcon("KIN", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_10",
@@ -319,7 +349,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_2",
                 communityName: "My community 2",
-                communityImage: Constants.tokenIcon("ICOS", false)
+                communityImage: Constants.tokenIcon("ICOS", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_11",
@@ -340,7 +371,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_2",
                 communityName: "My community 2",
-                communityImage: Constants.tokenIcon("ICOS", false)
+                communityImage: Constants.tokenIcon("ICOS", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_11",
@@ -361,7 +393,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_2",
                 communityName: "My community 2",
-                communityImage: Constants.tokenIcon("ICOS", false)
+                communityImage: Constants.tokenIcon("ICOS", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_12",
@@ -382,7 +415,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_2",
                 communityName: "My community 2",
-                communityImage: Constants.tokenIcon("ICOS", false)
+                communityImage: Constants.tokenIcon("ICOS", false),
+                tokenType: Constants.TokenType.ERC721
             },
             {
                 tokenId: "id_13",
@@ -403,7 +437,8 @@ SplitView {
                 mediaUrl: Qt.resolvedUrl(""),
                 communityId: "community_2",
                 communityName: "My community 2",
-                communityImage: Constants.tokenIcon("ICOS", false)
+                communityImage: Constants.tokenIcon("ICOS", false),
+                tokenType: Constants.TokenType.ERC721
             }
         ]
 
@@ -420,8 +455,10 @@ SplitView {
         ColumnLayout {
             spacing: 20
 
-            Text {
-                text: "Values to set before popup is launched"
+            CheckBox {
+                id: interactiveCheckbox
+                text: "Is interactive"
+                checked: true
             }
 
             Text {
@@ -489,6 +526,28 @@ SplitView {
             }
             Text {
                 text: "token selected is: " + simpleSend.selectedTokenKey
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                TextField {
+                    id: amountInput
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 50
+                    validator: RegularExpressionValidator {
+                        regularExpression: /^\d*\.?\d*$/
+                    }
+                }
+                Button {
+                    text: "update in modal"
+                    onClicked: simpleSend.selectedAmount = amountInput.text
+                }
+            }
+            Text {
+                text: "amount selected in base unit: " + simpleSend.selectedAmountInBaseUnit
+            }
+            Text {
+                text: "amount entered is: " + simpleSend.selectedAmount
             }
 
             RolesRenamingModel {

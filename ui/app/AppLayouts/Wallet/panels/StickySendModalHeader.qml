@@ -53,10 +53,6 @@ Rectangle {
     /** input property for programatic selection of network **/
     property int selectedChainId: -1
 
-    /** input property for programatic selection of token
-    (asset/collectible/collection) **/
-    property string selectedTokenKey
-
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -65,6 +61,12 @@ Rectangle {
     signal collectibleSelected(string key)
     /** signal to propagate that a network was selected **/
     signal networkSelected(string chainId)
+
+    /** input function for programatic selection of token
+    (asset/collectible/collection) **/
+    function setToken(name, icon, key) {
+        sendModalHeader.setToken(name, icon, key)
+    }
 
     enabled: root.isScrolling
     color: Theme.palette.baseColor3
@@ -114,7 +116,6 @@ Rectangle {
         collectiblesModel: root.collectiblesModel
 
         selectedChainId: root.selectedChainId
-        selectedTokenKey: root.selectedTokenKey
 
         onCollectibleSelected: root.collectibleSelected(key)
         onCollectionSelected: root.collectionSelected(key)
