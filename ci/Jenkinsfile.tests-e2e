@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.7'
+library 'status-jenkins-lib@v1.9.16'
 
 pipeline {
 
@@ -69,7 +69,7 @@ pipeline {
     SQUISH_DIR = '/opt/squish-runner-7.2.1'
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
-    
+
     /* To stop e2e tests using port 8545 */
     STATUS_RUNTIME_HTTP_API = 'False'
     STATUS_RUNTIME_WS_API = 'False'
