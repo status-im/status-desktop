@@ -71,6 +71,8 @@ StatusDialog {
     Only networks valid as per mainnet/testnet selection
     **/
     required property var networksModel
+    required property var savedAddressesModel
+    required property var recentRecipientsModel
     /** Input property holds currently selected Fiat currency **/
     required property string currentCurrency
     /** Input function to format currency amount to locale string **/
@@ -91,6 +93,14 @@ StatusDialog {
     Crypto value in a base unit as a string integer,
     e.g. 1000000000000000000 for 1 ETH **/
     readonly property string selectedAmountInBaseUnit: amountToSend.amount
+
+    /** TODO: replace with new and improved recipient selector StatusDateRangePicker
+    TBD under https://github.com/status-im/status-desktop/issues/16916 **/
+    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
+    required property var fnResolveENS
+    function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
+        recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
+    }
 
     QtObject {
         id: d
@@ -172,7 +182,6 @@ StatusDialog {
     padding: 0
     leftPadding: Theme.xlPadding
     rightPadding: Theme.xlPadding
-    bottomPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
 
     background: StatusDialogBackground {
@@ -343,6 +352,32 @@ StatusDialog {
                             color:  type === StatusBaseButton.Type.Danger ? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
                         }
                         disabledTextColor: type === StatusBaseButton.Type.Danger ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+                    }
+                }
+
+                /** TODO: replace with new and improved recipient selector TBD under
+                https://github.com/status-im/status-desktop/issues/16916 **/
+                ColumnLayout {
+                    spacing: Theme.halfPadding
+                    Layout.fillWidth: true
+                    StatusBaseText {
+                        elide: Text.ElideRight
+                        text: qsTr("To")
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+                    RecipientSelectorPanel {
+                        id: recipientsPanel
+
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.bottomMargin: Theme.xlPadding
+
+                        savedAddressesModel: root.savedAddressesModel
+                        myAccountsModel: root.accountsModel
+                        recentRecipientsModel: root.recentRecipientsModel
+
+                        onResolveENS: root.fnResolveENS(ensName, uuid)
                     }
                 }
             }

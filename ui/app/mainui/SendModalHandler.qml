@@ -88,6 +88,8 @@ QtObject {
     required property var showCommunityAssetsInSend
     /** required function to format currency amount to locale string **/
     required property var fnFormatCurrencyAmount
+    required property var savedAddressesModel
+    required property var recentRecipientsModel
 
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
@@ -231,6 +233,9 @@ QtObject {
             assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
             collectiblesModel: collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
+
+            savedAddressesModel: root.savedAddressesModel
+            recentRecipientsModel: root.recentRecipientsModel
 
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
