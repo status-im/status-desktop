@@ -132,6 +132,7 @@ rpc(getWalletToken, "wallet"):
 
 rpc(fetchOrGetCachedWalletBalances, "wallet"):
   accounts: seq[string]
+  forceRefresh: bool
 
 rpc(fetchMarketValues, "wallet"):
   symbols: seq[string]
