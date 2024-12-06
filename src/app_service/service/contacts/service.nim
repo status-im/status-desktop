@@ -52,9 +52,6 @@ type
     publicKey*: string
     ok*: bool
 
-  RpcResponseArgs* = ref object of Args
-    response*: RpcResponse[JsonNode]
-
   AppendChatMessagesArgs* = ref object of Args
     chatId*: string
     messages*: JsonNode
@@ -395,9 +392,9 @@ QtObject:
     if self.contacts.hasKey(publicKey):
       if self.contacts[publicKey].dto.added and not self.contacts[publicKey].dto.removed and contact.added and not contact.removed:
         signal = SIGNAL_CONTACT_UPDATED
-    if contact.removed:
-      singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
-      signal = SIGNAL_CONTACT_REMOVED
+      if contact.removed and not self.contacts[publicKey].dto.removed:
+        singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
+        signal = SIGNAL_CONTACT_REMOVED
 
     self.contacts[publicKey] = self.constructContactDetails(contact)
     self.events.emit(signal, ContactArgs(contactId: publicKey))
