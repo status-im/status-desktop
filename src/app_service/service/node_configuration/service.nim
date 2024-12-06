@@ -1,4 +1,4 @@
-import chronicles
+import chronicles, json_serialization
 
 import ./dto/node_config
 import ../settings/service as settings_service
@@ -6,6 +6,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node_config as status_node_config
 import ../../../constants as main_constants
+import ../../../app/core/signals/types
 
 export node_config
 
@@ -105,22 +106,30 @@ proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
   return self.configuration.TorrentConfig.Enabled
 
 proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
-  let response = status_node_config.enableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error enabling community history archive support: ", errDescription = response.error.message
-    return false
+  try:
+    let response = status_node_config.enableCommunityHistoryArchiveSupport()
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
 
-  self.configuration.TorrentConfig.Enabled = true
-  return true
+    self.configuration.TorrentConfig.Enabled = true
+    return true
+  except Exception as e:
+    error "error enabling community history archive support: ", errDescription = e.msg
+    return false
 
 proc disableCommunityHistoryArchiveSupport*(self: Service): bool =
-  let response = status_node_config.disableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error disabling community history archive support: ", errDescription = response.error.message
-    return false
+  try:
+    let response = status_node_config.disableCommunityHistoryArchiveSupport()
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
 
-  self.configuration.TorrentConfig.Enabled = false
-  return true
+    self.configuration.TorrentConfig.Enabled = false
+    return true
+  except Exception as e:
+    error "error disabling community history archive support: ", errDescription = e.msg
+    return false
 
 proc getFleet*(self: Service): Fleet =
   result = self.settingsService.getFleet()
@@ -138,18 +147,18 @@ proc saveNewWakuNode*(self: Service, nodeAddress: string): bool =
   try:
     let response = status_node_config.saveNewWakuNode(nodeAddress)
 
-    if not response.error.isNil:
-      error "failed to add new waku node: ", errDescription = response.error.message
-      return false
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
 
     self.configuration.ClusterConfig.WakuNodes.add(nodeAddress)
+    return true
   except Exception as e:
     error "error saving new waku node: ", errDescription = e.msg
     return false
-  return true
 
 proc setFleet*(self: Service, fleet: string): bool =
-  if (not self.settingsService.saveFleet(fleet)):
+  if not self.settingsService.saveFleet(fleet):
     error "error saving fleet ", procName = "setFleet"
     return false
 
@@ -205,14 +214,18 @@ proc setFleet*(self: Service, fleet: string): bool =
     return false
 
 proc setLightClient*(self: Service, enabled: bool): bool =
-  let response = status_node_config.setLightClient(enabled)
+  try:
+    let response = status_node_config.setLightClient(enabled)
 
-  if not response.error.isNil:
-    error "failed to set light client: ", errDescription = response.error.message
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
+
+    self.configuration.WakuV2Config.LightClient = enabled
+    return true
+  except Exception as e:
+    error "failed to set light client", errDescription = e.msg
     return false
-
-  self.configuration.WakuV2Config.LightClient = enabled
-  return true
 
 proc getLogLevel(self: Service): string =
   return self.configuration.LogLevel
@@ -224,15 +237,19 @@ proc isDebugEnabled*(self: Service): bool =
   return logLevel in DEBUG_LOG_LEVELS
 
 proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
-  let response = status_node_config.setLogLevel(logLevel)
+  try:
+    let response = status_node_config.setLogLevel(logLevel)
 
-  if not response.error.isNil:
-    error "failed to set log level: ", errDescription = response.error.message
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
+
+    self.configuration.LogLevel = $logLevel
+    self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
+    return true
+  except Exception as e:
+    error "failed to set log level", errDescription = e.msg
     return false
-
-  self.configuration.LogLevel = $logLevel
-  self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
-  return true
 
 proc getNimbusProxyConfig(self: Service): bool =
   return self.configuration.NimbusProxyConfig.Enabled
@@ -256,11 +273,15 @@ proc getLogMaxBackups*(self: Service): int =
   return self.configuration.LogMaxBackups
 
 proc setMaxLogBackups*(self: Service, value: int): bool =
-  let response = status_node_config.setMaxLogBackups(value)
+  try:
+    let response = status_node_config.setMaxLogBackups(value)
 
-  if not response.error.isNil:
-    error "failed to set max log backups: ", errDescription = response.error.message
+    if response.error != nil:
+      let error = Json.decode($response.error, RpcError)
+      raise newException(RpcException, error.message)
+
+    self.configuration.LogMaxBackups = value
+    return true
+  except Exception as e:
+    error "failed to set max log backups", errDescription = e.msg
     return false
-
-  self.configuration.LogMaxBackups = value
-  return true
