@@ -197,8 +197,9 @@ Control {
                 return validator.maxDecimalDigits + validator.maxIntegralDigits
             } else {
                 let availableSpaceForAmount = root.availableWidth - currencyField.contentWidth - layout.spacing
-                // k is a coefficient based on the font style (typically 𝑘 ≈ 0.6)
-                let digitWidth = textField.font.pixelSize * 0.6
+                // k is a coefficient based on the font style (typically 𝑘 ≈ 0.65)
+                let digitWidth = textField.font.pixelSize * 0.65
+                // remove one for decimal separator
                 return Math.floor(availableSpaceForAmount/digitWidth)
             }
         }
@@ -297,7 +298,7 @@ Control {
 
                 objectName: "bottomItemText"
 
-                Layout.fillWidth: true
+                Layout.preferredWidth: contentWidth
 
                 text: {
                     const divisor = SQUtils.AmountsArithmetic.fromExponent(
@@ -347,8 +348,22 @@ Control {
                         textField.text = d.localize(trimmed)
                     }
                 }
+
+                HoverHandler { id: hoverHandler }
+
                 visible: !root.bottomTextLoading
             }
+            StatusIcon {
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+
+                icon: "swap"
+                rotation: 90
+                color: Theme.palette.directColor5
+                visible: hoverHandler.hovered
+            }
+            RowLayout {}
             Loader {
                 id: bottomRightComponent
                 Layout.alignment: Qt.AlignVCenter
