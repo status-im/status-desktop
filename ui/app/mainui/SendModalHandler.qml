@@ -86,6 +86,8 @@ QtObject {
     /** whether community tokens are shown in send modal
     based on a global setting **/
     required property var showCommunityAssetsInSend
+    /** required function to format currency amount to locale string **/
+    required property var fnFormatCurrencyAmount
 
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
@@ -230,6 +232,9 @@ QtObject {
             collectiblesModel: collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
 
+            currentCurrency: root.currentCurrency
+            fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
+
             onClosed: destroy()
 
             TokenSelectorViewAdaptor {
@@ -252,7 +257,13 @@ QtObject {
                 enabledChainIds: [simpleSendModal.selectedChainId]
 
                 networksModel: root.filteredFlatNetworksModel
-                collectiblesModel: root.collectiblesBySymbolModel
+                collectiblesModel: SortFilterProxyModel {
+                    sourceModel: root.collectiblesBySymbolModel
+                    filters: ValueFilter {
+                        roleName: "soulbound"
+                        value: false
+                    }
+                }
             }
         }
     }
