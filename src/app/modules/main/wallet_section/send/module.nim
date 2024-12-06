@@ -269,7 +269,9 @@ method prepareSignaturesForTransactions*(self:Module, txForSigning: RouterTransa
         self.tmpSendTransactionDetails.resolvedSignatures[h] = ("", "", "")
       self.signOnKeycard()
     else:
-      let finalPassword = hashPassword(self.tmpSendTransactionDetails.password)
+      var finalPassword = self.tmpSendTransactionDetails.password
+      if not singletonInstance.userProfile.getIsKeycardUser():
+        finalPassword = hashPassword(self.tmpSendTransactionDetails.password)
       for h in txForSigning.signingDetails.hashes:
         self.tmpSendTransactionDetails.resolvedSignatures[h] = ("", "", "")
         var
