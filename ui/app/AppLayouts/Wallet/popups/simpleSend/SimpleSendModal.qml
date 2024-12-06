@@ -1,15 +1,22 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.14
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import shared.popups.send.views 1.0
 import shared.controls 1.0
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet 1.0
+
+import utils 1.0
 
 StatusDialog {
     id: root
@@ -64,31 +71,122 @@ StatusDialog {
     Only networks valid as per mainnet/testnet selection
     **/
     required property var networksModel
+    /** Input property holds currently selected Fiat currency **/
+    required property string currentCurrency
+    /** Input function to format currency amount to locale string **/
+    required property var fnFormatCurrencyAmount
+
+    /** input property to decide if send mdoal is interactive or prefilled**/
+    property bool interactive
 
     /** property to set and expose currently selected account **/
     property string selectedAccountAddress
-
     /** property to set and expose currently selected network **/
     property int selectedChainId
-
     /** property to set and expose currently selected token key **/
     property string selectedTokenKey
+    /** property to set and expose the amount to send from outside without any localization **/
+    property string selectedAmount
+    /** output property to set currently set amount to send
+    Crypto value in a base unit as a string integer,
+    e.g. 1000000000000000000 for 1 ETH **/
+    readonly property string selectedAmountInBaseUnit: amountToSend.amount
 
     QtObject {
         id: d
 
         readonly property bool isScrolling:
             scrollView.flickable.contentY > sendModalHeader.height
+
+        // Used to get asset entry if selected token is an asset
+        readonly property var selectedAssetEntry: ModelEntry {
+            sourceModel: root.assetsModel
+            key: "tokensKey"
+            value: root.selectedTokenKey
+        }
+
+        // Used to get collectible entry if selected token is a collectible
+        readonly property var selectedCollectibleEntry: ModelEntry {
+            sourceModel: root.collectiblesModel
+            key: "symbol"
+            value: root.selectedTokenKey
+        }
+
+        /** exposes the currently selected token entry **/
+        readonly property var selectedTokenEntry: selectedAssetEntry.available ?
+                                             selectedAssetEntry.item :
+                                             selectedCollectibleEntry.available ?
+                                                 selectedCollectibleEntry.item: null
+        onSelectedTokenEntryChanged: {
+            if(!selectedAssetEntry.available && !selectedCollectibleEntry.available) {
+                d.debounceResetTokenSelector()
+            }
+            if(selectedAssetEntry.available && !!selectedTokenEntry) {
+                d.setTokenOnBothHeaders(selectedTokenEntry.symbol,
+                                         Constants.tokenIcon(selectedTokenEntry.symbol),
+                                         selectedTokenEntry.tokensKey)
+            }
+            else if(selectedCollectibleEntry.available && !!selectedTokenEntry) {
+                const id = selectedTokenEntry.communityId ?
+                             selectedTokenEntry.collectionUid :
+                             selectedTokenEntry.uid
+                d.setTokenOnBothHeaders(selectedTokenEntry.name,
+                                         selectedTokenEntry.imageUrl || selectedTokenEntry.mediaUrl,
+                                         id)
+            }
+        }
+
+        function setTokenOnBothHeaders(name, icon, key) {
+            sendModalHeader.setToken(name, icon, key)
+            stickySendModalHeader.setToken(name, icon, key)
+        }
+
+        readonly property var debounceResetTokenSelector: Backpressure.debounce(root, 0, function() {
+            if(!selectedAssetEntry.available && !selectedCollectibleEntry.available) {
+                // reset token selector in case selected tokens doesnt exist in either models
+                d.setTokenOnBothHeaders("", "", "")
+                root.selectedTokenKey = ""
+            }
+        })
+
+        readonly property bool isCollectibleSelected: {
+            if(!selectedTokenEntry)
+                return false
+            const type = selectedAssetEntry.available ? selectedAssetEntry.item.type :
+                    selectedCollectibleEntry.available ? selectedCollectibleEntry.item.tokenType :
+                        Constants.TokenType.Unknown
+            return (type === Constants.TokenType.ERC721 || type === Constants.TokenType.ERC1155)
+        }
+
+        readonly property string selectedCryptoTokenSymbol: !!d.selectedTokenEntry ?
+                                                                d.selectedTokenEntry.symbol: ""
+
+        readonly property double maxSafeCryptoValue: {
+            const maxCryptoBalance = !!d.selectedTokenEntry && !!d.selectedTokenEntry.currentBalance ?
+                                       d.selectedTokenEntry.currentBalance : 0
+            return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
+        }
     }
 
     width: 556
     padding: 0
     leftPadding: Theme.xlPadding
     rightPadding: Theme.xlPadding
+    bottomPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
 
     background: StatusDialogBackground {
         color: Theme.palette.baseColor3
+    }
+
+    // Bindings needed for exposing and setting raw values from AmountToSend
+    Binding on selectedAmount {
+        value: amountToSend.text
+    }
+    onSelectedAmountChanged: {
+        if(!!selectedAmount && amountToSend.text !== root.selectedAmount) {
+            amountToSend.setValue(root.selectedAmount)
+        }
     }
 
     Item {
@@ -121,6 +219,8 @@ StatusDialog {
 
         // Sticky header only visible when scrolling
         StickySendModalHeader {
+            id: stickySendModalHeader
+
             width: root.width
             anchors.top: accountSelector.bottom
             anchors.topMargin:Theme.padding
@@ -135,7 +235,6 @@ StatusDialog {
             collectiblesModel: root.collectiblesModel
 
             selectedChainId: root.selectedChainId
-            selectedTokenKey: root.selectedTokenKey
 
             onCollectibleSelected: root.selectedTokenKey = key
             onCollectionSelected: root.selectedTokenKey = key
@@ -148,7 +247,6 @@ StatusDialog {
             id: scrollView
 
             anchors.fill: parent
-            anchors.topMargin: 28
             contentWidth: availableWidth
 
             padding: 0
@@ -171,6 +269,7 @@ StatusDialog {
                     id: sendModalHeader
 
                     Layout.fillWidth: true
+                    Layout.topMargin: 28
 
                     isScrolling: d.isScrolling
 
@@ -179,7 +278,6 @@ StatusDialog {
                     collectiblesModel: root.collectiblesModel
 
                     selectedChainId: root.selectedChainId
-                    selectedTokenKey: root.selectedTokenKey
 
                     onCollectibleSelected: root.selectedTokenKey = key
                     onCollectionSelected: root.selectedTokenKey = key
@@ -187,31 +285,66 @@ StatusDialog {
                     onNetworkSelected: root.selectedChainId = chainId
                 }
 
-                // TODO: Remove these Dummy items added only to test dialog resizing
-                readonly property string longLoremIpsum: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-                Text {
+                // Amount to send entry
+                AmountToSend {
+                    id: amountToSend
+
                     Layout.fillWidth: true
-                    text: scrollViewLayout.longLoremIpsum.repeat(3)
-                    wrapMode: Text.WordWrap
+
+                    interactive: root.interactive
+                    dividerVisible: true
+                    progressivePixelReduction: false
+                    /** TODO: connect this with suggested routes being fetched as price
+                        gets updated each time a new proposal is fetched
+                        bottomTextLoading: root.suggestedRoutesLoading **/
+
+                    /** TODO: connect to max safe value for eth.
+                        For now simply checking balance in case of both eth and other ERC20's **/
+                    markAsInvalid: SQUtils.AmountsArithmetic.fromNumber(d.maxSafeCryptoValue, multiplierIndex).cmp(amount) === -1
+
+                    selectedSymbol: amountToSend.fiatMode ?
+                                        root.currentCurrency:
+                                        d.selectedCryptoTokenSymbol
+                    price: !!d.selectedTokenEntry &&
+                           !!d.selectedTokenEntry.marketDetails ?
+                               d.selectedTokenEntry.marketDetails.currencyPrice.amount : 1
+                    multiplierIndex: !!d.selectedTokenEntry &&
+                                     !!d.selectedTokenEntry.decimals ?
+                                         d.selectedTokenEntry.decimals : 0
+                    formatFiat: amount => root.fnFormatCurrencyAmount(
+                                    amount, root.currentCurrency)
+                    formatBalance: amount => root.fnFormatCurrencyAmount(
+                                       amount, d.selectedCryptoTokenSymbol)
+
+                    visible: !!root.selectedTokenKey && !d.isCollectibleSelected
+                    onVisibleChanged: if(visible) forceActiveFocus()
+
+                    bottomRightComponent: MaxSendButton {
+                        id: maxButton
+
+                        formattedValue: {
+                            const price = !!d.selectedTokenEntry && !!d.selectedTokenEntry.marketDetails ?
+                                            d.selectedTokenEntry.marketDetails.currencyPrice.amount : 0
+                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * price : d.maxSafeCryptoValue
+                            return root.fnFormatCurrencyAmount(
+                                        maxSafeValue,
+                                        amountToSend.selectedSymbol,
+                                        { noSymbol: !amountToSend.fiatMode,
+                                            roundingMode: LocaleUtils.RoundingMode.Down
+                                        })
+                        }
+                        markAsInvalid: amountToSend.markAsInvalid
+                        /** TODO: Remove below customisations after
+                        https://github.com/status-im/status-desktop/issues/15709
+                        and make the button clickable **/
+                        enabled: false
+                        background: Rectangle {
+                            radius: 20
+                            color:  type === StatusBaseButton.Type.Danger ? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
+                        }
+                        disabledTextColor: type === StatusBaseButton.Type.Danger ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+                    }
                 }
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 200
-                    opacity: 0.2
-                    color:  "red"
-                }
-                Text {
-                    Layout.fillWidth: true
-                    text: scrollViewLayout.longLoremIpsum.repeat(3)
-                    wrapMode: Text.WordWrap
-                }
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 200
-                    opacity: 0.2
-                    color:  "red"
-                }
-                // End Dummy items
             }
         }
     }
