@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.14'
+library 'status-jenkins-lib@v1.9.16'
 
 /* Object to store public URLs for description. */
 urls = [:]
