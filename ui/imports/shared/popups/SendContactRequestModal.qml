@@ -44,13 +44,16 @@ CommonContactDialog {
     }
 
     readonly property var _conn: Connections {
-        target: root.rootStore.contactStore.contactsModule
+        enabled: root.loadingContactDetails
+        target: root.rootStore.contactStore
 
-        function onContactInfoRequestFinished(publicKey, ok) {
-            if (publicKey !== root.publicKey)
+        function onRequestedContactResolved(publicKey, ok) {
+            if (publicKey !== root.publicKey) {
                 return
-            if (ok)
+            }
+            if (ok) {
                 root.contactDetails = Utils.getContactDetailsAsJson(root.publicKey, false)
+            }
             root.loadingContactDetails = false
         }
     }
