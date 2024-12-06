@@ -49,12 +49,14 @@ OnboardingPage {
             Item { Layout.preferredHeight: 120 }
 
             StatusCheckBox {
+                objectName: "cbAck"
                 Layout.fillWidth: true
                 id: cbAck
                 text: qsTr("I understand my recovery phrase will now be removed and I will no longer be able to access it via Status")
             }
 
             StatusButton {
+                objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Continue")
                 enabled: cbAck.checked

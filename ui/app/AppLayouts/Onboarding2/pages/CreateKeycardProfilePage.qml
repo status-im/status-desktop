@@ -77,6 +77,7 @@ OnboardingPage {
                             color: Theme.palette.baseColor1
                         }
                         StatusButton {
+                            objectName: "btnCreateWithEmptySeedphrase"
                             Layout.fillWidth: true
                             text: qsTr("Let’s go!")
                             font.pixelSize: Theme.additionalTextSize
@@ -90,6 +91,7 @@ OnboardingPage {
                     contentItem: ColumnLayout {
                         spacing: 0
                         ListItemButton {
+                            objectName: "btnCreateWithExistingSeedphrase"
                             Layout.fillWidth: true
                             text: qsTr("Use an existing recovery phrase")
                             subTitle: qsTr("To create your Keycard-stored profile ")
