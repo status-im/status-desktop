@@ -150,7 +150,8 @@ ColumnLayout {
         Repeater {
             model: d.tabs
             StatusSwitchTabButton {
-                text: qsTr("%n word(s)", "", modelData)
+                readonly property int wordCount: modelData
+                text: qsTr("%n word(s)", "", wordCount)
                 id: seedPhraseWords
                 objectName: `${modelData}SeedButton`
             }
@@ -180,11 +181,12 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: 312
         Layout.topMargin: Theme.halfPadding
+        Layout.alignment: Qt.AlignHCenter
         flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
         interactive: false
-        model: switchTabBar.currentItem.text.substring(0,2)
+        model: switchTabBar.currentItem.wordCount
 
         function addWord(pos, word, ignoreGoingNext = false) {
 
