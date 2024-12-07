@@ -80,9 +80,14 @@ StatusDialog {
     required property var fnFormatCurrencyAmount
 
     /** input property to decide if send modal is interactive or prefilled **/
-    property bool interactive
-    /** input property to decide if fees are loading **/
-    property bool feesLoading
+    property bool interactive: true
+
+    /** input property to set estimated time **/
+    property string estimatedTime
+    /** input property to set estimated fees in fiat **/
+    property string estimatedFiatFees
+    /** input property to set estimated fees in crypto **/
+    property string estimatedCryptoFees
 
     /** property to set and expose currently selected account **/
     property string selectedAccountAddress
@@ -100,10 +105,17 @@ StatusDialog {
     /** TODO: replace with new and improved recipient selector StatusDateRangePicker
     TBD under https://github.com/status-im/status-desktop/issues/16916 **/
     property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
+    /** Input function to resolve Ens Name **/
     required property var fnResolveENS
+    /** Output function to set resolved ens name values **/
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
     }
+
+    /** Output signal to request signing of the transaction **/
+    signal reviewSendClicked()
+    /** Output signal to request fetching fees **/
+    signal fetchFees()
 
     QtObject {
         id: d
@@ -162,6 +174,10 @@ StatusDialog {
             }
         })
 
+        readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1500, function() {
+            root.selectedAmount = amountToSend.text
+        })
+
         readonly property bool isCollectibleSelected: {
             if(!selectedTokenEntry)
                 return false
@@ -180,11 +196,40 @@ StatusDialog {
             return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
         }
 
-        readonly property bool allValuesFilled: !!root.selectedAccountAddress &&
-                                                root.selectedChainId !== 0 &&
-                                                !!root.selectedTokenKey &&
-                                                !!root.selectedRecipientAddress &&
-                                                !!root.selectedAmount
+        function allValuesFilledCorrectly() {
+            return !!root.selectedAccountAddress &&
+                    root.selectedChainId !== 0 &&
+                    !!root.selectedTokenKey &&
+                    !!root.selectedRecipientAddress &&
+                    !!root.selectedAmount &&
+                    !amountToSend.markAsInvalid &&
+                    amountToSend.valid
+        }
+
+        // handle multiple property changes from single changed signal
+        property var combinedPropertyChangedHandler: [
+            root.selectedAccountAddress,
+            root.selectedChainId,
+            root.selectedTokenKey,
+            root.selectedRecipientAddress,
+            root.selectedAmount,
+            amountToSend.markAsInvalid,
+            amountToSend.valid]
+        onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => d.fetchFees())
+
+        function fetchFees() {
+            if(allValuesFilledCorrectly()) {
+                root.fetchFees()
+            } else {
+                root.estimatedCryptoFees = ""
+                root.estimatedFiatFees = ""
+                root.estimatedTime = ""
+            }
+        }
+
+        readonly property bool feesIsLoading: !root.estimatedCryptoFees &&
+                                              !root.estimatedFiatFees &&
+                                              !root.estimatedTime
     }
 
     width: 556
@@ -198,9 +243,6 @@ StatusDialog {
     }
 
     // Bindings needed for exposing and setting raw values from AmountToSend
-    Binding on selectedAmount {
-        value: amountToSend.text
-    }
     onSelectedAmountChanged: {
         if(!!selectedAmount && amountToSend.text !== root.selectedAmount) {
             amountToSend.setValue(root.selectedAmount)
@@ -343,6 +385,8 @@ StatusDialog {
                     visible: !!root.selectedTokenKey && !d.isCollectibleSelected
                     onVisibleChanged: if(visible) forceActiveFocus()
 
+                    onTextChanged: d.debounceSetSelectedAmount()
+
                     bottomRightComponent: MaxSendButton {
                         id: maxButton
 
@@ -414,20 +458,24 @@ StatusDialog {
                     SimpleTransactionsFees {
                         Layout.fillWidth: true
 
-                        loading: root.feesLoading
+                        cryptoFees: root.estimatedCryptoFees
+                        fiatFees: root.estimatedFiatFees
+                        loading: d.feesIsLoading && d.allValuesFilledCorrectly()
                     }
-                    visible: d.allValuesFilled
+                    visible: d.allValuesFilledCorrectly()
                 }
             }
         }
     }
 
-    // TODO:: move to new location and rework if needed
-    footer: TransactionModalFooter {
-        width: parent.width
-        pending: false
-        nextButtonText: qsTr("Review Send")
-        maxFiatFees: "..."
-        totalTimeEstimate: "..."
+    footer: SendModalFooter {
+        width: root.width
+
+        estimateTime: root.estimatedTime
+        estimatedFees: root.estimatedFiatFees
+
+        loading: d.feesIsLoading && d.allValuesFilledCorrectly()
+
+        onReviewSendClicked: root.reviewSendClicked()
     }
 }
