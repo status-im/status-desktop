@@ -9,7 +9,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import shared.controls 1.0 as SharedControls
-// TODO: remove all files and dependecies with this location once old send modal is removed
+// TODO: remove all files and dependencies with this location once old send modal is removed
 import shared.popups.send.controls 1.0
 import shared.popups.send 1.0
 

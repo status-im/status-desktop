@@ -60,6 +60,12 @@ SplitView {
                        })
             }
         }
+
+        property var setFees: Backpressure.debounce(root, 1500, function () {
+            simpleSend.estimatedTime = "~60s"
+            simpleSend.estimatedFiatFees = "1.45 EUR"
+            simpleSend.estimatedCryptoFees = "0.0007 ETH"
+        })
     }
 
     PopupBackground {
@@ -87,7 +93,6 @@ SplitView {
         modal: false
         closePolicy: Popup.CloseOnEscape
 
-        feesLoading: feesLoadingCheckbox.checked
         interactive: interactiveCheckbox.checked
 
         accountsModel: d.walletAccountsModel
@@ -115,6 +120,12 @@ SplitView {
                 simpleSend.ensNameResolved(ensName, "", uuid) // invalid
             }
         })
+
+        onFetchFees: {
+            console.log("Fetch fees...")
+            d.setFees()
+        }
+        onReviewSendClicked: console.log("Review send clicked")
 
         Binding on selectedAccountAddress {
             value: accountsCombobox.currentValue ?? ""
@@ -489,11 +500,6 @@ SplitView {
                 id: interactiveCheckbox
                 text: "Is interactive"
                 checked: true
-            }
-
-            CheckBox {
-                id: feesLoadingCheckbox
-                text: "Fees loading"
             }
 
             Text {
