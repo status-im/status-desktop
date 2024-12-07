@@ -7,3 +7,4 @@ TokenSelectorCollectibleDelegate 1.0 TokenSelectorCollectibleDelegate.qml
 TokenSelectorSectionDelegate 1.0 TokenSelectorSectionDelegate.qml
 AccountContextMenu 1.0 AccountContextMenu.qml
 RecipientView 1.0 RecipientView.qml
+SendModalFooter 1.0 SendModalFooter.qml
