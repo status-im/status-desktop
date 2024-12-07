@@ -15,3 +15,4 @@ WalletHeader 1.0 WalletHeader.qml
 SendModalHeader 1.0 SendModalHeader.qml
 StickySendModalHeader 1.0 StickySendModalHeader.qml
 RecipientSelectorPanel 1.0 RecipientSelectorPanel.qml
+SimpleTransactionsFees 1.0 SimpleTransactionsFees.qml
