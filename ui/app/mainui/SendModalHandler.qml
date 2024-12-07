@@ -88,8 +88,14 @@ QtObject {
     required property var showCommunityAssetsInSend
     /** required function to format currency amount to locale string **/
     required property var fnFormatCurrencyAmount
+
     required property var savedAddressesModel
     required property var recentRecipientsModel
+
+    /** required function to resolve an ens name **/
+    required property var fnResolveENS
+    /** required signal to receive resolved ens name address **/
+    signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
 
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
@@ -239,6 +245,7 @@ QtObject {
 
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
+            fnResolveENS: root.fnResolveENS
 
             onClosed: destroy()
 
@@ -269,6 +276,10 @@ QtObject {
                         value: false
                     }
                 }
+            }
+
+            Component.onCompleted: {
+                root.ensNameResolved.connect(ensNameResolved)
             }
         }
     }
