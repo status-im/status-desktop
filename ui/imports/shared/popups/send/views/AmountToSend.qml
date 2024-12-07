@@ -229,7 +229,7 @@ Control {
 
                 objectName: "amountToSend_textField"
 
-                implicitHeight: 44
+                Layout.preferredHeight: 44
                 padding: 0
                 background: null
 
@@ -240,7 +240,7 @@ Control {
                        : Theme.palette.dangerColor1
 
                 placeholderText: {
-                    if (!d.fiatMode || root.fiatDecimalPlaces === 0)
+                    if (!d.fiatMode || root.fiatDecimalPlaces === 0 || !!text)
                         return "0"
 
                     return "0" + root.decimalPoint

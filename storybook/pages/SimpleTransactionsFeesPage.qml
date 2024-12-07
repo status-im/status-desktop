@@ -20,6 +20,8 @@ SplitView {
             anchors.centerIn: parent
             width: 400
 
+            cryptoFees: qsTr("0.0007 ETH")
+            fiatFees: qsTr("1.45 EUR")
             loading: loadingCheckbox.checked
         }
     }

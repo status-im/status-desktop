@@ -11,12 +11,17 @@ Control {
     id: root
 
     /** property to set fees in fiat along with fiat symbol **/
-    property alias cryptoFees: cryptoFeesText.text
+    property string cryptoFees
     /** property to set fees in crypto along with crypto symbol **/
-    property alias fiatFees: fiatFeesText.text
-
+    property string fiatFees
     /** property to set loading state in the fees component **/
     property bool loading
+
+    QtObject {
+        id: d
+
+        readonly property string loadingText: "----------"
+    }
 
     implicitHeight: 64
 
@@ -63,7 +68,8 @@ Control {
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 22
 
-                text: qsTr("0.0007 ETH")
+                text: !!root.cryptoFees ? root.cryptoFees:
+                                          d.loadingText
             }
         }
         StatusTextWithLoadingState {
@@ -76,7 +82,8 @@ Control {
             lineHeightMode: Text.FixedHeight
             lineHeight: 22
 
-            text: qsTr("1.45 EUR")
+            text: !!root.fiatFees ? root.fiatFees:
+                                   d.loadingText
         }
     }
 }
