@@ -14,6 +14,7 @@ import shared.controls 1.0
 
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet 1.0
 
 import utils 1.0
@@ -78,8 +79,10 @@ StatusDialog {
     /** Input function to format currency amount to locale string **/
     required property var fnFormatCurrencyAmount
 
-    /** input property to decide if send mdoal is interactive or prefilled**/
+    /** input property to decide if send modal is interactive or prefilled **/
     property bool interactive
+    /** input property to decide if fees are loading **/
+    property bool feesLoading
 
     /** property to set and expose currently selected account **/
     property string selectedAccountAddress
@@ -176,6 +179,12 @@ StatusDialog {
                                        d.selectedTokenEntry.currentBalance : 0
             return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
         }
+
+        readonly property bool allValuesFilled: !!root.selectedAccountAddress &&
+                                                root.selectedChainId !== 0 &&
+                                                !!root.selectedTokenKey &&
+                                                !!root.selectedRecipientAddress &&
+                                                !!root.selectedAmount
     }
 
     width: 556
@@ -205,7 +214,13 @@ StatusDialog {
         anchors.top: parent.top
 
         implicitWidth: parent.width
-        implicitHeight: scrollView.implicitHeight
+        implicitHeight: Math.max(sendModalHeader.height +
+                                 amountToSend.height +
+                                 recipientsPanelLayout.height +
+                                 feesLayout.height +
+                                 scrollViewLayout.spacing*3 +
+                                 28,
+                                 scrollView.implicitHeight)
 
         // Floating account Selector
         AccountSelectorHeader {
@@ -358,20 +373,22 @@ StatusDialog {
                 /** TODO: replace with new and improved recipient selector TBD under
                 https://github.com/status-im/status-desktop/issues/16916 **/
                 ColumnLayout {
-                    spacing: Theme.halfPadding
+                    id: recipientsPanelLayout
+
                     Layout.fillWidth: true
+
+                    spacing: Theme.halfPadding
+
                     StatusBaseText {
                         elide: Text.ElideRight
                         text: qsTr("To")
-                        font.pixelSize: 15
-                        color: Theme.palette.directColor1
                     }
                     RecipientSelectorPanel {
                         id: recipientsPanel
 
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.bottomMargin: Theme.xlPadding
+                        Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
 
                         savedAddressesModel: root.savedAddressesModel
                         myAccountsModel: root.accountsModel
@@ -379,6 +396,27 @@ StatusDialog {
 
                         onResolveENS: root.fnResolveENS(ensName, uuid)
                     }
+                }
+
+                // Fees Component
+                ColumnLayout {
+                    id: feesLayout
+
+                    Layout.fillWidth: true
+                    Layout.bottomMargin: Theme.xlPadding
+
+                    spacing: Theme.halfPadding
+
+                    StatusBaseText {
+                        elide: Text.ElideRight
+                        text: qsTr("Fees")
+                    }
+                    SimpleTransactionsFees {
+                        Layout.fillWidth: true
+
+                        loading: root.feesLoading
+                    }
+                    visible: d.allValuesFilled
                 }
             }
         }
