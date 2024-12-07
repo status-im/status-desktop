@@ -87,6 +87,7 @@ SplitView {
         modal: false
         closePolicy: Popup.CloseOnEscape
 
+        feesLoading: feesLoadingCheckbox.checked
         interactive: interactiveCheckbox.checked
 
         accountsModel: d.walletAccountsModel
@@ -488,6 +489,11 @@ SplitView {
                 id: interactiveCheckbox
                 text: "Is interactive"
                 checked: true
+            }
+
+            CheckBox {
+                id: feesLoadingCheckbox
+                text: "Fees loading"
             }
 
             Text {
