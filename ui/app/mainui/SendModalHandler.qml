@@ -86,6 +86,16 @@ QtObject {
     /** whether community tokens are shown in send modal
     based on a global setting **/
     required property var showCommunityAssetsInSend
+    /** required function to format currency amount to locale string **/
+    required property var fnFormatCurrencyAmount
+
+    required property var savedAddressesModel
+    required property var recentRecipientsModel
+
+    /** required function to resolve an ens name **/
+    required property var fnResolveENS
+    /** required signal to receive resolved ens name address **/
+    signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
 
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
@@ -219,6 +229,13 @@ QtObject {
             collectiblesModel: collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
 
+            savedAddressesModel: root.savedAddressesModel
+            recentRecipientsModel: root.recentRecipientsModel
+
+            currentCurrency: root.currentCurrency
+            fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
+            fnResolveENS: root.fnResolveENS
+
             onClosed: destroy()
 
             TokenSelectorViewAdaptor {
@@ -241,7 +258,17 @@ QtObject {
                 enabledChainIds: [simpleSendModal.selectedChainId]
 
                 networksModel: root.filteredFlatNetworksModel
-                collectiblesModel: root.collectiblesBySymbolModel
+                collectiblesModel: SortFilterProxyModel {
+                    sourceModel: root.collectiblesBySymbolModel
+                    filters: ValueFilter {
+                        roleName: "soulbound"
+                        value: false
+                    }
+                }
+            }
+
+            Component.onCompleted: {
+                root.ensNameResolved.connect(ensNameResolved)
             }
         }
     }

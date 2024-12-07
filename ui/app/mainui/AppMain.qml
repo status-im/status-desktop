@@ -660,6 +660,7 @@ Item {
 
         simpleSendEnabled: appMain.featureFlagsStore.simpleSendEnabled
 
+        // for simple send
         walletAccountsModel: WalletStores.RootStore.accounts
         flatNetworksModel: WalletStores.RootStore.flatNetworks
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
@@ -667,11 +668,23 @@ Item {
         currentCurrency: appMain.currencyStore.currentCurrency
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
+        fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
+            return appMain.currencyStore.formatCurrencyAmount(amount, symbol)
+        }
+        // TODO remove this call to mainModule under #16919
+        fnResolveENS: function(ensName, uuid) {
+            mainModule.resolveENS(name, uuid)
+        }
+
+        savedAddressesModel: WalletStores.RootStore.savedAddresses
+        recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
             // Global to shorten the path via global signal.
             Global.sendToRecipientRequested.connect(sendToRecipient)
+            // TODO remove this call to mainModule under #16919
+            mainModule.resolvedENS.connect(ensNameResolved)
         }
     }
 
