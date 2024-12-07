@@ -130,8 +130,6 @@ Rectangle {
                     rotation: 45
                 },
                 StatusTextWithLoadingState {
-                    font.pixelSize: 15
-                    customColor: Theme.palette.directColor1
                     text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                 }
             ]
