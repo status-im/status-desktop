@@ -269,7 +269,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
     if flowEvent.keyUid != self.controller.getKeyUidWhichIsBeingSyncing():
       self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
       return
-    if eventType == ResponseTypeValueKeycardFlowResult and flowEvent.error.len == 0:
+    if eventType == ResponseTypeValueKeycardFlowResult and (flowEvent.error.len == 0 or flowEvent.error == ErrorNoData):
       var kpDto = KeycardDto(keycardUid: flowEvent.instanceUID,
         keycardName: flowEvent.cardMetadata.name,
         keycardLocked: false,
