@@ -6,15 +6,32 @@ import utils 1.0
 QtObject {
     id: root
 
+    signal requestedContactResolved(string publicKey, bool ok)
+
     readonly property QtObject _d: QtObject {
         id: d
 
         readonly property var contactsModuleInst: profileSectionModule.contactsModule
         readonly property var mainModuleInst: mainModule
         readonly property var globalUtilsInst: globalUtils
+        property string requestedContactPubKey: ""
 
         Component.onCompleted: {
             mainModuleInst.resolvedENS.connect(root.resolvedENS)
+        }
+
+        readonly property var _conn: Connections {
+            enabled: d.requestedContactPubKey !== ""
+            target: d.contactsModuleInst
+
+            function onContactInfoRequestFinished(publicKey, ok) {
+                if (publicKey !== d.requestedContactPubKey) {
+                    return
+                }
+
+                root.requestedContactResolved(publicKey, ok)
+                d.requestedContactPubKey = ""
+            }
         }
     }
 
@@ -121,6 +138,7 @@ QtObject {
     }
 
     function requestContactInfo(publicKey) {
+        d.requestedContactPubKey = publicKey
         d.contactsModuleInst.requestContactInfo(publicKey)
     }
 
