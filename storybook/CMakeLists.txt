@@ -39,6 +39,9 @@ file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
     "src/*.qml" "src/qmldir")
 
 file(GLOB_RECURSE TEST_QML_FILES "qmlTests/*.qml")
+if (Qt5Core_VERSION VERSION_LESS_EQUAL 5.15.2)
+list(FILTER TEST_QML_FILES EXCLUDE REGEX "tst_OnboardingLayout.qml$")
+endif()
 
 set(PROJECT_LIB "${PROJECT_NAME}Lib")
 

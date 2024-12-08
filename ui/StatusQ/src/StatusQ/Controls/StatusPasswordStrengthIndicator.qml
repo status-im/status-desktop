@@ -74,7 +74,7 @@ StatusProgressBar {
 
        Default value: "So-so"
     */
-    property string labelSoso: qsTr("So-so")
+    property string labelSoso: qsTr("Okay")
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelGood
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.Good.
@@ -88,7 +88,7 @@ StatusProgressBar {
 
        Default value: "Great"
     */
-    property string labelGreat: qsTr("Great")
+    property string labelGreat: qsTr("Very strong")
 
     enum Strength {
         None, // 0

@@ -659,7 +659,7 @@ QtObject {
                     case Constants.keycardSharedState.createPin:
                     case Constants.keycardSharedState.repeatPin:
                     case Constants.keycardSharedState.pinSet:
-                        return qsTr("Input seed phrase")
+                        return qsTr("Input recovery phrase")
 
                     case Constants.keycardSharedState.seedPhraseEnterWords:
                         return qsTr("Yes, migrate key pair to this Keycard")
@@ -668,7 +668,7 @@ QtObject {
                         return qsTr("Yes, migrate key pair to Keycard")
 
                     case Constants.keycardSharedState.wrongSeedPhrase:
-                        return qsTr("Try entering seed phrase again")
+                        return qsTr("Try entering recovery phrase again")
 
                     case Constants.keycardSharedState.keycardNotEmpty:
                         return qsTr("Check what is stored on this Keycard")
@@ -950,7 +950,7 @@ QtObject {
                             // to run unlock flow directly.
                             return ""
                         }
-                        return qsTr("Unlock using seed phrase")
+                        return qsTr("Unlock using recovery phrase")
 
                     case Constants.keycardSharedState.createPin:
                     case Constants.keycardSharedState.repeatPin:
@@ -961,7 +961,7 @@ QtObject {
                         return qsTr("Next")
 
                     case Constants.keycardSharedState.wrongSeedPhrase:
-                        return qsTr("Try entering seed phrase again")
+                        return qsTr("Try entering recovery phrase again")
 
                     case Constants.keycardSharedState.maxPukRetriesReached:
                         if (root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.disableSeedPhraseForUnlock) {
@@ -1123,7 +1123,7 @@ QtObject {
                         return qsTr("Done")
 
                     case Constants.keycardSharedState.wrongSeedPhrase:
-                        return qsTr("Try entering seed phrase again")
+                        return qsTr("Try entering recovery phrase again")
 
                     case Constants.keycardSharedState.maxPinRetriesReached:
                     case Constants.keycardSharedState.maxPukRetriesReached:
