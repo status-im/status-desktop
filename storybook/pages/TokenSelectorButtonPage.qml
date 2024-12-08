@@ -36,6 +36,9 @@ Pane {
 
                 selected: selectionCheckBox.checked
                 forceHovered: forceHoveredCheckBox.checked
+                size: smallCheckBox.checked ? TokenSelectorButton.Size.Small :
+                                              TokenSelectorButton.Size.Normal
+
 
                 name: "My token" + (longNameCheckBox.checked ? " long name" : "")
                 icon: Constants.tokenIcon("CFI")
@@ -60,6 +63,13 @@ Pane {
             id: forceHoveredCheckBox
 
             text: "force hovered"
+        }
+
+
+        CheckBox {
+            id: smallCheckBox
+
+            text: "small"
         }
     }
 

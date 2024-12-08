@@ -17,6 +17,12 @@ Control {
     /** Expected model structure: see SearchableCollectiblesPanel::model **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
+    /** Exposes insatnce of popup **/
+    property var popup: dropdown
+
+    /** Sets size of the TokenSelectorButton **/
+    property alias size: tokenSelectorButton.size
+
     readonly property bool isTokenSelected: tokenSelectorButton.selected
 
     signal assetSelected(string key)
@@ -54,7 +60,6 @@ Control {
         y: parent.height + 4
         width: 448
 
-        closePolicy: Popup.CloseOnPressOutsideParent
         horizontalPadding: 0
         bottomPadding: 0
 

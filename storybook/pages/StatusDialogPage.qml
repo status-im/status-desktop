@@ -75,6 +75,7 @@ SplitView {
             header: StatusDialogHeader {
                 //color: Theme.palette.baseColor3
                 color: !!ctrlHeaderBgColor.text ? ctrlHeaderBgColor.text : Theme.palette.statusModal.backgroundColor
+                dropShadowEnabled: ctrlHeaderDropShadow.checked
 
                 visible: dialog.title || dialog.subtitle
                 headline.title: dialog.title
@@ -232,6 +233,10 @@ SplitView {
             CheckBox {
                 id: ctrlDropShadow
                 text: "Footer drop shadow"
+            }
+            CheckBox {
+                id: ctrlHeaderDropShadow
+                text: "Header drop shadow"
             }
         }
     }

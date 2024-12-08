@@ -660,6 +660,14 @@ Item {
 
         simpleSendEnabled: appMain.featureFlagsStore.simpleSendEnabled
 
+        walletAccountsModel: WalletStores.RootStore.accounts
+        flatNetworksModel: WalletStores.RootStore.flatNetworks
+        areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
+        groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
+        currentCurrency: appMain.currencyStore.currentCurrency
+        showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
+        collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
+
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
             // Global to shorten the path via global signal.
