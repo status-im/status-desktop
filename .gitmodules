@@ -114,3 +114,6 @@
 [submodule "vendor/qzxing"]
 	path = vendor/qzxing
 	url = https://github.com/status-im/qzxing.git
+[submodule "ui/imports/assets/legal-docs"]
+	path = ui/imports/assets/legal-docs
+	url = https://github.com/status-im/status-software-legal-documents.git
