@@ -35,6 +35,7 @@ Item {
     property alias networkFilter: networkFilter
 
     property bool dAppsEnabled: true
+    property bool dAppsVisible: true
     property bool walletConnectEnabled: true
     property bool browserConnectEnabled: true
     property var dAppsModel
@@ -145,7 +146,8 @@ Item {
                 Layout.alignment: Qt.AlignTop
                 spacing: 8
 
-                visible: !root.walletStore.showSavedAddresses && root.dAppsEnabled
+                visible: !root.walletStore.showSavedAddresses && root.dAppsVisible
+                enabled: root.dAppsEnabled
                 walletConnectEnabled: root.walletConnectEnabled
                 connectorEnabled: root.browserConnectEnabled
                 model: root.dAppsModel

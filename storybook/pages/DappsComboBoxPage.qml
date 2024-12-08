@@ -19,6 +19,7 @@ SplitView {
             anchors.horizontalCenter: parent.horizontalCenter
             model: emptyModelCheckbox.checked ? emptyModel : smallModelCheckbox.checked ? smallModel: dappsModel
             popup.visible: true
+            enabled: enabledCheckbox.checked
 
             onPairDapp: console.log("onPairDapp")
         }
@@ -127,6 +128,12 @@ SplitView {
             RadioButton {
                 id: smallModelCheckbox
                 text: "Small model"
+            }
+
+            CheckBox {
+                id: enabledCheckbox
+                text: "Enabled"
+                checked: true
             }
         }
     }

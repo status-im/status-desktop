@@ -173,6 +173,22 @@ SQUtils.QObject {
             onClosed: pairWCLoader.active = false
             onPair: (uri) => root.pairingRequested(uri)
             onPairUriChanged: (uri) => root.pairingValidationRequested(uri)
+            onPairInstructionsRequested: pairInstructionsLoader.active = true
+        }
+    }
+
+    Loader {
+        id: pairInstructionsLoader
+
+        active: false
+        parent: root.visualParent
+
+        sourceComponent: Component {
+            DAppsUriCopyInstructionsPopup{
+                visible: true
+                destroyOnClose: false
+                onClosed: pairInstructionsLoader.active = false
+            }
         }
     }
 
