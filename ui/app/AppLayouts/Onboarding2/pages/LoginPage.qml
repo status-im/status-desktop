@@ -54,9 +54,9 @@ OnboardingPage {
                     spacing: 20
                     StatusImage {
                         Layout.alignment: Qt.AlignHCenter
-                        Layout.preferredWidth: Math.min(245, parent.width)
-                        Layout.preferredHeight: Math.min(200, height)
-                        source: Theme.png("onboarding/status_seedphrase")
+                        Layout.preferredWidth: Math.min(250, parent.width)
+                        Layout.preferredHeight: Math.min(250, height)
+                        source: Theme.png("onboarding/status_login_seedphrase")
                         mipmap: true
                     }
                     StatusBaseText {
@@ -94,9 +94,9 @@ OnboardingPage {
                     ListItemButton {
                         objectName: "btnBySyncing"
                         Layout.fillWidth: true
-                        text: qsTr("Log in by syncing")
+                        text: qsTr("Log in by syncing") // FIXME wording, "Log in by pairing"?
                         subTitle: qsTr("If you have Status on another device")
-                        icon.source: Theme.svg("mobile-sync") // FIXME correct icon
+                        icon.source: Theme.png("onboarding/login_syncing")
                         onClicked: loginWithSyncAck.createObject(root).open()
                     }
                     Rectangle {
