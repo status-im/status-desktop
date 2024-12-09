@@ -135,7 +135,7 @@ RowLayout {
 
         Layout.alignment: Qt.AlignTop
 
-        control.bottomPadding: 0
+        control.popup.y: networkFilter.height
 
         flatNetworks: root.networksModel
 

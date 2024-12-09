@@ -20,7 +20,7 @@ Control {
     QtObject {
         id: d
 
-        readonly property string loadingText: "----------"
+        readonly property string loadingText: "XXXXXXXXXX"
     }
 
     implicitHeight: 64

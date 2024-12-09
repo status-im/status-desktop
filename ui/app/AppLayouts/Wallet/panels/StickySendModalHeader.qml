@@ -1,10 +1,11 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
-Rectangle {
+Control {
     id: root
 
     /**
@@ -51,7 +52,7 @@ Rectangle {
     property bool isScrolling
 
     /** input property for programatic selection of network **/
-    property int selectedChainId: -1
+    property int selectedChainId
 
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
@@ -68,46 +69,41 @@ Rectangle {
         sendModalHeader.setToken(name, icon, key)
     }
 
-    enabled: root.isScrolling
-    color: Theme.palette.baseColor3
-    radius: 8
+    rightPadding: Theme.xlPadding
+    leftPadding: Theme.xlPadding
+    topPadding: 16
+    bottomPadding: 12
 
-    implicitHeight: root.isScrolling ?
-                        sendModalHeader.implicitHeight +
-                        sendModalHeader.anchors.topMargin +
-                        sendModalHeader.anchors.bottomMargin:
-                        0
-    implicitWidth: sendModalHeader.implicitWidth +
-                   sendModalHeader.anchors.leftMargin +
-                   sendModalHeader.anchors.rightMargin
+    background: Rectangle {
+        color: Theme.palette.baseColor3
+        radius: 8
 
-
-    // Drawer animation for stickey heade
-    Behavior on implicitHeight {
-        NumberAnimation { duration: 350 }
-    }
-
-    // cover for the bottom rounded corners
-    Rectangle {
-        width: parent.width
-        height: parent.radius
-        anchors.bottom: parent.bottom
-        color: parent.color
-    }
-
-    SendModalHeader {
-        id: sendModalHeader
-
-        width: parent.width
-
-        anchors {
-            fill: parent
-            leftMargin: Theme.xlPadding
-            rightMargin: Theme.xlPadding
-            topMargin: 16
-            bottomMargin: 12
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 0
+            verticalOffset: 2
+            samples: 37
+            color: Theme.palette.dropShadow
         }
 
+        // cover for the bottom rounded corners
+        Rectangle {
+            width: parent.width
+            height: parent.radius
+            anchors.bottom: parent.bottom
+            color: parent.color
+        }
+
+        StatusDialogDivider {
+            anchors.bottom: parent.bottom
+            width: parent.width
+        }
+    }
+
+    contentItem: SendModalHeader {
+        id: sendModalHeader
+
+        enabled: root.isScrolling
         isStickyHeader: true
         isScrolling: root.isScrolling
 
@@ -122,18 +118,4 @@ Rectangle {
         onAssetSelected: root.assetSelected(key)
         onNetworkSelected: root.networkSelected(chainId)
     }
-
-    StatusDialogDivider {
-        anchors.bottom: parent.bottom
-        width: parent.width
-    }
-
-    layer.enabled: true
-    layer.effect: DropShadow {
-        horizontalOffset: 0
-        verticalOffset: 2
-        samples: 37
-        color: Theme.palette.dropShadow
-    }
 }
-

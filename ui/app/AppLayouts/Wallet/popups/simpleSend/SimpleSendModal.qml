@@ -120,8 +120,8 @@ StatusDialog {
     QtObject {
         id: d
 
-        readonly property bool isScrolling:
-            scrollView.flickable.contentY > sendModalHeader.height
+        readonly property bool isScrolling: scrollView.flickable.contentY >
+                                            sendModalHeader.height + scrollViewLayout.spacing
 
         // Used to get asset entry if selected token is an asset
         readonly property var selectedAssetEntry: ModelEntry {
@@ -287,28 +287,42 @@ StatusDialog {
         }
 
         // Sticky header only visible when scrolling
-        StickySendModalHeader {
-            id: stickySendModalHeader
-
+        Item {
             width: root.width
+            height: childrenRect.height + Theme.smallPadding
             anchors.top: accountSelector.bottom
-            anchors.topMargin:Theme.padding
+            anchors.topMargin: Theme.padding
             anchors.left: parent.left
             anchors.leftMargin: -Theme.xlPadding
+
+            clip: true
             z: 1
 
-            isScrolling: d.isScrolling
+            StickySendModalHeader {
+                id: stickySendModalHeader
 
-            networksModel: root.networksModel
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
+                width: parent.width
 
-            selectedChainId: root.selectedChainId
+                // Drawer animation
+                y: d.isScrolling ? parent.x + height/2:
+                                   -height - Theme.smallPadding
+                Behavior on y {
+                    NumberAnimation { duration: 1000 }
+                }
 
-            onCollectibleSelected: root.selectedTokenKey = key
-            onCollectionSelected: root.selectedTokenKey = key
-            onAssetSelected: root.selectedTokenKey = key
-            onNetworkSelected: root.selectedChainId = chainId
+                isScrolling: d.isScrolling
+
+                networksModel: root.networksModel
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+
+                selectedChainId: root.selectedChainId
+
+                onCollectibleSelected: root.selectedTokenKey = key
+                onCollectionSelected: root.selectedTokenKey = key
+                onAssetSelected: root.selectedTokenKey = key
+                onNetworkSelected: root.selectedChainId = chainId
+            }
         }
 
         // Main scrollable Layout
@@ -400,8 +414,7 @@ StatusDialog {
                             return root.fnFormatCurrencyAmount(
                                         maxSafeValue,
                                         amountToSend.selectedSymbol,
-                                        { noSymbol: !amountToSend.fiatMode,
-                                            roundingMode: LocaleUtils.RoundingMode.Down
+                                        { roundingMode: LocaleUtils.RoundingMode.Down
                                         })
                         }
                         markAsInvalid: amountToSend.markAsInvalid
