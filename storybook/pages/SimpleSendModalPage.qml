@@ -121,10 +121,16 @@ SplitView {
             }
         })
 
-        onFetchFees: {
-            console.log("Fetch fees...")
-            d.setFees()
+        onFormChanged: {
+            estimatedCryptoFees = ""
+            estimatedFiatFees = ""
+            estimatedTime = ""
+            if(formCorrectlyFilled) {
+                console.log("Fetch fees...")
+                d.setFees()
+            }
         }
+
         onReviewSendClicked: console.log("Review send clicked")
 
         Binding on selectedAccountAddress {
@@ -488,7 +494,7 @@ SplitView {
         }
     }
 
-    LogsAndControlsPanel {
+    Pane {
         SplitView.minimumHeight: 100
         SplitView.minimumWidth: 300
         SplitView.maximumWidth: 380

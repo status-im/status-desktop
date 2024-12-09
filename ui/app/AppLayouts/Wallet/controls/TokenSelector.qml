@@ -17,9 +17,6 @@ Control {
     /** Expected model structure: see SearchableCollectiblesPanel::model **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
-    /** Exposes insatnce of popup **/
-    property var popup: dropdown
-
     /** Sets size of the TokenSelectorButton **/
     property alias size: tokenSelectorButton.size
 
@@ -43,6 +40,10 @@ Control {
             tokenSelectorButton.icon = icon
             tokenSelectorPanel.highlightedKey = key ?? ""
         }
+    }
+
+    function close() {
+        dropdown.close()
     }
 
     QObject {

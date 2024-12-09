@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.14
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -16,22 +16,23 @@ Control {
     property string fiatFees
     /** property to set loading state in the fees component **/
     property bool loading
+    /** property to set error state in the fees component **/
+    property bool error
 
     QtObject {
         id: d
 
-        readonly property string loadingText: "----------"
+        readonly property string loadingText: "XXXXXXXXXX"
     }
 
     implicitHeight: 64
 
     padding: Theme.padding
-    topPadding: 12
-    bottomPadding: 12
+    verticalPadding: 12
 
     background: Rectangle {
         color: Theme.palette.indirectColor1
-        radius: 8
+        radius: Theme.radius
     }
 
     contentItem: RowLayout {
@@ -64,7 +65,8 @@ Control {
                 Layout.fillWidth: true
 
                 loading: root.loading
-                customColor: Theme.palette.baseColor1
+                customColor: root.error ? Theme.palette.dangerColor1:
+                                          Theme.palette.baseColor1
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 22
 
@@ -78,7 +80,8 @@ Control {
             Layout.alignment: Qt.AlignRight
 
             loading: root.loading
-            customColor: Theme.palette.baseColor1
+            customColor: root.error ? Theme.palette.dangerColor1:
+                                      Theme.palette.baseColor1
             lineHeightMode: Text.FixedHeight
             lineHeight: 22
 

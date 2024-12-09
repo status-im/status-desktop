@@ -82,10 +82,10 @@ QtObject {
     **/
     required property var flatNetworksModel
     /** true if testnet mode is on **/
-    required property var areTestNetworksEnabled
+    required property bool areTestNetworksEnabled
     /** whether community tokens are shown in send modal
     based on a global setting **/
-    required property var showCommunityAssetsInSend
+    required property bool showCommunityAssetsInSend
     /** required function to format currency amount to locale string **/
     required property var fnFormatCurrencyAmount
 
@@ -248,6 +248,15 @@ QtObject {
             fnResolveENS: root.fnResolveENS
 
             onClosed: destroy()
+
+            onFormChanged: {
+                estimatedCryptoFees = ""
+                estimatedFiatFees = ""
+                estimatedTime = ""
+                if(formCorrectlyFilled) {
+                    // TODO: call stores fetchSuggestedRoutes api
+                }
+            }
 
             TokenSelectorViewAdaptor {
                 id: assetsSelectorViewAdaptor
