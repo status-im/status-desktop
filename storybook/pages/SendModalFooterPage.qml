@@ -22,8 +22,9 @@ SplitView {
             width: 595
 
             loading: loadingCheckbox.checked
+            error: errorCheckbox.checked
 
-            onReviewSendClicked: console.log("review send clicked")
+            onReviewSendClicked: logs.logEvent("review send clicked")
         }
     }
 
@@ -41,11 +42,16 @@ SplitView {
                 text: "loading"
             }
 
+            CheckBox {
+                id: errorCheckbox
+                text: "error"
+            }
+
             Button {
                 text: "set fees values"
                 onClicked: {
                     loadingCheckbox.checked = false
-                    footer.estimateTime = "~60s"
+                    footer.estimatedTime = "~60s"
                     footer.estimatedFees = "1.45 EUR"
                 }
             }

@@ -13,9 +13,11 @@ StatusDialogFooter {
     /** property to set loading state **/
     property bool loading
     /** property to set estimated time **/
-    property string estimateTime
+    property string estimatedTime
     /** property to set estimates fees in fiat **/
     property string estimatedFees
+    /** property to set error state **/
+    property bool error
 
     // Signal to propogate Send clicked
     signal reviewSendClicked()
@@ -29,7 +31,7 @@ StatusDialogFooter {
         id: d
 
         readonly property string emptyText: "--"
-        readonly property string loadingText: "----------"
+        readonly property string loadingText: "XXXXXXXXXX"
     }
 
     leftButtons: ObjectModel {
@@ -40,17 +42,19 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est time")
             }
             StatusTextWithLoadingState {
                 id: estimatedTime
 
-                customColor: !!root.estimateTime ? Theme.palette.directColor1:
+                font.weight: Font.Medium
+                customColor: !!root.estimatedTime ? Theme.palette.directColor1:
                                                    Theme.palette.directColor5
                 loading: root.loading
 
-                text: !!root.estimateTime ? root.estimateTime:
+                text: !!root.estimatedTime ? root.estimatedTime:
                       root.loading ? d.loadingText : d.emptyText
             }
         }
@@ -60,14 +64,18 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est fees")
             }
             StatusTextWithLoadingState {
                 id: estimatedFees
 
-                customColor: !!root.estimatedFees ? Theme.palette.directColor1:
-                                                   Theme.palette.directColor5
+                font.weight: Font.Medium
+                customColor: root.error ? Theme.palette.dangerColor1:
+                                          !!root.estimatedFees ?
+                                              Theme.palette.directColor1:
+                                              Theme.palette.directColor5
                 loading: root.loading
 
                 text: !!root.estimatedFees ? root.estimatedFees:
@@ -83,7 +91,7 @@ StatusDialogFooter {
             Layout.rightMargin: Theme.padding
 
             disabledColor: Theme.palette.directColor8
-            enabled: !!root.estimateTime &&
+            enabled: !!root.estimatedTime &&
                      !!root.estimatedFees &&
                      !root.loading
 

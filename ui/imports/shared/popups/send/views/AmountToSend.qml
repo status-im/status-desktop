@@ -206,6 +206,7 @@ Control {
     }
 
     contentItem: ColumnLayout {
+        spacing: Theme.halfPadding
         StatusBaseText {
             id: captionText
 
@@ -231,6 +232,7 @@ Control {
 
                 Layout.preferredHeight: 44
                 padding: 0
+                leftPadding: 0
                 background: null
 
                 readOnly: !root.interactive
@@ -286,7 +288,7 @@ Control {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            Layout.bottomMargin: 12
+            Layout.bottomMargin: 4
             color: Theme.palette.directColor8
             visible: root.dividerVisible
         }
@@ -363,7 +365,7 @@ Control {
                 color: Theme.palette.directColor5
                 visible: hoverHandler.hovered
             }
-            RowLayout {}
+            Item { Layout.fillWidth: true }
             Loader {
                 id: bottomRightComponent
                 Layout.alignment: Qt.AlignVCenter

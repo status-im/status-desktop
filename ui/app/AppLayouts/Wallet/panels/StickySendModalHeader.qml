@@ -1,10 +1,11 @@
-import QtQuick 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
-Rectangle {
+Control {
     id: root
 
     /**
@@ -48,10 +49,10 @@ Rectangle {
     Not using visible property directly here as the animation on
     implicitHeight doesnt work
     **/
-    property bool isScrolling
+    property bool stickyHeaderVisible
 
     /** input property for programatic selection of network **/
-    property int selectedChainId: -1
+    property int selectedChainId
 
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
@@ -60,7 +61,7 @@ Rectangle {
     /** signal to propagate that a collectible was selected **/
     signal collectibleSelected(string key)
     /** signal to propagate that a network was selected **/
-    signal networkSelected(string chainId)
+    signal networkSelected(int chainId)
 
     /** input function for programatic selection of token
     (asset/collectible/collection) **/
@@ -68,48 +69,56 @@ Rectangle {
         sendModalHeader.setToken(name, icon, key)
     }
 
-    enabled: root.isScrolling
-    color: Theme.palette.baseColor3
-    radius: 8
+    QtObject {
+        id: d
+        readonly property int bottomMargin: 12
+    }
 
-    implicitHeight: root.isScrolling ?
-                        sendModalHeader.implicitHeight +
-                        sendModalHeader.anchors.topMargin +
-                        sendModalHeader.anchors.bottomMargin:
-                        0
-    implicitWidth: sendModalHeader.implicitWidth +
-                   sendModalHeader.anchors.leftMargin +
-                   sendModalHeader.anchors.rightMargin
+    implicitHeight: root.stickyHeaderVisible ?
+                        implicitContentHeight + Theme.padding + d.bottomMargin : 0
 
+    horizontalPadding: Theme.xlPadding
+    bottomPadding: d.bottomMargin
+    topPadding: root.stickyHeaderVisible ? Theme.padding : -implicitContentHeight - Theme.padding
 
-    // Drawer animation for stickey heade
     Behavior on implicitHeight {
         NumberAnimation { duration: 350 }
     }
-
-    // cover for the bottom rounded corners
-    Rectangle {
-        width: parent.width
-        height: parent.radius
-        anchors.bottom: parent.bottom
-        color: parent.color
+    Behavior on topPadding {
+        NumberAnimation { duration: 350 }
     }
 
-    SendModalHeader {
-        id: sendModalHeader
+    background: Rectangle {
+        color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3: Theme.palette.transparent
+        radius: 8
 
-        width: parent.width
-
-        anchors {
-            fill: parent
-            leftMargin: Theme.xlPadding
-            rightMargin: Theme.xlPadding
-            topMargin: 16
-            bottomMargin: 12
+        layer.enabled: true
+        layer.effect: DropShadow {
+            horizontalOffset: 0
+            verticalOffset: 2
+            samples: 37
+            color: Theme.palette.dropShadow
         }
 
+        // cover for the bottom rounded corners
+        Rectangle {
+            width: parent.width
+            height: parent.radius
+            anchors.bottom: parent.bottom
+            color: parent.color
+        }
+
+        StatusDialogDivider {
+            anchors.bottom: parent.bottom
+            width: parent.width
+        }
+    }
+
+    contentItem: SendModalHeader {
+        id: sendModalHeader
+
         isStickyHeader: true
-        isScrolling: root.isScrolling
+        isScrolling: root.stickyHeaderVisible
 
         networksModel: root.networksModel
         assetsModel: root.assetsModel
@@ -122,18 +131,4 @@ Rectangle {
         onAssetSelected: root.assetSelected(key)
         onNetworkSelected: root.networkSelected(chainId)
     }
-
-    StatusDialogDivider {
-        anchors.bottom: parent.bottom
-        width: parent.width
-    }
-
-    layer.enabled: true
-    layer.effect: DropShadow {
-        horizontalOffset: 0
-        verticalOffset: 2
-        samples: 37
-        color: Theme.palette.dropShadow
-    }
 }
-

@@ -1,5 +1,5 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.14
+import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -102,6 +102,9 @@ StatusDialog {
     e.g. 1000000000000000000 for 1 ETH **/
     readonly property string selectedAmountInBaseUnit: amountToSend.amount
 
+    /** property to scheck if form has been filled correctly **/
+    readonly property bool formCorrectlyFilled: d.allValuesFilledCorrectly()
+
     /** TODO: replace with new and improved recipient selector StatusDateRangePicker
     TBD under https://github.com/status-im/status-desktop/issues/16916 **/
     property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
@@ -114,14 +117,22 @@ StatusDialog {
 
     /** Output signal to request signing of the transaction **/
     signal reviewSendClicked()
-    /** Output signal to request fetching fees **/
-    signal fetchFees()
+    /** Output signal to inform that the forms been updated **/
+    signal formChanged()
 
     QtObject {
         id: d
 
-        readonly property bool isScrolling:
-            scrollView.flickable.contentY > sendModalHeader.height
+        readonly property real scrollViewContentY: scrollView.flickable.contentY
+        onScrollViewContentYChanged: {
+            const buffer = sendModalHeader.height + scrollViewLayout.spacing
+            if (scrollViewContentY > buffer) {
+                d.stickyHeaderVisible = true
+            } else if (scrollViewContentY === 0) {
+                d.stickyHeaderVisible = false
+            }
+        }
+        property bool stickyHeaderVisible: false
 
         // Used to get asset entry if selected token is an asset
         readonly property var selectedAssetEntry: ModelEntry {
@@ -215,20 +226,7 @@ StatusDialog {
             root.selectedAmount,
             amountToSend.markAsInvalid,
             amountToSend.valid]
-        onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => d.fetchFees())
-
-        function resetFees() {
-            root.estimatedCryptoFees = ""
-            root.estimatedFiatFees = ""
-            root.estimatedTime = ""
-        }
-
-        function fetchFees() {
-            resetFees()
-            if(allValuesFilledCorrectly()) {
-                root.fetchFees()
-            }
-        }
+        onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
 
         readonly property bool feesIsLoading: !root.estimatedCryptoFees &&
                                               !root.estimatedFiatFees &&
@@ -237,8 +235,7 @@ StatusDialog {
 
     width: 556
     padding: 0
-    leftPadding: Theme.xlPadding
-    rightPadding: Theme.xlPadding
+    horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
 
     background: StatusDialogBackground {
@@ -287,28 +284,36 @@ StatusDialog {
         }
 
         // Sticky header only visible when scrolling
-        StickySendModalHeader {
-            id: stickySendModalHeader
-
-            width: root.width
+        Item {
+            height: childrenRect.height + Theme.smallPadding
             anchors.top: accountSelector.bottom
-            anchors.topMargin:Theme.padding
+            anchors.topMargin: Theme.padding
             anchors.left: parent.left
             anchors.leftMargin: -Theme.xlPadding
+            anchors.right: parent.right
+            anchors.rightMargin: -Theme.xlPadding
+
+            clip: true
             z: 1
 
-            isScrolling: d.isScrolling
+            StickySendModalHeader {
+                id: stickySendModalHeader
 
-            networksModel: root.networksModel
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
+                width: parent.width
 
-            selectedChainId: root.selectedChainId
+                stickyHeaderVisible: d.stickyHeaderVisible
 
-            onCollectibleSelected: root.selectedTokenKey = key
-            onCollectionSelected: root.selectedTokenKey = key
-            onAssetSelected: root.selectedTokenKey = key
-            onNetworkSelected: root.selectedChainId = chainId
+                networksModel: root.networksModel
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+
+                selectedChainId: root.selectedChainId
+
+                onCollectibleSelected: root.selectedTokenKey = key
+                onCollectionSelected: root.selectedTokenKey = key
+                onAssetSelected: root.selectedTokenKey = key
+                onNetworkSelected: root.selectedChainId = chainId
+            }
         }
 
         // Main scrollable Layout
@@ -340,7 +345,7 @@ StatusDialog {
                     Layout.fillWidth: true
                     Layout.topMargin: 28
 
-                    isScrolling: d.isScrolling
+                    isScrolling: d.stickyHeaderVisible
 
                     networksModel: root.networksModel
                     assetsModel: root.assetsModel
@@ -400,8 +405,7 @@ StatusDialog {
                             return root.fnFormatCurrencyAmount(
                                         maxSafeValue,
                                         amountToSend.selectedSymbol,
-                                        { noSymbol: !amountToSend.fiatMode,
-                                            roundingMode: LocaleUtils.RoundingMode.Down
+                                        { roundingMode: LocaleUtils.RoundingMode.Down
                                         })
                         }
                         markAsInvalid: amountToSend.markAsInvalid
@@ -474,7 +478,7 @@ StatusDialog {
     footer: SendModalFooter {
         width: root.width
 
-        estimateTime: root.estimatedTime
+        estimatedTime: root.estimatedTime
         estimatedFees: root.estimatedFiatFees
 
         loading: d.feesIsLoading && d.allValuesFilledCorrectly()
