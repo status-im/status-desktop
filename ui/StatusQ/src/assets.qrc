@@ -8345,7 +8345,9 @@
         <file>assets/png/onboarding/status_generate_keycard.png</file>
         <file>assets/png/onboarding/create_profile_seed.png</file>
         <file>assets/png/onboarding/create_profile_keycard.png</file>
+        <file>assets/png/onboarding/login_syncing.png</file>
         <file>assets/png/onboarding/status_chat.png</file>
+        <file>assets/png/onboarding/status_login_seedphrase.png</file>
         <file>assets/png/onboarding/status_key.png</file>
         <file>assets/png/onboarding/status_keycard.png</file>
         <file>assets/png/onboarding/status_keycard_multiple.png</file>

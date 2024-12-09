@@ -25,7 +25,7 @@ OnboardingPage {
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
-            width: Math.min(320, root.availableWidth)
+            width: Math.min(400, root.availableWidth)
             spacing: root.padding
             StatusBaseText {
                 Layout.fillWidth: true
@@ -45,23 +45,24 @@ OnboardingPage {
 
             StatusImage {
                 Layout.preferredWidth: 320
-                Layout.preferredHeight: 320
-                Layout.topMargin: 36
-                Layout.bottomMargin: 36
+                Layout.preferredHeight: 354
+                Layout.topMargin: Theme.bigPadding
+                Layout.bottomMargin: Theme.bigPadding
                 Layout.alignment: Qt.AlignHCenter
-                mipmap: true
                 source: Theme.png("onboarding/status_totebag_artwork_1")
             }
 
             StatusButton {
                 objectName: "btnShare"
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 320
                 text: qsTr("Share usage data")
                 onClicked: root.shareUsageDataRequested(true)
             }
             StatusButton {
                 objectName: "btnDontShare"
-                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 320
                 text: qsTr("Not now")
                 normalColor: "transparent"
                 borderWidth: 1
