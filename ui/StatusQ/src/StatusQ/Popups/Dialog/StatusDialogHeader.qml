@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -9,6 +10,7 @@ Rectangle {
 
     readonly property alias headline: headline
     readonly property alias actions: actions
+    property bool dropShadowEnabled
 
     property alias leftComponent: leftComponentLoader.sourceComponent
 
@@ -62,5 +64,13 @@ Rectangle {
     StatusDialogDivider {
         anchors.bottom: parent.bottom
         width: parent.width
+    }
+
+    layer.enabled: root.dropShadowEnabled
+    layer.effect: DropShadow {
+        horizontalOffset: 0
+        verticalOffset: 2
+        samples: 37
+        color: Theme.palette.dropShadow
     }
 }
