@@ -8,18 +8,13 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 OnboardingPage {
     id: root
 
-    required property int addKeyPairState // KeycardAddKeyPairPage.AddKeyPairState.xxx
+    required property int addKeyPairState // Onboarding.AddKeyPairState.xxx
     property int timeoutInterval: 30000
-
-    enum AddKeyPairState {
-        InProgress,
-        Success,
-        Failed
-    }
 
     signal keypairAddContinueRequested()
     signal keypairAddTryAgainRequested()
@@ -31,14 +26,14 @@ OnboardingPage {
     Timer {
         id: timer
         interval: root.timeoutInterval
-        running: root.addKeyPairState === KeycardAddKeyPairPage.AddKeyPairState.InProgress
-        onTriggered: root.addKeyPairState = KeycardAddKeyPairPage.AddKeyPairState.Failed
+        running: root.addKeyPairState === Onboarding.AddKeyPairState.InProgress
+        onTriggered: root.addKeyPairState = Onboarding.AddKeyPairState.Failed
     }
 
     states: [
         State {
             name: "inprogress"
-            when: root.addKeyPairState === KeycardAddKeyPairPage.AddKeyPairState.InProgress
+            when: root.addKeyPairState === Onboarding.AddKeyPairState.InProgress
             PropertyChanges {
                 target: root
                 title: qsTr("Adding key pair to Keycard")
@@ -59,7 +54,7 @@ OnboardingPage {
         },
         State {
             name: "success"
-            when: root.addKeyPairState === KeycardAddKeyPairPage.AddKeyPairState.Success
+            when: root.addKeyPairState === Onboarding.AddKeyPairState.Success
             PropertyChanges {
                 target: root
                 title: qsTr("Key pair added to Keycard")
@@ -83,7 +78,7 @@ OnboardingPage {
         },
         State {
             name: "failed"
-            when: root.addKeyPairState === KeycardAddKeyPairPage.AddKeyPairState.Failed
+            when: root.addKeyPairState === Onboarding.AddKeyPairState.Failed
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Failed to add key pair to Keycard") + "</font>"

@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 Item {
     id: root
@@ -11,14 +12,14 @@ Item {
     KeycardAddKeyPairPage {
         id: progressPage
         anchors.fill: parent
-        addKeyPairState: KeycardAddKeyPairPage.AddKeyPairState.InProgress
+        addKeyPairState: Onboarding.AddKeyPairState.InProgress
         timeoutInterval: 5000
         onKeypairAddTryAgainRequested: {
             console.warn("!!! onKeypairAddTryAgainRequested")
-            addKeyPairState = KeycardAddKeyPairPage.AddKeyPairState.InProgress
+            addKeyPairState = Onboarding.AddKeyPairState.InProgress
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                addKeyPairState = KeycardAddKeyPairPage.AddKeyPairState.Success
+                addKeyPairState = Onboarding.AddKeyPairState.Success
             })()
         }
         onKeypairAddContinueRequested: console.warn("!!! onKeypairAddContinueRequested")
@@ -31,7 +32,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         width: 350
-        model: ["KeycardAddKeyPairPage.AddKeyPairState.InProgress", "KeycardAddKeyPairPage.AddKeyPairState.Success", "KeycardAddKeyPairPage.AddKeyPairState.Failed"]
+        model: ["Onboarding.AddKeyPairState.InProgress", "Onboarding.AddKeyPairState.Success", "Onboarding.AddKeyPairState.Failed"]
         onCurrentIndexChanged: progressPage.addKeyPairState = currentIndex
     }
 }

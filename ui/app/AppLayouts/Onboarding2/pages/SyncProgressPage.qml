@@ -7,17 +7,13 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Onboarding.enums 1.0
+
 OnboardingPage {
     id: root
 
-    required property int syncState // SyncProgressPage.SyncState.xxx
+    required property int syncState // Onboarding.SyncState.xxx
     property int timeoutInterval: 30000
-
-    enum SyncState {
-        InProgress,
-        Success,
-        Failed
-    }
 
     signal loginToAppRequested()
     signal restartSyncRequested()
@@ -28,14 +24,14 @@ OnboardingPage {
     Timer {
         id: timer
         interval: root.timeoutInterval
-        running: root.syncState === SyncProgressPage.SyncState.InProgress
-        onTriggered: root.syncState = SyncProgressPage.SyncState.Failed
+        running: root.syncState === Onboarding.SyncState.InProgress
+        onTriggered: root.syncState = Onboarding.SyncState.Failed
     }
 
     states: [
         State {
             name: "inprogress"
-            when: root.syncState === SyncProgressPage.SyncState.InProgress
+            when: root.syncState === Onboarding.SyncState.InProgress
             PropertyChanges {
                 target: root
                 title: qsTr("Profile sync in progress...")
@@ -60,7 +56,7 @@ OnboardingPage {
         },
         State {
             name: "success"
-            when: root.syncState === SyncProgressPage.SyncState.Success
+            when: root.syncState === Onboarding.SyncState.Success
             PropertyChanges {
                 target: root
                 title: qsTr("Profile synced")
@@ -84,7 +80,7 @@ OnboardingPage {
         },
         State {
             name: "failed"
-            when: root.syncState === SyncProgressPage.SyncState.Failed
+            when: root.syncState === Onboarding.SyncState.Failed
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Profile syncing failed") + "</font>"
