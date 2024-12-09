@@ -19,7 +19,6 @@ ColumnLayout {
     //* This component is not refactored, just pulled out to a shared location *
     //**************************************************************************
     spacing: Theme.padding
-    clip: true
 
     readonly property bool seedPhraseIsValid: d.allEntriesValid && invalidSeedTxt.text === ""
     property var isSeedPhraseValid: function (mnemonic) { return false }
@@ -30,8 +29,8 @@ ColumnLayout {
 
     function setWrongSeedPhraseMessage(message) {
         invalidSeedTxt.text = message
-        // Validate again the seed phrase
-        // This is needed because the message can be set to empty and the seed phrase is still invalid
+        // Validate again the recovery phrase
+        // This is needed because the message can be set to empty and the recovery phrase is still invalid
         if (message === "")
             d.validate()
     }
@@ -57,7 +56,7 @@ ColumnLayout {
             if (d.allEntriesValid) {
                 mnemonicString = buildMnemonicString()
                 if (!Utils.isMnemonic(mnemonicString) || !root.isSeedPhraseValid(mnemonicString)) {
-                    root.setWrongSeedPhraseMessage(qsTr("Invalid seed phrase"))
+                    root.setWrongSeedPhraseMessage(qsTr("Invalid recovery phrase"))
                     d.allEntriesValid = false
                 }
             }
@@ -151,7 +150,8 @@ ColumnLayout {
         Repeater {
             model: d.tabs
             StatusSwitchTabButton {
-                text: qsTr("%n word(s)", "", modelData)
+                readonly property int wordCount: modelData
+                text: qsTr("%n word(s)", "", wordCount)
                 id: seedPhraseWords
                 objectName: `${modelData}SeedButton`
             }
@@ -180,12 +180,13 @@ ColumnLayout {
         objectName: "enterSeedPhraseGridView"
         Layout.fillWidth: true
         Layout.preferredHeight: 312
-        clip: false
+        Layout.topMargin: Theme.halfPadding
+        Layout.alignment: Qt.AlignHCenter
         flow: GridView.FlowTopToBottom
         cellWidth: (parent.width/(count/6))
         cellHeight: 52
         interactive: false
-        model: switchTabBar.currentItem.text.substring(0,2)
+        model: switchTabBar.currentItem.wordCount
 
         function addWord(pos, word, ignoreGoingNext = false) {
 

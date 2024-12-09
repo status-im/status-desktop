@@ -167,7 +167,7 @@ ColumnLayout {
                         case Constants.keypair.type.profile:
                             return qsTr("Derived from your default Status key pair")
                         case Constants.keypair.type.seedImport:
-                            return qsTr("Imported from seed phrase")
+                            return qsTr("Imported from recovery phrase")
                         case Constants.keypair.type.privateKeyImport:
                             return qsTr("Imported from private key")
                         case Constants.keypair.type.watchOnly:

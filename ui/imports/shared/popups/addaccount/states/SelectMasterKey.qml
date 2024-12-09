@@ -29,7 +29,7 @@ Item {
 
         StatusListItem {
             objectName: "AddAccountPopup-ImportUsingSeedPhrase"
-            title: qsTr("Import using seed phrase")
+            title: qsTr("Import using recovery phrase")
             asset {
                 name: "key_pair_seed_phrase"
                 color: Theme.palette.primaryColor1

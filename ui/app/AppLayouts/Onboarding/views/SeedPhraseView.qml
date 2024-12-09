@@ -50,7 +50,7 @@ Item {
             font.pixelSize: Constants.keycard.general.fontSize1
             font.weight: Font.Bold
             color: Theme.palette.directColor1
-            text: qsTr("Write down your seed phrase")
+            text: qsTr("Write down your recovery phrase")
         }
 
         StatusBaseText {
