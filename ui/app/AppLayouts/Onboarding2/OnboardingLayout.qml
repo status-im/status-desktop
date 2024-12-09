@@ -9,33 +9,27 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Popups 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding.enums 1.0
 
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 import shared.stores 1.0 as SharedStores
 
 import utils 1.0
 
-// compat
-import AppLayouts.Onboarding.stores 1.0 as OOBS
-
 Page {
     id: root
 
-    // FIXME refactor to a hasPin() (instead of getPin())
-    // TODO backend: replace with a new OnboardingStore, with just the needed props/functions?
-    required property OOBS.StartupStore startupStore
+    required property OnboardingStore onboardingStore
 
     // TODO backend: externalize the metrics handling too?
     required property SharedStores.MetricsStore metricsStore
-
-    required property ProfileStores.PrivacyStore privacyStore
 
     property int splashScreenDurationMs: 30000
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
 
     readonly property alias stack: stack
-    readonly property alias primaryFlow: d.primaryFlow // OnboardingLayout.PrimaryFlow enum
-    readonly property alias secondaryFlow: d.secondaryFlow // OnboardingLayout.SecondaryFlow enum
+    readonly property alias primaryFlow: d.primaryFlow // Onboarding.PrimaryFlow enum
+    readonly property alias secondaryFlow: d.secondaryFlow // Onboarding.SecondaryFlow enum
 
     signal finished(int primaryFlow, int secondaryFlow, var data)
     signal keycardFactoryResetRequested() // TODO integrate/switch to an external flow, needed?
@@ -51,10 +45,10 @@ Page {
     QtObject {
         id: d
         // logic
-        property int primaryFlow: OnboardingLayout.PrimaryFlow.Unknown
-        property int secondaryFlow: OnboardingLayout.SecondaryFlow.Unknown
-        readonly property string currentKeycardState: root.startupStore.currentStartupState.stateType
-        readonly property var seedWords: root.privacyStore.getMnemonic().split(" ")
+        property int primaryFlow: Onboarding.PrimaryFlow.Unknown
+        property int secondaryFlow: Onboarding.SecondaryFlow.Unknown
+        readonly property int currentKeycardState: root.onboardingStore.keycardState
+        readonly property var seedWords: root.onboardingStore.getMnemonic().split(" ")
         readonly property int numWordsToVerify: 4
 
         // UI
@@ -65,14 +59,15 @@ Page {
         property string password
         property string keycardPin
         property bool enableBiometrics
-        // TODO collect seedphrase too?
+        property string seedphrase
 
         function resetState() {
-            d.primaryFlow = OnboardingLayout.PrimaryFlow.Unknown
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.Unknown
+            d.primaryFlow = Onboarding.PrimaryFlow.Unknown
+            d.secondaryFlow = Onboarding.SecondaryFlow.Unknown
             d.password = ""
             d.keycardPin = ""
             d.enableBiometrics = false
+            d.seedphrase = ""
         }
 
         readonly property Settings settings: Settings {
@@ -95,29 +90,10 @@ Page {
 
         function finishFlow() {
             dbg.debugFlow(`ONBOARDING FINISHED; ${d.primaryFlow} -> ${d.secondaryFlow}`)
-            root.finished(d.primaryFlow, d.secondaryFlow, // TODO collect seedphrase?
-                          {"password": d.password, "keycardPin": d.keycardPin, "enableBiometrics": d.enableBiometrics})
+            root.finished(d.primaryFlow, d.secondaryFlow,
+                          {"password": d.password, "keycardPin": d.keycardPin,
+                              "seedphrase": d.seedphrase, "enableBiometrics": d.enableBiometrics})
         }
-    }
-
-    enum PrimaryFlow {
-        Unknown,
-        CreateProfile,
-        Login
-    }
-
-    enum SecondaryFlow {
-        Unknown,
-
-        CreateProfileWithPassword,
-        CreateProfileWithSeedphrase,
-        CreateProfileWithKeycard,
-        CreateProfileWithKeycardNewSeedphrase,
-        CreateProfileWithKeycardExistingSeedphrase,
-
-        LoginWithSeedphrase,
-        LoginWithSyncing,
-        LoginWithKeycard
     }
 
     LoggingCategory {
@@ -205,12 +181,12 @@ Page {
         // welcome page
         function onCreateProfileRequested() {
             dbg.debugFlow("PRIMARY: CREATE PROFILE")
-            d.primaryFlow = OnboardingLayout.PrimaryFlow.CreateProfile
+            d.primaryFlow = Onboarding.PrimaryFlow.CreateProfile
             stack.push(helpUsImproveStatusPage)
         }
         function onLoginRequested() {
             dbg.debugFlow("PRIMARY: LOG IN")
-            d.primaryFlow = OnboardingLayout.PrimaryFlow.Login
+            d.primaryFlow = Onboarding.PrimaryFlow.Login
             stack.push(helpUsImproveStatusPage)
         }
 
@@ -221,43 +197,43 @@ Page {
             Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})
             localAppSettings.metricsPopupSeen = true
 
-            if (d.primaryFlow === OnboardingLayout.PrimaryFlow.CreateProfile)
+            if (d.primaryFlow === Onboarding.PrimaryFlow.CreateProfile)
                 stack.push(createProfilePage)
-            else if (d.primaryFlow === OnboardingLayout.PrimaryFlow.Login)
+            else if (d.primaryFlow === Onboarding.PrimaryFlow.Login)
                 stack.push(loginPage)
         }
 
         // create profile page
         function onCreateProfileWithPasswordRequested() {
             dbg.debugFlow("SECONDARY: CREATE PROFILE WITH PASSWORD")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithPassword
+            d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithPassword
             stack.push(createPasswordPage)
         }
         function onCreateProfileWithSeedphraseRequested() {
             dbg.debugFlow("SECONDARY: CREATE PROFILE WITH SEEDPHRASE")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithSeedphrase
+            d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Create profile using a recovery phrase")})
         }
         function onCreateProfileWithEmptyKeycardRequested() {
             dbg.debugFlow("SECONDARY: CREATE PROFILE WITH KEYCARD")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithKeycard
+            d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithKeycard
             stack.push(keycardIntroPage)
         }
 
         // login page
         function onLoginWithSeedphraseRequested() {
             dbg.debugFlow("SECONDARY: LOGIN WITH SEEDPHRASE")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.LoginWithSeedphrase
+            d.secondaryFlow = Onboarding.SecondaryFlow.LoginWithSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Log in with your Status recovery phrase")})
         }
         function onLoginWithSyncingRequested() {
             dbg.debugFlow("SECONDARY: LOGIN WITH SYNCING")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.LoginWithSyncing
+            d.secondaryFlow = Onboarding.SecondaryFlow.LoginWithSyncing
             stack.push(loginBySyncPage)
         }
         function onLoginWithKeycardRequested() {
             dbg.debugFlow("SECONDARY: LOGIN WITH KEYCARD")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.LoginWithKeycard
+            d.secondaryFlow = Onboarding.SecondaryFlow.LoginWithKeycard
             stack.push(keycardIntroPage)
         }
 
@@ -271,17 +247,15 @@ Page {
         }
 
         // seedphrase page
-        function onSeedphraseValidated() {
-            dbg.debugFlow("SEEDPHRASE VALIDATED")
-            if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithSeedphrase || d.secondaryFlow === OnboardingLayout.SecondaryFlow.LoginWithSeedphrase) {
+        function onSeedphraseSubmitted(seedphrase: string) {
+            dbg.debugFlow(`SEEDPHRASE SUBMITTED: ${seedphrase}`)
+            d.seedphrase = seedphrase
+            if (d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithSeedphrase || d.secondaryFlow === Onboarding.SecondaryFlow.LoginWithSeedphrase) {
                 dbg.debugFlow("AFTER SEEDPHRASE -> PASSWORD PAGE")
                 stack.push(createPasswordPage)
-            } else if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
+            } else if (d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
                 dbg.debugFlow("AFTER SEEDPHRASE -> KEYCARD PIN PAGE")
-                if (root.startupStore.getPin() !== "")
-                    stack.push(keycardEnterPinPage)
-                else
-                    stack.push(keycardCreatePinPage)
+                stack.push(keycardCreatePinPage)
             }
         }
 
@@ -299,23 +273,20 @@ Page {
         }
         function onLoginWithThisKeycardRequested() {
             dbg.debugFlow("LOGIN WITH THIS KEYCARD REQUESTED")
-            d.primaryFlow = OnboardingLayout.PrimaryFlow.Login
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.LoginWithKeycard
-            if (root.startupStore.getPin() !== "")
-                stack.push(keycardEnterPinPage)
-            else
-                stack.push(keycardCreatePinPage)
+            d.primaryFlow = Onboarding.PrimaryFlow.Login
+            d.secondaryFlow = Onboarding.SecondaryFlow.LoginWithKeycard
+            stack.push(keycardEnterPinPage)
         }
         function onEmptyKeycardDetected() {
             dbg.debugFlow("EMPTY KEYCARD DETECTED")
-            if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.LoginWithKeycard)
+            if (d.secondaryFlow === Onboarding.SecondaryFlow.LoginWithKeycard)
                 stack.replace(keycardEmptyPage) // NB: replacing the loginPage
             else
                 stack.replace(createKeycardProfilePage) // NB: replacing the keycardIntroPage
         }
         function onNotEmptyKeycardDetected() {
             dbg.debugFlow("NOT EMPTY KEYCARD DETECTED")
-            if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.LoginWithKeycard)
+            if (d.secondaryFlow === Onboarding.SecondaryFlow.LoginWithKeycard)
                 stack.replace(keycardEnterPinPage)
             else
                 stack.replace(keycardNotEmptyPage)
@@ -323,25 +294,25 @@ Page {
 
         function onCreateKeycardProfileWithNewSeedphrase() {
             dbg.debugFlow("CREATE KEYCARD PROFILE WITH NEW SEEDPHRASE")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
+            d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
             stack.push(backupSeedIntroPage)
         }
         function onCreateKeycardProfileWithExistingSeedphrase() {
             dbg.debugFlow("CREATE KEYCARD PROFILE WITH EXISTING SEEDPHRASE")
-            d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
+            d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
             stack.push(seedphrasePage, { title: qsTr("Create profile on empty Keycard using a recovery phrase")})
         }
 
-        function onKeycardPinCreated(pin) {
+        function onKeycardPinCreated(pin: string) {
             dbg.debugFlow(`KEYCARD PIN CREATED: ${pin}`)
             d.keycardPin = pin
-            // TODO backend: set the PIN immediately?
+            root.onboardingStore.setPin(pin)
 
-            if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase ||
-                    d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
+            if (d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase ||
+                    d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
                 dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
                 stack.clear()
-                // TODO backend: transfer the keypair
+                root.onboardingStore.startKeypairTransfer()
                 stack.push(addKeypairPage)
             } else {
                 Backpressure.debounce(root, 2000, function() {
@@ -351,16 +322,16 @@ Page {
             }
         }
 
-        function onKeycardPinEntered(pin) {
+        function onKeycardPinEntered(pin: string) {
             dbg.debugFlow(`KEYCARD PIN ENTERED: ${pin}`)
             d.keycardPin = pin
-            // TODO backend: set the PIN immediately?
+            root.onboardingStore.setPin(pin)
 
-            if (d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase ||
-                    d.secondaryFlow === OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
+            if (d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase ||
+                    d.secondaryFlow === Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase) {
                 dbg.debugFlow("ENTERING KEYPAIR TRANSFER PAGE")
                 stack.clear()
-                // TODO backend: transfer the keypair
+                root.onboardingStore.startKeypairTransfer()
                 stack.push(addKeypairPage)
             } else {
                 stack.clear()
@@ -381,7 +352,7 @@ Page {
 
         function onBackupSeedphraseConfirmed() {
             dbg.debugFlow("BACKUP SEED CONFIRMED")
-            root.privacyStore.mnemonicWasShown()
+            root.onboardingStore.mnemonicWasShown()
             stack.push(backupSeedVerifyPage)
         }
 
@@ -392,19 +363,15 @@ Page {
 
         function onBackupSeedphraseRemovalConfirmed() {
             dbg.debugFlow("BACKUP SEED REMOVAL CONFIRMED")
-            root.privacyStore.removeMnemonic()
-
-            if (root.startupStore.getPin())
-                stack.replace(keycardEnterPinPage)
-            else
-                stack.replace(keycardCreatePinPage)
+            root.onboardingStore.removeMnemonic()
+            stack.replace(keycardCreatePinPage)
         }
 
         // login with sync pages
         function onSyncProceedWithConnectionString(connectionString) {
             dbg.debugFlow(`SYNC PROCEED WITH CONNECTION STRING: ${connectionString}`)
-            root.startupStore.setConnectionString(connectionString)
-            // TODO backend: start the sync
+            root.onboardingStore.setConnectionString(connectionString)
+            // TODO backend: start the sync?
             stack.clear()
             stack.replace(syncProgressPage)
         }
@@ -430,7 +397,7 @@ Page {
         }
         function onKeypairAddTryAgainRequested() {
             dbg.debugFlow("RESTART KEYPAIR TRANSFER REQUESTED")
-            // TODO backend: restart the transfer
+            root.onboardingStore.startKeypairTransfer()
             stack.clear()
             stack.push(addKeypairPage)
         }
@@ -465,8 +432,8 @@ Page {
         CreateProfilePage {
             StackView.onActivated: {
                 // reset when we get back here
-                d.primaryFlow = OnboardingLayout.PrimaryFlow.CreateProfile
-                d.secondaryFlow = OnboardingLayout.SecondaryFlow.Unknown
+                d.primaryFlow = Onboarding.PrimaryFlow.CreateProfile
+                d.secondaryFlow = Onboarding.SecondaryFlow.Unknown
             }
         }
     }
@@ -474,7 +441,7 @@ Page {
     Component {
         id: createPasswordPage
         CreatePasswordPage {
-            passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
+            passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore
         }
     }
 
@@ -486,7 +453,7 @@ Page {
     Component {
         id: seedphrasePage
         SeedphrasePage {
-            isSeedPhraseValid: root.startupStore.validMnemonic
+            isSeedPhraseValid: root.onboardingStore.validMnemonic
         }
     }
 
@@ -494,8 +461,8 @@ Page {
         id: createKeycardProfilePage
         CreateKeycardProfilePage {
             StackView.onActivated: {
-                d.primaryFlow = OnboardingLayout.PrimaryFlow.CreateProfile
-                d.secondaryFlow = OnboardingLayout.SecondaryFlow.CreateProfileWithKeycard
+                d.primaryFlow = Onboarding.PrimaryFlow.CreateProfile
+                d.secondaryFlow = Onboarding.SecondaryFlow.CreateProfileWithKeycard
             }
         }
     }
@@ -507,9 +474,9 @@ Page {
             displayPromoBanner: !d.settings.keycardPromoShown
             StackView.onActivated: {
                 // NB just to make sure we don't miss the signal when we (re)load the page in the final state already
-                if (keycardState === Constants.startupState.keycardEmpty)
+                if (keycardState === Onboarding.KeycardState.Empty)
                     emptyKeycardDetected()
-                else if (keycardState === Constants.startupState.keycardNotEmpty)
+                else if (keycardState === Onboarding.KeycardState.NotEmpty)
                     notEmptyKeycardDetected()
             }
         }
@@ -533,8 +500,8 @@ Page {
     Component {
         id: keycardEnterPinPage
         KeycardEnterPinPage {
-            existingPin: root.startupStore.getPin()
-            remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts // TODO backend: integrate
+            existingPin: root.onboardingStore.getPin() // FIXME remove
+            remainingAttempts: root.onboardingStore.keycardRemainingPinAttempts
         }
     }
 
@@ -576,8 +543,8 @@ Page {
         LoginPage {
             StackView.onActivated: {
                 // reset when we get back here
-                d.primaryFlow = OnboardingLayout.PrimaryFlow.Login
-                d.secondaryFlow = OnboardingLayout.SecondaryFlow.Unknown
+                d.primaryFlow = Onboarding.PrimaryFlow.Login
+                d.secondaryFlow = Onboarding.SecondaryFlow.Unknown
             }
         }
     }
@@ -585,14 +552,14 @@ Page {
     Component {
         id: loginBySyncPage
         LoginBySyncingPage {
-            validateConnectionString: root.startupStore.validateLocalPairingConnectionString
+            validateConnectionString: root.onboardingStore.validateLocalPairingConnectionString
         }
     }
 
     Component {
         id: syncProgressPage
         SyncProgressPage {
-            syncState: SyncProgressPage.SyncState.InProgress // TODO backend: integrate
+            syncState: root.onboardingStore.syncState
             timeoutInterval: root.splashScreenDurationMs
         }
     }
@@ -600,7 +567,7 @@ Page {
     Component {
         id: addKeypairPage
         KeycardAddKeyPairPage {
-            addKeyPairState: KeycardAddKeyPairPage.AddKeyPairState.InProgress // TODO backend: integrate
+            addKeyPairState: root.onboardingStore.addKeyPairState
             timeoutInterval: root.splashScreenDurationMs
         }
     }

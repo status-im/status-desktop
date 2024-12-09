@@ -3,8 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import AppLayouts.Onboarding2.pages 1.0
-
-import utils 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 Item {
     id: root
@@ -14,8 +13,8 @@ Item {
         anchors.fill: parent
         sourceComponent: {
             switch (ctrlKeycardState.currentValue) {
-            case Constants.startupState.keycardEmpty: return emptyPage
-            case Constants.startupState.keycardNotEmpty: return notEmptyPage
+            case Onboarding.KeycardState.Empty: return emptyPage
+            case Onboarding.KeycardState.NotEmpty: return notEmptyPage
             default: introPage
             }
         }
@@ -31,6 +30,7 @@ Item {
             onReloadKeycardRequested: console.warn("!!! RELOAD REQUESTED")
             onOpenLink: Qt.openUrlExternally(link)
             onOpenLinkWithConfirmation: Qt.openUrlExternally(link)
+            onKeycardFactoryResetRequested: console.warn("!!! FACTORY RESET")
         }
     }
 
@@ -38,6 +38,7 @@ Item {
         id: emptyPage
         KeycardEmptyPage {
             onCreateProfileWithEmptyKeycardRequested: console.warn("!!! CREATE NEW PROFILE")
+            onReloadKeycardRequested: console.warn("!!! RELOAD REQUESTED")
         }
     }
 
@@ -58,7 +59,7 @@ Item {
             id: ctrlDisplayPromo
             text: "Promo banner"
             checked: true
-            visible: ctrlKeycardState.currentValue === Constants.startupState.keycardPluginReader
+            visible: ctrlKeycardState.currentValue === Onboarding.KeycardState.InsertKeycard
         }
         ToolButton {
             text: "<"
@@ -69,22 +70,19 @@ Item {
 
             focusPolicy: Qt.NoFocus
             Layout.preferredWidth: 250
+            textRole: "text"
+            valueRole: "value"
             model: [
-                // initial
-                Constants.startupState.keycardNoPCSCService,
-                Constants.startupState.keycardPluginReader,
-                Constants.startupState.keycardInsertKeycard,
-                Constants.startupState.keycardInsertedKeycard,
-                Constants.startupState.keycardReadingKeycard,
-                Constants.startupState.keycardRecognizedKeycard,
-                // initial errors
-                Constants.startupState.keycardWrongKeycard,
-                Constants.startupState.keycardNotKeycard,
-                Constants.startupState.keycardMaxPairingSlotsReached,
-                Constants.startupState.keycardLocked,
-                // exit states
-                Constants.startupState.keycardNotEmpty,
-                Constants.startupState.keycardEmpty
+                { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
+                { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
+                { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
+                { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
+                { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
+                { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
+                { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
+                { value: Onboarding.KeycardState.Locked, text: "Locked" },
+                { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
+                { value: Onboarding.KeycardState.Empty, text: "Empty" }
             ]
         }
         ToolButton {

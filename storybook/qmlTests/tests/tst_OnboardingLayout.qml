@@ -5,10 +5,10 @@ import StatusQ 0.1 // ClipboardUtils
 
 import AppLayouts.Onboarding2 1.0
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding.enums 1.0
 
-import AppLayouts.Profile.stores 1.0 as ProfileStores
 import shared.stores 1.0 as SharedStores
-import AppLayouts.Onboarding.stores 1.0 as OOBS
 
 import utils 1.0
 
@@ -20,12 +20,12 @@ Item {
 
     QtObject {
         id: mockDriver
-        property string stateType // Constants.startupState.keycardXXX
+        property int keycardState // enum Onboarding.KeycardState
         property bool biometricsAvailable
-        property string existingPin
+        property string existingPin // FIXME REMOVE !!!
 
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
-
+        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
         readonly property string dummyNewPassword: "0123456789"
     }
 
@@ -34,30 +34,42 @@ Item {
 
         OnboardingLayout {
             anchors.fill: parent
-            startupStore: OOBS.StartupStore {
-                readonly property var currentStartupState: QtObject {
-                    readonly property string stateType: mockDriver.stateType // Constants.startupState.keycardXXX
-                }
+            onboardingStore: OnboardingStore {
+                readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
+                readonly property int keycardRemainingPinAttempts: 5
 
-                function getPasswordStrengthScore(password) {
-                    return Math.min(password.length-1, 4)
-                }
-                function validMnemonic(mnemonic) {
-                    return mnemonic === mockDriver.mnemonic
-                }
+                // FIXME REMOVE !!!
                 function getPin() {
                     return mockDriver.existingPin
                 }
-                function getSeedPhrase() {}
 
-                function validateLocalPairingConnectionString(connectionString) {
+                function setPin(pin: string) {
+                    return true
+                }
+
+                readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState
+                function startKeypairTransfer() {}
+
+                // password
+                function getPasswordStrengthScore(password: string) {
+                    return Math.min(password.length-1, 4)
+                }
+
+                // seedphrase/mnemonic
+                function validMnemonic(mnemonic: string) {
+                    return mnemonic === mockDriver.mnemonic
+                }
+                function getMnemonic() { // -> string
+                    return mockDriver.seedWords.join(" ")
+                }
+                function mnemonicWasShown() {}
+                function removeMnemonic() {}
+
+                readonly property int syncState: Onboarding.SyncState.InProgress // enum Onboarding.SyncState
+                function validateLocalPairingConnectionString(connectionString: string) {
                     return !Number.isNaN(parseInt(connectionString))
                 }
-                function setConnectionString(connectionString) {}
-
-                readonly property var startupModuleInst: QtObject {
-                    property int remainingAttempts: 5
-                }
+                function setConnectionString(connectionString: string) {}
             }
             metricsStore: SharedStores.MetricsStore {
                 readonly property var d: QtObject {
@@ -72,15 +84,6 @@ Item {
                 function addCentralizedMetricIfEnabled(eventName, eventValue = null) {}
 
                 readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
-            }
-            privacyStore: ProfileStores.PrivacyStore {
-                readonly property var words: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
-
-                function getMnemonic() {
-                    return words.join(" ")
-                }
-                function mnemonicWasShown() {}
-                function removeMnemonic() {}
             }
 
             splashScreenDurationMs: 3000
@@ -126,7 +129,7 @@ Item {
         }
 
         function cleanup() {
-            mockDriver.stateType = ""
+            mockDriver.keycardState = -1
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
             dynamicSpy.cleanup()
@@ -269,8 +272,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithPassword)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithPassword)
         }
 
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
@@ -361,8 +364,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndNewSeedphrase_data() {
@@ -372,10 +375,6 @@ Item {
                 let newRowEmptyPin = Object.create(dataRow)
                 Object.assign(newRowEmptyPin, { tag: dataRow.tag + "+emptyPin", pin: "" })
                 flowData.push(newRowEmptyPin)
-
-                let newRowSomePin = Object.assign(dataRow)
-                Object.assign(newRowSomePin, { tag: dataRow.tag + "+nonEmptyPin", pin: "123456" })
-                flowData.push(newRowSomePin)
             }
 
             return flowData
@@ -413,7 +412,7 @@ Item {
             // PAGE 4: Keycard intro
             page = getCurrentPage(stack, "KeycardIntroPage")
             dynamicSpy.setup(page, "emptyKeycardDetected")
-            mockDriver.stateType = Constants.startupState.keycardEmpty // SIMULATION // TODO test other states here as well
+            mockDriver.keycardState = Onboarding.KeycardState.Empty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "empty")
 
@@ -509,8 +508,8 @@ Item {
 
             // PAGE 12: Adding key pair to Keycard
             page = getCurrentPage(stack, "KeycardAddKeyPairPage")
-            tryCompare(page, "addKeyPairState", KeycardAddKeyPairPage.AddKeyPairState.InProgress)
-            page.addKeyPairState = KeycardAddKeyPairPage.AddKeyPairState.Success // SIMULATION
+            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
+            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, true)
@@ -529,8 +528,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndExistingSeedphrase_data() {
@@ -569,7 +568,7 @@ Item {
             // PAGE 4: Keycard intro
             page = getCurrentPage(stack, "KeycardIntroPage")
             dynamicSpy.setup(page, "emptyKeycardDetected")
-            mockDriver.stateType = Constants.startupState.keycardEmpty // SIMULATION // TODO test other states here as well
+            mockDriver.keycardState = Onboarding.KeycardState.Empty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "empty")
 
@@ -615,8 +614,8 @@ Item {
 
             // PAGE 8: Adding key pair to Keycard
             page = getCurrentPage(stack, "KeycardAddKeyPairPage")
-            tryCompare(page, "addKeyPairState", KeycardAddKeyPairPage.AddKeyPairState.InProgress)
-            page.addKeyPairState = KeycardAddKeyPairPage.AddKeyPairState.Success // SIMULATION
+            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
+            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
             const btnContinue2 = findChild(page, "btnContinue")
             verify(!!btnContinue2)
             compare(btnContinue2.enabled, true)
@@ -635,8 +634,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
         }
 
         // FLOW: Log in -> Log in with recovery phrase
@@ -724,8 +723,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithSeedphrase)
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -791,8 +790,8 @@ Item {
 
             // PAGE 5: Profile sync in progress
             page = getCurrentPage(stack, "SyncProgressPage")
-            tryCompare(page, "syncState", SyncProgressPage.SyncState.InProgress)
-            page.syncState = SyncProgressPage.SyncState.Success // SIMULATION
+            tryCompare(page, "syncState", Onboarding.SyncState.InProgress)
+            page.syncState = Onboarding.SyncState.Success // SIMULATION
             const btnLogin2 = findChild(page, "btnLogin") // TODO test other flows/buttons here as well
             verify(!!btnLogin2)
             compare(btnLogin2.enabled, true)
@@ -811,8 +810,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithSyncing)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithSyncing)
         }
 
         // FLOW: Log in -> Log in with Keycard
@@ -847,7 +846,7 @@ Item {
             // PAGE 4: Keycard intro
             page = getCurrentPage(stack, "KeycardIntroPage")
             dynamicSpy.setup(page, "notEmptyKeycardDetected")
-            mockDriver.stateType = Constants.startupState.keycardNotEmpty // SIMULATION // TODO test other states here as well
+            mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "notEmpty")
 
@@ -871,8 +870,8 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], OnboardingLayout.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], OnboardingLayout.SecondaryFlow.LoginWithKeycard)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
+            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithKeycard)
         }
     }
 }

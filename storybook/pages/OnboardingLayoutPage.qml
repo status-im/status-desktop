@@ -16,13 +16,11 @@ import Storybook 1.0
 import utils 1.0
 
 import AppLayouts.Onboarding2 1.0
-import AppLayouts.Profile.stores 1.0 as ProfileStores
+import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
-
-// compat
-import AppLayouts.Onboarding.stores 1.0 as OOBS
 
 SplitView {
     id: root
@@ -31,68 +29,75 @@ SplitView {
     Logs { id: logs }
 
     QtObject {
-        id: keycardMock
-        property string stateType: ctrlKeycardState.currentValue
-
-        readonly property var keycardStates: [ // FIXME replace with proper/separate enums for the intro/pin pages
-            // initial
-            Constants.startupState.keycardNoPCSCService,
-            Constants.startupState.keycardPluginReader,
-            Constants.startupState.keycardInsertKeycard,
-            Constants.startupState.keycardInsertedKeycard,
-            Constants.startupState.keycardReadingKeycard,
-            Constants.startupState.keycardRecognizedKeycard,
-            // initial errors
-            Constants.startupState.keycardWrongKeycard,
-            Constants.startupState.keycardNotKeycard,
-            Constants.startupState.keycardMaxPairingSlotsReached,
-            Constants.startupState.keycardLocked,
-            // exit states
-            Constants.startupState.keycardNotEmpty,
-            Constants.startupState.keycardEmpty
-        ]
-
+        id: mockDriver
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
+        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+
+        // TODO simulation
+        function restart() {
+            // add keypair state
+            // sync state
+        }
     }
 
     OnboardingLayout {
         id: onboarding
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        startupStore: OOBS.StartupStore {
-            readonly property var currentStartupState: QtObject {
-                property string stateType: keycardMock.stateType // Constants.startupState.keycardXXX
-            }
+        onboardingStore: OnboardingStore {
+            readonly property int keycardState: ctrlKeycardState.currentValue // enum Onboarding.KeycardState
+            readonly property int keycardRemainingPinAttempts: 5
 
-            function getPasswordStrengthScore(password) {
-                logs.logEvent("StartupStore.getPasswordStrengthScore", ["password"], arguments)
-                return Math.min(password.length-1, 4)
-            }
-            function validMnemonic(mnemonic) {
-                logs.logEvent("StartupStore.validMnemonic", ["mnemonic"], arguments)
-                return mnemonic === keycardMock.mnemonic
-            }
-            function getPin() { // FIXME refactor to a hasPin(); there's no way to extract the PIN from the Keycard once written
-                logs.logEvent("StartupStore.getPin()")
+            // FIXME REMOVE !!!
+            function getPin() {
+                logs.logEvent("OnboardingStore.getPin()")
                 return ctrlPin.text
             }
-            function getSeedPhrase() {
-                logs.logEvent("StartupStore.getSeedPhrase()")
-                // FIXME needed? cf getMnemonic()
+
+            function setPin(pin: string) { // -> bool
+                logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
+                return true
             }
 
-            function validateLocalPairingConnectionString(connectionString) {
-                logs.logEvent("StartupStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
+            readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState
+            function startKeypairTransfer() { // -> void
+                logs.logEvent("OnboardingStore.startKeypairTransfer")
+            }
+
+            // password
+            function getPasswordStrengthScore(password: string) { // -> int
+                logs.logEvent("OnboardingStore.getPasswordStrengthScore", ["password"], arguments)
+                return Math.min(password.length-1, 4)
+            }
+
+            // seedphrase/mnemonic
+            function validMnemonic(mnemonic: string) { // -> bool
+                logs.logEvent("OnboardingStore.validMnemonic", ["mnemonic"], arguments)
+                return mnemonic === mockDriver.mnemonic
+            }
+            function getMnemonic() { // -> string
+                logs.logEvent("OnboardingStore.getMnemonic()")
+                return mockDriver.seedWords.join(" ")
+            }
+            function mnemonicWasShown() { // -> void
+                console.warn("!!! MNEMONIC SHOWN")
+                logs.logEvent("OnboardingStore.mnemonicWasShown()")
+            }
+            function removeMnemonic() { // -> void
+                console.warn("!!! REMOVE MNEMONIC")
+                logs.logEvent("OnboardingStore.removeMnemonic()")
+            }
+
+            readonly property int syncState: Onboarding.SyncState.InProgress // enum Onboarding.SyncState
+            function validateLocalPairingConnectionString(connectionString: string) { // -> bool
+                logs.logEvent("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
                 return !Number.isNaN(parseInt(connectionString))
             }
-            function setConnectionString(connectionString) {
-                logs.logEvent("StartupStore.setConnectionString", ["connectionString"], arguments)
-            }
-
-            readonly property var startupModuleInst: QtObject {
-                property int remainingAttempts: 5
+            function setConnectionString(connectionString: string) { // -> void
+                logs.logEvent("OnboardingStore.setConnectionString", ["connectionString"], arguments)
             }
         }
+
         metricsStore: SharedStores.MetricsStore {
             readonly property var d: QtObject {
                 id: d
@@ -106,24 +111,6 @@ SplitView {
             function addCentralizedMetricIfEnabled(eventName, eventValue = null) {}
 
             readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
-        }
-        privacyStore: ProfileStores.PrivacyStore {
-            readonly property var words: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
-
-            function getMnemonic() {
-                logs.logEvent("PrivacyStore.getMnemonic()")
-                return words.join(" ")
-            }
-
-            function mnemonicWasShown() {
-                console.warn("!!! MNEMONIC SHOWN")
-                logs.logEvent("PrivacyStore.mnemonicWasShown()")
-            }
-
-            function removeMnemonic() {
-                console.warn("!!! REMOVE MNEMONIC")
-                logs.logEvent("PrivacyStore.removeMnemonic()")
-            }
         }
 
         splashScreenDurationMs: 3000
@@ -226,7 +213,7 @@ SplitView {
                     Button {
                         text: "Copy seedphrase"
                         focusPolicy: Qt.NoFocus
-                        onClicked: ClipboardUtils.setText(keycardMock.mnemonic)
+                        onClicked: ClipboardUtils.setText(mockDriver.mnemonic)
                     }
                     Button {
                         text: "Copy PIN (\"%1\")".arg(ctrlPin.text)
@@ -256,7 +243,20 @@ SplitView {
                         Layout.preferredWidth: 300
                         id: ctrlKeycardState
                         focusPolicy: Qt.NoFocus
-                        model: keycardMock.keycardStates
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
+                            { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
+                            { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
+                            { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
+                            { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
+                            { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
+                            { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
+                            { value: Onboarding.KeycardState.Locked, text: "Locked" },
+                            { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
+                            { value: Onboarding.KeycardState.Empty, text: "Empty" }
+                        ]
                     }
                 }
             }

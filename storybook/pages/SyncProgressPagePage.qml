@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 Item {
     id: root
@@ -11,14 +12,14 @@ Item {
     SyncProgressPage {
         id: progressPage
         anchors.fill: parent
-        syncState: SyncProgressPage.SyncState.InProgress
+        syncState: Onboarding.SyncState.InProgress
         timeoutInterval: 5000
         onRestartSyncRequested: {
             console.warn("!!! RESTART SYNC REQUESTED")
-            syncState = SyncProgressPage.SyncState.InProgress
+            syncState = Onboarding.SyncState.InProgress
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                syncState = SyncProgressPage.SyncState.Success
+                syncState = Onboarding.SyncState.Success
             })()
         }
         onLoginToAppRequested: console.warn("!!! LOGIN TO APP REQUESTED")
@@ -30,7 +31,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         width: 300
-        model: ["SyncProgressPage.SyncState.InProgress", "SyncProgressPage.SyncState.Success", "SyncProgressPage.SyncState.Failed"]
+        model: ["Onboarding.SyncState.InProgress", "Onboarding.SyncState.Success", "Onboarding.SyncState.Failed"]
         onCurrentIndexChanged: progressPage.syncState = currentIndex
     }
 }

@@ -8,13 +8,14 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 import utils 1.0
 
 KeycardBasePage {
     id: root
 
-    required property string keycardState // Constants.startupState.keycardXXX
+    required property int keycardState // cf Onboarding.KeycardState
     property bool displayPromoBanner
 
     signal keycardFactoryResetRequested()
@@ -99,8 +100,8 @@ KeycardBasePage {
         // normal/intro states
         State {
             name: "plugin"
-            when: root.keycardState === Constants.startupState.keycardPluginReader ||
-                  root.keycardState === ""
+            when: root.keycardState === Onboarding.KeycardState.PluginReader ||
+                  root.keycardState === -1
             PropertyChanges {
                 target: root
                 title: qsTr("Plug in your Keycard reader")
@@ -113,7 +114,7 @@ KeycardBasePage {
         },
         State {
             name: "insert"
-            when: root.keycardState === Constants.startupState.keycardInsertKeycard
+            when: root.keycardState === Onboarding.KeycardState.InsertKeycard
             PropertyChanges {
                 target: root
                 title: qsTr("Insert your Keycard")
@@ -126,9 +127,7 @@ KeycardBasePage {
         },
         State {
             name: "reading"
-            when: root.keycardState === Constants.startupState.keycardReadingKeycard ||
-                  root.keycardState === Constants.startupState.keycardInsertedKeycard ||
-                  root.keycardState === Constants.startupState.keycardRecognizedKeycard
+            when: root.keycardState === Onboarding.KeycardState.ReadingKeycard
             PropertyChanges {
                 target: root
                 title: qsTr("Reading Keycard...")
@@ -138,8 +137,8 @@ KeycardBasePage {
         // error states
         State {
             name: "notKeycard"
-            when: root.keycardState === Constants.startupState.keycardWrongKeycard ||
-                  root.keycardState === Constants.startupState.keycardNotKeycard
+            when: root.keycardState === Onboarding.KeycardState.WrongKeycard ||
+                  root.keycardState === Onboarding.KeycardState.NotKeycard
             PropertyChanges {
                 target: root
                 title: qsTr("Oops this isn’t a Keycard")
@@ -154,7 +153,7 @@ KeycardBasePage {
         },
         State {
             name: "noService"
-            when: root.keycardState === Constants.startupState.keycardNoPCSCService
+            when: root.keycardState === Onboarding.KeycardState.NoPCSCService
             PropertyChanges {
                 target: root
                 title: qsTr("Smartcard reader service unavailable")
@@ -169,7 +168,7 @@ KeycardBasePage {
         },
         State {
             name: "occupied"
-            when: root.keycardState === Constants.startupState.keycardMaxPairingSlotsReached
+            when: root.keycardState === Onboarding.KeycardState.MaxPairingSlotsReached
             PropertyChanges {
                 target: root
                 title: qsTr("All pairing slots occupied")
@@ -187,7 +186,7 @@ KeycardBasePage {
         },
         State {
             name: "locked"
-            when: root.keycardState === Constants.startupState.keycardLocked
+            when: root.keycardState === Onboarding.KeycardState.Locked
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
@@ -206,14 +205,14 @@ KeycardBasePage {
         // exit states
         State {
             name: "empty"
-            when: root.keycardState === Constants.startupState.keycardEmpty
+            when: root.keycardState === Onboarding.KeycardState.Empty
             StateChangeScript {
                 script: root.emptyKeycardDetected()
             }
         },
         State {
             name: "notEmpty"
-            when: root.keycardState === Constants.startupState.keycardNotEmpty
+            when: root.keycardState === Onboarding.KeycardState.NotEmpty
             StateChangeScript {
                 script: root.notEmptyKeycardDetected()
             }
