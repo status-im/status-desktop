@@ -17,7 +17,7 @@ OnboardingPage {
 
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
-    signal seedphraseValidated()
+    signal seedphraseSubmitted(string seedphrase)
 
     pageClassName: "SeedphrasePage"
 
@@ -49,7 +49,7 @@ OnboardingPage {
                 Layout.preferredWidth: 580
                 Layout.alignment: Qt.AlignHCenter
                 isSeedPhraseValid: root.isSeedPhraseValid
-                onSubmitSeedPhrase: root.seedphraseValidated()
+                onSubmitSeedPhrase: root.seedphraseSubmitted(getSeedPhraseAsString())
             }
 
             StatusButton {
@@ -58,7 +58,7 @@ OnboardingPage {
                 Layout.topMargin: -Theme.halfPadding
                 enabled: seedPanel.seedPhraseIsValid
                 text: qsTr("Continue")
-                onClicked: root.seedphraseValidated()
+                onClicked: root.seedphraseSubmitted(seedPanel.getSeedPhraseAsString())
             }
         }
     }
