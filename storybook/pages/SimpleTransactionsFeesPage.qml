@@ -1,5 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core.Theme 0.1
 
@@ -9,7 +10,6 @@ import AppLayouts.Wallet.panels 1.0
 
 SplitView {
     orientation: Qt.Vertical
-    Logs { id: logs }
 
     Rectangle {
         SplitView.fillHeight: true
@@ -23,20 +23,26 @@ SplitView {
             cryptoFees: qsTr("0.0007 ETH")
             fiatFees: qsTr("1.45 EUR")
             loading: loadingCheckbox.checked
+            error: errorCheckbox.checked
         }
     }
 
-    LogsAndControlsPanel {
+    Pane {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
         SplitView.preferredHeight: 200
 
-        logsView.logText: logs.logText
+        ColumnLayout {
+            CheckBox {
+                id: loadingCheckbox
+                text: "loading"
+            }
 
-        CheckBox {
-            id: loadingCheckbox
-            text: "loading"
+            CheckBox {
+                id: errorCheckbox
+                text: "error"
+            }
         }
     }
 }

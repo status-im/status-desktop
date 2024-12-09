@@ -16,6 +16,8 @@ StatusDialogFooter {
     property string estimateTime
     /** property to set estimates fees in fiat **/
     property string estimatedFees
+    /** property to set error state **/
+    property bool error
 
     // Signal to propogate Send clicked
     signal reviewSendClicked()
@@ -29,7 +31,7 @@ StatusDialogFooter {
         id: d
 
         readonly property string emptyText: "--"
-        readonly property string loadingText: "----------"
+        readonly property string loadingText: "XXXXXXXXXX"
     }
 
     leftButtons: ObjectModel {
@@ -40,12 +42,14 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est time")
             }
             StatusTextWithLoadingState {
                 id: estimatedTime
 
+                font.weight: Font.Medium
                 customColor: !!root.estimateTime ? Theme.palette.directColor1:
                                                    Theme.palette.directColor5
                 loading: root.loading
@@ -60,14 +64,18 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est fees")
             }
             StatusTextWithLoadingState {
                 id: estimatedFees
 
-                customColor: !!root.estimatedFees ? Theme.palette.directColor1:
-                                                   Theme.palette.directColor5
+                font.weight: Font.Medium
+                customColor: root.error ? Theme.palette.dangerColor1:
+                                          !!root.estimatedFees ?
+                                              Theme.palette.directColor1:
+                                              Theme.palette.directColor5
                 loading: root.loading
 
                 text: !!root.estimatedFees ? root.estimatedFees:

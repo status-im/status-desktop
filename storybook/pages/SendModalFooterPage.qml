@@ -22,8 +22,9 @@ SplitView {
             width: 595
 
             loading: loadingCheckbox.checked
+            error: errorCheckbox.checked
 
-            onReviewSendClicked: console.log("review send clicked")
+            onReviewSendClicked: logs.logEvent("review send clicked")
         }
     }
 
@@ -39,6 +40,11 @@ SplitView {
             CheckBox {
                 id: loadingCheckbox
                 text: "loading"
+            }
+
+            CheckBox {
+                id: errorCheckbox
+                text: "error"
             }
 
             Button {

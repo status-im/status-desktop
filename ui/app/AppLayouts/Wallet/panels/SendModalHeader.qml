@@ -79,7 +79,7 @@ RowLayout {
 
     // if not closed during scrolling they move with the header and it feels undesirable
     onIsScrollingChanged: {
-        tokenSelector.popup.close()
+        tokenSelector.close()
         networkFilter.control.popup.close()
     }
 
@@ -135,7 +135,7 @@ RowLayout {
 
         Layout.alignment: Qt.AlignTop
 
-        control.bottomPadding: 0
+        control.popup.y: networkFilter.height
 
         flatNetworks: root.networksModel
 
