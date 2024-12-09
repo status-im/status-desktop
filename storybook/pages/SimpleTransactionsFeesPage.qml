@@ -9,7 +9,6 @@ import AppLayouts.Wallet.panels 1.0
 
 SplitView {
     orientation: Qt.Vertical
-    Logs { id: logs }
 
     Rectangle {
         SplitView.fillHeight: true
@@ -26,13 +25,11 @@ SplitView {
         }
     }
 
-    LogsAndControlsPanel {
+    Pane {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
         SplitView.preferredHeight: 200
-
-        logsView.logText: logs.logText
 
         CheckBox {
             id: loadingCheckbox

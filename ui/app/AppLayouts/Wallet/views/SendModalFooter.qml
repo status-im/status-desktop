@@ -29,7 +29,7 @@ StatusDialogFooter {
         id: d
 
         readonly property string emptyText: "--"
-        readonly property string loadingText: "----------"
+        readonly property string loadingText: "XXXXXXXXXX"
     }
 
     leftButtons: ObjectModel {

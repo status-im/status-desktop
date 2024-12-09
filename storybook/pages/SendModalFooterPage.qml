@@ -23,7 +23,7 @@ SplitView {
 
             loading: loadingCheckbox.checked
 
-            onReviewSendClicked: console.log("review send clicked")
+            onReviewSendClicked: logs.logEvent("review send clicked")
         }
     }
 
