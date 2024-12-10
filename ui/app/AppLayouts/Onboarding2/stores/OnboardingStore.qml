@@ -47,7 +47,7 @@ QtObject {
     function validateLocalPairingConnectionString(connectionString: string) { // -> bool
         return d.onboardingModuleInst.validateLocalPairingConnectionString(connectionString)
     }
-    function setConnectionString(connectionString: string) { // -> void
-        d.onboardingModuleInst.setConnectionString(connectionString)
+    function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+        d.onboardingModuleInst.inputConnectionStringForBootstrapping(connectionString)
     }
 }
