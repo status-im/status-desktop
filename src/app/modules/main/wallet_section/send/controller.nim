@@ -63,7 +63,7 @@ proc init*(self: Controller) =
       isApprovalTx = args.sentTransaction.approvalTx
     self.delegate.transactionWasSent(
       args.sendDetails.uuid,
-      args.sendDetails.fromChain,
+      args.sentTransaction.fromChain,
       isApprovalTx,
       txHash,
       if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""

@@ -16,8 +16,6 @@ type
   SendDetailsDto* = ref object
     uuid*: string
     sendType*: int
-    fromChain*: int
-    toChain*: int
     fromAddress*: string
     toAddress*: string
     fromToken*: string
@@ -81,8 +79,6 @@ proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
   result = SendDetailsDto()
   discard jsonObj.getProp("uuid", result.uuid)
   discard jsonObj.getProp("sendType", result.sendType)
-  discard jsonObj.getProp("fromChain", result.fromChain)
-  discard jsonObj.getProp("toChain", result.toChain)
   discard jsonObj.getProp("fromAddress", result.fromAddress)
   discard jsonObj.getProp("toAddress", result.toAddress)
   discard jsonObj.getProp("fromToken", result.fromToken)

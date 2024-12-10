@@ -443,8 +443,8 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       addressFrom = sendDetails.fromAddress
       addressTo = sendDetails.toAddress
       txTo = "" # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
-      fromChain = sendDetails.fromChain
-      toChain = sendDetails.toChain
+      fromChain = sentTransaction.fromChain
+      toChain = sentTransaction.toChain
       fromAmount = sendDetails.fromAmount.toString(10)
       toAmount = sendDetails.toAmount.toString(10)
       fromAsset = sendDetails.fromToken
