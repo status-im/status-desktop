@@ -81,7 +81,7 @@ Page {
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
                 dbg.debugFlow("ENTERING BIOMETRICS PAGE")
-                stack.push(enableBiometricsPage)
+                stack.replace(null, enableBiometricsPage)
             } else {
                 dbg.debugFlow("SKIPPING BIOMETRICS PAGE")
                 d.finishFlow()
@@ -241,7 +241,6 @@ Page {
         function onSetPasswordRequested(password: string) {
             dbg.debugFlow("SET PASSWORD REQUESTED")
             d.password = password
-            stack.clear()
             d.pushOrSkipBiometricsPage()
         }
 
@@ -315,7 +314,6 @@ Page {
                 stack.push(addKeypairPage)
             } else {
                 Backpressure.debounce(root, 2000, function() {
-                    stack.clear()
                     d.pushOrSkipBiometricsPage()
                 })()
             }
@@ -333,7 +331,6 @@ Page {
                 root.onboardingStore.startKeypairTransfer()
                 stack.push(addKeypairPage)
             } else {
-                stack.clear()
                 d.pushOrSkipBiometricsPage()
             }
         }
@@ -369,29 +366,23 @@ Page {
         // login with sync pages
         function onSyncProceedWithConnectionString(connectionString) {
             dbg.debugFlow(`SYNC PROCEED WITH CONNECTION STRING: ${connectionString}`)
-            root.onboardingStore.setConnectionString(connectionString)
-            // TODO backend: start the sync?
-            stack.clear()
+            root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
             stack.replace(syncProgressPage)
         }
 
         function onRestartSyncRequested() {
             dbg.debugFlow("RESTART SYNC REQUESTED")
-            // TODO backend: restart the sync
-            stack.clear()
-            stack.replace(syncProgressPage)
+            stack.replace(loginBySyncPage)
         }
 
         function onLoginToAppRequested() {
             dbg.debugFlow("LOGIN TO APP REQUESTED")
-            stack.clear()
             d.pushOrSkipBiometricsPage()
         }
 
         // keypair transfer page
         function onKeypairAddContinueRequested() {
             dbg.debugFlow("KEYPAIR TRANSFER COMPLETED")
-            stack.clear()
             d.pushOrSkipBiometricsPage()
         }
         function onKeypairAddTryAgainRequested() {
@@ -499,7 +490,7 @@ Page {
     Component {
         id: keycardEnterPinPage
         KeycardEnterPinPage {
-            tryToSetPinFunction: root.onboardingStore.setPin()
+            tryToSetPinFunction: root.onboardingStore.setPin
             remainingAttempts: root.onboardingStore.keycardRemainingPinAttempts
         }
     }
