@@ -10,6 +10,7 @@ QtObject {
         readonly property var onboardingModuleInst: onboardingModule
     }
 
+    // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
 
@@ -41,6 +42,7 @@ QtObject {
         d.onboardingModuleInst.removeMnemonic()
     }
 
+    // sync
     readonly property int syncState: d.onboardingModuleInst.syncState // cf. enum Onboarding.SyncState
     function validateLocalPairingConnectionString(connectionString: string) { // -> bool
         return d.onboardingModuleInst.validateLocalPairingConnectionString(connectionString)
