@@ -6,10 +6,17 @@ import AppLayouts.Onboarding2.pages 1.0
 Item {
     id: root
 
+    readonly property string existingPin: "111111"
+
     KeycardEnterPinPage {
         id: page
         anchors.fill: parent
-        existingPin: "111111"
+        tryToSetPinFunction: (pin) => {
+                                 const valid = pin === root.existingPin
+                                 if (!valid)
+                                     remainingAttempts--
+                                 return valid
+                             }
         remainingAttempts: 3
         onKeycardPinEntered: (pin) => {
                                  console.warn("!!! PIN:", pin)
@@ -31,7 +38,7 @@ Item {
     Label {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        text: "Hint: %1".arg(page.existingPin)
+        text: "Hint: %1".arg(root.existingPin)
     }
 }
 

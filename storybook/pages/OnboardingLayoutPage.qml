@@ -46,17 +46,14 @@ SplitView {
         SplitView.fillHeight: true
         onboardingStore: OnboardingStore {
             readonly property int keycardState: ctrlKeycardState.currentValue // enum Onboarding.KeycardState
-            readonly property int keycardRemainingPinAttempts: 5
-
-            // FIXME REMOVE !!!
-            function getPin() {
-                logs.logEvent("OnboardingStore.getPin()")
-                return ctrlPin.text
-            }
+            property int keycardRemainingPinAttempts: 5
 
             function setPin(pin: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
-                return true
+                const valid = pin === ctrlPin.text
+                if (!valid)
+                    keycardRemainingPinAttempts--
+                return valid
             }
 
             readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState

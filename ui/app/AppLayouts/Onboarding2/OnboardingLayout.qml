@@ -241,7 +241,6 @@ Page {
         function onSetPasswordRequested(password: string) {
             dbg.debugFlow("SET PASSWORD REQUESTED")
             d.password = password
-            // TODO backend: set the password immediately?
             stack.clear()
             d.pushOrSkipBiometricsPage()
         }
@@ -500,7 +499,7 @@ Page {
     Component {
         id: keycardEnterPinPage
         KeycardEnterPinPage {
-            existingPin: root.onboardingStore.getPin() // FIXME remove
+            tryToSetPinFunction: root.onboardingStore.setPin()
             remainingAttempts: root.onboardingStore.keycardRemainingPinAttempts
         }
     }

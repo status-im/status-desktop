@@ -22,7 +22,7 @@ Item {
         id: mockDriver
         property int keycardState // enum Onboarding.KeycardState
         property bool biometricsAvailable
-        property string existingPin // FIXME REMOVE !!!
+        property string existingPin
 
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
         readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
@@ -36,15 +36,13 @@ Item {
             anchors.fill: parent
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
-                readonly property int keycardRemainingPinAttempts: 5
-
-                // FIXME REMOVE !!!
-                function getPin() {
-                    return mockDriver.existingPin
-                }
+                property int keycardRemainingPinAttempts: 5
 
                 function setPin(pin: string) {
-                    return true
+                    const valid = pin === mockDriver.existingPin
+                    if (!valid)
+                        keycardRemainingPinAttempts--
+                    return valid
                 }
 
                 readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState
@@ -59,7 +57,7 @@ Item {
                 function validMnemonic(mnemonic: string) {
                     return mnemonic === mockDriver.mnemonic
                 }
-                function getMnemonic() { // -> string
+                function getMnemonic() {
                     return mockDriver.seedWords.join(" ")
                 }
                 function mnemonicWasShown() {}
