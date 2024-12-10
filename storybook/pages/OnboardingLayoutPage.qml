@@ -56,9 +56,10 @@ SplitView {
                 return valid
             }
 
-            readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState
+            property int addKeyPairState // enum Onboarding.AddKeyPairState
             function startKeypairTransfer() { // -> void
                 logs.logEvent("OnboardingStore.startKeypairTransfer")
+                addKeyPairState = Onboarding.AddKeyPairState.InProgress
             }
 
             // password
@@ -77,11 +78,9 @@ SplitView {
                 return mockDriver.seedWords.join(" ")
             }
             function mnemonicWasShown() { // -> void
-                console.warn("!!! MNEMONIC SHOWN")
                 logs.logEvent("OnboardingStore.mnemonicWasShown()")
             }
             function removeMnemonic() { // -> void
-                console.warn("!!! REMOVE MNEMONIC")
                 logs.logEvent("OnboardingStore.removeMnemonic()")
             }
 
@@ -90,8 +89,8 @@ SplitView {
                 logs.logEvent("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
                 return !Number.isNaN(parseInt(connectionString))
             }
-            function setConnectionString(connectionString: string) { // -> void
-                logs.logEvent("OnboardingStore.setConnectionString", ["connectionString"], arguments)
+            function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+                logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
         }
 

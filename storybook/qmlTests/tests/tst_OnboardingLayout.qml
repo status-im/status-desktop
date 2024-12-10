@@ -67,7 +67,7 @@ Item {
                 function validateLocalPairingConnectionString(connectionString: string) {
                     return !Number.isNaN(parseInt(connectionString))
                 }
-                function setConnectionString(connectionString: string) {}
+                function inputConnectionStringForBootstrapping(connectionString: string) {}
             }
             metricsStore: SharedStores.MetricsStore {
                 readonly property var d: QtObject {
