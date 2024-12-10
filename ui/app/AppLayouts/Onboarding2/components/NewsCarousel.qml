@@ -18,90 +18,89 @@ Control {
         radius: 20
     }
 
-    contentItem: Item {
+    verticalPadding: Theme.xlPadding
+    horizontalPadding: Theme.xlPadding * 2
+
+    contentItem: ColumnLayout {
         id: newsPage
         readonly property string primaryText: root.newsModel.get(pageIndicator.currentIndex).primary
         readonly property string secondaryText: root.newsModel.get(pageIndicator.currentIndex).secondary
 
+        spacing: Theme.halfPadding
+
         Image {
-            anchors.centerIn: parent
-            width: Math.min(parent.width / 3 * 2, 375)
-            height: Math.min(parent.height / 3 * 2, 473)
+            Layout.fillWidth: true
+            Layout.maximumWidth: 460
+            Layout.fillHeight: true
+            Layout.maximumHeight: 582
+            Layout.alignment: Qt.AlignHCenter
             fillMode: Image.PreserveAspectFit
             asynchronous: true
             source: Theme.png(root.newsModel.get(pageIndicator.currentIndex).image)
         }
 
-        ColumnLayout {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Theme.xlPadding
-            width: Math.min(300, parent.width)
-            spacing: 4
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: newsPage.primaryText
+            horizontalAlignment: Text.AlignHCenter
+            font.weight: Font.DemiBold
+            color: Theme.palette.white
+            wrapMode: Text.WordWrap
+        }
 
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: newsPage.primaryText
-                horizontalAlignment: Text.AlignHCenter
-                font.weight: Font.DemiBold
-                color: Theme.palette.white
-                wrapMode: Text.WordWrap
+        StatusBaseText {
+            Layout.fillWidth: true
+            text: newsPage.secondaryText
+            horizontalAlignment: Text.AlignHCenter
+            font.pixelSize: Theme.additionalTextSize
+            color: Theme.palette.white
+            wrapMode: Text.WordWrap
+        }
+
+        PageIndicator {
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+            Layout.topMargin: Theme.smallPadding
+            Layout.maximumWidth: parent.width
+            id: pageIndicator
+            interactive: true
+            count: root.newsModel.count
+            currentIndex: -1
+            Component.onCompleted: currentIndex = 0 // start switching pages
+
+            function switchToNextOrFirstPage() {
+                currentIndex = (currentIndex + 1) % count
             }
 
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: newsPage.secondaryText
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: Theme.additionalTextSize
-                color: Theme.palette.white
-                wrapMode: Text.WordWrap
-            }
+            delegate: Control {
+                id: pageIndicatorDelegate
+                implicitWidth: 44
+                implicitHeight: 8
 
-            PageIndicator {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Theme.halfPadding
-                Layout.maximumWidth: parent.width
-                id: pageIndicator
-                interactive: true
-                count: root.newsModel.count
-                currentIndex: -1
-                Component.onCompleted: currentIndex = 0 // start switching pages
+                readonly property bool isCurrentPage: index === pageIndicator.currentIndex
 
-                function switchToNextOrFirstPage() {
-                    currentIndex = (currentIndex + 1) % count
-                }
-
-                delegate: Control {
-                    id: pageIndicatorDelegate
-                    implicitWidth: 44
-                    implicitHeight: 8
-
-                    readonly property bool isCurrentPage: index === pageIndicator.currentIndex
-
-                    background: Rectangle {
-                        color: Qt.rgba(1, 1, 1, 0.1)
-                        radius: 4
-                        HoverHandler {
-                            cursorShape: hovered ? Qt.PointingHandCursor : undefined
-                        }
+                background: Rectangle {
+                    color: Qt.rgba(1, 1, 1, 0.1)
+                    radius: 4
+                    HoverHandler {
+                        cursorShape: hovered ? Qt.PointingHandCursor : undefined
                     }
-                    contentItem: Item {
-                        Rectangle {
-                            NumberAnimation on width {
-                                from: 0
-                                to: pageIndicatorDelegate.availableWidth
-                                duration: 3000
-                                running: pageIndicatorDelegate.isCurrentPage
-                                onStopped: {
-                                    if (pageIndicatorDelegate.isCurrentPage)
-                                        pageIndicator.switchToNextOrFirstPage()
-                                }
+                }
+                contentItem: Item {
+                    Rectangle {
+                        NumberAnimation on width {
+                            from: 0
+                            to: pageIndicatorDelegate.availableWidth
+                            duration: 3000
+                            running: pageIndicatorDelegate.isCurrentPage
+                            onStopped: {
+                                if (pageIndicatorDelegate.isCurrentPage)
+                                    pageIndicator.switchToNextOrFirstPage()
                             }
-
-                            height: parent.height
-                            color: pageIndicatorDelegate.isCurrentPage ? Theme.palette.white : "transparent"
-                            radius: 4
                         }
+
+                        height: parent.height
+                        color: pageIndicatorDelegate.isCurrentPage ? Theme.palette.white : "transparent"
+                        radius: 4
                     }
                 }
             }
