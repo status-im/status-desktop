@@ -50,14 +50,14 @@ OnboardingPage {
 
         // left part (welcome + buttons)
         Item {
-            Layout.fillWidth: true
+            Layout.preferredWidth: root.availableWidth/2 - root.horizontalPadding
             Layout.fillHeight: true
-            Layout.topMargin: -headerText.height
 
             ColumnLayout {
                 width: Math.min(400, parent.width)
                 spacing: 28
                 anchors.centerIn: parent
+                anchors.verticalCenterOffset: -headerText.height/2
 
                 StatusImage {
                     Layout.preferredWidth: 90
@@ -148,8 +148,8 @@ OnboardingPage {
 
         // right part (news carousel)
         NewsCarousel {
+            Layout.preferredWidth: root.availableWidth/2 - root.horizontalPadding
             Layout.fillHeight: true
-            Layout.fillWidth: true
             newsModel: d.newsModel
         }
     }
