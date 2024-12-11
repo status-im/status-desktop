@@ -44,7 +44,7 @@ ColumnLayout {
 
         property bool allEntriesValid: false
         property var mnemonicInput: []
-        property var incorrectWordAtIndex: []
+        property var incorrectWordAtIndex: [] // 1-based
         readonly property var tabs: [12, 18, 24]
         readonly property alias seedPhrases_en: root.dictionary
 
@@ -85,7 +85,7 @@ ColumnLayout {
             if (word !== "" && !ModelUtils.contains(d.seedPhrases_en, "seedWord", word)) {
                 const incorrectWordAtIndex = d.incorrectWordAtIndex
                 incorrectWordAtIndex.push(pos)
-                d.incorrectWordAtIndex = incorrectWordAtIndex
+                d.incorrectWordAtIndex = [...new Set(incorrectWordAtIndex)] // remove dupes
                 return
             }
             
@@ -241,7 +241,7 @@ ColumnLayout {
             textEdit.input.edit.objectName: `enterSeedPhraseInputField${seedWordInput.leftComponentText}`
             width: (grid.cellWidth - 8)
             height: (grid.cellHeight - 8)
-            Behavior on width { NumberAnimation { duration: 180 } }
+            Behavior on width { NumberAnimation { duration: 150 } }
             textEdit.text: {
                 const pos = seedWordInput.mnemonicIndex
                 for (let i in d.mnemonicInput) {
@@ -253,12 +253,13 @@ ColumnLayout {
                 return ""
             }
 
+            readonly property int itemIndex: index
             readonly property int mnemonicIndex: grid.wordIndex[(grid.count / 6) - 2][index]
 
             leftComponentText: mnemonicIndex
+            isError: d.incorrectWordAtIndex.includes(mnemonicIndex) & !!text
             inputList: d.seedPhrases_en
 
-            property int itemIndex: index
             onDoneInsertingWord: {
                 grid.addWord(mnemonicIndex, word)
             }
@@ -271,7 +272,6 @@ ColumnLayout {
             }
             onEditClicked: {
                 grid.currentIndex = index
-                grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus()
             }
             onKeyPressed: {
                 grid.currentIndex = index

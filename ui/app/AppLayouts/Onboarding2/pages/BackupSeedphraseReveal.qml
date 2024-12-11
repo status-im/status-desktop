@@ -64,8 +64,7 @@ OnboardingPage {
                         delegate: Frame {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            horizontalPadding: Theme.padding
-                            verticalPadding: Theme.smallPadding
+                            padding: Theme.smallPadding
                             background: Rectangle {
                                 radius: Theme.radius
                                 color: "transparent"
@@ -73,10 +72,13 @@ OnboardingPage {
                                 border.color: Theme.palette.baseColor2
                             }
                             contentItem: RowLayout {
-                                spacing: Theme.smallPadding
+                                spacing: Theme.halfPadding
                                 StatusBaseText {
+                                    Layout.preferredWidth: idxMetrics.advanceWidth
+                                    horizontalAlignment: Qt.AlignHCenter
                                     text: index + 1
                                     color: Theme.palette.baseColor1
+                                    font: idxMetrics.font
                                 }
                                 StatusBaseText {
                                     Layout.fillWidth: true
@@ -123,5 +125,12 @@ OnboardingPage {
                 }
             }
         }
+    }
+
+    TextMetrics {
+        id: idxMetrics
+        font.family: Theme.monoFont.name
+        font.pixelSize: Theme.primaryTextFontSize
+        text: "99"
     }
 }
