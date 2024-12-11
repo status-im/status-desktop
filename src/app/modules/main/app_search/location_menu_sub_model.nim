@@ -10,6 +10,7 @@ type
     Icon
     IconColor
     IsUserIcon
+    IsImage
     Position
     ColorId
     ColorHash
@@ -58,6 +59,7 @@ QtObject:
       SubModelRole.Icon.int:"iconName",
       SubModelRole.IconColor.int:"iconColor",
       SubModelRole.IsUserIcon.int:"isUserIcon",
+      SubModelRole.IsImage.int:"isImage",
       SubModelRole.Position.int:"position",
       SubModelRole.ColorId.int:"colorId",
       SubModelRole.ColorHash.int:"colorHash"
@@ -86,6 +88,8 @@ QtObject:
       result = newQVariant(item.iconColor)
     of SubModelRole.IsUserIcon:
       result = newQVariant(item.isUserIcon)
+    of SubModelRole.IsImage:
+      result = newQVariant(item.isImage)
     of SubModelRole.Position:
       result = newQVariant(item.position)
     of SubModelRole.ColorId:
