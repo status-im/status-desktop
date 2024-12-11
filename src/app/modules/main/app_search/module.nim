@@ -71,7 +71,7 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
   var categoryChats: OrderedTable[int, seq[ChatDto]] = initOrderedTable[int, seq[ChatDto]]()
 
   for chatDto in chats:
-    if chatDto.isHiddenChat:
+    if not chatDto.canView:
       continue
     
     var chatName = chatDto.name
