@@ -37,7 +37,7 @@ Item {
             font.pixelSize: 22
             font.weight: Font.Bold
             color: Theme.palette.directColor1
-            text: qsTr("Sign in by syncing")
+            text: qsTr("Log in by syncing")
         }
 
         SyncingDeviceView {
