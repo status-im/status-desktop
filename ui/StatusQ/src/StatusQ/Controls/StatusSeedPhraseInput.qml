@@ -1,6 +1,5 @@
-import QtQuick 2.12
-import QtGraphicalEffects 1.13
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -76,6 +75,8 @@ Item {
     */
     property ListModel filteredList: ListModel { }
 
+    property bool isError
+
     readonly property bool suggestionsOpened: suggListContainer.opened
 
     /*!
@@ -124,8 +125,10 @@ Item {
             rightPadding: 4
             text: root.leftComponentText
             font.family: Theme.monoFont.name
-            color: seedWordInput.input.edit.activeFocus ?
-                   Theme.palette.primaryColor1 : Theme.palette.baseColor1
+            horizontalAlignment: Qt.AlignHCenter
+            color: root.isError ? Theme.palette.dangerColor1
+                                : seedWordInput.input.edit.activeFocus ? Theme.palette.primaryColor1
+                                                                       : Theme.palette.baseColor1
         }
     }
 
@@ -135,6 +138,12 @@ Item {
         implicitWidth: parent.width
         input.leftComponent: seedInputLeftComponent
         input.acceptReturn: true
+
+        Binding on input.background.border.color {
+            value: Theme.palette.dangerColor1
+            when: root.isError && seedWordInput.input.edit.activeFocus
+        }
+
         onTextChanged: {
             filteredList.clear();
             let textToCheck = text.trim().toLowerCase()
