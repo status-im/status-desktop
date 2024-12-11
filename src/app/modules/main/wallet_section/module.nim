@@ -487,6 +487,7 @@ method destroyKeypairImportPopup*(self: Module) =
   self.view.emitDestroyKeypairImportPopup()
   self.keypairImportModule.delete
   self.keypairImportModule = nil
+  self.view.emitKeypairImportModuleChangedSignal()
 
 method runKeypairImportPopup*(self: Module) =
   if self.filter.addresses.len != 1:
@@ -497,6 +498,7 @@ method runKeypairImportPopup*(self: Module) =
   self.keypairImportModule = keypair_import_module.newModule(self, self.events, self.accountsService,
     self.walletAccountService, self.devicesService)
   self.keypairImportModule.load(keypair.keyUid, ImportKeypairModuleMode.SelectImportMethod)
+  self.view.emitKeypairImportModuleChangedSignal()
 
 method getKeypairImportModule*(self: Module): QVariant =
   if self.keypairImportModule.isNil:
