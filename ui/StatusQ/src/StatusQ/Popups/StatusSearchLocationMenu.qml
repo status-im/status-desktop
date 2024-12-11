@@ -9,6 +9,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import SortFilterProxyModel 0.2
+
 StatusMenu {
     id: root
 
@@ -116,7 +118,13 @@ StatusMenu {
                         readonly property string parentIsIdenticon: subMenuDelegate.parentIsIdenticon
 
                         menu: subMenuDelegate
-                        model: subMenuDelegate.subItemsModel
+                        model: SortFilterProxyModel {
+                            sourceModel: subMenuDelegate.subItemsModel
+                            sorters: RoleSorter {
+                                roleName: "position"
+                                sortOrder: Qt.AscendingOrder
+                            }
+                        }
 
                         delegate: StatusSearchPopupMenuItem {
                             value: model.value

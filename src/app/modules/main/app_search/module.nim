@@ -1,5 +1,5 @@
 import NimQml
-import json, strutils, chronicles, sequtils
+import json, strutils, chronicles, sequtils, tables, std/algorithm
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -66,7 +66,10 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc getChatSubItems(self: Module, chats: seq[ChatDto]): seq[location_menu_sub_item.SubItem] =
+proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category] = @[]): seq[location_menu_sub_item.SubItem] =
+  var highestPosition = 0
+  var categoryChats: OrderedTable[int, seq[ChatDto]] = initOrderedTable[int, seq[ChatDto]]()
+
   for chatDto in chats:
     if chatDto.isHiddenChat:
       continue
@@ -76,10 +79,23 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto]): seq[location_menu_sub_i
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
-    if(isOneToOneChat):
+    if isOneToOneChat:
       (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
+    elif chatDto.chatType == ChatType.CommunityChat:
+      if chatDto.categoryId != "":
+        for cat in categories:
+          if cat.id == chatDto.categoryId:
+            if not categoryChats.hasKey(cat.position):
+              categoryChats[cat.position] = @[]
+            categoryChats[cat.position].add(chatDto)
+            break
+        continue
+      else:
+        if chatDto.position > highestPosition:
+          highestPosition = chatDto.position
+
     let subItem = location_menu_sub_item.initSubItem(
       chatDto.id,
       chatName,
@@ -87,10 +103,28 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto]): seq[location_menu_sub_i
       "",
       chatDto.color,
       isOneToOneChat,
+      chatDto.position,
       colorId,
-      colorHash
+      colorHash,
     )
     result.add(subItem)
+
+  # Add category chats by adjusting the position by taking into account the category position
+  let sortedKeys = toSeq(categoryChats.keys).sorted()
+  for categoryPosition in sortedKeys:
+    highestPosition.inc()
+    for chat in categoryChats[categoryPosition]:
+      let chatPosition = chat.position + highestPosition
+      result.add(location_menu_sub_item.initSubItem(
+        chat.id,
+        chat.name,
+        chat.emoji,
+        "",
+        chat.color,
+        isUserIcon = false,
+        chatPosition,
+      ))
+    highestPosition += categoryChats[categoryPosition].len
 
 proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): location_menu_item.Item =
   var item = location_menu_item.initItem(
@@ -101,7 +135,7 @@ proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): locat
     community.color
   )
 
-  var subItems = self.getChatSubItems(community.chats)
+  var subItems = self.getChatSubItems(community.chats, community.categories)
   item.setSubItems(subItems)
 
   return item
