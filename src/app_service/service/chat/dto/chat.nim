@@ -254,10 +254,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("readMessagesAtClockValue", result.readMessagesAtClockValue)
   discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
-  discard jsonObj.getProp("canPostReactions", result.canPostReactions)
-  discard jsonObj.getProp("canPost", result.canPost)
-  discard jsonObj.getProp("canView", result.canView)
-  discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("muted", result.muted)
   discard jsonObj.getProp("categoryId", result.categoryId)
@@ -285,6 +281,17 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   if (jsonObj.getProp("chatType", chatTypeInt) and
     (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))):
       result.chatType = ChatType(chatTypeInt)
+
+  # Default those properties to true as they are only provided for community chats
+  # To be refactored with https://github.com/status-im/status-desktop/issues/11694
+  result.canPostReactions = true
+  result.canPost = true
+  result.canView = true
+  result.viewersCanPostReactions = true
+  discard jsonObj.getProp("canPostReactions", result.canPostReactions)
+  discard jsonObj.getProp("canPost", result.canPost)
+  discard jsonObj.getProp("canView", result.canView)
+  discard jsonObj.getProp("viewersCanPostReactions", result.viewersCanPostReactions)
 
   var chatImage: string
   discard jsonObj.getProp("image", chatImage)
