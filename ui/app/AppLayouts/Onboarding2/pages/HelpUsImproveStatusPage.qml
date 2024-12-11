@@ -110,11 +110,11 @@ OnboardingPage {
                         spacing: 12
                         BulletPoint {
                             text: qsTr("Gather basic usage data, like clicks and page views")
-                            check: true
+                            checked: true
                         }
                         BulletPoint {
                             text: qsTr("Gather core diagnostics, like bandwidth usage")
-                            check: true
+                            checked: true
                         }
                         BulletPoint {
                             text: qsTr("Never collect your profile information or wallet address")
@@ -147,24 +147,6 @@ OnboardingPage {
                     }
                 }
             }
-        }
-    }
-
-    component BulletPoint: RowLayout {
-        property string text
-        property bool check
-
-        spacing: 6
-        StatusIcon {
-            Layout.preferredWidth: 20
-            Layout.preferredHeight: 20
-            icon: parent.check ? "check-circle" : "close-circle"
-            color: parent.check ? Theme.palette.successColor1 : Theme.palette.dangerColor1
-        }
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: parent.text
-            font.pixelSize: Theme.additionalTextSize
         }
     }
 }

@@ -32,7 +32,7 @@ ColumnLayout {
 
     property int contentAlignment: Qt.AlignHCenter
 
-    property var passwordStrengthScoreFunction: function () {}
+    property var passwordStrengthScoreFunction: (password) => { console.error("passwordStrengthScoreFunction: IMPLEMENT ME") }
 
     readonly property int zBehind: 1
     readonly property int zFront: 100
@@ -354,22 +354,22 @@ ColumnLayout {
         spacing: Theme.padding
         Layout.alignment: Qt.AlignHCenter
 
-        PassIncludesIndicator {
+        PasswordComponentIndicator {
             caption: qsTr("Lower case")
             checked: d.lowerCaseValidator(newPswInput.text)
         }
 
-        PassIncludesIndicator {
+        PasswordComponentIndicator {
             caption: qsTr("Upper case")
             checked: d.upperCaseValidator(newPswInput.text)
         }
 
-        PassIncludesIndicator {
+        PasswordComponentIndicator {
             caption: qsTr("Numbers")
             checked: d.numbersValidator(newPswInput.text)
         }
 
-        PassIncludesIndicator {
+        PasswordComponentIndicator {
             caption: qsTr("Symbols")
             checked: d.symbolsValidator(newPswInput.text)
         }
@@ -380,14 +380,5 @@ ColumnLayout {
         Layout.alignment: root.contentAlignment
         font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
-    }
-
-    component PassIncludesIndicator: StatusBaseText {
-        property bool checked
-        property string caption
-
-        text: "%1 %2".arg(checked ? "✓" : "+").arg(caption)
-        font.pixelSize: Theme.tertiaryTextFontSize
-        color: checked ? Theme.palette.successColor1 : Theme.palette.baseColor1
     }
 }
