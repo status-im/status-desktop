@@ -209,7 +209,7 @@ Item {
             if (!asset)
                 return "0"
             const num = AmountsArithmetic.toNumber(amount, asset.decimals)
-            return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSynbol: true})
+            return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSymbol: true})
         }
     }
 
