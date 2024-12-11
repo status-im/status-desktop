@@ -103,6 +103,7 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
       "",
       chatDto.color,
       isOneToOneChat,
+      isImage = chatImage != "",
       chatDto.position,
       colorId,
       colorHash,
@@ -122,6 +123,7 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
         "",
         chat.color,
         isUserIcon = false,
+        isImage = false,
         chatPosition,
       ))
     highestPosition += categoryChats[categoryPosition].len
