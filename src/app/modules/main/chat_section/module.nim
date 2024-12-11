@@ -316,8 +316,6 @@ proc buildChatSectionUI(
     items.add(self.addCategoryItem(categoryDto, community.memberRole, community.id))
 
   for chatDto in chats:
-    var categoryPosition = -1
-
     # Add an empty chat item that has the category info
     var isActive = false
     # restore on a startup last open channel for the section or
@@ -325,12 +323,6 @@ proc buildChatSectionUI(
     if (selectedItemId.len == 0 and sectionLastOpenChat.len == 0) or chatDto.id == sectionLastOpenChat:
       selectedItemId = chatDto.id
       isActive = true
-
-    if chatDto.categoryId != "":
-      for category in community.categories:
-        if category.id == chatDto.categoryId:
-          categoryPosition = category.position
-          break
 
     items.add(self.addOrUpdateChat(
       chatDto,
