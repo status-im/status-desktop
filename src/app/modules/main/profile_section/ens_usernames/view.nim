@@ -74,10 +74,6 @@ QtObject:
   proc getEtherscanAddressLink*(self: View): string {.slot.} =
     return self.etherscanAddressLink
 
-  proc usernameConfirmed(self: View, username: string) {.signal.}
-  proc emitUsernameConfirmedSignal*(self: View, ensUsername: string) =
-    self.usernameConfirmed(ensUsername)
-
   proc transactionCompleted(self: View, success: bool, txHash: string, username: string, trxType: string) {.signal.}
   proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, username: string, trxType: string) =
     self.transactionCompleted(success, txHash, username, trxType)
