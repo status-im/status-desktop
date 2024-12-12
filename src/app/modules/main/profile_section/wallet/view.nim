@@ -29,10 +29,14 @@ QtObject:
   proc runKeypairImportPopup*(self: View, keyUid: string, mode: int) {.slot.} =
     self.delegate.runKeypairImportPopup(keyUid, ImportKeypairModuleMode(mode))
 
+  proc keypairImportModuleChanged*(self: View) {.signal.}
+  proc emitKeypairImportModuleChangedSignal*(self: View) =
+    self.keypairImportModuleChanged()
   proc getKeypairImportModule(self: View): QVariant {.slot.} =
     return self.delegate.getKeypairImportModule()
   QtProperty[QVariant] keypairImportModule:
     read = getKeypairImportModule
+    notify = keypairImportModuleChanged
 
   proc displayKeypairImportPopup*(self: View) {.signal.}
   proc emitDisplayKeypairImportPopup*(self: View) =
