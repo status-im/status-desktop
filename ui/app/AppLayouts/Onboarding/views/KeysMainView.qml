@@ -330,7 +330,7 @@ Item {
             }
             PropertyChanges {
                 target: txtTitle
-                text: qsTr("Sign in by syncing")
+                text: qsTr("Log in by syncing")
             }
             PropertyChanges {
                 target: txtDesc
@@ -347,7 +347,7 @@ Item {
             }
             PropertyChanges {
                 target: button2
-                text: qsTr("I don’t have other device")
+                text: qsTr("Log in via Keycard or seed phrase instead")
             }
             PropertyChanges {
                 target: button3
@@ -365,11 +365,11 @@ Item {
             }
             PropertyChanges {
                 target: txtTitle
-                text: qsTr("Connect your keys")
+                text: qsTr("Log in")
             }
             PropertyChanges {
                 target: txtDesc
-                text: qsTr("Use your existing Status keys to login to this device.")
+                text: qsTr("Use your existing Status keys to log in to this device.")
                 height: Constants.onboarding.loginInfoHeight2
             }
             PropertyChanges {
