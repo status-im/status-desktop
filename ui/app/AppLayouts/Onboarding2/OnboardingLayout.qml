@@ -26,6 +26,7 @@ Page {
 
     property int splashScreenDurationMs: 30000
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
+    required property bool networkChecksEnabled
 
     readonly property alias stack: stack
     readonly property alias primaryFlow: d.primaryFlow // Onboarding.PrimaryFlow enum

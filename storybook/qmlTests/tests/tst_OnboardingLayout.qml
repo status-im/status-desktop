@@ -34,6 +34,7 @@ Item {
 
         OnboardingLayout {
             anchors.fill: parent
+            networkChecksEnabled: false
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
                 property int keycardRemainingPinAttempts: 5
