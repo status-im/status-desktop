@@ -26,6 +26,7 @@ Page {
 
     property int splashScreenDurationMs: 30000
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
+    required property bool networkChecksEnabled
 
     readonly property alias stack: stack
     readonly property alias primaryFlow: d.primaryFlow // Onboarding.PrimaryFlow enum
@@ -531,6 +532,7 @@ Page {
     Component {
         id: loginPage
         LoginPage {
+            networkChecksEnabled: root.networkChecksEnabled
             StackView.onActivated: {
                 // reset when we get back here
                 d.primaryFlow = Onboarding.PrimaryFlow.Login

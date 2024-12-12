@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -16,6 +17,8 @@ import utils 1.0
 
 OnboardingPage {
     id: root
+
+    required property bool networkChecksEnabled
 
     title: qsTr("Log in")
 
@@ -119,6 +122,11 @@ OnboardingPage {
         }
     }
 
+    NetworkChecker {
+        id: netChecker
+        active: root.networkChecksEnabled
+    }
+
     Component {
         id: loginWithSyncAck
         StatusDialog {
@@ -127,6 +135,7 @@ OnboardingPage {
             width: 480
             padding: 20
             destroyOnClose: true
+            onOpened: if (root.networkChecksEnabled) netChecker.checkNetwork()
             contentItem: ColumnLayout {
                 spacing: 20
                 StatusBaseText {
@@ -169,9 +178,110 @@ OnboardingPage {
                         text: qsTr("Continue")
                         enabled: ack1.checked && ack2.checked && ack3.checked
                         onClicked: {
-                            root.loginWithSyncingRequested()
+                            if (root.networkChecksEnabled && !netChecker.isOnline) {
+                                networkCheckPopup.createObject(root, {netChecker}).open()
+                            } else {
+                                root.loginWithSyncingRequested()
+                            }
                             close()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    Component {
+        id: networkCheckPopup
+        StatusDialog {
+            objectName: "networkCheckPopup"
+            title: qsTr("Status does not have access to local network")
+            width: 480
+            padding: 20
+            destroyOnClose: true
+
+            required property var netChecker
+
+            contentItem: ColumnLayout {
+                spacing: 20
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
+                    text: qsTr("Status must be connected to the local network on this device for you to be able to log in via syncing. To rectify this...")
+                }
+                OnboardingFrame {
+                    Layout.fillWidth: true
+                    dropShadow: false
+                    cornerRadius: Theme.radius
+                    horizontalPadding: 20
+                    verticalPadding: 12
+                    contentItem: ColumnLayout {
+                        spacing: 12
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("1. Open System Settings")
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("2. Click Privacy & Security")
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("3. Click Local Network")
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("4. Find Status")
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("5. Toggle the switch to grant access")
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                            color: Theme.palette.baseColor1
+                            text: qsTr("6. Click %1 below").arg(`<font color="${Theme.palette.directColor1}">` +
+                                                                qsTr("Verify local network access") +
+                                                                "</font>")
+                        }
+                    }
+                }
+            }
+            footer: StatusDialogFooter {
+                spacing: Theme.padding
+                rightButtons: ObjectModel {
+                    StatusFlatButton {
+                        text: qsTr("Cancel")
+                        onClicked: close()
+                    }
+                    StatusButton {
+                        objectName: "btnVerifyNet"
+                        text: loading ? qsTr("Verifying") : qsTr("Verify local network access")
+                        loading: netChecker.checking
+                        interactive: !loading
+                        onClicked: netChecker.checkNetwork()
+                    }
+                }
+            }
+            Connections {
+                target: netChecker
+                function onIsOnlineChanged() {
+                    if (netChecker.isOnline) {
+                        root.loginWithSyncingRequested()
+                        close()
                     }
                 }
             }

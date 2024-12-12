@@ -34,6 +34,7 @@ Item {
 
         OnboardingLayout {
             anchors.fill: parent
+            networkChecksEnabled: false
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
                 property int keycardRemainingPinAttempts: 5
@@ -124,6 +125,15 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
+
+            // disable animated transitions to speed-up tests
+            const stack = findChild(controlUnderTest, "stack")
+            stack.pushEnter = null
+            stack.pushExit = null
+            stack.popEnter = null
+            stack.popExit = null
+            stack.replaceEnter = null
+            stack.replaceExit = null
         }
 
         function cleanup() {

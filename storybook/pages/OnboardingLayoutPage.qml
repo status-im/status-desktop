@@ -44,6 +44,7 @@ SplitView {
         id: onboarding
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+        networkChecksEnabled: true
         onboardingStore: OnboardingStore {
             readonly property int keycardState: ctrlKeycardState.currentValue // enum Onboarding.KeycardState
             property int keycardRemainingPinAttempts: 5
