@@ -17,6 +17,12 @@ Control {
     /** Expected model structure: see SearchableCollectiblesPanel::model **/
     property alias collectiblesModel: tokenSelectorPanel.collectiblesModel
 
+    /** Exposes insatnce of popup **/
+    property var popup: dropdown
+
+    /** Sets size of the TokenSelectorButton **/
+    property alias size: tokenSelectorButton.size
+
     readonly property bool isTokenSelected: tokenSelectorButton.selected
 
     signal assetSelected(string key)
@@ -28,10 +34,15 @@ Control {
     property alias currentTab: tokenSelectorPanel.currentTab
 
     function setSelection(name: string, icon: url, key: string) {
-        tokenSelectorButton.selected = true
-        tokenSelectorButton.name = name
-        tokenSelectorButton.icon = icon
-        tokenSelectorPanel.highlightedKey = key ?? ""
+        // reset token selector in case of empty call
+        if (!key && !name && !icon) {
+            tokenSelectorButton.selected = false
+        } else {
+            tokenSelectorButton.selected = true
+            tokenSelectorButton.name = name
+            tokenSelectorButton.icon = icon
+            tokenSelectorPanel.highlightedKey = key ?? ""
+        }
     }
 
     QObject {
@@ -54,7 +65,6 @@ Control {
         y: parent.height + 4
         width: 448
 
-        closePolicy: Popup.CloseOnPressOutsideParent
         horizontalPadding: 0
         bottomPadding: 0
 
