@@ -36,18 +36,10 @@ Item {
 
         property int numOfPendingEnsUsernames: 0
         readonly property bool hasConfirmedEnsUsernames: root.ensUsernamesStore.ensUsernamesModel.count > 0
-                                                         && numOfPendingEnsUsernames !== root.ensUsernamesStore.ensUsernamesModel.count
+                                                         || numOfPendingEnsUsernames > 0
 
         function updateNumberOfPendingEnsUsernames() {
             numOfPendingEnsUsernames = root.ensUsernamesStore.numOfPendingEnsUsernames()
-        }
-    }
-
-    Connections {
-        target: root.ensUsernamesStore.ensUsernamesModule
-        function onUsernameConfirmed(username: string) {
-            d.updateNumberOfPendingEnsUsernames()
-            chatSettingsLabel.visible = true
         }
     }
 
