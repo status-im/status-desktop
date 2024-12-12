@@ -5,7 +5,7 @@ ListModel {
 
     Component.onCompleted: {
         var englishWords = [
-            "apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape", "horse", "ice cream", "jellyfish",
+            "age", "agent", "apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape", "horse", "icecream", "jellyfish",
             "kiwi", "lemon", "mango", "nut", "orange", "pear", "quail", "rabbit", "strawberry", "turtle",
             "umbrella", "violet", "watermelon", "xylophone", "yogurt", "zebra"
             // Add more English words here...
