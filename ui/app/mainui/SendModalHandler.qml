@@ -140,6 +140,17 @@ QtObject {
         openSend(params)
     }
 
+    function openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId) {
+        const params = {
+            preSelectedHoldingID: symbol,
+            preSelectedHoldingType: Constants.TokenType.ERC20,
+            preDefinedRawAmountToSend: rawAmount,
+            preSelectedChainId: chainId,
+            preSelectedRecipient: recipientAddress
+        }
+        openSend(params)
+    }
+
     readonly property Component sendModalComponent: Component {
         SendModal {
             loginType: root.loginType

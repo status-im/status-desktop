@@ -68,7 +68,6 @@ QtObject {
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection, int subSubsection, var data)
 
-    signal paymentRequestClicked(string receiverAddress, string symbol, string amount, int chainId)
     signal switchToCommunity(string communityId)
     signal switchToCommunitySettings(string communityId)
     signal switchToCommunityChannelsView(string communityId)

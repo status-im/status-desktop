@@ -246,6 +246,7 @@ Loader {
 
     signal openStickerPackPopup(string stickerPackId)
     signal sendViaPersonalChatRequested(string recipientAddress)
+    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
 
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
 
@@ -989,7 +990,7 @@ Loader {
                         onSetNeverAskAboutUnfurlingAgain: root.sharedRootStore.setNeverAskAboutUnfurlingAgain(neverAskAgain)
                         onPaymentRequestClicked: (index) => {
                             const request = StatusQUtils.ModelUtils.get(paymentRequestModel, index)
-                            Global.paymentRequestClicked(request.receiver, request.symbol, request.amount, request.chainId)
+                            root.tokenPaymentRequested(request.receiver, request.symbol, request.amount, request.chainId)
                         }
 
                         Component.onCompleted: {
