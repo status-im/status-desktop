@@ -99,6 +99,7 @@ type
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+    savedAddressService: saved_address_service.Service
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
@@ -207,6 +208,7 @@ proc newModule*[T](
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
+  result.savedAddressService = savedAddressService
   result.keychainService = keychainService
   result.stickersService = stickersService
 
@@ -476,7 +478,6 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       txHash = sentTransaction.hash
       isApprovalTx = sentTransaction.approvalTx
 
-
     var accFromName = ""
     var accDto = self.walletAccountService.getAccountByAddress(addressFrom)
     if not accDto.isNil:
@@ -486,6 +487,10 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
     accDto = self.walletAccountService.getAccountByAddress(addressTo)
     if not accDto.isNil:
       accToName = accDto.name
+    else:
+      let savedAddress = self.savedAddressService.getSavedAddress(address = addressTo, ignoreNetworkMode = false)
+      if not savedAddress.isNil:
+        accToName = savedAddress.name
 
     var txToName = ""
     let txType = SendType(sendDetails.sendType)

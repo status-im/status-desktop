@@ -153,7 +153,7 @@ method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: stri
   let finalEnsUsername = ens_utils.addDomain(ensUsername)
   if(self.view.model().containsEnsUsername(chainId, finalEnsUsername)):
     self.view.model().updatePendingStatus(chainId, finalEnsUsername, false)
-  else:
+  elif trxType != $ReleaseENS:
     self.view.model().addItem(Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: false))
   self.view.emitTransactionCompletedSignal(true, transactionHash, finalEnsUsername, trxType)
 
