@@ -78,7 +78,7 @@ Item {
             }
             TapHandler {
                 enabled: root.displayNameClickable
-                onSingleTapped: root.clicked(this)
+                onSingleTapped: root.clicked(primaryDisplayName)
             }
         }
 
