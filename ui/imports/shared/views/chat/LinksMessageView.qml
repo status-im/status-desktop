@@ -91,7 +91,7 @@ Flow {
 
     Repeater {
         id: tempRepeater
-        visible: root.cankToUnfurlGifs
+        visible: root.canAskToUnfurlGifs
         model: root.gifUnfurlingEnabled ? gifLinks : []
 
         delegate: LinkPreviewGifDelegate {
