@@ -104,6 +104,7 @@ ColumnLayout {
             chatId: root.chatId
             isOneToOne: root.chatType === Constants.chatType.oneToOne
             isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
+            isContactBlocked: root.isBlocked
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             areTestNetworksEnabled: root.areTestNetworksEnabled
