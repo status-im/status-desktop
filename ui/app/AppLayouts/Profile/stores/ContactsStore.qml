@@ -1,6 +1,8 @@
 import QtQuick 2.15
 
 import StatusQ 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
+
 import utils 1.0
 
 QtObject {
@@ -15,6 +17,7 @@ QtObject {
 
         Component.onCompleted: {
             mainModuleInst.resolvedENS.connect(root.resolvedENS)
+            contactsModuleInst.trustStatusRemoved.connect(root.trustStatusRemoved)
         }
     }
 
@@ -38,6 +41,7 @@ QtObject {
     readonly property var showcaseCollectiblesModel: d.contactsModuleInst.showcaseCollectiblesModel
 
     signal resolvedENS(string resolvedPubKey, string resolvedAddress, string uuid)
+    signal trustStatusRemoved(string pubKey)
 
     // Sets showcasePublicKey and updates showcase models with corresponding data
     function requestProfileShowcase(publicKey) {

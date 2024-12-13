@@ -148,7 +148,7 @@ Item {
                             emojiHash: model.emojiHash,
                             colorHash: model.colorHash,
                             colorId: model.colorId,
-                            displayName: nickName || userName,
+                            displayName: model.preferredDisplayName,
                             userIcon: model.icon,
                             trustStatus: model.trustStatus,
                             onlineStatus: model.onlineStatus,

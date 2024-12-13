@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import StatusQ.Core.Utils 0.1 as SQUtils
+
 import utils 1.0
 
 import AppLayouts.Wallet 1.0
@@ -227,6 +229,15 @@ QtObject {
                                        false,
                                         Constants.ephemeralNotificationType.danger,
                                        "")
+        }
+    }
+
+    readonly property Connections _contactStoreConnections: Connections {
+        target: root.rootStore.contactStore
+
+        function onTrustStatusRemoved(pubKey: string) {
+            const displayName = SQUtils.ModelUtils.getByKey(root.rootStore.contactStore.contactsModel, "pubKey", pubKey, "preferredDisplayName")
+            Global.displaySuccessToastMessage(qsTr("Trust mark removed for %1").arg(displayName))
         }
     }
 
