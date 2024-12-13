@@ -66,11 +66,9 @@ Item {
                     spacing: 8
                     enabled: dappsService.isServiceOnline
 
-                    onPairDapp: dappsWorkflow.openPairing()
+                    onConnectDapp: dappsWorkflow.chooseConnector()
                     onDisconnectDapp: dappsWorkflow.disconnectDapp(dappUrl)
                     model: dappsService.dappsModel
-                    walletConnectEnabled: dappsService.walletConnectFeatureEnabled
-                    connectorEnabled: dappsService.connectorFeatureEnabled
                 }
 
                 DAppsWorkflow {
@@ -87,6 +85,8 @@ Item {
                     accountsModel: dappModule.accountsModel
                     networksModel: dappModule.networksModel
                     sessionRequestsModel: wcService.sessionRequestsModel
+                    walletConnectEnabled: dappsService.walletConnectFeatureEnabled
+                    connectorEnabled: dappsService.connectorFeatureEnabled
 
                     formatBigNumber: (number, symbol, noSymbolOption) => {
                         print ("formatBigNumber", number, symbol, noSymbolOption)
@@ -101,6 +101,13 @@ Item {
                     onSignRequestAccepted: (connectionId, requestId) => wcService.sign(connectionId, requestId)
                     onSignRequestRejected: (connectionId, requestId) => wcService.rejectSign(connectionId, requestId, false /*hasError*/)
                     onSignRequestIsLive: (connectionId, requestId) => wcService.signRequestIsLive(connectionId, requestId)
+                    onPairWithConnectorRequested: (connectorId) => {
+                        if (connectorId == Constants.DAppConnectors.WalletConnect) {
+                            dappsWorkflow.openPairing()
+                        } else if (connectorId == Constants.DAppConnectors.StatusConnect) {
+                            Qt.openUrlExternally("https://chromewebstore.google.com/detail/a-wallet-connector-by-sta/kahehnbpamjplefhpkhafinaodkkenpg")
+                        }
+                    }
 
                     Connections {
                         target: dappsWorkflow.wcService
@@ -289,17 +296,6 @@ Item {
                 Connections {
                     target: dappsWorkflow
 
-                    // If Open Pair workflow if selected in the side bar
-                    function onDappsListReady() {
-                        if (d.activeTestCase < d.openPairTestCase)
-                            return
-
-                        let buttons = StoryBook.InspectionUtils.findVisualsByTypeName(dappsWorkflow.popup, "StatusButton")
-                        if (buttons.length === 1) {
-                            buttons[0].clicked()
-                        }
-                    }
-
                     function onPairWCReady() {
                         if (d.activeTestCase < d.openPairTestCase)
                             return
@@ -374,6 +370,13 @@ Item {
 
     DAppsModule {
         id: dappModule
+        dappsMetrics: DAppsMetrics {
+            metricsStore: SharedStores.MetricsStore {
+                function addCentralizedMetricIfEnabled(eventName, eventValue = null) {
+                    print ("Metrics Event", JSON.stringify(arguments))
+                }
+            }
+        }
         wcSdk: WalletConnectSDK {
             enabled: settings.enableSDK && dappsService.walletConnectFeatureEnabled
 
@@ -381,7 +384,7 @@ Item {
         }
 
         bcSdk: DappsConnectorSDK {
-            enabled: false
+            enabled: dappsService.connectorFeatureEnabled
 
             projectId: projectIdText.projectId
             networksModel: dappModule.networksModel

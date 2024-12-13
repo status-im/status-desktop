@@ -389,7 +389,7 @@ WalletConnectSDKBase {
 
         function onPairResponse(error) {
             console.debug(`WC WalletConnectSDK.onPairResponse; error: ${error}`)
-            root.pairResponse(error == "")
+            root.pairResponse(error == "", error)
         }
 
         function onPingResponse(error) {

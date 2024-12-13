@@ -7,7 +7,7 @@ Item {
 
     signal statusChanged(string message)
     signal sdkInit(bool success, var result)
-    signal pairResponse(bool success)
+    signal pairResponse(bool success, string error)
     signal sessionProposal(var sessionProposal)
     signal sessionProposalExpired()
     signal buildApprovedNamespacesResult(string id, var session, string error)

@@ -12,6 +12,7 @@ QObject {
 
     readonly property bool allOffline: d.allOffline
     readonly property bool allOnline: d.allOnline
+    readonly property bool networkOnline: networkChecker.isOnline
 
     property bool active: true
 
@@ -48,9 +49,8 @@ QObject {
 
     QtObject {
         id: d
-        readonly property bool allOffline: !networkChecker.isOnline || aggregator.value === 0
-        readonly property bool allOnline: networkChecker.isOnline &&
-                                        aggregator.value > 0 &&
+        readonly property bool allOffline: aggregator.value === 0
+        readonly property bool allOnline: aggregator.value > 0 &&
                                         aggregator.value === networksModel.ModelCount.count
     }
 }
