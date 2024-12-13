@@ -203,6 +203,9 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
 method contactTrustStatusChanged*(self: Module, publicKey: string, trustStatus: TrustStatus) =
   self.view.contactsModel().updateTrustStatus(publicKey, trustStatus)
 
+method onTrustStatusRemoved(self: Module, publicKey: string) =
+  self.view.trustStatusRemoved(publicKey)
+
 method markAsTrusted*(self: Module, publicKey: string): void =
   self.controller.markAsTrusted(publicKey)
 

@@ -71,6 +71,9 @@ method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.
 method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, trustStatus: TrustStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onTrustStatusRemoved*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

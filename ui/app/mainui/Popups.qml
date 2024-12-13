@@ -458,8 +458,6 @@ QtObject {
                 utilsStore: root.utilsStore
 
                 onAccepted: {
-                    rootStore.contactStore.removeTrustStatus(publicKey)
-
                     if (markAsUntrusted && removeContact) {
                         rootStore.contactStore.markUntrustworthy(publicKey)
                         rootStore.contactStore.removeContact(publicKey)
@@ -471,7 +469,7 @@ QtObject {
                         rootStore.contactStore.removeContact(publicKey)
                         Global.displaySuccessToastMessage(qsTr("%1 trust mark removed and removed from contacts").arg(mainDisplayName))
                     } else {
-                        Global.displaySuccessToastMessage(qsTr("%1 trust mark removed").arg(mainDisplayName))
+                        rootStore.contactStore.removeTrustStatus(publicKey)
                     }
                     close()
                 }
