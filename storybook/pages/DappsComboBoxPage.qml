@@ -21,7 +21,15 @@ SplitView {
             popup.visible: true
             enabled: enabledCheckbox.checked
 
-            onPairDapp: console.log("onPairDapp")
+            onDappListRequested: {
+                console.log("Dapps list requested")
+            }
+            onConnectDapp: {
+                console.log("Connect dapp")
+            }
+            onDisconnectDapp: {
+                console.log("Disconnect dapp")
+            }
         }
 
         ListModel {

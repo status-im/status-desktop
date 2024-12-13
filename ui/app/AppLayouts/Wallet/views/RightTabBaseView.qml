@@ -22,8 +22,6 @@ FocusScope {
     property bool swapEnabled
     property bool dAppsEnabled
     property bool dAppsVisible
-    property bool walletConnectEnabled
-    property bool browserConnectEnabled
 
     property var dAppsModel
 
@@ -33,7 +31,8 @@ FocusScope {
 
     default property alias content: contentWrapper.children
 
-    signal dappPairRequested()
+    signal dappListRequested()
+    signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
 
     ColumnLayout {
@@ -50,10 +49,9 @@ FocusScope {
             dAppsEnabled: root.dAppsEnabled
             dAppsVisible: root.dAppsVisible
             dAppsModel: root.dAppsModel
-            walletConnectEnabled: root.walletConnectEnabled
-            browserConnectEnabled: root.browserConnectEnabled
 
-            onDappPairRequested: root.dappPairRequested()
+            onDappListRequested: root.dappListRequested()
+            onDappConnectRequested: root.dappConnectRequested()
             onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
         }
 

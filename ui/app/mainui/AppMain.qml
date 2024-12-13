@@ -1706,13 +1706,18 @@ Item {
                             hideSignPhraseModal: userAgreementLoader.active
                             dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
                             dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
-                            walletConnectEnabled: featureFlagsStore.dappsEnabled
-                            browserConnectEnabled: featureFlagsStore.connectorEnabled
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
 
-                            onDappPairRequested: dAppsServiceLoader.dappPairRequested()
-                            onDappDisconnectRequested: (dappUrl) => dAppsServiceLoader.dappDisconnectRequested(dappUrl)
-			     onSendTokenRequested: sendModalHandler.sendToken(
+                            onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
+                            onDappConnectRequested: () => {
+                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
+                                dAppsServiceLoader.dappConnectRequested()
+                            }
+                            onDappDisconnectRequested: (dappUrl) => {
+                                dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
+                                dAppsServiceLoader.dappDisconnectRequested(dappUrl)
+                            }
+			                onSendTokenRequested: sendModalHandler.sendToken(
                                                       senderAddress, tokenId, tokenType)
                             onBridgeTokenRequested: sendModalHandler.bridgeToken(tokenId, tokenType)
                         }
@@ -2374,11 +2379,16 @@ Item {
         }
     }
 
+    DAppsMetrics {
+        id: dappMetrics
+        metricsStore: SharedStores.MetricsStore {}
+    }
+
     Loader {
         id: dAppsServiceLoader
 
-        signal dappPairRequested()
         signal dappDisconnectRequested(string dappUrl)
+        signal dappConnectRequested()
 
         // It seems some of the functionality of the dapp connector depends on the DAppsService
         active: {
@@ -2399,6 +2409,8 @@ Item {
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 networksModel: WalletStores.RootStore.filteredFlatModel
                 sessionRequestsModel: dAppsService.sessionRequestsModel
+                walletConnectEnabled: featureFlagsStore.dappsEnabled
+                connectorEnabled: featureFlagsStore.connectorEnabled
 
                 formatBigNumber: (number, symbol, noSymbolOption) => WalletStores.RootStore.currencyStore.formatBigNumber(number, symbol, noSymbolOption)
 
@@ -2410,12 +2422,20 @@ Item {
                 onSignRequestAccepted: (connectionId, requestId) => dAppsService.sign(connectionId, requestId)
                 onSignRequestRejected: (connectionId, requestId) => dAppsService.rejectSign(connectionId, requestId, false /*hasError*/)
                 onSignRequestIsLive: (connectionId, requestId) => dAppsService.signRequestIsLive(connectionId, requestId)
+                onPairWithConnectorRequested: (connectorId) => {
+                    dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppPairInitiated, connectorId)
+                    if (connectorId == Constants.DAppConnectors.WalletConnect) {
+                        dappsWorkflow.openPairing()
+                    } else if (connectorId == Constants.DAppConnectors.StatusConnect) {
+                        Global.openLink("https://chromewebstore.google.com/detail/a-wallet-connector-by-sta/kahehnbpamjplefhpkhafinaodkkenpg")
+                    }
+                }
 
                 Connections {
                     target: dAppsServiceLoader
 
-                    function onDappPairRequested() {
-                        dappsWorkflow.openPairing()
+                    function onDappConnectRequested() {
+                        dappsWorkflow.chooseConnector()
                     }
 
                     function onDappDisconnectRequested(dappUrl) {
@@ -2429,6 +2449,7 @@ Item {
                 currenciesStore: WalletStores.RootStore.currencyStore
                 groupedAccountAssetsModel: WalletStores.RootStore.walletAssetsStore.groupedAccountAssetsModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
+                dappsMetrics: dappMetrics
                 networksModel: SortFilterProxyModel {
                     sourceModel: WalletStores.RootStore.filteredFlatModel
                     proxyRoles: [
