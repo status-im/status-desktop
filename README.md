@@ -13,4 +13,3 @@
 #### [You have an idea for a cool feature or improvement?](https://status.app/feature-upvote)
 
 ![screenshot of the app](screenshot.png)
-
