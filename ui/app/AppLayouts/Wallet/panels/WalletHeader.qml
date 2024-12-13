@@ -36,12 +36,10 @@ Item {
 
     property bool dAppsEnabled: true
     property bool dAppsVisible: true
-    property bool walletConnectEnabled: true
-    property bool browserConnectEnabled: true
     property var dAppsModel
 
-    signal buttonClicked()
-    signal dappPairRequested()
+    signal dappListRequested()
+    signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
 
     implicitHeight: 88
@@ -148,11 +146,10 @@ Item {
 
                 visible: !root.walletStore.showSavedAddresses && root.dAppsVisible
                 enabled: root.dAppsEnabled
-                walletConnectEnabled: root.walletConnectEnabled
-                connectorEnabled: root.browserConnectEnabled
                 model: root.dAppsModel
-                onPairDapp: root.dappPairRequested()
+                onDappListRequested: () => root.dappListRequested()
                 onDisconnectDapp: (dappUrl) => root.dappDisconnectRequested(dappUrl)
+                onConnectDapp: () => root.dappConnectRequested()
             }
 
             StatusButton {

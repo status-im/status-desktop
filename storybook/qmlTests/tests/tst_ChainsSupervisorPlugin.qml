@@ -99,7 +99,9 @@ Item {
 
         function init() {
             componentUnderTest = chainsSupervisorPluginComponent.createObject(root)
-            tryVerify(() => componentUnderTest.anyChainAvailable)
+            tryVerify(() => componentUnderTest.isOnline)
+            tryVerify(() => !componentUnderTest.allChainsOffline)
+            tryVerify(() => !componentUnderTest.networkOffline)
             componentUnderTest.sdk.getActiveSessionsCallbacks = []
             componentUnderTest.sdk.emitSessionEventCalls = []
         }
@@ -108,7 +110,7 @@ Item {
             componentUnderTest.networksModel.setProperty(0, "isOnline", false)
             componentUnderTest.networksModel.setProperty(1, "isOnline", false)
 
-            tryVerify(() => !componentUnderTest.anyChainAvailable)
+            tryVerify(() => componentUnderTest.allChainsOffline)
         }
 
         function test_disconnectEventAllValid() {

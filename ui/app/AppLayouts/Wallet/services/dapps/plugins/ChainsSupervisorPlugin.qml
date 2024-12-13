@@ -19,7 +19,9 @@ QObject {
     // Required roles: chainId, isOnline
     required property var networksModel
     // Happens when any chain is available
-    readonly property bool anyChainAvailable: !chainsAvailabilityWatchdog.allOffline
+    readonly property bool isOnline: !chainsAvailabilityWatchdog.allOffline && chainsAvailabilityWatchdog.networkOnline
+    readonly property bool allChainsOffline: chainsAvailabilityWatchdog.allOffline
+    readonly property bool networkOffline: !chainsAvailabilityWatchdog.networkOnline
 
     ChainsAvailabilityWatchdog {
         id: chainsAvailabilityWatchdog

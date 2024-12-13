@@ -44,10 +44,12 @@ SQUtils.QObject {
     // Required roles: tokenKey, balances
     required property var groupedAccountAssetsModel
 
+    required property DAppsMetrics dappsMetrics
+
     readonly property alias requestsModel: requests
     readonly property alias dappsModel: dappConnections.dappsModel
     readonly property bool enabled: wcSdk.enabled || bcSdk.enabled
-    readonly property bool isServiceOnline: chainsSupervisorPlugin.anyChainAvailable && (wcSdk.sdkReady || bcSdk.enabled)
+    readonly property bool isServiceOnline: chainsSupervisorPlugin.isOnline && (wcSdk.sdkReady || bcSdk.enabled)
 
     // Connection signals
     /// Emitted when a new DApp requests a connection
@@ -85,7 +87,7 @@ SQUtils.QObject {
             siwePlugin.connectionRequests.delete(key.toString())
             return
         }
-        dappConnections.connect(key, approvedChainIds, accountAddress)
+        dappConnections.accept(key, approvedChainIds, accountAddress)
     }
 
     /// Rejects the session proposal. App response to `connectDApp`
@@ -96,7 +98,7 @@ SQUtils.QObject {
             siwePlugin.connectionRequests.delete(id.toString())
             return
         }
-        dappConnections.reject(id)
+        dappConnections.rejectAndLog(id)
     }
 
     /// Disconnects the WC session with the given topic. Expected `dappDisconnected` signal
@@ -164,20 +166,45 @@ SQUtils.QObject {
 
         onConnected: (proposalId, topic, url, connectorId) => {
             root.dappConnected(proposalId, topic, url, connectorId)
+            root.dappsMetrics.logDAppConnected(url, connectorId)
         }
-        onDisconnected: (topic, url) => {
+        onDisconnected: (topic, url, connectorId) => {
             root.dappDisconnected(topic, url)
+            root.dappsMetrics.logDAppDisconnected(url, connectorId)
         }
         onNewConnectionProposed: (key, chains, dAppUrl, dAppName, dAppIcon, connectorId) => {
             root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, connectorId, key)
+            root.dappsMetrics.logConnectionProposal(
+                dappConnections.getProposalChains(key),
+                dappConnections.getProposalMethods(key), 
+                dAppUrl,
+                connectorId)
         }
         onNewConnectionFailed: (key, dappUrl, error) => {
             root.newConnectionFailed(key, dappUrl, error)
+            root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.ConnectError, error)
+        }
+
+        function accept(key, approvedChainIds, accountAddress) {
+            const dappUrl = dappConnections.getDAppUrl(key)
+            const connectorId = dappConnections.getConnectorId(key)
+            dappConnections.connect(key, approvedChainIds, accountAddress)
+            root.dappsMetrics.logConnectionProposalAccepted(dappUrl, approvedChainIds, connectorId)
+        }
+
+        function rejectAndLog() {
+            const dappUrl = dappConnections.getDAppUrl(key)
+            const connectorId = dappConnections.getConnectorId(key)
+            dappConnections.reject(key)
+            root.dappsMetrics.logConnectionProposalRejected(dappUrl, connectorId)
         }
     }
 
     SessionRequestsModel {
         id: requests
+        onRequestAdded: (request) => {
+            root.dappsMetrics.logSignRequestReceived(request.sourceId, request.method, request.chainId, request.dappUrl)
+        }
     }
 
     ChainsSupervisorPlugin {
@@ -185,14 +212,38 @@ SQUtils.QObject {
 
         sdk: root.wcSdk
         networksModel: root.networksModel
+        onAllChainsOfflineChanged: {
+            if (!allChainsOffline) {
+                return
+            }
+            root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.ChainsDown, "")
+        }
+
+        onNetworkOfflineChanged: {
+            if (!networkOffline) {
+                return
+            }
+            root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.NetworkDown, "")
+        }
     }
 
     Connections {
         target: root.wcSdk
         enabled: root.wcSdk.enabled
 
-        function onPairResponse(ok) {
+        function onPairResponse(ok, error) {
             root.pairingResponse(ok)
+            if (!ok) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.PairError, error)
+            }
+        }
+
+        function onSdkInit(success, result) {
+            if (!success) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.WcUnavailable, result)
+                return
+            }
+            root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.WcAvailable, "")
         }
     }
 
@@ -221,10 +272,15 @@ SQUtils.QObject {
         onConnectDApp: (chains, dAppUrl, dAppName, dAppIcon, key) => {
             siwePlugin.connectionRequests.set(key.toString(), {chains, dAppUrl, dAppName, dAppIcon})
             root.connectDApp(chains, dAppUrl, dAppName, dAppIcon, Constants.DAppConnectors.WalletConnect, key)
+            root.dappsMetrics.logSiweConnectionProposal(
+                siwePlugin.getProposalChains(key),
+                dAppUrl,
+                Constants.DAppConnectors.WalletConnect)
         }
 
         onSiweFailed: (id, error, topic) => {
             root.siweCompleted(topic, id, error)
+            root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.ConnectError, error)
         }
 
         onSiweSuccessful: (id, topic) => {
@@ -243,10 +299,15 @@ SQUtils.QObject {
                 DAppsHelpers.buildSupportedNamespaces(approvedChainIds,
                                                 [accountAddress],
                                                 SessionRequest.getSupportedMethods()))
+            const dappUrl = siwePlugin.getDAppUrl(key)
             siwePlugin.connectionApproved(key, approvedNamespaces)
+            root.dappsMetrics.logConnectionProposalAccepted(dappUrl, approvedChainIds, Constants.DAppConnectors.WalletConnect)
         }
+
         function reject(key) {
+            const dappUrl = siwePlugin.getDAppUrl(key)
             siwePlugin.connectionRejected(key)
+            root.dappsMetrics.logConnectionProposalRejected(dappUrl, Constants.DAppConnectors.WalletConnect)
         }
     }
 
@@ -289,8 +350,31 @@ SQUtils.QObject {
             return root.currenciesStore.getFiatValue(value, currency)
         }
 
+        onAccepted: (topic, id, userAccepted) => {
+            const request = root.requestsModel.findRequest(topic, id)
+            if (!request) {
+                return
+            }
+            root.dappsMetrics.logSignRequestAccepted(request.sourceId, request.method, request.chainId, request.dappUrl)
+        }
+
+        onRejected: (topic, id, hasError) => {
+            if (hasError) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.SignError, "Rejecting due to error")
+                return
+            }
+            const request = root.requestsModel.findRequest(topic, id)
+            if (!request) {
+                return
+            }
+            root.dappsMetrics.logSignRequestRejected(request.sourceId, request.method, request.chainId, request.dappUrl)
+        }
+
         onSignCompleted: (topic, id, userAccepted, error) => {
             root.signCompleted(topic, id, userAccepted, error)
+            if (error) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.SignError, error)
+            }
         }
     }
 
@@ -310,8 +394,31 @@ SQUtils.QObject {
             return root.currenciesStore.getFiatValue(value, currency)
         }
 
+        onAccepted: (topic, id, userAccepted) => {
+            const request = root.requestsModel.findRequest(topic, id)
+            if (!request) {
+                return
+            }
+            root.dappsMetrics.logSignRequestAccepted(request.sourceId, request.method, request.chainId, request.dappUrl)
+        }
+
+        onRejected: (topic, id, hasError) => {
+            if (hasError) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.SignError, "Rejecting due to error")
+                return
+            }
+            const request = root.requestsModel.findRequest(topic, id)
+            if (!request) {
+                return
+            }
+            root.dappsMetrics.logSignRequestRejected(request.sourceId, request.method, request.chainId, request.dappUrl)
+        }
+
         onSignCompleted: (topic, id, userAccepted, error) => {
             root.signCompleted(topic, id, userAccepted, error)
+            if (error) {
+                root.dappsMetrics.logHealthEvent(DAppsMetrics.DAppsHealthState.SignError, error)
+            }
         }
     }
 }
