@@ -107,6 +107,7 @@ QtObject:
       debug "initialization response: ", initResp
 
   proc processSignal(self: Service, signal: string) =
+    echo "--- GOT A SIGNAL ", signal
     var jsonSignal: JsonNode
     try:
       jsonSignal = signal.parseJson
@@ -166,6 +167,16 @@ QtObject:
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
     if self.doLogging:
       debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
+
+  proc getAppInfoFlow*(self: Service) =
+    let response = keycard_go.getAppInfoFlow()
+    
+    debug "getAppInfoFlow", response=response
+
+  proc getMetadataFlow*(self: Service) =
+    let response = keycard_go.getMetadataFlow()
+
+    debug "getMetadataFlow", response=response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
     self.busy = true

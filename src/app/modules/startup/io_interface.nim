@@ -41,6 +41,12 @@ method moveToLoadingAppState*(self: AccessInterface) {.base.} =
 method moveToAppState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getAppInfoFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getMetadataFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method moveToStartupState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

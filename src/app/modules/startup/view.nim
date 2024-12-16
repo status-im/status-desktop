@@ -107,6 +107,12 @@ QtObject:
   proc onQuaternaryActionClicked*(self: View) {.slot.} =
     self.delegate.onQuaternaryActionClicked()
 
+  proc getAppInfoFlow*(self: View) {.slot.} =
+    self.delegate.getAppInfoFlow()
+
+  proc getMetadataFlow*(self: View) {.slot.} =
+    self.delegate.getMetadataFlow()
+
   proc onQuinaryActionClicked*(self: View) {.slot.} =
     self.delegate.onQuinaryActionClicked()
 

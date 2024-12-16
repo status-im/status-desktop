@@ -491,6 +491,12 @@ method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): boo
 method getSeedPhrase*[T](self: Module[T]): string =
   return self.controller.getSeedPhrase()
 
+method getAppInfoFlow*[T](self: Module[T]) =
+  self.controller.getAppInfoFlow()
+
+method getMetadataFlow*[T](self: Module[T]) =
+  self.controller.getMetadataFlow()
+
 method getKeycardData*[T](self: Module[T]): string =
   return self.view.getKeycardData()
 

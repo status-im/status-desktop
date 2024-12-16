@@ -198,6 +198,20 @@ Item {
             font.pixelSize: Constants.onboarding.titleFontSize
             color: Theme.palette.directColor1
         }
+        StatusButton {
+            text: qsTr("Get keycard status")
+            onClicked: {
+                console.log('Cal getAppInfoFlowl')
+                startupStore.startupModuleInst.getAppInfoFlow()
+            }
+        }
+        StatusButton {
+            text: qsTr("Get metadata")
+            onClicked: {
+                console.log('Call getMetadataFlow')
+                startupStore.startupModuleInst.getMetadataFlow()
+            }
+        }
         Item { Layout.fillHeight: d.isRegularLogin }
         Item {
             id: userInfo

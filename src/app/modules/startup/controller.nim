@@ -529,6 +529,12 @@ proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
 proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
   return self.keycardService.getCurrentFlow()
 
+proc getAppInfoFlow*(self: Controller) =
+  self.keycardService.getAppInfoFlow()
+
+proc getMetadataFlow*(self: Controller) =
+  self.keycardService.getMetadataFlow()
+
 proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
   return self.keycardService.getLastReceivedKeycardData()
 
