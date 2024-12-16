@@ -873,9 +873,6 @@ QtObject:
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.communities.values)
 
-  proc getCuratedCommunities*(self: Service): seq[CommunityDto] =
-    return toSeq(self.getFilteredCuratedCommunities.values)
-
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
     if communityId == "":
       return
@@ -1855,7 +1852,7 @@ QtObject:
       let curatedCommunities = parseCuratedCommunities(rpcResponseObj["response"]["result"])
       for curatedCommunity in curatedCommunities:
         self.communities[curatedCommunity.id] = curatedCommunity
-      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CommunitiesArgs(communities: self.getCuratedCommunities()))
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CommunitiesArgs(communities: curatedCommunities))
     except Exception as e:
       let errMsg = e.msg
       error "error loading curated communities: ", errMsg
