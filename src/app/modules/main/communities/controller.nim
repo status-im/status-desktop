@@ -226,9 +226,6 @@ proc isDisplayNameDupeOfCommunityMember*(self: Controller, displayName: string):
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   result = self.communityService.getCommunityById(communityId)
 
-proc getCuratedCommunities*(self: Controller): seq[CommunityDto] =
-  result = self.communityService.getCuratedCommunities()
-
 proc spectateCommunity*(self: Controller, communityId: string): string =
   self.communityService.spectateCommunity(communityId)
 
