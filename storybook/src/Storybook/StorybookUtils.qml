@@ -28,7 +28,13 @@ QtObject {
         for (let i = 0; i < parent.children.length; i++) {
             if (parent.children[i].objectName === name)
                 return parent.children[i]
+
+            const inner = findChild(parent.children[i], name)
+
+            if (inner !== null)
+                return inner
         }
+
         return null
     }
 }
