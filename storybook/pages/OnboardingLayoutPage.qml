@@ -213,6 +213,24 @@ SplitView {
                         onClicked: ClipboardUtils.setText(mockDriver.mnemonic)
                     }
                     Button {
+                        text: "Paste seed phrase verification"
+                        focusPolicy: Qt.NoFocus
+                        onClicked: {
+                            for (let i = 0;; i++) {
+                                const input = StorybookUtils.findChild(
+                                                onboarding.stack.currentItem,
+                                                `seedInput_${i}`)
+
+                                if (input === null)
+                                    break
+
+                                const index = input.seedWordIndex
+                                input.text = mockDriver.seedWords[index]
+                            }
+                        }
+                    }
+
+                    Button {
                         text: "Copy PIN (\"%1\")".arg(ctrlPin.text)
                         focusPolicy: Qt.NoFocus
                         enabled: ctrlPin.acceptableInput
