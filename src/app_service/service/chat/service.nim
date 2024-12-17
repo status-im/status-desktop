@@ -84,9 +84,6 @@ type
     role*: MemberRole
     joined*: bool
 
-  RpcResponseArgs* = ref object of Args
-    response*: RpcResponse[JsonNode]
-
   CheckChannelPermissionsResponseArgs* = ref object of Args
     communityId*: string
     chatId*: string
@@ -120,7 +117,6 @@ const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
 const SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT* = "switchToOrCreateOneToOneChat"
 const SIGNAL_CHAT_ADDED_OR_UPDATED* = "chatAddedOrUpdated"
 const SIGNAL_CHAT_CREATED* = "chatCreated"
-const SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND* = "chatRequestUpdateAfterSend"
 const SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE* = "checkChannelPermissionsResponse"
 const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE* = "checkAllChannelsPermissionsResponse"
 const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED* = "checkAllChannelsPermissionsFailed"
@@ -182,10 +178,6 @@ QtObject:
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
           self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
-
-    self.events.on(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND) do(e: Args):
-      var args = RpcResponseArgs(e)
-      discard self.processMessengerResponse(args.response)
 
   proc asyncGetActiveChats*(self: Service) =
     let arg = AsyncGetActiveChatsTaskArg(

@@ -9,7 +9,7 @@ proc getContacts*(): RpcResponse[JsonNode] =
   result = callPrivateRPC("contacts".prefix, payload)
 
 proc blockContact*(id: string): RpcResponse[JsonNode] =
-  result = callPrivateRPC("blockContactDesktop".prefix, %* [id])
+  result = callPrivateRPC("blockContact".prefix, %* [id])
 
 proc unblockContact*(id: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("unblockContact".prefix, %* [id])
