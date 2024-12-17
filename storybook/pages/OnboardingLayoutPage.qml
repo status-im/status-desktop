@@ -42,9 +42,12 @@ SplitView {
 
     OnboardingLayout {
         id: onboarding
+
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+
         networkChecksEnabled: true
+
         onboardingStore: OnboardingStore {
             readonly property int keycardState: ctrlKeycardState.currentValue // enum Onboarding.KeycardState
             property int keycardRemainingPinAttempts: 5
@@ -118,9 +121,9 @@ SplitView {
             property bool metricsPopupSeen
         }
 
-        onFinished: (primaryFlow, secondaryFlow, data) => {
-            console.warn("!!! ONBOARDING FINISHED; primary flow:", primaryFlow, "; secondary:", secondaryFlow, "; data:", JSON.stringify(data))
-            logs.logEvent("onFinished", ["primaryFlow", "secondaryFlow", "data"], arguments)
+        onFinished: (flow, data) => {
+            console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
+            logs.logEvent("onFinished", ["flow", "data"], arguments)
 
             console.warn("!!! SIMULATION: SHOWING SPLASH")
             stack.clear()
@@ -187,9 +190,6 @@ SplitView {
                     text: "Current page: %1".arg(onboarding.stack.currentItem ? onboarding.stack.currentItem.pageClassName : "")
                 }
                 Label {
-                    text: `Current flow: ${onboarding.primaryFlow} -> ${onboarding.secondaryFlow}`
-                }
-                Label {
                     text: "Stack depth: %1".arg(onboarding.stack.depth)
                 }
             }
@@ -212,6 +212,24 @@ SplitView {
                         focusPolicy: Qt.NoFocus
                         onClicked: ClipboardUtils.setText(mockDriver.mnemonic)
                     }
+                    Button {
+                        text: "Paste seed phrase verification"
+                        focusPolicy: Qt.NoFocus
+                        onClicked: {
+                            for (let i = 0;; i++) {
+                                const input = StorybookUtils.findChild(
+                                                onboarding.stack.currentItem,
+                                                `seedInput_${i}`)
+
+                                if (input === null)
+                                    break
+
+                                const index = input.seedWordIndex
+                                input.text = mockDriver.seedWords[index]
+                            }
+                        }
+                    }
+
                     Button {
                         text: "Copy PIN (\"%1\")".arg(ctrlPin.text)
                         focusPolicy: Qt.NoFocus
