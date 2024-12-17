@@ -44,9 +44,11 @@ suite "updating member items":
         alias = "",
         icon = "",
         isContact = false,
+        isBlocked = false,
         memberRole = MemberRole.None,
         joined = false,
         trustStatus = TrustStatus.Unknown,
+        contactRequest = ContactRequest.None,
         callDataChanged = false,
       )
     # Two updated roles, because preferredDisplayName gets updated too
@@ -64,9 +66,11 @@ suite "updating member items":
         alias = "",
         icon = "icon",
         isContact = true,
+        isBlocked = false,
         memberRole = MemberRole.None,
         joined = false,
         trustStatus = TrustStatus.Unknown,
+        contactRequest = ContactRequest.None,
         callDataChanged = false,
       )
     check(updatedRoles.len() == 2)
