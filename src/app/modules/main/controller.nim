@@ -525,6 +525,14 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
   self.events.on(SIGNAL_LOGGEDIN_USER_NAME_CHANGED) do(e: Args):
     self.delegate.contactUpdated(singletonInstance.userProfile.getPubKey())
 

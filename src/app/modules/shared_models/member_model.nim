@@ -288,6 +288,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       memberRole: MemberRole,
       joined: bool,
       membershipRequestState: MembershipRequestState = MembershipRequestState.None,
@@ -316,6 +317,7 @@ QtObject:
     updateRole(memberRole, MemberRole)
     updateRole(joined, Joined)
     updateRole(trustStatus, TrustStatus)
+    updateRole(isBlocked, IsBlocked)
 
     var updatedMembershipRequestState = membershipRequestState
     if updatedMembershipRequestState == MembershipRequestState.None:
@@ -357,6 +359,7 @@ QtObject:
         item.alias,
         item.icon,
         item.isContact,
+        item.isBlocked,
         item.memberRole,
         item.joined,
         item.membershipRequestState,
@@ -427,6 +430,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       trustStatus: TrustStatus,
     ) =
     let ind = self.findIndexForMember(pubKey)
@@ -442,6 +446,7 @@ QtObject:
       alias,
       icon,
       isContact,
+      isBlocked,
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
       self.items[ind].membershipRequestState,

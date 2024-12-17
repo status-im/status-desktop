@@ -98,6 +98,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
     trustStatus = contactDetails.dto.trustStatus,
+    isBlocked = contactDetails.dto.isBlocked,
   )
 
 method userProfileUpdated*(self: Module) =
@@ -149,6 +150,7 @@ proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): 
     colorHash = contactDetails.colorHash,
     onlineStatus = status,
     isContact = contactDetails.dto.isContact,
+    isBlocked = contactDetails.dto.isBlocked,
     isCurrentUser = isMe,
     memberRole = member.role,
     joined = member.joined,
@@ -202,6 +204,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberR
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
+    isBlocked = contactDetails.dto.isBlocked,
     memberRole,
     joined,
     trustStatus = contactDetails.dto.trustStatus,

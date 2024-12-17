@@ -344,6 +344,7 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       trustStatus: TrustStatus,
     ) =
     for item in self.items:
@@ -356,6 +357,7 @@ QtObject:
         alias,
         icon,
         isContact,
+        isBlocked,
         trustStatus,
       )
 
