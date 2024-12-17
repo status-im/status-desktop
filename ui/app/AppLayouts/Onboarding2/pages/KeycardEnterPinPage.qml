@@ -68,7 +68,7 @@ KeycardBasePage {
             width: 320
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
-            text: qsTr("I’ve inserted a Keycard")
+            text: qsTr("I’ve inserted a different Keycard")
             normalColor: "transparent"
             borderWidth: 1
             borderColor: Theme.palette.baseColor2
