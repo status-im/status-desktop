@@ -1897,6 +1897,7 @@ proc createMemberItem[T](
     isBlocked = contactDetails.dto.isBlocked,
     isCurrentUser = contactDetails.isCurrentUser,
     trustStatus = contactDetails.dto.trustStatus,
+    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
     memberRole = role,
     membershipRequestState = state,
     requestToJoinId = requestId,
@@ -1916,6 +1917,7 @@ method contactUpdated*[T](self: Module[T], contactId: string) =
     isContact = contactDetails.dto.isContact,
     isBlocked = contactDetails.dto.isBlocked,
     trustStatus = contactDetails.dto.trustStatus,
+    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
   )
 
 {.pop.}
