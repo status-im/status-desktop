@@ -280,8 +280,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithPassword)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithPassword)
         }
 
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
@@ -372,8 +371,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndNewSeedphrase_data() {
@@ -536,8 +534,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
         }
 
         function test_flow_createProfile_withKeycardAndExistingSeedphrase_data() {
@@ -642,8 +639,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.CreateProfile)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
         }
 
         // FLOW: Log in -> Log in with recovery phrase
@@ -729,10 +725,8 @@ Item {
                 compare(dynamicSpy.signalArguments[0][0], data.bioEnabled)
             }
 
-            // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSeedphrase)
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -818,8 +812,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithSyncing)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSyncing)
         }
 
         // FLOW: Log in -> Log in with Keycard
@@ -878,8 +871,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.PrimaryFlow.Login)
-            compare(finishedSpy.signalArguments[0][1], Onboarding.SecondaryFlow.LoginWithKeycard)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithKeycard)
         }
     }
 }
