@@ -271,6 +271,27 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
 
   self.view.pinnedModel().insertItemBasedOnClock(item)
 
+method onMessageEdited*(self: Module, message: MessageDto) =
+  let index = self.view.pinnedModel().findIndexForMessageId(message.id)
+  if index == -1:
+    return
+
+  let itemBeforeChange = self.view.pinnedModel().getItemWithMessageId(message.id)
+  let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
+  let communityChats = self.controller.getCommunityDetails().chats
+
+  self.view.pinnedModel().updateEditedMsg(
+    message.id,
+    self.controller.getRenderedText(message.parsedText, communityChats),
+    message.text,
+    message.parsedText,
+    message.contentType,
+    message.mentioned,
+    message.containsContactMentions(),
+    message.links,
+    message.mentionedUsersPks
+  )
+
 method getMyChatId*(self: Module): string =
   self.controller.getMyChatId()
 
