@@ -73,7 +73,6 @@ Item {
             Layout.topMargin: 5
 
             StatusTabButton {
-                leftPadding: 0
                 width: implicitWidth
                 objectName: "assetsButton"
                 text: qsTr("Assets")
