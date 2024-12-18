@@ -24,6 +24,10 @@ QtObject {
         d.sourceBlocker.when = false
 
         reloaded()
+
+        // Log to indicate moement when page was reloaded
+        const fileName = loader.source.toString().split('/').pop();
+        console.log("\n\n== Reloaded", fileName, "==")
     }
 
     readonly property Connections _d: Connections {

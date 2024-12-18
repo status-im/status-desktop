@@ -55,6 +55,7 @@ Item {
     property bool sendViaPersonalChatEnabled
 
     signal openStickerPackPopup(string stickerPackId)
+    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
     signal showReplyArea(string messageId, string author)
     signal editModeChanged(bool editModeOn)
 
@@ -376,6 +377,8 @@ Item {
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
+
+            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
 
             onShowReplyArea: {
                 root.showReplyArea(messageId, author)
