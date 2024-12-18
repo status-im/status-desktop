@@ -42,8 +42,6 @@ Shape {
     property int rightBottomRadius: radius
     readonly property alias path: path
 
-    asynchronous: true
-
     // design values; Shape doesn't have an implicit size
     implicitWidth: 448
     implicitHeight: 44

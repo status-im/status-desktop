@@ -66,17 +66,19 @@ CalloutCard {
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
                     text: qsTr("Payment request")
                     font.pixelSize: Theme.additionalTextSize
                     font.weight: Font.Medium
                 }
-                RowLayout {
+                Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     StatusBaseText {
-                        Layout.maximumWidth: parent.width * 0.8
-                        Layout.fillHeight: true
+                        id: amountText
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.rightMargin: symbolText.paintedWidth
                         font.pixelSize: Theme.tertiaryTextFontSize
                         color: Theme.palette.baseColor1
                         verticalAlignment: Text.AlignVCenter
@@ -84,7 +86,10 @@ CalloutCard {
                         text: root.amount
                     }
                     StatusBaseText {
-                        Layout.fillHeight: true
+                        id: symbolText
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: amountText.paintedWidth + Theme.halfPadding
                         font.pixelSize: Theme.tertiaryTextFontSize
                         color: Theme.palette.baseColor1
                         verticalAlignment: Text.AlignVCenter
