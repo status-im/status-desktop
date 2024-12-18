@@ -7,6 +7,7 @@ const DEFAULT_FLAG_CONNECTOR_ENABLED* = true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = false
+const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = false
 
 proc boolToEnv*(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
@@ -19,6 +20,7 @@ QtObject:
     sendViaPersonalChatEnabled: bool
     paymentRequestEnabled: bool
     simpleSendEnabled: bool
+    onboardingV2Enabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
@@ -28,6 +30,7 @@ QtObject:
     self.sendViaPersonalChatEnabled = getEnv("FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED", boolToEnv(DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)) != "0"
     self.paymentRequestEnabled = getEnv("FLAG_PAYMENT_REQUEST_ENABLED", boolToEnv(DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)) != "0"
     self.simpleSendEnabled = getEnv("FLAG_SIMPLE_SEND_ENABLED", boolToEnv(DEFAULT_FLAG_SIMPLE_SEND_ENABLED)) != "0"
+    self.onboardingV2Enabled = getEnv("FLAG_ONBOARDING_V2_ENABLED", boolToEnv(DEFAULT_FLAG_ONBOARDING_V2_ENABLED)) != "0"
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
@@ -71,3 +74,9 @@ QtObject:
 
   QtProperty[bool] simpleSendEnabled:
     read = getSimpleSendEnabled
+
+  proc getOnboardingV2Enabled*(self: FeatureFlags): bool {.slot.} =
+    return self.onboardingV2Enabled
+
+  QtProperty[bool] onboardingV2Enabled:
+    read = getOnboardingV2Enabled
