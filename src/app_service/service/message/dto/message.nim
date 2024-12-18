@@ -130,6 +130,7 @@ type MessageDto* = object
   deleted*: bool
   deletedBy*: string
   deletedForMe*: bool
+  pinnedBy*: string
   transactionParameters*: TransactionParameters
   mentioned*: bool
   replied*: bool
@@ -277,6 +278,7 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
     # The message was deleted by the sender itself
     result.deletedBy = result.`from`
   discard jsonObj.getProp("deletedForMe", result.deletedForMe)
+  discard jsonObj.getProp("pinnedBy", result.pinnedBy)
   discard jsonObj.getProp("mentioned", result.mentioned)
   discard jsonObj.getProp("replied", result.replied)
 
