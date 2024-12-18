@@ -40,6 +40,13 @@ QtObject:
     addressPerChainModel: seq[AddressPerChainModel]
     tokenMarketDetails: seq[MarketDetailsItem]
 
+  # Forward declaration
+  proc modelUpdatedCallback(self: TokensBySymbolModel): proc()
+  proc tokenDetailsUpdatedCallback(self: TokensBySymbolModel): proc()
+  proc tokenMarketValuesUpdatedCallback(self: TokensBySymbolModel): proc()
+  proc tokenPreferencesUpdatedCallback(self: TokensBySymbolModel): proc()
+  proc currencyFormatsUpdatedCallback(self: TokensBySymbolModel): proc()
+
   proc setup(self: TokensBySymbolModel) =
     self.QAbstractListModel.setup
     self.addressPerChainModel = @[]
@@ -59,6 +66,11 @@ QtObject:
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
     result.tokenMarketDetails = @[]
+    result.delegate.subscribeToModelUpdates(result.modelUpdatedCallback())
+    result.delegate.subscribeToTokenDetailsUpdates(result.tokenDetailsUpdatedCallback())
+    result.delegate.subscribeToTokenMarketValuesUpdates(result.tokenMarketValuesUpdatedCallback())
+    result.delegate.subscribeToTokenPreferencesUpdates(result.tokenPreferencesUpdatedCallback())
+    result.delegate.subscribeToCurrencyFormatsUpdates(result.currencyFormatsUpdatedCallback())
 
   method rowCount(self: TokensBySymbolModel, index: QModelIndex = nil): int =
     return self.delegate.getTokenBySymbolList().len
@@ -139,7 +151,7 @@ QtObject:
       of ModelRole.Position:
         result = newQVariant(self.delegate.getTokenPreferences(item.symbol).position)
 
-  proc modelsUpdated*(self: TokensBySymbolModel) =
+  proc modelsUpdated(self: TokensBySymbolModel) =
     self.beginResetModel()
     self.tokenMarketDetails = @[]
     self.addressPerChainModel = @[]
@@ -151,7 +163,7 @@ QtObject:
       self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
     self.endResetModel()
 
-  proc tokensMarketValuesUpdated*(self: TokensBySymbolModel) =
+  proc tokensMarketValuesUpdated(self: TokensBySymbolModel) =
     if not self.delegate.getTokensMarketValuesLoading():
       if self.delegate.getTokenBySymbolList().len > 0:
         let index = self.createIndex(0, 0, nil)
@@ -160,15 +172,7 @@ QtObject:
         defer: lastindex.delete
         self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
-  proc tokensMarketValuesAboutToUpdate*(self: TokensBySymbolModel) =
-    if self.delegate.getTokenBySymbolList().len > 0:
-      let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
-      self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
-
-  proc tokensDetailsAboutToUpdate*(self: TokensBySymbolModel) =
+  proc tokensDetailsUpdated(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
@@ -176,22 +180,29 @@ QtObject:
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
-  proc tokensDetailsUpdated*(self: TokensBySymbolModel) =
-    if self.delegate.getTokenBySymbolList().len > 0:
-      let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
-      self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
-
-  proc currencyFormatsUpdated*(self: TokensBySymbolModel) =
+  proc currencyFormatsUpdated(self: TokensBySymbolModel) =
     for marketDetails in self.tokenMarketDetails:
       marketDetails.updateCurrencyFormat()
 
-  proc tokenPreferencesUpdated*(self: TokensBySymbolModel) =
+  proc tokenPreferencesUpdated(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])
+
+  proc modelUpdatedCallback(self: TokensBySymbolModel): proc() =
+    return proc() = self.modelsUpdated()
+
+  proc tokenDetailsUpdatedCallback(self: TokensBySymbolModel): proc() =
+    return proc() = self.tokensDetailsUpdated()
+
+  proc tokenMarketValuesUpdatedCallback(self: TokensBySymbolModel): proc() =
+    return proc() = self.tokensMarketValuesUpdated()
+
+  proc tokenPreferencesUpdatedCallback(self: TokensBySymbolModel): proc() =
+    return proc() = self.tokenPreferencesUpdated()
+
+  proc currencyFormatsUpdatedCallback(self: TokensBySymbolModel): proc() =
+    return proc() = self.currencyFormatsUpdated()

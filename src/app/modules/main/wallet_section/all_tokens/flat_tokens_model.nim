@@ -40,6 +40,13 @@ QtObject:
     marketValuesDelegate: io_interface.TokenMarketValuesDataSource
     tokenMarketDetails: seq[MarketDetailsItem]
 
+  # Forward declaration
+  proc modelUpdatedCallback(self: FlatTokensModel): proc()
+  proc tokenDetailsUpdatedCallback(self: FlatTokensModel): proc()
+  proc tokenMarketValuesUpdatedCallback(self: FlatTokensModel): proc()
+  proc tokenPreferencesUpdatedCallback(self: FlatTokensModel): proc()
+  proc currencyFormatsUpdatedCallback(self: FlatTokensModel): proc()
+
   proc setup(self: FlatTokensModel) =
     self.QAbstractListModel.setup
 
@@ -56,6 +63,11 @@ QtObject:
     result.delegate = delegate
     result.marketValuesDelegate = marketValuesDelegate
     result.tokenMarketDetails = @[]
+    result.delegate.subscribeToModelUpdates(result.modelUpdatedCallback())
+    result.delegate.subscribeToTokenDetailsUpdates(result.tokenDetailsUpdatedCallback())
+    result.delegate.subscribeToTokenMarketValuesUpdates(result.tokenMarketValuesUpdatedCallback())
+    result.delegate.subscribeToTokenPreferencesUpdates(result.tokenPreferencesUpdatedCallback())
+    result.delegate.subscribeToCurrencyFormatsUpdates(result.currencyFormatsUpdatedCallback())
 
   method rowCount(self: FlatTokensModel, index: QModelIndex = nil): int =
     return self.delegate.getFlatTokensList().len
@@ -138,7 +150,7 @@ QtObject:
       of ModelRole.Position:
         result = newQVariant(self.delegate.getTokenPreferences(item.symbol).position)
 
-  proc modelsUpdated*(self: FlatTokensModel) =
+  proc modelsUpdated(self: FlatTokensModel) =
     self.beginResetModel()
     self.tokenMarketDetails = @[]
     for token in self.delegate.getFlatTokensList():
@@ -155,12 +167,6 @@ QtObject:
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
-  proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
-    self.marketDetailsDataChanged()
-
-  proc tokensMarketValuesAboutToUpdate*(self: FlatTokensModel) =
-    self.marketDetailsDataChanged()
-
   proc detailsDataChanged(self: FlatTokensModel) =
     if self.delegate.getFlatTokensList().len > 0:
       let index = self.createIndex(0, 0, nil)
@@ -169,20 +175,29 @@ QtObject:
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
-  proc tokensDetailsAboutToUpdate*(self: FlatTokensModel) =
-    self.detailsDataChanged()
-
-  proc tokensDetailsUpdated*(self: FlatTokensModel) =
-    self.detailsDataChanged()
-
-  proc currencyFormatsUpdated*(self: FlatTokensModel) =
+  proc currencyFormatsUpdated(self: FlatTokensModel) =
     for marketDetails in self.tokenMarketDetails:
       marketDetails.updateCurrencyFormat()
 
-  proc tokenPreferencesUpdated*(self: FlatTokensModel) =
+  proc tokenPreferencesUpdated(self: FlatTokensModel) =
     if self.delegate.getFlatTokensList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])
+
+  proc modelUpdatedCallback(self: FlatTokensModel): proc() =
+    return proc() = self.modelsUpdated()
+
+  proc tokenDetailsUpdatedCallback(self: FlatTokensModel): proc() =
+    return proc() = self.detailsDataChanged()
+
+  proc tokenMarketValuesUpdatedCallback(self: FlatTokensModel): proc() =
+    return proc() = self.marketDetailsDataChanged()
+
+  proc tokenPreferencesUpdatedCallback(self: FlatTokensModel): proc() =
+    return proc() = self.tokenPreferencesUpdated()
+
+  proc currencyFormatsUpdatedCallback(self: FlatTokensModel): proc() =
+    return proc() = self.currencyFormatsUpdated()
