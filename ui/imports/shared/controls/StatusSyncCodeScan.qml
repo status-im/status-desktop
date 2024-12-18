@@ -159,17 +159,6 @@ Column {
     }
 
     StatusBaseText {
-        visible: !d.showCamera
-        width: parent.width
-        height: visible ? implicitHeight : 0
-        wrapMode: Text.WordWrap
-        color: Theme.palette.baseColor1
-        font.pixelSize: Theme.tertiaryTextFontSize
-        horizontalAlignment: Text.AlignHCenter
-        text: qsTr("Ensure both devices are on the same network")
-    }
-
-    StatusBaseText {
         visible: d.showCamera && cameraLoader.item.camera ? true : false
         width: parent.width
         height: visible ? implicitHeight : 0

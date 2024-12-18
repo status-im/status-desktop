@@ -29,10 +29,10 @@ Item {
         onWrongSeedPhraseChanged: {
             if (wrongSeedPhrase) {
                 if (root.startupStore.startupModuleInst.flowType === Constants.startupFlow.firstRunOldUserImportSeedPhrase) {
-                    seedPhraseView.setWrongSeedPhraseMessage(qsTr("Profile key pair for the inserted seed phrase is already set up"))
+                    seedPhraseView.setWrongSeedPhraseMessage(qsTr("Profile key pair for the inserted recovery phrase is already set up"))
                     return
                 }
-                seedPhraseView.setWrongSeedPhraseMessage(qsTr("Seed phrase doesn’t match the profile of an existing Keycard user on this device"))
+                seedPhraseView.setWrongSeedPhraseMessage(qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
             }
             else {
                 seedPhraseView.setWrongSeedPhraseMessage("")
@@ -52,7 +52,7 @@ Item {
             font.weight: Font.Bold
             color: Theme.palette.directColor1
             Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Enter seed phrase")
+            text: qsTr("Enter recovery phrase")
         }
 
         EnterSeedPhrase {

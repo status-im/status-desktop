@@ -1,8 +1,10 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
+
+import "private"
 
 /*!
    \qmltype StatusDotsLoadingIndicator
@@ -39,7 +41,7 @@ Control {
 
     /*!
        \qmlproperty string StatusDotsLoadingIndicator::duration
-       This property holds the duration of the animation.
+       This property holds the duration of the animation in milliseconds
     */
     property int duration: 1500
 
@@ -59,33 +61,11 @@ Control {
 
     spacing: 2
 
-    component DotItem: Rectangle{
-        id: dotItem
-
-        property double maxOpacity
-
-        width: root.dotsDiameter
-        height: width
-        radius: width / 2
-        color: root.dotsColor
-
-        SequentialAnimation {
-            id: blinkingAnimation
-
-            loops: Animation.Infinite
-            running: visible
-            NumberAnimation { target: dotItem; property: "opacity"; to: 0; duration: root.duration;}
-            NumberAnimation { target: dotItem; property: "opacity"; to: dotItem.maxOpacity; duration: root.duration;}
-        }
-
-        Component.onCompleted: blinkingAnimation.start()
-    }
-
     contentItem: RowLayout {
         spacing: root.spacing
 
-        DotItem { id: firstDot; maxOpacity: d.opacity1}
-        DotItem { id: secondDot; maxOpacity: d.opacity2}
-        DotItem { id: thirdDot; maxOpacity: d.opacity3}
+        LoadingDotItem { dotsDiameter: root.dotsDiameter; duration: root.duration; dotsColor: root.dotsColor; maxOpacity: d.opacity1 }
+        LoadingDotItem { dotsDiameter: root.dotsDiameter; duration: root.duration; dotsColor: root.dotsColor; maxOpacity: d.opacity2 }
+        LoadingDotItem { dotsDiameter: root.dotsDiameter; duration: root.duration; dotsColor: root.dotsColor; maxOpacity: d.opacity3 }
     }
 }
