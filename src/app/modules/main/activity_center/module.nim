@@ -107,7 +107,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
       imagesAlbum.add(msg.image)
       albumMessageIds.add(msg.id)
 
-  return msg_item_qobj.newMessageItem(msg_item.initItem(
+  return msg_item_qobj.newMessageItem(msg_item.initMessageItem(
     message.id,
     communityId, # we don't received community id via `activityCenterNotifications` api call
     message.chatId,
@@ -144,6 +144,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.deleted,
     message.deletedBy,
     deletedByContactDetails = ContactDetails(),
+    message.pinnedBy,
     message.mentioned,
     message.quotedMessage.`from`,
     message.quotedMessage.text,
