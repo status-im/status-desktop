@@ -4,7 +4,6 @@ import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
 
 Switch {
     id: root
@@ -14,10 +13,14 @@ Switch {
     font.family: Theme.baseFont.name
     font.pixelSize: Theme.primaryTextFontSize
 
-    background: MouseArea {
-        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        acceptedButtons: Qt.NoButton
-    }
+    background: null
+
+    padding: 4
+    opacity: enabled ? 1.0 : Theme.disabledOpacity
+
+    property bool leftSide: true
+    LayoutMirroring.enabled: !leftSide
+    LayoutMirroring.childrenInherit: true
 
     indicator: Item {
         id: oval
@@ -33,8 +36,8 @@ Switch {
 
             radius: 14
             color: root.checked ? Theme.palette.primaryColor1
-                                : Theme.palette.directColor8
-            opacity: root.enabled ? 1 : 0.2
+                                : Theme.palette.directColor7
+            Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
         }
 
         Rectangle {
@@ -68,20 +71,23 @@ Switch {
                 }
             ]
 
-            transitions: Transition {
-                reversible: true
-                NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 120}
+            Behavior on x {
+                enabled: !root.pressed
+                SmoothedAnimation {}
             }
         }
     }
 
     contentItem: StatusBaseText {
         text: root.text
-        opacity: enabled ? 1.0 : 0.3
         color: root.textColor
         font: root.font
         verticalAlignment: Text.AlignVCenter
         leftPadding: root.mirrored ? 0 : !!root.text ? root.indicator.width + root.spacing : root.indicator.width
         rightPadding: root.mirrored ? !!root.text ? root.indicator.width + root.spacing : root.indicator.width : 0
+    }
+
+    HoverHandler {
+        cursorShape: root.enabled && root.hovered ? Qt.PointingHandCursor : undefined
     }
 }
