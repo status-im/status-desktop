@@ -29,7 +29,7 @@ Item {
             StatusTabButton {
                 width: implicitWidth
                 enabled: false
-                text: qsTr("Blocked & disabled")
+                text: "Blocked & disabled"
             }
             StatusTabButton {
                 width: implicitWidth

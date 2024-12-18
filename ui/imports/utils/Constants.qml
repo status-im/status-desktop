@@ -498,12 +498,8 @@ QtObject {
     readonly property QtObject contactsPanelUsage: QtObject {
         readonly property int unknownPosition: -1
         readonly property int mutualContacts: 0
-        readonly property int verifiedMutualContacts: 1
-        readonly property int sentContactRequest: 2
-        readonly property int receivedContactRequest: 3
-        readonly property int rejectedSentContactRequest: 4
-        readonly property int rejectedReceivedContactRequest: 5
-        readonly property int blockedContacts: 6
+        readonly property int pendingContacts: 1
+        readonly property int blockedContacts: 2
     }
 
     readonly property QtObject keypair: QtObject {

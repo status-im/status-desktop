@@ -55,8 +55,8 @@ StatusSectionLayout {
 
     property var mutualContactsModel
     property var blockedContactsModel
-    property var pendingReceivedRequestContactsModel
-    property var pendingSentRequestContactsModel
+    property var pendingContactsModel
+    property int pendingReceivedContactsCount
 
     required property bool isCentralizedMetricsEnabled
 
@@ -116,7 +116,7 @@ StatusSectionLayout {
 
         syncingBadgeCount: root.store.devicesStore.devicesModel.count -
                            root.store.devicesStore.devicesModel.pairedCount
-        messagingBadgeCount: root.pendingReceivedRequestContactsModel.ModelCount.count
+        messagingBadgeCount: root.pendingReceivedContactsCount
     }
 
     headerBackground: AccountHeaderGradient {
@@ -244,8 +244,8 @@ StatusSectionLayout {
 
                 mutualContactsModel: root.mutualContactsModel
                 blockedContactsModel: root.blockedContactsModel
-                pendingReceivedRequestContactsModel: root.pendingReceivedRequestContactsModel
-                pendingSentRequestContactsModel: root.pendingSentRequestContactsModel
+                pendingContactsModel: root.pendingContactsModel
+                pendingReceivedContactsCount: root.pendingReceivedContactsCount
             }
         }
 
@@ -280,7 +280,7 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.messaging)
-                requestsCount: root.pendingReceivedRequestContactsModel.ModelCount.count
+                requestsCount: root.pendingReceivedContactsCount
                 messagingStore: root.store.messagingStore
             }
         }

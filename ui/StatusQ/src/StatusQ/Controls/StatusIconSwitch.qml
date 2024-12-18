@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -17,8 +17,10 @@ Control {
 
     signal toggled
 
+    padding: 4
+
     contentItem: RowLayout {
-        spacing: 16
+        spacing: Theme.padding
 
         StatusRoundIcon {
             asset.name: root.icon
@@ -26,22 +28,21 @@ Control {
 
         ColumnLayout {
             Layout.fillWidth: true
-
-            StatusBaseText {
-                text: root.title
-                color: Theme.palette.directColor1
-                font.pixelSize: 15
-            }
-
-            Item { Layout.fillWidth: true }
+            Layout.fillHeight: true
 
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                text: root.title
+                visible: !!text
+                color: Theme.palette.directColor1
+                elide: Text.ElideRight
+            }
+
+            StatusBaseText {
+                Layout.fillWidth: true
                 text: root.subTitle
                 visible: !!text
                 color: Theme.palette.baseColor1
-                font.pixelSize: 15
                 lineHeight: 1.2
                 wrapMode: Text.WordWrap
                 elide: Text.ElideRight
@@ -51,6 +52,7 @@ Control {
         StatusSwitch {
             id: switchItem
             objectName: "switchItem"
+            padding: 0
 
             onToggled: root.toggled()
         }

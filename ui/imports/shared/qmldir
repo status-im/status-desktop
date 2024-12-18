@@ -3,3 +3,4 @@ module shared
 DelegateModelGeneralized 1.0 DelegateModelGeneralized.qml
 LoadingAnimation 1.0 LoadingAnimation.qml
 MacTrafficLights 1.0 MacTrafficLights.qml
+UserSearchFilterContainer 1.0 UserSearchFilterContainer.qml

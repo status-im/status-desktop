@@ -3,7 +3,9 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
+import shared.controls 1.0
 import shared.stores 1.0 as SharedStores
 import utils 1.0
 
@@ -72,14 +74,15 @@ SettingsPage {
                 membersTabBar.currentIndex = tabButton.TabBar.index
         }
         
-        spacing: 19
+        spacing: Theme.padding
 
         StatusTabBar {
             id: membersTabBar
-            Layout.fillWidth: true
-            Layout.topMargin: 5
+            Layout.preferredWidth: root.preferredContentWidth
 
             StatusTabButton {
+                readonly property int subSection: MembersTabPanel.TabType.AllMembers
+
                 id: allMembersBtn
                 objectName: "allMembersButton"
                 width: implicitWidth
@@ -87,6 +90,8 @@ SettingsPage {
             }
 
             StatusTabButton {
+                readonly property int subSection: MembersTabPanel.TabType.PendingRequests
+
                 id: pendingRequestsBtn
                 objectName: "pendingRequestsButton"
                 width: implicitWidth
@@ -95,6 +100,8 @@ SettingsPage {
             }
 
             StatusTabButton {
+                readonly property int subSection: MembersTabPanel.TabType.DeclinedRequests
+
                 id: declinedRequestsBtn
                 objectName: "declinedRequestsButton"
                 width: implicitWidth
@@ -103,6 +110,8 @@ SettingsPage {
             }
 
             StatusTabButton {
+                readonly property int subSection: MembersTabPanel.TabType.BannedMembers
+
                 id: bannedBtn
                 objectName: "bannedButton"
                 width: implicitWidth
@@ -111,79 +120,53 @@ SettingsPage {
             }
         }
 
-        StackLayout {
-            id: stackLayout
-            Layout.fillWidth: true
+        SearchBox {
+            id: memberSearch
+            Layout.preferredWidth: root.preferredContentWidth
+            placeholderText: qsTr("Search by name or chat key")
+            enabled: membersTabBar.currentItem.enabled
+        }
+
+        MembersTabPanel {
+            Layout.preferredWidth: root.preferredContentWidth
             Layout.fillHeight: true
-            currentIndex: membersTabBar.currentIndex
 
-            MembersTabPanel {
-                model: root.membersModel
-                rootStore: root.rootStore
-                utilsStore: root.utilsStore
-                memberRole: root.memberRole
-                panelType: MembersTabPanel.TabType.AllMembers
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                onKickUserClicked: {
-                    kickBanPopup.mode = KickBanPopup.Mode.Kick
-                    kickBanPopup.username = name
-                    kickBanPopup.userId = id
-                    kickBanPopup.open()
+            panelType: membersTabBar.currentItem.subSection
+            model: {
+                switch (panelType) {
+                case MembersTabPanel.TabType.PendingRequests:
+                    return root.pendingMembersModel
+                case MembersTabPanel.TabType.DeclinedRequests:
+                    return root.declinedMembersModel
+                case MembersTabPanel.TabType.BannedMembers:
+                    return root.bannedMembersModel
+                case MembersTabPanel.TabType.AllMembers:
+                default:
+                    return root.membersModel
                 }
-
-                onBanUserClicked: {
-                    kickBanPopup.mode = KickBanPopup.Mode.Ban
-                    kickBanPopup.username = name
-                    kickBanPopup.userId = id
-                    kickBanPopup.open()
-                }
-
-                onViewMemberMessagesClicked: root.viewMemberMessagesClicked(pubKey, displayName)
             }
 
-            MembersTabPanel {
-                model: root.pendingMembersModel
-                rootStore: root.rootStore
-                utilsStore: root.utilsStore
-                memberRole: root.memberRole
-                panelType: MembersTabPanel.TabType.PendingRequests
+            searchString: memberSearch.text
+            rootStore: root.rootStore
+            utilsStore: root.utilsStore
+            memberRole: root.memberRole
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                onAcceptRequestToJoin: root.acceptRequestToJoin(id)
-                onDeclineRequestToJoin: root.declineRequestToJoin(id)
+            onKickUserClicked: {
+                kickBanPopup.mode = KickBanPopup.Mode.Kick
+                kickBanPopup.username = name
+                kickBanPopup.userId = id
+                kickBanPopup.open()
             }
-
-            MembersTabPanel {
-                model: root.declinedMembersModel
-                rootStore: root.rootStore
-                utilsStore: root.utilsStore
-                memberRole: root.memberRole
-                panelType: MembersTabPanel.TabType.DeclinedRequests
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                onAcceptRequestToJoin: root.acceptRequestToJoin(id)
+            onBanUserClicked: {
+                kickBanPopup.mode = KickBanPopup.Mode.Ban
+                kickBanPopup.username = name
+                kickBanPopup.userId = id
+                kickBanPopup.open()
             }
-
-            MembersTabPanel {
-                model: root.bannedMembersModel
-                rootStore: root.rootStore
-                utilsStore: root.utilsStore
-                memberRole: root.memberRole
-                panelType: MembersTabPanel.TabType.BannedMembers
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                onUnbanUserClicked: root.unbanUserClicked(id)
-                onViewMemberMessagesClicked: root.viewMemberMessagesClicked(pubKey, displayName)
-            }
+            onUnbanUserClicked: root.unbanUserClicked(id)
+            onAcceptRequestToJoin: root.acceptRequestToJoin(id)
+            onDeclineRequestToJoin: root.declineRequestToJoin(id)
+            onViewMemberMessagesClicked: root.viewMemberMessagesClicked(pubKey, displayName)
         }
     }
 

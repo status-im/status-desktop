@@ -1,10 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-
-import StatusQ.Core.Utils 0.1
-
-import utils 1.0
 
 Flow {
     id: root

@@ -18,9 +18,9 @@ import shared.stores 1.0 as SharedStores
 import shared.views 1.0
 import shared.views.chat 1.0
 
-import "../stores"
-import "../panels"
-import "../popups"
+import AppLayouts.Profile.stores 1.0
+import AppLayouts.Profile.panels 1.0
+import AppLayouts.Profile.popups 1.0
 
 SettingsContentBase {
     id: root
@@ -28,20 +28,17 @@ SettingsContentBase {
     property ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
 
-    property var mutualContactsModel
-    property var blockedContactsModel
-    property var pendingReceivedRequestContactsModel
-    property var pendingSentRequestContactsModel
+    required property var mutualContactsModel
+    required property var blockedContactsModel
+    required property var pendingContactsModel
+    required property int pendingReceivedContactsCount
 
     property alias searchStr: searchBox.text
-    property bool isPending: false
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         objectName: "ContactsView_ContactRequest_Button"
         text: qsTr("Send contact request to chat key")
-        onClicked: {
-            Global.openPopup(sendContactRequest);
-        }
+        onClicked: sendContactRequestComponent.createObject(root).open()
     }
 
     function openContextMenu(model, pubKey) {
@@ -67,11 +64,108 @@ SettingsContentBase {
         Global.openMenu(contactContextMenuComponent, this, params)
     }
 
-    Item {
-        id: contentItem
+    headerComponents: ColumnLayout {
         width: root.contentWidth
-        height: (searchBox.height + contactsTabBar.height
-                + stackLayout.height + (2 * Theme.bigPadding))
+        spacing: Theme.padding
+
+        StatusTabBar {
+            id: contactsTabBar
+            Layout.fillWidth: true
+
+            StatusTabButton {
+                readonly property int panelUsage: Constants.contactsPanelUsage.mutualContacts
+
+                width: implicitWidth
+                text: qsTr("Contacts")
+            }
+            StatusTabButton {
+                readonly property int panelUsage: Constants.contactsPanelUsage.pendingContacts
+
+                objectName: "ContactsView_PendingRequest_Button"
+                width: implicitWidth
+                enabled: !!root.pendingContactsModel && !root.pendingContactsModel.ModelCount.empty
+                text: qsTr("Pending Requests")
+                badge.value: root.pendingReceivedContactsCount
+            }
+            StatusTabButton {
+                readonly property int panelUsage: Constants.contactsPanelUsage.blockedContacts
+
+                objectName: "ContactsView_Blocked_Button"
+                width: implicitWidth
+                enabled: !!root.blockedContactsModel && !root.blockedContactsModel.ModelCount.empty
+                text: qsTr("Blocked")
+            }
+        }
+
+        SearchBox {
+            id: searchBox
+            Layout.fillWidth: true
+            placeholderText: qsTr("Search by name or chat key")
+        }
+    }
+
+    ContactsListPanel {
+        id: contactsListPanel
+        width: root.contentWidth
+        height: root.availableHeight
+
+        panelUsage: contactsTabBar.currentItem.panelUsage
+        contactsModel: {
+            switch (panelUsage) {
+            case Constants.contactsPanelUsage.pendingContacts:
+                return root.pendingContactsModel
+            case Constants.contactsPanelUsage.blockedContacts:
+                return root.blockedContactsModel
+            case Constants.contactsPanelUsage.mutualContacts:
+            default:
+                return root.mutualContactsModel
+            }
+        }
+        section.property: {
+            switch (contactsListPanel.panelUsage) {
+            case Constants.contactsPanelUsage.pendingContacts:
+                return "contactRequest"
+            case Constants.contactsPanelUsage.mutualContacts:
+                return "isVerified"
+            case Constants.contactsPanelUsage.blockedContacts:
+            default:
+                return ""
+            }
+        }
+        section.delegate: SectionComponent {
+            text: {
+                switch (contactsListPanel.panelUsage) {
+                case Constants.contactsPanelUsage.pendingContacts:
+                    return section === `${Constants.ContactRequestState.Received}` ? qsTr("Received") : qsTr("Sent")
+                case Constants.contactsPanelUsage.mutualContacts:
+                    return section === "true" ? qsTr("Trusted Contacts") : qsTr("Contacts")
+                case Constants.contactsPanelUsage.blockedContacts:
+                default:
+                    return ""
+                }
+            }
+        }
+        section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+
+        header: NoFriendsRectangle {
+            width: ListView.view.width
+            visible: ListView.view.count === 0
+            inviteButtonVisible: searchBox.text === ""
+        }
+
+        searchString: searchBox.text
+        onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
+        onSendMessageActionTriggered: root.contactsStore.joinPrivateChat(publicKey)
+        onContactRequestAccepted: root.contactsStore.acceptContactRequest(publicKey, "")
+        onContactRequestRejected: root.contactsStore.dismissContactRequest(publicKey, "")
+
+        Component {
+            id: sendContactRequestComponent
+            SendContactRequestModal {
+                contactsStore: root.contactsStore
+                onClosed: destroy()
+            }
+        }
 
         Component {
             id: contactContextMenuComponent
@@ -98,191 +192,27 @@ SettingsContentBase {
                 onClosed: destroy()
             }
         }
-        SearchBox {
-            id: searchBox
-            anchors.left: parent.left
-            anchors.right: parent.right
-            placeholderText: qsTr("Search by a display name or chat key")
-        }
+    }
 
-        StatusTabBar {
-            id: contactsTabBar
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: searchBox.bottom
-            anchors.topMargin: Theme.padding
+    component SectionComponent: Rectangle {
+        required property string section
+        property alias text: sectionText.text
 
-            StatusTabButton {
-                id: contactsBtn
-                leftPadding: Theme.padding
-                width: implicitWidth
-                text: qsTr("Contacts")
-            }
-            StatusTabButton {
-                id: pendingRequestsBtn
-                objectName: "ContactsView_PendingRequest_Button"
-                width: implicitWidth
-                enabled: !root.pendingReceivedRequestContactsModel.ModelCount.empty ||
-                         !root.pendingSentRequestContactsModel.ModelCount.empty
-                text: qsTr("Pending Requests")
-                badge.value: root.pendingReceivedRequestContactsModel.ModelCount.count
-            }
-            StatusTabButton {
-                id: blockedBtn
-                objectName: "ContactsView_Blocked_Button"
-                width: implicitWidth
-                enabled: !root.blockedContactsModel.ModelCount.empty
-                text: qsTr("Blocked")
-            }
-        }
+        width: ListView.view.width
+        height: sectionText.implicitHeight
+        color: Theme.palette.statusListItem.backgroundColor
 
-        StackLayout {
-            id: stackLayout
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: contactsTabBar.bottom
-            currentIndex: contactsTabBar.currentIndex
-            anchors.topMargin: Theme.padding
-            // CONTACTS
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.minimumHeight: 0
-                Layout.maximumHeight: (verifiedContacts.height + mutualContacts.height + noFriendsItem.height)
-                visible: (stackLayout.currentIndex === 0)
-                onVisibleChanged: {
-                    if (visible) {
-                        stackLayout.height = height+contactsTabBar.anchors.topMargin;
-                    }
-                }
-                spacing: Theme.padding
-                ContactsListPanel {
-                    id: verifiedContacts
+        StatusBaseText {
+            id: sectionText
+            width: parent.width
+            anchors.verticalCenter: parent.verticalCenter
+            topPadding: Theme.halfPadding
+            bottomPadding: Theme.halfPadding
 
-                    Layout.fillWidth: true
-                    title: qsTr("Trusted Contacts")
-                    visible: !noFriendsItem.visible && count > 0
-                    contactsModel: root.mutualContactsModel
-                    searchString: searchBox.text
-                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
-                    onSendMessageActionTriggered: {
-                        root.contactsStore.joinPrivateChat(publicKey)
-                    }
-                }
-
-                ContactsListPanel {
-                    id: mutualContacts
-
-                    Layout.fillWidth: true
-                    visible: !noFriendsItem.visible && count > 0
-                    title: qsTr("Contacts")
-                    contactsModel: root.mutualContactsModel
-                    searchString: searchBox.text
-                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    panelUsage: Constants.contactsPanelUsage.mutualContacts
-
-                    onSendMessageActionTriggered: {
-                        root.contactsStore.joinPrivateChat(publicKey)
-                    }
-                }
-
-                Item {
-                    id: noFriendsItem
-
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: visible ?  (root.contentHeight - (2*searchBox.height) - contactsTabBar.height - contactsTabBar.anchors.topMargin) : 0
-                    visible: root.mutualContactsModel.ModelCount.empty
-
-                    NoFriendsRectangle {
-                        anchors.centerIn: parent
-                        text: qsTr("You don't have any contacts yet")
-                    }
-                }
-            }
-
-            // PENDING REQUESTS
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.minimumHeight: 0
-                Layout.maximumHeight: (receivedRequests.height + sentRequests.height)
-                spacing: Theme.padding
-                visible: (stackLayout.currentIndex === 1)
-                onVisibleChanged: {
-                    if (visible) {
-                        stackLayout.height = height+contactsTabBar.anchors.topMargin;
-                    }
-                }
-                ContactsListPanel {
-                    id: receivedRequests
-
-                    objectName: "receivedRequests_ContactsListPanel"
-                    Layout.fillWidth: true
-                    title: qsTr("Received")
-                    searchString: searchBox.text
-                    visible: count > 0
-                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    contactsModel: root.pendingReceivedRequestContactsModel
-                    panelUsage: Constants.contactsPanelUsage.receivedContactRequest
-
-                    onSendMessageActionTriggered: {
-                        root.contactsStore.joinPrivateChat(publicKey)
-                    }
-
-                    onContactRequestAccepted: {
-                        root.contactsStore.acceptContactRequest(publicKey, "")
-                    }
-
-                    onContactRequestRejected: {
-                        root.contactsStore.dismissContactRequest(publicKey, "")
-                    }
-                }
-
-                ContactsListPanel {
-                    id: sentRequests
-
-                    objectName: "sentRequests_ContactsListPanel"
-                    Layout.fillWidth: true
-                    title: qsTr("Sent")
-                    searchString: searchBox.text
-                    visible: count > 0
-                    onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                    contactsModel: root.pendingSentRequestContactsModel
-                    panelUsage: Constants.contactsPanelUsage.sentContactRequest
-                }
-            }
-
-            // BLOCKED
-            ContactsListPanel {
-                id: blockedContacts
-
-                Layout.fillWidth: true
-                searchString: searchBox.text
-                onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
-                contactsModel: root.blockedContactsModel
-                panelUsage: Constants.contactsPanelUsage.blockedContacts
-                visible: (stackLayout.currentIndex === 2)
-                onVisibleChanged: {
-                    if (visible) {
-                        stackLayout.height = height;
-                    }
-                }
-            }
-        }
-
-        Component {
-            id: loadingIndicator
-            StatusLoadingIndicator {
-                width: 12
-                height: 12
-            }
-        }
-
-        Component {
-            id: sendContactRequest
-            SendContactRequestModal {
-                contactsStore: root.contactsStore
-                onClosed: destroy()
-            }
+            color: Theme.palette.baseColor1
+            font.pixelSize: Theme.additionalTextSize
+            font.weight: Font.Medium
+            elide: Text.ElideRight
         }
     }
 }

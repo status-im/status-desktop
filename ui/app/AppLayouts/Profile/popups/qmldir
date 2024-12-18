@@ -10,3 +10,4 @@ TokenListPopup 1.0 TokenListPopup.qml
 WalletKeypairAccountMenu 1.0 WalletKeypairAccountMenu.qml
 WalletAddressMenu 1.0 WalletAddressMenu.qml
 ConfirmChangePasswordModal 1.0 ConfirmChangePasswordModal.qml
+SendContactRequestModal 1.0 SendContactRequestModal.qml
