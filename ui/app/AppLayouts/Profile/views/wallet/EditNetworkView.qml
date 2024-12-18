@@ -27,7 +27,6 @@ ColumnLayout {
         id: editPreviwTabBar
         objectName: "editPreviwTabBar"
         StatusTabButton {
-            leftPadding: 0
             text: qsTr("Live Network")
             objectName: "editNetworkLiveButton"
             width: implicitWidth
