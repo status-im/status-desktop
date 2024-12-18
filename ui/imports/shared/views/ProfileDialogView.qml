@@ -485,7 +485,6 @@ Pane {
                     Layout.rightMargin: column.anchors.rightMargin
                     bottomPadding: -4
                     StatusTabButton {
-                        leftPadding: 0
                         width: implicitWidth
                         text: qsTr("Communities")
                     }

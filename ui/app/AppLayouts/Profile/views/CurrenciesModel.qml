@@ -62,7 +62,7 @@ ListModel {
         name: qsTr("Ethereum")
         symbol: "Ξ"
         category: qsTr("Tokens")
-        imageSource: "../../../../imports/assets/png/tokens/ETH.png"
+        imageSource: "../../assets/png/tokens/ETH.png"
         selected: false
         isToken: true
     }
@@ -73,7 +73,7 @@ ListModel {
         name: qsTr("Bitcoin")
         symbol: "฿"
         category: qsTr("Tokens")
-        imageSource: "../../../../imports/assets/png/tokens/WBTC.png"
+        imageSource: "../../assets/png/tokens/WBTC.png"
         selected: false
         isToken: true
     }
@@ -84,7 +84,7 @@ ListModel {
         name: qsTr("Status Network Token")
         symbol: ""
         category: qsTr("Tokens")
-        imageSource: "../../../../imports/assets/png/tokens/SNT.png"
+        imageSource: "../../assets/png/tokens/SNT.png"
         selected: false
         isToken: true
     }
@@ -95,7 +95,7 @@ ListModel {
         name: qsTr("Dai")
         symbol: "◈"
         category: qsTr("Tokens")
-        imageSource: "../../../../imports/assets/png/tokens/DAI.png"
+        imageSource: "../../assets/png/tokens/DAI.png"
         selected: false
         isToken: true
     }
