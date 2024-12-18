@@ -37,9 +37,10 @@ import app_service/service/metrics/service as metrics_service
 
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/modules/startup/module as startup_module
+import app/modules/startup_v2/module as startup_module_v2
 import app/modules/main/module as main_module
 import app/core/notifications/notifications_manager
-import app/global/global_singleton
+import app/global/[global_singleton, feature_flags]
 import app/global/app_signals
 import app/core/[main]
 
@@ -105,6 +106,7 @@ type
 
     # Modules
     startupModule: startup_module.AccessInterface
+    startupModuleV2: startup_module_v2.AccessInterface
     mainModule: main_module.AccessInterface
 
 #################################################
@@ -116,6 +118,7 @@ proc applyNecessaryActionsAfterLoggingIn(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
+proc startupV2DidLoad*(self: AppController)
 proc userLoggedIn*(self: AppController): string
 proc appReady*(self: AppController)
 proc logout*(self: AppController)
@@ -248,6 +251,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.keycardService,
     result.devicesService
   )
+  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+    result.startupModuleV2 = startup_module_v2.newModule[AppController](
+      result,
+      statusFoundation.events,
+    )
   result.mainModule = main_module.newModule[AppController](
     result,
     statusFoundation.events,
@@ -304,6 +312,9 @@ proc delete*(self: AppController) =
   if not self.startupModule.isNil:
     self.startupModule.delete
     self.startupModule = nil
+  if not self.startupModuleV2.isNil:
+    self.startupModuleV2.delete
+    self.startupModuleV2 = nil
   self.mainModule.delete
   self.languageService.delete
 
@@ -387,6 +398,7 @@ proc checkForStoringPasswordToKeychain(self: AppController) =
     self.keychainService.storeData(account.keyUid, self.startupModule.getPin())
 
 proc startupDidLoad*(self: AppController) =
+  # TODO move these functions to startupV2DidLoad
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
@@ -397,6 +409,10 @@ proc startupDidLoad*(self: AppController) =
   self.languageService.init()
   # We need this to set app width/height appropriatelly on the app start.
   self.startupModule.startUpUIRaised()
+
+proc startupV2DidLoad*(self: AppController) =
+  debug "NEW ONBOARDING LOADED"
+  # TODO when removing the old startup module, we should move the functions above here
 
 proc mainDidLoad*(self: AppController) =
   self.applyNecessaryActionsAfterLoggingIn()
@@ -411,6 +427,8 @@ proc start*(self: AppController) =
   self.devicesService.init()
 
   self.startupModule.load()
+  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+    self.startupModuleV2.load()
 
 proc load(self: AppController) =
   self.settingsService.init()
@@ -483,6 +501,10 @@ proc finishAppLoading*(self: AppController) =
   if not self.startupModule.isNil:
     self.startupModule.onAppLoaded()
     self.startupModule = nil
+
+  if not self.startupModuleV2.isNil:
+    self.startupModuleV2.onAppLoaded()
+    self.startupModuleV2 = nil
 
   self.mainModule.checkAndPerformProfileMigrationIfNeeded()
 
