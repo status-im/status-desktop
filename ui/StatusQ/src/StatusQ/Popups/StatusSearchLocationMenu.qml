@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQml 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQml 2.15
+import QtQuick.Controls 2.15
 
 import Qt.labs.qmlmodels 1.0
 
@@ -8,6 +8,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+
+import SortFilterProxyModel 0.2
 
 StatusMenu {
     id: root
@@ -22,10 +24,10 @@ StatusMenu {
     signal setSearchSelection(string text,
                               string secondaryText,
                               string imageSource,
-                              string isIdenticon,
+                              bool isIdenticon,
                               string iconName,
                               string iconColor,
-                              var isUserIcon,
+                              bool isUserIcon,
                               int colorId,
                               string colorHash)
 
@@ -78,9 +80,12 @@ StatusMenu {
                         root.setSearchSelection(text,
                                                 "",
                                                 "",
-                                                assetSettings.isIdenticon,
+                                                assetSettings.imgIsIdenticon,
                                                 assetSettings.name,
-                                                assetSettings.color)
+                                                assetSettings.color,
+                                                model.isUserIcon,
+                                                model.colorId,
+                                                JSON.stringify(model.colorHash))
                         root.itemClicked(model.value, "")
                     }
                 }
@@ -113,21 +118,28 @@ StatusMenu {
                         readonly property string parentIconName: subMenuDelegate.parentIconName
                         readonly property string parentImageSource: subMenuDelegate.parentImageSource
                         readonly property string parentIdenticonColor: subMenuDelegate.parentIdenticonColor
-                        readonly property string parentIsIdenticon: subMenuDelegate.parentIsIdenticon
+                        readonly property bool parentIsIdenticon: subMenuDelegate.parentIsIdenticon
 
                         menu: subMenuDelegate
-                        model: subMenuDelegate.subItemsModel
+                        model: SortFilterProxyModel {
+                            sourceModel: subMenuDelegate.subItemsModel
+                            sorters: RoleSorter {
+                                roleName: "position"
+                                sortOrder: Qt.AscendingOrder
+                            }
+                        }
 
                         delegate: StatusSearchPopupMenuItem {
                             value: model.value
                             text: model.text
-                            assetSettings.isImage: !!model.imageSource
-                            assetSettings.name: !!StatusQUtils.Emoji.iconSource(model.imageSource) ?
-                                                  StatusQUtils.Emoji.iconSource(model.imageSource) : model.imageSource
+
+                            assetSettings.name: model.imageSource
+                            assetSettings.emoji: !model.isUserIcon ? model.imageSource : ""
                             assetSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
                             assetSettings.bgColor: model.iconColor
                             assetSettings.charactersLen: model.isUserIcon ? 2 : 1
                             ringSettings.ringSpecModel: model.colorHash
+
                             onTriggered: {
                                 root.resetSearchSelection()
                                 if (menuLoader.parentTitleText === "Chat") {
@@ -139,7 +151,7 @@ StatusMenu {
                                                             model.iconColor,
                                                             model.isUserIcon,
                                                             model.colorId,
-                                                            model.colorHash.toJson())
+                                                            JSON.stringify(model.colorHash))
                                 } else {
                                     root.setSearchSelection(menuLoader.parentTitleText,
                                                             model.text,
@@ -160,5 +172,4 @@ StatusMenu {
             }
         }
     }
-
 }
