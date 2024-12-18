@@ -10,25 +10,27 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-import shared.controls 1.0
+import shared 1.0
 import shared.controls.chat 1.0
+import shared.controls.delegates 1.0
 import shared.stores 1.0 as SharedStores
 import shared.views.chat 1.0
 import utils 1.0
 
 import AppLayouts.Chat.stores 1.0
-import AppLayouts.Communities.layouts 1.0
 
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
 
-    property string placeholderText: qsTr("Search by member name or chat key")
-    property var model
+    required property var model
+
+    property string searchString
     property RootStore rootStore
     property SharedStores.UtilsStore utilsStore
 
+    property int panelType: MembersTabPanel.TabType.AllMembers
     property int memberRole: Constants.memberRole.none
 
     readonly property bool isOwner: memberRole === Constants.memberRole.owner
@@ -49,332 +51,279 @@ Item {
         DeclinedRequests
     }
 
-    property int panelType: MembersTabPanel.TabType.AllMembers
-
-    ColumnLayout {
+    StatusListView {
+        objectName: "CommunityMembersTabPanel_MembersListViews"
         anchors.fill: parent
-        spacing: 30
 
-        SearchBox {
-            id: memberSearch
-            Layout.preferredWidth: 400
-            Layout.leftMargin: 12
-            placeholderText: root.placeholderText
-            enabled: !!root.model && !root.model.ModelCount.empty
+        model: SortFilterProxyModel {
+            sourceModel: root.model
+
+            sorters: [
+                StringSorter {
+                    roleName: "preferredDisplayName"
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+            ]
+
+            filters: [
+                UserSearchFilterContainer {
+                    searchString: root.searchString
+                }
+            ]
         }
 
-        StatusListView {
-            id: membersList
-            objectName: "CommunityMembersTabPanel_MembersListViews"
+        spacing: 0
 
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        delegate: ContactListItemDelegate {
+            id: memberItem
 
-            model: SortFilterProxyModel {
-                id: filteredModel
-                sourceModel: root.model
+            // Buttons visibility conditions:
+            // 1. Tab based buttons - only visible when the tab is selected
+            //      a. All members tab
+            //          - Kick; - Kick pending
+            //          - Ban; - Ban pending
+            //      b. Pending requests tab
+            //          - Accept; - Accept pending
+            //          - Reject; - Reject pending
+            //      c. Rejected members tab
+            //          - Accept; - Accept pending
+            //      d. Banned members tab
+            //          - Unban
+            // 2. Pending states - buttons in pending states are always visible in their specific tab. Other buttons are disabled if the request is in pending state
+            //    - Accept button is visible when the user is hovered or when the request is in accepted pending state. This condition can be overriden by the ctaAllowed property
+            //    - Reject button is visible when the user is hovered or when the request is in rejected pending state. This condition can be overriden by the ctaAllowed property
+            //    - Kick and ban buttons are visible when the user is hovered or when the request is in kick or ban pending state. This condition can be overriden by the ctaAllowed property
+            // 3. Other conditions - buttons are visible when the user is hovered and is not himself or other privileged user
+            // 4. All members tab, member in AwaitingAddress state - buttons is not visible, sandwatch icon is shown
 
-                function searchPredicate(ensName, displayName, aliasName) {
-                    const lowerCaseSearchString = memberSearch.text.toLowerCase()
-                    const secondaryName = ProfileUtils.displayName("", ensName, displayName, aliasName)
+            /// Helpers ///
 
-                    return secondaryName.toLowerCase().includes(lowerCaseSearchString)
-                }
+            // Tab based buttons
+            readonly property bool tabIsShowingKickBanButtons: root.panelType === MembersTabPanel.TabType.AllMembers
+            readonly property bool tabIsShowingUnbanButton: root.panelType === MembersTabPanel.TabType.BannedMembers
+            readonly property bool tabIsShowingRejectButton: root.panelType === MembersTabPanel.TabType.PendingRequests
+            readonly property bool tabIsShowingAcceptButton: root.panelType === MembersTabPanel.TabType.PendingRequests ||
+                                                             root.panelType === MembersTabPanel.TabType.DeclinedRequests
+            readonly property bool tabIsShowingViewMessagesButton: model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete &&
+                                                                   (root.panelType === MembersTabPanel.TabType.AllMembers ||
+                                                                    root.panelType === MembersTabPanel.TabType.BannedMembers)
 
-                sorters : [
-                    StringSorter {
-                        roleName: "preferredDisplayName"
-                        caseSensitivity: Qt.CaseInsensitive
-                    }
-                ]
 
-                filters: AnyOf {
-                    enabled: memberSearch.text !== ""
-                    // substring search for either nickname or the other primary/secondary display name
-                    SearchFilter {
-                        roleName: "localNickname"
-                        searchPhrase: memberSearch.text
-                    }
-                    FastExpressionFilter {
-                        expression: {
-                            memberSearch.text
-                            return filteredModel.searchPredicate(model.ensName, model.displayName, model.alias)
-                        }
-                        expectedRoles: ["ensName", "displayName", "alias"]
-                    }
-                    // exact search for the full key
-                    ValueFilter {
-                        roleName: "compressedPubKey"
-                        value: memberSearch.text
-                    }
+            // Request states
+            readonly property bool isPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.Pending
+            readonly property bool isAccepted: model.membershipRequestState === Constants.CommunityMembershipRequestState.Accepted
+            readonly property bool isRejected: model.membershipRequestState === Constants.CommunityMembershipRequestState.Rejected
+            readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
+            readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
+            readonly property bool isBanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending
+            readonly property bool isUnbanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.UnbannedPending
+            readonly property bool isKickPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending
+            readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned ||
+                                             model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
+            readonly property bool isKicked: model.membershipRequestState === Constants.CommunityMembershipRequestState.Kicked
+
+            // TODO: Connect to backend when available
+            // The admin that initited the pending state can change the state. Actions are not visible for other admins
+            readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
+
+            readonly property bool canBeBanned: {
+                if (model.isCurrentUser)
+                    return false
+
+                switch (model.memberRole) {
+                    // Owner can't be banned
+                case Constants.memberRole.owner: return false
+                    // TokenMaster can only be banned by owner
+                case Constants.memberRole.tokenMaster: return root.isOwner
+                    // Admin can only be banned by owner and tokenMaster
+                case Constants.memberRole.admin: return root.isOwner || root.isTokenMaster
+                    // All normal members can be banned by all privileged users
+                default: return true
                 }
             }
-            spacing: 0
+            readonly property bool showOnHover: hovered && ctaAllowed
+            readonly property bool canDeleteMessages: model.isCurrentUser || model.memberRole !== Constants.memberRole.owner
 
-            delegate: StatusMemberListItem {
-                id: memberItem
+            /// Button visibility ///
+            readonly property bool acceptButtonVisible: tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending || isAcceptedPending) && showOnHover
+            readonly property bool rejectButtonVisible: tabIsShowingRejectButton && (isPending || isRejectedPending || isAcceptedPending) && showOnHover
+            readonly property bool acceptPendingButtonVisible: tabIsShowingAcceptButton && isAcceptedPending
+            readonly property bool rejectPendingButtonVisible: tabIsShowingRejectButton && isRejectedPending
+            readonly property bool kickButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
+            readonly property bool banButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
+            readonly property bool kickPendingButtonVisible: tabIsShowingKickBanButtons && isKickPending
+            readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
+            readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
+            readonly property bool viewMessagesButtonVisible: tabIsShowingViewMessagesButton && showOnHover
+            readonly property bool messagesDeletedTextVisible: showOnHover &&
+                                                               model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
 
-                // Buttons visibility conditions:
-                // 1. Tab based buttons - only visible when the tab is selected
-                //      a. All members tab
-                //          - Kick; - Kick pending
-                //          - Ban; - Ban pending
-                //      b. Pending requests tab
-                //          - Accept; - Accept pending
-                //          - Reject; - Reject pending
-                //      c. Rejected members tab
-                //          - Accept; - Accept pending
-                //      d. Banned members tab
-                //          - Unban
-                // 2. Pending states - buttons in pending states are always visible in their specific tab. Other buttons are disabled if the request is in pending state
-                //    - Accept button is visible when the user is hovered or when the request is in accepted pending state. This condition can be overriden by the ctaAllowed property
-                //    - Reject button is visible when the user is hovered or when the request is in rejected pending state. This condition can be overriden by the ctaAllowed property
-                //    - Kick and ban buttons are visible when the user is hovered or when the request is in kick or ban pending state. This condition can be overriden by the ctaAllowed property
-                // 3. Other conditions - buttons are visible when the user is hovered and is not himself or other privileged user
-                // 4. All members tab, member in AwaitingAddress state - buttons is not visible, sandwatch icon is shown
+            /// Pending states ///
+            readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isUnbanPending || isKickPending
+            readonly property string pendingStateText: isAcceptedPending ? qsTr("Accept pending...") :
+                                                                           isRejectedPending ? qsTr("Reject pending...") :
+                                                                                               isBanPending ? qsTr("Ban pending...") :
+                                                                                                              isUnbanPending ? qsTr("Unban pending...") :
+                                                                                                                               isKickPending ? qsTr("Kick pending...") : ""
 
-                /// Helpers ///
+            isAwaitingAddress: model.membershipRequestState === Constants.CommunityMembershipRequestState.AwaitingAddress
 
-                // Tab based buttons
-                readonly property bool tabIsShowingKickBanButtons: root.panelType === MembersTabPanel.TabType.AllMembers
-                readonly property bool tabIsShowingUnbanButton: root.panelType === MembersTabPanel.TabType.BannedMembers
-                readonly property bool tabIsShowingRejectButton: root.panelType === MembersTabPanel.TabType.PendingRequests
-                readonly property bool tabIsShowingAcceptButton: root.panelType === MembersTabPanel.TabType.PendingRequests ||
-                                                                    root.panelType === MembersTabPanel.TabType.DeclinedRequests
-                readonly property bool tabIsShowingViewMessagesButton: model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete &&
-                                                                       (root.panelType === MembersTabPanel.TabType.AllMembers ||
-                                                                       root.panelType === MembersTabPanel.TabType.BannedMembers)
-
-
-                // Request states
-                readonly property bool isPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.Pending
-                readonly property bool isAccepted: model.membershipRequestState === Constants.CommunityMembershipRequestState.Accepted
-                readonly property bool isRejected: model.membershipRequestState === Constants.CommunityMembershipRequestState.Rejected
-                readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
-                readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
-                readonly property bool isBanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending
-                readonly property bool isUnbanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.UnbannedPending
-                readonly property bool isKickPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending
-                readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned ||
-                                                 model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
-                readonly property bool isKicked: model.membershipRequestState === Constants.CommunityMembershipRequestState.Kicked
-
-                // TODO: Connect to backend when available
-                // The admin that initited the pending state can change the state. Actions are not visible for other admins
-                readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isUnbanPending && !isKickPending
-
-                readonly property bool isHovered: memberItem.hovered
-                readonly property bool canBeBanned: {
-                    if (model.isCurrentUser)
-                        return false
-
-                    switch (model.memberRole) {
-                        // Owner can't be banned
-                        case Constants.memberRole.owner: return false
-                        // TokenMaster can only be banned by owner
-                        case Constants.memberRole.tokenMaster: return root.isOwner
-                        // Admin can only be banned by owner and tokenMaster
-                        case Constants.memberRole.admin: return root.isOwner || root.isTokenMaster
-                        // All normal members can be banned by all privileged users
-                        default: return true
+            components: [
+                StatusBaseText {
+                    id: pendingText
+                    width: Math.max(implicitWidth, d.pendingTextMaxWidth)
+                    onImplicitWidthChanged: {
+                        d.pendingTextMaxWidth = Math.max(implicitWidth, d.pendingTextMaxWidth)
                     }
+                    visible: !!text && isPendingState
+                    rightPadding: isKickPending || isBanPending || isUnbanPending ? 0 : Theme.bigPadding
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: pendingStateText
+                    color: Theme.palette.baseColor1
+                    StatusToolTip {
+                        text: qsTr("Waiting for owner node to come online")
+                        visible: hoverHandler.hovered
+                    }
+                    HoverHandler {
+                        id: hoverHandler
+                        enabled: pendingText.visible
+                    }
+                },
+
+                StatusBaseText {
+                    text: qsTr("Messages deleted")
+                    color: Theme.palette.baseColor1
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: messagesDeletedTextVisible
+                },
+
+                StatusButton {
+                    id: viewMessages
+                    anchors.verticalCenter: parent.verticalCenter
+                    objectName: "MemberListItem_ViewMessages"
+                    text: qsTr("View Messages")
+                    visible: viewMessagesButtonVisible
+                    size: StatusBaseButton.Size.Small
+                    onClicked: root.viewMemberMessagesClicked(model.pubKey, memberItem.title)
+                },
+
+                StatusButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    objectName: "MemberListItem_KickButton"
+                    text: qsTr("Kick")
+                    visible: kickButtonVisible
+                    type: StatusBaseButton.Type.Danger
+                    size: StatusBaseButton.Size.Small
+                    onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
+                },
+
+                StatusButton {
+                    objectName: "MemberListItem_BanButton"
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: banButtonVisible
+                    text: qsTr("Ban")
+                    type: StatusBaseButton.Type.Danger
+                    size: StatusBaseButton.Size.Small
+                    onClicked: root.banUserClicked(model.pubKey, memberItem.title)
+                },
+
+                StatusButton {
+                    objectName: "MemberListItem_UnbanButton"
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: unbanButtonVisible
+                    text: qsTr("Unban")
+                    type: StatusBaseButton.Type.Danger
+                    size: StatusBaseButton.Size.Small
+                    onClicked: root.unbanUserClicked(model.pubKey)
+                },
+
+                StatusButton {
+                    id: acceptButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    visible: acceptButtonVisible
+                    text: qsTr("Accept")
+                    type: StatusBaseButton.Type.Success
+                    size: StatusBaseButton.Size.Small
+                    icon.name: "checkmark-circle"
+                    icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
+                    loading: model.requestToJoinLoading
+                    enabled: !acceptPendingButtonVisible
+                    onClicked: root.acceptRequestToJoin(model.requestToJoinId)
+                },
+
+                StatusButton {
+                    id: rejectButton
+                    visible: rejectButtonVisible
+                    text: qsTr("Reject")
+                    type: StatusBaseButton.Type.Danger
+                    size: StatusBaseButton.Size.Small
+                    icon.name: "close-circle"
+                    icon.color: enabled ? Theme.palette.dangerColor1 : disabledTextColor
+                    enabled: !rejectPendingButtonVisible
+                    onClicked: root.declineRequestToJoin(model.requestToJoinId)
                 }
-                readonly property bool showOnHover: isHovered && ctaAllowed
-                readonly property bool canDeleteMessages: model.isCurrentUser || model.memberRole !== Constants.memberRole.owner
+            ]
 
-                /// Button visibility ///
-                readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending || isAcceptedPending) && showOnHover
-                readonly property bool rejectButtonVisible: tabIsShowingRejectButton && (isPending || isRejectedPending || isAcceptedPending) && showOnHover
-                readonly property bool acceptPendingButtonVisible: tabIsShowingAcceptButton && isAcceptedPending
-                readonly property bool rejectPendingButtonVisible: tabIsShowingRejectButton && isRejectedPending
-                readonly property bool kickButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
-                readonly property bool banButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
-                readonly property bool kickPendingButtonVisible: tabIsShowingKickBanButtons && isKickPending
-                readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
-                readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
-                readonly property bool viewMessagesButtonVisible: tabIsShowingViewMessagesButton && showOnHover
-                readonly property bool messagesDeletedTextVisible: showOnHover &&
-                                                                   model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedWithAllMessagesDelete
+            readonly property string title: model.preferredDisplayName
 
-                /// Pending states ///
-                readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isUnbanPending || isKickPending
-                readonly property string pendingStateText:  isAcceptedPending ? qsTr("Accept pending...") :
-                                                            isRejectedPending ? qsTr("Reject pending...") :
-                                                            isBanPending ? qsTr("Ban pending...") :
-                                                            isUnbanPending ? qsTr("Unban pending...") :
-                                                            isKickPending ? qsTr("Kick pending...") : ""
+            width: ListView.view.width
 
-                isAwaitingAddress: model.membershipRequestState === Constants.CommunityMembershipRequestState.AwaitingAddress
+            icon.width: 40
+            icon.height: 40
 
-                rightPadding: 75
-                leftPadding: 12
+            onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                    const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
+                    const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
-                components: [
-                    StatusBaseText {
-                        id: pendingText
-                        width: Math.max(implicitWidth, d.pendingTextMaxWidth)
-                        onImplicitWidthChanged: {
-                            d.pendingTextMaxWidth = Math.max(implicitWidth, d.pendingTextMaxWidth)
-                        }
-                        visible: !!text && isPendingState
-                        rightPadding: isKickPending || isBanPending || isUnbanPending ? 0 : Theme.bigPadding
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: pendingStateText
-                        color: Theme.palette.baseColor1
-                        StatusToolTip {
-                            text: qsTr("Waiting for owner node to come online")
-                            visible: hoverHandler.hovered
-                        }
-                        HoverHandler {
-                            id: hoverHandler
-                            enabled: pendingText.visible
-                        }
-                    },
-
-                    StatusBaseText {
-                        text: qsTr("Messages deleted")
-                        color: Theme.palette.baseColor1
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: messagesDeletedTextVisible
-                    },
-
-                    StatusButton {
-                        id: viewMessages
-                        anchors.verticalCenter: parent.verticalCenter
-                        objectName: "MemberListItem_ViewMessages"
-                        text: qsTr("View Messages")
-                        visible: viewMessagesButtonVisible
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.viewMemberMessagesClicked(model.pubKey, memberItem.title)
-                    },
-
-                    StatusButton {
-                        id: kickButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        objectName: "MemberListItem_KickButton"
-                        text: qsTr("Kick")
-                        visible: kickButtonVisible
-                        type: StatusBaseButton.Type.Danger
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
-                    },
-
-                    StatusButton {
-                        id: banButton
-                        objectName: "MemberListItem_BanButton"
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: banButtonVisible
-                        text: qsTr("Ban")
-                        type: StatusBaseButton.Type.Danger
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.banUserClicked(model.pubKey, memberItem.title)
-                    },
-
-                    StatusButton {
-                        objectName: "MemberListItem_UnbanButton"
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: unbanButtonVisible
-                        text: qsTr("Unban")
-                        type: StatusBaseButton.Type.Danger
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.unbanUserClicked(model.pubKey)
-                    },
-
-                    StatusButton {
-                        id: acceptButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        opacity: acceptButtonVisible
-                        text: qsTr("Accept")
-                        type: StatusBaseButton.Type.Success
-                        icon.name: "checkmark-circle"
-                        icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
-                        loading: model.requestToJoinLoading
-                        enabled: !acceptPendingButtonVisible
-                        onClicked: root.acceptRequestToJoin(model.requestToJoinId)
-                    },
-
-                    StatusButton {
-                        id: rejectButton
-                        opacity: rejectButtonVisible
-                        text: qsTr("Reject")
-                        type: StatusBaseButton.Type.Danger
-                        icon.name: "close-circle"
-                        icon.color: enabled ? Theme.palette.dangerColor1 : disabledTextColor
-                        enabled: !rejectPendingButtonVisible
-                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
+                    const params = {
+                        profileType, contactType,
+                        pubKey: model.pubKey,
+                        compressedPubKey: model.compressedPubKey,
+                        emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
+                        colorHash: model.colorHash,
+                        colorId: model.colorId,
+                        displayName: memberItem.title || model.displayName,
+                        userIcon: model.icon,
+                        trustStatus: model.trustStatus,
+                        onlineStatus: model.onlineStatus,
+                        ensVerified: model.isEnsVerified,
+                        hasLocalNickname: !!model.localNickname
                     }
-                ]
 
-                readonly property string title: model.preferredDisplayName
-
-                width: membersList.width
-                color: "transparent"
-
-                pubKey: model.isEnsVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
-                nickName: model.localNickname
-                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                status: model.onlineStatus
-                icon.color: Utils.colorForColorId(model.colorId)
-                icon.name: model.icon
-                icon.width: 40
-                icon.height: 40
-                ringSettings.ringSpecModel: model.colorHash
-                badge.visible: (root.panelType === MembersTabPanel.TabType.AllMembers)
-
-                onClicked: {
-                    if (mouse.button === Qt.RightButton) {
-                        const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
-                        const contactType = Utils.getContactType(model.contactRequest, model.isContact)
-
-                        const params = {
-                            profileType, contactType,
-                            pubKey: model.pubKey,
-                            compressedPubKey: model.compressedPubKey,
-                            emojiHash: root.utilsStore.getEmojiHash(model.pubKey),
-                            colorHash: model.colorHash,
-                            colorId: model.colorId,
-                            displayName: memberItem.title || model.displayName,
-                            userIcon: model.icon,
-                            trustStatus: model.trustStatus,
-                            onlineStatus: model.onlineStatus,
-                            ensVerified: model.isEnsVerified,
-                            hasLocalNickname: !!model.localNickname
-                        }
-
-                        Global.openMenu(memberContextMenuComponent, this, params)
-                    } else if (mouse.button === Qt.LeftButton) {
-                        Global.openProfilePopup(model.pubKey)
-                    }
+                    memberContextMenuComponent.createObject(root, params).popup(this)
+                } else if (mouse.button === Qt.LeftButton) {
+                    Global.openProfilePopup(model.pubKey)
                 }
             }
         }
-    }
 
-    Component {
-        id: memberContextMenuComponent
+        Component {
+            id: memberContextMenuComponent
 
-        ProfileContextMenu {
-            id: memberContextMenuView
+            ProfileContextMenu {
+                id: memberContextMenuView
 
-            required property string pubKey
+                required property string pubKey
 
-            onOpenProfileClicked: Global.openProfilePopup(pubKey, null)
-            onCreateOneToOneChat: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
+                onOpenProfileClicked: Global.openProfilePopup(pubKey, null)
+                onCreateOneToOneChat: {
+                    Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                    root.rootStore.chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
+                }
+                onReviewContactRequest: Global.openReviewContactRequestPopup(pubKey, null)
+                onSendContactRequest: Global.openContactRequestPopup(pubKey, null)
+                onEditNickname: Global.openNicknamePopupRequested(pubKey, null)
+                onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(pubKey, "", displayName, true)
+                onUnblockContact: Global.unblockContactRequested(pubKey)
+                onMarkAsUntrusted: Global.markAsUntrustedRequested(pubKey)
+                onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(pubKey)
+                onRemoveContact: Global.removeContactRequested(pubKey)
+                onBlockContact: Global.blockContactRequested(pubKey)
+                onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(pubKey, null)
+                onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(pubKey, null)
+                onClosed: destroy()
             }
-            onReviewContactRequest: Global.openReviewContactRequestPopup(pubKey, null)
-            onSendContactRequest: Global.openContactRequestPopup(pubKey, null)
-            onEditNickname: Global.openNicknamePopupRequested(pubKey, null)
-            onRemoveNickname: root.rootStore.contactsStore.changeContactNickname(pubKey, "", displayName, true)
-            onUnblockContact: Global.unblockContactRequested(pubKey)
-            onMarkAsUntrusted: Global.markAsUntrustedRequested(pubKey)
-            onRemoveTrustStatus: root.rootStore.contactsStore.removeTrustStatus(pubKey)
-            onRemoveContact: Global.removeContactRequested(pubKey)
-            onBlockContact: Global.blockContactRequested(pubKey)
-            onMarkAsTrusted: Global.openMarkAsIDVerifiedPopup(pubKey, null)
-            onRemoveTrustedMark: Global.openRemoveIDVerificationDialog(pubKey, null)
-            onClosed: destroy()
         }
     }
 
@@ -384,5 +333,6 @@ Item {
         // so that the text aligned on all rows (the text might be different on each row)
         property real pendingTextMaxWidth: 0
     }
+
     onPanelTypeChanged: { d.pendingTextMaxWidth = 0 }
 }

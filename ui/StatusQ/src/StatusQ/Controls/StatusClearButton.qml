@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -12,4 +12,5 @@ StatusFlatRoundButton {
     implicitHeight: 24
     icon.color: Theme.palette.directColor9
     backgroundHoverColor: "transparent"
+    tooltip.text: qsTr("Clear")
 }

@@ -12,7 +12,7 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
-import "../stores"
+import AppLayouts.Profile.stores 1.0
 
 StatusModal {
     id: root

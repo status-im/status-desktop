@@ -58,22 +58,27 @@ ItemDelegate {
     */
     property string pubKey: ""
     /*!
-       \qmlproperty string StatusMemberListItem::isContact
+       \qmlproperty bool StatusMemberListItem::isContact
        This property holds if the member represented is contact.
     */
     property bool isContact: false
     /*!
-       \qmlproperty string StatusMemberListItem::isVerified
+       \qmlproperty bool StatusMemberListItem::isVerified
        This property holds if the member represented is verified contact.
     */
     property bool isVerified: false
     /*!
-       \qmlproperty string StatusMemberListItem::isUntrustworthy
+       \qmlproperty bool StatusMemberListItem::isUntrustworthy
        This property holds if the member represented is untrustworthy.
     */
     property bool isUntrustworthy: false
     /*!
-       \qmlproperty string StatusMemberListItem::status
+       \qmlproperty bool StatusMemberListItem::isBlocked
+       This property holds if the member represented is blocked.
+    */
+    property bool isBlocked: false
+    /*!
+       \qmlproperty int StatusMemberListItem::status
        This property holds the connectivity status of the member represented.
 
     int unknown: -1
@@ -84,7 +89,7 @@ ItemDelegate {
     // FIXME: move Constants.onlineStatus from status-desktop
     property int status: 0
     /*!
-       \qmlproperty string StatusMemberListItem::isAdmin
+       \qmlproperty bool StatusMemberListItem::isAdmin
        This property holds the admin status of the member represented.
     */
     property bool isAdmin: false
@@ -126,7 +131,7 @@ ItemDelegate {
     property alias badge: identicon.badge
 
     /*!
-        \qmlsignal
+        \qmlsignal clicked
         This signal is emitted when the StatusMemberListItem is clicked.
     */
     signal clicked(var mouse)
@@ -158,9 +163,9 @@ ItemDelegate {
         }
     }
 
-    horizontalPadding: 8
+    horizontalPadding: Theme.halfPadding
     verticalPadding: 12
-    spacing: 8
+    spacing: Theme.halfPadding
 
     icon.width: 32
     icon.height: 32
@@ -170,7 +175,7 @@ ItemDelegate {
 
     background: Rectangle {
         color: root.color
-        radius: 8
+        radius: Theme.radius
 
         MouseArea {
             anchors.fill: parent
@@ -200,9 +205,8 @@ ItemDelegate {
             // badge
             badge.visible: true
             badge.color: root.status === 1 ? Theme.palette.successColor1 : Theme.palette.baseColor1 // FIXME, see root.status
-            badge.anchors.top: undefined
             badge.border.width: 2
-            badge.border.color: Theme.palette.statusListItem.backgroundColor
+            badge.border.color: root.hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
             badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
             badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
         }
@@ -243,7 +247,7 @@ ItemDelegate {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: d.composeSubtitle()
-                font.pixelSize: 10
+                font.pixelSize: Theme.asideTextFontSize
                 color: Theme.palette.baseColor1
                 visible: !!text
 
@@ -280,6 +284,7 @@ ItemDelegate {
         id: statusContactVerificationIcons
         StatusContactVerificationIcons {
             isContact: root.isContact
+            isBlocked: root.isBlocked
             trustIndicator: {
                 if (root.isVerified)
                     return StatusContactVerificationIcons.TrustedType.Verified

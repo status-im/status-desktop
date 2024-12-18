@@ -71,7 +71,7 @@ Row {
     }
 
     spacing: 4
-    visible: root.isContact || (root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None)
+    visible: root.isContact || root.isBlocked || (root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None)
 
     HoverHandler {
         id: hoverHandler
@@ -104,7 +104,8 @@ Row {
 
     // (un)trusted
     StatusRoundIcon {
-        visible: !root.isBlocked && root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None
+        visible: !root.isBlocked && (root.trustIndicator === StatusContactVerificationIcons.TrustedType.Untrustworthy ||
+                                     (root.isContact && trustIndicator === StatusContactVerificationIcons.TrustedType.Verified))
         asset: root.trustContactIcon
     }
 

@@ -19,7 +19,7 @@ QObject {
         localNickname            [string] - local nickname set by the current user
         alias                    [string] - generated 3 word name
         icon                     [string] - thumbnail image of the user
-        colorId                  [string] - generated color ID for the user's profile
+        colorId                  [int]    - generated color ID for the user's profile
         colorHash                [string] - generated color hash for the user's profile
         onlineStatus             [int]    - the online status of the member
         isContact                [bool]   - whether the user is a mutual contact or not
@@ -74,5 +74,22 @@ QObject {
             roleName: "contactRequest"
             value: Constants.ContactRequestState.Sent
         }
+    }
+
+    readonly property var pendingContacts: SortFilterProxyModel {
+        sourceModel: root.allContacts ?? null
+
+        filters: [
+            AnyOf {
+                ValueFilter {
+                    roleName: "contactRequest"
+                    value: Constants.ContactRequestState.Received
+                }
+                ValueFilter {
+                    roleName: "contactRequest"
+                    value: Constants.ContactRequestState.Sent
+                }
+            }
+        ]
     }
 }

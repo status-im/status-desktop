@@ -18,10 +18,11 @@ StatusMemberListItem {
     pubKey: model.isEnsVerified ? "" : model.compressedPubKey
     nickName: model.localNickname
     userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-    isVerified: model.isVerified
-    isUntrustworthy: model.isUntrustworthy
+    isBlocked: model.isBlocked
+    isVerified: model.isVerified || model.trustStatus === Constants.trustStatus.trusted
+    isUntrustworthy: model.isUntrustworthy || model.trustStatus === Constants.trustStatus.untrustworthy
     isContact: model.isContact
-    icon.name: model.icon
+    icon.name: model.thumbnailImage || model.icon
     icon.color: Utils.colorForColorId(model.colorId)
     status: model.onlineStatus
     ringSettings.ringSpecModel: model.colorHash
