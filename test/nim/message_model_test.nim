@@ -9,7 +9,7 @@ import app/modules/shared_models/message_item
 import app/modules/shared_models/message_transaction_parameters_item
 
 proc createTestMessageItem(id: string, clock: int64): Item =
-  return initItem(
+  return initMessageItem(
     id = id,
     communityId = "",
     chatId = "",
@@ -46,6 +46,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     deleted = false,
     deletedBy = "",
     deletedByContactDetails = ContactDetails(),
+    pinnedBy = "",
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",

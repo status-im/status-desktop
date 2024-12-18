@@ -149,7 +149,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
       if message.transactionParameters.fromAddress != "":
         isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
 
-    var item = initItem(
+    var item = initMessageItem(
       message.id,
       message.chatId,
       message.communityId,
@@ -193,6 +193,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
       message.deleted,
       message.deletedBy,
       deletedByContactDetails,
+      message.pinnedBy,
       message.mentioned,
       message.quotedMessage.`from`,
       message.quotedMessage.text,
@@ -238,7 +239,7 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
 
 proc createFetchMoreMessagesItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
-  result = initItem(
+  result = initMessageItem(
     FETCH_MORE_MESSAGES_MESSAGE_ID,
     communityId = "",
     chatId = "",
@@ -275,6 +276,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     deleted = false,
     deletedBy = "",
     deletedByContactDetails = ContactDetails(),
+    pinnedBy = "",
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",
@@ -307,7 +309,7 @@ proc createChatIdentifierItem(self: Module): Item =
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
     senderColorHash = sender.colorHash
 
-  result = initItem(
+  result = initMessageItem(
     CHAT_IDENTIFIER_MESSAGE_ID,
     communityId = "",
     chatId = "",
@@ -344,6 +346,7 @@ proc createChatIdentifierItem(self: Module): Item =
     deleted = false,
     deletedBy = "",
     deletedByContactDetails = ContactDetails(),
+    pinnedBy = "",
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",
@@ -419,10 +422,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   self.initialMessagesLoaded = true
   self.reevaluateViewLoadingState()
-
-method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) =
-  for p in pinnedMessages:
-    self.onPinMessage(p.message.id, p.pinnedBy)
 
 method messagesAdded*(self: Module, messages: seq[MessageDto]) =
   let items = self.createMessageItemsFromMessageDtos(messages)
