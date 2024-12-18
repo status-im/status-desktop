@@ -23,8 +23,11 @@ CheckBox {
     }
 
     property bool leftSide: true
+    LayoutMirroring.enabled: !leftSide
+    LayoutMirroring.childrenInherit: true
 
-    opacity: enabled ? 1.0 : 0.3
+    padding: 4
+    opacity: enabled ? 1.0 : Theme.disabledOpacity
 
     QtObject {
         id: d
@@ -40,7 +43,7 @@ CheckBox {
     }
 
     font.family: Theme.baseFont.name
-    font.pixelSize: size === StatusCheckBox.Size.Regular ? 15 : 13
+    font.pixelSize: size === StatusCheckBox.Size.Regular ? Theme.primaryTextFontSize : Theme.additionalTextSize
 
     indicator: Rectangle {
         objectName: "indicator"
@@ -49,12 +52,11 @@ CheckBox {
         implicitWidth: size === StatusCheckBox.Size.Regular
                        ? d.indicatorSizeRegular : d.indicatorSizeSmall
         implicitHeight: implicitWidth
-        x: !root.leftSide? root.rightPadding : root.leftPadding
-        y: parent.height / 2 - height / 2
+        x: root.text ? (root.mirrored ? root.width - width - root.rightPadding : root.leftPadding) : root.leftPadding + (root.availableWidth - width) / 2
+        y: root.topPadding + (root.availableHeight - height) / 2
         radius: 2
-        color: root.down || checkState !== Qt.Checked
-                    ? Theme.palette.directColor8
-                    : Theme.palette.primaryColor1
+        color: checkState !== Qt.Checked ? Theme.palette.directColor7 : Theme.palette.primaryColor1
+        Behavior on color { ColorAnimation { duration: Theme.AnimationDuration.Fast } }
 
         StatusIcon {
             icon: "checkbox"
@@ -63,9 +65,11 @@ CheckBox {
             height: size === StatusCheckBox.Size.Regular
                     ? d.indicatorIconHeightRegular : d.indicatorIconHeightSmall
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 1
+            anchors.horizontalCenterOffset: root.mirrored ? - 1 : 1
             color: checkState === Qt.PartiallyChecked ? Theme.palette.directColor9 : Theme.palette.white
-            visible: root.down || checkState !== Qt.Unchecked
+            opacity: checkState !== Qt.Unchecked ? 1 : 0
+            visible: opacity > 0
+            Behavior on opacity { OpacityAnimator { duration: Theme.AnimationDuration.Fast } }
         }
     }
 
@@ -76,10 +80,8 @@ CheckBox {
         wrapMode: Text.WordWrap
         width: parent.width
         lineHeight: 1.2
-        leftPadding: root.leftSide? (!!root.text ? root.indicator.width + root.spacing
-                                 : root.indicator.width) : 0
-        rightPadding: !root.leftSide? (!!root.text ? root.indicator.width + root.spacing
-                                 : root.indicator.width) : 0
+        leftPadding: root.indicator && !root.mirrored ? root.indicator.width + root.spacing : 0
+        rightPadding: root.indicator && root.mirrored ? root.indicator.width + root.spacing : 0
         visible: !!text
     }
 
