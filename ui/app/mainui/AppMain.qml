@@ -538,7 +538,7 @@ Item {
             Global.displayToastMessage(toastTitle, toastSubtitle, toastIcon, toastLoading, toastType, toastLink)
         }
 
-        function onCommunityMemberStatusEphemeralNotification(communityName: string, memberName: string, state: CommunityMembershipRequestState) {
+        function onCommunityMemberStatusEphemeralNotification(communityName: string, memberName: string, state: int) {
             var text = ""
             switch (state) {
                 case Constants.CommunityMembershipRequestState.Banned:
@@ -1724,8 +1724,8 @@ Item {
 
                             mutualContactsModel: contactsModelAdaptor.mutualContacts
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
-                            pendingReceivedRequestContactsModel: contactsModelAdaptor.pendingReceivedRequestContacts
-                            pendingSentRequestContactsModel: contactsModelAdaptor.pendingSentRequestContacts
+                            pendingContactsModel: contactsModelAdaptor.pendingContacts
+                            pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection

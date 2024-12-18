@@ -8,6 +8,7 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 
+import shared.stores 1.0
 import utils 1.0
 
 import Models 1.0
@@ -15,8 +16,6 @@ import SortFilterProxyModel 0.2
 import Storybook 1.0
 
 import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-
 
 SplitView {
     id: root
@@ -24,44 +23,25 @@ SplitView {
     orientation: Qt.Vertical
     Logs { id: logs }
 
-    // Utils.globalUtilsInst mock
-    QtObject {
-        function getEmojiHashAsJson(publicKey) {
-            return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
-        }
-
-        function getColorId(publicKey) {
-            return SQUtils.ModelUtils.getByKey(usersModel, "pubKey", publicKey, "colorId")
-        }
-
-        function getCompressedPk(publicKey) { return "zx3sh" + publicKey }
-
-        function getColorHashAsJson(publicKey) {
-            return JSON.stringify([{colorId: 0, segmentLength: 1},
-                                   {colorId: 19, segmentLength: 2}])
-        }
-
-        function isCompressedPubKey(publicKey) { return true }
-
-        Component.onCompleted: {
-            Utils.globalUtilsInst = this
-        }
-        Component.onDestruction: {
-            Utils.globalUtilsInst = {}
-        }
-    }
-
     MembersTabPanel {
         id: membersTabPanelPage
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        placeholderText: "Search users"
         model: usersModelWithMembershipState
         panelType: viewStateSelector.currentValue
+        searchString: ctrlSearch.text
 
         rootStore: ChatStores.RootStore {
             contactsStore: ProfileStores.ContactsStore {
                 readonly property string myPublicKey: "0x000"
+            }
+        }
+        utilsStore: UtilsStore {
+            function getEmojiHash(publicKey) {
+                if (publicKey === "")
+                    return ""
+
+                return JSON.stringify(["👨🏻‍🍼", "🏃🏿‍♂️", "🌇", "🤶🏿", "🏮","🤷🏻‍♂️", "🤦🏻", "📣", "🤎", "👷🏽", "😺", "🥞", "🔃", "🧝🏽‍♂️"])
             }
         }
 
@@ -132,7 +112,7 @@ SplitView {
     }
 
     LogsAndControlsPanel {
-        SplitView.minimumHeight: 100
+        SplitView.minimumHeight: 200
         SplitView.preferredHeight: 320
 
         logsView.logText: logs.logText
@@ -144,6 +124,7 @@ SplitView {
             }
 
             ComboBox {
+                Layout.preferredWidth: 300
                 id: viewStateSelector
                 textRole: "text"
                 valueRole: "value"
@@ -155,6 +136,13 @@ SplitView {
                      ListElement { text: "Declined Members"; value: MembersTabPanel.TabType.DeclinedRequests }
                  }
             }
+
+            Label { text: "Search" }
+            TextField {
+                id: ctrlSearch
+                Layout.preferredWidth: 300
+                placeholderText: "Search by member name or chat key"
+            }
         }
     }
 
@@ -163,4 +151,6 @@ SplitView {
     }
 }
 
+// category: Panels
+// status: good
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=35909-605774&mode=design&t=KfrAekLfW5mTy68x-0
