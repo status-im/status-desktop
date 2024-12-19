@@ -17,6 +17,9 @@ QtObject:
   type SourcesOfTokensModel* = ref object of QAbstractListModel
     delegate: io_interface.SourcesOfTokensModelDataSource
 
+  # Forward declaration
+  proc modelUpdatedCallback(self: SourcesOfTokensModel): proc()
+
   proc setup(self: SourcesOfTokensModel) =
     self.QAbstractListModel.setup
 
@@ -27,6 +30,7 @@ QtObject:
     new(result, delete)
     result.setup
     result.delegate = delegate
+    result.delegate.subscribeToModelUpdates(result.modelUpdatedCallback())
 
   method rowCount(self: SourcesOfTokensModel, index: QModelIndex = nil): int =
     return self.delegate.getSourcesOfTokensList().len
@@ -69,6 +73,9 @@ QtObject:
       of ModelRole.TokensCount:
         result = newQVariant(item.tokensCount)
 
-  proc modelsUpdated*(self: SourcesOfTokensModel) =
+  proc modelsUpdated(self: SourcesOfTokensModel) =
       self.beginResetModel()
       self.endResetModel()
+
+  proc modelUpdatedCallback(self: SourcesOfTokensModel): proc() =
+    return proc() = self.modelsUpdated()
