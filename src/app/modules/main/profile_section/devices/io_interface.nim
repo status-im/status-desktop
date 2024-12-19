@@ -59,7 +59,7 @@ method onLoggedInUserAuthenticated*(self: AccessInterface, pin: string, password
 proc validateConnectionString*(self: AccessInterface, connectionString: string): string =
   raise newException(ValueError, "No implementation available")
 
-method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string): string {.base.} =
+method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =

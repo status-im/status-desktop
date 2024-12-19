@@ -5,6 +5,9 @@ import view, controller
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app_service/service/general/service as general_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/devices/service as devices_service
 
 export io_interface
 
@@ -18,12 +21,18 @@ type
     viewVariant: QVariant
     controller: Controller
 
-proc newModule*[T](delegate: T, events: EventEmitter): Module[T] =
+proc newModule*[T](
+    delegate: T,
+    events: EventEmitter,
+    generalService: general_service.Service,
+    accountsService: accounts_service.Service,
+    devicesService: devices_service.Service,
+  ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events)
+  result.controller = controller.newController(result, events, generalService, accountsService, devicesService)
 
 {.push warning[Deprecated]: off.}
 
@@ -45,5 +54,23 @@ method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("onboardingModule", self.viewVariant)
   self.controller.init()
   self.delegate.onboardingDidLoad()
+
+method setPin*[T](self: Module[T], pin: string): bool =
+  self.controller.setPin(pin)
+
+method getPasswordStrengthScore*[T](self: Module[T], password, userName: string): int =
+  self.controller.getPasswordStrengthScore(password, userName)
+
+method validMnemonic*[T](self: Module[T], mnemonic: string): bool =
+  self.controller.validMnemonic(mnemonic)
+
+method getMnemonic*[T](self: Module[T]): string =
+  self.controller.getMnemonic()
+
+method validateLocalPairingConnectionString*[T](self: Module[T], connectionString: string): bool =
+  self.controller.validateLocalPairingConnectionString(connectionString)
+
+method inputConnectionStringForBootstrapping*[T](self: Module[T], connectionString: string) =
+  self.controller.inputConnectionStringForBootstrapping(connectionString)
 
 {.pop.}

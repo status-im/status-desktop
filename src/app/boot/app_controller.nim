@@ -255,6 +255,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.onboardingModule = onboarding_module.newModule[AppController](
       result,
       statusFoundation.events,
+      result.generalService,
+      result.accountsService,
+      result.devicesService,
     )
   result.mainModule = main_module.newModule[AppController](
     result,
