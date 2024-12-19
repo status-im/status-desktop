@@ -64,6 +64,7 @@ StackLayout {
     signal profileButtonClicked()
     signal openAppSearch()
     signal buyStickerPackRequested(string packId, int price)
+    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
 
     // Community transfer ownership related props/signals:
     property bool isPendingOwnershipRequest: sectionItemModel.isPendingOwnershipRequest
@@ -247,6 +248,7 @@ StackLayout {
             }
 
             onBuyStickerPackRequested: root.buyStickerPackRequested(packId, price)
+            onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
         }
     }
 
