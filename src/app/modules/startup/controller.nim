@@ -609,8 +609,8 @@ proc setConnectionString*(self: Controller, connectionString: string) =
 proc validateLocalPairingConnectionString*(self: Controller, connectionString: string): string =
   return self.devicesService.validateConnectionString(connectionString)
 
-proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string): string =
-  return self.devicesService.inputConnectionStringForBootstrapping(connectionString)
+proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
+  self.devicesService.inputConnectionStringForBootstrapping(connectionString)
 
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =
   self.accountsService.setLoggedInAccount(account)

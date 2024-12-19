@@ -106,5 +106,5 @@ proc validateConnectionString*(self: Controller, connectionString: string): stri
 proc getConnectionStringForBootstrappingAnotherDevice*(self: Controller, password, chatKey: string): string =
   return self.devicesService.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
 
-proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string): string =
-  return self.devicesService.inputConnectionStringForBootstrapping(connectionString)
+proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
+  self.devicesService.inputConnectionStringForBootstrapping(connectionString)
