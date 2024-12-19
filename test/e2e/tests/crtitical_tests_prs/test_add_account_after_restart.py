@@ -5,22 +5,18 @@ import pyperclip
 import pytest
 from allure import step
 
-from constants import RandomUser
 from constants.wallet import WalletNetworkSettings
 from helpers.WalletHelper import authenticate_with_password
-from . import marks
 
 import constants
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
-pytestmark = marks
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
                  'User can add  one more account after restarting the app')
-@pytest.mark.case(704459)
+@pytest.mark.case(704459, 738724, 738782, 738786)
 @pytest.mark.parametrize('name, color, emoji, emoji_unicode,',
                          [
                              pytest.param('GenAcc1', '#2a4af5', 'sunglasses', '1f60e')
@@ -30,6 +26,7 @@ pytestmark = marks
                              pytest.param('GenAcc2', '#2a4af5', 'sunglasses', '1f60e')
                          ])
 @pytest.mark.critical
+@pytest.mark.smoke
 def test_add_generated_account_restart_add_again(
         aut: AUT, main_screen: MainWindow, user_account,
         color: str, emoji: str, emoji_unicode: str, name: str,

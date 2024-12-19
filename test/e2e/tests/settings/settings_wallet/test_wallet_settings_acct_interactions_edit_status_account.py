@@ -4,18 +4,16 @@ import string
 import allure
 import pytest
 from allure_commons._allure import step
-from . import marks
 
 from constants.wallet import WalletNetworkSettings, WalletAccountSettings, DerivationPathValue
 from gui.main_window import MainWindow
 from gui.screens.settings import SettingsScreen
 
-pytestmark = marks
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704433',
                  'Account view interactions: Edit Status default account')
-@pytest.mark.case(704433)
+@pytest.mark.case(704433, 738789)
+@pytest.mark.smoke
 @pytest.mark.parametrize('new_name', [
     pytest.param(''.join(random.choices(string.ascii_letters +
                                         string.digits, k=20)))

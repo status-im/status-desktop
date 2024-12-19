@@ -5,12 +5,9 @@ from allure_commons._allure import step
 from constants import UserAccount
 from scripts.utils.generators import random_password_string
 from gui.components.change_password_popup import ChangePasswordPopup
-from tests.settings.settings_profile import marks
 
 from driver.aut import AUT
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @pytest.mark.timeout(timeout=180)

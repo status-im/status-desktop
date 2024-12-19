@@ -10,15 +10,13 @@ from helpers.SettingsHelper import enable_community_creation
 from tests import test_data
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703272', 'Member role cannot add category')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703273', 'Member role cannot edit category')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot remove category')
 @pytest.mark.case(703272, 703273, 703274)
+@pytest.mark.communities
 @pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
 @pytest.mark.parametrize('user_account', [constants.user.user_account_one])
 def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow):
@@ -53,7 +51,6 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
-
     enable_community_creation(main_screen)
 
     with step('Create community and select it'):

@@ -11,18 +11,15 @@ from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
 from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
-from . import marks
-
 import configs.testpath
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703252', 'Kick user')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703254', 'Edit chat - Delete any message')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736991', 'Owner can ban member')
 @pytest.mark.case(703252, 703252, 736991)
+@pytest.mark.communities
 @pytest.mark.skip(reason='Not possible to get floating buttons on hover for list item')
 def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
     user_one: UserAccount = RandomUser()

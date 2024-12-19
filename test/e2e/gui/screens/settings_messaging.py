@@ -113,7 +113,7 @@ class ContactsSettingsView(QObject):
         self._pending_request_received_panel = QObject(
             settings_names.settingsContentBaseScrollView_receivedRequests_ContactsListPanel)
         self._contacts_panel = QObject(settings_names.settingsContentBaseScrollView_mutualContacts_ContactsListPanel)
-        self._invite_friends_button = QObject(settings_names.settingsContentBaseScrollView_Invite_friends_StatusButton)
+        self.invite_friends_button = QObject(settings_names.settingsContentBaseScrollView_Invite_friends_StatusButton)
         self._no_friends_item = QObject(settings_names.settingsContentBaseScrollView_NoFriendsRectangle)
         # more options on contact
         self._verify_identity_item = QObject(settings_names.verify_Identity_StatusMenuItem)
@@ -155,11 +155,6 @@ class ContactsSettingsView(QObject):
     @allure.step('Get title of no friends item')
     def no_friends_item_text(self) -> str:
         return self._no_friends_item.object.text
-
-    @property
-    @allure.step('Get state of invite friends button')
-    def is_invite_friends_button_visible(self) -> bool:
-        return self._invite_friends_button.is_visible
 
     @allure.step('Open pending requests tab')
     def open_pending_requests(self):

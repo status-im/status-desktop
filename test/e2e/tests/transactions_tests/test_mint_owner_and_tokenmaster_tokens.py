@@ -6,18 +6,14 @@ import pytest
 from allure_commons._allure import step
 
 import configs
-import constants
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser, RandomCommunity
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode, enable_community_creation
-from tests.communities import marks
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')

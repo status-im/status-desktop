@@ -5,13 +5,10 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from . import marks
 
 import configs
 import driver
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704620',
@@ -22,8 +19,9 @@ pytestmark = marks
                                  ''.join(random.choices(string.ascii_letters, k=24)),
                                  '0x8397bc3c5a60a1883174f722403d63a8833312b7')
                          ])
-@pytest.mark.case(704620)
+@pytest.mark.case(704620, 738787)
 @pytest.mark.critical
+@pytest.mark.smoke
 def test_wallet_settings_add_saved_address(main_screen: MainWindow, address: str, name: str):
     with (step('Open wallet settings - Saved addresses section')):
         settings_saved_addresses = \

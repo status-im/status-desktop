@@ -16,8 +16,10 @@ pytestmark = marks
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703006',
                  'Set display name, bio and social links')
-@pytest.mark.case(703006)
+@pytest.mark.case(703006, 738755)
 @pytest.mark.parametrize('bio, links', [pytest.param('This is my bio', constants.social_links)])
+@pytest.mark.smoke
+# TODO: add clicking Preview button and check data there
 def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_account, bio, links):
     with step('Open profile settings and check name, bio and links'):
         profile_settings = main_screen.left_panel.open_settings().left_panel.open_profile_settings()

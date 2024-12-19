@@ -13,11 +13,8 @@ from helpers.SettingsHelper import enable_testnet_mode
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_ens_string
 from constants.wallet import WalletTransactions
-from tests.settings import marks
 from gui.components.wallet.send_popup import SendPopup
 from gui.screens.settings_ens_usernames import ENSRegisteredView
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704597',

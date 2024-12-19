@@ -15,15 +15,13 @@ from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.parsers import remove_tags
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703049', 'Create community channel')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703050', 'Edit community channel')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703051', 'Delete community channel')
 @pytest.mark.case(703049, 703050, 703051)
+@pytest.mark.communities
 @pytest.mark.parametrize(
     'channel_name, channel_description, channel_emoji, channel_emoji_image, channel_color, new_channel_name, '
     'new_channel_description, new_channel_emoji',

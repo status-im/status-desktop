@@ -3,20 +3,17 @@ import pytest
 from allure_commons._allure import step
 
 import configs
-import constants
 import driver
 from constants import permission_data_member, RandomCommunity
 from constants.community import LimitWarnings
 from gui.main_window import MainWindow
 from helpers.SettingsHelper import enable_community_creation
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/739309',
                  'Can create up to 5 member role permissions')
 @pytest.mark.case(739309)
+@pytest.mark.communities
 def test_add_5_member_role_permissions(main_screen: MainWindow):
     enable_community_creation(main_screen)
 

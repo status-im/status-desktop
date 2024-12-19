@@ -1,7 +1,6 @@
 import allure
 import pytest
 from allure_commons._allure import step
-from . import marks
 
 import driver
 
@@ -9,7 +8,6 @@ from constants.wallet import WalletNetworkNaming, WalletEditNetworkErrorMessages
 
 from gui.main_window import MainWindow
 
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703515',

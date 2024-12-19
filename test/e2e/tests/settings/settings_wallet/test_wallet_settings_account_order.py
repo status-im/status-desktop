@@ -3,14 +3,11 @@ import pytest
 from allure_commons._allure import step
 
 from helpers.WalletHelper import authenticate_with_password
-from . import marks
 
 import configs
 import driver
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
-pytestmark = marks
 
 
 def _verify_account_order(account_order, main_screen, default_name, order):

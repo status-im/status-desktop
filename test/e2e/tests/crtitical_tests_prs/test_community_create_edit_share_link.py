@@ -8,12 +8,9 @@ from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.browser import get_response, get_page_content
 from scripts.utils.generators import random_community_name, random_community_description, random_community_introduction, \
     random_community_leave_message
-from . import marks
 
 import configs.testpath
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703057', 'Edit community')
