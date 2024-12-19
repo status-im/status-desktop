@@ -76,6 +76,7 @@ MouseArea {
         }
 
         StatusFlatButton {
+            objectName: "disconnectDappButton"
             size: StatusBaseButton.Size.Large
 
             asset.color: root.containsMouse ? Theme.palette.directColor1

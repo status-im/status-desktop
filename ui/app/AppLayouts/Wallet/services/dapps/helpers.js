@@ -39,6 +39,24 @@ function extractChainsAndAccountsFromApprovedNamespaces(approvedNamespaces) {
     return { chains, accounts: uniqueAccounts };
 }
 
+function extractMethodsFromProposal(proposal) {
+    const optionalMethods = (((((proposal || {}).params) || {}).optionalNamespaces || {}).eip155 || {}).methods || []
+    const requiredMethods = (((((proposal || {}).params) || {}).requiredNamespaces || {}).eip155 || {}).methods || []
+    let methods = [...optionalMethods, ...requiredMethods]
+    return methods
+}
+
+function extractChainsFromProposal(proposal) {
+    const optionalChains = (((((proposal || {}).params) || {}).optionalNamespaces || {}).eip155 || {}).chains || []
+    const requiredChains = (((((proposal || {}).params) || {}).requiredNamespaces || {}).eip155 || {}).chains || []
+    let chains = [...optionalChains, ...requiredChains].map(chainIdFromEip155)
+    return chains
+}
+
+function extractChainsFromAuthenticationProposal(proposal) {
+    return ((((proposal || {}).params || {}).authPayload || {}).chains || []).map(chainIdFromEip155)
+}
+
 function buildSupportedNamespacesFromModels(chainsModel, accountsModel, methods) {
     var chainIds = []
     var addresses = []

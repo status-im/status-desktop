@@ -37,7 +37,7 @@ SQUtils.QObject {
     readonly property ConcatModel dappsModel: dappsModel
     
     // Output signal when a dApp is disconnected
-    signal disconnected(string topic, string dAppUrl)
+    signal disconnected(string topic, string dAppUrl, int connectorId)
     // Output signal when a new connection is proposed
     signal connected(string proposalId, string topic, string dAppUrl, int connectorId)
     // Output signal when a new connection is proposed by the SDK
@@ -62,6 +62,38 @@ SQUtils.QObject {
         d.reject(key)
     }
 
+    function getProposalMethods(key) {
+        const proposal = d.activeProposals.get(key.toString())
+        if (!proposal) {
+            return []
+        }
+        return DAppsHelpers.extractMethodsFromProposal(proposal.context)
+    }
+
+    function getProposalChains(key) {
+        const proposal = d.activeProposals.get(key.toString())
+        if (!proposal) {
+            return []
+        }
+        return DAppsHelpers.extractChainsFromProposal(proposal.context)
+    }
+
+    function getDAppUrl(key) {
+        const proposal = d.activeProposals.get(key.toString())
+        if (!proposal) {
+            return ""
+        }
+        return ((((proposal.context || {}).params || {}).proposer || {}).metadata || {}).url || ""
+    }
+
+    function getConnectorId(key) {
+        const proposal = d.activeProposals.get(key.toString())
+        if (!proposal) {
+            return -1
+        }
+        return proposal.connectorId
+    }
+
     WCDappsProvider {
         id: dappsProvider
         sdk: root.wcSDK
@@ -71,7 +103,7 @@ SQUtils.QObject {
             root.connected(proposalId, topic, dappUrl, Constants.DAppConnectors.WalletConnect)
         }
         onDisconnected: (topic, dappUrl) => {
-            root.disconnected(topic, dappUrl)
+            root.disconnected(topic, dappUrl, Constants.DAppConnectors.WalletConnect)
         }
     }
 
@@ -82,7 +114,7 @@ SQUtils.QObject {
             root.connected(pairingId, topic, dappUrl, Constants.DAppConnectors.StatusConnect)
         }
         onDisconnected: (topic, dappUrl) => {
-            root.disconnected(topic, dappUrl)
+            root.disconnected(topic, dappUrl, Constants.DAppConnectors.StatusConnect)
         }
     }
 
@@ -141,7 +173,7 @@ SQUtils.QObject {
             const key = sessionProposal.id
             const namespaces = sessionProposal.params.requiredNamespaces
             const { chains, _ } = DAppsHelpers.extractChainsAndAccountsFromApprovedNamespaces(namespaces)
-            d.activeProposals.set(key.toString(), { context: sessionProposal, promise: bcConnectionPromise })
+            d.activeProposals.set(key.toString(), { context: sessionProposal, promise: bcConnectionPromise, connectorId: Constants.DAppConnectors.StatusConnect })
             root.newConnectionProposed(
                 key,
                 chains,
@@ -190,7 +222,7 @@ SQUtils.QObject {
 
         function onSessionProposal(sessionProposal) {
             const key = sessionProposal.id
-            d.activeProposals.set(key.toString(), { context: sessionProposal, promise: wcConnectionPromise })
+            d.activeProposals.set(key.toString(), { context: sessionProposal, promise: wcConnectionPromise, connectorId: Constants.DAppConnectors.WalletConnect })
             const supportedNamespacesStr = DAppsHelpers.buildSupportedNamespacesFromModels(
                   root.networksModel, root.accountsModel, SessionRequest.getSupportedMethods())
             root.wcSDK.buildApprovedNamespaces(key, sessionProposal.params, JSON.parse(supportedNamespacesStr))
