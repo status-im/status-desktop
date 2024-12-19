@@ -5,18 +5,14 @@ import pytest
 from allure_commons._allure import step
 
 import configs
-import constants
 import driver
 from constants import permission_data, RandomCommunity
 from constants.community import ToastMessages, PermissionsElements
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
-from gui.components.delete_popup import DeletePermissionPopup
 from gui.main_window import MainWindow
 from gui.screens.community_settings import PermissionsIntroView
 from helpers.SettingsHelper import enable_community_creation
-from . import marks
 
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',

@@ -9,13 +9,10 @@ from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.main_window import MainWindow
 from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
-from . import marks
 import configs
 from constants import ColorCodes, UserAccount, RandomUser, RandomCommunity
 from gui.screens.community_settings import CommunitySettingsScreen
 from gui.screens.messages import MessagesScreen
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703255',
@@ -23,7 +20,9 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703256',
                  'Edit chat - Remove pinned message (when any member can pin is disabled)')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
-@pytest.mark.case(703255, 703256, 703510)
+@pytest.mark.case(703255, 703256, 703510, 738743, 738754, 738798, 738799)
+@pytest.mark.communities
+@pytest.mark.smoke
 def test_join_community_and_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()

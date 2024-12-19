@@ -8,16 +8,15 @@ from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
 from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
-from . import marks
 import configs
 from constants import UserAccount, RandomUser, RandomCommunity
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736170',
                  "Add a contact from community's member list")
-@pytest.mark.case(736170)
+@pytest.mark.case(736170, 738776, 738777)
+@pytest.mark.smoke
+@pytest.mark.communities
 def test_communities_send_accept_decline_request_remove_contact_from_profile(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -52,7 +51,8 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             contact_request_popup.send(chat_key, f'Hello {user_two.name}')
             main_screen.hide()
 
-        with step(f'User {user_two.name}, accept contact request from {user_one.name} and send contact request to {user_three.name} '):
+        with step(
+                f'User {user_two.name}, accept contact request from {user_one.name} and send contact request to {user_three.name} '):
             aut_two.attach()
             main_screen.prepare()
             settings = main_screen.left_panel.open_settings()
@@ -133,14 +133,16 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Join community button not hidden'
 
-        with step(f'User {user_one.name} send contact request to {user_three.name} from user profile from members list'):
+        with step(
+                f'User {user_one.name} send contact request to {user_three.name} from user profile from members list'):
             community_screen = main_screen.left_panel.select_community(community.name)
             profile_popup = community_screen.right_panel.click_member(user_three.name)
             profile_popup.send_request().send(f'Hello {user_three.name}')
             ProfilePopupFromMembers().wait_until_appears()
             main_screen.hide()
 
-        with step(f'User {user_three.name}, accept contact request from {user_one.name} from user profile from members list'):
+        with step(
+                f'User {user_three.name}, accept contact request from {user_one.name} from user profile from members list'):
             aut_three.attach()
             main_screen.prepare()
             community_screen = main_screen.left_panel.select_community(community.name)

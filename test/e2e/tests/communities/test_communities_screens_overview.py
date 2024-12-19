@@ -4,13 +4,10 @@ from allure_commons._allure import step
 
 from constants import RandomCommunity
 from helpers.SettingsHelper import enable_community_creation
-from . import marks
 
 from constants.community import AirdropsElements, TokensElements, PermissionsElements
 from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH, TOKENS_WELCOME_IMAGE_PATH, PERMISSION_WELCOME_IMAGE_PATH
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703198',

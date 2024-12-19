@@ -4,17 +4,12 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
 
 import constants
 import driver
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')

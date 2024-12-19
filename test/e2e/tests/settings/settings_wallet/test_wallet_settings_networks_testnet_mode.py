@@ -1,15 +1,12 @@
 import allure
 import pytest
 from allure import step
-from . import marks
 
 import configs.system
 from constants.wallet import WalletNetworkSettings, WalletNetworkNaming
 from gui.components.wallet.testnet_mode_banner import TestnetModeBanner
 from gui.components.toast_message import ToastMessage
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703505', 'Network: Testnet switching')

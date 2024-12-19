@@ -4,7 +4,6 @@ import pytest
 from allure_commons._allure import step
 
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from . import marks
 
 import configs.testpath
 import driver
@@ -16,12 +15,11 @@ from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, SyncDeviceFoundView, \
     YourEmojihashAndIdenticonRingView
 
-pytestmark = marks
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
-@pytest.mark.case(703592)
+@pytest.mark.case(703592, 738760)
 @pytest.mark.critical
+@pytest.mark.smoke
 def test_sync_device_during_onboarding(multiple_instances):
     user: UserAccount = RandomUser()
     main_window = MainWindow()

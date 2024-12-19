@@ -3,21 +3,17 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
-from . import marks
 
 import configs.testpath
-import constants
-from constants import UserAccount, RandomUser
-from scripts.utils.generators import random_name_string, random_password_string
+from constants import RandomUser
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704611', 'Reply to identity request')
 @pytest.mark.case(704611)
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/14954")
+@pytest.mark.settings_messaging
 def test_messaging_settings_identity_verification(multiple_instances):
     user_one: RandomUser()
     user_two: RandomUser()
