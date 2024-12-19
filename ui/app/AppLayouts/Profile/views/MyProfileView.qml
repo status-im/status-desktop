@@ -85,7 +85,6 @@ SettingsContentBase {
         StatusTabButton {
             objectName: "identityTabButton"
             width: implicitWidth
-            leftPadding: 0
             text: qsTr("Identity")
         }
 

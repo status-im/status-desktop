@@ -146,7 +146,6 @@ RightTabBaseView {
 
                     StatusTabButton {
                         objectName: "assetsTabButton"
-                        leftPadding: 0
                         width: implicitWidth
                         text: qsTr("Assets")
                     }

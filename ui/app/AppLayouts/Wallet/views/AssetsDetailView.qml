@@ -439,7 +439,6 @@ Item {
                 StatusTabBar {
                     width: parent.width
                     StatusTabButton {
-                        leftPadding: 0
                         width: implicitWidth
                         text: qsTr("Overview")
                     }
