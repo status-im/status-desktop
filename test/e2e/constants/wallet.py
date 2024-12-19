@@ -87,7 +87,7 @@ class WalletRenameKeypair(Enum):
 
 
 class WalletSeedPhrase(Enum):
-    WALLET_SEED_PHRASE_ALREADY_ADDED = 'The entered seed phrase is already added'
+    WALLET_SEED_PHRASE_ALREADY_ADDED = 'The entered recovery phrase is already added'
 
 
 class WalletAccountPopup(Enum):

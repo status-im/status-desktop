@@ -22,7 +22,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
 
         StyledText {
-            text: qsTr("Back up your seed phrase")
+            text: qsTr("Back up your recovery phrase")
             font.pixelSize: 13
             anchors.verticalCenter: parent.verticalCenter
             color: Theme.palette.white

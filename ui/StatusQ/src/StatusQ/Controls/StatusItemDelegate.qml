@@ -11,6 +11,7 @@ ItemDelegate {
     property bool centerTextHorizontally: false
     property int radius: 0
     property int cursorShape: Qt.PointingHandCursor
+    property color highlightColor: Theme.palette.statusMenu.hoverBackgroundColor
 
     padding: 8
     spacing: 8
@@ -19,7 +20,7 @@ ItemDelegate {
     icon.height: 16
 
     font.family: Theme.baseFont.name
-    font.pixelSize: 15
+    font.pixelSize: Theme.primaryTextFontSize
 
     contentItem: RowLayout {
         spacing: root.spacing
@@ -40,7 +41,7 @@ ItemDelegate {
             text: root.text
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            color: root.highlighted ? Theme.palette.white : root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
 
             Binding on horizontalAlignment {
                 when: root.centerTextHorizontally
@@ -50,16 +51,11 @@ ItemDelegate {
     }
 
     background: Rectangle {
-        color: root.highlighted
-               ? Theme.palette.statusMenu.hoverBackgroundColor
-               : "transparent"
-
+        color: root.highlighted ? root.highlightColor : "transparent"
         radius: root.radius
+    }
 
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: root.cursorShape
-            acceptedButtons: Qt.NoButton
-        }
+    HoverHandler {
+        cursorShape: root.cursorShape
     }
 }

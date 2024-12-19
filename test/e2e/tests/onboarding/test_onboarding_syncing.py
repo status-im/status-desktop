@@ -35,7 +35,8 @@ def test_wrong_sync_code(sync_screen, wrong_sync_code):
     with step('Paste wrong sync code and check that error message appears'):
         pyperclip.copy(wrong_sync_code)
         sync_view.click_paste_button()
-        assert SyncingSettings.SYNC_CODE_IS_WRONG_TEXT.value == sync_view.sync_code_error_message, f'Wrong sync code message did not appear'
+        assert str(SyncingSettings.SYNC_CODE_IS_WRONG_TEXT.value == sync_view.sync_code_error_message), \
+            f'Wrong sync code message did not appear'
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703591', 'Generate sync code. Negative')

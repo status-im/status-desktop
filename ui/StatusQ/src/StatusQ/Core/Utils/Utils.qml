@@ -279,4 +279,25 @@ QtObject {
     function stripHttpsAndwwwFromUrl(text) {
         return text.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?(\/)/gim, '')
     }
+
+    /**
+      - given a contiguous array of non repeating numbers from [0..totalCount-1]
+      - @return an array of @p n random numbers, sorted in ascending order
+      Example:
+        const arr = [0, 1, 2, 3, 4, 5]
+        const indexes = nSamples(3, 6) // pick 3 random numbers from an array of 6 elements [0..5]
+        console.log(indexes) -> Array[0, 4, 5] // example output
+      */
+    function nSamples(n, totalCount) {
+        if (n > totalCount) {
+            console.error("'n' must be less than or equal to 'totalCount'")
+            return
+        }
+
+        let set = new Set()
+        while (set.size < n) {
+            set.add(~~(Math.random() * totalCount))
+        }
+        return [...set].sort((a, b) => a - b)
+    }
 }
