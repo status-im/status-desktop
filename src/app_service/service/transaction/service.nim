@@ -115,6 +115,8 @@ type
   SuggestedRoutesArgs* = ref object of Args
     uuid*: string
     suggestedRoutes*: SuggestedRoutesDto
+    # this should be the only one used when old send modal code is removed
+    routes*: seq[TransactionPathDtoV2]
     errCode*: string
     errDescription*: string
 
@@ -362,6 +364,7 @@ QtObject:
     self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(
       uuid: uuid,
       suggestedRoutes: suggestedDto,
+      routes: route,
       errCode: errCode,
       errDescription: errDescription
     ))
