@@ -4,16 +4,14 @@ import configs.timeouts
 import pytest
 from allure_commons._allure import step
 from constants import UserAccount, RandomUser
-from . import marks
 from constants.messaging import Messaging
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704610',
                  'Reject a contact request with a chat key')
 @pytest.mark.case(704610)
+@pytest.mark.settings_messaging
 def test_messaging_settings_rejecting_request(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -60,7 +58,7 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
             assert str(contacts_settings.no_friends_item_text) == Messaging.NO_FRIENDS_ITEM.value
-            assert contacts_settings.is_invite_friends_button_visible
+            assert contacts_settings.invite_friends_button.is_visible
             main_window.hide()
 
         with step(f'Verify that contacts list of {user_one.name} is empty in messaging settings'):
@@ -69,4 +67,4 @@ def test_messaging_settings_rejecting_request(multiple_instances):
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
             assert str(contacts_settings.no_friends_item_text) == Messaging.NO_FRIENDS_ITEM.value
-            assert contacts_settings.is_invite_friends_button_visible
+            assert contacts_settings.invite_friends_button.is_visible

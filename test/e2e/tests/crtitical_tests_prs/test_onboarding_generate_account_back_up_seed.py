@@ -6,10 +6,8 @@ from allure import step
 
 import constants
 import driver
-from constants import RandomUser
 from gui.components.back_up_your_seed_phrase_banner import BackUpSeedPhraseBanner
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from . import marks
 
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -19,13 +17,12 @@ from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, \
     YourEmojihashAndIdenticonRingView
 
-pytestmark = marks
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703010', 'Settings - Sign out & Quit')
-@pytest.mark.case(703421, 703010)
+@pytest.mark.case(703421, 703010, 738725, 738758, 738771)
 @pytest.mark.critical  # TODO 'https://github.com/status-im/status-desktop/issues/13013'
+@pytest.mark.smoke
 @pytest.mark.parametrize('user_image, zoom, shift', [
     pytest.param(
         random.choice(['sample_JPEG_1920×1280.jpeg', 'file_example_PNG_3MB.png', 'file_example_JPG_2500kB.jpg']
@@ -124,7 +121,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
     with step('Open share profile popup and check the data'):
         share_profile_popup = profile_popup.share_profile()
         profile_link = share_profile_popup.get_profile_link()
-        assert share_profile_popup.is_profile_qr_code_visibile
+        assert share_profile_popup.is_profile_qr_code_visibile, f'QR code is not displayed'
         assert chat_key in profile_link, f'Profile link is wrong {profile_link}, it does not contain correct chat key'
         share_profile_popup.close()
 

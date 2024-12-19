@@ -5,17 +5,12 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from configs import testpath
-from . import marks
 
 import configs
 import driver
 from constants.wallet import WalletAccountSettings
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703508',

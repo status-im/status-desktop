@@ -14,18 +14,17 @@ from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
 from scripts.utils.generators import random_text_message
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
-@pytest.mark.case(703014)
+@pytest.mark.case(703014, 738735, 738736, 738739, 738740)
 @pytest.mark.timeout(timeout=315)
 @pytest.mark.critical
+@pytest.mark.smoke
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')
                           ])
+# TODO: add clearing chat history action
 def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain_link, domain_link_2):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -214,7 +213,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 messages_screen.group_chat.type_message(message)
 
             with step('Wait until link preview is ready'):
-                assert driver.waitFor(lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(
+                    lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
             with step(f'Paste image to the same message'):
                 messages_screen.group_chat.choose_image(str(path))

@@ -6,7 +6,6 @@ from allure_commons._allure import step
 from tests.wallet_main_screen import marks
 
 import constants
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
@@ -14,8 +13,10 @@ pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026', 'Manage a watch-only account')
-@pytest.mark.case(703026)
+@pytest.mark.case(703026, 738788, 738815)
+@pytest.mark.smoke
 @pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15933")
+# TODO: to add a step of account removal
 @pytest.mark.parametrize('address, name, color, emoji, emoji_unicode', [
     pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                  'sunglasses', '1f60e')

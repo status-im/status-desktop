@@ -8,13 +8,9 @@ from allure_commons._allure import step
 from constants.wallet import WalletRenameKeypair, WalletAccountPopup
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
 
 import constants
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703420',

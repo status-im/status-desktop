@@ -5,17 +5,12 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import RandomUser
 from helpers.WalletHelper import authenticate_with_password
-from . import marks
 
 import driver
 from constants.wallet import WalletAccountSettings, DerivationPathValue
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 from gui.screens.settings_wallet import WalletSettingsView
-
-pytestmark = marks
 
 
 @pytest.mark.critical
