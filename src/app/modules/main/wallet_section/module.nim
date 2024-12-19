@@ -13,6 +13,7 @@ import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./networks/module as networks_module
 import ./overview/module as overview_module
 import ./send/module as send_module
+import ./send_new/module as new_send_module
 
 import ./activity/controller as activityc
 
@@ -70,6 +71,8 @@ type
     allCollectiblesModule: all_collectibles_module.AccessInterface
     assetsModule: assets_module.AccessInterface
     sendModule: send_module.AccessInterface
+    # TODO: replace this with sendModule when old one is removed
+    newSendModule: new_send_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
     overviewModule: overview_module.AccessInterface
@@ -141,6 +144,7 @@ proc newModule*(
     currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
   transactionService, keycardService)
+  result.newSendModule = newSendModule.newModule(result, events, walletAccountService, networkService, transactionService, keycardService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, rampService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
@@ -185,6 +189,7 @@ method delete*(self: Module) =
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
   self.sendModule.delete
+  self.newSendModule.delete
   self.controller.delete
   self.viewVariant.delete
   self.view.delete
@@ -351,6 +356,7 @@ method load*(self: Module) =
   self.buySellCryptoModule.load()
   self.overviewModule.load()
   self.sendModule.load()
+  self.newSendModule.load()
   self.networksModule.load()
   self.walletConnectService.init()
   self.walletConnectController.init()
@@ -382,6 +388,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.sendModule.isLoaded()):
+    return
+
+  if(not self.newSendModule.isLoaded()):
     return
 
   if(not self.networksModule.isLoaded()):
@@ -430,6 +439,9 @@ method overviewModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method sendModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method newSendModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method networksModuleDidLoad*(self: Module) =

@@ -102,6 +102,8 @@ Item {
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
         simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
     }
+    // TODO: Only until the  old send modal transaction store can be replaced with this one
+    readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
 
     required property bool isCentralizedMetricsEnabled
 
@@ -646,6 +648,7 @@ Item {
         loginType: appMain.rootStore.loginType
         transactionStore: appMain.transactionStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
+        transactionStoreNew: appMain.transactionStoreNew
 
         // for ens flows
         ensRegisteredAddress: appMain.rootStore.profileSectionStore.ensUsernamesStore.getEnsRegisteredAddress()
@@ -668,6 +671,7 @@ Item {
         currentCurrency: appMain.currencyStore.currentCurrency
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
+        tokenBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
         fnFormatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
             return appMain.currencyStore.formatCurrencyAmount(amount, symbol)
         }

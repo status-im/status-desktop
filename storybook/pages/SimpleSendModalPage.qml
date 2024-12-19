@@ -62,6 +62,7 @@ SplitView {
         }
 
         property var setFees: Backpressure.debounce(root, 1500, function () {
+            simpleSend.routesLoading = false
             simpleSend.estimatedTime = "~60s"
             simpleSend.estimatedFiatFees = "1.45 EUR"
             simpleSend.estimatedCryptoFees = "0.0007 ETH"
@@ -125,8 +126,9 @@ SplitView {
             estimatedCryptoFees = ""
             estimatedFiatFees = ""
             estimatedTime = ""
-            if(formCorrectlyFilled) {
+            if(allValuesFilledCorrectly) {
                 console.log("Fetch fees...")
+                routesLoading = true
                 d.setFees()
             }
         }
