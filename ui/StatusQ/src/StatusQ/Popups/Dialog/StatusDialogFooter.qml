@@ -11,6 +11,7 @@ Rectangle {
 
     property ObjectModel leftButtons
     property ObjectModel rightButtons
+    property ObjectModel errorTags
     property int spacing: 5
     property bool dropShadowEnabled
 
@@ -34,34 +35,59 @@ Rectangle {
         visible: !root.dropShadowEnabled
     }
 
-    RowLayout {
+    ColumnLayout {
         id: layout
-
-        spacing: root.spacing
-        clip: true
 
         anchors {
             fill: parent
             margins: 16
         }
 
+        spacing: 8
+
         Repeater {
-            model: root.leftButtons
+            Layout.topMargin: 4
+            model: root.errorTags
             onItemAdded: {
                 item.Layout.fillHeight = true
-                item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+                item.Layout.fillWidth = true
             }
         }
 
-        Item {
+        StatusDialogDivider {
+            Layout.topMargin: 12
             Layout.fillWidth: true
+
+            color: Theme.palette.directColor8
+
+            visible: !!root.errorTags && root.errorTags.count > 0
         }
 
-        Repeater {
-            model: root.rightButtons
-            onItemAdded: {
-                item.Layout.fillHeight = true
-                item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+        RowLayout {
+
+            Layout.fillWidth: true
+
+            spacing: root.spacing
+            clip: true
+
+            Repeater {
+                model: root.leftButtons
+                onItemAdded: {
+                    item.Layout.fillHeight = true
+                    item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+                }
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            Repeater {
+                model: root.rightButtons
+                onItemAdded: {
+                    item.Layout.fillHeight = true
+                    item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
+                }
             }
         }
     }

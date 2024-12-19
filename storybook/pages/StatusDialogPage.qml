@@ -12,6 +12,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import AppLayouts.Wallet.controls 1.0
+
 SplitView {
     id: root
 
@@ -138,7 +140,23 @@ SplitView {
                         }
                     }
                 }
+
+                errorTags: ctrlAddErrorTags.checked ? errorTagsModel: null
             }
+        }
+    }
+
+    ObjectModel {
+        id: errorTagsModel
+        RouterErrorTag {
+            errorTitle: "Error 1"
+            buttonText: "Add ETH"
+        }
+        RouterErrorTag {
+            errorTitle: "Error 2"
+            buttonText: "Add ETH"
+            errorDetails: "Details will appear here"
+            expandable: true
         }
     }
 
@@ -237,6 +255,10 @@ SplitView {
             CheckBox {
                 id: ctrlHeaderDropShadow
                 text: "Header drop shadow"
+            }
+            CheckBox {
+                id: ctrlAddErrorTags
+                text: "Add error tags"
             }
         }
     }
