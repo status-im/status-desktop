@@ -12,6 +12,7 @@ type
     IsUserIcon
     IsImage
     Position
+    LastMessageTimestamp
     ColorId
     ColorHash
 
@@ -61,6 +62,7 @@ QtObject:
       SubModelRole.IsUserIcon.int:"isUserIcon",
       SubModelRole.IsImage.int:"isImage",
       SubModelRole.Position.int:"position",
+      SubModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
       SubModelRole.ColorId.int:"colorId",
       SubModelRole.ColorHash.int:"colorHash"
     }.toTable
@@ -92,6 +94,8 @@ QtObject:
       result = newQVariant(item.isImage)
     of SubModelRole.Position:
       result = newQVariant(item.position)
+    of SubModelRole.LastMessageTimestamp:
+      result = newQVariant(item.lastMessageTimestamp)
     of SubModelRole.ColorId:
       result = newQVariant(item.colorId)
     of SubModelRole.ColorHash:
