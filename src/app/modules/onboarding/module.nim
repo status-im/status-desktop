@@ -8,6 +8,7 @@ import app/core/eventemitter
 import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/devices/service as devices_service
+import app_service/service/keycardV2/service as keycard_serviceV2
 
 export io_interface
 
@@ -27,12 +28,20 @@ proc newModule*[T](
     generalService: general_service.Service,
     accountsService: accounts_service.Service,
     devicesService: devices_service.Service,
+    keycardServiceV2: keycard_serviceV2.Service,
   ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, generalService, accountsService, devicesService)
+  result.controller = controller.newController(
+    result,
+    events,
+    generalService,
+    accountsService,
+    devicesService,
+    keycardServiceV2,
+  )
 
 {.push warning[Deprecated]: off.}
 
