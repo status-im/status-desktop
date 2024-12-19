@@ -10,6 +10,7 @@ import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.adaptors 1.0
 import utils 1.0
 
+import Models 1.0
 import Storybook 1.0
 
 import SortFilterProxyModel 0.2
@@ -24,6 +25,8 @@ Pane {
             // collection 2
             {
                 tokenId: "id_3",
+                symbol: "abc",
+                chainId: NetworksModel.mainnetChainId,
                 name: "Multi-sequencer Test NFT 1",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
@@ -43,6 +46,8 @@ Pane {
             },
             {
                 tokenId: "id_4",
+                symbol: "def",
+                chainId: NetworksModel.mainnetChainId,
                 name: "Multi-sequencer Test NFT 2",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
@@ -62,6 +67,8 @@ Pane {
             },
             {
                 tokenId: "id_5",
+                symbol: "ghi",
+                chainId: NetworksModel.mainnetChainId,
                 name: "Multi-sequencer Test NFT 3",
                 contractAddress: "contract_2",
                 collectionName: "Multi-sequencer Test NFT",
@@ -82,6 +89,8 @@ Pane {
             // collection 1
             {
                 tokenId: "id_1",
+                symbol: "jkl",
+                chainId: NetworksModel.mainnetChainId,
                 name: "Genesis",
                 contractAddress: "contract_1",
                 collectionName: "ERC-1155 Faucet",
@@ -106,6 +115,8 @@ Pane {
             },
             {
                 tokenId: "id_2",
+                symbol: "mno",
+                chainId: NetworksModel.mainnetChainId,
                 name: "QAERC1155",
                 contractAddress: "contract_1",
                 collectionName: "ERC-1155 Faucet",
@@ -126,6 +137,8 @@ Pane {
             // collection 3, community token
             {
                 tokenId: "id_6",
+                symbol: "pqr",
+                chainId: NetworksModel.optChainId,
                 name: "My Token",
                 contractAddress: "contract_3",
                 collectionName: "My Token",
@@ -145,6 +158,8 @@ Pane {
             },
             {
                 tokenId: "id_7",
+                symbol: "stu",
+                chainId: NetworksModel.optChainId,
                 name: "My Token",
                 contractAddress: "contract_3",
                 collectionName: "My Token",
@@ -164,6 +179,8 @@ Pane {
             },
             {
                 tokenId: "id_8",
+                symbol: "vwx",
+                chainId: NetworksModel.optChainId,
                 name: "My Token",
                 contractAddress: "contract_3",
                 collectionName: "My Token",
@@ -183,6 +200,8 @@ Pane {
             },
             {
                 tokenId: "id_9",
+                symbol: "yz1",
+                chainId: NetworksModel.optChainId,
                 name: "My Other Token",
                 contractAddress: "contract_4",
                 collectionName: "My Other Token",
@@ -202,6 +221,8 @@ Pane {
             },
             {
                 tokenId: "id_10",
+                symbol: "234",
+                chainId: NetworksModel.arbChainId,
                 name: "My Community 2 Token",
                 contractAddress: "contract_5",
                 collectionName: "My Community 2 Token",
@@ -221,6 +242,8 @@ Pane {
             },
             {
                 tokenId: "id_11",
+                symbol: "567",
+                chainId: NetworksModel.arbChainId,
                 name: "My Community 2 Token",
                 contractAddress: "contract_5",
                 collectionName: "My Community 2 Token",
@@ -240,6 +263,8 @@ Pane {
             },
             {
                 tokenId: "id_11",
+                symbol: "8910",
+                chainId: NetworksModel.arbChainId,
                 name: "My Community 2 Token",
                 contractAddress: "contract_5",
                 collectionName: "My Community 2 Token",
@@ -259,6 +284,8 @@ Pane {
             },
             {
                 tokenId: "id_12",
+                symbol: "111213",
+                chainId: NetworksModel.arbChainId,
                 name: "My Community 2 Token",
                 contractAddress: "contract_5",
                 collectionName: "My Community 2 Token",
@@ -278,6 +305,8 @@ Pane {
             },
             {
                 tokenId: "id_13",
+                symbol: "141516",
+                chainId: NetworksModel.arbChainId,
                 name: "My Community 2 Token",
                 contractAddress: "contract_5",
                 collectionName: "My Community 2 Token",
@@ -312,6 +341,8 @@ Pane {
     CollectiblesSelectionAdaptor {
         id: adaptor
 
+        networksModel: NetworksModel.flatNetworks
+        enabledChainIds: [networksCombobox.currentValue]
         collectiblesModel: listModel
         accountKey: accountsSelector.selection
     }
@@ -330,6 +361,18 @@ Pane {
                 id: accountsSelector
 
                 Layout.fillWidth: true
+            }
+        }
+
+        RowLayout {
+            Label { text: "Enabled Networks:" }
+
+            ComboBox {
+                id: networksCombobox
+                model: NetworksModel.flatNetworks
+                textRole: "chainName"
+                valueRole: "chainId"
+                currentIndex: 0
             }
         }
 

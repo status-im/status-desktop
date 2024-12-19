@@ -11,7 +11,7 @@ Rectangle {
     border.width: 1
     border.color: Theme.palette.directColor7
     radius: 8
-    color: root.active ? Theme.palette.baseColor2 : "transparent"
+    color: root.active ? Theme.palette.directColor8 : "transparent"
     HoverHandler {
         cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
     }
