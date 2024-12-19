@@ -18,9 +18,6 @@ from constants import RandomUser, UserAccount
 from gui.main_window import MainWindow
 from scripts.utils.generators import random_text_message
 from scripts.utils.parsers import remove_tags
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')

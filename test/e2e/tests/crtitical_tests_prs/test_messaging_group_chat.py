@@ -14,9 +14,6 @@ from constants.messaging import Messaging
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen, ToolBar
 from scripts.utils.generators import random_text_message
-from . import marks
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703014', 'Create a group and send messages')
@@ -214,7 +211,9 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                 messages_screen.group_chat.type_message(message)
 
             with step('Wait until link preview is ready'):
-                assert driver.waitFor(lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(), configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(
+                    lambda: domain_link_2 == messages_screen.group_chat.get_link_preview_bubble_description(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
             with step(f'Paste image to the same message'):
                 messages_screen.group_chat.choose_image(str(path))
