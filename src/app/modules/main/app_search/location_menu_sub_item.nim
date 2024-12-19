@@ -11,6 +11,7 @@ type
     colorId: int
     colorHash: color_hash_model.Model
     position: int
+    lastMessageTimestamp: int
 
 proc initSubItem*(
     value,
@@ -30,6 +31,7 @@ proc initSubItem*(
   result.isUserIcon = isUserIcon
   result.isImage = isImage
   result.position = position
+  result.lastMessageTimestamp = lastMessageTimestamp
   result.colorId = colorId
   result.colorHash = color_hash_model.newModel()
   result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
@@ -55,6 +57,7 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "value": self.value,
     "text": self.text,
     "position": self.position,
+    "lastMessageTimestamp": self.lastMessageTimestamp,
     "imageSource": self.image,
     "iconName": self.icon,
     "iconColor": self.iconColor,
@@ -66,6 +69,9 @@ proc toJsonNode*(self: SubItem): JsonNode =
 
 proc position*(self: SubItem): int =
   return self.position
+
+proc lastMessageTimestamp*(self: SubItem): int =
+  return self.lastMessageTimestamp
 
 proc isUserIcon*(self: SubItem): bool =
   return self.isUserIcon

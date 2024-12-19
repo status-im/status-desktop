@@ -99,12 +99,13 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
     let subItem = location_menu_sub_item.initSubItem(
       chatDto.id,
       chatName,
-      if (chatImage != ""): chatImage else: chatDto.emoji,
-      "",
+      image = if (chatImage != ""): chatImage else: chatDto.emoji,
+      icon = "",
       chatDto.color,
       isOneToOneChat,
       isImage = chatImage != "",
       chatDto.position,
+      chatDto.timestamp.int,
       colorId,
       colorHash,
     )
@@ -120,11 +121,12 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
         chat.id,
         chat.name,
         chat.emoji,
-        "",
+        icon = "",
         chat.color,
         isUserIcon = false,
         isImage = false,
         chatPosition,
+        chat.timestamp.int,
       ))
     highestPosition += categoryChats[categoryPosition].len
 

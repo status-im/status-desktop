@@ -123,10 +123,16 @@ StatusMenu {
                         menu: subMenuDelegate
                         model: SortFilterProxyModel {
                             sourceModel: subMenuDelegate.subItemsModel
-                            sorters: RoleSorter {
-                                roleName: "position"
-                                sortOrder: Qt.AscendingOrder
-                            }
+                            sorters: [
+                                RoleSorter {
+                                    roleName: "position"
+                                    sortOrder: Qt.AscendingOrder
+                                },
+                                RoleSorter {
+                                    roleName: "lastMessageTimestamp"
+                                    sortOrder: Qt.DescendingOrder
+                                }
+                            ]
                         }
 
                         delegate: StatusSearchPopupMenuItem {
