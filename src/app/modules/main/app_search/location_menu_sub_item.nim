@@ -9,12 +9,26 @@ type
     isUserIcon: bool
     colorId: int
     colorHash: color_hash_model.Model
+    position: int
+    lastMessageTimestamp: int
 
-proc initSubItem*(value, text, image, icon, iconColor: string,
-  isUserIcon: bool = false, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[]): SubItem =
+proc initSubItem*(
+    value,
+    text,
+    image,
+    icon,
+    iconColor: string,
+    isUserIcon: bool = false,
+    position: int,
+    lastMessageTimestamp: int,
+    colorId: int = 0,
+    colorHash: seq[ColorHashSegment] = @[]
+  ): SubItem =
   result = SubItem()
   result.setup(value, text, image, icon, iconColor)
   result.isUserIcon = isUserIcon
+  result.position = position
+  result.lastMessageTimestamp = lastMessageTimestamp
   result.colorId = colorId
   result.colorHash = color_hash_model.newModel()
   result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
@@ -26,6 +40,8 @@ proc `$`*(self: SubItem): string =
   result = fmt"""SearchMenuSubItem(
     value: {self.value},
     text: {self.text},
+    position: {self.position},
+    lastMessageTimestamp: {self.lastMessageTimestamp},
     imageSource: {self.image},
     iconName: {self.icon},
     iconColor: {self.iconColor},
@@ -35,6 +51,8 @@ proc toJsonNode*(self: SubItem): JsonNode =
   result = %* {
     "value": self.value,
     "text": self.text,
+    "position": self.position,
+    "lastMessageTimestamp": self.lastMessageTimestamp,
     "imageSource": self.image,
     "iconName": self.icon,
     "iconColor": self.iconColor,
@@ -42,6 +60,12 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "colorId": self.colorId,
     "colorHash": self.colorHash.toJson()
   }
+
+proc position*(self: SubItem): int =
+  return self.position
+
+proc lastMessageTimestamp*(self: SubItem): int =
+  return self.lastMessageTimestamp
 
 proc isUserIcon*(self: SubItem): bool =
   return self.isUserIcon
