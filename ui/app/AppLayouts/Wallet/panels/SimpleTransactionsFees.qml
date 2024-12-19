@@ -64,7 +64,7 @@ Control {
 
                 Layout.fillWidth: true
 
-                loading: root.loading
+                loading: root.loading || !root.cryptoFees
                 customColor: root.error ? Theme.palette.dangerColor1:
                                           Theme.palette.baseColor1
                 lineHeightMode: Text.FixedHeight
@@ -79,7 +79,7 @@ Control {
 
             Layout.alignment: Qt.AlignRight
 
-            loading: root.loading
+            loading: root.loading || !root.fiatFees
             customColor: root.error ? Theme.palette.dangerColor1:
                                       Theme.palette.baseColor1
             lineHeightMode: Text.FixedHeight

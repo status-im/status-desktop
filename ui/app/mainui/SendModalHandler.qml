@@ -2,12 +2,14 @@ import QtQuick 2.15
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups.simpleSend 1.0
 import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet 1.0
 
 import shared.popups.send 1.0
 import shared.stores.send 1.0
@@ -21,6 +23,7 @@ QtObject {
     required property int loginType
     required property TransactionStore transactionStore
     required property WalletStores.CollectiblesStore walletCollectiblesStore
+    required property WalletStores.TransactionStoreNew transactionStoreNew
 
     /** for ens flows **/
     required property string myPublicKey
@@ -73,6 +76,13 @@ QtObject {
             - accountAddress  [string] - unique identifier of an account
     **/
     required property var collectiblesBySymbolModel
+    /** Expected model structure:
+    - key              [string] - unique identifier of an asset
+    - decimals         [int] - decimals of the token
+    - marketDetails    [QObject] - collectible's contract address
+            - currencyPrice [CurrencyAmount] - assets market price in CurrencyAmount
+    **/
+    required property var tokenBySymbolModel
     /**
     Expected model structure:
     - chainId: network chain id
@@ -236,65 +246,148 @@ QtObject {
             /** TODO: use the newly defined WalletAccountsSelectorAdaptor
             in https://github.com/status-im/status-desktop/pull/16834 **/
             accountsModel: root.walletAccountsModel
-            assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
-            collectiblesModel: collectiblesSelectionAdaptor.model
-            networksModel: root.filteredFlatNetworksModel
-
+            assetsModel: backendHandler.assetsSelectorViewAdaptor.outputAssetsModel
+            collectiblesModel: backendHandler.collectiblesSelectionAdaptor.model
+            networksModel: backendHandler.filteredFlatNetworksModel
             savedAddressesModel: root.savedAddressesModel
             recentRecipientsModel: root.recentRecipientsModel
-
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
 
-            onClosed: destroy()
+            onClosed: {
+                destroy()
+                root.transactionStoreNew.stopUpdatesForSuggestedRoute()
+            }
 
             onFormChanged: {
                 estimatedCryptoFees = ""
                 estimatedFiatFees = ""
                 estimatedTime = ""
-                if(formCorrectlyFilled) {
-                    // TODO: call stores fetchSuggestedRoutes api
+                if(allValuesFilledCorrectly) {
+                    backendHandler.uuid = Utils.uuid()
+                    simpleSendModal.routesLoading = true
+                    root.transactionStoreNew.fetchSuggestedRoutes(backendHandler.uuid,
+                                                                  sendType,
+                                                                  selectedChainId,
+                                                                  selectedAccountAddress,
+                                                                  selectedRecipientAddress,
+                                                                  selectedAmountInBaseUnit,
+                                                                  selectedTokenKey)
                 }
             }
 
-            TokenSelectorViewAdaptor {
-                id: assetsSelectorViewAdaptor
-
-                // TODO: remove all store dependecies and add specific properties to the handler instead
-                assetsModel: root.groupedAccountAssetsModel
-                flatNetworksModel: root.flatNetworksModel
-
-                currentCurrency: root.currentCurrency
-                showCommunityAssets: root.showCommunityAssetsInSend
-
-                accountAddress: simpleSendModal.selectedAccountAddress
-                enabledChainIds: [simpleSendModal.selectedChainId]
+            // TODO: this should be called from the Reiew and Sign Modal instead
+            onReviewSendClicked: {
+                root.transactionStoreNew.authenticateAndTransfer(uuid, selectedAccountAddress)
             }
-            CollectiblesSelectionAdaptor {
-                id: collectiblesSelectionAdaptor
 
-                accountKey: simpleSendModal.selectedAccountAddress
-                enabledChainIds: [simpleSendModal.selectedChainId]
+            readonly property var backendHandler: QtObject {
+                property string uuid
+                property var fetchedPathModel
 
-                networksModel: root.filteredFlatNetworksModel
-                collectiblesModel: SortFilterProxyModel {
-                    sourceModel: root.collectiblesBySymbolModel
-                    filters: ValueFilter {
-                        roleName: "soulbound"
-                        value: false
+                readonly property var filteredFlatNetworksModel: SortFilterProxyModel {
+                    sourceModel: root.flatNetworksModel
+                    filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+                }
+
+                function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
+                    simpleSendModal.routesLoading = false
+                    if(returnedUuid !== uuid) {
+                        // Suggested routes for a different fetch, ignore
+                        return
+                    }
+                    fetchedPathModel = pathModel
+                }
+
+                function transactionSent(returnedUuid, chainId, approvalTx, txHash, error) {
+                    if(returnedUuid !== uuid) {
+                        // Suggested routes for a different fetch, ignore
+                        return
+                    }
+                    if (!!error) {
+                        if (error.includes(Constants.walletSection.authenticationCanceled)) {
+                            return
+                        }
+                        // TODO: handle error here
+                        return
+                    }
+                    close()
+                }
+
+                readonly property var assetsSelectorViewAdaptor: TokenSelectorViewAdaptor {
+                    // TODO: remove all store dependecies and add specific properties to the handler instead
+                    assetsModel: root.groupedAccountAssetsModel
+                    flatNetworksModel: root.flatNetworksModel
+
+                    currentCurrency: root.currentCurrency
+                    showCommunityAssets: root.showCommunityAssetsInSend
+
+                    accountAddress: simpleSendModal.selectedAccountAddress
+                    enabledChainIds: [simpleSendModal.selectedChainId]
+                }
+
+                readonly property var collectiblesSelectionAdaptor: CollectiblesSelectionAdaptor {
+                    accountKey: simpleSendModal.selectedAccountAddress
+                    enabledChainIds: [simpleSendModal.selectedChainId]
+
+                    networksModel: backendHandler.filteredFlatNetworksModel
+                    collectiblesModel: SortFilterProxyModel {
+                        sourceModel: root.collectiblesBySymbolModel
+                        filters: ValueFilter {
+                            roleName: "soulbound"
+                            value: false
+                        }
                     }
                 }
-            }
 
-            Component.onCompleted: {
-                root.ensNameResolved.connect(ensNameResolved)
+                readonly property var totalBalanceAggregator: FunctionAggregator {
+                    model: !!backendHandler.fetchedPathModel ?
+                               backendHandler.fetchedPathModel: null
+                    initialValue: "0"
+                    roleName: "txTotalFee"
+
+                    aggregateFunction: (aggr, value) => SQUtils.AmountsArithmetic.sum(
+                                           SQUtils.AmountsArithmetic.fromString(aggr),
+                                           SQUtils.AmountsArithmetic.fromString(value)).toString()
+
+                    onValueChanged: {
+                        let decimals = !!backendHandler.ethTokenEntry.item ? backendHandler.ethTokenEntry.item.decimals: 18
+                        let ethFiatValue = !!backendHandler.ethTokenEntry.item ? backendHandler.ethTokenEntry.item.marketDetails.currencyPrice.amount: 1
+                        let totalFees = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(value), SQUtils.AmountsArithmetic.fromNumber(1, decimals))
+                        let totalFeesInFiat = root.fnFormatCurrencyAmount(ethFiatValue*totalFees, root.currentCurrency).toString()
+                        simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), Constants.ethToken)
+                        simpleSendModal.estimatedFiatFees = totalFeesInFiat
+                    }
+                }
+
+                readonly property var estimatedTimeAggregator: SumAggregator {
+                    model: !!backendHandler.fetchedPathModel ?
+                               backendHandler.fetchedPathModel: null
+                    roleName: "estimatedTime"
+                    onValueChanged: {
+                        simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
+                    }
+                }
+
+                readonly property var selectedTokenEntry: ModelEntry {
+                    sourceModel: root.tokenBySymbolModel
+                    key: "key"
+                    value: simpleSendModal.selectedTokenKey
+                }
+
+                readonly property var ethTokenEntry: ModelEntry {
+                    sourceModel: root.tokenBySymbolModel
+                    key: "key"
+                    value: Constants.ethToken
+                }
+
+                Component.onCompleted: {
+                    root.ensNameResolved.connect(ensNameResolved)
+                    root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
+                    root.transactionStoreNew.transactionSent.connect(transactionSent)
+                }
             }
         }
-    }
-
-    readonly property var filteredFlatNetworksModel: SortFilterProxyModel {
-        sourceModel: root.flatNetworksModel
-        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
     }
 }
