@@ -22,7 +22,6 @@ StatusDialogFooter {
     // Signal to propogate Send clicked
     signal reviewSendClicked()
 
-    implicitHeight: 82
     spacing: Theme.bigPadding
     color: Theme.palette.baseColor3
     dropShadowEnabled: true
