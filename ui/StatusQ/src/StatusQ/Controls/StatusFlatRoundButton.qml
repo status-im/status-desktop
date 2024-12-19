@@ -1,15 +1,15 @@
-import QtQuick 2.14
+import QtQuick 2.15
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
-
 
 Rectangle {
     id: statusFlatRoundButton
 
     property StatusAssetSettings icon: StatusAssetSettings {
-        width: 23
-        height: 23
+        width: 24
+        height: 24
         rotation: 0
 
         color: {
