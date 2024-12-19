@@ -3,6 +3,7 @@ import NimQml, sequtils, sugar, chronicles, uuids
 import app_service/service/general/service as general_service
 import app_service/service/keychain/service as keychain_service
 import app_service/service/keycard/service as keycard_service
+import app_service/service/keycardV2/service as keycard_serviceV2
 import app_service/service/accounts/service as accounts_service
 import app_service/service/contacts/service as contacts_service
 import app_service/service/language/service as language_service
@@ -70,6 +71,7 @@ type
     # Services
     generalService: general_service.Service
     keycardService*: keycard_service.Service
+    keycardServiceV2*: keycard_serviceV2.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
@@ -169,6 +171,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # Services
   result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService, statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -255,6 +258,10 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.onboardingModule = onboarding_module.newModule[AppController](
       result,
       statusFoundation.events,
+      result.generalService,
+      result.accountsService,
+      result.devicesService,
+      result.keycardServiceV2,
     )
   result.mainModule = main_module.newModule[AppController](
     result,
@@ -353,6 +360,7 @@ proc delete*(self: AppController) =
   self.ensService.delete
   self.tokensService.delete
   self.keycardService.delete
+  self.keycardServiceV2.delete
   self.networkConnectionService.delete
   self.metricsService.delete
 
@@ -421,6 +429,7 @@ proc mainDidLoad*(self: AppController) =
 
 proc start*(self: AppController) =
   self.keycardService.init()
+  self.keycardServiceV2.init()
   self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()

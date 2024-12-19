@@ -120,8 +120,8 @@ method onLoggedInUserAuthenticated*(self: Module, pin: string, password: string,
 proc validateConnectionString*(self: Module, connectionString: string): string =
   return self.controller.validateConnectionString(connectionString)
 
-method inputConnectionStringForBootstrapping*(self: Module, connectionString: string): string =
-  return self.controller.inputConnectionStringForBootstrapping(connectionString)
+method inputConnectionStringForBootstrapping*(self: Module, connectionString: string) =
+  self.controller.inputConnectionStringForBootstrapping(connectionString)
 
 method onLocalPairingStatusUpdate*(self: Module, status: LocalPairingStatus) =
   self.view.onLocalPairingStatusUpdate(status)
