@@ -72,8 +72,7 @@ StatusDialog {
     Only networks valid as per mainnet/testnet selection
     **/
     required property var networksModel
-    required property var savedAddressesModel
-    required property var recentRecipientsModel
+
     /** Input property holds currently selected Fiat currency **/
     required property string currentCurrency
     /** Input function to format currency amount to locale string **/
@@ -89,6 +88,8 @@ StatusDialog {
     /** input property to set estimated fees in crypto **/
     property string estimatedCryptoFees
 
+    /** property to set currently selected send type **/
+    property string sendType: Constants.SendType.Transfer
     /** property to set and expose currently selected account **/
     property string selectedAccountAddress
     /** property to set and expose currently selected network **/
@@ -102,11 +103,10 @@ StatusDialog {
     e.g. 1000000000000000000 for 1 ETH **/
     readonly property string selectedAmountInBaseUnit: amountToSend.amount
 
-    /** property to scheck if form has been filled correctly **/
-    readonly property bool formCorrectlyFilled: d.allValuesFilledCorrectly()
-
     /** TODO: replace with new and improved recipient selector StatusDateRangePicker
     TBD under https://github.com/status-im/status-desktop/issues/16916 **/
+    required property var savedAddressesModel
+    required property var recentRecipientsModel
     property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
     /** Input function to resolve Ens Name **/
     required property var fnResolveENS
@@ -120,10 +120,22 @@ StatusDialog {
     /** Output signal to inform that the forms been updated **/
     signal formChanged()
 
+    /** function exposed to reset the values et from router **/
     function resetFees() {
         root.estimatedCryptoFees = ""
         root.estimatedFiatFees = ""
         root.estimatedTime = ""
+    }
+
+    /** function exposed to check if the form is filled correctly **/
+    function allValuesFilledCorrectly() {
+        return !!root.selectedAccountAddress &&
+                root.selectedChainId !== 0 &&
+                !!root.selectedTokenKey &&
+                !!root.selectedRecipientAddress &&
+                !!root.selectedAmount &&
+                !amountToSend.markAsInvalid &&
+                amountToSend.valid
     }
 
     QtObject {
@@ -213,25 +225,13 @@ StatusDialog {
             return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
         }
 
-        function allValuesFilledCorrectly() {
-            return !!root.selectedAccountAddress &&
-                    root.selectedChainId !== 0 &&
-                    !!root.selectedTokenKey &&
-                    !!root.selectedRecipientAddress &&
-                    !!root.selectedAmount &&
-                    !amountToSend.markAsInvalid &&
-                    amountToSend.valid
-        }
-
         // handle multiple property changes from single changed signal
         property var combinedPropertyChangedHandler: [
             root.selectedAccountAddress,
             root.selectedChainId,
             root.selectedTokenKey,
             root.selectedRecipientAddress,
-            root.selectedAmount,
-            amountToSend.markAsInvalid,
-            amountToSend.valid]
+            root.selectedAmount]
         onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
 
         readonly property bool feesIsLoading: !root.estimatedCryptoFees &&
@@ -474,9 +474,9 @@ StatusDialog {
 
                         cryptoFees: root.estimatedCryptoFees
                         fiatFees: root.estimatedFiatFees
-                        loading: d.feesIsLoading && d.allValuesFilledCorrectly()
+                        loading: d.feesIsLoading && root.allValuesFilledCorrectly()
                     }
-                    visible: d.allValuesFilledCorrectly()
+                    visible: root.allValuesFilledCorrectly()
                 }
             }
         }
@@ -488,7 +488,7 @@ StatusDialog {
         estimateTime: root.estimatedTime
         estimatedFees: root.estimatedFiatFees
 
-        loading: d.feesIsLoading && d.allValuesFilledCorrectly()
+        loading: d.feesIsLoading && root.allValuesFilledCorrectly()
 
         onReviewSendClicked: root.reviewSendClicked()
     }

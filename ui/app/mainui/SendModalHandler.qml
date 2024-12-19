@@ -2,12 +2,14 @@ import QtQuick 2.15
 
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups.simpleSend 1.0
 import AppLayouts.Wallet.adaptors 1.0
+import AppLayouts.Wallet 1.0
 
 import shared.popups.send 1.0
 import shared.stores.send 1.0
@@ -21,6 +23,7 @@ QtObject {
     required property int loginType
     required property TransactionStore transactionStore
     required property WalletStores.CollectiblesStore walletCollectiblesStore
+    required property WalletStores.TransactionStoreNew transactionStoreNew
 
     /** for ens flows **/
     required property string myPublicKey
@@ -73,6 +76,7 @@ QtObject {
             - accountAddress  [string] - unique identifier of an account
     **/
     required property var collectiblesBySymbolModel
+    required property var tokenBySymbolModel
     /**
     Expected model structure:
     - chainId: network chain id
@@ -222,6 +226,9 @@ QtObject {
         SimpleSendModal {
             id: simpleSendModal
 
+            property string uuid
+            property var fetchedPathModel
+
             /** TODO: use the newly defined WalletAccountsSelectorAdaptor
             in https://github.com/status-im/status-desktop/pull/16834 **/
             accountsModel: root.walletAccountsModel
@@ -236,13 +243,37 @@ QtObject {
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
 
-            onClosed: destroy()
+            onClosed: {
+                destroy()
+                root.transactionStoreNew.stopUpdatesForSuggestedRoute()
+            }
 
             onFormChanged: {
                 resetFees()
-                if(formCorrectlyFilled) {
-                    // TODO: call stores fetchSuggestedRoutes api
+                if(allValuesFilledCorrectly()) {
+                    uuid = Utils.uuid()
+                    root.transactionStoreNew.fetchSuggestedRoutes(uuid,
+                                                                  sendType,
+                                                                  selectedChainId,
+                                                                  selectedAccountAddress,
+                                                                  selectedRecipientAddress,
+                                                                  selectedAmountInBaseUnit,
+                                                                  selectedTokenKey)
                 }
+            }
+
+            // TODO: this should be called from the Reiew and Sign Modal instead
+            onReviewSendClicked: {
+                root.transactionStoreNew.authenticateAndTransfer(uuid, selectedAccountAddress)
+            }
+
+            function routesFetched(rUuid, pathModel, errCode, errDescription) {
+                if(rUuid !== uuid) {
+                    // Suggested routes for a different fetch, ignore
+                    return
+                }
+                fetchedPathModel = pathModel
+                // TODO: Handle errors here
             }
 
             TokenSelectorViewAdaptor {
@@ -274,8 +305,58 @@ QtObject {
                 }
             }
 
+            FunctionAggregator {
+                id: totalBalanceAggregator
+
+                model: !!simpleSendModal.fetchedPathModel  &&
+                       simpleSendModal.fetchedPathModel.ModelCount.count > 0 ?
+                           simpleSendModal.fetchedPathModel: null
+                initialValue: "0"
+                roleName: "txTotalFee"
+
+                aggregateFunction: (aggr, value) => SQUtils.AmountsArithmetic.sum(
+                                       SQUtils.AmountsArithmetic.fromString(aggr),
+                                       SQUtils.AmountsArithmetic.fromString(value)).toString()
+
+                onValueChanged: {
+                    let decimals = !!selectedTokenEntry.item ? selectedTokenEntry.item.decimals: 18
+                    let ethFiatValue = !!ethTokenEntry.item ? ethTokenEntry.item.marketDetails.currencyPrice.amount: 1
+                    let totalFees = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(value), SQUtils.AmountsArithmetic.fromNumber(1, decimals))
+                    let totalFeesInFiat = root.fnFormatCurrencyAmount(ethFiatValue*totalFees, root.currentCurrency).toString()
+                    simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), Constants.ethToken)
+                    simpleSendModal.estimatedFiatFees = totalFeesInFiat
+                }
+            }
+
+            SumAggregator {
+                id: estimatedTimeAggregator
+
+                model: !!simpleSendModal.fetchedPathModel  &&
+                       simpleSendModal.fetchedPathModel.ModelCount.count > 0 ?
+                           simpleSendModal.fetchedPathModel: null
+                roleName: "estimatedTime"
+                onValueChanged: {
+                    simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
+                }
+            }
+
+            ModelEntry {
+                id: selectedTokenEntry
+                sourceModel: root.tokenBySymbolModel
+                key: "key"
+                value: simpleSendModal.selectedTokenKey
+            }
+
+            ModelEntry {
+                id: ethTokenEntry
+                sourceModel: root.tokenBySymbolModel
+                key: "key"
+                value: Constants.ethToken
+            }
+
             Component.onCompleted: {
                 root.ensNameResolved.connect(ensNameResolved)
+                root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
             }
         }
     }

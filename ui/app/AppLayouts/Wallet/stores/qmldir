@@ -5,3 +5,4 @@ TokensStore 1.0 TokensStore.qml
 WalletAssetsStore 1.0 WalletAssetsStore.qml
 SwapStore 1.0 SwapStore.qml
 BuyCryptoStore 1.0 BuyCryptoStore.qml
+TransactionStoreNew 1.0 TransactionStoreNew.qml
