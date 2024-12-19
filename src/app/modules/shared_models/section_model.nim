@@ -344,7 +344,9 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       trustStatus: TrustStatus,
+      contactRequest: ContactRequest,
     ) =
     for item in self.items:
       item.members.updateItem(
@@ -356,7 +358,9 @@ QtObject:
         alias,
         icon,
         isContact,
+        isBlocked,
         trustStatus,
+        contactRequest,
       )
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
