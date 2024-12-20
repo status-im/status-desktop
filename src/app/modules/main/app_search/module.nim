@@ -163,7 +163,8 @@ method prepareLocationMenuModel*(self: Module) =
   # Community sections
   let communities = self.controller.getJoinedAndSpectatedCommunities()
   for c in communities:
-    items.add(self.buildLocationMenuForCommunity(c))
+    if c.joined:
+      items.add(self.buildLocationMenuForCommunity(c))
 
   self.view.locationMenuModel().setItems(items)
 
