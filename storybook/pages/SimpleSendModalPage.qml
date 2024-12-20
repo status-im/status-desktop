@@ -66,7 +66,19 @@ SplitView {
             simpleSend.estimatedTime = "~60s"
             simpleSend.estimatedFiatFees = "1.45 EUR"
             simpleSend.estimatedCryptoFees = "0.0007 ETH"
+            simpleSend.routerErrorCode = Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+            simpleSend.routerError = qsTr("Not enough ETH to pay gas fees")
+            simpleSend.routerErrorDetails = ""
         })
+
+        function resetRouterValues() {
+            simpleSend.estimatedCryptoFees = ""
+            simpleSend.estimatedFiatFees = ""
+            simpleSend.estimatedTime = ""
+            simpleSend.routerErrorCode = ""
+            simpleSend.routerError = ""
+            simpleSend.routerErrorDetails = ""
+        }
     }
 
     PopupBackground {
@@ -123,9 +135,7 @@ SplitView {
         })
 
         onFormChanged: {
-            estimatedCryptoFees = ""
-            estimatedFiatFees = ""
-            estimatedTime = ""
+            d.resetRouterValues()
             if(allValuesFilledCorrectly()) {
                 console.log("Fetch fees...")
                 routesLoading = true
@@ -134,6 +144,7 @@ SplitView {
         }
 
         onReviewSendClicked: console.log("Review send clicked")
+        onLaunchBuyFlow: console.log("launch buy flow clicked")
 
         Binding on selectedAccountAddress {
             value: accountsCombobox.currentValue ?? ""

@@ -142,7 +142,7 @@ QtObject {
         case Constants.routerErrorCodes.router.errNotEnoughTokenBalance:
             return qsTr("not enough token balance")
         case Constants.routerErrorCodes.router.errNotEnoughNativeBalance:
-            return qsTr("not enough ETH")
+            return qsTr("Not enough ETH to pay gas fees")
         case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
             return qsTr("amount in too low")
         case Constants.routerErrorCodes.router.errNoPositiveBalance:
@@ -278,7 +278,6 @@ QtObject {
         case Constants.routerErrorCodes.router.errCannotCheckLockedAmounts:
             return qsTr("cannot check locked amounts")
         case Constants.routerErrorCodes.router.errNotEnoughTokenBalance:
-        case Constants.routerErrorCodes.router.errNotEnoughNativeBalance:
             try {
                 const jsonObj = JSON.parse(details)
 
@@ -299,6 +298,8 @@ QtObject {
             catch (e) {
                 return ""
             }
+        case Constants.routerErrorCodes.router.errNotEnoughNativeBalance:
+            return details
         case Constants.routerErrorCodes.router.errLowAmountInForHopBridge:
             return qsTr("bonder fee greater than estimated received, a higher amount is needed to cover fees")
         case Constants.routerErrorCodes.router.errNoPositiveBalance:

@@ -107,6 +107,8 @@ QtObject {
     /** required signal to receive resolved ens name address **/
     signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
 
+    signal launchBuyFlowRequested(string accountAddress, string chainId, string tokenKey)
+
     function openSend(params = {}) {
         // TODO remove once simple send is feature complete
         let sendModalCmp = root.simpleSendEnabled ? simpleSendModalComponent: sendModalComponent
@@ -250,9 +252,7 @@ QtObject {
             }
 
             onFormChanged: {
-                estimatedCryptoFees = ""
-                estimatedFiatFees = ""
-                estimatedTime = ""
+                backendHandler.resetRouterValues()
                 if(allValuesFilledCorrectly()) {
                     backendHandler.uuid = Utils.uuid()
                     simpleSendModal.routesLoading = true
@@ -268,7 +268,11 @@ QtObject {
 
             // TODO: this should be called from the Reiew and Sign Modal instead
             onReviewSendClicked: {
-                root.transactionStoreNew.authenticateAndTransfer(uuid, selectedAccountAddress)
+                root.transactionStoreNew.authenticateAndTransfer(backendHandler.uuid, selectedAccountAddress)
+            }
+
+            onLaunchBuyFlow: {
+                root.launchBuyFlowRequested(selectedAccountAddress, selectedChainId, selectedTokenKey)
             }
 
             readonly property var backendHandler: QtObject {
@@ -286,6 +290,10 @@ QtObject {
                         // Suggested routes for a different fetch, ignore
                         return
                     }
+                    simpleSendModal.routerErrorCode = errCode
+                    simpleSendModal.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
+                    simpleSendModal.routerErrorDetails = "%1 - %2".arg(errCode).arg(
+                                WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
                     fetchedPathModel = pathModel
                     // TODO: Handle errors here
                 }
@@ -376,6 +384,15 @@ QtObject {
                     root.ensNameResolved.connect(ensNameResolved)
                     root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
                     root.transactionStoreNew.transactionSent.connect(transactionSent)
+                }
+
+                function resetRouterValues() {
+                    simpleSendModal.estimatedCryptoFees = ""
+                    simpleSendModal.estimatedFiatFees = ""
+                    simpleSendModal.estimatedTime = ""
+                    simpleSendModal.routerErrorCode = ""
+                    simpleSendModal.routerError = ""
+                    simpleSendModal.routerErrorDetails = ""
                 }
             }
         }
