@@ -3,6 +3,7 @@ import QtTest 1.15
 
 import Models 1.0
 
+import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.stores 1.0
@@ -46,21 +47,6 @@ Item {
 
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
-        }
-
-        function test_search() {
-            verify(!!controlUnderTest)
-
-            const searchText = "dAi"
-            const originalCount = controlUnderTest.outputAssetsModel.count
-            controlUnderTest.searchString = searchText
-
-            // search yields 1 result
-            tryCompare(controlUnderTest.outputAssetsModel, "count", 1)
-
-            // resetting search string resets the view back to original count
-            controlUnderTest.searchString = ""
-            tryCompare(controlUnderTest.outputAssetsModel, "count", originalCount)
         }
 
         function test_showCommunityAssets() {
@@ -128,11 +114,14 @@ Item {
             verify(!!controlUnderTest)
 
             controlUnderTest.showAllTokens = true
-            const searchText = "DAI"
-            controlUnderTest.searchString = searchText
+            let count = 0
+            ModelUtils.forEach(controlUnderTest.outputAssetsModel, (modelItem) => {
+                if (modelItem.tokensKey === "DAI")
+                    count++
+            })
 
-            // search yields 1 result
-            tryCompare(controlUnderTest.outputAssetsModel, "count", 1)
+            // only one DAI entry should be present
+            compare(count, 1)
         }
     }
 }
