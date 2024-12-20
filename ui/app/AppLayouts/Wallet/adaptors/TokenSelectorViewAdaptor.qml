@@ -49,38 +49,28 @@ QObject {
     property var enabledChainIds: []
     property string accountAddress
     property bool showCommunityAssets
-    property string searchString
 
     // output model
     readonly property SortFilterProxyModel outputAssetsModel: SortFilterProxyModel {
 
         objectName: "TokenSelectorViewAdaptor_outputAssetsModel"
 
-        sourceModel: showAllTokens && !!plainTokensBySymbolModel ? concatModel : assetsObjectProxyModel
+        sourceModel: allTokensLoader.item && allTokensLoader.item.ModelCount.count > 0 ?
+                                    allTokensLoader.item :
+                                    (tokensWithBalance.ModelCount.count ? tokensWithBalance : null)
 
         proxyRoles: [
             FastExpressionRole {
-                name: "sectionId"
-                expression: {
-                    if (!model.currentBalance)
-                        return d.favoritesSectionId
-
-                    if (root.enabledChainIds.length === 1)
-                        return "section_%1".arg(root.enabledChainIds[0])
-                }
-                expectedRoles: ["currentBalance"]
-            },
-            FastExpressionRole {
                 name: "sectionName"
-                function getSectionName(sectionId, hasBalance) {
-                    if (sectionId === d.favoritesSectionId)
+                function getSectionName(hasBalance) {
+                    if (!hasBalance)
                         return qsTr("Popular assets")
 
-                    if (root.enabledChainIds.length === 1 && hasBalance)
-                        return qsTr("Your assets on %1").arg(ModelUtils.getByKey(root.flatNetworksModel, "chainId", root.enabledChainIds[0], "chainName"))
+                    if (firstEnabledChain.available)
+                        return qsTr("Your assets on %1").arg(firstEnabledChain.item.chainName)
                 }
-                expression: getSectionName(model.sectionId, !!model.currentBalance)
-                expectedRoles: ["sectionId", "currentBalance"]
+                expression: getSectionName(!!model.currentBalance)
+                expectedRoles: ["currentBalance"]
             },
             FastExpressionRole {
                 function tokenIcon(symbol) {
@@ -92,65 +82,43 @@ QObject {
             }
         ]
 
-        filters: [
-            AnyOf {
-                RegExpFilter {
-                    roleName: "name"
-                    pattern: root.searchString
-                    caseSensitivity: Qt.CaseInsensitive
-                }
-                RegExpFilter {
-                    roleName: "symbol"
-                    pattern: root.searchString
-                    caseSensitivity: Qt.CaseInsensitive
-                }
+        sorters: [
+            RoleSorter {
+                roleName: "currencyBalance"
+                ascendingOrder: false
             },
+            RoleSorter {
+                roleName: "name"
+            }
+            // FIXME #15277 sort by assetsController instead, to have the sorting/order as in the main wallet view
+        ]
+        filters: [
             ValueFilter {
                 roleName: "communityId"
                 value: ""
                 enabled: !root.showCommunityAssets
-            },
-            // duplicate tokens filter
-            FastExpressionFilter {
-                function hasDuplicateKey(tokensKey) {
-                    return ModelUtils.indexOf(assetsObjectProxyModel, "tokensKey", tokensKey) > -1
-                }
-
-                expression: {
-                    if (model.which_model === "plain_tokens_model") {
-                        return !hasDuplicateKey(model.tokensKey)
-                    }
-                    return true
-                }
-                expectedRoles: ["which_model", "tokensKey"]
-                enabled: root.showAllTokens
-            },
-            // remove tokens not available on selected network(s)
-            FastExpressionFilter {
-                function isPresentOnEnabledNetworks(addressPerChain) {
-                    if(!addressPerChain)
-                        return true
-                    return !!ModelUtils.getFirstModelEntryIf(
-                                addressPerChain,
-                                (addPerChain) => {
-                                    return root.enabledChainIds.includes(addPerChain.chainId)
-                                })
-                }
-                expression: isPresentOnEnabledNetworks(model.addressPerChain)
-                expectedRoles: ["addressPerChain"]
-                enabled: root.enabledChainIds.length
             }
         ]
+    }
 
+    Loader {
+        id: allTokensLoader
+        active: showAllTokens && !!plainTokensBySymbolModel
+        sourceComponent: allTokensComponent
+    }
+
+    SortFilterProxyModel {
+        id: tokensWithBalance
+        filters: [
+            ValueFilter {
+                roleName: "currencyBalance"
+                value: 0
+                inverted: true
+            }
+        ]
         sorters: [
-            RoleSorter {
-                roleName: "sectionId"
-            },
             FastExpressionSorter {
                 expression: {
-                    if (modelLeft.sectionId === d.favoritesSectionId && modelRight.sectionId === d.favoritesSectionId)
-                        return 0
-
                     const lhs = modelLeft.currencyBalance
                     const rhs = modelRight.currencyBalance
                     if (lhs < rhs)
@@ -159,13 +127,108 @@ QObject {
                         return -1
                     return 0
                 }
-                expectedRoles: ["currencyBalance", "sectionId"]
-            },
-            RoleSorter {
-                roleName: "name"
+                expectedRoles: ["currencyBalance"]
             }
-            // FIXME #15277 sort by assetsController instead, to have the sorting/order as in the main wallet view
         ]
+        sourceModel: ObjectProxyModel {
+            sourceModel: root.assetsModel
+
+            objectName: "TokenSelectorViewAdaptor_assetsObjectProxyModel"
+
+            delegate: SortFilterProxyModel {
+                id: delegateRoot
+
+                // properties exposed as roles to the top-level model
+                readonly property string tokensKey: model.tokensKey
+                readonly property int decimals: model.decimals
+                readonly property double currentBalance: aggregator.value
+                readonly property double currencyBalance: {
+                    if (!!model.marketDetails) {
+                        return currentBalance * model.marketDetails.currencyPrice.amount
+                    }
+                    return 0
+                }
+                readonly property int displayDecimals: !!model.marketDetails ? model.marketDetails.currencyPrice.displayDecimals : 0
+                readonly property string currencyBalanceAsString:
+                    currencyBalance ? LocaleUtils.currencyAmountToLocaleString({amount: currencyBalance, symbol: root.currentCurrency, displayDecimals})
+                                    : ""
+
+                readonly property var balances: this
+
+                sourceModel: joinModel
+
+                proxyRoles: [
+                    FastExpressionRole {
+                        name: "balanceAsDouble"
+                        function balanceToDouble(balance: string, decimals: int) {
+                            if (typeof balance !== 'string')
+                                return 0
+                            let bigIntBalance = AmountsArithmetic.fromString(balance)
+                            return AmountsArithmetic.toNumber(bigIntBalance, decimals)
+                        }
+                        expression: balanceToDouble(model.balance, delegateRoot.decimals)
+                        expectedRoles: ["balance"]
+                    },
+                    FastExpressionRole {
+                        name: "balanceAsString"
+                        function convert(amount: double) {
+                            return LocaleUtils.currencyAmountToLocaleString({amount, displayDecimals: 2}, {noSymbol: true})
+                        }
+
+                        expression: convert(model.balanceAsDouble)
+                        expectedRoles: ["balanceAsDouble"]
+                    }
+                ]
+
+                filters: [
+                    ValueFilter {
+                        roleName: "balance"
+                        value: "0"
+                        inverted: true
+                    },
+                    RegExpFilter {
+                        roleName: "account"
+                        pattern: root.accountAddress
+                        caseSensitivity: Qt.CaseInsensitive
+                        enabled: root.accountAddress !== ""
+                    },
+                    FastExpressionFilter {
+                        expression: root.enabledChainIds.includes(model.chainId)
+                        expectedRoles: ["chainId"]
+                        enabled: root.enabledChainIds.length
+                    }
+                ]
+
+                sorters: [
+                    // sort by biggest (sub)balance first
+                    RoleSorter {
+                        roleName: "balanceAsDouble"
+                        sortOrder: Qt.DescendingOrder
+                    }
+                ]
+
+                readonly property LeftJoinModel joinModel: LeftJoinModel {
+                    leftModel: model.balances
+                    rightModel: root.flatNetworksModel
+                    joinRole: "chainId"
+                }
+
+                readonly property SumAggregator aggregator: SumAggregator {
+                    model: delegateRoot
+                    roleName: "balanceAsDouble"
+                }
+            }
+
+            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString"]
+            expectedRoles: [ "tokensKey", "communityId", "balances", "decimals", "marketDetails"]
+        }
+    }
+
+    ModelEntry {
+        id: firstEnabledChain
+        sourceModel: root.flatNetworksModel
+        key: "chainId"
+        value: root.enabledChainIds.length ? root.enabledChainIds[0] : null
     }
 
     // internals
@@ -175,124 +238,46 @@ QObject {
         readonly property string favoritesSectionId: "section_zzz"
     }
 
-    readonly property RolesRenamingModel renamedTokensBySymbolModel: RolesRenamingModel {
-        sourceModel: root.plainTokensBySymbolModel || null
-        mapping: [
-            RoleRename {
-                from: "key"
-                to: "tokensKey"
-            }
-        ]
-    }
-
-    ConcatModel {
-        id: concatModel
-        propagateResets: true
-        sources: [
-            SourceModel {
-                model: root.renamedTokensBySymbolModel
-                markerRoleValue: "plain_tokens_model"
-            },
-            SourceModel {
-                model: assetsObjectProxyModel
-                markerRoleValue: "wallet_assets_model"
-            }
-        ]
-
-        markerRoleName: "which_model"
-        expectedRoles: ["tokensKey", "name", "symbol", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "communityId", "marketDetails"]
-    }
-
-    ObjectProxyModel {
-        id: assetsObjectProxyModel
-        sourceModel: root.assetsModel
-
-        objectName: "TokenSelectorViewAdaptor_assetsObjectProxyModel"
-
-        delegate: SortFilterProxyModel {
-            id: delegateRoot
-
-            // properties exposed as roles to the top-level model
-            readonly property int decimals: model.decimals
-            readonly property double currentBalance: aggregator.value
-            readonly property double currencyBalance: {
-                if (!!model.marketDetails) {
-                    return currentBalance * model.marketDetails.currencyPrice.amount
+    Component {
+        id: allTokensComponent
+        LeftJoinModel {
+            id: allTokens
+            rightModel: tokensWithBalance
+            leftModel: RolesRenamingModel {
+                id: renamedTokensBySymbolModel
+                sourceModel: SortFilterProxyModel {
+                    sourceModel: root.plainTokensBySymbolModel
+                    filters: [
+                        // remove tokens not available on selected network(s)
+                        FastExpressionFilter {
+                            function isPresentOnEnabledNetworks(addressPerChain) {
+                                if(!addressPerChain)
+                                    return true
+                                if (root.enabledChainIds.length === 0)
+                                    return true
+                                return !!ModelUtils.getFirstModelEntryIf(
+                                            addressPerChain,
+                                            (addPerChain) => {
+                                                return root.enabledChainIds.includes(addPerChain.chainId)
+                                            })
+                            }
+                            expression: {
+                                root.enabledChainIds
+                                return isPresentOnEnabledNetworks(model.addressPerChain)
+                            }
+                            expectedRoles: ["addressPerChain"]
+                        }
+                    ]
                 }
-                return 0
-            }
-            readonly property int displayDecimals: !!model.marketDetails ? model.marketDetails.currencyPrice.displayDecimals : 0
-            readonly property string currencyBalanceAsString:
-                currencyBalance ? LocaleUtils.currencyAmountToLocaleString({amount: currencyBalance, symbol: root.currentCurrency, displayDecimals})
-                                : ""
-
-            readonly property var balances: this
-
-            sourceModel: joinModel
-
-            proxyRoles: [
-                FastExpressionRole {
-                    name: "balanceAsDouble"
-                    function balanceToDouble(balance: string, decimals: int) {
-                        if (typeof balance !== 'string')
-                            return 0
-                        let bigIntBalance = AmountsArithmetic.fromString(balance)
-                        return AmountsArithmetic.toNumber(bigIntBalance, decimals)
+                mapping: [
+                    RoleRename {
+                        from: "key"
+                        to: "tokensKey"
                     }
-                    expression: balanceToDouble(model.balance, delegateRoot.decimals)
-                    expectedRoles: ["balance"]
-                },
-                FastExpressionRole {
-                    name: "balanceAsString"
-                    function convert(amount: double) {
-                        return LocaleUtils.currencyAmountToLocaleString({amount, displayDecimals: 2}, {noSymbol: true})
-                    }
-
-                    expression: convert(model.balanceAsDouble)
-                    expectedRoles: ["balanceAsDouble"]
-                }
-            ]
-
-            filters: [
-                ValueFilter {
-                    roleName: "balance"
-                    value: "0"
-                    inverted: true
-                },
-                FastExpressionFilter {
-                    expression: root.enabledChainIds.includes(model.chainId)
-                    expectedRoles: ["chainId"]
-                    enabled: root.enabledChainIds.length
-                },
-                RegExpFilter {
-                    roleName: "account"
-                    pattern: root.accountAddress
-                    caseSensitivity: Qt.CaseInsensitive
-                    enabled: root.accountAddress !== ""
-                }
-            ]
-
-            sorters: [
-                // sort by biggest (sub)balance first
-                RoleSorter {
-                    roleName: "balanceAsDouble"
-                    sortOrder: Qt.DescendingOrder
-                }
-            ]
-
-            readonly property LeftJoinModel joinModel: LeftJoinModel {
-                leftModel: model.balances
-                rightModel: root.flatNetworksModel
-                joinRole: "chainId"
+                ]
             }
-
-            readonly property SumAggregator aggregator: SumAggregator {
-                model: delegateRoot
-                roleName: "balanceAsDouble"
-            }
+            joinRole: "tokensKey"
+            rolesToJoin: ["tokensKey", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
         }
-
-        exposedRoles: ["balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString"]
-        expectedRoles: ["communityId", "balances", "decimals", "marketDetails"]
     }
 }

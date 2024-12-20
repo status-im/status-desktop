@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -93,7 +94,7 @@ Control {
 
             spacing: 4
 
-            model: sfpm
+            model: sfpm.ModelCount.count > 0 ? sfpm : null
             section.property: "sectionName"
 
             section.delegate: TokenSelectorSectionDelegate {

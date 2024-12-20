@@ -21,15 +21,8 @@ Item {
     width: 1200
     height: 800
 
-    ListModel {
+    TokensBySymbolModel {
         id: plainTokensModel
-        ListElement {
-            key: "aave"
-            name: "Aave"
-            symbol: "AAVE"
-            image: "https://cryptologos.cc/logos/aave-aave-logo.png"
-            communityId: ""
-        }
     }
 
     QtObject {

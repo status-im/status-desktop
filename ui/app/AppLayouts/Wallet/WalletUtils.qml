@@ -42,6 +42,9 @@ QtObject {
       rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
       */
     function calculateMaxSafeSendAmount(value, symbol) {
+        if (!value) {
+            return 0
+        }
         if (symbol !== Constants.ethToken || value === 0) {
             return value
         }
