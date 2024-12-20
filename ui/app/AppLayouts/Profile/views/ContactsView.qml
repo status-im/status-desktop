@@ -75,6 +75,7 @@ SettingsContentBase {
             StatusTabButton {
                 readonly property int panelUsage: Constants.contactsPanelUsage.mutualContacts
 
+                objectName: "ContactsView_Contacts_Button"
                 width: implicitWidth
                 text: qsTr("Contacts")
             }

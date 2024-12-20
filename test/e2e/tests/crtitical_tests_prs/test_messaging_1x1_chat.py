@@ -67,7 +67,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             contacts_settings.open_pending_requests()
             assert Messaging.CONTACT_REQUEST_SENT.value == contacts_settings.contact_items[0].object.contactText
             assert len(contacts_settings.contact_items) == 1
-            assert contacts_settings.pending_request_sent_list_title == 'Sent'
+            assert str(contacts_settings.section_header.object.text) == 'Sent'
             main_window.hide()
 
         with step(f'Verify that contact request was received by {user_two.name}'):
@@ -77,7 +77,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             messaging_settings = settings.left_panel.open_messaging_settings()
             contacts_settings = messaging_settings.open_contacts_settings()
             contacts_settings.open_pending_requests()
-            assert contacts_settings.pending_request_received_list_title == 'Received'
+            assert str(contacts_settings.section_header.object.text) == 'Received'
             assert user_one.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
 
@@ -96,7 +96,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
         with step(f'Verify that contact appeared in contacts list of {user_two.name} in messaging settings'):
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
-            assert contacts_settings.contacts_list_title == 'Contacts'
+            assert str(contacts_settings.section_header.object.text) == 'Contacts'
             assert user_one.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
             main_window.hide()
@@ -106,7 +106,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             main_window.prepare()
             contacts_settings = main_window.left_panel.open_settings().left_panel.open_messaging_settings().open_contacts_settings()
             contacts_settings.open_contacts()
-            assert contacts_settings.contacts_list_title == 'Contacts'
+            assert str(contacts_settings.section_header.object.text) == 'Contacts'
             assert user_two.name == contacts_settings.contact_items[0].contact
             assert len(contacts_settings.contact_items) == 1
 
