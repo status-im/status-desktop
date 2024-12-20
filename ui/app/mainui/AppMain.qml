@@ -44,6 +44,7 @@ import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Wallet.popups 1.0 as WalletPopups
 import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
+import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
 
@@ -601,6 +602,9 @@ Item {
             }
             return username
         }
+
+        // TODO: Remove this and adapt new mechanism to launch BuyModal as done for SendModal
+        property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {}
     }
 
     Settings {
@@ -681,15 +685,21 @@ Item {
 
         // TODO remove this call to mainModule under #16919
         fnResolveENS: function(ensName, uuid) {
-            mainModule.resolveENS(name, uuid)
+            appMain.rootStore.resolveENS(ensName, uuid)
+        }
+
+        onLaunchBuyFlowRequested: {
+            d.buyFormData.selectedWalletAddress = accountAddress
+            d.buyFormData.selectedNetworkChainId = chainId
+            d.buyFormData.selectedTokenKey = tokenKey
+            Global.openBuyCryptoModalRequested(d.buyFormData)
         }
 
         Component.onCompleted: {
             // It's requested from many nested places, so as a workaround we use
             // Global to shorten the path via global signal.
             Global.sendToRecipientRequested.connect(sendToRecipient)
-            // TODO remove this call to mainModule under #16919
-            mainModule.resolvedENS.connect(ensNameResolved)
+            appMain.rootStore.ensNameResolved.connect(ensNameResolved)
         }
     }
 
