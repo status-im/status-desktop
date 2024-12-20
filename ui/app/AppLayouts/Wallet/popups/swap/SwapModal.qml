@@ -97,7 +97,6 @@ StatusDialog {
     }
     onClosed: {
         root.swapAdaptor.stopUpdatesForSuggestedRoute()
-        root.swapAdaptor.reset()
         d.addMetricsEvent("popup closed")
     }
 

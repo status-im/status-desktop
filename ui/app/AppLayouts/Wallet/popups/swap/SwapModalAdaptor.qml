@@ -68,7 +68,7 @@ QObject {
             },
             FastExpressionRole {
                 name: "currencyBalanceDouble"
-                expression: model.currencyBalance.amount
+                expression: model.currencyBalance ? model.currencyBalance.amount : 0
                 expectedRoles: ["currencyBalance"]
             },
             FastExpressionRole {
