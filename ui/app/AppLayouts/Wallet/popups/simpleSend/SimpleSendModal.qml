@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -87,6 +88,12 @@ StatusDialog {
     property string estimatedFiatFees
     /** input property to set estimated fees in crypto **/
     property string estimatedCryptoFees
+    /** input property to set router error title **/
+    property string routerError: ""
+    /** input property to set router error details **/
+    property string routerErrorDetails: ""
+    /** input property to set router error code **/
+    property string routerErrorCode
 
     /** property to set currently selected send type **/
     property int sendType: Constants.SendType.Transfer
@@ -128,6 +135,8 @@ StatusDialog {
     signal reviewSendClicked()
     /** Output signal to inform that the forms been updated **/
     signal formChanged()
+    /** Output signal to launch buy flow **/
+    signal launchBuyFlow()
 
     QtObject {
         id: d
@@ -194,7 +203,7 @@ StatusDialog {
             }
         })
 
-        readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1500, function() {
+        readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1000, function() {
             root.selectedAmount = amountToSend.text
         })
 
@@ -224,6 +233,8 @@ StatusDialog {
             root.selectedRecipientAddress,
             root.selectedAmount]
         onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
+
+        readonly property bool errNotEnoughGas: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
     }
 
     width: 556
@@ -461,6 +472,7 @@ StatusDialog {
                         cryptoFees: root.estimatedCryptoFees
                         fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
+                        error: d.errNotEnoughGas
                     }
                     visible: root.allValuesFilledCorrectly
                 }
@@ -474,8 +486,33 @@ StatusDialog {
         estimatedTime: root.estimatedTime
         estimatedFees: root.estimatedFiatFees
 
+        error: d.errNotEnoughGas
+        errorTags: amountToSend.markAsInvalid || !!root.routerErrorCode ?
+                       errorTagsModel: null
+
         loading: root.routesLoading && root.allValuesFilledCorrectly
 
         onReviewSendClicked: root.reviewSendClicked()
+    }
+
+    ObjectModel {
+        id: errorTagsModel
+        RouterErrorTag {
+            errorTitle: qsTr("Insufficient funds for send transaction")
+            buttonText: qsTr("Add assets")
+            onButtonClicked: root.launchBuyFlow()
+
+            visible: amountToSend.markAsInvalid
+        }
+        RouterErrorTag {
+            errorTitle: root.routerError
+            errorDetails: !d.errNotEnoughGas ?
+                              root.routerErrorDetails: ""
+            buttonText: qsTr("Add ETH")
+            expandable: !d.errNotEnoughGas
+            onButtonClicked: root.launchBuyFlow()
+
+            visible: !!root.routerErrorCode
+        }
     }
 }

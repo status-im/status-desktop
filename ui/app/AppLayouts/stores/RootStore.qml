@@ -220,8 +220,8 @@ QtObject {
         mainModuleInst.setActiveSectionById(communityId);
     }
 
-    function resolveENS(value) {
-        mainModuleInst.resolveENS(value, "")
+    function resolveENS(value, uuid = "") {
+        mainModuleInst.resolveENS(value, uuid)
     }
 
     function windowActivated() {
@@ -258,5 +258,10 @@ QtObject {
 
     function promoteSelfToControlNode(communityId) {
         communitiesModuleInst.promoteSelfToControlNode(communityId)
+    }
+
+    signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
+    Component.onCompleted: {
+        mainModuleInst.resolvedENS.connect(ensNameResolved)
     }
 }
