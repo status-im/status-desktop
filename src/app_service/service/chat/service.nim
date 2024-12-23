@@ -328,7 +328,7 @@ QtObject:
     # TODO: Signal is not handled anywhere
     self.events.emit(SIGNAL_MESSAGE_REMOVE, MessageArgs(id: messageId, channel: chats[0].id))
 
-  proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
+  proc parseChatResponseAndEmit*(self: Service, response: RpcResponse[JsonNode]) =
     var (chats, _) = self.parseChatResponse(response)
     self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
@@ -407,7 +407,7 @@ QtObject:
       let chat = self.chats[chatId]
       if chat.chatType == chat_dto.ChatType.PrivateGroupChat:
         let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
-        self.emitUpdate(leaveGroupResponse)
+        self.parseChatResponseAndEmit(leaveGroupResponse)
 
       discard status_chat.deactivateChat(chatId, preserveHistory = chat.chatType == chat_dto.ChatType.OneToOne)
 
