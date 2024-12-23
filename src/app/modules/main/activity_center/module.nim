@@ -3,9 +3,8 @@ import NimQml, Tables, json, sequtils
 import ./io_interface, ./view, ./controller, ./token_data_item
 import ../io_interface as delegate_interface
 import ./item as notification_item
-import ../../shared_models/message_item as msg_item
+import ../../shared_models/message_model
 import ../../shared_models/message_item_qobject as msg_item_qobj
-import ../../shared_models/message_transaction_parameters_item
 import ../../../global/global_singleton
 import ../../../global/app_sections_config as conf
 import ../../../core/eventemitter
@@ -100,69 +99,27 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     else:
       quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
-  var imagesAlbum: seq[string]
+  var albumImages: seq[string]
   var albumMessageIds: seq[string]
   if message.albumId != "":
     for msg in albumMessages:
-      imagesAlbum.add(msg.image)
+      albumImages.add(msg.image)
       albumMessageIds.add(msg.id)
 
-  return msg_item_qobj.newMessageItem(msg_item.initMessageItem(
-    message.id,
-    communityId, # we don't received community id via `activityCenterNotifications` api call
-    message.chatId,
-    message.responseTo,
-    message.`from`,
-    contactDetails.defaultDisplayName,
-    contactDetails.optionalName,
-    contactDetails.icon,
-    contactDetails.colorHash,
+  let messageItem = message_model.createMessageItemFromDtos(
+    message,
+    communityId,
+    contactDetails,
     contactDetails.isCurrentUser,
-    contactDetails.dto.added,
-    message.outgoingStatus,
-    self.controller.getRenderedText(message.parsedText, communityChats),
-    self.controller.replacePubKeysWithDisplayNames(message.text),
-    message.parsedText,
-    message.image,
-    message.containsContactMentions(),
-    message.seen,
-    timestamp = message.timestamp,
-    clock = message.clock,
-    message.contentType,
-    message.messageType,
-    message.contactRequestState,
-    message.sticker.url,
-    message.sticker.pack,
-    message.links,
-    message.linkPreviews,
-    newTransactionParametersItem("","","","","","",-1,""),
-    message.mentionedUsersPks,
-    contactDetails.dto.trustStatus,
-    contactDetails.dto.ensVerified,
-    message.discordMessage,
-    resendError = "",
-    message.deleted,
-    message.deletedBy,
-    deletedByContactDetails = ContactDetails(),
-    message.pinnedBy,
-    message.mentioned,
-    message.quotedMessage.`from`,
-    message.quotedMessage.text,
-    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
-    message.quotedMessage.contentType,
-    message.quotedMessage.deleted,
-    message.quotedMessage.discordMessage,
-    quotedMessageAuthorDetails,
-    message.quotedMessage.albumImages,
-    message.quotedMessage.albumImagesCount,
-    message.albumId,
-    imagesAlbum,
+    renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats),
+    clearText = self.controller.replacePubKeysWithDisplayNames(message.text),
+    albumImages,
     albumMessageIds,
-    message.albumImagesCount,
-    message.bridgeMessage,
-    message.quotedMessage.bridgeMessage,
-    message.paymentRequests
-    ))
+    deletedByContactDetails = ContactDetails(),
+    quotedMessageAuthorDetails,
+    quotedRenderedMessageText = self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
+  )
+  return msg_item_qobj.newMessageItem(messageItem)
 
 method convertToItems*(
     self: Module,

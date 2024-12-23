@@ -7,7 +7,6 @@ import model as chats_model
 import item as chat_item
 import ../../shared_models/message_item as member_msg_item
 import ../../shared_models/message_model as member_msg_model
-import ../../shared_models/message_transaction_parameters_item
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
 import ../../shared_models/token_permissions_model
@@ -156,68 +155,21 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
       isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
-  return member_msg_item.initMessageItem(
-    message.id,
+
+  return member_msg_model.createMessageItemFromDtos(
+    message,
     message.communityId,
-    message.chatId,
-    message.responseTo,
-    message.`from`,
-    contactDetails.defaultDisplayName,
-    contactDetails.optionalName,
-    contactDetails.icon,
-    contactDetails.colorHash,
+    contactDetails,
     isCurrentUser,
-    contactDetails.dto.added,
-    message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
-    message.text,
-    message.parsedText,
-    message.image,
-    message.containsContactMentions(),
-    message.seen,
-    timestamp = message.timestamp,
-    clock = message.clock,
-    message.contentType,
-    message.messageType,
-    message.contactRequestState,
-    message.sticker.url,
-    message.sticker.pack,
-    message.links,
-    message.linkPreviews,
-    newTransactionParametersItem(message.transactionParameters.id,
-      message.transactionParameters.fromAddress,
-      message.transactionParameters.address,
-      transactionContract,
-      transactionValue,
-      message.transactionParameters.transactionHash,
-      message.transactionParameters.commandState,
-      message.transactionParameters.signature),
-    message.mentionedUsersPks,
-    contactDetails.dto.trustStatus,
-    contactDetails.dto.ensVerified,
-    message.discordMessage,
-    resendError = "",
-    message.deleted,
-    message.deletedBy,
+    clearText = message.text,
+    albumImages = @[],
+    albumMessageIds = @[],
     deletedByContactDetails = ContactDetails(),
-    message.pinnedBy,
-    message.mentioned,
-    message.quotedMessage.`from`,
-    message.quotedMessage.text,
-    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
-    message.quotedMessage.contentType,
-    message.quotedMessage.deleted,
-    message.quotedMessage.discordMessage,
     quotedMessageAuthorDetails,
-    message.quotedMessage.albumImages,
-    message.quotedMessage.albumImagesCount,
-    message.albumId,
-    if len(message.albumId) == 0: @[] else: @[message.image],
-    if len(message.albumId) == 0: @[] else: @[message.id],
-    message.albumImagesCount,
-    message.bridgeMessage,
-    message.quotedMessage.bridgeMessage,
-    message.paymentRequests
+    self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
+    transactionContract,
+    transactionValue,
   )
 
 method delete*(self: Module) =

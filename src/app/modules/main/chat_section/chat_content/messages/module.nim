@@ -2,10 +2,8 @@ import NimQml, chronicles, sequtils, uuids, sets, times, tables, system
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import ../../../../shared_models/message_model
-import ../../../../shared_models/message_item
+import ../../../../shared_models/[message_model, message_item]
 import ../../../../shared_models/message_reaction_item
-import ../../../../shared_models/message_transaction_parameters_item
 import ../../../../shared_models/link_preview_model
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
@@ -16,6 +14,7 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
+import ../../../../../../app_service/service/contacts/dto/contact_details
 import ../../../../../../app_service/common/types
 import ../../../../../global/utils as utils
 import ../../../../../global/global_singleton
@@ -149,69 +148,21 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
       if message.transactionParameters.fromAddress != "":
         isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
 
-    var item = initMessageItem(
-      message.id,
-      message.chatId,
+    var item = message_model.createMessageItemFromDtos(
+      message,
       message.communityId,
-      message.responseTo,
-      message.`from`,
-      sender.defaultDisplayName,
-      sender.optionalName,
-      sender.icon,
-      sender.colorHash,
-      (isCurrentUser and message.contentType != ContentType.DiscordMessage),
-      sender.dto.added,
-      message.outgoingStatus,
+      sender,
+      isCurrentUser,
       renderedMessageText,
-      message.text,
-      message.parsedText,
-      message.image,
-      message.containsContactMentions(),
-      message.seen,
-      timestamp = message.timestamp,
-      clock = message.clock,
-      message.contentType,
-      message.messageType,
-      message.contactRequestState,
-      sticker = message.sticker.url,
-      message.sticker.pack,
-      message.links,
-      message.linkPreviews,
-      newTransactionParametersItem(message.transactionParameters.id,
-        message.transactionParameters.fromAddress,
-        message.transactionParameters.address,
-        transactionContract,
-        transactionValue,
-        message.transactionParameters.transactionHash,
-        message.transactionParameters.commandState,
-        message.transactionParameters.signature),
-      message.mentionedUsersPks(),
-      sender.dto.trustStatus,
-      sender.dto.ensVerified,
-      message.discordMessage,
-      resendError = "",
-      message.deleted,
-      message.deletedBy,
+      clearText = message.text,
+      albumImages = @[],
+      albumMessageIds = @[],
       deletedByContactDetails,
-      message.pinnedBy,
-      message.mentioned,
-      message.quotedMessage.`from`,
-      message.quotedMessage.text,
-      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
-      message.quotedMessage.contentType,
-      message.quotedMessage.deleted,
-      message.quotedMessage.discordMessage,
       quotedMessageAuthorDetails,
-      message.quotedMessage.albumImages,
-      message.quotedMessage.albumImagesCount,
-      message.albumId,
-      if (len(message.albumId) == 0): @[] else: @[message.image],
-      if (len(message.albumId) == 0): @[] else: @[message.id],
-      message.albumImagesCount,
-      message.bridgeMessage,
-      message.quotedMessage.bridgeMessage,
-      message.paymentRequests
-      )
+      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
+      transactionContract,
+      transactionValue,
+    )
 
     self.updateLinkPreviewsContacts(item, requestFromMailserver = item.seen)
     self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
@@ -239,61 +190,21 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
 
 proc createFetchMoreMessagesItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
-  result = initMessageItem(
-    FETCH_MORE_MESSAGES_MESSAGE_ID,
+  result = message_model.createMessageItemFromDtos(
+    message = MessageDto(
+      id: FETCH_MORE_MESSAGES_MESSAGE_ID,
+      clock: FETCH_MORE_MESSAGES_CLOCK,
+      contentType: ContentType.FetchMoreMessagesButton,
+    ),
     communityId = "",
-    chatId = "",
-    responseToMessageWithId = "",
-    senderId = chatDto.id,
-    senderDisplayName = "",
-    senderOptionalName = "",
-    senderIcon = "",
-    senderColorHash = "",
-    amISender = false,
-    senderIsAdded = false,
-    outgoingStatus = "",
-    text = "",
-    unparsedText = "",
-    parsedText = @[],
-    image = "",
-    messageContainsMentions = false,
-    seen = true,
-    timestamp = 0,
-    clock = FETCH_MORE_MESSAGES_CLOCK,
-    ContentType.FetchMoreMessagesButton,
-    messageType = -1,
-    contactRequestState = 0,
-    sticker = "",
-    stickerPack = -1,
-    links = @[],
-    linkPreviews = @[],
-    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
-    mentionedUsersPks = @[],
-    senderTrustStatus = TrustStatus.Unknown,
-    senderEnsVerified = false,
-    DiscordMessage(),
-    resendError = "",
-    deleted = false,
-    deletedBy = "",
-    deletedByContactDetails = ContactDetails(),
-    pinnedBy = "",
-    mentioned = false,
-    quotedMessageFrom = "",
-    quotedMessageText = "",
-    quotedMessageParsedText = "",
-    quotedMessageContentType = ContentType.Unknown,
-    quotedMessageDeleted = false,
-    quotedMessageDiscordMessage = DiscordMessage(),
-    quotedMessageAuthorDetails = ContactDetails(),
-    quotedMessageAlbumMessageImages = @[],
-    quotedMessageAlbumImagesCount = 0,
-    albumId = "",
-    albumMessageImages = @[],
-    albumMessageIds = @[],
-    albumImagesCount = 0,
-    BridgeMessage(),
-    BridgeMessage(),
-    paymentRequests = @[]
+    sender = ContactDetails(
+      dto: ContactsDto(
+        id: chatDto.id,
+      ),
+    ),
+    isCurrentUser = false,
+    renderedMessageText = "",
+    clearText = "",
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -303,67 +214,32 @@ proc createChatIdentifierItem(self: Module): Item =
   var chatIcon = ""
   var senderColorHash = ""
   var senderIsAdded = false
-  if(chatDto.chatType == ChatType.OneToOne):
+  if chatDto.chatType == ChatType.OneToOne:
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.dto.added
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
     senderColorHash = sender.colorHash
 
-  result = initMessageItem(
-    CHAT_IDENTIFIER_MESSAGE_ID,
+  result = message_model.createMessageItemFromDtos(
+    message = MessageDto(
+      id: CHAT_IDENTIFIER_MESSAGE_ID,
+      clock: CHAT_IDENTIFIER_CLOCK,
+      contentType: ContentType.ChatIdentifier,
+      seen: true,
+    ),
     communityId = "",
-    chatId = "",
-    responseToMessageWithId = "",
-    senderId = chatDto.id,
-    senderDisplayName = chatName,
-    senderOptionalName = "",
-    senderIcon = chatIcon,
-    senderColorHash = senderColorHash,
-    amISender = false,
-    senderIsAdded,
-    outgoingStatus = "",
-    text = "",
-    unparsedText = "",
-    parsedText = @[],
-    image = "",
-    messageContainsMentions = false,
-    seen = true,
-    timestamp = 0,
-    clock = CHAT_IDENTIFIER_CLOCK,
-    ContentType.ChatIdentifier,
-    messageType = -1,
-    contactRequestState = 0,
-    sticker = "",
-    stickerPack = -1,
-    links = @[],
-    linkPreviews = @[],
-    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
-    mentionedUsersPks = @[],
-    senderTrustStatus = TrustStatus.Unknown,
-    senderEnsVerified = false,
-    DiscordMessage(),
-    resendError = "",
-    deleted = false,
-    deletedBy = "",
-    deletedByContactDetails = ContactDetails(),
-    pinnedBy = "",
-    mentioned = false,
-    quotedMessageFrom = "",
-    quotedMessageText = "",
-    quotedMessageParsedText = "",
-    quotedMessageContentType = ContentType.Unknown,
-    quotedMessageDeleted = false,
-    quotedMessageDiscordMessage = DiscordMessage(),
-    quotedMessageAuthorDetails = ContactDetails(),
-    quotedMessageAlbumMessageImages = @[],
-    quotedMessageAlbumImagesCount = 0,
-    albumId = "",
-    albumMessageImages = @[],
-    albumMessageIds = @[],
-    albumImagesCount = 0,
-    bridgeMessage = BridgeMessage(),
-    quotedBridgeMessage = BridgeMessage(),
-    paymentRequests = @[]
+    sender = ContactDetails(
+    defaultDisplayName: chatName,
+    icon: chatIcon,
+    colorHash: senderColorHash,
+    dto: ContactsDto(
+      id: chatDto.id,
+      added: senderIsAdded,
+    ),
+  ),
+    isCurrentUser = false,
+    renderedMessageText = "",
+    clearText = "",
   )
 
 proc checkIfMessageLoadedAndScroll(self: Module) =
