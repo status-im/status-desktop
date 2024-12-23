@@ -60,6 +60,7 @@ Item {
     property bool paymentRequestFeatureEnabled
 
     signal openStickerPackPopup(string stickerPackId)
+    signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -209,7 +210,7 @@ Item {
             if (!asset)
                 return "0"
             const num = AmountsArithmetic.toNumber(amount, asset.decimals)
-            return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSynbol: true})
+            return root.rootStore.currencyStore.formatCurrencyAmount(num, symbol, {noSymbol: true})
         }
     }
 
@@ -259,6 +260,7 @@ Item {
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
+                        onTokenPaymentRequested: root.tokenPaymentRequested(recipientAddress, symbol, rawAmount, chainId)
                         onShowReplyArea: (messageId) => {
                                             d.showReplyArea(messageId)
                                         }

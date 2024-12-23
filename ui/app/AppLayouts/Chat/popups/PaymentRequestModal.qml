@@ -132,6 +132,7 @@ StatusDialog {
                                amount, root.selectedTokenKey)
 
             dividerVisible: true
+            selectedSymbol: d.isSelectedHoldingValidAsset ? d.selectedHolding.item.symbol : ""
 
             AssetSelector {
                 id: holdingSelector

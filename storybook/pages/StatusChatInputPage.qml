@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import SortFilterProxyModel 0.2
 
 import Storybook 1.0
 import Models 1.0
@@ -79,6 +80,7 @@ SplitView {
 
                 enabled: enabledCheckBox.checked
                 linkPreviewModel: fakeLinksModel
+                paymentRequestModel: d.paymentRequestModel
                 urlsList: {
                     urlsModelChangeTracker.revision
                     return SQUtils.ModelUtils.modelToFlatArray(fakeLinksModel, "url")
@@ -128,6 +130,9 @@ SplitView {
                     fakeLinksModel.setProperty(index, "unfurled", false)
                     fakeLinksModel.setProperty(index, "immutable", true)
                 }
+                onRemovePaymentRequestPreview: (index) => {
+                    d.paymentRequestModel.remove(index)
+                }
             }
         }
 
@@ -150,6 +155,8 @@ SplitView {
                 }
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
+
+            property var paymentRequestModel: ListModel {}
 
             property bool linkPreviewsEnabled: linkPreviewSwitch.checked && !askToEnableLinkPreviewSwitch.checked
             onLinkPreviewsEnabledChanged: {
@@ -198,6 +205,9 @@ SplitView {
                 }
                 TabButton {
                     text: "Users"
+                }
+                TabButton {
+                    text: "payment\nrequest"
                 }
             }
 
@@ -270,6 +280,32 @@ SplitView {
                     onRemoveClicked: fakeUsersModel.remove(index, 1)
                     onRemoveAllClicked: fakeUsersModel.clear()
                     onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    Button {
+                        text: "Add payment request"
+                        enabled: paymentRequestAmount.text !== "" && paymentRequestAsset.text !== ""
+                        onClicked: {
+                            d.paymentRequestModel.append({
+                                "amount": paymentRequestAmount.text,
+                                "symbol": paymentRequestAsset.text
+                            })
+                        }
+                    }
+
+                    Label { text: "Amount:" }
+                    TextField {
+                        id: paymentRequestAmount
+                    }
+
+                    Label { text: "Asset:" }
+                    TextField {
+                        id: paymentRequestAsset
+                    }
                 }
             }
             Label {
