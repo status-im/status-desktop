@@ -58,6 +58,24 @@ SQUtils.QObject {
         return true
     }
 
+    function getProposalChains(key) {
+        const siweLifeCycle = d.getSiweLifeCycle(key)
+        if (!siweLifeCycle) {
+            return []
+        }
+
+        return DAppsHelpers.extractChainsFromAuthenticationProposal(siweLifeCycle.request)
+    }
+
+    function getDAppUrl(key) {
+        const siweLifeCycle = d.getSiweLifeCycle(key)
+        if (!siweLifeCycle) {
+            return ""
+        }
+
+        return ((((siweLifeCycle.request || {}).params || {}).requester || {}).metadata || {}).url || ""
+    }
+
     Instantiator {
         id: requestLifecycle
         model: d.requests

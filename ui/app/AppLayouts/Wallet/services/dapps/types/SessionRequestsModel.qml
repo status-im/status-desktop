@@ -4,8 +4,11 @@ import QtQuick 2.15
 ListModel {
     id: root
 
+    signal requestAdded(var request)
+
     function enqueue(request) {
         root.append({requestId: request.requestId, requestItem: request});
+        requestAdded(request);
     }
 
     function dequeue() {
