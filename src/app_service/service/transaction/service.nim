@@ -6,25 +6,27 @@ import backend/backend
 import backend/eth
 import backend/wallet
 
-import app_service/common/utils as common_utils
-import app_service/common/types as common_types
-
 import app/core/[main]
 import app/core/signals/types
 import app/core/tasks/[qt, threadpool]
 import app/global/global_singleton
 import app/global/app_signals
 
+import app_service/common/wallet_constants as common_wallet_constants
+import app_service/common/utils as common_utils
+import app_service/common/types as common_types
+import app_service/service/currency/service as currency_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/settings/service as settings_service
+import app_service/service/eth/utils as eth_utils
 import ./dto as transaction_dto
 import ./dtoV2
 import ./dto_conversion
 import ./router_transactions_dto
-import app_service/service/eth/utils as eth_utils
 
+import app/modules/shared_models/currency_amount
 
 export transaction_dto, router_transactions_dto
 export transactions.TransactionsSignatures
@@ -46,7 +48,7 @@ const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 const SIGNAL_OWNER_TOKEN_SENT* = "ownerTokenSent"
 const SIGNAL_TRANSACTION_STATUS_CHANGED* = "transactionStatusChanged"
 
-const InternalErrorCode = -1
+const InternalErrorCode* = -1
 
 type TokenTransferMetadata* = object
   tokenName*: string
@@ -114,9 +116,13 @@ type
 type
   SuggestedRoutesArgs* = ref object of Args
     uuid*: string
+    sendType*: SendType
     suggestedRoutes*: SuggestedRoutesDto
     errCode*: string
     errDescription*: string
+    # Below fields used for community related tx
+    totalCostEthCurrency*: CurrencyAmount
+    totalCostFiatCurrency*: CurrencyAmount
 
 type
   TransactionDecodedArgs* = ref object of Args
@@ -137,10 +143,11 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
+    currencyService: currency_service.Service
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
-    uuidOfTheLastRequestForSuggestedRoutes: string
+    lastRequestForSuggestedRoutes: tuple[uuid: string, sendType: SendType]
 
   ## Forward declarations
   proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
@@ -152,6 +159,7 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
+      currencyService: currency_service.Service,
       networkService: network_service.Service,
       settingsService: settings_service.Service,
       tokenService: token_service.Service,
@@ -160,6 +168,7 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
+    result.currencyService = currencyService
     result.networkService = networkService
     result.settingsService = settingsService
     result.tokenService = tokenService
@@ -345,8 +354,25 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
+  proc updateCommunityRoute(self: Service, data: var SuggestedRoutesArgs, route: seq[TransactionPathDtoV2]) =
+    var totalFee: UInt256
+    for p in route:
+      totalFee += p.txTotalFee
+    let totalFeeInEth = wei2Eth(totalFee)
+    let totalFeeAsFloat = parseFloat(totalFeeInEth)
+    let ethFormat = self.currencyService.getCurrencyFormat(common_wallet_constants.ETH_SYMBOL)
+    data.totalCostEthCurrency = newCurrencyAmount(totalFeeAsFloat, ethFormat.symbol, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes)
+    let currencyFormat = self.currencyService.getCurrencyFormat(self.settingsService.getCurrency())
+    data.totalCostFiatCurrency = newCurrencyAmount(totalFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+
+  proc emitSuggestedRoutesReadySignal*(self: Service, data: SuggestedRoutesArgs) =
+    if self.lastRequestForSuggestedRoutes.uuid != data.uuid:
+      error "cannot emit suggested routes ready signal, uuid mismatch"
+      return
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, data)
+
   proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
-    if self.uuidOfTheLastRequestForSuggestedRoutes != uuid:
+    if self.lastRequestForSuggestedRoutes.uuid != uuid:
       return
 
     # TODO: refactor sending modal part of the app, but for now since we're integrating the router v2 just map params to the old dto
@@ -359,12 +385,24 @@ QtObject:
       amountToReceive: getTotalAmountToReceive(oldRoute),
       toNetworks: getToNetworksList(oldRoute),
     )
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(
+    var data = SuggestedRoutesArgs(
       uuid: uuid,
+      sendType: self.lastRequestForSuggestedRoutes.sendType,
       suggestedRoutes: suggestedDto,
       errCode: errCode,
       errDescription: errDescription
-    ))
+    )
+
+    if self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityBurn or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityDeployAssets or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityDeployCollectibles or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityDeployOwnerToken or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityMintTokens or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunityRemoteBurn or
+      self.lastRequestForSuggestedRoutes.sendType == SendType.CommunitySetSignerPubKey:
+        self.updateCommunityRoute(data, route)
+
+    self.emitSuggestedRoutesReadySignal(data)
 
   proc suggestedRoutes*(self: Service,
     uuid: string,
@@ -381,7 +419,7 @@ QtObject:
     lockedInAmounts: Table[string, string] = initTable[string, string](),
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
 
-    self.uuidOfTheLastRequestForSuggestedRoutes = uuid
+    self.lastRequestForSuggestedRoutes = (uuid, sendType)
 
     let
       bigAmountIn = common_utils.stringToUint256(amountIn)
@@ -390,15 +428,49 @@ QtObject:
       amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
 
     try:
-      let res = eth.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
+      let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
         tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+      if err.len > 0:
+        raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:
       error "suggestedRoutes", exception=e.msg
       self.suggestedRoutesReady(uuid, @[], "", $InternalErrorCode, e.msg)
 
+  proc suggestedCommunityRoutes*(self: Service, uuid: string, sendType: SendType, chainId: int, accountFrom: string,
+    communityId: string, signerPubKey: string, signature: string, ownerTokenParameters: JsonNode = JsonNode(),
+    masterTokenParameters: JsonNode = JsonNode(), deploymentParameters: JsonNode = JsonNode()) =
+    self.lastRequestForSuggestedRoutes = (uuid, sendType)
+    try:
+      let
+        disabledFromChainIDs = self.networkService.getDisabledChainIdsForEnabledChainIds(@[chainId])
+        disabledToChainIDs = disabledFromChainIDs
+
+      let err = wallet.suggestedRoutesAsyncForCommunities(
+        uuid,
+        ord(sendType),
+        accountFrom,
+        disabledFromChainIDs,
+        disabledToChainIDs,
+        communityId,
+        tokenContractAddress = "",
+        signerPubKey = singletonInstance.userProfile.getPubKey(),
+        amount = "0x0",
+        tokenIds = @[],
+        walletAddresses = @[],
+        tokenDeploymentSignature = signature,
+        ownerTokenParameters,
+        masterTokenParameters,
+        deploymentParameters
+      )
+      if err.len > 0:
+        raise newException(CatchableError, "err fetching the best route for deploying owner: " & err)
+    except Exception as e:
+      error "Error loading fees", msg = e.msg
+      self.suggestedRoutesReady(uuid, @[], "", $InternalErrorCode, e.msg)
+
   proc stopSuggestedRoutesAsyncCalculation*(self: Service) =
     try:
-      discard eth.stopSuggestedRoutesAsyncCalculation()
+      discard wallet.stopSuggestedRoutesAsyncCalculation()
     except CatchableError as e:
       error "stopSuggestedRoutesAsyncCalculation", exception=e.msg
 

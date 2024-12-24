@@ -79,7 +79,9 @@ Item {
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {}
-    property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {}
+    property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {
+        currencyStore: appMain.currencyStore
+    }
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStores.TokensStore tokensStore: WalletStores.RootStore.tokensStore
     readonly property WalletStores.WalletAssetsStore walletAssetsStore: WalletStores.RootStore.walletAssetsStore
@@ -285,6 +287,10 @@ Item {
                                         username: string,
                                         publicKey: string,
                                         packId: string,
+                                        communityId: string,
+                                        communityName: string,
+                                        communityOwnerTokenName: string,
+                                        communityMasterTokenName: string,
                                         status: string,
                                         error: string) {
 
@@ -398,6 +404,18 @@ Item {
                     }
                     break
                 }
+                case Constants.SendType.CommunityDeployAssets: {
+                    toastTitle = qsTr("Minting %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    toastTitle = qsTr("Minting %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Minting %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
                 case Constants.SendType.Approve: {
                     console.warn("tx type approve not yet identified as a stand alone path")
                     break
@@ -462,6 +480,18 @@ Item {
                     }
                     break
                 }
+                case Constants.SendType.CommunityDeployAssets: {
+                    toastTitle = qsTr("Minted %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    toastTitle = qsTr("Minted %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Minted %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
                 case Constants.SendType.Approve: {
                     console.warn("tx type approve not yet identified as a stand alone path")
                     break
@@ -520,6 +550,18 @@ Item {
                     }
                     break
                 }
+                case Constants.SendType.CommunityDeployAssets: {
+                    toastTitle = qsTr("Mint failed: %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    toastTitle = qsTr("Mint failed: %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Mint failed: %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
                 case Constants.SendType.Approve: {
                     console.warn("tx type approve not yet identified as a stand alone path")
                     break
@@ -531,8 +573,16 @@ Item {
                 break
             }
             default:
-                console.warn("not supported status")
-                return
+                if (!error) {
+                    console.warn("not supported status")
+                    return
+                } else {
+                    const err1 = "cannot_resolve_community" // move to Constants
+                    if (error === err1) {
+                        Global.displayToastMessage(qsTr("Unknown error resolving community"), "", "", false, Constants.ephemeralNotificationType.normal, "")
+                        return
+                    }
+                }
             }
 
             Global.displayToastMessage(toastTitle, toastSubtitle, toastIcon, toastLoading, toastType, toastLink)

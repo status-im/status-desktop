@@ -1123,7 +1123,9 @@ QtObject {
                     contractAddress: finalisePopup.ownerTokenDetails.contractAddress
                     accountAddress: finalisePopup.ownerTokenDetails.accountAddress
                     enabled: finalisePopup.visible || signPopup.visible
-                    Component.onCompleted: feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
+                    Component.onCompleted: {
+                        const subscription = d.feesBroker.prepareSetSignerFeesSubscribtion(feeSubscriber)
+                    }
                 }
 
                 SignTransactionsPopup {

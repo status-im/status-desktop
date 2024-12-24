@@ -53,17 +53,21 @@ StatusScrollView {
 
     signal chooseArtWork
     signal previewClicked
+    signal calculateFees()
+    signal stopUpdatingFees()
 
     QtObject {
         id: d
 
-        readonly property bool isFullyFilled: dropAreaItem.artworkSource.toString().length > 0
+        readonly property bool formFilled: dropAreaItem.artworkSource.toString().length > 0
                                               && nameInput.valid
                                               && descriptionInput.valid
                                               && symbolInput.valid
                                               && (unlimitedSupplyChecker.checked || (!unlimitedSupplyChecker.checked && parseInt(supplyInput.text) > 0))
                                               && (!root.isAssetView  || (root.isAssetView && assetDecimalsInput.valid))
-                                              && deployFeeSubscriber.feeText !== "" && deployFeeSubscriber.feeErrorText === ""
+        readonly property bool isFullyFilled: d.formFilled
+                                              && deployFeeSubscriber.feeText !== ""
+                                              && deployFeeSubscriber.feeErrorText === ""
 
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
 
@@ -110,6 +114,7 @@ StatusScrollView {
         DropAndEditImagePanel {
             id: dropAreaItem
 
+            enabled: !showFees.checked
             Layout.fillWidth: true
             Layout.preferredHeight: d.imageSelectorRectWidth
             dataImage: root.token.artworkSource
@@ -129,6 +134,7 @@ StatusScrollView {
         CustomStatusInput {
             id: nameInput
 
+            enabled: !showFees.checked
             label: qsTr("Name")
             text: root.token.name
             charLimit: 15
@@ -157,6 +163,7 @@ StatusScrollView {
         CustomStatusInput {
             id: descriptionInput
 
+            enabled: !showFees.checked
             label: qsTr("Description")
             text: root.token.description
             charLimit: 280
@@ -177,6 +184,7 @@ StatusScrollView {
         CustomStatusInput {
             id: symbolInput
 
+            enabled: !showFees.checked
             label: qsTr("Symbol")
             text: root.token.symbol
             charLimit: 6
@@ -258,6 +266,7 @@ StatusScrollView {
 
         NetworkWarningPanel {
             visible: !!root.networkThatIsNotActive
+            enabled: !showFees.checked
             Layout.fillWidth: true
             Layout.topMargin: Theme.padding
 
@@ -268,6 +277,7 @@ StatusScrollView {
         CustomSwitchRowComponent {
             id: unlimitedSupplyChecker
 
+            enabled: !showFees.checked
             label: qsTr("Unlimited supply")
             description: qsTr("Enable to allow the minting of additional tokens in the future. Disable to specify a finite supply")
             checked: root.token.infiniteSupply
@@ -310,6 +320,7 @@ StatusScrollView {
             id: transferableChecker
 
             visible: !root.isAssetView
+            enabled: !showFees.checked
             label: checked ? qsTr("Not transferable (Soulbound)") : qsTr("Transferable")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
             checked: !root.token.transferable
@@ -321,6 +332,7 @@ StatusScrollView {
             id: remotelyDestructChecker
 
             visible: !root.isAssetView
+            enabled: !showFees.checked
             label: qsTr("Remotely destructible")
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
             checked: !!root.token ? root.token.remotelyDestruct : true
@@ -347,8 +359,25 @@ StatusScrollView {
             onTextChanged: root.token.decimals = parseInt(text)
         }
 
+        CustomSwitchRowComponent {
+            id: showFees
+            enabled: d.formFilled
+            label: qsTr("Show fees")
+            description: qsTr("Fees will be enabled once the form is filled")
+
+            onCheckedChanged: {
+                if(checked) {
+                    root.calculateFees()
+                    return
+                }
+                root.stopUpdatingFees()
+            }
+        }
+
         FeesBox {
             id: feesBox
+
+            visible: showFees.checked
 
             Layout.fillWidth: true
             Layout.topMargin: Theme.padding

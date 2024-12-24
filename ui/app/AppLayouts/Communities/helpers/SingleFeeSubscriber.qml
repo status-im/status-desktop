@@ -17,24 +17,26 @@ import utils 1.0
 
     // Internal properties based on response
     readonly property string feeText: {
-        if (!feesResponse || !Object.values(feesResponse.ethCurrency).length || !Object.values(feesResponse.fiatCurrency).length)  return ""
-        
-        if (feesResponse.errorCode !== Constants.ComputeFeeErrorCode.Success && feesResponse.errorCode !== Constants.ComputeFeeErrorCode.Balance)
+        if (!root.feesResponse) {
             return ""
+        }
 
-        return LocaleUtils.currencyAmountToLocaleString(feesResponse.ethCurrency)
-                + " (" + LocaleUtils.currencyAmountToLocaleString(feesResponse.fiatCurrency) + ")"
+
+        if (!!root.feesResponse.error) {
+            return "-"
+        }
+
+        if (!root.feesResponse || !Object.values(root.feesResponse.ethCurrency).length || !Object.values(root.feesResponse.fiatCurrency).length) {
+            return ""
+        }
+
+        return LocaleUtils.currencyAmountToLocaleString(root.feesResponse.ethCurrency)
+                + " (" + LocaleUtils.currencyAmountToLocaleString(root.feesResponse.fiatCurrency) + ")"
     }
     readonly property string feeErrorText: {
-        if (!feesResponse)  return ""
-        if (feesResponse.errorCode === Constants.ComputeFeeErrorCode.Success) return ""
+        if (!root.feesResponse)
+            return ""
 
-        if (feesResponse.errorCode === Constants.ComputeFeeErrorCode.Balance)
-            return qsTr("Not enough funds to make transaction")
-
-        if (feesResponse.errorCode === Constants.ComputeFeeErrorCode.Infura)
-            return qsTr("Infura error")
-
-        return qsTr("Unknown error")
+        return root.feesResponse.error
     }
 }

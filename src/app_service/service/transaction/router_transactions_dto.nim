@@ -1,6 +1,7 @@
 import json, stint
+import app_service/service/community_tokens/dto/deployment_parameters
 
-include  ../../common/json_utils
+include  app_service/common/json_utils
 
 const
   TxStatusSending* = "Sending"
@@ -12,6 +13,20 @@ type
   ErrorResponse* = ref object
     details*: string
     code*: string
+
+type
+  CommunityParamsDto* = ref object
+    communityID*: string
+    tokenContractAddress*: string
+    signerPubKey*: string
+    amount*: UInt256
+    tokenIds*: seq[UInt256]
+    walletAddresses*: seq[string]
+    tokenDeploymentSignature*: string
+    ownerTokenParameters*: DeploymentParameters
+    masterTokenParameters*: DeploymentParameters
+    deploymentParameters*: DeploymentParameters
+
 type
   SendDetailsDto* = ref object
     uuid*: string
@@ -29,6 +44,7 @@ type
     username*: string
     publicKey*: string
     packId*: string
+    communityParams*: CommunityParamsDto
 
 type
   SigningDetails* = ref object
@@ -77,6 +93,28 @@ proc toErrorResponse*(jsonObj: JsonNode): ErrorResponse =
   if jsonObj.contains("code"):
     result.code = jsonObj["code"].getStr
 
+proc toCommunityParamsDto*(jsonObj: JsonNode): CommunityParamsDto =
+  result = CommunityParamsDto()
+  discard jsonObj.getProp("communityID", result.communityID)
+  discard jsonObj.getProp("tokenContractAddress", result.tokenContractAddress)
+  discard jsonObj.getProp("signerPubKey", result.signerPubKey)
+  discard jsonObj.getProp("tokenDeploymentSignature", result.tokenDeploymentSignature)
+  var tmpObj: JsonNode
+  if jsonObj.getProp("amount", tmpObj):
+    result.amount = stint.fromHex(UInt256, tmpObj.getStr)
+  if jsonObj.getProp("tokenIds", tmpObj) and tmpObj.kind == JArray:
+    for id in tmpObj:
+      result.tokenIds.add(stint.fromHex(UInt256, id.getStr))
+  if jsonObj.getProp("walletAddresses", tmpObj) and tmpObj.kind == JArray:
+    for addr in tmpObj:
+      result.walletAddresses.add(addr.getStr)
+  if jsonObj.getProp("ownerTokenParameters", tmpObj):
+    result.ownerTokenParameters = toDeploymentParameters(tmpObj)
+  if jsonObj.getProp("masterTokenParameters", tmpObj):
+    result.masterTokenParameters = toDeploymentParameters(tmpObj)
+  if jsonObj.getProp("deploymentParameters", tmpObj):
+    result.deploymentParameters = toDeploymentParameters(tmpObj)
+
 proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
   result = SendDetailsDto()
   discard jsonObj.getProp("uuid", result.uuid)
@@ -100,6 +138,8 @@ proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
   if jsonObj.getProp("packId", tmpObj):
     let packId = stint.fromHex(UInt256, tmpObj.getStr)
     result.packId = $packId
+  if jsonObj.getProp("communityParams", tmpObj):
+    result.communityParams = toCommunityParamsDto(tmpObj)
 
 proc toSigningDetails*(jsonObj: JsonNode): SigningDetails =
   result = SigningDetails()

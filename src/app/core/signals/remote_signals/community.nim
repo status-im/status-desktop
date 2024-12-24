@@ -79,7 +79,7 @@ type DiscordChannelImportFinishedSignal* = ref object of Signal
   channelId*: string
 
 type CommunityTokenTransactionStatusChangedSignal* = ref object of Signal
-  transactionType*: string
+  sendType*: int
   success*: bool
   hash*: string
   communityToken*: CommunityTokenDto
@@ -276,7 +276,7 @@ proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal,
 proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: JsonNode): CommunityTokenTransactionStatusChangedSignal =
   result = CommunityTokenTransactionStatusChangedSignal()
   result.signalType = SignalType.CommunityTokenTransactionStatusChanged
-  result.transactionType = event["event"]{"transactionType"}.getStr()
+  result.sendType = event["event"]{"sendType"}.getInt()
   result.success = event["event"]{"success"}.getBool()
   result.hash = event["event"]{"hash"}.getStr()
   if event["event"].hasKey("communityToken"):

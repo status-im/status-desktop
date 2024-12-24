@@ -3,6 +3,9 @@ import QtQuick 2.15
 import shared.stores 1.0
 
 import StatusQ.Core.Utils 0.1
+import AppLayouts.Wallet 1.0
+
+import utils 1.0
 
 QtObject {
     id: root
@@ -51,7 +54,10 @@ QtObject {
                 chainId: subscriber.chainId,
                 accountAddress: subscriber.accountAddress,
                 tokenType: subscriber.tokenType,
-                isOwnerDeployment: subscriber.isOwnerDeployment
+                isOwnerDeployment: subscriber.isOwnerDeployment,
+                ownerToken: subscriber.ownerToken,
+                masterToken: subscriber.masterToken,
+                token: subscriber.token
             })
 
             isReady: !!subscriber.chainId && 
@@ -124,41 +130,33 @@ QtObject {
         readonly property SubscriptionBroker feesBroker: SubscriptionBroker {
             id: feesBroker
 
-            onRequest: internal.computeFee(topic)
+            onRequest: internal.computeFee(subscriptionId, topic)
         }
 
         property Connections communityTokensStoreConnections: Connections {
-            target: communityTokensStore
+            target: root.communityTokensStore.communityTokensModuleInst
 
-            function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
+            function onSuggestedRoutesReady(uuid, ethCurrency, fiatCurrency, errCode, errDescription) {
+                let err = ""
+                if(!!errCode || !!errDescription) {
+                    err = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
+                }
+                d.feesBroker.response(uuid, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, error: err })
             }
 
-            function onAirdropFeeUpdated(response) {
-                d.feesBroker.response(response.requestId, response)
-            }
 
-            function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
 
-            function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
 
-            function onSetSignerFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
         }
 
-        function computeFee(topic) {
+        function computeFee(subscriptionId, topic) {
             const args = JSON.parse(topic)
             switch (args.type) {
                 case TransactionFeesBroker.FeeType.Airdrop:
                     computeAirdropFee(args, topic)
                     break
                 case TransactionFeesBroker.FeeType.Deploy:
-                    computeDeployFee(args, topic)
+                    computeDeployFee(subscriptionId, args)
                     break
                 case TransactionFeesBroker.FeeType.SelfDestruct:
                     computeSelfDestructFee(args, topic)
@@ -183,8 +181,58 @@ QtObject {
                         topic)
         }
 
-        function computeDeployFee(args, topic) {
-            communityTokensStore.computeDeployFee(args.communityId, args.chainId, args.accountAddress, args.tokenType, args.isOwnerDeployment, topic)
+        function computeDeployFee(subscriptionId, args) {
+            if (args.isOwnerDeployment) {
+                communityTokensStore.computeDeployTokenOwnerFee(
+                            subscriptionId,
+                            args.communityId,
+                            args.ownerToken.chainId,
+                            args.ownerToken.accountAddress,
+                            args.ownerToken.name,
+                            args.ownerToken.symbol,
+                            args.ownerToken.description,
+                            args.ownerToken.artworkSource,
+                            args.ownerToken.artworkCropRect,
+                            args.masterToken.name,
+                            args.masterToken.symbol,
+                            args.masterToken.description)
+                return
+            }
+
+            if (args.tokenType === Constants.TokenType.ERC721) {
+                communityTokensStore.computeDeployCollectiblesFee(
+                            subscriptionId,
+                            args.communityId,
+                            args.token.key,
+                            args.token.chainId,
+                            args.token.accountAddress,
+                            args.token.name,
+                            args.token.symbol,
+                            args.token.description,
+                            args.token.supply,
+                            args.token.infiniteSupply,
+                            args.token.transferable,
+                            args.token.remotelyDestruct,
+                            args.token.artworkSource,
+                            args.token.artworkCropRect)
+                return
+
+            }
+
+            communityTokensStore.computeDeployAssetsFee(
+                        subscriptionId,
+                        args.communityId,
+                        args.token.key,
+                        args.token.chainId,
+                        args.token.accountAddress,
+                        args.token.name,
+                        args.token.symbol,
+                        args.token.description,
+                        args.token.supply,
+                        args.token.infiniteSupply,
+                        args.token.decimals,
+                        args.token.artworkSource,
+                        args.token.artworkCropRect)
         }
 
         function computeSelfDestructFee(args, topic) {
@@ -201,28 +249,27 @@ QtObject {
         }
     }
 
-    function registerAirdropFeesSubscriber(subscriberObj) {
-        const subscription = d.airdropFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
-        d.feesBroker.subscribe(subscription)
+    function prepareAirdropFeesSubscribtion(subscriberObj) {
+        return d.airdropFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
     }
 
-    function registerDeployFeesSubscriber(subscriberObj) {
-        const subscription = d.deployFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
-        d.feesBroker.subscribe(subscription)
+    function prepareDeployFeesSubscribtion(subscriberObj) {
+        return d.deployFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
     }
 
-    function registerSelfDestructFeesSubscriber(subscriberObj) {
-        const subscription = d.selfDestructFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
-        d.feesBroker.subscribe(subscription)
+    function prepareSelfDestructFeesSubscribtion(subscriberObj) {
+        return d.selfDestructFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
     }
 
-    function registerBurnFeesSubscriber(subscriberObj) {
-        const subscription = d.burnFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
-        d.feesBroker.subscribe(subscription)
+    function prepareBurnFeesSubscribtion(subscriberObj) {
+        return d.burnFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
     }
 
-    function registerSetSignerFeesSubscriber(subscriberObj) {
-        const subscription = d.setSignerFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
+    function prepareSetSignerFeesSubscribtion(subscriberObj) {
+        return d.setSignerFeeSubscriptionComponent.createObject(subscriberObj, { subscriber: subscriberObj })
+    }
+
+    function subscribe(subscription) {
         d.feesBroker.subscribe(subscription)
     }
 }
