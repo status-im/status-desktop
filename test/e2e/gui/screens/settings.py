@@ -43,13 +43,13 @@ class LeftPanel(QObject):
     @allure.step('Choose back up seed phrase in settings')
     @handle_settings_opening(BackUpYourSeedPhrasePopUp, '18-MenuItem')
     def open_back_up_seed_phrase(self, click_attempts: int = 2) -> 'BackUpYourSeedPhrasePopUp':
-        assert BackUpYourSeedPhrasePopUp().exists, 'Back up your seed phrase modal was not opened'
+        assert BackUpYourSeedPhrasePopUp().wait_until_appears(), 'Back up your seed phrase modal was not opened'
         return BackUpYourSeedPhrasePopUp()
 
     @allure.step('Open wallet settings')
     @handle_settings_opening(WalletSettingsView, '5-MenuItem')
     def open_wallet_settings(self, click_attempts: int = 2) -> 'WalletSettingsView':
-        assert WalletSettingsView().exists, 'Wallet view was not opened'
+        assert WalletSettingsView().wait_until_appears(), 'Wallet view was not opened'
         return WalletSettingsView()
 
     @allure.step('Open messaging settings')
@@ -61,25 +61,25 @@ class LeftPanel(QObject):
     @allure.step('Open communities settings')
     @handle_settings_opening(CommunitiesSettingsView, '12-MenuItem')
     def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
-        assert CommunitiesSettingsView().exists, 'Community settings view was not opened'
+        assert CommunitiesSettingsView().wait_until_appears(), 'Community settings view was not opened'
         return CommunitiesSettingsView()
 
     @allure.step('Open profile settings')
     @handle_settings_opening(ProfileSettingsView, '0-MenuItem')
     def open_profile_settings(self, click_attempts: int = 2) -> 'ProfileSettingsView':
-        assert ProfileSettingsView().exists, 'Profile settings view was not opened'
+        assert ProfileSettingsView().wait_until_appears(), 'Profile settings view was not opened'
         return ProfileSettingsView()
 
     @allure.step('Open password settings')
     @handle_settings_opening(ChangePasswordView, '1-MenuItem')
     def open_password_settings(self, click_attempts: int = 2) -> 'ChangePasswordView':
-        assert ChangePasswordView().exists, 'Password settings view was not opened'
+        assert ChangePasswordView().wait_until_appears(), 'Password settings view was not opened'
         return ChangePasswordView()
 
     @allure.step('Open syncing settings')
     @handle_settings_opening(SyncingSettingsView, '9-MenuItem')
     def open_syncing_settings(self, click_attempts: int = 2) -> 'SyncingSettingsView':
-        assert SyncingSettingsView().exists, 'Syncing settings view was not opened'
+        assert SyncingSettingsView().wait_until_appears(), 'Syncing settings view was not opened'
         return SyncingSettingsView()
 
     @allure.step('Choose sign out and quit in settings')
