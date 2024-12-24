@@ -44,7 +44,7 @@ def setup_function_scope(
         generate_test_data,
         check_result,
         application_logs,
-        keycard_controller
+        launch_keycard_controller
 ):
     # FIXME: broken due to KeyError: <_pytest.stash.StashKey object at 0x7fd1ba6d78c0>
     # caplog.set_level(configs.LOG_LEVEL)

@@ -4,12 +4,10 @@ from pathlib import Path
 import allure
 import pytest
 from allure import step
-from . import marks
 
 import configs
-import constants
 import driver
-from constants import ColorCodes, RandomUser
+from constants import ColorCodes
 from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, CHOOSE_KEYCARD_PIN_IMAGE_PATH, \
     KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
@@ -17,14 +15,13 @@ from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
 
-pytestmark = marks
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703623',
                  'Setup a keycard with an existing account')
 @pytest.mark.case(703623)
 @pytest.mark.parametrize('account_name', [pytest.param('Account 1')])
 @pytest.mark.timeout(timeout=210)
+@pytest.mark.keycard
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_account, account_name):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
@@ -86,7 +83,8 @@ def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_accou
     with step('Register and insert custom emtpy keycard with custom details'):
         main_screen.hide()
         keycard_controller.choose_custom_keycard()
-        keycard_controller.input_custom_keycard_details(first_details, 0).input_custom_keycard_details(second_details, 1)
+        keycard_controller.input_custom_keycard_details(first_details, 0)
+        keycard_controller.input_custom_keycard_details(second_details, 1)
         keycard_controller.register_keycard().insert_keycard_1()
         main_screen.show()
 

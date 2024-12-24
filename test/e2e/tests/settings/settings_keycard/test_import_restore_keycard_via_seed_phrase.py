@@ -3,25 +3,24 @@ import time
 import allure
 import pytest
 from allure import step
-from . import marks
 
 import configs
-import constants
 import driver
-from constants import ColorCodes, RandomUser
+from constants import ColorCodes
 from constants.images_paths import PLUG_IN_KEYCARD_IMAGE_PATH, INSERT_KEYCARD_IMAGE_PATH, KEYCARD_SUCCESS_IMAGE_PATH
 from constants.keycard import Keycard
 from gui.main_window import MainWindow
 from gui.mocked_keycard_controller import MockedKeycardController
-
-pytestmark = marks
+from scripts.utils.generators import random_mnemonic
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703625',
                  'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
+@pytest.mark.keycard
 @pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
-def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_account):
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/17012')
+def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     pin = Keycard.KEYCARD_PIN.value
     keycard_name = Keycard.KEYCARD_NAME.value
@@ -63,7 +62,7 @@ def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow, user_ac
                               timeout), f"There is no correct keycard instruction in {keycard_popup.keycard_instructions}"
 
     with step('Import keycard via seed phrase'):
-        keycard_popup.import_keycard_via_seed_phrase(user_account.seed_phrase, pin, keycard_name, account_name)
+        keycard_popup.import_keycard_via_seed_phrase(random_mnemonic().split(), pin, keycard_name, account_name)
 
     with step('Verify that preview shows correct keycard and account name and color and instructions are correct'):
         assert driver.waitFor(lambda: Keycard.KEYCARD_READY.value in keycard_popup.keycard_instructions), \
