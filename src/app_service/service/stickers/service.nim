@@ -160,7 +160,7 @@ QtObject:
       self.marketStickerPacks[$args.sendDetails.packId].status = StickerPackStatus.Pending
       self.marketStickerPacks[$args.sendDetails.packId].txHash = args.sentTransaction.hash
       let data = StickerBuyResultArgs(
-        chainId: args.sendDetails.fromChain,
+        chainId: args.sentTransaction.fromChain,
         packId: args.sendDetails.packId,
         txHash: args.sentTransaction.hash,
         error: if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""

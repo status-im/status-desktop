@@ -157,7 +157,7 @@ QtObject:
 
       var err = if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
       var dto = EnsUsernameDto(
-        chainId: args.sendDetails.fromChain,
+        chainId: args.sentTransaction.fromChain,
         username: args.sendDetails.username,
         txHash: args.sentTransaction.hash,
         txStatus: args.status
@@ -167,29 +167,30 @@ QtObject:
         dto.txType = RegisterENS
         if err.len == 0:
           let ensUsernameFinal = self.formatUsername(args.sendDetails.username, true)
-          if not self.add(args.sendDetails.fromChain, ensUsernameFinal):
+          if not self.add(args.sentTransaction.fromChain, ensUsernameFinal):
             err = "failed to add ens username"
             error "error", err
       elif txType == SendType.ENSSetPubKey:
         dto.txType = SetPubKey
         if err.len == 0:
           let usernameWithDomain = args.sendDetails.username.addDomain()
-          if not self.add(args.sendDetails.fromChain, usernameWithDomain):
+          if not self.add(args.sentTransaction.fromChain, usernameWithDomain):
             err = "failed to set ens username"
             error "error", err
       elif txType == SendType.ENSRelease:
         dto.txType = ReleaseENS
         if err.len == 0:
           let ensUsernameFinal = self.formatUsername(args.sendDetails.username, true)
-          if not self.remove(args.sendDetails.fromChain, ensUsernameFinal):
+          if not self.remove(args.sentTransaction.fromChain, ensUsernameFinal):
             err = "failed to remove ens username"
             error "error", err
 
-      self.pendingEnsUsernames[makeKey(dto.username, args.sendDetails.fromChain)] = dto
+      let key = makeKey(dto.username, args.sentTransaction.fromChain)
+      self.pendingEnsUsernames[key] = dto
 
       let data = EnsTxResultArgs(
         transactionType: $dto.txType,
-        chainId: args.sendDetails.fromChain,
+        chainId: args.sentTransaction.fromChain,
         ensUsername: args.sendDetails.username,
         txHash: args.sentTransaction.hash,
         error: err
@@ -208,7 +209,8 @@ QtObject:
         trx.typeValue == $PendingTransactionTypeDto.SetPubKey or
         trx.typeValue == $PendingTransactionTypeDto.ReleaseENS:
           let dto = EnsUsernameDto(chainId: trx.chainId, username: trx.additionalData)
-          self.pendingEnsUsernames[makeKey(dto.username, dto.chainId)] = dto
+          let key = makeKey(dto.username, dto.chainId)
+          self.pendingEnsUsernames[key] = dto
 
   proc getMyPendingEnsUsernames*(self: Service): seq[EnsUsernameDto] =
     for i in self.pendingEnsUsernames.values:
