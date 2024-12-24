@@ -1894,8 +1894,10 @@ proc createMemberItem[T](
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(status.statusType),
     isContact = contactDetails.dto.isContact,
+    isBlocked = contactDetails.dto.isBlocked,
     isCurrentUser = contactDetails.isCurrentUser,
     trustStatus = contactDetails.dto.trustStatus,
+    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
     memberRole = role,
     membershipRequestState = state,
     requestToJoinId = requestId,
@@ -1913,7 +1915,9 @@ method contactUpdated*[T](self: Module[T], contactId: string) =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
+    isBlocked = contactDetails.dto.isBlocked,
     trustStatus = contactDetails.dto.trustStatus,
+    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
   )
 
 {.pop.}
