@@ -23,8 +23,9 @@ def options(request):
 
 
 @pytest.fixture
-def keycard_controller(request):
-    if 'settings_keycard' in str(getattr(request, 'fspath')):
+def launch_keycard_controller(request):
+    marker = request.node.get_closest_marker("keycard")
+    if marker:
         os.environ['STATUS_RUNTIME_USE_MOCKED_KEYCARD'] = 'True'
 
 
