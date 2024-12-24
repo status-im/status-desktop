@@ -2,8 +2,6 @@ import NimQml, json, strutils, sequtils
 
 import ./io_interface as community_tokens_module_interface
 import app/modules/shared_models/currency_amount
-import app_service/common/conversion
-import app_service/common/types
 
 QtObject:
   type
@@ -22,14 +20,26 @@ QtObject:
     result.QObject.setup
     result.communityTokensModule = communityTokensModule
 
-  proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.slot.} =
-    self.communityTokensModule.deployCollectibles(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, imageCropInfoJson)
+  proc authenticateAndTransfer*(self: View) {.slot.} =
+    self.communityTokensModule.authenticateAndTransfer()
 
-  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
-    self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, imageCropInfoJson)
+  proc computeDeployCollectiblesFee*(self: View, uuid: string, communityId: string, fromAddress: string, name: string,
+    symbol: string, description: string, supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool,
+    chainId: int, imageCropInfoJson: string) {.slot.} =
+      self.communityTokensModule.computeDeployCollectiblesFee(uuid, communityId, fromAddress, name, symbol, description,
+        supply, infiniteSupply, transferable, selfDestruct, chainId, imageCropInfoJson)
 
-  proc deployOwnerToken*(self:View, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string, masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) {.slot.} =
-    self.communityTokensModule.deployOwnerToken(communityId, fromAddress, ownerName, ownerSymbol, ownerDescription, masterName, masterSymbol, masterDescription, chainId, imageCropInfoJson)
+  proc computeDeployAssetsFee*(self: View, uuid: string, communityId: string, fromAddress: string, name: string,
+    symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int, chainId: int,
+    imageCropInfoJson: string) {.slot.} =
+      self.communityTokensModule.computeDeployAssetsFee(uuid, communityId, fromAddress, name, symbol, description, supply,
+        infiniteSupply, decimals, chainId, imageCropInfoJson)
+
+  proc computeDeployTokenOwnerFee*(self:View, uuid: string, communityId: string, fromAddress: string, ownerName: string,
+    ownerSymbol: string, ownerDescription: string, masterName: string, masterSymbol: string, masterDescription: string,
+    chainId: int, imageCropInfoJson: string) {.slot.} =
+      self.communityTokensModule.computeDeployTokenOwnerFee(uuid, communityId, fromAddress, ownerName, ownerSymbol,
+      ownerDescription, masterName, masterSymbol, masterDescription, chainId, imageCropInfoJson)
 
   proc removeCommunityToken*(self: View, communityId: string, chainId: int, address: string) {.slot.} =
     self.communityTokensModule.removeCommunityToken(communityId, chainId, address)
@@ -52,7 +62,6 @@ QtObject:
   proc setSigner*(self: View, communityId: string, chainId: int, contractAddress: string, addressFrom: string) {.slot.} =
     self.communityTokensModule.setSigner(communityId, chainId, contractAddress, addressFrom)
 
-  proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
   proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
   proc airdropFeesUpdated*(self: View, json: string) {.signal.}
   proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int, responseId: string) {.signal.}
@@ -63,8 +72,6 @@ QtObject:
   proc ownershipNodeLost*(self: View, communityId: string, communityName: string) {.signal.}
   proc sendOwnerTokenStateChanged*(self: View, tokenName: string, status: int, url: string) {.signal.}
 
-  proc computeDeployFee*(self: View, communityId: string, chainId: int, accountAddress: string, tokenType: int, isOwnerDeployment: bool, requestId: string) {.slot.} =
-    self.communityTokensModule.computeDeployFee(communityId, chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown), isOwnerDeployment, requestId)
 
   proc computeSetSignerFee*(self: View, chainId: int, contractAddress: string, addressFrom: string, requestId: string) {.slot.} =
     self.communityTokensModule.computeSetSignerFee(chainId, contractAddress, addressFrom, requestId)
@@ -78,8 +85,6 @@ QtObject:
   proc declineOwnership*(self: View, communityId: string) {.slot.} =
     self.communityTokensModule.declineOwnership(communityId)
 
-  proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int, responseId: string) =
-    self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode, responseId)
 
   proc updateBurnFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int, responseId: string) =
     self.burnFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode, responseId)
@@ -93,9 +98,6 @@ QtObject:
   proc updateAirdropFees*(self: View, args: JsonNode) =
     self.airdropFeesUpdated($args)
 
-  proc deploymentStateChanged*(self: View, communityId: string, status: int, url: string) {.signal.}
-  proc emitDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) =
-    self.deploymentStateChanged(communityId, status, url)
 
   proc remoteDestructStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) {.signal.}
   proc emitRemoteDestructStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
@@ -109,13 +111,7 @@ QtObject:
   proc emitAirdropStateChanged*(self: View, communityId: string, tokenName: string, chainName: string, status: int, url: string) =
     self.airdropStateChanged(communityId, tokenName, chainName, status, url)
 
-  proc ownerTokenDeploymentStarted*(self: View, communityId: string, url: string) {.signal.}
-  proc emitOwnerTokenDeploymentStarted*(self: View, communityId: string, url: string) =
-    self.ownerTokenDeploymentStarted(communityId, url)
 
-  proc ownerTokenDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) {.signal.}
-  proc emitOwnerTokenDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) =
-    self.ownerTokenDeploymentStateChanged(communityId, status, url)
 
   proc emitOwnerTokenReceived*(self: View, communityId: string, communityName: string, chainId: int, contractAddress: string) =
     self.ownerTokenReceived(communityId, communityName, chainId, contractAddress)
@@ -145,3 +141,10 @@ QtObject:
   QtProperty[string] ownerTokenDetails:
     read = getOwnerTokenDetails
     notify = ownerTokenDetailsChanged
+
+  proc suggestedRoutesReady(self: View, uuid: string, ethCurrency: QVariant, fiatCurrency: QVariant, errCode: string, errDescription: string) {.signal.}
+  proc emitSuggestedRoutesReadySignal*(self: View, uuid: string, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errCode: string, errDescription: string) =
+    self.suggestedRoutesReady(uuid, newQVariant(ethCurrency), newQVariant(fiatCurrency), errCode, errDescription)
+
+  proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
+    self.communityTokensModule.stopUpdatesForSuggestedRoute()

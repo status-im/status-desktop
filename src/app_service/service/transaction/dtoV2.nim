@@ -43,6 +43,7 @@ type
     approvalPriorityFee*: UInt256
     approvalGasAmount*: uint64
     approvalL1Fee*: UInt256
+    txTotalFee*: UInt256
     estimatedTime*: int
 
 proc toSuggestedLevelsForMaxFeesPerGasDto*(jsonObj: JsonNode): SuggestedLevelsForMaxFeesPerGasDto =
@@ -79,6 +80,7 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result.approvalPriorityFee = stint.fromHex(UInt256, jsonObj{"ApprovalPriorityFee"}.getStr)
   discard jsonObj.getProp("ApprovalGasAmount", result.approvalGasAmount)
   result.approvalL1Fee = stint.fromHex(UInt256, jsonObj{"ApprovalL1Fee"}.getStr)
+  result.txTotalFee = stint.fromHex(UInt256, jsonObj{"TxTotalFee"}.getStr)
   result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
 
 proc toTransactionPathsDtoV2*(jsonObj: JsonNode): seq[TransactionPathDtoV2] =

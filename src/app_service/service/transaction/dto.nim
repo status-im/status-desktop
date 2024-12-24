@@ -21,6 +21,13 @@ type
     ERC721Transfer
     ERC1155Transfer
     Swap
+    CommunityBurn
+    CommunityDeployAssets
+    CommunityDeployCollectibles
+    CommunityDeployOwnerToken
+    CommunityMintTokens
+    CommunityRemoteBurn
+    CommunitySetSignerPubKey
     Approve
 
 type
