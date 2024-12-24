@@ -119,7 +119,7 @@ Column {
     AddressDetails {
         width: parent.width
         addressDetailsItem: root.store.watchOnlyAccAddress
-        defaultMessage: qsTr("You will need to import your seed phrase or use your Keycard to transact with this account")
+        defaultMessage: qsTr("You will need to import your recovery phrase or use your Keycard to transact with this account")
         defaultMessageCondition: addressInput.text === "" || !addressInput.valid
     }
 }

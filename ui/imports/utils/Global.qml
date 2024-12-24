@@ -86,6 +86,7 @@ QtObject {
     signal openTestnetPopup()
 
     signal privacyPolicyRequested()
+    signal termsOfUseRequested()
 
     signal openPaymentRequestModalRequested(var callback)
 

@@ -120,7 +120,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        title: qsTr("Create a new Keycard account with a new seed phrase")
+        title: qsTr("Create a new Keycard account with a new recovery phrase")
         objectName: "createNewKeycardAccount"
         components: [
             StatusIcon {
@@ -143,7 +143,7 @@ ColumnLayout {
 
     StatusListItem {
         Layout.fillWidth: true
-        title: qsTr("Import or restore via a seed phrase")
+        title: qsTr("Import or restore via a recovery phrase")
         objectName: "importRestoreKeycard"
         components: [
             StatusIcon {

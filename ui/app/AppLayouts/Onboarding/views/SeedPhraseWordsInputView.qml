@@ -75,7 +75,7 @@ Item {
             font.pixelSize: Constants.keycard.general.fontSize1
             font.weight: Font.Bold
             color: Theme.palette.directColor1
-            text: qsTr("Enter seed phrase words")
+            text: qsTr("Enter recovery phrase words")
         }
 
         Item {

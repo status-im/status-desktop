@@ -111,7 +111,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
             color: Theme.palette.directColor1
-            text: qsTr("Confirm word #%1 of your seed phrase").arg(root.store.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhraseWord1?
+            text: qsTr("Confirm word #%1 of your recovery phrase").arg(root.store.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhraseWord1?
                                                                        root.store.seedPhraseWord1WordNumber + 1 :
                                                                        root.store.seedPhraseWord2WordNumber + 1)
         }
