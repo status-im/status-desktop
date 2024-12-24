@@ -556,3 +556,6 @@ QtObject:
   QtProperty[QVariant] membersModel:
     read = getMembersModel
     notify = membersModelChanged
+
+  proc markAllReadInCommunity*(self: View) {.slot.} =
+    self.delegate.markAllReadInCommunity()

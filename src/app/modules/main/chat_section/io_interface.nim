@@ -434,3 +434,6 @@ method updateRequestToJoinState*(self: AccessInterface, state: RequestToJoinStat
 
 method communityMemberReevaluationStatusUpdated*(self: AccessInterface, status: CommunityMemberReevaluationStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method markAllReadInCommunity*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
