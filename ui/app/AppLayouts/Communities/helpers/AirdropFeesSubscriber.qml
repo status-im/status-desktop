@@ -36,34 +36,33 @@ QtObject {
     property var airdropFeesResponse: null
 
     readonly property string feesError: {
-        if (!airdropFeesResponse)  return ""
-
-        if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Success) return ""
-
-        if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Balance)
-            return qsTr("Your account does not have enough ETH to pay the gas fee for this airdrop. Try adding some ETH to your account.")
-
-        if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Infura)
-            return qsTr("Infura error")
-
-        if (airdropFeesResponse.errorCode === Constants.ComputeFeeErrorCode.Revert)
-            return qsTr("Estimation reverted. Make sure you selected the Wallet account that owns the TokenMaster or Owner Token.")
-
-        return qsTr("Unknown error")
-    }
-    readonly property string totalFee: {
-        if (!airdropFeesResponse || !Object.values(airdropFeesResponse.totalEthFee).length || !Object.values(airdropFeesResponse.totalFiatFee).length)  return ""
-
-        if (airdropFeesResponse.errorCode !== Constants.ComputeFeeErrorCode.Success && airdropFeesResponse.errorCode !== Constants.ComputeFeeErrorCode.Balance)
+        if (!root.airdropFeesResponse)
             return ""
 
-        return `${LocaleUtils.currencyAmountToLocaleString(airdropFeesResponse.totalEthFee)} (${LocaleUtils.currencyAmountToLocaleString(airdropFeesResponse.totalFiatFee)})`
+        return root.airdropFeesResponse.error
+    }
+    readonly property string totalFee: {
+        if (!root.airdropFeesResponse) {
+            return ""
+        }
+
+        if (!!root.airdropFeesResponse.error) {
+            return "-"
+        }
+
+        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.ethCurrency).length || !Object.values(root.airdropFeesResponse.fiatCurrency).length) {
+            return ""
+        }
+
+        return LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.ethCurrency)
+                + " (" + LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.fiatCurrency) + ")"
     }
 
     readonly property var feesPerContract: {
-        if (!airdropFeesResponse || !Object.values(airdropFeesResponse.fees).length || totalFee == "")  return []
+        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.fees).length || totalFee == "")
+            return []
 
-        return airdropFeesResponse.fees.map(fee => {
+        return root.airdropFeesResponse.fees.map(fee => {
             return {
                 contractUniqueKey: fee.contractUniqueKey,
                 feeText: `${LocaleUtils.currencyAmountToLocaleString(fee.ethFee)} (${LocaleUtils.currencyAmountToLocaleString(fee.fiatFee)})`

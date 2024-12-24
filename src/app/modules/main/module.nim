@@ -103,6 +103,7 @@ type
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
+    communityTokensService: community_tokens_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
@@ -211,6 +212,7 @@ proc newModule*[T](
   result.savedAddressService = savedAddressService
   result.keychainService = keychainService
   result.stickersService = stickersService
+  result.communityTokensService = communityTokensService
 
   # Submodules
   result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
@@ -454,6 +456,14 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       error = ""
       txHash = ""
       isApprovalTx = false
+      #community specific details
+      communityId = ""
+      communityName = ""
+      communityAmount = ""
+      communityAssetName = ""
+      communityAssetDecimals = 0
+      communityOwnerTokenName = ""
+      communityMasterTokenName = ""
 
     if not sendDetails.errorResponse.isNil:
       error = sendDetails.errorResponse.details
@@ -503,6 +513,27 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       if not accDto.isNil:
         txToName = accDto.name
 
+    # check for community details
+    if not sendDetails.communityParams.isNil:
+      communityId = sendDetails.communityParams.communityId
+      communityAmount = sendDetails.communityParams.amount.toString(10)
+      let item = self.view.model().getItemById(communityId)
+      if item.id == "":
+        error = "cannot_resolve_community"
+      else:
+        communityName = item.name
+
+      let communityToken = self.communityTokensService.getCommunityTokenFromCache(fromChain, sendDetails.communityParams.tokenContractAddress)
+      if not communityToken.name.len == 0:
+        error = "cannot_resolve_community_token"
+      else:
+        communityAssetName = communityToken.name
+        communityAssetDecimals = communityToken.decimals
+
+      if txType == SendType.CommunityDeployOwnerToken:
+        communityOwnerTokenName = sendDetails.communityParams.ownerTokenParameters.name
+        communityMasterTokenName = sendDetails.communityParams.masterTokenParameters.name
+
     self.view.showTransactionToast(
       sendDetails.uuid,
       sendDetails.sendType,
@@ -523,6 +554,13 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       sendDetails.username,
       sendDetails.publicKey,
       sendDetails.packId,
+      communityId,
+      communityName,
+      communityAmount,
+      communityAssetName,
+      communityAssetDecimals,
+      communityOwnerTokenName,
+      communityMasterTokenName,
       status,
       error,
     )
@@ -1348,16 +1386,26 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
-method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: CommunityTokenDto) =
+method onCommunityTokenDeploymentStored*[T](self: Module[T], communityToken: CommunityTokenDto, error: string) =
+  if error != "":
+    error "Cannot update section model, due to error storing community token: ", error
+    return
   let item = self.view.model().getItemById(communityToken.communityId)
-  if item.id != "":
-    item.appendCommunityToken(self.createTokenItem(communityToken))
+  if item.id == "":
+    error "Cannot update section model, due to missing community with id: ", communityId=communityToken.communityId
+    return
+  item.appendCommunityToken(self.createTokenItem(communityToken))
 
-method onOwnerTokensDeploymentStarted*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) =
+method onOwnerTokensDeploymentStored*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto, error: string) =
+  if error != "":
+    error "Cannot update section model, due to error storing owner tokens: ", error
+    return
   let item = self.view.model().getItemById(ownerToken.communityId)
-  if item.id != "":
-    item.appendCommunityToken(self.createTokenItem(ownerToken))
-    item.appendCommunityToken(self.createTokenItem(masterToken))
+  if item.id == "":
+    error "Cannot update section model, due to missing community with id: ", communityId=ownerToken.communityId
+    return
+  item.appendCommunityToken(self.createTokenItem(ownerToken))
+  item.appendCommunityToken(self.createTokenItem(masterToken))
 
 method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId: int, address: string) =
   let item = self.view.model().getItemById(communityId)

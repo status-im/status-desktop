@@ -59,7 +59,6 @@ QtObject:
   proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
   proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int)
   # All slots defined in included files have to be forward declared
-  proc onAllTokensBuilt*(self: Service, response: string) {.slot.}
   proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.}
   proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.slot.}
   proc onAddressDetailsFetched*(self: Service, jsonString: string) {.slot.}
