@@ -149,6 +149,8 @@ QtObject {
     property int smallPadding: 10
     property int radius: 8
 
+    readonly property real disabledOpacity: 0.3
+
     function updateFontSize(fontSize:int) {
         switch (fontSize) {
             case Theme.FontSizeXS:
@@ -205,6 +207,12 @@ QtObject {
                 asideTextFontSize = 13
                 break;
         }
+    }
+
+    enum AnimationDuration {
+        Fast = 100,
+        Default = 250, // https://doc.qt.io/qt-5/qml-qtquick-propertyanimation.html#duration-prop
+        Slow = 400
     }
 
     // Style compat

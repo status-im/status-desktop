@@ -1,13 +1,17 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ.Core.Theme 0.1
+
 import AppLayouts.Communities.controls 1.0
 
 Page {
     id: root
 
-    leftPadding: 64
-    topPadding: 16
+    leftPadding: Theme.xlPadding*2
+    topPadding: Theme.padding
+
+    readonly property int preferredContentWidth: 560
 
     property alias buttons: pageHeader.buttons
     property alias subtitle: pageHeader.subtitle
@@ -18,8 +22,8 @@ Page {
         id: pageHeader
 
         height: 44
-        leftPadding: 64
-        rightPadding: width - 560 - leftPadding
+        leftPadding: root.leftPadding
+        rightPadding: width - root.preferredContentWidth - leftPadding
 
         title: root.title
     }
