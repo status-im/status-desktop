@@ -21,7 +21,6 @@ from gui.mocked_keycard_controller import MockedKeycardController
     [pytest.param('Test Account', '#216266', 'sunglasses', '😎 ', 'Test Account2', '#2a4af5',
                   'thumbsup', '👍 ', 'Test Account3', '#ff7d46', 'cool', '🆒 ')
      ])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_create_keycard_account_with_new_seed_phrase(main_screen: MainWindow, name, color, emoji_name, emoji, name1,
                                                      color1, emoji1_name, emoji1, name2, color2, emoji2_name, emoji2):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC

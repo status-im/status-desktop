@@ -22,7 +22,6 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @pytest.mark.parametrize('account_name', [pytest.param('Account 1')])
 @pytest.mark.timeout(timeout=210)
 @pytest.mark.keycard
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_setup_keycard_with_existing_account(main_screen: MainWindow, user_account, account_name):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     first_details = '{}'

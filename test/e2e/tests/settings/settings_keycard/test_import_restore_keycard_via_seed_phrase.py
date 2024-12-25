@@ -18,8 +18,7 @@ from scripts.utils.generators import random_mnemonic
                  'Import or restore a Keycard via a seed phrase')
 @pytest.mark.case(703625)
 @pytest.mark.keycard
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/17012')
+@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/17012')
 def test_import_restore_keycard_via_seed_phrase(main_screen: MainWindow):
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
     pin = Keycard.KEYCARD_PIN.value
