@@ -14,7 +14,6 @@ from gui.mocked_keycard_controller import MockedKeycardController
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703628', 'Factory reset a Keycard')
 @pytest.mark.case(703628)
 @pytest.mark.keycard
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_factory_reset_keycard(main_screen: MainWindow, user_account):
     main_screen.prepare()
     timeout = configs.timeouts.UI_LOAD_TIMEOUT_MSEC
@@ -68,7 +67,6 @@ def test_factory_reset_keycard(main_screen: MainWindow, user_account):
                  'Factory reset a Keycard: incorrect PIN')
 @pytest.mark.case(704606)
 @pytest.mark.keycard
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15741')
 def test_factory_reset_keycard_incorrect_pin(main_screen: MainWindow, user_account):
     main_screen.prepare()
     incorrect_pin = Keycard.KEYCARD_INCORRECT_PIN.value
