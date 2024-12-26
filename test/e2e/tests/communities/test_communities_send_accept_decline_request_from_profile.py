@@ -107,7 +107,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community.name, 0)
+            community_screen = chat.click_community_invite(community.name, 0)
 
         with step(f'User {user_three.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
@@ -123,7 +123,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community.name, 0)
+            community_screen = chat.click_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()

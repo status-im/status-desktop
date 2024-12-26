@@ -32,6 +32,11 @@ channel_name_StatusBaseText = {"container": None, "type": "StatusBaseText", "unn
 mainWindow_createChannelOrCategoryBtn_StatusBaseText = {"container": mainWindow_communityColumnView_CommunityColumnView, "objectName": "createChannelOrCategoryBtn", "type": "StatusBaseText", "visible": True}
 create_channel_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "createCommunityChannelBtn", "type": "StatusMenuItem", "visible": True}
 mainWindow_Join_Community_StatusButton = {"checkable": False, "container": mainWindow_StatusWindow, "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Banned Panel
+mainWindow_CommunityBannedMemberPanel = {"container": statusDesktop_mainWindow, "objectName": "communityBannedMemberPanel", "type": "CommunityBannedMemberCenterPanel", "visible": True}
+mainWindow_CommunityBannedMemberPanel_UserInfo = {"container": statusDesktop_mainWindow, "objectName": "userInfoPanelBase", "type": "Rectangle", "visible": True}
+
 add_categories_StatusFlatButton = {"checkable": False, "container": mainWindow_scrollView_StatusScrollView, "id": "manageBtn", "type": "StatusFlatButton", "visible": True}
 categoryItem_StatusChatListCategoryItem = {"container": mainWindow_scrollView_StatusScrollView, "objectName": "categoryItem", "type": "StatusChatListCategoryItem", "visible": True}
 delete_Category_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "deleteCategoryMenuItem", "type": "StatusMenuItem", "visible": True}
@@ -83,10 +88,10 @@ mainWindow_Edit_Community_StatusButton = {"container": statusDesktop_mainWindow,
 
 # Members Settings View
 mainWindow_MembersSettingsPanel = {"container": mainWindow_communityLoader_Loader, "type": "MembersSettingsPanel", "unnamed": 1, "visible": True}
-membersListViews_ListView = {"container": mainWindow_MembersSettingsPanel, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
+membersListViews_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "StatusListView", "visible": True}
 memberItem_StatusMemberListItem = {"container": membersListViews_ListView, "id": "memberItem", "type": "StatusMemberListItem", "unnamed": 1, "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": membersListViews_ListView, "objectName": "MemberListItem_KickButton", "type": "StatusButton", "visible": True}
-memberItem_Ban_StatusButton = {"checkable": False, "container": membersListViews_ListView, "objectName": "MemberListItem_BanButton", "type": "StatusButton", "visible": True}
+memberItem_Ban_StatusButton = {"container": membersListViews_ListView, "objectName": "MemberListItem_BanButton", "type": "StatusButton", "visible": True}
 memberItem_Unban_StatusButton = {"checkable": False, "container": membersListViews_ListView, "objectName": "MemberListItem_UnbanButton", "type": "StatusButton", "visible": True}
 
 # Tokens View

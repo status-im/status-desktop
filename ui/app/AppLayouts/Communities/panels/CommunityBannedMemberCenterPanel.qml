@@ -11,6 +11,8 @@ import StatusQ.Layout 0.1
 ColumnLayout {
     id: root
 
+    objectName: "communityBannedMemberPanel"
+
     property string name
     property string chatDateTimeText
     property string listUsersText
@@ -81,6 +83,8 @@ ColumnLayout {
     Rectangle {
         id: panelBase
 
+        objectName: "userInfoPanelBase"
+
         Layout.fillWidth: true
         Layout.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
@@ -121,6 +125,7 @@ ColumnLayout {
                 }
 
                 StatusBaseText {
+                    objectName: "userInfoPanelBaseText"
                     text: qsTr("You've been banned from <b>%1<b>").arg(root.name)
                     color: Theme.palette.dangerColor1
                     font.pixelSize: Theme.secondaryAdditionalTextSize

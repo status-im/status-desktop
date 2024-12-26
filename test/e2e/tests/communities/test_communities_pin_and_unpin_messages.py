@@ -78,7 +78,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             main_screen.prepare()
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            chat.accept_community_invite(community.name, 0)
+            chat.click_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()

@@ -22,6 +22,7 @@ from gui.elements.text_label import TextLabel
 from gui.objects_map import names, communities_names, messaging_names
 from gui.screens.community_settings import CommunitySettingsScreen
 from scripts.tools.image import Image
+from scripts.utils.parsers import remove_tags
 
 
 class CommunityScreen(QObject):
@@ -91,6 +92,21 @@ class CommunityScreen(QObject):
     def verify_category(self, category_name: str):
         category = self.left_panel.find_category_in_list(category_name)
         assert category.category_name == category_name
+
+
+class BannedCommunityScreen(QObject):
+    def __init__(self):
+        super().__init__(communities_names.mainWindow_communityLoader_Loader)
+        self.community_header_button = Button(communities_names.mainWindow_communityHeaderButton_StatusChatInfoButton)
+        self.community_start_chat_button = Button(messaging_names.mainWindow_startChatButton_StatusIconTabButton)
+        self.community_banned_member_panel = QObject(communities_names.mainWindow_CommunityBannedMemberPanel)
+        self.community_banned_member_panel_user_info = QObject(
+            communities_names.mainWindow_CommunityBannedMemberPanel_UserInfo)
+
+    def banned_title(self):
+        for child in walk_children(self.community_banned_member_panel_user_info.object):
+            if str(getattr(child, 'objectName', '')) == 'userInfoPanelBaseText':
+                return remove_tags(str(child.text))
 
 
 class ToolBar(QObject):

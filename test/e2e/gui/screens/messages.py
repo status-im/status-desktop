@@ -27,7 +27,7 @@ from gui.elements.scroll import Scroll
 from gui.elements.text_edit import TextEdit
 from gui.elements.text_label import TextLabel
 from gui.objects_map import messaging_names, communities_names
-from gui.screens.community import CommunityScreen
+from gui.screens.community import CommunityScreen, BannedCommunityScreen
 from scripts.tools.image import Image
 from scripts.utils.parsers import remove_tags
 
@@ -175,6 +175,11 @@ class Message:
         self.delegate_button.click()
         return CommunityScreen().wait_until_appears()
 
+    def open_banned_community_invitation(self):
+        driver.waitFor(lambda: self.delegate_button.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        self.delegate_button.click()
+        return BannedCommunityScreen().wait_until_appears()
+
     @allure.step('Hover message')
     def hover_message(self):
         self.delegate_button.hover()
@@ -275,8 +280,17 @@ class ChatView(QObject):
                 raise LookupError(f'Message not found')
         return message
 
-    @allure.step('Accept community invitation')
-    def accept_community_invite(self, community: str, index: int) -> 'CommunityScreen':
+    @allure.step('Open community invitation')
+    def click_community_invite(self, community: str, index: int) -> 'CommunityScreen':
+        message = self.search_for_invitation(community, index)
+        return message.open_community_invitation()
+
+    @allure.step('Open banned community invitation')
+    def open_banned_community(self, community, index) -> 'BannedCommunityScreen':
+        message = self.search_for_invitation(community, index)
+        return message.open_banned_community_invitation()
+
+    def search_for_invitation(self, community, index):
         message = None
         started_at = time.monotonic()
         while message is None:
@@ -286,8 +300,9 @@ class ChatView(QObject):
                     break
             if time.monotonic() - started_at > 80:
                 raise LookupError(f'Community invitation was not found')
+        return message
 
-        return message.open_community_invitation()
+
 
 
 class CreateChatView(QObject):

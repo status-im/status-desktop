@@ -60,6 +60,7 @@ class ToastMessages(Enum):
     REMOVED_CONTACT_TOAST = 'Contact removed'
     BANNED_USER_TOAST = ' was banned from '
     UNBANNED_USER_TOAST = ' unbanned from '
+    UNBANNED_USER_CONFIRM = 'You were unbanned from '
 
 
 class LimitWarnings(Enum):
