@@ -27,7 +27,6 @@ class QObject:
             raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC}")
         return obj
 
-
     def set_text_property(self, text):
         self.object.forceActiveFocus()
         self.object.clear()

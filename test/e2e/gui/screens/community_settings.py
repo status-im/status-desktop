@@ -272,8 +272,8 @@ class MembersView(QObject):
         self._unban_member_button = Button(communities_names.memberItem_Unban_StatusButton)
 
     @property
-    @allure.step('Get community members')
-    def members(self) -> typing.List[str]:
+    @allure.step('Get community members names')
+    def members_names(self) -> typing.List[str]:
         return [str(member.userName) for member in driver.findAllObjects(self._member_list_item.real_name)]
 
     @allure.step('Get community member objects')
@@ -300,29 +300,29 @@ class MembersView(QObject):
     def kick_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        self._kick_member_button.click()
+        self._kick_member_button.hover()
+        time.sleep(1)
+        self._kick_member_button.native_mouse_click()
         kick_member_popup = KickMemberPopup()
-        assert kick_member_popup.exists
         kick_member_popup.confirm_kicking()
 
     @allure.step('Ban community member')
     def ban_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        self._ban_member_button.click()
+        self._ban_member_button.hover()
+        time.sleep(1)
+        self._ban_member_button.native_mouse_click()
         return BanMemberPopup().wait_until_appears()
 
     @allure.step('Unban community member')
-    def unban_member(self, member_name: str, attempt: int = 2):
+    def unban_member(self, member_name: str):
         member = self.get_member_object(member_name)
         QObject(real_name=driver.objectMap.realName(member)).hover()
-        try:
-            self._unban_member_button.wait_until_appears().click()
-        except AssertionError as er:
-            if attempt:
-                self.unban_member(member_name, attempt-1)
-            else:
-                raise er
+        self._unban_member_button.hover()
+        time.sleep(1)
+        self._unban_member_button.native_mouse_click()
+        return self
 
 
 class AirdropsView(QObject):

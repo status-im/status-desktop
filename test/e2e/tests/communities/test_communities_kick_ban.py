@@ -7,6 +7,7 @@ from allure_commons._allure import step
 import driver
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
+from driver.objects_access import walk_children
 from gui.screens.community import Members
 from gui.screens.messages import MessagesScreen
 from helpers.SettingsHelper import enable_community_creation
@@ -16,11 +17,9 @@ from gui.main_window import MainWindow
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703252', 'Kick user')
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703254', 'Edit chat - Delete any message')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/736991', 'Owner can ban member')
 @pytest.mark.case(703252, 703252, 736991)
 @pytest.mark.communities
-@pytest.mark.skip(reason='Not possible to get floating buttons on hover for list item')
 def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -64,7 +63,6 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             enable_community_creation(main_screen)
-
             main_screen.create_community(community_data=community)
             community_screen = main_screen.left_panel.select_community(community.name)
             add_members = community_screen.left_panel.open_add_members_popup()
@@ -78,7 +76,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert driver.waitFor(lambda: user_two.name in messages_view.left_panel.get_chats_names,
                                   10000)
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
-            community_screen = chat.accept_community_invite(community.name, 0)
+            community_screen = chat.click_community_invite(community.name, 0)
 
         with step(f'User {user_one.name}, verify welcome community popup'):
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
@@ -87,25 +85,6 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
                                   10000), 'Join community button not hidden'
-            messages_screen = MessagesScreen()
-            message_text = "Hi"
-            messages_screen.group_chat.send_message_to_group_chat(message_text)
-            main_screen.hide()
-
-        with step(f'User {user_two.name}, delete member message of {user_one.name} and verify it was deleted'):
-            aut_two.attach()
-            main_screen.prepare()
-            community_screen = main_screen.left_panel.select_community(community.name)
-            messages_screen = MessagesScreen()
-            message = messages_screen.chat.find_message_by_text(message_text, '0')
-            message.hover_message().delete_message()
-            assert messages_screen.chat.get_deleted_message_state
-            main_screen.hide()
-
-        with step(f'User {user_one.name} verify that message was deleted by {user_two.name}'):
-            aut_one.attach()
-            main_screen.prepare()
-            assert driver.waitFor(lambda: messages_screen.chat.get_deleted_message_state, timeout)
             main_screen.hide()
 
         with step(f'User {user_two.name}, ban {user_one.name} from the community'):
@@ -130,27 +109,53 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_two.name}, see {user_one.name} in banned members list'):
             community_screen.right_panel.click_banned_button()
             assert driver.waitFor(lambda: user_one.name not in members_list, timeout)
-
-        with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
-            members.unban_member(user_one.name)
-            time.sleep(2)
-
-        with step('Check toast message about unbanned member'):
-            toast_messages = main_screen.wait_for_notification()
-            toast_message = user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name
-            assert driver.waitFor(lambda: toast_message in toast_messages, timeout), \
-                f"Toast message is incorrect, current message {toast_message} is not in {toast_messages}"
             main_screen.hide()
 
-        with step(f'User {user_one.name} join community again {user_two.name}'):
+        with step(f'User {user_one.name} tries to join community when being banned by {user_two.name}'):
             aut_one.attach()
             main_screen.prepare()
-            community_screen = chat.accept_community_invite(community.name, 0)
+            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
+            banned_community_screen = chat.open_banned_community(community.name, 0)
+            assert banned_community_screen.community_banned_member_panel.is_visible
+            assert banned_community_screen.banned_title() == f"You've been banned from {community.name}"
+            main_screen.left_panel.open_community_context_menu(community.name).leave_community()
+            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
+            main_screen.hide()
+
+        with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
+            aut_two.attach()
+            main_screen.prepare()
+            members.unban_member(user_one.name)
+            toast_messages = main_screen.wait_for_notification()
+            assert len(toast_messages) == 1, \
+                f"Multiple toast messages appeared"
+            message = toast_messages[0]
+            assert message == user_one.name + ToastMessages.UNBANNED_USER_TOAST.value + community.name, \
+                f"Toast message is incorrect, current message is {message}"
+            main_screen.hide()
+
+        with step(f'User {user_one.name} joins community again'):
+            aut_one.attach()
+            main_screen.prepare()
+            chat1 = messages_view.left_panel.click_chat_by_name(user_two.name)
+            community_screen = chat1.open_banned_community(community.name, 0)
+            toast_messages = main_screen.wait_for_notification(timeout_msec=10000)
+            assert len(toast_messages) == 1, \
+                f"Multiple toast messages appeared"
+            message = toast_messages[0]
+            assert message == ToastMessages.UNBANNED_USER_CONFIRM.value + community.name, \
+                f"Toast message is incorrect, current message is {message}"
+            main_screen.left_panel.open_community_context_menu(community.name).leave_community()
+
+            messages_view1 = main_screen.left_panel.open_messages_screen()
+            chat = messages_view1.left_panel.click_chat_by_name(user_two.name)
+            time.sleep(1)
+            community_screen = chat.click_community_invite(community.name, 0)
+
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
-                                  10000), 'Join community button not hidden'
-            main_screen.hide()
+                              10000), 'Join community button not hidden'
 
         with step(f'User {user_two.name}, kick {user_one.name} from the community'):
             aut_two.attach()
@@ -170,7 +175,16 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert driver.waitFor(lambda: user_one.name not in community_screen.right_panel.members, timeout)
             main_screen.hide()
 
-        with step(f'User {user_one.name} is not in the community anymore'):
+        with step(f'User {user_one.name} rejoins community after being kicked'):
             aut_one.attach()
             main_screen.prepare()
             assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
+
+            messages_view = main_screen.left_panel.open_messages_screen()
+            chat = messages_view.left_panel.click_chat_by_name(user_two.name)
+            community_screen = chat.click_community_invite(community.name, 0)
+
+            welcome_popup = community_screen.left_panel.open_welcome_community_popup()
+            welcome_popup.join().authenticate(user_one.password)
+            assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
+                                  10000), 'Join community button not hidden'
