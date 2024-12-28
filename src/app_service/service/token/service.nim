@@ -31,10 +31,7 @@ const CRYPTO_SUB_UNITS_TO_FACTOR = {
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
-const SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED* = "tokensDetailsAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
-const SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED* = "tokensMarketValuesAboutToBeUpdated"
-const SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED* = "tokensPricesValuesAboutToBeUpdated"
 const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
 const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
 const SIGNAL_TOKEN_PREFERENCES_UPDATED* = "tokenPreferencesUpdated"
@@ -104,7 +101,6 @@ QtObject:
 
   proc fetchTokensMarketValues(self: Service, symbols: seq[string]) =
     self.tokensMarketDetailsLoading = true
-    defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensMarketValuesTaskArg(
       tptr: fetchTokensMarketValuesTask,
       vptr: cast[ByteAddress](self.vptr),
@@ -187,7 +183,6 @@ QtObject:
 
   proc fetchTokensPrices(self: Service, symbols: seq[string]) =
     self.tokensPricesLoading = true
-    defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensPricesTaskArg(
       tptr: fetchTokensPricesTask,
       vptr: cast[ByteAddress](self.vptr),
