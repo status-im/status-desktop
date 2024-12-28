@@ -338,30 +338,6 @@ proc hasMember*(self: SectionItem, pubkey: string): bool =
 proc setOnlineStatusForMember*(self: SectionItem, pubKey: string, onlineStatus: OnlineStatus) =
   self.membersModel.setOnlineStatus(pubkey, onlineStatus)
 
-proc updateMember*(
-    self: SectionItem,
-    pubkey: string,
-    name: string,
-    ensName: string,
-    isEnsVerified: bool,
-    nickname: string,
-    alias: string,
-    image: string,
-    isContact: bool,
-    trustStatus: TrustStatus,
-  ) =
-  self.membersModel.updateItem(
-    pubkey,
-    name,
-    ensName,
-    isEnsVerified,
-    nickname,
-    alias,
-    image,
-    isContact,
-    trustStatus,
-  )
-
 proc amIBanned*(self: SectionItem): bool {.inline.} =
   return self.membersModel.isUserBanned(singletonInstance.userProfile.getPubKey())
 
