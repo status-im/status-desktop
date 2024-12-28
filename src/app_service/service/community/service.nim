@@ -2441,3 +2441,14 @@ QtObject:
       if (not chatDto.muted and chatDto.unviewedMessagesCount > 0) or chatDto.unviewedMentionsCount > 0:
         return true
     return false
+
+  proc markAllReadInCommunity*(self: Service, communityId: string) =
+    try:
+      let response = status_go.markAllReadInCommunity(communityId)
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, error.message)
+
+      self.chatService.parseChatResponseAndEmit(response)
+    except Exception as e:
+      error "error marking all read in community", msg = e.msg

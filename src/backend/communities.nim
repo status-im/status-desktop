@@ -558,3 +558,5 @@ proc setCommunityShard*(communityId: string, index: int): RpcResponse[JsonNode] 
         "communityId": communityId,
       }])
 
+proc markAllReadInCommunity*(communityId: string,): RpcResponse[JsonNode] =
+  return callPrivateRPC("markAllReadInCommunity".prefix, %*[communityId])

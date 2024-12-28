@@ -1632,3 +1632,6 @@ method updateRequestToJoinState*(self: Module, state: RequestToJoinState) =
 
 method communityMemberReevaluationStatusUpdated*(self: Module, status: CommunityMemberReevaluationStatus) =
   self.view.setCommunityMemberReevaluationStatus(status.int)
+
+method markAllReadInCommunity*(self: Module) =
+  self.controller.markAllReadInCommunity()
