@@ -59,17 +59,16 @@ class ContactItem:
         return self.contact
 
     def init_ui(self):
+        self.contact = str(self.object.userName)
         for child in walk_children(self.object):
             if str(getattr(child, 'id', '')) == 'iconOrImage':
                 self.icon = Image(driver.objectMap.realName(child))
-            elif str(getattr(child, 'id', '')) == 'menuButton':
+            elif str(getattr(child, 'objectName', '')) == 'moreBtn':
                 self._open_canvas_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'objectName', '')) == 'acceptBtn':
                 self._accept_button = Button(real_name=driver.objectMap.realName(child))
             elif str(getattr(child, 'objectName', '')) == 'declineBtn':
                 self._reject_button = Button(real_name=driver.objectMap.realName(child))
-            elif str(getattr(child, 'id', '')) == 'statusListItemTitle':
-                self.contact = str(child.text)
             elif str(getattr(child, 'objectName', '')) == 'chat-icon':
                 self._chat_button = Button(real_name=driver.objectMap.realName(child))
 
@@ -110,6 +109,7 @@ class ContactsSettingsView(QObject):
         self._contacts_items_list = List(settings_names.settingsContentBaseScrollView_ContactListPanel)
         self._pending_request_sent_panel = QObject(
             settings_names.settingsContentBaseScrollView_sentRequests_ContactsListPanel)
+        self.section_header = QObject(settings_names.settingsContentBaseScrollView_ContactListPanel_Header)
         self._pending_request_received_panel = QObject(
             settings_names.settingsContentBaseScrollView_receivedRequests_ContactsListPanel)
         self._contacts_panel = QObject(settings_names.settingsContentBaseScrollView_mutualContacts_ContactsListPanel)
