@@ -113,10 +113,10 @@ Control {
 
         proxyRoles: [
             // helper role for rendering section delegate
-            FastExpressionRole {
+            JoinRole {
                 name: "isCommunity"
-                expression: !!communityId ? "community" : ""
-                expectedRoles: ["communityId"]
+                roleNames: ["communityId"]
+                separator: ""
             },
             FastExpressionRole {
                 name: "marketBalance"
@@ -289,7 +289,8 @@ Control {
             model: root.loading ? loadingModel : regularModel
 
             section {
-                property: "isCommunity"
+                property: "communityId"
+                criteria: ViewSection.FirstCharacter
                 delegate: AssetsSectionDelegate {
                     width: parent.width
                     text: qsTr("Community minted")
