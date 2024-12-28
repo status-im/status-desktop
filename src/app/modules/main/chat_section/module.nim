@@ -156,7 +156,7 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
       isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
-  return member_msg_item.initItem(
+  return member_msg_item.initMessageItem(
     message.id,
     message.communityId,
     message.chatId,
@@ -200,6 +200,7 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     message.deleted,
     message.deletedBy,
     deletedByContactDetails = ContactDetails(),
+    message.pinnedBy,
     message.mentioned,
     message.quotedMessage.`from`,
     message.quotedMessage.text,

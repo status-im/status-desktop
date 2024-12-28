@@ -60,12 +60,6 @@ proc init*(self: Controller) =
       return
     self.delegate.newMessagesLoaded(args.messages, args.reactions)
 
-  self.events.on(SIGNAL_PINNED_MESSAGES_LOADED) do(e:Args):
-    let args = PinnedMessagesLoadedArgs(e)
-    if(self.chatId != args.chatId):
-      return
-    self.delegate.newPinnedMessagesLoaded(args.pinnedMessages)
-
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     var args = MessagesArgs(e)
     if(self.chatId != args.chatId):

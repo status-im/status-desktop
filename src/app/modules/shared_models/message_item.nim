@@ -76,7 +76,7 @@ type
     bridgeName: string
     paymentRequestModel: payment_request_model.Model
 
-proc initItem*(
+proc initMessageItem*(
     id,
     communityId,
     chatId,
@@ -113,6 +113,7 @@ proc initItem*(
     deleted: bool,
     deletedBy: string,
     deletedByContactDetails: ContactDetails,
+    pinnedBy: string,
     mentioned: bool,
     quotedMessageFrom: string,
     quotedMessageText: string,
@@ -164,6 +165,9 @@ proc initItem*(
   result.deleted = deleted
   result.deletedBy = deletedBy
   result.deletedByContactDetails = deletedByContactDetails
+  result.pinnedBy = pinnedBy
+  if pinnedBy != "":
+    result.pinned = true
   result.links = links
   result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
   result.emojiReactionsModel = newEmojiReactionsModel()
@@ -233,7 +237,7 @@ proc initItem*(
     result.bridgeName = bridgeMessage.bridgeName
 
 proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
-  return initItem(
+  return initMessageItem(
     id = "",
     communityId = "",
     chatId = "",
@@ -270,6 +274,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     deleted = false,
     deletedBy = "",
     deletedByContactDetails = ContactDetails(),
+    pinnedBy = "",
     mentioned = false,
     quotedMessageFrom = "",
     quotedMessageText = "",
