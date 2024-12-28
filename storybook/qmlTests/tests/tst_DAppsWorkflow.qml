@@ -322,6 +322,11 @@ Item {
 
         DAppsModule {
             currenciesStore: CurrenciesStore {}
+            dappsMetrics: DAppsMetrics {
+                metricsStore: MetricsStore {
+                    function addCentralizedMetricIfEnabled(eventName, eventValue = null) {}
+                }
+            }
             groupedAccountAssetsModel: assetsStoreMock.groupedAccountAssetsModel
         }
     }
@@ -1006,6 +1011,12 @@ Item {
             signalName: "signRequestRejected"
         }
 
+        SignalSpy {
+            id: pairWithConnectorRequestedSpy
+            target: dappsWorkflowTest.controlUnderTest
+            signalName: "pairWithConnectorRequested"
+        }
+
         function init() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
@@ -1220,6 +1231,56 @@ Item {
 
             popup = findChild(controlUnderTest, "dappsRequestModal")
             verify(!popup)
+        }
+
+        function test_connectorsEnabledOrDisabled() {
+            controlUnderTest.chooseConnector()
+            waitForRendering(controlUnderTest.visualParent, 200)
+            waitForItemPolished(controlUnderTest.visualParent, 200)
+
+            const connectorButton = findChild(controlUnderTest.visualParent, "btnStatusConnector")
+            const wcButton = findChild(controlUnderTest.visualParent, "btnWalletConnect")
+            verify(!!connectorButton)
+            verify(!!wcButton)
+
+            compare(controlUnderTest.walletConnectEnabled, true)
+            compare(controlUnderTest.connectorEnabled, true)
+
+            controlUnderTest.walletConnectEnabled = false
+            compare(wcButton.enabled, false)
+
+            controlUnderTest.walletConnectEnabled = true
+            compare(wcButton.enabled, true)
+
+            controlUnderTest.connectorEnabled = false
+            compare(connectorButton.enabled, false)
+
+            controlUnderTest.connectorEnabled = true
+            compare(connectorButton.enabled, true)
+        }
+
+        function test_openPairModal() {
+            controlUnderTest.chooseConnector()
+            waitForRendering(controlUnderTest.visualParent, 200)
+            waitForItemPolished(controlUnderTest.visualParent, 200)
+
+            const wcButton = findChild(controlUnderTest, "btnWalletConnect")
+            verify(!!wcButton)
+
+            mouseClick(wcButton)
+            compare(pairWithConnectorRequestedSpy.count, 1)
+            compare(pairWithConnectorRequestedSpy.signalArguments[0][0], Constants.DAppConnectors.WalletConnect)
+
+            controlUnderTest.chooseConnector()
+            waitForRendering(controlUnderTest.visualParent, 200)
+            waitForItemPolished(controlUnderTest.visualParent, 200)
+
+            const connectorButton = findChild(controlUnderTest, "btnStatusConnector")
+            verify(!!connectorButton)
+
+            mouseClick(connectorButton)
+            compare(pairWithConnectorRequestedSpy.count, 2)
+            compare(pairWithConnectorRequestedSpy.signalArguments[1][0], Constants.DAppConnectors.StatusConnect)
         }
     }
 }

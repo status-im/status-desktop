@@ -13,8 +13,10 @@ Item {
     Component {
         id: componentUnderTest
         DappsComboBox {
-            property SignalSpy dappsListReadySpy: SignalSpy { target: controlUnderTest; signalName: "dappsListReady" }
-            property SignalSpy pairDappSpy: SignalSpy { target: controlUnderTest; signalName: "pairDapp" }
+            id: controlUnderTest
+            property SignalSpy dappListRequestedSpy: SignalSpy { target: controlUnderTest; signalName: "dappListRequested" }
+            property SignalSpy connectDappSpy: SignalSpy { target: controlUnderTest; signalName: "connectDapp" }
+            property SignalSpy disconnectDappSpy: SignalSpy { target: controlUnderTest; signalName: "disconnectDapp" }
 
             anchors.centerIn: parent
             model: ListModel {}
@@ -40,7 +42,7 @@ Item {
             const indicator = findChild(controlUnderTest, "dappBadge")
             compare(indicator.visible, false)
 
-            controlUnderTest.model.append({name: "Test dApp 1", url: "https://dapp.test/1", iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png"})
+            controlUnderTest.model.append({name: "Test dApp 1", url: "https://dapp.test/1", iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png", connectorBadge: "status"})
             compare(indicator.visible, true)
 
             controlUnderTest.model.clear()
@@ -63,7 +65,7 @@ Item {
             compare(popup.y, controlUnderTest.height + 4)
             compare(popup.width, 312)
             verify(popup.height > 0)
-            compare(controlUnderTest.dappsListReadySpy.count, 1)
+            compare(controlUnderTest.dappListRequestedSpy.count, 1)
 
             const background = findChild(controlUnderTest, "dappsBackground")
             compare(background.active, true)
@@ -93,48 +95,29 @@ Item {
             compare(dappTooltip.visible, false)
         }
 
-        function test_connectorsEnabledOrDisabled() {
+        function test_clickConnect() {
             mouseClick(controlUnderTest)
-            const dappListPopup = findChild(controlUnderTest, "dappsListPopup")
-            verify(!!dappListPopup)
+            waitForRendering(controlUnderTest, 200)
 
-            dappListPopup.connectDapp()
-            waitForRendering(controlUnderTest)
-            waitForItemPolished(controlUnderTest)
 
-            const connectorButton = findChild(controlUnderTest, "btnStatusConnector")
-            const wcButton = findChild(controlUnderTest, "btnWalletConnect")
-            verify(!!connectorButton)
-            verify(!!wcButton)
+            const connectButton = findChild(controlUnderTest, "connectDappButton")
+            verify(!!connectButton)
 
-            compare(controlUnderTest.walletConnectEnabled, true)
-            compare(controlUnderTest.connectorEnabled, true)
-
-            controlUnderTest.walletConnectEnabled = false
-            compare(wcButton.enabled, false)
-
-            controlUnderTest.walletConnectEnabled = true
-            compare(wcButton.enabled, true)
-
-            controlUnderTest.connectorEnabled = false
-            compare(connectorButton.enabled, false)
-
-            controlUnderTest.connectorEnabled = true
-            compare(connectorButton.enabled, true)
+            mouseClick(connectButton)
+            compare(controlUnderTest.connectDappSpy.count, 1)
         }
 
-        function test_openPairModal() {
+        function test_disconnect() {
+            controlUnderTest.model.append({name: "Test dApp 1", url: "https://dapp.test/1", iconUrl: "https://se-sdk-dapp.vercel.app/assets/eip155:1.png", connectorBadge: "status"})
             mouseClick(controlUnderTest)
-            const dappListPopup = findChild(controlUnderTest, "dappsListPopup")
-            verify(!!dappListPopup)
+            waitForRendering(controlUnderTest, 200)
 
-            dappListPopup.connectDapp()
-            const wcButton = findChild(controlUnderTest, "btnWalletConnect")
-            verify(!!wcButton)
+            const dapplist = findChild(controlUnderTest, "dappsListPopup")
+            const disconnectButton = findChild(dapplist.contentItem, "disconnectDappButton")
+            verify(!!disconnectButton)
 
-            mouseClick(wcButton)
-            compare(dappListPopup.visible, false)
-            compare(controlUnderTest.pairDappSpy.count, 1)
+            mouseClick(disconnectButton)
+            compare(controlUnderTest.disconnectDappSpy.count, 1)
         }
     }
 }

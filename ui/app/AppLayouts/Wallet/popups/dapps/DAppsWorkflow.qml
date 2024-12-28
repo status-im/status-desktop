@@ -1,10 +1,16 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import StatusQ 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Popups.Dialog 0.1
+
 import SortFilterProxyModel 0.2
 
 import AppLayouts.Wallet 1.0
@@ -77,6 +83,9 @@ SQUtils.QObject {
 
     property var formatBigNumber: (number, symbol, noSymbolOption) => console.error("formatBigNumber not set")
 
+    property bool walletConnectEnabled: true
+    property bool connectorEnabled: true
+
     signal pairWCReady()
 
     signal disconnectRequested(string connectionId)
@@ -87,6 +96,7 @@ SQUtils.QObject {
     signal signRequestAccepted(string connectionId, string requestId)
     signal signRequestRejected(string connectionId, string requestId)
     signal signRequestIsLive(string connectionId, string requestId)
+    signal pairWithConnectorRequested(int connectorId)
 
     /// Response to pairingValidationRequested
     function pairingValidated(validationState) {
@@ -112,6 +122,10 @@ SQUtils.QObject {
 
     function openPairing() {
         pairWCLoader.active = true
+    }
+
+    function chooseConnector() {
+       dappConnectSelectLoader.active = true
     }
 
     function disconnectDapp(dappUrl) {
@@ -414,6 +428,77 @@ SQUtils.QObject {
                 key: "chainId"
                 value: request.chainId
             }
+        }
+    }
+
+    Loader {
+        id: dappConnectSelectLoader
+        active: false
+        sourceComponent: StatusDialog {
+            id: dappConnectSelect
+            objectName: "dappConnectSelect"
+            width: 480
+            topPadding: Theme.bigPadding
+            leftPadding: Theme.padding
+            rightPadding: Theme.padding
+            bottomPadding: 4
+            destroyOnClose: false
+            visible: true
+            parent: root.visualParent
+
+            title: qsTr("Connect a dApp")
+            footer: StatusDialogFooter {
+                rightButtons: ObjectModel {
+                    StatusButton {
+                        text: qsTr("Cancel")
+                        onClicked: dappConnectSelect.close()
+                    }
+                }
+            }
+
+            contentItem: ColumnLayout {
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Theme.padding
+                    color: Theme.palette.baseColor1
+                    text: qsTr("How would you like to connect?")
+                }
+                StatusListItem {
+                    objectName: "btnStatusConnector"
+                    title: "Status Connector"
+                    asset.name: Theme.png("status-logo")
+                    asset.isImage: true
+                    enabled: root.connectorEnabled
+                    components: [
+                        StatusIcon {
+                            icon: "external-link"
+                            color: Theme.palette.baseColor1
+                        }
+                    ]
+                    onClicked: {
+                        dappConnectSelect.close()
+                        root.pairWithConnectorRequested(Constants.DAppConnectors.StatusConnect)
+                    }
+                }
+                StatusListItem {
+                    objectName: "btnWalletConnect"
+                    title: "Wallet Connect"
+                    asset.name: Theme.svg("walletconnect")
+                    asset.isImage: true
+                    enabled: root.walletConnectEnabled
+                    components: [
+                        StatusIcon {
+                            icon: "next"
+                            color: Theme.palette.baseColor1
+                        }
+                    ]
+                    onClicked: {
+                        dappConnectSelect.close()
+                        root.pairWithConnectorRequested(Constants.DAppConnectors.WalletConnect)
+                    }
+                }
+            }
+            onClosed: dappConnectSelectLoader.active = false
         }
     }
 

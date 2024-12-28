@@ -43,12 +43,11 @@ Item {
     property bool swapEnabled
     property bool dAppsEnabled
     property bool dAppsVisible
-    property bool walletConnectEnabled: true
-    property bool browserConnectEnabled: true
 
     property var dAppsModel
 
-    signal dappPairRequested()
+    signal dappListRequested()
+    signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
 
     // TODO: remove tokenType parameter from signals below
@@ -248,8 +247,6 @@ Item {
             swapEnabled: root.swapEnabled
             dAppsEnabled: root.dAppsEnabled
             dAppsVisible: root.dAppsVisible
-            walletConnectEnabled: root.walletConnectEnabled
-            browserConnectEnabled: root.browserConnectEnabled
 
             dAppsModel: root.dAppsModel
 
@@ -266,8 +263,9 @@ Item {
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData)
             }
-            onDappPairRequested: root.dappPairRequested()
-            onDappDisconnectRequested: (dappUrl) => root.dappDisconnectRequested(dappUrl)
+            onDappListRequested: root.dappListRequested()
+            onDappConnectRequested: root.dappConnectRequested()
+            onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
             onSendTokenRequested: root.sendTokenRequested(senderAddress, tokenId, tokenType)
