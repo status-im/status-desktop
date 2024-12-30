@@ -44,11 +44,28 @@ Item {
         root.state = d.stateMembersSelectorContent
     }
 
+    function messageAboutToBeSent() {
+        if (d.selectingMembers) {
+            d.usersStore.updateGroupMembers()
+            d.usersStore.resetTemporaryModel()
+            root.groupUpdated()
+        }
+    }
+
+    function groupUpdated() {
+        root.state = d.stateInfoButtonContent
+    }
+
     QtObject {
         id: d
 
         readonly property string stateInfoButtonContent: ""
         readonly property string stateMembersSelectorContent: "selectingMembers"
+        readonly property var usersStore: UsersStore {
+            chatDetails: chatContentModule.chatDetails
+            chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
+            usersModule: root.chatContentModule.usersModule
+        }
 
         readonly property bool selectingMembers: root.state == stateMembersSelectorContent
     }
@@ -346,15 +363,11 @@ Item {
 
         MembersEditSelectorView {
             rootStore: root.rootStore
-            usersStore: UsersStore {
-                chatDetails: chatContentModule.chatDetails
-                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-                usersModule: root.chatContentModule.usersModule
-            }
+            usersStore: d.usersStore
             contactsModel: root.mutualContactsModel
 
-            onConfirmed: root.state = d.stateInfoButtonContent
-            onRejected: root.state = d.stateInfoButtonContent
+            onConfirmed: root.groupUpdated()
+            onRejected: root.groupUpdated()
         }
     }
 }

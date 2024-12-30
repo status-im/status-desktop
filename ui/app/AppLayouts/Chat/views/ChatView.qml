@@ -291,6 +291,11 @@ StatusSectionLayout {
             amISectionAdmin: root.amISectionAdmin
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
+            onMessageAboutToBeSent: {
+                if (headerContentLoader.item && headerContentLoader.item.messageAboutToBeSent) {
+                    headerContentLoader.item.messageAboutToBeSent()
+                }
+            }
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
             }
