@@ -82,6 +82,7 @@ StackView {
     signal registerDeployFeesSubscriber(var feeSubscriber)
     signal registerSelfDestructFeesSubscriber(var feeSubscriber)
     signal registerBurnTokenFeesSubscriber(var feeSubscriber)
+    signal stopUpdatingFees()
 
     signal startTokenHoldersManagement(int chainId, string address)
     signal stopTokenHoldersManagement()
@@ -269,6 +270,10 @@ StackView {
                     isOwnerDeployment: editOwnerTokenView.ownerToken.isPrivilegedToken
                     accountAddress: editOwnerTokenView.ownerToken.accountAddress
                     enabled: editOwnerTokenView.visible || signMintPopup.visible
+
+                    ownerToken: editOwnerTokenView.ownerToken
+                    masterToken: editOwnerTokenView.tMasterToken
+
                     Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
                 }
 
@@ -407,6 +412,14 @@ StackView {
                                       StackView.Immediate)
                         }
 
+                        onCalculateFees: {
+                            root.registerDeployFeesSubscriber(deployFeeSubscriber)
+                        }
+
+                        onStopUpdatingFees: {
+                            root.stopUpdatingFees()
+                        }
+
                         DeployFeesSubscriber {
                             id: deployFeeSubscriber
                             communityId: root.communityId
@@ -415,7 +428,8 @@ StackView {
                             isOwnerDeployment: editView.token.isPrivilegedToken
                             accountAddress: editView.token.accountAddress
                             enabled: editView.visible
-                            Component.onCompleted: root.registerDeployFeesSubscriber(deployFeeSubscriber)
+
+                            token: editView.token
                         }
                     }
                 }
@@ -464,7 +478,14 @@ StackView {
                     isOwnerDeployment: preview.token.isPrivilegedToken
                     accountAddress: preview.token.accountAddress
                     enabled: preview.visible || signMintPopup.visible
-                    Component.onCompleted: root.registerDeployFeesSubscriber(feeSubscriber)
+
+                    token: preview.token
+
+                    Component.onCompleted: {
+                        Qt.callLater(function () {
+                            root.registerDeployFeesSubscriber(feeSubscriber)
+                        })
+                    }
                 }
 
                 SignTransactionsPopup {

@@ -44,6 +44,7 @@ StackView {
     signal navigateToMintTokenSettings(bool isAssetType)
     signal registerAirdropFeeSubscriber(var feeSubscriber)
     signal enableNetwork(int chainId)
+    signal stopUpdatingFees()
 
     function navigateBack() {
         pop(StackView.Immediate)
@@ -139,6 +140,14 @@ StackView {
                     d.addAddresses.connect(view.addAddresses)
                 }
 
+                onCalculateFees: {
+                    root.registerAirdropFeeSubscriber(feesSubscriber)
+                }
+
+                onStopUpdatingFees: {
+                    root.stopUpdatingFees()
+                }
+
                 AirdropFeesSubscriber {
                     id: feesSubscriber
                     enabled: view.visible && view.showingFees
@@ -146,7 +155,6 @@ StackView {
                     contractKeysAndAmounts: view.selectedContractKeysAndAmounts
                     addressesToAirdrop: view.selectedAddressesToAirdrop
                     feeAccountAddress: view.selectedFeeAccount
-                    Component.onCompleted: root.registerAirdropFeeSubscriber(feesSubscriber)
                 }
             }
         }

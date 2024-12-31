@@ -1,34 +1,39 @@
 import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils, stew/shims/strformat, times
-import ../../../app/global/global_singleton
-import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
-import ../../../app/core/signals/types
 
-import ../../../app/modules/shared_models/currency_amount
+import app/global/global_singleton
+import app/core/eventemitter
+import app/core/tasks/[qt, threadpool]
+import app/core/signals/types
 
-import ../../../backend/collectibles as collectibles_backend
-import ../../../backend/communities as communities_backend
-import ../../../backend/community_tokens as tokens_backend
-import ../transaction/service as transaction_service
-import ../token/service as token_service
-import ../settings/service as settings_service
-import ../wallet_account/service as wallet_account_service
-import ../activity_center/service as ac_service
-import ../community/service as community_service
-import app_service/service/currency/service as currency_service
-import ../ens/utils as ens_utils
-import ../eth/dto/transaction
+import app/modules/shared_models/currency_amount
+
+import backend/backend
+import backend/response_type
+import backend/wallet
+import backend/collectibles as collectibles_backend
+import backend/communities as communities_backend
+import backend/community_tokens as tokens_backend
 from backend/collectibles_types import CollectibleOwner
-import ../../../backend/backend
 
-import ../../../backend/response_type
+import app_service/service/network/service as network_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/token/service as token_service
+import app_service/service/settings/service as settings_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/activity_center/service as ac_service
+import app_service/service/community/service as community_service
+import app_service/service/currency/service as currency_service
+import app_service/service/ens/utils as ens_utils
+import app_service/service/eth/utils as eth_utils
+import app_service/service/eth/dto/transaction
+import app_service/service/community/dto/community
+import app_service/service/contacts/dto/contacts
+import app_service/common/activity_center
+import app_service/common/conversion
+import app_service/common/types
+import app_service/common/account_constants
+import app_service/common/utils as common_utils
 
-import ../../common/activity_center
-import ../../common/conversion
-import ../../common/account_constants
-import ../../common/utils as common_utils
-import ../community/dto/community
-import ../contacts/dto/contacts
 
 import ./community_collectible_owner
 import ./dto/deployment_parameters
@@ -39,9 +44,9 @@ export community_token
 export deployment_parameters
 export community_token_owner
 
-const ethSymbol = "ETH"
-
 include async_tasks
+
+const ethSymbol = "ETH"
 
 logScope:
   topics = "community-tokens-service"
@@ -71,12 +76,13 @@ type
   CommunityTokenDeploymentArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
+    error*: string
 
 type
   OwnerTokenDeploymentArgs* = ref object of Args
     ownerToken*: CommunityTokenDto
     masterToken*: CommunityTokenDto
-    transactionHash*: string
+    error*: string
 
 type
   CommunityTokenRemovedArgs* = ref object of Args
@@ -253,8 +259,7 @@ proc toContractDetails*(jsonObj: JsonNode): ContractDetails =
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokens-communityTokenDeployStatus"
-const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED* = "communityTokens-communityTokenDeploymentStarted"
-const SIGNAL_COMPUTE_DEPLOY_FEE* = "communityTokens-computeDeployFee"
+const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STORED* = "communityTokens-communityTokenDeploymentStored"
 const SIGNAL_COMPUTE_SET_SIGNER_FEE* = "communityTokens-computeSetSignerFee"
 const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "communityTokens-computeSelfDestructFee"
 const SIGNAL_COMPUTE_BURN_FEE* = "communityTokens-computeBurnFee"
@@ -268,7 +273,7 @@ const SIGNAL_AIRDROP_STATUS* = "communityTokens-airdropStatus"
 const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "communityTokens-removeCommunityTokenFailed"
 const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokens-communityTokenRemoved"
 const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "communityTokens-ownerTokenDeployStatus"
-const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "communityTokens-ownerTokenDeploymentStarted"
+const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STORED* = "communityTokens-ownerTokenDeploymentStored"
 const SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED* = "communityTokens-communityTokenDetailsLoaded"
 const SIGNAL_OWNER_TOKEN_RECEIVED* = "communityTokens-ownerTokenReceived"
 const SIGNAL_SET_SIGNER_STATUS* = "communityTokens-setSignerStatus"
@@ -281,6 +286,7 @@ QtObject:
     Service* = ref object of QObject
       events: EventEmitter
       threadpool: ThreadPool
+      networkService: network_service.Service
       transactionService: transaction_service.Service
       tokenService: token_service.Service
       settingsService: settings_service.Service
@@ -322,6 +328,7 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
+    networkService: network_service.Service,
     transactionService: transaction_service.Service,
     tokenService: token_service.Service,
     settingsService: settings_service.Service,
@@ -334,6 +341,7 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
+    result.networkService = networkService
     result.transactionService = transactionService
     result.tokenService = tokenService
     result.settingsService = settingsService
@@ -356,6 +364,11 @@ QtObject:
   proc removeCommunityTokenAndUpdateCache(self: Service, chainId: int, contractAddress: string) =
     discard tokens_backend.removeCommunityToken(chainId, contractAddress)
     self.communityTokensCache = self.communityTokensCache.filter(x => ((x.chainId != chainId) or (x.address != contractAddress)))
+
+  proc getCommunityTokenFromCache*(self: Service, chainId: int, address: string): CommunityTokenDto =
+    for token in self.communityTokensCache:
+      if token.chainId == chainId and cmpIgnoreCase(token.address, address) == 0:
+        return token
 
   # end of cache functions
 
@@ -604,17 +617,17 @@ QtObject:
       if receivedData.errorString != "":
         error "Community token transaction has finished but the system error occured. Probably state of the token in database is broken.",
               errorString=receivedData.errorString, transactionHash=receivedData.hash, transactionSuccess=receivedData.success
-      if receivedData.transactionType == $PendingTransactionTypeDto.SetSignerPublicKey:
+      if receivedData.sendType == int(SendType.CommunitySetSignerPubKey):
         self.processSetSignerTransactionEvent(receivedData)
-      elif receivedData.transactionType == $PendingTransactionTypeDto.AirdropCommunityToken:
+      elif receivedData.sendType == int(SendType.CommunityMintTokens):
         self.processAirdropTransactionEvent(receivedData)
-      elif receivedData.transactionType == $PendingTransactionTypeDto.RemoteDestructCollectible:
+      elif receivedData.sendType == int(SendType.CommunityRemoteBurn):
         self.processRemoteDestructEvent(receivedData)
-      elif receivedData.transactionType == $PendingTransactionTypeDto.BurnCommunityToken:
+      elif receivedData.sendType == int(SendType.CommunityBurn):
         self.processBurnEvent(receivedData)
-      elif receivedData.transactionType == $PendingTransactionTypeDto.DeployCommunityToken:
+      elif receivedData.sendType == int(SendType.CommunityDeployAssets) or receivedData.sendType == int(SendType.CommunityDeployCollectibles):
         self.processDeployCommunityToken(receivedData)
-      elif receivedData.transactionType == $PendingTransactionTypeDto.DeployOwnerToken:
+      elif receivedData.sendType == int(SendType.CommunityDeployOwnerToken):
         self.processDeployOwnerToken(receivedData)
 
   proc buildTransactionDataDto(self: Service, addressFrom: string, chainId: int, contractAddress: string): TransactionDataDto =
@@ -631,68 +644,62 @@ QtObject:
   proc temporaryOwnerContractAddress*(ownerContractTransactionHash: string): string =
     return ownerContractTransactionHash & "-owner"
 
-  proc deployOwnerContracts*(self: Service, communityId: string, addressFrom: string, password: string,
-      ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, chainId: int) =
+  proc storeDeployedOwnerContract*(self: Service, addressFrom: string, chainId: int, txHash: string,
+    ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters) =
+    var data = OwnerTokenDeploymentArgs(
+      ownerToken: CommunityTokenDto(
+        communityId: ownerDeploymentParams.communityId,
+        name: ownerDeploymentParams.name,
+        symbol: ownerDeploymentParams.symbol,
+        tokenType: ownerDeploymentParams.tokenType,
+      ),
+      masterToken: CommunityTokenDto(
+        communityId: masterDeploymentParams.communityId,
+        name: masterDeploymentParams.name,
+        symbol: masterDeploymentParams.symbol,
+        tokenType: masterDeploymentParams.tokenType,
+      ),
+    )
     try:
-      let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
-      if txData.source == parseAddress(ZERO_ADDRESS):
-        return
 
-      # set my pub key as signer
-      let signerPubKey = singletonInstance.userProfile.getPubKey()
+      let response = tokens_backend.storeDeployedOwnerToken(addressFrom, chainId, txHash, %ownerDeploymentParams, %masterDeploymentParams)
+      if not response.error.isNil:
+        raise newException(CatchableError, response.error.message)
 
-      # deploy contract
-      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams,
-          signerPubKey, %txData, common_utils.hashPassword(password))
-      let transactionHash = response.result["transactionHash"].getStr()
       let deployedOwnerToken = toCommunityTokenDto(response.result["ownerToken"])
       let deployedMasterToken = toCommunityTokenDto(response.result["masterToken"])
-      debug "Deployment transaction hash ", transactionHash=transactionHash
-
       self.communityTokensCache.add(deployedOwnerToken)
       self.communityTokensCache.add(deployedMasterToken)
+      data.ownerToken = deployedOwnerToken
+      data.masterToken = deployedMasterToken
+    except Exception as e:
+      data.error = e.msg
+      error "Error storing deployed owner contract", msg = e.msg
+    self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STORED, data)
 
-      let data = OwnerTokenDeploymentArgs(ownerToken: deployedOwnerToken, masterToken: deployedMasterToken, transactionHash: transactionHash)
-      self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED, data)
-
-    except RpcException:
-      error "Error deploying owner contract", message = getCurrentExceptionMsg()
-      let data = OwnerTokenDeployedStatusArgs(communityId: communityId,
-                                              deployState: DeployState.Failed)
-      self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
-
-  proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, chainId: int) =
+  proc storeDeployedContract*(self: Service, sendType: SendType, addressFrom: string, addressTo: string, chainId: int,
+    txHash: string, deploymentParams: DeploymentParameters) =
+    var data = CommunityTokenDeploymentArgs(
+      transactionHash: txHash
+    )
     try:
-      let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
-      if txData.source == parseAddress(ZERO_ADDRESS):
-        return
-
       var response: RpcResponse[JsonNode]
-      case deploymentParams.tokenType
-      of TokenType.ERC721:
-        response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
-      of TokenType.ERC20:
-        response = tokens_backend.deployAssets(chainId, %deploymentParams, %txData, common_utils.hashPassword(password))
+      case sendType
+      of SendType.CommunityDeployAssets:
+        response = tokens_backend.storeDeployedAssets(addressFrom, addressTo, chainId, txHash, %deploymentParams)
+      of SendType.CommunityDeployCollectibles:
+        response = tokens_backend.storeDeployedCollectibles(addressFrom, addressTo, chainId, txHash, %deploymentParams)
       else:
-        error "Contract deployment error - unknown token type", tokenType=deploymentParams.tokenType
-        return
+        let err = "unexpected send type " & $sendType
+        raise newException(CatchableError, err)
 
-      let contractAddress = response.result["contractAddress"].getStr()
-      let transactionHash = response.result["transactionHash"].getStr()
       let deployedCommunityToken = toCommunityTokenDto(response.result["communityToken"])
-      debug "Deployed contract address ", contractAddress=contractAddress
-      debug "Deployment transaction hash ", transactionHash=transactionHash
-
-      # add to cache
       self.communityTokensCache.add(deployedCommunityToken)
-      let data = CommunityTokenDeploymentArgs(communityToken: deployedCommunityToken, transactionHash: transactionHash)
-      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
-
-    except RpcException:
-      error "Error deploying contract", message = getCurrentExceptionMsg()
-      let data = CommunityTokenDeployedStatusArgs(communityId: communityId,
-                                                  deployState: DeployState.Failed)
-      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
+      data.communityToken = deployedCommunityToken
+    except Exception as e:
+      data.error = e.msg
+      error "Error storing deployed contract", msg = e.msg
+    self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STORED, data)
 
   proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
     return self.communityTokensCache.filter(x => (x.communityId == communityId))
@@ -833,40 +840,58 @@ QtObject:
     except RpcException:
       error "Error getting remote destructed amount", message = getCurrentExceptionMsg()
 
-  proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
+  proc computeAirdropFee*(self: Service, uuid: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
+    let sendType = SendType.CommunityMintTokens
     try:
+      if collectiblesAndAmounts.len == 0:
+        raise newException(CatchableError, "no collectibles to airdrop")
+      let chainId = collectiblesAndAmounts[0].communityToken.chainId
+      let communityId = collectiblesAndAmounts[0].communityToken.communityId
+      var transferDetails: seq[JsonNode]
       for collectibleAndAmount in collectiblesAndAmounts:
-        let txData = self.buildTransactionDataDto(addressFrom, collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
-        if txData.source == parseAddress(ZERO_ADDRESS):
-          return
-        debug "Airdrop tokens ", chainId=collectibleAndAmount.communityToken.chainId, address=collectibleAndAmount.communityToken.address, amount=collectibleAndAmount.amount
-        let response = tokens_backend.mintTokens(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, common_utils.hashPassword(password), walletAddresses, collectibleAndAmount.amount)
-        let transactionHash = response.result.getStr()
-        debug "Airdrop transaction hash ", transactionHash=transactionHash
-
-        var data = AirdropArgs(communityToken: collectibleAndAmount.communityToken, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
-        self.events.emit(SIGNAL_AIRDROP_STATUS, data)
-    except RpcException:
-      error "Error airdropping tokens", message = getCurrentExceptionMsg()
-
-  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string, requestId: string) =
-    try:
-      self.tempTokensAndAmounts = collectiblesAndAmounts
-      let arg = AsyncGetMintFees(
-        tptr: asyncGetMintFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onAirdropFees",
-        collectiblesAndAmounts: collectiblesAndAmounts,
-        walletAddresses: walletAddresses,
-        addressFrom: addressFrom,
-        requestId: requestId
+        let amountHex = "0x" & eth_utils.stripLeadingZeros(collectibleAndAmount.amount.toHex)
+        transferDetails.add(%* {
+          "tokenContractAddress": collectibleAndAmount.communityToken.address,
+          "amount": amountHex,
+        })
+      self.transactionService.suggestedCommunityRoutes(
+        uuid,
+        sendType,
+        chainId,
+        addressFrom,
+        communityId,
+        signerPubKey = "",
+        walletAddresses,
+        transferDetails
       )
-      self.threadpool.start(arg)
     except Exception as e:
-      error "Error loading airdrop fees", msg = e.msg
-      var dataToEmit = AirdropFeesArgs()
-      dataToEmit.errorCode =  ComputeFeeErrorCode.Other
-      self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
+      error "Error loading deploy owner fees", msg = e.msg
+      self.transactionService.emitSuggestedRoutesReadySignal(
+        SuggestedRoutesArgs(
+          uuid: uuid,
+          sendType: sendType,
+          errCode: $InternalErrorCode,
+          errDescription: e.msg
+        )
+      )
+
+    # try:
+    #   self.tempTokensAndAmounts = collectiblesAndAmounts
+    #   let arg = AsyncGetMintFees(
+    #     tptr: asyncGetMintFeesTask,
+    #     vptr: cast[ByteAddress](self.vptr),
+    #     slot: "onAirdropFees",
+    #     collectiblesAndAmounts: collectiblesAndAmounts,
+    #     walletAddresses: walletAddresses,
+    #     addressFrom: addressFrom,
+    #     requestId: requestId
+    #   )
+    #   self.threadpool.start(arg)
+    # except Exception as e:
+    #   error "Error loading airdrop fees", msg = e.msg
+    #   var dataToEmit = AirdropFeesArgs()
+    #   dataToEmit.errorCode =  ComputeFeeErrorCode.Other
+    #   self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
   proc getFiatValue(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
     if (cryptoSymbol == ""):
@@ -880,61 +905,88 @@ QtObject:
       if common_utils.contractUniqueKey(token.chainId, token.address) == contractUniqueKey:
         return token
 
-  proc computeDeployFee*(self: Service, chainId: int, accountAddress: string, tokenType: TokenType, requestId: string) =
+  proc computeDeployTokenFee*(self: Service, uuid: string, chainId: int, accountFrom: string, communityId: string, deploymentParams: DeploymentParameters) =
+    var sendType = SendType.CommunityDeployAssets
+    if deploymentParams.tokenType == TokenType.ERC721:
+      sendType = SendType.CommunityDeployCollectibles
     try:
-      if tokenType != TokenType.ERC20 and tokenType != TokenType.ERC721:
-        error "Error loading fees: unknown token type", tokenType = tokenType
-        return
-      let arg = AsyncGetDeployFeesArg(
-        tptr: asyncGetDeployFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onDeployFees",
-        chainId: chainId,
-        addressFrom: accountAddress,
-        tokenType: tokenType,
-        requestId: requestId
+      self.transactionService.suggestedCommunityRoutes(
+        uuid,
+        sendType,
+        chainId,
+        accountFrom,
+        communityId,
+        signerPubKey = "",
+        walletAddresses = @[],
+        transferDetails = @[],
+        signature = "",
+        ownerTokenParameters = JsonNode(),
+        masterTokenParameters = JsonNode(),
+        %deploymentParams
       )
-      self.threadpool.start(arg)
     except Exception as e:
-      #TODO: handle error - emit error signal
-      error "Error loading fees", msg = e.msg
+      error "Error loading deploy owner fees", msg = e.msg
+      self.transactionService.emitSuggestedRoutesReadySignal(
+        SuggestedRoutesArgs(
+          uuid: uuid,
+          sendType: sendType,
+          errCode: $InternalErrorCode,
+          errDescription: e.msg
+        )
+      )
+
 
   proc computeSetSignerFee*(self: Service, chainId: int, contractAddress: string, accountAddress: string, requestId: string) =
-    try:
-      let arg = AsyncSetSignerFeesArg(
-        tptr: asyncSetSignerFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onSetSignerFees",
-        chainId: chainId,
-        contractAddress: contractAddress,
-        addressFrom: accountAddress,
-        requestId: requestId,
-        newSignerPubKey: singletonInstance.userProfile.getPubKey()
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      #TODO: handle error - emit error signal
-      error "Error loading fees", msg = e.msg
+    discard
+    # try:
+    #   let arg = AsyncSetSignerFeesArg(
+    #     tptr: asyncSetSignerFeesTask,
+    #     vptr: cast[ByteAddress](self.vptr),
+    #     slot: "onSetSignerFees",
+    #     chainId: chainId,
+    #     contractAddress: contractAddress,
+    #     addressFrom: accountAddress,
+    #     requestId: requestId,
+    #     newSignerPubKey: singletonInstance.userProfile.getPubKey()
+    #   )
+    #   self.threadpool.start(arg)
+    # except Exception as e:
+    #   #TODO: handle error - emit error signal
+    #   error "Error loading fees", msg = e.msg
 
 
-  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string, communityId: string, ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters, requestId: string) =
+  proc computeDeployOwnerContractsFee*(self: Service, uuid: string, chainId: int, accountFrom: string, communityId: string,
+    ownerDeploymentParams: DeploymentParameters, masterDeploymentParams: DeploymentParameters) =
     try:
-      let arg = AsyncDeployOwnerContractsFeesArg(
-        tptr: asyncGetDeployOwnerContractsFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onDeployOwnerContractsFees",
-        chainId: chainId,
-        addressFrom: accountAddress,
-        requestId: requestId,
-        signerPubKey: singletonInstance.userProfile.getPubKey(),
-        communityId: communityId,
-        ownerParams: %ownerDeploymentParams,
-        masterParams: %masterDeploymentParams
+      var signatureResult: JsonNode
+      let err = tokens_backend.createCommunityTokenDeploymentSignature(signatureResult, chainId, accountFrom, communityId)
+      if err.len > 0:
+        raise newException(CatchableError, "createCommunityTokenDeploymentSignature failed " & err)
+      let signature = signatureResult.getStr
+
+      self.transactionService.suggestedCommunityRoutes(
+        uuid,
+        SendType.CommunityDeployOwnerToken,
+        chainId,
+        accountFrom,
+        communityId,
+        signerPubKey = singletonInstance.userProfile.getPubKey(),
+        walletAddresses = @[],
+        transferDetails = @[],
+        signature,
+        %ownerDeploymentParams,
+        %masterDeploymentParams
       )
-      self.threadpool.start(arg)
     except Exception as e:
-      #TODO: handle error - emit error signal
-      error "Error loading fees", msg = e.msg
+      error "Error loading deploy owner fees", msg = e.msg
+      self.transactionService.emitSuggestedRoutesReadySignal(
+        SuggestedRoutesArgs(
+          uuid: uuid,
+          sendType: SendType.CommunityDeployOwnerToken,
+          errCode: $InternalErrorCode,
+          errDescription: e.msg
+        )
+      )
 
   proc getOwnerBalances(self: Service, contractOwners: seq[CommunityCollectibleOwner], ownerAddress: string): seq[CollectibleBalance] =
     for owner in contractOwners:
@@ -964,47 +1016,49 @@ QtObject:
     return tokenIds
 
   proc selfDestructCollectibles*(self: Service, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
-    try:
-      let contract = self.findContractByUniqueId(contractUniqueKey)
-      let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
-      if len(tokenIds) == 0:
-        debug "No token ids to remote burn", walletAndAmounts=walletAndAmounts
-        return
-      var addresses: seq[string] = @[]
-      for walletAndAmount in walletAndAmounts:
-        addresses.add(walletAndAmount.walletAddress)
-      let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
-      debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
-      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password),
-                                                tokenIds, $(%addresses))
-      let transactionHash = response.result.getStr()
-      debug "Remote destruct transaction hash ", transactionHash=transactionHash
+    discard
+    # try:
+    #   let contract = self.findContractByUniqueId(contractUniqueKey)
+    #   let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
+    #   if len(tokenIds) == 0:
+    #     debug "No token ids to remote burn", walletAndAmounts=walletAndAmounts
+    #     return
+    #   var addresses: seq[string] = @[]
+    #   for walletAndAmount in walletAndAmounts:
+    #     addresses.add(walletAndAmount.walletAddress)
+    #   let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
+    #   debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
+    #   let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password),
+    #                                             tokenIds, $(%addresses))
+    #   let transactionHash = response.result.getStr()
+    #   debug "Remote destruct transaction hash ", transactionHash=transactionHash
 
-      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress, remoteDestructAddresses: addresses)
-      self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
-    except Exception as e:
-      error "Remote self destruct error", msg = e.msg
+    #   var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress, remoteDestructAddresses: addresses)
+    #   self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
+    # except Exception as e:
+    #   error "Remote self destruct error", msg = e.msg
 
   proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string, requestId: string) =
-    try:
-      let contract = self.findContractByUniqueId(contractUniqueKey)
-      let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
-      if len(tokenIds) == 0:
-        warn "token list is empty"
-        return
-      let arg = AsyncGetRemoteBurnFees(
-        tptr: asyncGetRemoteBurnFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onSelfDestructFees",
-        chainId: contract.chainId,
-        contractAddress: contract.address,
-        tokenIds: tokenIds,
-        addressFrom: addressFrom,
-        requestId: requestId
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error loading fees", msg = e.msg
+    discard
+    # try:
+    #   let contract = self.findContractByUniqueId(contractUniqueKey)
+    #   let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
+    #   if len(tokenIds) == 0:
+    #     warn "token list is empty"
+    #     return
+    #   let arg = AsyncGetRemoteBurnFees(
+    #     tptr: asyncGetRemoteBurnFeesTask,
+    #     vptr: cast[ByteAddress](self.vptr),
+    #     slot: "onSelfDestructFees",
+    #     chainId: contract.chainId,
+    #     contractAddress: contract.address,
+    #     tokenIds: tokenIds,
+    #     addressFrom: addressFrom,
+    #     requestId: requestId
+    #   )
+    #   self.threadpool.start(arg)
+    # except Exception as e:
+    #   error "Error loading fees", msg = e.msg
 
   proc create0CurrencyAmounts(self: Service): (CurrencyAmount, CurrencyAmount) =
     let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
@@ -1025,69 +1079,72 @@ QtObject:
     return errorCode
 
   proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
-    try:
-      var contract = self.findContractByUniqueId(contractUniqueKey)
-      let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
-      debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
-      let response = tokens_backend.burn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password), amount)
-      let transactionHash = response.result.getStr()
-      debug "Burn transaction hash ", transactionHash=transactionHash
+    discard
+    # try:
+    #   var contract = self.findContractByUniqueId(contractUniqueKey)
+    #   let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
+    #   debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
+    #   let response = tokens_backend.burn(contract.chainId, contract.address, %txData, common_utils.hashPassword(password), amount)
+    #   let transactionHash = response.result.getStr()
+    #   debug "Burn transaction hash ", transactionHash=transactionHash
 
-      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
-      self.events.emit(SIGNAL_BURN_STATUS, data)
-    except Exception as e:
-      error "Burn error", msg = e.msg
+    #   var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
+    #   self.events.emit(SIGNAL_BURN_STATUS, data)
+    # except Exception as e:
+    #   error "Burn error", msg = e.msg
 
   proc setSigner*(self: Service, password: string, communityId: string, chainId: int, contractAddress: string, addressFrom: string) =
-    try:
-      let txData = self.buildTransactionDataDto(addressFrom, chainId, contractAddress)
-      debug "Set signer ", chainId=chainId, address=contractAddress
-      let signerPubKey = singletonInstance.userProfile.getPubKey()
-      let response = tokens_backend.setSignerPubKey(chainId, contractAddress, %txData, signerPubKey, common_utils.hashPassword(password))
-      let transactionHash = response.result.getStr()
-      debug "Set signer transaction hash ", transactionHash=transactionHash
+    discard
+    # try:
+    #   let txData = self.buildTransactionDataDto(addressFrom, chainId, contractAddress)
+    #   debug "Set signer ", chainId=chainId, address=contractAddress
+    #   let signerPubKey = singletonInstance.userProfile.getPubKey()
+    #   let response = tokens_backend.setSignerPubKey(chainId, contractAddress, %txData, signerPubKey, common_utils.hashPassword(password))
+    #   let transactionHash = response.result.getStr()
+    #   debug "Set signer transaction hash ", transactionHash=transactionHash
 
-      let data = SetSignerArgs(status: ContractTransactionStatus.InProgress,
-                              chainId: chainId,
-                              transactionHash: transactionHash,
-                              communityId: communityId)
+    #   let data = SetSignerArgs(status: ContractTransactionStatus.InProgress,
+    #                           chainId: chainId,
+    #                           transactionHash: transactionHash,
+    #                           communityId: communityId)
 
-      self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
+    #   self.events.emit(SIGNAL_SET_SIGNER_STATUS, data)
 
-      # observe transaction state
-      let contractDetails = ContractDetails(chainId: chainId, contractAddress: contractAddress, communityId: communityId)
-      self.transactionService.watchTransaction(
-        transactionHash,
-        addressFrom,
-        contractAddress,
-        $PendingTransactionTypeDto.SetSignerPublicKey,
-        $(%contractDetails),
-        chainId,
-      )
-    except Exception as e:
-      error "Set signer error", msg = e.msg
+    #   # observe transaction state
+    #   let contractDetails = ContractDetails(chainId: chainId, contractAddress: contractAddress, communityId: communityId)
+    #   self.transactionService.watchTransaction(
+    #     transactionHash,
+    #     addressFrom,
+    #     contractAddress,
+    #     $PendingTransactionTypeDto.SetSignerPublicKey,
+    #     $(%contractDetails),
+    #     chainId,
+    #   )
+    # except Exception as e:
+    #   error "Set signer error", msg = e.msg
 
   proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256, addressFrom: string, requestId: string) =
-    try:
-      let contract = self.findContractByUniqueId(contractUniqueKey)
-      let arg = AsyncGetBurnFees(
-        tptr: asyncGetBurnFeesTask,
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onBurnFees",
-        chainId: contract.chainId,
-        contractAddress: contract.address,
-        amount: amount,
-        addressFrom: addressFrom,
-        requestId: requestId
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error loading burn fees", msg = e.msg
+    discard
+    # try:
+    #   let contract = self.findContractByUniqueId(contractUniqueKey)
+    #   let arg = AsyncGetBurnFees(
+    #     tptr: asyncGetBurnFeesTask,
+    #     vptr: cast[ByteAddress](self.vptr),
+    #     slot: "onBurnFees",
+    #     chainId: contract.chainId,
+    #     contractAddress: contract.address,
+    #     amount: amount,
+    #     addressFrom: addressFrom,
+    #     requestId: requestId
+    #   )
+    #   self.threadpool.start(arg)
+    # except Exception as e:
+    #   error "Error loading burn fees", msg = e.msg
 
-  proc createComputeFeeArgsWithError(self:Service, errorMessage: string): ComputeFeeArgs =
-    let errorCode = self.getErrorCodeFromMessage(errorMessage)
-    let (ethCurrency, fiatCurrency) = self.create0CurrencyAmounts()
-    return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
+  # proc createComputeFeeArgsWithError(self:Service, errorMessage: string): ComputeFeeArgs =
+  #   let errorCode = self.getErrorCodeFromMessage(errorMessage)
+  #   let (ethCurrency, fiatCurrency) = self.create0CurrencyAmounts()
+  #   return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
 
   # Returns eth value with l1 fee included
   proc computeEthValue(self:Service, gasUnits: int, suggestedFees: SuggestedFeesDto): float =
@@ -1114,17 +1171,17 @@ QtObject:
           balance += self.currencyService.parseCurrencyValueByTokensKey(token.tokensKey, b)
     return balance
 
-  proc createComputeFeeArgsFromEthAndBalance(self: Service, ethValue: float, balance: float): ComputeFeeArgs =
-    let fiatValue = self.getFiatValue(ethValue, ethSymbol)
-    let (ethCurrency, fiatCurrency) = self.createCurrencyAmounts(ethValue, fiatValue)
-    return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
-                                    errorCode: (if ethValue > balance: ComputeFeeErrorCode.Balance else: ComputeFeeErrorCode.Success))
+  # proc createComputeFeeArgsFromEthAndBalance(self: Service, ethValue: float, balance: float): ComputeFeeArgs =
+  #   let fiatValue = self.getFiatValue(ethValue, ethSymbol)
+  #   let (ethCurrency, fiatCurrency) = self.createCurrencyAmounts(ethValue, fiatValue)
+  #   return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
+  #                                   errorCode: (if ethValue > balance: ComputeFeeErrorCode.Balance else: ComputeFeeErrorCode.Success))
 
-  proc createComputeFeeArgs(self: Service, gasUnits: int, suggestedFees: SuggestedFeesDto, chainId: int, walletAddress: string): ComputeFeeArgs =
-    let ethValue = self.computeEthValue(gasUnits, suggestedFees)
-    let balance = self.getWalletBalanceForChain(walletAddress, chainId)
-    debug "computing fees", walletBalance=balance, ethValueWithL1Fee=ethValue, l1Fee=gwei2Eth(suggestedFees.l1GasFee)
-    return self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
+  # proc createComputeFeeArgs(self: Service, gasUnits: int, suggestedFees: SuggestedFeesDto, chainId: int, walletAddress: string): ComputeFeeArgs =
+  #   let ethValue = self.computeEthValue(gasUnits, suggestedFees)
+  #   let balance = self.getWalletBalanceForChain(walletAddress, chainId)
+  #   debug "computing fees", walletBalance=balance, ethValueWithL1Fee=ethValue, l1Fee=gwei2Eth(suggestedFees.l1GasFee)
+  #   return self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
 
   # convert json returned from async task into gas table
   proc toGasTable(json: JsonNode): Table[ContractTuple, int] =
@@ -1146,117 +1203,117 @@ QtObject:
     except Exception:
       error "Error converting to fee table", message = getCurrentExceptionMsg()
 
-  proc parseFeeResponseAndEmitSignal(self:Service, response: string, signalName: string) =
-    let responseJson = response.parseJson()
-    try:
-      let errorMessage = responseJson{"error"}.getStr
-      if errorMessage != "":
-        let data = self.createComputeFeeArgsWithError(errorMessage)
-        data.requestId = responseJson{"requestId"}.getStr
-        self.events.emit(signalName, data)
-        return
-      let gasTable = responseJson{"gasTable"}.toGasTable
-      let feeTable = responseJson{"feeTable"}.toFeeTable
-      let chainId = responseJson{"chainId"}.getInt
-      let addressFrom = responseJson{"addressFrom"}.getStr
-      self.tempGasTable = gasTable
-      self.tempFeeTable = feeTable
-      let gasUnits = toSeq(gasTable.values())[0]
-      let suggestedFees = toSeq(feeTable.values())[0]
-      let data = self.createComputeFeeArgs(gasUnits, suggestedFees, chainId, addressFrom)
-      data.requestId = responseJson{"requestId"}.getStr
-      self.events.emit(signalName, data)
-    except Exception:
-      error "Error creating fee args", message = getCurrentExceptionMsg()
-      let data = self.createComputeFeeArgsWithError(getCurrentExceptionMsg())
-      data.requestId = responseJson{"requestId"}.getStr
-      self.events.emit(signalName, data)
+  # proc parseFeeResponseAndEmitSignal(self:Service, response: string, signalName: string) =
+  #   let responseJson = response.parseJson()
+  #   try:
+  #     let errorMessage = responseJson{"error"}.getStr
+  #     if errorMessage != "":
+  #       let data = self.createComputeFeeArgsWithError(errorMessage)
+  #       data.requestId = responseJson{"requestId"}.getStr
+  #       self.events.emit(signalName, data)
+  #       return
+  #     let gasTable = responseJson{"gasTable"}.toGasTable
+  #     let feeTable = responseJson{"feeTable"}.toFeeTable
+  #     let chainId = responseJson{"chainId"}.getInt
+  #     let addressFrom = responseJson{"addressFrom"}.getStr
+  #     self.tempGasTable = gasTable
+  #     self.tempFeeTable = feeTable
+  #     let gasUnits = toSeq(gasTable.values())[0]
+  #     let suggestedFees = toSeq(feeTable.values())[0]
+  #     let data = self.createComputeFeeArgs(gasUnits, suggestedFees, chainId, addressFrom)
+  #     data.requestId = responseJson{"requestId"}.getStr
+  #     self.events.emit(signalName, data)
+  #   except Exception:
+  #     error "Error creating fee args", message = getCurrentExceptionMsg()
+  #     let data = self.createComputeFeeArgsWithError(getCurrentExceptionMsg())
+  #     data.requestId = responseJson{"requestId"}.getStr
+  #     self.events.emit(signalName, data)
 
-  proc onDeployOwnerContractsFees*(self:Service, response: string) {.slot.} =
-    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
+  # proc onDeployOwnerContractsFees*(self:Service, response: string) {.slot.} =
+  #   self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
 
-  proc onSelfDestructFees*(self:Service, response: string) {.slot.} =
-    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SELF_DESTRUCT_FEE)
+  # proc onSelfDestructFees*(self:Service, response: string) {.slot.} =
+  #   self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SELF_DESTRUCT_FEE)
 
-  proc onBurnFees*(self:Service, response: string) {.slot.} =
-    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_BURN_FEE)
+  # proc onBurnFees*(self:Service, response: string) {.slot.} =
+  #   self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_BURN_FEE)
 
-  proc onDeployFees*(self:Service, response: string) {.slot.} =
-    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
+  # proc onDeployFees*(self:Service, response: string) {.slot.} =
+  #   self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
 
-  proc onSetSignerFees*(self: Service, response: string) {.slot.} =
-    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SET_SIGNER_FEE)
+  # proc onSetSignerFees*(self: Service, response: string) {.slot.} =
+  #   self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SET_SIGNER_FEE)
 
-  proc onAirdropFees*(self:Service, response: string) {.slot.} =
-    var wholeEthCostForChainWallet: Table[ChainWalletTuple, float]
-    var ethValuesForContracts: Table[ContractTuple, float]
-    var allComputeFeeArgs: seq[ComputeFeeArgs]
-    var dataToEmit = AirdropFeesArgs()
-    dataToEmit.errorCode =  ComputeFeeErrorCode.Success
-    let responseJson = response.parseJson()
+  # proc onAirdropFees*(self:Service, response: string) {.slot.} =
+  #   var wholeEthCostForChainWallet: Table[ChainWalletTuple, float]
+  #   var ethValuesForContracts: Table[ContractTuple, float]
+  #   var allComputeFeeArgs: seq[ComputeFeeArgs]
+  #   var dataToEmit = AirdropFeesArgs()
+  #   dataToEmit.errorCode =  ComputeFeeErrorCode.Success
+  #   let responseJson = response.parseJson()
 
-    try:
-      let errorMessage = responseJson{"error"}.getStr
-      let requestId = responseJson{"requestId"}.getStr
-      if errorMessage != "":
-        for collectibleAndAmount in self.tempTokensAndAmounts:
-          let args = self.createComputeFeeArgsWithError(errorMessage)
-          args.contractUniqueKey = common_utils.contractUniqueKey(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
-          dataToEmit.fees.add(args)
-        let (ethTotal, fiatTotal) = self.create0CurrencyAmounts()
-        dataToEmit.totalEthFee = ethTotal
-        dataToEmit.totalFiatFee = fiatTotal
-        dataToEmit.errorCode = self.getErrorCodeFromMessage(errorMessage)
-        dataToEmit.requestId = requestId
-        self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
-        return
+  #   try:
+  #     let errorMessage = responseJson{"error"}.getStr
+  #     let requestId = responseJson{"requestId"}.getStr
+  #     if errorMessage != "":
+  #       for collectibleAndAmount in self.tempTokensAndAmounts:
+  #         let args = self.createComputeFeeArgsWithError(errorMessage)
+  #         args.contractUniqueKey = common_utils.contractUniqueKey(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
+  #         dataToEmit.fees.add(args)
+  #       let (ethTotal, fiatTotal) = self.create0CurrencyAmounts()
+  #       dataToEmit.totalEthFee = ethTotal
+  #       dataToEmit.totalFiatFee = fiatTotal
+  #       dataToEmit.errorCode = self.getErrorCodeFromMessage(errorMessage)
+  #       dataToEmit.requestId = requestId
+  #       self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
+  #       return
 
-      let gasTable = responseJson{"gasTable"}.toGasTable
-      let feeTable = responseJson{"feeTable"}.toFeeTable
-      let addressFrom = responseJson{"addressFrom"}.getStr
-      self.tempGasTable = gasTable
-      self.tempFeeTable = feeTable
+  #     let gasTable = responseJson{"gasTable"}.toGasTable
+  #     let feeTable = responseJson{"feeTable"}.toFeeTable
+  #     let addressFrom = responseJson{"addressFrom"}.getStr
+  #     self.tempGasTable = gasTable
+  #     self.tempFeeTable = feeTable
 
-      # compute eth cost for every contract
-      # also sum all eth costs per (chain, wallet) - it will be needed to compare with (chain, wallet) balance
-      for collectibleAndAmount in self.tempTokensAndAmounts:
-        let gasUnits = self.tempGasTable[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)]
-        let suggestedFees = self.tempFeeTable[collectibleAndAmount.communityToken.chainId]
-        let ethValue = self.computeEthValue(gasUnits, suggestedFees)
-        wholeEthCostForChainWallet[(collectibleAndAmount.communityToken.chainId, addressFrom)] = wholeEthCostForChainWallet.getOrDefault((collectibleAndAmount.communityToken.chainId, addressFrom), 0.0) + ethValue
-        ethValuesForContracts[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)] = ethValue
+  #     # compute eth cost for every contract
+  #     # also sum all eth costs per (chain, wallet) - it will be needed to compare with (chain, wallet) balance
+  #     for collectibleAndAmount in self.tempTokensAndAmounts:
+  #       let gasUnits = self.tempGasTable[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)]
+  #       let suggestedFees = self.tempFeeTable[collectibleAndAmount.communityToken.chainId]
+  #       let ethValue = self.computeEthValue(gasUnits, suggestedFees)
+  #       wholeEthCostForChainWallet[(collectibleAndAmount.communityToken.chainId, addressFrom)] = wholeEthCostForChainWallet.getOrDefault((collectibleAndAmount.communityToken.chainId, addressFrom), 0.0) + ethValue
+  #       ethValuesForContracts[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)] = ethValue
 
-      var totalEthVal = 0.0
-      var totalFiatVal = 0.0
-      # for every contract create cost Args
-      for collectibleAndAmount in self.tempTokensAndAmounts:
-        let contractTuple = (chainId: collectibleAndAmount.communityToken.chainId,
-                                          address: collectibleAndAmount.communityToken.address)
-        let ethValue = ethValuesForContracts[contractTuple]
-        var balance = self.getWalletBalanceForChain(addressFrom, contractTuple.chainId)
-        if balance < wholeEthCostForChainWallet[(contractTuple.chainId, addressFrom)]:
-          # if wallet balance for this chain is less than the whole cost
-          # then we can't afford it; setting balance to 0.0 will set balance error code in Args
-          balance = 0.0
-          dataToEmit.errorCode = ComputeFeeErrorCode.Balance # set total error code to balance error
-        var args = self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
-        totalEthVal = totalEthVal + ethValue
-        totalFiatVal = totalFiatVal + args.fiatCurrency.getAmount()
-        args.contractUniqueKey = common_utils.contractUniqueKey(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
-        allComputeFeeArgs.add(args)
+  #     var totalEthVal = 0.0
+  #     var totalFiatVal = 0.0
+  #     # for every contract create cost Args
+  #     for collectibleAndAmount in self.tempTokensAndAmounts:
+  #       let contractTuple = (chainId: collectibleAndAmount.communityToken.chainId,
+  #                                         address: collectibleAndAmount.communityToken.address)
+  #       let ethValue = ethValuesForContracts[contractTuple]
+  #       var balance = self.getWalletBalanceForChain(addressFrom, contractTuple.chainId)
+  #       if balance < wholeEthCostForChainWallet[(contractTuple.chainId, addressFrom)]:
+  #         # if wallet balance for this chain is less than the whole cost
+  #         # then we can't afford it; setting balance to 0.0 will set balance error code in Args
+  #         balance = 0.0
+  #         dataToEmit.errorCode = ComputeFeeErrorCode.Balance # set total error code to balance error
+  #       var args = self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
+  #       totalEthVal = totalEthVal + ethValue
+  #       totalFiatVal = totalFiatVal + args.fiatCurrency.getAmount()
+  #       args.contractUniqueKey = common_utils.contractUniqueKey(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
+  #       allComputeFeeArgs.add(args)
 
-      dataToEmit.fees = allComputeFeeArgs
-      let (ethTotal, fiatTotal) = self.createCurrencyAmounts(totalEthVal, totalFiatVal)
-      dataToEmit.totalEthFee = ethTotal
-      dataToEmit.totalFiatFee = fiatTotal
-      dataToEmit.requestId = requestId
-      self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
+  #     dataToEmit.fees = allComputeFeeArgs
+  #     let (ethTotal, fiatTotal) = self.createCurrencyAmounts(totalEthVal, totalFiatVal)
+  #     dataToEmit.totalEthFee = ethTotal
+  #     dataToEmit.totalFiatFee = fiatTotal
+  #     dataToEmit.requestId = requestId
+  #     self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
-    except Exception as e:
-      error "Error computing airdrop fees", msg = e.msg
-      dataToEmit.errorCode = ComputeFeeErrorCode.Other
-      dataToEmit.requestId = responseJson{"requestId"}.getStr
-      self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
+  #   except Exception as e:
+  #     error "Error computing airdrop fees", msg = e.msg
+  #     dataToEmit.errorCode = ComputeFeeErrorCode.Other
+  #     dataToEmit.requestId = responseJson{"requestId"}.getStr
+  #     self.events.emit(SIGNAL_COMPUTE_AIRDROP_FEE, dataToEmit)
 
   proc isTokenDeployed(self: Service, token: CommunityTokenDto): bool =
     return token.deployState == DeployState.Deployed
@@ -1441,3 +1498,15 @@ QtObject:
       # different token is opened now
       return
     self.restartTokenHoldersTimer(token.chainId, token.address)
+
+  proc stopSuggestedRoutesAsyncCalculation*(self: Service) =
+    self.transactionService.stopSuggestedRoutesAsyncCalculation()
+
+  proc buildTransactionsFromRoute*(self: Service, uuid: string): string =
+    return self.transactionService.buildTransactionsFromRoute(uuid, slippagePercentage = 0.0)
+
+  proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatures: TransactionsSignatures): string =
+    return self.transactionService.sendRouterTransactionsWithSignatures(uuid, signatures)
+
+  proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
+    return self.transactionService.signMessage(address, hashedPassword, hashedMessage)

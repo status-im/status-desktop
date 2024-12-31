@@ -361,6 +361,13 @@ QtObject:
     username: string,
     publicKey: string,
     packId: string,
+    communityId: string,
+    communityName: string,
+    communityAmount: string,
+    communityAssetName: string,
+    communityAssetDecimals: int,
+    communityOwnerTokenName: string,
+    communityMasterTokenName: string,
     status: string,
     error: string) {.signal.}
 
