@@ -49,25 +49,11 @@ ActivityNotificationMessage {
             root.store.contactsStore.blockContact(root.contactId)
         }
         onDetailsClicked: {
-            Global.openPopup(reviewContactRequestPopupComponent, {
-                messageDetails: root.messageDetails,
-                compressedPubKey: contactDetails ? contactDetails.compressedPublicKey : "",
-                timestamp: notification ? notification.timestamp : 0
-            })
+            Global.openReviewContactRequestPopup(root.contactId, null)
         }
     }
 
     onMessageClicked: {
         root.openProfilePopup()
-    }
-
-    Component {
-        id: reviewContactRequestPopupComponent
-
-        ReviewContactRequestPopup {
-            id: reviewRequestPopup
-            onAccepted: root.store.contactsStore.acceptContactRequest(root.contactId, root.contactRequestId)
-            onDeclined: root.store.contactsStore.dismissContactRequest(root.contactId, root.contactRequestId)
-        }
     }
 }
