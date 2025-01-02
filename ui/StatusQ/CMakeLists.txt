@@ -165,6 +165,9 @@ add_library(StatusQ SHARED
         src/wallet/managetokensmodel.h
         src/wallet/tokendata.cpp
         src/wallet/tokendata.h
+
+        # onboarding
+        src/onboarding/enums.h
         )
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)

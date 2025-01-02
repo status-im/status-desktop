@@ -18,7 +18,7 @@ Item {
 
         property bool wrongSeedPhrase: root.sharedKeycardModule.keycardData & Constants.predefinedKeycardData.wrongSeedPhrase
         onWrongSeedPhraseChanged: {
-            seedPhrase.setWrongSeedPhraseMessage(wrongSeedPhrase? qsTr("The phrase you’ve entered does not match this Keycard’s seed phrase") : "")
+            seedPhrase.setWrongSeedPhraseMessage(wrongSeedPhrase? qsTr("The phrase you’ve entered does not match this Keycard’s recovery phrase") : "")
         }
 
     }
@@ -74,7 +74,7 @@ Item {
                 text: {
                     switch (root.sharedKeycardModule.currentState.flowType) {
                     case Constants.keycardSharedFlow.migrateFromKeycardToApp:
-                        return qsTr("Enter seed phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        return qsTr("Enter recovery phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
                     }
 
                     return ""
@@ -89,7 +89,7 @@ Item {
                 text: {
                     switch (root.sharedKeycardModule.currentState.flowType) {
                     case Constants.keycardSharedFlow.migrateFromKeycardToApp:
-                        return qsTr("Enter seed phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
+                        return qsTr("Enter recovery phrase for %1 key pair").arg(root.sharedKeycardModule.keyPairForProcessing.name)
                     }
 
                     return ""

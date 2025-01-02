@@ -73,7 +73,7 @@ Item {
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
             color: Theme.palette.directColor1
-            text: qsTr("By completing this process, you will remove your seed phrase from this application’s storage. This makes your funds more secure.\n\nYou will remain logged in, and your seed phrase will be entirely in your hands.")
+            text: qsTr("By completing this process, you will remove your recovery phrase from this application’s storage. This makes your funds more secure.\n\nYou will remain logged in, and your recovery phrase will be entirely in your hands.")
         }
 
         StatusCheckBox {
@@ -84,7 +84,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             spacing: Theme.padding
             font.pixelSize: Theme.primaryTextFontSize
-            text: qsTr("I aknowledge that Status will not be able to show me my seed phrase again.")
+            text: qsTr("I acknowledge that Status will not be able to show me my recovery phrase again.")
             onToggled: {
                 root.store.seedPhraseBackupConfirmed = checked
             }

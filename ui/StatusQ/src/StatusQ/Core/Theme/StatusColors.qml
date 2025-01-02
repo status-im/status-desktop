@@ -86,5 +86,8 @@ QtObject {
 
         'lightDesktopBlue10': '#ECEFFB',
         'darkDesktopBlue10': '#273251',
+
+        // new/mobile colors
+        'neutral-95': '#0D1625'
     }
 }

@@ -66,6 +66,7 @@
         <file>StatusQ/Components/StatusVideo.qml</file>
         <file>StatusQ/Components/StatusWizardStepper.qml</file>
         <file>StatusQ/Components/WebEngineLoader.qml</file>
+        <file>StatusQ/Components/private/LoadingDotItem.qml</file>
         <file>StatusQ/Components/private/StatusComboboxBackground.qml</file>
         <file>StatusQ/Components/private/StatusComboboxIndicator.qml</file>
         <file>StatusQ/Components/private/chart/ChartCanvas.qml</file>
@@ -246,6 +247,7 @@
         <file>StatusQ/Popups/StatusSearchLocationMenu.qml</file>
         <file>StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
+        <file>StatusQ/Popups/StatusSimpleTextPopup.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
         <file>StatusQ/Popups/StatusSuccessAction.qml</file>
         <file>StatusQ/Popups/qmldir</file>

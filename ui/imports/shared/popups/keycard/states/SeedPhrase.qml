@@ -45,7 +45,7 @@ Item {
             Layout.preferredWidth: parent.width
             Layout.fillHeight: true
 
-            property var seedPhrase: root.sharedKeycardModule.getMnemonic().split(" ")
+            seedPhrase: root.sharedKeycardModule.getMnemonic().split(" ")
         }
     }
 
@@ -55,14 +55,14 @@ Item {
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.seedPhraseDisplay
             PropertyChanges {
                 target: title
-                text: qsTr("Write down your seed phrase")
+                text: qsTr("Write down your recovery phrase")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
             PropertyChanges {
                 target: message
-                text: qsTr("The next screen contains your seed phrase.<br/><b>Anyone</b> who sees it can use it to access to your funds.")
+                text: qsTr("The next screen contains your recovery phrase.<br/><b>Anyone</b> who sees it can use it to access to your funds.")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
