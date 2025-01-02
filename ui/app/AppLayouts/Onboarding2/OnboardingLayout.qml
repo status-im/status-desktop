@@ -86,7 +86,7 @@ Page {
         objectName: "stack"
         anchors.fill: parent
 
-        property bool backAvailable:
+        readonly property bool backAvailable:
             stack.currentItem ? (stack.currentItem.backAvailableHint ?? true)
                               : false
     }
@@ -95,6 +95,7 @@ Page {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         enabled: stack.depth > 1 && !stack.busy
+        cursorShape: undefined
         onClicked: stack.pop()
     }
 
@@ -137,17 +138,17 @@ Page {
         tryToSetPinFunction: root.onboardingStore.setPin
         remainingAttempts: root.onboardingStore.keycardRemainingPinAttempts
 
-        onKeycardPinCreated: {
+        onKeycardPinCreated: (pin) => {
             d.keycardPin = pin
             root.onboardingStore.setPin(pin)
         }
 
-        onKeycardPinEntered: {
+        onKeycardPinEntered: (pin) => {
             d.keycardPin = pin
             root.onboardingStore.setPin(pin)
         }
 
-        onShareUsageDataRequested: {
+        onShareUsageDataRequested: (enabled) => {
             root.metricsStore.toggleCentralizedMetrics(enabled)
             Global.addCentralizedMetricIfEnabled(
                         "usage_data_shared",
@@ -155,14 +156,15 @@ Page {
             localAppSettings.metricsPopupSeen = true
         }
 
-        onSyncProceedWithConnectionString:
-            root.onboardingStore.inputConnectionStringForBootstrapping(
-                connectionString)
+        onSyncProceedWithConnectionString: (connectionString) =>
+            root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
 
-        onSeedphraseSubmitted: d.seedphrase = seedphrase
-        onSetPasswordRequested: d.password = password
+        onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
+        onSetPasswordRequested: (password) => d.password = password
 
-        onFinished: d.finishFlow(flow)
+        onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
+
+        onFinished: (flow) => d.finishFlow(flow)
     }
 
     Connections {
