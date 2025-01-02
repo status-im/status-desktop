@@ -281,6 +281,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithPassword)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, mockDriver.dummyNewPassword)
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, "")
+            compare(resultData.seedphrase, "")
         }
 
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
@@ -372,6 +378,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithSeedphrase)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, mockDriver.dummyNewPassword)
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, "")
+            compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 
         function test_flow_createProfile_withKeycardAndNewSeedphrase_data() {
@@ -535,6 +547,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, "")
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, !!data.pin ? data.pin : "123321")
+            compare(resultData.seedphrase, "") // TODO check seed here as well?
         }
 
         function test_flow_createProfile_withKeycardAndExistingSeedphrase_data() {
@@ -640,6 +658,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, "")
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, !!data.pin ? data.pin : "123321")
+            compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 
         // FLOW: Log in -> Log in with recovery phrase
@@ -727,6 +751,12 @@ Item {
 
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSeedphrase)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, mockDriver.dummyNewPassword)
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, "")
+            compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 
         // FLOW: Log in -> Log in by syncing
@@ -813,6 +843,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSyncing)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, "")
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, "")
+            compare(resultData.seedphrase, "")
         }
 
         // FLOW: Log in -> Log in with Keycard
@@ -872,6 +908,12 @@ Item {
             // FINISH
             tryCompare(finishedSpy, "count", 1)
             compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithKeycard)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, "")
+            compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
+            compare(resultData.keycardPin, mockDriver.existingPin)
+            compare(resultData.seedphrase, "")
         }
     }
 }

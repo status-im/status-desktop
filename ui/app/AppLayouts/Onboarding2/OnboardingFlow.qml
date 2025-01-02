@@ -19,9 +19,9 @@ SQUtils.QObject {
     required property int remainingAttempts
     required property int splashScreenDurationMs
 
-    property bool biometricsAvailable
-    property bool displayKeycardPromoBanner
-    property bool networkChecksEnabled
+    required property bool biometricsAvailable
+    required property bool displayKeycardPromoBanner
+    required property bool networkChecksEnabled
 
     // functions
     required property var passwordStrengthScoreFunction
@@ -145,8 +145,8 @@ SQUtils.QObject {
         isSeedPhraseValid: root.isSeedPhraseValid
         passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
-        onSeedphraseSubmitted: root.seedphraseSubmitted(seedphrase)
-        onSetPasswordRequested: root.setPasswordRequested(password)
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+        onSetPasswordRequested: (password) => root.setPasswordRequested(password)
         onFinished: d.pushOrSkipBiometricsPage()
     }
 
@@ -162,7 +162,7 @@ SQUtils.QObject {
         splashScreenDurationMs: root.splashScreenDurationMs
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
-        onKeycardPinCreated: root.keycardPinCreated(pin)
+        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
 
         onCreateProfileWithoutKeycardRequested: {
@@ -171,6 +171,8 @@ SQUtils.QObject {
 
             stackView.replace(page, createProfilePage, StackView.PopTransition)
         }
+
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
         onFinished: (fromBackupSeedphrase) => {
             d.flow = fromBackupSeedphrase
@@ -190,8 +192,8 @@ SQUtils.QObject {
 
         splashScreenDurationMs: root.splashScreenDurationMs
 
-        onSyncProceedWithConnectionString:
-            root.syncProceedWithConnectionString(connectionString)
+        onSyncProceedWithConnectionString: (connectionString) =>
+                                           root.syncProceedWithConnectionString(connectionString)
 
         onLoginWithSeedphraseRequested: {
             d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
@@ -213,7 +215,7 @@ SQUtils.QObject {
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         tryToSetPinFunction: root.tryToSetPinFunction
 
-        onKeycardPinEntered: root.keycardPinEntered(pin)
+        onKeycardPinEntered: (pin) => root.keycardPinEntered(pin)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
 
@@ -227,7 +229,7 @@ SQUtils.QObject {
         id: enableBiometricsPage
 
         EnableBiometricsPage {
-            onEnableBiometricsRequested: {
+            onEnableBiometricsRequested: (enable) => {
                 root.enableBiometricsRequested(enable)
                 root.finished(d.flow)
             }
