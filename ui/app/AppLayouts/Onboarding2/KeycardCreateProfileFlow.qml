@@ -24,6 +24,7 @@ SQUtils.QObject {
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
     signal keycardPinCreated(string pin)
+    signal seedphraseSubmitted(string seedphrase)
 
     signal keypairAddTryAgainRequested
     signal reloadKeycardRequested
@@ -152,7 +153,10 @@ SQUtils.QObject {
             title: qsTr("Create profile on empty Keycard using a recovery phrase")
 
             isSeedPhraseValid: root.isSeedPhraseValid
-            onSeedphraseSubmitted: root.stackView.push(keycardCreatePinPage)
+            onSeedphraseSubmitted: (seedphrase) => {
+                root.seedphraseSubmitted(seedphrase)
+                root.stackView.push(keycardCreatePinPage)
+            }
 
             StackView.onActivated: d.fromBackupSeedphrase = true
         }

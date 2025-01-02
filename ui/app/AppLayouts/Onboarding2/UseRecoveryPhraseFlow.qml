@@ -29,7 +29,7 @@ SQUtils.QObject {
             title: qsTr("Create profile using a recovery phrase")
             isSeedPhraseValid: root.isSeedPhraseValid
 
-            onSeedphraseSubmitted: {
+            onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
                 root.stackView.push(createPasswordPage)
             }
