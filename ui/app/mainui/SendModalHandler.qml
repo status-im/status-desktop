@@ -38,8 +38,6 @@ QtObject {
 
     /** For simple send modal flows, decoupling from transaction store **/
 
-    /** curently selected fiat currency symbol **/
-    required property string currentCurrency
     /** Expected model structure:
     - name: name of account
     - address: wallet address
@@ -59,6 +57,13 @@ QtObject {
     - balances: submodel[ chainId:int, account:string, balance:BigIntString, iconUrl:string ]
     **/
     required property var groupedAccountAssetsModel
+    /** Expected token by symbol model structure:
+    - key: id for the token,
+    - name: name of the token,
+    - symbol: symbol of the token,
+    - decimals: decimals for the token
+    */
+    required property var plainTokensBySymbolModel
     /** Expected model structure:
     - symbol              [string] - unique identifier of a collectible
     - collectionUid       [string] - unique identifier of a collection
@@ -88,6 +93,21 @@ QtObject {
     required property bool showCommunityAssetsInSend
     /** required function to format currency amount to locale string **/
     required property var fnFormatCurrencyAmount
+
+    required property var savedAddressesModel
+    required property var recentRecipientsModel
+
+    /** required function to resolve an ens name **/
+    required property var fnResolveENS
+    /** required signal to receive resolved ens name address **/
+    signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
+
+    /** curently selected fiat currency symbol **/
+    required property string currentCurrency
+    /** required function to format currency amount to locale string **/
+    required property var fnFormatCurrencyAmount
+    /** required function to format to currency amount from big int **/
+     required property var fnFormatCurrencyAmountFromBigInt
 
     required property var savedAddressesModel
     required property var recentRecipientsModel
@@ -233,9 +253,7 @@ QtObject {
         SimpleSendModal {
             id: simpleSendModal
 
-            /** TODO: use the newly defined WalletAccountsSelectorAdaptor
-            in https://github.com/status-im/status-desktop/pull/16834 **/
-            accountsModel: root.walletAccountsModel
+            accountsModel: accountsSelectorAdaptor.processedWalletAccounts
             assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
             collectiblesModel: collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
@@ -258,6 +276,19 @@ QtObject {
                 }
             }
 
+            WalletAccountsSelectorAdaptor {
+                id: accountsSelectorAdaptor
+
+                accounts: root.walletAccountsModel
+                assetsModel: root.groupedAccountAssetsModel
+                tokensBySymbolModel: root.plainTokensBySymbolModel
+                filteredFlatNetworksModel: root.filteredFlatNetworksModel
+
+                selectedTokenKey: simpleSendModal.selectedTokenKey
+                selectedNetworkChainId: simpleSendModal.selectedChainId
+
+                fnFormatCurrencyAmountFromBigInt: root.fnFormatCurrencyAmountFromBigInt
+            }
             TokenSelectorViewAdaptor {
                 id: assetsSelectorViewAdaptor
 

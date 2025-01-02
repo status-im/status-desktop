@@ -33,50 +33,8 @@ QObject {
     // To expose the selected from and to Token from the SwapModal
     readonly property var fromToken: fromTokenEntry.item
     readonly property var toToken: toTokenEntry.item
-    readonly property var selectedAccount: selectedAccountEntry.item
 
     readonly property string uuid: d.uuid
-
-    // TO REVIEW: Handle this in a separate `WalletAccountsAdaptor.qml` file.
-    // Probably this data transformation should live there since they have common base.
-    readonly property var nonWatchAccounts: SortFilterProxyModel {
-        sourceModel: root.swapStore.accounts
-        delayed: true // Delayed to allow `processAccountBalance` dependencies to be resolved
-        filters: ValueFilter {
-            roleName: "canSend"
-            value: true
-        }
-        sorters: [
-            RoleSorter { roleName: "currencyBalanceDouble"; sortOrder: Qt.DescendingOrder },
-            RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-        ]
-        proxyRoles: [
-            FastExpressionRole {
-                name: "accountBalance"
-                expression: {
-                    // dependencies
-                    root.swapFormData.fromTokensKey
-                    root.fromToken
-                    root.fromToken.symbol
-                    root.fromToken.decimals
-                    root.swapFormData.selectedNetworkChainId
-                    root.swapFormData.fromTokensKey
-
-                    return d.processAccountBalance(model.address)
-                }
-                expectedRoles: ["address"]
-            },
-            FastExpressionRole {
-                name: "currencyBalanceDouble"
-                expression: model.currencyBalance.amount
-                expectedRoles: ["currencyBalance"]
-            },
-            FastExpressionRole {
-                name: "fromToken"
-                expression: root.fromToken
-            }
-        ]
-    }
 
     readonly property SortFilterProxyModel filteredFlatNetworksModel: SortFilterProxyModel {
         sourceModel: root.swapStore.flatNetworks
@@ -93,55 +51,6 @@ QObject {
         property string uuid
         // storing txHash to verify against tx completed event
         property string txHash
-
-        readonly property ObjectProxyModel filteredBalancesModel: ObjectProxyModel {
-            sourceModel: root.walletAssetsStore.baseGroupedAccountAssetModel
-
-            delegate: SortFilterProxyModel {
-                readonly property var balances: this
-
-                sourceModel: LeftJoinModel {
-                    leftModel: model.balances
-                    rightModel: root.swapStore.flatNetworks
-
-                    joinRole: "chainId"
-                }
-
-                filters: ValueFilter {
-                    roleName: "chainId"
-                    value: root.swapFormData.selectedNetworkChainId
-                }
-            }
-
-            expectedRoles: "balances"
-            exposedRoles: "balances"
-        }
-
-        function processAccountBalance(address) {
-            if (!root.swapFormData.fromTokensKey || !root.fromToken) {
-                return null
-            }
-
-            let network = ModelUtils.getByKey(root.filteredFlatNetworksModel, "chainId", root.swapFormData.selectedNetworkChainId)
-
-            if (!network) {
-                return null
-            }
-
-            let balancesModel = ModelUtils.getByKey(filteredBalancesModel, "tokensKey", root.swapFormData.fromTokensKey, "balances")
-            let accountBalance = ModelUtils.getByKey(balancesModel, "account", address)
-            if(accountBalance && accountBalance.balance !== "0") {
-                accountBalance.formattedBalance = root.formatCurrencyAmountFromBigInt(accountBalance.balance, root.fromToken.symbol, root.fromToken.decimals)
-                return accountBalance
-            }
-
-            return {
-                balance: "0",
-                iconUrl: network.iconUrl,
-                chainColor: network.chainColor,
-                formattedBalance: "0 %1".arg(root.fromToken.symbol)
-            }
-        }
 
         // Properties to handle error states
         readonly property bool isRouteEthBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
@@ -207,13 +116,6 @@ QObject {
         sourceModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
         key: "key"
         value: root.swapFormData.toTokenKey
-    }
-
-    ModelEntry {
-        id: selectedAccountEntry
-        sourceModel: root.nonWatchAccounts
-        key: "address"
-        value: root.swapFormData.selectedAccountAddress
     }
 
     Connections {
@@ -282,14 +184,6 @@ QObject {
         root.approvalPending = false
         root.approvalSuccessful = false
         d.txHash = ""
-    }
-
-    function formatCurrencyAmount(balance, symbol, options = null, locale = null) {
-        return root.currencyStore.formatCurrencyAmount(balance, symbol, options, locale)
-    }
-
-    function formatCurrencyAmountFromBigInt(balance, symbol, decimals, options = null) {
-        return root.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)
     }
 
     function getDisabledChainIds(enabledChainId) {
