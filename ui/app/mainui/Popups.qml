@@ -206,6 +206,10 @@ QtObject {
         openPopup(communityProfilePopup, { store: store, community: community, communitySectionModule: communitySectionModule})
     }
 
+    function openCommunityRulesPopup(name, introMessage, image, color) {
+        openPopup(communityRulesPopup, { name, introMessage, image, color })
+    }
+
     function openMarkAsIDVerifiedPopup(publicKey, cb) {
         const contactDetails = Utils.getContactDetailsAsJson(
                                  publicKey, true, true, true)
@@ -627,6 +631,14 @@ QtObject {
             id: communityProfilePopup
 
             CommunityProfilePopup {
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: communityRulesPopup
+
+            CommunityRulesPopup {
                 onClosed: destroy()
             }
         },
