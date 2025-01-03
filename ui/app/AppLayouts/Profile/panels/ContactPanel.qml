@@ -54,6 +54,11 @@ StatusListItem {
             icon.name: "chat"
             icon.color: Theme.palette.directColor1
             onClicked: root.sendMessageRequested()
+
+            StatusToolTip {
+                text: qsTr('Send message')
+                visible: parent.hovered
+            }
         },
         StatusFlatRoundButton {
             objectName: "declineBtn"
@@ -63,6 +68,11 @@ StatusListItem {
             icon.name: "close-circle"
             icon.color: Theme.palette.dangerColor1
             onClicked: root.rejectRequestRequested()
+
+            StatusToolTip {
+                text: qsTr('Decline Request')
+                visible: parent.hovered
+            }
         },
         StatusFlatRoundButton {
             objectName: "acceptBtn"
@@ -72,6 +82,11 @@ StatusListItem {
             icon.name: "checkmark-circle"
             icon.color: Theme.palette.successColor1
             onClicked: root.acceptContactRequested()
+
+            StatusToolTip {
+                text: qsTr('Accept Request')
+                visible: parent.hovered
+            }
         },
         StatusFlatRoundButton {
             objectName: "removeRejectBtn"
@@ -81,6 +96,11 @@ StatusListItem {
             icon.name: "cancel"
             icon.color: Theme.palette.dangerColor1
             onClicked: root.removeRejectionRequested()
+
+            StatusToolTip {
+                text: qsTr('Remove Rejection')
+                visible: parent.hovered
+            }
         },
         StatusBaseText {
             text: root.contactText
