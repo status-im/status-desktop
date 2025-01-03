@@ -994,9 +994,15 @@ Item {
                         }
 
                         StatusAction {
-                            text: qsTr("View Community")
-                            icon.name: "group-chat"
+                            text: qsTr("Community Info")
+                            icon.name: "info"
                             onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
+                        }
+
+                        StatusAction {
+                            text: qsTr("Community Rules")
+                            icon.name: "text"
+                            onTriggered: popups.openCommunityRulesPopup(model)
                         }
 
                         StatusMenuSeparator {}
