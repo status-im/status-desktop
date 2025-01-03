@@ -75,4 +75,19 @@ QObject {
             value: Constants.ContactRequestState.Sent
         }
     }
+
+    readonly property var dimissedReceivedRequestContacts: SortFilterProxyModel {
+        sourceModel: root.allContacts ?? null
+
+        filters: [
+            ValueFilter {
+                roleName: "contactRequest"
+                value: Constants.ContactRequestState.Dismissed
+            },
+            ValueFilter {
+                roleName: "isBlocked"
+                value: false
+            }
+        ]
+    }
 }
