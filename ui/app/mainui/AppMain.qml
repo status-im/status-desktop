@@ -1733,6 +1733,7 @@ Item {
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
                             pendingReceivedRequestContactsModel: contactsModelAdaptor.pendingReceivedRequestContacts
                             pendingSentRequestContactsModel: contactsModelAdaptor.pendingSentRequestContacts
+                            dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection

@@ -32,6 +32,7 @@ SettingsContentBase {
     property var blockedContactsModel
     property var pendingReceivedRequestContactsModel
     property var pendingSentRequestContactsModel
+    property var dismissedReceivedRequestContactsModel
 
     property alias searchStr: searchBox.text
     property bool isPending: false
@@ -113,13 +114,11 @@ SettingsContentBase {
             anchors.topMargin: Theme.padding
 
             StatusTabButton {
-                id: contactsBtn
                 leftPadding: Theme.padding
                 width: implicitWidth
                 text: qsTr("Contacts")
             }
             StatusTabButton {
-                id: pendingRequestsBtn
                 objectName: "ContactsView_PendingRequest_Button"
                 width: implicitWidth
                 enabled: !root.pendingReceivedRequestContactsModel.ModelCount.empty ||
@@ -128,7 +127,12 @@ SettingsContentBase {
                 badge.value: root.pendingReceivedRequestContactsModel.ModelCount.count
             }
             StatusTabButton {
-                id: blockedBtn
+                objectName: "ContactsView_DismissedRequest_Button"
+                width: implicitWidth
+                enabled: !root.dismissedReceivedRequestContactsModel.ModelCount.empty
+                text: qsTr("Dismissed Requests")
+            }
+            StatusTabButton {
                 objectName: "ContactsView_Blocked_Button"
                 width: implicitWidth
                 enabled: !root.blockedContactsModel.ModelCount.empty
@@ -251,6 +255,22 @@ SettingsContentBase {
                 }
             }
 
+            // DISMISSED REQUESTS
+            ContactsListPanel {
+                Layout.fillWidth: true
+                searchString: searchBox.text
+                onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
+                contactsModel: root.dismissedReceivedRequestContactsModel
+                panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
+                visible: (stackLayout.currentIndex === 2)
+                onVisibleChanged: {
+                    if (visible) {
+                        stackLayout.height = height;
+                    }
+                }
+                onRejectionRemoved: root.contactsStore.acceptContactRequest(publicKey, "")
+            }
+
             // BLOCKED
             ContactsListPanel {
                 id: blockedContacts
@@ -260,7 +280,7 @@ SettingsContentBase {
                 onOpenContactContextMenu: root.openContextMenu(contactsModel, publicKey)
                 contactsModel: root.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
-                visible: (stackLayout.currentIndex === 2)
+                visible: (stackLayout.currentIndex === 3)
                 onVisibleChanged: {
                     if (visible) {
                         stackLayout.height = height;
