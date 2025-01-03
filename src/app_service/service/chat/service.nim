@@ -407,6 +407,7 @@ QtObject:
       let chat = self.chats[chatId]
       if chat.chatType == chat_dto.ChatType.PrivateGroupChat:
         let leaveGroupResponse = status_chat.leaveGroupChat(chatId)
+        echo "leaveGroupResponse: ", leaveGroupResponse
         self.emitUpdate(leaveGroupResponse)
 
       discard status_chat.deactivateChat(chatId, preserveHistory = chat.chatType == chat_dto.ChatType.OneToOne)

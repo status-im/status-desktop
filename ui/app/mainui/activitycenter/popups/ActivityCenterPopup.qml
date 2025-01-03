@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
@@ -15,6 +16,7 @@ import shared.popups 1.0
 import shared.views.chat 1.0
 
 import utils 1.0
+import SortFilterProxyModel 0.2
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
@@ -102,8 +104,28 @@ Popup {
         anchors.margins: Theme.smallPadding
         spacing: 1
 
-        model: root.activityCenterStore.activityCenterNotifications
+        model: SortFilterProxyModel {
+            id: modelFilter
+            readonly property var messageNotificationTypes: [
+                ActivityCenterStore.ActivityCenterNotificationType.Mention,
+                ActivityCenterStore.ActivityCenterNotificationType.Reply
+            ]
 
+            sourceModel: root.activityCenterStore.activityCenterNotifications
+            filters: FastExpressionFilter {
+                expression: {
+                    console.log('model.name', model.name)
+                    console.log('model.notificationType', model.notificationType)
+                    console.log('model.dismissed', model.dismissed)
+                    console.log('modelFilter.messageNotificationTypes', modelFilter.messageNotificationTypes)
+                    if (modelFilter.messageNotificationTypes.includes(model.notificationType)) {
+                        return !model.dismissed
+                    }
+                    return true
+                }
+                expectedRoles: ["dismissed", "notificationType"]
+            }
+        }
         onContentYChanged: d.loadMoreNotificationsIfScrollBelowThreshold()
 
         delegate: Loader {
