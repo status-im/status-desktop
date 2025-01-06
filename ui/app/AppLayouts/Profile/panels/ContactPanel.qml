@@ -32,6 +32,11 @@ ContactListItemDelegate {
             icon.color: Theme.palette.directColor1
             tooltip.text: qsTr("Send message")
             onClicked: root.sendMessageRequested()
+
+            StatusToolTip {
+                text: qsTr('Send message')
+                visible: parent.hovered
+            }
         },
         StatusFlatRoundButton {
             objectName: "declineBtn"
@@ -42,6 +47,11 @@ ContactListItemDelegate {
             icon.color: Theme.palette.dangerColor1
             tooltip.text: qsTr("Reject")
             onClicked: root.rejectRequestRequested()
+
+            StatusToolTip {
+                text: qsTr('Decline Request')
+                visible: parent.hovered
+            }
         },
         StatusFlatRoundButton {
             objectName: "acceptBtn"
@@ -52,6 +62,25 @@ ContactListItemDelegate {
             icon.color: Theme.palette.successColor1
             tooltip.text: qsTr("Accept")
             onClicked: root.acceptContactRequested()
+
+            StatusToolTip {
+                text: qsTr('Accept Request')
+                visible: parent.hovered
+            }
+        },
+        StatusFlatRoundButton {
+            objectName: "removeRejectBtn"
+            visible: showRemoveRejectionButton
+            width: visible ? 32 : 0
+            height: visible ? 32 : 0
+            icon.name: "cancel"
+            icon.color: Theme.palette.dangerColor1
+            onClicked: root.removeRejectionRequested()
+
+            StatusToolTip {
+                text: qsTr('Remove Rejection')
+                visible: parent.hovered
+            }
         },
         StatusBaseText {
             text: root.contactText
