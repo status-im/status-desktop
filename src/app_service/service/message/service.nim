@@ -519,7 +519,7 @@ QtObject:
 
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
     except Exception as e:
-      error "Erorr load pinned messages for chat async", msg = e.msg
+      error "Error load pinned messages for chat async", msg = e.msg
       # notify view, this is important
       self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, PinnedMessagesLoadedArgs())
 
