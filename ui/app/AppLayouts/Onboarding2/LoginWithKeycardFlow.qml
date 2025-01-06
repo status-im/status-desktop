@@ -14,10 +14,13 @@ SQUtils.QObject {
     required property int keycardState
     required property var tryToSetPinFunction
     required property int remainingAttempts
+    required property var isSeedPhraseValid
 
     property bool displayKeycardPromoBanner
 
     signal keycardPinEntered(string pin)
+    signal keycardPinCreated(string pin)
+    signal seedphraseSubmitted(string seedphrase)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
     signal createProfileWithEmptyKeycardRequested
@@ -53,9 +56,11 @@ SQUtils.QObject {
         KeycardIntroPage {
             keycardState: root.keycardState
             displayPromoBanner: root.displayKeycardPromoBanner
+            unlockUsingSeedphrase: true
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+            onUnlockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
             onEmptyKeycardDetected: root.stackView.replace(keycardEmptyPage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardEnterPinPage)
         }
@@ -78,6 +83,7 @@ SQUtils.QObject {
         KeycardEnterPinPage {
             tryToSetPinFunction: root.tryToSetPinFunction
             remainingAttempts: root.remainingAttempts
+            unlockUsingSeedphrase: true
 
             onKeycardPinEntered: {
                 root.keycardPinEntered(pin)
@@ -86,6 +92,32 @@ SQUtils.QObject {
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+            onUnlockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
+        }
+    }
+
+    Component {
+        id: seedphrasePage
+
+        SeedphrasePage {
+            title: qsTr("Unlock Keycard using the recovery phrase")
+            btnContinueText: qsTr("Unlock")
+            isSeedPhraseValid: root.isSeedPhraseValid
+            onSeedphraseSubmitted: (seedphrase) => {
+                root.seedphraseSubmitted(seedphrase)
+                root.stackView.push(keycardCreatePinPage)
+            }
+        }
+    }
+
+    Component {
+        id: keycardCreatePinPage
+
+        KeycardCreatePinPage {
+            onKeycardPinCreated: {
+                root.keycardPinCreated(pin)
+                root.finished()
+            }
         }
     }
 }

@@ -37,6 +37,7 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
     signal setPasswordRequested(string password)
     signal reloadKeycardRequested
+    signal keycardFactoryResetRequested
 
     signal finished(int flow)
 
@@ -162,6 +163,7 @@ SQUtils.QObject {
         splashScreenDurationMs: root.splashScreenDurationMs
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
+        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
 
@@ -214,10 +216,14 @@ SQUtils.QObject {
         remainingAttempts: root.remainingAttempts
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         tryToSetPinFunction: root.tryToSetPinFunction
+        isSeedPhraseValid: root.isSeedPhraseValid
 
         onKeycardPinEntered: (pin) => root.keycardPinEntered(pin)
+        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
+        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
 
         onFinished: {
             d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
