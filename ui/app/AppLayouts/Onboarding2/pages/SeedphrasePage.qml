@@ -14,6 +14,7 @@ OnboardingPage {
 
     title: qsTr("Create profile using a recovery phrase")
     property string subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")
+    property alias btnContinueText: btnContinue.text
 
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
@@ -53,6 +54,7 @@ OnboardingPage {
             }
 
             StatusButton {
+                id: btnContinue
                 objectName: "btnContinue"
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: -Theme.halfPadding

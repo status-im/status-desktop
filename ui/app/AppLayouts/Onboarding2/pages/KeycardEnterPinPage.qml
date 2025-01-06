@@ -17,9 +17,11 @@ KeycardBasePage {
 
     property var tryToSetPinFunction: (pin) => { console.error("tryToSetPinFunction: IMPLEMENT ME"); return false }
     required property int remainingAttempts
+    property bool unlockUsingSeedphrase
 
     signal keycardPinEntered(string pin)
     signal reloadKeycardRequested()
+    signal unlockWithSeedphraseRequested()
     signal keycardFactoryResetRequested()
 
     pageClassName: "KeycardEnterPinPage"
@@ -64,6 +66,13 @@ KeycardBasePage {
             onClicked: root.keycardFactoryResetRequested()
         },
         StatusButton {
+            id: btnUnlockWithSeedphrase
+            visible: false
+            text: qsTr("Unlock with recovery phrase")
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: root.unlockWithSeedphraseRequested()
+        },
+        StatusButton {
             id: btnReload
             width: 320
             anchors.horizontalCenter: parent.horizontalCenter
@@ -96,7 +105,11 @@ KeycardBasePage {
             }
             PropertyChanges {
                 target: btnFactoryReset
-                visible: true
+                visible: !root.unlockUsingSeedphrase
+            }
+            PropertyChanges {
+                target: btnUnlockWithSeedphrase
+                visible: root.unlockUsingSeedphrase
             }
             PropertyChanges {
                 target: btnReload
@@ -135,9 +148,7 @@ KeycardBasePage {
             }
             StateChangeScript {
                 script: {
-                    Backpressure.debounce(root, 2000, function() {
-                        root.keycardPinEntered(pinInput.pinInput)
-                    })()
+                    Backpressure.debounce(root, 2000, () => root.keycardPinEntered(pinInput.pinInput))()
                 }
             }
         },
