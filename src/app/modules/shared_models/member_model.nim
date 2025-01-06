@@ -288,10 +288,12 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       memberRole: MemberRole,
       joined: bool,
       membershipRequestState: MembershipRequestState = MembershipRequestState.None,
       trustStatus: TrustStatus,
+      contactRequest: ContactRequest,
       callDataChanged: bool = true,
     ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
@@ -316,6 +318,8 @@ QtObject:
     updateRole(memberRole, MemberRole)
     updateRole(joined, Joined)
     updateRole(trustStatus, TrustStatus)
+    updateRole(isBlocked, IsBlocked)
+    updateRole(contactRequest, ContactRequest)
 
     var updatedMembershipRequestState = membershipRequestState
     if updatedMembershipRequestState == MembershipRequestState.None:
@@ -357,10 +361,12 @@ QtObject:
         item.alias,
         item.icon,
         item.isContact,
+        item.isBlocked,
         item.memberRole,
         item.joined,
         item.membershipRequestState,
         item.trustStatus,
+        item.contactRequest,
         callDataChanged = false,
       )
 
@@ -427,7 +433,9 @@ QtObject:
       alias: string,
       icon: string,
       isContact: bool,
+      isBlocked: bool,
       trustStatus: TrustStatus,
+      contactRequest: ContactRequest
     ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
@@ -442,10 +450,12 @@ QtObject:
       alias,
       icon,
       isContact,
+      isBlocked,
       memberRole = self.items[ind].memberRole,
       joined = self.items[ind].joined,
       self.items[ind].membershipRequestState,
       trustStatus,
+      contactRequest,
     )
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =

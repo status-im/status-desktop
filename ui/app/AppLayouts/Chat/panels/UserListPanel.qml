@@ -196,8 +196,6 @@ Item {
         id: profileContextMenuComponent
 
         ProfileContextMenu {
-            id: profileContextMenu
-
             property string pubKey
 
             margins: 8
