@@ -17,8 +17,10 @@ KeycardBasePage {
 
     required property int keycardState // cf Onboarding.KeycardState
     property bool displayPromoBanner
+    property bool unlockUsingSeedphrase
 
     signal keycardFactoryResetRequested()
+    signal unlockWithSeedphraseRequested()
     signal reloadKeycardRequested()
     signal emptyKeycardDetected()
     signal notEmptyKeycardDetected()
@@ -86,6 +88,13 @@ KeycardBasePage {
             text: qsTr("Factory reset Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.keycardFactoryResetRequested()
+        },
+        MaybeOutlineButton {
+            id: btnUnlockWithSeedphrase
+            visible: false
+            text: qsTr("Unlock with recovery phrase")
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: root.unlockWithSeedphraseRequested()
         },
         MaybeOutlineButton {
             id: btnReload
@@ -190,12 +199,17 @@ KeycardBasePage {
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
-                subtitle: qsTr("The Keycard you have inserted is locked, you will need to factory reset it or insert a different one")
+                subtitle: root.unlockUsingSeedphrase ? qsTr("The Keycard you have inserted is locked, you will need to unlock it using the recovery phrase or insert a different one")
+                                                     : qsTr("The Keycard you have inserted is locked, you will need to factory reset it or insert a different one")
                 image.source: Theme.png("onboarding/keycard/error")
             }
             PropertyChanges {
                 target: btnFactoryReset
-                visible: true
+                visible: !root.unlockUsingSeedphrase
+            }
+            PropertyChanges {
+                target: btnUnlockWithSeedphrase
+                visible: root.unlockUsingSeedphrase
             }
             PropertyChanges {
                 target: btnReload
