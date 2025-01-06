@@ -81,7 +81,7 @@ Rectangle {
 
             const shift = (root.name.charAt(0) === "#") ||
                           (root.name.charAt(0) === "@")
-            return root.name.substring(shift, shift + charactersLen).toUpperCase()
+            return root.name.substring(shift, shift + charactersLen)
         }
     }
 

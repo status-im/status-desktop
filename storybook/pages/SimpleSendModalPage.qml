@@ -56,12 +56,12 @@ SplitView {
                 for (let i = 0; i < 10; i++)
                     append({
                                name: "some saved addr name " + i,
-                               ens: [],
+                               ens: "",
                                address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
                            })
                 append({
                            name: "some saved ENS name ",
-                           ens: ["me@status.eth"],
+                           ens: "me@status.eth",
                            address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4",
                        })
             }
@@ -130,8 +130,8 @@ SplitView {
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
 
-        savedAddressesModel: d.savedAddressesModel
-        recentRecipientsModel: WalletTransactionsModel{}
+        recipientsModel: recipientViewAdaptor.recipientsModel
+        recipientsFilterModel: recipientViewAdaptor.recipientsFilterModel
 
         currentCurrency: "USD"
         fnFormatCurrencyAmount: d.formatCurrencyAmount
@@ -166,6 +166,17 @@ SplitView {
         Binding on selectedTokenKey {
             value: tokensCombobox.currentValue ?? ""
         }
+    }
+
+    RecipientViewAdaptor {
+        id: recipientViewAdaptor
+        savedAddressesModel: d.savedAddressesModel
+        accountsModel: d.walletAccountsModel
+        recentRecipientsModel: WalletTransactionsModel{}
+
+        selectedSenderAddress: simpleSend.selectedAccountAddress
+        selectedRecipientType: simpleSend.selectedRecipientType
+        searchPattern: simpleSend.recipientSearchPattern
     }
 
     WalletAccountsSelectorAdaptor {

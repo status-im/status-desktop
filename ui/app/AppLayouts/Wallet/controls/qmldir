@@ -26,4 +26,6 @@ SwapProvidersTermsAndConditionsText 1.0 SwapProvidersTermsAndConditionsText.qml
 TokenSelector 1.0 TokenSelector.qml
 TokenSelectorButton 1.0 TokenSelectorButton.qml
 TokenSelectorCompactButton 1.0 TokenSelectorCompactButton.qml
+RecipientViewDelegate 1.0 RecipientViewDelegate.qml
+SendRecipientInput 1.0 SendRecipientInput.qml
 RouterErrorTag 1.0 RouterErrorTag.qml
