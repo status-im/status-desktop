@@ -6,7 +6,7 @@ def isPRBuild = utils.isPRBuild()
 def isNightlyBuild = utils.isNightlyBuild()
 
 pipeline {
-  agent { label 'linux && x86_64 && nix-2.14' }
+  agent { label 'linux && x86_64 && nix-2.24' }
 
   parameters {
     booleanParam(
