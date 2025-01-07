@@ -405,8 +405,7 @@ proc checkForStoringPasswordToKeychain(self: AppController) =
   else:
     self.keychainService.storeData(account.keyUid, self.startupModule.getPin())
 
-proc startupDidLoad*(self: AppController) =
-  # TODO move these functions to onboardingDidLoad
+proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
@@ -415,11 +414,18 @@ proc startupDidLoad*(self: AppController) =
 
   # We need to init a language service once qml is loaded
   self.languageService.init()
-  # We need this to set app width/height appropriatelly on the app start.
+  # We need this to set app width/height appropriately on the app start.
   self.startupModule.startUpUIRaised()
+
+proc startupDidLoad*(self: AppController) =
+  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+    # We will inialize in onboardingDidLoad
+    return
+  self.initializeQmlContext()
 
 proc onboardingDidLoad*(self: AppController) =
   debug "NEW ONBOARDING LOADED"
+  self.initializeQmlContext()
   # TODO when removing the old startup module, we should move the functions above here
 
 proc mainDidLoad*(self: AppController) =

@@ -378,12 +378,11 @@ StatusWindow {
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
-                duration: onboarding.splashScreenDurationMs
+                duration: startupOnbaordingLoader.item.splashScreenDurationMs
                 running: runningProgressAnimation
                 onStopped: {
                     console.warn("!!! SPLASH SCREEN DONE")
-                    console.warn("!!! RESTARTING FLOW")
-                    onboarding.restartFlow()
+                    // TODO move to main screen
                 }
             }
         }
@@ -478,7 +477,14 @@ StatusWindow {
             onFinished: (flow, data) => {
                 console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
 
-                console.warn("!!! SIMULATION: SHOWING SPLASH")
+                let error = onboardingStore.finishOnboardingFlow(flow, data)
+
+                if (error != "") {
+                    console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
+                    // TODO show error
+                    return
+                }
+                console.warn("!!! Onboarding completed!")
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
             }

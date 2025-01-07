@@ -28,7 +28,7 @@ method validateLocalPairingConnectionString*(self: AccessInterface, connectionSt
 method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method finishOnboardingFlow*(self: AccessInterface, primaryFlowInt, secondaryFlowInt: int, dataJson: string): string {.base.} =
+method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

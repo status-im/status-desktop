@@ -84,5 +84,5 @@ QtObject:
   # proc mnemonicWasShown(self: View): string {.slot.} =
   #   return self.delegate.getMnemonic()
 
-  proc finishOnboardingFlow(self: View, primaryFlowInt: int, secondaryFlowInt: int, dataJson: string): string {.slot.} =
-    self.delegate.finishOnboardingFlow(primaryFlowInt, secondaryFlowInt, dataJson)
+  proc finishOnboardingFlow(self: View, flowInt: int, dataJson: string): string {.slot.} =
+    self.delegate.finishOnboardingFlow(flowInt, dataJson)
