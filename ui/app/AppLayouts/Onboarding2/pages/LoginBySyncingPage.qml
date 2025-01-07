@@ -19,8 +19,6 @@ OnboardingPage {
 
     title: qsTr("Log in by syncing")
 
-    pageClassName: "LoginBySyncingPage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

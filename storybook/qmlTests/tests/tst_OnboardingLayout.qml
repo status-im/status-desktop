@@ -150,12 +150,13 @@ Item {
             }
         }
 
-        function getCurrentPage(stack, pageClassName) {
-            if (!stack || !pageClassName)
-                fail("getCurrentPage: expected param 'stack' or 'pageClassName' empty")
+        function getCurrentPage(stack, pageClass) {
+            if (!stack || !pageClass)
+                fail("getCurrentPage: expected param 'stack' or 'pageClass' empty")
             verify(!!stack)
             tryCompare(stack, "busy", false) // wait for page transitions to stop
-            tryCompare(stack.currentItem, "pageClassName", pageClassName)
+
+            verify(stack.currentItem instanceof pageClass)
             return stack.currentItem
         }
 
@@ -187,7 +188,7 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
 
             const linksText = findChild(controlUnderTest, "approvalLinks")
             verify(!!linksText)
@@ -207,7 +208,7 @@ Item {
             mouseClick(btnCreateProfile)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
 
             let infoButton = findChild(controlUnderTest, "infoButton")
             verify(!!infoButton)
@@ -224,14 +225,14 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Create profile
-            page = getCurrentPage(stack, "CreateProfilePage")
+            page = getCurrentPage(stack, CreateProfilePage)
 
             const btnCreateWithPassword = findChild(controlUnderTest, "btnCreateWithPassword")
             verify(!!btnCreateWithPassword)
             mouseClick(btnCreateWithPassword)
 
             // PAGE 4: Create password
-            page = getCurrentPage(stack, "CreatePasswordPage")
+            page = getCurrentPage(stack, CreatePasswordPage)
 
             infoButton = findChild(controlUnderTest, "infoButton")
             verify(!!infoButton)
@@ -269,7 +270,7 @@ Item {
 
             // PAGE 5: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -298,14 +299,14 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
 
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
             mouseClick(btnCreateProfile)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
 
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
@@ -314,14 +315,14 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Create profile
-            page = getCurrentPage(stack, "CreateProfilePage")
+            page = getCurrentPage(stack, CreateProfilePage)
 
             const btnCreateWithSeedPhrase = findChild(controlUnderTest, "btnCreateWithSeedPhrase")
             verify(!!btnCreateWithSeedPhrase)
             mouseClick(btnCreateWithSeedPhrase)
 
             // PAGE 4: Create profile using a recovery phrase
-            page = getCurrentPage(stack, "SeedphrasePage")
+            page = getCurrentPage(stack, SeedphrasePage)
 
             const btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -336,7 +337,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 5: Create password
-            page = getCurrentPage(stack, "CreatePasswordPage")
+            page = getCurrentPage(stack, CreatePasswordPage)
 
             const btnConfirmPassword = findChild(controlUnderTest, "btnConfirmPassword")
             verify(!!btnConfirmPassword)
@@ -366,7 +367,7 @@ Item {
 
             // PAGE 6: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -408,13 +409,13 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
             mouseClick(btnCreateProfile)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
             mouseClick(shareButton)
@@ -422,32 +423,32 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Create profile
-            page = getCurrentPage(stack, "CreateProfilePage")
+            page = getCurrentPage(stack, CreateProfilePage)
             const btnCreateWithEmptyKeycard = findChild(controlUnderTest, "btnCreateWithEmptyKeycard")
             verify(!!btnCreateWithEmptyKeycard)
             mouseClick(btnCreateWithEmptyKeycard)
 
             // PAGE 4: Keycard intro
-            page = getCurrentPage(stack, "KeycardIntroPage")
+            page = getCurrentPage(stack, KeycardIntroPage)
             dynamicSpy.setup(page, "emptyKeycardDetected")
             mockDriver.keycardState = Onboarding.KeycardState.Empty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "empty")
 
             // PAGE 5: Create profile on empty Keycard -> Use a new recovery phrase
-            page = getCurrentPage(stack, "CreateKeycardProfilePage")
+            page = getCurrentPage(stack, CreateKeycardProfilePage)
             const btnCreateWithEmptySeedphrase = findChild(page, "btnCreateWithEmptySeedphrase")
             verify(!!btnCreateWithEmptySeedphrase)
             mouseClick(btnCreateWithEmptySeedphrase)
 
             // PAGE 6: Backup your recovery phrase (intro)
-            page = getCurrentPage(stack, "BackupSeedphraseIntro")
+            page = getCurrentPage(stack, BackupSeedphraseIntro)
             const btnBackupSeedphrase = findChild(page, "btnBackupSeedphrase")
             verify(!!btnBackupSeedphrase)
             mouseClick(btnBackupSeedphrase)
 
             // PAGE 7: Backup your recovery phrase (ack checkboxes)
-            page = getCurrentPage(stack, "BackupSeedphraseAcks")
+            page = getCurrentPage(stack, BackupSeedphraseAcks)
             let btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
@@ -460,7 +461,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 8: Backup your recovery phrase (seedphrase reveal) - step 1
-            page = getCurrentPage(stack, "BackupSeedphraseReveal")
+            page = getCurrentPage(stack, BackupSeedphraseReveal)
             const seedGrid = findChild(page, "seedGrid")
             verify(!!seedGrid)
             tryCompare(seedGrid.layer, "enabled", true)
@@ -475,7 +476,7 @@ Item {
             mouseClick(btnConfirm)
 
             // PAGE 9: Backup your recovery phrase (seedphrase verification) - step 2
-            page = getCurrentPage(stack, "BackupSeedphraseVerify")
+            page = getCurrentPage(stack, BackupSeedphraseVerify)
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
@@ -491,7 +492,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 10: Backup your recovery phrase (outro) - step 3
-            page = getCurrentPage(stack, "BackupSeedphraseOutro")
+            page = getCurrentPage(stack, BackupSeedphraseOutro)
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
@@ -505,7 +506,7 @@ Item {
 
             // PAGE 11a: Enter Keycard PIN
             if (!!data.pin) {
-                page = getCurrentPage(stack, "KeycardEnterPinPage")
+                page = getCurrentPage(stack, KeycardEnterPinPage)
                 dynamicSpy.setup(page, "keycardPinEntered")
                 keyClickSequence(data.pin)
                 tryCompare(dynamicSpy, "count", 1)
@@ -514,7 +515,7 @@ Item {
             // PAGE 11b: Create new Keycard PIN
             else {
                 const newPin = "123321"
-                page = getCurrentPage(stack, "KeycardCreatePinPage")
+                page = getCurrentPage(stack, KeycardCreatePinPage)
                 tryCompare(page, "state", "creating")
                 dynamicSpy.setup(page, "keycardPinCreated")
                 keyClickSequence(newPin)
@@ -525,7 +526,7 @@ Item {
             }
 
             // PAGE 12: Adding key pair to Keycard
-            page = getCurrentPage(stack, "KeycardAddKeyPairPage")
+            page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
             page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
             btnContinue = findChild(page, "btnContinue")
@@ -535,7 +536,7 @@ Item {
 
             // PAGE 13: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -569,13 +570,13 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
             const btnCreateProfile = findChild(controlUnderTest, "btnCreateProfile")
             verify(!!btnCreateProfile)
             mouseClick(btnCreateProfile)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
             mouseClick(shareButton)
@@ -583,26 +584,26 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Create profile
-            page = getCurrentPage(stack, "CreateProfilePage")
+            page = getCurrentPage(stack, CreateProfilePage)
             const btnCreateWithEmptyKeycard = findChild(controlUnderTest, "btnCreateWithEmptyKeycard")
             verify(!!btnCreateWithEmptyKeycard)
             mouseClick(btnCreateWithEmptyKeycard)
 
             // PAGE 4: Keycard intro
-            page = getCurrentPage(stack, "KeycardIntroPage")
+            page = getCurrentPage(stack, KeycardIntroPage)
             dynamicSpy.setup(page, "emptyKeycardDetected")
             mockDriver.keycardState = Onboarding.KeycardState.Empty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "empty")
 
             // PAGE 5: Create profile on empty Keycard -> Use an existing recovery phrase
-            page = getCurrentPage(stack, "CreateKeycardProfilePage")
+            page = getCurrentPage(stack, CreateKeycardProfilePage)
             const btnCreateWithExistingSeedphrase = findChild(page, "btnCreateWithExistingSeedphrase")
             verify(!!btnCreateWithExistingSeedphrase)
             mouseClick(btnCreateWithExistingSeedphrase)
 
             // PAGE 6: Create profile on empty Keycard using a recovery phrase
-            page = getCurrentPage(stack, "SeedphrasePage")
+            page = getCurrentPage(stack, SeedphrasePage)
             const btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
@@ -616,7 +617,7 @@ Item {
 
             // PAGE 7a: Enter Keycard PIN
             if (!!data.pin) {
-                page = getCurrentPage(stack, "KeycardEnterPinPage")
+                page = getCurrentPage(stack, KeycardEnterPinPage)
                 dynamicSpy.setup(page, "keycardPinEntered")
                 keyClickSequence(data.pin)
                 tryCompare(dynamicSpy, "count", 1)
@@ -625,7 +626,7 @@ Item {
             // PAGE 7b: Create new Keycard PIN
             else {
                 const newPin = "123321"
-                page = getCurrentPage(stack, "KeycardCreatePinPage")
+                page = getCurrentPage(stack, KeycardCreatePinPage)
                 tryCompare(page, "state", "creating")
                 dynamicSpy.setup(page, "keycardPinCreated")
                 keyClickSequence(newPin)
@@ -636,7 +637,7 @@ Item {
             }
 
             // PAGE 8: Adding key pair to Keycard
-            page = getCurrentPage(stack, "KeycardAddKeyPairPage")
+            page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
             page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
             const btnContinue2 = findChild(page, "btnContinue")
@@ -646,7 +647,7 @@ Item {
 
             // PAGE 9: Enable Biometrics
             if (controlUnderTest.biometricsAvailable) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -675,13 +676,13 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
             mouseClick(shareButton)
@@ -689,13 +690,13 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in -> Enter recovery phrase
-            page = getCurrentPage(stack, "LoginPage")
+            page = getCurrentPage(stack, LoginPage)
             const btnWithSeedphrase = findChild(page, "btnWithSeedphrase")
             verify(!!btnWithSeedphrase)
             mouseClick(btnWithSeedphrase)
 
             // PAGE 4: Sign in with your Status recovery phrase
-            page = getCurrentPage(stack, "SeedphrasePage")
+            page = getCurrentPage(stack, SeedphrasePage)
 
             const btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -710,7 +711,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 5: Create password
-            page = getCurrentPage(stack, "CreatePasswordPage")
+            page = getCurrentPage(stack, CreatePasswordPage)
 
             const btnConfirmPassword = findChild(controlUnderTest, "btnConfirmPassword")
             verify(!!btnConfirmPassword)
@@ -740,7 +741,7 @@ Item {
 
             // PAGE 6: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -768,13 +769,13 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
             mouseClick(shareButton)
@@ -782,7 +783,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in
-            page = getCurrentPage(stack, "LoginPage")
+            page = getCurrentPage(stack, LoginPage)
             const btnBySyncing = findChild(page, "btnBySyncing")
             verify(!!btnBySyncing)
             mouseClick(btnBySyncing)
@@ -802,7 +803,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 4: Log in by syncing
-            page = getCurrentPage(stack, "LoginBySyncingPage")
+            page = getCurrentPage(stack, LoginBySyncingPage)
 
             const enterCodeTabBtn = findChild(page, "secondTab_StatusSwitchTabButton")
             verify(!!enterCodeTabBtn)
@@ -821,7 +822,7 @@ Item {
             mouseClick(btnContinue)
 
             // PAGE 5: Profile sync in progress
-            page = getCurrentPage(stack, "SyncProgressPage")
+            page = getCurrentPage(stack, SyncProgressPage)
             tryCompare(page, "syncState", Onboarding.SyncState.InProgress)
             page.syncState = Onboarding.SyncState.Success // SIMULATION
             const btnLogin2 = findChild(page, "btnLogin") // TODO test other flows/buttons here as well
@@ -831,7 +832,7 @@ Item {
 
             // PAGE 6: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")
@@ -861,13 +862,13 @@ Item {
             verify(!!stack)
 
             // PAGE 1: Welcome
-            let page = getCurrentPage(stack, "WelcomePage")
+            let page = getCurrentPage(stack, WelcomePage)
             const btnLogin = findChild(controlUnderTest, "btnLogin")
             verify(!!btnLogin)
             mouseClick(btnLogin)
 
             // PAGE 2: Help us improve
-            page = getCurrentPage(stack, "HelpUsImproveStatusPage")
+            page = getCurrentPage(stack, HelpUsImproveStatusPage)
             const shareButton = findChild(controlUnderTest, data.shareBtnName)
             dynamicSpy.setup(page, "shareUsageDataRequested")
             mouseClick(shareButton)
@@ -875,20 +876,20 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in -> Login with Keycard
-            page = getCurrentPage(stack, "LoginPage")
+            page = getCurrentPage(stack, LoginPage)
             const btnWithKeycard = findChild(page, "btnWithKeycard")
             verify(!!btnWithKeycard)
             mouseClick(btnWithKeycard)
 
             // PAGE 4: Keycard intro
-            page = getCurrentPage(stack, "KeycardIntroPage")
+            page = getCurrentPage(stack, KeycardIntroPage)
             dynamicSpy.setup(page, "notEmptyKeycardDetected")
             mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // SIMULATION // TODO test other states here as well
             tryCompare(dynamicSpy, "count", 1)
             tryCompare(page, "state", "notEmpty")
 
             // PAGE 5: Enter Keycard PIN
-            page = getCurrentPage(stack, "KeycardEnterPinPage")
+            page = getCurrentPage(stack, KeycardEnterPinPage)
             dynamicSpy.setup(page, "keycardPinEntered")
             keyClickSequence(mockDriver.existingPin)
             tryCompare(dynamicSpy, "count", 1)
@@ -896,7 +897,7 @@ Item {
 
             // PAGE 6: Enable Biometrics
             if (data.biometrics) {
-                page = getCurrentPage(stack, "EnableBiometricsPage")
+                page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
                 dynamicSpy.setup(page, "enableBiometricsRequested")

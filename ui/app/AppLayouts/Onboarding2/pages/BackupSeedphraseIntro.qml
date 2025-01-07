@@ -12,8 +12,6 @@ OnboardingPage {
 
     signal backupSeedphraseRequested()
 
-    pageClassName: "BackupSeedphraseIntro"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

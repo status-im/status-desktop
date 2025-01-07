@@ -14,8 +14,6 @@ KeycardBasePage {
     subtitle: qsTr("There is no profile key pair on this Keycard")
     image.source: Theme.png("onboarding/keycard/error")
 
-    pageClassName: "KeycardEmptyPage"
-
     buttons: [
         MaybeOutlineButton {
             anchors.horizontalCenter: parent.horizontalCenter
