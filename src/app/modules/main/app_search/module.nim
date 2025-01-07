@@ -80,7 +80,7 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
     if isOneToOneChat:
-      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+      (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
     elif chatDto.chatType == ChatType.CommunityChat:
