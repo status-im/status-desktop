@@ -601,12 +601,15 @@ QtObject:
     defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Reactions.int])
 
-  proc pinUnpinMessage*(self: Model, messageId: string, pin: bool, pinnedBy: string) =
+  proc pinUnpinMessage*(self: Model, messageId: string, pinned: bool, pinnedBy: string) =
     let ind = self.findIndexForMessageId(messageId)
-    if(ind == -1):
+    if ind == -1:
       return
 
-    self.items[ind].pinned = pin
+    if self.items[ind].pinned == pinned:
+      return
+
+    self.items[ind].pinned = pinned
     self.items[ind].pinnedBy = pinnedBy
 
     let index = self.createIndex(ind, 0, nil)

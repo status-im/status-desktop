@@ -175,7 +175,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
       isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
-  item = pinned_msg_item.initItem(
+  item = pinned_msg_item.initMessageItem(
     message.id,
     message.communityId,
     message.chatId,
@@ -219,6 +219,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.deleted,
     message.deletedBy,
     deletedByContactDetails = ContactDetails(),
+    message.pinnedBy,
     message.mentioned,
     message.quotedMessage.`from`,
     message.quotedMessage.text,
