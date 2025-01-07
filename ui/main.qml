@@ -15,6 +15,8 @@ import shared.stores 1.0
 
 import mainui 1.0
 import AppLayouts.Onboarding 1.0
+import AppLayouts.Onboarding2 1.0 as Onboarding2
+import AppLayouts.Onboarding2.stores 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
@@ -24,6 +26,7 @@ StatusWindow {
 
     property bool appIsReady: false
 
+    readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
 
@@ -113,7 +116,7 @@ StatusWindow {
                 var c = Qt.createComponent("qrc:/imports/shared/panels/MockedKeycardLibControllerWindow.qml");
                 if (c.status === Component.Ready) {
                     d.mockedKeycardControllerWindow = c.createObject(applicationWindow, {
-                                                                         "relatedModule": startupOnboarding.visible?
+                                                                         "relatedModule": startupOnbaordingLoader.item.visible?
                                                                                               startupModule :
                                                                                               mainModule
                                                                      })
@@ -176,13 +179,13 @@ StatusWindow {
                 // we're here only in case of error when we're returning from the app loading state
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
-                startupOnboarding.visible = true
+                startupOnbaordingLoader.item.visible = true
             }
             else if(state === Constants.appState.appLoading) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
-                startupOnboarding.visible = false
+                startupOnbaordingLoader.item.visible = false
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
@@ -204,8 +207,8 @@ StatusWindow {
                 if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
                     localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
                 }
-                startupOnboarding.unload()
-                startupOnboarding.visible = false
+                startupOnbaordingLoader.item.unload()
+                startupOnbaordingLoader.item.visible = false
 
                 Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
                 Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
@@ -215,7 +218,7 @@ StatusWindow {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = true
                 appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
-                startupOnboarding.visible = false
+                startupOnbaordingLoader.item.visible = false
             }
         }
     }
@@ -277,7 +280,7 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Theme.changeTheme(startupOnboarding.visible ? Universal.System : localAppSettings.theme,
+        Theme.changeTheme(startupOnbaordingLoader.item.visible ? Universal.System : localAppSettings.theme,
                           systemPalette.isCurrentSystemThemeDark())
     }
 
@@ -367,12 +370,125 @@ StatusWindow {
         }
     }
 
-    OnboardingLayout {
-        id: startupOnboarding
-        objectName: "startupOnboardingLayout"
-        anchors.fill: parent
+    Component {
+        id: splashScreenV2
+        DidYouKnowSplashScreen {
+            readonly property string pageClassName: "Splash"
+            property bool runningProgressAnimation
+            NumberAnimation on progress {
+                from: 0.0
+                to: 1
+                duration: onboarding.splashScreenDurationMs
+                running: runningProgressAnimation
+                onStopped: {
+                    console.warn("!!! SPLASH SCREEN DONE")
+                    console.warn("!!! RESTARTING FLOW")
+                    onboarding.restartFlow()
+                }
+            }
+        }
+    }
 
-        utilsStore: applicationWindow.utilsStore
+    Loader {
+        id: startupOnbaordingLoader
+        anchors.fill: parent
+        sourceComponent: featureFlags && featureFlags.onboardingV2Enabled ? onboardingV2 : onboardingV1
+    }
+
+    Component {
+        id: onboardingV1
+
+        OnboardingLayout {
+            objectName: "startupOnboardingLayout"
+            anchors.fill: parent
+
+            utilsStore: applicationWindow.utilsStore
+        }
+    }
+
+    Component {
+        id: onboardingV2
+
+        Onboarding2.OnboardingLayout {
+            objectName: "startupOnboardingLayout"
+            anchors.fill: parent
+
+            networkChecksEnabled: true
+            splashScreenDurationMs: 3000
+            biometricsAvailable: Qt.platform.os === Constants.mac
+
+            onboardingStore: OnboardingStore {
+                function setPin(pin: string) { // -> bool
+                    console.log("OnboardingStore.setPin", ["pin"])
+                    return true
+                }
+
+                function startKeypairTransfer() { // -> void
+                    console.log("OnboardingStore.startKeypairTransfer")
+                }
+
+                // password
+                function getPasswordStrengthScore(password: string) { // -> int
+                    console.log("OnboardingStore.getPasswordStrengthScore", ["password"])
+                    return Math.min(password.length-1, 4)
+                }
+
+                // seedphrase/mnemonic
+                function validMnemonic(mnemonic: string) { // -> bool
+                    console.log("OnboardingStore.validMnemonic", ["mnemonic"])
+                    return true
+                }
+                function getMnemonic() { // -> string
+                    console.log("OnboardingStore.getMnemonic()")
+                    return ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"].join(" ")
+                }
+                function mnemonicWasShown() { // -> void
+                    console.log("OnboardingStore.mnemonicWasShown()")
+                }
+                function removeMnemonic() { // -> void
+                    console.log("OnboardingStore.removeMnemonic()")
+                }
+
+                function validateLocalPairingConnectionString(connectionString: string) { // -> bool
+                    console.log("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"])
+                    return !Number.isNaN(parseInt(connectionString))
+                }
+                function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+                    console.log("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"])
+                }
+            }
+
+            metricsStore: MetricsStore {
+                readonly property var d: QtObject {
+                    id: d
+                    property bool isCentralizedMetricsEnabled
+                }
+
+                function toggleCentralizedMetrics(enabled) {
+                    d.isCentralizedMetricsEnabled = enabled
+                }
+
+                function addCentralizedMetricIfEnabled(eventName, eventValue = null) {
+                    console.log("MetricsStore.addCentralizedMetricIfEnabled", ["eventName", "eventValue"])
+                }
+
+                readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
+            }
+
+            onFinished: (flow, data) => {
+                console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
+
+                console.warn("!!! SIMULATION: SHOWING SPLASH")
+                stack.clear()
+                stack.push(splashScreenV2, { runningProgressAnimation: true })
+            }
+            onKeycardFactoryResetRequested: {
+                console.warn("!!! FACTORY RESET; RESTARTING FLOW")
+            }
+            onKeycardReloaded: {
+                console.warn("!!! RELOAD KEYCARD")
+            }
+        }
     }
 
     Loader {
