@@ -295,7 +295,7 @@ Control {
 
         RowLayout {
             Layout.fillWidth: true
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: bottomItem
 
                 objectName: "bottomItemText"
@@ -317,7 +317,8 @@ Control {
 
                 elide: Text.ElideMiddle
                 font.pixelSize: 13
-                color: Theme.palette.directColor5
+                customColor: Theme.palette.directColor5
+                loading: root.bottomTextLoading
 
                 MouseArea {
                     objectName: "amountToSend_mouseArea"
@@ -352,8 +353,6 @@ Control {
                 }
 
                 HoverHandler { id: hoverHandler }
-
-                visible: !root.bottomTextLoading
             }
             StatusIcon {
                 Layout.preferredWidth: 16
@@ -370,13 +369,6 @@ Control {
                 id: bottomRightComponent
                 Layout.alignment: Qt.AlignVCenter
             }
-        }
-
-        LoadingComponent {
-            objectName: "bottomItemTextLoadingComponent"
-            Layout.preferredWidth: bottomItem.width
-            Layout.preferredHeight: bottomItem.height
-            visible: root.bottomTextLoading
         }
     }
 }

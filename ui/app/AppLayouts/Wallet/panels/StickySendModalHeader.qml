@@ -54,6 +54,12 @@ Control {
     /** input property for programatic selection of network **/
     property int selectedChainId
 
+    /** input property to decide if the header can be interacted with **/
+    property bool interactive: true
+
+    /** input property to show only ERC20 assets and no collectibles **/
+    property bool displayOnlyAssets
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -119,6 +125,8 @@ Control {
 
         isStickyHeader: true
         isScrolling: root.stickyHeaderVisible
+        interactive: root.interactive
+        displayOnlyAssets: root.displayOnlyAssets
 
         networksModel: root.networksModel
         assetsModel: root.assetsModel

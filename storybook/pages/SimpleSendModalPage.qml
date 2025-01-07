@@ -7,6 +7,7 @@ import SortFilterProxyModel 0.2
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Backpressure 0.1
 
 import Models 1.0
@@ -120,9 +121,12 @@ SplitView {
         closePolicy: Popup.CloseOnEscape
 
         interactive: interactiveCheckbox.checked
+        displayOnlyAssets: displayOnlyAssetsCheckbox.checked
+        transferOwnership: transferOwnershipCheckbox.checked
 
         accountsModel: accountsSelectorAdaptor.processedWalletAccounts
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
+        flatCollectiblesModel: collectiblesSelectionAdaptor.filteredFlatModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel
 
@@ -548,6 +552,17 @@ SplitView {
                 checked: true
             }
 
+            CheckBox {
+                id: transferOwnershipCheckbox
+                text: "transfer ownership"
+                checked: false
+            }
+
+            CheckBox {
+                id: displayOnlyAssetsCheckbox
+                text: "displayOnlyAssets"
+            }
+
             Text {
                 text: "Select an accounts"
             }
@@ -586,23 +601,93 @@ SplitView {
             }
             ComboBox {
                 id: tokensCombobox
+                Layout.preferredWidth: 200
                 model: ConcatModel {
                     sources: [
                         SourceModel {
-                            model: assetsSelectorViewAdaptor.outputAssetsModel
+                            model: ObjectProxyModel {
+                                sourceModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
+                                delegate: SortFilterProxyModel {
+                                    readonly property var addressPerChain: this
+                                    sourceModel: LeftJoinModel {
+                                        leftModel: model.addressPerChain
+                                        rightModel: d.filteredNetworksModel
+
+                                        joinRole: "chainId"
+                                    }
+
+                                    filters: ValueFilter {
+                                        roleName: "isTest"
+                                        value: testNetworksCheckbox.checked
+                                    }
+                                }
+                                expectedRoles: "addressPerChain"
+                                exposedRoles: "addressPerChain"
+                            }
                             markerRoleValue: "first_model"
                         },
                         SourceModel {
-                            model: collectiblesKeyModel
+                            model: RolesRenamingModel {
+                                sourceModel: collectiblesBySymbolModel
+                                mapping: [
+                                    RoleRename {
+                                        from: "symbol"
+                                        to: "key"
+                                    }
+                                ]
+                            }
                             markerRoleValue: "second_model"
                         }
                     ]
 
                     markerRoleName: "which_model"
-                    expectedRoles: ["tokensKey", "name"]
+                    expectedRoles: ["key", "name", "addressPerChain", "chainId", "ownership", "type", "tokenType", "addressPerChain"]
                 }
+                delegate: ItemDelegate {
+                    contentItem: RowLayout {
+                        Text {
+                            text: model.name
+                        }
+                        StatusIcon {
+                            icon: {
+                                const iconUrl = ModelUtils.getByKey(NetworksModel.flatNetworks, "chainId", model.chainId, "iconUrl")
+                                if(!!iconUrl)
+                                    return Theme.svg(iconUrl)
+                                else return ""
+                            }
+                        }
+                    }
+                    onClicked: {
+                        let tokenType = model.type ?? model.tokenType
+                        if (tokenType === Constants.TokenType.ERC721) {
+                            simpleSend.sendType = Constants.SendType.ERC721Transfer
+                            simpleSend.selectedChainId = model.chainId
+                            const firstAccountOwningSelectedCollectible = ModelUtils.get(model.ownership, 0, "accountAddress")
+                            if(!!firstAccountOwningSelectedCollectible)
+                                simpleSend.selectedAccountAddress = firstAccountOwningSelectedCollectible
+                        }
+                        else if (tokenType === Constants.TokenType.ERC1155) {
+                            simpleSend.sendType = Constants.SendType.ERC1155Transfer
+                            simpleSend.selectedChainId = model.chainId
+                            const firstAccountOwningSelectedCollectible = ModelUtils.get(model.ownership, 0, "accountAddress")
+                            if(!!firstAccountOwningSelectedCollectible)
+                                simpleSend.selectedAccountAddress = firstAccountOwningSelectedCollectible
+                        }
+                        else {
+                            let selectedChainId = ModelUtils.getByKey(model.addressPerChain, "layer", "1", "chainId")
+                            if (!selectedChainId) {
+                                selectedChainId = ModelUtils.get(model.addressPerChain, 0, "chainId")
+                            }
+                            simpleSend.selectedChainId = selectedChainId
+                            simpleSend.sendType =  Constants.SendType.Transfer
+                        }
+                    }
+
+                    highlighted: tokensCombobox.highlightedIndex === index
+                }
+
                 textRole: "name"
-                valueRole: "tokensKey"
+                valueRole: "key"
             }
 
             RowLayout {
@@ -616,12 +701,9 @@ SplitView {
                     }
                 }
                 Button {
-                    text: "update in modal"
-                    onClicked: simpleSend.selectedAmount = amountInput.text
+                    text: "update raw value in modal"
+                    onClicked: simpleSend.selectedRawAmount = amountInput.text
                 }
-            }
-            Text {
-                text: "amount selected in base unit: " + simpleSend.selectedAmountInBaseUnit
             }
 
             Text {
@@ -651,22 +733,10 @@ SplitView {
                 text: "token selected is: " + simpleSend.selectedTokenKey
             }
             Text {
-                text: "amount entered is: " + simpleSend.selectedAmount
+                text: "raw amount entered is: " + simpleSend.selectedRawAmount
             }
             Text {
                 text: "selected recipient is: \n" + simpleSend.selectedRecipientAddress
-            }
-
-            RolesRenamingModel {
-                id: collectiblesKeyModel
-                sourceModel: collectiblesSelectionAdaptor.model
-
-                mapping: [
-                    RoleRename {
-                        from: "symbol"
-                        to: "tokensKey"
-                    }
-                ]
             }
         }
     }

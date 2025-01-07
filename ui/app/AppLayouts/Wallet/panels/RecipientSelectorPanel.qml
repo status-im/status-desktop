@@ -27,6 +27,8 @@ Rectangle {
     property alias selectedRecipientAddress: recipientInputLoader.selectedRecipientAddress
     property alias selectedRecipientType: recipientInputLoader.selectedRecipientType
 
+    property bool interactive: true
+
     signal resolveENS(string ensName, string uuid)
 
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
@@ -47,6 +49,8 @@ Rectangle {
             id: recipientInputLoader
 
             Layout.fillWidth: true
+
+            interactive: root.interactive
 
             savedAddressesModel: root.savedAddressesModel
             myAccountsModel: root.myAccountsModel

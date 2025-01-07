@@ -322,11 +322,8 @@ Item {
 
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
-            verify(!bottomItemText.visible)
-
-            const bottomItemTextLoadingComponent = findChild(amountToSendInput, "bottomItemTextLoadingComponent")
-            verify(!!bottomItemTextLoadingComponent)
-            verify(bottomItemTextLoadingComponent.visible)
+            verify(bottomItemText.visible)
+            verify(bottomItemText.loading)
         }
 
         function test_max_button_when_different_tokens_clicked() {

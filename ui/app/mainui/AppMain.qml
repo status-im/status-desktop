@@ -660,13 +660,13 @@ Item {
 
         // for simple send
         walletAccountsModel: WalletStores.RootStore.accounts
+        filteredFlatNetworksModel: WalletStores.RootStore.filteredFlatModel
         flatNetworksModel: WalletStores.RootStore.flatNetworks
         areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
         groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
         plainTokensBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
         collectiblesBySymbolModel: WalletStores.RootStore.collectiblesStore.jointCollectiblesBySymbolModel
-        tokenBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
         savedAddressesModel: WalletStores.RootStore.savedAddresses
         recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
 

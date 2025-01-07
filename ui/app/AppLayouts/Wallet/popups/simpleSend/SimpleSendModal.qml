@@ -63,6 +63,29 @@ StatusDialog {
     **/
     required property var collectiblesModel
     /**
+      This model is needed here not to be used in any visual item but
+      to evaluate the collectible selected by using the selectedTokenKey.
+      To do this with the grouped and nested collectiblesModel is very
+      complex and is adding unnecessary edge cases that need to be handled
+      expicity.
+      This model should be already filtered by account and chainId selected
+      Expected model structure:
+
+        symbol              [string] - unique identifier of a collectible
+        chainId             [int] - unique identifier of a network
+        collectionUid       [string] - unique identifier of a collection
+        contractAddress     [string] - collectible's contract address
+        name                [string] - collectible's name e.g. "Magicat"
+        collectionName      [string] - collection name e.g. "Crypto Kitties"
+        mediaUrl            [url]    - collectible's media url
+        imageUrl            [url]    - collectible's image url
+        communityId         [string] - unique identifier of a community for community collectible or empty
+        ownership           [model]  - submodel of balances per chain/account
+            balance         [int]    - balance (always 1 for ERC-721)
+            accountAddress  [string] - unique identifier of an account
+    **/
+    required property var flatCollectiblesModel
+    /**
     Expected model structure:
     - chainId: network chain id
     - chainName: name of network
@@ -78,6 +101,11 @@ StatusDialog {
 
     /** input property to decide if send modal is interactive or prefilled **/
     property bool interactive: true
+    /** input property to show only ERC20 assets and no collectibles **/
+    property bool displayOnlyAssets
+
+    /** input property true if a community owner token is being transferred **/
+     property bool transferOwnership
 
     /** input property to decide if routes are being fetched **/
     property bool routesLoading
@@ -103,24 +131,26 @@ StatusDialog {
     property int selectedChainId
     /** property to set and expose currently selected token key **/
     property string selectedTokenKey
-    /** property to set and expose the amount to send from outside without any localization **/
-    property string selectedAmount
-    /** output property to set currently set amount to send
+    /** property to set and expose the raw amount to send from outside without any localization
     Crypto value in a base unit as a string integer,
     e.g. 1000000000000000000 for 1 ETH **/
-    readonly property string selectedAmountInBaseUnit: amountToSend.amount
+    property string selectedRawAmount
+
+    /** input property holds the publicKey of the user for registering an ENS name **/
+    property string publicKey
+    /** input property holds the selected ens name to be registered **/
+    property string ensName
+    /** input property holds the selected sticker pack id to purchase **/
+    property string stickersPackId
 
     /** property to check if the form is filled correctly **/
     readonly property bool allValuesFilledCorrectly: !!root.selectedAccountAddress &&
-                root.selectedChainId !== 0 &&
-                !!root.selectedTokenKey &&
-                !!root.selectedRecipientAddress &&
-                !!root.selectedAmount &&
-                !amountToSend.markAsInvalid &&
-                amountToSend.valid
-
-    /** Output property if a collectible is selected in the the send modal **/
-    readonly property bool isCollectibleSelected: d.isCollectibleSelected
+                                                     root.selectedChainId !== 0 &&
+                                                     !!root.selectedTokenKey &&
+                                                     !!root.selectedRecipientAddress &&
+                                                     !!root.selectedRawAmount &&
+                                                     !amountToSend.markAsInvalid &&
+                                                     amountToSend.valid
 
     /** TODO: replace with new and improved recipient selector StatusDateRangePicker
     TBD under https://github.com/status-im/status-desktop/issues/16916 **/
@@ -160,36 +190,63 @@ StatusDialog {
             sourceModel: root.assetsModel
             key: "tokensKey"
             value: root.selectedTokenKey
+            onItemChanged: d.setAssetInTokenSelector()
+            onAvailableChanged: d.setAssetInTokenSelector()
+        }
+
+        // Holds if the asset entry is valid
+        readonly property bool selectedAssetEntryValid: selectedAssetEntry.available &&
+                                                        !!selectedAssetEntry.item
+
+        // Used to set selected asset in token selector
+        function setAssetInTokenSelector() {
+            if(selectedAssetEntry.available && !!selectedAssetEntry.item) {
+                d.setTokenOnBothHeaders(selectedAssetEntry.item.symbol,
+                                        Constants.tokenIcon(selectedAssetEntry.item.symbol),
+                                        selectedAssetEntry.item.key)
+            }
         }
 
         // Used to get collectible entry if selected token is a collectible
         readonly property var selectedCollectibleEntry: ModelEntry {
-            sourceModel: root.collectiblesModel
+            sourceModel: root.flatCollectiblesModel
             key: "symbol"
             value: root.selectedTokenKey
+            onItemChanged: d.setCollectibleInTokenSelector()
+            onAvailableChanged: d.setCollectibleInTokenSelector()
         }
 
-        /** exposes the currently selected token entry **/
-        readonly property var selectedTokenEntry: selectedAssetEntry.available ?
-                                             selectedAssetEntry.item :
-                                             selectedCollectibleEntry.available ?
-                                                 selectedCollectibleEntry.item: null
-        onSelectedTokenEntryChanged: {
-            if(!selectedAssetEntry.available && !selectedCollectibleEntry.available) {
+        // Holds if the collectible entry is valid
+        readonly property bool selectedCollectibleEntryValid: selectedCollectibleEntry.available &&
+                                                              !!selectedCollectibleEntry.item
+
+        /** Handling the case when an asset is selcted from dropdown
+            to reset the harcoded "1" set for collectibles
+        **/
+        onSelectedCollectibleEntryValidChanged: {
+            if(!selectedCollectibleEntryValid && root.selectedRawAmount === "1") {
+                amountToSend.clear()
+            }
+        }
+
+        // Used to set selected collectible in token selector
+        function setCollectibleInTokenSelector() {
+            if(selectedCollectibleEntry.available && !!selectedCollectibleEntry.item) {
+                const id = selectedCollectibleEntry.item.communityId ?
+                             selectedCollectibleEntry.item.collectionUid :
+                             selectedCollectibleEntry.item.uid
+                d.setTokenOnBothHeaders(selectedCollectibleEntry.item.name,
+                                        selectedCollectibleEntry.item.imageUrl ||
+                                        selectedCollectibleEntry.item.mediaUrl,
+                                        id)
+            }
+        }
+
+        // In case no token is found in the models, we reset the token selector
+        readonly property bool noTokenSelected: !selectedAssetEntryValid && !selectedCollectibleEntryValid
+        onNoTokenSelectedChanged: {
+            if(noTokenSelected) {
                 d.debounceResetTokenSelector()
-            }
-            if(selectedAssetEntry.available && !!selectedTokenEntry) {
-                d.setTokenOnBothHeaders(selectedTokenEntry.symbol,
-                                         Constants.tokenIcon(selectedTokenEntry.symbol),
-                                         selectedTokenEntry.tokensKey)
-            }
-            else if(selectedCollectibleEntry.available && !!selectedTokenEntry) {
-                const id = selectedTokenEntry.communityId ?
-                             selectedTokenEntry.collectionUid :
-                             selectedTokenEntry.uid
-                d.setTokenOnBothHeaders(selectedTokenEntry.name,
-                                         selectedTokenEntry.imageUrl || selectedTokenEntry.mediaUrl,
-                                         id)
             }
         }
 
@@ -198,8 +255,8 @@ StatusDialog {
             stickySendModalHeader.setToken(name, icon, key)
         }
 
-        readonly property var debounceResetTokenSelector: Backpressure.debounce(root, 0, function() {
-            if(!selectedAssetEntry.available && !selectedCollectibleEntry.available) {
+        readonly property var debounceResetTokenSelector: Backpressure.debounce(root, 200, function() {
+            if(!selectedAssetEntryValid && !selectedCollectibleEntryValid) {
                 // reset token selector in case selected tokens doesnt exist in either models
                 d.setTokenOnBothHeaders("", "", "")
                 root.selectedTokenKey = ""
@@ -207,25 +264,25 @@ StatusDialog {
         })
 
         readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1000, function() {
-            root.selectedAmount = amountToSend.text
+            if(amountToSend.amount !== "0" && amountToSend.amount !== root.selectedRawAmount)
+                root.selectedRawAmount = amountToSend.amount
         })
 
-        readonly property bool isCollectibleSelected: {
-            if(!selectedTokenEntry)
-                return false
-            const type = selectedAssetEntry.available ? selectedAssetEntry.item.type :
-                    selectedCollectibleEntry.available ? selectedCollectibleEntry.item.tokenType :
-                        Constants.TokenType.Unknown
-            return (type === Constants.TokenType.ERC721 || type === Constants.TokenType.ERC1155)
-        }
-
-        readonly property string selectedCryptoTokenSymbol: !!d.selectedTokenEntry ?
-                                                                d.selectedTokenEntry.symbol: ""
+        readonly property string selectedCryptoTokenSymbol: selectedAssetEntryValid ?
+                                                                selectedAssetEntry.item.symbol:
+                                                                selectedCollectibleEntryValid ?
+                                                                    selectedCollectibleEntry.item.symbol: ""
 
         readonly property double maxSafeCryptoValue: {
-            const maxCryptoBalance = !!d.selectedTokenEntry && !!d.selectedTokenEntry.currentBalance ?
-                                       d.selectedTokenEntry.currentBalance : 0
-            return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
+            if (selectedCollectibleEntryValid) {
+                let collectibleBalance =  SQUtils.ModelUtils.getByKey(selectedCollectibleEntry.item.ownership, "accountAddress", root.selectedAccountAddress, "balance")
+                return !!collectibleBalance ? collectibleBalance: 0
+            } else if (selectedAssetEntryValid) {
+                const maxCryptoBalance = !!d.selectedAssetEntry.item.currentBalance ?
+                                           d.selectedAssetEntry.item.currentBalance : 0
+                return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
+            }
+            return 0
         }
 
         // handle multiple property changes from single changed signal
@@ -234,10 +291,33 @@ StatusDialog {
             root.selectedChainId,
             root.selectedTokenKey,
             root.selectedRecipientAddress,
-            root.selectedAmount]
+            root.selectedRawAmount,
+            root.allValuesFilledCorrectly]
         onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
 
         readonly property bool errNotEnoughGas: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+
+        function setRawValue() {
+            if(!!selectedRawAmount && (amountToSend.amount !== root.selectedRawAmount || amountToSend.empty)) {
+                amountToSend.setRawValue(root.selectedRawAmount)
+            }
+        }
+
+        function setSelectedCollectible(key) {
+            let tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
+               if(tokenType === Constants.TokenType.ERC1155) {
+                   root.sendType =  Constants.SendType.ERC1155Transfer
+               } else if(tokenType === Constants.TokenType.ERC721) {
+                   root.sendType =  Constants.SendType.ERC721Transfer
+               }
+               root.selectedRawAmount = "1"
+               root.selectedTokenKey = key
+        }
+
+        function setSelectedAsset(key) {
+               root.sendType = Constants.SendType.Transfer
+               root.selectedTokenKey = key
+        }
     }
 
     width: 556
@@ -250,11 +330,7 @@ StatusDialog {
     }
 
     // Bindings needed for exposing and setting raw values from AmountToSend
-    onSelectedAmountChanged: {
-        if(!!selectedAmount && amountToSend.text !== root.selectedAmount) {
-            amountToSend.setValue(root.selectedAmount)
-        }
-    }
+    onSelectedRawAmountChanged: d.setRawValue()
 
     Item {
         id: sendModalcontentItem
@@ -310,15 +386,18 @@ StatusDialog {
 
                 stickyHeaderVisible: d.stickyHeaderVisible
 
+                interactive: root.interactive && !root.transferOwnership
+                displayOnlyAssets: root.displayOnlyAssets
+
                 networksModel: root.networksModel
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
 
                 selectedChainId: root.selectedChainId
 
-                onCollectibleSelected: root.selectedTokenKey = key
-                onCollectionSelected: root.selectedTokenKey = key
-                onAssetSelected: root.selectedTokenKey = key
+                onCollectibleSelected: d.setSelectedCollectible(key)
+                onCollectionSelected: d.setSelectedCollectible(key)
+                onAssetSelected: d.setSelectedAsset(key)
                 onNetworkSelected: root.selectedChainId = chainId
             }
         }
@@ -353,6 +432,8 @@ StatusDialog {
                     Layout.topMargin: 28
 
                     isScrolling: d.stickyHeaderVisible
+                    interactive: root.interactive && !root.transferOwnership
+                    displayOnlyAssets: root.displayOnlyAssets
 
                     networksModel: root.networksModel
                     assetsModel: root.assetsModel
@@ -360,9 +441,9 @@ StatusDialog {
 
                     selectedChainId: root.selectedChainId
 
-                    onCollectibleSelected: root.selectedTokenKey = key
-                    onCollectionSelected: root.selectedTokenKey = key
-                    onAssetSelected: root.selectedTokenKey = key
+                    onCollectibleSelected: d.setSelectedCollectible(key)
+                    onCollectionSelected: d.setSelectedCollectible(key)
+                    onAssetSelected: d.setSelectedAsset(key)
                     onNetworkSelected: root.selectedChainId = chainId
                 }
 
@@ -375,9 +456,7 @@ StatusDialog {
                     interactive: root.interactive
                     dividerVisible: true
                     progressivePixelReduction: false
-                    /** TODO: connect this with suggested routes being fetched as price
-                        gets updated each time a new proposal is fetched
-                        bottomTextLoading: root.suggestedRoutesLoading **/
+                    bottomTextLoading: root.routesLoading
 
                     /** TODO: connect to max safe value for eth.
                         For now simply checking balance in case of both eth and other ERC20's **/
@@ -386,29 +465,27 @@ StatusDialog {
                     selectedSymbol: amountToSend.fiatMode ?
                                         root.currentCurrency:
                                         d.selectedCryptoTokenSymbol
-                    price: !!d.selectedTokenEntry &&
-                           !!d.selectedTokenEntry.marketDetails ?
-                               d.selectedTokenEntry.marketDetails.currencyPrice.amount : 1
-                    multiplierIndex: !!d.selectedTokenEntry &&
-                                     !!d.selectedTokenEntry.decimals ?
-                                         d.selectedTokenEntry.decimals : 0
+                    price: !!d.selectedAssetEntryValid &&
+                           !!d.selectedAssetEntry.item.marketDetails ?
+                               d.selectedAssetEntry.item.marketDetails.currencyPrice.amount : 1
+                    multiplierIndex: !!d.selectedAssetEntryValid &&
+                                     !!d.selectedAssetEntry.item.decimals ?
+                                         d.selectedAssetEntry.item.decimals : 0
                     formatFiat: amount => root.fnFormatCurrencyAmount(
                                     amount, root.currentCurrency)
                     formatBalance: amount => root.fnFormatCurrencyAmount(
                                        amount, d.selectedCryptoTokenSymbol)
 
-                    visible: !!root.selectedTokenKey && !d.isCollectibleSelected
+                    visible: d.selectedAssetEntryValid
                     onVisibleChanged: if(visible) forceActiveFocus()
 
-                    onTextChanged: d.debounceSetSelectedAmount()
+                    onAmountChanged: d.debounceSetSelectedAmount()
 
                     bottomRightComponent: MaxSendButton {
                         id: maxButton
 
                         formattedValue: {
-                            const price = !!d.selectedTokenEntry && !!d.selectedTokenEntry.marketDetails ?
-                                            d.selectedTokenEntry.marketDetails.currencyPrice.amount : 0
-                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * price : d.maxSafeCryptoValue
+                            let maxSafeValue = amountToSend.fiatMode ? d.maxSafeCryptoValue * amountToSend.price : d.maxSafeCryptoValue
                             return root.fnFormatCurrencyAmount(
                                         maxSafeValue,
                                         amountToSend.selectedSymbol,
@@ -447,6 +524,8 @@ StatusDialog {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
+
+                        interactive: root.interactive
 
                         savedAddressesModel: root.savedAddressesModel
                         myAccountsModel: root.accountsModel
