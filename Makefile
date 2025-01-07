@@ -867,7 +867,7 @@ NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
 nim-test-run/%: | dotherside $(STATUSGO)
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
-	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" -r $(subst nim-test-run/,,$@)
+	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
 
