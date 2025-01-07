@@ -23,7 +23,7 @@ Page {
 
     property int splashScreenDurationMs: 30000
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
-    property bool networkChecksEnabled
+    property bool networkChecksEnabled: true
 
     readonly property alias stack: stack
 
