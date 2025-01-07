@@ -403,12 +403,6 @@ StatusWindow {
                 console.log("OnboardingStore.startKeypairTransfer")
             }
 
-            // password
-            function getPasswordStrengthScore(password: string) { // -> int
-                console.log("OnboardingStore.getPasswordStrengthScore", ["password"])
-                return Math.min(password.length-1, 4)
-            }
-
             // seedphrase/mnemonic
             function validMnemonic(mnemonic: string) { // -> bool
                 console.log("OnboardingStore.validMnemonic", ["mnemonic"])

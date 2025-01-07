@@ -33,7 +33,7 @@ QtObject {
 
     // password
     function getPasswordStrengthScore(password: string) { // -> int
-        return d.onboardingModuleInst.getPasswordStrengthScore(password)
+        return d.onboardingModuleInst.getPasswordStrengthScore(password, "") // The second argument is username
     }
 
     // seedphrase/mnemonic
