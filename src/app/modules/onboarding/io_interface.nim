@@ -10,6 +10,9 @@ method onAppLoaded*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method shouldStartWithOnboardingScreen*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setPin*(self: AccessInterface, pin: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

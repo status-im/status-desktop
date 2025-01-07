@@ -18,6 +18,9 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
 
+
+  ### QtProperties ###
+
   proc syncStateChanged*(self: View) {.signal.}
   proc getSyncState(self: View): int {.slot.} =
     return self.syncState
@@ -57,6 +60,12 @@ QtObject:
   proc setAddKeyPairState*(self: View, addKeyPairState: int) =
     self.addKeyPairState = addKeyPairState
     self.addKeyPairStateChanged()
+
+
+  ### slots ###
+
+  proc shouldStartWithOnboardingScreen(self: View): bool {.slot.} =
+    return self.delegate.shouldStartWithOnboardingScreen()
 
   proc setPin(self: View, pin: string): bool {.slot.} =
     return self.delegate.setPin(pin)

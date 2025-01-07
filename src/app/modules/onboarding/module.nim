@@ -75,6 +75,9 @@ method load*[T](self: Module[T]) =
   self.controller.init()
   self.delegate.onboardingDidLoad()
 
+method shouldStartWithOnboardingScreen*[T](self: Module[T]): bool =
+  self.controller.shouldStartWithOnboardingScreen()
+
 method setPin*[T](self: Module[T], pin: string): bool =
   self.controller.setPin(pin)
 

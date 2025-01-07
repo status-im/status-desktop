@@ -27,6 +27,7 @@ StatusWindow {
     property bool appIsReady: false
 
     readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
+    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
 
@@ -389,9 +390,65 @@ StatusWindow {
     }
 
     Loader {
+        id: onboardingStoreLoader
+        active: applicationWindow.onboardingV2Enabled
+
+        sourceComponent: OnboardingStore {
+            function setPin(pin: string) { // -> bool
+                console.log("OnboardingStore.setPin", ["pin"])
+                return true
+            }
+
+            function startKeypairTransfer() { // -> void
+                console.log("OnboardingStore.startKeypairTransfer")
+            }
+
+            // password
+            function getPasswordStrengthScore(password: string) { // -> int
+                console.log("OnboardingStore.getPasswordStrengthScore", ["password"])
+                return Math.min(password.length-1, 4)
+            }
+
+            // seedphrase/mnemonic
+            function validMnemonic(mnemonic: string) { // -> bool
+                console.log("OnboardingStore.validMnemonic", ["mnemonic"])
+                return true
+            }
+            function getMnemonic() { // -> string
+                console.log("OnboardingStore.getMnemonic()")
+                return ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"].join(" ")
+            }
+            function mnemonicWasShown() { // -> void
+                console.log("OnboardingStore.mnemonicWasShown()")
+            }
+            function removeMnemonic() { // -> void
+                console.log("OnboardingStore.removeMnemonic()")
+            }
+
+            function validateLocalPairingConnectionString(connectionString: string) { // -> bool
+                console.log("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"])
+                return !Number.isNaN(parseInt(connectionString))
+            }
+            function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
+                console.log("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"])
+            }
+        }
+    }
+
+    Loader {
         id: startupOnbaordingLoader
         anchors.fill: parent
-        sourceComponent: featureFlags && featureFlags.onboardingV2Enabled ? onboardingV2 : onboardingV1
+        sourceComponent: {
+            console.log('applicationWindow.onboardingV2Enabled', applicationWindow.onboardingV2Enabled)
+            if (applicationWindow.onboardingV2Enabled) {
+                console.log('satrt with onbaording??', onboardingStoreLoader.item.shouldStartWithOnboardingScreen())
+                if (onboardingStoreLoader.item.shouldStartWithOnboardingScreen()) {
+                    // TODO select a new component when we have the new login screens (for old users)
+                    return onboardingV2
+                }
+            }
+            return onboardingV1
+        }
     }
 
     Component {
@@ -416,46 +473,7 @@ StatusWindow {
             splashScreenDurationMs: 3000
             biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: OnboardingStore {
-                function setPin(pin: string) { // -> bool
-                    console.log("OnboardingStore.setPin", ["pin"])
-                    return true
-                }
-
-                function startKeypairTransfer() { // -> void
-                    console.log("OnboardingStore.startKeypairTransfer")
-                }
-
-                // password
-                function getPasswordStrengthScore(password: string) { // -> int
-                    console.log("OnboardingStore.getPasswordStrengthScore", ["password"])
-                    return Math.min(password.length-1, 4)
-                }
-
-                // seedphrase/mnemonic
-                function validMnemonic(mnemonic: string) { // -> bool
-                    console.log("OnboardingStore.validMnemonic", ["mnemonic"])
-                    return true
-                }
-                function getMnemonic() { // -> string
-                    console.log("OnboardingStore.getMnemonic()")
-                    return ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"].join(" ")
-                }
-                function mnemonicWasShown() { // -> void
-                    console.log("OnboardingStore.mnemonicWasShown()")
-                }
-                function removeMnemonic() { // -> void
-                    console.log("OnboardingStore.removeMnemonic()")
-                }
-
-                function validateLocalPairingConnectionString(connectionString: string) { // -> bool
-                    console.log("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"])
-                    return !Number.isNaN(parseInt(connectionString))
-                }
-                function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
-                    console.log("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"])
-                }
-            }
+            onboardingStore: onboardingStoreLoader.item
 
             metricsStore: MetricsStore {
                 readonly property var d: QtObject {
@@ -477,7 +495,7 @@ StatusWindow {
             onFinished: (flow, data) => {
                 console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
 
-                let error = onboardingStore.finishOnboardingFlow(flow, data)
+                let error = onboardingStoreLoader.item.finishOnboardingFlow(flow, data)
 
                 if (error != "") {
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)

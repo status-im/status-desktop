@@ -43,6 +43,9 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
+proc shouldStartWithOnboardingScreen*(self: Controller): bool =
+  return self.accountsService.openedAccounts().len == 0
+
 proc setPin*(self: Controller, pin: string): bool =
   self.keycardServiceV2.setPin(pin)
   discard
