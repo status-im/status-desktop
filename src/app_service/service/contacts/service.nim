@@ -142,7 +142,7 @@ QtObject:
   proc fetchContacts*(self: Service) =
     let arg = AsyncFetchContactsTaskArg(
       tptr: asyncFetchContactsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "fetchContactsDone",
     )
     self.threadpool.start(arg)
