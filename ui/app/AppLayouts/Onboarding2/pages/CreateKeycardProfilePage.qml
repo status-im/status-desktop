@@ -19,8 +19,6 @@ OnboardingPage {
     signal createKeycardProfileWithNewSeedphrase()
     signal createKeycardProfileWithExistingSeedphrase()
 
-    pageClassName: "CreateKeycardProfilePage"
-
     contentItem: Item {
         ColumnLayout {
             width: parent.width

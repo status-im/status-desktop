@@ -26,8 +26,6 @@ OnboardingPage {
     signal loginWithSyncingRequested()
     signal loginWithKeycardRequested()
 
-    pageClassName: "LoginPage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

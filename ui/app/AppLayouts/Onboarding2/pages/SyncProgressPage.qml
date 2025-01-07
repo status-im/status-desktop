@@ -19,8 +19,6 @@ OnboardingPage {
     signal restartSyncRequested()
     signal loginWithSeedphraseRequested()
 
-    pageClassName: "SyncProgressPage"
-
     Timer {
         id: timer
         interval: root.timeoutInterval

@@ -18,7 +18,6 @@ KeycardBasePage {
 
     signal keycardPinCreated(string pin)
 
-    pageClassName: "KeycardCreatePinPage"
     image.source: Theme.png("onboarding/keycard/reading")
 
     QtObject {

@@ -146,7 +146,6 @@ SplitView {
     Component {
         id: splashScreen
         DidYouKnowSplashScreen {
-            readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
             NumberAnimation on progress {
                 from: 0.0
@@ -187,7 +186,7 @@ SplitView {
             ColumnLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: "Current page: %1".arg(onboarding.stack.currentItem ? onboarding.stack.currentItem.pageClassName : "")
+                    text: "Current page: %1".arg(InspectionUtils.baseName(onboarding.stack.currentItem))
                 }
                 Label {
                     text: "Stack depth: %1".arg(onboarding.stack.depth)

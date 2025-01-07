@@ -52,7 +52,7 @@ Item {
     Label {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        text: !!stack.currentItem && stack.currentItem.pageClassName === "BackupSeedphraseVerify" ?
+        text: !!stack.currentItem && stack.currentItem instanceof BackupSeedphraseVerify ?
                   "Hint: %1".arg(stack.currentItem.seedWordsToVerify.map((entry) => entry.seedWord))
                 : ""
     }

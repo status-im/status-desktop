@@ -21,8 +21,6 @@ OnboardingPage {
     signal createProfileWithSeedphraseRequested()
     signal createProfileWithEmptyKeycardRequested()
 
-    pageClassName: "CreateProfilePage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

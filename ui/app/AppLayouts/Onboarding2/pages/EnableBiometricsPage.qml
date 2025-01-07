@@ -16,8 +16,6 @@ OnboardingPage {
 
     signal enableBiometricsRequested(bool enable)
 
-    pageClassName: "EnableBiometricsPage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

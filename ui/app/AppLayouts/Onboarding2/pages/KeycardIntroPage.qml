@@ -25,8 +25,6 @@ KeycardBasePage {
     signal emptyKeycardDetected()
     signal notEmptyKeycardDetected()
 
-    pageClassName: "KeycardIntroPage"
-
     OnboardingFrame {
         id: promoBanner
         visible: false
