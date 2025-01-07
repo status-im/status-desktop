@@ -24,7 +24,6 @@ KeycardBasePage {
     signal unlockWithSeedphraseRequested()
     signal keycardFactoryResetRequested()
 
-    pageClassName: "KeycardEnterPinPage"
     image.source: Theme.png("onboarding/keycard/reading")
 
     QtObject {

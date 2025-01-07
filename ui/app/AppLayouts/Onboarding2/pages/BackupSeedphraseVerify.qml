@@ -21,8 +21,6 @@ OnboardingPage {
 
     signal backupSeedphraseVerified()
 
-    pageClassName: "BackupSeedphraseVerify"
-
     QtObject {
         id: d
         readonly property var seedSuggestions: BIP39_en {} // [{seedWord:string}, ...]

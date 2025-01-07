@@ -15,8 +15,6 @@ KeycardBasePage {
     subtitle: qsTr("You can’t use it to store new keys right now")
     image.source: Theme.png("onboarding/keycard/error")
 
-    pageClassName: "KeycardNotEmptyPage"
-
     buttons: [
         MaybeOutlineButton {
             text: qsTr("I’ve inserted a different Keycard")

@@ -20,8 +20,6 @@ OnboardingPage {
 
     signal seedphraseSubmitted(string seedphrase)
 
-    pageClassName: "SeedphrasePage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent

@@ -17,8 +17,6 @@ OnboardingPage {
 
     signal backupSeedphraseConfirmed()
 
-    pageClassName: "BackupSeedphraseReveal"
-
     QtObject {
         id: d
         property bool seedphraseRevealed

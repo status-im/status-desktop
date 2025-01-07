@@ -21,8 +21,6 @@ OnboardingPage {
     signal reloadKeycardRequested()
     signal createProfilePageRequested()
 
-    pageClassName: "KeycardAddKeyPairPage"
-
     Timer {
         id: timer
         interval: root.timeoutInterval

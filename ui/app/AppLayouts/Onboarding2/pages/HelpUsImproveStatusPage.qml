@@ -20,8 +20,6 @@ OnboardingPage {
     signal shareUsageDataRequested(bool enabled)
     signal privacyPolicyRequested()
 
-    pageClassName: "HelpUsImproveStatusPage"
-
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
