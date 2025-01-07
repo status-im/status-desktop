@@ -22,7 +22,7 @@ proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
 proc addSession*(sessionJson: string): bool =
   try:
     let rpcRes = addWalletConnectSession(sessionJson)
-    return isSuccessResponse(rpcRes):
+    return isSuccessResponse(rpcRes)
   except Exception as e:
     error "AddWalletConnectSession failed: ", "msg", e.msg
     return false
@@ -30,7 +30,7 @@ proc addSession*(sessionJson: string): bool =
 proc disconnectSession*(topic: string): bool =
   try:
     let rpcRes = disconnectWalletConnectSession(topic)
-    return isSuccessResponse(rpcRes):
+    return isSuccessResponse(rpcRes)
   except Exception as e:
     error "wallet_disconnectWalletConnectSession failed: ", "msg", e.msg
     return false

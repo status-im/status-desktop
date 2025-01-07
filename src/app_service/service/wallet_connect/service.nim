@@ -233,7 +233,7 @@ QtObject:
   proc getEstimatedTime*(self: Service, topic: string, chainId: int, maxFeePerGasHex: string) =
     let request = AsyncGetEstimatedTimeArgs(
       tptr: asyncGetEstimatedTimeTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "estimatedTimeResponse",
       topic: topic,
       chainId: chainId,
@@ -256,7 +256,7 @@ QtObject:
   proc requestSuggestedFees*(self: Service, topic: string, chainId: int) =
     let request = AsyncSuggestedFeesArgs(
       tptr: asyncSuggestedFeesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "suggestedFeesResponse",
       topic: topic,
       chainId: chainId
@@ -315,7 +315,7 @@ QtObject:
   proc requestGasEstimate*(self: Service, topic: string, tx: JsonNode, chainId: int) =
     let request = AsyncEstimateGasArgs(
       tptr: asyncEstimateGasTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "estimatedGasResponse",
       topic: topic,
       chainId: chainId,

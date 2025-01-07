@@ -107,7 +107,7 @@ QtObject:
     defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensMarketValuesTaskArg(
       tptr: fetchTokensMarketValuesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "tokensMarketValuesRetrieved",
       symbols: symbols,
       currency: self.getCurrency()
@@ -150,7 +150,7 @@ QtObject:
     self.tokensDetailsLoading = true
     let arg = FetchTokensDetailsTaskArg(
       tptr: fetchTokensDetailsTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "tokensDetailsRetrieved",
       symbols: symbols
     )
@@ -190,7 +190,7 @@ QtObject:
     defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensPricesTaskArg(
       tptr: fetchTokensPricesTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "tokensPricesRetrieved",
       symbols: symbols,
       currencies: @[self.getCurrency()]
@@ -362,7 +362,7 @@ QtObject:
   proc getSupportedTokensList*(self: Service) =
     let arg = QObjectTaskArg(
       tptr: getSupportedTokenList,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "supportedTokensListRetrieved",
     )
     self.threadpool.start(arg)
@@ -499,7 +499,7 @@ QtObject:
   proc getHistoricalDataForToken*(self: Service, symbol: string, currency: string, range: int) =
     let arg = GetTokenHistoricalDataTaskArg(
       tptr: getTokenHistoricalDataTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "tokenHistoricalDataResolved",
       symbol: symbol,
       currency: currency,

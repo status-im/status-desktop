@@ -1,3 +1,5 @@
+import "json_serialization"
+
 type
   ContentType* {.pure.} = enum
     NewMessagesMarker = -3
@@ -92,6 +94,8 @@ type TokenType* {.pure.} = enum
   ERC1155 = 3,
   Unknown = 4,
   ENS = 5
+
+TokenType.configureJsonSerialization(EnumAsNumber)
 
 type RequestToJoinState* {.pure.} = enum
   None = 0

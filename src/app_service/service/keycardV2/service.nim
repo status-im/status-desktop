@@ -50,7 +50,7 @@ QtObject:
   proc setPin*(self: Service, pin: string) =
     let arg = AsyncSetPinTaskArg(
       tptr: asyncSetPinTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAsyncSetPinResponse",
       pin: pin,
     )

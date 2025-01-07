@@ -80,7 +80,7 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
     if isOneToOneChat:
-      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+      (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
     elif chatDto.chatType == ChatType.CommunityChat:
@@ -219,7 +219,7 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
       var colorId: int = 0
       let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
       if(isOneToOneChat):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+        (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
         colorHash = self.controller.getColorHash(chatDto.id)
         colorId = self.controller.getColorId(chatDto.id)
 
@@ -310,7 +310,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       var chatName = chatDto.name
       var chatImage = chatDto.icon
       if(chatDto.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+        (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
         chatDto.color, false, true, colorId, colorHash)

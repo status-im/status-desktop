@@ -327,7 +327,7 @@ QtObject:
       mnemonic: mnemonic,
       paths: paths,
       tptr: fetchAddressesFromNotImportedMnemonicTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onAddressesFromNotImportedMnemonicFetched",
     )
     self.threadpool.start(arg)
@@ -428,7 +428,7 @@ QtObject:
 
     let arg = TimerTaskArg(
       tptr: timerTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onWaitForReencryptionTimeout",
       timeoutInMilliseconds: timeout
     )
@@ -460,7 +460,7 @@ QtObject:
     let hashedCurrentPassword = hashPassword(currentPassword)
     let arg = ConvertRegularProfileKeypairToKeycardTaskArg(
       tptr: convertRegularProfileKeypairToKeycardTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onConvertRegularProfileKeypairToKeycard",
       accountDataJson: accountDataJson,
       settingsJson: settingsJson,
@@ -490,7 +490,7 @@ QtObject:
     let hashedNewPassword = hashPassword(newPassword)
     let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
       tptr: convertKeycardProfileKeypairToRegularTask,
-      vptr: cast[ByteAddress](self.vptr),
+      vptr: cast[uint](self.vptr),
       slot: "onConvertKeycardProfileKeypairToRegular",
       mnemonic: mnemonic,
       currentPassword: currentPassword,

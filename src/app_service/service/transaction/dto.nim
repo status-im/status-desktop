@@ -8,7 +8,7 @@ include  ../../common/json_utils
 import ../network/dto, ../token/dto
 import ../../common/conversion as service_conversion
 
-import ./backend/transactions
+import ../../../backend/transactions
 
 type
   SendType* {.pure.} = enum
