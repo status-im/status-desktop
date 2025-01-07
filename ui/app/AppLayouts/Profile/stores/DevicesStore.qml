@@ -46,6 +46,6 @@ QtObject {
     }
 
     function inputConnectionStringForBootstrapping(connectionString) {
-        return root.devicesModule.inputConnectionStringForBootstrapping(connectionString)
+        root.devicesModule.inputConnectionStringForBootstrapping(connectionString)
     }
 }

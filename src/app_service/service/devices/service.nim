@@ -233,7 +233,7 @@ QtObject:
     self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Sender)
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
-  proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
+  proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string) =
     let configJSON = %* {
       "receiverConfig": %* {
         "createAccount": %*accounts_service.defaultCreateAccountRequest(),

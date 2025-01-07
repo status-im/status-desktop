@@ -10,7 +10,7 @@ proc delete*(self: SyncDeviceWithSyncCodeState) =
 
 method executePrimaryCommand*(self: SyncDeviceWithSyncCodeState, controller: Controller) =
   let connectionString = controller.getConnectionString()
-  discard controller.inputConnectionStringForBootstrapping(connectionString)
+  controller.inputConnectionStringForBootstrapping(connectionString)
 
 method getNextPrimaryState*(self: SyncDeviceWithSyncCodeState, controller: Controller): State =
   return createState(StateType.SyncDeviceResult, self.flowType, self)

@@ -139,5 +139,5 @@ QtObject:
   proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
     return self.delegate.validateConnectionString(connectionString)
 
-  proc inputConnectionStringForBootstrapping*(self: View, connectionString: string): string {.slot.} =
-    return self.delegate.inputConnectionStringForBootstrapping(connectionString)
+  proc inputConnectionStringForBootstrapping*(self: View, connectionString: string) {.slot.} =
+    self.delegate.inputConnectionStringForBootstrapping(connectionString)
