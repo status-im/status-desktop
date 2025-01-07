@@ -55,6 +55,12 @@ RowLayout {
     /** input property holds if the header is the sticky header **/
     property bool isStickyHeader
 
+    /** input property to show only ERC20 assets and no collectibles **/
+    property bool displayOnlyAssets
+
+    /** input property to decide if the header can be interacted with **/
+    property bool interactive: true
+
     /** input property for programatic selection of network **/
     property int selectedChainId
 
@@ -106,8 +112,10 @@ RowLayout {
                   TokenSelectorButton.Size.Small:
                   TokenSelectorButton.Size.Normal
 
+        enabled: root.interactive
+
         assetsModel: root.assetsModel
-        collectiblesModel: root.collectiblesModel
+        collectiblesModel: root.displayOnlyAssets ? null: root.collectiblesModel
 
         onCollectibleSelected: root.collectibleSelected(key)
         onCollectionSelected: root.collectionSelected(key)
@@ -142,6 +150,7 @@ RowLayout {
         multiSelection: false
         showSelectionIndicator: false
         showTitle: false
+        selectionAllowed: root.interactive
 
         Binding on selection {
             value: [root.selectedChainId]

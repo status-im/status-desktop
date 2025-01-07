@@ -46,7 +46,11 @@ QtObject {
             return value
         }
 
-        return value - Math.max(0.0001, Math.min(0.01, value * 0.1))
+        const estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
+        const result = value - estFee
+
+        // Ensure the result is not negative
+        return Math.max(result, 0)
     }
 
     function getLabelForEstimatedTxTime(estimatedFlag) {

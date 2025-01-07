@@ -75,6 +75,12 @@ QObject {
     **/
     readonly property alias model: communityGroupsGrouppedByCollection
 
+    /** output model which follows same structure as the input collectiblesModel
+      The only add on here is that this model is not grouped and is filtered
+      based on account and chainId
+    **/
+    readonly property alias filteredFlatModel: initiallyFilteredAndSorted
+
     // In case collectibles are to be shown only on specific networks
     property var enabledChainIds: []
 

@@ -83,13 +83,6 @@ QtObject {
             - accountAddress  [string] - unique identifier of an account
     **/
     required property var collectiblesBySymbolModel
-    /** Expected model structure:
-    - key              [string] - unique identifier of an asset
-    - decimals         [int] - decimals of the token
-    - marketDetails    [QObject] - collectible's contract address
-            - currencyPrice [CurrencyAmount] - assets market price in CurrencyAmount
-    **/
-    required property var tokenBySymbolModel
     /**
     Expected model structure:
     - chainId: network chain id
@@ -98,6 +91,14 @@ QtObject {
     networks on both mainnet & testnet
     **/
     required property var flatNetworksModel
+    /**
+    Expected model structure:
+    - chainId: network chain id
+    - chainName: name of network
+    - iconUrl: network icon url
+    networks on either mainnet OR testnet
+    **/
+    required property var filteredFlatNetworksModel
     /** true if testnet mode is on **/
     required property bool areTestNetworksEnabled
     /** whether community tokens are shown in send modal
@@ -148,87 +149,171 @@ QtObject {
     **/
     required property var fnGetOpenSeaUrl
 
+    /** property to store the params to be updated in the send modal until it is launched **/
+    property var simpleSendParams
+
     /** signal to request launch of buy crypto modal **/
     signal launchBuyFlowRequested(string accountAddress, int chainId, string tokenKey)
 
-    function openSend(params = {}) {
+    function openSend(params = {}, forceLaunchOldSend = false) {
         // TODO remove once simple send is feature complete
-        let sendModalCmp = root.simpleSendEnabled ? simpleSendModalComponent: sendModalComponent
-        let sendModalInst = sendModalCmp.createObject(popupParent, params)
-        sendModalInst.open()
+        if(root.simpleSendEnabled && !forceLaunchOldSend) {
+            root.simpleSendParams = params
+            let sendModalInst = simpleSendModalComponent.createObject(popupParent)
+            sendModalInst.open()
+        } else {
+            let sendModalInst = sendModalComponent.createObject(popupParent, params)
+            sendModalInst.open()
+        }
     }
 
     function connectUsername(ensName) {
-        let params = {
-            preSelectedSendType: Constants.SendType.ENSSetPubKey,
-            preSelectedHoldingID: Constants.ethToken ,
-            preSelectedHoldingType: Constants.TokenType.Native,
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0),
-            preSelectedRecipient: root.ensRegisteredAddress,
-            interactive: false,
-            publicKey: root.myPublicKey,
-            ensName: ensName
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: Constants.SendType.ENSSetPubKey,
+                selectedTokenKey: Constants.ethToken ,
+                selectedRawAmount: "0",
+                selectedRecipientAddress: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
+        } else {
+            params = {
+                preSelectedSendType: Constants.SendType.ENSSetPubKey,
+                preSelectedHoldingID: Constants.ethToken ,
+                preSelectedHoldingType: Constants.TokenType.Native,
+                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0),
+                preSelectedRecipient: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
         }
         openSend(params)
     }
 
     function registerUsername(ensName) {
-        let params = {
-            preSelectedSendType: Constants.SendType.ENSRegister,
-            preSelectedHoldingID: root.getStatusTokenKey(),
-            preSelectedHoldingType: Constants.TokenType.ERC20,
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10),
-            preSelectedRecipient: root.ensRegisteredAddress,
-            interactive: false,
-            publicKey: root.myPublicKey,
-            ensName: ensName
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: Constants.SendType.ENSRegister,
+                selectedTokenKey: root.getStatusTokenKey(),
+                // TODO this should come from backend.To be fixed when ENS is reworked
+                selectedRawAmount: SQUtils.AmountsArithmetic.fromNumber(10, 18).toString(),
+                selectedRecipientAddress: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
+        } else {
+            params = {
+                preSelectedSendType: Constants.SendType.ENSRegister,
+                preSelectedHoldingID: root.getStatusTokenKey(),
+                preSelectedHoldingType: Constants.TokenType.ERC20,
+                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10),
+                preSelectedRecipient: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
         }
         openSend(params)
     }
 
     function releaseUsername(ensName, senderAddress, chainId) {
-        let params = {
-            preSelectedSendType: Constants.SendType.ENSRelease,
-            preSelectedAccountAddress: senderAddress,
-            preSelectedHoldingID: Constants.ethToken ,
-            preSelectedHoldingType: Constants.TokenType.Native,
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0),
-            preSelectedChainId: chainId,
-            preSelectedRecipient: root.ensRegisteredAddress,
-            interactive: false,
-            publicKey: root.myPublicKey,
-            ensName: ensName
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: Constants.SendType.ENSRelease,
+                selectedAccountAddress: senderAddress,
+                selectedTokenKey: Constants.ethToken ,
+                selectedRawAmount: "0",
+                selectedChainId: chainId,
+                selectedRecipientAddress: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
+        } else {
+            params = {
+                preSelectedSendType: Constants.SendType.ENSRelease,
+                preSelectedAccountAddress: senderAddress,
+                preSelectedHoldingID: Constants.ethToken ,
+                preSelectedHoldingType: Constants.TokenType.Native,
+                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0),
+                preSelectedChainId: chainId,
+                preSelectedRecipient: root.ensRegisteredAddress,
+                interactive: false,
+                publicKey: root.myPublicKey,
+                ensName: ensName
+            }
         }
         openSend(params)
     }
 
     function buyStickerPack(packId, price) {
-        let params = {
-            preSelectedSendType: Constants.SendType.StickersBuy,
-            preSelectedHoldingID: root.getStatusTokenKey(),
-            preSelectedHoldingType: Constants.TokenType.ERC20,
-            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(price),
-            preSelectedChainId: root.stickersNetworkId,
-            preSelectedRecipient: root.stickersMarketAddress,
-            interactive: false,
-            stickersPackId: packId
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: Constants.SendType.StickersBuy,
+                selectedTokenKey: root.getStatusTokenKey(),
+                selectedRawAmount: SQUtils.AmountsArithmetic.fromNumber(price, 18).toString(),
+                selectedChainId: root.stickersNetworkId,
+                selectedRecipientAddress: root.stickersMarketAddress,
+                interactive: false,
+                stickersPackId: packId
+            }
+        } else {
+            params = {
+                preSelectedSendType: Constants.SendType.StickersBuy,
+                preSelectedHoldingID: root.getStatusTokenKey(),
+                preSelectedHoldingType: Constants.TokenType.ERC20,
+                preDefinedAmountToSend: LocaleUtils.numberToLocaleString(price),
+                preSelectedChainId: root.stickersNetworkId,
+                preSelectedRecipient: root.stickersMarketAddress,
+                interactive: false,
+                stickersPackId: packId
+            }
         }
         openSend(params)
     }
 
     function transferOwnership(tokenId, senderAddress) {
-        let params = {
-            preSelectedSendType: Constants.SendType.ERC721Transfer,
-            preSelectedAccountAddress: senderAddress,
-            preSelectedHoldingID: tokenId,
-            preSelectedHoldingType:  Constants.TokenType.ERC721,
+        let selectedChainId =
+                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: Constants.SendType.ERC721Transfer,
+                selectedAccountAddress: senderAddress,
+                selectedTokenKey: tokenId,
+                selectedRawAmount: "1",
+                selectedChainId: selectedChainId,
+                transferOwnership: true
+            }
+        } else {
+            params = {
+                preSelectedSendType: Constants.SendType.ERC721Transfer,
+                preSelectedAccountAddress: senderAddress,
+                preSelectedHoldingID: tokenId,
+                preSelectedHoldingType:  Constants.TokenType.ERC721,
+            }
         }
         openSend(params)
     }
 
     function sendToRecipient(recipientAddress) {
-        let params = {
-            preSelectedRecipient: recipientAddress
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                selectedRecipientAddress: recipientAddress
+            }
+        } else {
+            params = {
+                preSelectedRecipient: recipientAddress
+            }
         }
         openSend(params)
     }
@@ -240,32 +325,79 @@ QtObject {
             preSelectedHoldingType: tokenType,
             onlyAssets: true
         }
-        openSend(params)
+        openSend(params, true)
     }
 
     function sendToken(senderAddress, tokenId, tokenType) {
         let sendType = Constants.SendType.Transfer
+        let selectedChainId = 0
+        let selectedRawAmount = ""
         if (tokenType === Constants.TokenType.ERC721)  {
             sendType = Constants.SendType.ERC721Transfer
-        } else if(tokenType === Constants.TokenType.ERC1155) {
-            sendType = Constants.SendType.ERC1155Transfer
+            selectedRawAmount = "1"
+            selectedChainId =
+                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
         }
-        let params = {
-            preSelectedSendType: sendType,
-            preSelectedAccountAddress: senderAddress,
-            preSelectedHoldingID: tokenId ,
-            preSelectedHoldingType: tokenType,
+        else if(tokenType === Constants.TokenType.ERC1155) {
+            sendType = Constants.SendType.ERC1155Transfer
+            selectedRawAmount = "1"
+            selectedChainId =
+                    SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
+        }
+        else {
+            let layer1chainId = SQUtils.ModelUtils.getByKey(root.filteredFlatNetworksModel, "layer", "1", "chainId")
+            let networksChainIdArray = SQUtils.ModelUtils.modelToFlatArray(root.filteredFlatNetworksModel, "chainId")
+            let selectedAssetAddressPerChain =
+                SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", tokenId, "addressPerChain")
+            // check if layer address is found
+            selectedChainId = SQUtils.ModelUtils.getByKey(selectedAssetAddressPerChain, "chainId", layer1chainId, "chainId")
+            // if not layer 1 chain id found, select the first one is list
+            if (!selectedChainId) {
+                selectedChainId = SQUtils.ModelUtils.getFirstModelEntryIf(
+                            selectedAssetAddressPerChain,
+                            (addPerChain) => {
+                                return networksChainIdArray.includes(addPerChain.chainId)
+                            })
+            }
+        }
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                sendType: sendType,
+                selectedAccountAddress: senderAddress,
+                selectedTokenKey: tokenId,
+                selectedRawAmount: selectedRawAmount,
+                selectedChainId: selectedChainId
+            }
+        } else {
+            params = {
+                preSelectedSendType: sendType,
+                preSelectedAccountAddress: senderAddress,
+                preSelectedHoldingID: tokenId,
+                preSelectedHoldingType: tokenType,
+            }
         }
         openSend(params)
     }
 
     function openTokenPaymentRequest(recipientAddress, symbol, rawAmount, chainId) {
-        const params = {
-            preSelectedHoldingID: symbol,
-            preSelectedHoldingType: Constants.TokenType.ERC20,
-            preDefinedRawAmountToSend: rawAmount,
-            preSelectedChainId: chainId,
-            preSelectedRecipient: recipientAddress
+        let params = {}
+        if (root.simpleSendEnabled) {
+            params = {
+                selectedTokenKey: symbol,
+                selectedRawAmount: rawAmount,
+                selectedChainId: chainId,
+                selectedRecipientAddress: recipientAddress,
+                interactive: false
+            }
+        } else {
+            params = {
+                preSelectedHoldingID: symbol,
+                preSelectedHoldingType: Constants.TokenType.ERC20,
+                preDefinedRawAmountToSend: rawAmount,
+                preSelectedChainId: chainId,
+                preSelectedRecipient: recipientAddress
+            }
         }
         openSend(params)
     }
@@ -289,14 +421,55 @@ QtObject {
 
             accountsModel: handler.accountsSelectorAdaptor.processedWalletAccounts
             assetsModel: handler.assetsSelectorViewAdaptor.outputAssetsModel
+            flatCollectiblesModel: handler.collectiblesSelectionAdaptor.filteredFlatModel
             collectiblesModel: handler.collectiblesSelectionAdaptor.model
-            networksModel: handler.filteredFlatNetworksModel
+            networksModel: root.filteredFlatNetworksModel
             savedAddressesModel: root.savedAddressesModel
             recentRecipientsModel: root.recentRecipientsModel
 
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
+
+            onOpened: {
+                if(root.simpleSendParams.interactive !== undefined) {
+                    interactive = root.simpleSendParams.interactive
+                }
+                if(root.simpleSendParams.displayOnlyAssets !== undefined) {
+                    displayOnlyAssets = root.simpleSendParams.displayOnlyAssets
+                }
+                if(root.simpleSendParams.sendType !== undefined) {
+                    sendType = root.simpleSendParams.sendType
+                }
+                if(root.simpleSendParams.selectedAccountAddress !== undefined &&
+                        !!root.simpleSendParams.selectedAccountAddress) {
+                    selectedAccountAddress = root.simpleSendParams.selectedAccountAddress
+                }
+                if(root.simpleSendParams.selectedTokenKey !== undefined) {
+                    selectedTokenKey = root.simpleSendParams.selectedTokenKey
+                }
+                if(root.simpleSendParams.selectedChainId !== undefined) {
+                    selectedChainId = root.simpleSendParams.selectedChainId
+                }
+                if(root.simpleSendParams.selectedRawAmount !== undefined) {
+                    selectedRawAmount = root.simpleSendParams.selectedRawAmount
+                }
+                if(root.simpleSendParams.selectedRecipientAddress !== undefined) {
+                    selectedRecipientAddress = root.simpleSendParams.selectedRecipientAddress
+                }
+                if(root.simpleSendParams.publicKey !== undefined) {
+                    publicKey = root.simpleSendParams.publicKey
+                }
+                if(root.simpleSendParams.ensName !== undefined) {
+                    ensName = root.simpleSendParams.ensName
+                }
+                if(root.simpleSendParams.stickersPackId !== undefined) {
+                    stickersPackId = root.simpleSendParams.stickersPackId
+                }                
+                if(root.simpleSendParams.transferOwnership !== undefined) {
+                    transferOwnership = root.simpleSendParams.transferOwnership
+                }
+            }
 
             onClosed: {
                 destroy()
@@ -308,22 +481,47 @@ QtObject {
                 if(allValuesFilledCorrectly) {
                     handler.uuid = Utils.uuid()
                     simpleSendModal.routesLoading = true
+                    let tokenKey = selectedTokenKey
+                    /** TODO: This special handling for collectibles should ideally not
+                    be needed, howver is needed because of current implementation and
+                    collectible token id is contractAddress:tokenId **/
+                    if(sendType === Constants.SendType.ERC1155Transfer ||
+                            sendType === Constants.SendType.ERC721Transfer) {
+                        const selectedCollectible =
+                                                  SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedTokenKey)
+                        if(!!selectedCollectible &&
+                                !!selectedCollectible.contractAddress &&
+                                !!selectedCollectible.tokenId) {
+                            tokenKey = "%1:%2".arg(
+                                        selectedCollectible.contractAddress).arg(
+                                        selectedCollectible.tokenId)
+                        }
+                    }
                     root.transactionStoreNew.fetchSuggestedRoutes(handler.uuid,
                                                                   sendType,
                                                                   selectedChainId,
                                                                   selectedAccountAddress,
                                                                   selectedRecipientAddress,
-                                                                  selectedAmountInBaseUnit,
-                                                                  selectedTokenKey)
+                                                                  selectedRawAmount,
+                                                                  tokenKey,
+                                                                  /*amountOut = */ "0",
+                                                                  /*toToken =*/ "",
+                                                                  handler.extraParamsJson)
                 }
             }
 
             onReviewSendClicked: {
-                if (handler.selectedCollectibleEntry.available &&
-                        !!handler.selectedCollectibleEntry.item) {
-                    root.fnGetDetailedCollectible(simpleSendModal.selectedChainId ,
-                                                  handler.selectedCollectibleEntry.item.contractAddress,
-                                                  handler.selectedCollectibleEntry.item.tokenId)
+                if(sendType === Constants.SendType.ERC1155Transfer ||
+                        sendType === Constants.SendType.ERC721Transfer) {
+                    const selectedCollectible =
+                                              SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", selectedTokenKey)
+                    if(!!selectedCollectible &&
+                            !!selectedCollectible.contractAddress &&
+                            !!selectedCollectible.tokenId) {
+                        root.fnGetDetailedCollectible(simpleSendModal.selectedChainId ,
+                                                      selectedCollectible.contractAddress,
+                                                      selectedCollectible.tokenId)
+                    }
                 }
                 Global.openPopup(sendSignModalCmp)
             }
@@ -336,10 +534,15 @@ QtObject {
                 id: handler
                 property string uuid
                 property var fetchedPathModel
-
-                readonly property var filteredFlatNetworksModel: SortFilterProxyModel {
-                    sourceModel: root.flatNetworksModel
-                    filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+                readonly property string extraParamsJson: {
+                    if (!!simpleSendModal.stickersPackId) {
+                        return JSON.stringify({[Constants.suggestedRoutesExtraParamsProperties.packId]: simpleSendModal.stickersPackId})
+                    }
+                    if (!!simpleSendModal.ensName && !!simpleSendModal.publicKey) {
+                        return JSON.stringify({[Constants.suggestedRoutesExtraParamsProperties.username]: simpleSendModal.ensName,
+                                                  [Constants.suggestedRoutesExtraParamsProperties.publicKey]: simpleSendModal.publicKey})
+                    }
+                    return ""
                 }
 
                 function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
@@ -374,7 +577,7 @@ QtObject {
                     accounts: root.walletAccountsModel
                     assetsModel: root.groupedAccountAssetsModel
                     tokensBySymbolModel: root.plainTokensBySymbolModel
-                    filteredFlatNetworksModel: handler.filteredFlatNetworksModel
+                    filteredFlatNetworksModel: root.filteredFlatNetworksModel
 
                     selectedTokenKey: simpleSendModal.selectedTokenKey
                     selectedNetworkChainId: simpleSendModal.selectedChainId
@@ -397,7 +600,7 @@ QtObject {
                     accountKey: simpleSendModal.selectedAccountAddress
                     enabledChainIds: [simpleSendModal.selectedChainId]
 
-                    networksModel: handler.filteredFlatNetworksModel
+                    networksModel: root.filteredFlatNetworksModel
                     collectiblesModel: SortFilterProxyModel {
                         sourceModel: root.collectiblesBySymbolModel
                         filters: ValueFilter {
@@ -405,7 +608,7 @@ QtObject {
                             value: false
                         }
                     }
-                    filterCommunityOwnerAndMasterTokens: true
+                    filterCommunityOwnerAndMasterTokens: !simpleSendModal.transferOwnership
                 }
 
                 readonly property var totalFeesAggregator: FunctionAggregator {
@@ -419,15 +622,15 @@ QtObject {
                                            SQUtils.AmountsArithmetic.fromString(value)).toString()
 
                     onValueChanged: {
-                        let decimals = !!handler.ethTokenEntry.item ? handler.ethTokenEntry.item.decimals: 18
-                        let ethFiatValue = !!handler.ethTokenEntry.item ? handler.ethTokenEntry.item.marketDetails.currencyPrice.amount: 1
+                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
+                        let decimals = !!ethToken ? ethToken.decimals: 18
+                        let ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
                         let totalFees = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(value), SQUtils.AmountsArithmetic.fromNumber(1, decimals))
                         let totalFeesInFiat = root.fnFormatCurrencyAmount(ethFiatValue*totalFees, root.currentCurrency).toString()
                         simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), Constants.ethToken)
                         simpleSendModal.estimatedFiatFees = totalFeesInFiat
                     }
                 }
-
 
                 readonly property var estimatedTimeAggregator: FunctionAggregator {
                     model: !!handler.fetchedPathModel ?
@@ -440,25 +643,6 @@ QtObject {
                     onValueChanged: {
                         simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
                     }
-                }
-
-                readonly property var selectedTokenEntry: ModelEntry {
-                    sourceModel: root.tokenBySymbolModel
-                    key: "key"
-                    value: simpleSendModal.selectedTokenKey
-                }
-
-                readonly property var ethTokenEntry: ModelEntry {
-                    sourceModel: root.tokenBySymbolModel
-                    key: "key"
-                    value: Constants.ethToken
-                }
-
-                readonly property var selectedCollectibleEntry: ModelEntry {
-                    sourceModel: simpleSendModal.isCollectibleSelected ?
-                                     root.collectiblesBySymbolModel: null
-                    value: simpleSendModal.selectedTokenKey
-                    key: "symbol"
                 }
 
                 Component.onCompleted: {
@@ -486,8 +670,8 @@ QtObject {
                 chainId: simpleSendModal.selectedChainId
                 networksModel: root.flatNetworksModel
                 tokenKey: simpleSendModal.selectedTokenKey
-                tokenBySymbolModel: root.tokenBySymbolModel
-                selectedAmountInBaseUnit: simpleSendModal.selectedAmountInBaseUnit
+                tokenBySymbolModel: root.plainTokensBySymbolModel
+                selectedAmountInBaseUnit: simpleSendModal.selectedRawAmount
             }
 
             Component {
@@ -523,7 +707,8 @@ QtObject {
 
                     loginType: root.loginType
 
-                    isCollectible: simpleSendModal.isCollectibleSelected
+                    isCollectible: simpleSendModal.sendType === Constants.SendType.ERC1155Transfer ||
+                                   simpleSendModal.sendType === Constants.SendType.ERC721Transfer
                     isCollectibleLoading: root.isDetailedCollectibleLoading
                     collectibleContractAddress: root.detailedCollectible.contractAddress
                     collectibleTokenId: root.detailedCollectible.tokenId

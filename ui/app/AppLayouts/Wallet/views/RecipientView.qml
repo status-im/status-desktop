@@ -94,7 +94,7 @@ Loader {
             implicitWidth: parent.width
             modelData: d.savedAddrSelectedEntry.item
             radius: 8
-            clearVisible: true
+            clearVisible: root.interactive
             color: Theme.palette.indirectColor1
             sensor.enabled: false
             subTitle:  {
@@ -127,7 +127,7 @@ Loader {
 
             width: parent.width
             radius: 8
-            clearVisible: true
+            clearVisible: root.interactive
             color: Theme.palette.indirectColor1
             sensor.enabled: false
             subTitle: {
