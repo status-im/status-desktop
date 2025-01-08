@@ -1,10 +1,16 @@
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
+from app_service/service/settings/dto/settings import SettingsDto
+from app_service/service/accounts/dto/accounts import AccountDto
+
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAppLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method load*(self: AccessInterface) {.base.} =
@@ -38,3 +44,6 @@ method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: stri
 type
   DelegateInterface* = concept c
     c.onboardingDidLoad()
+    c.appReady()
+    c.finishAppLoading()
+    c.userLoggedIn()

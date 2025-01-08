@@ -5,9 +5,17 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import AppLayouts.Onboarding.enums 1.0
 
 QtObject {
+    id: root
+    signal appLoaded()
+
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
+    }
+
+    readonly property var _conn: Connections {
+        target: d.onboardingModuleInst
+        onAppLoaded: root.appLoaded()
     }
 
     // keycard

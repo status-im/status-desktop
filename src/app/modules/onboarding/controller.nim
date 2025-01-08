@@ -1,7 +1,9 @@
 import chronicles, strutils
 import io_interface
+import uuids
 
 import app/core/eventemitter
+import app/core/signals/types
 import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/dto/image_crop_rectangle
@@ -15,6 +17,7 @@ type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    connectionIds: seq[UUID]
     generalService: general_service.Service
     accountsService: accounts_service.Service
     devicesService: devices_service.Service
@@ -37,11 +40,18 @@ proc newController*(
   result.devicesService = devicesService
   result.keycardServiceV2 = keycardServiceV2
 
+proc disconnect*(self: Controller) =
+  for id in self.connectionIds:
+    self.events.disconnect(id)
+
 proc delete*(self: Controller) =
-  discard
+  self.disconnect()
 
 proc init*(self: Controller) =
-  discard
+  var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
+    let signal = NodeSignal(e)
+    self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
+  self.connectionIds.add(handlerId)
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
@@ -95,3 +105,7 @@ proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recov
     ImageCropRectangle(),
     keycardInstanceUID,
   )
+
+proc setLoggedInAccount*(self: Controller, account: AccountDto) =
+  self.accountsService.setLoggedInAccount(account)
+  self.accountsService.updateLoggedInAccount(account.name, account.images)

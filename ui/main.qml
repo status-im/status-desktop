@@ -117,7 +117,7 @@ StatusWindow {
                 var c = Qt.createComponent("qrc:/imports/shared/panels/MockedKeycardLibControllerWindow.qml");
                 if (c.status === Component.Ready) {
                     d.mockedKeycardControllerWindow = c.createObject(applicationWindow, {
-                                                                         "relatedModule": startupOnbaordingLoader.item.visible?
+                                                                         "relatedModule": startupOnboardingLoader.item.visible?
                                                                                               startupModule :
                                                                                               mainModule
                                                                      })
@@ -164,9 +164,41 @@ StatusWindow {
         }
     }
 
+    function moveToAppMain() {
+        // We set main module to the Global singleton once user is logged in and we move to the main app.
+        appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+        appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+        if (!appLoadingAnimation.runningProgressAnimation) {
+            mainModule.fakeLoadingScreenFinished()
+        }
+        Global.appIsReady = true
+
+        loader.sourceComponent = app
+
+        if(localAccountSensitiveSettings.recentEmojis === "") {
+            localAccountSensitiveSettings.recentEmojis = [];
+        }
+        if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
+            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
+        }
+        if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
+            localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+        }
+        startupOnboardingLoader.item.unload()
+        startupOnboardingLoader.active = false
+        onboardingStoreLoader.active = false
+
+        Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
+
+        // TODO is this still needed
+        // d.runMockedKeycardControllerWindow()
+    }
+
     //TODO remove direct backend access
     Connections {
-        target: startupModule
+        enabled: !applicationWindow.onboardingV2Enabled
+        target: !applicationWindow.onboardingV2Enabled ? startupModule : null
 
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
@@ -180,46 +212,21 @@ StatusWindow {
                 // we're here only in case of error when we're returning from the app loading state
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
-                startupOnbaordingLoader.item.visible = true
+                startupOnboardingLoader.item.visible = true
             }
             else if(state === Constants.appState.appLoading) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
-                startupOnbaordingLoader.item.visible = false
+                startupOnboardingLoader.item.visible = false
             }
             else if(state === Constants.appState.main) {
-                // We set main module to the Global singleton once user is logged in and we move to the main app.
-                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-                if (!appLoadingAnimation.runningProgressAnimation) {
-                    mainModule.fakeLoadingScreenFinished()
-                }
-                Global.appIsReady = true
-
-                loader.sourceComponent = app
-
-                if(localAccountSensitiveSettings.recentEmojis === "") {
-                    localAccountSensitiveSettings.recentEmojis = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
-                }
-                startupOnbaordingLoader.item.unload()
-                startupOnbaordingLoader.item.visible = false
-
-                Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
-                Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
-
-                d.runMockedKeycardControllerWindow()
+                moveToAppMain()
             } else if(state === Constants.appState.appEncryptionProcess) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = true
                 appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
-                startupOnbaordingLoader.item.visible = false
+                startupOnboardingLoader.item.visible = false
             }
         }
     }
@@ -281,7 +288,7 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Theme.changeTheme(startupOnbaordingLoader.item.visible ? Universal.System : localAppSettings.theme,
+        Theme.changeTheme(startupOnboardingLoader.item.visible ? Universal.System : localAppSettings.theme,
                           systemPalette.isCurrentSystemThemeDark())
     }
 
@@ -379,7 +386,7 @@ StatusWindow {
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
-                duration: startupOnbaordingLoader.item.splashScreenDurationMs
+                duration: startupOnboardingLoader.item.splashScreenDurationMs
                 running: runningProgressAnimation
                 onStopped: {
                     console.warn("!!! SPLASH SCREEN DONE")
@@ -394,6 +401,8 @@ StatusWindow {
         active: applicationWindow.onboardingV2Enabled
 
         sourceComponent: OnboardingStore {
+            onAppLoaded: moveToAppMain()
+
             function setPin(pin: string) { // -> bool
                 console.log("OnboardingStore.setPin", ["pin"])
                 return true
@@ -430,12 +439,10 @@ StatusWindow {
     }
 
     Loader {
-        id: startupOnbaordingLoader
+        id: startupOnboardingLoader
         anchors.fill: parent
         sourceComponent: {
-            console.log('applicationWindow.onboardingV2Enabled', applicationWindow.onboardingV2Enabled)
             if (applicationWindow.onboardingV2Enabled) {
-                console.log('satrt with onbaording??', onboardingStoreLoader.item.shouldStartWithOnboardingScreen())
                 if (onboardingStoreLoader.item.shouldStartWithOnboardingScreen()) {
                     // TODO select a new component when we have the new login screens (for old users)
                     return onboardingV2

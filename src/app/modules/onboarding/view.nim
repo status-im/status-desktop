@@ -19,6 +19,10 @@ QtObject:
     result.delegate = delegate
 
 
+  ### QtSignals ###
+
+  proc appLoaded*(self: View) {.signal.}
+
   ### QtProperties ###
 
   proc syncStateChanged*(self: View) {.signal.}

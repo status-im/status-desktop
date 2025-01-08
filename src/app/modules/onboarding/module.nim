@@ -9,6 +9,8 @@ import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/devices/service as devices_service
 import app_service/service/keycardV2/service as keycard_serviceV2
+from app_service/service/settings/dto/settings import SettingsDto
+from app_service/service/accounts/dto/accounts import AccountDto
 
 export io_interface
 
@@ -62,6 +64,7 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method onAppLoaded*[T](self: Module[T]) =
+  self.view.appLoaded()
   singletonInstance.engine.setRootContextProperty("onboardingModule", newQVariant())
   self.view.delete
   self.view = nil
@@ -147,5 +150,36 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
   except Exception as e:
     error "Error finishing Onboarding Flow", msg = e.msg
     return e.msg
+
+proc finishAppLoading2[T](self: Module[T]) =
+  self.delegate.appReady()
+
+  # TODO get the flow to send the right metric
+  # let currStateObj = self.view.currentStartupStateObj()
+  # if not currStateObj.isNil:
+  #   var eventType = "user-logged-in"
+  #   if currStateObj.flowType() != FlowType.AppLogin:
+  #     eventType = "onboarding-completed"
+  #   singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
+  #     $(%*{"flowType": currStateObj.flowType()}))
+
+  self.delegate.finishAppLoading()
+  
+method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
+  if error.len != 0:
+    # TODO: Handle error
+    echo "ERROR from onNodeLogin: ", error
+    return
+
+  self.controller.setLoggedInAccount(account)
+
+  # TODO this might be only needed on other calls?
+  # let err = self.delegate.userLoggedIn()
+  # if err.len > 0:
+  #   echo "ERROR from userLoggedIn: ", error
+  #   # TODO: Handle error
+  #   return
+
+  self.finishAppLoading2()
 
 {.pop.}
