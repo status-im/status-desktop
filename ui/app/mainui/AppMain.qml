@@ -1029,9 +1029,13 @@ Item {
                             enabled: model.muted
                             text: qsTr("Unmute Community")
                             icon.name: "notification"
-                            onTriggered: {
-                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
-                            }
+                            onTriggered: communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
+                        }
+
+                        StatusAction {
+                            text: qsTr("Mark as read")
+                            icon.name: "check-circle"
+                            onTriggered: communityContextMenu.chatCommunitySectionModule.markAllReadInCommunity()
                         }
 
                         StatusAction {

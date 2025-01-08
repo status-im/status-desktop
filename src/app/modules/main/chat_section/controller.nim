@@ -781,3 +781,6 @@ proc deleteCommunityMemberMessages*(self: Controller, memberPubKey: string, mess
 
 proc isMyCommunityRequestPending*(self: Controller): bool =
   return self.communityService.isMyCommunityRequestPending(self.sectionId)
+
+proc markAllReadInCommunity*(self: Controller) =
+  self.communityService.markAllReadInCommunity(self.sectionId)
