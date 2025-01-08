@@ -123,24 +123,28 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     amountInLocked = txPath.amountInLocked,
     amountOut = $txPath.amountOut,
     suggestedLevelsForMaxFeesPerGas = self.convertFeeLevelsDtoToMaxFeeLevelsItem(txPath.suggestedLevelsForMaxFeesPerGas),
-    maxFeesPerGas = $txPath.maxFeesPerGas,
+    txNonce = $txPath.txNonce,
+    txMaxFeesPerGas = $txPath.txMaxFeesPerGas,
     txBaseFee = $txPath.txBaseFee,
     txPriorityFee = $txPath.txPriorityFee,
     txGasAmount = $txPath.txGasAmount,
     txBonderFees = $txPath.txBonderFees,
     txTokenFees = $txPath.txTokenFees,
+    txEstimatedTime = txPath.txEstimatedTime,
     txFee = $txPath.txFee,
     txL1Fee = $txPath.txL1Fee,
     approvalRequired = txPath.approvalRequired,
     approvalAmountRequired = $txPath.approvalAmountRequired,
     approvalContractAddress = txPath.approvalContractAddress,
+    approvalTxNonce = $txPath.approvalTxNonce,
+    approvalMaxFeesPerGas = $txPath.approvalMaxFeesPerGas,
     approvalBaseFee = $txPath.approvalBaseFee,
     approvalPriorityFee = $txPath.approvalPriorityFee,
     approvalGasAmount = $txPath.approvalGasAmount,
+    approvalEstimatedTime = txPath.approvalEstimatedTime,
     approvalFee = $txPath.approvalFee,
     approvalL1Fee = $txPath.approvalL1Fee,
-    txTotalFee = $txPath.txTotalFee,
-    estimatedTime = txPath.estimatedTime
+    txTotalFee = $txPath.txTotalFee
     )
 
 proc buildTransactionsFromRoute(self: Module) =

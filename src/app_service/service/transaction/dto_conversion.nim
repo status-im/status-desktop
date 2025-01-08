@@ -1,6 +1,6 @@
 import strutils, stint, chronicles, algorithm
 
-import app_service/common/conversion
+import app_service/common/[conversion, wallet_constants]
 
 import ./dto, ./dtoV2
 
@@ -60,8 +60,14 @@ proc convertToOldRoute*(route: seq[TransactionPathDtoV2]): seq[TransactionPathDt
       trPath.approvalAmountRequired = p.approvalAmountRequired
       trPath.approvalContractAddress = p.approvalContractAddress
       trPath.amountInLocked = p.amountInLocked
-      trPath.estimatedTime = p.estimatedTime
       trPath.gasAmount = p.txGasAmount
+
+      if p.processorName == wallet_constants.PROCESSOR_NAME_SWAP_PARASWAP:
+        trPath.estimatedTime = p.txEstimatedTime + p.approvalEstimatedTime
+      elif p.processorName == wallet_constants.PROCESSOR_NAME_BRIDGE_HOP:
+        trPath.estimatedTime = p.txEstimatedTime + 1
+      else:
+        trPath.estimatedTime = p.txEstimatedTime
 
       value = conversion.wei2Eth(p.suggestedLevelsForMaxFeesPerGas.medium,  decimals = ethDecimals)
       trPath.approvalGasFees = parseFloat(value) * float64(p.approvalGasAmount)
