@@ -391,10 +391,15 @@ QtObject {
                     }
                 }
 
-                readonly property var estimatedTimeAggregator: SumAggregator {
+
+                readonly property var estimatedTimeAggregator: FunctionAggregator {
                     model: !!backendHandler.fetchedPathModel ?
                                backendHandler.fetchedPathModel: null
+                    initialValue: Constants.TransactionEstimatedTime.Unknown
                     roleName: "estimatedTime"
+
+                    aggregateFunction: (aggr, value) => aggr < value? value : aggr
+
                     onValueChanged: {
                         simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
                     }

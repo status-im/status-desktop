@@ -13,24 +13,29 @@ type
     AmountInLocked,
     AmountOut,
     SuggestedLevelsForMaxFeesPerGas,
-    MaxFeesPerGas,
+    TxNonce,
+    TxMaxFeesPerGas,
     TxBaseFee,
     TxPriorityFee,
     TxGasAmount,
     TxBonderFees,
     TxTokenFees,
+    TxEstimatedTime,
     TxFee,
     TxL1Fee,
     TxTotalFee,
-    EstimatedTime,
     ApprovalRequired,
     ApprovalAmountRequired,
     ApprovalContractAddress,
+    ApprovalTxNonce,
+    ApprovalMaxFeesPerGas,
     ApprovalBaseFee,
     ApprovalPriorityFee,
     ApprovalGasAmount,
+    ApprovalEstimatedTime,
     ApprovalFee,
-    ApprovalL1Fee
+    ApprovalL1Fee,
+    EstimatedTime
 
 QtObject:
   type
@@ -66,24 +71,29 @@ QtObject:
       ModelRole.AmountInLocked.int: "amountInLocked",
       ModelRole.AmountOut.int: "amountOut",
       ModelRole.SuggestedLevelsForMaxFeesPerGas.int: "suggestedLevelsForMaxFeesPerGas",
-      ModelRole.MaxFeesPerGas.int: "maxFeesPerGas",
+      ModelRole.TxNonce.int: "txNonce",
+      ModelRole.TxMaxFeesPerGas.int: "txMaxFeesPerGas",
       ModelRole.TxBaseFee.int: "txBaseFee",
       ModelRole.TxPriorityFee.int: "txPriorityFee",
       ModelRole.TxGasAmount.int: "txGasAmount",
       ModelRole.TxBonderFees.int: "txBonderFees",
       ModelRole.TxTokenFees.int: "txTokenFees",
+      ModelRole.TxEstimatedTime.int: "txEstimatedTime",
       ModelRole.TxFee.int: "txFee",
       ModelRole.TxL1Fee.int: "txL1Fee",
       ModelRole.TxTotalFee.int: "txTotalFee",
-      ModelRole.EstimatedTime.int: "estimatedTime",
       ModelRole.ApprovalRequired.int: "approvalRequired",
       ModelRole.ApprovalAmountRequired.int: "approvalAmountRequired",
       ModelRole.ApprovalContractAddress.int: "approvalContractAddress",
+      ModelRole.ApprovalTxNonce.int: "approvalTxNonce",
+      ModelRole.ApprovalMaxFeesPerGas.int: "approvalMaxFeesPerGas",
       ModelRole.ApprovalBaseFee.int: "approvalBaseFee",
       ModelRole.ApprovalPriorityFee.int: "approvalPriorityFee",
       ModelRole.ApprovalGasAmount.int: "approvalGasAmount",
+      ModelRole.ApprovalEstimatedTime.int: "approvalEstimatedTime",
       ModelRole.ApprovalFee.int: "approvalFee",
       ModelRole.ApprovalL1Fee.int: "approvalL1Fee",
+      ModelRole.EstimatedTime.int: "estimatedTime"
     }.toTable
 
   proc setItems*(self: PathModel, items: seq[PathItem]) =
@@ -120,8 +130,10 @@ QtObject:
       result = newQVariant(item.amountOut)
     of ModelRole.SuggestedLevelsForMaxFeesPerGas:
       result = newQVariant(item.suggestedLevelsForMaxFeesPerGas)
-    of ModelRole.MaxFeesPerGas:
-      result = newQVariant(item.maxFeesPerGas)
+    of ModelRole.TxNonce:
+      result = newQVariant(item.txNonce)
+    of ModelRole.TxMaxFeesPerGas:
+      result = newQVariant(item.txMaxFeesPerGas)
     of ModelRole.TxBaseFee:
       result = newQVariant(item.txBaseFee)
     of ModelRole.TxPriorityFee:
@@ -132,29 +144,37 @@ QtObject:
       result = newQVariant(item.txBonderFees)
     of ModelRole.TxTokenFees:
       result = newQVariant(item.txTokenFees)
+    of ModelRole.TxEstimatedTime:
+      result = newQVariant(item.txEstimatedTime)
     of ModelRole.TxFee:
       result = newQVariant(item.txFee)
     of ModelRole.TxL1Fee:
       result = newQVariant(item.txL1Fee)
     of ModelRole.TxTotalFee:
       result = newQVariant(item.txTotalFee)
-    of ModelRole.EstimatedTime:
-      result = newQVariant(item.estimatedTime)
     of ModelRole.ApprovalRequired:
       result = newQVariant(item.approvalRequired)
     of ModelRole.ApprovalAmountRequired:
       result = newQVariant(item.approvalAmountRequired)
     of ModelRole.ApprovalContractAddress:
       result = newQVariant(item.approvalContractAddress)
+    of ModelRole.ApprovalTxNonce:
+      result = newQVariant(item.approvalTxNonce)
+    of ModelRole.ApprovalMaxFeesPerGas:
+      result = newQVariant(item.approvalMaxFeesPerGas)
     of ModelRole.ApprovalBaseFee:
       result = newQVariant(item.approvalBaseFee)
     of ModelRole.ApprovalPriorityFee:
       result = newQVariant(item.approvalPriorityFee)
     of ModelRole.ApprovalGasAmount:
       result = newQVariant(item.approvalGasAmount)
+    of ModelRole.ApprovalEstimatedTime:
+      result = newQVariant(item.approvalEstimatedTime)
     of ModelRole.ApprovalFee:
       result = newQVariant(item.approvalFee)
     of ModelRole.ApprovalL1Fee:
       result = newQVariant(item.approvalL1Fee)
+    of ModelRole.EstimatedTime:
+      result = newQVariant(item.estimatedTime)
     else:
       discard

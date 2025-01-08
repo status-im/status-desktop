@@ -21,6 +21,7 @@ type
 
 type
   TransactionPathDtoV2* = ref object
+    routerInputParamsUuid*: string
     processorName*: string
     fromChain*: NetworkDto
     toChain*: NetworkDto
@@ -29,25 +30,35 @@ type
     amountIn*: UInt256
     amountInLocked*: bool
     amountOut*: UInt256
+
     suggestedLevelsForMaxFeesPerGas*: SuggestedLevelsForMaxFeesPerGasDto
-    maxFeesPerGas*: UInt256
+
+    txNonce*: UInt256
+    txMaxFeesPerGas*: UInt256
     txBaseFee*: UInt256
     txPriorityFee*: UInt256
     txGasAmount*: uint64
     txBonderFees*: UInt256
     txTokenFees*: UInt256
+    txEstimatedTime*: int
+
     txFee*: UInt256
     txL1Fee*: UInt256
+
     approvalRequired*: bool
     approvalAmountRequired*: UInt256
     approvalContractAddress*: string
+    approvalTxNonce*: UInt256
+    approvalMaxFeesPerGas*: UInt256
     approvalBaseFee*: UInt256
     approvalPriorityFee*: UInt256
     approvalGasAmount*: uint64
+    approvalEstimatedTime*: int
+
     approvalFee*: UInt256
     approvalL1Fee*: UInt256
+
     txTotalFee*: UInt256
-    estimatedTime*: int
 
 proc toSuggestedLevelsForMaxFeesPerGasDto*(jsonObj: JsonNode): SuggestedLevelsForMaxFeesPerGasDto =
   result = SuggestedLevelsForMaxFeesPerGasDto()
@@ -61,6 +72,7 @@ proc toSuggestedLevelsForMaxFeesPerGasDto*(jsonObj: JsonNode): SuggestedLevelsFo
 
 proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result = TransactionPathDtoV2()
+  discard jsonObj.getProp("RouterInputParamsUuid", result.routerInputParamsUuid)
   discard jsonObj.getProp("ProcessorName", result.processorName)
   result.fromChain = Json.decode($jsonObj["FromChain"], NetworkDto, allowUnknownFields = true)
   result.toChain = Json.decode($jsonObj["ToChain"], NetworkDto, allowUnknownFields = true)
@@ -70,24 +82,28 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
   result.suggestedLevelsForMaxFeesPerGas = jsonObj["SuggestedLevelsForMaxFeesPerGas"].toSuggestedLevelsForMaxFeesPerGasDto()
-  result.maxFeesPerGas = stint.fromHex(UInt256, jsonObj{"MaxFeesPerGas"}.getStr)
+  result.txNonce = stint.fromHex(UInt256, jsonObj{"TxNonce"}.getStr)
+  result.txMaxFeesPerGas = stint.fromHex(UInt256, jsonObj{"TxMaxFeesPerGas"}.getStr)
   result.txBaseFee = stint.fromHex(UInt256, jsonObj{"TxBaseFee"}.getStr)
   result.txPriorityFee = stint.fromHex(UInt256, jsonObj{"TxPriorityFee"}.getStr)
   discard jsonObj.getProp("TxGasAmount", result.txGasAmount)
   result.txBonderFees = stint.fromHex(UInt256, jsonObj{"TxBonderFees"}.getStr)
   result.txTokenFees = stint.fromHex(UInt256, jsonObj{"TxTokenFees"}.getStr)
+  discard jsonObj.getProp("TxEstimatedTime", result.txEstimatedTime)
   result.txFee = stint.fromHex(UInt256, jsonObj{"TxFee"}.getStr)
   result.txL1Fee = stint.fromHex(UInt256, jsonObj{"TxL1Fee"}.getStr)
   discard jsonObj.getProp("ApprovalRequired", result.approvalRequired)
   result.approvalAmountRequired = stint.fromHex(UInt256, jsonObj{"ApprovalAmountRequired"}.getStr)
   discard jsonObj.getProp("ApprovalContractAddress", result.approvalContractAddress)
+  result.approvalTxNonce = stint.fromHex(UInt256, jsonObj{"ApprovalTxNonce"}.getStr)
+  result.approvalMaxFeesPerGas = stint.fromHex(UInt256, jsonObj{"ApprovalMaxFeesPerGas"}.getStr)
   result.approvalBaseFee = stint.fromHex(UInt256, jsonObj{"ApprovalBaseFee"}.getStr)
   result.approvalPriorityFee = stint.fromHex(UInt256, jsonObj{"ApprovalPriorityFee"}.getStr)
   discard jsonObj.getProp("ApprovalGasAmount", result.approvalGasAmount)
+  discard jsonObj.getProp("ApprovalEstimatedTime", result.approvalEstimatedTime)
   result.approvalFee = stint.fromHex(UInt256, jsonObj{"ApprovalFee"}.getStr)
   result.approvalL1Fee = stint.fromHex(UInt256, jsonObj{"ApprovalL1Fee"}.getStr)
   result.txTotalFee = stint.fromHex(UInt256, jsonObj{"TxTotalFee"}.getStr)
-  result.estimatedTime = jsonObj{"EstimatedTime"}.getInt
 
 proc toTransactionPathsDtoV2*(jsonObj: JsonNode): seq[TransactionPathDtoV2] =
   return jsonObj.getElems().map(x => x.toTransactionPathDtoV2())
