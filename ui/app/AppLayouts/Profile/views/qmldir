@@ -7,3 +7,4 @@ LanguageView 1.0 LanguageView.qml
 NotificationsView 1.0 NotificationsView.qml
 PrivacyAndSecurityView 1.0 PrivacyAndSecurityView.qml
 SyncingView 1.0 SyncingView.qml
+SettingsLeftTabView 1.0 SettingsLeftTabView.qml

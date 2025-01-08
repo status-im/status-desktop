@@ -40,20 +40,13 @@ StatusListView {
         title: model.text
         asset.name: model.icon
         selected: root.currenctSubsection === model.subsection
-        highlighted: !!betaTagLoader.item && betaTagLoader.item.hovered
         badge.value: model.badgeCount
 
-        Loader {
-            id: betaTagLoader
+        statusListItemTitleIcons.sourceComponent: model.isExperimental ? betaTagComponent : null
 
-            active: model.isExperimental
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: Theme.padding +
-                                 (delegate.badge.visible
-                                  ? delegate.badge.width + Theme.halfPadding : 0)
-
-            sourceComponent: StatusBetaTag {
+        Component {
+            id: betaTagComponent
+            StatusBetaTag {
                 tooltipText: model.experimentalTooltip
                 cursorShape: Qt.PointingHandCursor
             }
