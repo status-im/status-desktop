@@ -125,7 +125,7 @@ StatusSectionLayout {
         visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.store.walletStore.selectedAccount
     }
 
-    leftPanel: LeftTabView {
+    leftPanel: SettingsLeftTabView {
         anchors.fill: parent
 
         model: settingsEntriesModel
