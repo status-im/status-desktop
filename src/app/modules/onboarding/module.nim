@@ -176,13 +176,6 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
 
   self.controller.setLoggedInAccount(account)
 
-  # TODO this might be only needed on other calls?
-  # let err = self.delegate.userLoggedIn()
-  # if err.len > 0:
-  #   echo "ERROR from userLoggedIn: ", error
-  #   # TODO: Handle error
-  #   return
-
   if self.localPairingStatus.installation.id != "":
     # We tried to login by pairing, so finilize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)

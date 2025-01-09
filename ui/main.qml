@@ -193,8 +193,7 @@ StatusWindow {
         Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
-        // TODO is this still needed
-        // d.runMockedKeycardControllerWindow()
+        d.runMockedKeycardControllerWindow()
     }
 
     //TODO remove direct backend access
