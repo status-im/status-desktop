@@ -7,7 +7,6 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
 
@@ -103,7 +102,7 @@ KeycardBasePage {
             StateChangeScript {
                 script: {
                     pinInput.setPin(d.pin)
-                    Backpressure.debounce(root, 2000, () => root.keycardPinCreated(d.pin))()
+                    root.keycardPinCreated(d.pin)
                 }
             }
         },
