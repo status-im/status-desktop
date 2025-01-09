@@ -108,7 +108,7 @@ ColumnLayout {
             let timeout = 0
             if (switchTabBar.currentIndex !== index) {
                 switchTabBar.currentIndex = index
-                // Set the teimeout to 100 so the grid has time to generate the new items
+                // Set the timeout to 100 so the grid has time to generate the new items
                 timeout = 100
             }
 
