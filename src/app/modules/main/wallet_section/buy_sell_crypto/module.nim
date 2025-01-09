@@ -9,19 +9,18 @@ import app_service/service/ramp/dto
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  rampService: ramp_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    rampService: ramp_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -40,7 +39,9 @@ method fetchProviders*(self: Module) =
   self.controller.fetchCryptoRampProviders()
   self.view.setIsFetching(true)
 
-method fetchProviderUrl*(self: Module, uuid: string, providerID: string, parameters: CryptoRampParametersDto) =
+method fetchProviderUrl*(
+    self: Module, uuid: string, providerID: string, parameters: CryptoRampParametersDto
+) =
   self.controller.fetchCryptoRampUrl(uuid, providerID, parameters)
 
 method updateRampProviders*(self: Module, cryptoServices: seq[CryptoRampDto]) =
@@ -52,7 +53,9 @@ method onRampProviderUrlReady*(self: Module, uuid: string, url: string) =
   self.view.onProviderUrlReady(uuid, url)
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionBuySellCrypto", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionBuySellCrypto", self.viewVariant
+  )
   self.controller.init()
   self.view.load()
 

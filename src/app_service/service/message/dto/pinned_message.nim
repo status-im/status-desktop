@@ -17,5 +17,5 @@ proc toPinnedMessageDto*(jsonObj: JsonNode): PinnedMessageDto =
   discard jsonObj.getProp("pinnedBy", result.pinnedBy)
 
   var messageObj: JsonNode
-  if(jsonObj.getProp("message", messageObj)):
+  if (jsonObj.getProp("message", messageObj)):
     result.message = toMessageDto(messageObj)

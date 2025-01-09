@@ -4,13 +4,12 @@ import ./currency_amount
 
 export keypair_account_model
 
-type
-  KeyPairType* {.pure.} = enum
-    Unknown = -1
-    Profile
-    SeedImport
-    PrivateKeyImport
-    WatchOnly
+type KeyPairType* {.pure.} = enum
+  Unknown = -1
+  Profile
+  SeedImport
+  PrivateKeyImport
+  WatchOnly
 
 QtObject:
   type KeyPairItem* = ref object of QObject
@@ -30,20 +29,21 @@ QtObject:
     observedAccount: KeyPairAccountItem
     ownershipVerified: bool
 
-  proc setup*(self: KeyPairItem,
-    keyUid: string,
-    pubKey: string,
-    locked: bool,
-    name: string,
-    image: string,
-    icon: string,
-    pairType: KeyPairType,
-    derivedFrom: string,
-    lastUsedDerivationIndex: int,
-    migratedToKeycard: bool,
-    syncedFrom: string,
-    ownershipVerified: bool
-    ) =
+  proc setup*(
+      self: KeyPairItem,
+      keyUid: string,
+      pubKey: string,
+      locked: bool,
+      name: string,
+      image: string,
+      icon: string,
+      pairType: KeyPairType,
+      derivedFrom: string,
+      lastUsedDerivationIndex: int,
+      migratedToKeycard: bool,
+      syncedFrom: string,
+      ownershipVerified: bool,
+  ) =
     self.QObject.setup
     self.keyUid = keyUid
     self.pubKey = pubKey
@@ -62,24 +62,29 @@ QtObject:
   proc delete*(self: KeyPairItem) =
     self.QObject.delete
 
-  proc newKeyPairItem*(keyUid = "",
-    pubKey = "",
-    locked = false,
-    name = "",
-    image = "",
-    icon = "",
-    pairType = KeyPairType.Unknown,
-    derivedFrom = "",
-    lastUsedDerivationIndex = 0,
-    migratedToKeycard = false,
-    syncedFrom = "",
-    ownershipVerified = false): KeyPairItem =
+  proc newKeyPairItem*(
+      keyUid = "",
+      pubKey = "",
+      locked = false,
+      name = "",
+      image = "",
+      icon = "",
+      pairType = KeyPairType.Unknown,
+      derivedFrom = "",
+      lastUsedDerivationIndex = 0,
+      migratedToKeycard = false,
+      syncedFrom = "",
+      ownershipVerified = false,
+  ): KeyPairItem =
     new(result, delete)
-    result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom, lastUsedDerivationIndex,
-      migratedToKeycard, syncedFrom, ownershipVerified)
+    result.setup(
+      keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom,
+      lastUsedDerivationIndex, migratedToKeycard, syncedFrom, ownershipVerified,
+    )
 
   proc `$`*(self: KeyPairItem): string =
-    result = fmt"""KeyPairItem[
+    result =
+      fmt"""KeyPairItem[
       keyUid: {self.keyUid},
       pubKey: {self.pubkey},
       name: {self.name},
@@ -102,9 +107,11 @@ QtObject:
   proc keyUidChanged*(self: KeyPairItem) {.signal.}
   proc getKeyUid*(self: KeyPairItem): string {.slot.} =
     return self.keyUid
+
   proc setKeyUid*(self: KeyPairItem, value: string) {.slot.} =
     self.keyUid = value
     self.keyUidChanged()
+
   QtProperty[string] keyUid:
     read = getKeyUid
     write = setKeyUid
@@ -113,9 +120,11 @@ QtObject:
   proc pubKeyChanged*(self: KeyPairItem) {.signal.}
   proc getPubKey*(self: KeyPairItem): string {.slot.} =
     return self.pubKey
+
   proc setPubKey*(self: KeyPairItem, value: string) {.slot.} =
     self.pubKey = value
     self.pubKeyChanged()
+
   QtProperty[string] pubKey:
     read = getPubKey
     write = setPubKey
@@ -124,9 +133,11 @@ QtObject:
   proc lockedChanged*(self: KeyPairItem) {.signal.}
   proc getLocked*(self: KeyPairItem): bool {.slot.} =
     return self.locked
+
   proc setLocked*(self: KeyPairItem, value: bool) {.slot.} =
     self.locked = value
     self.lockedChanged()
+
   QtProperty[bool] locked:
     read = getLocked
     write = setLocked
@@ -135,9 +146,11 @@ QtObject:
   proc nameChanged*(self: KeyPairItem) {.signal.}
   proc getName*(self: KeyPairItem): string {.slot.} =
     return self.name
+
   proc setName*(self: KeyPairItem, value: string) {.slot.} =
     self.name = value
     self.nameChanged()
+
   QtProperty[string] name:
     read = getName
     write = setName
@@ -146,9 +159,11 @@ QtObject:
   proc imageChanged*(self: KeyPairItem) {.signal.}
   proc getImage*(self: KeyPairItem): string {.slot.} =
     return self.image
+
   proc setImage*(self: KeyPairItem, value: string) {.slot.} =
     self.image = value
     self.imageChanged()
+
   QtProperty[string] image:
     read = getImage
     write = setImage
@@ -157,9 +172,11 @@ QtObject:
   proc iconChanged*(self: KeyPairItem) {.signal.}
   proc getIcon*(self: KeyPairItem): string {.slot.} =
     return self.icon
+
   proc setIcon*(self: KeyPairItem, value: string) {.slot.} =
     self.icon = value
     self.iconChanged()
+
   QtProperty[string] icon:
     read = getIcon
     write = setIcon
@@ -168,9 +185,11 @@ QtObject:
   proc pairTypeChanged*(self: KeyPairItem) {.signal.}
   proc getPairType*(self: KeyPairItem): int {.slot.} =
     return self.pairType.int
+
   proc setPairType*(self: KeyPairItem, value: int) {.slot.} =
     self.pairType = value.KeyPairType
     self.pairTypeChanged()
+
   QtProperty[int] pairType:
     read = getPairType
     write = setPairType
@@ -179,9 +198,11 @@ QtObject:
   proc derivedFromChanged*(self: KeyPairItem) {.signal.}
   proc getDerivedFrom*(self: KeyPairItem): string {.slot.} =
     return self.derivedFrom
+
   proc setDerivedFrom*(self: KeyPairItem, value: string) {.slot.} =
     self.derivedFrom = value
     self.derivedFromChanged()
+
   QtProperty[string] derivedFrom:
     read = getDerivedFrom
     write = setDerivedFrom
@@ -190,9 +211,11 @@ QtObject:
   proc lastUsedDerivationIndexChanged*(self: KeyPairItem) {.signal.}
   proc getLastUsedDerivationIndex*(self: KeyPairItem): int {.slot.} =
     return self.lastUsedDerivationIndex
+
   proc setLastUsedDerivationIndex*(self: KeyPairItem, value: int) {.slot.} =
     self.lastUsedDerivationIndex = value
     self.lastUsedDerivationIndexChanged()
+
   QtProperty[int] lastUsedDerivationIndex:
     read = getLastUsedDerivationIndex
     write = setLastUsedDerivationIndex
@@ -201,9 +224,11 @@ QtObject:
   proc migratedToKeycardChanged*(self: KeyPairItem) {.signal.}
   proc getMigratedToKeycard*(self: KeyPairItem): bool {.slot.} =
     return self.migratedToKeycard
+
   proc setMigratedToKeycard*(self: KeyPairItem, value: bool) {.slot.} =
     self.migratedToKeycard = value
     self.migratedToKeycardChanged()
+
   QtProperty[bool] migratedToKeycard:
     read = getMigratedToKeycard
     write = setMigratedToKeycard
@@ -217,6 +242,7 @@ QtObject:
     if items.any(x => x.getOperability() == AccountPartiallyOperable):
       return AccountPartiallyOperable
     return AccountFullyOperable
+
   QtProperty[string] operability:
     read = getOperability
     notify = operabilityChanged
@@ -224,9 +250,11 @@ QtObject:
   proc syncedFromChanged*(self: KeyPairItem) {.signal.}
   proc getSyncedFrom*(self: KeyPairItem): string {.slot.} =
     return self.syncedFrom
+
   proc setSyncedFrom*(self: KeyPairItem, value: string) {.slot.} =
     self.syncedFrom = value
     self.syncedFromChanged()
+
   QtProperty[string] syncedFrom:
     read = getSyncedFrom
     write = setSyncedFrom
@@ -235,9 +263,11 @@ QtObject:
   proc ownershipVerifiedChanged*(self: KeyPairItem) {.signal.}
   proc getOwnershipVerified*(self: KeyPairItem): bool {.slot.} =
     return self.ownershipVerified
+
   proc setOwnershipVerified*(self: KeyPairItem, value: bool) {.slot.} =
     self.ownershipVerified = value
     self.ownershipVerifiedChanged()
+
   QtProperty[bool] ownershipVerified:
     read = getOwnershipVerified
     write = setOwnershipVerified
@@ -246,49 +276,72 @@ QtObject:
   proc observedAccountChanged*(self: KeyPairItem) {.signal.}
   proc getObservedAccountAsVariant*(self: KeyPairItem): QVariant {.slot.} =
     return newQVariant(self.observedAccount)
+
   QtProperty[QVariant] observedAccount:
     read = getObservedAccountAsVariant
     notify = observedAccountChanged
   proc setAccountAtIndexAsObservedAccount*(self: KeyPairItem, index: int) {.slot.} =
     self.observedAccount = self.accounts.getItemAtIndex(index)
     self.observedAccountChanged()
+
   proc setLastAccountAsObservedAccount(self: KeyPairItem) =
     let index = self.accounts.getCount() - 1
     self.setAccountAtIndexAsObservedAccount(index)
+
   proc getAccountsModel*(self: KeyPairItem): KeyPairAccountModel =
     return self.accounts
+
   proc getAccountsAsVariant*(self: KeyPairItem): QVariant {.slot.} =
     return newQVariant(self.accounts)
+
   QtProperty[QVariant] accounts:
     read = getAccountsAsVariant
   proc removeAccountAtIndex*(self: KeyPairItem, index: int) {.slot.} =
     self.accounts.removeItemAtIndex(index)
     self.setLastAccountAsObservedAccount()
     self.operabilityChanged()
+
   proc removeAccountByAddress*(self: KeyPairItem, address: string) {.slot.} =
     self.accounts.removeItemByAddress(address)
     self.setLastAccountAsObservedAccount()
     self.operabilityChanged()
+
   proc addAccount*(self: KeyPairItem, item: KeyPairAccountItem) =
     self.accounts.addItem(item)
     self.setLastAccountAsObservedAccount()
     self.operabilityChanged()
+
   proc setAccounts*(self: KeyPairItem, items: seq[KeyPairAccountItem]) =
     self.accounts.setItems(items)
     self.setLastAccountAsObservedAccount()
     self.operabilityChanged()
+
   proc containsAccountAddress*(self: KeyPairItem, address: string): bool =
     return self.accounts.containsAccountAddress(address)
+
   proc containsAccountPath*(self: KeyPairItem, path: string): bool =
     return self.accounts.containsAccountPath(path)
-  proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairItem): bool {.slot.} =
+
+  proc containsPathOutOfTheDefaultStatusDerivationTree*(
+      self: KeyPairItem
+  ): bool {.slot.} =
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
-  proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, colorId, emoji: string) =
+
+  proc updateDetailsForAccountWithAddressIfTheyAreSet*(
+      self: KeyPairItem, address, name, colorId, emoji: string
+  ) =
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
-  proc updateAccountHiddenInTotalBalance*(self: KeyPairItem, address: string, hideFromTotalBalance: bool) =
+
+  proc updateAccountHiddenInTotalBalance*(
+      self: KeyPairItem, address: string, hideFromTotalBalance: bool
+  ) =
     self.accounts.updateAccountHiddenInTotalBalance(address, hideFromTotalBalance)
-  proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: CurrencyAmount) =
+
+  proc setBalanceForAddress*(
+      self: KeyPairItem, address: string, balance: CurrencyAmount
+  ) =
     self.accounts.setBalanceForAddress(address, balance)
+
   proc updateOperabilityForAllAddresses*(self: KeyPairItem, operability: string) =
     self.accounts.updateOperabilityForAllAddresses(operability)
     self.operabilityChanged()

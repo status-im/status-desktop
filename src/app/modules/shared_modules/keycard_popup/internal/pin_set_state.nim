@@ -1,5 +1,4 @@
-type
-  PinSetState* = ref object of State
+type PinSetState* = ref object of State
 
 proc newPinSetState*(flowType: FlowType, backState: State): PinSetState =
   result = PinSetState()
@@ -7,10 +6,11 @@ proc newPinSetState*(flowType: FlowType, backState: State): PinSetState =
 
 proc delete*(self: PinSetState) =
   self.State.delete
-  
+
 method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
-    if controller.isProfileMnemonicBackedUp() or not controller.getSelectedKeyPairIsProfile():
+    if controller.isProfileMnemonicBackedUp() or
+        not controller.getSelectedKeyPairIsProfile():
       return createState(StateType.EnterSeedPhrase, self.flowType, nil)
     else:
       return createState(StateType.SeedPhraseDisplay, self.flowType, nil)
@@ -28,7 +28,7 @@ method getNextPrimaryState*(self: PinSetState, controller: Controller): State =
 
 method executeCancelCommand*(self: PinSetState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
-    self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
-    self.flowType == FlowType.UnlockKeycard:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      self.flowType == FlowType.SetupNewKeycardNewSeedPhrase or
+      self.flowType == FlowType.SetupNewKeycardOldSeedPhrase or
+      self.flowType == FlowType.UnlockKeycard:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

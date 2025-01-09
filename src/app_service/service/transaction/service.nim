@@ -1,4 +1,13 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, stew/shims/strformat
+import
+  Tables,
+  NimQml,
+  chronicles,
+  sequtils,
+  sugar,
+  stint,
+  strutils,
+  json,
+  stew/shims/strformat
 
 import backend/collectibles as collectibles
 import backend/transactions as transactions
@@ -24,7 +33,6 @@ import ./dtoV2
 import ./dto_conversion
 import ./router_transactions_dto
 import app_service/service/eth/utils as eth_utils
-
 
 export transaction_dto, router_transactions_dto
 export transactions.TransactionsSignatures
@@ -53,37 +61,32 @@ type TokenTransferMetadata* = object
   isOwnerToken*: bool
 
 proc `%`*(self: TokenTransferMetadata): JsonNode =
-  result = %* {
-    "tokenName": self.tokenName,
-    "isOwnerToken": self.isOwnerToken,
-  }
+  result = %*{"tokenName": self.tokenName, "isOwnerToken": self.isOwnerToken}
 
 proc toTokenTransferMetadata*(jsonObj: JsonNode): TokenTransferMetadata =
   result = TokenTransferMetadata()
   discard jsonObj.getProp("tokenName", result.tokenName)
   discard jsonObj.getProp("isOwnerToken", result.isOwnerToken)
 
-type
-  EstimatedTime* {.pure.} = enum
-    Unknown = 0
-    LessThanOneMin
-    LessThanThreeMins
-    LessThanFiveMins
-    MoreThanFiveMins
+type EstimatedTime* {.pure.} = enum
+  Unknown = 0
+  LessThanOneMin
+  LessThanThreeMins
+  LessThanFiveMins
+  MoreThanFiveMins
 
-type
-  TransactionMinedArgs* = ref object of Args
-    data*: string
-    transactionHash*: string
-    chainId*: int
-    success*: bool
-    txType*: SendType
-    fromAddress*: string
-    toAddress*: string
-    fromTokenKey*: string
-    fromAmount*: string
-    toTokenKey*: string
-    toAmount*: string
+type TransactionMinedArgs* = ref object of Args
+  data*: string
+  transactionHash*: string
+  chainId*: int
+  success*: bool
+  txType*: SendType
+  fromAddress*: string
+  toAddress*: string
+  fromTokenKey*: string
+  fromAmount*: string
+  toTokenKey*: string
+  toAmount*: string
 
 proc `$`*(self: TransactionMinedArgs): string =
   try:
@@ -103,37 +106,32 @@ proc `$`*(self: TransactionMinedArgs): string =
   except ValueError:
     raiseAssert "static fmt"
 
-type
-  OwnerTokenSentArgs* = ref object of Args
-    chainId*: int
-    txHash*: string
-    tokenName*: string
-    uuid*: string
-    status*: ContractTransactionStatus
+type OwnerTokenSentArgs* = ref object of Args
+  chainId*: int
+  txHash*: string
+  tokenName*: string
+  uuid*: string
+  status*: ContractTransactionStatus
 
-type
-  SuggestedRoutesArgs* = ref object of Args
-    uuid*: string
-    suggestedRoutes*: SuggestedRoutesDto
-    # this should be the only one used when old send modal code is removed
-    routes*: seq[TransactionPathDtoV2]
-    errCode*: string
-    errDescription*: string
+type SuggestedRoutesArgs* = ref object of Args
+  uuid*: string
+  suggestedRoutes*: SuggestedRoutesDto
+  # this should be the only one used when old send modal code is removed
+  routes*: seq[TransactionPathDtoV2]
+  errCode*: string
+  errDescription*: string
 
-type
-  TransactionDecodedArgs* = ref object of Args
-    dataDecoded*: string
-    txHash*: string
+type TransactionDecodedArgs* = ref object of Args
+  dataDecoded*: string
+  txHash*: string
 
-type
-  RouterTransactionsForSigningArgs* = ref object of Args
-    data*: RouterTransactionsForSigningDto
+type RouterTransactionsForSigningArgs* = ref object of Args
+  data*: RouterTransactionsForSigningDto
 
-type
-  TransactionArgs* = ref object of Args
-    status*: string
-    sendDetails*: SendDetailsDto
-    sentTransaction*: RouterSentTransaction
+type TransactionArgs* = ref object of Args
+  status*: string
+  sendDetails*: SendDetailsDto
+  sentTransaction*: RouterSentTransaction
 
 QtObject:
   type Service* = ref object of QObject
@@ -145,8 +143,20 @@ QtObject:
     uuidOfTheLastRequestForSuggestedRoutes: string
 
   ## Forward declarations
-  proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string)
-  proc sendTransactionsSignal(self: Service, sendDetails: SendDetailsDto, sentTransactions: seq[RouterSentTransaction] = @[])
+  proc suggestedRoutesReady(
+    self: Service,
+    uuid: string,
+    route: seq[TransactionPathDtoV2],
+    routeRaw: string,
+    errCode: string,
+    errDescription: string,
+  )
+
+  proc sendTransactionsSignal(
+    self: Service,
+    sendDetails: SendDetailsDto,
+    sentTransactions: seq[RouterSentTransaction] = @[],
+  )
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -167,48 +177,61 @@ QtObject:
     result.tokenService = tokenService
 
   proc init*(self: Service) =
-    self.events.on(SignalType.Wallet.event) do(e:Args):
+    self.events.on(SignalType.Wallet.event) do(e: Args):
       var data = WalletSignal(e)
-      case data.eventType:
-        of transactions.EventNonArchivalNodeDetected:
-          self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
-        of transactions.EventFetchingHistoryError:
-          self.events.emit(SIGNAL_HISTORY_ERROR, Args())
+      case data.eventType
+      of transactions.EventNonArchivalNodeDetected:
+        self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
+      of transactions.EventFetchingHistoryError:
+        self.events.emit(SIGNAL_HISTORY_ERROR, Args())
 
-    self.events.on(SignalType.WalletSuggestedRoutes.event) do(e:Args):
+    self.events.on(SignalType.WalletSuggestedRoutes.event) do(e: Args):
       var data = WalletSignal(e)
       self.tokenService.updateTokenPrices(data.updatedPrices)
-      self.suggestedRoutesReady(data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error)
+      self.suggestedRoutesReady(
+        data.uuid, data.bestRoute, data.bestRouteRaw, data.errorCode, data.error
+      )
 
-    self.events.on(SignalType.WalletRouterSendingTransactionsStarted.event) do(e:Args):
+    self.events.on(SignalType.WalletRouterSendingTransactionsStarted.event) do(e: Args):
       var data = WalletSignal(e)
-      self.events.emit(SIGNAL_SENDING_TRANSACTIONS_STARTED, TransactionArgs(
-        status: TxStatusSending,
-        sendDetails: data.routerTransactionsSendingDetails
-      ))
+      self.events.emit(
+        SIGNAL_SENDING_TRANSACTIONS_STARTED,
+        TransactionArgs(
+          status: TxStatusSending, sendDetails: data.routerTransactionsSendingDetails
+        ),
+      )
 
-    self.events.on(SignalType.WalletRouterSignTransactions.event) do(e:Args):
+    self.events.on(SignalType.WalletRouterSignTransactions.event) do(e: Args):
       var data = WalletSignal(e)
       if data.routerTransactionsForSigning.sendDetails.errorResponse.isNil and
-        not data.routerTransactionsForSigning.signingDetails.isNil:
-          self.events.emit(SIGNAL_SIGN_ROUTER_TRANSACTIONS, RouterTransactionsForSigningArgs(data: data.routerTransactionsForSigning))
-          return
+          not data.routerTransactionsForSigning.signingDetails.isNil:
+        self.events.emit(
+          SIGNAL_SIGN_ROUTER_TRANSACTIONS,
+          RouterTransactionsForSigningArgs(data: data.routerTransactionsForSigning),
+        )
+        return
       self.sendTransactionsSignal(data.routerTransactionsForSigning.sendDetails)
 
-    self.events.on(SignalType.WalletRouterTransactionsSent.event) do(e:Args):
+    self.events.on(SignalType.WalletRouterTransactionsSent.event) do(e: Args):
       var data = WalletSignal(e)
-      self.sendTransactionsSignal(data.routerSentTransactions.sendDetails, data.routerSentTransactions.sentTransactions)
+      self.sendTransactionsSignal(
+        data.routerSentTransactions.sendDetails,
+        data.routerSentTransactions.sentTransactions,
+      )
 
-    self.events.on(SignalType.WalletTransactionStatusChanged.event) do(e:Args):
+    self.events.on(SignalType.WalletTransactionStatusChanged.event) do(e: Args):
       var data = WalletSignal(e)
       if data.transactionStatusChange.isNil:
         return
       for tx in data.transactionStatusChange.sentTransactions:
-        self.events.emit(SIGNAL_TRANSACTION_STATUS_CHANGED, TransactionArgs(
-          status: data.transactionStatusChange.status,
-          sendDetails: data.transactionStatusChange.sendDetails,
-          sentTransaction: tx
-        ))
+        self.events.emit(
+          SIGNAL_TRANSACTION_STATUS_CHANGED,
+          TransactionArgs(
+            status: data.transactionStatusChange.status,
+            sendDetails: data.transactionStatusChange.sendDetails,
+            sentTransaction: tx,
+          ),
+        )
 
     # TODO: handle this for community related tx (minting, airdropping...)
     # self.events.on(PendingTransactionTypeDto.WalletTransfer.event) do(e: Args):
@@ -240,16 +263,18 @@ QtObject:
       return errorMessage
     startIndex += 8
     let endIndex = errorMessage.rfind("]")
-    return errorMessage[startIndex..endIndex-1]
+    return errorMessage[startIndex .. endIndex - 1]
 
-  proc getPendingTransactionsForType*(self: Service, transactionType: PendingTransactionTypeDto): seq[TransactionDto] =
+  proc getPendingTransactionsForType*(
+      self: Service, transactionType: PendingTransactionTypeDto
+  ): seq[TransactionDto] =
     let allPendingTransactions = self.getPendingTransactions()
     return allPendingTransactions.filter(x => x.typeValue == $transactionType)
 
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
-    if(success):
+    if (success):
       let hash = watchTxResult["hash"].getStr
       let chainId = watchTxResult["chainId"].getInt
       let address = watchTxResult["address"].getStr
@@ -268,12 +293,25 @@ QtObject:
           toTokenKey: watchTxResult["toTokenKey"].getStr,
           toAmount: watchTxResult["toAmount"].getStr,
         )
-        self.events.emit(parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event, ev)
+        self.events.emit(
+          parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event,
+          ev,
+        )
         transactions.checkRecentHistory(@[chainId], @[address])
 
   proc watchTransaction*(
-    self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int,
-    fromTokenKey: string = "", fromAmount: string = "", toTokenKey: string = "", toAmount: string = "", txType: SendType = SendType.Transfer
+      self: Service,
+      hash: string,
+      fromAddress: string,
+      toAddress: string,
+      trxType: string,
+      data: string,
+      chainId: int,
+      fromTokenKey: string = "",
+      fromAmount: string = "",
+      toTokenKey: string = "",
+      toAmount: string = "",
+      txType: SendType = SendType.Transfer,
   ) =
     let arg = WatchTransactionTaskArg(
       chainId: chainId,
@@ -314,31 +352,47 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc sendTransactionsSignal(self: Service, sendDetails: SendDetailsDto, sentTransactions: seq[RouterSentTransaction] = @[]) =
+  proc sendTransactionsSignal(
+      self: Service,
+      sendDetails: SendDetailsDto,
+      sentTransactions: seq[RouterSentTransaction] = @[],
+  ) =
     # While preparing the tx in the Send modal user cannot see the address, it's revealed once the tx is sent
     # (there are few places where we display the toast from and link to the etherscan where the address can be seen)
     # that's why we need to mark the addresses as shown here (safer).
-    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: @[sendDetails.fromAddress, sendDetails.toAddress]))
+    self.events.emit(
+      MARK_WALLET_ADDRESSES_AS_SHOWN,
+      WalletAddressesArgs(addresses: @[sendDetails.fromAddress, sendDetails.toAddress]),
+    )
 
     if sentTransactions.len == 0:
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionArgs(sendDetails: sendDetails))
+      self.events.emit(
+        SIGNAL_TRANSACTION_SENT, TransactionArgs(sendDetails: sendDetails)
+      )
       return
 
     for tx in sentTransactions:
       if sendDetails.ownerTokenBeingSent:
-        self.events.emit(SIGNAL_OWNER_TOKEN_SENT, OwnerTokenSentArgs(
-          chainId: tx.fromChain,
-          txHash: tx.hash,
-          uuid: sendDetails.uuid,
-          tokenName: tx.fromToken,
-          status: ContractTransactionStatus.InProgress
-        ))
+        self.events.emit(
+          SIGNAL_OWNER_TOKEN_SENT,
+          OwnerTokenSentArgs(
+            chainId: tx.fromChain,
+            txHash: tx.hash,
+            uuid: sendDetails.uuid,
+            tokenName: tx.fromToken,
+            status: ContractTransactionStatus.InProgress,
+          ),
+        )
       else:
-        self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionArgs(
-          status: TxStatusSending, # here should be TxStatusPending state, but that's not what Figma wants
-          sendDetails: sendDetails,
-          sentTransaction: tx
-        ))
+        self.events.emit(
+          SIGNAL_TRANSACTION_SENT,
+          TransactionArgs(
+            status: TxStatusSending,
+              # here should be TxStatusPending state, but that's not what Figma wants
+            sendDetails: sendDetails,
+            sentTransaction: tx,
+          ),
+        )
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:
@@ -347,7 +401,14 @@ QtObject:
     except Exception as e:
       error "Error getting suggested fees", msg = e.msg
 
-  proc suggestedRoutesReady(self: Service, uuid: string, route: seq[TransactionPathDtoV2], routeRaw: string, errCode: string, errDescription: string) =
+  proc suggestedRoutesReady(
+      self: Service,
+      uuid: string,
+      route: seq[TransactionPathDtoV2],
+      routeRaw: string,
+      errCode: string,
+      errDescription: string,
+  ) =
     if self.uuidOfTheLastRequestForSuggestedRoutes != uuid:
       return
 
@@ -361,29 +422,33 @@ QtObject:
       amountToReceive: getTotalAmountToReceive(oldRoute),
       toNetworks: getToNetworksList(oldRoute),
     )
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(
-      uuid: uuid,
-      suggestedRoutes: suggestedDto,
-      routes: route,
-      errCode: errCode,
-      errDescription: errDescription
-    ))
+    self.events.emit(
+      SIGNAL_SUGGESTED_ROUTES_READY,
+      SuggestedRoutesArgs(
+        uuid: uuid,
+        suggestedRoutes: suggestedDto,
+        routes: route,
+        errCode: errCode,
+        errDescription: errDescription,
+      ),
+    )
 
-  proc suggestedRoutes*(self: Service,
-    uuid: string,
-    sendType: SendType,
-    accountFrom: string,
-    accountTo: string,
-    token: string,
-    tokenIsOwnerToken: bool,
-    amountIn: string,
-    toToken: string = "",
-    amountOut: string = "",
-    disabledFromChainIDs: seq[int] = @[],
-    disabledToChainIDs: seq[int] = @[],
-    lockedInAmounts: Table[string, string] = initTable[string, string](),
-    extraParamsTable: Table[string, string] = initTable[string, string]()) =
-
+  proc suggestedRoutes*(
+      self: Service,
+      uuid: string,
+      sendType: SendType,
+      accountFrom: string,
+      accountTo: string,
+      token: string,
+      tokenIsOwnerToken: bool,
+      amountIn: string,
+      toToken: string = "",
+      amountOut: string = "",
+      disabledFromChainIDs: seq[int] = @[],
+      disabledToChainIDs: seq[int] = @[],
+      lockedInAmounts: Table[string, string] = initTable[string, string](),
+      extraParamsTable: Table[string, string] = initTable[string, string](),
+  ) =
     self.uuidOfTheLastRequestForSuggestedRoutes = uuid
 
     let
@@ -393,21 +458,37 @@ QtObject:
       amountOutHex = "0x" & eth_utils.stripLeadingZeros(bigAmountOut.toHex)
 
     try:
-      let res = eth.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+      let res = eth.suggestedRoutesAsync(
+        uuid,
+        ord(sendType),
+        accountFrom,
+        accountTo,
+        amountInHex,
+        amountOutHex,
+        token,
+        tokenIsOwnerToken,
+        toToken,
+        disabledFromChainIDs,
+        disabledToChainIDs,
+        lockedInAmounts,
+        extraParamsTable,
+      )
     except CatchableError as e:
-      error "suggestedRoutes", exception=e.msg
+      error "suggestedRoutes", exception = e.msg
       self.suggestedRoutesReady(uuid, @[], "", $InternalErrorCode, e.msg)
 
   proc stopSuggestedRoutesAsyncCalculation*(self: Service) =
     try:
       discard eth.stopSuggestedRoutesAsyncCalculation()
     except CatchableError as e:
-      error "stopSuggestedRoutesAsyncCalculation", exception=e.msg
+      error "stopSuggestedRoutesAsyncCalculation", exception = e.msg
 
-  proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
+  proc getEstimatedTime*(
+      self: Service, chainId: int, maxFeePerGas: string
+  ): EstimatedTime =
     try:
-      let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas).result.getInt
+      let response =
+        backend.getTransactionEstimatedTime(chainId, maxFeePerGas).result.getInt
       return EstimatedTime(response)
     except Exception as e:
       error "Error estimating transaction time", message = e.msg
@@ -437,35 +518,39 @@ proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =
     error "error: ", errDescription
     return
 
-proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
+proc signMessage*(
+    self: Service, address: string, hashedPassword: string, hashedMessage: string
+): tuple[res: string, err: string] =
   var signMsgRes: JsonNode
-  let err = wallet.signMessage(signMsgRes,
-    hashedMessage,
-    address,
-    hashedPassword)
+  let err = wallet.signMessage(signMsgRes, hashedMessage, address, hashedPassword)
   if err.len > 0:
-    error "status-go - wallet_signMessage failed", err=err
+    error "status-go - wallet_signMessage failed", err = err
     result.err = err
     return
   result.res = signMsgRes.getStr
   return
 
-proc buildTransactionsFromRoute*(self: Service, uuid: string, slippagePercentage: float): string =
+proc buildTransactionsFromRoute*(
+    self: Service, uuid: string, slippagePercentage: float
+): string =
   var response: JsonNode
   let err = transactions.buildTransactionsFromRoute(response, uuid, slippagePercentage)
   if err.len > 0:
-    error "status-go - transfer failed", err=err
+    error "status-go - transfer failed", err = err
     return err
   if response.kind != JNull:
     error "unexpected transfer response"
     return "unexpected transfer response"
   return ""
 
-proc sendRouterTransactionsWithSignatures*(self: Service, uuid: string, signatures: TransactionsSignatures): string =
+proc sendRouterTransactionsWithSignatures*(
+    self: Service, uuid: string, signatures: TransactionsSignatures
+): string =
   var response: JsonNode
-  let err = transactions.sendRouterTransactionsWithSignatures(response, uuid, signatures)
+  let err =
+    transactions.sendRouterTransactionsWithSignatures(response, uuid, signatures)
   if err.len > 0:
-    error "status-go - wallet_sendRouterTransactionsWithSignatures failed", err=err
+    error "status-go - wallet_sendRouterTransactionsWithSignatures failed", err = err
     return err
   if response.kind != JNull:
     error "unexpected sending transactions response"

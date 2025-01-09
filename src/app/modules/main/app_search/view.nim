@@ -3,11 +3,10 @@ import result_model, location_menu_model
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      searchResultModel: result_model.Model
-      locationMenuModel: location_menu_model.Model
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    searchResultModel: result_model.Model
+    locationMenuModel: location_menu_model.Model
 
   proc delete*(self: View) =
     self.searchResultModel.delete
@@ -45,7 +44,9 @@ QtObject:
   proc prepareLocationMenuModel*(self: View) {.slot.} =
     self.delegate.prepareLocationMenuModel()
 
-  proc setSearchLocation*(self: View, location: string = "", subLocation: string = "") {.slot.} =
+  proc setSearchLocation*(
+      self: View, location: string = "", subLocation: string = ""
+  ) {.slot.} =
     self.delegate.setSearchLocation(location, subLocation)
 
   proc getSearchLocationObject*(self: View): string {.slot.} =

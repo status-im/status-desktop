@@ -15,7 +15,6 @@ template benchmark*(benchmarkName: string, code: untyped) =
     let elapsedStr = elapsed.formatFloat(format = ffDecimal, precision = 10)
     echo "CPU Time [", benchmarkName, "] ", elapsedStr, "s"
 
-
 # Thread safe benchmarking tools
 # There are two ways to use this module:
 # 1. Use the benchmark benchmarkProc macro to benchmark a block of code. It will automatically call registerDuration with the name of the procedure and the start and end time
@@ -40,7 +39,7 @@ template benchmark*(benchmarkName: string, code: untyped) =
 #  defer: registerDuration("custom test3", cpuTime, cpuTime())
 #  sleep(1)
 
-type 
+type
   ProcBenchmark* = object
     numRuns*: int
     totalTime*: float
@@ -53,9 +52,10 @@ type
     len*: int
     maxLen*: int
 
-  BenchmarkResult = tuple[procName: string, numRuns: int, totalTime: float, weight: float]
+  BenchmarkResult =
+    tuple[procName: string, numRuns: int, totalTime: float, weight: float]
 
-var 
+var
   lock: Lock
   benchmarkResults: ptr SharedProcBenchmarkArr
 
@@ -64,7 +64,7 @@ proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.
 
 proc quitCallback() {.noconv.}
 proc initBenchmarking() {.gcsafe.}
-proc deinitBenchmarking() 
+proc deinitBenchmarking()
 proc aggregateData(): seq[BenchmarkResult]
 proc writeToFile(resultsToWrite: seq[BenchmarkResult])
 proc resultCmp(x, y: BenchmarkResult): int
@@ -75,19 +75,18 @@ addQuitProc(quitCallback)
 macro benchmarkProc*(procDef: untyped): untyped =
   procDef.expectKind(nnkProcDef)
 
-  let
-    procName = procDef[0].toStrLit
-  
-  let 
-    startingBenchmark = quote do:
-      let startTime = cpuTime()
-      defer: registerDuration(`procName`, startTime, cpuTime())
+  let procName = procDef[0].toStrLit
+
+  let startingBenchmark = quote:
+    let startTime = cpuTime()
+    defer:
+      registerDuration(`procName`, startTime, cpuTime())
 
   procDef.body.insert(0, startingBenchmark)
   return procDef
 
 proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.} =
-  if(benchmarkResults == nil):
+  if (benchmarkResults == nil):
     initBenchmarking()
 
   withLock lock:
@@ -99,14 +98,16 @@ proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.
         found = true
       if found:
         break
-    
+
     if not found:
       if benchmarkResults.len == benchmarkResults.maxLen:
         benchmarkResults.maxLen = benchmarkResults.maxLen * 2
-        benchmarkResults.data = cast[ptr UncheckedArray[ProcBenchmarkPtr]](reallocShared(benchmarkResults.data, sizeof(ProcBenchmark) * benchmarkResults.maxLen))
+        benchmarkResults.data = cast[ptr UncheckedArray[ProcBenchmarkPtr]](reallocShared(
+          benchmarkResults.data, sizeof(ProcBenchmark) * benchmarkResults.maxLen
+        ))
 
       var newProcBenchmark = cast[ProcBenchmarkPtr](allocShared(sizeof(ProcBenchmark)))
-      var namePtr = cast[cstring](allocShared(name.len+1))
+      var namePtr = cast[cstring](allocShared(name.len + 1))
       copyMem(namePtr, name.cstring, name.len)
       namePtr[name.len] = '\0'
 
@@ -115,11 +116,10 @@ proc registerDuration*(name: string, startTime: float, endTime: float) {.gcsafe.
       newProcBenchmark.totalTime = endTime - startTime
       benchmarkResults.data[benchmarkResults.len] = newProcBenchmark
       benchmarkResults.len += 1
-      
+
 proc quitCallback() {.noconv.} =
   echo "Benchmarking quit callback"
-  var 
-    results = aggregateData()
+  var results = aggregateData()
   results.writeToFile()
   deinitBenchmarking()
 
@@ -131,10 +131,13 @@ proc initBenchmarking() {.gcsafe.} =
     if benchmarkResults != nil:
       return
 
-    benchmarkResults = cast[ptr SharedProcBenchmarkArr](allocShared(sizeof(SharedProcBenchmarkArr)))
+    benchmarkResults =
+      cast[ptr SharedProcBenchmarkArr](allocShared(sizeof(SharedProcBenchmarkArr)))
     benchmarkResults.len = 0
     benchmarkResults.maxLen = 1000
-    benchmarkResults.data = cast[ptr UncheckedArray[ProcBenchmarkPtr]](allocShared(sizeof(ProcBenchmark) * benchmarkResults.maxLen))
+    benchmarkResults.data = cast[ptr UncheckedArray[ProcBenchmarkPtr]](allocShared(
+      sizeof(ProcBenchmark) * benchmarkResults.maxLen
+    ))
 
 proc deinitBenchmarking() =
   echo "Benchmarking deinit"
@@ -144,7 +147,7 @@ proc deinitBenchmarking() =
 
     for i in 0 ..< benchmarkResults.len:
       deallocShared(benchmarkResults.data[i].procName)
-    
+
     deallocShared(benchmarkResults.data)
     deallocShared(benchmarkResults)
     benchmarkResults = nil
@@ -156,12 +159,18 @@ proc aggregateData(): seq[BenchmarkResult] =
   withLock lock:
     for i in 0 ..< benchmarkResults.len:
       totalWeight += benchmarkResults.data[i].totalTime
-      result.add(($(benchmarkResults.data[i].procName), benchmarkResults.data[i].numRuns, benchmarkResults.data[i].totalTime, 0.0))
+      result.add(
+        (
+          $(benchmarkResults.data[i].procName),
+          benchmarkResults.data[i].numRuns,
+          benchmarkResults.data[i].totalTime,
+          0.0,
+        )
+      )
 
   result.sort(resultCmp)
   for i in 0 ..< result.len:
     result[i].weight = result[i].totalTime / totalWeight
-
 
 proc writeToFile(resultsToWrite: seq[BenchmarkResult]) =
   echo "Benchmarking - write to file"
@@ -173,11 +182,11 @@ proc writeToFile(resultsToWrite: seq[BenchmarkResult]) =
     return
   file.writeLine("Procedure, Number of runs, Total time in ms, Avg time in ms, Weight")
   for entry in resultsToWrite:
-    file.writeLine(entry.procName & 
-                  "," & $entry.numRuns & 
-                  "," & $(entry.totalTime * 1000) & 
-                  "," & $((entry.totalTime / entry.numRuns.float) * 1000) & 
-                  "," & $(entry.weight * 100) & "%")
+    file.writeLine(
+      entry.procName & "," & $entry.numRuns & "," & $(entry.totalTime * 1000) & "," &
+        $((entry.totalTime / entry.numRuns.float) * 1000) & "," & $(entry.weight * 100) &
+        "%"
+    )
   file.close()
 
 proc resultCmp(x, y: BenchmarkResult): int =

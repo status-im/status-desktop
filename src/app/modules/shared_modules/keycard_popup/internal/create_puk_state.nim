@@ -1,5 +1,4 @@
-type
-  CreatePukState* = ref object of State
+type CreatePukState* = ref object of State
 
 proc newCreatePukState*(flowType: FlowType, backState: State): CreatePukState =
   result = CreatePukState()
@@ -7,7 +6,7 @@ proc newCreatePukState*(flowType: FlowType, backState: State): CreatePukState =
 
 proc delete*(self: CreatePukState) =
   self.State.delete
-  
+
 method executeCancelCommand*(self: CreatePukState, controller: Controller) =
   if self.flowType == FlowType.ChangeKeycardPuk:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)

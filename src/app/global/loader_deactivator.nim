@@ -3,10 +3,7 @@ import std/deques
 
 const MAX_CHATS_IN_MEMORY = 5
 
-type
-  ChatInMemory = tuple
-    sectionId: string
-    chatId: string
+type ChatInMemory = tuple[sectionId: string, chatId: string]
 
 QtObject:
   type LoaderDeactivator* = ref object of QObject
@@ -19,18 +16,19 @@ QtObject:
   proc delete*(self: LoaderDeactivator) =
     self.QObject.delete
 
-  proc newLoaderDeactivator*():
-    LoaderDeactivator =
+  proc newLoaderDeactivator*(): LoaderDeactivator =
     new(result, delete)
     result.setup
 
   proc newChatInMemory(sectionId, chatId: string): ChatInMemory =
     (sectionId, chatId)
 
-  proc addChatInMemory*(self: LoaderDeactivator, sectionId, chatId: string): ChatInMemory =
+  proc addChatInMemory*(
+      self: LoaderDeactivator, sectionId, chatId: string
+  ): ChatInMemory =
     if self.keepInMemory.contains(newChatInMemory(sectionId, chatId)):
       return
-    
+
     self.keepInMemory.addFirst(newChatInMemory(sectionId, chatId))
 
     if self.keepInMemory.len > MAX_CHATS_IN_MEMORY:

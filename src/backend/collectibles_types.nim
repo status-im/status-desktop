@@ -6,9 +6,9 @@ include app_service/common/json_utils
 
 # follows the ContractType declared in status go status-go/services/wallet/common/const.go
 type ContractType* {.pure.} = enum
-  ContractTypeUnknown = 0,
-  ContractTypeERC20 = 1,
-  ContractTypeERC721 = 2,
+  ContractTypeUnknown = 0
+  ContractTypeERC20 = 1
+  ContractTypeERC721 = 2
   ContractTypeERC1155 = 3
 
 type
@@ -24,7 +24,10 @@ type
 
   # see status-go/services/wallet/collectibles/service.go CollectibleDataType
   CollectibleDataType* {.pure.} = enum
-    UniqueID, Header, Details, CommunityHeader
+    UniqueID
+    Header
+    Details
+    CommunityHeader
 
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleTrait
   CollectibleTrait* = ref object of RootObj
@@ -64,7 +67,7 @@ type
 
   Collectible* = ref object of RootObj
     dataType*: CollectibleDataType
-    id* : CollectibleUniqueID
+    id*: CollectibleUniqueID
     collectibleData*: Option[CollectibleData]
     collectionData*: Option[CollectionData]
     communityData*: Option[CommunityData]
@@ -99,9 +102,9 @@ type
 
   # Mirrors status-go/multiaccounts/settings_wallet/database.go CollectiblePreferencesType
   CollectiblePreferencesItemType* {.pure.} = enum
-    NonCommunityCollectible = 1,
-    CommunityCollectible,
-    Collection,
+    NonCommunityCollectible = 1
+    CommunityCollectible
+    Collection
     Community
 
   # Mirrors status-go/multiaccounts/settings_wallet/database.go CollectiblePreferences
@@ -113,14 +116,14 @@ type
 
 # ContractID
 proc `$`*(self: ContractID): string =
-  return fmt"""ContractID(
+  return
+    fmt"""ContractID(
     chainID:{self.chainID},
     address:{self.address}
   )"""
 
 proc `==`*(a, b: ContractID): bool =
-  result = a.chainID == b.chainID and
-    a.address == b.address
+  result = a.chainID == b.chainID and a.address == b.address
 
 proc `%`*(t: ContractID): JsonNode {.inline.} =
   result = newJObject()
@@ -160,14 +163,14 @@ proc isContractID*(t: string): bool =
 
 # CollectibleUniqueID
 proc `$`*(self: CollectibleUniqueID): string =
-  return fmt"""CollectibleUniqueID(
+  return
+    fmt"""CollectibleUniqueID(
     contractID:{self.contractID},
     tokenID:{self.tokenID}
   )"""
 
 proc `==`*(a, b: CollectibleUniqueID): bool =
-  result = a.contractID == b.contractID and
-    a.tokenID == b.tokenID
+  result = a.contractID == b.contractID and a.tokenID == b.tokenID
 
 proc `%`*(t: CollectibleUniqueID): JsonNode {.inline.} =
   result = newJObject()
@@ -177,12 +180,16 @@ proc `%`*(t: CollectibleUniqueID): JsonNode {.inline.} =
 proc `%`*(t: ref CollectibleUniqueID): JsonNode {.inline.} =
   return %(t[])
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleUniqueID]): CollectibleUniqueID {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectibleUniqueID]
+): CollectibleUniqueID {.inline.} =
   result = CollectibleUniqueID()
   result.contractID = fromJson(t["contractID"], ContractID)
   result.tokenID = stint.parse(t["tokenID"].getStr(), UInt256)
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleUniqueID]): ref CollectibleUniqueID {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[ref CollectibleUniqueID]
+): ref CollectibleUniqueID {.inline.} =
   result = new(CollectibleUniqueID)
   result[] = fromJson(t, CollectibleUniqueID)
 
@@ -192,36 +199,39 @@ proc toString*(t: CollectibleUniqueID): string =
 proc toCollectibleUniqueID*(t: string): CollectibleUniqueID =
   var parts = t.split("+")
   return CollectibleUniqueID(
-    contractID: ContractID(
-        chainID: parts[0].parseInt(),
-        address: parts[1]
-      ),
-    tokenID: stint.parse(parts[2], UInt256)
+    contractID: ContractID(chainID: parts[0].parseInt(), address: parts[1]),
+    tokenID: stint.parse(parts[2], UInt256),
   )
 
 # CollectibleTrait
 proc `$`*(self: CollectibleTrait): string =
-  return fmt"""CollectibleTrait(
+  return
+    fmt"""CollectibleTrait(
     trait_type:{self.trait_type},
     value:{self.value},
     display_type:{self.display_type},
     max_value:{self.max_value}
   )"""
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleTrait]): CollectibleTrait {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectibleTrait]
+): CollectibleTrait {.inline.} =
   result = CollectibleTrait()
   result.trait_type = t["trait_type"].getStr()
   result.value = t["value"].getStr()
   result.display_type = t["display_type"].getStr()
   result.max_value = t["max_value"].getStr()
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleTrait]): ref CollectibleTrait {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[ref CollectibleTrait]
+): ref CollectibleTrait {.inline.} =
   result = new(CollectibleTrait)
   result[] = fromJson(t, CollectibleTrait)
 
 # CollectionData
 proc `$`*(self: CollectionData): string =
-  return fmt"""CollectionData(
+  return
+    fmt"""CollectionData(
     name:{self.name},
     slug:{self.slug},
     imageUrl:{self.imageUrl}
@@ -231,7 +241,8 @@ proc `$`*(self: CollectionData): string =
 
 # CollectionSocials
 proc `$`*(self: CollectionSocials): string =
-  return fmt"""CollectionSocials(
+  return
+    fmt"""CollectionSocials(
     website:{self.website},
     twitterHandle:{self.twitterHandle},
   )"""
@@ -249,7 +260,8 @@ proc fromJson*(t: JsonNode, T: typedesc[ref CollectionData]): ref CollectionData
 
 # CollectibleData
 proc `$`*(self: CollectibleData): string =
-  return fmt"""CollectibleData(
+  return
+    fmt"""CollectibleData(
     name:{self.name},
     description:{self.description},
     imageUrl:{self.imageUrl},
@@ -305,13 +317,16 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData =
   else:
     result.backgroundColor = none(string)
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleData]): ref CollectibleData {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[ref CollectibleData]
+): ref CollectibleData {.inline.} =
   result = new(CollectibleData)
   result[] = fromJson(t, CollectibleData)
 
 # CommunityData
 proc `$`*(self: CommunityData): string =
-  return fmt"""CommunityData(
+  return
+    fmt"""CommunityData(
     id:{self.id},
     name:{self.name},
     color:{self.color},
@@ -331,13 +346,16 @@ proc fromJson*(t: JsonNode, T: typedesc[CommunityData]): CommunityData =
   else:
     result.imageUrl = none(string)
 
-proc fromJson*(t: JsonNode, T: typedesc[ref CommunityData]): ref CommunityData {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[ref CommunityData]
+): ref CommunityData {.inline.} =
   result = new(CommunityData)
   result[] = fromJson(t, CommunityData)
 
 # AccountBalance
 proc `$`*(self: AccountBalance): string =
-  return fmt"""AccountBalance(
+  return
+    fmt"""AccountBalance(
     address:{self.address},
     balance:{self.balance},
     txTimestamp:{self.txTimestamp}
@@ -346,16 +364,19 @@ proc `$`*(self: AccountBalance): string =
 proc getAccountBalances(jsonAsset: JsonNode): seq[AccountBalance] =
   var balanceList: seq[AccountBalance] = @[]
   for item in jsonAsset.getElems():
-      balanceList.add(AccountBalance(
-          address: item{"address"}.getStr,
-          balance: stint.parse(item{"balance"}.getStr, Uint256),
-          txTimestamp: item{"txTimestamp"}.getInt
-      ))
+    balanceList.add(
+      AccountBalance(
+        address: item{"address"}.getStr,
+        balance: stint.parse(item{"balance"}.getStr, Uint256),
+        txTimestamp: item{"txTimestamp"}.getInt,
+      )
+    )
   return balanceList
 
 # Collectible
 proc `$`*(self: Collectible): string =
-  return fmt"""Collectible(
+  return
+    fmt"""Collectible(
     dataType:{self.dataType},
     id:{self.id},
     collectibleData:{self.collectibleData},
@@ -418,7 +439,8 @@ proc toIds(self: seq[Collectible]): seq[CollectibleUniqueID] =
 
 # CollectibleBalance
 proc `$`*(self: CollectibleBalance): string =
-  return fmt"""CollectibleBalance(
+  return
+    fmt"""CollectibleBalance(
     tokenId:{self.tokenId},
     balance:{self.balance}
     """
@@ -426,15 +448,18 @@ proc `$`*(self: CollectibleBalance): string =
 proc getCollectibleBalances*(jsonAsset: JsonNode): seq[CollectibleBalance] =
   var balanceList: seq[CollectibleBalance] = @[]
   for item in jsonAsset.items:
-      balanceList.add(CollectibleBalance(
-          tokenId: stint.parse(item{"tokenId"}.getStr, Uint256),
-          balance: stint.parse(item{"balance"}.getStr, Uint256)
-      ))
+    balanceList.add(
+      CollectibleBalance(
+        tokenId: stint.parse(item{"tokenId"}.getStr, Uint256),
+        balance: stint.parse(item{"balance"}.getStr, Uint256),
+      )
+    )
   return balanceList
 
 # CollectibleOwner
 proc `$`*(self: CollectibleOwner): string =
-  return fmt"""CollectibleOwner(
+  return
+    fmt"""CollectibleOwner(
     address:{self.address},
     balances:{self.balances}
     """
@@ -442,7 +467,7 @@ proc `$`*(self: CollectibleOwner): string =
 proc getCollectibleOwner*(jsonAsset: JsonNode): CollectibleOwner =
   return CollectibleOwner(
     address: jsonAsset{"ownerAddress"}.getStr,
-    balances: getCollectibleBalances(jsonAsset{"tokenBalances"})
+    balances: getCollectibleBalances(jsonAsset{"tokenBalances"}),
   )
 
 proc `%`*(self: CollectibleOwner): JsonNode {.inline.} =
@@ -453,32 +478,38 @@ proc `%`*(self: CollectibleOwner): JsonNode {.inline.} =
 proc getCollectibleOwners(jsonAsset: JsonNode): seq[CollectibleOwner] =
   var ownerList: seq[CollectibleOwner] = @[]
   for item in jsonAsset.items:
-      ownerList.add(getCollectibleOwner(item))
+    ownerList.add(getCollectibleOwner(item))
   return ownerList
 
 # CollectibleContractOwnership
 proc `$`*(self: CollectibleContractOwnership): string =
-  return fmt"""CollectibleContractOwnership(
+  return
+    fmt"""CollectibleContractOwnership(
     contractAddress:{self.contractAddress},
     owners:{self.owners}
     """
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleContractOwnership]): CollectibleContractOwnership {.inline.} =
-    return CollectibleContractOwnership(
-        contractAddress: t{"contractAddress"}.getStr,
-        owners: getCollectibleOwners(t{"owners"})
-    )
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectibleContractOwnership]
+): CollectibleContractOwnership {.inline.} =
+  return CollectibleContractOwnership(
+    contractAddress: t{"contractAddress"}.getStr,
+    owners: getCollectibleOwners(t{"owners"}),
+  )
 
 # CollectiblePreferences
 proc `$`*(self: CollectiblePreferences): string =
-  return fmt"""CollectiblePreferences(
+  return
+    fmt"""CollectiblePreferences(
     type:{self.itemType},
     key:{self.key},
     position:{self.position},
     visible:{self.visible}
     """
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectiblePreferences]): CollectiblePreferences {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectiblePreferences]
+): CollectiblePreferences {.inline.} =
   result = CollectiblePreferences()
   result.itemType = t{"type"}.getInt().CollectiblePreferencesItemType
   discard t.getProp("key", result.key)
@@ -492,13 +523,17 @@ proc `%`*(cp: CollectiblePreferences): JsonNode {.inline.} =
   result["position"] = %cp.position
   result["visible"] = %cp.visible
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectionSocials]): CollectionSocials {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectionSocials]
+): CollectionSocials {.inline.} =
   result = CollectionSocials()
   if t.kind != JNull:
     result.website = t["website"].getStr()
     result.twitterHandle = t["twitter_handle"].getStr()
 
-proc fromJson*(t: JsonNode, T: typedesc[CollectionSocialsMessage]): CollectionSocialsMessage {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[CollectionSocialsMessage]
+): CollectionSocialsMessage {.inline.} =
   result = CollectionSocialsMessage()
   result.socials = fromJson(t["socials"], CollectionSocials)
   result.id = fromJson(t["id"], ContractID)

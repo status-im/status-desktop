@@ -4,26 +4,25 @@ import ./backend/transactions
 
 const MultiTransactionMissingID* = 0
 
-type
-  MultiTransactionItem* = object
-    id: int
-    timestamp: int
-    fromAddress: string
-    toAddress: string
-    fromAsset: string
-    toAsset: string
-    fromAmount: string
-    multiTxType: MultiTransactionType
+type MultiTransactionItem* = object
+  id: int
+  timestamp: int
+  fromAddress: string
+  toAddress: string
+  fromAsset: string
+  toAsset: string
+  fromAmount: string
+  multiTxType: MultiTransactionType
 
 proc initMultiTransactionItem*(
-  id: int,
-  timestamp: int,
-  fromAddress: string,
-  toAddress: string,
-  fromAsset: string,
-  toAsset: string,
-  fromAmount: string,
-  multiTxType: MultiTransactionType,
+    id: int,
+    timestamp: int,
+    fromAddress: string,
+    toAddress: string,
+    fromAsset: string,
+    toAsset: string,
+    fromAmount: string,
+    multiTxType: MultiTransactionType,
 ): MultiTransactionItem =
   result.id = id
   result.timestamp = timestamp
@@ -35,7 +34,8 @@ proc initMultiTransactionItem*(
   result.multiTxType = multiTxType
 
 proc `$`*(self: MultiTransactionItem): string =
-  result = fmt"""MultiTransactionItem(
+  result =
+    fmt"""MultiTransactionItem(
     id: {self.id},
     timestamp: {self.timestamp},
     fromAddress: {self.fromAddress},

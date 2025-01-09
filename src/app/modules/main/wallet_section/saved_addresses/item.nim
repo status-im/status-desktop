@@ -2,22 +2,21 @@ import stew/shims/strformat
 
 import app_service/common/account_constants
 
-type
-  Item* = object
-    name: string
-    address: string
-    mixedcaseAddress: string
-    ens: string
-    colorId: string
-    isTest: bool
+type Item* = object
+  name: string
+  address: string
+  mixedcaseAddress: string
+  ens: string
+  colorId: string
+  isTest: bool
 
 proc initItem*(
-  name: string,
-  address: string,
-  mixedcaseAddress: string,
-  ens: string,
-  colorId: string,
-  isTest: bool
+    name: string,
+    address: string,
+    mixedcaseAddress: string,
+    ens: string,
+    colorId: string,
+    isTest: bool,
 ): Item =
   result.name = name
   result.address = address
@@ -27,7 +26,8 @@ proc initItem*(
   result.isTest = isTest
 
 proc `$`*(self: Item): string =
-  result = fmt"""SavedAddressItem(
+  result =
+    fmt"""SavedAddressItem(
     name: {self.name},
     address: {self.address},
     mixedcaseAddress: {self.mixedcaseAddress},

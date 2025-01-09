@@ -1,5 +1,4 @@
-type
-  NoPCSCServiceState* = ref object of State
+type NoPCSCServiceState* = ref object of State
 
 proc newNoPCSCServiceState*(flowType: FlowType, backState: State): NoPCSCServiceState =
   result = NoPCSCServiceState()
@@ -11,9 +10,17 @@ proc delete*(self: NoPCSCServiceState) =
 method executeCancelCommand*(self: NoPCSCServiceState, controller: Controller) =
   controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method executePrePrimaryStateCommand*(self: NoPCSCServiceState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: NoPCSCServiceState, controller: Controller
+) =
   controller.reRunCurrentFlow()
 
-method resolveKeycardNextState*(self: NoPCSCServiceState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: NoPCSCServiceState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  return ensureReaderAndCardPresenceAndResolveNextState(
+    self, keycardFlowType, keycardEvent, controller
+  )

@@ -1,16 +1,14 @@
 import NimQml, Tables, strutils, sequtils, logging
 
-type
-  ModelRole {.pure.} = enum
-    AddressRole = UserRole + 1
-    HasNameRole
+type ModelRole {.pure.} = enum
+  AddressRole = UserRole + 1
+  HasNameRole
 
 QtObject:
-  type
-    RecipientsModel* = ref object of QAbstractListModel
-      addresses*: seq[string]
-      # TODO: store resolved names here along addresses
-      hasMore: bool
+  type RecipientsModel* = ref object of QAbstractListModel
+    addresses*: seq[string]
+    # TODO: store resolved names here along addresses
+    hasMore: bool
 
   proc delete(self: RecipientsModel) =
     self.QAbstractListModel.delete
@@ -39,10 +37,7 @@ QtObject:
     return self.addresses.len
 
   method roleNames(self: RecipientsModel): Table[int, string] =
-    {
-      ModelRole.AddressRole.int:"address",
-      ModelRole.HasNameRole.int:"hasName"
-    }.toTable
+    {ModelRole.AddressRole.int: "address", ModelRole.HasNameRole.int: "hasName"}.toTable
 
   method data(self: RecipientsModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -54,7 +49,7 @@ QtObject:
     let address = self.addresses[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.AddressRole:
       result = newQVariant(address)
     of ModelRole.HasNameRole:
@@ -67,19 +62,24 @@ QtObject:
     self.hasMore = hasMore
     self.hasMoreChanged()
 
-  proc addAddresses*(self: RecipientsModel, newAddresses: seq[string], offset: int, hasMore: bool) =
+  proc addAddresses*(
+      self: RecipientsModel, newAddresses: seq[string], offset: int, hasMore: bool
+  ) =
     if offset == 0:
       self.beginResetModel()
       self.addresses = newAddresses
       self.endResetModel()
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
+      defer:
+        parentModelIndex.delete
 
       if offset != self.addresses.len:
         error "offset != self.addresses.len"
         return
-      self.beginInsertRows(parentModelIndex, self.addresses.len, self.addresses.len + newAddresses.len - 1)
+      self.beginInsertRows(
+        parentModelIndex, self.addresses.len, self.addresses.len + newAddresses.len - 1
+      )
       self.addresses.add(newAddresses)
       self.endInsertRows()
 
@@ -92,4 +92,3 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
-

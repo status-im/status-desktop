@@ -2,23 +2,21 @@ import NimQml, Tables
 
 import item
 
-type
-  ModelRole {.pure.} = enum
-    Id = UserRole + 1
-    Name
-    Description
-    Fees
-    LogoUrl
-    Hostname
-    SupportsSinglePurchase
-    SupportsRecurrentPurchase
-    SupportedAssets
-    UrlsNeedParameters
+type ModelRole {.pure.} = enum
+  Id = UserRole + 1
+  Name
+  Description
+  Fees
+  LogoUrl
+  Hostname
+  SupportsSinglePurchase
+  SupportsRecurrentPurchase
+  SupportedAssets
+  UrlsNeedParameters
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      list: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    list: seq[Item]
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete
@@ -35,16 +33,16 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Id.int:"id",
-      ModelRole.Name.int:"name",
-      ModelRole.Description.int:"description",
-      ModelRole.Fees.int:"fees",
-      ModelRole.LogoUrl.int:"logoUrl",
-      ModelRole.Hostname.int:"hostname",
-      ModelRole.SupportsSinglePurchase.int:"supportsSinglePurchase",
-      ModelRole.SupportsRecurrentPurchase.int:"supportsRecurrentPurchase",
-      ModelRole.SupportedAssets.int:"supportedAssets",
-      ModelRole.UrlsNeedParameters.int:"urlsNeedParameters"
+      ModelRole.Id.int: "id",
+      ModelRole.Name.int: "name",
+      ModelRole.Description.int: "description",
+      ModelRole.Fees.int: "fees",
+      ModelRole.LogoUrl.int: "logoUrl",
+      ModelRole.Hostname.int: "hostname",
+      ModelRole.SupportsSinglePurchase.int: "supportsSinglePurchase",
+      ModelRole.SupportsRecurrentPurchase.int: "supportsRecurrentPurchase",
+      ModelRole.SupportedAssets.int: "supportedAssets",
+      ModelRole.UrlsNeedParameters.int: "urlsNeedParameters",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -57,7 +55,7 @@ QtObject:
     let item = self.list[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Id:
       result = newQVariant(item.getId)
     of ModelRole.Name:

@@ -31,7 +31,7 @@ QtObject:
     self.idChanged()
 
   proc getId(self: ActiveItem): string {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return ""
     return self.item.id
 
@@ -40,7 +40,7 @@ QtObject:
     notify = idChanged
 
   proc getName(self: ActiveItem): string {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return ""
     return self.item.name
 
@@ -48,7 +48,7 @@ QtObject:
     read = getName
 
   proc getMemberRole(self: ActiveItem): int {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return MemberRole.None.int
     return self.item.memberRole.int
 
@@ -56,7 +56,7 @@ QtObject:
     read = getMemberRole
 
   proc getIcon(self: ActiveItem): string {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return ""
     return self.item.icon
 
@@ -64,7 +64,7 @@ QtObject:
     read = getIcon
 
   proc getColor(self: ActiveItem): string {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return ""
     return self.item.color
 
@@ -72,7 +72,7 @@ QtObject:
     read = getColor
 
   proc getDescription(self: ActiveItem): string {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return ""
     return self.item.description
 
@@ -80,7 +80,7 @@ QtObject:
     read = getDescription
 
   proc getType(self: ActiveItem): int {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return 0
     return self.item.`type`
 
@@ -88,7 +88,7 @@ QtObject:
     read = getType
 
   proc getHasUnreadMessages(self: ActiveItem): bool {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return false
     return self.item.hasUnreadMessages
 
@@ -96,7 +96,7 @@ QtObject:
     read = getHasUnreadMessages
 
   proc getNotificationCount(self: ActiveItem): int {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return 0
     return self.item.notificationsCount
 
@@ -104,21 +104,23 @@ QtObject:
     read = getNotificationCount
 
   proc getMuted(self: ActiveItem): bool {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return false
     return self.item.muted
+
   QtProperty[bool] muted:
     read = getMuted
 
   proc getBlocked(self: ActiveItem): bool {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return false
     return self.item.blocked
+
   QtProperty[bool] blocked:
     read = getBlocked
 
   proc getPosition(self: ActiveItem): int {.slot.} =
-    if(self.item.isNil):
+    if (self.item.isNil):
       return 0
     return self.item.position
 

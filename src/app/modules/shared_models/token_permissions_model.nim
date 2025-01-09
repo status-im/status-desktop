@@ -4,16 +4,15 @@ import token_permission_chat_list_item
 import token_permission_chat_list_model
 import token_criteria_model
 
-type
-  ModelRole {.pure.} = enum
-    Id = UserRole + 1
-    Key
-    Type
-    TokenCriteria
-    ChatList
-    IsPrivate
-    TokenCriteriaMet
-    State
+type ModelRole {.pure.} = enum
+  Id = UserRole + 1
+  Key
+  Type
+  TokenCriteria
+  ChatList
+  IsPrivate
+  TokenCriteriaMet
+  State
 
 QtObject:
   type TokenPermissionsModel* = ref object of QAbstractListModel
@@ -32,14 +31,14 @@ QtObject:
 
   method roleNames(self: TokenPermissionsModel): Table[int, string] =
     {
-      ModelRole.Id.int:"id",
-      ModelRole.Key.int:"key",
-      ModelRole.Type.int:"permissionType",
-      ModelRole.TokenCriteria.int:"holdingsListModel",
-      ModelRole.ChatList.int:"channelsListModel",
-      ModelRole.IsPrivate.int:"isPrivate",
-      ModelRole.TokenCriteriaMet.int:"tokenCriteriaMet",
-      ModelRole.State.int:"permissionState",
+      ModelRole.Id.int: "id",
+      ModelRole.Key.int: "key",
+      ModelRole.Type.int: "permissionType",
+      ModelRole.TokenCriteria.int: "holdingsListModel",
+      ModelRole.ChatList.int: "channelsListModel",
+      ModelRole.IsPrivate.int: "isPrivate",
+      ModelRole.TokenCriteriaMet.int: "tokenCriteriaMet",
+      ModelRole.State.int: "permissionState",
     }.toTable
 
   proc countChanged(self: TokenPermissionsModel) {.signal.}
@@ -52,7 +51,7 @@ QtObject:
 
   proc findIndexById(self: TokenPermissionsModel, id: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].getId() == id):
+      if (self.items[i].getId() == id):
         return i
     return -1
 
@@ -61,9 +60,11 @@ QtObject:
       let item = self.items[i]
       item.getChatList().renameChatById(chatId, newName)
 
-  proc belongsToChat*(self: TokenPermissionsModel, permissionId: string, chatId: string): bool {.slot.} =
+  proc belongsToChat*(
+      self: TokenPermissionsModel, permissionId: string, chatId: string
+  ): bool {.slot.} =
     let idx = self.findIndexById(permissionId)
-    if(idx == -1):
+    if (idx == -1):
       return false
 
     for clItem in self.items[idx].chatList.getItems():
@@ -82,27 +83,28 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
-      of ModelRole.Id:
-        result = newQVariant(item.getId())
-      of ModelRole.Key:
-        result = newQVariant(item.getId())
-      of ModelRole.Type:
-        result = newQVariant(item.getType())
-      of ModelRole.TokenCriteria:
-        result = newQVariant(item.getTokenCriteria())
-      of ModelRole.ChatList:
-        result = newQVariant(item.getChatList())
-      of ModelRole.IsPrivate:
-        result = newQVariant(item.getIsPrivate())
-      of ModelRole.TokenCriteriaMet:
-        result = newQVariant(item.getTokenCriteriaMet())
-      of ModelRole.State:
-        result = newQVariant(item.getState())
+    case enumRole
+    of ModelRole.Id:
+      result = newQVariant(item.getId())
+    of ModelRole.Key:
+      result = newQVariant(item.getId())
+    of ModelRole.Type:
+      result = newQVariant(item.getType())
+    of ModelRole.TokenCriteria:
+      result = newQVariant(item.getTokenCriteria())
+    of ModelRole.ChatList:
+      result = newQVariant(item.getChatList())
+    of ModelRole.IsPrivate:
+      result = newQVariant(item.getIsPrivate())
+    of ModelRole.TokenCriteriaMet:
+      result = newQVariant(item.getTokenCriteriaMet())
+    of ModelRole.State:
+      result = newQVariant(item.getState())
 
   proc addItem*(self: TokenPermissionsModel, item: TokenPermissionItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -119,29 +121,34 @@ QtObject:
 
   proc removeItemWithId*(self: TokenPermissionsModel, permissionId: string) =
     let idx = self.findIndexById(permissionId)
-    if(idx == -1):
+    if (idx == -1):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
     self.endRemoveRows()
     self.countChanged()
 
-  proc getItemById*(self: TokenPermissionsModel, permissionId: string): TokenPermissionItem =
+  proc getItemById*(
+      self: TokenPermissionsModel, permissionId: string
+  ): TokenPermissionItem =
     let idx = self.findIndexById(permissionId)
-    if(idx == -1):
+    if (idx == -1):
       return
 
     return self.items[idx]
 
   proc tokenCriteriaUpdated(self: TokenPermissionsModel) {.signal.}
 
-  proc updateItem*(self: TokenPermissionsModel, permissionId: string, item: TokenPermissionItem) =
+  proc updateItem*(
+      self: TokenPermissionsModel, permissionId: string, item: TokenPermissionItem
+  ) =
     let idx = self.findIndexById(permissionId)
-    if(idx == -1):
+    if (idx == -1):
       return
 
     self.items[idx].`type` = item.`type`
@@ -152,13 +159,14 @@ QtObject:
     self.items[idx].state = item.state
 
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.Type.int,
-      ModelRole.TokenCriteria.int,
-      ModelRole.ChatList.int,
-      ModelRole.IsPrivate.int,
-      ModelRole.TokenCriteriaMet.int,
-      ModelRole.State.int
-    ])
+    defer:
+      index.delete
+    self.dataChanged(
+      index,
+      index,
+      @[
+        ModelRole.Type.int, ModelRole.TokenCriteria.int, ModelRole.ChatList.int,
+        ModelRole.IsPrivate.int, ModelRole.TokenCriteriaMet.int, ModelRole.State.int,
+      ],
+    )
     self.tokenCriteriaUpdated()

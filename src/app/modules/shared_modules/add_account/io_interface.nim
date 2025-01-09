@@ -4,13 +4,14 @@ import ../../../../app_service/service/accounts/dto/generated_accounts
 import ../../../../app_service/service/wallet_account/dto/derived_address_dto
 from ../../../../app_service/service/keycard/service import KeycardEvent
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loadForAddingAccount*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
+method loadForAddingAccount*(
+    self: AccessInterface, addingWatchOnlyAccount: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method loadForEditingAccount*(self: AccessInterface, address: string) {.base.} =
@@ -49,7 +50,9 @@ method finalizeAction*(self: AccessInterface) {.base.} =
 method authenticateForEditingDerivationPath*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+method onUserAuthenticated*(
+    self: AccessInterface, pin: string, password: string, keyUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method changeSelectedOrigin*(self: AccessInterface, keyUid: string) {.base.} =
@@ -76,23 +79,37 @@ method validSeedPhrase*(self: AccessInterface, seedPhrase: string): bool {.base.
 method resetDerivationPath*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDerivedAddressesFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+method onDerivedAddressesFetched*(
+    self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDerivedAddressesFromMnemonicFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+method onDerivedAddressesFromMnemonicFetched*(
+    self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAddressesFromNotImportedMnemonicFetched*(self: AccessInterface, derivations: Table[string, DerivedAccountDetails], error: string) {.base.} =
+method onAddressesFromNotImportedMnemonicFetched*(
+    self: AccessInterface,
+    derivations: Table[string, DerivedAccountDetails],
+    error: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAddressDetailsFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+method onAddressDetailsFetched*(
+    self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method startScanningForActivity*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDerivedAddressesFromKeycardFetched*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent,
-  paths: seq[string]) {.base.} =
+method onDerivedAddressesFromKeycardFetched*(
+    self: AccessInterface,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    paths: seq[string],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method buildNewPrivateKeyKeypairAndAddItToOrigin*(self: AccessInterface) {.base.} =
@@ -104,10 +121,14 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*(self: AccessInterface) {.base.
 method removingSavedAddressConfirmed*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressDeleted*(self: AccessInterface, address: string, errorMsg: string) {.base.} =
+method savedAddressDeleted*(
+    self: AccessInterface, address: string, errorMsg: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isChecksumValidForAddress*(self: AccessInterface, address: string): bool {.base.} =
+method isChecksumValidForAddress*(
+    self: AccessInterface, address: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
@@ -119,7 +140,7 @@ method remainingKeypairCapacity*(self: AccessInterface): int {.base.} =
 method remainingWatchOnlyAccountCapacity*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-type
-  DelegateInterface* = concept c
-    c.onAddAccountModuleLoaded()
-    c.destroyAddAccountPopup()
+type DelegateInterface* =
+  concept c
+      c.onAddAccountModuleLoaded()
+      c.destroyAddAccountPopup()

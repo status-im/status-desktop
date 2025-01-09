@@ -1,7 +1,8 @@
-type
-  MigrateKeypairToAppState* = ref object of State
+type MigrateKeypairToAppState* = ref object of State
 
-proc newMigrateKeypairToAppState*(flowType: FlowType, backState: State): MigrateKeypairToAppState =
+proc newMigrateKeypairToAppState*(
+    flowType: FlowType, backState: State
+): MigrateKeypairToAppState =
   result = MigrateKeypairToAppState()
   result.setup(flowType, StateType.MigrateKeypairToApp, backState)
 
@@ -12,6 +13,8 @@ method executeCancelCommand*(self: MigrateKeypairToAppState, controller: Control
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 
-method getNextPrimaryState*(self: MigrateKeypairToAppState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: MigrateKeypairToAppState, controller: Controller
+): State =
   if self.flowType == FlowType.MigrateFromKeycardToApp:
     return createState(StateType.EnterSeedPhrase, self.flowType, self)

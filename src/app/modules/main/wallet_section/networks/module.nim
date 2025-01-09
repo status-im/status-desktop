@@ -11,26 +11,27 @@ import app_service/service/network/combined_network_item
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  networkService: networkService.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    networkService: networkService.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, networkService, walletAccountService, settingsService)
+  result.controller = controller.newController(
+    result, events, networkService, walletAccountService, settingsService
+  )
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("networksModule", result.viewVariant)
@@ -69,19 +70,31 @@ method toggleTestNetworksEnabled*(self: Module) =
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
 
-method updateNetworkEndPointValues*(self: Module, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
-  self.controller.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+method updateNetworkEndPointValues*(
+    self: Module,
+    chainId: int,
+    testNetwork: bool,
+    newMainRpcInput, newFailoverRpcUrl: string,
+    revertToDefault: bool,
+) =
+  self.controller.updateNetworkEndPointValues(
+    chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault
+  )
 
 method fetchChainIdForUrl*(self: Module, url: string, isMainUrl: bool) =
   self.controller.fetchChainIdForUrl(url, isMainUrl)
 
-method chainIdFetchedForUrl*(self: Module, url: string, chainId: int, success: bool, isMainUrl: bool) =
+method chainIdFetchedForUrl*(
+    self: Module, url: string, chainId: int, success: bool, isMainUrl: bool
+) =
   self.view.chainIdFetchedForUrl(url, chainId, success, isMainUrl)
 
 # Interfaces for getting lists from the service files into the abstract models
 
 method getNetworksDataSource*(self: Module): NetworksDataSource =
   return (
-    getFlatNetworksList: proc(): var seq[NetworkItem] = self.controller.getFlatNetworks(),
-    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] = self.controller.getCombinedNetworks()
+    getFlatNetworksList: proc(): var seq[NetworkItem] =
+      self.controller.getFlatNetworks(),
+    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] =
+      self.controller.getCombinedNetworks(),
   )

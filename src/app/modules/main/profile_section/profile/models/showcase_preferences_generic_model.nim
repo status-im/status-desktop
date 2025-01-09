@@ -2,22 +2,19 @@ import NimQml, tables, strutils, sequtils, json
 
 import app_service/service/profile/dto/profile_showcase_preferences
 
-type
-  ShowcasePreferencesGenericItem* = object of RootObj
-    showcaseKey*: string
-    showcaseVisibility*: ProfileShowcaseVisibility
-    showcasePosition*: int
+type ShowcasePreferencesGenericItem* = object of RootObj
+  showcaseKey*: string
+  showcaseVisibility*: ProfileShowcaseVisibility
+  showcasePosition*: int
 
-type
-  ModelRole {.pure.} = enum
-    ShowcaseKey
-    ShowcaseVisibility
-    ShowcasePosition
+type ModelRole {.pure.} = enum
+  ShowcaseKey
+  ShowcaseVisibility
+  ShowcasePosition
 
 QtObject:
-  type
-    ShowcasePreferencesGenericModel* = ref object of QAbstractListModel
-      items: seq[ShowcasePreferencesGenericItem]
+  type ShowcasePreferencesGenericModel* = ref object of QAbstractListModel
+    items: seq[ShowcasePreferencesGenericItem]
 
   proc delete(self: ShowcasePreferencesGenericModel) =
     self.items = @[]
@@ -30,10 +27,14 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc items*(self: ShowcasePreferencesGenericModel): seq[ShowcasePreferencesGenericItem] =
+  proc items*(
+      self: ShowcasePreferencesGenericModel
+  ): seq[ShowcasePreferencesGenericItem] =
     self.items
 
-  method rowCount(self: ShowcasePreferencesGenericModel, index: QModelIndex = nil): int =
+  method rowCount(
+      self: ShowcasePreferencesGenericModel, index: QModelIndex = nil
+  ): int =
     return self.items.len
 
   method roleNames(self: ShowcasePreferencesGenericModel): Table[int, string] =
@@ -43,7 +44,9 @@ QtObject:
       ModelRole.ShowcasePosition.int: "showcasePosition",
     }.toTable
 
-  method data(self: ShowcasePreferencesGenericModel, index: QModelIndex, role: int): QVariant =
+  method data(
+      self: ShowcasePreferencesGenericModel, index: QModelIndex, role: int
+  ): QVariant =
     if (not index.isValid):
       return
 
@@ -53,7 +56,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ShowcaseKey:
       result = newQVariant(item.showcaseKey)
     of ModelRole.ShowcaseVisibility:
@@ -61,7 +64,9 @@ QtObject:
     of ModelRole.ShowcasePosition:
       result = newQVariant(item.showcasePosition)
 
-  proc setItems*(self: ShowcasePreferencesGenericModel, items: seq[ShowcasePreferencesGenericItem]) =
+  proc setItems*(
+      self: ShowcasePreferencesGenericModel, items: seq[ShowcasePreferencesGenericItem]
+  ) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()

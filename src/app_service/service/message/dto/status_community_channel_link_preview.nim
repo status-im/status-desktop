@@ -24,6 +24,7 @@ QtObject:
   proc channelUuidChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getChannelUuid*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
     return self.channelUuid
+
   QtProperty[string] channelUuid:
     read = getChannelUuid
     notify = channelUuidChanged
@@ -31,6 +32,7 @@ QtObject:
   proc emojiChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getEmoji*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
     return self.emoji
+
   QtProperty[string] emoji:
     read = getEmoji
     notify = emojiChanged
@@ -38,6 +40,7 @@ QtObject:
   proc displayNameChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getDisplayName*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
     return self.displayName
+
   QtProperty[string] displayName:
     read = getDisplayName
     notify = displayNameChanged
@@ -45,6 +48,7 @@ QtObject:
   proc descriptionChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getDescription*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
     return self.description
+
   QtProperty[string] description:
     read = getDescription
     notify = descriptionChanged
@@ -52,14 +56,19 @@ QtObject:
   proc colorChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getColor*(self: StatusCommunityChannelLinkPreview): string {.slot.} =
     return self.color
+
   QtProperty[string] color:
     read = getColor
     notify = colorChanged
 
-  proc getCommunity*(self: StatusCommunityChannelLinkPreview): StatusCommunityLinkPreview =
+  proc getCommunity*(
+      self: StatusCommunityChannelLinkPreview
+  ): StatusCommunityLinkPreview =
     return self.community
 
-  proc toStatusCommunityChannelLinkPreview*(jsonObj: JsonNode): StatusCommunityChannelLinkPreview =
+  proc toStatusCommunityChannelLinkPreview*(
+      jsonObj: JsonNode
+  ): StatusCommunityChannelLinkPreview =
     new(result, delete)
     result.setup()
 
@@ -68,13 +77,14 @@ QtObject:
     discard jsonObj.getProp("displayName", result.displayName)
     discard jsonObj.getProp("description", result.description)
     discard jsonObj.getProp("color", result.color)
-  
+
     var communityJsonNode: JsonNode
     if jsonObj.getProp("community", communityJsonNode):
       result.community = toStatusCommunityLinkPreview(communityJsonNode)
-  
+
   proc `$`*(self: StatusCommunityChannelLinkPreview): string =
-    return fmt"""StatusCommunityChannelLinkPreview(
+    return
+      fmt"""StatusCommunityChannelLinkPreview(
       channelUuid: {self.channelUuid},
       emoji: {self.emoji},
       displayName: {self.displayName},
@@ -84,19 +94,22 @@ QtObject:
     )"""
 
   proc `%`*(self: StatusCommunityChannelLinkPreview): JsonNode =
-    return %* {
-      "channelUuid": self.channelUuid,
-      "emoji": self.emoji,
-      "displayName": self.displayName,
-      "description": self.description,
-      "color": self.color,
-      "community": self.community
-    }
+    return
+      %*{
+        "channelUuid": self.channelUuid,
+        "emoji": self.emoji,
+        "displayName": self.displayName,
+        "description": self.description,
+        "color": self.color,
+        "community": self.community,
+      }
 
   proc empty*(self: StatusCommunityChannelLinkPreview): bool =
     return self.channelUUID.len == 0
 
-  proc setCommunityInfo*(self: StatusCommunityChannelLinkPreview, community: CommunityDto): bool =
+  proc setCommunityInfo*(
+      self: StatusCommunityChannelLinkPreview, community: CommunityDto
+  ): bool =
     if not self.community.setCommunityInfo(community):
       return false
 
@@ -104,7 +117,8 @@ QtObject:
       if chat.communityChannelUuid() != self.channelUuid:
         continue
 
-      debug "setChannelInfo", communityId = $self.community.getCommunityId(), channelUuid = $self.channelUuid
+      debug "setChannelInfo",
+        communityId = $self.community.getCommunityId(), channelUuid = $self.channelUuid
 
       if self.displayName != chat.name:
         self.displayName = chat.name

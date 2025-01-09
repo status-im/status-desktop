@@ -32,59 +32,65 @@ import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 logScope:
   topics = "main-module-controller"
 
-const UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER* = "MainModule-AuthenticateKeypair"
+const UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER* =
+  "MainModule-AuthenticateKeypair"
 const UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER* = "MainModule-SigningData"
 const UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER* = "MainModule-KeycardSyncPurpose"
-const UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER* = "MainModule-SharedKeycardModule"
+const UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER* =
+  "MainModule-SharedKeycardModule"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    settingsService: settings_service.Service
-    nodeConfigurationService: node_configuration_service.Service
-    accountsService: accounts_service.Service
-    chatService: chat_service.Service
-    communityService: community_service.Service
-    messageService: message_service.Service
-    contactsService: contacts_service.Service
-    gifService: gif_service.Service
-    privacyService: privacy_service.Service
-    mailserversService: mailservers_service.Service
-    nodeService: node_service.Service
-    communityTokensService: community_tokens_service.Service
-    activeSectionId: string
-    authenticateUserFlowRequestedBy: string
-    keycardSigningFlowRequestedBy: string
-    walletAccountService: wallet_account_service.Service
-    tokenService: token_service.Service
-    networksService: networks_service.Service
-    sharedUrlsService: urls_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  settingsService: settings_service.Service
+  nodeConfigurationService: node_configuration_service.Service
+  accountsService: accounts_service.Service
+  chatService: chat_service.Service
+  communityService: community_service.Service
+  messageService: message_service.Service
+  contactsService: contacts_service.Service
+  gifService: gif_service.Service
+  privacyService: privacy_service.Service
+  mailserversService: mailservers_service.Service
+  nodeService: node_service.Service
+  communityTokensService: community_tokens_service.Service
+  activeSectionId: string
+  authenticateUserFlowRequestedBy: string
+  keycardSigningFlowRequestedBy: string
+  walletAccountService: wallet_account_service.Service
+  tokenService: token_service.Service
+  networksService: networks_service.Service
+  sharedUrlsService: urls_service.Service
 
 # Forward declaration
-proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256
-proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256
+proc getRemainingSupply*(
+  self: Controller, chainId: int, contractAddress: string
+): Uint256
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  accountsService: accounts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  contactsService: contacts_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  privacyService: privacy_service.Service,
-  mailserversService: mailservers_service.Service,
-  nodeService: node_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  networksService: networks_service.Service,
-  sharedUrlsService: urls_service.Service
-):
-  Controller =
+proc getRemoteDestructedAmount*(
+  self: Controller, chainId: int, contractAddress: string
+): Uint256
+
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    accountsService: accounts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    contactsService: contacts_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    privacyService: privacy_service.Service,
+    mailserversService: mailservers_service.Service,
+    nodeService: node_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    networksService: networks_service.Service,
+    sharedUrlsService: urls_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -109,61 +115,37 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e:Args):
+  self.events.on(SIGNAL_ACTIVE_CHATS_LOADED) do(e: Args):
     self.delegate.onChatsLoaded(
-      self.events,
-      self.settingsService,
-      self.nodeConfigurationService,
-      self.contactsService,
-      self.chatService,
-      self.communityService,
-      self.messageService,
-      self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
-      self.sharedUrlsService,
+      self.events, self.settingsService, self.nodeConfigurationService,
+      self.contactsService, self.chatService, self.communityService,
+      self.messageService, self.mailserversService, self.walletAccountService,
+      self.tokenService, self.communityTokensService, self.sharedUrlsService,
       self.networksService,
     )
 
-  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e: Args):
     self.delegate.onCommunityDataLoaded(
-      self.events,
-      self.settingsService,
-      self.nodeConfigurationService,
-      self.contactsService,
-      self.chatService,
-      self.communityService,
-      self.messageService,
-      self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
-      self.sharedUrlsService,
+      self.events, self.settingsService, self.nodeConfigurationService,
+      self.contactsService, self.chatService, self.communityService,
+      self.messageService, self.mailserversService, self.walletAccountService,
+      self.tokenService, self.communityTokensService, self.sharedUrlsService,
       self.networksService,
     )
 
-  self.events.on(SIGNAL_CONTACTS_LOADED) do(e:Args):
+  self.events.on(SIGNAL_CONTACTS_LOADED) do(e: Args):
     self.delegate.onContactsLoaded(
-      self.events,
-      self.settingsService,
-      self.nodeConfigurationService,
-      self.contactsService,
-      self.chatService,
-      self.communityService,
-      self.messageService,
-      self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
-      self.sharedUrlsService,
+      self.events, self.settingsService, self.nodeConfigurationService,
+      self.contactsService, self.chatService, self.communityService,
+      self.messageService, self.mailserversService, self.walletAccountService,
+      self.tokenService, self.communityTokensService, self.sharedUrlsService,
       self.networksService,
     )
 
-  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e: Args):
     self.delegate.onChatsLoadingFailed()
 
-  self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):
+  self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e: Args):
     let args = ActiveMailserverChangedArgs(e)
     if args.nodeAddress == "":
       return
@@ -177,7 +159,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_MAILSERVER_NOT_WORKING) do(e: Args):
     self.delegate.emitMailserverNotWorking()
 
-  self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_JOINED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityJoined(
       args.community,
@@ -194,10 +176,10 @@ proc init*(self: Controller) =
       self.communityTokensService,
       self.sharedUrlsService,
       self.networksService,
-      setActive = args.fromUserAction
+      setActive = args.fromUserAction,
     )
 
-  self.events.on(SIGNAL_COMMUNITY_SPECTATED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_SPECTATED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityJoined(
       args.community,
@@ -214,16 +196,18 @@ proc init*(self: Controller) =
       self.communityTokensService,
       self.sharedUrlsService,
       self.networksService,
-      setActive = args.fromUserAction
+      setActive = args.fromUserAction,
     )
-    self.delegate.onFinaliseOwnershipStatusChanged(args.isPendingOwnershipRequest, args.community.id)
+    self.delegate.onFinaliseOwnershipStatusChanged(
+      args.isPendingOwnershipRequest, args.community.id
+    )
     self.delegate.communitySpectated(args.community.id)
 
-  self.events.on(TOGGLE_SECTION) do(e:Args):
+  self.events.on(TOGGLE_SECTION) do(e: Args):
     let args = ToggleSectionArgs(e)
     self.delegate.toggleSection(args.sectionType)
 
-  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityJoined(
       args.community,
@@ -240,12 +224,12 @@ proc init*(self: Controller) =
       self.communityTokensService,
       self.sharedUrlsService,
       self.networksService,
-      setActive = true
+      setActive = true,
     )
 
-  self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e: Args):
     let args = CommunityArgs(e)
-    if(args.error.len > 0):
+    if (args.error.len > 0):
       return
     self.delegate.communityJoined(
       args.community,
@@ -262,31 +246,33 @@ proc init*(self: Controller) =
       self.communityTokensService,
       self.sharedUrlsService,
       self.networksService,
-      setActive = false
+      setActive = false,
     )
 
-  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityDataImported(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_LEFT) do(e: Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityLeft(args.communityId)
 
-  self.events.on(SIGNAL_COMMUNITY_EDITED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_EDITED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityEdited(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED) do(e: Args):
     let args = CommunityMembersRevealedAccountsArgs(e)
-    self.delegate.communityMembersRevealedAccountsLoaded(args.communityId, args.membersRevealedAccounts)
+    self.delegate.communityMembersRevealedAccountsLoaded(
+      args.communityId, args.membersRevealedAccounts
+    )
 
-  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
 
-  self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_MUTED) do(e: Args):
     let args = CommunityMutedArgs(e)
     self.delegate.onCommunityMuted(args.communityId, args.muted)
 
@@ -303,7 +289,9 @@ proc init*(self: Controller) =
     self.delegate.activeSectionSet(self.activeSectionId)
 
     if args.chatId != "":
-      self.delegate.openSectionChatAndMessage(args.sectionId, args.chatId, args.messageId)
+      self.delegate.openSectionChatAndMessage(
+        args.sectionId, args.chatId, args.messageId
+      )
 
   self.events.on(SIGNAL_STATUS_URL_ACTIVATED) do(e: Args):
     var args = StatusUrlArgs(e)
@@ -326,9 +314,11 @@ proc init*(self: Controller) =
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)
 
-  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e:Args):
+  self.events.on(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED) do(e: Args):
     let args = community_service.CanceledCommunityRequestArgs(e)
-    self.delegate.communityMembershipRequestCanceled(args.communityId, args.requestId, args.pubKey)
+    self.delegate.communityMembershipRequestCanceled(
+      args.communityId, args.requestId, args.pubKey
+    )
 
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY_ACCEPTED) do(e: Args):
     var args = CommunityRequestArgs(e)
@@ -340,7 +330,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     self.delegate.onNetworkDisconnected()
 
-  self.events.on(SIGNAL_CURRENT_USER_STATUS_UPDATED) do (e: Args):
+  self.events.on(SIGNAL_CURRENT_USER_STATUS_UPDATED) do(e: Args):
     var args = CurrentUserStatusArgs(e)
     singletonInstance.userProfile.setCurrentUserStatus(args.statusType.int)
 
@@ -349,7 +339,7 @@ proc init*(self: Controller) =
     self.delegate.onChatLeft(args.chatId)
 
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
-    self.delegate.onMyRequestAdded();
+    self.delegate.onMyRequestAdded()
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
     let args = CommunityTokenDeploymentArgs(e)
@@ -361,32 +351,50 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)
-    self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.contractAddress, args.deployState)
+    self.delegate.onCommunityTokenDeployStateChanged(
+      args.communityId, args.chainId, args.contractAddress, args.deployState
+    )
 
   self.events.on(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = OwnerTokenDeployedStatusArgs(e)
-    self.delegate.onOwnerTokenDeployStateChanged(args.communityId, args.chainId, args.ownerContractAddress, args.masterContractAddress, args.deployState, args.transactionHash)
+    self.delegate.onOwnerTokenDeployStateChanged(
+      args.communityId, args.chainId, args.ownerContractAddress,
+      args.masterContractAddress, args.deployState, args.transactionHash,
+    )
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_REMOVED) do(e: Args):
     let args = CommunityTokenRemovedArgs(e)
-    self.delegate.onCommunityTokenRemoved(args.communityId, args.chainId, args.contractAddress)
+    self.delegate.onCommunityTokenRemoved(
+      args.communityId, args.chainId, args.contractAddress
+    )
 
   self.events.on(SIGNAL_BURN_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     let communityToken = args.communityToken
-    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply,
+    self.delegate.onCommunityTokenSupplyChanged(
+      communityToken.communityId,
+      communityToken.chainId,
+      communityToken.address,
+      communityToken.supply,
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
-      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
-    self.delegate.onBurnStateChanged(communityToken.communityId, communityToken.chainId, communityToken.address, args.status)
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address),
+    )
+    self.delegate.onBurnStateChanged(
+      communityToken.communityId, communityToken.chainId, communityToken.address,
+      args.status,
+    )
 
   self.events.on(SIGNAL_BURN_ACTION_RECEIVED) do(e: Args):
     let args = RemoteDestructArgs(e)
     let communityToken = args.communityToken
-    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply,
+    self.delegate.onCommunityTokenSupplyChanged(
+      communityToken.communityId,
+      communityToken.chainId,
+      communityToken.address,
+      communityToken.supply,
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
-      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address),
+    )
 
   self.events.on(SIGNAL_FINALISE_OWNERSHIP_STATUS) do(e: Args):
     let args = FinaliseOwnershipStatusArgs(e)
@@ -395,31 +403,50 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     let communityToken = args.communityToken
-    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply,
+    self.delegate.onCommunityTokenSupplyChanged(
+      communityToken.communityId,
+      communityToken.chainId,
+      communityToken.address,
+      communityToken.supply,
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
-      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
-    self.delegate.onRemoteDestructed(communityToken.communityId, communityToken.chainId, communityToken.address, args.remoteDestructAddresses)
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address),
+    )
+    self.delegate.onRemoteDestructed(
+      communityToken.communityId, communityToken.chainId, communityToken.address,
+      args.remoteDestructAddresses,
+    )
     if args.status == ContractTransactionStatus.Completed:
-      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(communityToken.communityId, communityToken.chainId, communityToken.address)
+      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(
+        communityToken.communityId, communityToken.chainId, communityToken.address
+      )
 
   self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
     let args = AirdropArgs(e)
     let communityToken = args.communityToken
-    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply,
+    self.delegate.onCommunityTokenSupplyChanged(
+      communityToken.communityId,
+      communityToken.chainId,
+      communityToken.address,
+      communityToken.supply,
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
-      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address),
+    )
     if args.status == ContractTransactionStatus.Completed:
-      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(communityToken.communityId, communityToken.chainId, communityToken.address)
+      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(
+        communityToken.communityId, communityToken.chainId, communityToken.address
+      )
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED) do(e: Args):
     let args = CommunityTokenOwnersArgs(e)
-    self.delegate.onCommunityTokenOwnersFetched(args.communityId, args.chainId, args.contractAddress, args.owners)
+    self.delegate.onCommunityTokenOwnersFetched(
+      args.communityId, args.chainId, args.contractAddress, args.owners
+    )
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_LOADING_FAILED) do(e: Args):
     let args = CommunityTokenOwnersArgs(e)
-    self.delegate.errorLoadingTokenHolders(args.communityId, args.chainId, args.contractAddress, args.error)
+    self.delegate.errorLoadingTokenHolders(
+      args.communityId, args.chainId, args.contractAddress, args.error
+    )
 
   self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING) do(e: Args):
     var args = CommunityMemberArgs(e)
@@ -427,57 +454,80 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED) do(e: Args):
     var args = CommunityMemberArgs(e)
-    self.delegate.onAcceptRequestToJoinFailed(args.communityId, args.pubKey, args.requestId)
+    self.delegate.onAcceptRequestToJoinFailed(
+      args.communityId, args.pubKey, args.requestId
+    )
 
   self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION) do(e: Args):
     var args = CommunityMemberArgs(e)
-    self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
+    self.delegate.onAcceptRequestToJoinFailedNoPermission(
+      args.communityId, args.pubKey, args.requestId
+    )
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
     var args = CommunityMemberArgs(e)
-    self.delegate.onAcceptRequestToJoinSuccess(args.communityId, args.pubKey, args.requestId)
+    self.delegate.onAcceptRequestToJoinSuccess(
+      args.communityId, args.pubKey, args.requestId
+    )
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_STATUS_CHANGED) do(e: Args):
     let args = CommunityMemberStatusUpdatedArgs(e)
-    self.delegate.onMembershipStateUpdated(args.communityId, args.memberPubkey, args.state)
+    self.delegate.onMembershipStateUpdated(
+      args.communityId, args.memberPubkey, args.state
+    )
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:
-      self.delegate.onSharedKeycarModuleKeycardSyncPurposeTerminated(args.lastStepInTheCurrentFlow)
+      self.delegate.onSharedKeycarModuleKeycardSyncPurposeTerminated(
+        args.lastStepInTheCurrentFlow
+      )
       self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED, Args())
       return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER:
-      self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow, args.continueWithNextFlow,
-        args.forceFlow, args.continueWithKeyUid, args.returnToFlow)
+      self.delegate.onSharedKeycarModuleFlowTerminated(
+        args.lastStepInTheCurrentFlow, args.continueWithNextFlow, args.forceFlow,
+        args.continueWithKeyUid, args.returnToFlow,
+      )
       return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER and
-      self.keycardSigningFlowRequestedBy.len > 0:
-        self.delegate.onSharedKeycarModuleForAuthenticationOrSigningTerminated(args.lastStepInTheCurrentFlow)
-        let data = SharedKeycarModuleArgs(uniqueIdentifier: self.keycardSigningFlowRequestedBy,
-          pin: args.pin,
-          keyUid: args.keyUid,
-          keycardUid: args.keycardUid,
-          path: args.path,
-          r: args.r,
-          s: args.s,
-          v: args.v)
-        self.keycardSigningFlowRequestedBy = ""
-        self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED, data)
-        return
+        self.keycardSigningFlowRequestedBy.len > 0:
+      self.delegate.onSharedKeycarModuleForAuthenticationOrSigningTerminated(
+        args.lastStepInTheCurrentFlow
+      )
+      let data = SharedKeycarModuleArgs(
+        uniqueIdentifier: self.keycardSigningFlowRequestedBy,
+        pin: args.pin,
+        keyUid: args.keyUid,
+        keycardUid: args.keycardUid,
+        path: args.path,
+        r: args.r,
+        s: args.s,
+        v: args.v,
+      )
+      self.keycardSigningFlowRequestedBy = ""
+      self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED, data)
+      return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER and
-      self.authenticateUserFlowRequestedBy.len > 0:
-        self.delegate.onSharedKeycarModuleForAuthenticationOrSigningTerminated(args.lastStepInTheCurrentFlow)
-        let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
-          password: args.password,
-          pin: args.pin,
-          keyUid: args.keyUid,
-          keycardUid: args.keycardUid,
-          additinalPathsDetails: args.additinalPathsDetails)
-        self.authenticateUserFlowRequestedBy = ""
-        ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
-        self.events.emit(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS, ImportAccountsArgs(keyUid: data.keyUid, password: data.password))
-        self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
+        self.authenticateUserFlowRequestedBy.len > 0:
+      self.delegate.onSharedKeycarModuleForAuthenticationOrSigningTerminated(
+        args.lastStepInTheCurrentFlow
+      )
+      let data = SharedKeycarModuleArgs(
+        uniqueIdentifier: self.authenticateUserFlowRequestedBy,
+        password: args.password,
+        pin: args.pin,
+        keyUid: args.keyUid,
+        keycardUid: args.keycardUid,
+        additinalPathsDetails: args.additinalPathsDetails,
+      )
+      self.authenticateUserFlowRequestedBy = ""
+      ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
+      self.events.emit(
+        SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS,
+        ImportAccountsArgs(keyUid: data.keyUid, password: data.password),
+      )
+      self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
     let args = SharedKeycarModuleBaseArgs(e)
@@ -485,23 +535,28 @@ proc init*(self: Controller) =
       self.delegate.onDisplayKeycardSharedModuleFlow()
       return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER and
-      self.keycardSigningFlowRequestedBy.len > 0:
-        self.delegate.onDisplayKeycardSharedModuleForAuthenticationOrSigning()
-        return
+        self.keycardSigningFlowRequestedBy.len > 0:
+      self.delegate.onDisplayKeycardSharedModuleForAuthenticationOrSigning()
+      return
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER and
-      self.authenticateUserFlowRequestedBy.len > 0:
-        self.delegate.onDisplayKeycardSharedModuleForAuthenticationOrSigning()
-        return
+        self.authenticateUserFlowRequestedBy.len > 0:
+      self.delegate.onDisplayKeycardSharedModuleForAuthenticationOrSigning()
+      return
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA) do(e: Args):
     let args = SharedKeycarModuleSigningArgs(e)
     self.keycardSigningFlowRequestedBy = args.uniqueIdentifier
-    self.delegate.runAuthenticationOrSigningPopup(keycard_shared_module.FlowType.Sign, args.keyUid, @[args.path], args.dataToSign)
+    self.delegate.runAuthenticationOrSigningPopup(
+      keycard_shared_module.FlowType.Sign, args.keyUid, @[args.path], args.dataToSign
+    )
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER) do(e: Args):
     let args = SharedKeycarModuleAuthenticationArgs(e)
     self.authenticateUserFlowRequestedBy = args.uniqueIdentifier
-    self.delegate.runAuthenticationOrSigningPopup(keycard_shared_module.FlowType.Authentication, args.keyUid, args.additionalBip44Paths)
+    self.delegate.runAuthenticationOrSigningPopup(
+      keycard_shared_module.FlowType.Authentication, args.keyUid,
+      args.additionalBip44Paths,
+    )
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -512,7 +567,9 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
     let args = CommunityTokensDetailsArgs(e)
-    self.delegate.onCommunityTokensDetailsLoaded(args.communityId, args.communityTokens, args.communityTokenJsonItems)
+    self.delegate.onCommunityTokensDetailsLoaded(
+      args.communityId, args.communityTokens, args.communityTokenJsonItems
+    )
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.onAppNetworkChanged()
@@ -548,35 +605,43 @@ proc setActiveSectionId*(self: Controller, sectionId: string) =
 proc getAllChats*(self: Controller): seq[ChatDto] =
   result = self.chatService.getAllChats()
 
-proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string, sectionIsMuted: bool):
-    tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
-  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId, sectionIsMuted)
+proc sectionUnreadMessagesAndMentionsCount*(
+    self: Controller, communityId: string, sectionIsMuted: bool
+): tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
+  return
+    self.chatService.sectionUnreadMessagesAndMentionsCount(communityId, sectionIsMuted)
 
 proc setCurrentUserStatus*(self: Controller, status: StatusType) =
-  if(self.settingsService.saveSendStatusUpdates(status)):
+  if (self.settingsService.saveSendStatusUpdates(status)):
     singletonInstance.userProfile.setCurrentUserStatus(status.int)
-    self.contactsService.emitCurrentUserStatusChanged(self.settingsService.getCurrentUserStatus())
+    self.contactsService.emitCurrentUserStatusChanged(
+      self.settingsService.getCurrentUserStatus()
+    )
   else:
     error "error updating user status"
 
 proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getContactNameAndImage*(
+    self: Controller, contactId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
 
-proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
+proc resolveENS*(
+    self: Controller, ensName: string, uuid: string = "", reason: string = ""
+) =
   self.contactsService.resolveENS(ensName, uuid, reason)
 
 proc isMnemonicBackedUp*(self: Controller): bool =
   result = self.privacyService.isMnemonicBackedUp()
 
 proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
-  let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
+  let data =
+    ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
 proc getJoinedAndSpectatedCommunities*(self: Controller): seq[CommunityDto] =
@@ -594,34 +659,50 @@ proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpda
 proc getCommunityTokensDetailsAsync*(self: Controller, communityId: string) =
   self.communityTokensService.getCommunityTokensDetailsAsync(communityId)
 
-proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
-  return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)
+proc getCommunityTokenOwners*(
+    self: Controller, communityId: string, chainId: int, contractAddress: string
+): seq[CommunityCollectibleOwner] =
+  return self.communityTokensService.getCommunityTokenOwners(
+    communityId, chainId, contractAddress
+  )
 
-proc getCommunityTokenOwnerName*(self: Controller, contractOwnerAddress: string): string =
+proc getCommunityTokenOwnerName*(
+    self: Controller, contractOwnerAddress: string
+): string =
   return self.communityTokensService.contractOwnerName(contractOwnerAddress)
 
-proc getCommunityTokenBurnState*(self: Controller, chainId: int, contractAddress: string): ContractTransactionStatus =
-  return self.communityTokensService.getCommunityTokenBurnState(chainId, contractAddress)
+proc getCommunityTokenBurnState*(
+    self: Controller, chainId: int, contractAddress: string
+): ContractTransactionStatus =
+  return
+    self.communityTokensService.getCommunityTokenBurnState(chainId, contractAddress)
 
-proc getRemoteDestructedAddresses*(self: Controller, chainId: int, contractAddress: string): seq[string] =
-  return self.communityTokensService.getRemoteDestructedAddresses(chainId, contractAddress)
+proc getRemoteDestructedAddresses*(
+    self: Controller, chainId: int, contractAddress: string
+): seq[string] =
+  return
+    self.communityTokensService.getRemoteDestructedAddresses(chainId, contractAddress)
 
-proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256 =
+proc getRemainingSupply*(
+    self: Controller, chainId: int, contractAddress: string
+): Uint256 =
   return self.communityTokensService.getRemainingSupply(chainId, contractAddress)
 
-proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256 =
+proc getRemoteDestructedAmount*(
+    self: Controller, chainId: int, contractAddress: string
+): Uint256 =
   return self.communityTokensService.getRemoteDestructedAmount(chainId, contractAddress)
 
-proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
+proc getNetworkByChainId*(self: Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
-proc getAppNetwork*(self:Controller): NetworkItem =
+proc getAppNetwork*(self: Controller): NetworkItem =
   self.networksService.getAppNetwork()
 
-proc slowdownArchivesImport*(self:Controller) =
+proc slowdownArchivesImport*(self: Controller) =
   communityService.slowdownArchivesImport()
 
-proc speedupArchivesImport*(self:Controller) =
+proc speedupArchivesImport*(self: Controller) =
   communityService.speedupArchivesImport()
 
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
@@ -633,13 +714,19 @@ proc getColorId*(self: Controller, pubkey: string): int =
 proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: string) =
   self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)
 
-proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
+proc asyncGetRevealedAccountsForMember*(
+    self: Controller, communityId, memberPubkey: string
+) =
   self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
 
-proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
+proc asyncReevaluateCommunityMembersPermissions*(
+    self: Controller, communityId: string
+) =
   self.communityService.asyncReevaluateCommunityMembersPermissions(communityId)
 
-proc startTokenHoldersManagement*(self: Controller, chainId: int, contractAddress: string) =
+proc startTokenHoldersManagement*(
+    self: Controller, chainId: int, contractAddress: string
+) =
   self.communityTokensService.startTokenHoldersManagement(chainId, contractAddress)
 
 proc stopTokenHoldersManagement*(self: Controller) =

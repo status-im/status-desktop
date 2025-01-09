@@ -1,8 +1,21 @@
-import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
+import
+  NimQml,
+  tables,
+  json,
+  sequtils,
+  stew/shims/strformat,
+  marshal,
+  times,
+  chronicles,
+  stint,
+  browsers,
+  strutils
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
-import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
+import
+  app/modules/shared_models/
+    [user_item, member_item, member_model, section_item, section_model, section_details]
 import app/modules/shared_models/[color_hash_item, color_hash_model]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config as conf
@@ -130,70 +143,63 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string)
 proc checkIfWeHaveNotifications[T](self: Module[T])
-proc createMemberItem[T](self: Module[T], memberId: string, requestId: string, state: MembershipRequestState, role: MemberRole, airdropAddress: string = ""): MemberItem
+proc createMemberItem[T](
+  self: Module[T],
+  memberId: string,
+  requestId: string,
+  state: MembershipRequestState,
+  role: MemberRole,
+  airdropAddress: string = "",
+): MemberItem
 
 proc newModule*[T](
-  delegate: T,
-  events: EventEmitter,
-  urlsManager: UrlsManager,
-  keychainService: keychain_service.Service,
-  accountsService: accounts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  tokenService: token_service.Service,
-  collectibleService: collectible_service.Service,
-  currencyService: currency_service.Service,
-  rampService: ramp_service.Service,
-  transactionService: transaction_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  profileService: profile_service.Service,
-  settingsService: settings_service.Service,
-  contactsService: contacts_service.Service,
-  aboutService: about_service.Service,
-  languageService: language_service.Service,
-  privacyService: privacy_service.Service,
-  providerService: provider_service.Service,
-  stickersService: stickers_service.Service,
-  activityCenterService: activity_center_service.Service,
-  savedAddressService: saved_address_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  devicesService: devices_service.Service,
-  mailserversService: mailservers_service.Service,
-  nodeService: node_service.Service,
-  gifService: gif_service.Service,
-  ensService: ens_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  networkService: network_service.Service,
-  generalService: general_service.Service,
-  keycardService: keycard_service.Service,
-  networkConnectionService: network_connection_service.Service,
-  sharedUrlsService: urls_service.Service,
-  threadpool: ThreadPool
+    delegate: T,
+    events: EventEmitter,
+    urlsManager: UrlsManager,
+    keychainService: keychain_service.Service,
+    accountsService: accounts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    tokenService: token_service.Service,
+    collectibleService: collectible_service.Service,
+    currencyService: currency_service.Service,
+    rampService: ramp_service.Service,
+    transactionService: transaction_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    profileService: profile_service.Service,
+    settingsService: settings_service.Service,
+    contactsService: contacts_service.Service,
+    aboutService: about_service.Service,
+    languageService: language_service.Service,
+    privacyService: privacy_service.Service,
+    providerService: provider_service.Service,
+    stickersService: stickers_service.Service,
+    activityCenterService: activity_center_service.Service,
+    savedAddressService: saved_address_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    devicesService: devices_service.Service,
+    mailserversService: mailservers_service.Service,
+    nodeService: node_service.Service,
+    gifService: gif_service.Service,
+    ensService: ens_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    networkService: network_service.Service,
+    generalService: general_service.Service,
+    keycardService: keycard_service.Service,
+    networkConnectionService: network_connection_service.Service,
+    sharedUrlsService: urls_service.Service,
+    threadpool: ThreadPool,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
-    result,
-    events,
-    settingsService,
-    nodeConfigurationService,
-    accountsService,
-    chatService,
-    communityService,
-    contactsService,
-    messageService,
-    gifService,
-    privacyService,
-    mailserversService,
-    nodeService,
-    communityTokensService,
-    walletAccountService,
-    tokenService,
-    networkService,
-    sharedUrlsService,
+    result, events, settingsService, nodeConfigurationService, accountsService,
+    chatService, communityService, contactsService, messageService, gifService,
+    privacyService, mailserversService, nodeService, communityTokensService,
+    walletAccountService, tokenService, networkService, sharedUrlsService,
   )
   result.moduleLoaded = false
   result.chatsLoaded = false
@@ -213,32 +219,45 @@ proc newModule*[T](
   result.stickersService = stickersService
 
   # Submodules
-  result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
+  result.chatSectionModules =
+    initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
-    result, events, tokenService, collectibleService, currencyService,
-    rampService, transactionService, walletAccountService,
-    settingsService, savedAddressService, networkService, accountsService,
-    keycardService, nodeService, networkConnectionService, devicesService,
-    communityTokensService, threadpool
+    result, events, tokenService, collectibleService, currencyService, rampService,
+    transactionService, walletAccountService, settingsService, savedAddressService,
+    networkService, accountsService, keycardService, nodeService,
+    networkConnectionService, devicesService, communityTokensService, threadpool,
   )
   result.profileSectionModule = profile_section_module.newModule(
-    result, events, accountsService, settingsService, stickersService,
-    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService, keycardService, keychainService, tokenService, nodeService
+    result, events, accountsService, settingsService, stickersService, profileService,
+    contactsService, aboutService, languageService, privacyService,
+    nodeConfigurationService, devicesService, mailserversService, chatService,
+    ensService, walletAccountService, generalService, communityService, networkService,
+    keycardService, keychainService, tokenService, nodeService,
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService,
-    networkService, tokenService)
+  result.stickersModule = stickers_module.newModule(
+    result, events, stickersService, settingsService, walletAccountService,
+    networkService, tokenService,
+  )
   result.gifsModule = gifs_module.newModule(result, events, gifService)
-  result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
-  messageService, chatService, communityService, devicesService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,
-    networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
-  result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
-  messageService)
-  result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
-  result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
-  result.sharedUrlsModule = shared_urls_module.newModule(result, events, sharedUrlsService)
+  result.activityCenterModule = activity_center_module.newModule(
+    result, events, activityCenterService, contactsService, messageService, chatService,
+    communityService, devicesService,
+  )
+  result.communitiesModule = communities_module.newModule(
+    result, events, communityService, contactsService, communityTokensService,
+    networkService, transactionService, tokenService, chatService, walletAccountService,
+    keycardService,
+  )
+  result.appSearchModule = app_search_module.newModule(
+    result, events, contactsService, chatService, communityService, messageService
+  )
+  result.nodeSectionModule = node_section_module.newModule(
+    result, events, settingsService, nodeService, nodeConfigurationService
+  )
+  result.networkConnectionModule =
+    network_connection_module.newModule(result, events, networkConnectionService)
+  result.sharedUrlsModule =
+    shared_urls_module.newModule(result, events, sharedUrlsService)
 
 method delete*[T](self: Module[T]) =
   self.controller.delete
@@ -270,37 +289,67 @@ method getAppNetwork*[T](self: Module[T]): NetworkItem =
 method onAppNetworkChanged*[T](self: Module[T]) =
   self.view.emitAppNetworkChangedSignal()
 
-proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : token_item.TokenItem =
+proc createTokenItem[T](
+    self: Module[T], tokenDto: CommunityTokenDto
+): token_item.TokenItem =
   let network = self.controller.getNetworkByChainId(tokenDto.chainId)
-  let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
-  let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
-  let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
-  let burnState = self.controller.getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
-  let remoteDestructedAddresses = self.controller.getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
-  let destructedAmount = self.controller.getRemoteDestructedAmount(tokenDto.chainId, tokenDto.address)
-  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, burnState, remoteDestructedAddresses, remainingSupply, destructedAmount)
+  let tokenOwners = self.controller.getCommunityTokenOwners(
+    tokenDto.communityId, tokenDto.chainId, tokenDto.address
+  )
+  let ownerAddressName =
+    if len(tokenDto.deployer) > 0:
+      self.controller.getCommunityTokenOwnerName(tokenDto.deployer)
+    else:
+      ""
+  let remainingSupply =
+    if tokenDto.infiniteSupply:
+      stint.parse("0", Uint256)
+    else:
+      self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
+  let burnState =
+    self.controller.getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
+  let remoteDestructedAddresses =
+    self.controller.getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
+  let destructedAmount =
+    self.controller.getRemoteDestructedAmount(tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(
+    tokenDto, network, tokenOwners, ownerAddressName, burnState,
+    remoteDestructedAddresses, remainingSupply, destructedAmount,
+  )
 
-proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, communityTokenJsonItems: JsonNode) : token_item.TokenItem =
+proc createTokenItemImproved[T](
+    self: Module[T], tokenDto: CommunityTokenDto, communityTokenJsonItems: JsonNode
+): token_item.TokenItem =
   # These 3 values come from local caches so they can be done sync
   let network = self.controller.getNetworkByChainId(tokenDto.chainId)
-  let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
-  let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
+  let tokenOwners = self.controller.getCommunityTokenOwners(
+    tokenDto.communityId, tokenDto.chainId, tokenDto.address
+  )
+  let ownerAddressName =
+    if len(tokenDto.deployer) > 0:
+      self.controller.getCommunityTokenOwnerName(tokenDto.deployer)
+    else:
+      ""
 
   var tokenDetails: JsonNode
 
   for details in communityTokenJsonItems.items:
-    if details["address"].getStr ==  tokenDto.address:
+    if details["address"].getStr == tokenDto.address:
       tokenDetails = details
       break
 
   if tokenDetails.kind == JNull:
-    error "Token details not found for token", name = tokenDto.name, address = tokenDto.address
+    error "Token details not found for token",
+      name = tokenDto.name, address = tokenDto.address
     return
 
   let remainingSupply = tokenDetails["remainingSupply"].getStr
   let burnState = tokenDetails["burnState"].getInt
-  let remoteDestructedAddresses = map(tokenDetails["remoteDestructedAddresses"].getElems(),
-    proc(remoteDestructAddress: JsonNode): string = remoteDestructAddress.getStr)
+  let remoteDestructedAddresses = map(
+    tokenDetails["remoteDestructedAddresses"].getElems(),
+    proc(remoteDestructAddress: JsonNode): string =
+      remoteDestructAddress.getStr,
+  )
   let destructedAmount = tokenDetails["destructedAmount"].getStr
 
   result = initTokenItem(
@@ -314,19 +363,27 @@ proc createTokenItemImproved[T](self: Module[T], tokenDto: CommunityTokenDto, co
     stint.parse(destructedAmount, Uint256),
   )
 
-method onCommunityTokensDetailsLoaded[T](self: Module[T], communityId: string,
-    communityTokens: seq[CommunityTokenDto], communityTokenJsonItems: JsonNode) =
-  let communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
-    result = self.createTokenItemImproved(tokenDto, communityTokenJsonItems)
+method onCommunityTokensDetailsLoaded[T](
+    self: Module[T],
+    communityId: string,
+    communityTokens: seq[CommunityTokenDto],
+    communityTokenJsonItems: JsonNode,
+) =
+  let communityTokensItems = communityTokens.map(
+    proc(tokenDto: CommunityTokenDto): TokenItem =
+      result = self.createTokenItemImproved(tokenDto, communityTokenJsonItems)
   )
   self.view.model().setTokenItems(communityId, communityTokensItems)
 
-proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityDto, isEdit: bool = false): SectionItem =
+proc createCommunitySectionItem[T](
+    self: Module[T], communityDetails: CommunityDto, isEdit: bool = false
+): SectionItem =
   var communityTokensItems: seq[TokenItem]
   var communityMembersAirdropAddress: Table[string, string]
 
   let existingCommunity = self.view.model().getItemById(communityDetails.id)
-  if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
+  if communityDetails.memberRole == MemberRole.Owner or
+      communityDetails.memberRole == MemberRole.TokenMaster:
     if not isEdit:
       # When first creating the section, we load the community tokens and the members revealed accounts
       self.controller.getCommunityTokensDetailsAsync(communityDetails.id)
@@ -341,12 +398,12 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
       communityTokensItems = existingCommunity.communityTokens.items
 
   let (unviewedCount, notificationsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    communityDetails.id,
-    communityDetails.muted,
+    communityDetails.id, communityDetails.muted
   )
 
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
-  let active = self.getActiveSectionId() == communityDetails.id # We must pass on if the current item section is currently active to keep that property as it is
+  let active = self.getActiveSectionId() == communityDetails.id
+    # We must pass on if the current item section is currently active to keep that property as it is
 
   # Add members who were kicked from the community after the ownership change for auto-rejoin after they share addresses
   var members = communityDetails.members
@@ -360,17 +417,22 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
   var bannedMembers = newSeq[MemberItem]()
   for memberId, memberState in communityDetails.pendingAndBannedMembers.pairs:
     let state = memberState.toMembershipRequestState()
-    case state:
-      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete, MembershipRequestState.UnbannedPending:
-        bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
-      else:
-        discard
+    case state
+    of MembershipRequestState.Banned,
+        MembershipRequestState.BannedWithAllMessagesDelete,
+        MembershipRequestState.UnbannedPending:
+      bannedMembers.add(self.createMemberItem(memberId, "", state, MemberRole.None))
+    else:
+      discard
 
-  var memberItems = members.map(proc(member: ChatMember): MemberItem =
+  var memberItems = members.map(
+    proc(member: ChatMember): MemberItem =
       var state = MembershipRequestState.Accepted
       if member.id in communityDetails.pendingAndBannedMembers:
-        let memberState = communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
-        if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+        let memberState =
+          communityDetails.pendingAndBannedMembers[member.id].toMembershipRequestState()
+        if memberState == MembershipRequestState.BannedPending or
+            memberState == MembershipRequestState.KickedPending:
           state = memberState
       elif not member.joined:
         state = MembershipRequestState.AwaitingAddress
@@ -378,21 +440,29 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
       if not existingCommunity.isEmpty() and not existingCommunity.communityTokens.isNil:
         airdropAddress = existingCommunity.members.getAirdropAddressForMember(member.id)
       result = self.createMemberItem(
-        member.id,
-        requestId = "",
-        state,
-        member.role,
-        airdropAddress,
+        member.id, requestId = "", state, member.role, airdropAddress
       )
-    )
+  )
 
-  let pendingMembers = communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
+  let pendingMembers = communityDetails.pendingRequestsToJoin.map(
+    proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(
+        requestDto.publicKey,
+        requestDto.id,
+        MembershipRequestState(requestDto.state),
+        MemberRole.None,
+      )
+  )
 
-  let declinedMemberItems = communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state), MemberRole.None)
-    )
+  let declinedMemberItems = communityDetails.declinedRequestsToJoin.map(
+    proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(
+        requestDto.publicKey,
+        requestDto.id,
+        MembershipRequestState(requestDto.state),
+        MemberRole.None,
+      )
+  )
 
   memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
 
@@ -440,99 +510,92 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
     activeMembersCount = int(communityDetails.activeMembersCount),
   )
 
-proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetailsDto, sentTransaction: RouterSentTransaction) =
-    var
-      addressFrom = sendDetails.fromAddress
-      addressTo = sendDetails.toAddress
-      txTo = "" # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
-      fromChain = sendDetails.fromChain
-      toChain = sendDetails.toChain
-      fromAmount = sendDetails.fromAmount.toString(10)
-      toAmount = sendDetails.toAmount.toString(10)
-      fromAsset = sendDetails.fromToken
-      toAsset = sendDetails.toToken
-      error = ""
-      txHash = ""
-      isApprovalTx = false
+proc sendNotification[T](
+    self: Module[T],
+    status: string,
+    sendDetails: SendDetailsDto,
+    sentTransaction: RouterSentTransaction,
+) =
+  var
+    addressFrom = sendDetails.fromAddress
+    addressTo = sendDetails.toAddress
+    txTo = ""
+      # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
+    fromChain = sendDetails.fromChain
+    toChain = sendDetails.toChain
+    fromAmount = sendDetails.fromAmount.toString(10)
+    toAmount = sendDetails.toAmount.toString(10)
+    fromAsset = sendDetails.fromToken
+    toAsset = sendDetails.toToken
+    error = ""
+    txHash = ""
+    isApprovalTx = false
 
-    if not sendDetails.errorResponse.isNil:
-      error = sendDetails.errorResponse.details
+  if not sendDetails.errorResponse.isNil:
+    error = sendDetails.errorResponse.details
 
-    if not sentTransaction.isNil and sentTransaction.hash.len > 0:
-      txTo = sentTransaction.toAddress
-      if sentTransaction.fromChain > 0:
-        fromChain = sentTransaction.fromChain
-      if sentTransaction.toChain > 0:
-        toChain = sentTransaction.toChain
-      let
-        txAmountIn = sentTransaction.amountIn.toString(10)
-        txAmountOut = sentTransaction.amountOut.toString(10)
-      if txAmountIn != "0":
-        fromAmount = txAmountIn
-      if txAmountOut != "0":
-        toAmount = txAmountOut
-      if sentTransaction.fromToken.len > 0:
-        fromAsset = sentTransaction.fromToken
-      if sentTransaction.toToken.len > 0:
-        toAsset = sentTransaction.toToken
-      txHash = sentTransaction.hash
-      isApprovalTx = sentTransaction.approvalTx
+  if not sentTransaction.isNil and sentTransaction.hash.len > 0:
+    txTo = sentTransaction.toAddress
+    if sentTransaction.fromChain > 0:
+      fromChain = sentTransaction.fromChain
+    if sentTransaction.toChain > 0:
+      toChain = sentTransaction.toChain
+    let
+      txAmountIn = sentTransaction.amountIn.toString(10)
+      txAmountOut = sentTransaction.amountOut.toString(10)
+    if txAmountIn != "0":
+      fromAmount = txAmountIn
+    if txAmountOut != "0":
+      toAmount = txAmountOut
+    if sentTransaction.fromToken.len > 0:
+      fromAsset = sentTransaction.fromToken
+    if sentTransaction.toToken.len > 0:
+      toAsset = sentTransaction.toToken
+    txHash = sentTransaction.hash
+    isApprovalTx = sentTransaction.approvalTx
 
-    var accFromName = ""
-    var accDto = self.walletAccountService.getAccountByAddress(addressFrom)
-    if not accDto.isNil:
-      accFromName = accDto.name
+  var accFromName = ""
+  var accDto = self.walletAccountService.getAccountByAddress(addressFrom)
+  if not accDto.isNil:
+    accFromName = accDto.name
 
-    var accToName = ""
-    accDto = self.walletAccountService.getAccountByAddress(addressTo)
-    if not accDto.isNil:
-      accToName = accDto.name
-    else:
-      let savedAddress = self.savedAddressService.getSavedAddress(address = addressTo, ignoreNetworkMode = false)
-      if not savedAddress.isNil:
-        accToName = savedAddress.name
-
-    var txToName = ""
-    let txType = SendType(sendDetails.sendType)
-    if txType == SendType.Bridge:
-      txToName = "Hop" # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
-    elif txType == SendType.Swap:
-      txToName = "ParaSwap" # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
-    else:
-      accDto = self.walletAccountService.getAccountByAddress(txTo)
-      if not accDto.isNil:
-        txToName = accDto.name
-
-    self.view.showTransactionToast(
-      sendDetails.uuid,
-      sendDetails.sendType,
-      fromChain,
-      toChain,
-      addressFrom,
-      accFromName,
-      addressTo,
-      accToName,
-      txTo,
-      txToName,
-      txHash,
-      isApprovalTx,
-      fromAmount,
-      toAmount,
-      fromAsset,
-      toAsset,
-      sendDetails.username,
-      sendDetails.publicKey,
-      sendDetails.packId,
-      status,
-      error,
+  var accToName = ""
+  accDto = self.walletAccountService.getAccountByAddress(addressTo)
+  if not accDto.isNil:
+    accToName = accDto.name
+  else:
+    let savedAddress = self.savedAddressService.getSavedAddress(
+      address = addressTo, ignoreNetworkMode = false
     )
+    if not savedAddress.isNil:
+      accToName = savedAddress.name
+
+  var txToName = ""
+  let txType = SendType(sendDetails.sendType)
+  if txType == SendType.Bridge:
+    txToName = "Hop"
+      # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
+  elif txType == SendType.Swap:
+    txToName = "ParaSwap"
+      # no translations, currently we hardcode providers here, when we add more, this info should come from the status-go side.
+  else:
+    accDto = self.walletAccountService.getAccountByAddress(txTo)
+    if not accDto.isNil:
+      txToName = accDto.name
+
+  self.view.showTransactionToast(
+    sendDetails.uuid, sendDetails.sendType, fromChain, toChain, addressFrom,
+    accFromName, addressTo, accToName, txTo, txToName, txHash, isApprovalTx, fromAmount,
+    toAmount, fromAsset, toAsset, sendDetails.username, sendDetails.publicKey,
+    sendDetails.packId, status, error,
+  )
 
 proc connectForNotificationsOnly[T](self: Module[T]) =
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     let args = AccountArgs(e)
     self.view.showToastAccountAdded(args.account.name)
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     let args = AccountArgs(e)
     self.view.showToastAccountRemoved(args.account.name)
 
@@ -542,52 +605,54 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
 
   self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
     let args = NetworkEndpointUpdatedArgs(e)
-    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest, args.revertedToDefault)
+    self.view.showNetworkEndpointUpdated(
+      args.networkName, args.isTest, args.revertedToDefault
+    )
 
   self.events.on(SIGNAL_KEYPAIR_DELETED) do(e: Args):
     let args = KeypairArgs(e)
     self.view.showToastKeypairRemoved(args.keyPairName)
 
-  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e:Args):
+  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e: Args):
     let args = KeypairsArgs(e)
     var kpName: string
     if args.keypairs.len > 0:
       kpName = args.keypairs[0].name
     self.view.showToastKeypairsImported(kpName, args.keypairs.len, args.error)
 
-  self.events.on(SIGNAL_SENDING_TRANSACTIONS_STARTED) do(e:Args):
+  self.events.on(SIGNAL_SENDING_TRANSACTIONS_STARTED) do(e: Args):
     let args = TransactionArgs(e)
     # we allow this notification only if an error occurs, otherwise skip it and display notification after the tx gets submitted to the network
     if args.sendDetails.errorResponse.isNil:
       return
     self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
 
-  self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+  self.events.on(SIGNAL_TRANSACTION_SENT) do(e: Args):
     let args = TransactionArgs(e)
     self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
 
-  self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+  self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e: Args):
     let args = TransactionArgs(e)
     self.sendNotification(args.status, args.sendDetails, args.sentTransaction)
 
-  self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e:Args):
+  self.events.on(MARK_WALLET_ADDRESSES_AS_SHOWN) do(e: Args):
     let args = WalletAddressesArgs(e)
     for address in args.addresses:
       self.addressWasShown(address)
 
-  self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e:Args):
+  self.events.on(SIGNAL_PAIRING_FALLBACK_COMPLETED) do(e: Args):
     self.view.showToastPairingFallbackCompleted()
 
 method load*[T](
-  self: Module[T],
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  mailserversService: mailservers_service.Service,
+    self: Module[T],
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
 ) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
@@ -595,7 +660,8 @@ method load*[T](
   self.connectForNotificationsOnly()
 
   var activeSection: SectionItem
-  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
+  var activeSectionId =
+    singletonInstance.localAccountSensitiveSettings.getActiveSection()
   if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
     activeSectionId = conf.WALLET_SECTION_ID
 
@@ -721,27 +787,28 @@ proc isEverythingLoaded[T](self: Module[T]): bool =
   return self.communityDataLoaded and self.chatsLoaded and self.contactsLoaded
 
 method onChatsLoaded*[T](
-  self: Module[T],
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  sharedUrlsService: urls_service.Service,
-  networkService: network_service.Service,
+    self: Module[T],
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
 ) =
   self.chatsLoaded = true
   if not self.isEverythingLoaded:
     return
   let myPubKey = singletonInstance.userProfile.getPubKey()
   var activeSection: SectionItem
-  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
+  var activeSectionId =
+    singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Create personal chat section
   self.chatSectionModules[myPubKey] = chat_section_module.newModule(
@@ -760,11 +827,10 @@ method onChatsLoaded*[T](
     tokenService,
     communityTokensService,
     sharedUrlsService,
-    networkService
+    networkService,
   )
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    myPubKey,
-    sectionIsMuted = false
+    myPubKey, sectionIsMuted = false
   )
   var items: seq[SectionItem] = @[]
 
@@ -808,7 +874,7 @@ method onChatsLoaded*[T](
       tokenService,
       communityTokensService,
       sharedUrlsService,
-      networkService
+      networkService,
     )
     let communitySectionItem = self.createCommunitySectionItem(community)
     items.add(communitySectionItem)
@@ -833,116 +899,95 @@ method onChatsLoaded*[T](
   self.checkIfWeHaveNotifications()
 
 method onCommunityDataLoaded*[T](
-  self: Module[T],
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  sharedUrlsService: urls_service.Service,
-  networkService: network_service.Service,
+    self: Module[T],
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
 ) =
   self.communityDataLoaded = true
   if not self.isEverythingLoaded:
     return
 
   self.onChatsLoaded(
-    events,
-    settingsService,
-    nodeConfigurationService,
-    contactsService,
-    chatService,
-    communityService,
-    messageService,
-    mailserversService,
-    walletAccountService,
-    tokenService,
-    communityTokensService,
-    sharedUrlsService,
-    networkService,
+    events, settingsService, nodeConfigurationService, contactsService, chatService,
+    communityService, messageService, mailserversService, walletAccountService,
+    tokenService, communityTokensService, sharedUrlsService, networkService,
   )
 
 method onContactsLoaded*[T](
-  self: Module[T],
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  sharedUrlsService: urls_service.Service,
-  networkService: network_service.Service,
+    self: Module[T],
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
 ) =
   self.contactsLoaded = true
   if not self.isEverythingLoaded:
     return
 
   self.onChatsLoaded(
-    events,
-    settingsService,
-    nodeConfigurationService,
-    contactsService,
-    chatService,
-    communityService,
-    messageService,
-    mailserversService,
-    walletAccountService,
-    tokenService,
-    communityTokensService,
-    sharedUrlsService,
-    networkService,
+    events, settingsService, nodeConfigurationService, contactsService, chatService,
+    communityService, messageService, mailserversService, walletAccountService,
+    tokenService, communityTokensService, sharedUrlsService, networkService,
   )
 
 method onChatsLoadingFailed*[T](self: Module[T]) =
   self.view.chatsLoadingFailed()
 
-proc checkIfModuleDidLoad [T](self: Module[T]) =
+proc checkIfModuleDidLoad[T](self: Module[T]) =
   if self.moduleLoaded:
     return
 
   for cModule in self.chatSectionModules.values:
-    if(not cModule.isLoaded()):
+    if (not cModule.isLoaded()):
       return
 
-#  if (not self.communitiesPortalSectionModule.isLoaded()):
-#    return
-
+  #  if (not self.communitiesPortalSectionModule.isLoaded()):
+  #    return
   if (not self.walletSectionModule.isLoaded()):
     return
 
-  if(not self.nodeSectionModule.isLoaded()):
+  if (not self.nodeSectionModule.isLoaded()):
     return
 
-  if(not self.profileSectionModule.isLoaded()):
+  if (not self.profileSectionModule.isLoaded()):
     return
 
-  if(not self.stickersModule.isLoaded()):
+  if (not self.stickersModule.isLoaded()):
     return
 
   if not self.gifsModule.isLoaded():
     return
 
-  if(not self.activityCenterModule.isLoaded()):
+  if (not self.activityCenterModule.isLoaded()):
     return
 
-  if(not self.communitiesModule.isLoaded()):
+  if (not self.communitiesModule.isLoaded()):
     return
 
-  if(not self.appSearchModule.isLoaded()):
+  if (not self.appSearchModule.isLoaded()):
     return
 
-  if(not self.networkConnectionModule.isLoaded()):
+  if (not self.networkConnectionModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -1000,8 +1045,10 @@ method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
 
-method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSettings: bool = false) =
-  if(item.isEmpty()):
+method setActiveSection*[T](
+    self: Module[T], item: SectionItem, skipSavingInSettings: bool = false
+) =
+  if (item.isEmpty()):
     warn "section is empty and cannot be made as active one"
     return
   self.controller.setActiveSectionId(item.id)
@@ -1020,19 +1067,21 @@ proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
 
   # If there is a need other section may be notified the same way from here...
 
-method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSettings: bool = false) =
+method activeSectionSet*[T](
+    self: Module[T], sectionId: string, skipSavingInSettings: bool = false
+) =
   if self.view.activeSection.getId() == sectionId:
     return
   let item = self.view.model().getItemById(sectionId)
 
-  if(item.isEmpty()):
+  if (item.isEmpty()):
     # should never be here
     warn "main-module, incorrect section id", sectionId
     return
 
-  case sectionId:
-    of conf.COMMUNITIESPORTAL_SECTION_ID:
-      self.communitiesModule.onActivated()
+  case sectionId
+  of conf.COMMUNITIESPORTAL_SECTION_ID:
+    self.communitiesModule.onActivated()
 
   # If metrics are enabled, send a navigation event
   var sectionIdToSend = sectionId
@@ -1041,7 +1090,9 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
   elif sectionId.startsWith("0x"):
     # This is a community
     sectionIdToSend = "community"
-  singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": sectionIdToSend}))
+  singletonInstance.globalEvents.addCentralizedMetricIfEnabled(
+    "navigation", $(%*{"viewId": sectionIdToSend})
+  )
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
@@ -1051,17 +1102,22 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
 
   self.notifySubModulesAboutChange(sectionId)
 
-proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, available: bool) =
-  if(available):
+proc setSectionAvailability[T](
+    self: Module[T], sectionType: SectionType, available: bool
+) =
+  if (available):
     self.view.model().enableSection(sectionType)
   else:
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
   if (sectionType == SectionType.NodeManagement):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
+    let enabled =
+      singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
+    singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(
+      not enabled
+    )
 
 method setCurrentUserStatus*[T](self: Module[T], status: StatusType) =
   self.controller.setCurrentUserStatus(status)
@@ -1073,7 +1129,7 @@ method getChatSectionModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.getChatSectionModule().getModuleAsVariant()
 
 method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
-  if(not self.chatSectionModules.contains(communityId)):
+  if (not self.chatSectionModules.contains(communityId)):
     warn "main-module, unexisting community key", communityId
     return
 
@@ -1110,17 +1166,19 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
     elif chat.chatType == ChatType.CommunityChat:
       sectionId = communityId
       sectionName = self.view.model().getItemById(sectionId).name()
-    items.add(chat_search_item.initItem(
-      chat.id,
-      chatName,
-      chat.color,
-      colorId,
-      chatImage,
-      colorHash.toJson(),
-      sectionId,
-      sectionName,
-      chat.emoji,
-    ))
+    items.add(
+      chat_search_item.initItem(
+        chat.id,
+        chatName,
+        chat.color,
+        colorId,
+        chatImage,
+        colorHash.toJson(),
+        sectionId,
+        sectionName,
+        chat.emoji,
+      )
+    )
 
   self.view.chatSearchModel().setItems(items)
 
@@ -1135,15 +1193,22 @@ method onChatLeft*[T](self: Module[T], chatId: string) =
 
 proc checkIfWeHaveNotifications[T](self: Module[T]) =
   let sectionWithUnread = self.view.model().isThereASectionWithUnreadMessages()
-  let activtyCenterNotifications = self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
+  let activtyCenterNotifications =
+    self.activityCenterModule.unreadActivityCenterNotificationsCountFromView() > 0
   self.view.setNotificationAvailable(sectionWithUnread or activtyCenterNotifications)
 
 method onActivityNotificationsUpdated[T](self: Module[T]) =
   self.checkIfWeHaveNotifications()
 
-method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
-    sectionNotificationCount: int) =
-  self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
+method onNotificationsUpdated[T](
+    self: Module[T],
+    sectionId: string,
+    sectionHasUnreadMessages: bool,
+    sectionNotificationCount: int,
+) =
+  self.view.model().updateNotifications(
+    sectionId, sectionHasUnreadMessages, sectionNotificationCount
+  )
   self.checkIfWeHaveNotifications()
 
 method onNetworkConnected[T](self: Module[T]) =
@@ -1169,22 +1234,22 @@ method communitySpectated*[T](self: Module[T], communityId: string) =
   self.controller.switchTo(communityId, chatId, "")
 
 method communityJoined*[T](
-  self: Module[T],
-  community: CommunityDto,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  sharedUrlsService: urls_service.Service,
-  networkService: network_service.Service,
-  setActive: bool = false,
+    self: Module[T],
+    community: CommunityDto,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    tokenService: token_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    sharedUrlsService: urls_service.Service,
+    networkService: network_service.Service,
+    setActive: bool = false,
 ) =
   if self.chatSectionModules.contains(community.id):
     # The community is already spectated
@@ -1193,41 +1258,43 @@ method communityJoined*[T](
   if (self.chatSectionModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
   self.chatSectionModules[community.id] = chat_section_module.newModule(
-      self,
-      events,
-      community.id,
-      isCommunity = true,
-      settingsService,
-      nodeConfigurationService,
-      contactsService,
-      chatService,
-      communityService,
-      messageService,
-      mailserversService,
-      walletAccountService,
-      tokenService,
-      communityTokensService,
-      sharedUrlsService,
-      networkService
-    )
+    self,
+    events,
+    community.id,
+    isCommunity = true,
+    settingsService,
+    nodeConfigurationService,
+    contactsService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    walletAccountService,
+    tokenService,
+    communityTokensService,
+    sharedUrlsService,
+    networkService,
+  )
   self.chatSectionModules[community.id].load()
 
   let communitySectionItem = self.createCommunitySectionItem(community)
   if (firstCommunityJoined):
     # If there are no other communities, add the first community after the Chat section in the model so that the order is respected
-    self.view.model().addItem(communitySectionItem,
-      self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1)
+    self.view.model().addItem(
+      communitySectionItem,
+      self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1,
+    )
   else:
     self.view.model().addItem(communitySectionItem)
 
   if setActive:
     self.setActiveSection(communitySectionItem)
-    if(community.chats.len > 0):
+    if (community.chats.len > 0):
       let chatId = community.chats[0].id
       self.chatSectionModules[community.id].setActiveItem(chatId)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
-  if(not self.chatSectionModules.contains(communityId)):
+  if (not self.chatSectionModules.contains(communityId)):
     warn "main-module, unexisting community key to leave", communityId
     return
 
@@ -1244,29 +1311,28 @@ method communityLeft*[T](self: Module[T], communityId: string) =
   moduleToDelete.delete
   moduleToDelete = nil
 
-method communityEdited*[T](
-    self: Module[T],
-    community: CommunityDto) =
+method communityEdited*[T](self: Module[T], community: CommunityDto) =
   if not self.chatSectionModules.contains(community.id):
     return
   var communitySectionItem = self.createCommunitySectionItem(community, isEdit = true)
   # We need to calculate the unread counts because the community update doesn't come with it
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    communitySectionItem.id,
-    communitySectionItem.muted,
+    communitySectionItem.id, communitySectionItem.muted
   )
   communitySectionItem.setHasNotification(unviewedMessagesCount > 0)
   communitySectionItem.setNotificationsCount(unviewedMentionsCount)
   self.view.editItem(communitySectionItem)
 
-method onCommunityMuted*[T](
-    self: Module[T],
-    communityId: string,
-    muted: bool) =
+method onCommunityMuted*[T](self: Module[T], communityId: string, muted: bool) =
   self.view.model.setMuted(communityId, muted)
 
-method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool = false,
-  getOnlineStatus: bool = false, includeDetails: bool = false): string =
+method getContactDetailsAsJson*[T](
+    self: Module[T],
+    publicKey: string,
+    getVerificationRequest: bool = false,
+    getOnlineStatus: bool = false,
+    includeDetails: bool = false,
+): string =
   var contactDetails: ContactDetails
   ## If includeDetails is true, additional details are calculated, like color hash and that results in higher CPU usage,
   ## that's why by default it is false and we should set it to true only when we really need it.
@@ -1277,36 +1343,38 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
 
   var onlineStatus = OnlineStatus.Inactive
   if getOnlineStatus:
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
+    onlineStatus =
+      toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
 
-  let jsonObj = %* {
-    # contact details props
-    "icon": contactDetails.icon,
-    "isCurrentUser": contactDetails.isCurrentUser,
-    "colorId": contactDetails.colorId,
-    "colorHash": contactDetails.colorHash,
-    # contact dto props
-    "displayName": contactDetails.dto.displayName,
-    "publicKey": contactDetails.dto.id,
-    "compressedPublicKey": accounts_utils.compressPk(contactDetails.dto.id),
-    "name": contactDetails.dto.name,
-    "ensVerified": contactDetails.dto.ensVerified,
-    "alias": contactDetails.dto.alias,
-    "lastUpdated": contactDetails.dto.lastUpdated,
-    "lastUpdatedLocally": contactDetails.dto.lastUpdatedLocally,
-    "localNickname": contactDetails.dto.localNickname,
-    "thumbnailImage": contactDetails.dto.image.thumbnail,
-    "largeImage": contactDetails.dto.image.large,
-    "isContact": contactDetails.dto.isContact,
-    "isBlocked": contactDetails.dto.isBlocked,
-    "isContactRequestReceived": contactDetails.dto.isContactRequestReceived,
-    "isContactRequestSent": contactDetails.dto.isContactRequestSent,
-    "removed": contactDetails.dto.removed,
-    "trustStatus": contactDetails.dto.trustStatus.int,
-    "contactRequestState": contactDetails.dto.contactRequestState.int,
-    "bio": contactDetails.dto.bio,
-    "onlineStatus": onlineStatus.int
-  }
+  let jsonObj =
+    %*{
+      # contact details props
+      "icon": contactDetails.icon,
+      "isCurrentUser": contactDetails.isCurrentUser,
+      "colorId": contactDetails.colorId,
+      "colorHash": contactDetails.colorHash,
+      # contact dto props
+      "displayName": contactDetails.dto.displayName,
+      "publicKey": contactDetails.dto.id,
+      "compressedPublicKey": accounts_utils.compressPk(contactDetails.dto.id),
+      "name": contactDetails.dto.name,
+      "ensVerified": contactDetails.dto.ensVerified,
+      "alias": contactDetails.dto.alias,
+      "lastUpdated": contactDetails.dto.lastUpdated,
+      "lastUpdatedLocally": contactDetails.dto.lastUpdatedLocally,
+      "localNickname": contactDetails.dto.localNickname,
+      "thumbnailImage": contactDetails.dto.image.thumbnail,
+      "largeImage": contactDetails.dto.image.large,
+      "isContact": contactDetails.dto.isContact,
+      "isBlocked": contactDetails.dto.isBlocked,
+      "isContactRequestReceived": contactDetails.dto.isContactRequestReceived,
+      "isContactRequestSent": contactDetails.dto.isContactRequestSent,
+      "removed": contactDetails.dto.removed,
+      "trustStatus": contactDetails.dto.trustStatus.int,
+      "contactRequestState": contactDetails.dto.contactRequestState.int,
+      "bio": contactDetails.dto.bio,
+      "onlineStatus": onlineStatus.int,
+    }
   return $jsonObj
 
 # used in FinaliseOwnershipPopup in UI
@@ -1316,13 +1384,16 @@ method getOwnerTokenAsJson*[T](self: Module[T], communityId: string): string =
     return
   let tokensModel = item.communityTokens()
   let ownerToken = tokensModel.getOwnerToken()
-  let jsonObj = %* {
-    "symbol": ownerToken.tokenDto.symbol,
-    "chainName": ownerToken.chainName,
-    "accountName": ownerToken.accountName,
-    "accountAddress": ownerToken.tokenDto.deployer,
-    "contractUniqueKey": common_utils.contractUniqueKey(ownerToken.tokenDto.chainId, ownerToken.tokenDto.address)
-  }
+  let jsonObj =
+    %*{
+      "symbol": ownerToken.tokenDto.symbol,
+      "chainName": ownerToken.chainName,
+      "accountName": ownerToken.accountName,
+      "accountAddress": ownerToken.tokenDto.deployer,
+      "contractUniqueKey": common_utils.contractUniqueKey(
+        ownerToken.tokenDto.chainId, ownerToken.tokenDto.address
+      ),
+    }
   return $jsonObj
 
 method isEnsVerified*[T](self: Module[T], publicKey: string): bool =
@@ -1332,93 +1403,164 @@ method communityDataImported*[T](self: Module[T], community: CommunityDto) =
   if community.id == self.pendingSpectateRequest.communityId:
     discard self.communitiesModule.spectateCommunity(community.id)
 
-method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
+method resolveENS*[T](
+    self: Module[T], ensName: string, uuid: string, reason: string = ""
+) =
   if ensName.len == 0:
     error "error: cannot do a lookup for empty ens name"
     return
   self.controller.resolveENS(ensName, uuid, reason)
 
-method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string, reason: string) =
-  if(reason.len > 0 and publicKey.len == 0):
-    self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
+method resolvedENS*[T](
+    self: Module[T], publicKey: string, address: string, uuid: string, reason: string
+) =
+  if (reason.len > 0 and publicKey.len == 0):
+    self.displayEphemeralNotification(
+      "Unexisting contact", "Wrong public key or ens name", "", false,
+      EphemeralNotificationType.Default.int, "",
+    )
     return
 
-  if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
+  if (reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
     self.switchToContactOrDisplayUserProfile(publicKey)
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
-method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: CommunityTokenDto) =
+method onCommunityTokenDeploymentStarted*[T](
+    self: Module[T], communityToken: CommunityTokenDto
+) =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
     item.appendCommunityToken(self.createTokenItem(communityToken))
 
-method onOwnerTokensDeploymentStarted*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) =
+method onOwnerTokensDeploymentStarted*[T](
+    self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto
+) =
   let item = self.view.model().getItemById(ownerToken.communityId)
   if item.id != "":
     item.appendCommunityToken(self.createTokenItem(ownerToken))
     item.appendCommunityToken(self.createTokenItem(masterToken))
 
-method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId: int, address: string) =
+method onCommunityTokenRemoved*[T](
+    self: Module[T], communityId: string, chainId: int, address: string
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.removeCommunityToken(chainId, address)
 
-method startTokenHoldersManagement*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string) =
+method startTokenHoldersManagement*[T](
+    self: Module[T], communityId: string, chainId: int, contractAddress: string
+) =
   self.controller.startTokenHoldersManagement(chainId, contractAddress)
   let item = self.view.model().getItemById(communityId)
-  if item.id != "" and not item.communityTokens.hasTokenHolders(chainId, contractAddress):
+  if item.id != "" and not item.communityTokens.hasTokenHolders(
+    chainId, contractAddress
+  ):
     item.setCommunityTokenHoldersLoading(chainId, contractAddress, value = true)
 
 method stopTokenHoldersManagement*[T](self: Module[T]) =
   self.controller.stopTokenHoldersManagement()
 
-method errorLoadingTokenHolders*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, error: string) =
+method errorLoadingTokenHolders*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    error: string,
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.setCommunityTokenHoldersLoading(chainId, contractAddress, value = false)
 
-method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
+method onCommunityTokenOwnersFetched*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    owners: seq[CommunityCollectibleOwner],
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.setCommunityTokenOwners(chainId, contractAddress, owners)
 
-method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, deployState: DeployState) =
+method onCommunityTokenDeployStateChanged*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    deployState: DeployState,
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
 
-method onFinaliseOwnershipStatusChanged*[T](self: Module[T], isPending: bool, communityId: string) =
+method onFinaliseOwnershipStatusChanged*[T](
+    self: Module[T], isPending: bool, communityId: string
+) =
   self.view.model().updateIsPendingOwnershipRequest(communityId, isPending)
 
-method onOwnerTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState, transactionHash: string) =
+method onOwnerTokenDeployStateChanged*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    ownerContractAddress: string,
+    masterContractAddress: string,
+    deployState: DeployState,
+    transactionHash: string,
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     # update temporary master contract address first
     if transactionHash != "":
-      item.updateCommunityTokenAddress(chainId, temporaryMasterContractAddress(transactionHash), masterContractAddress)
-      item.updateCommunityTokenAddress(chainId, temporaryOwnerContractAddress(transactionHash), ownerContractAddress)
+      item.updateCommunityTokenAddress(
+        chainId, temporaryMasterContractAddress(transactionHash), masterContractAddress
+      )
+      item.updateCommunityTokenAddress(
+        chainId, temporaryOwnerContractAddress(transactionHash), ownerContractAddress
+      )
     # then update states
     item.updateCommunityTokenDeployState(chainId, ownerContractAddress, deployState)
     item.updateCommunityTokenDeployState(chainId, masterContractAddress, deployState)
 
-method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) =
+method onCommunityTokenSupplyChanged*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    supply: Uint256,
+    remainingSupply: Uint256,
+    destructedAmount: Uint256,
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenSupply(chainId, contractAddress, supply, destructedAmount)
     item.updateCommunityRemainingSupply(chainId, contractAddress, remainingSupply)
 
-method onBurnStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
+method onBurnStateChanged*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    burnState: ContractTransactionStatus,
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateBurnState(chainId, contractAddress, burnState)
 
-method onRemoteDestructed*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, addresses: seq[string]) =
+method onRemoteDestructed*[T](
+    self: Module[T],
+    communityId: string,
+    chainId: int,
+    contractAddress: string,
+    addresses: seq[string],
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateRemoteDestructedAddresses(chainId, contractAddress, addresses)
 
-method onRequestReevaluateMembersPermissionsIfRequired*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string) =
+method onRequestReevaluateMembersPermissionsIfRequired*[T](
+    self: Module[T], communityId: string, chainId: int, contractAddress: string
+) =
   let communityDto = self.controller.getCommunityById(communityId)
   for _, tokenPermission in communityDto.tokenPermissions.pairs:
     if tokenPermission.type != TokenPermissionType.BecomeTokenOwner:
@@ -1429,51 +1571,73 @@ method onRequestReevaluateMembersPermissionsIfRequired*[T](self: Module[T], comm
             self.controller.asyncReevaluateCommunityMembersPermissions(communityId)
             return
 
-method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
+method onAcceptRequestToJoinLoading*[T](
+    self: Module[T], communityId: string, memberKey: string
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, true)
 
-method onAcceptRequestToJoinFailed*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
+method onAcceptRequestToJoinFailed*[T](
+    self: Module[T], communityId: string, memberKey: string, requestId: string
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
 
-method onAcceptRequestToJoinFailedNoPermission*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
+method onAcceptRequestToJoinFailedNoPermission*[T](
+    self: Module[T], communityId: string, memberKey: string, requestId: string
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
 
-method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
+method onAcceptRequestToJoinSuccess*[T](
+    self: Module[T], communityId: string, memberKey: string, requestId: string
+) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
 
-method onMembershipStateUpdated*[T](self: Module[T], communityId: string, memberPubkey: string, state: MembershipRequestState) =
+method onMembershipStateUpdated*[T](
+    self: Module[T],
+    communityId: string,
+    memberPubkey: string,
+    state: MembershipRequestState,
+) =
   let myPublicKey = singletonInstance.userProfile.getPubKey()
   let communityDto = self.controller.getCommunityById(communityId)
 
   if myPublicKey == memberPubkey:
-    case state:
-      of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete:
-        singletonInstance.globalEvents.showCommunityMemberBannedNotification(fmt "You've been banned from {communityDto.name}", "", communityId)
-      of MembershipRequestState.Kicked:
-        singletonInstance.globalEvents.showCommunityMemberKickedNotification(fmt "You were kicked from {communityDto.name}", "", communityId)
-      of MembershipRequestState.Unbanned:
-        singletonInstance.globalEvents.showCommunityMemberUnbannedNotification(fmt "You were unbanned from {communityDto.name}", "", communityId)
-      else:
-        discard
+    case state
+    of MembershipRequestState.Banned, MembershipRequestState.BannedWithAllMessagesDelete:
+      singletonInstance.globalEvents.showCommunityMemberBannedNotification(
+        fmt "You've been banned from {communityDto.name}", "", communityId
+      )
+    of MembershipRequestState.Kicked:
+      singletonInstance.globalEvents.showCommunityMemberKickedNotification(
+        fmt "You were kicked from {communityDto.name}", "", communityId
+      )
+    of MembershipRequestState.Unbanned:
+      singletonInstance.globalEvents.showCommunityMemberUnbannedNotification(
+        fmt "You were unbanned from {communityDto.name}", "", communityId
+      )
+    else:
+      discard
   elif communityDto.isControlNode:
     let (contactName, _, _) = self.controller.getContactNameAndImage(memberPubkey)
     let item = self.view.model().getItemById(communityId)
     if item.id != "":
       item.updateMembershipStatus(memberPubkey, state)
-    case state:
-      of MembershipRequestState.Banned, MembershipRequestState.Kicked,
-          MembershipRequestState.Unbanned, MembershipRequestState.BannedWithAllMessagesDelete:
-        self.view.emitCommunityMemberStatusEphemeralNotification(communityDto.name, contactName, state.int)
-      else:
-        discard
+    case state
+    of MembershipRequestState.Banned, MembershipRequestState.Kicked,
+        MembershipRequestState.Unbanned,
+        MembershipRequestState.BannedWithAllMessagesDelete:
+      self.view.emitCommunityMemberStatusEphemeralNotification(
+        communityDto.name, contactName, state.int
+      )
+    else:
+      discard
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
@@ -1482,135 +1646,223 @@ method mnemonicBackedUp*[T](self: Module[T]) =
   self.view.model().updateNotifications(
     conf.SETTINGS_SECTION_ID,
     self.calculateProfileSectionHasNotification(),
-    notificationsCount = 0)
+    notificationsCount = 0,
+  )
 
-method displayWindowsOsNotification*[T](self: Module[T], title: string,
-    message: string) =
+method displayWindowsOsNotification*[T](
+    self: Module[T], title: string, message: string
+) =
   self.view.displayWindowsOsNotification(title, message)
 
 method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) =
-  if(details.notificationType == NotificationType.NewContactRequest):
+  if (details.notificationType == NotificationType.NewContactRequest):
     self.controller.switchTo(details.sectionId, "", "")
     self.view.emitOpenActivityCenterSignal()
-  elif(details.notificationType == NotificationType.JoinCommunityRequest):
+  elif (details.notificationType == NotificationType.JoinCommunityRequest):
     self.controller.switchTo(details.sectionId, "", "")
     self.view.emitOpenCommunityMembershipRequestsViewSignal(details.sectionId)
-  elif(details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
+  elif (details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
     self.controller.switchTo(details.sectionId, "", "")
-  elif(details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):
+  elif (details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):
     warn "There is no particular action clicking on a notification informing you about rejection to join community"
 
-method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
-  let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
-  let community =  self.controller.getCommunityById(membershipRequest.communityId)
-  singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
-    fmt "{contactName} asks to join {community.name}", community.id)
+method newCommunityMembershipRequestReceived*[T](
+    self: Module[T], membershipRequest: CommunityMembershipRequestDto
+) =
+  let (contactName, _, _) =
+    self.controller.getContactNameAndImage(membershipRequest.publicKey)
+  let community = self.controller.getCommunityById(membershipRequest.communityId)
+  singletonInstance.globalEvents.newCommunityMembershipRequestNotification(
+    "New membership request",
+    fmt "{contactName} asks to join {community.name}",
+    community.id,
+  )
 
-  self.view.model().addMember(membershipRequest.communityId, self.createMemberItem(
-    membershipRequest.publicKey,
-    membershipRequest.id,
-    MembershipRequestState(membershipRequest.state),
-    MemberRole.None,
-  ))
+  self.view.model().addMember(
+    membershipRequest.communityId,
+    self.createMemberItem(
+      membershipRequest.publicKey,
+      membershipRequest.id,
+      MembershipRequestState(membershipRequest.state),
+      MemberRole.None,
+    ),
+  )
 
-method communityMembershipRequestCanceled*[T](self: Module[T], communityId: string, requestId: string, pubKey: string) =
+method communityMembershipRequestCanceled*[T](
+    self: Module[T], communityId: string, requestId: string, pubKey: string
+) =
   self.view.model().removeMember(communityId, pubKey)
 
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
 
-method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, loading: bool,
-  ephNotifType: int, url: string, details = NotificationDetails()) =
+method displayEphemeralNotification*[T](
+    self: Module[T],
+    title: string,
+    subTitle: string,
+    icon: string,
+    loading: bool,
+    ephNotifType: int,
+    url: string,
+    details = NotificationDetails(),
+) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
   var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
+  if (ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+  elif (ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, "",
-  loading, finalEphNotifType, url, EphemeralActionType.None, "", details)
+  let item = ephemeral_notification_item.initItem(
+    id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, "", loading,
+    finalEphNotifType, url, EphemeralActionType.None, "", details,
+  )
   self.view.ephemeralNotificationModel().addItem(item)
 
 # TO UNIFY with the one above.
 # Further refactor will be done in a next step
-method displayEphemeralWithActionNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, iconColor: string, loading: bool,
-  ephNotifType: int, actionType: int, actionData: string, details = NotificationDetails()) =
+method displayEphemeralWithActionNotification*[T](
+    self: Module[T],
+    title: string,
+    subTitle: string,
+    icon: string,
+    iconColor: string,
+    loading: bool,
+    ephNotifType: int,
+    actionType: int,
+    actionData: string,
+    details = NotificationDetails(),
+) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
   var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
+  if (ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+  elif (ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, iconColor,
-  loading, finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
+  let item = ephemeral_notification_item.initItem(
+    id,
+    title,
+    TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS,
+    subTitle,
+    "",
+    icon,
+    iconColor,
+    loading,
+    finalEphNotifType,
+    "",
+    EphemeralActionType(actionType),
+    actionData,
+    details,
+  )
   self.view.ephemeralNotificationModel().addItem(item)
 
 # TO UNIFY with the one above.
 # Further refactor will be done in a next step
-method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: string, subTitle: string, image: string, ephNotifType: int,
-    actionType: int, actionData: string, details = NotificationDetails()) =
+method displayEphemeralImageWithActionNotification*[T](
+    self: Module[T],
+    title: string,
+    subTitle: string,
+    image: string,
+    ephNotifType: int,
+    actionType: int,
+    actionData: string,
+    details = NotificationDetails(),
+) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
   var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
+  if (ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+  elif (ephNotifType == EphemeralNotificationType.Danger.int):
     finalEphNotifType = EphemeralNotificationType.Danger
 
-
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false,
-  finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
+  let item = ephemeral_notification_item.initItem(
+    id,
+    title,
+    TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS,
+    subTitle,
+    image,
+    "",
+    "",
+    false,
+    finalEphNotifType,
+    "",
+    EphemeralActionType(actionType),
+    actionData,
+    details,
+  )
   self.view.ephemeralNotificationModel().addItem(item)
 
-method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
+method displayEphemeralNotification*[T](
+    self: Module[T], title: string, subTitle: string, details: NotificationDetails
+) =
   if details.notificationType == NotificationType.NewMessage or
-    details.notificationType == NotificationType.NewMessageWithPersonalMention or
-    details.notificationType == NotificationType.CommunityTokenPermissionCreated or
-    details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
-    details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
-    details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
-    details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
-    details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
-    details.notificationType == NotificationType.NewMessageWithGlobalMention:
-    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
-
+      details.notificationType == NotificationType.NewMessageWithPersonalMention or
+      details.notificationType == NotificationType.CommunityTokenPermissionCreated or
+      details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
+      details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
+      details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
+      details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
+      details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
+      details.notificationType == NotificationType.NewMessageWithGlobalMention:
+    self.displayEphemeralNotification(
+      title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details
+    )
   elif details.notificationType == NotificationType.NewContactRequest or
-    details.notificationType == NotificationType.IdentityVerificationRequest or
-    details.notificationType == NotificationType.ContactRemoved:
-    self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
-
+      details.notificationType == NotificationType.IdentityVerificationRequest or
+      details.notificationType == NotificationType.ContactRemoved:
+    self.displayEphemeralNotification(
+      title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "",
+      details,
+    )
   elif details.notificationType == NotificationType.AcceptedContactRequest:
-    self.displayEphemeralNotification(title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int, "", details)
-
+    self.displayEphemeralNotification(
+      title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int,
+      "", details,
+    )
   elif details.notificationType == NotificationType.CommunityMemberKicked:
-    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
-
+    self.displayEphemeralNotification(
+      title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "",
+      details,
+    )
   elif details.notificationType == NotificationType.CommunityMemberBanned:
-    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
-
+    self.displayEphemeralNotification(
+      title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "",
+      details,
+    )
   elif details.notificationType == NotificationType.CommunityMemberUnbanned:
-    self.displayEphemeralWithActionNotification(title, "Visit community" , "communities", "", false, EphemeralNotificationType.Success.int, EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId)
+    self.displayEphemeralWithActionNotification(
+      title, "Visit community", "communities", "", false,
+      EphemeralNotificationType.Success.int,
+      EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId,
+    )
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
 
 method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
   let item = self.view.ephemeralNotificationModel().getItemWithId(id)
-  if(item.details.isEmpty()):
+  if (item.details.isEmpty()):
     return
-  if(item.details.notificationType == NotificationType.NewMessage or
+  if (
+    item.details.notificationType == NotificationType.NewMessage or
     item.details.notificationType == NotificationType.NewMessageWithPersonalMention or
-    item.details.notificationType == NotificationType.NewMessageWithGlobalMention):
-    self.controller.switchTo(item.details.sectionId, item.details.chatId, item.details.messageId)
+    item.details.notificationType == NotificationType.NewMessageWithGlobalMention
+  ):
+    self.controller.switchTo(
+      item.details.sectionId, item.details.chatId, item.details.messageId
+    )
   else:
     self.osNotificationClicked(item.details)
 
 method onMyRequestAdded*[T](self: Module[T]) =
-  self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
+  self.displayEphemeralNotification(
+    "Your Request has been submitted", "", "checkmark-circle", false,
+    EphemeralNotificationType.Success.int, "",
+  )
 
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) =
   let contact = self.controller.getContact(publicKey)
@@ -1619,45 +1871,50 @@ proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) 
   else:
     self.view.emitDisplayUserProfileSignal(publicKey)
 
-method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, channelId: string,
-    url: string, userId: string, shard: Shard) =
-
-  case action:
-    of StatusUrlAction.DisplayUserProfile:
-      if singletonInstance.utils().isCompressedPubKey(userId):
-        let contactPk = singletonInstance.utils().getDecompressedPk(userId)
-        self.switchToContactOrDisplayUserProfile(contactPk)
-      else:
-        self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
-
-    of StatusUrlAction.OpenCommunity:
-      let item = self.view.model().getItemById(communityId)
-      if item.isEmpty():
-        if self.controller.getCommunityById(communityId).id != "":
-          self.controller.spectateCommunity(communityId)
-          return
-        # request community info and then spectate
-        self.pendingSpectateRequest.communityId = communityId
-        self.pendingSpectateRequest.channelUuid = ""
-        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
-        return
-
-      self.controller.switchTo(communityId, "", "")
-
-    of StatusUrlAction.OpenCommunityChannel:
-      let chatId = communityId & channelId
-      let item = self.view.model().getItemById(communityId)
-
-      if item.isEmpty():
-        self.pendingSpectateRequest.communityId = communityId
-        self.pendingSpectateRequest.channelUuid = channelId
-        self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
-        return
-
-      self.controller.switchTo(communityId, chatId, "")
-
+method onStatusUrlRequested*[T](
+    self: Module[T],
+    action: StatusUrlAction,
+    communityId: string,
+    channelId: string,
+    url: string,
+    userId: string,
+    shard: Shard,
+) =
+  case action
+  of StatusUrlAction.DisplayUserProfile:
+    if singletonInstance.utils().isCompressedPubKey(userId):
+      let contactPk = singletonInstance.utils().getDecompressedPk(userId)
+      self.switchToContactOrDisplayUserProfile(contactPk)
     else:
+      self.resolveENS(
+        userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile
+      )
+  of StatusUrlAction.OpenCommunity:
+    let item = self.view.model().getItemById(communityId)
+    if item.isEmpty():
+      if self.controller.getCommunityById(communityId).id != "":
+        self.controller.spectateCommunity(communityId)
+        return
+      # request community info and then spectate
+      self.pendingSpectateRequest.communityId = communityId
+      self.pendingSpectateRequest.channelUuid = ""
+      self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
       return
+
+    self.controller.switchTo(communityId, "", "")
+  of StatusUrlAction.OpenCommunityChannel:
+    let chatId = communityId & channelId
+    let item = self.view.model().getItemById(communityId)
+
+    if item.isEmpty():
+      self.pendingSpectateRequest.communityId = communityId
+      self.pendingSpectateRequest.channelUuid = channelId
+      self.communitiesModule.requestCommunityInfo(communityId, shard, importing = false)
+      return
+
+    self.controller.switchTo(communityId, chatId, "")
+  else:
+    return
 
 ################################################################################
 ## keycard shared module - authentication/sign purpose
@@ -1669,46 +1926,69 @@ method getKeycardSharedModuleForAuthenticationOrSigning*[T](self: Module[T]): QV
   if self.isSharedKeycardModuleForAuthenticationOrSigningRunning():
     return self.keycardSharedModuleForAuthenticationOrSigning.getModuleAsVariant()
 
-proc createSharedKeycardModuleForAuthenticationOrSigning[T](self: Module[T], identifier: string) =
-  self.keycardSharedModuleForAuthenticationOrSigning = keycard_shared_module.newModule[Module[T]](self, identifier,
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+proc createSharedKeycardModuleForAuthenticationOrSigning[T](
+    self: Module[T], identifier: string
+) =
+  self.keycardSharedModuleForAuthenticationOrSigning = keycard_shared_module.newModule[
+    Module[T]
+  ](
+    self, identifier, self.events, self.keycardService, self.settingsService,
+    self.networkService, self.privacyService, self.accountsService,
+    self.walletAccountService, self.keychainService,
+  )
 
-method onSharedKeycarModuleForAuthenticationOrSigningTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+method onSharedKeycarModuleForAuthenticationOrSigningTerminated*[T](
+    self: Module[T], lastStepInTheCurrentFlow: bool
+) =
   if self.isSharedKeycardModuleForAuthenticationOrSigningRunning():
     self.view.emitDestroyKeycardSharedModuleForAuthenticationOrSigning()
     self.keycardSharedModuleForAuthenticationOrSigning.delete
     self.keycardSharedModuleForAuthenticationOrSigning = nil
 
-method runAuthenticationOrSigningPopup*[T](self: Module[T], flow: keycard_shared_module.FlowType, keyUid: string,
-  bip44Paths: seq[string] = @[], dataToSign = "") =
+method runAuthenticationOrSigningPopup*[T](
+    self: Module[T],
+    flow: keycard_shared_module.FlowType,
+    keyUid: string,
+    bip44Paths: seq[string] = @[],
+    dataToSign = "",
+) =
   var identifier = UNIQUE_MAIN_MODULE_AUTHENTICATE_KEYPAIR_IDENTIFIER
   if flow == keycard_shared_module.FlowType.Sign:
     identifier = UNIQUE_MAIN_MODULE_SIGNING_DATA_IDENTIFIER
   self.createSharedKeycardModuleForAuthenticationOrSigning(identifier)
   if self.keycardSharedModuleForAuthenticationOrSigning.isNil:
     return
-  self.keycardSharedModuleForAuthenticationOrSigning.runFlow(flow, keyUid, bip44Paths, dataToSign)
+  self.keycardSharedModuleForAuthenticationOrSigning.runFlow(
+    flow, keyUid, bip44Paths, dataToSign
+  )
 
 method onDisplayKeycardSharedModuleForAuthenticationOrSigning*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleForAuthenticationOrSigning()
+
 ################################################################################
 
 ################################################################################
 ## keycard shared module - keycard syncing purpose
 ################################################################################
-method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](
+    self: Module[T], lastStepInTheCurrentFlow: bool
+) =
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
     self.keycardSharedModuleKeycardSyncPurpose.delete
     self.keycardSharedModuleKeycardSyncPurpose = nil
 
 method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
-  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER,
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[
+    Module[T]
+  ](
+    self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, self.events, self.keycardService,
+    self.settingsService, self.networkService, self.privacyService,
+    self.accountsService, self.walletAccountService, self.keychainService,
+  )
   if self.keycardSharedModuleKeycardSyncPurpose.isNil:
     return
   self.keycardSharedModuleKeycardSyncPurpose.syncKeycardBasedOnAppState(keyUid, pin)
+
 ################################################################################
 
 ################################################################################
@@ -1718,15 +1998,23 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
   if not self.keycardSharedModule.isNil:
     return self.keycardSharedModule.getModuleAsVariant()
 
-method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType,
-  forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) =
+method onSharedKeycarModuleFlowTerminated*[T](
+    self: Module[T],
+    lastStepInTheCurrentFlow: bool,
+    nextFlow: keycard_shared_module.FlowType,
+    forceFlow: bool,
+    nextKeyUid: string,
+    returnToFlow: keycard_shared_module.FlowType,
+) =
   if not self.keycardSharedModule.isNil:
     if nextFlow == keycard_shared_module.FlowType.General:
       self.view.emitDestroyKeycardSharedModuleFlow()
       self.keycardSharedModule.delete
       self.keycardSharedModule = nil
       return
-    self.keycardSharedModule.runFlow(nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow)
+    self.keycardSharedModule.runFlow(
+      nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow
+    )
 
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
@@ -1735,21 +2023,36 @@ proc runStopUsingKeycardForProfilePopup[T](self: Module[T]) =
   if not self.keycardSharedModule.isNil:
     info "shared keycard module is already running, cannot run stop using keycard flow"
     return
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER,
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromKeycardToApp,
-    singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](
+    self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER, self.events,
+    self.keycardService, self.settingsService, self.networkService, self.privacyService,
+    self.accountsService, self.walletAccountService, self.keychainService,
+  )
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.MigrateFromKeycardToApp,
+    singletonInstance.userProfile.getKeyUid(),
+    bip44Paths = @[],
+    txHash = "",
+    forceFlow = true,
+  )
 
 proc runStartUsingKeycardForProfilePopup[T](self: Module[T]) =
   if not self.keycardSharedModule.isNil:
     info "shared keycard module is already running, cannot run start using keycard flow"
     return
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER,
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromAppToKeycard,
-    singletonInstance.userProfile.getKeyUid(), bip44Paths = @[], txHash = "", forceFlow = true)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](
+    self, UNIQUE_MAIN_MODULE_SHARED_KEYCARD_MODULE_IDENTIFIER, self.events,
+    self.keycardService, self.settingsService, self.networkService, self.privacyService,
+    self.accountsService, self.walletAccountService, self.keychainService,
+  )
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.MigrateFromAppToKeycard,
+    singletonInstance.userProfile.getKeyUid(),
+    bip44Paths = @[],
+    txHash = "",
+    forceFlow = true,
+  )
+
 ################################################################################
 
 method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
@@ -1763,8 +2066,8 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
     if not self.keycardSharedModule.isNil:
       let currentFlow = self.keycardSharedModule.getCurrentFlowType()
       if currentFlow == FlowType.MigrateFromKeycardToApp or
-        currentFlow == FlowType.MigrateFromAppToKeycard:
-          self.keycardSharedModule.onCancelActionClicked()
+          currentFlow == FlowType.MigrateFromAppToKeycard:
+        self.keycardSharedModule.onCancelActionClicked()
     return
   if profileKeypair.migratedToKeycard():
     if not self.keycardSharedModule.isNil:
@@ -1783,7 +2086,6 @@ method checkAndPerformProfileMigrationIfNeeded*[T](self: Module[T]) =
   info "run migrate to a Keycard flow for the profile, cause profile was migrated on paired device"
   self.runStartUsingKeycardForProfilePopup()
 
-
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   if not self.chatsLoaded:
     self.statusDeepLinkToActivate = statusDeepLink
@@ -1794,15 +2096,34 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
     openDefaultBrowser(statusDeepLink)
     return
   if urlData.channel.uuid != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid,
-      url="", userId="", urlData.community.shard)
+    self.onStatusUrlRequested(
+      StatusUrlAction.OpenCommunityChannel,
+      urlData.community.communityId,
+      urlData.channel.uuid,
+      url = "",
+      userId = "",
+      urlData.community.shard,
+    )
     return
   if urlData.community.communityId != "":
-    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, channelId="", url="", userId="", urlData.community.shard)
+    self.onStatusUrlRequested(
+      StatusUrlAction.OpenCommunity,
+      urlData.community.communityId,
+      channelId = "",
+      url = "",
+      userId = "",
+      urlData.community.shard,
+    )
     return
   if urlData.contact.publicKey != "":
-    self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, communityId="", channelId="", url="",
-      urlData.contact.publicKey, urlData.community.shard)
+    self.onStatusUrlRequested(
+      StatusUrlAction.DisplayUserProfile,
+      communityId = "",
+      channelId = "",
+      url = "",
+      urlData.contact.publicKey,
+      urlData.community.shard,
+    )
     return
 
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
@@ -1815,8 +2136,12 @@ method windowActivated*[T](self: Module[T]) =
 method windowDeactivated*[T](self: Module[T]) =
   self.controller.speedupArchivesImport()
 
-method communityMembersRevealedAccountsLoaded*[T](self: Module[T], communityId: string, membersRevealedAccounts: MembersRevealedAccounts) =
-  var  communityMembersAirdropAddress: Table[string, string]
+method communityMembersRevealedAccountsLoaded*[T](
+    self: Module[T],
+    communityId: string,
+    membersRevealedAccounts: MembersRevealedAccounts,
+) =
+  var communityMembersAirdropAddress: Table[string, string]
   for pubkey, revealedAccounts in membersRevealedAccounts.pairs:
     for revealedAccount in revealedAccounts:
       if revealedAccount.isAirdropAddress:
@@ -1825,7 +2150,9 @@ method communityMembersRevealedAccountsLoaded*[T](self: Module[T], communityId: 
 
   self.view.model.setMembersAirdropAddress(communityId, communityMembersAirdropAddress)
 
-method communityMemberRevealedAccountsAdded*[T](self: Module[T], request: CommunityMembershipRequestDto) =
+method communityMemberRevealedAccountsAdded*[T](
+    self: Module[T], request: CommunityMembershipRequestDto
+) =
   var airdropAddress = ""
   for revealedAccount in request.revealedAccounts:
     if revealedAccount.isAirdropAddress:
@@ -1833,16 +2160,27 @@ method communityMemberRevealedAccountsAdded*[T](self: Module[T], request: Commun
       discard
 
   if airdropAddress == "":
-    warn "Request to join doesn't have an airdrop address", requestId = request.id, communityId = request.communityId
+    warn "Request to join doesn't have an airdrop address",
+      requestId = request.id, communityId = request.communityId
     return
 
   let communityMembersAirdropAddress = {request.publicKey: airdropAddress}.toTable
-  self.view.model.setMembersAirdropAddress(request.communityId, communityMembersAirdropAddress)
+  self.view.model.setMembersAirdropAddress(
+    request.communityId, communityMembersAirdropAddress
+  )
 
 ## Used in test env only, for testing keycard flows
-method registerMockedKeycard*[T](self: Module[T], cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) =
-  self.keycardService.registerMockedKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+method registerMockedKeycard*[T](
+    self: Module[T],
+    cardIndex: int,
+    readerState: int,
+    keycardState: int,
+    mockedKeycard: string,
+    mockedKeycardHelper: string,
+) =
+  self.keycardService.registerMockedKeycard(
+    cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper
+  )
 
 method pluginMockedReaderAction*[T](self: Module[T]) =
   self.keycardService.pluginMockedReaderAction()
@@ -1864,11 +2202,17 @@ method addressWasShown*[T](self: Module[T], address: string) =
     return
   self.walletAccountService.addressWasShown(address)
 
-method openSectionChatAndMessage*[T](self: Module[T], sectionId: string, chatId: string, messageId: string) =
+method openSectionChatAndMessage*[T](
+    self: Module[T], sectionId: string, chatId: string, messageId: string
+) =
   if sectionId in self.chatSectionModules:
-    self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(chatId, messageId)
+    self.chatSectionModules[sectionId].openCommunityChatAndScrollToMessage(
+      chatId, messageId
+    )
 
-method updateRequestToJoinState*[T](self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState) =
+method updateRequestToJoinState*[T](
+    self: Module[T], sectionId: string, requestToJoinState: RequestToJoinState
+) =
   if sectionId in self.chatSectionModules:
     self.chatSectionModules[sectionId].updateRequestToJoinState(requestToJoinState)
 
@@ -1879,7 +2223,7 @@ proc createMemberItem[T](
     state: MembershipRequestState,
     role: MemberRole,
     airdropAddress: string = "",
-    ): MemberItem =
+): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   let status = self.controller.getStatusForContactWithId(memberId)
   return initMemberItem(

@@ -2,17 +2,15 @@ import json, stew/shims/strformat, NimQml
 import ./link_preview_thumbnail
 include ../../../common/json_utils
 
-type
-  LinkType* {.pure.} = enum
-    Link = 0
-    Image
+type LinkType* {.pure.} = enum
+  Link = 0
+  Image
 
 proc toLinkType*(value: int): LinkType =
   try:
     return LinkType(value)
   except RangeDefect:
     return LinkType.Link
-
 
 QtObject:
   type StandardLinkPreview* = ref object of QObject
@@ -31,7 +29,13 @@ QtObject:
     self.QObject.delete
     self.thumbnail.delete
 
-  proc newStandardLinkPreview*(hostname: string, title: string, description: string, thumbnail: LinkPreviewThumbnail, linkType: LinkType): StandardLinkPreview =
+  proc newStandardLinkPreview*(
+      hostname: string,
+      title: string,
+      description: string,
+      thumbnail: LinkPreviewThumbnail,
+      linkType: LinkType,
+  ): StandardLinkPreview =
     new(result, delete)
     result.setup()
     result.hostname = hostname
@@ -43,6 +47,7 @@ QtObject:
   proc hostnameChanged*(self: StandardLinkPreview) {.signal.}
   proc getHostname*(self: StandardLinkPreview): string {.slot.} =
     result = self.hostname
+
   QtProperty[string] hostname:
     read = getHostname
     notify = hostnameChanged
@@ -50,6 +55,7 @@ QtObject:
   proc titleChanged*(self: StandardLinkPreview) {.signal.}
   proc getTitle*(self: StandardLinkPreview): string {.slot.} =
     result = self.title
+
   QtProperty[string] title:
     read = getTitle
     notify = titleChanged
@@ -57,6 +63,7 @@ QtObject:
   proc descriptionChanged*(self: StandardLinkPreview) {.signal.}
   proc getDescription*(self: StandardLinkPreview): string {.slot.} =
     result = self.description
+
   QtProperty[string] description:
     read = getDescription
     notify = descriptionChanged
@@ -64,6 +71,7 @@ QtObject:
   proc linkTypeChanged*(self: StandardLinkPreview) {.signal.}
   proc getLinkType*(self: StandardLinkPreview): int {.slot.} =
     result = self.linkType.int
+
   QtProperty[int] linkType:
     read = getLinkType
     notify = linkTypeChanged
@@ -71,7 +79,6 @@ QtObject:
   proc getThumbnail*(self: StandardLinkPreview): LinkPreviewThumbnail =
     result = self.thumbnail
 
-  
   proc toStandardLinkPreview*(jsonObj: JsonNode): StandardLinkPreview =
     var hostname: string
     var title: string
@@ -91,7 +98,8 @@ QtObject:
     result = newStandardLinkPreview(hostname, title, description, thumbnail, linkType)
 
   proc `$`*(self: StandardLinkPreview): string =
-    result = fmt"""StandardLinkPreview(
+    result =
+      fmt"""StandardLinkPreview(
       type: {self.linkType},
       hostname: {self.hostname},
       title: {self.title},
@@ -101,14 +109,15 @@ QtObject:
 
   # Custom JSON converter to force `linkType` integer instead of string
   proc `%`*(self: StandardLinkPreview): JsonNode =
-    result = %* {
-      "url": self.url,
-      "type": self.linkType.int,
-      "hostname": self.hostname,
-      "title": self.title,
-      "description": self.description,
-      "thumbnail": %self.thumbnail,
-    }  
+    result =
+      %*{
+        "url": self.url,
+        "type": self.linkType.int,
+        "hostname": self.hostname,
+        "title": self.title,
+        "description": self.description,
+        "thumbnail": %self.thumbnail,
+      }
 
   proc empty*(self: StandardLinkPreview): bool =
     return self.hostname.len == 0

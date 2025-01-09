@@ -22,7 +22,7 @@ proc hashPassword*(password: string, lower: bool = true): string =
 proc hashedPasswordToUpperCase*(hashedPassword: string): string =
   return "0x" & hashedPassword[2 .. ^1].toUpperAscii()
 
-proc prefix*(methodName: string, isExt:bool = true): string =
+proc prefix*(methodName: string, isExt: bool = true): string =
   result = "waku"
   result = result & (if isExt: "ext_" else: "_")
   result = result & methodName
@@ -31,7 +31,9 @@ proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray == nil:
     return nil
   if jArray.kind != JArray:
-    raise newException(ValueError, "Parameter 'jArray' is a " & $jArray.kind & ", but must be a JArray")
+    raise newException(
+      ValueError, "Parameter 'jArray' is a " & $jArray.kind & ", but must be a JArray"
+    )
   for child in jArray.getElems:
     if child{fieldName}.getStr.toLower == id.toLower:
       return child
@@ -65,15 +67,17 @@ proc validateLink*(link: string): bool =
   result = true
   if link.len() != 0:
     if not match(
-        link, re"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", 0):
+      link,
+      re"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+      0,
+    ):
       error "Invalid social link", errDescription = link
       result = false
 
 proc isPathOutOfTheDefaultStatusDerivationTree*(path: string): bool =
-  if not path.startsWith(account_constants.PATH_WALLET_ROOT&"/") or
-    path.count("'") != 3 or
-    path.count("/") != 5:
-      return true
+  if not path.startsWith(account_constants.PATH_WALLET_ROOT & "/") or
+      path.count("'") != 3 or path.count("/") != 5:
+    return true
   return false
 
 proc contractUniqueKey*(chainId: int, contractAddress: string): string =
@@ -93,6 +97,10 @@ proc stringToUint256*(value: string): Uint256 =
   return parsedValue
 
 proc createHash*(signature: string): string =
-  let signatureHex = if signature.startsWith("0x"): signature[2..^1] else: signature
+  let signatureHex =
+    if signature.startsWith("0x"):
+      signature[2 ..^ 1]
+    else:
+      signature
 
   return hashPassword(signatureHex, true)

@@ -1,11 +1,10 @@
 import stew/shims/strformat
 
-type
-  Item* = ref object
-    entity: string
-    icon: string
-    trackOfLoadedMessages: seq[bool]
-    totalMessages: int
+type Item* = ref object
+  entity: string
+  icon: string
+  trackOfLoadedMessages: seq[bool]
+  totalMessages: int
 
 proc newItem*(entity: string, icon: string, totalMessages: int = 0): Item =
   result = Item()
@@ -15,7 +14,8 @@ proc newItem*(entity: string, icon: string, totalMessages: int = 0): Item =
   result.totalMessages = totalMessages
 
 proc `$`*(self: Item): string =
-  result = fmt"""FetchingDataItem[
+  result =
+    fmt"""FetchingDataItem[
       entity: {self.entity},
       icon: {self.icon},
       totalMessages: {self.totalMessages},
@@ -40,7 +40,7 @@ proc loadedMessages*(self: Item): int =
 
 proc receivedMessageAtPosition*(self: Item, position: int) =
   if position >= 1 and position <= self.totalMessages:
-    self.trackOfLoadedMessages[position-1] = true
+    self.trackOfLoadedMessages[position - 1] = true
 
 proc resetItem*(self: Item) =
   self.trackOfLoadedMessages = @[]

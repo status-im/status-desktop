@@ -4,11 +4,10 @@ import model
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
@@ -40,12 +39,18 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc savedAddressAddedOrUpdated*(self: View, added: bool, name: string, address: string, errorMsg: string) {.signal.}
+  proc savedAddressAddedOrUpdated*(
+    self: View, added: bool, name: string, address: string, errorMsg: string
+  ) {.signal.}
 
-  proc createOrUpdateSavedAddress*(self: View, name: string, address: string, ens: string, colorId: string) {.slot.} =
+  proc createOrUpdateSavedAddress*(
+      self: View, name: string, address: string, ens: string, colorId: string
+  ) {.slot.} =
     self.delegate.createOrUpdateSavedAddress(name, address, ens, colorId)
 
-  proc savedAddressDeleted*(self: View, name: string, address: string, errorMsg: string) {.signal.}
+  proc savedAddressDeleted*(
+    self: View, name: string, address: string, errorMsg: string
+  ) {.signal.}
 
   proc deleteSavedAddress*(self: View, address: string) {.slot.} =
     self.delegate.deleteSavedAddress(address)

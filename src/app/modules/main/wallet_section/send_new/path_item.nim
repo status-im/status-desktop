@@ -26,7 +26,7 @@ QtObject:
     txL1Fee: string
     txTotalFee: string
     approvalRequired: bool
-    approvalAmountRequired : string
+    approvalAmountRequired: string
     approvalContractAddress: string
     approvalTxNonce: string
     approvalMaxFeesPerGas: string
@@ -37,38 +37,39 @@ QtObject:
     approvalFee: string
     approvalL1Fee: string
 
-  proc setup*(self: PathItem,
-    processorName: string,
-    fromChain: int,
-    toChain: int,
-    fromToken: string,
-    toToken: string,
-    amountIn: string,
-    amountInLocked: bool,
-    amountOut: string,
-    suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
-    txNonce: string,
-    txMaxFeesPerGas: string,
-    txBaseFee: string,
-    txPriorityFee: string,
-    txGasAmount: string,
-    txBonderFees: string,
-    txTokenFees: string,
-    txEstimatedTime: int,
-    txFee: string,
-    txL1Fee: string,
-    txTotalFee: string,
-    approvalRequired: bool,
-    approvalAmountRequired: string,
-    approvalContractAddress: string,
-    approvalTxNonce: string,
-    approvalMaxFeesPerGas: string,
-    approvalBaseFee: string,
-    approvalPriorityFee: string,
-    approvalGasAmount: string,
-    approvalEstimatedTime: int,
-    approvalFee: string,
-    approvalL1Fee: string
+  proc setup*(
+      self: PathItem,
+      processorName: string,
+      fromChain: int,
+      toChain: int,
+      fromToken: string,
+      toToken: string,
+      amountIn: string,
+      amountInLocked: bool,
+      amountOut: string,
+      suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
+      txNonce: string,
+      txMaxFeesPerGas: string,
+      txBaseFee: string,
+      txPriorityFee: string,
+      txGasAmount: string,
+      txBonderFees: string,
+      txTokenFees: string,
+      txEstimatedTime: int,
+      txFee: string,
+      txL1Fee: string,
+      txTotalFee: string,
+      approvalRequired: bool,
+      approvalAmountRequired: string,
+      approvalContractAddress: string,
+      approvalTxNonce: string,
+      approvalMaxFeesPerGas: string,
+      approvalBaseFee: string,
+      approvalPriorityFee: string,
+      approvalGasAmount: string,
+      approvalEstimatedTime: int,
+      approvalFee: string,
+      approvalL1Fee: string,
   ) =
     self.QObject.setup
     self.processorName = processorName
@@ -107,44 +108,48 @@ QtObject:
     self.QObject.delete
 
   proc newPathItem*(
-    processorName: string,
-    fromChain: int,
-    toChain: int,
-    fromToken: string,
-    toToken: string,
-    amountIn: string,
-    amountInLocked: bool,
-    amountOut: string,
-    suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
-    txNonce: string,
-    txMaxFeesPerGas: string,
-    txBaseFee: string,
-    txPriorityFee: string,
-    txGasAmount: string,
-    txBonderFees: string,
-    txTokenFees: string,
-    txEstimatedTime: int,
-    txFee: string,
-    txL1Fee: string,
-    txTotalFee: string,
-    approvalRequired: bool,
-    approvalAmountRequired: string,
-    approvalContractAddress: string,
-    approvalTxNonce: string,
-    approvalMaxFeesPerGas: string,
-    approvalBaseFee: string,
-    approvalPriorityFee: string,
-    approvalGasAmount: string,
-    approvalEstimatedTime: int,
-    approvalFee: string,
-    approvalL1Fee: string
+      processorName: string,
+      fromChain: int,
+      toChain: int,
+      fromToken: string,
+      toToken: string,
+      amountIn: string,
+      amountInLocked: bool,
+      amountOut: string,
+      suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
+      txNonce: string,
+      txMaxFeesPerGas: string,
+      txBaseFee: string,
+      txPriorityFee: string,
+      txGasAmount: string,
+      txBonderFees: string,
+      txTokenFees: string,
+      txEstimatedTime: int,
+      txFee: string,
+      txL1Fee: string,
+      txTotalFee: string,
+      approvalRequired: bool,
+      approvalAmountRequired: string,
+      approvalContractAddress: string,
+      approvalTxNonce: string,
+      approvalMaxFeesPerGas: string,
+      approvalBaseFee: string,
+      approvalPriorityFee: string,
+      approvalGasAmount: string,
+      approvalEstimatedTime: int,
+      approvalFee: string,
+      approvalL1Fee: string,
   ): PathItem =
     new(result, delete)
-    result.setup(processorName, fromChain, toChain, fromToken, toToken, amountIn, amountInLocked, amountOut,
-      suggestedLevelsForMaxFeesPerGas, txNonce, txMaxFeesPerGas, txBaseFee,txPriorityFee, txGasAmount, txBonderFees,
-      txTokenFees, txEstimatedTime, txFee, txL1Fee, txTotalFee, approvalRequired, approvalAmountRequired,
-      approvalContractAddress, approvalTxNonce, approvalMaxFeesPerGas, approvalBaseFee, approvalPriorityFee,
-      approvalGasAmount, approvalEstimatedTime, approvalFee, approvalL1Fee)
+    result.setup(
+      processorName, fromChain, toChain, fromToken, toToken, amountIn, amountInLocked,
+      amountOut, suggestedLevelsForMaxFeesPerGas, txNonce, txMaxFeesPerGas, txBaseFee,
+      txPriorityFee, txGasAmount, txBonderFees, txTokenFees, txEstimatedTime, txFee,
+      txL1Fee, txTotalFee, approvalRequired, approvalAmountRequired,
+      approvalContractAddress, approvalTxNonce, approvalMaxFeesPerGas, approvalBaseFee,
+      approvalPriorityFee, approvalGasAmount, approvalEstimatedTime, approvalFee,
+      approvalL1Fee,
+    )
 
   proc `$`*(self: PathItem): string =
     result = "PathItem("
@@ -156,7 +161,8 @@ QtObject:
     result &= "\namountIn: " & $self.amountIn
     result &= "\namountInLocked: " & $self.amountInLocked
     result &= "\namountOut: " & $self.amountOut
-    result &= "\nsuggestedLevelsForMaxFeesPerGas: " & $self.suggestedLevelsForMaxFeesPerGas
+    result &=
+      "\nsuggestedLevelsForMaxFeesPerGas: " & $self.suggestedLevelsForMaxFeesPerGas
     result &= "\ntxNonce: " & $self.txNonce
     result &= "\ntxMaxFeesPerGas: " & $self.txMaxFeesPerGas
     result &= "\ntxBaseFee: " & $self.txBaseFee

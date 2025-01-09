@@ -5,16 +5,20 @@ import core, response_type
 from gen import rpc
 
 rpc(addWalletConnectSession, "wallet"):
-  sessionJson: string
+  sessionJson:
+    string
 
 rpc(disconnectWalletConnectSession, "wallet"):
-  topic: string
+  topic:
+    string
 
 rpc(getWalletConnectActiveSessions, "wallet"):
-  validAtTimestamp: int64
+  validAtTimestamp:
+    int64
 
 rpc(hashMessageEIP191, "wallet"):
-  message: string
+  message:
+    string
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil
@@ -40,7 +44,7 @@ proc getActiveSessions*(validAtTimestamp: int64): JsonNode =
   try:
     let rpcRes = getWalletConnectActiveSessions(validAtTimestamp)
 
-    if(not isSuccessResponse(rpcRes)):
+    if (not isSuccessResponse(rpcRes)):
       return nil
 
     let jsonResultStr = $rpcRes.result
@@ -61,7 +65,7 @@ proc getDapps*(validAtEpoch: int64, testChains: bool): string =
     let params = %*[validAtEpoch, testChains]
     let rpcResRaw = callPrivateRPCNoDecode("wallet_getWalletConnectDapps", params)
     let rpcRes = Json.decode(rpcResRaw, RpcResponse[JsonNode])
-    if(not rpcRes.error.isNil):
+    if (not rpcRes.error.isNil):
       return ""
 
     # Expect nil golang array to be valid empty array

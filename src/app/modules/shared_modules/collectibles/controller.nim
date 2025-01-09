@@ -13,11 +13,12 @@ import app_service/service/network/service as network_service
 
 const FETCH_BATCH_COUNT_DEFAULT = 50
 
-type
-  LoadType* {.pure.} = enum
-    AutoLoadSingleUpdate, # load all items and update the model once with full list
-    AutoLoadPaginated,    # load items in batches (keep loading until the end of the list) and update the model appending each batch.
-    OnDemand              # load items in batches (on demand when loadMoreItems is called) and update the model appending each batch.
+type LoadType* {.pure.} = enum
+  AutoLoadSingleUpdate # load all items and update the model once with full list
+  AutoLoadPaginated
+    # load items in batches (keep loading until the end of the list) and update the model appending each batch.
+  OnDemand
+    # load items in batches (on demand when loadMoreItems is called) and update the model appending each batch.
 
 proc isAutoLoad(self: LoadType): bool =
   return self == LoadType.AutoLoadSingleUpdate or self == LoadType.AutoLoadPaginated
@@ -26,28 +27,28 @@ proc isPaginated(self: LoadType): bool =
   return self == LoadType.AutoLoadPaginated or self == LoadType.OnDemand
 
 QtObject:
-  type
-    Controller* = ref object of QObject
-      networkService: network_service.Service
+  type Controller* = ref object of QObject
+    networkService: network_service.Service
 
-      model: Model
-      fetchFromStart: bool
-      tempItems: seq[CollectiblesEntry]
+    model: Model
+    fetchFromStart: bool
+    tempItems: seq[CollectiblesEntry]
 
-      eventsHandler: EventsHandler
+    eventsHandler: EventsHandler
 
-      addresses: seq[string]
-      chainIds: seq[int]
-      selectedAddress: string
-      filter: backend_collectibles.CollectibleFilter
+    addresses: seq[string]
+    chainIds: seq[int]
+    selectedAddress: string
+    filter: backend_collectibles.CollectibleFilter
 
-      ownershipStatus: Table[string, Table[int, OwnershipStatus]] # Table[address][chainID] -> OwnershipStatus
+    ownershipStatus: Table[string, Table[int, OwnershipStatus]]
+      # Table[address][chainID] -> OwnershipStatus
 
-      requestId: int32
-      loadType: LoadType
+    requestId: int32
+    loadType: LoadType
 
-      dataType: backend_collectibles.CollectibleDataType
-      fetchCriteria: backend_collectibles.FetchCriteria
+    dataType: backend_collectibles.CollectibleDataType
+    fetchCriteria: backend_collectibles.FetchCriteria
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -71,7 +72,8 @@ QtObject:
     # Otherwise, if any address+chainID is updating, then the whole model is updating
     # Otherwise, the model is idle
     for address, statusPerChainID in self.ownershipStatus.pairs:
-      if not self.addresses.contains(address) or (self.selectedAddress != "" and self.selectedAddress != address):
+      if not self.addresses.contains(address) or
+          (self.selectedAddress != "" and self.selectedAddress != address):
         continue
       for chainID, status in statusPerChainID:
         if not self.chainIds.contains(chainID):
@@ -83,16 +85,16 @@ QtObject:
           overallState = OwnershipStateUpdating
           break
 
-    case overallState:
-      of OwnershipStateIdle, OwnershipStateDelayed:
-        self.model.setIsUpdating(false)
-        self.model.setIsError(false)
-      of OwnershipStateUpdating:
-        self.model.setIsUpdating(true)
-        self.model.setIsError(false)
-      of OwnershipStateError:
-        self.model.setIsUpdating(false)
-        self.model.setIsError(true)
+    case overallState
+    of OwnershipStateIdle, OwnershipStateDelayed:
+      self.model.setIsUpdating(false)
+      self.model.setIsError(false)
+    of OwnershipStateUpdating:
+      self.model.setIsUpdating(true)
+      self.model.setIsError(false)
+    of OwnershipStateError:
+      self.model.setIsUpdating(false)
+      self.model.setIsError(true)
 
   proc resetOwnershipStatus(self: Controller) =
     # Initialize state table
@@ -102,11 +104,14 @@ QtObject:
       for chainID in self.chainIds:
         self.ownershipStatus[address][chainID] = OwnershipStatus(
           state: OwnershipStateUpdating,
-          timestamp: backend_collectibles.invalidTimestamp
+          timestamp: backend_collectibles.invalidTimestamp,
         )
     self.model.setIsUpdating(true)
 
-  proc setOwnershipStatus(self: Controller, statusPerAddressAndChainID: Table[string, Table[int, OwnershipStatus]]) =
+  proc setOwnershipStatus(
+      self: Controller,
+      statusPerAddressAndChainID: Table[string, Table[int, OwnershipStatus]],
+  ) =
     for address, statusPerChainID in statusPerAddressAndChainID.pairs:
       if not self.ownershipStatus.hasKey(address):
         continue
@@ -117,8 +122,11 @@ QtObject:
 
     self.checkModelState()
 
-  proc setOwnershipState(self: Controller, address: string, chainID: int, state: OwnershipState) =
-    if not self.ownershipStatus.hasKey(address) or not self.ownershipStatus[address].hasKey(chainID):
+  proc setOwnershipState(
+      self: Controller, address: string, chainID: int, state: OwnershipState
+  ) =
+    if not self.ownershipStatus.hasKey(address) or
+        not self.ownershipStatus[address].hasKey(chainID):
       return
     self.ownershipStatus[address][chainID].state = state
 
@@ -139,7 +147,10 @@ QtObject:
         offset = self.tempItems.len
     self.fetchFromStart = false
     try:
-      let response = backend_collectibles.getOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, self.filter, offset, FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria)
+      let response = backend_collectibles.getOwnedCollectiblesAsync(
+        self.requestId, self.chainIds, self.addresses, self.filter, offset,
+        FETCH_BATCH_COUNT_DEFAULT, self.dataType, self.fetchCriteria,
+      )
       if response.error != nil:
         self.model.setIsFetching(false)
         self.model.setIsError(true)
@@ -180,11 +191,14 @@ QtObject:
       self.model.setIsFetching(false)
       return
 
-    try: 
-      let items = res.collectibles.map(header => (block:
-        let extradata = self.getExtraData(header.id.contractID.chainID)
-        newCollectibleDetailsFullEntry(header, extradata)
-      ))
+    try:
+      let items = res.collectibles.map(
+        header => (
+          block:
+            let extradata = self.getExtraData(header.id.contractID.chainID)
+            newCollectibleDetailsFullEntry(header, extradata)
+        )
+      )
       if self.loadType.isPaginated():
         self.model.setItems(items, res.offset, res.hasMore)
       else:
@@ -202,7 +216,9 @@ QtObject:
     if self.loadType.isAutoLoad() and res.hasMore:
       self.loadMoreItems()
 
-  proc updateTempItems(self: Controller, updates: seq[backend_collectibles.Collectible]) =
+  proc updateTempItems(
+      self: Controller, updates: seq[backend_collectibles.Collectible]
+  ) =
     for i in countdown(self.tempItems.high, 0):
       let entry = self.tempItems[i]
       for j in countdown(updates.high, 0):
@@ -210,62 +226,78 @@ QtObject:
           break
 
   proc processCollectiblesDataUpdate(self: Controller, jsonObj: JsonNode) =
-      if jsonObj.kind != JArray:
-        error "processCollectiblesDataUpdate expected an array"
+    if jsonObj.kind != JArray:
+      error "processCollectiblesDataUpdate expected an array"
 
-      var collectibles: seq[backend_collectibles.Collectible]
-      for jsonCollectible in jsonObj.getElems():
-        let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
-        collectibles.add(collectible)
-      self.model.updateItemsData(collectibles)
-      if not self.loadType.isPaginated():
-        self.updateTempItems(collectibles)
+    var collectibles: seq[backend_collectibles.Collectible]
+    for jsonCollectible in jsonObj.getElems():
+      let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
+      collectibles.add(collectible)
+    self.model.updateItemsData(collectibles)
+    if not self.loadType.isPaginated():
+      self.updateTempItems(collectibles)
 
   proc resetModel(self: Controller) {.slot.} =
     self.tempItems = @[]
     self.model.setItems(@[], 0, true)
     self.fetchFromStart = true
     if self.loadType.isAutoLoad():
-      self.loadMoreItems() 
+      self.loadMoreItems()
 
   proc setupEventHandlers(self: Controller) =
-    self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
-      self.processGetOwnedCollectiblesResponse(jsonObj)
+    self.eventsHandler.onOwnedCollectiblesFilteringDone(
+      proc(jsonObj: JsonNode) =
+        self.processGetOwnedCollectiblesResponse(jsonObj)
     )
 
-    self.eventsHandler.onCollectiblesDataUpdate(proc (jsonObj: JsonNode) =
-      self.processCollectiblesDataUpdate(jsonObj)
+    self.eventsHandler.onCollectiblesDataUpdate(
+      proc(jsonObj: JsonNode) =
+        self.processCollectiblesDataUpdate(jsonObj)
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc (address: string, chainID: int) =
-      self.setOwnershipState(address, chainID, OwnershipStateUpdating)
+    self.eventsHandler.onCollectiblesOwnershipUpdateStarted(
+      proc(address: string, chainID: int) =
+        self.setOwnershipState(address, chainID, OwnershipStateUpdating)
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdatePartial(proc (address: string, chainID: int, changes: backend_collectibles.OwnershipUpdateMessage) =
-      self.setOwnershipState(address, chainID, OwnershipStateUpdating)
-      if changes.hasChanges():
-        self.resetModel() 
+    self.eventsHandler.onCollectiblesOwnershipUpdatePartial(
+      proc(
+          address: string,
+          chainID: int,
+          changes: backend_collectibles.OwnershipUpdateMessage,
+      ) =
+        self.setOwnershipState(address, chainID, OwnershipStateUpdating)
+        if changes.hasChanges():
+          self.resetModel()
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc (address: string, chainID: int, changes: backend_collectibles.OwnershipUpdateMessage) =
-      self.setOwnershipState(address, chainID, OwnershipStateIdle)
-      if changes.hasChanges():
-        self.resetModel()
+    self.eventsHandler.onCollectiblesOwnershipUpdateFinished(
+      proc(
+          address: string,
+          chainID: int,
+          changes: backend_collectibles.OwnershipUpdateMessage,
+      ) =
+        self.setOwnershipState(address, chainID, OwnershipStateIdle)
+        if changes.hasChanges():
+          self.resetModel()
     )
 
-    self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(proc (address: string, chainID: int) =
-      self.setOwnershipState(address, chainID, OwnershipStateError)
+    self.eventsHandler.onCollectiblesOwnershipUpdateFinishedWithError(
+      proc(address: string, chainID: int) =
+        self.setOwnershipState(address, chainID, OwnershipStateError)
     )
 
   proc newController*(
-    requestId: int32,
-    networkService: network_service.Service,
-    events: EventEmitter,
-    loadType: LoadType,
-    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Header,
-    fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
-      fetchType: backend_collectibles.FetchType.NeverFetch,
-    )): Controller =
+      requestId: int32,
+      networkService: network_service.Service,
+      events: EventEmitter,
+      loadType: LoadType,
+      dataType: backend_collectibles.CollectibleDataType =
+        backend_collectibles.CollectibleDataType.Header,
+      fetchCriteria: backend_collectibles.FetchCriteria = backend_collectibles.FetchCriteria(
+        fetchType: backend_collectibles.FetchType.NeverFetch
+      ),
+  ): Controller =
     new(result, delete)
 
     result.requestId = requestId
@@ -277,7 +309,7 @@ QtObject:
 
     result.model = newModel()
     result.fetchFromStart = true
-  
+
     result.eventsHandler = newEventsHandler(result.requestId, events)
 
     result.addresses = @[]
@@ -294,7 +326,9 @@ QtObject:
     self.selectedAddress = address
     self.checkModelState()
 
-  proc setFilterAddressesAndChains*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
+  proc setFilterAddressesAndChains*(
+      self: Controller, addresses: seq[string], chainIds: seq[int]
+  ) =
     if chainIds == self.chainIds and addresses == self.addresses:
       return
 
@@ -302,12 +336,12 @@ QtObject:
     self.addresses = addresses
 
     self.resetOwnershipStatus()
-  
+
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
 
     self.resetModel()
-  
+
   proc setFilter*(self: Controller, filter: backend_collectibles.CollectibleFilter) =
     if filter == self.filter:
       return
@@ -316,6 +350,8 @@ QtObject:
 
     self.resetModel()
 
-  proc getItemForData*(self: Controller, tokenId: string, tokenAddress: string, chainId: int): CollectiblesEntry =
+  proc getItemForData*(
+      self: Controller, tokenId: string, tokenAddress: string, chainId: int
+  ): CollectiblesEntry =
     let uid = self.model.getUidForData(tokenId, tokenAddress, chainId)
     return self.model.getItemById(uid)

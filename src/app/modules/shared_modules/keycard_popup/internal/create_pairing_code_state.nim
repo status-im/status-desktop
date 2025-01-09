@@ -1,14 +1,17 @@
-type
-  CreatePairingCodeState* = ref object of State
+type CreatePairingCodeState* = ref object of State
 
-proc newCreatePairingCodeState*(flowType: FlowType, backState: State): CreatePairingCodeState =
+proc newCreatePairingCodeState*(
+    flowType: FlowType, backState: State
+): CreatePairingCodeState =
   result = CreatePairingCodeState()
   result.setup(flowType, StateType.CreatePairingCode, backState)
 
 proc delete*(self: CreatePairingCodeState) =
   self.State.delete
 
-method getNextPrimaryState*(self: CreatePairingCodeState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: CreatePairingCodeState, controller: Controller
+): State =
   if self.flowType == FlowType.ChangePairingCode:
     if controller.getPairingCode().len >= 0:
       return createState(StateType.ChangingKeycardPairingCode, self.flowType, nil)

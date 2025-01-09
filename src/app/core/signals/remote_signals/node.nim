@@ -10,7 +10,9 @@ type NodeSignal* = ref object of Signal
   account*: AccountDto
   settings*: SettingsDto
 
-proc fromEvent*(T: type NodeSignal, signalType: SignalType, event: JsonNode): NodeSignal =
+proc fromEvent*(
+    T: type NodeSignal, signalType: SignalType, event: JsonNode
+): NodeSignal =
   result = NodeSignal()
   result.signalType = signalType
 

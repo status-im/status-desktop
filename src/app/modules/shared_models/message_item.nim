@@ -9,92 +9,83 @@ import ./payment_request_model as payment_request_model
 import ./emoji_reactions_model as emoji_reactions_model
 
 export types.ContentType
-import message_reaction_model, message_reaction_item, message_transaction_parameters_item
+import
+  message_reaction_model, message_reaction_item, message_transaction_parameters_item
 
-type
-  Item* = ref object
-    id: string
-    communityId: string
-    chatId: string
-    responseToMessageWithId: string
-    senderId: string
-    senderDisplayName: string
-    senderOptionalName: string
-    amISender: bool
-    senderIsAdded: bool
-    senderIcon: string
-    senderColorHash: string
-    seen: bool
-    outgoingStatus: string
-    messageText: string
-    unparsedText: string
-    # Saving the parsed text property because we need it to getRenderedText when mentions change
-    parsedText: seq[ParsedText]
-    messageImage: string
-    messageContainsMentions: bool
-    sticker: string
-    stickerPack: int
-    gapFrom: int64
-    gapTo: int64
-    timestamp: int64
-    clock: int64 # lamport timestamp - used for ordering
-    contentType: ContentType
-    messageType: int
-    contactRequestState: int
-    reactionsModel: MessageReactionModel
-    pinned: bool
-    pinnedBy: string
-    editMode: bool
-    isEdited: bool
-    deleted: bool
-    deletedBy: string
-    deletedByContactDetails: ContactDetails
-    links: seq[string]
-    linkPreviewModel: link_preview_model.Model
-    emojiReactionsModel: emoji_reactions_model.Model
-    transactionParameters: TransactionParametersItem
-    mentionedUsersPks: seq[string]
-    senderTrustStatus: TrustStatus
-    senderEnsVerified: bool
-    messageAttachments: seq[string]
-    resendError: string
-    mentioned: bool
-    quotedMessageFrom: string
-    quotedMessageText: string
-    quotedMessageParsedText: string
-    quotedMessageContentType: ContentType
-    quotedMessageDeleted: bool
-    quotedMessageAuthorDisplayName: string
-    quotedMessageAuthorAvatar: string
-    quotedMessageAuthorDetails: ContactDetails
-    quotedMessageAlbumMessageImages: seq[string]
-    quotedMessageAlbumImagesCount: int
-    albumId: string
-    albumMessageImages: seq[string]
-    albumMessageIds: seq[string]
-    albumImagesCount: int
-    bridgeName: string
-    paymentRequestModel: payment_request_model.Model
+type Item* = ref object
+  id: string
+  communityId: string
+  chatId: string
+  responseToMessageWithId: string
+  senderId: string
+  senderDisplayName: string
+  senderOptionalName: string
+  amISender: bool
+  senderIsAdded: bool
+  senderIcon: string
+  senderColorHash: string
+  seen: bool
+  outgoingStatus: string
+  messageText: string
+  unparsedText: string
+  # Saving the parsed text property because we need it to getRenderedText when mentions change
+  parsedText: seq[ParsedText]
+  messageImage: string
+  messageContainsMentions: bool
+  sticker: string
+  stickerPack: int
+  gapFrom: int64
+  gapTo: int64
+  timestamp: int64
+  clock: int64 # lamport timestamp - used for ordering
+  contentType: ContentType
+  messageType: int
+  contactRequestState: int
+  reactionsModel: MessageReactionModel
+  pinned: bool
+  pinnedBy: string
+  editMode: bool
+  isEdited: bool
+  deleted: bool
+  deletedBy: string
+  deletedByContactDetails: ContactDetails
+  links: seq[string]
+  linkPreviewModel: link_preview_model.Model
+  emojiReactionsModel: emoji_reactions_model.Model
+  transactionParameters: TransactionParametersItem
+  mentionedUsersPks: seq[string]
+  senderTrustStatus: TrustStatus
+  senderEnsVerified: bool
+  messageAttachments: seq[string]
+  resendError: string
+  mentioned: bool
+  quotedMessageFrom: string
+  quotedMessageText: string
+  quotedMessageParsedText: string
+  quotedMessageContentType: ContentType
+  quotedMessageDeleted: bool
+  quotedMessageAuthorDisplayName: string
+  quotedMessageAuthorAvatar: string
+  quotedMessageAuthorDetails: ContactDetails
+  quotedMessageAlbumMessageImages: seq[string]
+  quotedMessageAlbumImagesCount: int
+  albumId: string
+  albumMessageImages: seq[string]
+  albumMessageIds: seq[string]
+  albumImagesCount: int
+  bridgeName: string
+  paymentRequestModel: payment_request_model.Model
 
 proc initMessageItem*(
-    id,
-    communityId,
-    chatId,
-    responseToMessageWithId,
-    senderId,
-    senderDisplayName,
-    senderOptionalName,
-    senderIcon: string,
+    id, communityId, chatId, responseToMessageWithId, senderId, senderDisplayName,
+      senderOptionalName, senderIcon: string,
     senderColorHash: string,
     amISender: bool,
     senderIsAdded: bool,
-    outgoingStatus,
-    text,
-    unparsedText: string,
+    outgoingStatus, text, unparsedText: string,
     parsedText: seq[ParsedText],
     image: string,
-    messageContainsMentions,
-    seen: bool,
+    messageContainsMentions, seen: bool,
     timestamp: int64,
     clock: int64,
     contentType: ContentType,
@@ -131,7 +122,7 @@ proc initMessageItem*(
     bridgeMessage: BridgeMessage,
     quotedBridgeMessage: BridgeMessage,
     paymentRequests: seq[PaymentRequest],
-    ): Item =
+): Item =
   result = Item()
   result.id = id
   result.communityId = communityId
@@ -200,7 +191,8 @@ proc initMessageItem*(
     if result.quotedMessageAuthorAvatar == "":
       result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.avatarUrl
   else:
-    result.quotedMessageAuthorDisplayName = quotedMessageAuthorDetails.dto.userDefaultDisplayName()
+    result.quotedMessageAuthorDisplayName =
+      quotedMessageAuthorDetails.dto.userDefaultDisplayName()
     result.quotedMessageAuthorAvatar = quotedMessageAuthorDetails.dto.image.thumbnail
 
   if quotedMessageContentType == ContentType.BridgeMessage:
@@ -210,20 +202,19 @@ proc initMessageItem*(
     result.quotedMessageParsedText = quotedBridgeMessage.content
 
   if contentType == ContentType.DiscordMessage:
-
     if result.messageText == "":
       result.messageText = discordMessage.content
       result.unparsedText = discordMessage.content
     result.senderId = discordMessage.author.id
     result.senderDisplayName = discordMessage.author.name
     result.senderIcon = discordMessage.author.localUrl
-    result.timestamp = parseInt(discordMessage.timestamp)*1000
+    result.timestamp = parseInt(discordMessage.timestamp) * 1000
 
     if result.senderIcon == "":
       result.senderIcon = discordMessage.author.avatarUrl
 
     if discordMessage.timestampEdited != "":
-      result.timestamp = parseInt(discordMessage.timestampEdited)*1000
+      result.timestamp = parseInt(discordMessage.timestampEdited) * 1000
 
     for attachment in discordMessage.attachments:
       if attachment.contentType.contains("image"):
@@ -265,7 +256,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     stickerPack = -1,
     links = @[],
     linkPreviews = @[],
-    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
+    transactionParameters = newTransactionParametersItem("", "", "", "", "", "", -1, ""),
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
     senderEnsVerified = false,
@@ -295,7 +286,8 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
   )
 
 proc `$`*(self: Item): string =
-  result = fmt"""Item(
+  result =
+    fmt"""Item(
     id: {$self.id},
     communityId: {$self.communityId},
     chatId: {$self.chatId},
@@ -498,14 +490,28 @@ proc shouldAddReaction*(self: Item, emojiId: EmojiId, userPublicKey: string): bo
 proc getReactionId*(self: Item, emojiId: EmojiId, userPublicKey: string): string =
   return self.reactionsModel.getReactionId(emojiId, userPublicKey)
 
-proc addReaction*(self: Item, emojiId: EmojiId, didIReactWithThisEmoji: bool, userPublicKey: string,
-  userDisplayName: string, reactionId: string) =
-  self.reactionsModel.addReaction(emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
-  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), didIReactWithThisEmoji)
+proc addReaction*(
+    self: Item,
+    emojiId: EmojiId,
+    didIReactWithThisEmoji: bool,
+    userPublicKey: string,
+    userDisplayName: string,
+    reactionId: string,
+) =
+  self.reactionsModel.addReaction(
+    emojiId, didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId
+  )
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(
+    ord(emojiId), didIReactWithThisEmoji
+  )
 
-proc removeReaction*(self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool) =
+proc removeReaction*(
+    self: Item, emojiId: EmojiId, reactionId: string, didIRemoveThisReaction: bool
+) =
   self.reactionsModel.removeReaction(emojiId, reactionId, didIRemoveThisReaction)
-  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(ord(emojiId), not didIRemoveThisReaction)
+  self.emojiReactionsModel.setItemDidIReactWithThisEmoji(
+    ord(emojiId), not didIRemoveThisReaction
+  )
 
 proc messageAttachments*(self: Item): seq[string] {.inline.} =
   self.messageAttachments
@@ -535,59 +541,60 @@ proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
   self.transactionParameters
 
 proc toJsonNode*(self: Item): JsonNode =
-  result = %* {
-    "id": self.id,
-    "communityId": self.communityId,
-    "chatId": self.chatId,
-    "responseToMessageWithId": self.responseToMessageWithId,
-    "senderId": self.senderId,
-    "senderDisplayName": self.senderDisplayName,
-    "senderOptionalName": self.senderOptionalName,
-    "amISender": self.amISender,
-    "senderIsAdded": self.senderIsAdded,
-    "senderIcon": self.senderIcon,
-    "senderColorHash": self.senderColorHash,
-    "seen": self.seen,
-    "outgoingStatus": self.outgoingStatus,
-    "messageText": self.messageText,
-    "unparsedText": self.unparsedText,
-    "messageImage": self.messageImage,
-    "messageContainsMentions": self.messageContainsMentions,
-    "sticker": self.sticker,
-    "stickerPack": self.stickerPack,
-    "gapFrom": self.gapFrom,
-    "gapTo": self.gapTo,
-    "timestamp": self.timestamp,
-    "clock": self.clock,
-    "contentType": self.contentType.int,
-    "messageType": self.messageType,
-    "contactRequestState": self.contactRequestState,
-    "pinned": self.pinned,
-    "pinnedBy": self.pinnedBy,
-    "editMode": self.editMode,
-    "isEdited": self.isEdited,
-    "deleted": self.deleted,
-    "deletedBy": self.deletedBy,
-    "links": self.links,
-    "mentionedUsersPks": self.mentionedUsersPks,
-    "senderEnsVerified": self.senderEnsVerified,
-    "resendError": self.resendError,
-    "mentioned": self.mentioned,
-    "quotedMessageFrom": self.quotedMessageFrom,
-    "quotedMessageText": self.quotedMessageText,
-    "quotedMessageParsedText": self.quotedMessageParsedText,
-    "quotedMessageContentType": self.quotedMessageContentType.int,
-    "quotedMessageDeleted": self.quotedMessageDeleted,
-    "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
-    "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
-    "quotedMessageAlbumMessageImages": self.quotedMessageAlbumMessageImages,
-    "quotedMessageAlbumImagesCount": self.quotedMessageAlbumImagesCount,
-    "albumId": self.albumId,
-    "albumMessageImages": self.albumMessageImages,
-    "albumMessageIds": self.albumMessageIds,
-    "albumImagesCount": self.albumImagesCount,
-    "bridgeName": self.bridgeName
-  }
+  result =
+    %*{
+      "id": self.id,
+      "communityId": self.communityId,
+      "chatId": self.chatId,
+      "responseToMessageWithId": self.responseToMessageWithId,
+      "senderId": self.senderId,
+      "senderDisplayName": self.senderDisplayName,
+      "senderOptionalName": self.senderOptionalName,
+      "amISender": self.amISender,
+      "senderIsAdded": self.senderIsAdded,
+      "senderIcon": self.senderIcon,
+      "senderColorHash": self.senderColorHash,
+      "seen": self.seen,
+      "outgoingStatus": self.outgoingStatus,
+      "messageText": self.messageText,
+      "unparsedText": self.unparsedText,
+      "messageImage": self.messageImage,
+      "messageContainsMentions": self.messageContainsMentions,
+      "sticker": self.sticker,
+      "stickerPack": self.stickerPack,
+      "gapFrom": self.gapFrom,
+      "gapTo": self.gapTo,
+      "timestamp": self.timestamp,
+      "clock": self.clock,
+      "contentType": self.contentType.int,
+      "messageType": self.messageType,
+      "contactRequestState": self.contactRequestState,
+      "pinned": self.pinned,
+      "pinnedBy": self.pinnedBy,
+      "editMode": self.editMode,
+      "isEdited": self.isEdited,
+      "deleted": self.deleted,
+      "deletedBy": self.deletedBy,
+      "links": self.links,
+      "mentionedUsersPks": self.mentionedUsersPks,
+      "senderEnsVerified": self.senderEnsVerified,
+      "resendError": self.resendError,
+      "mentioned": self.mentioned,
+      "quotedMessageFrom": self.quotedMessageFrom,
+      "quotedMessageText": self.quotedMessageText,
+      "quotedMessageParsedText": self.quotedMessageParsedText,
+      "quotedMessageContentType": self.quotedMessageContentType.int,
+      "quotedMessageDeleted": self.quotedMessageDeleted,
+      "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
+      "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
+      "quotedMessageAlbumMessageImages": self.quotedMessageAlbumMessageImages,
+      "quotedMessageAlbumImagesCount": self.quotedMessageAlbumImagesCount,
+      "albumId": self.albumId,
+      "albumMessageImages": self.albumMessageImages,
+      "albumMessageIds": self.albumMessageIds,
+      "albumImagesCount": self.albumImagesCount,
+      "bridgeName": self.bridgeName,
+    }
 
 proc editMode*(self: Item): bool {.inline.} =
   self.editMode
@@ -612,6 +619,7 @@ proc deletedBy*(self: Item): string {.inline.} =
 
 proc deletedByContactDetails*(self: Item): ContactDetails {.inline.} =
   self.deletedByContactDetails
+
 proc `deletedByContactDetails=`*(self: Item, value: ContactDetails) {.inline.} =
   self.deletedByContactDetails = value
 
@@ -638,26 +646,31 @@ proc `mentioned=`*(self: Item, value: bool) {.inline.} =
 
 proc quotedMessageFrom*(self: Item): string {.inline.} =
   self.quotedMessageFrom
+
 proc `quotedMessageFrom=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageFrom = value
 
 proc quotedMessageText*(self: Item): string {.inline.} =
   self.quotedMessageText
+
 proc `quotedMessageText=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageText = value
 
 proc quotedMessageParsedText*(self: Item): string {.inline.} =
   self.quotedMessageParsedText
+
 proc `quotedMessageParsedText=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageParsedText = value
 
 proc quotedMessageContentType*(self: Item): ContentType {.inline.} =
   self.quotedMessageContentType
+
 proc `quotedMessageContentType=`*(self: Item, value: ContentType) {.inline.} =
   self.quotedMessageContentType = value
 
 proc quotedMessageDeleted*(self: Item): bool {.inline.} =
   self.quotedMessageDeleted
+
 proc `quotedMessageDeleted=`*(self: Item, value: bool) {.inline.} =
   self.quotedMessageDeleted = value
 
@@ -675,6 +688,7 @@ proc `quotedMessageAuthorAvatar=`*(self: Item, value: string) {.inline.} =
 
 proc quotedMessageAuthorDetails*(self: Item): ContactDetails {.inline.} =
   self.quotedMessageAuthorDetails
+
 proc `quotedMessageAuthorDetails=`*(self: Item, value: ContactDetails) {.inline.} =
   self.quotedMessageAuthorDetails = value
 

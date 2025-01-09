@@ -22,12 +22,11 @@ const SIGNAL_SAVED_ADDRESSES_UPDATED* = "savedAddressesUpdated"
 const SIGNAL_SAVED_ADDRESS_UPDATED* = "savedAddressUpdated"
 const SIGNAL_SAVED_ADDRESS_DELETED* = "savedAddressDeleted"
 
-type
-  SavedAddressArgs* = ref object of Args
-    name*: string
-    address*: string
-    isTestAddress*: bool
-    errorMsg*: string
+type SavedAddressArgs* = ref object of Args
+  name*: string
+  address*: string
+  isTestAddress*: bool
+  errorMsg*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -40,8 +39,12 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(threadpool: ThreadPool, events: EventEmitter, networkService: network_service.Service,
-    settingsService: settings_service.Service): Service =
+  proc newService*(
+      threadpool: ThreadPool,
+      events: EventEmitter,
+      networkService: network_service.Service,
+      settingsService: settings_service.Service,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.threadpool = threadpool
@@ -54,14 +57,11 @@ QtObject:
   proc updateAddresses(self: Service, signal: string, arg: Args)
 
   proc init*(self: Service) =
-    self.events.on(SignalType.Message.event) do(e:Args):
+    self.events.on(SignalType.Message.event) do(e: Args):
       var data = MessageSignal(e)
       for sa in data.savedAddresses:
-        let arg = SavedAddressArgs(
-          name: sa.name,
-          address: sa.address,
-          isTestAddress: sa.isTest,
-        )
+        let arg =
+          SavedAddressArgs(name: sa.name, address: sa.address, isTestAddress: sa.isTest)
         if sa.removed:
           self.updateAddresses(SIGNAL_SAVED_ADDRESS_DELETED, arg)
         else:
@@ -75,18 +75,25 @@ QtObject:
   proc getAddresses(self: Service): seq[SavedAddressDto] =
     try:
       let response = backend.getSavedAddresses()
-      return map(response.result.getElems(), proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x))
+      return map(
+        response.result.getElems(),
+        proc(x: JsonNode): SavedAddressDto =
+          toSavedAddressDto(x),
+      )
     except Exception as e:
-      error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "fetchAddress", errName = e.name, errDesription = e.msg
 
   proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
     return self.savedAddresses
 
-  proc getSavedAddress*(self: Service, address: string, ignoreNetworkMode: bool = true): SavedAddressDto =
+  proc getSavedAddress*(
+      self: Service, address: string, ignoreNetworkMode: bool = true
+  ): SavedAddressDto =
     for sa in self.savedAddresses:
       if cmpIgnoreCase(sa.address, address) == 0 and
-        (ignoreNetworkMode or sa.isTest == self.areTestNetworksEnabled()):
-          return sa
+          (ignoreNetworkMode or sa.isTest == self.areTestNetworksEnabled()):
+        return sa
 
   proc updateAddresses(self: Service, signal: string, arg: Args) =
     self.savedAddresses = self.getAddresses()
@@ -109,12 +116,18 @@ QtObject:
       if rpcResponseObj{"response"}.kind != JArray:
         raise newException(CatchableError, "invalid response")
 
-      self.savedAddresses = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): SavedAddressDto = toSavedAddressDto(x))
+      self.savedAddresses = map(
+        rpcResponseObj{"response"}.getElems(),
+        proc(x: JsonNode): SavedAddressDto =
+          toSavedAddressDto(x),
+      )
     except Exception as e:
       error "onSavedAddressesFetched", msg = e.msg
     self.events.emit(SIGNAL_SAVED_ADDRESSES_UPDATED, Args())
 
-  proc createOrUpdateSavedAddress*(self: Service, name: string, address: string, ens: string, colorId: string) =
+  proc createOrUpdateSavedAddress*(
+      self: Service, name: string, address: string, ens: string, colorId: string
+  ) =
     let arg = SavedAddressTaskArg(
       chainId: self.networkService.getAppNetwork().chainId,
       name: name,
@@ -134,7 +147,8 @@ QtObject:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-      if rpcResponseObj{"response"}.kind != JNull and rpcResponseObj{"response"}.getStr != "ok":
+      if rpcResponseObj{"response"}.kind != JNull and
+          rpcResponseObj{"response"}.getStr != "ok":
         raise newException(CatchableError, "invalid response")
 
       arg.name = rpcResponseObj{"name"}.getStr
@@ -161,7 +175,8 @@ QtObject:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
-      if rpcResponseObj{"response"}.kind != JNull and rpcResponseObj{"response"}.getStr != "ok":
+      if rpcResponseObj{"response"}.kind != JNull and
+          rpcResponseObj{"response"}.getStr != "ok":
         raise newException(CatchableError, "invalid response")
 
       arg.address = rpcResponseObj{"address"}.getStr
@@ -173,9 +188,13 @@ QtObject:
 
   proc remainingCapacityForSavedAddresses*(self: Service): int =
     try:
-      let response = backend.remainingCapacityForSavedAddresses(self.areTestNetworksEnabled())
+      let response =
+        backend.remainingCapacityForSavedAddresses(self.areTestNetworksEnabled())
       if not response.error.isNil:
         raise newException(CatchableError, response.error.message)
       return response.result.getInt
     except Exception as e:
-      error "error: ", procName="remainingCapacityForSavedAddresses", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "remainingCapacityForSavedAddresses",
+        errName = e.name,
+        errDesription = e.msg

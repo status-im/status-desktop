@@ -4,9 +4,8 @@ import ./io_interface
 from app/modules/shared_modules/keypair_import/module import ImportKeypairModuleMode
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -18,11 +17,13 @@ QtObject:
 
   proc getAccountsModule(self: View): QVariant {.slot.} =
     return self.delegate.getAccountsModule()
+
   QtProperty[QVariant] accountsModule:
     read = getAccountsModule
 
   proc getCollectiblesModel(self: View): QVariant {.slot.} =
     return self.delegate.getCollectiblesModel()
+
   QtProperty[QVariant] collectiblesModel:
     read = getCollectiblesModel
 
@@ -32,8 +33,10 @@ QtObject:
   proc keypairImportModuleChanged*(self: View) {.signal.}
   proc emitKeypairImportModuleChangedSignal*(self: View) =
     self.keypairImportModuleChanged()
+
   proc getKeypairImportModule(self: View): QVariant {.slot.} =
     return self.delegate.getKeypairImportModule()
+
   QtProperty[QVariant] keypairImportModule:
     read = getKeypairImportModule
     notify = keypairImportModuleChanged
@@ -49,13 +52,16 @@ QtObject:
   proc hasPairedDevicesChanged*(self: View) {.signal.}
   proc emitHasPairedDevicesChangedSignal*(self: View) =
     self.hasPairedDevicesChanged()
+
   proc getHasPairedDevices(self: View): bool {.slot.} =
     return self.delegate.hasPairedDevices()
+
   QtProperty[bool] hasPairedDevices:
     read = getHasPairedDevices
     notify = hasPairedDevicesChanged
 
   proc getRpcStats(self: View): string {.slot.} =
     return self.delegate.getRpcStats()
+
   proc resetRpcStats(self: View) {.slot.} =
     self.delegate.resetRpcStats()

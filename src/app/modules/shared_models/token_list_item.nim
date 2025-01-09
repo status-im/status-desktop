@@ -1,36 +1,35 @@
 import stew/shims/strformat
 
-type TokenListItemCategory* {.pure.}= enum
-  Community = 0,
-  Own = 1,
+type TokenListItemCategory* {.pure.} = enum
+  Community = 0
+  Own = 1
   General = 2
 
-type
-  TokenListItem* = object
-    key*: string
-    name*: string
-    symbol*: string
-    color*: string
-    image*: string
-    category*: int
-    communityId*: string
-    supply*: string
-    infiniteSupply*: bool
-    decimals*: int
-    privilegesLevel*: int
+type TokenListItem* = object
+  key*: string
+  name*: string
+  symbol*: string
+  color*: string
+  image*: string
+  category*: int
+  communityId*: string
+  supply*: string
+  infiniteSupply*: bool
+  decimals*: int
+  privilegesLevel*: int
 
 proc initTokenListItem*(
-  key: string,
-  name: string,
-  symbol: string,
-  color: string,
-  image: string,
-  category: int,
-  communityId: string = "",
-  supply: string = "1",
-  infiniteSupply: bool = true,
-  decimals: int,
-  privilegesLevel: int
+    key: string,
+    name: string,
+    symbol: string,
+    color: string,
+    image: string,
+    category: int,
+    communityId: string = "",
+    supply: string = "1",
+    infiniteSupply: bool = true,
+    decimals: int,
+    privilegesLevel: int,
 ): TokenListItem =
   result.key = key
   result.symbol = symbol
@@ -45,7 +44,8 @@ proc initTokenListItem*(
   result.privilegesLevel = privilegesLevel
 
 proc `$`*(self: TokenListItem): string =
-  result = fmt"""TokenListItem(
+  result =
+    fmt"""TokenListItem(
     key: {self.key},
     name: {self.name},
     color: {self.color},

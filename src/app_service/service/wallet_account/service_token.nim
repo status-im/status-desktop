@@ -6,7 +6,14 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountTokens: seq[GroupedTokenItem] = @[]
   defer:
     let timestamp = getTime().toUnix()
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens, timestamp: timestamp))
+    self.events.emit(
+      SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT,
+      TokensPerAccountArgs(
+        accountAddresses: accountAddresses,
+        accountTokens: accountTokens,
+        timestamp: timestamp,
+      ),
+    )
   try:
     let responseObj = response.parseJson
     var storeResult: bool
@@ -24,7 +31,9 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
         # for a new account the balances per address per chain will simply be appended later
         var tokensToBeDeleted: seq[string] = @[]
         for tokenkey, token in groupedAccountsTokensBalances:
-          token.balancesPerAccount = token.balancesPerAccount.filter(balanceItem => balanceItem.account != accountAddress)
+          token.balancesPerAccount = token.balancesPerAccount.filter(
+            balanceItem => balanceItem.account != accountAddress
+          )
           if token.balancesPerAccount.len == 0:
             tokensToBeDeleted.add(tokenkey)
 
@@ -33,14 +42,13 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
 
         if tokensDetailsObj.kind == JArray:
           for token in tokensDetailsObj.getElems():
-
             let symbol = token{"symbol"}.getStr
             let communityId = token{"community_data"}{"id"}.getStr
             if not token{"hasError"}.getBool:
               allTokensHaveError = false
 
             var balancesPerChainObj: JsonNode
-            if(token.getProp("balancesPerChain", balancesPerChainObj)):
+            if (token.getProp("balancesPerChain", balancesPerChainObj)):
               for chainId, balanceObj in balancesPerChainObj:
                 let chainId = balanceObj{"chainId"}.getInt
                 let address = balanceObj{"address"}.getStr
@@ -57,19 +65,31 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
                 if not balance1DayAgoStr.contains("nil"):
                   balance1DayAgo = stint.parse(balance1DayAgoStr, UInt256)
 
-                let token_by_symbol_key = if communityId.isEmptyOrWhitespace: symbol
-                                          else: address
+                let token_by_symbol_key =
+                  if communityId.isEmptyOrWhitespace: symbol else: address
                 if groupedAccountsTokensBalances.hasKey(token_by_symbol_key):
-                  groupedAccountsTokensBalances[token_by_symbol_key].balancesPerAccount.add(BalanceItem(account: accountAddress,
-                    chainId: chainId,
-                    balance: rawBalance,
-                    balance1DayAgo: balance1DayAgo))
+                  groupedAccountsTokensBalances[token_by_symbol_key].balancesPerAccount.add(
+                    BalanceItem(
+                      account: accountAddress,
+                      chainId: chainId,
+                      balance: rawBalance,
+                      balance1DayAgo: balance1DayAgo,
+                    )
+                  )
                 else:
                   groupedAccountsTokensBalances[token_by_symbol_key] = GroupedTokenItem(
                     tokensKey: token_by_symbol_key,
                     symbol: symbol,
-                    balancesPerAccount: @[BalanceItem(account: accountAddress, chainId: chainId, balance: rawBalance, balance1DayAgo: balance1DayAgo)]
-                    )
+                    balancesPerAccount:
+                      @[
+                        BalanceItem(
+                          account: accountAddress,
+                          chainId: chainId,
+                          balance: rawBalance,
+                          balance1DayAgo: balance1DayAgo,
+                        )
+                      ],
+                  )
 
         # set assetsLoading to false once the tokens are loaded
         self.updateAssetsLoadingState(accountAddress, false)
@@ -79,12 +99,12 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
       self.groupedAccountsTokensTable = groupedAccountsTokensBalances
       self.groupedAccountsTokensList = accountTokens
   except Exception as e:
-    error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
+    error "error: ",
+      procName = "onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
 proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
-  if not main_constants.WALLET_ENABLED or
-    accounts.len == 0:
-      return
+  if not main_constants.WALLET_ENABLED or accounts.len == 0:
+    return
 
   # set assetsLoading to true as the tokens are being loaded
   for waddress in accounts:
@@ -95,17 +115,23 @@ proc buildAllTokens*(self: Service, accounts: seq[string], store: bool) =
     vptr: cast[uint](self.vptr),
     slot: "onAllTokensBuilt",
     accounts: accounts,
-    storeResult: store
+    storeResult: store,
   )
   self.threadpool.start(arg)
 
-proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], chainIds: seq[int]): float64 =
+proc getTotalCurrencyBalance*(
+    self: Service, addresses: seq[string], chainIds: seq[int]
+): float64 =
   var totalBalance: float64 = 0.0
   for token in self.groupedAccountsTokensList:
     let price = self.tokenService.getPriceBySymbol(token.symbol)
-    let balances = token.balancesPerAccount.filter(a => addresses.contains(a.account) and chainIds.contains(a.chainId))
+    let balances = token.balancesPerAccount.filter(
+      a => addresses.contains(a.account) and chainIds.contains(a.chainId)
+    )
     for balance in balances:
-      totalBalance = totalBalance + (self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)*price)
+      totalBalance =
+        totalBalance +
+        (self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance) * price)
   return totalBalance
 
 proc getGroupedAccountsAssetsList*(self: Service): var seq[GroupedTokenItem] =
@@ -117,7 +143,9 @@ proc getTokensMarketValuesLoading*(self: Service): bool =
 proc getHasBalanceCache*(self: Service): bool =
   return self.hasBalanceCache
 
-proc getChainsWithNoGasFromError*(self: Service, errCode: string, errDescription: string): Table[int, string] =
+proc getChainsWithNoGasFromError*(
+    self: Service, errCode: string, errDescription: string
+): Table[int, string] =
   ## Extracts the chainId and token from the error description for chains with no gas.
   ## If the error code is not "WR-002", an empty table is returned.
   result = initTable[int, string]()
@@ -129,12 +157,17 @@ proc getChainsWithNoGasFromError*(self: Service, errCode: string, errDescription
       let chainId: int = jsonData["chainId"].getInt()
       result[chainId] = token
     except Exception as e:
-      error "error: ", procName="getChainsWithNoGasFromError", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "getChainsWithNoGasFromError",
+        errName = e.name,
+        errDesription = e.msg
 
 proc getCurrency*(self: Service): string =
   return self.settingsService.getCurrency()
 
-proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: string): tuple[balance: float64, fetched: bool] =
+proc getOrFetchBalanceForAddressInPreferredCurrency*(
+    self: Service, address: string
+): tuple[balance: float64, fetched: bool] =
   let acc = self.getAccountByAddress(address)
   if acc.isNil:
     self.buildAllTokens(@[address], store = false)
@@ -147,25 +180,35 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: str
 
 proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
   var totalTokenBalance = 0.0
-  let accountsAddresses = self.getWalletAccounts().filter(n => n.walletType == WalletTypeWatch).map(n => n.address)
+  let accountsAddresses = self
+    .getWalletAccounts()
+    .filter(n => n.walletType == WalletTypeWatch)
+    .map(n => n.address)
   for token in self.groupedAccountsTokensList:
     if token.symbol == symbol:
       for balance in token.balancesPerAccount:
         if accountsAddresses.contains(balance.account):
-          totalTokenBalance += self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
+          totalTokenBalance +=
+            self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
   return totalTokenBalance
 
-proc getTokenBalance*(self: Service, address: string, chainId: int, tokensKey: string): float64 =
+proc getTokenBalance*(
+    self: Service, address: string, chainId: int, tokensKey: string
+): float64 =
   var totalTokenBalance = 0.0
   for token in self.groupedAccountsTokensList:
     if token.tokensKey == tokensKey:
-      let balances = token.balancesPerAccount.filter(b => address == b.account and chainId == b.chainId)
+      let balances = token.balancesPerAccount.filter(
+        b => address == b.account and chainId == b.chainId
+      )
       for balance in balances:
-        totalTokenBalance = totalTokenBalance + self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
+        totalTokenBalance =
+          totalTokenBalance +
+          self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
   return totalTokenBalance
 
 proc checkRecentHistory*(self: Service, addresses: seq[string]) =
-  if(not main_constants.WALLET_ENABLED):
+  if (not main_constants.WALLET_ENABLED):
     return
   try:
     let chainIds = self.networkService.getCurrentNetworksChainIds()
@@ -185,7 +228,9 @@ proc reloadAccountTokens*(self: Service) =
   self.buildAllTokens(addresses, store = true)
   self.checkRecentHistory(addresses)
 
-proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
+proc parseCurrencyValueByTokensKey*(
+    self: Service, tokensKey: string, amountInt: UInt256
+): float64 =
   return self.currencyService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
 
 proc getCurrencyFormat(self: Service, tokensKey: string): CurrencyFormatDto =

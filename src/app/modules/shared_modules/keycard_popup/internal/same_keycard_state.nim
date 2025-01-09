@@ -1,5 +1,4 @@
-type
-  SameKeycardState* = ref object of State
+type SameKeycardState* = ref object of State
 
 proc newSameKeycardState*(flowType: FlowType, backState: State): SameKeycardState =
   result = SameKeycardState()
@@ -10,12 +9,20 @@ proc delete*(self: SameKeycardState) =
 
 method executePrePrimaryStateCommand*(self: SameKeycardState, controller: Controller) =
   if self.flowType == FlowType.CreateCopyOfAKeycard:
-    controller.runLoadAccountFlow(seedPhraseLength = 0, seedPhrase = "", pin = controller.getPin())
+    controller.runLoadAccountFlow(
+      seedPhraseLength = 0, seedPhrase = "", pin = controller.getPin()
+    )
 
 method executeCancelCommand*(self: SameKeycardState, controller: Controller) =
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method resolveKeycardNextState*(self: SameKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: SameKeycardState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  return ensureReaderAndCardPresenceAndResolveNextState(
+    self, keycardFlowType, keycardEvent, controller
+  )

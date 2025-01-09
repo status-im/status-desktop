@@ -2,24 +2,22 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import location_menu_sub_item
 
-type
-  SubModelRole {.pure.} = enum
-    Value = UserRole + 1
-    Text
-    Image
-    Icon
-    IconColor
-    IsUserIcon
-    IsImage
-    Position
-    LastMessageTimestamp
-    ColorId
-    ColorHash
+type SubModelRole {.pure.} = enum
+  Value = UserRole + 1
+  Text
+  Image
+  Icon
+  IconColor
+  IsUserIcon
+  IsImage
+  Position
+  LastMessageTimestamp
+  ColorId
+  ColorHash
 
 QtObject:
-  type
-    SubModel* = ref object of QAbstractListModel
-      items: seq[SubItem]
+  type SubModel* = ref object of QAbstractListModel
+    items: seq[SubItem]
 
   proc delete*(self: SubModel) =
     for i in 0 ..< self.items.len:
@@ -36,7 +34,8 @@ QtObject:
 
   proc `$`*(self: SubModel): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""
+      result &=
+        fmt"""
       [{i}]:({$self.items[i]})
       """
 
@@ -54,17 +53,17 @@ QtObject:
 
   method roleNames(self: SubModel): Table[int, string] =
     {
-      SubModelRole.Value.int:"value",
-      SubModelRole.Text.int:"text",
-      SubModelRole.Image.int:"imageSource",
-      SubModelRole.Icon.int:"iconName",
-      SubModelRole.IconColor.int:"iconColor",
-      SubModelRole.IsUserIcon.int:"isUserIcon",
-      SubModelRole.IsImage.int:"isImage",
-      SubModelRole.Position.int:"position",
-      SubModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
-      SubModelRole.ColorId.int:"colorId",
-      SubModelRole.ColorHash.int:"colorHash"
+      SubModelRole.Value.int: "value",
+      SubModelRole.Text.int: "text",
+      SubModelRole.Image.int: "imageSource",
+      SubModelRole.Icon.int: "iconName",
+      SubModelRole.IconColor.int: "iconColor",
+      SubModelRole.IsUserIcon.int: "isUserIcon",
+      SubModelRole.IsImage.int: "isImage",
+      SubModelRole.Position.int: "position",
+      SubModelRole.LastMessageTimestamp.int: "lastMessageTimestamp",
+      SubModelRole.ColorId.int: "colorId",
+      SubModelRole.ColorHash.int: "colorHash",
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -77,7 +76,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.SubModelRole
 
-    case enumRole:
+    case enumRole
     of SubModelRole.Value:
       result = newQVariant(item.value)
     of SubModelRole.Text:

@@ -4,15 +4,14 @@ import app_service/common/types
 
 import token_criteria_item
 
-type
-  ModelRole {.pure.} = enum
-    Key = UserRole + 1
-    Type
-    Symbol
-    ShortName
-    Name
-    Amount
-    CriteriaMet
+type ModelRole {.pure.} = enum
+  Key = UserRole + 1
+  Type
+  Symbol
+  ShortName
+  Name
+  Amount
+  CriteriaMet
 
 QtObject:
   type TokenCriteriaModel* = ref object of QAbstractListModel
@@ -31,18 +30,19 @@ QtObject:
 
   method roleNames(self: TokenCriteriaModel): Table[int, string] =
     {
-      ModelRole.Key.int:"key",
-      ModelRole.Type.int:"type",
-      ModelRole.Symbol.int:"symbol",
-      ModelRole.ShortName.int:"shortName",
-      ModelRole.Name.int:"name",
-      ModelRole.Amount.int:"amount",
-      ModelRole.CriteriaMet.int:"available",
+      ModelRole.Key.int: "key",
+      ModelRole.Type.int: "type",
+      ModelRole.Symbol.int: "symbol",
+      ModelRole.ShortName.int: "shortName",
+      ModelRole.Name.int: "name",
+      ModelRole.Amount.int: "amount",
+      ModelRole.CriteriaMet.int: "available",
     }.toTable
 
   proc countChanged(self: TokenCriteriaModel) {.signal.}
   proc getCount(self: TokenCriteriaModel): int {.slot.} =
     self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -57,26 +57,26 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
-      of ModelRole.Key:
-        if item.getType() == ord(TokenType.ENS):
-          result = newQVariant(item.getEnsPattern())
-        elif item.getType() == ord(TokenType.ERC721):
-          result = newQVariant(item.getContractIdFromFirstAddress())
-        else:
-          result = newQVariant(item.getSymbol())
-      of ModelRole.Type:
-        result = newQVariant(item.getType())
-      of ModelRole.Symbol:
+    case enumRole
+    of ModelRole.Key:
+      if item.getType() == ord(TokenType.ENS):
+        result = newQVariant(item.getEnsPattern())
+      elif item.getType() == ord(TokenType.ERC721):
+        result = newQVariant(item.getContractIdFromFirstAddress())
+      else:
         result = newQVariant(item.getSymbol())
-      of ModelRole.ShortName:
-        result = newQVariant(item.getSymbol())
-      of ModelRole.Name:
-        result = newQVariant(item.getName())
-      of ModelRole.Amount:
-        result = newQVariant(item.getAmount())
-      of ModelRole.CriteriaMet:
-        result = newQVariant(item.getCriteriaMet())
+    of ModelRole.Type:
+      result = newQVariant(item.getType())
+    of ModelRole.Symbol:
+      result = newQVariant(item.getSymbol())
+    of ModelRole.ShortName:
+      result = newQVariant(item.getSymbol())
+    of ModelRole.Name:
+      result = newQVariant(item.getName())
+    of ModelRole.Amount:
+      result = newQVariant(item.getAmount())
+    of ModelRole.CriteriaMet:
+      result = newQVariant(item.getCriteriaMet())
 
   proc getItems*(self: TokenCriteriaModel): seq[TokenCriteriaItem] =
     return self.items
@@ -89,7 +89,8 @@ QtObject:
 
   proc addItem*(self: TokenCriteriaModel, item: TokenCriteriaItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

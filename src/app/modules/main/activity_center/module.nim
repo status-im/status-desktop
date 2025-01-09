@@ -8,7 +8,8 @@ import ../../shared_models/message_item_qobject as msg_item_qobj
 import ../../../global/global_singleton
 import ../../../global/app_sections_config as conf
 import ../../../core/eventemitter
-import ../../../../app_service/service/activity_center/service as activity_center_service
+import
+  ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -17,14 +18,13 @@ import ../../../../app_service/service/devices/service as devices_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
-    unreadCount: int
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
+  unreadCount: int
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -35,20 +35,14 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     devicesService: devices_service.Service,
-    ): Module =
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
-    result,
-    events,
-    activityCenterService,
-    contactsService,
-    messageService,
-    chatService,
-    communityService,
-    devicesService,
+    result, events, activityCenterService, contactsService, messageService, chatService,
+    communityService, devicesService,
   )
   result.moduleLoaded = false
 
@@ -56,7 +50,9 @@ method delete*(self: Module) =
   self.view.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("activityCenterModule", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "activityCenterModule", self.viewVariant
+  )
   self.controller.init()
   self.view.load()
 
@@ -88,16 +84,22 @@ method onNotificationsCountMayHaveChanged*(self: Module) =
 method onUnseenChanged*(self: Module, hasUnseen: bool) =
   self.view.setHasUnseen(hasUnseen)
 
-proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: string, albumMessages: seq[MessageDto]): MessageItem =
+proc createMessageItemFromDto(
+    self: Module,
+    message: MessageDto,
+    communityId: string,
+    albumMessages: seq[MessageDto],
+): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityById(communityId).chats
 
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
-    if(message.`from` == message.quotedMessage.`from`):
+    if (message.`from` == message.quotedMessage.`from`):
       quotedMessageAuthorDetails = contactDetails
     else:
-      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+      quotedMessageAuthorDetails =
+        self.controller.getContactDetails(message.quotedMessage.`from`)
 
   var albumImages: seq[string]
   var albumMessageIds: seq[string]
@@ -111,26 +113,28 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     communityId,
     contactDetails,
     contactDetails.isCurrentUser,
-    renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats),
+    renderedMessageText =
+      self.controller.getRenderedText(message.parsedText, communityChats),
     clearText = self.controller.replacePubKeysWithDisplayNames(message.text),
     albumImages,
     albumMessageIds,
     deletedByContactDetails = ContactDetails(),
     quotedMessageAuthorDetails,
-    quotedRenderedMessageText = self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
+    quotedRenderedMessageText =
+      self.controller.getRenderedText(message.quotedMessage.parsedText, communityChats),
   )
   return msg_item_qobj.newMessageItem(messageItem)
 
 method convertToItems*(
-    self: Module,
-    activityCenterNotifications: seq[ActivityCenterNotificationDto]
-    ): seq[notification_item.Item] =
+    self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]
+): seq[notification_item.Item] =
   result = activityCenterNotifications.map(
     proc(notification: ActivityCenterNotificationDto): notification_item.Item =
       var messageItem: MessageItem
       var repliedMessageItem: MessageItem
       # default section id is `Chat` section
-      let sectionId = if notification.communityId.len > 0:
+      let sectionId =
+        if notification.communityId.len > 0:
           notification.communityId
         else:
           singletonInstance.userProfile.getPubKey()
@@ -138,49 +142,43 @@ method convertToItems*(
       if (notification.message.id != ""):
         let communityId = sectionId
         # If there is a message in the Notification, transfer it to a MessageItem (QObject)
-        messageItem = self.createMessageItemFromDto(notification.message, communityId, notification.albumMessages)
+        messageItem = self.createMessageItemFromDto(
+          notification.message, communityId, notification.albumMessages
+        )
 
-        if (notification.notificationType == ActivityCenterNotificationType.Reply and notification.message.responseTo != ""):
-          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
+        if (
+          notification.notificationType == ActivityCenterNotificationType.Reply and
+          notification.message.responseTo != ""
+        ):
+          repliedMessageItem =
+            self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
 
-        if (notification.notificationType == ActivityCenterNotificationType.ContactVerification):
-          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
+        if (
+          notification.notificationType ==
+          ActivityCenterNotificationType.ContactVerification
+        ):
+          repliedMessageItem =
+            self.createMessageItemFromDto(notification.replyMessage, communityId, @[])
 
       var tokenDataItem = token_data_item.newTokenDataItem(
-          notification.tokenData.chainId,
-          notification.tokenData.txHash,
-          notification.tokenData.walletAddress,
-          notification.tokenData.isFirst,
-          notification.tokenData.communiyId,
-          notification.tokenData.amount,
-          notification.tokenData.name,
-          notification.tokenData.symbol,
-          notification.tokenData.imageUrl,
-          notification.tokenData.tokenType
+        notification.tokenData.chainId, notification.tokenData.txHash,
+        notification.tokenData.walletAddress, notification.tokenData.isFirst,
+        notification.tokenData.communiyId, notification.tokenData.amount,
+        notification.tokenData.name, notification.tokenData.symbol,
+        notification.tokenData.imageUrl, notification.tokenData.tokenType,
       )
 
       let chatDetails = self.controller.getChatDetails(notification.chatId)
 
       return notification_item.initItem(
-        notification.id,
-        notification.chatId,
-        notification.communityId,
-        notification.membershipStatus,
-        sectionId,
-        notification.name,
-        notification.author,
-        notification.notificationType,
-        notification.timestamp,
-        notification.read,
-        notification.dismissed,
-        notification.accepted,
-        messageItem,
-        repliedMessageItem,
-        chatDetails.chatType,
-        tokenDataItem,
+        notification.id, notification.chatId, notification.communityId,
+        notification.membershipStatus, sectionId, notification.name,
+        notification.author, notification.notificationType, notification.timestamp,
+        notification.read, notification.dismissed, notification.accepted, messageItem,
+        repliedMessageItem, chatDetails.chatType, tokenDataItem,
         notification.installationId,
       )
-    )
+  )
 
 method fetchActivityCenterNotifications*(self: Module) =
   self.controller.asyncActivityNotificationLoad()
@@ -194,19 +192,29 @@ method markAllActivityCenterNotificationsReadDone*(self: Module) =
 method markActivityCenterNotificationRead*(self: Module, notificationId: string) =
   self.controller.markActivityCenterNotificationRead(notificationId)
 
-method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
+method markActivityCenterNotificationReadDone*(
+    self: Module, notificationIds: seq[string]
+) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
 
 method markAsSeenActivityCenterNotifications*(self: Module) =
   self.controller.markAsSeenActivityCenterNotifications()
 
-method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+method addActivityCenterNotifications*(
+    self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]
+) =
+  self.view.addActivityCenterNotifications(
+    self.convertToItems(activityCenterNotifications)
+  )
   self.view.hasUnseenActivityCenterNotificationsChanged()
 
-method resetActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-  self.view.resetActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+method resetActivityCenterNotifications*(
+    self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]
+) =
+  self.view.resetActivityCenterNotifications(
+    self.convertToItems(activityCenterNotifications)
+  )
 
 method markActivityCenterNotificationUnread*(self: Module, notificationId: string) =
   self.controller.markActivityCenterNotificationUnread(notificationId)
@@ -223,7 +231,9 @@ method acceptActivityCenterNotificationDone*(self: Module, notificationId: strin
 method dismissActivityCenterNotificationDone*(self: Module, notificationId: string) =
   self.view.dismissActivityCenterNotificationDone(notificationId)
 
-method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
+method markActivityCenterNotificationUnreadDone*(
+    self: Module, notificationIds: seq[string]
+) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
 
@@ -236,39 +246,39 @@ method switchTo*(self: Module, sectionId, chatId, messageId: string) =
 method getDetails*(self: Module, sectionId: string, chatId: string): string =
   var jsonObject = newJObject()
   if sectionId == singletonInstance.userProfile.getPubKey():
-    jsonObject["sType"] = %* ChatSectionType.Personal
-    jsonObject["sName"] = %* conf.CHAT_SECTION_NAME
-    jsonObject["sImage"] = %* ""
-    jsonObject["sColor"] = %* ""
+    jsonObject["sType"] = %*ChatSectionType.Personal
+    jsonObject["sName"] = %*conf.CHAT_SECTION_NAME
+    jsonObject["sImage"] = %*""
+    jsonObject["sColor"] = %*""
   else:
     # Community
     let community = self.controller.getCommunityById(sectionId)
 
-    jsonObject["sType"] = %* ChatSectionType.Community
-    jsonObject["sName"] = %* community.name
-    jsonObject["sImage"] = %* community.images.thumbnail
-    jsonObject["sColor"] = %* community.color
+    jsonObject["sType"] = %*ChatSectionType.Community
+    jsonObject["sName"] = %*community.name
+    jsonObject["sImage"] = %*community.images.thumbnail
+    jsonObject["sColor"] = %*community.color
 
   let c = self.controller.getChatDetails(chatId)
-  
+
   var chatName = c.name
   var chatImage = c.icon
   if c.chatType == ChatType.OneToOne:
     (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(c.id)
 
-  jsonObject["cName"] = %* chatName
-  jsonObject["cImage"] = %* chatImage
-  jsonObject["cColor"] = %* c.color
-  jsonObject["cEmoji"] = %* c.emoji
+  jsonObject["cName"] = %*chatName
+  jsonObject["cImage"] = %*chatImage
+  jsonObject["cColor"] = %*c.color
+  jsonObject["cEmoji"] = %*c.emoji
   return $jsonObject
 
 method getChatDetailsAsJson*(self: Module, chatId: string): string =
   let chatDto = self.controller.getChatDetails(chatId)
   var jsonObject = newJObject()
-  jsonObject["name"] = %* chatDto.name
-  jsonObject["icon"] = %* chatDto.icon
-  jsonObject["color"] = %* chatDto.color
-  jsonObject["emoji"] = %* chatDto.emoji
+  jsonObject["name"] = %*chatDto.name
+  jsonObject["icon"] = %*chatDto.icon
+  jsonObject["color"] = %*chatDto.color
+  jsonObject["emoji"] = %*chatDto.emoji
   return $jsonObject
 
 method setActiveNotificationGroup*(self: Module, group: int) =
@@ -283,7 +293,9 @@ method setActivityCenterReadType*(self: Module, readType: int) =
 method getActivityCenterReadType*(self: Module): int =
   return self.controller.getActivityCenterReadType().int
 
-method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGroup, int]) =
+method setActivityGroupCounters*(
+    self: Module, counters: Table[ActivityCenterGroup, int]
+) =
   self.view.setActivityGroupCounters(counters)
 
 method enableInstallationAndSync*(self: Module, installationId: string) =

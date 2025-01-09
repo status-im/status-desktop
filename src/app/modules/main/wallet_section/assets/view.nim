@@ -5,12 +5,11 @@ import ./grouped_account_assets_model as grouped_account_assets_model
 import app_service/service/wallet_account/service
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      groupedAccountAssetsModel: grouped_account_assets_model.Model
-      hasBalanceCache: bool
-      hasMarketValuesCache: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    groupedAccountAssetsModel: grouped_account_assets_model.Model
+    hasBalanceCache: bool
+    hasMarketValuesCache: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -22,7 +21,9 @@ QtObject:
     new(result, delete)
     result.setup()
     result.delegate = delegate
-    result.groupedAccountAssetsModel = grouped_account_assets_model.newModel(delegate.getGroupedAccountAssetsDataSource())
+    result.groupedAccountAssetsModel = grouped_account_assets_model.newModel(
+      delegate.getGroupedAccountAssetsDataSource()
+    )
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -30,12 +31,14 @@ QtObject:
   proc groupedAccountAssetsModelChanged(self: View) {.signal.}
   proc getGroupedAccountAssetsModel*(self: View): QVariant {.slot.} =
     return newQVariant(self.groupedAccountAssetsModel)
+
   QtProperty[QVariant] groupedAccountAssetsModel:
     read = getGroupedAccountAssetsModel
     notify = groupedAccountAssetsModelChanged
 
   proc getHasBalanceCache(self: View): QVariant {.slot.} =
     return newQVariant(self.hasBalanceCache)
+
   proc hasBalanceCacheChanged(self: View) {.signal.}
   QtProperty[QVariant] hasBalanceCache:
     read = getHasBalanceCache
@@ -47,6 +50,7 @@ QtObject:
 
   proc getHasMarketValuesCache(self: View): QVariant {.slot.} =
     return newQVariant(self.hasMarketValuesCache)
+
   proc hasMarketValuesCacheChanged(self: View) {.signal.}
   QtProperty[QVariant] hasMarketValuesCache:
     read = getHasMarketValuesCache

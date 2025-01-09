@@ -9,7 +9,9 @@ type WakuFetchingBackupProgressSignal* = ref object of Signal
   clock*: uint64
   fetchingBackupProgress*: Table[string, WakuFetchingBackupProgress]
 
-proc fromEvent*(T: type WakuFetchingBackupProgressSignal, event: JsonNode): WakuFetchingBackupProgressSignal =
+proc fromEvent*(
+    T: type WakuFetchingBackupProgressSignal, event: JsonNode
+): WakuFetchingBackupProgressSignal =
   result = WakuFetchingBackupProgressSignal()
   result.signalType = SignalType.WakuFetchingBackupProgress
   result.fetchingBackupProgress = initTable[string, WakuFetchingBackupProgress]()
@@ -17,7 +19,8 @@ proc fromEvent*(T: type WakuFetchingBackupProgressSignal, event: JsonNode): Waku
   let e = event["event"]
   if e.contains("clock"):
     result.clock = uint64(e["clock"].getBiggestInt)
-  if e.contains("fetchingBackedUpDataProgress") and e["fetchingBackedUpDataProgress"].kind == JObject:
+  if e.contains("fetchingBackedUpDataProgress") and
+      e["fetchingBackedUpDataProgress"].kind == JObject:
     for key in e["fetchingBackedUpDataProgress"].keys:
       let entity = e["fetchingBackedUpDataProgress"][key]
       var details = WakuFetchingBackupProgress()

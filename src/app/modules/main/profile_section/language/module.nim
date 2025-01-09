@@ -8,16 +8,18 @@ import ../../../../../app_service/service/language/service as language_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-    events: EventEmitter, languageService: language_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    languageService: language_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -31,13 +33,15 @@ proc populateLanguageModel(self: Module) =
   for locale in self.controller.getLanguages():
     if localeDescriptionTable.contains(locale):
       let localeDescr = localeDescriptionTable[locale]
-      items.add(initItem(
-        locale = locale,
-        name = localeDescr.name,
-        native = localeDescr.native,
-        flag = localeDescr.flag,
-        state = localeDescr.state
-      ))
+      items.add(
+        initItem(
+          locale = locale,
+          name = localeDescr.name,
+          native = localeDescr.native,
+          flag = localeDescr.flag,
+          state = localeDescr.state,
+        )
+      )
     else:
       warn "missing locale details", locale
 
@@ -68,5 +72,3 @@ method changeLanguage*(self: Module, language: string) =
 
 method onCurrentLanguageChanged*(self: Module, language: string) =
   self.view.setLanguage(language)
-
-

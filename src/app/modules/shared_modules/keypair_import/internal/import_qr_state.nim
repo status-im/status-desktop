@@ -1,5 +1,4 @@
-type
-  ImportQrState* = ref object of State
+type ImportQrState* = ref object of State
 
 proc newImportQrState*(backState: State): ImportQrState =
   result = ImportQrState()

@@ -1,6 +1,8 @@
-proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
+proc createState*(
+    stateToBeCreated: StateType, flowType: FlowType, backState: State
+): State =
   if stateToBeCreated == StateType.AllowNotifications:
-    return newNotificationState(flowType, backState) 
+    return newNotificationState(flowType, backState)
   if stateToBeCreated == StateType.Welcome:
     return newWelcomeState(flowType, backState)
   if stateToBeCreated == StateType.WelcomeNewStatusUser:
@@ -8,9 +10,9 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
   if stateToBeCreated == StateType.WelcomeOldStatusUser:
     return newWelcomeStateOldUser(flowType, backState)
   if stateToBeCreated == StateType.UserProfileCreate:
-    return newUserProfileCreateState(flowType, backState) 
+    return newUserProfileCreateState(flowType, backState)
   if stateToBeCreated == StateType.UserProfileCreateSameChatKey:
-    return newUserProfileCreateSameChatKeyState(flowType, backState) 
+    return newUserProfileCreateSameChatKeyState(flowType, backState)
   if stateToBeCreated == StateType.UserProfileChatKey:
     return newUserProfileChatKeyState(flowType, backState)
   if stateToBeCreated == StateType.UserProfileCreatePassword:
@@ -125,9 +127,11 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newSyncDeviceWithSyncCodeState(flowType, backState)
   if stateToBeCreated == StateType.SyncDeviceResult:
     return newSyncDeviceResultState(flowType, backState)
-  error "No implementation available for state ", state=stateToBeCreated
+  error "No implementation available for state ", state = stateToBeCreated
 
-proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State =
+proc findBackStateWithTargetedStateType*(
+    currentState: State, targetedStateType: StateType
+): State =
   if currentState.isNil:
     return nil
   var state = currentState
@@ -142,25 +146,22 @@ proc findBackStateWhichDoesNotBelongToAnyOfReadingStates*(currentState: State): 
     return nil
   var state = currentState
 
-  const onboardingReadingStates = @[
-    StateType.KeycardPluginReader,
-    StateType.KeycardInsertKeycard,
-    StateType.KeycardInsertedKeycard,
-    StateType.KeycardReadingKeycard,
-    StateType.KeycardRecognizedKeycard
-  ]
-  const loginReadingStates = @[
-    StateType.Login,
-    StateType.LoginPlugin,
-    StateType.LoginKeycardInsertKeycard,
-    StateType.LoginKeycardInsertedKeycard,
-    StateType.LoginKeycardReadingKeycard,
-    StateType.LoginKeycardRecognizedKeycard
-  ]
+  const onboardingReadingStates =
+    @[
+      StateType.KeycardPluginReader, StateType.KeycardInsertKeycard,
+      StateType.KeycardInsertedKeycard, StateType.KeycardReadingKeycard,
+      StateType.KeycardRecognizedKeycard,
+    ]
+  const loginReadingStates =
+    @[
+      StateType.Login, StateType.LoginPlugin, StateType.LoginKeycardInsertKeycard,
+      StateType.LoginKeycardInsertedKeycard, StateType.LoginKeycardReadingKeycard,
+      StateType.LoginKeycardRecognizedKeycard,
+    ]
 
   while not state.isNil:
     if not common_utils.arrayContains(onboardingReadingStates, state.stateType) and
-      not common_utils.arrayContains(loginReadingStates, state.stateType):
-        return state
+        not common_utils.arrayContains(loginReadingStates, state.stateType):
+      return state
     state = state.getBackState
   return nil

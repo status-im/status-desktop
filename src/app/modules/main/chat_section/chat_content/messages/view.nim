@@ -5,19 +5,18 @@ import ../../../../../../app_service/service/chat/dto/chat
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      messageSearchOngoing: bool
-      amIChatAdmin: bool
-      isPinMessageAllowedForMembers: bool
-      chatColor: string
-      chatIcon: string
-      chatType: int
-      loading: bool
-      keepUnread: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    messageSearchOngoing: bool
+    amIChatAdmin: bool
+    isPinMessageAllowedForMembers: bool
+    chatColor: string
+    chatIcon: string
+    chatType: int
+    loading: bool
+    keepUnread: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -47,6 +46,7 @@ QtObject:
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
+
   QtProperty[QVariant] model:
     read = getModel
 
@@ -80,13 +80,13 @@ QtObject:
 
   proc getMessageByIdAsJson*(self: View, messageId: string): string {.slot.} =
     let jsonObj = self.model.getMessageByIdAsJson(messageId)
-    if(jsonObj.isNil):
+    if (jsonObj.isNil):
       return ""
     return $jsonObj
 
   proc getMessageByIndexAsJson*(self: View, index: int): string {.slot.} =
     let jsonObj = self.model.getMessageByIndexAsJson(index)
-    if(jsonObj.isNil):
+    if (jsonObj.isNil):
       return ""
     return $jsonObj
 
@@ -115,10 +115,10 @@ QtObject:
     self.delegate.deleteMessage(messageId)
 
   proc setEditModeOn*(self: View, messageId: string) {.slot.} =
-   self.model.setEditModeOn(messageId)
+    self.model.setEditModeOn(messageId)
 
   proc setEditModeOff*(self: View, messageId: string) {.slot.} =
-   self.model.setEditModeOff(messageId)
+    self.model.setEditModeOff(messageId)
 
   proc editMessage*(self: View, messageId: string, updatedMsg: string) {.slot.} =
     self.delegate.editMessage(messageId, updatedMsg)
@@ -148,7 +148,8 @@ QtObject:
 
   proc setEditModeOnAndScrollToLastMessage*(self: View, pubkey: string) {.slot.} =
     let lastMessage = self.model.getLastItemFrom(pubKey)
-    if lastMessage != nil and lastMessage.id != "" and isEditAllowed(lastMessage.messageImage, lastMessage.sticker):
+    if lastMessage != nil and lastMessage.id != "" and
+        isEditAllowed(lastMessage.messageImage, lastMessage.sticker):
       self.model.setEditModeOn(lastMessage.id)
       self.jumpToMessage(lastMessage.id)
 
@@ -178,11 +179,11 @@ QtObject:
   proc amIChatAdminChanged*(self: View) {.signal.}
   proc getAmIChatAdmin*(self: View): bool {.slot.} =
     return self.amIChatAdmin
-  
+
   QtProperty[bool] amIChatAdmin:
     read = getAmIChatAdmin
     notify = amIChatAdminChanged
-  
+
   proc setAmIChatAdmin*(self: View, value: bool) =
     self.amIChatAdmin = value
     self.amIChatAdminChanged()
@@ -190,11 +191,11 @@ QtObject:
   proc isPinMessageAllowedForMembersChanged*(self: View) {.signal.}
   proc getIsPinMessageAllowedForMembers*(self: View): bool {.slot.} =
     return self.isPinMessageAllowedForMembers
-  
+
   QtProperty[bool] isPinMessageAllowedForMembers:
     read = getIsPinMessageAllowedForMembers
     notify = isPinMessageAllowedForMembersChanged
-  
+
   proc setIsPinMessageAllowedForMembers*(self: View, value: bool) =
     self.isPinMessageAllowedForMembers = value
     self.isPinMessageAllowedForMembersChanged()
@@ -206,7 +207,7 @@ QtObject:
   QtProperty[string] chatColor:
     read = getChatColor
     notify = chatColorChanged
-  
+
   proc setChatColor*(self: View, value: string) =
     self.chatColor = value
     self.chatColorChanged()
@@ -218,11 +219,11 @@ QtObject:
   QtProperty[string] chatIcon:
     read = getChatIcon
     notify = chatIconChanged
-  
+
   proc setChatIcon*(self: View, value: string) =
     self.chatIcon = value
     self.chatIconChanged()
-  
+
   proc chatTypeChanged*(self: View) {.signal.}
   proc getChatType*(self: View): int {.slot.} =
     return self.chatType
@@ -230,7 +231,7 @@ QtObject:
   QtProperty[int] chatType:
     read = getChatType
     notify = chatTypeChanged
-  
+
   proc setChatType*(self: View, value: int) =
     self.chatType = value
     self.chatTypeChanged()
@@ -238,10 +239,11 @@ QtObject:
   proc loadingChanged*(self: View) {.signal.}
   proc isLoading*(self: View): bool {.slot.} =
     return self.loading
+
   proc setLoading*(self: View, value: bool) =
     self.loading = value
     self.loadingChanged()
-  
+
   QtProperty[bool] loading:
     read = isLoading
     notify = loadingChanged

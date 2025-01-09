@@ -1,5 +1,4 @@
-type
-  KeycardPinSetState* = ref object of State
+type KeycardPinSetState* = ref object of State
 
 proc newKeycardPinSetState*(flowType: FlowType, backState: State): KeycardPinSetState =
   result = KeycardPinSetState()
@@ -14,7 +13,8 @@ method executeBackCommand*(self: KeycardPinSetState, controller: Controller) =
 
 method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    return createState(StateType.KeycardDisplaySeedPhrase, self.flowType, self.getBackState)
+    return
+      createState(StateType.KeycardDisplaySeedPhrase, self.flowType, self.getBackState)
   if self.flowType == FirstRunNewUserImportSeedPhraseIntoKeycard:
     return createState(StateType.UserProfileCreate, self.flowType, self.getBackState)
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
@@ -51,9 +51,12 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
   if self.flowType == FlowType.LostKeycardReplacement:
     controller.startLoginFlowAutomatically(controller.getPin())
 
-method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent,
-  controller: Controller): State =
-
+method resolveKeycardNextState*(
+    self: KeycardPinSetState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
   if keycardFlowType != ResponseTypeValueKeycardFlowResult:
     return
 
@@ -65,7 +68,6 @@ method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: strin
     return
 
   let storeToKeychain = keycardReplacement and main_constants.SUPPORTS_FINGERPRINT
-  
+
   controller.setKeycardEvent(keycardEvent)
   controller.loginAccountKeycard(storeToKeychain, keycardReplacement)
-

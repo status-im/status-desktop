@@ -11,15 +11,14 @@ import app_service/common/types
 
 import app_service/service/profile/dto/profile_showcase_preferences
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    profileService: profile_service.Service
-    settingsService: settings_service.Service
-    communityService: community_service.Service
-    walletAccountService: wallet_account_service.Service
-    tokenService: token_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  profileService: profile_service.Service
+  settingsService: settings_service.Service
+  communityService: community_service.Service
+  walletAccountService: wallet_account_service.Service
+  tokenService: token_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -28,7 +27,8 @@ proc newController*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    tokenService: token_service.Service): Controller =
+    tokenService: token_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -56,7 +56,9 @@ proc init*(self: Controller) =
     let args = ProfileShowcasePreferencesArgs(e)
     self.delegate.loadProfileShowcasePreferences(args.preferences)
 
-proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): bool =
+proc storeIdentityImage*(
+    self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int
+): bool =
   len(self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)) > 0
 
 proc deleteIdentityImage*(self: Controller, address: string): bool =
@@ -71,7 +73,9 @@ proc getCommunityById*(self: Controller, id: string): CommunityDto =
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   self.walletAccountService.getAccountByAddress(address)
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Controller
+): seq[wallet_account_service.WalletAccountDto] =
   self.walletAccountService.getWalletAccounts(true)
 
 proc getBio*(self: Controller): string =
@@ -80,9 +84,15 @@ proc getBio*(self: Controller): string =
 proc setBio*(self: Controller, bio: string): bool =
   self.profileService.setBio(bio)
 
-proc saveProfileShowcasePreferences*(self: Controller, preferences: ProfileShowcasePreferencesDto, revealedAddresses: seq[string]) =
+proc saveProfileShowcasePreferences*(
+    self: Controller,
+    preferences: ProfileShowcasePreferencesDto,
+    revealedAddresses: seq[string],
+) =
   self.profileService.saveProfileShowcasePreferences(preferences)
-  self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: revealedAddresses))
+  self.events.emit(
+    MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: revealedAddresses)
+  )
 
 proc requestProfileShowcasePreferences*(self: Controller) =
   self.profileService.requestProfileShowcasePreferences()

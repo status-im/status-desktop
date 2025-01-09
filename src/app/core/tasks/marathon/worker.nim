@@ -4,8 +4,7 @@ import # vendor libs
 import # status-desktop libs
   ../common
 
-export
-  chronos, common, json_serialization
+export chronos, common, json_serialization
 
 logScope:
   topics = "task-marathon-worker"
@@ -15,6 +14,7 @@ type
     chanSendToMain*: AsyncChannel[ThreadSafeString]
     chanRecvFromMain*: AsyncChannel[ThreadSafeString]
     vptr*: uint
+
   MarathonWorker* = ref object of RootObj
     chanSendToWorker*: AsyncChannel[ThreadSafeString]
     chanRecvFromWorker*: AsyncChannel[ThreadSafeString]

@@ -2,19 +2,18 @@ import stew/shims/strformat, strutils
 
 import app/modules/shared_models/currency_amount
 
-type
-  NetworkRouteItem* = ref object
-    chainId: int
-    layer: int
-    isRouteEnabled: bool
-    isRoutePreferred: bool
-    hasGas: bool
-    tokenBalance: CurrencyAmount
-    locked: bool
-    lockedAmount: string
-    amountIn: string
-    amountOut: string
-    toNetworks: seq[int]
+type NetworkRouteItem* = ref object
+  chainId: int
+  layer: int
+  isRouteEnabled: bool
+  isRoutePreferred: bool
+  hasGas: bool
+  tokenBalance: CurrencyAmount
+  locked: bool
+  lockedAmount: string
+  amountIn: string
+  amountOut: string
+  toNetworks: seq[int]
 
 proc initNetworkRouteItem*(
     chainId: int,
@@ -27,7 +26,7 @@ proc initNetworkRouteItem*(
     lockedAmount: string = "",
     amountIn: string = "",
     amountOut: string = "",
-    toNetworks: seq[int] = @[]
+    toNetworks: seq[int] = @[],
 ): NetworkRouteItem =
   result = NetworkRouteItem()
   result.chainId = chainId
@@ -43,7 +42,8 @@ proc initNetworkRouteItem*(
   result.toNetworks = toNetworks
 
 proc `$`*(self: NetworkRouteItem): string =
-  result = fmt"""NetworkRouteItem(
+  result =
+    fmt"""NetworkRouteItem(
     chainId: {self.chainId},
     layer: {self.layer},
     isRouteEnabled:{self.isRouteEnabled},
@@ -65,48 +65,57 @@ proc getLayer*(self: NetworkRouteItem): int =
 
 proc getIsRouteEnabled*(self: NetworkRouteItem): bool =
   return self.isRouteEnabled
+
 proc `isRouteEnabled=`*(self: NetworkRouteItem, value: bool) {.inline.} =
   self.isRouteEnabled = value
 
 proc getIsRoutePreferred*(self: NetworkRouteItem): bool =
   return self.isRoutePreferred
+
 proc `isRoutePreferred=`*(self: NetworkRouteItem, value: bool) {.inline.} =
   self.isRoutePreferred = value
 
 proc getHasGas*(self: NetworkRouteItem): bool =
   return self.hasGas
+
 proc `hasGas=`*(self: NetworkRouteItem, value: bool) {.inline.} =
   self.hasGas = value
 
 proc getTokenBalance*(self: NetworkRouteItem): CurrencyAmount =
   return self.tokenBalance
+
 proc `tokenBalance=`*(self: NetworkRouteItem, value: CurrencyAmount) {.inline.} =
   self.tokenBalance = value
 
 proc getLocked*(self: NetworkRouteItem): bool =
   return self.locked
+
 proc `locked=`*(self: NetworkRouteItem, value: bool) {.inline.} =
   self.locked = value
 
 proc getLockedAmount*(self: NetworkRouteItem): string =
   return self.lockedAmount
+
 proc `lockedAmount=`*(self: NetworkRouteItem, value: string) {.inline.} =
   self.lockedAmount = value
 
 proc getAmountIn*(self: NetworkRouteItem): string =
   return self.amountIn
+
 proc `amountIn=`*(self: NetworkRouteItem, value: string) {.inline.} =
   self.amountIn = value
 
 proc getAmountOut*(self: NetworkRouteItem): string =
   return self.amountOut
+
 proc `amountOut=`*(self: NetworkRouteItem, value: string) {.inline.} =
   self.amountOut = value
 
 proc getToNetworks*(self: NetworkRouteItem): string =
   return self.toNetworks.join(":")
+
 proc `toNetworks=`*(self: NetworkRouteItem, value: int) {.inline.} =
   self.toNetworks.add(value)
-proc resetToNetworks*(self: NetworkRouteItem) =
-   self.toNetworks = @[]
 
+proc resetToNetworks*(self: NetworkRouteItem) =
+  self.toNetworks = @[]

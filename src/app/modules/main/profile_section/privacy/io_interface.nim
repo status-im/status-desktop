@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -25,7 +24,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method isMnemonicBackedUp*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changePassword*(self: AccessInterface, password: string, newPassword: string) {.base.} =
+method changePassword*(
+    self: AccessInterface, password: string, newPassword: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMnemonic*(self: AccessInterface): string {.base.} =
@@ -44,7 +45,9 @@ method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base
 method mnemonicBackedUp*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPasswordChanged*(self: AccessInterface, success: bool, errorMsg: string) {.base.} =
+method onPasswordChanged*(
+    self: AccessInterface, success: bool, errorMsg: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMessagesFromContactsOnly*(self: AccessInterface): bool {.base.} =
@@ -62,10 +65,14 @@ method setUrlUnfurlingMode*(self: AccessInterface, value: int) {.base.} =
 method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
+method getPasswordStrengthScore*(
+    self: AccessInterface, password: string
+): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onStoreToKeychainError*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =
+method onStoreToKeychainError*(
+    self: AccessInterface, errorDescription: string, errorType: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onStoreToKeychainSuccess*(self: AccessInterface, data: string) {.base.} =
@@ -77,7 +84,9 @@ method tryStoreToKeyChain*(self: AccessInterface) {.base.} =
 method tryRemoveFromKeyChain*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+method onUserAuthenticated*(
+    self: AccessInterface, pin: string, password: string, keyUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method backupData*(self: AccessInterface): int64 {.base.} =

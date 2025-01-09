@@ -15,30 +15,32 @@ import app_service/service/community_tokens/service as community_tokens_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    addresses: seq[string]
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  addresses: seq[string]
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  tokenService: token_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
-  communityTokensService: community_tokens_service.Service
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    tokenService: token_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
+    communityTokensService: community_tokens_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
+  result.controller = controller.newController(
+    result, events, tokenService, walletAccountService, settingsService,
+    communityTokensService,
+  )
   result.moduleLoaded = false
   result.addresses = @[]
 
@@ -48,9 +50,11 @@ method delete*(self: Module) =
   self.controller.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAllTokens", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionAllTokens", self.viewVariant
+  )
 
-  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e: Args):
     self.controller.rebuildMarketData()
 
   # Passing on the events for changes in model to abstract model
@@ -74,7 +78,7 @@ method load*(self: Module) =
   self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
     self.view.tokensDetailsUpdated()
 
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e: Args):
     self.view.currencyFormatsUpdated()
 
   self.controller.init()
@@ -97,51 +101,82 @@ method getHistoricalDataForToken*(self: Module, symbol: string, currency: string
 method tokenHistoricalDataResolved*(self: Module, tokenDetails: string) =
   self.view.setTokenHistoricalDataReady(tokenDetails)
 
-method fetchHistoricalBalanceForTokenAsJson*(self: Module, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  let addresses = if address == "": self.addresses else: @[address]
-  self.controller.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol,timeIntervalEnum)
+method fetchHistoricalBalanceForTokenAsJson*(
+    self: Module,
+    address: string,
+    tokenSymbol: string,
+    currencySymbol: string,
+    timeIntervalEnum: int,
+) =
+  let addresses =
+    if address == "":
+      self.addresses
+    else:
+      @[address]
+  self.controller.fetchHistoricalBalanceForTokenAsJson(
+    addresses, tokenSymbol, currencySymbol, timeIntervalEnum
+  )
 
 method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string) =
   self.view.setTokenBalanceHistoryDataReady(balanceHistoryJson)
 
 # Interfaces for getting lists from the service files into the abstract models
 
-method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
+method getSourcesOfTokensModelDataSource*(
+    self: Module
+): SourcesOfTokensModelDataSource =
   return (
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
+    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] =
+      self.controller.getSourcesOfTokensList()
   )
 
 method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
-    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
-    getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
-    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+    getFlatTokensList: proc(): var seq[TokenItem] =
+      self.controller.getFlatTokensList(),
+    getTokenDetails: proc(symbol: string): TokenDetailsItem =
+      self.controller.getTokenDetails(symbol),
+    getTokenPreferences: proc(symbol: string): TokenPreferencesItem =
+      self.controller.getTokenPreferences(symbol),
+    getCommunityTokenDescription: proc(chainId: int, address: string): string =
+      self.controller.getCommunityTokenDescription(chainId, address),
+    getTokensDetailsLoading: proc(): bool =
+      self.controller.getTokensDetailsLoading(),
+    getTokensMarketValuesLoading: proc(): bool =
+      self.controller.getTokensMarketValuesLoading(),
   )
 
 method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
   return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
-    getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
-    getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
-    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
-    getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] =
+      self.controller.getTokenBySymbolList(),
+    getTokenDetails: proc(symbol: string): TokenDetailsItem =
+      self.controller.getTokenDetails(symbol),
+    getTokenPreferences: proc(symbol: string): TokenPreferencesItem =
+      self.controller.getTokenPreferences(symbol),
+    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string =
+      self.controller.getCommunityTokenDescription(addressPerChain),
+    getTokensDetailsLoading: proc(): bool =
+      self.controller.getTokensDetailsLoading(),
+    getTokensMarketValuesLoading: proc(): bool =
+      self.controller.getTokensMarketValuesLoading(),
   )
 
 method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSource =
   return (
-    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem = self.controller.getMarketValuesBySymbol(symbol),
-    getPriceBySymbol: proc(symbol: string): float64 = self.controller.getPriceBySymbol(symbol),
-    getCurrentCurrencyFormat: proc(): CurrencyFormatDto = self.controller.getCurrentCurrencyFormat(),
-    getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
+    getMarketValuesBySymbol: proc(symbol: string): TokenMarketValuesItem =
+      self.controller.getMarketValuesBySymbol(symbol),
+    getPriceBySymbol: proc(symbol: string): float64 =
+      self.controller.getPriceBySymbol(symbol),
+    getCurrentCurrencyFormat: proc(): CurrencyFormatDto =
+      self.controller.getCurrentCurrencyFormat(),
+    getTokensMarketValuesLoading: proc(): bool =
+      self.controller.getTokensMarketValuesLoading(),
   )
 
-method filterChanged*(self: Module, addresses: seq[string]) = 
+method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:
-      return
+    return
   self.addresses = addresses
 
 method updateTokenPreferences*(self: Module, tokenPreferencesJson: string) {.slot.} =

@@ -12,10 +12,11 @@ type EnsUsernameDto* = ref object
   txStatus*: string
 
 proc `==`*(l, r: EnsUsernameDto): bool =
-    return l.chainId == r.chainid and l.username == r.username
+  return l.chainId == r.chainid and l.username == r.username
 
 proc `$`*(self: EnsUsernameDto): string =
-  result = fmt"""EnsUsernameDto(
+  result =
+    fmt"""EnsUsernameDto(
     chainId: {self.chainId},
     username: {self.username},
     txType: {self.txType},
@@ -24,7 +25,7 @@ proc `$`*(self: EnsUsernameDto): string =
     )"""
 
 proc hash*(dto: EnsUsernameDto): Hash =
-    return ($dto).hash
+  return ($dto).hash
 
 proc toEnsUsernameDto*(jsonObj: JsonNode): EnsUsernameDto =
   result = EnsUsernameDto()

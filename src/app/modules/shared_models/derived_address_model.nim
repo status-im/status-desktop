@@ -4,14 +4,12 @@ import ./derived_address_item
 
 export derived_address_item
 
-type
-  ModelRole {.pure.} = enum
-    AddressDetails = UserRole + 1
+type ModelRole {.pure.} = enum
+  AddressDetails = UserRole + 1
 
 QtObject:
-  type
-    DerivedAddressModel* = ref object of QAbstractListModel
-      items: seq[DerivedAddressItem]
+  type DerivedAddressModel* = ref object of QAbstractListModel
+    items: seq[DerivedAddressItem]
 
   proc delete(self: DerivedAddressModel) =
     self.items = @[]
@@ -31,6 +29,7 @@ QtObject:
   proc countChanged(self: DerivedAddressModel) {.signal.}
   proc getCount(self: DerivedAddressModel): int {.slot.} =
     self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -38,6 +37,7 @@ QtObject:
   proc loadedCountChanged(self: DerivedAddressModel) {.signal.}
   proc getLoadedCount(self: DerivedAddressModel): int {.slot.} =
     return self.items.filter(x => x.getLoaded()).len
+
   QtProperty[int] loadedCount:
     read = getLoadedCount
     notify = loadedCountChanged
@@ -46,9 +46,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: DerivedAddressModel): Table[int, string] =
-    {
-      ModelRole.AddressDetails.int: "addressDetails"
-    }.toTable
+    {ModelRole.AddressDetails.int: "addressDetails"}.toTable
 
   method data(self: DerivedAddressModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -60,7 +58,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.AddressDetails:
       result = newQVariant(item)
 
@@ -78,20 +76,25 @@ QtObject:
     self.countChanged()
     self.loadedCountChanged()
 
-  proc getItemByAddress*(self: DerivedAddressModel, address: string): DerivedAddressItem =
+  proc getItemByAddress*(
+      self: DerivedAddressModel, address: string
+  ): DerivedAddressItem =
     for it in self.items:
       if it.getAddress() == address:
         return it
     return nil
-  
-  proc updateDetailsForAddressAndBubbleItToTop*(self: DerivedAddressModel, address: string, hasActivity: bool) =
+
+  proc updateDetailsForAddressAndBubbleItToTop*(
+      self: DerivedAddressModel, address: string, hasActivity: bool
+  ) =
     var item: DerivedAddressItem
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         item = self.items[i]
-       
+
         let parentModelIndex = newQModelIndex()
-        defer: parentModelIndex.delete
+        defer:
+          parentModelIndex.delete
         self.beginRemoveRows(parentModelIndex, i, i)
         self.items.delete(i)
         self.endRemoveRows()
@@ -107,12 +110,20 @@ QtObject:
       indexToInsertTo.inc
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
     self.items.insert(
-      newDerivedAddressItem(item.getOrder(), item.getAddress(), item.getPublicKey(), item.getPath(), item.getAlreadyCreated(), 
-        hasActivity, loaded = true), 
-      indexToInsertTo
+      newDerivedAddressItem(
+        item.getOrder(),
+        item.getAddress(),
+        item.getPublicKey(),
+        item.getPath(),
+        item.getAlreadyCreated(),
+        hasActivity,
+        loaded = true,
+      ),
+      indexToInsertTo,
     )
     self.endInsertRows()
     self.countChanged() # we need this to trigger bindings on the qml side

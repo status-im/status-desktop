@@ -20,23 +20,22 @@ import ../../../../backend/general as status_general
 const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Authentication"
 const UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER* = "CommunitiesModule-Signing"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    communityService: community_service.Service
-    contactsService: contacts_service.Service
-    communityTokensService: community_tokens_service.Service
-    networksService: networks_service.Service
-    tokenService: token_service.Service
-    chatService: chat_service.Service
-    walletAccountService: wallet_account_service.Service
-    keycardService: keycard_service.Service
-    connectionKeycardResponse: UUID
-    ## the following are used for silent signing in case there are more then a single address for the same keypair
-    silentSigningPath: string
-    silentSigningKeyUid: string
-    silentSigningPin: string
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  communityService: community_service.Service
+  contactsService: contacts_service.Service
+  communityTokensService: community_tokens_service.Service
+  networksService: networks_service.Service
+  tokenService: token_service.Service
+  chatService: chat_service.Service
+  walletAccountService: wallet_account_service.Service
+  keycardService: keycard_service.Service
+  connectionKeycardResponse: UUID
+  ## the following are used for silent signing in case there are more then a single address for the same keypair
+  silentSigningPath: string
+  silentSigningKeyUid: string
+  silentSigningPin: string
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -48,8 +47,8 @@ proc newController*(
     tokenService: token_service.Service,
     chatService: chat_service.Service,
     walletAccountService: wallet_account_service.Service,
-    keycardService: keycard_service.Service
-    ): Controller =
+    keycardService: keycard_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -66,14 +65,14 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.once(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
+  self.events.once(SIGNAL_COMMUNITY_DATA_LOADED) do(e: Args):
     self.delegate.communityDataLoaded()
 
-  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_CREATED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_DATA_IMPORTED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityDataImported(args.community)
 
@@ -81,87 +80,97 @@ proc init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityInfoRequestFailed(args.communityId, args.error)
 
-  self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
+  self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.curatedCommunityAdded(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_ADDED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_ADDED) do(e: Args):
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
-  self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e: Args):
     let args = CommunityArgs(e)
-    if(args.error.len > 0):
+    if (args.error.len > 0):
       self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
     else:
       self.delegate.communityImported(args.community)
 
-  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e: Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
       self.delegate.curatedCommunityEdited(community)
 
-  self.events.on(SIGNAL_CURATED_COMMUNITIES_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_UPDATED) do(e: Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.curatedCommunityEdited(community)
 
-  self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_MUTED) do(e: Args):
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
 
-  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
     let args = CommunityRequestArgs(e)
     self.delegate.communityAccessRequested(args.communityRequest.communityId)
 
-  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_FAILED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_FAILED) do(e: Args):
     let args = CommunityRequestFailedArgs(e)
     self.delegate.communityAccessFailed(args.communityId, args.error)
 
-  self.events.on(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED) do(e: Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityEditSharedAddressesSucceeded(args.communityId)
 
-  self.events.on(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED) do(e: Args):
     let args = CommunityRequestFailedArgs(e)
     self.delegate.communityEditSharedAddressesFailed(args.communityId, args.error)
 
-  self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e:Args):
+  self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e: Args):
     let args = DiscordCategoriesAndChannelsArgs(e)
-    self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors, args.errorsCount)
+    self.delegate.discordCategoriesAndChannelsExtracted(
+      args.categories, args.channels, args.oldestMessageTimestamp, args.errors,
+      args.errorsCount,
+    )
 
-  self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e:Args):
+  self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e: Args):
     let args = DiscordImportProgressArgs(e)
-    self.delegate.discordImportProgressUpdated(args.communityId, args.communityName, args.communityImage, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+    self.delegate.discordImportProgressUpdated(
+      args.communityId, args.communityName, args.communityImage, args.tasks,
+      args.progress, args.errorsCount, args.warningsCount, args.stopped,
+      args.totalChunksCount, args.currentChunk,
+    )
 
-  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS) do(e:Args):
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_PROGRESS) do(e: Args):
     let args = DiscordImportChannelProgressArgs(e)
-    self.delegate.discordImportChannelProgressUpdated(args.channelId, args.channelName, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk)
+    self.delegate.discordImportChannelProgressUpdated(
+      args.channelId, args.channelName, args.tasks, args.progress, args.errorsCount,
+      args.warningsCount, args.stopped, args.totalChunksCount, args.currentChunk,
+    )
 
-  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED) do(e:Args):
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_FINISHED) do(e: Args):
     let args = CommunityChatIdArgs(e)
     self.delegate.discordImportChannelFinished(args.communityId, args.chatId)
 
-  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED) do(e:Args):
+  self.events.on(SIGNAL_DISCORD_CHANNEL_IMPORT_CANCELED) do(e: Args):
     let args = ChannelIdArgs(e)
     self.delegate.discordImportChannelCanceled(args.channelId)
 
-  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_STARTED) do(e: Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityHistoryArchivesDownloadStarted(args.communityId)
 
-  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED) do(e:Args):
+  self.events.on(SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED) do(e: Args):
     let args = CommunityIdArgs(e)
     self.delegate.communityHistoryArchivesDownloadFinished(args.communityId)
 
-  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING) do(e:Args):
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING) do(e: Args):
     self.delegate.curatedCommunitiesLoading()
 
-  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED) do(e: Args):
     self.delegate.curatedCommunitiesLoadingFailed()
 
-  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADED) do(e:Args):
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADED) do(e: Args):
     let args = CommunitiesArgs(e)
     self.delegate.curatedCommunitiesLoaded(args.communities)
 
@@ -171,21 +180,20 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
     let args = CheckPermissionsToJoinResponseArgs(e)
-    self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
+    self.delegate.onCommunityCheckPermissionsToJoinResponse(
+      args.communityId, args.checkPermissionsToJoinResponse
+    )
 
   self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
     let args = CheckAllChannelsPermissionsResponseArgs(e)
     self.delegate.onCommunityCheckAllChannelsPermissionsResponse(
-      args.communityId,
-      args.checkAllChannelsPermissionsResponse,
+      args.communityId, args.checkAllChannelsPermissionsResponse
     )
 
   self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):
     let args = CommunityMemberRevealedAccountsArgs(e)
     self.delegate.onCommunityMemberRevealedAccountsLoaded(
-      args.communityId,
-      args.memberPubkey,
-      args.memberRevealedAccounts,
+      args.communityId, args.memberPubkey, args.memberRevealedAccounts
     )
 
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
@@ -206,7 +214,9 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
     let args = CheckChannelsPermissionsErrorArgs(e)
-    self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
+    self.delegate.onCommunityCheckAllChannelPermissionsFailed(
+      args.communityId, args.error
+    )
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -242,23 +252,18 @@ proc createCommunity*(
     color: string,
     tags: string,
     imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int,
+    aX: int,
+    aY: int,
+    bX: int,
+    bY: int,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
-    bannerJsonStr: string) =
+    bannerJsonStr: string,
+) =
   self.communityService.createCommunity(
-    name,
-    description,
-    introMessage,
-    outroMessage,
-    access,
-    color,
-    tags,
-    imageUrl,
-    aX, aY, bX, bY,
-    historyArchiveSupportEnabled,
-    pinMessageAllMembersEnabled,
-    bannerJsonStr)
+    name, description, introMessage, outroMessage, access, color, tags, imageUrl, aX,
+    aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr,
+  )
 
 proc requestImportDiscordCommunity*(
     self: Controller,
@@ -270,25 +275,20 @@ proc requestImportDiscordCommunity*(
     color: string,
     tags: string,
     imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int,
+    aX: int,
+    aY: int,
+    bX: int,
+    bY: int,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool,
     filesToImport: seq[string],
-    fromTimestamp: int) =
+    fromTimestamp: int,
+) =
   self.communityService.requestImportDiscordCommunity(
-    name,
-    description,
-    introMessage,
-    outroMessage,
-    access,
-    color,
-    tags,
-    imageUrl,
-    aX, aY, bX, bY,
-    historyArchiveSupportEnabled,
-    pinMessageAllMembersEnabled,
-    filesToImport,
-    fromTimestamp)
+    name, description, introMessage, outroMessage, access, color, tags, imageUrl, aX,
+    aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+    filesToImport, fromTimestamp,
+  )
 
 proc requestImportDiscordChannel*(
     self: Controller,
@@ -299,40 +299,36 @@ proc requestImportDiscordChannel*(
     color: string,
     emoji: string,
     filesToImport: seq[string],
-    fromTimestamp: int) =
+    fromTimestamp: int,
+) =
   self.communityService.requestImportDiscordChannel(
-    name,
-    discordChannelId,
-    communityId,
-    description,
-    color,
-    emoji,
-    filesToImport,
-    fromTimestamp)
+    name, discordChannelId, communityId, description, color, emoji, filesToImport,
+    fromTimestamp,
+  )
 
 proc reorderCommunityChat*(
     self: Controller,
     communityId: string,
     categoryId: string,
     chatId: string,
-    position: int) =
-  self.communityService.reorderCommunityChat(
-    communityId,
-    categoryId,
-    chatId,
-    position)
+    position: int,
+) =
+  self.communityService.reorderCommunityChat(communityId, categoryId, chatId, position)
 
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
 
-proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, importing: bool) =
+proc requestCommunityInfo*(
+    self: Controller, communityId: string, shard: Shard, importing: bool
+) =
   self.communityService.requestCommunityInfo(communityId, shard, importing)
 
 proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityId, mutedType)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getContactNameAndImage*(
+    self: Controller, contactId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
@@ -353,7 +349,9 @@ proc asyncLoadCuratedCommunities*(self: Controller) =
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 
-proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport: seq[string]) =
+proc requestExtractDiscordChannelsAndCategories*(
+    self: Controller, filesToImport: seq[string]
+) =
   self.communityService.requestExtractDiscordChannelsAndCategories(filesToImport)
 
 proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
@@ -362,13 +360,15 @@ proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
 proc requestCancelDiscordChannelImport*(self: Controller, discordChannelId: string) =
   self.communityService.requestCancelDiscordChannelImport(discordChannelId)
 
-proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
+proc getCommunityTokens*(
+    self: Controller, communityId: string
+): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
 
 proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
   self.communityTokensService.getAllCommunityTokens()
 
-proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
+proc getNetworkByChainId*(self: Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
 proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
@@ -380,46 +380,89 @@ proc shareCommunityUrlWithChatKey*(self: Controller, communityId: string): strin
 proc shareCommunityUrlWithData*(self: Controller, communityId: string): string =
   return self.communityService.shareCommunityUrlWithData(communityId)
 
-proc shareCommunityChannelUrlWithChatKey*(self: Controller, communityId: string, chatId: string): string =
+proc shareCommunityChannelUrlWithChatKey*(
+    self: Controller, communityId: string, chatId: string
+): string =
   return self.communityService.shareCommunityChannelUrlWithChatKey(communityId, chatId)
 
-proc shareCommunityChannelUrlWithData*(self: Controller, communityId: string, chatId: string): string =
+proc shareCommunityChannelUrlWithData*(
+    self: Controller, communityId: string, chatId: string
+): string =
   return self.communityService.shareCommunityChannelUrlWithData(communityId, chatId)
 
-proc asyncRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string, addressesToShare: seq[string],
-  airdropAddress: string, signatures: seq[string]) =
-  self.communityService.asyncRequestToJoinCommunity(communityId, ensName, addressesToShare, airdropAddress,
-    signatures)
+proc asyncRequestToJoinCommunity*(
+    self: Controller,
+    communityId: string,
+    ensName: string,
+    addressesToShare: seq[string],
+    airdropAddress: string,
+    signatures: seq[string],
+) =
+  self.communityService.asyncRequestToJoinCommunity(
+    communityId, ensName, addressesToShare, airdropAddress, signatures
+  )
 
-proc asyncEditSharedAddresses*(self: Controller, communityId: string, addressesToShare: seq[string],
-  airdropAddress: string, signatures: seq[string]) =
-  self.communityService.asyncEditSharedAddresses(communityId, addressesToShare, airdropAddress, signatures)
+proc asyncEditSharedAddresses*(
+    self: Controller,
+    communityId: string,
+    addressesToShare: seq[string],
+    airdropAddress: string,
+    signatures: seq[string],
+) =
+  self.communityService.asyncEditSharedAddresses(
+    communityId, addressesToShare, airdropAddress, signatures
+  )
 
 proc authenticate*(self: Controller) =
-  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER)
+  let data = SharedKeycarModuleAuthenticationArgs(
+    uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER
+  )
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
-  result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+proc getCommunityPublicKeyFromPrivateKey*(
+    self: Controller, communityPrivateKey: string
+): string =
+  result =
+    self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
-proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string]) =
+proc asyncCheckPermissionsToJoin*(
+    self: Controller, communityId: string, addressesToShare: seq[string]
+) =
   self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare)
 
-proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string]) =
+proc asyncCheckAllChannelsPermissions*(
+    self: Controller, communityId: string, sharedAddresses: seq[string]
+) =
   self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
 
-proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
+proc asyncGetRevealedAccountsForMember*(
+    self: Controller, communityId, memberPubkey: string
+) =
   self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)
 
-proc generateJoiningCommunityRequestsForSigning*(self: Controller, memberPubKey: string, communityId: string,
-  addressesToReveal: seq[string]): seq[SignParamsDto] =
-  return self.communityService.generateJoiningCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+proc generateJoiningCommunityRequestsForSigning*(
+    self: Controller,
+    memberPubKey: string,
+    communityId: string,
+    addressesToReveal: seq[string],
+): seq[SignParamsDto] =
+  return self.communityService.generateJoiningCommunityRequestsForSigning(
+    memberPubKey, communityId, addressesToReveal
+  )
 
-proc generateEditCommunityRequestsForSigning*(self: Controller, memberPubKey: string, communityId: string,
-  addressesToReveal: seq[string]): seq[SignParamsDto] =
-  return self.communityService.generateEditCommunityRequestsForSigning(memberPubKey, communityId, addressesToReveal)
+proc generateEditCommunityRequestsForSigning*(
+    self: Controller,
+    memberPubKey: string,
+    communityId: string,
+    addressesToReveal: seq[string],
+): seq[SignParamsDto] =
+  return self.communityService.generateEditCommunityRequestsForSigning(
+    memberPubKey, communityId, addressesToReveal
+  )
 
-proc signCommunityRequests*(self: Controller, communityId: string, signParams: seq[SignParamsDto]): seq[string] =
+proc signCommunityRequests*(
+    self: Controller, communityId: string, signParams: seq[SignParamsDto]
+): seq[string] =
   return self.communityService.signCommunityRequests(communityId, signParams)
 
 proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
@@ -431,7 +474,9 @@ proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
 proc getKeypairs*(self: Controller): seq[KeypairDto] =
   return self.walletAccountService.getKeypairs()
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Controller
+): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
 proc getEnabledChainIds*(self: Controller): seq[int] =
@@ -441,7 +486,9 @@ proc disconnectKeycardReponseSignal(self: Controller) =
   self.events.disconnect(self.connectionKeycardResponse)
 
 proc connectKeycardReponseSignal(self: Controller) =
-  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
+  self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(
+    e: Args
+  ):
     let args = KeycardLibArgs(e)
     self.disconnectKeycardReponseSignal()
     let currentFlow = self.keycardService.getCurrentFlow()
@@ -453,7 +500,10 @@ proc connectKeycardReponseSignal(self: Controller) =
     self.silentSigningKeyUid = ""
     self.silentSigningPath = ""
     self.silentSigningPin = ""
-    self.delegate.onDataSigned(keyUid, path, args.flowEvent.txSignature.r, args.flowEvent.txSignature.s, args.flowEvent.txSignature.v, pin)
+    self.delegate.onDataSigned(
+      keyUid, path, args.flowEvent.txSignature.r, args.flowEvent.txSignature.s,
+      args.flowEvent.txSignature.v, pin,
+    )
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
@@ -463,16 +513,20 @@ proc runSignFlow(self: Controller, pin, path, dataToSign: string) =
   self.connectKeycardReponseSignal()
   self.keycardService.startSignFlow(path, dataToSign, pin)
 
-proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataToSign: string, pin: string) =
+proc runSigningOnKeycard*(
+    self: Controller, keyUid: string, path: string, dataToSign: string, pin: string
+) =
   var finalDataToSign = status_general.hashMessageForSigning(dataToSign)
   if finalDataToSign.startsWith("0x"):
-    finalDataToSign = finalDataToSign[2..^1]
-  
+    finalDataToSign = finalDataToSign[2 ..^ 1]
+
   if pin.len == 0:
-    let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
+    let data = SharedKeycarModuleSigningArgs(
+      uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
       keyUid: keyUid,
       path: path,
-      dataToSign: finalDataToSign)
+      dataToSign: finalDataToSign,
+    )
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA, data)
     return
   self.silentSigningKeyUid = keyUid

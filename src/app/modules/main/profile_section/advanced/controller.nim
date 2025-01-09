@@ -5,23 +5,27 @@ import ../../../../global/app_signals
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
-import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 
 logScope:
   topics = "profile-section-advanced-module-controller"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    settingsService: settings_service.Service
-    stickersService: stickers_service.Service
-    nodeConfigurationService: node_configuration_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  settingsService: settings_service.Service
+  stickersService: stickers_service.Service
+  nodeConfigurationService: node_configuration_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.Service,
-  stickersService: stickers_service.Service,
-  nodeConfigurationService: node_configuration_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    stickersService: stickers_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -49,7 +53,7 @@ proc getLogMaxBackups*(self: Controller): int =
   return self.nodeConfigurationService.getLogMaxBackups()
 
 proc setMaxLogBackups*(self: Controller, value: int) =
-  if(not self.nodeConfigurationService.setMaxLogBackups(value)):
+  if (not self.nodeConfigurationService.setMaxLogBackups(value)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't set the Max Log Backups"
     return
@@ -79,10 +83,10 @@ proc isTelemetryEnabled*(self: Controller): bool =
 
 proc toggleTelemetry*(self: Controller) =
   var value = ""
-  if(not self.isTelemetryEnabled()):
+  if (not self.isTelemetryEnabled()):
     value = DEFAULT_TELEMETRY_SERVER_URL
 
-  if(not self.settingsService.saveTelemetryServerUrl(value)):
+  if (not self.settingsService.saveTelemetryServerUrl(value)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't toggle telemetry message"
     return
@@ -91,7 +95,7 @@ proc toggleTelemetry*(self: Controller) =
 
 proc toggleAutoMessage*(self: Controller) =
   let enabled = self.settingsService.autoMessageEnabled()
-  if(not self.settingsService.saveAutoMessageEnabled(not enabled)):
+  if (not self.settingsService.saveAutoMessageEnabled(not enabled)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't toggle auto message"
     return
@@ -103,13 +107,13 @@ proc isAutoMessageEnabled*(self: Controller): bool =
 
 proc isDebugEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isDebugEnabled()
-  
+
 proc toggleDebug*(self: Controller) =
   var logLevel = LogLevel.DEBUG
-  if(self.isDebugEnabled()):
+  if (self.isDebugEnabled()):
     logLevel = LogLevel.INFO
 
-  if(not self.nodeConfigurationService.setLogLevel(logLevel)):
+  if (not self.nodeConfigurationService.setLogLevel(logLevel)):
     # in the future we may do a call from here to show a popup about this error
     error "an error occurred, we couldn't toggle debug level"
     return
@@ -129,16 +133,22 @@ proc toggleNimbusProxy*(self: Controller) =
   self.delegate.onNimbusProxyToggled()
 
 proc toggleCommunitiesPortalSection*(self: Controller) =
-  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.CommunitiesPortal))
+  self.events.emit(
+    TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.CommunitiesPortal)
+  )
 
 proc toggleWalletSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Wallet))
 
 proc toggleCommunitySection*(self: Controller) =
-  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Community))
+  self.events.emit(
+    TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Community)
+  )
 
 proc toggleNodeManagementSection*(self: Controller) =
-  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.NodeManagement))
+  self.events.emit(
+    TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.NodeManagement)
+  )
 
 proc isCommunityHistoryArchiveSupportEnabled*(self: Controller): bool =
   self.nodeConfigurationService.isCommunityHistoryArchiveSupportEnabled()

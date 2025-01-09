@@ -5,10 +5,9 @@ import json, stew/shims/strformat, strutils
 include ../../../common/json_utils
 include ../../../common/utils
 
-type
-  Images* = object
-    thumbnail*: string
-    large*: string
+type Images* = object
+  thumbnail*: string
+  large*: string
 
 type ContactRequestState* {.pure.} = enum
   None = 0
@@ -36,13 +35,15 @@ type ContactsDto* = object
   contactRequestState*: ContactRequestState
 
 proc `$`(self: Images): string =
-  result = fmt"""Images(
+  result =
+    fmt"""Images(
     thumbnail: {self.thumbnail},
     large: {self.large},
     ]"""
 
 proc `$`*(self: ContactsDto): string =
-  result = fmt"""ContactsDto(
+  result =
+    fmt"""ContactsDto(
     id: {self.id},
     name: {self.name},
     ensVerified: {self.ensVerified},
@@ -66,22 +67,22 @@ proc toImages(jsonObj: JsonNode): Images =
   result = Images()
 
   var largeObj: JsonNode
-  if(jsonObj.getProp("large", largeObj)):
+  if (jsonObj.getProp("large", largeObj)):
     discard largeObj.getProp("localUrl", result.large)
 
   var thumbnailObj: JsonNode
-  if(jsonObj.getProp("thumbnail", thumbnailObj)):
+  if (jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("localUrl", result.thumbnail)
 
 proc toContactRequestState*(value: int): ContactRequestState =
   result = ContactRequestState.None
   if value >= ord(low(ContactRequestState)) and value <= ord(high(ContactRequestState)):
-      result = ContactRequestState(value)
+    result = ContactRequestState(value)
 
 proc toTrustStatus*(value: int): TrustStatus =
   result = TrustStatus.Unknown
   if value >= ord(low(TrustStatus)) and value <= ord(high(TrustStatus)):
-      result = TrustStatus(value)
+    result = TrustStatus(value)
 
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
@@ -108,7 +109,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result.trustStatus = trustStatusInt.toTrustStatus()
 
   var imageObj: JsonNode
-  if(jsonObj.getProp("images", imageObj)):
+  if (jsonObj.getProp("images", imageObj)):
     result.image = toImages(imageObj)
 
   discard jsonObj.getProp("added", result.added)
@@ -117,7 +118,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("Removed", result.removed)
 
 proc userExtractedName(contact: ContactsDto): string =
-  if(contact.name.len > 0 and contact.ensVerified):
+  if (contact.name.len > 0 and contact.ensVerified):
     result = contact.name
   elif contact.displayName.len > 0:
     result = contact.displayName
@@ -125,13 +126,13 @@ proc userExtractedName(contact: ContactsDto): string =
     result = contact.alias
 
 proc userDefaultDisplayName*(contact: ContactsDto): string =
-  if(contact.localNickname.len > 0):
+  if (contact.localNickname.len > 0):
     result = contact.localNickname
   else:
     result = userExtractedName(contact)
 
 proc userOptionalName*(contact: ContactsDto): string =
-  if(contact.localNickname.len > 0):
+  if (contact.localNickname.len > 0):
     result = userExtractedName(contact)
 
 proc isContactRequestReceived*(self: ContactsDto): bool =

@@ -1,15 +1,13 @@
 import NimQml, tables, sequtils
 
-type
-  ModelRole {.pure.} = enum
-    Url = UserRole + 1
+type ModelRole {.pure.} = enum
+  Url = UserRole + 1
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[string]
+  type Model* = ref object of QAbstractListModel
+    items: seq[string]
 
-  proc delete*(self: Model) = 
+  proc delete*(self: Model) =
     self.items = @[]
     self.QAbstractListModel.delete
 
@@ -33,9 +31,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
-    {
-      ModelRole.Url.int:"url"
-    }.toTable
+    {ModelRole.Url.int: "url"}.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -46,7 +42,7 @@ QtObject:
 
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Url:
       let item = self.items[index.row]
       result = newQVariant(item)
@@ -54,11 +50,12 @@ QtObject:
       result = newQVariant()
 
   proc removeItemWithIndex(self: Model, ind: int) =
-    if(ind < 0 or ind >= self.items.len):
+    if (ind < 0 or ind >= self.items.len):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -83,11 +80,13 @@ QtObject:
         continue
       itemsToInsert.add(urls[i])
 
-
     if itemsToInsert.len > 0:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
-      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + itemsToInsert.len - 1)
+      defer:
+        parentModelIndex.delete
+      self.beginInsertRows(
+        parentModelIndex, self.items.len, self.items.len + itemsToInsert.len - 1
+      )
       self.items = self.items & itemsToInsert
       self.endInsertRows()
 

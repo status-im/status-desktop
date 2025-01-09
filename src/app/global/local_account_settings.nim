@@ -23,18 +23,17 @@ QtObject:
     self.settingsFileDir = os.joinPath(DATADIR, "qt")
 
   proc delete*(self: LocalAccountSettings) =
-    if(not self.settings.isNil):
+    if (not self.settings.isNil):
       self.settings.delete
 
     self.QObject.delete
 
-  proc newLocalAccountSettings*():
-    LocalAccountSettings =
+  proc newLocalAccountSettings*(): LocalAccountSettings =
     new(result, delete)
     result.setup
 
   proc setFileName*(self: LocalAccountSettings, fileName: string) =
-    if(not self.settings.isNil):
+    if (not self.settings.isNil):
       self.settings.delete
     let
       currentFilePath = os.joinPath(self.settingsFileDir, self.currentFileName)
@@ -50,10 +49,10 @@ QtObject:
   proc storeToKeychainValueChanged*(self: LocalAccountSettings) {.signal.}
 
   proc removeKey*(self: LocalAccountSettings, key: string) =
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
     self.settings.remove(key)
-    if(key == LS_KEY_STORE_TO_KEYCHAIN):
+    if (key == LS_KEY_STORE_TO_KEYCHAIN):
       self.storeToKeychainValueChanged()
 
   proc getStoreToKeychainValue*(self: LocalAccountSettings): string {.slot.} =
@@ -63,7 +62,7 @@ QtObject:
     self.settings.value(LS_KEY_STORE_TO_KEYCHAIN).stringVal
 
   proc setStoreToKeychainValue*(self: LocalAccountSettings, value: string) {.slot.} =
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
 
     self.settings.setValue(LS_KEY_STORE_TO_KEYCHAIN, newQVariant(value))
@@ -78,12 +77,15 @@ QtObject:
 
   proc getIsFirstShowcaseInteraction*(self: LocalAccountSettings): bool {.slot.} =
     if self.settings.isNil:
-        return DEFAULT_IS_FIRST_SHOWCASE_INTERACTION
-    
-    self.settings.value(LS_KEY_IS_FIRST_SHOWCASE_INTERACTION, newQVariant(DEFAULT_IS_FIRST_SHOWCASE_INTERACTION)).boolVal
+      return DEFAULT_IS_FIRST_SHOWCASE_INTERACTION
+
+    self.settings.value(
+      LS_KEY_IS_FIRST_SHOWCASE_INTERACTION,
+      newQVariant(DEFAULT_IS_FIRST_SHOWCASE_INTERACTION),
+    ).boolVal
 
   proc setIsFirstShowcaseInteraction*(self: LocalAccountSettings, value: bool) =
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
 
     self.settings.setValue(LS_KEY_IS_FIRST_SHOWCASE_INTERACTION, newQVariant(value))

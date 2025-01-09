@@ -96,15 +96,13 @@ type StateType* {.pure.} = enum
   ImportingFromKeycardSuccess = "ImportingFromKeycardSuccess"
   ImportingFromKeycardFailure = "ImportingFromKeycardFailure"
 
-
 ## This is the base class for all state we may have in onboarding/login flow.
 ## We should not instance of this class (in c++ this will be an abstract class).
 ## For now each `State` inherited instance supports up to 3 different actions (e.g. 3 buttons on the UI).
-type
-  State* {.pure inheritable.} = ref object of RootObj
-    flowType: FlowType
-    stateType: StateType
-    backState: State
+type State* {.pure, inheritable.} = ref object of RootObj
+  flowType: FlowType
+  stateType: StateType
+  backState: State
 
 proc setup*(self: State, flowType: FlowType, stateType: StateType, backState: State) =
   self.flowType = flowType
@@ -115,7 +113,9 @@ proc setup*(self: State, flowType: FlowType, stateType: StateType, backState: St
 ## `stateType` - detemines the state this instance describes
 ## `backState` - the sate (instance) we're moving to if user clicks "back" button,
 ##               in case we should not display "back" button for this state, set it to `nil`
-proc newState*(self: State, flowType: FlowType, stateType: StateType, backState: State): State =
+proc newState*(
+    self: State, flowType: FlowType, stateType: StateType, backState: State
+): State =
   result = State()
   result.setup(flowType, stateType, backState)
 
@@ -123,70 +123,96 @@ proc delete*(self: State) =
   discard
 
 ## Returns flow type
-method flowType*(self: State): FlowType {.inline base.} =
+method flowType*(self: State): FlowType {.inline, base.} =
   self.flowType
 
 ## Returns state type
-method stateType*(self: State): StateType {.inline base.} =
+method stateType*(self: State): StateType {.inline, base.} =
   self.stateType
 
 ## Returns back state instance
-method getBackState*(self: State): State {.inline base.} =
+method getBackState*(self: State): State {.inline, base.} =
   self.backState
 
 ## Returns true if we should display "back" button, otherwise false
-method displayBackButton*(self: State): bool {.inline base.} =
+method displayBackButton*(self: State): bool {.inline, base.} =
   return not self.backState.isNil
 
 ## Returns next state instance if "primary" action is triggered
-method getNextPrimaryState*(self: State, controller: Controller): State  {.inline base.} =
+method getNextPrimaryState*(
+    self: State, controller: Controller
+): State {.inline, base.} =
   return nil
 
 ## Returns next state instance if "secondary" action is triggered
-method getNextSecondaryState*(self: State, controller: Controller): State {.inline base.} =
+method getNextSecondaryState*(
+    self: State, controller: Controller
+): State {.inline, base.} =
   return nil
 
 ## Returns next state instance in case the "tertiary" action is triggered
-method getNextTertiaryState*(self: State, controller: Controller): State {.inline base.} =
+method getNextTertiaryState*(
+    self: State, controller: Controller
+): State {.inline, base.} =
   return nil
 
 ## This method is executed if "cancel" action is triggered (invalidates current flow)
-method executeCancelCommand*(self: State, controller: Controller) {.inline base.} =
+method executeCancelCommand*(self: State, controller: Controller) {.inline, base.} =
   discard
 
 ## This method is executed before back state is set, if "back" action is triggered
-method executePreBackStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePreBackStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed after back state is set, if "back" action is triggered
-method executePostBackStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePostBackStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed before primary state is set, if "primary" action is triggered
-method executePrePrimaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePrePrimaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed after primary state is set, if "primary" action is triggered
-method executePostPrimaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePostPrimaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed before secondary state is set, if "secondary" action is triggered
-method executePreSecondaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePreSecondaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed after secondary state is set, if "secondary" action is triggered
-method executePostSecondaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePostSecondaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed before tertiary state is set, if "tertiary" action is triggered
-method executePreTertiaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePreTertiaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is executed after tertiary state is set, if "tertiary" action is triggered
-method executePostTertiaryStateCommand*(self: State, controller: Controller) {.inline base.} =
+method executePostTertiaryStateCommand*(
+    self: State, controller: Controller
+) {.inline, base.} =
   discard
 
 ## This method is used for handling aync responses for keycard related states
-method resolveKeycardNextState*(self: State, keycardFlowType: string, keycardEvent: KeycardEvent,
-  controller: Controller): State {.inline base.} =
+method resolveKeycardNextState*(
+    self: State,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State {.inline, base.} =
   return nil

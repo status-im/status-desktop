@@ -2,12 +2,11 @@ import NimQml
 import io_interface, model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      activeMailserver: string
-      model: Model
-      modelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    activeMailserver: string
+    model: Model
+    modelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
@@ -31,6 +30,7 @@ QtObject:
   proc modelChanged*(self: View) {.signal.}
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
+
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged

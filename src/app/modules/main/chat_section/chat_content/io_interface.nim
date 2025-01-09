@@ -4,8 +4,7 @@ import ../item as chat_item
 import app_service/service/message/dto/pinned_message
 import app_service/service/chat/dto/chat
 import app_service/service/message/dto/message
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -22,16 +21,22 @@ method onChatUpdated*(self: AccessInterface, chatItem: chat_item.Item) {.base.} 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNotificationsUpdated*(self: AccessInterface, hasUnreadMessages: bool, notificationCount: int) {.base.} =
+method onNotificationsUpdated*(
+    self: AccessInterface, hasUnreadMessages: bool, notificationCount: int
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[PinnedMessageDto]) {.base.} =
+method newPinnedMessagesLoaded*(
+    self: AccessInterface, pinnedMessages: seq[PinnedMessageDto]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUnpinMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPinMessage*(self: AccessInterface, messageId: string, actionInitiatedBy: string) {.base.} =
+method onPinMessage*(
+    self: AccessInterface, messageId: string, actionInitiatedBy: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
@@ -43,14 +48,23 @@ method onChatMuted*(self: AccessInterface) {.base.} =
 method onChatUnmuted*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+method onReactionAdded*(
+    self: AccessInterface, messageId: string, emojiId: int, reactionId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReactionRemoved*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
+method onReactionRemoved*(
+    self: AccessInterface, messageId: string, emojiId: int, reactionId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleReactionFromOthers*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string,
-  reactionFrom: string) {.base.} =
+method toggleReactionFromOthers*(
+    self: AccessInterface,
+    messageId: string,
+    emojiId: int,
+    reactionId: string,
+    reactionFrom: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactDetailsUpdated*(self: AccessInterface, contactId: string) {.base.} =
@@ -62,7 +76,9 @@ method onCommunityChannelEdited*(self: AccessInterface, chatDto: ChatDto) {.base
 method onChatRenamed*(self: AccessInterface, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onGroupChatDetailsUpdated*(self: AccessInterface, newName: string, newColor: string, newImage: string) {.base.} =
+method onGroupChatDetailsUpdated*(
+    self: AccessInterface, newName: string, newColor: string, newImage: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method inputAreaDidLoad*(self: AccessInterface) {.base.} =

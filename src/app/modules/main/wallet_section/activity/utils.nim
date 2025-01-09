@@ -5,7 +5,9 @@ import backend/activity as backend_activity
 import app_service/common/types
 import web3/ethtypes as eth
 
-proc collectibleUidToActivityToken*(uid: string, tokenType: TokenType): backend_activity.Token =
+proc collectibleUidToActivityToken*(
+    uid: string, tokenType: TokenType
+): backend_activity.Token =
   try:
     let id = uid.toCollectibleUniqueID()
     result.tokenType = tokenType

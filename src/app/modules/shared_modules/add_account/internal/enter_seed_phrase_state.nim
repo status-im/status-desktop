@@ -1,5 +1,4 @@
-type
-  EnterSeedPhraseState* = ref object of State
+type EnterSeedPhraseState* = ref object of State
 
 proc newEnterSeedPhraseState*(backState: State): EnterSeedPhraseState =
   result = EnterSeedPhraseState()
@@ -7,8 +6,10 @@ proc newEnterSeedPhraseState*(backState: State): EnterSeedPhraseState =
 
 proc delete*(self: EnterSeedPhraseState) =
   self.State.delete
-  
-method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Controller) =
+
+method executePrePrimaryStateCommand*(
+    self: EnterSeedPhraseState, controller: Controller
+) =
   controller.buildNewSeedPhraseKeypairAndAddItToOrigin()
 
 method getNextPrimaryState*(self: EnterSeedPhraseState, controller: Controller): State =

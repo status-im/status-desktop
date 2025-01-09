@@ -5,8 +5,7 @@ import ../../../../../../app_service/service/message/dto/link_preview
 import ../../../../../../app_service/service/message/dto/payment_request
 import ../../../../../../app_service/service/contacts/dto/contact_details
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -20,28 +19,52 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, contentType: int, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) {.base.} =
+method sendChatMessage*(
+    self: AccessInterface,
+    msg: string,
+    replyTo: string,
+    contentType: int,
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendImages*(self: AccessInterface, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) {.base.} =
+method sendImages*(
+    self: AccessInterface,
+    imagePathsJson: string,
+    msg: string,
+    replyTo: string,
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method requestAddressForTransaction*(
+    self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
+method requestTransaction*(
+    self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method declineRequestTransaction*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method declineRequestAddressForTransaction*(self: AccessInterface, messageId: string) {.base.} =
+method declineRequestAddressForTransaction*(
+    self: AccessInterface, messageId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: string, address: string) {.base.} =
+method acceptRequestAddressForTransaction*(
+    self: AccessInterface, messageId: string, address: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
+method acceptRequestTransaction*(
+    self: AccessInterface, transactionHash: string, messageId: string, signature: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method searchGifs*(self: AccessInterface, query: string) {.base.} =
@@ -113,7 +136,9 @@ method updateLinkPreviewsFromCache*(self: AccessInterface, urls: seq[string]) {.
 method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
+method linkPreviewsFromCache*(
+    self: AccessInterface, urls: seq[string]
+): Table[string, LinkPreview] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method reloadUnfurlingPlan*(self: AccessInterface) {.base.} =
@@ -131,13 +156,17 @@ method setLinkPreviewEnabled*(self: AccessInterface, enabled: bool) {.base.} =
 method setAskToEnableLinkPreview*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setLinkPreviewEnabledForThisMessage*(self: AccessInterface, enabled: bool) {.base.} =
+method setLinkPreviewEnabledForThisMessage*(
+    self: AccessInterface, enabled: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
+method getContactDetails*(
+    self: AccessInterface, contactId: string
+): ContactDetails {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onSendingMessageSuccess*(self: AccessInterface) {.base.} =

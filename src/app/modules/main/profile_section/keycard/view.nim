@@ -5,13 +5,12 @@ import ../../../shared_modules/keycard_popup/models/keycard_model
 import ./io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      keycardModel: KeycardModel
-      keycardModelVariant: QVariant
-      keycardDetailsModel: KeycardModel
-      keycardDetailsModelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    keycardModel: KeycardModel
+    keycardModelVariant: QVariant
+    keycardDetailsModel: KeycardModel
+    keycardDetailsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -41,6 +40,7 @@ QtObject:
     if not module.isNil:
       return module
     return newQVariant()
+
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
 
@@ -97,11 +97,13 @@ QtObject:
 
   proc keycardModel*(self: View): KeycardModel =
     return self.keycardModel
+
   proc keycardModelChanged(self: View) {.signal.}
   proc getKeycardModel(self: View): QVariant {.slot.} =
     if self.keycardModelVariant.isNil:
       return newQVariant()
     return self.keycardModelVariant
+
   QtProperty[QVariant] keycardModel:
     read = getKeycardModel
     notify = keycardModelChanged
@@ -112,11 +114,13 @@ QtObject:
 
   proc keycardDetailsModel*(self: View): KeycardModel =
     return self.keycardDetailsModel
+
   proc keycardDetailsModelChanged(self: View) {.signal.}
   proc getKeycardDetailsModel(self: View): QVariant {.slot.} =
     if self.keycardDetailsModelVariant.isNil:
       return newQVariant()
     return self.keycardDetailsModelVariant
+
   QtProperty[QVariant] keycardDetailsModel:
     read = getKeycardDetailsModel
     notify = keycardDetailsModelChanged

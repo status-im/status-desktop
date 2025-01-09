@@ -3,13 +3,12 @@ import ../../../../shared_models/[member_model, member_item]
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      temporaryModel: Model # used for editing purposes
-      temporaryModelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    temporaryModel: Model # used for editing purposes
+    temporaryModelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
@@ -45,7 +44,7 @@ QtObject:
   proc getTemporaryModel(self: View): QVariant {.slot.} =
     return self.temporaryModelVariant
 
-  QtProperty[QVariant]temporaryModel:
+  QtProperty[QVariant] temporaryModel:
     read = getTemporaryModel
     notify = temporaryModelChanged
 

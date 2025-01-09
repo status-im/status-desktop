@@ -7,10 +7,9 @@ import app_service/service/transaction/dto as transaction_dto
 from backend/eth import ExtraKeyPackId
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      pathModel: PathModel
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    pathModel: PathModel
 
   proc delete*(self: View) =
     self.pathModel.delete
@@ -25,17 +24,19 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc fetchSuggestedRoutes*(self: View,
-    uuid: string,
-    sendType: int,
-    chainId: int,
-    accountFrom: string,
-    accountTo: string,
-    amountIn: string,
-    token: string,
-    amountOut: string,
-    toToken: string,
-    extraParamsJson: string) {.slot.} =
+  proc fetchSuggestedRoutes*(
+      self: View,
+      uuid: string,
+      sendType: int,
+      chainId: int,
+      accountFrom: string,
+      accountTo: string,
+      amountIn: string,
+      token: string,
+      amountOut: string,
+      toToken: string,
+      extraParamsJson: string,
+  ) {.slot.} =
     var extraParamsTable: Table[string, string]
     self.pathModel.setItems(@[])
     try:
@@ -48,41 +49,79 @@ QtObject:
           else:
             extraParamsTable[key] = value.getStr()
     except Exception as e:
-      error "Error parsing extraParamsJson: ", msg=e.msg
+      error "Error parsing extraParamsJson: ", msg = e.msg
 
     self.delegate.suggestedRoutes(
-        uuid,
-        SendType(sendType),
-        chainId,
-        accountFrom,
-        accountTo,
-        token,
-        false, #tokenIsOwnerToken
-        amountIn,
-        toToken,
-        amountOut,
-        extraParamsTable)
+      uuid,
+      SendType(sendType),
+      chainId,
+      accountFrom,
+      accountTo,
+      token,
+      false, #tokenIsOwnerToken
+      amountIn,
+      toToken,
+      amountOut,
+      extraParamsTable,
+    )
 
   proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
     self.delegate.stopUpdatesForSuggestedRoute()
 
-  proc authenticateAndTransfer*(self: View, uuid: string, fromAddr: string, slippagePercentageString: string) {.slot.} =
+  proc authenticateAndTransfer*(
+      self: View, uuid: string, fromAddr: string, slippagePercentageString: string
+  ) {.slot.} =
     var slippagePercentage: float
     try:
       slippagePercentage = slippagePercentageString.parseFloat()
     except:
-      error "parsing slippage failed", slippage=slippagePercentageString
+      error "parsing slippage failed", slippage = slippagePercentageString
     self.delegate.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
 
-  proc suggestedRoutesReady*(self: View, uuid: string, pathModel: QVariant, errCode: string, errDescription: string) {.signal.}
-  proc setTransactionRoute*(self: View, uuid: string, paths: seq[PathItem], errCode: string, errDescription: string) =
-    self.pathModel.setItems(paths)
-    self.suggestedRoutesReady(uuid, newQVariant(self.pathModel), errCode, errDescription)
+  proc suggestedRoutesReady*(
+    self: View,
+    uuid: string,
+    pathModel: QVariant,
+    errCode: string,
+    errDescription: string,
+  ) {.signal.}
 
-  proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
-  proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =
+  proc setTransactionRoute*(
+      self: View,
+      uuid: string,
+      paths: seq[PathItem],
+      errCode: string,
+      errDescription: string,
+  ) =
+    self.pathModel.setItems(paths)
+    self.suggestedRoutesReady(
+      uuid, newQVariant(self.pathModel), errCode, errDescription
+    )
+
+  proc transactionSendingComplete*(
+    self: View, txHash: string, status: string
+  ) {.signal.}
+
+  proc sendtransactionSendingCompleteSignal*(
+      self: View, txHash: string, status: string
+  ) =
     self.transactionSendingComplete(txHash, status)
 
-  proc transactionSent*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
-  proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
+  proc transactionSent*(
+    self: View,
+    uuid: string,
+    chainId: int,
+    approvalTx: bool,
+    txHash: string,
+    error: string,
+  ) {.signal.}
+
+  proc sendTransactionSentSignal*(
+      self: View,
+      uuid: string,
+      chainId: int,
+      approvalTx: bool,
+      txHash: string,
+      error: string,
+  ) =
     self.transactionSent(uuid, chainId, approvalTx, txHash, error)

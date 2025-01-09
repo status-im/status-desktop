@@ -2,10 +2,10 @@ import json, json_serialization, stew/shims/strformat
 
 include ../../../common/json_utils
 
-type ProfileShowcaseMembershipStatus* {.pure.}= enum
-  Unproven = 0,
-  ProvenMember = 1,
-  NotAMember = 2,
+type ProfileShowcaseMembershipStatus* {.pure.} = enum
+  Unproven = 0
+  ProvenMember = 1
+  NotAMember = 2
 
 type ProfileShowcaseCommunity* = ref object of RootObj
   communityId*: string
@@ -49,12 +49,17 @@ type ProfileShowcaseDto* = ref object of RootObj
   unverifiedTokens*: seq[ProfileShowcaseUnverifiedToken]
   socialLinks*: seq[ProfileShowcaseSocialLink]
 
-proc toProfileShowcaseMembershipStatus*(jsonObj: JsonNode): ProfileShowcaseMembershipStatus =
+proc toProfileShowcaseMembershipStatus*(
+    jsonObj: JsonNode
+): ProfileShowcaseMembershipStatus =
   var membershipStatusInt: int
-  if (jsonObj.getProp("membershipStatus", membershipStatusInt) and
-    (membershipStatusInt >= ord(low(ProfileShowcaseMembershipStatus)) and
-    membershipStatusInt <= ord(high(ProfileShowcaseMembershipStatus)))):
-      return ProfileShowcaseMembershipStatus(membershipStatusInt)
+  if (
+    jsonObj.getProp("membershipStatus", membershipStatusInt) and (
+      membershipStatusInt >= ord(low(ProfileShowcaseMembershipStatus)) and
+      membershipStatusInt <= ord(high(ProfileShowcaseMembershipStatus))
+    )
+  ):
+    return ProfileShowcaseMembershipStatus(membershipStatusInt)
   return ProfileShowcaseMembershipStatus.Unproven
 
 proc toProfileShowcaseCommunity*(jsonObj: JsonNode): ProfileShowcaseCommunity =
@@ -84,7 +89,9 @@ proc toProfileShowcaseVerifiedToken*(jsonObj: JsonNode): ProfileShowcaseVerified
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("order", result.order)
 
-proc toProfileShowcaseUnverifiedToken*(jsonObj: JsonNode): ProfileShowcaseUnverifiedToken =
+proc toProfileShowcaseUnverifiedToken*(
+    jsonObj: JsonNode
+): ProfileShowcaseUnverifiedToken =
   result = ProfileShowcaseUnverifiedToken()
   discard jsonObj.getProp("contractAddress", result.contractAddress)
   discard jsonObj.getProp("chainId", result.chainId)
@@ -122,12 +129,12 @@ proc toProfileShowcaseDto*(jsonObj: JsonNode): ProfileShowcaseDto =
 
 proc `%`*(x: ProfileShowcaseAccount): JsonNode =
   result = newJobject()
-  result["contactId"] = % x.contactId
-  result["address"] = % x.address
-  result["name"] = % x.name
-  result["colorId"] = % x.colorId
-  result["emoji"] = % x.emoji
-  result["order"] = % x.order
+  result["contactId"] = %x.contactId
+  result["address"] = %x.address
+  result["name"] = %x.name
+  result["colorId"] = %x.colorId
+  result["emoji"] = %x.emoji
+  result["order"] = %x.order
 
 # TODO: refactor to utils function on code cleanup stage
 proc toCombinedCollectibleId*(self: ProfileShowcaseCollectible): string =

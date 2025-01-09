@@ -16,7 +16,9 @@ import messages/module as messages_module
 import users/module as users_module
 
 import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -30,39 +32,55 @@ export io_interface
 logScope:
   topics = "chat-section-module"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    inputAreaModule: input_area_module.AccessInterface
-    messagesModule: messages_module.AccessInterface
-    usersModule: users_module.AccessInterface
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  inputAreaModule: input_area_module.AccessInterface
+  messagesModule: messages_module.AccessInterface
+  usersModule: users_module.AccessInterface
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-    belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service,
-    chatService: chat_service.Service, communityService: community_service.Service,
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    sectionId: string,
+    chatId: string,
+    belongsToCommunity: bool,
+    isUsersListAvailable: bool,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
     messageService: message_service.Service,
-    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service):
-  Module =
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity,
-    isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService)
+  result.controller = controller.newController(
+    result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
+    settingsService, nodeConfigurationService, contactService, chatService,
+    communityService, messageService,
+  )
   result.moduleLoaded = false
 
-  result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
-    chatService, communityService, contactService, messageService, settingsService)
-  result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
-    contactService, communityService, chatService, messageService, mailserversService, sharedUrlsService)
-  result.usersModule = users_module.newModule(events, sectionId, chatId, belongsToCommunity,
-    isUsersListAvailable, contactService, chat_service, communityService, messageService)
+  result.inputAreaModule = input_area_module.newModule(
+    result, events, sectionId, chatId, belongsToCommunity, chatService,
+    communityService, contactService, messageService, settingsService,
+  )
+  result.messagesModule = messages_module.newModule(
+    result, events, sectionId, chatId, belongsToCommunity, contactService,
+    communityService, chatService, messageService, mailserversService, sharedUrlsService,
+  )
+  result.usersModule = users_module.newModule(
+    events, sectionId, chatId, belongsToCommunity, isUsersListAvailable, contactService,
+    chat_service, communityService, messageService,
+  )
 
 method delete*(self: Module) =
   self.controller.delete
@@ -85,19 +103,38 @@ method load*(self: Module, chatItem: chat_item.Item) =
     chatName = contactDto.userDefaultDisplayName()
     isContact = contactDto.isContact
     trustStatus = contactDto.trustStatus
-    if(contactDto.image.thumbnail.len > 0):
+    if (contactDto.image.thumbnail.len > 0):
       chatImage = contactDto.image.thumbnail
 
   self.usersModule.load()
 
   self.view.load()
-  self.view.chatDetails.setChatDetails(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
-    self.controller.isUsersListAvailable(), chatName, chatImage,
-    chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
-    chatItem.highlight, chatItem.muted, chatItem.position, trustStatus,
-    isContact, chatItem.blocked, chatItem.canPost, chatItem.canView, chatItem.canPostReactions,
-    chatItem.hideIfPermissionsNotMet, chatItem.missingEncryptionKey, chatItem.requiresPermissions)
-  
+  self.view.chatDetails.setChatDetails(
+    chatItem.id,
+    chatItem.`type`,
+    self.controller.belongsToCommunity(),
+    self.controller.isUsersListAvailable(),
+    chatName,
+    chatImage,
+    chatItem.color,
+    chatItem.description,
+    chatItem.emoji,
+    chatItem.hasUnreadMessages,
+    chatItem.notificationsCount,
+    chatItem.highlight,
+    chatItem.muted,
+    chatItem.position,
+    trustStatus,
+    isContact,
+    chatItem.blocked,
+    chatItem.canPost,
+    chatItem.canView,
+    chatItem.canPostReactions,
+    chatItem.hideIfPermissionsNotMet,
+    chatItem.missingEncryptionKey,
+    chatItem.requiresPermissions,
+  )
+
   self.view.chatDetailsChanged()
 
   self.inputAreaModule.load()
@@ -107,7 +144,7 @@ proc checkIfModuleDidLoad(self: Module) =
   if self.moduleLoaded:
     return
 
-  if(not self.inputAreaModule.isLoaded()):
+  if (not self.inputAreaModule.isLoaded()):
     return
 
   if (not self.messagesModule.isLoaded()):
@@ -155,25 +192,31 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
       return true
   return false
 
-proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy: string,
-    item: var pinned_msg_item.Item):bool =
-
+proc buildPinnedMessageItem(
+    self: Module,
+    message: MessageDto,
+    actionInitiatedBy: string,
+    item: var pinned_msg_item.Item,
+): bool =
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityDetails().chats
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
-    if(message.`from` == message.quotedMessage.`from`):
+    if (message.`from` == message.quotedMessage.`from`):
       quotedMessageAuthorDetails = contactDetails
     else:
-      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+      quotedMessageAuthorDetails =
+        self.controller.getContactDetails(message.quotedMessage.`from`)
 
   var transactionContract = message.transactionParameters.contract
   var transactionValue = message.transactionParameters.value
   var isCurrentUser = contactDetails.isCurrentUser
-  if(message.contentType == ContentType.Transaction):
-    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+  if (message.contentType == ContentType.Transaction):
+    (transactionContract, transactionValue) =
+      self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
-      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+      isCurrentUser =
+        self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
 
   item = pinned_msg_model.createMessageItemFromDtos(
     message,
@@ -199,12 +242,13 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
   var viewItems: seq[pinned_msg_item.Item]
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
-    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item)):
+    if (not self.buildPinnedMessageItem(p.message, p.pinnedBy, item)):
       continue
 
-    viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
+    viewItems = item & viewItems
+      # messages are sorted from the most recent to the least recent one
 
-  if(viewItems.len == 0):
+  if (viewItems.len == 0):
     return
   self.view.pinnedModel().insertItemsBasedOnClock(viewItems)
 
@@ -242,7 +286,7 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     message.mentioned,
     message.containsContactMentions(),
     message.links,
-    message.mentionedUsersPks
+    message.mentionedUsersPks,
   )
 
 method getMyChatId*(self: Module): string =
@@ -278,39 +322,67 @@ method onChatMuted*(self: Module) =
 method onChatUnmuted*(self: Module) =
   self.view.setMuted(false)
 
-method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+method onReactionAdded*(
+    self: Module, messageId: string, emojiId: int, reactionId: string
+) =
   var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+  if (pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     let myName = singletonInstance.userProfile.getName()
-    self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
-    reactionId)
+    self.view.pinnedModel().addReaction(
+      messageId,
+      emojiIdAsEnum,
+      didIReactWithThisEmoji = true,
+      myPublicKey,
+      myName,
+      reactionId,
+    )
   else:
-    error "(pinned) wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
+    error "(pinned) wrong emoji id found on reaction added response",
+      emojiId, methodName = "onReactionAdded"
 
-method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+method onReactionRemoved*(
+    self: Module, messageId: string, emojiId: int, reactionId: string
+) =
   var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
+  if (pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    self.view.pinnedModel().removeReaction(
+      messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true
+    )
   else:
-    error "(pinned) wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+    error "(pinned) wrong emoji id found on reaction remove response",
+      emojiId, methodName = "onReactionRemoved"
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
-  reactionFrom: string) =
+method toggleReactionFromOthers*(
+    self: Module,
+    messageId: string,
+    emojiId: int,
+    reactionId: string,
+    reactionFrom: string,
+) =
   var emojiIdAsEnum: EmojiId
-  if(pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+  if (pinned_msg_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let item = self.view.pinnedModel().getItemWithMessageId(messageId)
-    if(item.isNil):
+    if (item.isNil):
       return
 
-    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
+    if (item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.pinnedModel().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-        userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
+      self.view.pinnedModel().addReaction(
+        messageId,
+        emojiIdAsEnum,
+        didIReactWithThisEmoji = false,
+        userWhoAddedThisReaction.id,
+        userWhoAddedThisReaction.userDefaultDisplayName(),
+        reactionId,
+      )
     else:
-      self.view.pinnedModel().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+      self.view.pinnedModel().removeReaction(
+        messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false
+      )
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
+    error "wrong emoji id found on reaction added response",
+      emojiId, methodName = "toggleReactionFromOthers"
 
 method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
@@ -332,14 +404,19 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
       let communityChats = self.controller.getCommunityDetails().chats
-      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
+      item.messageText =
+        self.controller.getRenderedText(item.parsedText, communityChats)
 
   if self.controller.getMyChatId() == contactId:
-    self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
+    self.view.updateChatDetailsNameAndIcon(
+      updatedContact.defaultDisplayName, updatedContact.icon
+    )
     self.view.updateTrustStatus(updatedContact.dto.trustStatus)
     self.view.updateChatBlocked(updatedContact.dto.blocked)
 
-method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
+method onNotificationsUpdated*(
+    self: Module, hasUnreadMessages: bool, notificationCount: int
+) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
 method onChatUpdated*(self: Module, chatItem: chat_item.Item) =
@@ -386,7 +463,9 @@ method onChatRenamed*(self: Module, newName: string) =
   self.view.updateChatDetailsName(newName)
   self.messagesModule.updateChatIdentifier()
 
-method onGroupChatDetailsUpdated*(self: Module, newName: string, newColor: string, newImage: string) =
+method onGroupChatDetailsUpdated*(
+    self: Module, newName: string, newColor: string, newImage: string
+) =
   self.view.updateChatDetailsNameColorIcon(newName, newColor, newImage)
   self.messagesModule.updateChatIdentifier()
 
@@ -404,7 +483,7 @@ method onMadeActive*(self: Module) =
   # as messages may arrive out of order and relying on the previous
   # new messages marker could yield incorrect results.
   if not self.messagesModule.isFirstUnseenMessageInitialized() or
-     self.controller.getChatDetails().unviewedMessagesCount > 0:
+      self.controller.getChatDetails().unviewedMessagesCount > 0:
     self.messagesModule.resetAndScrollToNewMessagesMarker()
   self.messagesModule.reevaluateViewLoadingState()
   self.view.setActive()
@@ -419,12 +498,16 @@ method amIChatAdmin*(self: Module): bool =
     let chatDto = self.controller.getChatDetails()
     for member in chatDto.members:
       if member.id == singletonInstance.userProfile.getPubKey():
-        return member.role == MemberRole.Owner or member.role == MemberRole.Admin or member.role == MemberRole.TokenMaster
+        return
+          member.role == MemberRole.Owner or member.role == MemberRole.Admin or
+          member.role == MemberRole.TokenMaster
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
-    return communityDto.memberRole == MemberRole.Owner or
-      communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
+    return
+      communityDto.memberRole == MemberRole.Owner or
+      communityDto.memberRole == MemberRole.Admin or
+      communityDto.memberRole == MemberRole.TokenMaster
 
 method setPermissionsCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)

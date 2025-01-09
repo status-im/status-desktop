@@ -9,18 +9,17 @@ import io_interface, view, controller, model
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
-    controller: Controller
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
+  controller: Controller
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  savedAddressService: saved_address_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    savedAddressService: saved_address_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -36,18 +35,15 @@ method delete*(self: Module) =
 method loadSavedAddresses*(self: Module) =
   let savedAddresses = self.controller.getSavedAddresses()
   self.view.setItems(
-    savedAddresses.map(s => initItem(
-      s.name,
-      s.address,
-      s.mixedcaseAddress,
-      s.ens,
-      s.colorId,
-      s.isTest,
-    ))
+    savedAddresses.map(
+      s => initItem(s.name, s.address, s.mixedcaseAddress, s.ens, s.colorId, s.isTest)
+    )
   )
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionSavedAddresses", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionSavedAddresses", self.viewVariant
+  )
 
   self.loadSavedAddresses()
   self.controller.init()
@@ -60,20 +56,26 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string, ens: string, colorId: string) =
+method createOrUpdateSavedAddress*(
+    self: Module, name: string, address: string, ens: string, colorId: string
+) =
   self.controller.createOrUpdateSavedAddress(name, address, ens, colorId)
 
 method deleteSavedAddress*(self: Module, address: string) =
   self.controller.deleteSavedAddress(address)
 
-method savedAddressUpdated*(self: Module, name: string, address: string, isTestAddress: bool, errorMsg: string) =
+method savedAddressUpdated*(
+    self: Module, name: string, address: string, isTestAddress: bool, errorMsg: string
+) =
   if isTestAddress != self.controller.areTestNetworksEnabled():
     return
   let item = self.view.getModel().getItemByAddress(address, isTestAddress)
   self.loadSavedAddresses()
   self.view.savedAddressAddedOrUpdated(item.isEmpty(), name, address, errorMsg)
 
-method savedAddressDeleted*(self: Module, address: string, isTestAddress: bool, errorMsg: string) =
+method savedAddressDeleted*(
+    self: Module, address: string, isTestAddress: bool, errorMsg: string
+) =
   if isTestAddress != self.controller.areTestNetworksEnabled():
     return
   let item = self.view.getModel().getItemByAddress(address, isTestAddress)
@@ -87,13 +89,14 @@ method getSavedAddressAsJson*(self: Module, address: string): string =
   let saDto = self.controller.getSavedAddress(address, ignoreNetworkMode = false)
   if saDto.isNil:
     return ""
-  let jsonObj = %* {
-    "name": saDto.name,
-    "address": saDto.address,
-    "ens": saDto.ens,
-    "colorId": saDto.colorId,
-    "isTest": saDto.isTest,
-  }
+  let jsonObj =
+    %*{
+      "name": saDto.name,
+      "address": saDto.address,
+      "ens": saDto.ens,
+      "colorId": saDto.colorId,
+      "isTest": saDto.isTest,
+    }
   return $jsonObj
 
 method remainingCapacityForSavedAddresses*(self: Module): int =

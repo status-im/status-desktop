@@ -11,16 +11,14 @@ logScope:
 
 const SIGNAL_LANGUAGE_UPDATE* = "languageUpdated"
 
-type
-  LanguageUpdatedArgs* = ref object of Args
-    language*: string
+type LanguageUpdatedArgs* = ref object of Args
+  language*: string
 
-type
-  Service* = ref object of RootObj
-    events: EventEmitter
-    i18nPath: string
-    shouldRetranslate: bool
-    languages: seq[string] # list of locale names for translation purposes
+type Service* = ref object of RootObj
+  events: EventEmitter
+  i18nPath: string
+  shouldRetranslate: bool
+  languages: seq[string] # list of locale names for translation purposes
 
 proc delete*(self: Service) =
   discard
@@ -57,8 +55,9 @@ proc init*(self: Service) =
     self.languages = obtainLanguages(self.i18nPath)
 
     let language = currentLanguage()
-    singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate)
-
+    singletonInstance.engine.setTranslationPackage(
+      joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate
+    )
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
@@ -69,6 +68,8 @@ proc setLanguage*(self: Service, language: string) =
     return
 
   singletonInstance.localAppSettings.setLanguage(language)
-  singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate)
+  singletonInstance.engine.setTranslationPackage(
+    joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate
+  )
 
   self.events.emit(SIGNAL_LANGUAGE_UPDATE, LanguageUpdatedArgs(language: language))

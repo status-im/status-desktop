@@ -2,16 +2,14 @@ import NimQml, Tables, strutils, stew/shims/strformat, sequtils
 
 import backend/backend
 
-type
-  ModelRole {.pure.} = enum
-    ChainIdRole = UserRole + 1
-    TransactionHashRole
-    AddressRole
+type ModelRole {.pure.} = enum
+  ChainIdRole = UserRole + 1
+  TransactionHashRole
+  AddressRole
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[backend.TransactionIdentity]
+  type Model* = ref object of QAbstractListModel
+    items: seq[backend.TransactionIdentity]
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete
@@ -42,9 +40,9 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.ChainIdRole.int:"chainId",
-      ModelRole.TransactionHashRole.int:"txHash",
-      ModelRole.AddressRole.int:"address"
+      ModelRole.ChainIdRole.int: "chainId",
+      ModelRole.TransactionHashRole.int: "txHash",
+      ModelRole.AddressRole.int: "address",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -57,17 +55,16 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ChainIdRole:
       result = newQVariant(item.chainId)
     of ModelRole.TransactionHashRole:
       result = newQVariant(item.hash)
     of ModelRole.AddressRole:
       result = newQVariant(item.address)
-  
+
   proc setItems*(self: Model, items: seq[backend.TransactionIdentity]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
-

@@ -8,20 +8,19 @@ import app_service/service/network/network_item
 import ../../shared/wallet_utils
 import ../../shared_models/currency_amount
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    settingsService: settings_service.Service
-    walletAccountService: wallet_account_service.Service
-    currencyService: currency_service.Service
-    networkService: network_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  settingsService: settings_service.Service
+  walletAccountService: wallet_account_service.Service
+  currencyService: currency_service.Service
+  networkService: network_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  settingsService: settings_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  currencyService: currency_service.Service,
-  networkService: network_service.Service
+    delegate: io_interface.AccessInterface,
+    settingsService: settings_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    currencyService: currency_service.Service,
+    networkService: network_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -45,10 +44,17 @@ proc getSigningPhrase*(self: Controller): string =
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.settingsService.getMnemonic().len > 0
 
-proc getTotalCurrencyBalance*(self: Controller, addresses: seq[string], chainIds: seq[int]): CurrencyAmount =
-  return currencyAmountToItem(self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds), self.currencyService.getCurrencyFormat(self.getCurrency()))
+proc getTotalCurrencyBalance*(
+    self: Controller, addresses: seq[string], chainIds: seq[int]
+): CurrencyAmount =
+  return currencyAmountToItem(
+    self.walletAccountService.getTotalCurrencyBalance(addresses, chainIds),
+    self.currencyService.getCurrencyFormat(self.getCurrency()),
+  )
 
-proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): CurrencyAmount =
+proc getCurrencyAmount*(
+    self: Controller, amount: float64, symbol: string
+): CurrencyAmount =
   return currencyAmountToItem(amount, self.currencyService.getCurrencyFormat(symbol))
 
 proc updateCurrency*(self: Controller, currency: string) =
@@ -57,7 +63,9 @@ proc updateCurrency*(self: Controller, currency: string) =
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Controller
+): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
 proc getEnabledChainIds*(self: Controller): seq[int] =

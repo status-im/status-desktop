@@ -17,4 +17,4 @@ proc toStatusUpdateDto*(jsonObj: JsonNode): StatusUpdateDto =
   result.statusType = StatusType.Unknown
   var statusTypeInt: int
   if (jsonObj.getProp("statusType", statusTypeInt)):
-      result.statusType = intToEnum(statusTypeInt, StatusType.Unknown)
+    result.statusType = intToEnum(statusTypeInt, StatusType.Unknown)

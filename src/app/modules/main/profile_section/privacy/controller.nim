@@ -10,23 +10,26 @@ import ../../../../../app_service/service/privacy/service as privacy_service
 import ../../../../../app_service/service/general/service as general_service
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
-const UNIQUE_PRIVACY_SECTION_MODULE_AUTH_IDENTIFIER* = "PrivacySectionModule-Authentication"
+const UNIQUE_PRIVACY_SECTION_MODULE_AUTH_IDENTIFIER* =
+  "PrivacySectionModule-Authentication"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    settingsService: settings_service.Service
-    keychainService: keychain_service.Service
-    privacyService: privacy_service.Service
-    generalService: general_service.Service
-    keychainConnectionIds: seq[UUID]
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  settingsService: settings_service.Service
+  keychainService: keychain_service.Service
+  privacyService: privacy_service.Service
+  generalService: general_service.Service
+  keychainConnectionIds: seq[UUID]
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.Service,
-  keychainService: keychain_service.Service,
-  privacyService: privacy_service.Service,
-  generalService: general_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    keychainService: keychain_service.Service,
+    privacyService: privacy_service.Service,
+    generalService: general_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -44,13 +47,13 @@ proc disconnectKeychain*(self: Controller) =
   self.keychainConnectionIds = @[]
 
 proc connectKeychain*(self: Controller) =
-  var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
+  var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e: Args):
     let args = KeyChainServiceArg(e)
     self.disconnectKeychain()
     self.delegate.onStoreToKeychainSuccess(args.data)
   self.keychainConnectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e: Args):
     let args = KeyChainServiceArg(e)
     self.disconnectKeychain()
     self.delegate.onStoreToKeychainError(args.errDescription, args.errType)
@@ -115,27 +118,27 @@ proc getPasswordStrengthScore*(self: Controller, password, userName: string): in
 proc storeToKeychain*(self: Controller, data: string) =
   let myKeyUid = singletonInstance.userProfile.getKeyUid()
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if not main_constants.SUPPORTS_FINGERPRINT or # Dealing with Keychain is the MacOS only feature
-    data.len == 0 or
-    value == LS_VALUE_STORE or
-    myKeyUid.len == 0:
-      self.delegate.onStoreToKeychainError("", "")
-      return
+  if not main_constants.SUPPORTS_FINGERPRINT or
+    # Dealing with Keychain is the MacOS only feature
+  data.len == 0 or value == LS_VALUE_STORE or myKeyUid.len == 0:
+    self.delegate.onStoreToKeychainError("", "")
+    return
   self.connectKeychain()
   self.keychainService.storeData(myKeyUid, data)
 
 proc removeFromKeychain*(self: Controller, key: string) =
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
   if not main_constants.IS_MACOS or # Dealing with Keychain is the MacOS only feature
-    key.len == 0 or
-    value != LS_VALUE_STORE:
-      self.delegate.onStoreToKeychainError("", "")
-      return
+  key.len == 0 or value != LS_VALUE_STORE:
+    self.delegate.onStoreToKeychainError("", "")
+    return
   self.connectKeychain()
   self.keychainService.tryToDeleteData(key)
 
 proc authenticateLoggedInUser*(self: Controller) =
-  var data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_PRIVACY_SECTION_MODULE_AUTH_IDENTIFIER)
+  var data = SharedKeycarModuleAuthenticationArgs(
+    uniqueIdentifier: UNIQUE_PRIVACY_SECTION_MODULE_AUTH_IDENTIFIER
+  )
   if singletonInstance.userProfile.getIsKeycardUser():
     data.keyUid = singletonInstance.userProfile.getKeyUid()
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)

@@ -13,7 +13,7 @@ proc getIsCentralizedMetricsEnabled*(): bool =
     let response = status_go.centralizedMetricsInfo()
     let jsonObj = response.parseJson
     if jsonObj.hasKey("error"):
-      error "isCentralizedMetricsEnabled", errorMsg=jsonObj["error"].getStr
+      error "isCentralizedMetricsEnabled", errorMsg = jsonObj["error"].getStr
       return false
     let metricsInfo = toCentralizedMetricsInfoDto(jsonObj)
     return metricsInfo.enabled
@@ -38,11 +38,15 @@ QtObject:
     result.QObject.setup
     result.threadpool = threadpool
 
-    signalConnect(singletonInstance.globalEvents, "addCentralizedMetricIfEnabled(QString, QString)",
-      result, "addCentralizedMetricIfEnabled(QString, QString)", 2)
+    signalConnect(
+      singletonInstance.globalEvents, "addCentralizedMetricIfEnabled(QString, QString)",
+      result, "addCentralizedMetricIfEnabled(QString, QString)", 2,
+    )
 
   # eventValueJson is a json string
-  proc addCentralizedMetricIfEnabled*(self: MetricsService, eventName: string, eventValueJson: string) {.slot.} =
+  proc addCentralizedMetricIfEnabled*(
+      self: MetricsService, eventName: string, eventValueJson: string
+  ) {.slot.} =
     let arg = AsyncAddCentralizedMetricIfEnabledTaskArg(
       tptr: asyncAddCentralizedMetricIfEnabledTask,
       vptr: cast[uint](self.vptr),
@@ -52,18 +56,21 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc onCentralizedMetricAddedIdEnabled*(self: MetricsService, response: string) {.slot.} =
+  proc onCentralizedMetricAddedIdEnabled*(
+      self: MetricsService, response: string
+  ) {.slot.} =
     try:
       let responseObj = response.parseJson
       let errorString = responseObj{"error"}.getStr()
       if errorString != "":
-        error "onCentralizedMetricAddedIdEnabled", error=errorString
+        error "onCentralizedMetricAddedIdEnabled", error = errorString
         return
-      
+
       if responseObj{"metricsDisabled"}.getBool:
         return
 
-      debug "onCentralizedMetricAddedIdEnabled", metricId=responseObj{"metricId"}.getStr()
+      debug "onCentralizedMetricAddedIdEnabled",
+        metricId = responseObj{"metricId"}.getStr()
     except Exception as e:
       error "onCentralizedMetricAddedIdEnabled", exceptionMsg = e.msg
 
@@ -80,11 +87,11 @@ QtObject:
       let isEnabled = self.isCentralizedMetricsEnabled()
       if enabled == isEnabled:
         return
-      let payload = %* {"enabled": enabled}
+      let payload = %*{"enabled": enabled}
       let response = status_go.toggleCentralizedMetrics($payload)
       let jsonObj = response.parseJson
       if jsonObj{"error"}.getStr.len > 0:
-        error "toggleCentralizedMetrics", errorMsg=jsonObj["error"].getStr
+        error "toggleCentralizedMetrics", errorMsg = jsonObj["error"].getStr
       else:
         self.centralizedMetricsEnabledChanged()
     except Exception as e:

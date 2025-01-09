@@ -5,14 +5,12 @@ import ./currency_amount
 
 export keypair_item
 
-type
-  ModelRole {.pure.} = enum
-    KeyPair = UserRole + 1
+type ModelRole {.pure.} = enum
+  KeyPair = UserRole + 1
 
 QtObject:
-  type
-    KeyPairModel* = ref object of QAbstractListModel
-      items: seq[KeyPairItem]
+  type KeyPairModel* = ref object of QAbstractListModel
+    items: seq[KeyPairItem]
 
   proc delete(self: KeyPairModel) =
     self.items = @[]
@@ -28,13 +26,15 @@ QtObject:
   proc countChanged(self: KeyPairModel) {.signal.}
   proc getCount*(self: KeyPairModel): int {.slot.} =
     self.items.len
-  QtProperty[int]count:
+
+  QtProperty[int] count:
     read = getCount
     notify = countChanged
 
   proc `$`*(self: KeyPairModel): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""KeyPairModel:
+      result &=
+        fmt"""KeyPairModel:
       [{i}]:({$self.items[i]})
       """
 
@@ -42,9 +42,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: KeyPairModel): Table[int, string] =
-    {
-      ModelRole.KeyPair.int: "keyPair",
-    }.toTable
+    {ModelRole.KeyPair.int: "keyPair"}.toTable
 
   method data(self: KeyPairModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -53,7 +51,7 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
+    case enumRole
     of ModelRole.KeyPair:
       result = newQVariant(item)
 
@@ -65,7 +63,8 @@ QtObject:
 
   proc addItem*(self: KeyPairModel, item: KeyPairItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -73,21 +72,27 @@ QtObject:
 
   proc findItemByKeyUid*(self: KeyPairModel, keyUid: string): KeyPairItem =
     for i in 0 ..< self.items.len:
-      if(self.items[i].getKeyUid() == keyUid):
+      if (self.items[i].getKeyUid() == keyUid):
         return self.items[i]
     return nil
 
-  proc findKeyPairAndAccountByAddresss*(self: KeyPairModel, address: string): (KeyPairItem, KeyPairAccountItem) =
+  proc findKeyPairAndAccountByAddresss*(
+      self: KeyPairModel, address: string
+  ): (KeyPairItem, KeyPairAccountItem) =
     for i in 0 ..< self.items.len:
       let account = self.items[i].getAccountByAddress(address)
       if not account.isNil:
         return (self.items[i], account)
     return (nil, nil)
 
-  proc onUpdatedAccount*(self: KeyPairModel, keyUid, address, name, colorId, emoji: string) =
+  proc onUpdatedAccount*(
+      self: KeyPairModel, keyUid, address, name, colorId, emoji: string
+  ) =
     for item in self.items:
       if keyUid == item.getKeyUid():
-        item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
+        item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(
+          address, name, colorId, emoji
+        )
         break
 
   proc onUpdatedKeypairOperability*(self: KeyPairModel, keyUid, operability: string) =
@@ -96,10 +101,14 @@ QtObject:
         item.updateOperabilityForAllAddresses(operability)
         break
 
-  proc onHideFromTotalBalanceUpdated*(self: KeyPairModel, keyUid, address: string, hideFromTotalBalance: bool) =
+  proc onHideFromTotalBalanceUpdated*(
+      self: KeyPairModel, keyUid, address: string, hideFromTotalBalance: bool
+  ) =
     for item in self.items:
       if keyUid == item.getKeyUid():
-        item.getAccountsModel().updateAccountHiddenInTotalBalance(address, hideFromTotalBalance)
+        item.getAccountsModel().updateAccountHiddenInTotalBalance(
+          address, hideFromTotalBalance
+        )
         break
 
   proc keypairNameExists*(self: KeyPairModel, name: string): bool =
@@ -111,12 +120,16 @@ QtObject:
       return
     item.setName(name)
 
-  proc setOwnershipVerified*(self: KeyPairModel, keyUid: string, ownershipVerified: bool) =
+  proc setOwnershipVerified*(
+      self: KeyPairModel, keyUid: string, ownershipVerified: bool
+  ) =
     let item = self.findItemByKeyUid(keyUid)
     if item.isNil:
       return
     item.setOwnershipVerified(ownershipVerified)
 
-  proc setBalanceForAddress*(self: KeyPairModel, address: string, balance: CurrencyAmount) =
+  proc setBalanceForAddress*(
+      self: KeyPairModel, address: string, balance: CurrencyAmount
+  ) =
     for item in self.items:
       item.setBalanceForAddress(address, balance)

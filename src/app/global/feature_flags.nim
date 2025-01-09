@@ -24,13 +24,28 @@ QtObject:
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
-    self.dappsEnabled = getEnv("FLAG_DAPPS_ENABLED", boolToEnv(DEFAULT_FLAG_DAPPS_ENABLED)) != "0"
-    self.swapEnabled = getEnv("FLAG_SWAP_ENABLED", boolToEnv(DEFAULT_FLAG_SWAP_ENABLED)) != "0"
-    self.connectorEnabled = getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
-    self.sendViaPersonalChatEnabled = getEnv("FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED", boolToEnv(DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)) != "0"
-    self.paymentRequestEnabled = getEnv("FLAG_PAYMENT_REQUEST_ENABLED", boolToEnv(DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)) != "0"
-    self.simpleSendEnabled = getEnv("FLAG_SIMPLE_SEND_ENABLED", boolToEnv(DEFAULT_FLAG_SIMPLE_SEND_ENABLED)) != "0"
-    self.onboardingV2Enabled = getEnv("FLAG_ONBOARDING_V2_ENABLED", boolToEnv(DEFAULT_FLAG_ONBOARDING_V2_ENABLED)) != "0"
+    self.dappsEnabled =
+      getEnv("FLAG_DAPPS_ENABLED", boolToEnv(DEFAULT_FLAG_DAPPS_ENABLED)) != "0"
+    self.swapEnabled =
+      getEnv("FLAG_SWAP_ENABLED", boolToEnv(DEFAULT_FLAG_SWAP_ENABLED)) != "0"
+    self.connectorEnabled =
+      getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    self.sendViaPersonalChatEnabled =
+      getEnv(
+        "FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED",
+        boolToEnv(DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED),
+      ) != "0"
+    self.paymentRequestEnabled =
+      getEnv(
+        "FLAG_PAYMENT_REQUEST_ENABLED", boolToEnv(DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)
+      ) != "0"
+    self.simpleSendEnabled =
+      getEnv("FLAG_SIMPLE_SEND_ENABLED", boolToEnv(DEFAULT_FLAG_SIMPLE_SEND_ENABLED)) !=
+      "0"
+    self.onboardingV2Enabled =
+      getEnv(
+        "FLAG_ONBOARDING_V2_ENABLED", boolToEnv(DEFAULT_FLAG_ONBOARDING_V2_ENABLED)
+      ) != "0"
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()

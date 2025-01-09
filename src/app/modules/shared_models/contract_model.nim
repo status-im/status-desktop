@@ -2,11 +2,10 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import ./contract_item
 
-type
-  ModelRole {.pure.} = enum
-    Key = UserRole + 1
-    ChainId
-    Address
+type ModelRole {.pure.} = enum
+  Key = UserRole + 1
+  ChainId
+  Address
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -33,9 +32,9 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Key.int:"key",
-      ModelRole.ChainId.int:"chainId",
-      ModelRole.Address.int:"address",
+      ModelRole.Key.int: "key",
+      ModelRole.ChainId.int: "chainId",
+      ModelRole.Address.int: "address",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -45,14 +44,14 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
-      of ModelRole.Key:
-        result = newQVariant(item.key())
-      of ModelRole.ChainId:
-        result = newQVariant(item.chainId())
-      of ModelRole.Address:
-        result = newQVariant(item.address())
-  
+    case enumRole
+    of ModelRole.Key:
+      result = newQVariant(item.key())
+    of ModelRole.ChainId:
+      result = newQVariant(item.chainId())
+    of ModelRole.Address:
+      result = newQVariant(item.address())
+
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items

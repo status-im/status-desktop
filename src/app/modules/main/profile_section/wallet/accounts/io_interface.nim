@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -25,10 +24,18 @@ method deleteKeypair*(self: AccessInterface, keyUid: string) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
+method updateAccount*(
+    self: AccessInterface,
+    address: string,
+    accountName: string,
+    colorId: string,
+    emoji: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method moveAccountFinally*(self: AccessInterface, fromPosition: int, toPosition: int) {.base.} =
+method moveAccountFinally*(
+    self: AccessInterface, fromPosition: int, toPosition: int
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method renameKeypair*(self: AccessInterface, keyUid: string, name: string) {.base.} =
@@ -46,5 +53,7 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method getCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateWatchAccountHiddenFromTotalBalance*(self: AccessInterface, address: string, hideFromTotalBalance: bool) {.base.} =
+method updateWatchAccountHiddenFromTotalBalance*(
+    self: AccessInterface, address: string, hideFromTotalBalance: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")

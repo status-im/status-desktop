@@ -29,12 +29,11 @@ export PUBKEY_SIGNATURE
 export ADDRESS_SIGNATURE
 export OWNER_SIGNATURE
 
-type
-  ENSType* {.pure.} = enum
-    IPFS,
-    SWARM,
-    IPNS,
-    UNKNOWN
+type ENSType* {.pure.} = enum
+  IPFS
+  SWARM
+  IPNS
+  UNKNOWN
 
 proc addDomain*(username: string): string =
   if username.endsWith(ETH_DOMAIN):
@@ -61,7 +60,7 @@ proc ownerOf*(chainId: int, username: string): string =
   let address = res.result.getStr
   if address == ZERO_ADDRESS:
     return ""
-  
+
   return address
 
 proc buildTransaction*(
@@ -72,40 +71,79 @@ proc buildTransaction*(
     isEIP1559Enabled = false,
     maxPriorityFeePerGas = "",
     maxFeePerGas = "",
-    data = ""
-  ): TransactionDataDto =
+    data = "",
+): TransactionDataDto =
   result = TransactionDataDto(
     source: source,
     value: value.some,
-    gas: (if gas.isEmptyOrWhitespace: Quantity.none else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some),
-    gasPrice: (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some),
-    data: data
+    gas: (
+      if gas.isEmptyOrWhitespace: Quantity.none
+      else: Quantity(cast[uint64](parseFloat(gas).toUInt64)).some
+    ),
+    gasPrice: (
+      if gasPrice.isEmptyOrWhitespace: int.none
+      else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some
+    ),
+    data: data,
   )
   if isEIP1559Enabled:
     result.txType = "0x02"
-    result.maxPriorityFeePerGas = if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
-    result.maxFeePerGas = (if maxFeePerGas.isEmptyOrWhitespace: Uint256.none else: gwei2Wei(parseFloat(maxFeePerGas)).some)
+    result.maxPriorityFeePerGas =
+      if maxFeePerGas.isEmptyOrWhitespace:
+        Uint256.none
+      else:
+        gwei2Wei(parseFloat(maxPriorityFeePerGas)).some
+    result.maxFeePerGas = (
+      if maxFeePerGas.isEmptyOrWhitespace: Uint256.none
+      else: gwei2Wei(parseFloat(maxFeePerGas)).some
+    )
   else:
     result.txType = "0x00"
 
-proc buildTransactionDataDto*(gasUnits: int, suggestedFees: SuggestedFeesDto, addressFrom: string, chainId: int, contractAddress: string): TransactionDataDto =
-    if suggestedFees == nil:
-      error "Can't find suggested fees for chainId", chainId=chainId
-      return
-    return buildTransaction(parseAddress(addressFrom), 0.u256, $gasUnits,
-      if suggestedFees.eip1559Enabled: "" else: $suggestedFees.gasPrice, suggestedFees.eip1559Enabled,
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
-      if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
+proc buildTransactionDataDto*(
+    gasUnits: int,
+    suggestedFees: SuggestedFeesDto,
+    addressFrom: string,
+    chainId: int,
+    contractAddress: string,
+): TransactionDataDto =
+  if suggestedFees == nil:
+    error "Can't find suggested fees for chainId", chainId = chainId
+    return
+  return buildTransaction(
+    parseAddress(addressFrom),
+    0.u256,
+    $gasUnits,
+    if suggestedFees.eip1559Enabled:
+      ""
+    else:
+      $suggestedFees.gasPrice,
+    suggestedFees.eip1559Enabled,
+    if suggestedFees.eip1559Enabled:
+      $suggestedFees.maxPriorityFeePerGas
+    else:
+      "",
+    if suggestedFees.eip1559Enabled:
+      $suggestedFees.maxFeePerGasM
+    else:
+      "",
+  )
 
 proc buildTokenTransaction*(
-  source, contractAddress: Address, gas = "", gasPrice = "", isEIP1559Enabled = false,
-  maxPriorityFeePerGas = "", maxFeePerGas = ""
+    source, contractAddress: Address,
+    gas = "",
+    gasPrice = "",
+    isEIP1559Enabled = false,
+    maxPriorityFeePerGas = "",
+    maxFeePerGas = "",
 ): TransactionDataDto =
-  result = buildTransaction(source, 0.u256, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
+  result = buildTransaction(
+    source, 0.u256, gas, gasPrice, isEIP1559Enabled, maxPriorityFeePerGas, maxFeePerGas
+  )
   result.to = contractAddress.some
 
-proc label*(username:string): string =
-  var node:array[32, byte] = keccak_256.digest(username.toLower()).data
+proc label*(username: string): string =
+  var node: array[32, byte] = keccak_256.digest(username.toLower()).data
   result = "0x" & node.toHex()
 
 proc getExpirationTime*(chainId: int, username: string): int =
@@ -124,4 +162,5 @@ proc hex2Token*(input: string, decimals: int): string =
   var leading_zeros = "0".repeat(decimals - ($r).len)
   var d = fmt"{leading_zeros}{$r}"
   result = $i
-  if(r > 0): result = fmt"{result}.{d}"
+  if (r > 0):
+    result = fmt"{result}.{d}"

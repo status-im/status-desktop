@@ -4,20 +4,19 @@ import internal/[state, state_wrapper]
 import app/modules/shared_models/[keypair_model, derived_address_model]
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      currentState: StateWrapper
-      currentStateVariant: QVariant
-      keypairModel: KeyPairModel
-      keypairModelVariant: QVariant
-      selectedKeypair: KeyPairItem
-      selectedKeypairVariant: QVariant
-      privateKeyAccAddress: DerivedAddressItem
-      privateKeyAccAddressVariant: QVariant
-      enteredPrivateKeyMatchTheKeypair: bool
-      connectionString: string
-      connectionStringError: string
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    currentState: StateWrapper
+    currentStateVariant: QVariant
+    keypairModel: KeyPairModel
+    keypairModelVariant: QVariant
+    selectedKeypair: KeyPairItem
+    selectedKeypairVariant: QVariant
+    privateKeyAccAddress: DerivedAddressItem
+    privateKeyAccAddressVariant: QVariant
+    enteredPrivateKeyMatchTheKeypair: bool
+    connectionString: string
+    connectionStringError: string
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -42,18 +41,30 @@ QtObject:
     result.privateKeyAccAddressVariant = newQVariant(result.privateKeyAccAddress)
     result.enteredPrivateKeyMatchTheKeypair = false
 
-    signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
-    signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
-    signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
-    signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
+    signalConnect(
+      result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()",
+      2,
+    )
+    signalConnect(
+      result.currentState, "secondaryActionClicked()", result,
+      "onSecondaryActionClicked()", 2,
+    )
 
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
 
   proc setCurrentState*(self: View, state: State) =
     self.currentState.setStateObj(state)
+
   proc getCurrentState(self: View): QVariant {.slot.} =
     return self.currentStateVariant
+
   QtProperty[QVariant] currentState:
     read = getCurrentState
 
@@ -71,8 +82,10 @@ QtObject:
 
   proc getSelectedKeypair*(self: View): KeyPairItem =
     return self.selectedKeypair
+
   proc getSelectedKeypairAsVariant*(self: View): QVariant {.slot.} =
     return self.selectedKeypairVariant
+
   QtProperty[QVariant] selectedKeypair:
     read = getSelectedKeypairAsVariant
 
@@ -88,6 +101,7 @@ QtObject:
   proc privateKeyAccAddressChanged*(self: View) {.signal.}
   proc getPrivateKeyAccAddressVariant*(self: View): QVariant {.slot.} =
     return self.privateKeyAccAddressVariant
+
   QtProperty[QVariant] privateKeyAccAddress:
     read = getPrivateKeyAccAddressVariant
     notify = privateKeyAccAddressChanged
@@ -108,6 +122,7 @@ QtObject:
   proc enteredPrivateKeyMatchTheKeypairChanged(self: View) {.signal.}
   proc getEnteredPrivateKeyMatchTheKeypair*(self: View): bool {.slot.} =
     return self.enteredPrivateKeyMatchTheKeypair
+
   QtProperty[bool] enteredPrivateKeyMatchTheKeypair:
     read = getEnteredPrivateKeyMatchTheKeypair
     notify = enteredPrivateKeyMatchTheKeypairChanged
@@ -124,6 +139,7 @@ QtObject:
     if self.keypairModelVariant.isNil:
       return newQVariant()
     return self.keypairModelVariant
+
   QtProperty[QVariant] keypairModel:
     read = getKeypairModel
     notify = keypairModelChanged
@@ -139,9 +155,11 @@ QtObject:
   proc connectionStringChanged(self: View) {.signal.}
   proc getConnectionString*(self: View): string {.slot.} =
     return self.connectionString
+
   proc setConnectionString*(self: View, connectionScreen: string) {.slot.} =
     self.connectionString = connectionScreen
     self.connectionStringChanged()
+
   QtProperty[string] connectionString:
     read = getConnectionString
     write = setConnectionString
@@ -150,6 +168,7 @@ QtObject:
   proc connectionStringErrorChanged(self: View) {.signal.}
   proc getConnectionStringError*(self: View): string {.slot.} =
     return self.connectionStringError
+
   QtProperty[string] connectionStringError:
     read = getConnectionStringError
     notify = connectionStringErrorChanged
@@ -160,5 +179,7 @@ QtObject:
   proc generateConnectionStringForExporting*(self: View) {.slot.} =
     self.delegate.generateConnectionStringForExporting()
 
-  proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
+  proc validateConnectionString*(
+      self: View, connectionString: string
+  ): string {.slot.} =
     return self.delegate.validateConnectionString(connectionString)

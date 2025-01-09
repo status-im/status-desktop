@@ -4,37 +4,35 @@ import logging
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles
 
-type
-  CollectibleRole* {.pure.} = enum
-    Uid = UserRole + 1,
-    ChainId
-    ContractAddress
-    TokenId
-    Name
-    ImageUrl
-    MediaUrl
-    MediaType
-    BackgroundColor
-    CollectionUid
-    CollectionName
-    CollectionSlug
-    CollectionImageUrl
-    IsLoading
-    Ownership
-    # Community-related roles
-    CommunityId
-    CommunityPrivilegesLevel
-    TokenType
-    Soulbound
+type CollectibleRole* {.pure.} = enum
+  Uid = UserRole + 1
+  ChainId
+  ContractAddress
+  TokenId
+  Name
+  ImageUrl
+  MediaUrl
+  MediaType
+  BackgroundColor
+  CollectionUid
+  CollectionName
+  CollectionSlug
+  CollectionImageUrl
+  IsLoading
+  Ownership
+  # Community-related roles
+  CommunityId
+  CommunityPrivilegesLevel
+  TokenType
+  Soulbound
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[CollectiblesEntry]
-      hasMore: bool
-      isFetching: bool
-      isUpdating: bool
-      isError: bool
+  type Model* = ref object of QAbstractListModel
+    items: seq[CollectiblesEntry]
+    hasMore: bool
+    isFetching: bool
+    isUpdating: bool
+    isError: bool
 
   proc delete(self: Model) =
     self.items = @[]
@@ -59,7 +57,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
     return self.items.len
-    
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -67,6 +65,7 @@ QtObject:
   proc isFetchingChanged(self: Model) {.signal.}
   proc getIsFetching*(self: Model): bool {.slot.} =
     self.isFetching
+
   QtProperty[bool] isFetching:
     read = getIsFetching
     notify = isFetchingChanged
@@ -79,6 +78,7 @@ QtObject:
   proc isUpdatingChanged(self: Model) {.signal.}
   proc getIsUpdating*(self: Model): bool {.slot.} =
     self.isUpdating
+
   QtProperty[bool] isUpdating:
     read = getIsUpdating
     notify = isUpdatingChanged
@@ -91,6 +91,7 @@ QtObject:
   proc isErrorChanged(self: Model) {.signal.}
   proc getIsError*(self: Model): bool {.slot.} =
     self.isError
+
   QtProperty[bool] isError:
     read = getIsError
     notify = isErrorChanged
@@ -103,6 +104,7 @@ QtObject:
   proc hasMoreChanged*(self: Model) {.signal.}
   proc getHasMore*(self: Model): bool {.slot.} =
     self.hasMore
+
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
@@ -128,25 +130,25 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      CollectibleRole.Uid.int:"uid",
-      CollectibleRole.ChainId.int:"chainId",
-      CollectibleRole.ContractAddress.int:"contractAddress",
-      CollectibleRole.TokenId.int:"tokenId",
-      CollectibleRole.Name.int:"name",
-      CollectibleRole.MediaUrl.int:"mediaUrl",
-      CollectibleRole.MediaType.int:"mediaType",
-      CollectibleRole.ImageUrl.int:"imageUrl",
-      CollectibleRole.BackgroundColor.int:"backgroundColor",
-      CollectibleRole.CollectionUid.int:"collectionUid",
-      CollectibleRole.CollectionName.int:"collectionName",
-      CollectibleRole.CollectionSlug.int:"collectionSlug",
-      CollectibleRole.CollectionImageUrl.int:"collectionImageUrl",
-      CollectibleRole.IsLoading.int:"isLoading",
-      CollectibleRole.Ownership.int:"ownership",
-      CollectibleRole.CommunityId.int:"communityId",
-      CollectibleRole.CommunityPrivilegesLevel.int:"communityPrivilegesLevel",
-      CollectibleRole.TokenType.int:"tokenType",
-      CollectibleRole.Soulbound.int:"soulbound"
+      CollectibleRole.Uid.int: "uid",
+      CollectibleRole.ChainId.int: "chainId",
+      CollectibleRole.ContractAddress.int: "contractAddress",
+      CollectibleRole.TokenId.int: "tokenId",
+      CollectibleRole.Name.int: "name",
+      CollectibleRole.MediaUrl.int: "mediaUrl",
+      CollectibleRole.MediaType.int: "mediaType",
+      CollectibleRole.ImageUrl.int: "imageUrl",
+      CollectibleRole.BackgroundColor.int: "backgroundColor",
+      CollectibleRole.CollectionUid.int: "collectionUid",
+      CollectibleRole.CollectionName.int: "collectionName",
+      CollectibleRole.CollectionSlug.int: "collectionSlug",
+      CollectibleRole.CollectionImageUrl.int: "collectionImageUrl",
+      CollectibleRole.IsLoading.int: "isLoading",
+      CollectibleRole.Ownership.int: "ownership",
+      CollectibleRole.CommunityId.int: "communityId",
+      CollectibleRole.CommunityPrivilegesLevel.int: "communityPrivilegesLevel",
+      CollectibleRole.TokenType.int: "tokenType",
+      CollectibleRole.Soulbound.int: "soulbound",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -158,7 +160,7 @@ QtObject:
     let enumRole = role.CollectibleRole
     if index.row < self.items.len:
       let item = self.items[index.row]
-      case enumRole:
+      case enumRole
       of CollectibleRole.Uid:
         result = newQVariant(item.getIDAsString())
       of CollectibleRole.ChainId:
@@ -213,7 +215,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     # Start after the current last real item
     let startIdx = self.items.len
@@ -230,19 +233,20 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
     self.endRemoveRows()
     self.countChanged()
-  
+
   proc updateCollectibleItems(self: Model, newItems: seq[CollectiblesEntry]) =
     if len(self.items) == 0:
       # Current list is empty, just replace with new list
       self.resetCollectibleItems(newItems)
       return
-    
+
     if len(newItems) == 0:
       # New list is empty, just remove all items
       self.resetCollectibleItems()
@@ -282,11 +286,13 @@ QtObject:
 
   proc getItemById*(self: Model, id: string): CollectiblesEntry =
     for item in self.items:
-      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
+      if (cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item
     return nil
 
-  proc setItems*(self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool) =
+  proc setItems*(
+      self: Model, newItems: seq[CollectiblesEntry], offset: int, hasMore: bool
+  ) =
     if offset == 0:
       self.resetCollectibleItems(newItems)
     elif offset != self.getCount():
@@ -313,7 +319,8 @@ QtObject:
         let update = updates[j]
         if entry.updateDataIfSameID(update):
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
+          defer:
+            index.delete
           self.dataChanged(index, index)
           anyUpdated = true
           break
@@ -322,19 +329,24 @@ QtObject:
 
   proc getImageUrl*(self: Model, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
+      if (cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item.getImageUrl()
     return ""
 
   proc getName*(self: Model, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getIDAsString(), id) == 0):
+      if (cmpIgnoreCase(item.getIDAsString(), id) == 0):
         return item.getName()
     return ""
 
-  proc getUidForData*(self: Model, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
+  proc getUidForData*(
+      self: Model, tokenId: string, tokenAddress: string, chainId: int
+  ): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getTokenIDAsString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0) and item.getChainID() == chainId:
+      if (
+        cmpIgnoreCase(item.getTokenIDAsString(), tokenId) == 0 and
+        cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0
+      ) and item.getChainID() == chainId:
         return item.getIDAsString()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:

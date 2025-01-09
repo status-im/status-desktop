@@ -6,15 +6,13 @@ import app/modules/shared_models/currency_amount
 import app_service/service/currency/service
 import backend/activity as backend
 
-type
-  ModelRole {.pure.} = enum
-    ActivityEntryRole = UserRole + 1
+type ModelRole {.pure.} = enum
+  ActivityEntryRole = UserRole + 1
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      entries: seq[entry.ActivityEntry]
-      hasMore: bool
+  type Model* = ref object of QAbstractListModel
+    entries: seq[entry.ActivityEntry]
+    hasMore: bool
 
   proc delete(self: Model) =
     self.entries = @[]
@@ -54,9 +52,7 @@ QtObject:
     return self.entries.len
 
   method roleNames(self: Model): Table[int, string] =
-    {
-      ModelRole.ActivityEntryRole.int:"activityEntry",
-    }.toTable
+    {ModelRole.ActivityEntryRole.int: "activityEntry"}.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -68,7 +64,7 @@ QtObject:
     let entry = self.entries[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ActivityEntryRole:
       result = newQVariant(entry)
 
@@ -83,27 +79,35 @@ QtObject:
     self.entries = newEntries
     self.endResetModel()
 
-  proc setEntries*(self: Model, newEntries: seq[entry.ActivityEntry], offset: int, hasMore: bool) =
+  proc setEntries*(
+      self: Model, newEntries: seq[entry.ActivityEntry], offset: int, hasMore: bool
+  ) =
     if offset == 0:
       self.resetModel(newEntries)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
+      defer:
+        parentModelIndex.delete
 
       if offset != self.entries.len:
         error "offset != self.entries.len"
         return
 
-      self.beginInsertRows(parentModelIndex, self.entries.len, self.entries.len + newEntries.len - 1)
+      self.beginInsertRows(
+        parentModelIndex, self.entries.len, self.entries.len + newEntries.len - 1
+      )
       self.entries.add(newEntries)
       self.endInsertRows()
 
     self.countChanged()
     self.setHasMore(hasMore)
 
-  proc addNewEntries*(self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]) =
+  proc addNewEntries*(
+      self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]
+  ) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     for j in countdown(newEntries.high, 0):
       let ae = newEntries[j]
@@ -132,15 +136,16 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
-    
+
   proc refreshItemsContainingAddress*(self: Model, address: string) =
-    for i in 0..self.entries.high:
+    for i in 0 .. self.entries.high:
       if cmpIgnoreCase(self.entries[i].getSender(), address) == 0 or
-        cmpIgnoreCase(self.entries[i].getRecipient(), address) == 0:
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
+          cmpIgnoreCase(self.entries[i].getRecipient(), address) == 0:
+        let index = self.createIndex(i, 0, nil)
+        defer:
+          index.delete
+        self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
 
   proc refreshAmountCurrency*(self: Model, currencyService: Service) =
-    for i in 0..self.entries.high:
+    for i in 0 .. self.entries.high:
       self.entries[i].resetAmountCurrency(currencyService)

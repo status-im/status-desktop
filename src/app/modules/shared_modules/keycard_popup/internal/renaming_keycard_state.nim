@@ -1,8 +1,9 @@
-type
-  RenamingKeycardState* = ref object of State
-    success: bool
+type RenamingKeycardState* = ref object of State
+  success: bool
 
-proc newRenamingKeycardState*(flowType: FlowType, backState: State): RenamingKeycardState =
+proc newRenamingKeycardState*(
+    flowType: FlowType, backState: State
+): RenamingKeycardState =
   result = RenamingKeycardState()
   result.setup(flowType, StateType.RenamingKeycard, backState)
   result.success = false
@@ -10,7 +11,9 @@ proc newRenamingKeycardState*(flowType: FlowType, backState: State): RenamingKey
 proc delete*(self: RenamingKeycardState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: RenamingKeycardState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: RenamingKeycardState, controller: Controller
+) =
   if self.flowType == FlowType.RenameKeycard:
     let md = controller.getMetadataFromKeycard()
     let paths = md.walletAccounts.map(a => a.path)
@@ -26,13 +29,19 @@ method getNextPrimaryState*(self: RenamingKeycardState, controller: Controller):
     if not self.success:
       return createState(StateType.KeycardRenameFailure, self.flowType, nil)
 
-method resolveKeycardNextState*(self: RenamingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: RenamingKeycardState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  let state = ensureReaderAndCardPresenceAndResolveNextState(
+    self, keycardFlowType, keycardEvent, controller
+  )
   if not state.isNil:
     return state
   if self.flowType == FlowType.RenameKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len == 0:
-        return createState(StateType.KeycardRenameSuccess, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
+        keycardEvent.error.len == 0:
+      return createState(StateType.KeycardRenameSuccess, self.flowType, nil)
     return createState(StateType.KeycardRenameFailure, self.flowType, nil)

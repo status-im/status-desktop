@@ -1,86 +1,84 @@
 import json, strutils, stint, json_serialization, stew/shims/strformat
 import Tables, sequtils
 
-import
-  web3/ethtypes
+import web3/ethtypes
 
-include  ../../common/json_utils
+include ../../common/json_utils
 import ../network/dto, ../token/dto
 import ../../common/conversion as service_conversion
 
 import ../../../backend/transactions
 
-type
-  SendType* {.pure.} = enum
-    Transfer
-    ENSRegister
-    ENSRelease
-    ENSSetPubKey
-    StickersBuy
-    Bridge
-    ERC721Transfer
-    ERC1155Transfer
-    Swap
-    Approve
+type SendType* {.pure.} = enum
+  Transfer
+  ENSRegister
+  ENSRelease
+  ENSSetPubKey
+  StickersBuy
+  Bridge
+  ERC721Transfer
+  ERC1155Transfer
+  Swap
+  Approve
 
-type
-  PendingTransactionTypeDto* {.pure.} = enum
-    RegisterENS = "RegisterENS",
-    SetPubKey = "SetPubKey",
-    ReleaseENS = "ReleaseENS",
-    BuyStickerPack = "BuyStickerPack"
-    WalletTransfer = "WalletTransfer"
-    DeployCommunityToken = "DeployCommunityToken"
-    AirdropCommunityToken = "AirdropCommunityToken"
-    RemoteDestructCollectible = "RemoteDestructCollectible"
-    BurnCommunityToken = "BurnCommunityToken"
-    DeployOwnerToken = "DeployOwnerToken"
-    SetSignerPublicKey = "SetSignerPublicKey"
-    WalletConnectTransfer = "WalletConnectTransfer"
+type PendingTransactionTypeDto* {.pure.} = enum
+  RegisterENS = "RegisterENS"
+  SetPubKey = "SetPubKey"
+  ReleaseENS = "ReleaseENS"
+  BuyStickerPack = "BuyStickerPack"
+  WalletTransfer = "WalletTransfer"
+  DeployCommunityToken = "DeployCommunityToken"
+  AirdropCommunityToken = "AirdropCommunityToken"
+  RemoteDestructCollectible = "RemoteDestructCollectible"
+  BurnCommunityToken = "BurnCommunityToken"
+  DeployOwnerToken = "DeployOwnerToken"
+  SetSignerPublicKey = "SetSignerPublicKey"
+  WalletConnectTransfer = "WalletConnectTransfer"
 
-proc event*(self:PendingTransactionTypeDto):string =
+proc event*(self: PendingTransactionTypeDto): string =
   result = "transaction:" & $self
 
-type
-  TransactionDto* = ref object of RootObj
-    id*: string
-    typeValue*: string
-    address*: string
-    blockNumber*: string # TODO remove, fetched separately in details
-    blockHash*: string
-    contract*: string
-    timestamp*: UInt256
-    gasPrice*: string
-    gasLimit*: string # TODO remove, fetched separately in details
-    gasUsed*: string
-    nonce*: string # TODO remove, fetched separately in details
-    txStatus*: string
-    value*: string
-    tokenId*: UInt256
-    fromAddress*: string
-    to*: string
-    chainId*: int
-    maxFeePerGas*: string # TODO remove, fetched separately in details
-    maxPriorityFeePerGas*: string
-    input*: string # TODO remove, fetched separately in details
-    txHash*: string # TODO remove, fetched separately in details
-    multiTransactionID*: int
-    baseGasFees*: string
-    totalFees*: string
-    maxTotalFees*: string # TODO remove, fetched separately in details
-    additionalData*: string
-    symbol*: string
+type TransactionDto* = ref object of RootObj
+  id*: string
+  typeValue*: string
+  address*: string
+  blockNumber*: string # TODO remove, fetched separately in details
+  blockHash*: string
+  contract*: string
+  timestamp*: UInt256
+  gasPrice*: string
+  gasLimit*: string # TODO remove, fetched separately in details
+  gasUsed*: string
+  nonce*: string # TODO remove, fetched separately in details
+  txStatus*: string
+  value*: string
+  tokenId*: UInt256
+  fromAddress*: string
+  to*: string
+  chainId*: int
+  maxFeePerGas*: string # TODO remove, fetched separately in details
+  maxPriorityFeePerGas*: string
+  input*: string # TODO remove, fetched separately in details
+  txHash*: string # TODO remove, fetched separately in details
+  multiTransactionID*: int
+  baseGasFees*: string
+  totalFees*: string
+  maxTotalFees*: string # TODO remove, fetched separately in details
+  additionalData*: string
+  symbol*: string
 
-proc getTotalFees(tip: string, baseFee: string, gasUsed: string, maxFee: string): string =
-    var maxFees = stint.fromHex(Uint256, maxFee)
-    var totalGasUsed = stint.fromHex(Uint256, tip) + stint.fromHex(Uint256, baseFee)
-    if totalGasUsed >  maxFees:
-      totalGasUsed = maxFees
-    var totalGasUsedInHex = (totalGasUsed * stint.fromHex(Uint256, gasUsed)).toHex
-    return totalGasUsedInHex
+proc getTotalFees(
+    tip: string, baseFee: string, gasUsed: string, maxFee: string
+): string =
+  var maxFees = stint.fromHex(Uint256, maxFee)
+  var totalGasUsed = stint.fromHex(Uint256, tip) + stint.fromHex(Uint256, baseFee)
+  if totalGasUsed > maxFees:
+    totalGasUsed = maxFees
+  var totalGasUsedInHex = (totalGasUsed * stint.fromHex(Uint256, gasUsed)).toHex
+  return totalGasUsedInHex
 
 proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
-    return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
+  return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
 
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
@@ -107,11 +105,14 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("txHash", result.txHash)
   discard jsonObj.getProp("multiTransactionID", result.multiTransactionID)
   discard jsonObj.getProp("base_gas_fee", result.baseGasFees)
-  result.totalFees = getTotalFees(result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas)
+  result.totalFees = getTotalFees(
+    result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas
+  )
   result.maxTotalFees = getMaxTotalFees(result.maxFeePerGas, result.gasLimit)
 
 proc `$`*(self: TransactionDto): string =
-  return fmt"""TransactionDto(
+  return
+    fmt"""TransactionDto(
     id:{self.id},
     typeValue:{self.typeValue},
     address:{self.address},
@@ -180,16 +181,15 @@ proc cmpTransactions*(x, y: TransactionDto): int =
   if result == 0:
     result = cmp(x.nonce, y.nonce)
 
-type
-  SuggestedFeesDto* = ref object
-    gasPrice*: float64
-    baseFee*: float64
-    maxPriorityFeePerGas*: float64
-    maxFeePerGasL*: float64
-    maxFeePerGasM*: float64
-    maxFeePerGasH*: float64
-    l1GasFee*: float64
-    eip1559Enabled*: bool
+type SuggestedFeesDto* = ref object
+  gasPrice*: float64
+  baseFee*: float64
+  maxPriorityFeePerGas*: float64
+  maxFeePerGasL*: float64
+  maxFeePerGasM*: float64
+  maxFeePerGasH*: float64
+  l1GasFee*: float64
+  eip1559Enabled*: bool
 
 proc decodeSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result = SuggestedFeesDto()
@@ -223,7 +223,8 @@ proc toSuggestedFeesDto*(jsonObj: JsonNode): SuggestedFeesDto =
   result.eip1559Enabled = jsonObj{"eip1559Enabled"}.getbool
 
 proc `$`*(self: SuggestedFeesDto): string =
-  return fmt"""SuggestedFees(
+  return
+    fmt"""SuggestedFees(
     gasPrice:{self.gasPrice},
     baseFee:{self.baseFee},
     maxPriorityFeePerGas:{self.maxPriorityFeePerGas},
@@ -234,33 +235,33 @@ proc `$`*(self: SuggestedFeesDto): string =
     eip1559Enabled:{self.eip1559Enabled}
   )"""
 
-type
-  TransactionPathDto* = ref object
-    bridgeName*: string
-    fromNetwork*: NetworkDto
-    toNetwork*: NetworkDto
-    fromToken*: TokenDto  # Only populated when converting from V2
-    toToken*: TokenDto  # Only populated when converting from V2
-    maxAmountIn* : UInt256
-    amountIn*: UInt256
-    amountOut*: UInt256
-    gasAmount*: uint64
-    gasFees*: SuggestedFeesDto
-    tokenFees*: float
-    bonderFees*: string
-    txBonderFees*: UInt256 # Unchanged value from Path V2
-    cost*: float
-    estimatedTime*: int
-    amountInLocked*: bool
-    isFirstSimpleTx*: bool
-    isFirstBridgeTx*: bool
-    approvalRequired*: bool
-    approvalGasFees*: float
-    approvalAmountRequired*: UInt256
-    approvalContractAddress*: string
+type TransactionPathDto* = ref object
+  bridgeName*: string
+  fromNetwork*: NetworkDto
+  toNetwork*: NetworkDto
+  fromToken*: TokenDto # Only populated when converting from V2
+  toToken*: TokenDto # Only populated when converting from V2
+  maxAmountIn*: UInt256
+  amountIn*: UInt256
+  amountOut*: UInt256
+  gasAmount*: uint64
+  gasFees*: SuggestedFeesDto
+  tokenFees*: float
+  bonderFees*: string
+  txBonderFees*: UInt256 # Unchanged value from Path V2
+  cost*: float
+  estimatedTime*: int
+  amountInLocked*: bool
+  isFirstSimpleTx*: bool
+  isFirstBridgeTx*: bool
+  approvalRequired*: bool
+  approvalGasFees*: float
+  approvalAmountRequired*: UInt256
+  approvalContractAddress*: string
 
 proc `$`*(self: TransactionPathDto): string =
-  return fmt"""TransactionPath(
+  return
+    fmt"""TransactionPath(
     bridgeName:{self.bridgeName},
     fromNetwork:{self.fromNetwork},
     toNetwork:{self.toNetwork},
@@ -287,8 +288,10 @@ proc `$`*(self: TransactionPathDto): string =
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
   discard jsonObj.getProp("bridgeName", result.bridgeName)
-  result.fromNetwork = Json.decode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
-  result.toNetwork = Json.decode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
+  result.fromNetwork =
+    Json.decode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
+  result.toNetwork =
+    Json.decode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
   result.gasFees = decodeSuggestedFeesDto(jsonObj["gasFees"])
   discard jsonObj.getProp("cost", result.cost)
   discard jsonObj.getProp("tokenFees", result.tokenFees)
@@ -306,14 +309,14 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   discard jsonObj.getProp("approvalGasFees", result.approvalGasFees)
   discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
 
-type
-  FeesDto* = ref object
-    totalFeesInEth*: float
-    totalTokenFees*: float
-    totalTime*: int
+type FeesDto* = ref object
+  totalFeesInEth*: float
+  totalTokenFees*: float
+  totalTime*: int
 
 proc `$`*(self: FeesDto): string =
-  return fmt"""FeesDto(
+  return
+    fmt"""FeesDto(
     totalFeesInEth:{self.totalFeesInEth},
     totalTokenFees:{self.totalTokenFees},
     totalTime:{self.totalTime},
@@ -325,15 +328,15 @@ proc convertToFeesDto*(jsonObj: JsonNode): FeesDto =
   discard jsonObj.getProp("totalTokenFees", result.totalTokenFees)
   discard jsonObj.getProp("totalTime", result.totalTime)
 
-type
-  SendToNetwork* = ref object
-    chainId*: int
-    chainName*: string
-    iconUrl*: string
-    amountOut*: UInt256
+type SendToNetwork* = ref object
+  chainId*: int
+  chainName*: string
+  iconUrl*: string
+  amountOut*: UInt256
 
 proc `$`*(self: SendToNetwork): string =
-  return fmt"""SendToNetwork(
+  return
+    fmt"""SendToNetwork(
     chainId:{self.chainId},
     chainName:{self.chainName},
     iconUrl:{self.iconUrl},
@@ -347,13 +350,12 @@ proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
   discard jsonObj.getProp("iconUrl", result.iconUrl)
   result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
 
-type
-  SuggestedRoutesDto* = ref object
-    best*: seq[TransactionPathDto]
-    rawBest*: string # serialized seq[TransactionPathDtoV2]
-    gasTimeEstimate*: FeesDto
-    amountToReceive*: UInt256
-    toNetworks*: seq[SendToNetwork]
+type SuggestedRoutesDto* = ref object
+  best*: seq[TransactionPathDto]
+  rawBest*: string # serialized seq[TransactionPathDtoV2]
+  gasTimeEstimate*: FeesDto
+  amountToReceive*: UInt256
+  toNetworks*: seq[SendToNetwork]
 
 proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
   let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)
@@ -362,7 +364,7 @@ proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
 
 proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
   var fees: FeesDto = FeesDto()
-  if(paths.len == 0):
+  if (paths.len == 0):
     return fees
 
   for path in paths:
@@ -371,7 +373,10 @@ proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
       optimalPrice = path.gasFees.maxFeePerGasM
 
     fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
-    fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
+    fees.totalFeesInEth +=
+      parseFloat(
+        service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee))
+      )
     fees.totalFeesInEth += path.approvalGasFees
     fees.totalTokenFees += path.tokenFees
     fees.totalTime += path.estimatedTime
@@ -387,13 +392,21 @@ proc getTotalAmountToReceive*(paths: seq[TransactionPathDto]): UInt256 =
 proc getToNetworksList*(paths: seq[TransactionPathDto]): seq[SendToNetwork] =
   var networkMap: Table[int, SendToNetwork] = initTable[int, SendToNetwork]()
   for path in paths:
-    if(networkMap.hasKey(path.toNetwork.chainId)):
-      networkMap[path.toNetwork.chainId].amountOut = networkMap[path.toNetwork.chainId].amountOut + path.amountOut
+    if (networkMap.hasKey(path.toNetwork.chainId)):
+      networkMap[path.toNetwork.chainId].amountOut =
+        networkMap[path.toNetwork.chainId].amountOut + path.amountOut
     else:
-      networkMap[path.toNetwork.chainId] = SendToNetwork(chainId: path.toNetwork.chainId, chainName: path.toNetwork.chainName, iconUrl: path.toNetwork.iconURL, amountOut: path.amountOut)
+      networkMap[path.toNetwork.chainId] = SendToNetwork(
+        chainId: path.toNetwork.chainId,
+        chainName: path.toNetwork.chainName,
+        iconUrl: path.toNetwork.iconURL,
+        amountOut: path.amountOut,
+      )
   return toSeq(networkMap.values)
 
-proc addFirstSimpleBridgeTxFlag*(paths: seq[TransactionPathDto]) : seq[TransactionPathDto] =
+proc addFirstSimpleBridgeTxFlag*(
+    paths: seq[TransactionPathDto]
+): seq[TransactionPathDto] =
   let txPaths = paths
   var firstSimplePath: bool = false
   var firstBridgePath: bool = false

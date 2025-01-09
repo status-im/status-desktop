@@ -1,9 +1,8 @@
 import NimQml, Tables
 import item
 
-type
-  ModelRole {.pure.} = enum
-    NodeAddress = UserRole + 1
+type ModelRole {.pure.} = enum
+  NodeAddress = UserRole + 1
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -24,9 +23,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
-    {
-      ModelRole.NodeAddress.int:"nodeAddress"
-    }.toTable
+    {ModelRole.NodeAddress.int: "nodeAddress"}.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -36,24 +33,26 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
-      of ModelRole.NodeAddress:
-        result = newQVariant(item.nodeAddress)
+    case enumRole
+    of ModelRole.NodeAddress:
+      result = newQVariant(item.nodeAddress)
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
 
   proc addItems*(self: Model, items: seq[Item]) =
-    if(items.len == 0):
+    if (items.len == 0):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1

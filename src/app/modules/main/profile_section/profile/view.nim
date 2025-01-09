@@ -7,19 +7,18 @@ import models/showcase_preferences_generic_model
 import models/showcase_preferences_social_links_model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      showcasePreferencesCommunitiesModel: ShowcasePreferencesGenericModel
-      showcasePreferencesCommunitiesModelVariant: QVariant
-      showcasePreferencesAccountsModel: ShowcasePreferencesGenericModel
-      showcasePreferencesAccountsModelVariant: QVariant
-      showcasePreferencesCollectiblesModel: ShowcasePreferencesGenericModel
-      showcasePreferencesCollectiblesModelVariant: QVariant
-      showcasePreferencesAssetsModel: ShowcasePreferencesGenericModel
-      showcasePreferencesAssetsModelVariant: QVariant
-      showcasePreferencesSocialLinksModel: ShowcasePreferencesSocialLinkModel
-      showcasePreferencesSocialLinksModelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    showcasePreferencesCommunitiesModel: ShowcasePreferencesGenericModel
+    showcasePreferencesCommunitiesModelVariant: QVariant
+    showcasePreferencesAccountsModel: ShowcasePreferencesGenericModel
+    showcasePreferencesAccountsModelVariant: QVariant
+    showcasePreferencesCollectiblesModel: ShowcasePreferencesGenericModel
+    showcasePreferencesCollectiblesModelVariant: QVariant
+    showcasePreferencesAssetsModel: ShowcasePreferencesGenericModel
+    showcasePreferencesAssetsModelVariant: QVariant
+    showcasePreferencesSocialLinksModel: ShowcasePreferencesSocialLinkModel
+    showcasePreferencesSocialLinksModelVariant: QVariant
 
   proc delete*(self: View) =
     self.showcasePreferencesCommunitiesModel.delete
@@ -39,15 +38,20 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.showcasePreferencesCommunitiesModel = newShowcasePreferencesGenericModel()
-    result.showcasePreferencesCommunitiesModelVariant = newQVariant(result.showcasePreferencesCommunitiesModel)
+    result.showcasePreferencesCommunitiesModelVariant =
+      newQVariant(result.showcasePreferencesCommunitiesModel)
     result.showcasePreferencesAccountsModel = newShowcasePreferencesGenericModel()
-    result.showcasePreferencesAccountsModelVariant = newQVariant(result.showcasePreferencesAccountsModel)
+    result.showcasePreferencesAccountsModelVariant =
+      newQVariant(result.showcasePreferencesAccountsModel)
     result.showcasePreferencesCollectiblesModel = newShowcasePreferencesGenericModel()
-    result.showcasePreferencesCollectiblesModelVariant = newQVariant(result.showcasePreferencesCollectiblesModel)
+    result.showcasePreferencesCollectiblesModelVariant =
+      newQVariant(result.showcasePreferencesCollectiblesModel)
     result.showcasePreferencesAssetsModel = newShowcasePreferencesGenericModel()
-    result.showcasePreferencesAssetsModelVariant = newQVariant(result.showcasePreferencesAssetsModel)
+    result.showcasePreferencesAssetsModelVariant =
+      newQVariant(result.showcasePreferencesAssetsModel)
     result.showcasePreferencesSocialLinksModel = newShowcasePreferencesSocialLinkModel()
-    result.showcasePreferencesSocialLinksModelVariant = newQVariant(result.showcasePreferencesSocialLinksModel)
+    result.showcasePreferencesSocialLinksModelVariant =
+      newQVariant(result.showcasePreferencesSocialLinksModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -55,6 +59,7 @@ QtObject:
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =
     self.delegate.getBio()
+
   QtProperty[string] bio:
     read = getBio
     notify = bioChanged
@@ -80,26 +85,31 @@ QtObject:
 
   proc getShowcasePreferencesCommunitiesModel(self: View): QVariant {.slot.} =
     return self.showcasePreferencesCommunitiesModelVariant
+
   QtProperty[QVariant] showcasePreferencesCommunitiesModel:
     read = getShowcasePreferencesCommunitiesModel
 
   proc getShowcasePreferencesAccountsModel(self: View): QVariant {.slot.} =
     return self.showcasePreferencesAccountsModelVariant
+
   QtProperty[QVariant] showcasePreferencesAccountsModel:
     read = getShowcasePreferencesAccountsModel
 
   proc getShowcasePreferencesCollectiblesModel(self: View): QVariant {.slot.} =
     return self.showcasePreferencesCollectiblesModelVariant
+
   QtProperty[QVariant] showcasePreferencesCollectiblesModel:
     read = getShowcasePreferencesCollectiblesModel
 
   proc getShowcasePreferencesAssetsModel(self: View): QVariant {.slot.} =
     return self.showcasePreferencesAssetsModelVariant
+
   QtProperty[QVariant] showcasePreferencesAssetsModel:
     read = getShowcasePreferencesAssetsModel
 
   proc getShowcasePreferencesSocialLinksModel(self: View): QVariant {.slot.} =
     return self.showcasePreferencesSocialLinksModelVariant
+
   QtProperty[QVariant] showcasePreferencesSocialLinksModel:
     read = getShowcasePreferencesSocialLinksModel
 
@@ -125,17 +135,27 @@ QtObject:
   proc setIsFirstShowcaseInteraction(self: View) {.slot.} =
     self.delegate.setIsFirstShowcaseInteraction()
 
-  proc loadProfileShowcasePreferencesCommunities*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesCommunities*(
+      self: View, items: seq[ShowcasePreferencesGenericItem]
+  ) =
     self.showcasePreferencesCommunitiesModel.setItems(items)
 
-  proc loadProfileShowcasePreferencesAccounts*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesAccounts*(
+      self: View, items: seq[ShowcasePreferencesGenericItem]
+  ) =
     self.showcasePreferencesAccountsModel.setItems(items)
 
-  proc loadProfileShowcasePreferencesCollectibles*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesCollectibles*(
+      self: View, items: seq[ShowcasePreferencesGenericItem]
+  ) =
     self.showcasePreferencesCollectiblesModel.setItems(items)
 
-  proc loadProfileShowcasePreferencesAssets*(self: View, items: seq[ShowcasePreferencesGenericItem]) =
+  proc loadProfileShowcasePreferencesAssets*(
+      self: View, items: seq[ShowcasePreferencesGenericItem]
+  ) =
     self.showcasePreferencesAssetsModel.setItems(items)
 
-  proc loadProfileShowcasePreferencesSocialLinks*(self: View, items: seq[ShowcasePreferencesSocialLinkItem]) =
+  proc loadProfileShowcasePreferencesSocialLinks*(
+      self: View, items: seq[ShowcasePreferencesSocialLinkItem]
+  ) =
     self.showcasePreferencesSocialLinksModel.setItems(items)

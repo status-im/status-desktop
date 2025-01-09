@@ -2,7 +2,7 @@ import tables, json, stew/shims/strformat, strutils, sequtils, sugar, chronicles
 
 import account_dto, keycard_dto
 
-include  app_service/common/json_utils
+include app_service/common/json_utils
 
 export account_dto, keycard_dto
 
@@ -12,17 +12,16 @@ const KeypairTypeKey* = "key"
 
 const SyncedFromBackup* = "backup" # means a keypair is coming from backed up data
 
-type
-  KeypairDto* = ref object of RootObj
-    keyUid*: string
-    name*: string
-    keypairType*: string
-    derivedFrom*: string
-    lastUsedDerivationIndex*: int
-    syncedFrom*: string
-    accounts*: seq[WalletAccountDto]
-    keycards*: seq[KeycardDto]
-    removed*: bool
+type KeypairDto* = ref object of RootObj
+  keyUid*: string
+  name*: string
+  keypairType*: string
+  derivedFrom*: string
+  lastUsedDerivationIndex*: int
+  syncedFrom*: string
+  accounts*: seq[WalletAccountDto]
+  keycards*: seq[KeycardDto]
+  removed*: bool
 
 proc migratedToKeycard*(self: KeypairDto): bool =
   return self.keycards.len > 0
@@ -38,10 +37,9 @@ proc toKeypairDto*(jsonObj: JsonNode): KeypairDto =
   discard jsonObj.getProp("removed", result.removed)
 
   if not result.removed:
-    if result.keypairType != KeypairTypeProfile and
-      result.keypairType != KeypairTypeSeed and
-      result.keypairType != KeypairTypeKey:
-        error "unknown keypair type", kpType=result.keypairType
+    if result.keypairType != KeypairTypeProfile and result.keypairType != KeypairTypeSeed and
+        result.keypairType != KeypairTypeKey:
+      error "unknown keypair type", kpType = result.keypairType
 
   var accountsObj: JsonNode
   if jsonObj.getProp("accounts", accountsObj) and accountsObj.kind != JNull:
@@ -54,7 +52,8 @@ proc toKeypairDto*(jsonObj: JsonNode): KeypairDto =
       result.keycards.add(toKeycardDto(kcObj))
 
 proc `$`*(self: KeypairDto): string =
-  result = fmt"""KeypairDto[
+  result =
+    fmt"""KeypairDto[
     keyUid: {self.keyUid},
     name: {self.name},
     type: {self.keypairType},
@@ -64,17 +63,21 @@ proc `$`*(self: KeypairDto): string =
     accounts:
   """
   for i in 0 ..< self.accounts.len:
-    result &= fmt"""
+    result &=
+      fmt"""
     [{i}]:({$self.accounts[i]})
     """
-  result &= fmt"""
+  result &=
+    fmt"""
     keycards:
   """
   for i in 0 ..< self.keycards.len:
-    result &= fmt"""
+    result &=
+      fmt"""
     [{i}]:({$self.accounts[i]})
     """
-  result &= """
+  result &=
+    """
     ]"""
 
 proc getOperability*(self: KeypairDto): string =

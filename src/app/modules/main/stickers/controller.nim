@@ -10,17 +10,16 @@ import app_service/service/network/service as network_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/token/service as token_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    stickerService: stickers_service.Service
-    settingsService: settings_service.Service
-    networkService: network_service.Service
-    walletAccountService: wallet_account_service.Service
-    tokenService: token_service.Service
-    connectionKeycardResponse: UUID
-    disconnected: bool
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  stickerService: stickers_service.Service
+  settingsService: settings_service.Service
+  networkService: network_service.Service
+  walletAccountService: wallet_account_service.Service
+  tokenService: token_service.Service
+  connectionKeycardResponse: UUID
+  disconnected: bool
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -30,7 +29,7 @@ proc newController*(
     walletAccountService: wallet_account_service.Service,
     networkService: network_service.Service,
     tokenService: token_service.Service,
-    ): Controller =
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -45,7 +44,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-
   self.events.on(SIGNAL_LOAD_RECENT_STICKERS_DONE) do(e: Args):
     self.delegate.clearStickers()
     let args = StickersArgs(e)
@@ -55,10 +53,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_STICKER_PACK_LOADED) do(e: Args):
     let args = StickerPackLoadedArgs(e)
     self.delegate.addStickerPackToList(
-      args.stickerPack,
-      args.isInstalled,
-      args.isBought,
-      args.isPending
+      args.stickerPack, args.isInstalled, args.isBought, args.isPending
     )
 
   self.events.on(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE) do(e: Args):
@@ -72,17 +67,23 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED) do(e: Args):
     self.delegate.allPacksLoadFailed()
 
-  self.events.on(SIGNAL_STICKER_TRANSACTION_SENT) do(e:Args):
+  self.events.on(SIGNAL_STICKER_TRANSACTION_SENT) do(e: Args):
     let args = StickerBuyResultArgs(e)
-    self.delegate.stickerTransactionSent(args.chainId, args.packId, args.txHash, args.error)
+    self.delegate.stickerTransactionSent(
+      args.chainId, args.packId, args.txHash, args.error
+    )
 
-  self.events.on(SIGNAL_STICKER_TRANSACTION_CONFIRMED) do(e:Args):
+  self.events.on(SIGNAL_STICKER_TRANSACTION_CONFIRMED) do(e: Args):
     let args = StickerTransactionArgs(e)
-    self.delegate.stickerTransactionConfirmed(args.transactionType, args.packID, args.transactionHash)
+    self.delegate.stickerTransactionConfirmed(
+      args.transactionType, args.packID, args.transactionHash
+    )
 
-  self.events.on(SIGNAL_STICKER_TRANSACTION_REVERTED) do(e:Args):
+  self.events.on(SIGNAL_STICKER_TRANSACTION_REVERTED) do(e: Args):
     let args = StickerTransactionArgs(e)
-    self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash)
+    self.delegate.stickerTransactionReverted(
+      args.transactionType, args.packID, args.transactionHash
+    )
 
   self.events.on(SIGNAL_STICKER_PACK_INSTALLED) do(e: Args):
     let args = StickerPackInstalledArgs(e)
@@ -120,7 +121,8 @@ proc sendSticker*(
     channelId: string,
     replyTo: string,
     sticker: StickerDto,
-    preferredUsername: string) =
+    preferredUsername: string,
+) =
   self.stickerService.asyncSendSticker(channelId, replyTo, sticker, preferredUsername)
 
 proc getSigningPhrase*(self: Controller): string =

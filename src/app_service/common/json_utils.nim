@@ -2,7 +2,9 @@ import json
 import web3/ethtypes
 import types
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[int]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[int]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = obj[prop].getInt
@@ -10,7 +12,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[int]): bool {.
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[int64]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[int64]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = obj[prop].getBiggestInt
@@ -18,7 +22,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[int64]): bool 
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[uint]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[uint]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = uint(obj[prop].getInt)
@@ -26,7 +32,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[uint]): bool {
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[uint64]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[uint64]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = uint64(obj[prop].getBiggestInt)
@@ -34,7 +42,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[uint64]): bool
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[string]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[string]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop) and obj[prop].kind == JString):
     value = obj[prop].getStr
@@ -42,7 +52,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[string]): bool
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[float]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[float]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop) and obj[prop].kind == JFloat):
     value = obj[prop].getFloat
@@ -50,7 +62,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[float]): bool 
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[bool]): bool {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[bool]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = obj[prop].getBool
@@ -58,7 +72,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[bool]): bool {
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[JsonNode]): bool {.redefine.}  =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[JsonNode]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = obj[prop]
@@ -66,7 +82,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[JsonNode]): bo
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[Address]): bool  {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[Address]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = fromHex(Address, obj[prop].getStr)
@@ -74,7 +92,9 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[Address]): boo
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[MemberRole]): bool  {.redefine.} =
+template getProp(
+    obj: JsonNode, prop: string, value: var typedesc[MemberRole]
+): bool {.redefine.} =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = MemberRole(obj[prop].getInt)

@@ -9,6 +9,7 @@ type EnvelopeSentSignal* = ref object of Signal
 proc fromEvent*(T: type EnvelopeSentSignal, jsonSignal: JsonNode): EnvelopeSentSignal =
   result = EnvelopeSentSignal()
   result.signalType = SignalType.EnvelopeSent
-  if jsonSignal["event"].kind != JNull and jsonSignal["event"].hasKey("ids") and jsonSignal["event"]["ids"].kind != JNull:
+  if jsonSignal["event"].kind != JNull and jsonSignal["event"].hasKey("ids") and
+      jsonSignal["event"]["ids"].kind != JNull:
     for messageId in jsonSignal["event"]["ids"]:
       result.messageIds.add(messageId.getStr)

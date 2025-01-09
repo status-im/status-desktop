@@ -1,21 +1,20 @@
 import stew/shims/strformat
 
-type
-  DiscordChannelItem* = object
-    id*: string
-    categoryId*: string
-    name*: string
-    description*: string
-    filePath*: string
-    selected*: bool
+type DiscordChannelItem* = object
+  id*: string
+  categoryId*: string
+  name*: string
+  description*: string
+  filePath*: string
+  selected*: bool
 
 proc initDiscordChannelItem*(
-  id: string,
-  categoryId: string,
-  name: string,
-  description: string,
-  filePath: string,
-  selected: bool
+    id: string,
+    categoryId: string,
+    name: string,
+    description: string,
+    filePath: string,
+    selected: bool,
 ): DiscordChannelItem =
   result.id = id
   result.categoryId = categoryId
@@ -25,7 +24,8 @@ proc initDiscordChannelItem*(
   result.selected = selected
 
 proc `$`*(self: DiscordChannelItem): string =
-  result = fmt"""DiscordChannelItem(
+  result =
+    fmt"""DiscordChannelItem(
     id: {self.id},
     categoryId: {self.categoryId},
     name: {self.name},
@@ -51,4 +51,3 @@ proc getFilePath*(self: DiscordChannelItem): string =
 
 proc getSelected*(self: DiscordChannelItem): bool =
   return self.selected
-

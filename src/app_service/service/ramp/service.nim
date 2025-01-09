@@ -10,14 +10,12 @@ export dto
 const SIGNAL_CRYPTO_RAMP_PROVIDERS_READY* = "cryptoRampProvidersReady"
 const SIGNAL_CRYPTO_RAMP_URL_READY* = "cryptoRampUrlReady"
 
-type
-  CryptoRampProvidersArgs* = ref object of Args
-    data*: seq[CryptoRampDto]
+type CryptoRampProvidersArgs* = ref object of Args
+  data*: seq[CryptoRampDto]
 
-type
-  CryptoRampUrlArgs* = ref object of Args
-    uuid*: string
-    url*: string
+type CryptoRampUrlArgs* = ref object of Args
+  uuid*: string
+  url*: string
 
 logScope:
   topics = "ramp-service"
@@ -33,21 +31,21 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(
-      events: EventEmitter,
-      threadpool: ThreadPool,
-  ): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-  
+
   proc init*(self: Service) =
     discard
 
   proc onFetchCryptoRampProviders*(self: Service, response: string) {.slot.} =
-    let cryptoServices = parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())
-    self.events.emit(SIGNAL_CRYPTO_RAMP_PROVIDERS_READY, CryptoRampProvidersArgs(data: cryptoServices))
+    let cryptoServices =
+      parseJson(response){"result"}.getElems().map(x => x.toCryptoRampDto())
+    self.events.emit(
+      SIGNAL_CRYPTO_RAMP_PROVIDERS_READY, CryptoRampProvidersArgs(data: cryptoServices)
+    )
 
   proc fetchCryptoRampProviders*(self: Service) =
     let arg = QObjectTaskArg(
@@ -61,12 +59,16 @@ QtObject:
     let responseJson = parseJson(response)
     let uuid = responseJson{"uuid"}.getStr()
     let url = responseJson{"url"}.getStr()
-    self.events.emit(SIGNAL_CRYPTO_RAMP_URL_READY, CryptoRampUrlArgs(
-      uuid: uuid,
-      url: url,
-    ))
+    self.events.emit(
+      SIGNAL_CRYPTO_RAMP_URL_READY, CryptoRampUrlArgs(uuid: uuid, url: url)
+    )
 
-  proc fetchCryptoRampUrl*(self: Service, uuid: string, providerID: string, parameters: CryptoRampParametersDto) =
+  proc fetchCryptoRampUrl*(
+      self: Service,
+      uuid: string,
+      providerID: string,
+      parameters: CryptoRampParametersDto,
+  ) =
     let arg = GetCryptoRampUrlTaskArg(
       tptr: getCryptoRampURLTask,
       vptr: cast[uint](self.vptr),

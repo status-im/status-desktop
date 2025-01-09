@@ -33,19 +33,18 @@ const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"
 const SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED* = "tokensDetailsAboutToBeUpdated"
 const SIGNAL_TOKENS_DETAILS_UPDATED* = "tokensDetailsUpdated"
-const SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED* = "tokensMarketValuesAboutToBeUpdated"
+const SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED* =
+  "tokensMarketValuesAboutToBeUpdated"
 const SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED* = "tokensPricesValuesAboutToBeUpdated"
 const SIGNAL_TOKENS_MARKET_VALUES_UPDATED* = "tokensMarketValuesUpdated"
 const SIGNAL_TOKENS_PRICES_UPDATED* = "tokensPricesValuesUpdated"
 const SIGNAL_TOKEN_PREFERENCES_UPDATED* = "tokenPreferencesUpdated"
 
-type
-  ResultArgs* = ref object of Args
-    success*: bool
+type ResultArgs* = ref object of Args
+  success*: bool
 
-type
-  TokenHistoricalDataArgs* = ref object of Args
-    result*: string
+type TokenHistoricalDataArgs* = ref object of Args
+  result*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -77,10 +76,10 @@ QtObject:
     self.QObject.delete
 
   proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool,
-    networkService: network_service.Service,
-    settingsService: settings_service.Service
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      networkService: network_service.Service,
+      settingsService: settings_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -104,20 +103,22 @@ QtObject:
 
   proc fetchTokensMarketValues(self: Service, symbols: seq[string]) =
     self.tokensMarketDetailsLoading = true
-    defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensMarketValuesTaskArg(
       tptr: fetchTokensMarketValuesTask,
       vptr: cast[uint](self.vptr),
       slot: "tokensMarketValuesRetrieved",
       symbols: symbols,
-      currency: self.getCurrency()
+      currency: self.getCurrency(),
     )
     self.threadpool.start(arg)
 
   proc tokensMarketValuesRetrieved(self: Service, response: string) {.slot.} =
     # this is emited so that the models can notify about market values being available
     self.tokensMarketDetailsLoading = false
-    defer: self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKENS_MARKET_VALUES_UPDATED, Args())
     try:
       let parsedJson = response.parseJson
       var errorString: string
@@ -127,12 +128,15 @@ QtObject:
       discard tokenMarketValues.getProp("result", tokensResult)
 
       if not errorString.isEmptyOrWhitespace:
-        raise newException(Exception, "Error getting tokens market values: " & errorString)
+        raise
+          newException(Exception, "Error getting tokens market values: " & errorString)
       if tokensResult.isNil or tokensResult.kind == JNull:
         return
 
       for (symbol, marketValuesObj) in tokensResult.pairs:
-        let marketValuesDto = Json.decode($marketValuesObj, dto.TokenMarketValuesDto, allowUnknownFields = true)
+        let marketValuesDto = Json.decode(
+          $marketValuesObj, dto.TokenMarketValuesDto, allowUnknownFields = true
+        )
         self.tokenMarketValuesTable[symbol] = TokenMarketValuesItem(
           marketCap: marketValuesDto.marketCap,
           highDay: marketValuesDto.highDay,
@@ -140,7 +144,8 @@ QtObject:
           changePctHour: marketValuesDto.changePctHour,
           changePctDay: marketValuesDto.changePctDay,
           changePct24hour: marketValuesDto.changePct24hour,
-          change24hour: marketValuesDto.change24hour)
+          change24hour: marketValuesDto.change24hour,
+        )
       self.hasMarketDetailsCache = true
     except Exception as e:
       let errDesription = e.msg
@@ -152,14 +157,15 @@ QtObject:
       tptr: fetchTokensDetailsTask,
       vptr: cast[uint](self.vptr),
       slot: "tokensDetailsRetrieved",
-      symbols: symbols
+      symbols: symbols,
     )
     self.threadpool.start(arg)
 
   proc tokensDetailsRetrieved(self: Service, response: string) {.slot.} =
     self.tokensDetailsLoading = false
     # this is emited so that the models can notify about details being available
-    defer: self.events.emit(SIGNAL_TOKENS_DETAILS_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKENS_DETAILS_UPDATED, Args())
     try:
       let parsedJson = response.parseJson
       var errorString: string
@@ -174,10 +180,12 @@ QtObject:
         return
 
       for (symbol, tokenDetailsObj) in tokensResult.pairs:
-        let tokenDetailsDto = Json.decode($tokenDetailsObj, dto.TokenDetailsDto, allowUnknownFields = true)
+        let tokenDetailsDto =
+          Json.decode($tokenDetailsObj, dto.TokenDetailsDto, allowUnknownFields = true)
         self.tokenDetailsTable[symbol] = TokenDetailsItem(
           description: tokenDetailsDto.description,
-          assetWebsiteUrl: tokenDetailsDto.assetWebsiteUrl)
+          assetWebsiteUrl: tokenDetailsDto.assetWebsiteUrl,
+        )
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -187,20 +195,22 @@ QtObject:
 
   proc fetchTokensPrices(self: Service, symbols: seq[string]) =
     self.tokensPricesLoading = true
-    defer: self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKENS_PRICES_ABOUT_TO_BE_UPDATED, Args())
     let arg = FetchTokensPricesTaskArg(
       tptr: fetchTokensPricesTask,
       vptr: cast[uint](self.vptr),
       slot: "tokensPricesRetrieved",
       symbols: symbols,
-      currencies: @[self.getCurrency()]
+      currencies: @[self.getCurrency()],
     )
     self.threadpool.start(arg)
 
   proc tokensPricesRetrieved(self: Service, response: string) {.slot.} =
     self.tokensPricesLoading = false
     # this is emited so that the models can notify about prices being available
-    defer: self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
     try:
       let parsedJson = response.parseJson
       var errorString: string
@@ -229,33 +239,48 @@ QtObject:
 
     var updated = false
     let unique_key = token.flatModelKey()
-    if not any(self.flatTokenList, proc (x: TokenItem): bool = x.key == unique_key):
-      self.flatTokenList.add(TokenItem(
-        key: unique_key,
-        name: token.name,
-        symbol: token.symbol,
-        sources: @[sourceName],
-        chainID: token.chainID,
-        address: token.address,
-        decimals: token.decimals,
-        image: token.image,
-        `type`: tokenType,
-        communityId: token.communityID))
+    if not any(
+      self.flatTokenList,
+      proc(x: TokenItem): bool =
+        x.key == unique_key,
+    ):
+      self.flatTokenList.add(
+        TokenItem(
+          key: unique_key,
+          name: token.name,
+          symbol: token.symbol,
+          sources: @[sourceName],
+          chainID: token.chainID,
+          address: token.address,
+          decimals: token.decimals,
+          image: token.image,
+          `type`: tokenType,
+          communityId: token.communityID,
+        )
+      )
       self.flatTokenList.sort(cmpTokenItem)
       updated = true
 
     let token_by_symbol_key = token.bySymbolModelKey()
-    if not any(self.tokenBySymbolList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
-      self.tokenBySymbolList.add(TokenBySymbolItem(
+    if not any(
+      self.tokenBySymbolList,
+      proc(x: TokenBySymbolItem): bool =
+        x.key == token_by_symbol_key,
+    ):
+      self.tokenBySymbolList.add(
+        TokenBySymbolItem(
           key: token_by_symbol_key,
           name: token.name,
           symbol: token.symbol,
           sources: @[sourceName],
-          addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
+          addressPerChainId:
+            @[AddressPerChain(chainId: token.chainID, address: token.address)],
           decimals: token.decimals,
           image: token.image,
           `type`: tokenType,
-          communityId: token.communityID))
+          communityId: token.communityID,
+        )
+      )
       self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
       updated = true
 
@@ -277,21 +302,28 @@ QtObject:
       discard supportedTokensJson.getProp("result", tokensResult)
 
       if not errorString.isEmptyOrWhitespace:
-        raise newException(Exception, "Error getting supported tokens list: " & errorString)
+        raise
+          newException(Exception, "Error getting supported tokens list: " & errorString)
 
       if tokensResult.isNil or tokensResult.kind == JNull:
-        raise newException(Exception, "Error in response of getting supported tokens list")
+        raise
+          newException(Exception, "Error in response of getting supported tokens list")
 
-      let tokenList =  Json.decode($tokensResult, TokenListDto, allowUnknownFields = true)
+      let tokenList =
+        Json.decode($tokensResult, TokenListDto, allowUnknownFields = true)
       self.tokenListUpdatedAt = tokenList.updatedAt
 
-      let supportedNetworkChains = self.networkService.getFlatNetworks().map(n => n.chainId)
+      let supportedNetworkChains =
+        self.networkService.getFlatNetworks().map(n => n.chainId)
       var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
-      var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
+      var tokenBySymbolList: Table[string, TokenBySymbolItem] =
+        initTable[string, TokenBySymbolItem]()
       var tokenSymbols: seq[string] = @[]
 
       for s in tokenList.data:
-        let newSource = SupportedSourcesItem(name: s.name, source: s.source, version: s.version, tokensCount: s.tokens.len)
+        let newSource = SupportedSourcesItem(
+          name: s.name, source: s.source, version: s.version, tokensCount: s.tokens.len
+        )
         self.sourcesOfTokensList.add(newSource)
 
         for token in s.tokens:
@@ -302,8 +334,8 @@ QtObject:
             if flatTokensList.hasKey(unique_key):
               flatTokensList[unique_key].sources.add(s.name)
             else:
-              let tokenType = if s.name == "native" : TokenType.Native
-                              else: TokenType.ERC20
+              let tokenType =
+                if s.name == "native": TokenType.Native else: TokenType.ERC20
               flatTokensList[unique_key] = TokenItem(
                 key: unique_key,
                 name: token.name,
@@ -314,7 +346,8 @@ QtObject:
                 decimals: token.decimals,
                 image: token.image,
                 `type`: tokenType,
-                communityId: token.communityData.id)
+                communityId: token.communityData.id,
+              )
 
             # logic for building tokens by symbol list
             # In case the token is not a community token the unique key is symbol
@@ -331,20 +364,24 @@ QtObject:
               for addressPerChain in tokenBySymbolList[token_by_symbol_key].addressPerChainId:
                 addedChains.add(addressPerChain.chainId)
               if not addedChains.contains(token.chainID):
-                tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
+                tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(
+                  AddressPerChain(chainId: token.chainID, address: token.address)
+                )
             else:
-              let tokenType = if s.name == "native": TokenType.Native
-                              else: TokenType.ERC20
+              let tokenType =
+                if s.name == "native": TokenType.Native else: TokenType.ERC20
               tokenBySymbolList[token_by_symbol_key] = TokenBySymbolItem(
                 key: token_by_symbol_key,
                 name: token.name,
                 symbol: token.symbol,
                 sources: @[s.name],
-                addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
+                addressPerChainId:
+                  @[AddressPerChain(chainId: token.chainID, address: token.address)],
                 decimals: token.decimals,
                 image: token.image,
                 `type`: tokenType,
-                communityId: token.communityData.id)
+                communityId: token.communityData.id,
+              )
               if token.communityData.id.isEmptyOrWhitespace:
                 tokenSymbols.add(token.symbol)
 
@@ -368,11 +405,11 @@ QtObject:
     self.threadpool.start(arg)
 
   proc init*(self: Service) =
-    self.events.on(SignalType.Wallet.event) do(e:Args):
+    self.events.on(SignalType.Wallet.event) do(e: Args):
       var data = WalletSignal(e)
-      case data.eventType:
-        of "wallet-tick-reload":
-          self.rebuildMarketData()
+      case data.eventType
+      of "wallet-tick-reload":
+        self.rebuildMarketData()
     # update and populate internal list and then emit signal when new custom token detected?
 
   proc getCurrency*(self: Service): string =
@@ -439,7 +476,9 @@ QtObject:
         return token
     return nil
 
-  proc getTokenBySymbolByContractAddr(self: Service, contractAddr: string): TokenBySymbolItem =
+  proc getTokenBySymbolByContractAddr(
+      self: Service, contractAddr: string
+  ): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
         if addrPerChainId.address.toLower() == contractAddr.toLower():
@@ -455,7 +494,7 @@ QtObject:
     if token != nil:
       return token.key
     else:
-        return ""
+      return ""
 
   # TODO: needed in token permission right now, and activity controller which needs
   # to consider that token symbol may not be unique
@@ -469,7 +508,9 @@ QtObject:
   # TODO: remove this call once the activty filter mechanism uses tokenKeys instead of the token
   # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
   # https://github.com/status-im/status-desktop/issues/13505
-  proc findTokenBySymbolAndChainId*(self: Service, symbol: string, chainId: int): TokenBySymbolItem =
+  proc findTokenBySymbolAndChainId*(
+      self: Service, symbol: string, chainId: int
+  ): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       if token.symbol == symbol:
         for addrPerChainId in token.addressPerChainId:
@@ -478,7 +519,9 @@ QtObject:
     return nil
 
   # TODO: Perhaps will be removed after transactions in chat is refactored
-  proc findTokenByAddress*(self: Service, networkChainId: int, address: string): TokenBySymbolItem =
+  proc findTokenByAddress*(
+      self: Service, networkChainId: int, address: string
+  ): TokenBySymbolItem =
     for token in self.tokenBySymbolList:
       for addrPerChainId in token.addressPerChainId:
         if addrPerChainId.chainId == networkChainId and addrPerChainId.address == address:
@@ -492,30 +535,36 @@ QtObject:
       info "prepared tokens are not a json object"
       return
 
-    self.events.emit(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED, TokenHistoricalDataArgs(
-      result: response
-    ))
+    self.events.emit(
+      SIGNAL_TOKEN_HISTORICAL_DATA_LOADED, TokenHistoricalDataArgs(result: response)
+    )
 
-  proc getHistoricalDataForToken*(self: Service, symbol: string, currency: string, range: int) =
+  proc getHistoricalDataForToken*(
+      self: Service, symbol: string, currency: string, range: int
+  ) =
     let arg = GetTokenHistoricalDataTaskArg(
       tptr: getTokenHistoricalDataTask,
       vptr: cast[uint](self.vptr),
       slot: "tokenHistoricalDataResolved",
       symbol: symbol,
       currency: currency,
-      range: range
+      range: range,
     )
     self.threadpool.start(arg)
 
   # Token Management
   proc fetchTokenPreferences(self: Service) =
     # this is emited so that the models can notify about token preferences being available
-    defer: self.events.emit(SIGNAL_TOKEN_PREFERENCES_UPDATED, Args())
+    defer:
+      self.events.emit(SIGNAL_TOKEN_PREFERENCES_UPDATED, Args())
     self.tokenPreferencesJson = "[]"
     try:
       let response = backend.getTokenPreferences()
       if not response.error.isNil:
-        error "status-go error", procName="fetchTokenPreferences", errCode=response.error.code, errDesription=response.error.message
+        error "status-go error",
+          procName = "fetchTokenPreferences",
+          errCode = response.error.code,
+          errDesription = response.error.message
         return
 
       if response.result.isNil or response.result.kind != JArray:
@@ -523,15 +572,18 @@ QtObject:
 
       self.tokenPreferencesJson = $response.result
       for preferences in response.result:
-        let dto = Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = true)
+        let dto =
+          Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = true)
         self.tokenPreferencesTable[dto.key] = TokenPreferencesItem(
           key: dto.key,
           position: dto.position,
           groupPosition: dto.groupPosition,
           visible: dto.visible,
-          communityId: dto.communityId)
+          communityId: dto.communityId,
+        )
     except Exception as e:
-      error "error: ", procName="fetchTokenPreferences", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "fetchTokenPreferences", errName = e.name, errDesription = e.msg
 
   proc getTokenPreferences*(self: Service, symbol: string): TokenPreferencesItem =
     if not self.tokenPreferencesTable.hasKey(symbol):
@@ -540,7 +592,7 @@ QtObject:
         position: high(int),
         groupPosition: high(int),
         visible: true,
-        communityId: ""
+        communityId: "",
       )
     return self.tokenPreferencesTable[symbol]
 
@@ -555,15 +607,19 @@ QtObject:
       var tokenPreferences: seq[TokenPreferencesDto]
       if preferencesJson.kind == JArray:
         for preferences in preferencesJson:
-          add(tokenPreferences, Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = false))
+          add(
+            tokenPreferences,
+            Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = false),
+          )
       let response = backend.updateTokenPreferences(tokenPreferences)
       if not response.error.isNil:
         raise newException(CatchableError, response.error.message)
       self.fetchTokenPreferences()
     except Exception as e:
-      error "error: ", procName="updateTokenPreferences", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "updateTokenPreferences", errName = e.name, errDesription = e.msg
 
   proc updateTokenPrices*(self: Service, updatedPrices: Table[string, float64]) =
-      for tokenSymbol, price in updatedPrices:
-        self.tokenPriceTable[tokenSymbol] = price
-      self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())
+    for tokenSymbol, price in updatedPrices:
+      self.tokenPriceTable[tokenSymbol] = price
+    self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())

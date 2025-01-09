@@ -8,7 +8,7 @@ from ../../../../app_service/common/conversion import intToEnum
 
 import signal_type
 
-include  app_service/common/json_utils
+include app_service/common/json_utils
 
 type CommunitySignal* = ref object of Signal
   community*: CommunityDto
@@ -64,11 +64,10 @@ type DiscordCommunityImportFinishedSignal* = ref object of Signal
 type DiscordChannelImportCancelledSignal* = ref object of Signal
   channelId*: string
 
-type
-  CommunityMemberReevaluationStatus* {.pure.} = enum
-    None = 0,
-    InProgress,
-    Done,
+type CommunityMemberReevaluationStatus* {.pure.} = enum
+  None = 0
+  InProgress
+  Done
 
 type CommunityMemberReevaluationStatusSignal* = ref object of Signal
   communityId*: string
@@ -87,12 +86,11 @@ type CommunityTokenTransactionStatusChangedSignal* = ref object of Signal
   masterToken*: CommunityTokenDto
   errorString*: string
 
-type
-  CommunityTokenActionType* {.pure.} = enum
-    Unknown = 0,
-    Airdrop,
-    Burn,
-    RemoteDestruct,
+type CommunityTokenActionType* {.pure.} = enum
+  Unknown = 0
+  Airdrop
+  Burn
+  RemoteDestruct
 
 type CommunityTokenActionSignal* = ref object of Signal
   communityToken*: CommunityTokenDto
@@ -103,7 +101,9 @@ proc fromEvent*(T: type CommunitySignal, event: JsonNode): CommunitySignal =
   result.signalType = SignalType.CommunityFound
   result.community = event["event"].toCommunityDto()
 
-proc fromEvent*(T: type CuratedCommunitiesSignal, event: JsonNode): CuratedCommunitiesSignal =
+proc fromEvent*(
+    T: type CuratedCommunitiesSignal, event: JsonNode
+): CuratedCommunitiesSignal =
   result = CuratedCommunitiesSignal()
   result.signalType = SignalType.CuratedCommunitiesUpdated
 
@@ -116,7 +116,9 @@ proc fromEvent*(T: type CuratedCommunitiesSignal, event: JsonNode): CuratedCommu
     for communityId in event["event"]["unknownCommunities"].items():
       result.unknownCommunities.add(communityId.getStr)
 
-proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: JsonNode): DiscordCategoriesAndChannelsExtractedSignal =
+proc fromEvent*(
+    T: type DiscordCategoriesAndChannelsExtractedSignal, event: JsonNode
+): DiscordCategoriesAndChannelsExtractedSignal =
   result = DiscordCategoriesAndChannelsExtractedSignal()
 
   result.signalType = SignalType.DiscordCategoriesAndChannelsExtracted
@@ -136,9 +138,11 @@ proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: Json
       err.code = responseErr["code"].getInt()
       err.message = responseErr["message"].getStr()
       result.errors[key] = err
-      result.errorsCount = result.errorsCount+1
+      result.errorsCount = result.errorsCount + 1
 
-proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): DiscordCommunityImportProgressSignal =
+proc fromEvent*(
+    T: type DiscordCommunityImportProgressSignal, event: JsonNode
+): DiscordCommunityImportProgressSignal =
   result = DiscordCommunityImportProgressSignal()
   result.signalType = SignalType.DiscordCommunityImportProgress
   result.tasks = @[]
@@ -162,7 +166,9 @@ proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): 
       for task in importProgressObj["tasks"]:
         result.tasks.add(task.toDiscordImportTaskProgress())
 
-proc fromEvent*(T: type DiscordChannelImportProgressSignal, event: JsonNode): DiscordChannelImportProgressSignal =
+proc fromEvent*(
+    T: type DiscordChannelImportProgressSignal, event: JsonNode
+): DiscordChannelImportProgressSignal =
   result = DiscordChannelImportProgressSignal()
   result.signalType = SignalType.DiscordChannelImportProgress
   result.tasks = @[]
@@ -183,97 +189,139 @@ proc fromEvent*(T: type DiscordChannelImportProgressSignal, event: JsonNode): Di
       for task in importProgressObj["tasks"]:
         result.tasks.add(task.toDiscordImportTaskProgress())
 
-proc fromEvent*(T: type DiscordCommunityImportFinishedSignal, event: JsonNode): DiscordCommunityImportFinishedSignal =
+proc fromEvent*(
+    T: type DiscordCommunityImportFinishedSignal, event: JsonNode
+): DiscordCommunityImportFinishedSignal =
   result = DiscordCommunityImportFinishedSignal()
   result.signalType = SignalType.DiscordCommunityImportFinished
   result.communityId = event["event"]{"communityId"}.getStr()
 
-proc fromEvent*(T: type DiscordCommunityImportCancelledSignal, event: JsonNode): DiscordCommunityImportCancelledSignal =
+proc fromEvent*(
+    T: type DiscordCommunityImportCancelledSignal, event: JsonNode
+): DiscordCommunityImportCancelledSignal =
   result = DiscordCommunityImportCancelledSignal()
   result.signalType = SignalType.DiscordCommunityImportCancelled
   result.communityId = event["event"]{"communityId"}.getStr()
 
-proc fromEvent*(T: type DiscordCommunityImportCleanedUpSignal, event: JsonNode): DiscordCommunityImportCleanedUpSignal =
+proc fromEvent*(
+    T: type DiscordCommunityImportCleanedUpSignal, event: JsonNode
+): DiscordCommunityImportCleanedUpSignal =
   result = DiscordCommunityImportCleanedUpSignal()
   result.signalType = SignalType.DiscordCommunityImportCleanedUp
   result.communityId = event["event"]{"communityId"}.getStr()
 
-proc fromEvent*(T: type DiscordChannelImportFinishedSignal, event: JsonNode): DiscordChannelImportFinishedSignal =
+proc fromEvent*(
+    T: type DiscordChannelImportFinishedSignal, event: JsonNode
+): DiscordChannelImportFinishedSignal =
   result = DiscordChannelImportFinishedSignal()
   result.signalType = SignalType.DiscordChannelImportFinished
   result.communityId = event["event"]{"communityId"}.getStr()
   result.channelId = event["event"]{"channelId"}.getStr()
 
-proc fromEvent*(T: type DiscordChannelImportCancelledSignal, event: JsonNode): DiscordChannelImportCancelledSignal =
+proc fromEvent*(
+    T: type DiscordChannelImportCancelledSignal, event: JsonNode
+): DiscordChannelImportCancelledSignal =
   result = DiscordChannelImportCancelledSignal()
   result.signalType = SignalType.DiscordChannelImportCancelled
   result.channelId = event["event"]{"channelId"}.getStr()
 
-proc fromEvent*(T: type CommunityMemberReevaluationStatusSignal, event: JsonNode): CommunityMemberReevaluationStatusSignal =
+proc fromEvent*(
+    T: type CommunityMemberReevaluationStatusSignal, event: JsonNode
+): CommunityMemberReevaluationStatusSignal =
   result = CommunityMemberReevaluationStatusSignal()
   result.signalType = SignalType.MemberReevaluationStatus
   result.communityId = event["event"]{"communityId"}.getStr()
 
   result.status = CommunityMemberReevaluationStatus.None
   var statusInt: int
-  if (event["event"].getProp("status", statusInt) and (statusInt >= ord(low(CommunityMemberReevaluationStatus)) and
-      statusInt <= ord(high(CommunityMemberReevaluationStatus)))):
+  if (
+    event["event"].getProp("status", statusInt) and (
+      statusInt >= ord(low(CommunityMemberReevaluationStatus)) and
+      statusInt <= ord(high(CommunityMemberReevaluationStatus))
+    )
+  ):
     result.status = CommunityMemberReevaluationStatus(statusInt)
 
-proc createFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc createFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
   result.begin = event["event"]{"from"}.getInt()
   result.to = event["event"]{"to"}.getInt()
 
-proc historyArchivesProtocolEnabledFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchivesProtocolEnabledFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchivesProtocolEnabled
 
-proc historyArchivesProtocolDisabledFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchivesProtocolDisabledFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchivesProtocolDisabled
 
-proc creatingHistoryArchivesFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc creatingHistoryArchivesFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.CreatingHistoryArchives
 
-proc historyArchivesCreatedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchivesCreatedFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchivesCreated
 
-proc noHistoryArchivesCreatedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc noHistoryArchivesCreatedFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.NoHistoryArchivesCreated
 
-proc historyArchivesSeedingFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchivesSeedingFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchivesSeeding
 
-proc historyArchivesUnseededFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchivesUnseededFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchivesUnseeded
 
-proc historyArchiveDownloadedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc historyArchiveDownloadedFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal.createFromEvent(event)
   result.signalType = SignalType.HistoryArchiveDownloaded
 
-proc downloadingHistoryArchivesStartedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc downloadingHistoryArchivesStartedFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
   result.signalType = SignalType.DownloadingHistoryArchivesStarted
 
-proc importingHistoryArchiveMessagesFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc importingHistoryArchiveMessagesFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
   result.signalType = SignalType.ImportingHistoryArchiveMessages
 
-proc downloadingHistoryArchivesFinishedFromEvent*(T: type HistoryArchivesSignal, event: JsonNode): HistoryArchivesSignal =
+proc downloadingHistoryArchivesFinishedFromEvent*(
+    T: type HistoryArchivesSignal, event: JsonNode
+): HistoryArchivesSignal =
   result = HistoryArchivesSignal()
   result.communityId = event["event"]{"communityId"}.getStr()
   result.signalType = SignalType.DownloadingHistoryArchivesFinished
 
-proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: JsonNode): CommunityTokenTransactionStatusChangedSignal =
+proc fromEvent*(
+    T: type CommunityTokenTransactionStatusChangedSignal, event: JsonNode
+): CommunityTokenTransactionStatusChangedSignal =
   result = CommunityTokenTransactionStatusChangedSignal()
   result.signalType = SignalType.CommunityTokenTransactionStatusChanged
   result.transactionType = event["event"]{"transactionType"}.getStr()
@@ -288,14 +336,17 @@ proc fromEvent*(T: type CommunityTokenTransactionStatusChangedSignal, event: Jso
   result.errorString = event["event"]{"errorString"}.getStr()
   result.signalType = SignalType.CommunityTokenTransactionStatusChanged
 
-proc fromEvent*(T: type CommunityTokenActionSignal, event: JsonNode): CommunityTokenActionSignal =
+proc fromEvent*(
+    T: type CommunityTokenActionSignal, event: JsonNode
+): CommunityTokenActionSignal =
   result = CommunityTokenActionSignal()
   result.signalType = SignalType.CommunityTokenAction
   result.actionType = CommunityTokenActionType.Unknown
   if event["event"].hasKey("communityToken"):
     result.communityToken = toCommunityTokenDto(event["event"]{"communityToken"})
   try:
-    result.actionType = intToEnum[CommunityTokenActionType](event["event"]{"actionType"}.getInt())
+    result.actionType =
+      intToEnum[CommunityTokenActionType](event["event"]{"actionType"}.getInt())
   except Exception as e:
-    error "CommunityTokenActionSignal: can't read actionType:", error=e.msg
+    error "CommunityTokenActionSignal: can't read actionType:", error = e.msg
   result.signalType = SignalType.CommunityTokenAction

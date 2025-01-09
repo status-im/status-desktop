@@ -1,6 +1,5 @@
-type
-  BiometricsState* = ref object of State
-    storeToKeychain: bool
+type BiometricsState* = ref object of State
+  storeToKeychain: bool
 
 proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState =
   result = BiometricsState()
@@ -15,7 +14,9 @@ method executeCancelCommand*(self: BiometricsState, controller: Controller) =
 
 proc doAuthentication(self: BiometricsState, controller: Controller) =
   if self.flowType == FlowType.MigrateFromKeycardToApp:
-    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    let migratingProfile =
+      controller.getKeyPairForProcessing().getKeyUid() ==
+      singletonInstance.userProfile.getKeyUid()
     if not migratingProfile:
       return
     controller.authenticateUser()
@@ -41,7 +42,9 @@ method executePreTertiaryStateCommand*(self: BiometricsState, controller: Contro
 method getNextTertiaryState*(self: BiometricsState, controller: Controller): State =
   ## Tertiary action is called after each async action during migration process.
   if self.flowType == FlowType.MigrateFromKeycardToApp:
-    let migratingProfile = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+    let migratingProfile =
+      controller.getKeyPairForProcessing().getKeyUid() ==
+      singletonInstance.userProfile.getKeyUid()
     if not migratingProfile:
       return
     return createState(StateType.MigratingKeypairToApp, self.flowType, nil)

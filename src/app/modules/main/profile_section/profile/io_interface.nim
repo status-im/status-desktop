@@ -4,8 +4,7 @@ import app_service/service/profile/dto/profile_showcase_preferences
 
 import models/profile_save_data
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -38,10 +37,14 @@ method onProfileShowcasePreferencesSaveSucceeded*(self: AccessInterface) {.base.
 method onProfileShowcasePreferencesSaveFailed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveProfileIdentityChanges*(self: AccessInterface, identity: IdentityChangesSaveData) {.base.} =
+method saveProfileIdentityChanges*(
+    self: AccessInterface, identity: IdentityChangesSaveData
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveProfileShowcasePreferences*(self: AccessInterface, showcase: ShowcaseSaveData) {.base.} =
+method saveProfileShowcasePreferences*(
+    self: AccessInterface, showcase: ShowcaseSaveData
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getProfileShowcaseSocialLinksLimit*(self: AccessInterface): int {.base.} =
@@ -56,7 +59,9 @@ method requestProfileShowcasePreferences*(self: AccessInterface) {.base.} =
 method setIsFirstShowcaseInteraction*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loadProfileShowcasePreferences*(self: AccessInterface, preferences: ProfileShowcasePreferencesDto) {.base.} =
+method loadProfileShowcasePreferences*(
+    self: AccessInterface, preferences: ProfileShowcasePreferencesDto
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

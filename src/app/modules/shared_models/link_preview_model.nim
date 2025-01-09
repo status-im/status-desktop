@@ -8,40 +8,38 @@ import ../../../app_service/service/message/dto/status_community_channel_link_pr
 import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/community/dto/community
 
-type
-  ModelRole {.pure.} = enum
-    Url = UserRole + 1
-    Unfurled
-    Immutable
-    IsLocalData
-    LoadingLocalData
-    Empty
-    PreviewType
-    # Standard unfurled link (oembed, opengraph, image)
-    StandardPreview
-    StandardPreviewThumbnail
-    # Status contact
-    StatusContactPreview
-    StatusContactPreviewThumbnail
-    # Status community
-    StatusCommunityPreview
-    StatusCommunityPreviewIcon
-    StatusCommunityPreviewBanner
-    # Status channel
-    StatusCommunityChannelPreview
-    # NOTE: I know "CommunityChannelCommunity" doesn't sound good, 
-    # and we could use existing `StatusCommunityPreview` role for this,
-    # but I decided no to mess things around. So there we have it:
-    StatusCommunityChannelCommunityPreview 
-    StatusCommunityChannelCommunityPreviewIcon
-    StatusCommunityChannelCommunityPreviewBanner
+type ModelRole {.pure.} = enum
+  Url = UserRole + 1
+  Unfurled
+  Immutable
+  IsLocalData
+  LoadingLocalData
+  Empty
+  PreviewType
+  # Standard unfurled link (oembed, opengraph, image)
+  StandardPreview
+  StandardPreviewThumbnail
+  # Status contact
+  StatusContactPreview
+  StatusContactPreviewThumbnail
+  # Status community
+  StatusCommunityPreview
+  StatusCommunityPreviewIcon
+  StatusCommunityPreviewBanner
+  # Status channel
+  StatusCommunityChannelPreview
+  # NOTE: I know "CommunityChannelCommunity" doesn't sound good, 
+  # and we could use existing `StatusCommunityPreview` role for this,
+  # but I decided no to mess things around. So there we have it:
+  StatusCommunityChannelCommunityPreview
+  StatusCommunityChannelCommunityPreviewIcon
+  StatusCommunityChannelCommunityPreviewBanner
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
-  proc delete*(self: Model) = 
+  proc delete*(self: Model) =
     for i in 0 ..< self.items.len:
       self.items[i].delete
     self.items = @[]
@@ -65,7 +63,8 @@ QtObject:
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""
+      result &=
+        fmt"""
       [{i}]:({$self.items[i]})
       """
 
@@ -83,28 +82,31 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Url.int:"url",
-      ModelRole.Unfurled.int:"unfurled",
-      ModelRole.Immutable.int:"immutable",
-      ModelRole.IsLocalData.int:"isLocalData",
-      ModelRole.LoadingLocalData.int:"loadingLocalData",
-      ModelRole.Empty.int:"empty",
-      ModelRole.PreviewType.int:"previewType",
+      ModelRole.Url.int: "url",
+      ModelRole.Unfurled.int: "unfurled",
+      ModelRole.Immutable.int: "immutable",
+      ModelRole.IsLocalData.int: "isLocalData",
+      ModelRole.LoadingLocalData.int: "loadingLocalData",
+      ModelRole.Empty.int: "empty",
+      ModelRole.PreviewType.int: "previewType",
       # Standard
-      ModelRole.StandardPreview.int:"standardPreview",
-      ModelRole.StandardPreviewThumbnail.int:"standardPreviewThumbnail",
+      ModelRole.StandardPreview.int: "standardPreview",
+      ModelRole.StandardPreviewThumbnail.int: "standardPreviewThumbnail",
       # Contact
-      ModelRole.StatusContactPreview.int:"statusContactPreview",
-      ModelRole.StatusContactPreviewThumbnail.int:"statusContactPreviewThumbnail",
+      ModelRole.StatusContactPreview.int: "statusContactPreview",
+      ModelRole.StatusContactPreviewThumbnail.int: "statusContactPreviewThumbnail",
       # Community
-      ModelRole.StatusCommunityPreview.int:"statusCommunityPreview",
-      ModelRole.StatusCommunityPreviewIcon.int:"statusCommunityPreviewIcon",
-      ModelRole.StatusCommunityPreviewBanner.int:"statusCommunityPreviewBanner",
+      ModelRole.StatusCommunityPreview.int: "statusCommunityPreview",
+      ModelRole.StatusCommunityPreviewIcon.int: "statusCommunityPreviewIcon",
+      ModelRole.StatusCommunityPreviewBanner.int: "statusCommunityPreviewBanner",
       # Channel
-      ModelRole.StatusCommunityChannelPreview.int:"statusCommunityChannelPreview",
-      ModelRole.StatusCommunityChannelCommunityPreview.int:"statusCommunityChannelCommunityPreview",
-      ModelRole.StatusCommunityChannelCommunityPreviewIcon.int:"statusCommunityChannelCommunityPreviewIcon",
-      ModelRole.StatusCommunityChannelCommunityPreviewBanner.int:"statusCommunityChannelCommunityPreviewBanner",
+      ModelRole.StatusCommunityChannelPreview.int: "statusCommunityChannelPreview",
+      ModelRole.StatusCommunityChannelCommunityPreview.int:
+        "statusCommunityChannelCommunityPreview",
+      ModelRole.StatusCommunityChannelCommunityPreviewIcon.int:
+        "statusCommunityChannelCommunityPreviewIcon",
+      ModelRole.StatusCommunityChannelCommunityPreviewBanner.int:
+        "statusCommunityChannelCommunityPreviewBanner",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -117,7 +119,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Url:
       result = newQVariant(item.linkPreview.url)
     of ModelRole.Unfurled:
@@ -129,7 +131,7 @@ QtObject:
     of ModelRole.LoadingLocalData:
       result = newQVariant(item.loadingLocalData)
     of ModelRole.Empty:
-      result = newQVariant(item.linkPreview.empty()) 
+      result = newQVariant(item.linkPreview.empty())
     of ModelRole.PreviewType:
       result = newQVariant(item.linkPreview.previewType.int)
     of ModelRole.StandardPreview:
@@ -169,24 +171,25 @@ QtObject:
       result = newQVariant()
 
   proc removeItemWithIndex(self: Model, ind: int) =
-    if(ind < 0 or ind >= self.items.len):
+    if (ind < 0 or ind >= self.items.len):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
 
   proc getItemAtIndex*(self: Model, index: int): Item =
-    if(index < 0 or index >= self.items.len):
+    if (index < 0 or index >= self.items.len):
       return
     return self.items[index]
-  
+
   proc findUrlIndex(self: Model, url: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].linkPreview.url == url):
+      if (self.items[i].linkPreview.url == url):
         return i
     return -1
 
@@ -199,9 +202,11 @@ QtObject:
       return
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
+    defer:
+      sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
+    defer:
+      destIndex.delete
 
     let currentItem = self.items[fromRow]
     self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, to)
@@ -216,7 +221,8 @@ QtObject:
       item.unfurled = true
       item.linkPreview = linkPreviews[item.linkPreview.url]
       let modelIndex = self.createIndex(row, 0, nil)
-      defer: modelIndex.delete
+      defer:
+        modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)
 
   proc setUrls*(self: Model, urls: seq[string]) =
@@ -249,11 +255,12 @@ QtObject:
       item.linkPreview = linkPreview
 
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
+      defer:
+        parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, i, i)
       self.items.insert(item, i)
       self.endInsertRows()
-      
+
     self.countChanged()
 
   proc clearItems*(self: Model) =
@@ -269,19 +276,22 @@ QtObject:
     self.items[index].markAsImmutable()
 
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
     for i in 0 ..< self.items.len:
       self.items[i].markAsImmutable()
-  
+
     let indexStart = self.createIndex(0, 0, nil)
     let indexEnd = self.createIndex(self.items.len, 0, nil)
-    defer: indexStart.delete
-    defer: indexEnd.delete
+    defer:
+      indexStart.delete
+    defer:
+      indexEnd.delete
     self.dataChanged(indexStart, indexEnd)
-      
+
   proc getLinkPreviewType*(self: Model, url: string): int {.slot.} =
     let index = self.findUrlIndex(url)
     if index == -1:
@@ -300,7 +310,6 @@ QtObject:
     for item in self.items:
       result.add(item.linkPreview.url)
 
-
   proc getContactIds*(self: Model): HashSet[string] =
     for item in self.items:
       let contactId = item.linkPreview.getContactId()
@@ -313,15 +322,16 @@ QtObject:
       if communityId != "":
         result[communityId] = item.linkPreview.url
 
-  proc setItemLoadingLocalData(self: Model, row: int, item: Item, value: bool) = 
+  proc setItemLoadingLocalData(self: Model, row: int, item: Item, value: bool) =
     if item.loadingLocalData == value:
       return
     item.loadingLocalData = value
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LoadingLocalData.int])
 
-  proc setItemIsLocalData(self: Model, row: int, item: Item) = 
+  proc setItemIsLocalData(self: Model, row: int, item: Item) =
     if item.isLocalData:
       return
     var roles = @[ModelRole.IsLocalData.int]
@@ -330,7 +340,8 @@ QtObject:
       item.loadingLocalData = false
       roles.add(ModelRole.LoadingLocalData.int)
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, roles)
 
   proc setContactInfo*(self: Model, contactDetails: ContactDetails) =

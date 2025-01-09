@@ -12,9 +12,8 @@ logScope:
 # Signals which may be emitted by this service:
 const SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED* = "collectiblePreferencesUpdated"
 
-type
-  ResultArgs* = ref object of Args
-    success*: bool
+type ResultArgs* = ref object of Args
+  success*: bool
 
 QtObject:
   type Service* = ref object of QObject
@@ -24,10 +23,7 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool
-  ): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -40,13 +36,19 @@ QtObject:
     try:
       let response = backend.getCollectiblePreferences()
       if not response.error.isNil:
-        error "status-go error", procName="getCollectiblePreferences", errCode=response.error.code, errDesription=response.error.message
+        error "status-go error",
+          procName = "getCollectiblePreferences",
+          errCode = response.error.code,
+          errDesription = response.error.message
         return
       return response.result
     except Exception as e:
-      error "error: ", procName="getCollectiblePreferences", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "getCollectiblePreferences", errName = e.name, errDesription = e.msg
 
-  proc updateCollectiblePreferences*(self: Service, collectiblePreferencesJson: string) =
+  proc updateCollectiblePreferences*(
+      self: Service, collectiblePreferencesJson: string
+  ) =
     var updated = false
     try:
       let preferencesJson = parseJson(collectiblePreferencesJson)
@@ -59,6 +61,11 @@ QtObject:
         raise newException(CatchableError, response.error.message)
       updated = true
     except Exception as e:
-      error "error: ", procName="updateCollectiblePreferences", errName=e.name, errDesription=e.msg
+      error "error: ",
+        procName = "updateCollectiblePreferences",
+        errName = e.name,
+        errDesription = e.msg
 
-    self.events.emit(SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED, ResultArgs(success: updated))
+    self.events.emit(
+      SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED, ResultArgs(success: updated)
+    )

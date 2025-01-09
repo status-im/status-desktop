@@ -27,10 +27,10 @@ QtObject:
     self.icon.delete()
     self.banner.delete()
 
-
   proc communityIdChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getCommunityId*(self: StatusCommunityLinkPreview): string {.slot.} =
     result = self.communityId
+
   QtProperty[string] communityId:
     read = getCommunityId
     notify = communityIdChanged
@@ -38,6 +38,7 @@ QtObject:
   proc displayNameChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getDisplayName*(self: StatusCommunityLinkPreview): string {.slot.} =
     result = self.displayName
+
   QtProperty[string] displayName:
     read = getDisplayName
     notify = displayNameChanged
@@ -45,6 +46,7 @@ QtObject:
   proc descriptionChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getDescription*(self: StatusCommunityLinkPreview): string {.slot.} =
     result = self.description
+
   QtProperty[string] description:
     read = getDescription
     notify = descriptionChanged
@@ -52,6 +54,7 @@ QtObject:
   proc membersCountChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getMembersCount*(self: StatusCommunityLinkPreview): int {.slot.} =
     result = int(self.membersCount)
+
   QtProperty[int] membersCount:
     read = getMembersCount
     notify = membersCountChanged
@@ -59,13 +62,15 @@ QtObject:
   proc activeMembersCountChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getActiveMembersCount*(self: StatusCommunityLinkPreview): int {.slot.} =
     result = int(self.activeMembersCount)
+
   QtProperty[int] activeMembersCount:
     read = getActiveMembersCount
     notify = activeMembersCountChanged
-  
+
   proc colorChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getColor*(self: StatusCommunityLinkPreview): string {.slot.} =
     result = self.color
+
   QtProperty[string] color:
     read = getColor
     notify = colorChanged
@@ -78,6 +83,7 @@ QtObject:
 
   proc getEncrypted*(self: StatusCommunityLinkPreview): bool {.slot.} =
     result = self.encrypted
+
   proc encryptedChanged*(self: StatusCommunityLinkPreview) {.signal.}
 
   QtProperty[bool] encrypted:
@@ -86,6 +92,7 @@ QtObject:
 
   proc getJoined*(self: StatusCommunityLinkPreview): bool {.slot.} =
     result = self.joined
+
   proc joinedChanged*(self: StatusCommunityLinkPreview) {.signal.}
 
   QtProperty[bool] joined:
@@ -118,7 +125,8 @@ QtObject:
     result.banner.copy(banner)
 
   proc `$`*(self: StatusCommunityLinkPreview): string =
-    result = fmt"""StatusCommunityLinkPreview(
+    result =
+      fmt"""StatusCommunityLinkPreview(
       communityId: {self.communityId},
       displayName: {self.displayName},
       description: {self.description},
@@ -132,27 +140,31 @@ QtObject:
     )"""
 
   proc `%`*(self: StatusCommunityLinkPreview): JsonNode =
-    result = %* {
-      "communityId": self.communityId,
-      "displayName": self.displayName,
-      "description": self.description,
-      "membersCount": self.membersCount,
-      "activeMembersCount": self.activeMembersCount,
-      "color": self.color,
-      "icon": self.icon,
-      "banner": self.banner,
-      "encrypted": self.encrypted,
-      "joined": self.joined
-    }
+    result =
+      %*{
+        "communityId": self.communityId,
+        "displayName": self.displayName,
+        "description": self.description,
+        "membersCount": self.membersCount,
+        "activeMembersCount": self.activeMembersCount,
+        "color": self.color,
+        "icon": self.icon,
+        "banner": self.banner,
+        "encrypted": self.encrypted,
+        "joined": self.joined,
+      }
 
   proc empty*(self: StatusCommunityLinkPreview): bool =
     return self.communityId.len == 0
 
-  proc setCommunityInfo*(self: StatusCommunityLinkPreview, community: CommunityDto): bool =
+  proc setCommunityInfo*(
+      self: StatusCommunityLinkPreview, community: CommunityDto
+  ): bool =
     if self.communityId != community.id:
       return false
 
-    debug "setCommunityInfo", communityId = self.communityId, communityName = community.name
+    debug "setCommunityInfo",
+      communityId = self.communityId, communityName = community.name
 
     if self.displayName != community.name:
       self.displayName = community.name

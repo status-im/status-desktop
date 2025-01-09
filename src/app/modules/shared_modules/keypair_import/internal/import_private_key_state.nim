@@ -1,5 +1,4 @@
-type
-  ImportPrivateKeyState* = ref object of State
+type ImportPrivateKeyState* = ref object of State
 
 proc newImportPrivateKeyState*(backState: State): ImportPrivateKeyState =
   result = ImportPrivateKeyState()
@@ -8,5 +7,7 @@ proc newImportPrivateKeyState*(backState: State): ImportPrivateKeyState =
 proc delete*(self: ImportPrivateKeyState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: ImportPrivateKeyState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: ImportPrivateKeyState, controller: Controller
+) =
   controller.authenticateLoggedInUser()

@@ -31,15 +31,44 @@ type PredefinedKeycardData* {.pure.} = enum
 
 # Forward declaration
 # General section
-proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
+proc createState*(
+  stateToBeCreated: StateType, flowType: FlowType, backState: State
+): State
+
 proc extractPredefinedKeycardDataToNumber*(currValue: string): int
-proc updatePredefinedKeycardData*(currValue: string, value: PredefinedKeycardData, add: bool): string
-proc isPredefinedKeycardDataFlagSet*(currValue: string, value: PredefinedKeycardData): bool
-proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State
+proc updatePredefinedKeycardData*(
+  currValue: string, value: PredefinedKeycardData, add: bool
+): string
+
+proc isPredefinedKeycardDataFlagSet*(
+  currValue: string, value: PredefinedKeycardData
+): bool
+
+proc findBackStateWithTargetedStateType*(
+  currentState: State, targetedStateType: StateType
+): State
+
 # Resolve state section
-proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
-proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
-proc readingKeycard*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
+proc ensureReaderAndCardPresence*(
+  state: State,
+  keycardFlowType: string,
+  keycardEvent: KeycardEvent,
+  controller: Controller,
+): State
+
+proc ensureReaderAndCardPresenceAndResolveNextState*(
+  state: State,
+  keycardFlowType: string,
+  keycardEvent: KeycardEvent,
+  controller: Controller,
+): State
+
+proc readingKeycard*(
+  state: State,
+  keycardFlowType: string,
+  keycardEvent: KeycardEvent,
+  controller: Controller,
+): State
 
 include biometrics_state
 include biometrics_password_failed_state

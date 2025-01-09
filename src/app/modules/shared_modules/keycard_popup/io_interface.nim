@@ -24,27 +24,25 @@ type FlowType* {.pure.} = enum
   Sign = "Sign"
 
 # For the following flows we don't run card syncing.
-const FlowsWeShouldNotTryAKeycardSyncFor* = @[
-  FlowType.General,
-  FlowType.FactoryReset,
-  FlowType.UnlockKeycard,
-  FlowType.SetupNewKeycard,
-  FlowType.SetupNewKeycardNewSeedPhrase,
-  FlowType.SetupNewKeycardOldSeedPhrase,
-  FlowType.ImportFromKeycard,
-  FlowType.Authentication,
-  FlowType.CreateCopyOfAKeycard,
-  FlowType.MigrateFromKeycardToApp,
-  FlowType.MigrateFromAppToKeycard,
-  FlowType.Sign,
-]
+const FlowsWeShouldNotTryAKeycardSyncFor* =
+  @[
+    FlowType.General, FlowType.FactoryReset, FlowType.UnlockKeycard,
+    FlowType.SetupNewKeycard, FlowType.SetupNewKeycardNewSeedPhrase,
+    FlowType.SetupNewKeycardOldSeedPhrase, FlowType.ImportFromKeycard,
+    FlowType.Authentication, FlowType.CreateCopyOfAKeycard,
+    FlowType.MigrateFromKeycardToApp, FlowType.MigrateFromAppToKeycard, FlowType.Sign,
+  ]
 
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
 const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
-const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
-const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* = "sharedKeycarModuleUserAuthenticated"
-const SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC* = "sharedKeycarModuleTryKeycardSync"
-const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModuleKeycardSyncTerminated"
+const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* =
+  "sharedKeycarModuleAuthenticateUser"
+const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* =
+  "sharedKeycarModuleUserAuthenticated"
+const SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC* =
+  "sharedKeycarModuleTryKeycardSync"
+const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* =
+  "sharedKeycarModuleKeycardSyncTerminated"
 const SIGNAL_SHARED_KEYCARD_MODULE_SIGN_DATA* = "sharedKeycarModuleSignData"
 const SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED* = "sharedKeycarModuleDataSigned"
 
@@ -65,43 +63,39 @@ const SIGNAL_SHARED_KEYCARD_MODULE_DATA_SIGNED* = "sharedKeycarModuleDataSigned"
 ## TLDR: when you need to authenticate user, from the module where it's needed you have to send `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER`
 ## signal to run authentication process and connect to `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal to get the results of it.
 
-type
-  SharedKeycarModuleBaseArgs* = ref object of Args
-    uniqueIdentifier*: string
+type SharedKeycarModuleBaseArgs* = ref object of Args
+  uniqueIdentifier*: string
 
-type
-  SharedKeycarModuleArgs* = ref object of SharedKeycarModuleBaseArgs
-    password*: string
-    pin*: string # this is used in case we need to run another keycard flow which requires pin, after we successfully authenticated logged in user
-    keyUid*: string
-    keycardUid*: string
-    additinalPathsDetails*: Table[string, KeyDetails] # [path, KeyDetails]
-    path*: string
-    r*: string
-    s*: string
-    v*: string
+type SharedKeycarModuleArgs* = ref object of SharedKeycarModuleBaseArgs
+  password*: string
+  pin*: string
+    # this is used in case we need to run another keycard flow which requires pin, after we successfully authenticated logged in user
+  keyUid*: string
+  keycardUid*: string
+  additinalPathsDetails*: Table[string, KeyDetails] # [path, KeyDetails]
+  path*: string
+  r*: string
+  s*: string
+  v*: string
 
-type
-  SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
-    lastStepInTheCurrentFlow*: bool
-    continueWithNextFlow*: FlowType
-    forceFlow*: bool
-    continueWithKeyUid*: string
-    returnToFlow*: FlowType
+type SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
+  lastStepInTheCurrentFlow*: bool
+  continueWithNextFlow*: FlowType
+  forceFlow*: bool
+  continueWithKeyUid*: string
+  returnToFlow*: FlowType
 
-type
-  SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
-    keyUid*: string
-    additionalBip44Paths*: seq[string] # can be used in authentication flow to export additinal paths if needed except encryption path
+type SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
+  keyUid*: string
+  additionalBip44Paths*: seq[string]
+    # can be used in authentication flow to export additinal paths if needed except encryption path
 
-type
-  SharedKeycarModuleSigningArgs* = ref object of SharedKeycarModuleBaseArgs
-    keyUid*: string
-    path*: string
-    dataToSign*: string
+type SharedKeycarModuleSigningArgs* = ref object of SharedKeycarModuleBaseArgs
+  keyUid*: string
+  path*: string
+  dataToSign*: string
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -145,12 +139,21 @@ method onTertiaryActionClicked*(self: AccessInterface) {.base.} =
 method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
+method onKeycardResponse*(
+    self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "",
-  forceFlow = false, returnToFlow = FlowType.General) {.base.} =
-    raise newException(ValueError, "No implementation available")
+method runFlow*(
+    self: AccessInterface,
+    flowToRun: FlowType,
+    keyUid = "",
+    bip44Paths: seq[string] = @[],
+    txHash = "",
+    forceFlow = false,
+    returnToFlow = FlowType.General,
+) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -176,10 +179,14 @@ method getNameFromKeycard*(self: AccessInterface): string {.base.} =
 method setPairingCode*(self: AccessInterface, value: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): bool {.base.} =
+method checkRepeatedKeycardPinWhileTyping*(
+    self: AccessInterface, pin: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkRepeatedKeycardPukWhileTyping*(self: AccessInterface, puk: string): bool {.base.} =
+method checkRepeatedKeycardPukWhileTyping*(
+    self: AccessInterface, puk: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMnemonic*(self: AccessInterface): string {.base.} =
@@ -203,16 +210,22 @@ method getKeyPairForProcessing*(self: AccessInterface): KeyPairItem {.base.} =
 method getKeyPairHelper*(self: AccessInterface): KeyPairItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateKeyPairForProcessing*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+method updateKeyPairForProcessing*(
+    self: AccessInterface, cardMetadata: CardMetadata
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateKeyPairHelper*(self: AccessInterface, cardMetadata: CardMetadata) {.base.} =
+method updateKeyPairHelper*(
+    self: AccessInterface, cardMetadata: CardMetadata
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeyPairForProcessing*(self: AccessInterface, item: KeyPairItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method prepareKeyPairForProcessing*(self: AccessInterface, keyUid: string, keycardUid = "") {.base.} =
+method prepareKeyPairForProcessing*(
+    self: AccessInterface, keyUid: string, keycardUid = ""
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
@@ -221,26 +234,35 @@ method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
 method getSigningPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
+method onUserAuthenticated*(
+    self: AccessInterface, password: string, pin: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method keychainObtainedDataFailure*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =
+method keychainObtainedDataFailure*(
+    self: AccessInterface, errorDescription: string, errorType: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method keychainObtainedDataSuccess*(self: AccessInterface, data: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method syncKeycardBasedOnAppState*(self: AccessInterface, keyUid: string, pin: string) {.base.} =
+method syncKeycardBasedOnAppState*(
+    self: AccessInterface, keyUid: string, pin: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getPin*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) {.base.} =
+method onTokensRebuilt*(
+    self: AccessInterface,
+    accountAddresses: seq[string],
+    accountTokens: seq[GroupedTokenItem],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-type
-  DelegateInterface* = concept c
+type DelegateInterface* = concept c

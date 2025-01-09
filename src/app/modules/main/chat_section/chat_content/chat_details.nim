@@ -1,10 +1,8 @@
 import NimQml
 import ../../../../../app_service/common/types
 
-
 QtObject:
-  type ChatDetails* = ref object of QObject
-    # fixed props
+  type ChatDetails* = ref object of QObject # fixed props
     id: string
     `type`: int
     belongsToCommunity: bool
@@ -42,12 +40,9 @@ QtObject:
       self: ChatDetails,
       id: string,
       `type`: int,
-      belongsToCommunity,
-      isUsersListAvailable: bool,
-      name,
-      icon:string,
-      color, description,
-      emoji: string,
+      belongsToCommunity, isUsersListAvailable: bool,
+      name, icon: string,
+      color, description, emoji: string,
       hasUnreadMessages: bool,
       notificationsCount: int,
       highlight, muted: bool,
@@ -61,7 +56,7 @@ QtObject:
       hideIfPermissionsNotMet: bool,
       missingEncryptionKey: bool,
       requiresPermissions: bool,
-    ) =
+  ) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -89,27 +84,32 @@ QtObject:
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
+
   QtProperty[string] id:
     read = getId
 
   proc getType(self: ChatDetails): int {.slot.} =
     return self.`type`
+
   QtProperty[int] type:
     read = getType
 
   proc getBelongsToCommunity(self: ChatDetails): bool {.slot.} =
     return self.belongsToCommunity
+
   QtProperty[bool] belongsToCommunity:
     read = getBelongsToCommunity
 
   proc getIsUsersListAvailable(self: ChatDetails): bool {.slot.} =
     return self.isUsersListAvailable
+
   QtProperty[bool] isUsersListAvailable:
     read = getIsUsersListAvailable
 
   proc nameChanged(self: ChatDetails) {.signal.}
   proc getName(self: ChatDetails): string {.slot.} =
     return self.name
+
   QtProperty[string] name:
     read = getName
     notify = nameChanged
@@ -123,6 +123,7 @@ QtObject:
   proc iconChanged(self: ChatDetails) {.signal.}
   proc getIcon(self: ChatDetails): string {.slot.} =
     return self.icon
+
   QtProperty[string] icon:
     read = getIcon
     notify = iconChanged
@@ -136,6 +137,7 @@ QtObject:
   proc colorChanged(self: ChatDetails) {.signal.}
   proc getColor(self: ChatDetails): string {.slot.} =
     return self.color
+
   QtProperty[string] color:
     read = getColor
     notify = colorChanged
@@ -149,6 +151,7 @@ QtObject:
   proc emojiChanged(self: ChatDetails) {.signal.}
   proc getEmoji(self: ChatDetails): string {.slot.} =
     return self.emoji
+
   QtProperty[string] emoji:
     read = getEmoji
     notify = emojiChanged
@@ -162,6 +165,7 @@ QtObject:
   proc descriptionChanged(self: ChatDetails) {.signal.}
   proc getDescription(self: ChatDetails): string {.slot.} =
     return self.description
+
   QtProperty[string] description:
     read = getDescription
     notify = descriptionChanged
@@ -175,6 +179,7 @@ QtObject:
   proc hasUnreadMessagesChanged(self: ChatDetails) {.signal.}
   proc getHasUnreadMessages(self: ChatDetails): bool {.slot.} =
     return self.hasUnreadMessages
+
   QtProperty[bool] hasUnreadMessages:
     read = getHasUnreadMessages
     notify = hasUnreadMessages
@@ -188,6 +193,7 @@ QtObject:
   proc notificationCountChanged(self: ChatDetails) {.signal.}
   proc getNotificationCount(self: ChatDetails): int {.slot.} =
     return self.notificationsCount
+
   QtProperty[int] notificationCount:
     read = getNotificationCount
     notify = notificationCountChanged
@@ -201,6 +207,7 @@ QtObject:
   proc highlightChanged(self: ChatDetails) {.signal.}
   proc getHighlight*(self: ChatDetails): bool {.slot.} =
     return self.highlight
+
   QtProperty[bool] highlight:
     read = getHighlight
     notify = highlightChanged
@@ -214,6 +221,7 @@ QtObject:
   proc mutedChanged(self: ChatDetails) {.signal.}
   proc getMuted(self: ChatDetails): bool {.slot.} =
     return self.muted
+
   QtProperty[bool] muted:
     read = getMuted
     notify = mutedChanged
@@ -227,6 +235,7 @@ QtObject:
   proc positionChanged(self: ChatDetails) {.signal.}
   proc getPosition(self: ChatDetails): int {.slot.} =
     return self.position
+
   QtProperty[int] position:
     read = getPosition
     notify = positionChanged
@@ -240,6 +249,7 @@ QtObject:
   proc isMutualContactChanged(self: ChatDetails) {.signal.}
   proc getIsMutualContact(self: ChatDetails): bool {.slot.} =
     return self.isContact
+
   QtProperty[bool] isContact:
     read = getIsMutualContact
     notify = isMutualContactChanged
@@ -253,6 +263,7 @@ QtObject:
   proc isUntrustworthyChanged(self: ChatDetails) {.signal.}
   proc getIsUntrustworthy(self: ChatDetails): bool {.slot.} =
     return self.trustStatus == TrustStatus.Untrustworthy
+
   QtProperty[bool] isUntrustworthy:
     read = getIsUntrustworthy
     notify = isUntrustworthyChanged
@@ -260,6 +271,7 @@ QtObject:
   proc trustStatusChanged(self: ChatDetails) {.signal.}
   proc getTrustStatus(self: ChatDetails): int {.slot.} =
     return self.trustStatus.int
+
   QtProperty[int] trustStatus:
     read = getTrustStatus
     notify = trustStatusChanged
@@ -274,6 +286,7 @@ QtObject:
   proc activeChanged(self: ChatDetails) {.signal.}
   proc isActive(self: ChatDetails): bool {.slot.} =
     return self.active
+
   QtProperty[bool] active:
     read = isActive
     notify = activeChanged
@@ -287,6 +300,7 @@ QtObject:
   proc blockedChanged(self: ChatDetails) {.signal.}
   proc getBlocked(self: ChatDetails): bool {.slot.} =
     return self.blocked
+
   QtProperty[bool] blocked:
     read = getBlocked
     notify = blockedChanged
@@ -300,6 +314,7 @@ QtObject:
   proc canPostChanged(self: ChatDetails) {.signal.}
   proc getCanPost(self: ChatDetails): bool {.slot.} =
     return self.canPost
+
   QtProperty[bool] canPost:
     read = getCanPost
     notify = canPostChanged
@@ -313,6 +328,7 @@ QtObject:
   proc canViewChanged(self: ChatDetails) {.signal.}
   proc getCanView(self: ChatDetails): bool {.slot.} =
     return self.canView
+
   QtProperty[bool] canView:
     read = getCanView
     notify = canViewChanged
@@ -326,6 +342,7 @@ QtObject:
   proc canPostReactionsChanged(self: ChatDetails) {.signal.}
   proc getCanPostReactions(self: ChatDetails): bool {.slot.} =
     return self.canPostReactions
+
   QtProperty[bool] canPostReactions:
     read = getCanPostReactions
     notify = canPostReactionsChanged
@@ -335,10 +352,11 @@ QtObject:
       return
     self.canPostReactions = value
     self.canPostReactionsChanged()
-  
+
   proc hideIfPermissionsNotMetChanged(self: ChatDetails) {.signal.}
   proc getHideIfPermissionsNotMet(self: ChatDetails): bool {.slot.} =
     return self.hideIfPermissionsNotMet
+
   QtProperty[bool] hideIfPermissionsNotMet:
     read = getHideIfPermissionsNotMet
     notify = hideIfPermissionsNotMetChanged
@@ -352,6 +370,7 @@ QtObject:
   proc missingEncryptionKeyChanged(self: ChatDetails) {.signal.}
   proc getMissingEncryptionKey(self: ChatDetails): bool {.slot.} =
     return self.missingEncryptionKey
+
   QtProperty[bool] missingEncryptionKey:
     read = getMissingEncryptionKey
     notify = missingEncryptionKeyChanged
@@ -365,6 +384,7 @@ QtObject:
   proc requiresPermissionsChanged(self: ChatDetails) {.signal.}
   proc getRequiresPermissions*(self: ChatDetails): bool {.slot.} =
     return self.requiresPermissions
+
   QtProperty[bool] requiresPermissions:
     read = getRequiresPermissions
     notify = requiresPermissionsChanged

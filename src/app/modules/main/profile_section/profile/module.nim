@@ -21,13 +21,12 @@ export io_interface
 logScope:
   topics = "profile-section-profile-module"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: controller.Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: controller.Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -36,12 +35,16 @@ proc newModule*(
     settingsService: settings_service.Service,
     communityService: community_service.Service,
     walletAccountService: wallet_account_service.Service,
-    tokenService: token_service.Service): Module =
+    tokenService: token_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, profileService, settingsService, communityService, walletAccountService, tokenService)
+  result.controller = controller.newController(
+    result, events, profileService, settingsService, communityService,
+    walletAccountService, tokenService,
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -91,13 +94,18 @@ proc storeIdentityImage*(self: Module, identityImage: IdentityImage): bool =
   # let size = image_getFileSize(image)
   # TODO find a way to i18n this (maybe send just a code and then QML sets the right string)
   # return "Max file size is 20MB"
-  self.controller.storeIdentityImage(keyUid, image, identityImage.aX, identityImage.aY, identityImage.bX, identityImage.bY)
+  self.controller.storeIdentityImage(
+    keyUid, image, identityImage.aX, identityImage.aY, identityImage.bX,
+    identityImage.bY,
+  )
 
 proc deleteIdentityImage*(self: Module): bool =
   let keyUid = singletonInstance.userProfile.getKeyUid()
   self.controller.deleteIdentityImage(keyUid)
 
-method saveProfileIdentityChanges*(self: Module, identityChanges: IdentityChangesSaveData) =
+method saveProfileIdentityChanges*(
+    self: Module, identityChanges: IdentityChangesSaveData
+) =
   var ok = true
 
   # Update only the fields that have changed
@@ -124,19 +132,23 @@ method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData)
   var showcasePreferences = ProfileShowcasePreferencesDto()
 
   for _, showcaseCommunity in showcase.communities:
-    showcasePreferences.communities.add(ProfileShowcaseCommunityPreference(
-      communityId: showcaseCommunity.showcaseKey,
-      showcaseVisibility: showcaseCommunity.showcaseVisibility,
-      order: showcaseCommunity.showcasePosition
-    ))
+    showcasePreferences.communities.add(
+      ProfileShowcaseCommunityPreference(
+        communityId: showcaseCommunity.showcaseKey,
+        showcaseVisibility: showcaseCommunity.showcaseVisibility,
+        order: showcaseCommunity.showcasePosition,
+      )
+    )
 
   var revealedAddresses: seq[string]
   for _, showcaseAccount in showcase.accounts:
-    showcasePreferences.accounts.add(ProfileShowcaseAccountPreference(
-      address: showcaseAccount.showcaseKey,
-      showcaseVisibility: showcaseAccount.showcaseVisibility,
-      order: showcaseAccount.showcasePosition
-    ))
+    showcasePreferences.accounts.add(
+      ProfileShowcaseAccountPreference(
+        address: showcaseAccount.showcaseKey,
+        showcaseVisibility: showcaseAccount.showcaseVisibility,
+        order: showcaseAccount.showcasePosition,
+      )
+    )
 
     if showcaseAccount.showcaseVisibility != ProfileShowcaseVisibility.ToNoOne:
       revealedAddresses.add(showcaseAccount.showcaseKey)
@@ -144,97 +156,117 @@ method saveProfileShowcasePreferences*(self: Module, showcase: ShowcaseSaveData)
   for _, showcaseCollectible in showcase.collectibles:
     let parts = showcaseCollectible.showcaseKey.split('+')
     if len(parts) == 3:
-      showcasePreferences.collectibles.add(ProfileShowcaseCollectiblePreference(
-        chainId: parseInt(parts[0]),
-        contractAddress: parts[1],
-        tokenId: parts[2],
-        showcaseVisibility: showcaseCollectible.showcaseVisibility,
-        order: showcaseCollectible.showcasePosition
-      ))
+      showcasePreferences.collectibles.add(
+        ProfileShowcaseCollectiblePreference(
+          chainId: parseInt(parts[0]),
+          contractAddress: parts[1],
+          tokenId: parts[2],
+          showcaseVisibility: showcaseCollectible.showcaseVisibility,
+          order: showcaseCollectible.showcasePosition,
+        )
+      )
     else:
       error "Wrong collectible combined id provided"
 
   for _, showcaseAsset in showcase.assets:
     # TODO: less fragile way to split verified and unverified assets
     if len(showcaseAsset.showcaseKey) == 3:
-      showcasePreferences.verifiedTokens.add(ProfileShowcaseVerifiedTokenPreference(
-        symbol: showcaseAsset.showcaseKey,
-        showcaseVisibility: showcaseAsset.showcaseVisibility,
-        order: showcaseAsset.showcasePosition
-      ))
+      showcasePreferences.verifiedTokens.add(
+        ProfileShowcaseVerifiedTokenPreference(
+          symbol: showcaseAsset.showcaseKey,
+          showcaseVisibility: showcaseAsset.showcaseVisibility,
+          order: showcaseAsset.showcasePosition,
+        )
+      )
     else:
       let parts = showcaseAsset.showcaseKey.split('+')
       if len(parts) == 2:
-        showcasePreferences.unverifiedTokens.add(ProfileShowcaseUnverifiedTokenPreference(
-          chainId: parseInt(parts[0]),
-          contractAddress: parts[1],
-          showcaseVisibility: showcaseAsset.showcaseVisibility,
-          order: showcaseAsset.showcasePosition
-        ))
+        showcasePreferences.unverifiedTokens.add(
+          ProfileShowcaseUnverifiedTokenPreference(
+            chainId: parseInt(parts[0]),
+            contractAddress: parts[1],
+            showcaseVisibility: showcaseAsset.showcaseVisibility,
+            order: showcaseAsset.showcasePosition,
+          )
+        )
       else:
         error "Wrong unverified asset combined id provided"
 
   for _, showcaseSocialLink in showcase.socialLinks:
-    showcasePreferences.socialLinks.add(ProfileShowcaseSocialLinkPreference(
-      text: showcaseSocialLink.text,
-      url: showcaseSocialLink.url,
-      showcaseVisibility: showcaseSocialLink.showcaseVisibility,
-      order: showcaseSocialLink.showcasePosition
-    ))
+    showcasePreferences.socialLinks.add(
+      ProfileShowcaseSocialLinkPreference(
+        text: showcaseSocialLink.text,
+        url: showcaseSocialLink.url,
+        showcaseVisibility: showcaseSocialLink.showcaseVisibility,
+        order: showcaseSocialLink.showcasePosition,
+      )
+    )
 
   self.controller.saveProfileShowcasePreferences(showcasePreferences, revealedAddresses)
 
 method requestProfileShowcasePreferences(self: Module) =
   self.controller.requestProfileShowcasePreferences()
 
-method loadProfileShowcasePreferences(self: Module, preferences: ProfileShowcasePreferencesDto) =
+method loadProfileShowcasePreferences(
+    self: Module, preferences: ProfileShowcasePreferencesDto
+) =
   var communityItems: seq[ShowcasePreferencesGenericItem] = @[]
   for community in preferences.communities:
-    communityItems.add(ShowcasePreferencesGenericItem(
-      showcaseKey: community.communityId,
-      showcaseVisibility: community.showcaseVisibility,
-      showcasePosition: community.order
-    ))
+    communityItems.add(
+      ShowcasePreferencesGenericItem(
+        showcaseKey: community.communityId,
+        showcaseVisibility: community.showcaseVisibility,
+        showcasePosition: community.order,
+      )
+    )
   self.view.loadProfileShowcasePreferencesCommunities(communityItems)
 
   var accountItems: seq[ShowcasePreferencesGenericItem] = @[]
   for account in preferences.accounts:
-    accountItems.add(ShowcasePreferencesGenericItem(
-      showcaseKey: account.address,
-      showcaseVisibility: account.showcaseVisibility,
-      showcasePosition: account.order
-    ))
+    accountItems.add(
+      ShowcasePreferencesGenericItem(
+        showcaseKey: account.address,
+        showcaseVisibility: account.showcaseVisibility,
+        showcasePosition: account.order,
+      )
+    )
   self.view.loadProfileShowcasePreferencesAccounts(accountItems)
 
   var collectibleItems: seq[ShowcasePreferencesGenericItem] = @[]
   for collectible in preferences.collectibles:
-    collectibleItems.add(ShowcasePreferencesGenericItem(
-      showcaseKey: collectible.toCombinedCollectibleId(),
-      showcaseVisibility: collectible.showcaseVisibility,
-      showcasePosition: collectible.order
-    ))
+    collectibleItems.add(
+      ShowcasePreferencesGenericItem(
+        showcaseKey: collectible.toCombinedCollectibleId(),
+        showcaseVisibility: collectible.showcaseVisibility,
+        showcasePosition: collectible.order,
+      )
+    )
   self.view.loadProfileShowcasePreferencesCollectibles(collectibleItems)
 
   var assetItems: seq[ShowcasePreferencesGenericItem] = @[]
   for token in preferences.verifiedTokens:
-    assetItems.add(ShowcasePreferencesGenericItem(
-      showcaseKey: token.symbol,
-      showcaseVisibility: token.showcaseVisibility,
-      showcasePosition: token.order
-    ))
+    assetItems.add(
+      ShowcasePreferencesGenericItem(
+        showcaseKey: token.symbol,
+        showcaseVisibility: token.showcaseVisibility,
+        showcasePosition: token.order,
+      )
+    )
   for token in preferences.unverifiedTokens:
-    assetItems.add(ShowcasePreferencesGenericItem(
-      showcaseKey: token.toCombinedTokenId(),
-      showcaseVisibility: token.showcaseVisibility,
-      showcasePosition: token.order
-    ))
+    assetItems.add(
+      ShowcasePreferencesGenericItem(
+        showcaseKey: token.toCombinedTokenId(),
+        showcaseVisibility: token.showcaseVisibility,
+        showcasePosition: token.order,
+      )
+    )
   self.view.loadProfileShowcasePreferencesAssets(assetItems)
 
   var socialLinkItems: seq[ShowcasePreferencesSocialLinkItem] = @[]
   for socialLink in preferences.socialLinks:
-    socialLinkItems.add(ShowcasePreferencesSocialLinkItem(
-      url: socialLink.url,
-      text: socialLink.text,
-      showcasePosition: socialLink.order
-    ))
+    socialLinkItems.add(
+      ShowcasePreferencesSocialLinkItem(
+        url: socialLink.url, text: socialLink.text, showcasePosition: socialLink.order
+      )
+    )
   self.view.loadProfileShowcasePreferencesSocialLinks(socialLinkItems)

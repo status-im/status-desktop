@@ -7,7 +7,8 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
+import
+  ../../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../../../app_service/common/types
 import ../../../../../core/eventemitter
@@ -16,26 +17,34 @@ import ../../../../../core/unique_event_emitter
 logScope:
   topics = "messages-controller"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: UniqueUUIDEventEmitter
-    sectionId: string
-    chatId: string
-    belongsToCommunity: bool
-    searchedMessageId: string
-    loadingMessagesPerPageFactor: int
-    contactService: contact_service.Service
-    communityService: community_service.Service
-    chatService: chat_service.Service
-    messageService: message_service.Service
-    mailserversService: mailservers_service.Service
-    sharedUrlsService: shared_urls_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: UniqueUUIDEventEmitter
+  sectionId: string
+  chatId: string
+  belongsToCommunity: bool
+  searchedMessageId: string
+  loadingMessagesPerPageFactor: int
+  contactService: contact_service.Service
+  communityService: community_service.Service
+  chatService: chat_service.Service
+  messageService: message_service.Service
+  mailserversService: mailservers_service.Service
+  sharedUrlsService: shared_urls_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-    belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-    chatService: chat_service.Service, messageService: message_service.Service,
-    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    sectionId: string,
+    chatId: string,
+    belongsToCommunity: bool,
+    contactService: contact_service.Service,
+    communityService: community_service.Service,
+    chatService: chat_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = initUniqueUUIDEventEmitter(events)
@@ -54,85 +63,87 @@ proc delete*(self: Controller) =
   self.events.disconnect()
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGES_LOADED) do(e: Args):
     let args = MessagesLoadedArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.newMessagesLoaded(args.messages, args.reactions)
 
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     var args = MessagesArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.messagesAdded(args.messages)
 
-  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e: Args):
     let args = MessageSendingSuccess(e)
-    if(self.chatId != args.chat.id):
+    if (self.chatId != args.chat.id):
       return
     self.delegate.onSendingMessageSuccess(args.message)
 
-  self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_SENDING_FAILED) do(e: Args):
     let args = MessageSendingFailure(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onSendingMessageError(args.error)
 
-  self.events.on(SIGNAL_ENVELOPE_SENT) do(e:Args):
+  self.events.on(SIGNAL_ENVELOPE_SENT) do(e: Args):
     let args = EnvelopeSentArgs(e)
     self.delegate.onEnvelopeSent(args.messagesIds)
 
-  self.events.on(SIGNAL_ENVELOPE_EXPIRED) do(e:Args):
+  self.events.on(SIGNAL_ENVELOPE_EXPIRED) do(e: Args):
     let args = EnvelopeExpiredArgs(e)
     self.delegate.onEnvelopeExpired(args.messagesIds)
 
-  self.events.on(SIGNAL_MESSAGE_DELIVERED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_DELIVERED) do(e: Args):
     let args = MessageDeliveredArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onMessageDelivered(args.messageId)
 
-  self.events.on(SIGNAL_MESSAGE_PINNED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_PINNED) do(e: Args):
     let args = MessagePinUnpinArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onPinMessage(args.messageId, args.actionInitiatedBy)
 
-  self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_UNPINNED) do(e: Args):
     let args = MessagePinUnpinArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onUnpinMessage(args.messageId)
 
-  self.events.on(SIGNAL_MESSAGE_MARKED_AS_UNREAD) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_MARKED_AS_UNREAD) do(e: Args):
     let args = MessageMarkMessageAsUnreadArgs(e)
     if (self.chatId != args.chatId):
       return
     self.delegate.onMarkMessageAsUnread(args.messageId)
 
-  self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_REACTION_ADDED) do(e: Args):
     let args = MessageAddRemoveReactionArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onReactionAdded(args.messageId, args.emojiId, args.reactionId)
 
-  self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_REACTION_REMOVED) do(e: Args):
     let args = MessageAddRemoveReactionArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onReactionRemoved(args.messageId, args.emojiId, args.reactionId)
 
-  self.events.on(SIGNAL_MESSAGE_REACTION_FROM_OTHERS) do(e:Args):
+  self.events.on(SIGNAL_MESSAGE_REACTION_FROM_OTHERS) do(e: Args):
     let args = MessageAddRemoveReactionArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
-    self.delegate.toggleReactionFromOthers(args.messageId, args.emojiId, args.reactionId, args.reactionFrom)
+    self.delegate.toggleReactionFromOthers(
+      args.messageId, args.emojiId, args.reactionId, args.reactionFrom
+    )
 
   self.events.on(SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
     let args = MessagesMarkedAsReadArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
-    if(args.allMessagesMarked):
+    if (args.allMessagesMarked):
       self.delegate.markAllMessagesRead()
     else:
       self.delegate.markMessagesAsRead(args.messagesIds)
@@ -177,7 +188,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MESSAGE_REMOVED) do(e: Args):
     let args = MessageRemovedArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onMessageRemoved(args.messageId, args.deletedBy)
 
@@ -188,13 +199,13 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MESSAGE_EDITED) do(e: Args):
     let args = MessageEditedArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onMessageEdited(args.message)
 
-  self.events.on(SIGNAL_CHAT_HISTORY_CLEARED) do (e: Args):
+  self.events.on(SIGNAL_CHAT_HISTORY_CLEARED) do(e: Args):
     var args = ChatArgs(e)
-    if(self.chatId != args.chatId):
+    if (self.chatId != args.chatId):
       return
     self.delegate.onHistoryCleared()
 
@@ -223,7 +234,9 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_GET_MESSAGE_FINISHED) do(e: Args):
     let args = GetMessageResult(e)
-    self.delegate.onGetMessageById(args.requestId, args.messageId, args.message, args.error)
+    self.delegate.onGetMessageById(
+      args.requestId, args.messageId, args.message, args.error
+    )
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -240,13 +253,20 @@ proc getCommunityDetails*(self: Controller): CommunityDto =
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
-proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, useDatabase: bool,
-    requiredTimeSinceLastRequest: Duration) =
-  self.communityService.requestCommunityInfo(communityId, shard, importing = false,
-    useDatabase, requiredTimeSinceLastRequest)
+proc requestCommunityInfo*(
+    self: Controller,
+    communityId: string,
+    shard: Shard,
+    useDatabase: bool,
+    requiredTimeSinceLastRequest: Duration,
+) =
+  self.communityService.requestCommunityInfo(
+    communityId, shard, importing = false, useDatabase, requiredTimeSinceLastRequest
+  )
 
-proc getOneToOneChatNameAndImage*(self: Controller):
-    tuple[name: string, image: string, largeImage: string] =
+proc getOneToOneChatNameAndImage*(
+    self: Controller
+): tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
 proc belongsToCommunity*(self: Controller): bool =
@@ -259,7 +279,9 @@ proc loadMoreMessages*(self: Controller): bool =
 proc addReaction*(self: Controller, messageId: string, emojiId: int) =
   self.messageService.addReaction(self.chatId, messageId, emojiId)
 
-proc removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
+proc removeReaction*(
+    self: Controller, messageId: string, emojiId: int, reactionId: string
+) =
   self.messageService.removeReaction(reactionId, self.chatId, messageId, emojiId)
 
 proc pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
@@ -280,7 +302,9 @@ proc requestContactInfo*(self: Controller, contactId: string) =
 proc getNumOfPinnedMessages*(self: Controller): int =
   return self.messageService.getNumOfPinnedMessages(self.chatId)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+proc getRenderedText*(
+    self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]
+): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc deleteMessage*(self: Controller, messageId: string) =
@@ -316,10 +340,12 @@ proc requestMoreMessages*(self: Controller) =
 proc fillGaps*(self: Controller, messageId: string) =
   self.mailserversService.fillGaps(self.chatId, messageId)
 
-proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+proc getTransactionDetails*(self: Controller, message: MessageDto): (string, string) =
   return self.messageService.getTransactionDetails(message)
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Controller
+): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
 
 proc leaveChat*(self: Controller) =

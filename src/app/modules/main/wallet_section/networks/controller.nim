@@ -6,21 +6,19 @@ import app_service/service/network/network_item
 import app_service/service/network/combined_network_item
 import ./io_interface
 
-
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    networkService: network_service.Service
-    walletAccountService: wallet_account_service.Service
-    settingsService: settings_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  networkService: network_service.Service
+  walletAccountService: wallet_account_service.Service
+  settingsService: settings_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  networkService: network_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    networkService: network_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -38,7 +36,9 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED) do(e: Args):
     let args = ChainIdForUrlArgs(e)
-    self.delegate.chainIdFetchedForUrl(args.url, args.chainId, args.success, args.isMainUrl)
+    self.delegate.chainIdFetchedForUrl(
+      args.url, args.chainId, args.success, args.isMainUrl
+    )
 
   self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
@@ -58,8 +58,16 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
 
-proc updateNetworkEndPointValues*(self: Controller, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
-  self.networkService.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+proc updateNetworkEndPointValues*(
+    self: Controller,
+    chainId: int,
+    testNetwork: bool,
+    newMainRpcInput, newFailoverRpcUrl: string,
+    revertToDefault: bool,
+) =
+  self.networkService.updateNetworkEndPointValues(
+    chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault
+  )
 
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)

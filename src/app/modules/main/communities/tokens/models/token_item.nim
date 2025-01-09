@@ -9,28 +9,27 @@ import token_owners_item
 
 export community_token
 
-type
-  TokenItem* = object
-    tokenDto*: CommunityTokenDto
-    chainName*: string
-    chainIcon*: string
-    accountName*: string
-    remainingSupply*: Uint256
-    destructedAmount*: Uint256
-    burnState*: ContractTransactionStatus
-    remoteDestructedAddresses*: seq[string]
-    tokenOwnersModel*: token_owners_model.TokenOwnersModel
-    tokenHoldersLoading*: bool
+type TokenItem* = object
+  tokenDto*: CommunityTokenDto
+  chainName*: string
+  chainIcon*: string
+  accountName*: string
+  remainingSupply*: Uint256
+  destructedAmount*: Uint256
+  burnState*: ContractTransactionStatus
+  remoteDestructedAddresses*: seq[string]
+  tokenOwnersModel*: token_owners_model.TokenOwnersModel
+  tokenHoldersLoading*: bool
 
 proc initTokenItem*(
-  tokenDto: CommunityTokenDto,
-  network: NetworkItem,
-  tokenOwners: seq[CommunityCollectibleOwner],
-  accountName: string,
-  burnState: ContractTransactionStatus,
-  remoteDestructedAddresses: seq[string],
-  remainingSupply: Uint256,
-  destructedAmount: Uint256,
+    tokenDto: CommunityTokenDto,
+    network: NetworkItem,
+    tokenOwners: seq[CommunityCollectibleOwner],
+    accountName: string,
+    burnState: ContractTransactionStatus,
+    remoteDestructedAddresses: seq[string],
+    remainingSupply: Uint256,
+    destructedAmount: Uint256,
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:
@@ -42,14 +41,21 @@ proc initTokenItem*(
   result.burnState = burnState
   result.remoteDestructedAddresses = remoteDestructedAddresses
   result.tokenOwnersModel = newTokenOwnersModel()
-  result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
-    # TODO: provide number of messages here
-    result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, remoteDestructedAddresses)
-  ))
+  result.tokenOwnersModel.setItems(
+    tokenOwners.map(
+      proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
+        # TODO: provide number of messages here
+        result = initTokenOwnersItem(
+          owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner,
+          remoteDestructedAddresses,
+        )
+    )
+  )
   result.tokenHoldersLoading = false
 
 proc `$`*(self: TokenItem): string =
-  result = fmt"""TokenItem(
+  result =
+    fmt"""TokenItem(
     tokenDto: {self.tokenDto},
     chainName: {self.chainName},
     chainIcon: {self.chainIcon},
@@ -60,4 +66,3 @@ proc `$`*(self: TokenItem): string =
     tokenHoldersLoading: {self.tokenHoldersLoading},
     remoteDestructedAddresses: {self.remoteDestructedAddresses}
     ]"""
-

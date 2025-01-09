@@ -4,11 +4,17 @@ proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} 
     warn "blance history response is not a json object"
     return
 
-  self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
-    result: response
-  ))
+  self.events.emit(
+    SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(result: response)
+  )
 
-proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
+proc fetchHistoricalBalanceForTokenAsJson*(
+    self: Service,
+    addresses: seq[string],
+    tokenSymbol: string,
+    currencySymbol: string,
+    timeInterval: BalanceHistoryTimeInterval,
+) =
   var chainIds: seq[int] = self.networkService.getEnabledChainIds()
   let arg = GetTokenBalanceHistoryDataTaskArg(
     tptr: getTokenBalanceHistoryDataTask,
@@ -18,7 +24,7 @@ proc fetchHistoricalBalanceForTokenAsJson*(self: Service, addresses: seq[string]
     addresses: addresses,
     tokenSymbol: tokenSymbol,
     currencySymbol: currencySymbol,
-    timeInterval: timeInterval
+    timeInterval: timeInterval,
   )
   self.threadpool.start(arg)
   return

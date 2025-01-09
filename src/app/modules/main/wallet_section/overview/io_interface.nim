@@ -1,5 +1,4 @@
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -17,7 +16,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) {.base.} =
+method filterChanged*(
+    self: AccessInterface, addresses: seq[string], chainIds: seq[int]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setIsAllAccounts*(self: AccessInterface, value: bool) {.base.} =

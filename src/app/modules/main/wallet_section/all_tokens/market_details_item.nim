@@ -17,7 +17,7 @@ QtObject:
     self.QObject.delete
 
   proc newMarketDetailsItem*(
-    delegate: io_interface.TokenMarketValuesDataSource, symbol: string
+      delegate: io_interface.TokenMarketValuesDataSource, symbol: string
   ): MarketDetailsItem =
     new(result)
     result.setup()
@@ -25,72 +25,112 @@ QtObject:
     result.symbol = symbol
     result.currencyFormat = delegate.getCurrentCurrencyFormat()
 
-
   proc updateCurrencyFormat*(self: MarketDetailsItem) =
     self.currencyFormat = self.delegate.getCurrentCurrencyFormat()
 
   proc marketCapChanged*(self: MarketDetailsItem) {.signal.}
   proc marketCap*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).marketCap, self.currencyFormat))
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return newQVariant(
+        currencyAmountToItem(
+          self.delegate.getMarketValuesBySymbol(self.symbol).marketCap,
+          self.currencyFormat,
+        )
+      )
+
   QtProperty[QVariant] marketCap:
     read = marketCap
     notify = marketCapChanged
 
   proc highDayChanged*(self: MarketDetailsItem) {.signal.}
   proc highDay*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).highDay, self.currencyFormat))
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return newQVariant(
+        currencyAmountToItem(
+          self.delegate.getMarketValuesBySymbol(self.symbol).highDay,
+          self.currencyFormat,
+        )
+      )
+
   QtProperty[QVariant] highDay:
     read = highDay
     notify = highDayChanged
 
   proc lowDayChanged*(self: MarketDetailsItem) {.signal.}
   proc lowDay*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(currencyAmountToItem(self.delegate.getMarketValuesBySymbol(self.symbol).lowDay, self.currencyFormat))
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return newQVariant(
+        currencyAmountToItem(
+          self.delegate.getMarketValuesBySymbol(self.symbol).lowDay, self.currencyFormat
+        )
+      )
+
   QtProperty[QVariant] lowDay:
     read = lowDay
     notify = lowDayChanged
 
   proc changePctHourChanged*(self: MarketDetailsItem) {.signal.}
   proc changePctHour*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePctHour)
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return
+        newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePctHour)
+
   QtProperty[QVariant] changePctHour:
     read = changePctHour
     notify = changePctHourChanged
 
   proc changePctDayChanged*(self: MarketDetailsItem) {.signal.}
   proc changePctDay*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePctDay)
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return
+        newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePctDay)
+
   QtProperty[QVariant] changePctDay:
     read = changePctDay
     notify = changePctDayChanged
 
   proc changePct24hourChanged*(self: MarketDetailsItem) {.signal.}
   proc changePct24hour*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePct24hour)
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return
+        newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).changePct24hour)
+
   QtProperty[QVariant] changePct24hour:
     read = changePct24hour
     notify = changePct24hourChanged
 
   proc change24hourChanged*(self: MarketDetailsItem) {.signal.}
   proc change24hour*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant()
-    else: return newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).change24hour)
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant()
+    else:
+      return
+        newQVariant(self.delegate.getMarketValuesBySymbol(self.symbol).change24hour)
+
   QtProperty[QVariant] change24hour:
     read = change24hour
     notify = change24hourChanged
 
   proc currencyPriceChanged*(self: MarketDetailsItem) {.signal.}
   proc currencyPrice*(self: MarketDetailsItem): QVariant {.slot.} =
-    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading(): return newQVariant(currencyAmountToItem(0, self.currencyFormat))
+    if self.symbol.isEmptyOrWhitespace or self.delegate.getTokensMarketValuesLoading():
+      return newQVariant(currencyAmountToItem(0, self.currencyFormat))
     else:
       let price = self.delegate.getPriceBySymbol(self.symbol)
       return newQVariant(currencyAmountToItem(price, self.currencyFormat))
+
   QtProperty[QVariant] currencyPrice:
     read = currencyPrice
     notify = currencyPriceChanged

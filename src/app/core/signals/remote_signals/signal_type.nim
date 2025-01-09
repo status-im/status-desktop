@@ -50,7 +50,8 @@ type SignalType* {.pure.} = enum
   DownloadingHistoryArchivesFinished = "community.downloadingHistoryArchivesFinished"
   ImportingHistoryArchiveMessages = "community.importingHistoryArchiveMessages"
   UpdateAvailable = "update.available"
-  DiscordCategoriesAndChannelsExtracted = "community.discordCategoriesAndChannelsExtracted"
+  DiscordCategoriesAndChannelsExtracted =
+    "community.discordCategoriesAndChannelsExtracted"
   StatusUpdatesTimedout = "status.updates.timedout"
   DiscordCommunityImportFinished = "community.discordCommunityImportFinished"
   DiscordCommunityImportProgress = "community.discordCommunityImportProgress"
@@ -68,7 +69,8 @@ type SignalType* {.pure.} = enum
   LocalPairing = "localPairing"
   DBReEncryptionStarted = "db.reEncryption.started"
   DBReEncryptionFinished = "db.reEncryption.finished"
-  CommunityTokenTransactionStatusChanged = "communityToken.communityTokenTransactionStatusChanged"
+  CommunityTokenTransactionStatusChanged =
+    "communityToken.communityTokenTransactionStatusChanged"
   CommunityTokenAction = "communityToken.communityTokenAction"
   ConnectorSendRequestAccounts = "connector.sendRequestAccounts"
   ConnectorSendTransaction = "connector.sendTransaction"
@@ -77,5 +79,5 @@ type SignalType* {.pure.} = enum
   ConnectorSign = "connector.Sign"
   Unknown
 
-proc event*(self:SignalType):string =
+proc event*(self: SignalType): string =
   result = "signal:" & $self

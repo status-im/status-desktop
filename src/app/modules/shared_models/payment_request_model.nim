@@ -1,19 +1,17 @@
 import NimQml, stew/shims/strformat, tables, sequtils
 import ../../../app_service/service/message/dto/payment_request
 
-type
-  ModelRole {.pure.} = enum
-    Symbol = UserRole + 1
-    Amount
-    ReceiverAddress
-    ChainId
+type ModelRole {.pure.} = enum
+  Symbol = UserRole + 1
+  Amount
+  ReceiverAddress
+  ChainId
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[PaymentRequest]
+  type Model* = ref object of QAbstractListModel
+    items: seq[PaymentRequest]
 
-  proc delete*(self: Model) = 
+  proc delete*(self: Model) =
     self.items = @[]
     self.QAbstractListModel.delete
 
@@ -31,7 +29,8 @@ QtObject:
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""
+      result &=
+        fmt"""
       [{i}]:({$self.items[i]})
       """
 
@@ -59,7 +58,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Symbol:
       result = newQVariant(item.symbol)
     of ModelRole.Amount:
@@ -72,11 +71,12 @@ QtObject:
       result = newQVariant()
 
   proc removeItemWithIndex*(self: Model, ind: int) {.slot.} =
-    if(ind < 0 or ind >= self.items.len):
+    if (ind < 0 or ind >= self.items.len):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -84,13 +84,16 @@ QtObject:
 
   proc insertItem(self: Model, paymentRequest: PaymentRequest) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(paymentRequest)
     self.endInsertRows()
 
-  proc addPaymentRequest*(self: Model, receiver: string, amount: string, symbol: string, chainId: int) {.slot.}=
+  proc addPaymentRequest*(
+      self: Model, receiver: string, amount: string, symbol: string, chainId: int
+  ) {.slot.} =
     let paymentRequest = newPaymentRequest(receiver, amount, symbol, chainId)
     self.insertItem(paymentRequest)
 

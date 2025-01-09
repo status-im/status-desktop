@@ -8,7 +8,8 @@ import ./token_data_item
 const CONTACT_REQUEST_PENDING_STATE = 1
 
 type Item* = ref object
-  id: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
+  id: string
+    # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId: string
   communityId: string
   membershipStatus: ActivityCenterMembershipStatus
@@ -27,23 +28,23 @@ type Item* = ref object
   installationId: string
 
 proc initItem*(
-  id: string,
-  chatId: string,
-  communityId: string,
-  membershipStatus: ActivityCenterMembershipStatus,
-  sectionId: string,
-  name: string,
-  author: string,
-  notificationType: ActivityCenterNotificationType,
-  timestamp: int64,
-  read: bool,
-  dismissed: bool,
-  accepted: bool,
-  messageItem: MessageItem,
-  repliedMessageItem: MessageItem,
-  chatType: ChatType,
-  tokenDataItem: TokenDataItem,
-  installationId: string
+    id: string,
+    chatId: string,
+    communityId: string,
+    membershipStatus: ActivityCenterMembershipStatus,
+    sectionId: string,
+    name: string,
+    author: string,
+    notificationType: ActivityCenterNotificationType,
+    timestamp: int64,
+    read: bool,
+    dismissed: bool,
+    accepted: bool,
+    messageItem: MessageItem,
+    repliedMessageItem: MessageItem,
+    chatType: ChatType,
+    tokenDataItem: TokenDataItem,
+    installationId: string,
 ): Item =
   result = Item()
   result.id = id
@@ -65,7 +66,8 @@ proc initItem*(
   result.installationId = installationId
 
 proc `$`*(self: Item): string =
-  result = fmt"""activity_center/Item(
+  result =
+    fmt"""activity_center/Item(
     id: {self.id},
     name: {$self.name},
     chatId: {$self.chatId},

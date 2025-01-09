@@ -17,14 +17,15 @@ include async_tasks
 logScope:
   topics = "profile-service"
 
-type
-  ProfileShowcasePreferencesArgs* = ref object of Args
-    preferences*: ProfileShowcasePreferencesDto
+type ProfileShowcasePreferencesArgs* = ref object of Args
+  preferences*: ProfileShowcasePreferencesDto
 
 # Signals which may be emitted by this service:
 const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED* = "profileShowcasePreferencesLoaded"
-const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED* = "profileShowcasePreferencesSaveSucceeded"
-const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED* = "profileShowcasePreferencesSaveFailed"
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_SUCCEEDED* =
+  "profileShowcasePreferencesSaveSucceeded"
+const SIGNAL_PROFILE_SHOWCASE_PREFERENCES_SAVE_FAILED* =
+  "profileShowcasePreferencesSaveFailed"
 
 QtObject:
   type Service* = ref object of QObject
@@ -35,7 +36,11 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, settingsService: settings_service.Service): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.threadpool = threadpool
@@ -43,46 +48,49 @@ QtObject:
     result.settingsService = settingsService
 
   proc init*(self: Service) =
-    self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
+    self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e: Args):
       let args = SettingsTextValueArgs(e)
       singletonInstance.userProfile.setDisplayName(args.value)
 
-  proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
+  proc storeIdentityImage*(
+      self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int
+  ): seq[Image] =
     try:
       let response = status_accounts.storeIdentityImage(address, image, aX, aY, bX, bY)
-      if(not response.error.isNil):
+      if (not response.error.isNil):
         error "could not store identity images"
         return
-      if(response.result.kind != JArray):
-        error "error: ", procName="storeIdentityImage", errDesription = "response is not an array"
+      if (response.result.kind != JArray):
+        error "error: ",
+          procName = "storeIdentityImage", errDesription = "response is not an array"
         return
-      if(response.result.len == 0):
+      if (response.result.len == 0):
         error "error: array of stored images is empty"
         return
 
       for img in response.result:
         let imageDto = toImage(img)
         result.add(imageDto)
-        if(imageDto.imgType == "large"):
+        if (imageDto.imgType == "large"):
           singletonInstance.userProfile.setLargeImage(imageDto.uri)
-        elif(imageDto.imgType == "thumbnail"):
+        elif (imageDto.imgType == "thumbnail"):
           singletonInstance.userProfile.setThumbnailImage(imageDto.uri)
-
     except Exception as e:
-      error "error: ", procName="storeIdentityImage", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "storeIdentityImage", errName = e.name, errDesription = e.msg
 
   proc deleteIdentityImage*(self: Service, address: string): bool =
     try:
       let response = status_accounts.deleteIdentityImage(address)
-      if(not response.error.isNil):
+      if (not response.error.isNil):
         error "could not delete identity images"
         return false
       singletonInstance.userProfile.setLargeImage("")
       singletonInstance.userProfile.setThumbnailImage("")
       return true
-
     except Exception as e:
-      error "error: ", procName="deleteIdentityImage", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "deleteIdentityImage", errName = e.name, errDesription = e.msg
       return false
 
   proc setDisplayName*(self: Service, displayName: string): bool =
@@ -96,7 +104,8 @@ QtObject:
         return false
       return true
     except Exception as e:
-      error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "setDisplayName", errName = e.name, errDesription = e.msg
       return false
 
   proc setBio*(self: Service, bio: string): bool =
@@ -110,7 +119,7 @@ QtObject:
         return false
       return true
     except Exception as e:
-      error "error: ", procName="setBio", errName = e.name, errDesription = e.msg
+      error "error: ", procName = "setBio", errName = e.name, errDesription = e.msg
       return false
 
   proc requestProfileShowcasePreferences*(self: Service) =
@@ -121,21 +130,29 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc asyncProfileShowcasePreferencesLoaded*(self: Service, rpcResponse: string) {.slot.} =
+  proc asyncProfileShowcasePreferencesLoaded*(
+      self: Service, rpcResponse: string
+  ) {.slot.} =
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        error "Error requesting profile showcase preferences", msg = rpcResponseObj{"error"}
+        error "Error requesting profile showcase preferences",
+          msg = rpcResponseObj{"error"}
         return
 
-      let preferences = rpcResponseObj["response"]["result"].toProfileShowcasePreferencesDto()
+      let preferences =
+        rpcResponseObj["response"]["result"].toProfileShowcasePreferencesDto()
 
-      self.events.emit(SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
-        ProfileShowcasePreferencesArgs(preferences: preferences))
+      self.events.emit(
+        SIGNAL_PROFILE_SHOWCASE_PREFERENCES_LOADED,
+        ProfileShowcasePreferencesArgs(preferences: preferences),
+      )
     except Exception as e:
       error "Error requesting profile showcase preferences", msg = e.msg
 
-  proc saveProfileShowcasePreferences*(self: Service, preferences: ProfileShowcasePreferencesDto) =
+  proc saveProfileShowcasePreferences*(
+      self: Service, preferences: ProfileShowcasePreferencesDto
+  ) =
     let arg = SaveProfileShowcasePreferencesTaskArg(
       preferences: preferences,
       tptr: saveProfileShowcasePreferencesTask,
@@ -144,7 +161,9 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc asyncProfileShowcasePreferencesSaved*(self: Service, rpcResponse: string) {.slot.} =
+  proc asyncProfileShowcasePreferencesSaved*(
+      self: Service, rpcResponse: string
+  ) {.slot.} =
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":

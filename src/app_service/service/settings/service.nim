@@ -90,28 +90,48 @@ QtObject:
 
       if receivedData.currentStatus.len > 0:
         var statusUpdate = receivedData.currentStatus[0]
-        self.events.emit(SIGNAL_CURRENT_USER_STATUS_UPDATED, CurrentUserStatusArgs(statusType: statusUpdate.statusType, text: statusUpdate.text))
+        self.events.emit(
+          SIGNAL_CURRENT_USER_STATUS_UPDATED,
+          CurrentUserStatusArgs(
+            statusType: statusUpdate.statusType, text: statusUpdate.text
+          ),
+        )
 
       if receivedData.settings.len > 0:
         for settingsField in receivedData.settings:
           if settingsField.name == KEY_CURRENCY:
             self.settings.currency = settingsField.value.getStr
-            self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
+            self.events.emit(
+              SIGNAL_CURRENCY_UPDATED,
+              SettingsTextValueArgs(value: self.settings.currency),
+            )
           if settingsField.name == KEY_DISPLAY_NAME:
             self.settings.displayName = settingsField.value.getStr
-            self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
+            self.events.emit(
+              SIGNAL_DISPLAY_NAME_UPDATED,
+              SettingsTextValueArgs(value: self.settings.displayName),
+            )
           if settingsField.name == KEY_BIO:
             self.settings.bio = settingsField.value.getStr
-            self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
+            self.events.emit(
+              SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio)
+            )
           if settingsField.name == KEY_MNEMONIC:
             self.settings.mnemonic = ""
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
           if settingsField.name == PROFILE_MIGRATION_NEEDED:
             self.settings.profileMigrationNeeded = settingsField.value.getBool
-            self.events.emit(SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED, SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded))
+            self.events.emit(
+              SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED,
+              SettingsBoolValueArgs(value: self.settings.profileMigrationNeeded),
+            )
           if settingsField.name == KEY_URL_UNFURLING_MODE:
-            self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
-            self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+            self.settings.urlUnfurlingMode =
+              toUrlUnfurlingMode(settingsField.value.getInt)
+            self.events.emit(
+              SIGNAL_URL_UNFURLING_MODE_UPDATED,
+              UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode),
+            )
 
     self.initialized = true
 
@@ -129,11 +149,12 @@ QtObject:
     discard self.getNotificationVolume()
     discard self.getNotificationMessagePreview()
 
-
-  proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int | int64): bool =
+  proc saveSetting(
+      self: Service, attribute: string, value: string | JsonNode | bool | int | int64
+  ): bool =
     try:
       let response = status_settings.saveSettings(attribute, value)
-      if(not response.error.isNil):
+      if (not response.error.isNil):
         error "error saving settings: ", errDescription = response.error.message
         return false
       return true
@@ -143,7 +164,7 @@ QtObject:
     return false
 
   proc saveAddress*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_ADDRESS, value)):
+    if (self.saveSetting(KEY_ADDRESS, value)):
       self.settings.address = value
       return true
     return false
@@ -152,20 +173,22 @@ QtObject:
     return self.settings.address
 
   proc saveCurrency*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_CURRENCY, value)):
+    if (self.saveSetting(KEY_CURRENCY, value)):
       self.settings.currency = value.toLowerAscii()
-      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
+      self.events.emit(
+        SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency)
+      )
       return true
     return false
 
   proc getCurrency*(self: Service): string =
-    if(self.settings.currency.len == 0):
+    if (self.settings.currency.len == 0):
       self.settings.currency = DEFAULT_CURRENCY
 
     return self.settings.currency.toUpperAscii()
 
   proc saveDappsAddress*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_DAPPS_ADDRESS, value)):
+    if (self.saveSetting(KEY_DAPPS_ADDRESS, value)):
       self.settings.dappsAddress = value
       return true
     return false
@@ -174,7 +197,7 @@ QtObject:
     return self.settings.dappsAddress
 
   proc saveEip1581Address*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_EIP1581_ADDRESS, value)):
+    if (self.saveSetting(KEY_EIP1581_ADDRESS, value)):
       self.settings.eip1581Address = value
       return true
     return false
@@ -183,7 +206,7 @@ QtObject:
     return self.settings.eip1581Address
 
   proc saveInstallationId*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_INSTALLATION_ID, value)):
+    if (self.saveSetting(KEY_INSTALLATION_ID, value)):
       self.settings.installationId = value
       return true
     return false
@@ -192,7 +215,7 @@ QtObject:
     return self.settings.installationId
 
   proc savePreferredName*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_PREFERRED_NAME, value)):
+    if (self.saveSetting(KEY_PREFERRED_NAME, value)):
       self.settings.preferredName = value
       return true
     return false
@@ -204,14 +227,17 @@ QtObject:
     return self.settings.displayName
 
   proc saveDisplayName*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_DISPLAY_NAME, value)):
+    if (self.saveSetting(KEY_DISPLAY_NAME, value)):
       self.settings.displayName = value
-      self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
+      self.events.emit(
+        SIGNAL_DISPLAY_NAME_UPDATED,
+        SettingsTextValueArgs(value: self.settings.displayName),
+      )
       return true
     return false
 
   proc saveKeyUid*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_KEY_UID, value)):
+    if (self.saveSetting(KEY_KEY_UID, value)):
       self.settings.keyUid = value
       return true
     return false
@@ -220,7 +246,7 @@ QtObject:
     return self.settings.keyUid
 
   proc saveLatestDerivedPath*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_LATEST_DERIVED_PATH, value)):
+    if (self.saveSetting(KEY_LATEST_DERIVED_PATH, value)):
       self.settings.latestDerivedPath = value
       return true
     return false
@@ -229,7 +255,7 @@ QtObject:
     self.settings.latestDerivedPath
 
   proc saveLinkPreviewRequestEnabled*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_LINK_PREVIEW_REQUEST_ENABLED, value)):
+    if (self.saveSetting(KEY_LINK_PREVIEW_REQUEST_ENABLED, value)):
       self.settings.linkPreviewRequestEnabled = value
       return true
     return false
@@ -238,7 +264,7 @@ QtObject:
     self.settings.linkPreviewRequestEnabled
 
   proc saveMessagesFromContactsOnly*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_MESSAGES_FROM_CONTACTS_ONLY, value)):
+    if (self.saveSetting(KEY_MESSAGES_FROM_CONTACTS_ONLY, value)):
       self.settings.messagesFromContactsOnly = value
       return true
     return false
@@ -247,7 +273,7 @@ QtObject:
     self.settings.messagesFromContactsOnly
 
   proc saveMnemonic*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_MNEMONIC, value)):
+    if (self.saveSetting(KEY_MNEMONIC, value)):
       self.settings.mnemonic = value
       self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
       return true
@@ -257,7 +283,7 @@ QtObject:
     return self.settings.mnemonic
 
   proc saveName*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_NAME, value)):
+    if (self.saveSetting(KEY_NAME, value)):
       self.settings.name = value
       return true
     return false
@@ -266,7 +292,7 @@ QtObject:
     return self.settings.name
 
   proc savePhotoPath*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_PHOTO_PATH, value)):
+    if (self.saveSetting(KEY_PHOTO_PATH, value)):
       self.settings.photoPath = value
       return true
     return false
@@ -275,7 +301,7 @@ QtObject:
     return self.settings.photoPath
 
   proc savePreviewPrivacy*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_PREVIEW_PRIVACY, value)):
+    if (self.saveSetting(KEY_PREVIEW_PRIVACY, value)):
       self.settings.previewPrivacy = value
       return true
     return false
@@ -284,7 +310,7 @@ QtObject:
     self.settings.previewPrivacy
 
   proc savePublicKey*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_PUBLIC_KEY, value)):
+    if (self.saveSetting(KEY_PUBLIC_KEY, value)):
       self.settings.publicKey = value
       return true
     return false
@@ -293,7 +319,7 @@ QtObject:
     return self.settings.publicKey
 
   proc saveSigningPhrase*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_SIGNING_PHRASE, value)):
+    if (self.saveSetting(KEY_SIGNING_PHRASE, value)):
       self.settings.signingPhrase = value
       return true
     return false
@@ -302,7 +328,7 @@ QtObject:
     return self.settings.signingPhrase
 
   proc saveDefaultSyncPeriod*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_DEFAULT_SYNC_PERIOD, value)):
+    if (self.saveSetting(KEY_DEFAULT_SYNC_PERIOD, value)):
       self.settings.defaultSyncPeriod = value
       return true
     return false
@@ -311,7 +337,7 @@ QtObject:
     self.settings.defaultSyncPeriod
 
   proc saveSendPushNotifications*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_SEND_PUSH_NOTIFICATIONS, value)):
+    if (self.saveSetting(KEY_SEND_PUSH_NOTIFICATIONS, value)):
       self.settings.sendPushNotifications = value
       return true
     return false
@@ -320,7 +346,7 @@ QtObject:
     self.settings.sendPushNotifications
 
   proc saveAppearance*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_APPEARANCE, value)):
+    if (self.saveSetting(KEY_APPEARANCE, value)):
       self.settings.appearance = value
       return true
     return false
@@ -345,7 +371,7 @@ QtObject:
     self.settings.useMailservers
 
   proc saveWalletRootAddress*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_WALLET_ROOT_ADDRESS, value)):
+    if (self.saveSetting(KEY_WALLET_ROOT_ADDRESS, value)):
       self.settings.walletRootAddress = value
       return true
     return false
@@ -357,7 +383,7 @@ QtObject:
     self.settings.sendStatusUpdates
 
   proc saveTelemetryServerUrl*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_TELEMETRY_SERVER_URL, value)):
+    if (self.saveSetting(KEY_TELEMETRY_SERVER_URL, value)):
       self.settings.telemetryServerUrl = value
       return true
     return false
@@ -371,12 +397,13 @@ QtObject:
       # the settings accordingly and might turn it off afterwards (if user has
       # set status to "inactive")
       const propagateStatus = true
-      if(self.saveSetting(KEY_SEND_STATUS_UPDATES, propagateStatus) != true):
-          return false
+      if (self.saveSetting(KEY_SEND_STATUS_UPDATES, propagateStatus) != true):
+        return false
       discard status_update.setUserStatus(newStatus.int)
       self.settings.currentUserStatus.statusType = newStatus
-      let sendPingsWithStatusUpdates = (newStatus == StatusType.AlwaysOnline or newStatus == StatusType.Automatic)
-      if(self.saveSetting(KEY_SEND_STATUS_UPDATES, sendPingsWithStatusUpdates)):
+      let sendPingsWithStatusUpdates =
+        (newStatus == StatusType.AlwaysOnline or newStatus == StatusType.Automatic)
+      if (self.saveSetting(KEY_SEND_STATUS_UPDATES, sendPingsWithStatusUpdates)):
         self.settings.sendStatusUpdates = sendPingsWithStatusUpdates
         return true
       return false
@@ -384,7 +411,7 @@ QtObject:
       return false
 
   proc saveFleet*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_FLEET, value)):
+    if (self.saveSetting(KEY_FLEET, value)):
       self.settings.fleet = value
       return true
     return false
@@ -415,13 +442,15 @@ QtObject:
   proc setPinnedMailserverId*(self: Service, mailserverID: string, fleet: Fleet): bool =
     if fleet == Fleet.Undefined:
       return false
-    var newMailserverJsonObj = self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
-    newMailserverJsonObj[$fleet] = %* mailserverID
+    var newMailserverJsonObj =
+      self.settings.pinnedMailserver.pinnedMailserverToJsonNode()
+    newMailserverJsonObj[$fleet] = %*mailserverID
 
     try:
       let response = status_mailservers.setPinnedMailservers(newMailserverJsonObj)
       if not response.error.isNil:
-        error "error saving pinned mailserver: ", errDescription = response.error.message
+        error "error saving pinned mailserver: ",
+          errDescription = response.error.message
         return false
 
       case fleet
@@ -447,7 +476,7 @@ QtObject:
     return self.setPinnedMailserverId("", fleet)
 
   proc saveAutoMessageEnabled*(self: Service, value: bool): bool =
-    if(self.saveSetting(KEY_AUTO_MESSAGE_ENABLED, value)):
+    if (self.saveSetting(KEY_AUTO_MESSAGE_ENABLED, value)):
       self.settings.autoMessageEnabled = value
       return true
     return false
@@ -456,7 +485,7 @@ QtObject:
     return self.settings.autoMessageEnabled
 
   proc setDefaultSyncPeriod*(self: Service, value: int): bool =
-    if(self.saveSetting(KEY_DEFAULT_SYNC_PERIOD,value)):
+    if (self.saveSetting(KEY_DEFAULT_SYNC_PERIOD, value)):
       self.settings.defaultSyncPeriod = value
       return true
     return false
@@ -466,9 +495,11 @@ QtObject:
 
   proc toggleTestNetworksEnabled*(self: Service): bool =
     let newValue = not self.settings.testNetworksEnabled
-    if(self.saveSetting(KEY_TEST_NETWORKS_ENABLED, newValue)):
+    if (self.saveSetting(KEY_TEST_NETWORKS_ENABLED, newValue)):
       self.settings.testNetworksEnabled = newValue
-      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
+      self.events.emit(
+        SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency)
+      )
       return true
     return false
 
@@ -477,7 +508,7 @@ QtObject:
 
   proc toggleTokenGroupByCommunity*(self: Service): bool =
     let newValue = not self.settings.tokenGroupByCommunity
-    if(self.saveSetting(KEY_TOKEN_GROUP_BY_COMMUNITY, newValue)):
+    if (self.saveSetting(KEY_TOKEN_GROUP_BY_COMMUNITY, newValue)):
       self.settings.tokenGroupByCommunity = newValue
       return true
     return false
@@ -487,7 +518,7 @@ QtObject:
 
   proc toggleShowCommunityAssetWhenSendingTokens*(self: Service): bool =
     let newValue = not self.settings.showCommunityAssetWhenSendingTokens
-    if(self.saveSetting(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, newValue)):
+    if (self.saveSetting(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, newValue)):
       self.settings.showCommunityAssetWhenSendingTokens = newValue
       return true
     return false
@@ -497,7 +528,7 @@ QtObject:
 
   proc toggleDisplayAssetsBelowBalance*(self: Service): bool =
     let newValue = not self.settings.displayAssetsBelowBalance
-    if(self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE, newValue)):
+    if (self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE, newValue)):
       self.settings.displayAssetsBelowBalance = newValue
       return true
     return false
@@ -506,7 +537,7 @@ QtObject:
     return self.settings.displayAssetsBelowBalanceThreshold
 
   proc setDisplayAssetsBelowBalanceThreshold*(self: Service, value: int64): bool =
-    if(self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, value)):
+    if (self.saveSetting(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, value)):
       self.settings.displayAssetsBelowBalanceThreshold = value
       return true
     return false
@@ -516,7 +547,7 @@ QtObject:
 
   proc toggleCollectibleGroupByCommunity*(self: Service): bool =
     let newValue = not self.settings.collectibleGroupByCommunity
-    if(self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, newValue)):
+    if (self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, newValue)):
       self.settings.collectibleGroupByCommunity = newValue
       return true
     return false
@@ -526,7 +557,7 @@ QtObject:
 
   proc toggleCollectibleGroupByCollection*(self: Service): bool =
     let newValue = not self.settings.collectibleGroupByCollection
-    if(self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, newValue)):
+    if (self.saveSetting(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, newValue)):
       self.settings.collectibleGroupByCollection = newValue
       return true
     return false
@@ -538,7 +569,10 @@ QtObject:
     if not self.saveSetting(KEY_URL_UNFURLING_MODE, int(value)):
       return false
     self.settings.urlUnfurlingMode = value
-    self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+    self.events.emit(
+      SIGNAL_URL_UNFURLING_MODE_UPDATED,
+      UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode),
+    )
     return true
 
   proc notifSettingAllowNotificationsChanged*(self: Service) {.signal.}
@@ -549,8 +583,9 @@ QtObject:
     result = true #default value
     try:
       let response = status_settings.getAllowNotifications()
-      if(not response.error.isNil):
-        error "error reading allow notification setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading allow notification setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getBool
       self.settings.notificationsAllowNotifications = result
@@ -561,8 +596,9 @@ QtObject:
   proc setNotifSettingAllowNotifications*(self: Service, value: bool) {.slot.} =
     try:
       let response = status_settings.setAllowNotifications(value)
-      if(not response.error.isNil):
-        error "error saving allow notification setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving allow notification setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsAllowNotifications = value
       self.notifSettingAllowNotificationsChanged()
@@ -583,8 +619,9 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getOneToOneChats()
-      if(not response.error.isNil):
-        error "error reading one to one setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading one to one setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsOneToOneChats = result
@@ -595,8 +632,9 @@ QtObject:
   proc setNotifSettingOneToOneChats*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setOneToOneChats(value)
-      if(not response.error.isNil):
-        error "error saving one to one setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving one to one setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsOneToOneChats = value
       self.notifSettingOneToOneChatsChanged()
@@ -617,8 +655,9 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getGroupChats()
-      if(not response.error.isNil):
-        error "error reading group chats setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading group chats setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsGroupChats = result
@@ -629,8 +668,9 @@ QtObject:
   proc setNotifSettingGroupChats*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setGroupChats(value)
-      if(not response.error.isNil):
-        error "error saving group chats setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving group chats setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsGroupChats = value
       self.notifSettingGroupChatsChanged()
@@ -651,8 +691,9 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getPersonalMentions()
-      if(not response.error.isNil):
-        error "error reading personal mentions setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading personal mentions setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsPersonalMentions = result
@@ -663,8 +704,9 @@ QtObject:
   proc setNotifSettingPersonalMentions*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setPersonalMentions(value)
-      if(not response.error.isNil):
-        error "error saving personal mentions setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving personal mentions setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsPersonalMentions = value
       self.notifSettingPersonalMentionsChanged()
@@ -685,8 +727,9 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getGlobalMentions()
-      if(not response.error.isNil):
-        error "error reading global mentions setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading global mentions setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsGlobalMentions = result
@@ -697,8 +740,9 @@ QtObject:
   proc setNotifSettingGlobalMentions*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setGlobalMentions(value)
-      if(not response.error.isNil):
-        error "error saving global mentions setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving global mentions setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsGlobalMentions = value
       self.notifSettingGlobalMentionsChanged()
@@ -719,8 +763,9 @@ QtObject:
     result = VALUE_NOTIF_TURN_OFF #default value
     try:
       let response = status_settings.getAllMessages()
-      if(not response.error.isNil):
-        error "error reading all messages setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading all messages setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsAllMessages = result
@@ -731,8 +776,9 @@ QtObject:
   proc setNotifSettingAllMessages*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setAllMessages(value)
-      if(not response.error.isNil):
-        error "error saving all messages setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving all messages setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsAllMessages = value
       self.notifSettingAllMessagesChanged()
@@ -753,8 +799,9 @@ QtObject:
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getContactRequests()
-      if(not response.error.isNil):
-        error "error reading contact request setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading contact request setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getStr
       self.settings.notificationsContactRequests = result
@@ -765,8 +812,9 @@ QtObject:
   proc setNotifSettingContactRequests*(self: Service, value: string) {.slot.} =
     try:
       let response = status_settings.setContactRequests(value)
-      if(not response.error.isNil):
-        error "error saving contact request setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving contact request setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsContactRequests = value
       self.notifSettingContactRequestsChanged()
@@ -787,8 +835,9 @@ QtObject:
     result = true #default value
     try:
       let response = status_settings.getSoundEnabled()
-      if(not response.error.isNil):
-        error "error reading sound enabled setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading sound enabled setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getBool
       self.settings.notificationsSoundsEnabled = result
@@ -799,8 +848,9 @@ QtObject:
   proc setNotificationSoundsEnabled*(self: Service, value: bool) {.slot.} =
     try:
       let response = status_settings.setSoundEnabled(value)
-      if(not response.error.isNil):
-        error "error saving sound enabled setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving sound enabled setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsSoundsEnabled = value
       self.notificationSoundsEnabledChanged()
@@ -821,7 +871,7 @@ QtObject:
     result = 50 #default value
     try:
       let response = status_settings.getVolume()
-      if(not response.error.isNil):
+      if (not response.error.isNil):
         error "error reading volume setting: ", errDescription = response.error.message
         return
       result = response.result.getInt
@@ -833,7 +883,7 @@ QtObject:
   proc setNotificationVolume*(self: Service, value: int) {.slot.} =
     try:
       let response = status_settings.setVolume(value)
-      if(not response.error.isNil):
+      if (not response.error.isNil):
         error "error saving volume setting: ", errDescription = response.error.message
         return
       self.settings.notificationsVolume = value
@@ -847,7 +897,6 @@ QtObject:
     write = setNotificationVolume
     notify = notificationVolumeChanged
 
-
   proc notificationMessagePreviewChanged*(self: Service) {.signal.}
   proc getNotificationMessagePreview*(self: Service): int {.slot.} =
     if self.initialized:
@@ -856,8 +905,9 @@ QtObject:
     result = 2 #default value
     try:
       let response = status_settings.getMessagePreview()
-      if(not response.error.isNil):
-        error "error reading message preview setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading message preview setting: ",
+          errDescription = response.error.message
         return
       result = response.result.getInt
       self.settings.notificationsMessagePreview = result
@@ -868,8 +918,9 @@ QtObject:
   proc setNotificationMessagePreview*(self: Service, value: int) {.slot.} =
     try:
       let response = status_settings.setMessagePreview(value)
-      if(not response.error.isNil):
-        error "error saving message preview setting: ", errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error saving message preview setting: ",
+          errDescription = response.error.message
         return
       self.settings.notificationsMessagePreview = value
       self.notificationMessagePreviewChanged()
@@ -882,13 +933,18 @@ QtObject:
     write = setNotificationMessagePreview
     notify = notificationMessagePreviewChanged
 
-  proc setNotifSettingExemptions*(self: Service, id: string, exemptions: NotificationsExemptions): bool =
+  proc setNotifSettingExemptions*(
+      self: Service, id: string, exemptions: NotificationsExemptions
+  ): bool =
     result = false
     try:
-      let response = status_settings.setExemptions(id, exemptions.muteAllMessages, exemptions.personalMentions,
-      exemptions.globalMentions, exemptions.otherMessages)
-      if(not response.error.isNil):
-        error "error saving exemptions setting: ", id = id, errDescription = response.error.message
+      let response = status_settings.setExemptions(
+        id, exemptions.muteAllMessages, exemptions.personalMentions,
+        exemptions.globalMentions, exemptions.otherMessages,
+      )
+      if (not response.error.isNil):
+        error "error saving exemptions setting: ",
+          id = id, errDescription = response.error.message
         return
       self.notifExemptionsCache[id] = exemptions
       result = true
@@ -900,8 +956,9 @@ QtObject:
     result = false
     try:
       let response = status_settings.deleteExemptions(id)
-      if(not response.error.isNil):
-        error "error deleting exemptions setting: ", id = id, errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error deleting exemptions setting: ",
+          id = id, errDescription = response.error.message
         return
       result = true
     except Exception as e:
@@ -919,29 +976,32 @@ QtObject:
     result.otherMessages = VALUE_NOTIF_TURN_OFF
     try:
       var response = status_settings.getExemptionMuteAllMessages(id)
-      if(not response.error.isNil):
-        error "error reading exemptions mute all messages request setting: ", id = id, errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading exemptions mute all messages request setting: ",
+          id = id, errDescription = response.error.message
         return
       result.muteAllMessages = response.result.getBool
 
       response = status_settings.getExemptionPersonalMentions(id)
-      if(not response.error.isNil):
-        error "error reading exemptions personal mentions request setting: ", id = id, errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading exemptions personal mentions request setting: ",
+          id = id, errDescription = response.error.message
         return
       result.personalMentions = response.result.getStr
 
       response = status_settings.getExemptionGlobalMentions(id)
-      if(not response.error.isNil):
-        error "error reading exemptions global mentions request setting: ", id = id, errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading exemptions global mentions request setting: ",
+          id = id, errDescription = response.error.message
         return
       result.globalMentions = response.result.getStr
 
       response = status_settings.getExemptionOtherMessages(id)
-      if(not response.error.isNil):
-        error "error reading exemptions other messages request setting: ", id = id, errDescription = response.error.message
+      if (not response.error.isNil):
+        error "error reading exemptions other messages request setting: ",
+          id = id, errDescription = response.error.message
         return
       result.otherMessages = response.result.getStr
-
     except Exception as e:
       let errDesription = e.msg
       error "reading exemptions setting error: ", id = id, errDesription
@@ -952,9 +1012,11 @@ QtObject:
     self.settings.bio
 
   proc saveBio*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_BIO, value)):
+    if (self.saveSetting(KEY_BIO, value)):
       self.settings.bio = value
-      self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
+      self.events.emit(
+        SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio)
+      )
       return true
     return false
 
@@ -963,6 +1025,7 @@ QtObject:
 
   proc mnemonicWasShown*(self: Service) =
     let response = status_settings.mnemonicWasShown()
-    if(not response.error.isNil):
-      error "error saving mnemonic was shown setting: ", errDescription = response.error.message
+    if (not response.error.isNil):
+      error "error saving mnemonic was shown setting: ",
+        errDescription = response.error.message
       return

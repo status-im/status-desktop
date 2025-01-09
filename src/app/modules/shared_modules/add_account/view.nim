@@ -4,36 +4,36 @@ import internal/[state, state_wrapper]
 import ../../shared_models/[keypair_model, keypair_item, derived_address_model]
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      currentState: StateWrapper
-      currentStateVariant: QVariant
-      originModel: KeyPairModel
-      originModelVariant: QVariant
-      selectedOrigin: KeyPairItem
-      selectedOriginVariant: QVariant
-      derivedAddressModel: DerivedAddressModel
-      derivedAddressModelVariant: QVariant
-      selectedDerivedAddress: DerivedAddressItem
-      selectedDerivedAddressVariant: QVariant
-      watchOnlyAccAddress: DerivedAddressItem
-      watchOnlyAccAddressVariant: QVariant
-      privateKeyAccAddress: DerivedAddressItem
-      privateKeyAccAddressVariant: QVariant
-      accountName: string
-      newKeyPairName: string
-      selectedEmoji: string
-      selectedColorId: string
-      storedAccountName: string # used only in edit mode
-      storedSelectedEmoji: string # used only in edit mode
-      storedSelectedColorId: string # used only in edit mode
-      derivationPath: string
-      suggestedDerivationPath: string
-      actionAuthenticated: bool
-      scanningForActivityIsOngoing: bool
-      editMode: bool
-      disablePopup: bool # unables user to interact with the popup (action buttons are disabled as well as close popup button)
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    currentState: StateWrapper
+    currentStateVariant: QVariant
+    originModel: KeyPairModel
+    originModelVariant: QVariant
+    selectedOrigin: KeyPairItem
+    selectedOriginVariant: QVariant
+    derivedAddressModel: DerivedAddressModel
+    derivedAddressModelVariant: QVariant
+    selectedDerivedAddress: DerivedAddressItem
+    selectedDerivedAddressVariant: QVariant
+    watchOnlyAccAddress: DerivedAddressItem
+    watchOnlyAccAddressVariant: QVariant
+    privateKeyAccAddress: DerivedAddressItem
+    privateKeyAccAddressVariant: QVariant
+    accountName: string
+    newKeyPairName: string
+    selectedEmoji: string
+    selectedColorId: string
+    storedAccountName: string # used only in edit mode
+    storedSelectedEmoji: string # used only in edit mode
+    storedSelectedColorId: string # used only in edit mode
+    derivationPath: string
+    suggestedDerivationPath: string
+    actionAuthenticated: bool
+    scanningForActivityIsOngoing: bool
+    editMode: bool
+    disablePopup: bool
+      # unables user to interact with the popup (action buttons are disabled as well as close popup button)
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -75,26 +75,45 @@ QtObject:
     result.editMode = false
     result.disablePopup = false
 
-    signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
-    signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
-    signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
-    signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
-    signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
-    signalConnect(result.currentState, "quaternaryActionClicked()", result, "onQuaternaryActionClicked()", 2)
+    signalConnect(
+      result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()",
+      2,
+    )
+    signalConnect(
+      result.currentState, "secondaryActionClicked()", result,
+      "onSecondaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentState, "tertiaryActionClicked()", result,
+      "onTertiaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentState, "quaternaryActionClicked()", result,
+      "onQuaternaryActionClicked()", 2,
+    )
 
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
 
   proc setCurrentState*(self: View, state: State) =
     self.currentState.setStateObj(state)
+
   proc getCurrentState(self: View): QVariant {.slot.} =
     return self.currentStateVariant
+
   QtProperty[QVariant] currentState:
     read = getCurrentState
 
   proc editModeChanged*(self: View) {.signal.}
   proc getEditMode*(self: View): bool {.slot.} =
     return self.editMode
+
   QtProperty[bool] editMode:
     read = getEditMode
     notify = editModeChanged
@@ -105,6 +124,7 @@ QtObject:
   proc disablePopupChanged*(self: View) {.signal.}
   proc getDisablePopup*(self: View): bool {.slot.} =
     return self.disablePopup
+
   QtProperty[bool] disablePopup:
     read = getDisablePopup
     notify = disablePopupChanged
@@ -138,6 +158,7 @@ QtObject:
     if self.originModelVariant.isNil:
       return newQVariant()
     return self.originModelVariant
+
   QtProperty[QVariant] originModel:
     read = getOriginModel
     notify = originModelChanged
@@ -151,8 +172,10 @@ QtObject:
 
   proc getSelectedOrigin*(self: View): KeyPairItem =
     return self.selectedOrigin
+
   proc getSelectedOriginAsVariant*(self: View): QVariant {.slot.} =
     return self.selectedOriginVariant
+
   QtProperty[QVariant] selectedOrigin:
     read = getSelectedOriginAsVariant
 
@@ -163,6 +186,7 @@ QtObject:
     if self.derivedAddressModelVariant.isNil:
       return newQVariant()
     return self.derivedAddressModelVariant
+
   QtProperty[QVariant] derivedAddressModel:
     read = getDerivedAddressModel
 
@@ -175,6 +199,7 @@ QtObject:
   proc selectedDerivedAddressChanged*(self: View) {.signal.}
   proc getSelectedDerivedAddressVariant*(self: View): QVariant {.slot.} =
     return self.selectedDerivedAddressVariant
+
   QtProperty[QVariant] selectedDerivedAddress:
     read = getSelectedDerivedAddressVariant
     notify = selectedDerivedAddressChanged
@@ -189,6 +214,7 @@ QtObject:
   proc watchOnlyAccAddressChanged*(self: View) {.signal.}
   proc getWatchOnlyAccAddressVariant*(self: View): QVariant {.slot.} =
     return self.watchOnlyAccAddressVariant
+
   QtProperty[QVariant] watchOnlyAccAddress:
     read = getWatchOnlyAccAddressVariant
     notify = watchOnlyAccAddressChanged
@@ -203,6 +229,7 @@ QtObject:
   proc privateKeyAccAddressChanged*(self: View) {.signal.}
   proc getPrivateKeyAccAddressVariant*(self: View): QVariant {.slot.} =
     return self.privateKeyAccAddressVariant
+
   QtProperty[QVariant] privateKeyAccAddress:
     read = getPrivateKeyAccAddressVariant
     notify = privateKeyAccAddressChanged
@@ -214,9 +241,11 @@ QtObject:
   proc actionAuthenticatedChanged*(self: View) {.signal.}
   proc getActionAuthenticated*(self: View): bool {.slot.} =
     return self.actionAuthenticated
+
   proc setActionAuthenticated*(self: View, value: bool) {.slot.} =
     self.actionAuthenticated = value
     self.actionAuthenticatedChanged()
+
   QtProperty[bool] actionAuthenticated:
     read = getActionAuthenticated
     write = setActionAuthenticated
@@ -225,9 +254,11 @@ QtObject:
   proc scanningForActivityChanged*(self: View) {.signal.}
   proc getScanningForActivityIsOngoing*(self: View): bool {.slot.} =
     return self.scanningForActivityIsOngoing
+
   proc setScanningForActivityIsOngoing*(self: View, value: bool) {.slot.} =
     self.scanningForActivityIsOngoing = value
     self.scanningForActivityChanged()
+
   QtProperty[bool] scanningForActivityIsOngoing:
     read = getScanningForActivityIsOngoing
     write = setScanningForActivityIsOngoing
@@ -239,8 +270,10 @@ QtObject:
       return
     self.accountName = value
     self.accountNameChanged()
+
   proc getAccountName*(self: View): string {.slot.} =
     return self.accountName
+
   QtProperty[string] accountName:
     read = getAccountName
     write = setAccountName
@@ -252,8 +285,10 @@ QtObject:
       return
     self.newKeyPairName = value
     self.newKeyPairNameChanged()
+
   proc getNewKeyPairName*(self: View): string {.slot.} =
     return self.newKeyPairName
+
   QtProperty[string] newKeyPairName:
     read = getNewKeyPairName
     write = setNewKeyPairName
@@ -265,8 +300,10 @@ QtObject:
       return
     self.selectedEmoji = value
     self.selectedEmojiChanged()
+
   proc getSelectedEmoji*(self: View): string {.slot.} =
     return self.selectedEmoji
+
   QtProperty[string] selectedEmoji:
     read = getSelectedEmoji
     write = setSelectedEmoji
@@ -278,8 +315,10 @@ QtObject:
       return
     self.selectedColorId = value
     self.selectedColorIdChanged()
+
   proc getSelectedColorId*(self: View): string {.slot.} =
     return self.selectedColorId
+
   QtProperty[string] selectedColorId:
     read = getSelectedColorId
     write = setSelectedColorId
@@ -287,27 +326,32 @@ QtObject:
 
   proc getStoredAccountName*(self: View): string {.slot.} =
     return self.storedAccountName
+
   proc setStoredAccountName*(self: View, value: string) =
     self.storedAccountName = value
 
   proc getStoredSelectedEmoji*(self: View): string {.slot.} =
     return self.storedSelectedEmoji
+
   proc setStoredSelectedEmoji*(self: View, value: string) =
     self.storedSelectedEmoji = value
 
   proc getStoredSelectedColorId*(self: View): string {.slot.} =
     return self.storedSelectedColorId
+
   proc setStoredSelectedColorId*(self: View, value: string) =
     self.storedSelectedColorId = value
 
   proc derivationPathChanged*(self: View) {.signal.}
   proc getDerivationPath*(self: View): string {.slot.} =
     return self.derivationPath
+
   proc setDerivationPath*(self: View, value: string) {.slot.} =
     if self.derivationPath == value:
       return
     self.derivationPath = value
     self.derivationPathChanged()
+
   QtProperty[string] derivationPath:
     read = getDerivationPath
     write = setDerivationPath
@@ -316,6 +360,7 @@ QtObject:
   proc suggestedDerivationPathChanged*(self: View) {.signal.}
   proc getSuggestedDerivationPath*(self: View): string {.slot.} =
     return self.suggestedDerivationPath
+
   QtProperty[string] suggestedDerivationPath:
     read = getSuggestedDerivationPath
     notify = suggestedDerivationPathChanged
@@ -355,7 +400,9 @@ QtObject:
     self.delegate.startScanningForActivity()
 
   proc confirmSavedAddressRemoval*(self: View, name: string, address: string) {.signal.}
-  proc sendConfirmSavedAddressRemovalSignal*(self: View, name: string, address: string) =
+  proc sendConfirmSavedAddressRemovalSignal*(
+      self: View, name: string, address: string
+  ) =
     self.confirmSavedAddressRemoval(name, address)
 
   proc removingSavedAddressConfirmed*(self: View, address: string) {.slot.} =

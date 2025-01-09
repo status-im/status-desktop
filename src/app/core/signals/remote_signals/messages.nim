@@ -2,7 +2,9 @@ import json, chronicles, tables
 
 import base
 
-import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
+import
+  ../../../../app_service/service/message/dto/
+    [message, pinned_message_update, reaction, removed_message]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
@@ -40,14 +42,16 @@ type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
   messageId*: string
 
-proc fromEvent*(T: type MessageDeliveredSignal, event: JsonNode): MessageDeliveredSignal =
+proc fromEvent*(
+    T: type MessageDeliveredSignal, event: JsonNode
+): MessageDeliveredSignal =
   result = MessageDeliveredSignal()
   result.signalType = SignalType.MessageDelivered
   result.chatId = event["event"]["chatID"].getStr
   result.messageId = event["event"]["messageID"].getStr
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
-  var signal:MessageSignal = MessageSignal()
+  var signal: MessageSignal = MessageSignal()
   signal.signalType = SignalType.Message
   signal.messages = @[]
   signal.contacts = @[]
@@ -65,7 +69,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonMsg in e["messages"]:
       var message = jsonMsg.toMessageDto()
       signal.messages.add(message)
-      info "received", signal="messages.new", messageID=message.id
+      info "received", signal = "messages.new", messageID = message.id
 
   if e.contains("chats"):
     for jsonChat in e["chats"]:
@@ -83,8 +87,8 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
       signal.statusUpdates.add(statusUpdate)
 
   if e.contains("currentStatus"):
-      var currentStatus = e["currentStatus"].toStatusUpdateDto()
-      signal.currentStatus.add(currentStatus)
+    var currentStatus = e["currentStatus"].toStatusUpdateDto()
+    signal.currentStatus.add(currentStatus)
 
   if e.contains("installations"):
     for jsonDevice in e["installations"]:
@@ -124,7 +128,9 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if e.contains("activityCenterNotifications"):
     for jsonNotification in e["activityCenterNotifications"]:
-      signal.activityCenterNotifications.add(jsonNotification.toActivityCenterNotificationDto())
+      signal.activityCenterNotifications.add(
+        jsonNotification.toActivityCenterNotificationDto()
+      )
 
   if e.contains("pinMessages"):
     for jsonPinnedMessage in e["pinMessages"]:
@@ -154,4 +160,3 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for contactId in e["updatedProfileShowcaseContactIDs"]:
       signal.updatedProfileShowcaseContactIDs.add(contactId.getStr())
   result = signal
-

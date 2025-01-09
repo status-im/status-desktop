@@ -28,28 +28,35 @@ type SignAcceptedArgs* = ref object of RootObj
   signature* {.serializedFieldName("signature").}: string
 
 rpc(requestAccountsAccepted, "connector"):
-  args: RequestAccountsAcceptedArgs
+  args:
+    RequestAccountsAcceptedArgs
 
 rpc(sendTransactionAccepted, "connector"):
-  args: SendTransactionAcceptedArgs
+  args:
+    SendTransactionAcceptedArgs
 
 rpc(sendTransactionRejected, "connector"):
-  aargs: RejectedArgs
+  aargs:
+    RejectedArgs
 
 rpc(requestAccountsRejected, "connector"):
-  args: RejectedArgs
+  args:
+    RejectedArgs
 
 rpc(recallDAppPermission, "connector"):
-  dAppUrl: string
+  dAppUrl:
+    string
 
 rpc(getPermittedDAppsList, "connector"):
   discard
 
 rpc(signAccepted, "connector"):
-  args: SignAcceptedArgs
+  args:
+    SignAcceptedArgs
 
 rpc(signRejected, "connector"):
-  args: RejectedArgs
+  args:
+    RejectedArgs
 
 proc isSuccessResponse(rpcResponse: RpcResponse[JsonNode]): bool =
   return rpcResponse.error.isNil

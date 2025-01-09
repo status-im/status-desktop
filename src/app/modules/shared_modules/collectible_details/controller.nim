@@ -11,18 +11,17 @@ import backend/collectibles as backend_collectibles
 import app_service/service/network/service as network_service
 
 QtObject:
-  type
-    Controller* = ref object of QObject
-      networkService: network_service.Service
+  type Controller* = ref object of QObject
+    networkService: network_service.Service
 
-      isDetailedEntryLoading: bool
-      detailedEntry: CollectiblesEntry
+    isDetailedEntryLoading: bool
+    detailedEntry: CollectiblesEntry
 
-      eventsHandler: EventsHandler
+    eventsHandler: EventsHandler
 
-      requestId: int32
+    requestId: int32
 
-      dataType: backend_collectibles.CollectibleDataType
+    dataType: backend_collectibles.CollectibleDataType
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -59,7 +58,8 @@ QtObject:
       return getExtraData(network)
 
   proc processGetCollectiblesDetailsResponse(self: Controller, response: JsonNode) =
-    defer: self.setIsDetailedEntryLoading(false)
+    defer:
+      self.setIsDetailedEntryLoading(false)
 
     let res = fromJson(response, backend_collectibles.GetCollectiblesByUniqueIDResponse)
 
@@ -68,7 +68,8 @@ QtObject:
       return
 
     if len(res.collectibles) != 1:
-      error "unexpected number of items fetching collectible details: ", len(res.collectibles)
+      error "unexpected number of items fetching collectible details: ",
+        len(res.collectibles)
       return
 
     let collectible = res.collectibles[0]
@@ -78,34 +79,36 @@ QtObject:
     self.detailedEntryChanged()
 
   proc processCollectiblesDataUpdate(self: Controller, jsonObj: JsonNode) =
-      if jsonObj.kind != JArray:
-        error "onCollectiblesDataUpdate expected an array"
+    if jsonObj.kind != JArray:
+      error "onCollectiblesDataUpdate expected an array"
 
-      for jsonCollectible in jsonObj.getElems():
-        let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
-        if self.detailedEntry.updateDataIfSameID(collectible):
-          break
+    for jsonCollectible in jsonObj.getElems():
+      let collectible = fromJson(jsonCollectible, backend_collectibles.Collectible)
+      if self.detailedEntry.updateDataIfSameID(collectible):
+        break
 
   proc processGetCollectionSocialsResponse(self: Controller, response: JsonNode) =
     let res = fromJson(response, backend_collectibles.CollectionSocialsMessage)
     self.detailedEntry.updateDataIfSameID(res)
 
-  proc getDetailedCollectible*(self: Controller, chainId: int, contractAddress: string, tokenId: string) {.slot.} =
+  proc getDetailedCollectible*(
+      self: Controller, chainId: int, contractAddress: string, tokenId: string
+  ) {.slot.} =
     self.setIsDetailedEntryLoading(true)
 
     let id = backend_collectibles.CollectibleUniqueID(
-      contractID: backend_collectibles.ContractID(
-        chainID: chainId,
-        address: contractAddress
-      ),
-      tokenID: stint.u256(tokenId)
+      contractID:
+        backend_collectibles.ContractID(chainID: chainId, address: contractAddress),
+      tokenID: stint.u256(tokenId),
     )
     let extradata = self.getExtraData(chainId)
 
     self.detailedEntry = newCollectibleDetailsBasicEntry(id, extradata)
     self.detailedEntryChanged()
 
-    let response = backend_collectibles.getCollectiblesByUniqueIDAsync(self.requestId, @[id], self.dataType)
+    let response = backend_collectibles.getCollectiblesByUniqueIDAsync(
+      self.requestId, @[id], self.dataType
+    )
     discard backend_collectibles.fetchCollectionSocialsAsync(id.contractID)
     if response.error != nil:
       self.setIsDetailedEntryLoading(false)
@@ -117,23 +120,27 @@ QtObject:
     self.detailedEntryChanged()
 
   proc setupEventHandlers(self: Controller) =
-    self.eventsHandler.onGetCollectiblesDetailsDone(proc (jsonObj: JsonNode) =
-      self.processGetCollectiblesDetailsResponse(jsonObj)
+    self.eventsHandler.onGetCollectiblesDetailsDone(
+      proc(jsonObj: JsonNode) =
+        self.processGetCollectiblesDetailsResponse(jsonObj)
     )
 
-    self.eventsHandler.onCollectiblesDataUpdate(proc (jsonObj: JsonNode) =
-      self.processCollectiblesDataUpdate(jsonObj)
+    self.eventsHandler.onCollectiblesDataUpdate(
+      proc(jsonObj: JsonNode) =
+        self.processCollectiblesDataUpdate(jsonObj)
     )
 
-    self.eventsHandler.onGetCollectionSocialsDone(proc (jsonObj: JsonNode) =
-      self.processGetCollectionSocialsResponse(jsonObj)
+    self.eventsHandler.onGetCollectionSocialsDone(
+      proc(jsonObj: JsonNode) =
+        self.processGetCollectionSocialsResponse(jsonObj)
     )
 
   proc newController*(
-    requestId: int32,
-    networkService: network_service.Service,
-    events: EventEmitter,
-    dataType: backend_collectibles.CollectibleDataType = backend_collectibles.CollectibleDataType.Details
+      requestId: int32,
+      networkService: network_service.Service,
+      events: EventEmitter,
+      dataType: backend_collectibles.CollectibleDataType =
+        backend_collectibles.CollectibleDataType.Details,
   ): Controller =
     new(result, delete)
 

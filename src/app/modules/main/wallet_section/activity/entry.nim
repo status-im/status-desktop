@@ -16,28 +16,26 @@ import ./transaction_identities_model as txid
 # Additional data needed to build an Entry, which is
 # not included in the metadata and needs to be
 # fetched from a different source.
-type
-  ExtraData* = object
-    inAmount*: float64
-    outAmount*: float64
+type ExtraData* = object
+  inAmount*: float64
+  outAmount*: float64
 
 # Used to display an activity history header entry in the QML UI
 QtObject:
-  type
-    ActivityEntry* = ref object of QObject
-      metadata: backend.ActivityEntry
-      extradata: ExtraData
+  type ActivityEntry* = ref object of QObject
+    metadata: backend.ActivityEntry
+    extradata: ExtraData
 
-      transactions: txid.Model
+    transactions: txid.Model
 
-      amountCurrency: CurrencyAmount
-      noAmount: CurrencyAmount
+    amountCurrency: CurrencyAmount
+    noAmount: CurrencyAmount
 
-      nftName: string
-      nftImageURL: string
+    nftName: string
+    nftImageURL: string
 
-      # true for entries that were changed/added in the current session
-      highlight: bool
+    # true for entries that were changed/added in the current session
+    highlight: bool
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -46,17 +44,28 @@ QtObject:
     self.QObject.delete
 
   proc isInTransactionType(self: ActivityEntry): bool =
-    return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
+    return
+      self.metadata.activityType == backend.ActivityType.Receive or
+      self.metadata.activityType == backend.ActivityType.Mint
 
-  proc extractCurrencyAmount(self: ActivityEntry, currencyService: Service): CurrencyAmount =
-    let amount = if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
-    let symbol = if self.isInTransactionType(): self.metadata.symbolIn.get("") else: self.metadata.symbolOut.get("")
+  proc extractCurrencyAmount(
+      self: ActivityEntry, currencyService: Service
+  ): CurrencyAmount =
+    let amount =
+      if self.isInTransactionType(): self.metadata.amountIn else: self.metadata.amountOut
+    let symbol =
+      if self.isInTransactionType():
+        self.metadata.symbolIn.get("")
+      else:
+        self.metadata.symbolOut.get("")
     return currencyAmountToItem(
       currencyService.parseCurrencyValue(symbol, amount),
       currencyService.getCurrencyFormat(symbol),
     )
 
-  proc newMultiTransactionActivityEntry*(metadata: backend.ActivityEntry, extradata: ExtraData, currencyService: Service): ActivityEntry =
+  proc newMultiTransactionActivityEntry*(
+      metadata: backend.ActivityEntry, extradata: ExtraData, currencyService: Service
+  ): ActivityEntry =
     new(result, delete)
     result.metadata = metadata
     result.extradata = extradata
@@ -71,7 +80,12 @@ QtObject:
 
     result.setup()
 
-  proc newTransactionActivityEntry*(metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, currencyService: Service): ActivityEntry =
+  proc newTransactionActivityEntry*(
+      metadata: backend.ActivityEntry,
+      fromAddresses: seq[string],
+      extradata: ExtraData,
+      currencyService: Service,
+  ): ActivityEntry =
     new(result, delete)
     result.metadata = metadata
     result.extradata = extradata
@@ -84,35 +98,51 @@ QtObject:
 
     result.setup()
 
-  proc buildMultiTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildMultiTransactionExtraData(
+      metadata: backend.ActivityEntry, currencyService: Service
+  ): ExtraData =
     if metadata.symbolIn.isSome():
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
+      result.inAmount =
+        currencyService.parseCurrencyValue(metadata.symbolIn.get(), metadata.amountIn)
     if metadata.symbolOut.isSome():
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
+      result.outAmount =
+        currencyService.parseCurrencyValue(metadata.symbolOut.get(), metadata.amountOut)
 
-  proc buildTransactionExtraData(metadata: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildTransactionExtraData(
+      metadata: backend.ActivityEntry, currencyService: Service
+  ): ExtraData =
     if metadata.symbolIn.isSome() or metadata.amountIn > 0:
-      result.inAmount = currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
+      result.inAmount =
+        currencyService.parseCurrencyValue(metadata.symbolIn.get(""), metadata.amountIn)
     if metadata.symbolOut.isSome() or metadata.amountOut > 0:
-      result.outAmount = currencyService.parseCurrencyValue(metadata.symbolOut.get(""), metadata.amountOut)
+      result.outAmount = currencyService.parseCurrencyValue(
+        metadata.symbolOut.get(""), metadata.amountOut
+      )
 
-  proc buildExtraData(backendEntry: backend.ActivityEntry, currencyService: Service): ExtraData =
+  proc buildExtraData(
+      backendEntry: backend.ActivityEntry, currencyService: Service
+  ): ExtraData =
     var extraData: ExtraData
-    case backendEntry.getPayloadType():
-      of MultiTransaction:
-        extraData = buildMultiTransactionExtraData(backendEntry, currencyService)
-      of SimpleTransaction, PendingTransaction:
-        extraData = buildTransactionExtraData(backendEntry, currencyService)
+    case backendEntry.getPayloadType()
+    of MultiTransaction:
+      extraData = buildMultiTransactionExtraData(backendEntry, currencyService)
+    of SimpleTransaction, PendingTransaction:
+      extraData = buildTransactionExtraData(backendEntry, currencyService)
     return extraData
 
-  proc newActivityEntry*(backendEntry: backend.ActivityEntry, addresses: seq[string], currencyService: Service): ActivityEntry =
+  proc newActivityEntry*(
+      backendEntry: backend.ActivityEntry,
+      addresses: seq[string],
+      currencyService: Service,
+  ): ActivityEntry =
     var ae: entry.ActivityEntry
     let extraData = buildExtraData(backendEntry, currencyService)
-    case backendEntry.getPayloadType():
-      of MultiTransaction:
-        ae = newMultiTransactionActivityEntry(backendEntry, extraData, currencyService)
-      of SimpleTransaction, PendingTransaction:
-        ae = newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
+    case backendEntry.getPayloadType()
+    of MultiTransaction:
+      ae = newMultiTransactionActivityEntry(backendEntry, extraData, currencyService)
+    of SimpleTransaction, PendingTransaction:
+      ae =
+        newTransactionActivityEntry(backendEntry, addresses, extraData, currencyService)
     return ae
 
   proc resetAmountCurrency*(self: ActivityEntry, service: Service) =
@@ -132,7 +162,8 @@ QtObject:
     read = isPendingTransaction
 
   proc `$`*(self: ActivityEntry): string =
-    return fmt"""ActivityEntry(
+    return
+      fmt"""ActivityEntry(
       metadata:{$self.metadata},
       extradata:{$self.extradata},
       transactions:{$self.transactions},
@@ -149,18 +180,26 @@ QtObject:
 
   QtProperty[QVariant] transactions:
     read = getTransactions
-  
+
   proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
     return self.metadata
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
-    return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
+    return
+      if self.metadata.sender.isSome():
+        "0x" & self.metadata.sender.unsafeGet().toHex()
+      else:
+        ""
 
   QtProperty[string] sender:
     read = getSender
 
   proc getRecipient*(self: ActivityEntry): string {.slot.} =
-    return if self.metadata.recipient.isSome(): "0x" & self.metadata.recipient.unsafeGet().toHex() else: ""
+    return
+      if self.metadata.recipient.isSome():
+        "0x" & self.metadata.recipient.unsafeGet().toHex()
+      else:
+        ""
 
   QtProperty[string] recipient:
     read = getRecipient
@@ -305,7 +344,7 @@ QtObject:
       if self.metadata.tokenIn.isSome():
         tokenId = self.metadata.tokenIn.unsafeGet().tokenId
     elif self.metadata.tokenOut.isSome():
-        tokenId = self.metadata.tokenOut.unsafeGet().tokenId
+      tokenId = self.metadata.tokenOut.unsafeGet().tokenId
 
     if tokenId.isSome():
       return $stint.fromHex(UInt256, string(tokenId.unsafeGet()))

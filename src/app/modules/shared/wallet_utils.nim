@@ -4,36 +4,31 @@ import app_service/service/currency/dto as currency_dto
 
 import ../main/wallet_section/accounts/item as wallet_accounts_item
 
-proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : CurrencyAmount =
+proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto): CurrencyAmount =
   return newCurrencyAmount(
-    amount,
-    format.symbol,
-    int(format.displayDecimals),
-    format.stripTrailingZeroes
+    amount, format.symbol, int(format.displayDecimals), format.stripTrailingZeroes
   )
 
-proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool, areTestNetworksEnabled: bool): WalletAccountItem =
+proc walletAccountToWalletAccountItem*(
+    w: WalletAccountDto, keycardAccount: bool, areTestNetworksEnabled: bool
+): WalletAccountItem =
   if w.isNil:
     return newWalletAccountItem()
 
   return newWalletAccountItem(
-    w.name,
-    w.address,
-    w.colorId,
-    w.emoji,
-    w.walletType,
-    w.path,
-    w.keyUid,
-    keycardAccount,
-    w.position,
-    w.operable,
-    areTestNetworksEnabled,
-    w.hideFromTotalBalance
+    w.name, w.address, w.colorId, w.emoji, w.walletType, w.path, w.keyUid,
+    keycardAccount, w.position, w.operable, areTestNetworksEnabled,
+    w.hideFromTotalBalance,
   )
 
-proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: bool, 
-  currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool,
-  marketValuesLoading: bool): wallet_accounts_item.Item =
+proc walletAccountToWalletAccountsItem*(
+    w: WalletAccountDto,
+    isKeycardAccount: bool,
+    currencyBalance: float64,
+    currencyFormat: CurrencyFormatDto,
+    areTestNetworksEnabled: bool,
+    marketValuesLoading: bool,
+): wallet_accounts_item.Item =
   return wallet_accounts_item.newItem(
     w.name,
     w.address,
@@ -50,6 +45,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: b
     w.isWallet,
     areTestNetworksEnabled,
     w.hideFromTotalBalance,
-    canSend=w.walletType != "watch" and (w.operable==AccountFullyOperable or w.operable==AccountPartiallyOperable)
+    canSend =
+      w.walletType != "watch" and
+      (w.operable == AccountFullyOperable or w.operable == AccountPartiallyOperable),
   )
-  

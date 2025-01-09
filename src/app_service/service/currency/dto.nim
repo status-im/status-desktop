@@ -1,28 +1,25 @@
 import json
-include  ../../common/json_utils
+include ../../common/json_utils
 
-type
-  CurrencyFormatDto* = object
-    symbol*: string
-    displayDecimals*: uint
-    stripTrailingZeroes*: bool
+type CurrencyFormatDto* = object
+  symbol*: string
+  displayDecimals*: uint
+  stripTrailingZeroes*: bool
 
 proc newCurrencyFormatDto*(
-  symbol: string,
-  displayDecimals: uint,
-  stripTrailingZeroes: bool,
+    symbol: string, displayDecimals: uint, stripTrailingZeroes: bool
 ): CurrencyFormatDto =
   return CurrencyFormatDto(
     symbol: symbol,
     displayDecimals: displayDecimals,
-    stripTrailingZeroes: stripTrailingZeroes
+    stripTrailingZeroes: stripTrailingZeroes,
   )
 
 proc newCurrencyFormatDto*(symbol: string = ""): CurrencyFormatDto =
   return CurrencyFormatDto(
     symbol: symbol,
     displayDecimals: if len(symbol) == 0: 0 else: 8,
-    stripTrailingZeroes: true
+    stripTrailingZeroes: true,
   )
 
 proc toCurrencyFormatDto*(jsonObj: JsonNode): CurrencyFormatDto =

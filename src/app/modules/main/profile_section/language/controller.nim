@@ -2,20 +2,21 @@ import io_interface
 import ../../../../../app_service/service/language/service as language_service
 import ../../../../../app/core/eventemitter
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    languageService: language_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  languageService: language_service.Service
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_LANGUAGE_UPDATE) do(e: Args):
     let args = LanguageUpdatedArgs(e)
     self.delegate.onCurrentLanguageChanged(args.language)
 
-proc newController*(delegate: io_interface.AccessInterface,
-    events: EventEmitter, languageService: language_service.Service):
-  Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    languageService: language_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events

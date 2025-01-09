@@ -10,28 +10,23 @@ import ../../../core/eventemitter
 
 export io_interface
 
-type
-  Module*  = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     sharedUrlsService: urls_service.Service,
-    ): Module =
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(
-      result,
-      events,
-      sharedUrlsService,
-  )
+  result.controller = controller.newController(result, events, sharedUrlsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

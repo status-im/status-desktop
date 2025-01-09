@@ -34,9 +34,11 @@ QtObject:
       error "Invalid signal received", data = signal
       return
 
-    debug "keycard_signal", response=signal
+    debug "keycard_signal", response = signal
 
-  proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] =
+  proc buildSeedPhrasesFromIndexes*(
+      self: Service, seedPhraseIndexes: seq[int]
+  ): seq[string] =
     var seedPhrase: seq[string]
     for ind in seedPhraseIndexes:
       seedPhrase.add(englishWords[ind])
@@ -61,7 +63,9 @@ QtObject:
       let rpcResponseObj = response.parseJson
       echo "Set the pin ", response
 
-      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+      if (
+        rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""
+      ):
         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
     except Exception as e:
       error "error set pin: ", msg = e.msg

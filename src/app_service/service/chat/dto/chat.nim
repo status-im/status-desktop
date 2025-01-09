@@ -7,18 +7,18 @@ import ../../shared_urls/dto/url_data
 include ../../../common/json_utils
 import ../../../../app_service/common/types
 
-type ChatType* {.pure.}= enum
-  Unknown = 0,
-  OneToOne = 1,
-  Public = 2,
-  PrivateGroupChat = 3,
-  Profile = 4,
-  Timeline {.deprecated.} = 5,
+type ChatType* {.pure.} = enum
+  Unknown = 0
+  OneToOne = 1
+  Public = 2
+  PrivateGroupChat = 3
+  Profile = 4
+  Timeline {.deprecated.} = 5
   CommunityChat = 6
 
-type ChatSectionType* {.pure.}= enum
-  Unknown = "unknown",
-  Personal = "personal",
+type ChatSectionType* {.pure.} = enum
+  Unknown = "unknown"
+  Personal = "personal"
   Community = "community"
 
 type Category* = object
@@ -27,16 +27,14 @@ type Category* = object
   position*: int
   collapsed*: bool
 
-type
-  Permission* = object
-    access*: int
-    ensOnly*: bool
+type Permission* = object
+  access*: int
+  ensOnly*: bool
 
-type
-  Images* = object
-    thumbnail*: string
-    large*: string
-    banner*: string
+type Images* = object
+  thumbnail*: string
+  large*: string
+  banner*: string
 
 type ChatMember* = object
   id*: string
@@ -68,8 +66,10 @@ type ChatDto* = object
   active*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message
-  lastClockValue*: int64 # indicates the last clock value to be used when sending messages
-  deletedAtClockValue*: int64 # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
+  lastClockValue*: int64
+    # indicates the last clock value to be used when sending messages
+  deletedAtClockValue*: int64
+    # indicates the clock value at time of deletion, messages with lower clock value of this should be discarded
   readMessagesAtClockValue*: int64
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
@@ -84,7 +84,8 @@ type ChatDto* = object
   joined*: int64 # indicates when the user joined the chat last time
   syncedTo*: int64
   syncedFrom*: int64
-  firstMessageTimestamp: int64 # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
+  firstMessageTimestamp: int64
+    # valid only for community chats, 0 - undefined, 1 - no messages, >1 valid timestamps
   canPost*: bool
   canView*: bool
   canPostReactions*: bool
@@ -102,7 +103,8 @@ type ClearedHistoryDto* = object
   clearedAt*: int
 
 proc `$`*(self: ChatDto): string =
-  result = fmt"""ChatDto(
+  result =
+    fmt"""ChatDto(
     id: {self.id},
     name: {self.name},
     description: {self.description},
@@ -139,30 +141,42 @@ proc `$`*(self: ChatDto): string =
 proc toCheckPermissionsResultDto*(jsonObj: JsonNode): CheckPermissionsResultDto =
   result = CheckPermissionsResultDto()
   var criteriaObj: JsonNode
-  if(jsonObj.getProp("criteria", criteriaObj) and criteriaObj.kind == JArray):
+  if (jsonObj.getProp("criteria", criteriaObj) and criteriaObj.kind == JArray):
     for c in criteriaObj:
       result.criteria.add(c.getBool)
 
-proc toViewOnlyOrViewAndPostPermissionsResponseDto*(jsonObj: JsonNode): ViewOnlyOrViewAndPostPermissionsResponseDto =
+proc toViewOnlyOrViewAndPostPermissionsResponseDto*(
+    jsonObj: JsonNode
+): ViewOnlyOrViewAndPostPermissionsResponseDto =
   result = ViewOnlyOrViewAndPostPermissionsResponseDto()
   discard jsonObj.getProp("satisfied", result.satisfied)
 
   var permissionsObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
+  if (jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
     result.permissions = initTable[string, CheckPermissionsResultDto]()
     for permissionId, permission in permissionsObj:
       result.permissions[permissionId] = permission.toCheckPermissionsResultDto
 
-proc toCheckChannelPermissionsResponseDto*(jsonObj: JsonNode): CheckChannelPermissionsResponseDto =
+proc toCheckChannelPermissionsResponseDto*(
+    jsonObj: JsonNode
+): CheckChannelPermissionsResponseDto =
   result = CheckChannelPermissionsResponseDto()
 
   var viewOnlyPermissionsObj: JsonNode
-  if(jsonObj.getProp("viewOnlyPermissions", viewOnlyPermissionsObj) and viewOnlyPermissionsObj.kind == JObject):
-    result.viewOnlyPermissions = viewOnlyPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
+  if (
+    jsonObj.getProp("viewOnlyPermissions", viewOnlyPermissionsObj) and
+    viewOnlyPermissionsObj.kind == JObject
+  ):
+    result.viewOnlyPermissions =
+      viewOnlyPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
 
   var viewAndPostPermissionsObj: JsonNode
-  if(jsonObj.getProp("viewAndPostPermissions", viewAndPostPermissionsObj) and viewAndPostPermissionsObj.kind == JObject):
-    result.viewAndPostPermissions = viewAndPostPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
+  if (
+    jsonObj.getProp("viewAndPostPermissions", viewAndPostPermissionsObj) and
+    viewAndPostPermissionsObj.kind == JObject
+  ):
+    result.viewAndPostPermissions =
+      viewAndPostPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
 
 proc toClearedHistoryDto*(jsonObj: JsonNode): ClearedHistoryDto =
   result = ClearedHistoryDto()
@@ -178,15 +192,15 @@ proc toImages*(jsonObj: JsonNode): Images =
   result = Images()
 
   var largeObj: JsonNode
-  if(jsonObj.getProp("large", largeObj)):
+  if (jsonObj.getProp("large", largeObj)):
     discard largeObj.getProp("uri", result.large)
 
   var thumbnailObj: JsonNode
-  if(jsonObj.getProp("thumbnail", thumbnailObj)):
+  if (jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
 
   var bannerObj: JsonNode
-  if(jsonObj.getProp("banner", bannerObj)):
+  if (jsonObj.getProp("banner", bannerObj)):
     discard bannerObj.getProp("uri", result.banner)
 
 proc toCategory*(jsonObj: JsonNode): Category =
@@ -221,7 +235,7 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string): ChatMember =
   result.id = memberId
   var rolesObj: JsonNode
   var roles: seq[int] = @[]
-  if(jsonObj.getProp("roles", rolesObj)):
+  if (jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
       roles.add(roleObj.getInt)
 
@@ -273,14 +287,16 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("firstMessageTimestamp", result.firstMessageTimestamp)
   discard jsonObj.getProp("highlight", result.highlight)
   var permissionObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionObj)):
+  if (jsonObj.getProp("permissions", permissionObj)):
     result.permissions = toPermission(permissionObj)
 
   result.chatType = ChatType.Unknown
   var chatTypeInt: int
-  if (jsonObj.getProp("chatType", chatTypeInt) and
-    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))):
-      result.chatType = ChatType(chatTypeInt)
+  if (
+    jsonObj.getProp("chatType", chatTypeInt) and
+    (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))
+  ):
+    result.chatType = ChatType(chatTypeInt)
 
   # Default those properties to true as they are only provided for community chats
   # To be refactored with https://github.com/status-im/status-desktop/issues/11694
@@ -299,12 +315,12 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     result.icon = chatImage
 
   var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj)):
-    if(membersObj.kind == JArray):
+  if (jsonObj.getProp("members", membersObj)):
+    if (membersObj.kind == JArray):
       # during group chat updates
       for memberObj in membersObj:
         result.members.add(toGroupChatMember(memberObj))
-    elif(membersObj.kind == JObject):
+    elif (membersObj.kind == JObject):
       # on a startup, chat/channel creation
       for memberId, memberObj in membersObj:
         result.members.add(toChatMember(memberObj, memberId))
@@ -314,12 +330,15 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
     result.id = result.communityId & result.id
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
-proc toChatDto*(jsonObj: JsonNode, communityId: string, communityMembers: seq[ChatMember]): ChatDto =
+proc toChatDto*(
+    jsonObj: JsonNode, communityId: string, communityMembers: seq[ChatMember]
+): ChatDto =
   result = jsonObj.toChatDto()
   result.chatType = ChatType.CommunityChat
   result.communityId = communityId
   if communityId != "":
-    result.id = communityId & result.id.replace(communityId, "") # Adding communityID prefix in case it's not available
+    result.id = communityId & result.id.replace(communityId, "")
+      # Adding communityID prefix in case it's not available
 
   if not result.tokenGated:
     result.members = communityMembers

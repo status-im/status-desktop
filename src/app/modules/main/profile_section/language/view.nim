@@ -3,12 +3,11 @@ import NimQml
 import io_interface, model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      currentLanguage: string
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    currentLanguage: string
 
   proc delete*(self: View) =
     self.QObject.delete

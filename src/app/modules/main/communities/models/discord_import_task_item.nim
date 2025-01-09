@@ -2,21 +2,20 @@ import stew/shims/strformat
 import discord_import_errors_model, discord_import_error_item
 import ../../../../../app_service/service/community/dto/community
 
-
 const MAX_VISIBLE_ERROR_ITEMS* = 3
 
-type
-  DiscordImportTaskItem* = object
-    `type`*: string
-    progress*: float
-    state*: string
-    errors*: DiscordImportErrorsModel
-    stopped*: bool
-    errorsCount*: int
-    warningsCount*: int
+type DiscordImportTaskItem* = object
+  `type`*: string
+  progress*: float
+  state*: string
+  errors*: DiscordImportErrorsModel
+  stopped*: bool
+  errorsCount*: int
+  warningsCount*: int
 
 proc `$`*(self: DiscordImportTaskItem): string =
-  result = fmt"""DiscordImportTaskItem(
+  result =
+    fmt"""DiscordImportTaskItem(
     type: {self.type},
     state: {self.state},
     progress: {self.progress},
@@ -24,13 +23,13 @@ proc `$`*(self: DiscordImportTaskItem): string =
     ]"""
 
 proc initDiscordImportTaskItem*(
-  `type`: string,
-  progress: float,
-  state: string,
-  errors: seq[DiscordImportError],
-  stopped: bool,
-  errorsCount: int,
-  warningsCount: int
+    `type`: string,
+    progress: float,
+    state: string,
+    errors: seq[DiscordImportError],
+    stopped: bool,
+    errorsCount: int,
+    warningsCount: int,
 ): DiscordImportTaskItem =
   result.type = type
   result.progress = progress
@@ -44,7 +43,9 @@ proc initDiscordImportTaskItem*(
   # "#n more issues" item in the UI
   for i, error in errors:
     if i < MAX_VISIBLE_ERROR_ITEMS or error.code > ord(DiscordImportErrorCode.Warning):
-      result.errors.addItem(initDiscordImportErrorItem(`type`, error.code, error.message))
+      result.errors.addItem(
+        initDiscordImportErrorItem(`type`, error.code, error.message)
+      )
 
 proc getType*(self: DiscordImportTaskItem): string =
   return self.type

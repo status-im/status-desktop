@@ -34,21 +34,28 @@ type
     isInstalled*: bool
     isBought*: bool
     isPending*: bool
+
   StickerGasEstimatedArgs* = ref object of Args
     estimate*: int
     uuid*: string
+
   GasPriceArgs* = ref object of Args
     gasPrice*: string
+
   StickerTransactionArgs* = ref object of Args
     transactionHash*: string
     packID*: string
     transactionType*: string
+
   StickerPackInstalledArgs* = ref object of Args
     packId*: string
+
   StickersArgs* = ref object of Args
     stickers*: seq[StickerDto]
+
   StickerPacksArgs* = ref object of Args
     packs*: Table[string, StickerPackDto]
+
   StickerBuyResultArgs* = ref object of Args
     chainId*: int
     packId*: string
@@ -98,7 +105,7 @@ QtObject:
       transactionService: transaction_service.Service,
       networkService: network_service.Service,
       chatService: chat_service.Service,
-      tokenService: token_service.Service
+      tokenService: token_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -141,38 +148,53 @@ QtObject:
 
     if status == TxStatusSuccess:
       self.marketStickerPacks[packId].status = StickerPackStatus.Purchased
-      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packId, transactionType: $PendingTransactionTypeDto.BuyStickerPack)
+      let data = StickerTransactionArgs(
+        transactionHash: transactionHash,
+        packID: packId,
+        transactionType: $PendingTransactionTypeDto.BuyStickerPack,
+      )
       self.events.emit(SIGNAL_STICKER_TRANSACTION_CONFIRMED, data)
       return
     if status == TxStatusFailed:
       self.marketStickerPacks[packId].status = StickerPackStatus.Available
-      let data = StickerTransactionArgs(transactionHash: transactionHash, packID: packId, transactionType: $PendingTransactionTypeDto.BuyStickerPack)
+      let data = StickerTransactionArgs(
+        transactionHash: transactionHash,
+        packID: packId,
+        transactionType: $PendingTransactionTypeDto.BuyStickerPack,
+      )
       self.events.emit(SIGNAL_STICKER_TRANSACTION_REVERTED, data)
       return
     error "Error updating sticker pack status", message = "unknown status: " & status
 
   proc init*(self: Service) =
-    self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+    self.events.on(SIGNAL_TRANSACTION_SENT) do(e: Args):
       let args = TransactionArgs(e)
       let txType = SendType(args.sendDetails.sendType)
       if txType != SendType.StickersBuy:
         return
-      self.marketStickerPacks[$args.sendDetails.packId].status = StickerPackStatus.Pending
-      self.marketStickerPacks[$args.sendDetails.packId].txHash = args.sentTransaction.hash
+      self.marketStickerPacks[$args.sendDetails.packId].status =
+        StickerPackStatus.Pending
+      self.marketStickerPacks[$args.sendDetails.packId].txHash =
+        args.sentTransaction.hash
       let data = StickerBuyResultArgs(
         chainId: args.sendDetails.fromChain,
         packId: args.sendDetails.packId,
         txHash: args.sentTransaction.hash,
-        error: if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
+        error:
+          if not args.sendDetails.errorResponse.isNil:
+            args.sendDetails.errorResponse.details
+          else:
+            "",
       )
       self.events.emit(SIGNAL_STICKER_TRANSACTION_SENT, data)
 
-    self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+    self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e: Args):
       let args = TransactionArgs(e)
       self.updateStickersPack(args.sentTransaction.hash, args.status)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
-    let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
+    let stickersResult =
+      Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])
 
     if stickersResult.error != "":
       self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOAD_FAILED, Args())
@@ -185,24 +207,30 @@ QtObject:
         continue
 
       self.marketStickerPacks[stickerPack.id] = stickerPack
-      self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
-        stickerPack: stickerPack,
-        isInstalled: false,
-        isBought: stickerPack.status == StickerPackStatus.Purchased,
-        isPending: false
-      ))
+      self.events.emit(
+        SIGNAL_STICKER_PACK_LOADED,
+        StickerPackLoadedArgs(
+          stickerPack: stickerPack,
+          isInstalled: false,
+          isBought: stickerPack.status == StickerPackStatus.Purchased,
+          isPending: false,
+        ),
+      )
 
     let pendingStickerPacksResponse = status_stickers.pending()
     for (packId, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
-        if self.marketStickerPacks.contains(packId):
-          continue
-        self.marketStickerPacks[packId] = stickerPackJson.toStickerPackDto()
-        self.events.emit(SIGNAL_STICKER_PACK_LOADED, StickerPackLoadedArgs(
+      if self.marketStickerPacks.contains(packId):
+        continue
+      self.marketStickerPacks[packId] = stickerPackJson.toStickerPackDto()
+      self.events.emit(
+        SIGNAL_STICKER_PACK_LOADED,
+        StickerPackLoadedArgs(
           stickerPack: self.marketStickerPacks[packId],
           isInstalled: false,
           isBought: false,
-          isPending: true
-        ))
+          isPending: true,
+        ),
+      )
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
   proc obtainMarketStickerPacks*(self: Service) =
@@ -222,9 +250,14 @@ QtObject:
     except RpcException:
       error "Error adding recent sticker", message = getCurrentExceptionMsg()
 
-  proc getPackIdForSticker*(packs: Table[string, StickerPackDto], hash: string): string =
+  proc getPackIdForSticker*(
+      packs: Table[string, StickerPackDto], hash: string
+  ): string =
     for packId, pack in packs.pairs:
-      if pack.stickers.any(proc(sticker: StickerDto): bool = return sticker.hash == hash):
+      if pack.stickers.any(
+        proc(sticker: StickerDto): bool =
+          return sticker.hash == hash
+      ):
         return packId
     return "0"
 
@@ -246,7 +279,7 @@ QtObject:
       let arg = AsyncGetRecentStickersTaskArg(
         tptr: asyncGetRecentStickersTask,
         vptr: cast[uint](self.vptr),
-        slot: "onAsyncGetRecentStickersDone"
+        slot: "onAsyncGetRecentStickersDone",
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -256,12 +289,15 @@ QtObject:
     try:
       let rpcResponseObj = response.parseJson
       if (rpcResponseObj{"error"}.kind != JNull):
-         raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       let recentStickers = map(rpcResponseObj{"result"}.getElems(), toStickerDto)
-      self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_DONE, StickersArgs(stickers: recentStickers))
+      self.events.emit(
+        SIGNAL_LOAD_RECENT_STICKERS_DONE, StickersArgs(stickers: recentStickers)
+      )
     except Exception as e:
-      error "error loading recent stickers: ", procName = "onAsyncGetRecentStickersDone", errMsg = e.msg
+      error "error loading recent stickers: ",
+        procName = "onAsyncGetRecentStickersDone", errMsg = e.msg
       self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_FAILED, Args())
 
   proc asyncLoadInstalledStickerPacks*(self: Service) =
@@ -270,7 +306,7 @@ QtObject:
       let arg = AsyncGetInstalledStickerPacksTaskArg(
         tptr: asyncGetInstalledStickerPacksTask,
         vptr: cast[uint](self.vptr),
-        slot: "onAsyncGetInstalledStickerPacksDone"
+        slot: "onAsyncGetInstalledStickerPacksDone",
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -284,9 +320,13 @@ QtObject:
 
       for (packID, stickerPackJson) in rpcResponseObj{"result"}.pairs():
         self.installedStickerPacks[packID] = stickerPackJson.toStickerPackDto()
-      self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE, StickerPacksArgs(packs: self.installedStickerPacks))
+      self.events.emit(
+        SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE,
+        StickerPacksArgs(packs: self.installedStickerPacks),
+      )
     except Exception as e:
-      error "error loading installed sticker packs: ", procName="onAsyncGetInstalledStickerPacksDone", errMsg = e.msg
+      error "error loading installed sticker packs: ",
+        procName = "onAsyncGetInstalledStickerPacksDone", errMsg = e.msg
       self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_FAILED, Args())
 
   proc getNumInstalledStickerPacks*(self: Service): int =
@@ -294,7 +334,8 @@ QtObject:
       let installedResponse = status_stickers.installed()
       return installedResponse.result.len
     except RpcException:
-      error "Error getting installed stickers number", message = getCurrentExceptionMsg()
+      error "Error getting installed stickers number",
+        message = getCurrentExceptionMsg()
     return 0
 
   proc installStickerPack*(self: Service, packId: string) =
@@ -308,13 +349,16 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onStickerPackInstalled*(self: Service, installedPackJson: string) {.slot.} =
-    let installedPack = Json.decode(installedPackJson, tuple[packId: string, installed: bool])
+    let installedPack =
+      Json.decode(installedPackJson, tuple[packId: string, installed: bool])
     if installedPack.installed:
       if self.marketStickerPacks.hasKey(installedPack.packId):
-        self.marketStickerPacks[installedPack.packId].status = StickerPackStatus.Installed
-      self.events.emit(SIGNAL_STICKER_PACK_INSTALLED, StickerPackInstalledArgs(
-        packId: installedPack.packId
-      ))
+        self.marketStickerPacks[installedPack.packId].status =
+          StickerPackStatus.Installed
+      self.events.emit(
+        SIGNAL_STICKER_PACK_INSTALLED,
+        StickerPackInstalledArgs(packId: installedPack.packId),
+      )
     else:
       error "Sticker pack did not get installed", packId = installedPack.packId
 
@@ -329,7 +373,8 @@ QtObject:
       chatId: string,
       replyTo: string,
       sticker: StickerDto,
-      preferredUsername: string) =
+      preferredUsername: string,
+  ) =
     let arg = AsyncSendStickerTaskArg(
       tptr: asyncSendStickerTask,
       vptr: cast[uint](self.vptr),
@@ -355,7 +400,9 @@ QtObject:
       discard self.chatService.processMessengerResponse(rpcResponse)
     except Exception as e:
       error "Error sending sticker", msg = e.msg
-      self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr))
+      self.events.emit(
+        SIGNAL_SENDING_FAILED, ChatArgs(chatId: rpcResponseObj["chatId"].getStr)
+      )
 
   proc removeRecentStickers*(self: Service, packId: string) =
     self.recentStickers.keepItIf(it.packId != packId)

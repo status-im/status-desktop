@@ -8,23 +8,22 @@ import app_service/service/currency/dto
 import app_service/service/settings/service as settings_service
 import app_service/service/community_tokens/service as community_tokens_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    tokenService: token_service.Service
-    walletAccountService: wallet_account_service.Service
-    settingsService: settings_service.Service
-    communityTokensService: community_tokens_service.Service
-    displayAssetsBelowBalanceThreshold: CurrencyAmount
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  tokenService: token_service.Service
+  walletAccountService: wallet_account_service.Service
+  settingsService: settings_service.Service
+  communityTokensService: community_tokens_service.Service
+  displayAssetsBelowBalanceThreshold: CurrencyAmount
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  tokenService: token_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
-  communityTokensService: community_tokens_service.Service
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    tokenService: token_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
+    communityTokensService: community_tokens_service.Service,
 ): Controller =
   result = Controller()
   result.events = events
@@ -38,34 +37,44 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED) do(e:Args):
+  self.events.on(SIGNAL_TOKEN_HISTORICAL_DATA_LOADED) do(e: Args):
     let args = TokenHistoricalDataArgs(e)
     self.delegate.tokenHistoricalDataResolved(args.result)
 
-  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e:Args):
+  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e: Args):
     let args = TokenBalanceHistoryDataArgs(e)
     self.delegate.tokenBalanceHistoryDataResolved(args.result)
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_RECEIVED) do(e: Args):
     let args = CommunityTokenReceivedArgs(e)
     let token = TokenDto(
-        address: args.address,
-        name: args.name,
-        symbol: args.symbol,
-        decimals: args.decimals,
-        chainID: args.chainId,
-        communityID: args.communityId,
-        image: args.image,
+      address: args.address,
+      name: args.name,
+      symbol: args.symbol,
+      decimals: args.decimals,
+      chainID: args.chainId,
+      communityID: args.communityId,
+      image: args.image,
     )
     self.tokenService.addNewCommunityToken(token)
 
   self.tokenService.getSupportedTokensList()
 
-proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
+proc getHistoricalDataForToken*(
+    self: Controller, symbol: string, currency: string, range: int
+) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 
-proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
+proc fetchHistoricalBalanceForTokenAsJson*(
+    self: Controller,
+    addresses: seq[string],
+    tokenSymbol: string,
+    currencySymbol: string,
+    timeIntervalEnum: int,
+) =
+  self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(
+    addresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum)
+  )
 
 proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
   return self.tokenService.getSourcesOfTokensList()
@@ -100,10 +109,14 @@ proc getTokensDetailsLoading*(self: Controller): bool =
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   self.tokenService.getTokensMarketValuesLoading()
 
-proc getCommunityTokenDescription*(self: Controller, addressPerChain: seq[AddressPerChain]): string =
+proc getCommunityTokenDescription*(
+    self: Controller, addressPerChain: seq[AddressPerChain]
+): string =
   self.communityTokensService.getCommunityTokenDescription(addressPerChain)
 
-proc getCommunityTokenDescription*(self: Controller, chainId: int, address: string): string =
+proc getCommunityTokenDescription*(
+    self: Controller, chainId: int, address: string
+): string =
   self.communityTokensService.getCommunityTokenDescription(chainId, address)
 
 proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
@@ -135,7 +148,8 @@ proc toggleDisplayAssetsBelowBalance*(self: Controller): bool =
 
 proc getDisplayAssetsBelowBalanceThreshold*(self: Controller): CurrencyAmount =
   let amount = float64(self.settingsService.displayAssetsBelowBalanceThreshold())
-  self.displayAssetsBelowBalanceThreshold = newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
+  self.displayAssetsBelowBalanceThreshold =
+    newCurrencyAmount(amount, self.tokenService.getCurrency(), 9, true)
   return self.displayAssetsBelowBalanceThreshold
 
 proc setDisplayAssetsBelowBalanceThreshold*(self: Controller, threshold: int64): bool =

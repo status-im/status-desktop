@@ -13,13 +13,12 @@ proc validateMnemonic*(mnemonic: string): RpcResponse[JsonNode] =
   try:
     let response = status_go.validateMnemonic(mnemonic.strip())
     result.result = Json.decode(response, JsonNode)
-
   except RpcException as e:
-    error "error doing rpc request", methodName = "validateMnemonic", exception=e.msg
+    error "error doing rpc request", methodName = "validateMnemonic", exception = e.msg
     raise newException(RpcException, e.msg)
 
 proc startMessenger*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   result = core.callPrivateRPC("startMessenger".prefix, payload)
 
 proc logout*(): RpcResponse[JsonNode] =
@@ -27,40 +26,42 @@ proc logout*(): RpcResponse[JsonNode] =
     let response = status_go.logout()
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error logging out", methodName = "logout", exception=e.msg
+    error "error logging out", methodName = "logout", exception = e.msg
     raise newException(RpcException, e.msg)
 
 proc generateSymKeyFromPassword*(password: string): RpcResponse[JsonNode] =
-  let payload = %* [password]
+  let payload = %*[password]
   result = core.callPrivateRPC("waku_generateSymKeyFromPassword", payload)
 
 proc adminPeers*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   result = core.callPrivateRPC("admin_peers", payload)
 
 proc wakuV2Peers*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   result = core.callPrivateRPC("peers".prefix, payload)
 
 proc dialPeer*(address: string): RpcResponse[JsonNode] =
-  let payload = %* [address]
+  let payload = %*[address]
   result = core.callPrivateRPC("dialPeer".prefix, payload)
 
 proc dropPeerByID*(peer: string): RpcResponse[JsonNode] =
-  let payload = %* [peer]
+  let payload = %*[peer]
   result = core.callPrivateRPC("dropPeer".prefix, payload)
 
 proc removePeer*(peer: string): RpcResponse[JsonNode] =
-  let payload = %* [peer]
+  let payload = %*[peer]
   result = core.callPrivateRPC("admin_removePeer", payload)
 
-proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcResponse[JsonNode] =
-  let params = %* {"password": password, "userInputs": userInputs}
+proc getPasswordStrengthScore*(
+    password: string, userInputs: seq[string]
+): RpcResponse[JsonNode] =
+  let params = %*{"password": password, "userInputs": userInputs}
   try:
     let response = status_go.getPasswordStrengthScore($(params))
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error", methodName = "getPasswordStrengthScore", exception=e.msg
+    error "error", methodName = "getPasswordStrengthScore", exception = e.msg
     raise newException(RpcException, e.msg)
 
 proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] =
@@ -68,7 +69,7 @@ proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNo
     let response = status_go.generateImages(imagePath, aX, aY, bX, bY)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error", methodName = "generateImages", exception=e.msg
+    error "error", methodName = "generateImages", exception = e.msg
     raise newException(RpcException, e.msg)
 
 proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] =
@@ -76,18 +77,18 @@ proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] =
     let response = status_go.initKeystore(keystoreDir)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
-    error "error", methodName = "initKeystore", exception=e.msg
+    error "error", methodName = "initKeystore", exception = e.msg
     raise newException(RpcException, e.msg)
 
 proc backupData*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   result = callPrivateRPC("backupData".prefix, payload)
 
 proc parseSharedUrl*(url: string): RpcResponse[JsonNode] =
   result = callPrivateRPC("parseSharedURL".prefix, %*[url])
 
 proc hashMessageForSigning*(message: string): string =
-  try: 
+  try:
     let response = status_go.hashMessage(message)
     let jsonResponse = parseJson(response)
     return jsonResponse{"result"}.getStr()

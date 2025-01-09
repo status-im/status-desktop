@@ -3,9 +3,8 @@ import NimQml, json, strutils, sequtils
 import ./io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
 
   proc delete*(self: View) =
     self.QObject.delete

@@ -5,16 +5,14 @@ type Item* = object
   isPending*: bool
   chainId*: int
 
-type
-  ModelRole {.pure.} = enum
-    EnsUsername = UserRole + 1
-    IsPending
-    ChainId
+type ModelRole {.pure.} = enum
+  EnsUsername = UserRole + 1
+  IsPending
+  ChainId
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -30,6 +28,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -39,9 +38,9 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.EnsUsername.int:"ensUsername",
-      ModelRole.IsPending.int:"isPending",
-      ModelRole.ChainId.int:"chainId"
+      ModelRole.EnsUsername.int: "ensUsername",
+      ModelRole.IsPending.int: "isPending",
+      ModelRole.ChainId.int: "chainId",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -54,7 +53,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.EnsUsername:
       result = newQVariant(item.ensUsername)
     of ModelRole.IsPending:
@@ -65,8 +64,7 @@ QtObject:
   proc findIndex(self: Model, chainId: int, ensUsername: string): int =
     for i in 0 ..< self.items.len:
       let item = self.items[i]
-      if (item.chainId == chainId and 
-          item.ensUsername == ensUsername):
+      if (item.chainId == chainId and item.ensUsername == ensUsername):
         return i
     return -1
 
@@ -74,11 +72,12 @@ QtObject:
     return self.findIndex(chainId, ensUsername) != -1
 
   proc addItem*(self: Model, item: Item) =
-    if(self.containsEnsUsername(item.chainId, item.ensUsername)):
+    if (self.containsEnsUsername(item.chainId, item.ensUsername)):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -87,24 +86,28 @@ QtObject:
 
   proc removeItemByEnsUsername*(self: Model, chainId: int, ensUsername: string) =
     let index = self.findIndex(chainId, ensUsername)
-    if(index == -1):
+    if (index == -1):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
 
-  proc updatePendingStatus*(self: Model, chainId: int, ensUsername: string, pendingStatus: bool) =
+  proc updatePendingStatus*(
+      self: Model, chainId: int, ensUsername: string, pendingStatus: bool
+  ) =
     let ind = self.findIndex(chainId, ensUsername)
-    if(ind == -1):
+    if (ind == -1):
       return
 
     self.items[ind].isPending = pendingStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, @[ModelRole.IsPending.int])

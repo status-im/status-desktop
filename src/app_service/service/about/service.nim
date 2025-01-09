@@ -14,31 +14,24 @@ logScope:
 
 const APP_UPDATES_ENS* = "desktop.status.eth"
 
-type
-  VersionArgs* = ref object of Args
-    available*: bool
-    version*: string
-    url*: string
-
-
+type VersionArgs* = ref object of Args
+  available*: bool
+  version*: string
+  url*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_VERSION_FETCHED* = "versionFetched"
 
 QtObject:
-  type
-    Service* = ref object of QObject
-      events: EventEmitter
-      threadpool: ThreadPool
-      settingsService: settings_service.Service
+  type Service* = ref object of QObject
+    events: EventEmitter
+    threadpool: ThreadPool
+    settingsService: settings_service.Service
 
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool,
-  ): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -61,17 +54,22 @@ QtObject:
 
   proc checkForUpdates*(self: Service) =
     try:
-      discard status_about.checkForUpdates(types.Mainnet, APP_UPDATES_ENS, self.getAppVersion())
+      discard status_about.checkForUpdates(
+        types.Mainnet, APP_UPDATES_ENS, self.getAppVersion()
+      )
     except Exception as e:
-      error "Error checking for updates", msg=e.msg
+      error "Error checking for updates", msg = e.msg
 
   proc init*(self: Service) =
     self.events.on(SignalType.UpdateAvailable.event) do(e: Args):
       var updateSignal = UpdateAvailableSignal(e)
-      self.events.emit(SIGNAL_VERSION_FETCHED, VersionArgs(
-        available: updateSignal.available,
-        version: updateSignal.version,
-        url: updateSignal.url))
+      self.events.emit(
+        SIGNAL_VERSION_FETCHED,
+        VersionArgs(
+          available: updateSignal.available,
+          version: updateSignal.version,
+          url: updateSignal.url,
+        ),
+      )
 
     self.checkForUpdates()
-    

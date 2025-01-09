@@ -42,4 +42,4 @@ proc createState*(stateToBeCreated: StateType, backState: State): State =
   if stateToBeCreated == StateType.SelectMasterKey:
     return newSelectMasterKeyState(backState)
 
-  error "Add account - no implementation available for state", state=stateToBeCreated
+  error "Add account - no implementation available for state", state = stateToBeCreated

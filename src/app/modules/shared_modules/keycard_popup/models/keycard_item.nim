@@ -8,7 +8,7 @@ QtObject:
     keycardUid: string
 
   proc delete*(self: KeycardItem) =
-      self.KeyPairItem.delete
+    self.KeyPairItem.delete
 
   proc initKeycardItem*(
       keycardUid = "",
@@ -21,15 +21,28 @@ QtObject:
       pairType = KeyPairType.Unknown,
       derivedFrom = "",
       lastUsedDerivationIndex = 0,
-      migratedToKeycard = true
-      ): KeycardItem =
+      migratedToKeycard = true,
+  ): KeycardItem =
     new(result, delete)
-    result.KeyPairItem.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom,lastUsedDerivationIndex,
-      migratedToKeycard, syncedFrom = "", ownershipVerified = false)
+    result.KeyPairItem.setup(
+      keyUid,
+      pubKey,
+      locked,
+      name,
+      image,
+      icon,
+      pairType,
+      derivedFrom,
+      lastUsedDerivationIndex,
+      migratedToKeycard,
+      syncedFrom = "",
+      ownershipVerified = false,
+    )
     result.keycardUid = keycardUid
 
   proc `$`*(self: KeycardItem): string =
-    result = fmt"""KeycardItem[
+    result =
+      fmt"""KeycardItem[
       keycardUid: {self.keycardUid},
       pubKey: {self.getPubKey()},
       keyUid: {self.getKeyUid()},
@@ -45,9 +58,11 @@ QtObject:
   proc keycardUidChanged*(self: KeycardItem) {.signal.}
   proc getKeycardUid*(self: KeycardItem): string {.slot.} =
     return self.keycardUid
+
   proc setKeycardUid*(self: KeycardItem, value: string) {.slot.} =
     self.keycardUid = value
     self.keycardUidChanged()
+
   QtProperty[string] keycardUid:
     read = getKeycardUid
     write = setKeycardUid

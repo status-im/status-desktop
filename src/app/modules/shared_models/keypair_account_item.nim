@@ -23,9 +23,21 @@ QtObject:
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 
-  proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
-    balance = newCurrencyAmount(), balanceFetched = true, operability = wa_dto.AccountFullyOperable,
-    isDefaultAccount = false, areTestNetworksEnabled =false, hideFromTotalBalance = false): KeyPairAccountItem =
+  proc newKeyPairAccountItem*(
+      name = "",
+      path = "",
+      address = "",
+      pubKey = "",
+      emoji = "",
+      colorId = "",
+      icon = "",
+      balance = newCurrencyAmount(),
+      balanceFetched = true,
+      operability = wa_dto.AccountFullyOperable,
+      isDefaultAccount = false,
+      areTestNetworksEnabled = false,
+      hideFromTotalBalance = false,
+  ): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -43,7 +55,8 @@ QtObject:
     result.hideFromTotalBalance = hideFromTotalBalance
 
   proc `$`*(self: KeyPairAccountItem): string =
-    result = fmt"""KeyPairAccountItem[
+    result =
+      fmt"""KeyPairAccountItem[
       name: {self.name},
       path: {self.path},
       address: {self.address},
@@ -62,9 +75,11 @@ QtObject:
   proc nameChanged*(self: KeyPairAccountItem) {.signal.}
   proc getName*(self: KeyPairAccountItem): string {.slot.} =
     return self.name
+
   proc setName*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.name = value
     self.nameChanged()
+
   QtProperty[string] name:
     read = getName
     write = setName
@@ -73,9 +88,11 @@ QtObject:
   proc pathChanged*(self: KeyPairAccountItem) {.signal.}
   proc getPath*(self: KeyPairAccountItem): string {.slot.} =
     return self.path
+
   proc setPath*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.path = value
     self.pathChanged()
+
   QtProperty[string] path:
     read = getPath
     write = setPath
@@ -84,9 +101,11 @@ QtObject:
   proc addressChanged*(self: KeyPairAccountItem) {.signal.}
   proc getAddress*(self: KeyPairAccountItem): string {.slot.} =
     return self.address
+
   proc setAddress*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.address = value
     self.addressChanged()
+
   QtProperty[string] address:
     read = getAddress
     write = setAddress
@@ -95,9 +114,11 @@ QtObject:
   proc pubKeyChanged*(self: KeyPairAccountItem) {.signal.}
   proc getPubKey*(self: KeyPairAccountItem): string {.slot.} =
     return self.pubKey
+
   proc setPubKey*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.pubKey = value
     self.pubKeyChanged()
+
   QtProperty[string] pubKey:
     read = getPubKey
     write = setPubKey
@@ -106,9 +127,11 @@ QtObject:
   proc operabilityChanged*(self: KeyPairAccountItem) {.signal.}
   proc getOperability*(self: KeyPairAccountItem): string {.slot.} =
     return self.operability
+
   proc setOperability*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.operability = value
     self.operabilityChanged()
+
   QtProperty[string] operability:
     read = getOperability
     write = setOperability
@@ -117,9 +140,11 @@ QtObject:
   proc emojiChanged*(self: KeyPairAccountItem) {.signal.}
   proc getEmoji*(self: KeyPairAccountItem): string {.slot.} =
     return self.emoji
+
   proc setEmoji*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.emoji = value
     self.emojiChanged()
+
   QtProperty[string] emoji:
     read = getEmoji
     write = setEmoji
@@ -128,9 +153,11 @@ QtObject:
   proc colorIdChanged*(self: KeyPairAccountItem) {.signal.}
   proc getColorId*(self: KeyPairAccountItem): string {.slot.} =
     return self.colorId
+
   proc setColorId*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.colorId = value
     self.colorIdChanged()
+
   QtProperty[string] colorId:
     read = getColorId
     write = setColorId
@@ -139,9 +166,11 @@ QtObject:
   proc iconChanged*(self: KeyPairAccountItem) {.signal.}
   proc getIcon*(self: KeyPairAccountItem): string {.slot.} =
     return self.icon
+
   proc setIcon*(self: KeyPairAccountItem, value: string) {.slot.} =
     self.icon = value
     self.iconChanged()
+
   QtProperty[string] icon:
     read = getIcon
     write = setIcon
@@ -150,10 +179,12 @@ QtObject:
   proc balanceChanged*(self: KeyPairAccountItem) {.signal.}
   proc getBalance*(self: KeyPairAccountItem): QVariant {.slot.} =
     return newQVariant(self.balance)
+
   proc setBalance*(self: KeyPairAccountItem, value: CurrencyAmount) =
     self.balance = value
     self.balanceFetched = true
     self.balanceChanged()
+
   QtProperty[QVariant] balance:
     read = getBalance
     write = setBalance
@@ -161,6 +192,7 @@ QtObject:
 
   proc getBalanceFetched*(self: KeyPairAccountItem): bool {.slot.} =
     return self.balanceFetched
+
   QtProperty[bool] balanceFetched:
     read = getBalanceFetched
     notify = balanceChanged
@@ -168,6 +200,7 @@ QtObject:
   proc isDefaultAccountChanged*(self: KeyPairAccountItem) {.signal.}
   proc getIsDefaultAccount*(self: KeyPairAccountItem): bool {.slot.} =
     return self.isDefaultAccount
+
   QtProperty[bool] isDefaultAccount:
     read = getIsDefaultAccount
     notify = isDefaultAccountChanged
@@ -175,9 +208,11 @@ QtObject:
   proc hideFromTotalBalanceChanged*(self: KeyPairAccountItem) {.signal.}
   proc hideFromTotalBalance*(self: KeyPairAccountItem): bool {.slot.} =
     return self.hideFromTotalBalance
+
   proc setHideFromTotalBalance*(self: KeyPairAccountItem, value: bool) =
     self.hideFromTotalBalance = value
     self.hideFromTotalBalanceChanged()
+
   QtProperty[bool] hideFromTotalBalance:
     read = hideFromTotalBalance
     notify = hideFromTotalBalanceChanged

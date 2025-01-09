@@ -1,10 +1,9 @@
-type
-  BaseItem* {.pure inheritable.} = ref object of RootObj
-    value: string
-    text: string
-    image: string
-    icon: string
-    iconColor: string
+type BaseItem* {.pure, inheritable.} = ref object of RootObj
+  value: string
+  text: string
+  image: string
+  icon: string
+  iconColor: string
 
 proc setup*(self: BaseItem, value, text, image, icon, iconColor: string) =
   self.value = value
@@ -20,17 +19,17 @@ proc initBaseItem*(value, text, image, icon, iconColor: string): BaseItem =
 proc delete*(self: BaseItem) =
   discard
 
-method value*(self: BaseItem): string {.inline base.} =
+method value*(self: BaseItem): string {.inline, base.} =
   self.value
 
-method text*(self: BaseItem): string {.inline base.} =
+method text*(self: BaseItem): string {.inline, base.} =
   self.text
 
-method image*(self: BaseItem): string {.inline base.} =
+method image*(self: BaseItem): string {.inline, base.} =
   self.image
 
-method icon*(self: BaseItem): string {.inline base.} =
+method icon*(self: BaseItem): string {.inline, base.} =
   self.icon
 
-method iconColor*(self: BaseItem): string {.inline base.} =
+method iconColor*(self: BaseItem): string {.inline, base.} =
   self.iconColor

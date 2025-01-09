@@ -1,7 +1,8 @@
-type
-  CreatePasswordState* = ref object of State
+type CreatePasswordState* = ref object of State
 
-proc newCreatePasswordState*(flowType: FlowType, backState: State): CreatePasswordState =
+proc newCreatePasswordState*(
+    flowType: FlowType, backState: State
+): CreatePasswordState =
   result = CreatePasswordState()
   result.setup(flowType, StateType.CreatePassword, backState)
 

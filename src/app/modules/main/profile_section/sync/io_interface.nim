@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -36,7 +35,9 @@ method getPinnedMailserverId*(self: AccessInterface): string {.base.} =
 method setPinnedMailserverId*(self: AccessInterface, mailserverID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveNewMailserver*(self: AccessInterface, name: string, nodeAddress: string) {.base.} =
+method saveNewMailserver*(
+    self: AccessInterface, name: string, nodeAddress: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method enableAutomaticSelection*(self: AccessInterface, value: bool) {.base.} =

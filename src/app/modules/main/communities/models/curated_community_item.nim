@@ -1,40 +1,39 @@
 import stew/shims/strformat
 import ../../../shared_models/[token_permissions_model, token_permission_item]
 
-type
-  CuratedCommunityItem* = object
-    id: string
-    name: string
-    description: string
-    available: bool
-    icon: string
-    banner: string
-    color: string
-    tags: string
-    members: int
-    activeMembers: int
-    featured: bool
-    permissionModel: TokenPermissionsModel
-    amIBanned: bool
-    joined: bool
-    encrypted: bool
+type CuratedCommunityItem* = object
+  id: string
+  name: string
+  description: string
+  available: bool
+  icon: string
+  banner: string
+  color: string
+  tags: string
+  members: int
+  activeMembers: int
+  featured: bool
+  permissionModel: TokenPermissionsModel
+  amIBanned: bool
+  joined: bool
+  encrypted: bool
 
 proc initCuratedCommunityItem*(
-  id: string,
-  name: string,
-  description: string,
-  available: bool,
-  icon: string,
-  banner: string,
-  color: string,
-  tags: string,
-  members: int,
-  activeMembers: int,
-  featured: bool,
-  tokenPermissionsItems: seq[TokenPermissionItem],
-  amIBanned: bool,
-  joined: bool,
-  encrypted: bool
+    id: string,
+    name: string,
+    description: string,
+    available: bool,
+    icon: string,
+    banner: string,
+    color: string,
+    tags: string,
+    members: int,
+    activeMembers: int,
+    featured: bool,
+    tokenPermissionsItems: seq[TokenPermissionItem],
+    amIBanned: bool,
+    joined: bool,
+    encrypted: bool,
 ): CuratedCommunityItem =
   result.id = id
   result.name = name
@@ -43,7 +42,7 @@ proc initCuratedCommunityItem*(
   result.icon = icon
   result.banner = banner
   result.color = color
-  result.tags  = tags
+  result.tags = tags
   result.members = members
   result.activeMembers = activeMembers
   result.featured = featured
@@ -55,7 +54,8 @@ proc initCuratedCommunityItem*(
   result.encrypted = encrypted
 
 proc `$`*(self: CuratedCommunityItem): string =
-  result = fmt"""CuratedCommunityItem(
+  result =
+    fmt"""CuratedCommunityItem(
     id: {self.id},
     name: {self.name},
     description: {self.description},
@@ -106,7 +106,9 @@ proc getFeatured*(self: CuratedCommunityItem): bool =
 proc getPermissionsModel*(self: CuratedCommunityItem): TokenPermissionsModel =
   return self.permissionModel
 
-proc setPermissionModelItems*(self: CuratedCommunityItem, items: seq[TokenPermissionItem]) =
+proc setPermissionModelItems*(
+    self: CuratedCommunityItem, items: seq[TokenPermissionItem]
+) =
   self.permissionModel.setItems(items)
 
 proc getAmIBanned*(self: CuratedCommunityItem): bool =

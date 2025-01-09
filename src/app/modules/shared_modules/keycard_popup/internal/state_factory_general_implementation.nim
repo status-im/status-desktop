@@ -7,7 +7,9 @@ proc extractPredefinedKeycardDataToNumber*(currValue: string): int =
   except:
     return 0
 
-proc updatePredefinedKeycardData*(currValue: string, value: PredefinedKeycardData, add: bool): string =
+proc updatePredefinedKeycardData*(
+    currValue: string, value: PredefinedKeycardData, add: bool
+): string =
   var currNum: int
   try:
     if add:
@@ -21,16 +23,24 @@ proc updatePredefinedKeycardData*(currValue: string, value: PredefinedKeycardDat
       else:
         return $(currNum and (not value.int))
   except:
-    return if add: $(value.int) else: ""
+    return
+      if add:
+        $(value.int)
+      else:
+        ""
 
-proc isPredefinedKeycardDataFlagSet*(currValue: string, value: PredefinedKeycardData): bool =
+proc isPredefinedKeycardDataFlagSet*(
+    currValue: string, value: PredefinedKeycardData
+): bool =
   var currNum: int
   if parseInt(currValue, currNum) == 0:
     return false
   else:
     return (currNum and value.int) == value.int
 
-proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State =
+proc createState*(
+    stateToBeCreated: StateType, flowType: FlowType, backState: State
+): State =
   if stateToBeCreated == StateType.Biometrics:
     return newBiometricsState(flowType, backState)
   if stateToBeCreated == StateType.BiometricsPasswordFailed:
@@ -208,9 +218,11 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
   if stateToBeCreated == StateType.WrongSeedPhrase:
     return newWrongSeedPhraseState(flowType, backState)
 
-  error "No implementation available for state ", state=stateToBeCreated
+  error "No implementation available for state ", state = stateToBeCreated
 
-proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State =
+proc findBackStateWithTargetedStateType*(
+    currentState: State, targetedStateType: StateType
+): State =
   if currentState.isNil:
     return nil
   var state = currentState

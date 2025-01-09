@@ -1,38 +1,38 @@
 import stew/shims/strformat, stint
 import backend/activity as backend
 
-type
-  CollectibleItem* = object
-    chainId: int
-    contractAddress: string
-    tokenId: UInt256
-    name: string
-    imageUrl: string
+type CollectibleItem* = object
+  chainId: int
+  contractAddress: string
+  tokenId: UInt256
+  name: string
+  imageUrl: string
 
 proc initItem*(
-  chainId: int,
-  contractAddress: string,
-  tokenId: UInt256,
-  name: string,
-  imageUrl: string
+    chainId: int,
+    contractAddress: string,
+    tokenId: UInt256,
+    name: string,
+    imageUrl: string,
 ): CollectibleItem =
   result.chainId = chainId
   result.contractAddress = contractAddress
   result.tokenId = tokenId
-  result.name = if (name != ""): name else: ("#" & tokenId.toString())
+  result.name =
+    if (name != ""):
+      name
+    else:
+      ("#" & tokenId.toString())
   result.imageUrl = imageUrl
 
-proc collectibleToItem*(c: backend.CollectibleHeader) : CollectibleItem =
+proc collectibleToItem*(c: backend.CollectibleHeader): CollectibleItem =
   return initItem(
-    c.id.contractID.chainID,
-    c.id.contractID.address,
-    c.id.tokenID,
-    c.name,
-    c.imageUrl
+    c.id.contractID.chainID, c.id.contractID.address, c.id.tokenID, c.name, c.imageUrl
   )
 
 proc `$`*(self: CollectibleItem): string =
-  result = fmt"""Collectibles(
+  result =
+    fmt"""Collectibles(
     chainId: {self.chainId},
     contractAddress: {self.contractAddress},
     tokenId: {self.tokenId},
@@ -58,4 +58,3 @@ proc getName*(self: CollectibleItem): string =
 
 proc getImageUrl*(self: CollectibleItem): string =
   return self.imageUrl
-

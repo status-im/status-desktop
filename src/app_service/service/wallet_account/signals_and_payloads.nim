@@ -11,14 +11,19 @@ const SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS* = "importPartiallyOperableAccou
 const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
 const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
-const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
+const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* =
+  "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
-const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedAddressesFetched"
-const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
-const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* =
+  "walletAccount/derivedAddressesFetched"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* =
+  "walletAccount/derivedAddressesFromMnemonicFetched"
+const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* =
+  "walletAccount/addressDetailsFetched"
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
 const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
-const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* = "walletAccount/chainIdForUrlFetched"
+const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* =
+  "walletAccount/chainIdForUrlFetched"
 const SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED* = "walletAccount/accountHiddenChanged"
 
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
@@ -84,6 +89,5 @@ type ChainIdForUrlArgs* = ref object of Args
   url*: string
   isMainUrl*: bool
 
-type
-  TokenBalanceHistoryDataArgs* = ref object of Args
-    result*: string
+type TokenBalanceHistoryDataArgs* = ref object of Args
+  result*: string

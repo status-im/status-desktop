@@ -31,18 +31,15 @@ include async_tasks
 logScope:
   topics = "devices-service"
 
-type
-  UpdateInstallationArgs* = ref object of Args
-    installation*: InstallationDto
+type UpdateInstallationArgs* = ref object of Args
+  installation*: InstallationDto
 
-type
-  UpdateInstallationNameArgs* = ref object of Args
-    installationId*: string
-    name*: string
+type UpdateInstallationNameArgs* = ref object of Args
+  installationId*: string
+  name*: string
 
-type
-  DevicesArg* = ref object of Args
-    devices*: seq[InstallationDto]
+type DevicesArg* = ref object of Args
+  devices*: seq[InstallationDto]
 
 # Signals which may be emitted by this service:
 const SIGNAL_UPDATE_DEVICE* = "updateDevice"
@@ -66,32 +63,33 @@ QtObject:
     if not self.localPairingStatus.isNil:
       self.localPairingStatus.delete
 
-  proc newService*(events: EventEmitter,
-    threadpool: ThreadPool,
-    settingsService: settings_service.Service,
-    accountsService: accounts_service.Service,
-    walletAccountService: wallet_account_service.Service): Service =
-      new(result, delete)
-      result.QObject.setup
-      result.events = events
-      result.threadpool = threadpool
-      result.settingsService = settingsService
-      result.accountsService = accountsService
-      result.walletAccountService = walletAccountService
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service,
+      accountsService: accounts_service.Service,
+      walletAccountService: wallet_account_service.Service,
+  ): Service =
+    new(result, delete)
+    result.QObject.setup
+    result.events = events
+    result.threadpool = threadpool
+    result.settingsService = settingsService
+    result.accountsService = accountsService
+    result.walletAccountService = walletAccountService
 
   proc updateLocalPairingStatus(self: Service, data: LocalPairingEventArgs) =
     self.localPairingStatus.update(data)
     self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
 
   proc doConnect(self: Service) =
-    self.events.on(SignalType.Message.event) do(e:Args):
+    self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
       for dto in receivedData.installations:
-        let data = UpdateInstallationArgs(
-          installation: dto)
+        let data = UpdateInstallationArgs(installation: dto)
         self.events.emit(SIGNAL_UPDATE_DEVICE, data)
 
-    self.events.on(SignalType.LocalPairing.event) do(e:Args):
+    self.events.on(SignalType.LocalPairing.event) do(e: Args):
       let signalData = LocalPairingSignal(e)
       if self.localPairingStatus.pairingType == PairingType.AppSync:
         let data = LocalPairingEventArgs(
@@ -99,14 +97,16 @@ QtObject:
           action: signalData.action,
           accountData: signalData.accountData,
           installation: signalData.installation,
-          error: signalData.error)
+          error: signalData.error,
+        )
         self.updateLocalPairingStatus(data)
       elif self.localPairingStatus.pairingType == PairingType.KeypairSync:
         let data = LocalPairingEventArgs(
           eventType: signalData.eventType,
           action: signalData.action,
           error: signalData.error,
-          transferredKeypairs: signalData.transferredKeypairs)
+          transferredKeypairs: signalData.transferredKeypairs,
+        )
         self.updateLocalPairingStatus(data)
 
   proc init*(self: Service) =
@@ -126,7 +126,11 @@ QtObject:
       if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
         raise newException(CatchableError, responseObj{"error"}.getStr)
 
-      let installations = map(responseObj["response"].getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
+      let installations = map(
+        responseObj["response"].getElems(),
+        proc(x: JsonNode): InstallationDto =
+          x.toInstallationDto(),
+      )
       self.events.emit(SIGNAL_DEVICES_LOADED, DevicesArg(devices: installations))
     except Exception as e:
       error "Erorr load devices async", msg = e.msg
@@ -135,7 +139,11 @@ QtObject:
   proc getAllDevices*(self: Service): seq[InstallationDto] =
     try:
       let response = status_installations.getOurInstallations()
-      return map(response.result.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
+      return map(
+        response.result.getElems(),
+        proc(x: JsonNode): InstallationDto =
+          x.toInstallationDto(),
+      )
     except Exception as e:
       error "error: ", desription = e.msg
 
@@ -154,7 +162,8 @@ QtObject:
 
   proc syncAllDevices*(self: Service) =
     let preferredName = self.settingsService.getPreferredName()
-    let photoPath = "" # From the old code: TODO change this to identicon when status-go is updated
+    let photoPath = ""
+      # From the old code: TODO change this to identicon when status-go is updated
     # Once we get more info from `status-go` we may emit success/failed signal from here.
     discard status_installations.syncDevices(preferredName, "")
 
@@ -170,12 +179,13 @@ QtObject:
     # Once we get more info from `status-go` we may emit success/failed signal from here.
     discard status_installations.disableInstallation(deviceId)
 
-
   #
   # Local Pairing
   #
 
-  proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+  proc inputConnectionStringForBootstrappingFinished*(
+      self: Service, responseJson: string
+  ) {.slot.} =
     var currentError = ""
     if self.localPairingStatus.state == LocalPairingState.Error:
       # The error was already returned by an event, keep it to reuse
@@ -185,9 +195,10 @@ QtObject:
     let errorDescription = response["error"].getStr
     if len(errorDescription) == 0:
       var installation = InstallationDto()
-      installation.id = response["installationId"].getStr # Set the installation with the ID (only info we have for now)
+      installation.id = response["installationId"].getStr
+        # Set the installation with the ID (only info we have for now)
       let data = LocalPairingEventArgs(
-        installation: installation, 
+        installation: installation,
         eventType: EventCompletedAndNodeReady,
         action: ActionPairingInstallation,
         accountData: LocalPairingAccountData(),
@@ -207,51 +218,57 @@ QtObject:
   proc validateConnectionString*(self: Service, connectionString: string): string =
     if connectionString.len == 0:
       result = "an empty connection string provided"
-      error "error", msg=result
+      error "error", msg = result
       return
     return status_go.validateConnectionString(connectionString)
 
-  proc getConnectionStringForBootstrappingAnotherDevice*(self: Service, password: string, chatKey: string): string =
+  proc getConnectionStringForBootstrappingAnotherDevice*(
+      self: Service, password: string, chatKey: string
+  ): string =
     let keyUid = singletonInstance.userProfile.getKeyUid()
     let keycardUser = singletonInstance.userProfile.getIsKeycardUser()
     var finalPassword = utils.hashPassword(password)
     if keycardUser:
       finalPassword = password
 
-    let configJSON = %* {
-      "senderConfig": %* {
-        "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, keyUid),
-        "deviceType": hostOs,
-        "keyUID": keyUid,
-        "password": finalPassword,
-        "chatKey": chatKey,
-      },
-      "serverConfig": %* {
-        "timeout": 5 * 60 * 1000,
+    let configJSON =
+      %*{
+        "senderConfig":
+          %*{
+            "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, keyUid),
+            "deviceType": hostOs,
+            "keyUID": keyUid,
+            "password": finalPassword,
+            "chatKey": chatKey,
+          },
+        "serverConfig": %*{"timeout": 5 * 60 * 1000},
       }
-    }
-    self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Sender)
+    self.localPairingStatus =
+      newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Sender)
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string) =
-    let configJSON = %* {
-      "receiverConfig": %* {
-        "createAccount": %*accounts_service.defaultCreateAccountRequest(),
-      },
-      "clientConfig": %* {}
-    }
-    self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
+    let configJSON =
+      %*{
+        "receiverConfig":
+          %*{"createAccount": %*accounts_service.defaultCreateAccountRequest()},
+        "clientConfig": %*{},
+      }
+    self.localPairingStatus =
+      newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(
       tptr: asyncInputConnectionStringTask,
       vptr: cast[uint](self.vptr),
       slot: "inputConnectionStringForBootstrappingFinished",
       connectionString: connectionString,
-      configJSON: $configJSON
+      configJSON: $configJSON,
     )
     self.threadpool.start(arg)
 
-  proc validateKeyUids*(self: Service, keyUids: seq[string], validateForExport: bool): tuple[finalKeyUids: seq[string], err: string] =
+  proc validateKeyUids*(
+      self: Service, keyUids: seq[string], validateForExport: bool
+  ): tuple[finalKeyUids: seq[string], err: string] =
     if keyUids.len > 0:
       for keyUid in keyUids:
         let kp = self.walletAccountService.getKeypairByKeyUid(keyUid)
@@ -272,26 +289,27 @@ QtObject:
     else:
       let keypairs = self.walletAccountService.getKeypairs()
       for kp in keypairs:
-        if kp.migratedToKeycard() or
-          kp.keypairType == KeypairTypeProfile or
-          validateForExport and kp.getOperability() == AccountNonOperable or
-          not validateForExport and kp.getOperability() != AccountNonOperable:
-            continue
+        if kp.migratedToKeycard() or kp.keypairType == KeypairTypeProfile or
+            validateForExport and kp.getOperability() == AccountNonOperable or
+            not validateForExport and kp.getOperability() != AccountNonOperable:
+          continue
         result.finalKeyUids.add(kp.keyUid)
 
     if result.finalKeyUids.len == 0:
       result.err = "there is no valid keypair"
 
   ## Providing an empty array of keyUids means generating a connection string and transferring all non operable keypairs
-  proc generateConnectionStringForExportingKeypairsKeystores*(self: Service, keyUids: seq[string], password: string): tuple[res: string, err: string] =
+  proc generateConnectionStringForExportingKeypairsKeystores*(
+      self: Service, keyUids: seq[string], password: string
+  ): tuple[res: string, err: string] =
     if password.len == 0:
       result.err = "emtpy password provided"
-      error "error", msg=result.err
+      error "error", msg = result.err
       return
-    let(finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport=true)
+    let (finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport = true)
     if err.len > 0:
       result.err = err
-      error "error", msg=err
+      error "error", msg = err
       return
 
     let loggedInUserKeyUid = singletonInstance.userProfile.getKeyUid()
@@ -301,19 +319,21 @@ QtObject:
     if keycardUser:
       finalPassword = password
 
-    let configJSON = %* {
-      "senderConfig": %* {
-        "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, loggedInUserKeyUid),
-        "loggedInKeyUid": loggedInUserKeyUid,
-        "password": finalPassword,
-        "keypairsToExport": finalKeyUids,
-      },
-      "serverConfig": %* {
-        "timeout": 5 * 60 * 1000,
+    let configJSON =
+      %*{
+        "senderConfig":
+          %*{
+            "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, loggedInUserKeyUid),
+            "loggedInKeyUid": loggedInUserKeyUid,
+            "password": finalPassword,
+            "keypairsToExport": finalKeyUids,
+          },
+        "serverConfig": %*{"timeout": 5 * 60 * 1000},
       }
-    }
-    self.localPairingStatus = newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Sender)
-    let response = status_go.getConnectionStringForExportingKeypairsKeystores($configJSON)
+    self.localPairingStatus =
+      newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Sender)
+    let response =
+      status_go.getConnectionStringForExportingKeypairsKeystores($configJSON)
     try:
       let jsonObj = response.parseJson
       if jsonObj.hasKey("error"):
@@ -321,29 +341,35 @@ QtObject:
     except Exception:
       return (response, "")
 
-  proc inputConnectionStringForImportingKeystoreFinished*(self: Service, responseJson: string) {.slot.} =
+  proc inputConnectionStringForImportingKeystoreFinished*(
+      self: Service, responseJson: string
+  ) {.slot.} =
     try:
       let jsonObj = responseJson.parseJson
       if jsonObj.hasKey("error") and jsonObj["error"].getStr.len == 0:
         info "keystore files successfully transferred"
-        self.walletAccountService.updateKeypairOperabilityInLocalStoreAndNotify(self.localPairingStatus.transferredKeypairs)
+        self.walletAccountService.updateKeypairOperabilityInLocalStoreAndNotify(
+          self.localPairingStatus.transferredKeypairs
+        )
         return
       let errorDescription = jsonObj["error"].getStr
       error "failed to start transferring keystore files", errorDescription
       self.events.emit(SIGNAL_IMPORTED_KEYPAIRS, KeypairsArgs(error: errorDescription))
     except Exception as e:
-      error "unexpected error", msg=e.msg
+      error "unexpected error", msg = e.msg
 
   ## Providing an empty array of keyUids means expecting keystore files for all non operable keypairs to be received
-  proc inputConnectionStringForImportingKeypairsKeystores*(self: Service, keyUids: seq[string], connectionString: string, password: string): string =
+  proc inputConnectionStringForImportingKeypairsKeystores*(
+      self: Service, keyUids: seq[string], connectionString: string, password: string
+  ): string =
     if password.len == 0:
       result = "emtpy password provided"
-      error "error", msg=result
+      error "error", msg = result
       return
-    let(finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport=false)
+    let (finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport = false)
     if err.len > 0:
       result = err
-      error "error", msg=result
+      error "error", msg = result
       return
 
     let loggedInUserKeyUid = singletonInstance.userProfile.getKeyUid()
@@ -353,29 +379,33 @@ QtObject:
     if keycardUser:
       finalPassword = password
 
-    let configJSON = %* {
-      "receiverConfig": %* {
-        "keystorePath": main_constants.ROOTKEYSTOREDIR,
-        "loggedInKeyUid": loggedInUserKeyUid,
-        "password": finalPassword,
-        "keypairsToImport": finalKeyUids,
-      },
-      "clientConfig": %* {}
-    }
-    self.localPairingStatus = newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Receiver)
+    let configJSON =
+      %*{
+        "receiverConfig":
+          %*{
+            "keystorePath": main_constants.ROOTKEYSTOREDIR,
+            "loggedInKeyUid": loggedInUserKeyUid,
+            "password": finalPassword,
+            "keypairsToImport": finalKeyUids,
+          },
+        "clientConfig": %*{},
+      }
+    self.localPairingStatus =
+      newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(
       tptr: asyncInputConnectionStringForImportingKeystoreTask,
       vptr: cast[uint](self.vptr),
       slot: "inputConnectionStringForImportingKeystoreFinished",
       connectionString: connectionString,
-      configJSON: $configJSON
+      configJSON: $configJSON,
     )
     self.threadpool.start(arg)
 
   proc finishPairingThroughSeedPhraseProcess*(self: Service, installationId: string) =
     try:
-      let response = status_installations.finishPairingThroughSeedPhraseProcess(installationId)
+      let response =
+        status_installations.finishPairingThroughSeedPhraseProcess(installationId)
       if response.error != nil:
         let e = Json.decode($response.error, RpcError)
         raise newException(CatchableError, e.message)
@@ -389,7 +419,9 @@ QtObject:
         let e = Json.decode($response.error, RpcError)
         raise newException(CatchableError, e.message)
       # Parse AC notif
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+      checkAndEmitACNotificationsFromResponse(
+        self.events, response.result{"activityCenterNotifications"}
+      )
       self.events.emit(SIGNAL_PAIRING_FALLBACK_COMPLETED, Args())
     except Exception as e:
       error "error: ", desription = e.msg

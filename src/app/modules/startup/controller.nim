@@ -25,47 +25,47 @@ type ProfileImageDetails = object
   croppedImage*: string
   cropRectangle*: ImageCropRectangle
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    generalService: general_service.Service
-    accountsService: accounts_service.Service
-    keychainService: keychain_service.Service
-    profileService: profile_service.Service
-    keycardService: keycard_service.Service
-    devicesService: devices_service.Service
-    connectionIds: seq[UUID]
-    keychainConnectionIds: seq[UUID]
-    tmpProfileImageDetails: ProfileImageDetails
-    tmpDisplayName: string
-    tmpPassword: string
-    tmpSelectedLoginAccountKeyUid: string
-    tmpSelectedLoginAccountIsKeycardAccount: bool
-    tmpPin: string
-    tmpPinMatch: bool
-    tmpPuk: string
-    tmpValidPuk: bool
-    tmpSeedPhrase: string
-    tmpSeedPhraseLength: int
-    tmpKeyUid: string
-    tmpKeycardEvent: KeycardEvent
-    tmpCardMetadata: CardMetadata
-    tmpKeychainErrorOccurred: bool
-    tmpRecoverKeycardUsingSeedPhraseWhileLoggingIn: bool
-    tmpConnectionString: string
-    localPairingStatus: LocalPairingStatus
-    loggedInPofilePublicKey: string
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  generalService: general_service.Service
+  accountsService: accounts_service.Service
+  keychainService: keychain_service.Service
+  profileService: profile_service.Service
+  keycardService: keycard_service.Service
+  devicesService: devices_service.Service
+  connectionIds: seq[UUID]
+  keychainConnectionIds: seq[UUID]
+  tmpProfileImageDetails: ProfileImageDetails
+  tmpDisplayName: string
+  tmpPassword: string
+  tmpSelectedLoginAccountKeyUid: string
+  tmpSelectedLoginAccountIsKeycardAccount: bool
+  tmpPin: string
+  tmpPinMatch: bool
+  tmpPuk: string
+  tmpValidPuk: bool
+  tmpSeedPhrase: string
+  tmpSeedPhraseLength: int
+  tmpKeyUid: string
+  tmpKeycardEvent: KeycardEvent
+  tmpCardMetadata: CardMetadata
+  tmpKeychainErrorOccurred: bool
+  tmpRecoverKeycardUsingSeedPhraseWhileLoggingIn: bool
+  tmpConnectionString: string
+  localPairingStatus: LocalPairingStatus
+  loggedInPofilePublicKey: string
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  generalService: general_service.Service,
-  accountsService: accounts_service.Service,
-  keychainService: keychain_service.Service,
-  profileService: profile_service.Service,
-  keycardService: keycard_service.Service,
-  devicesService: devices_service.Service):
-  Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    generalService: general_service.Service,
+    accountsService: accounts_service.Service,
+    keychainService: keychain_service.Service,
+    profileService: profile_service.Service,
+    keycardService: keycard_service.Service,
+    devicesService: devices_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -93,13 +93,13 @@ proc disconnectKeychain(self: Controller) =
   self.keychainConnectionIds = @[]
 
 proc connectKeychain(self: Controller) =
-  var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
+  var handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e: Args):
     let args = KeyChainServiceArg(e)
     self.disconnectKeychain()
     self.delegate.emitObtainingPasswordSuccess(args.data)
   self.keychainConnectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e: Args):
     let args = KeyChainServiceArg(e)
     self.tmpKeychainErrorOccurred = true
     self.disconnectKeychain()
@@ -109,10 +109,14 @@ proc connectKeychain(self: Controller) =
 proc connectToFetchingFromWakuEvents*(self: Controller) =
   self.accountsService.connectToFetchingFromWakuEvents()
 
-  var handlerId = self.events.onWithUUID(SignalType.WakuFetchingBackupProgress.event) do(e: Args):
+  var handlerId = self.events.onWithUUID(SignalType.WakuFetchingBackupProgress.event) do(
+    e: Args
+  ):
     var receivedData = WakuFetchingBackupProgressSignal(e)
     for k, v in receivedData.fetchingBackupProgress:
-      self.delegate.onFetchingFromWakuMessageReceived(receivedData.clock, k, v.totalNumber, v.dataNumber)
+      self.delegate.onFetchingFromWakuMessageReceived(
+        receivedData.clock, k, v.totalNumber, v.dataNumber
+      )
   self.connectionIds.add(handlerId)
 
 proc disconnect*(self: Controller) =
@@ -125,12 +129,12 @@ proc delete*(self: Controller) =
   self.cleanTmpData()
 
 proc init*(self: Controller) =
-  var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
+  var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e: Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e:Args):
+  handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e: Args):
     self.events.emit("nodeStopped", Args())
     self.accountsService.clear()
     self.cleanTmpData()
@@ -142,14 +146,18 @@ proc init*(self: Controller) =
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(
+    e: Args
+  ):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
       return
     self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(
+    e: Args
+  ):
     let args = SharedKeycarModuleBaseArgs(e)
     if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
       return
@@ -168,7 +176,9 @@ proc init*(self: Controller) =
     self.delegate.onReencryptionProcessStarted()
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionFinished.event) do(e: Args):
+  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionFinished.event) do(
+    e: Args
+  ):
     self.delegate.onReencryptionProcessFinished()
   self.connectionIds.add(handlerId)
 
@@ -190,7 +200,8 @@ proc shouldStartWithOnboardingScreen*(self: Controller): bool =
 #   2. FirstRunOldUserKeycardImport
 # At this point the account is already created in the database. All that's left is to set the displayName and profileImage.
 proc storeProfileDataAndProceedWithAppLoading*(self: Controller) =
-  self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin() # reason for this is in the table in AppController.nim file
+  self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
+    # reason for this is in the table in AppController.nim file
   discard self.profileService.setDisplayName(self.tmpDisplayName)
   let images = self.storeIdentityImage()
   self.accountsService.updateLoggedInAccount(self.tmpDisplayName, images)
@@ -205,7 +216,9 @@ proc getPasswordStrengthScore*(self: Controller, password, userName: string): in
 proc clearImage*(self: Controller) =
   self.tmpProfileImageDetails = ProfileImageDetails()
 
-proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
+proc generateImage*(
+    self: Controller, imageUrl: string, aX: int, aY: int, bX: int, bY: int
+): string =
   let formatedImg = singletonInstance.utils.formatImagePath(imageUrl)
   let images = self.generalService.generateImages(formatedImg, aX, aY, bX, bY)
   if images.len == 0:
@@ -213,9 +226,9 @@ proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: in
   for img in images:
     if img.imgType == "large":
       self.tmpProfileImageDetails = ProfileImageDetails(
-        url: formatedImg, 
-        croppedImage: img.uri, 
-        cropRectangle: ImageCropRectangle(ax: aX, ay: aY, bx: bX, by: bY)
+        url: formatedImg,
+        croppedImage: img.uri,
+        cropRectangle: ImageCropRectangle(ax: aX, ay: aY, bx: bX, by: bY),
       )
       return img.uri
 
@@ -296,8 +309,12 @@ proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata) =
 proc getMetadataFromKeycard*(self: Controller): CardMetadata =
   return self.tmpCardMetadata
 
-proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: Controller, oldKeycardUid: string, newKeycardUid: string) =
-  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(
+    self: Controller, oldKeycardUid: string, newKeycardUid: string
+) =
+  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(
+    oldKeycardUid, newKeycardUid
+  )
 
 proc syncKeycardBasedOnAppWalletStateAfterLogin(self: Controller) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
@@ -329,9 +346,10 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   ## This proc is used to fetch pass/pin from the keychain while user is trying to login.
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
   if not main_constants.IS_MACOS or # This is MacOS only feature
-    value != LS_VALUE_STORE:
-      return
-  self.connectKeychain() # handling the results is done in slots connected in `connectKeychain` proc
+  value != LS_VALUE_STORE:
+    return
+  self.connectKeychain()
+    # handling the results is done in slots connected in `connectKeychain` proc
   self.tmpKeychainErrorOccurred = false
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
@@ -342,9 +360,7 @@ proc storeIdentityImage*(self: Controller): seq[Image] =
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
   result = self.profileService.storeIdentityImage(
-    account.keyUid, 
-    image, 
-    self.tmpProfileImageDetails.cropRectangle.aX,
+    account.keyUid, image, self.tmpProfileImageDetails.cropRectangle.aX,
     self.tmpProfileImageDetails.cropRectangle.aY,
     self.tmpProfileImageDetails.cropRectangle.bX,
     self.tmpProfileImageDetails.cropRectangle.bY,
@@ -362,14 +378,15 @@ proc validMnemonic*(self: Controller, mnemonic: string): bool =
 
 # validateMnemonicForImport checks if mnemonic is valid and not yet saved in local database
 proc validateMnemonicForImport*(self: Controller, mnemonic: string): bool =
-
   let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
   if err.len != 0:
     self.delegate.emitStartupError(err, StartupErrorType.ImportAccError)
     return false
 
   if self.accountsService.openedAccountsContainsKeyUid(keyUID):
-    self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
+    self.delegate.emitStartupError(
+      ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError
+    )
     return false
 
   self.setSeedPhrase(mnemonic)
@@ -381,7 +398,9 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc processCreateAccountResult*(self: Controller, error: string, displayName: string, storeToKeychain: bool) =
+proc processCreateAccountResult*(
+    self: Controller, error: string, displayName: string, storeToKeychain: bool
+) =
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
@@ -391,14 +410,14 @@ proc processCreateAccountResult*(self: Controller, error: string, displayName: s
 proc createAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   self.delegate.moveToLoadingAppState()
   let error = self.accountsService.createAccountAndLogin(
-    self.tmpPassword, 
-    self.tmpDisplayName, 
-    self.tmpProfileImageDetails.url, 
-    self.tmpProfileImageDetails.cropRectangle
+    self.tmpPassword, self.tmpDisplayName, self.tmpProfileImageDetails.url,
+    self.tmpProfileImageDetails.cropRectangle,
   )
   self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
-proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
+proc importAccountAndLogin*(
+    self: Controller, storeToKeychain: bool, recoverAccount: bool = false
+) =
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
     self.connectToFetchingFromWakuEvents()
@@ -406,27 +425,26 @@ proc importAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAcco
     self.delegate.moveToLoadingAppState()
 
   let error = self.accountsService.importAccountAndLogin(
-    self.tmpSeedPhrase, 
-    self.tmpPassword, 
-    recoverAccount, 
-    self.tmpDisplayName, 
-    self.tmpProfileImageDetails.url,
-    self.tmpProfileImageDetails.cropRectangle,
+    self.tmpSeedPhrase, self.tmpPassword, recoverAccount, self.tmpDisplayName,
+    self.tmpProfileImageDetails.url, self.tmpProfileImageDetails.cropRectangle,
   )
 
   self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 # NOTE: Called during FirstRunNewUserNewKeycardKeys and FirstRunNewUserImportSeedPhraseIntoKeycard
 # WARNING: Reuse `importAccountAndLogin` with custom parameters
-proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool = true) =
+proc storeKeycardAccountAndLogin*(
+    self: Controller, storeToKeychain: bool, newKeycard: bool = true
+) =
   self.delegate.moveToLoadingAppState()
   self.storeMetadataForNewKeycardUser()
   let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
   let error = self.accountsService.importAccountAndLogin(
-    self.tmpSeedPhrase, 
-    password = "", # For keycard it will be substituted with`encryption.publicKey` in status-go
-    false, 
-    self.tmpDisplayName, 
+    self.tmpSeedPhrase,
+    password = "",
+      # For keycard it will be substituted with`encryption.publicKey` in status-go
+    false,
+    self.tmpDisplayName,
     self.tmpProfileImageDetails.url,
     self.tmpProfileImageDetails.cropRectangle,
     keycardInstanceUID = flowEvent.instanceUID,
@@ -434,11 +452,15 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
   self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 # NOTE: Called during FirstRunOldUserKeycardImport
-proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
+proc setupKeycardAccount*(
+    self: Controller, storeToKeychain: bool, recoverAccount: bool = false
+) =
   if self.tmpKeycardEvent.keyUid.len == 0 or
-    self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
-      self.delegate.emitStartupError(ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError)
-      return
+      self.accountsService.openedAccountsContainsKeyUid(self.tmpKeycardEvent.keyUid):
+    self.delegate.emitStartupError(
+      ACCOUNT_ALREADY_EXISTS_ERROR, StartupErrorType.ImportAccError
+    )
+    return
 
   if recoverAccount:
     self.delegate.prepareAndInitFetchingData()
@@ -447,13 +469,10 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, recoverAccoun
   self.syncKeycardBasedOnAppWalletStateAfterLogin()
 
   let error = self.accountsService.restoreKeycardAccountAndLogin(
-    self.tmpKeycardEvent,
-    recoverAccount, 
-    self.tmpDisplayName, 
-    self.tmpProfileImageDetails.url,
-    self.tmpProfileImageDetails.cropRectangle,
+    self.tmpKeycardEvent, recoverAccount, self.tmpDisplayName,
+    self.tmpProfileImageDetails.url, self.tmpProfileImageDetails.cropRectangle,
   )
-  
+
   self.processCreateAccountResult(error, self.tmpDisplayName, storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
@@ -462,7 +481,7 @@ proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
 proc getSelectedLoginAccount*(self: Controller): AccountDto =
   let openedAccounts = self.getOpenedAccounts()
   for acc in openedAccounts:
-    if(acc.keyUid == self.tmpSelectedLoginAccountKeyUid):
+    if (acc.keyUid == self.tmpSelectedLoginAccountKeyUid):
       return acc
 
 proc keyUidMatchSelectedLoginAccount*(self: Controller, keyUid: string): bool =
@@ -471,7 +490,9 @@ proc keyUidMatchSelectedLoginAccount*(self: Controller, keyUid: string): bool =
 proc isSelectedLoginAccountKeycardAccount*(self: Controller): bool =
   return self.tmpSelectedLoginAccountIsKeycardAccount
 
-proc setSelectedLoginAccount*(self: Controller, keyUid: string, isKeycardAccount: bool) =
+proc setSelectedLoginAccount*(
+    self: Controller, keyUid: string, isKeycardAccount: bool
+) =
   self.tmpSelectedLoginAccountKeyUid = keyUid
   self.tmpSelectedLoginAccountIsKeycardAccount = isKeycardAccount
   let selectedAccount = self.getSelectedLoginAccount()
@@ -487,7 +508,7 @@ proc login*(self: Controller, keycard: bool = false, keycardReplacement: bool = 
   var passwordHash, chatPrivateKey, mnemonic = ""
 
   if not keycard:
-    passwordHash = hashPassword(self.tmpPassword) 
+    passwordHash = hashPassword(self.tmpPassword)
   else:
     passwordHash = self.tmpKeycardEvent.encryptionKey.publicKey
     chatPrivateKey = self.tmpKeycardEvent.whisperKey.privateKey
@@ -495,12 +516,9 @@ proc login*(self: Controller, keycard: bool = false, keycardReplacement: bool = 
 
   if keycard and keycardReplacement:
     self.delegate.applyKeycardReplacementAfterLogin()
-      
+
   self.accountsService.login(
-    self.getSelectedLoginAccount(),
-    passwordHash,
-    chatPrivateKey,
-    mnemonic,
+    self.getSelectedLoginAccount(), passwordHash, chatPrivateKey, mnemonic
   )
 
 proc loginLocalPairingAccount*(self: Controller) =
@@ -508,19 +526,24 @@ proc loginLocalPairingAccount*(self: Controller) =
   self.accountsService.login(
     self.localPairingStatus.account,
     self.localPairingStatus.password,
-    chatPrivateKey = self.localPairingStatus.chatKey
+    chatPrivateKey = self.localPairingStatus.chatKey,
   )
 
 # FIXME: Why do we even have storeToKeychain during login? Makes no sense
 # https://github.com/status-im/status-desktop/issues/15167
-proc loginAccountKeycard*(self: Controller, storeToKeychain: bool, keycardReplacement = false) =
+proc loginAccountKeycard*(
+    self: Controller, storeToKeychain: bool, keycardReplacement = false
+) =
   # singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
   self.login(keycard = true, keycardReplacement = keycardReplacement)
 
 proc convertKeycardProfileKeypairToRegular*(self: Controller) =
-  let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
-  self.accountsService.convertKeycardProfileKeypairToRegular(self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey,
-    self.getPassword())
+  let acc = self.accountsService.createAccountFromMnemonic(
+    self.getSeedPhrase(), includeEncryption = true
+  )
+  self.accountsService.convertKeycardProfileKeypairToRegular(
+    self.getSeedPhrase(), acc.derivedAccounts.encryption.publicKey, self.getPassword()
+  )
 
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)
@@ -529,33 +552,60 @@ proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
 proc getCurrentKeycardServiceFlow*(self: Controller): keycard_service.KCSFlowType =
   return self.keycardService.getCurrentFlow()
 
-proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flowEvent: KeycardEvent] =
+proc getLastReceivedKeycardData*(
+    self: Controller
+): tuple[flowType: string, flowEvent: KeycardEvent] =
   return self.keycardService.getLastReceivedKeycardData()
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
 
-proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
-  self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startLoadAccountFlow(seedPhraseLength, seedPhrase, pin, puk, factoryReset)
+proc runLoadAccountFlow*(
+    self: Controller,
+    seedPhraseLength = 0,
+    seedPhrase = "",
+    pin = "",
+    puk = "",
+    factoryReset = false,
+) =
+  self.cancelCurrentFlow()
+    # before running into any flow we're making sure that the previous flow is canceled
+  self.keycardService.startLoadAccountFlow(
+    seedPhraseLength, seedPhrase, pin, puk, factoryReset
+  )
 
 proc runLoginFlow*(self: Controller) =
-  self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
+  self.cancelCurrentFlow()
+    # before running into any flow we're making sure that the previous flow is canceled
   self.keycardService.startLoginFlow()
 
 proc startLoginFlowAutomatically*(self: Controller, pin: string) =
-  self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
+  self.cancelCurrentFlow()
+    # before running into any flow we're making sure that the previous flow is canceled
   self.keycardService.startLoginFlowAutomatically(pin)
 
-proc runRecoverAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", puk = "", factoryReset = false) =
-  self.cancelCurrentFlow() # before running into any flow we're making sure that the previous flow is canceled
-  self.keycardService.startRecoverAccountFlow(seedPhraseLength, seedPhrase, puk, factoryReset)
+proc runRecoverAccountFlow*(
+    self: Controller,
+    seedPhraseLength = 0,
+    seedPhrase = "",
+    puk = "",
+    factoryReset = false,
+) =
+  self.cancelCurrentFlow()
+    # before running into any flow we're making sure that the previous flow is canceled
+  self.keycardService.startRecoverAccountFlow(
+    seedPhraseLength, seedPhrase, puk, factoryReset
+  )
 
-proc runStoreMetadataFlow*(self: Controller, cardName: string, pin: string, walletPaths: seq[string]) =
+proc runStoreMetadataFlow*(
+    self: Controller, cardName: string, pin: string, walletPaths: seq[string]
+) =
   self.cancelCurrentFlow()
   self.keycardService.startStoreMetadataFlow(cardName, pin, walletPaths)
 
-proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterAddr = false, pin = "") =
+proc runGetMetadataFlow*(
+    self: Controller, resolveAddress = false, exportMasterAddr = false, pin = ""
+) =
   self.cancelCurrentFlow()
   self.keycardService.startGetMetadataFlow(resolveAddress, exportMasterAddr, pin)
 
@@ -580,7 +630,9 @@ proc enterKeycardPin*(self: Controller, pin: string) =
 proc enterKeycardPuk*(self: Controller, puk: string) =
   self.keycardService.enterPuk(puk)
 
-proc storeSeedPhraseToKeycard*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
+proc storeSeedPhraseToKeycard*(
+    self: Controller, seedPhraseLength: int, seedPhrase: string
+) =
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
 
 proc buildSeedPhrasesFromIndexes*(self: Controller, seedPhraseIndexes: seq[int]) =
@@ -606,10 +658,14 @@ proc getConnectionString*(self: Controller): string =
 proc setConnectionString*(self: Controller, connectionString: string) =
   self.tmpConnectionString = connectionString
 
-proc validateLocalPairingConnectionString*(self: Controller, connectionString: string): string =
+proc validateLocalPairingConnectionString*(
+    self: Controller, connectionString: string
+): string =
   return self.devicesService.validateConnectionString(connectionString)
 
-proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
+proc inputConnectionStringForBootstrapping*(
+    self: Controller, connectionString: string
+) =
   self.devicesService.inputConnectionStringForBootstrapping(connectionString)
 
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =
@@ -633,7 +689,7 @@ proc getLoggedInAccountImage*(self: Controller): string =
 
 # NOTE: This could be a constant now, but in future we should check if the user
 # has already enabled notifications and return corresponding result from this function.
-proc notificationsNeedsEnable*(self: Controller): bool = 
+proc notificationsNeedsEnable*(self: Controller): bool =
   return main_constants.IS_MACOS
 
 proc proceedToApp*(self: Controller) =

@@ -2,39 +2,42 @@ import tables, json, stew/shims/strformat, strutils
 
 import account_token_item
 
-include  app_service/common/json_utils
+include app_service/common/json_utils
 
 export account_token_item
 
-const WalletTypeGenerated* = "generated" # refers to accounts generated from the profile keypair
+const WalletTypeGenerated* = "generated"
+  # refers to accounts generated from the profile keypair
 const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
 
-const AccountNonOperable* = "no" # an account is non operable it is not a keycard account and there is no keystore file for it and no keystore file for the address it is derived from
-const AccountPartiallyOperable* = "partially" # an account is partially operable if it is not a keycard account and there is created keystore file for the address it is derived from
-const AccountFullyOperable* = "fully" # an account is fully operable if it is not a keycard account and there is a keystore file for it
+const AccountNonOperable* = "no"
+  # an account is non operable it is not a keycard account and there is no keystore file for it and no keystore file for the address it is derived from
+const AccountPartiallyOperable* = "partially"
+  # an account is partially operable if it is not a keycard account and there is created keystore file for the address it is derived from
+const AccountFullyOperable* = "fully"
+  # an account is fully operable if it is not a keycard account and there is a keystore file for it
 
-type
-  WalletAccountDto* = ref object of RootObj
-    name*: string
-    address*: string
-    mixedcaseAddress*: string
-    keyUid*: string
-    path*: string
-    colorId*: string
-    publicKey*: string
-    walletType*: string
-    isWallet*: bool
-    isChat*: bool
-    emoji*: string
-    ens*: string
-    assetsLoading*: bool
-    removed*: bool # needs for synchronization
-    operable*: string
-    createdAt*: int
-    position*: int
-    hideFromTotalBalance*: bool
+type WalletAccountDto* = ref object of RootObj
+  name*: string
+  address*: string
+  mixedcaseAddress*: string
+  keyUid*: string
+  path*: string
+  colorId*: string
+  publicKey*: string
+  walletType*: string
+  isWallet*: bool
+  isChat*: bool
+  emoji*: string
+  ens*: string
+  assetsLoading*: bool
+  removed*: bool # needs for synchronization
+  operable*: string
+  createdAt*: int
+  position*: int
+  hideFromTotalBalance*: bool
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
@@ -44,7 +47,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("key-uid", result.keyUid)
   discard jsonObj.getProp("path", result.path)
   discard jsonObj.getProp("colorId", result.colorId)
-  result.colorId = result.colorId.toUpper() # to match `preDefinedWalletAccountColors` on the qml side
+  result.colorId = result.colorId.toUpper()
+    # to match `preDefinedWalletAccountColors` on the qml side
   discard jsonObj.getProp("wallet", result.isWallet)
   discard jsonObj.getProp("chat", result.isChat)
   discard jsonObj.getProp("public-key", result.publicKey)
@@ -58,7 +62,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result.assetsLoading = true
 
 proc `$`*(self: WalletAccountDto): string =
-  result = fmt"""WalletAccountDto[
+  result =
+    fmt"""WalletAccountDto[
     name: {self.name},
     address: {self.address},
     mixedcaseAddress: {self.mixedcaseAddress},
@@ -77,21 +82,21 @@ proc `$`*(self: WalletAccountDto): string =
 
 proc `%`*(x: WalletAccountDto): JsonNode =
   result = newJobject()
-  result["name"] = % x.name
-  result["address"] = % x.address
-  result["mixedcaseAddress"] = % x.mixedcaseAddress
-  result["keyUid"] = % x.keyUid
-  result["path"] = % x.path
-  result["colorId"] = % x.colorId
-  result["publicKey"] = % x.publicKey
-  result["walletType"] = % x.walletType
-  result["isWallet"] = % x.isWallet
-  result["isChat"] = % x.isChat
-  result["emoji"] = % x.emoji
-  result["ens"] = % x.ens
-  result["assetsLoading"] = % x.assetsLoading
-  result["removed"] = % x.removed
-  result["operable"] = % x.operable
-  result["createdAt"] = % x.createdAt
-  result["position"] = % x.position
-  result["hideFromTotalBalance"] = % x.hideFromTotalBalance
+  result["name"] = %x.name
+  result["address"] = %x.address
+  result["mixedcaseAddress"] = %x.mixedcaseAddress
+  result["keyUid"] = %x.keyUid
+  result["path"] = %x.path
+  result["colorId"] = %x.colorId
+  result["publicKey"] = %x.publicKey
+  result["walletType"] = %x.walletType
+  result["isWallet"] = %x.isWallet
+  result["isChat"] = %x.isChat
+  result["emoji"] = %x.emoji
+  result["ens"] = %x.ens
+  result["assetsLoading"] = %x.assetsLoading
+  result["removed"] = %x.removed
+  result["operable"] = %x.operable
+  result["createdAt"] = %x.createdAt
+  result["position"] = %x.position
+  result["hideFromTotalBalance"] = %x.hideFromTotalBalance

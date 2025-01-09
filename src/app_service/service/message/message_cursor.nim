@@ -7,8 +7,9 @@ type
     pending: bool
     mostRecent: bool
 
-proc initMessageCursor*(value: CursorValue, pending: bool,
-    mostRecent: bool): MessageCursor =
+proc initMessageCursor*(
+    value: CursorValue, pending: bool, mostRecent: bool
+): MessageCursor =
   MessageCursor(value: value, pending: pending, mostRecent: mostRecent)
 
 proc getValue*(self: MessageCursor): CursorValue =

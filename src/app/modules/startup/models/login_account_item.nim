@@ -3,22 +3,25 @@ import NimQml
 import sequtils, sugar
 import ../../shared_models/[color_hash_item, color_hash_model]
 
-type
-  Item* = object
-    order: int
-    name: string
-    icon: string
-    thumbnailImage: string
-    largeImage: string
-    keyUid: string
-    colorHash: color_hash_model.Model
-    colorHashVariant: QVariant
-    colorId: int
-    keycardPairing: string
+type Item* = object
+  order: int
+  name: string
+  icon: string
+  thumbnailImage: string
+  largeImage: string
+  keyUid: string
+  colorHash: color_hash_model.Model
+  colorHashVariant: QVariant
+  colorId: int
+  keycardPairing: string
 
-proc initItem*(order: int, name, icon, thumbnailImage, largeImage, keyUid: string, colorHash: seq[ColorHashSegment] = @[], 
-  colorId: int = -1, keycardPairing: string = ""):
-  Item =
+proc initItem*(
+    order: int,
+    name, icon, thumbnailImage, largeImage, keyUid: string,
+    colorHash: seq[ColorHashSegment] = @[],
+    colorId: int = -1,
+    keycardPairing: string = "",
+): Item =
   result.order = order
   result.name = name
   result.icon = icon
@@ -26,7 +29,9 @@ proc initItem*(order: int, name, icon, thumbnailImage, largeImage, keyUid: strin
   result.largeImage = largeImage
   result.keyUid = keyUid
   result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
+  result.colorHash.setItems(
+    map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx))
+  )
   result.colorHashVariant = newQVariant(result.colorHash)
   result.colorId = colorId
   result.keycardPairing = keycardPairing

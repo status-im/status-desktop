@@ -4,13 +4,12 @@ import ./gif_column_model
 import ../../../../app_service/service/gif/dto
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      gifColumnAModel: GifColumnModel
-      gifColumnBModel: GifColumnModel
-      gifColumnCModel: GifColumnModel
-      gifLoading: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    gifColumnAModel: GifColumnModel
+    gifColumnBModel: GifColumnModel
+    gifColumnCModel: GifColumnModel
+    gifLoading: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -81,6 +80,7 @@ QtObject:
   proc setGifLoading*(self: View, value: bool) =
     self.gifLoading = value
     self.gifLoadingChanged()
+
   proc getGifLoading*(self: View): bool {.slot.} =
     result = self.gifLoading
 

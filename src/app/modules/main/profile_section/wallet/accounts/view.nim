@@ -9,14 +9,13 @@ import app/modules/shared_models/wallet_account_item
 import app/modules/shared_models/currency_amount
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      accounts: Model
-      accountsVariant: QVariant
-      keyPairModel: KeyPairModel
-      selectedKeyPair: KeyPairItem
-      selectedAccount: KeyPairAccountItem
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    accounts: Model
+    accountsVariant: QVariant
+    keyPairModel: KeyPairModel
+    selectedKeyPair: KeyPairItem
+    selectedAccount: KeyPairAccountItem
 
   proc delete*(self: View) =
     self.accounts.delete
@@ -55,7 +54,8 @@ QtObject:
     notify = selectedAccountChanged
 
   proc setSelectedAccount*(self: View, address: string) {.slot.} =
-    let (selectedKeyPair, selectedAccount) = self.keyPairModel.findKeyPairAndAccountByAddresss(address)
+    let (selectedKeyPair, selectedAccount) =
+      self.keyPairModel.findKeyPairAndAccountByAddresss(address)
     self.selectedKeyPair = selectedKeyPair
     self.selectedAccount = selectedAccount
     self.selectedKeyPairChanged()
@@ -81,20 +81,28 @@ QtObject:
   proc setItems*(self: View, items: seq[WalletAccountItem]) =
     self.accounts.setItems(items)
 
-  proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
+  proc updateAccount(
+      self: View, address: string, accountName: string, colorId: string, emoji: string
+  ) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)
 
   proc onUpdatedAccount*(self: View, account: WalletAccountItem) =
     self.accounts.onUpdatedAccount(account)
-    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
+    self.keyPairModel.onUpdatedAccount(
+      account.keyUid, account.address, account.name, account.colorId, account.emoji
+    )
     self.refreshSelectedAccount()
 
   proc onUpdatedKeypairOperability*(self: View, keyUid, operability: string) =
     self.keyPairModel.onUpdatedKeypairOperability(keyUid, operability)
     self.refreshSelectedAccount()
 
-  proc onHideFromTotalBalanceUpdated*(self: View, keyUid, address: string, hideFromTotalBalance: bool) =
-    self.keyPairModel.onHideFromTotalBalanceUpdated(keyUid, address, hideFromTotalBalance)
+  proc onHideFromTotalBalanceUpdated*(
+      self: View, keyUid, address: string, hideFromTotalBalance: bool
+  ) =
+    self.keyPairModel.onHideFromTotalBalanceUpdated(
+      keyUid, address, hideFromTotalBalance
+    )
     self.refreshSelectedAccount()
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
@@ -109,6 +117,7 @@ QtObject:
   proc keyPairModelChanged*(self: View) {.signal.}
   proc getKeyPairModel(self: View): QVariant {.slot.} =
     return newQVariant(self.keyPairModel)
+
   QtProperty[QVariant] keyPairModel:
     read = getKeyPairModel
     notify = keyPairModelChanged
@@ -134,5 +143,9 @@ QtObject:
     self.keyPairModel.setBalanceForAddress(address, balance)
     self.refreshSelectedAccount()
 
-  proc updateWatchAccountHiddenFromTotalBalance*(self: View, address: string, hideFromTotalBalance: bool) {.slot.} =
-    self.delegate.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+  proc updateWatchAccountHiddenFromTotalBalance*(
+      self: View, address: string, hideFromTotalBalance: bool
+  ) {.slot.} =
+    self.delegate.updateWatchAccountHiddenFromTotalBalance(
+      address, hideFromTotalBalance
+    )

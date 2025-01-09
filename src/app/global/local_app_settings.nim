@@ -18,7 +18,8 @@ const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
 const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
 const LAS_KEY_CREATE_COMMUNITIES_ENABLED = "global/create_communities"
-let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
+let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED
+  #enabled in production, disabled in development and e2e tests
 const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
 const DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED = false
 const LAS_KEY_TRANSLATIONS_ENABLED = "global/translations_enabled"
@@ -46,10 +47,10 @@ QtObject:
     let filePath = os.joinPath(DATADIR, "qt", fileName)
     result.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
-
   proc languageChanged*(self: LocalAppSettings) {.signal.}
   proc getLanguage*(self: LocalAppSettings): string {.slot.} =
     self.settings.value(LAS_KEY_LANGUAGE, newQVariant(DEFAULT_LAS_KEY_LANGUAGE)).stringVal
+
   proc setLanguage*(self: LocalAppSettings, value: string) {.slot.} =
     self.settings.setValue(LAS_KEY_LANGUAGE, newQVariant(value))
     self.languageChanged()
@@ -59,10 +60,10 @@ QtObject:
     write = setLanguage
     notify = languageChanged
 
-
   proc themeChanged*(self: LocalAppSettings) {.signal.}
   proc getTheme*(self: LocalAppSettings): int {.slot.} =
     self.settings.value(LAS_KEY_THEME, newQVariant(DEFAULT_THEME)).intVal
+
   proc setTheme*(self: LocalAppSettings, value: int) {.slot.} =
     self.settings.setValue(LAS_KEY_THEME, newQVariant(value))
     self.themeChanged()
@@ -72,10 +73,10 @@ QtObject:
     write = setTheme
     notify = themeChanged
 
-
   proc geometryChanged*(self: LocalAppSettings) {.signal.}
   proc getGeometry*(self: LocalAppSettings): QVariant {.slot.} =
     self.settings.value(LAS_KEY_GEOMETRY)
+
   proc setGeometry*(self: LocalAppSettings, value: QVariant) {.slot.} =
     self.settings.setValue(LAS_KEY_GEOMETRY, newQVariant(value))
     self.geometryChanged()
@@ -85,10 +86,10 @@ QtObject:
     write = setGeometry
     notify = geometryChanged
 
-
   proc visibilityChanged*(self: LocalAppSettings) {.signal.}
   proc getVisibility*(self: LocalAppSettings): int {.slot.} =
     self.settings.value(LAS_KEY_VISIBILITY, newQVariant(DEFAULT_VISIBILITY)).intVal
+
   proc setVisibility*(self: LocalAppSettings, value: int) {.slot.} =
     self.settings.setValue(LAS_KEY_VISIBILITY, newQVariant(value))
     self.visibilityChanged()
@@ -100,7 +101,11 @@ QtObject:
 
   proc isCustomMouseScrollingEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getCustomMouseScrollingEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED, newQVariant(DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED)).boolVal
+    self.settings.value(
+      LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED,
+      newQVariant(DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED),
+    ).boolVal
+
   proc setCustomMouseScrollingEnabled*(self: LocalAppSettings, value: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED, newQVariant(value))
     self.isCustomMouseScrollingEnabledChanged()
@@ -113,6 +118,7 @@ QtObject:
   proc scrollVelocityChanged*(self: LocalAppSettings) {.signal.}
   proc getScrollVelocity*(self: LocalAppSettings): int {.slot.} =
     self.settings.value(LAS_KEY_SCROLL_VELOCITY, newQVariant(DEFAULT_SCROLL_VELOCITY)).intVal
+
   proc setScrollVelocity*(self: LocalAppSettings, value: int) {.slot.} =
     self.settings.setValue(LAS_KEY_SCROLL_VELOCITY, newQVariant(value))
     self.scrollVelocityChanged()
@@ -124,7 +130,10 @@ QtObject:
 
   proc scrollDecelerationChanged*(self: LocalAppSettings) {.signal.}
   proc getScrollDeceleration*(self: LocalAppSettings): int {.slot.} =
-    self.settings.value(LAS_KEY_SCROLL_DECELERATION, newQVariant(DEFAULT_SCROLL_DECELERATION)).intVal
+    self.settings.value(
+      LAS_KEY_SCROLL_DECELERATION, newQVariant(DEFAULT_SCROLL_DECELERATION)
+    ).intVal
+
   proc setScrollDeceleration*(self: LocalAppSettings, value: int) {.slot.} =
     self.settings.setValue(LAS_KEY_SCROLL_DECELERATION, newQVariant(value))
     self.scrollDecelerationChanged()
@@ -145,7 +154,10 @@ QtObject:
 
   proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
+    self.settings.value(
+      LAS_KEY_FAKE_LOADING_SCREEN_ENABLED,
+      newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED),
+    ).boolVal
 
   proc setFakeLoadingScreenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(enabled))
@@ -159,6 +171,7 @@ QtObject:
   proc refreshTokenEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getRefreshTokenEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_REFRESH_TOKEN_ENABLED, newQVariant(false)).boolVal
+
   proc setRefreshTokenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_REFRESH_TOKEN_ENABLED, newQVariant(enabled))
     self.refreshTokenEnabledChanged()
@@ -170,7 +183,10 @@ QtObject:
 
   proc createCommunityEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getCreateCommunityEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED)).boolVal
+    self.settings.value(
+      LAS_KEY_CREATE_COMMUNITIES_ENABLED,
+      newQVariant(DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED),
+    ).boolVal
 
   proc setCreateCommunityEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(enabled))
@@ -183,9 +199,14 @@ QtObject:
 
   proc wakuV2ShardedCommunitiesEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_SHARDED_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED)).boolVal
+    self.settings.value(
+      LAS_KEY_SHARDED_COMMUNITIES_ENABLED,
+      newQVariant(DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED),
+    ).boolVal
 
-  proc setWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
+  proc setWakuV2ShardedCommunitiesEnabled*(
+      self: LocalAppSettings, enabled: bool
+  ) {.slot.} =
     self.settings.setValue(LAS_KEY_SHARDED_COMMUNITIES_ENABLED, newQVariant(enabled))
     self.wakuV2ShardedCommunitiesEnabledChanged()
 
@@ -196,7 +217,10 @@ QtObject:
 
   proc translationsEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getTranslationsEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_TRANSLATIONS_ENABLED, newQVariant(DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED)).boolVal
+    self.settings.value(
+      LAS_KEY_TRANSLATIONS_ENABLED, newQVariant(DEFAULT_LAS_KEY_TRANSLATIONS_ENABLED)
+    ).boolVal
+
   proc setTranslationsEnabled*(self: LocalAppSettings, value: bool) {.slot.} =
     if value == self.getTranslationsEnabled:
       return
@@ -209,22 +233,32 @@ QtObject:
     notify = translationsEnabledChanged
 
   proc removeKey*(self: LocalAppSettings, key: string) =
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
 
     self.settings.remove(key)
 
-    case key:
-      of LAS_KEY_LANGUAGE: self.languageChanged()
-      of LAS_KEY_THEME: self.themeChanged()
-      of LAS_KEY_GEOMETRY: self.geometryChanged()
-      of LAS_KEY_VISIBILITY: self.visibilityChanged()
-      of LAS_KEY_SCROLL_VELOCITY: self.scrollVelocityChanged()
-      of LAS_KEY_SCROLL_DECELERATION: self.scrollDecelerationChanged()
-      of LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED: self.isCustomMouseScrollingEnabledChanged()
-      of LAS_KEY_FAKE_LOADING_SCREEN_ENABLED: self.fakeLoadingScreenEnabledChanged()
-      of LAS_KEY_SHARDED_COMMUNITIES_ENABLED: self.wakuV2ShardedCommunitiesEnabledChanged()
-      of LAS_KEY_TRANSLATIONS_ENABLED: self.translationsEnabledChanged()
+    case key
+    of LAS_KEY_LANGUAGE:
+      self.languageChanged()
+    of LAS_KEY_THEME:
+      self.themeChanged()
+    of LAS_KEY_GEOMETRY:
+      self.geometryChanged()
+    of LAS_KEY_VISIBILITY:
+      self.visibilityChanged()
+    of LAS_KEY_SCROLL_VELOCITY:
+      self.scrollVelocityChanged()
+    of LAS_KEY_SCROLL_DECELERATION:
+      self.scrollDecelerationChanged()
+    of LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED:
+      self.isCustomMouseScrollingEnabledChanged()
+    of LAS_KEY_FAKE_LOADING_SCREEN_ENABLED:
+      self.fakeLoadingScreenEnabledChanged()
+    of LAS_KEY_SHARDED_COMMUNITIES_ENABLED:
+      self.wakuV2ShardedCommunitiesEnabledChanged()
+    of LAS_KEY_TRANSLATIONS_ENABLED:
+      self.translationsEnabledChanged()
 
   proc getWalletConnectProjectID*(self: LocalAppSettings): string {.slot.} =
     return constants.WALLET_CONNECT_PROJECT_ID
@@ -232,10 +266,12 @@ QtObject:
   QtProperty[string] walletConnectProjectID:
     read = getWalletConnectProjectID
 
-
   proc refreshMetricsPopupSeen*(self: LocalAppSettings) {.signal.}
   proc getMetricsPopupSeen*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_METRICS_POPUP_SEEN, newQVariant(DEFAULT_LAS_KEY_METRICS_POPUP_SEEN)).boolVal
+    self.settings.value(
+      LAS_KEY_METRICS_POPUP_SEEN, newQVariant(DEFAULT_LAS_KEY_METRICS_POPUP_SEEN)
+    ).boolVal
+
   proc setMetricsPopupSeen*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_METRICS_POPUP_SEEN, newQVariant(enabled))
     self.refreshMetricsPopupSeen()

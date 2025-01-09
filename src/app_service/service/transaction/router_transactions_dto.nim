@@ -1,6 +1,6 @@
 import json, stint
 
-include  ../../common/json_utils
+include ../../common/json_utils
 
 const
   TxStatusSending* = "Sending"
@@ -8,67 +8,61 @@ const
   TxStatusSuccess* = "Success"
   TxStatusFailed* = "Failed"
 
-type
-  ErrorResponse* = ref object
-    details*: string
-    code*: string
-type
-  SendDetailsDto* = ref object
-    uuid*: string
-    sendType*: int
-    fromChain*: int
-    toChain*: int
-    fromAddress*: string
-    toAddress*: string
-    fromToken*: string
-    toToken*: string
-    fromAmount*: UInt256 # total amount
-    toAmount*: UInt256
-    ownerTokenBeingSent*: bool
-    errorResponse*: ErrorResponse
-    username*: string
-    publicKey*: string
-    packId*: string
+type ErrorResponse* = ref object
+  details*: string
+  code*: string
 
-type
-  SigningDetails* = ref object
-    address*: string
-    addressPath*: string
-    keyUid*: string
-    signOnKeycard*: bool
-    hashes*: seq[string]
+type SendDetailsDto* = ref object
+  uuid*: string
+  sendType*: int
+  fromChain*: int
+  toChain*: int
+  fromAddress*: string
+  toAddress*: string
+  fromToken*: string
+  toToken*: string
+  fromAmount*: UInt256 # total amount
+  toAmount*: UInt256
+  ownerTokenBeingSent*: bool
+  errorResponse*: ErrorResponse
+  username*: string
+  publicKey*: string
+  packId*: string
 
-type
-  RouterTransactionsForSigningDto* = ref object
-    sendDetails*: SendDetailsDto
-    signingDetails*: SigningDetails
+type SigningDetails* = ref object
+  address*: string
+  addressPath*: string
+  keyUid*: string
+  signOnKeycard*: bool
+  hashes*: seq[string]
 
-type
-  RouterSentTransaction* = ref object
-    fromAddress*: string
-    toAddress*: string
-    fromChain*: int
-    toChain*: int
-    fromToken*: string
-    toToken*: string
-    amount*: UInt256 # amount sent
-    amountIn*: UInt256 # amount that is "data" of tx (important for erc20 tokens)
-    amountOut*: UInt256 # amount that will be received
-    hash*: string
-    approvalTx*: bool
+type RouterTransactionsForSigningDto* = ref object
+  sendDetails*: SendDetailsDto
+  signingDetails*: SigningDetails
 
-type
-  RouterSentTransactionsDto* = ref object
-    sendDetails*: SendDetailsDto
-    sentTransactions*: seq[RouterSentTransaction]
+type RouterSentTransaction* = ref object
+  fromAddress*: string
+  toAddress*: string
+  fromChain*: int
+  toChain*: int
+  fromToken*: string
+  toToken*: string
+  amount*: UInt256 # amount sent
+  amountIn*: UInt256 # amount that is "data" of tx (important for erc20 tokens)
+  amountOut*: UInt256 # amount that will be received
+  hash*: string
+  approvalTx*: bool
 
-type
-  TransactionStatusChange* = ref object
-    status*: string
-    hash*: string
-    chainId*: int
-    sendDetails*: SendDetailsDto
-    sentTransactions*: seq[RouterSentTransaction]
+type RouterSentTransactionsDto* = ref object
+  sendDetails*: SendDetailsDto
+  sentTransactions*: seq[RouterSentTransaction]
+
+type TransactionStatusChange* = ref object
+  status*: string
+  hash*: string
+  chainId*: int
+  sendDetails*: SendDetailsDto
+  sentTransactions*: seq[RouterSentTransaction]
 
 proc toErrorResponse*(jsonObj: JsonNode): ErrorResponse =
   result = ErrorResponse()
@@ -112,7 +106,9 @@ proc toSigningDetails*(jsonObj: JsonNode): SigningDetails =
     for tx in tmpObj:
       result.hashes.add(tx.getStr)
 
-proc toRouterTransactionsForSigningDto*(jsonObj: JsonNode): RouterTransactionsForSigningDto =
+proc toRouterTransactionsForSigningDto*(
+    jsonObj: JsonNode
+): RouterTransactionsForSigningDto =
   result = RouterTransactionsForSigningDto()
   var tmpObj: JsonNode
   if jsonObj.getProp("sendDetails", tmpObj) and tmpObj.kind == JObject:

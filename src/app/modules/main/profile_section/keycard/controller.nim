@@ -14,16 +14,16 @@ logScope:
 
 const UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER* = "Settings-KeycardModule"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    walletAccountService: wallet_account_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  walletAccountService: wallet_account_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  walletAccountService: wallet_account_service.Service):
-  Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    walletAccountService: wallet_account_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -37,8 +37,10 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier != UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER:
       return
-    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow, args.continueWithNextFlow,
-      args.forceFlow, args.continueWithKeyUid, args.returnToFlow)
+    self.delegate.onSharedKeycarModuleFlowTerminated(
+      args.lastStepInTheCurrentFlow, args.continueWithNextFlow, args.forceFlow,
+      args.continueWithKeyUid, args.returnToFlow,
+    )
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
     let args = SharedKeycarModuleBaseArgs(e)
@@ -87,7 +89,9 @@ proc init*(self: Controller) =
     let args = KeycardArgs(e)
     if not args.success:
       return
-    self.delegate.onKeycardNameChanged(args.keycard.keycardUid, args.keycard.keycardName)
+    self.delegate.onKeycardNameChanged(
+      args.keycard.keycardUid, args.keycard.keycardName
+    )
 
   self.events.on(SIGNAL_KEYCARD_UID_UPDATED) do(e: Args):
     let args = KeycardArgs(e)
@@ -122,7 +126,9 @@ proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDt
 proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
   return self.walletAccountService.getKeypairs()
 
-proc getKeypairByKeyUid*(self: Controller, keyUid: string): wallet_account_service.KeypairDto =
+proc getKeypairByKeyUid*(
+    self: Controller, keyUid: string
+): wallet_account_service.KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
 proc remainingKeypairCapacity*(self: Controller): int =

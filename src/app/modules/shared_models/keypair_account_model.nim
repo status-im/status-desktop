@@ -6,14 +6,12 @@ import ../../../app_service/common/utils
 
 export keypair_account_item
 
-type
-  ModelRole {.pure.} = enum
-    Account = UserRole + 1
+type ModelRole {.pure.} = enum
+  Account = UserRole + 1
 
 QtObject:
-  type
-    KeyPairAccountModel* = ref object of QAbstractListModel
-      items: seq[KeyPairAccountItem]
+  type KeyPairAccountModel* = ref object of QAbstractListModel
+    items: seq[KeyPairAccountItem]
 
   proc delete(self: KeyPairAccountModel) =
     self.items = @[]
@@ -29,13 +27,15 @@ QtObject:
   proc countChanged(self: KeyPairAccountModel) {.signal.}
   proc getCount*(self: KeyPairAccountModel): int {.slot.} =
     self.items.len
-  QtProperty[int]count:
+
+  QtProperty[int] count:
     read = getCount
     notify = countChanged
 
   proc `$`*(self: KeyPairAccountModel): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""KeyPairAccountModel:
+      result &=
+        fmt"""KeyPairAccountModel:
       [{i}]:({$self.items[i]})
       """
 
@@ -43,9 +43,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: KeyPairAccountModel): Table[int, string] =
-    {
-      ModelRole.Account.int: "account"
-    }.toTable
+    {ModelRole.Account.int: "account"}.toTable
 
   method data(self: KeyPairAccountModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -54,7 +52,7 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
+    case enumRole
     of ModelRole.Account:
       result = newQVariant(item)
 
@@ -69,7 +67,8 @@ QtObject:
 
   proc addItem*(self: KeyPairAccountModel, item: KeyPairAccountItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -87,7 +86,9 @@ QtObject:
         return true
     return false
 
-  proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairAccountModel): bool =
+  proc containsPathOutOfTheDefaultStatusDerivationTree*(
+      self: KeyPairAccountModel
+  ): bool =
     for it in self.items:
       if utils.isPathOutOfTheDefaultStatusDerivationTree(it.getPath()):
         return true
@@ -98,7 +99,9 @@ QtObject:
       return newKeyPairAccountItem()
     return self.items[index]
 
-  proc getItemByAddress*(self: KeyPairAccountModel, address: string): KeyPairAccountItem =
+  proc getItemByAddress*(
+      self: KeyPairAccountModel, address: string
+  ): KeyPairAccountItem =
     for it in self.items:
       if cmpIgnoreCase(it.getAddress(), address) == 0:
         return it
@@ -108,7 +111,8 @@ QtObject:
     if (index < 0 or index >= self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
@@ -120,7 +124,9 @@ QtObject:
         self.removeItemAtIndex(i)
         return
 
-  proc updateDetailsForAddressIfTheyAreSet*(self: KeyPairAccountModel, address, name, colorId, emoji: string) =
+  proc updateDetailsForAddressIfTheyAreSet*(
+      self: KeyPairAccountModel, address, name, colorId, emoji: string
+  ) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         if name.len > 0:
@@ -131,16 +137,22 @@ QtObject:
           self.items[i].setEmoji(emoji)
         return
 
-  proc updateOperabilityForAllAddresses*(self: KeyPairAccountModel, operability: string) =
+  proc updateOperabilityForAllAddresses*(
+      self: KeyPairAccountModel, operability: string
+  ) =
     for i in 0 ..< self.items.len:
       self.items[i].setOperability(operability)
 
-  proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: CurrencyAmount) =
+  proc setBalanceForAddress*(
+      self: KeyPairAccountModel, address: string, balance: CurrencyAmount
+  ) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setBalance(balance)
 
-  proc updateAccountHiddenInTotalBalance*(self: KeyPairAccountModel, address: string, hideFromTotalBalance: bool) =
+  proc updateAccountHiddenInTotalBalance*(
+      self: KeyPairAccountModel, address: string, hideFromTotalBalance: bool
+  ) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setHideFromTotalBalance(hideFromTotalBalance)

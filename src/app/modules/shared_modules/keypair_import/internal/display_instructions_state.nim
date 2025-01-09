@@ -1,5 +1,4 @@
-type
-  DisplayInstructionsState* = ref object of State
+type DisplayInstructionsState* = ref object of State
 
 proc newDisplayInstructionsState*(backState: State): DisplayInstructionsState =
   result = DisplayInstructionsState()

@@ -13,21 +13,20 @@ import ../io_interface as delegate_interface
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    isAllAccounts: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  isAllAccounts: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  walletAccountService: wallet_account_service.Service,
-  currencyService: currency_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    walletAccountService: wallet_account_service.Service,
+    currencyService: currency_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -43,7 +42,9 @@ method delete*(self: Module) =
   self.view.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionOverview", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionOverview", self.viewVariant
+  )
   self.controller.init()
   self.view.load()
 
@@ -58,10 +59,15 @@ method viewDidLoad*(self: Module) =
 proc setBalance(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  let totalCurrencyBalanceForAllAssets = self.controller.getTotalCurrencyBalance(addresses, chainIds)
-  self.view.setCurrencyBalance(currencyAmountToItem(totalCurrencyBalanceForAllAssets, currencyFormat))
+  let totalCurrencyBalanceForAllAssets =
+    self.controller.getTotalCurrencyBalance(addresses, chainIds)
+  self.view.setCurrencyBalance(
+    currencyAmountToItem(totalCurrencyBalanceForAllAssets, currencyFormat)
+  )
 
-proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) : seq[string] =
+proc getWalletAccoutColors(
+    self: Module, walletAccounts: seq[WalletAccountDto]
+): seq[string] =
   var colors: seq[string] = @[]
   for account in walletAccounts:
     colors.add(account.colorId)
@@ -75,7 +81,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   for account in walletAccounts:
     if account.assetsLoading:
       loading = true
-      break 
+      break
   if self.isAllAccounts:
     let item = initItem(
       "",
@@ -84,9 +90,9 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       loading,
       "",
       "",
-      isWatchOnlyAccount=false,
-      isAllAccounts=true,
-      self.getWalletAccoutColors(walletAccounts)
+      isWatchOnlyAccount = false,
+      isAllAccounts = true,
+      self.getWalletAccoutColors(walletAccounts),
     )
     self.view.setData(item)
   else:
@@ -99,8 +105,12 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       loading,
       walletAccount.colorId,
       walletAccount.emoji,
-      isWatchOnlyAccount=isWatchOnlyAccount,
-      canSend=not isWatchOnlyAccount and (walletAccount.operable==AccountFullyOperable or walletAccount.operable==AccountPartiallyOperable)
+      isWatchOnlyAccount = isWatchOnlyAccount,
+      canSend =
+        not isWatchOnlyAccount and (
+          walletAccount.operable == AccountFullyOperable or
+          walletAccount.operable == AccountPartiallyOperable
+        ),
     )
     self.view.setData(item)
 

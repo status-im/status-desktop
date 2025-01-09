@@ -58,29 +58,37 @@ rpc(getEthereumChains, "wallet"):
   discard
 
 rpc(addEthereumChain, "wallet"):
-  network: Network
+  network:
+    Network
 
 rpc(deleteEthereumChain, "wallet"):
-  chainId: int
+  chainId:
+    int
 
 rpc(fetchChainIDForURL, "wallet"):
-  url: string
+  url:
+    string
 
 rpc(upsertSavedAddress, "wakuext"):
-  savedAddress: SavedAddressDto
+  savedAddress:
+    SavedAddressDto
 
 rpc(deleteSavedAddress, "wakuext"):
-  address: string
-  isTest: bool
+  address:
+    string
+  isTest:
+    bool
 
 rpc(getSavedAddresses, "wakuext"):
   discard
 
 rpc(getSavedAddressesPerMode, "wakuext"):
-  isTest: bool
+  isTest:
+    bool
 
 rpc(remainingCapacityForSavedAddresses, "wakuext"):
-  isTest: bool
+  isTest:
+    bool
 
 rpc(checkConnected, "wallet"):
   discard
@@ -91,17 +99,28 @@ rpc(getTokenList, "wallet"):
 rpc(getPendingTransactions, "wallet"):
   discard
 
-type
-  TransactionIdentity* = ref object
-    chainId*: int
-    hash*: string
-    address*: string
+type TransactionIdentity* = ref object
+  chainId*: int
+  hash*: string
+  address*: string
 
 proc fromJson*(t: JsonNode, T: typedesc[TransactionIdentity]): T {.inline.} =
   result = TransactionIdentity(
-    chainId: if t.hasKey("chainId"): t["chainId"].getInt() else: 0,
-    hash: if t.hasKey("hash"): t["hash"].getStr() else: "",
-    address: if t.hasKey("address"): t["address"].getStr() else: "",
+    chainId:
+      if t.hasKey("chainId"):
+        t["chainId"].getInt()
+      else:
+        0,
+    hash:
+      if t.hasKey("hash"):
+        t["hash"].getStr()
+      else:
+        "",
+    address:
+      if t.hasKey("address"):
+        t["address"].getStr()
+      else:
+        "",
   )
 
 proc hash*(ti: TransactionIdentity): Hash =
@@ -115,7 +134,8 @@ proc `==`*(a, b: TransactionIdentity): bool =
   result = (a.chainId == b.chainId) and (a.hash == b.hash) and (a.address == b.address)
 
 proc `$`*(self: TransactionIdentity): string =
-  return fmt"""TransactionIdentity(
+  return
+    fmt"""TransactionIdentity(
     chainId:{self.chainId},
     hash:{self.hash},
     address:{self.address},
@@ -128,53 +148,70 @@ rpc(getTransfersForIdentities, "wallet"):
   identities = seq[TransactionIdentity]
 
 rpc(getWalletToken, "wallet"):
-  accounts: seq[string]
+  accounts:
+    seq[string]
 
 rpc(fetchOrGetCachedWalletBalances, "wallet"):
-  accounts: seq[string]
-  forceRefresh: bool
+  accounts:
+    seq[string]
+  forceRefresh:
+    bool
 
 rpc(fetchMarketValues, "wallet"):
-  symbols: seq[string]
-  currency: string
+  symbols:
+    seq[string]
+  currency:
+    string
 
 rpc(startWallet, "wallet"):
   discard
 
 rpc(getTransactionEstimatedTime, "wallet"):
-  chainId: int
-  maxFeePerGas: string
+  chainId:
+    int
+  maxFeePerGas:
+    string
 
 rpc(fetchPrices, "wallet"):
-  symbols: seq[string]
-  currencies: seq[string]
+  symbols:
+    seq[string]
+  currencies:
+    seq[string]
 
 rpc(fetchDecodedTxData, "wallet"):
-  data: string
+  data:
+    string
 
 rpc(activityCenterNotifications, "wakuext"):
-  request: ActivityCenterNotificationsRequest
+  request:
+    ActivityCenterNotificationsRequest
 
 rpc(activityCenterNotificationsCount, "wakuext"):
-  request: ActivityCenterCountRequest
+  request:
+    ActivityCenterCountRequest
 
 rpc(markAllActivityCenterNotificationsRead, "wakuext"):
   discard
 
 rpc(markActivityCenterNotificationsRead, "wakuext"):
-  ids: seq[string]
+  ids:
+    seq[string]
 
 rpc(markActivityCenterNotificationsUnread, "wakuext"):
-  ids: seq[string]
+  ids:
+    seq[string]
 
 rpc(acceptActivityCenterNotifications, "wakuext"):
-  ids: seq[string]
+  ids:
+    seq[string]
 
 rpc(dismissActivityCenterNotifications, "wakuext"):
-  ids: seq[string]
+  ids:
+    seq[string]
 
 rpc(deleteActivityCenterNotifications, "wakuext"):
-  ids: seq[string]
+  ids:
+    seq[string]
 
 rpc(hasUnseenActivityCenterNotifications, "wakuext"):
   discard
@@ -183,16 +220,20 @@ rpc(markAsSeenActivityCenterNotifications, "wakuext"):
   discard
 
 rpc(setTenorAPIKey, "gif"):
-  key: string
+  key:
+    string
 
 rpc(fetchGifs, "gif"):
-  path: string
+  path:
+    string
 
 rpc(updateRecentGifs, "gif"):
-  recentGifs: JsonNode
+  recentGifs:
+    JsonNode
 
 rpc(updateFavoriteGifs, "gif"):
-  favoriteGifs: JsonNode
+  favoriteGifs:
+    JsonNode
 
 rpc(getRecentGifs, "gif"):
   discard
@@ -201,86 +242,124 @@ rpc(getFavoriteGifs, "gif"):
   discard
 
 rpc(fetchMarketValues, "wallet"):
-  symbols: seq[string]
-  currencies: seq[string]
+  symbols:
+    seq[string]
+  currencies:
+    seq[string]
 
 rpc(fetchTokenDetails, "wallet"):
-  symbols: seq[string]
+  symbols:
+    seq[string]
 
 rpc(saveOrUpdateKeycard, "accounts"):
-  keycard: JsonNode
-  accountsComingFromKeycard: bool
+  keycard:
+    JsonNode
+  accountsComingFromKeycard:
+    bool
 
 rpc(deleteKeycardAccounts, "accounts"):
-  keycardUid: string
-  accountsToRemove: seq[string]
+  keycardUid:
+    string
+  accountsToRemove:
+    seq[string]
 
 rpc(getAllKnownKeycards, "accounts"):
   discard
 
 rpc(getKeycardsWithSameKeyUID, "accounts"):
-  keyUid: string
+  keyUid:
+    string
 
 rpc(getKeycardByKeycardUID, "accounts"):
-  keycardUid: string
+  keycardUid:
+    string
 
 rpc(setKeycardName, "accounts"):
-  keycardUid: string
-  keyPairName: string
+  keycardUid:
+    string
+  keyPairName:
+    string
 
 rpc(keycardLocked, "accounts"):
-  keycardUid: string
+  keycardUid:
+    string
 
 rpc(keycardUnlocked, "accounts"):
-  keycardUid: string
+  keycardUid:
+    string
 
 rpc(updateKeycardUID, "accounts"):
-  oldKeycardUID: string
-  newKeycardUID: string
+  oldKeycardUID:
+    string
+  newKeycardUID:
+    string
 
 rpc(deleteKeycard, "accounts"):
-  keycardUid: string
+  keycardUid:
+    string
 
 rpc(deleteAllKeycardsWithKeyUID, "accounts"):
-  keyUid: string
+  keyUid:
+    string
 
 rpc(moveWalletAccount, "accounts"):
-  fromPosition: int
-  toPosition: int
+  fromPosition:
+    int
+  toPosition:
+    int
 
 rpc(updateTokenPreferences, "accounts"):
-  preferences: seq[TokenPreferencesDto]
+  preferences:
+    seq[TokenPreferencesDto]
 
 rpc(getTokenPreferences, "accounts"):
   discard
 
 rpc(updateKeypairName, "accounts"):
-  keyUid: string
-  name: string
+  keyUid:
+    string
+  name:
+    string
 
 rpc(getHourlyMarketValues, "wallet"):
-  symbol: string
-  currency: string
-  limit: int
-  aggregate: int
+  symbol:
+    string
+  currency:
+    string
+  limit:
+    int
+  aggregate:
+    int
 
 rpc(getDailyMarketValues, "wallet"):
-  symbol: string
-  currency: string
-  limit: int
-  allDate: bool
-  aggregate: int
+  symbol:
+    string
+  currency:
+    string
+  limit:
+    int
+  allDate:
+    bool
+  aggregate:
+    int
 
 rpc(getName, "ens"):
-  chainId: int
-  address: string
+  chainId:
+    int
+  address:
+    string
 
 rpc(getBalanceHistory, "wallet"):
-  chainIds: seq[int]
-  addresses: seq[string]
-  tokenSymbol: string
-  currencySymbol: string
-  timeInterval: int
+  chainIds:
+    seq[int]
+  addresses:
+    seq[string]
+  tokenSymbol:
+    string
+  currencySymbol:
+    string
+  timeInterval:
+    int
 
 rpc(getCachedCurrencyFormats, "wallet"):
   discard
@@ -292,12 +371,16 @@ rpc(hasPairedDevices, "accounts"):
   discard
 
 rpc(getBalancesByChain, "wallet"):
-  chainIds: seq[int]
-  addresses: seq[string]
-  tokenAddresses: seq[string]
+  chainIds:
+    seq[int]
+  addresses:
+    seq[string]
+  tokenAddresses:
+    seq[string]
 
 rpc(restartWalletReloadTimer, "wallet"):
   discard
 
 rpc(isChecksumValidForAddress, "wallet"):
-  address: string
+  address:
+    string

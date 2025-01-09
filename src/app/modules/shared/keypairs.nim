@@ -13,10 +13,12 @@ logScope:
 proc buildKeypairItem*(keypair: KeypairDto, areTestNetworksEnabled: bool): KeyPairItem =
   if keypair.accounts.len == 0:
     ## we should never be here
-    error "there must not be any keypair without accounts", keyUid=keypair.keyUid
+    error "there must not be any keypair without accounts", keyUid = keypair.keyUid
     return
-  let publicKey = keypair.accounts[0].publicKey # in case of other but the profile keypair we take public key of first account as keypair's public key
-  var item = newKeyPairItem(keyUid = keypair.keyUid,
+  let publicKey = keypair.accounts[0].publicKey
+    # in case of other but the profile keypair we take public key of first account as keypair's public key
+  var item = newKeyPairItem(
+    keyUid = keypair.keyUid,
     pubKey = publicKey,
     locked = false,
     name = keypair.name,
@@ -26,7 +28,8 @@ proc buildKeypairItem*(keypair: KeypairDto, areTestNetworksEnabled: bool): KeyPa
     derivedFrom = keypair.derivedFrom,
     lastUsedDerivationIndex = keypair.lastUsedDerivationIndex,
     migratedToKeycard = keypair.migratedToKeycard(),
-    syncedFrom = keypair.syncedFrom)
+    syncedFrom = keypair.syncedFrom,
+  )
 
   if keypair.keypairType == KeypairTypeProfile:
     item.setPubKey(singletonInstance.userProfile.getPubKey())
@@ -46,13 +49,31 @@ proc buildKeypairItem*(keypair: KeypairDto, areTestNetworksEnabled: bool): KeyPa
     var icon = ""
     if acc.emoji.len == 0:
       icon = "wallet"
-    item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-      icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet, areTestNetworksEnabled,
-      acc.hideFromTotalBalance))
+    item.addAccount(
+      newKeyPairAccountItem(
+        acc.name,
+        acc.path,
+        acc.address,
+        acc.publicKey,
+        acc.emoji,
+        acc.colorId,
+        icon,
+        newCurrencyAmount(),
+        balanceFetched = true,
+        operability = acc.operable,
+        acc.isWallet,
+        areTestNetworksEnabled,
+        acc.hideFromTotalBalance,
+      )
+    )
   return item
 
-proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: bool,
-  excludePrivateKeyKeypairs: bool, areTestNetworksEnabled: bool = false): seq[KeyPairItem] =
+proc buildKeyPairsList*(
+    keypairs: seq[KeypairDto],
+    excludeAlreadyMigratedPairs: bool,
+    excludePrivateKeyKeypairs: bool,
+    areTestNetworksEnabled: bool = false,
+): seq[KeyPairItem] =
   var items: seq[KeyPairItem]
   for kp in keypairs:
     let item = buildKeypairItem(kp, areTestNetworksEnabled)
@@ -63,7 +84,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
     if item.getPairType() == KeypairType.Profile.int:
       items.insert(item, 0) # Status Account must be at first place
       continue
-    if item.getPairType() == KeypairType.PrivateKeyImport.int and excludePrivateKeyKeypairs:
+    if item.getPairType() == KeypairType.PrivateKeyImport.int and
+        excludePrivateKeyKeypairs:
       continue
     items.add(item)
   if items.len == 0:

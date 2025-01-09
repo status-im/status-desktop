@@ -2,77 +2,82 @@ import stew/shims/strformat
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
 
-type
-  ContactRequest* {.pure.} = enum
-    None = 0
-    Mutual = 1
-    Sent = 2
-    Received = 3
-    Dismissed = 4
+type ContactRequest* {.pure.} = enum
+  None = 0
+  Mutual = 1
+  Sent = 2
+  Received = 3
+  Dismissed = 4
 
 #TODO: #14964 - To check if this is needed
 proc toContactStatus*(value: ContactRequestState): ContactRequest =
-  case value:
-  of ContactRequestState.None: return ContactRequest.None
-  of ContactRequestState.Mutual: return ContactRequest.Mutual
-  of ContactRequestState.Sent: return ContactRequest.Sent
-  of ContactRequestState.Received: return ContactRequest.Received
-  of ContactRequestState.Dismissed: return ContactRequest.Dismissed
-  else: return ContactRequest.None
+  case value
+  of ContactRequestState.None:
+    return ContactRequest.None
+  of ContactRequestState.Mutual:
+    return ContactRequest.Mutual
+  of ContactRequestState.Sent:
+    return ContactRequest.Sent
+  of ContactRequestState.Received:
+    return ContactRequest.Received
+  of ContactRequestState.Dismissed:
+    return ContactRequest.Dismissed
+  else:
+    return ContactRequest.None
 
-type
-  UserItem* = ref object of RootObj
-    pubKey: string
-    displayName: string
-    ensName: string
-    isEnsVerified: bool
-    localNickname: string
-    alias: string
-    icon: string
-    colorId: int
-    colorHash: string
-    onlineStatus: OnlineStatus
-    isContact: bool
-    isBlocked: bool
-    contactRequest: ContactRequest
-    #Contact extra details
-    isCurrentUser: bool
-    lastUpdated: int64
-    lastUpdatedLocally: int64
-    bio: string
-    thumbnailImage: string
-    largeImage: string
-    isContactRequestReceived: bool
-    isContactRequestSent: bool
-    isRemoved: bool
-    trustStatus: TrustStatus
+type UserItem* = ref object of RootObj
+  pubKey: string
+  displayName: string
+  ensName: string
+  isEnsVerified: bool
+  localNickname: string
+  alias: string
+  icon: string
+  colorId: int
+  colorHash: string
+  onlineStatus: OnlineStatus
+  isContact: bool
+  isBlocked: bool
+  contactRequest: ContactRequest
+  #Contact extra details
+  isCurrentUser: bool
+  lastUpdated: int64
+  lastUpdatedLocally: int64
+  bio: string
+  thumbnailImage: string
+  largeImage: string
+  isContactRequestReceived: bool
+  isContactRequestSent: bool
+  isRemoved: bool
+  trustStatus: TrustStatus
 
-proc setup*(self: UserItem,
-  pubKey: string,
-  displayName: string,
-  ensName: string,
-  isEnsVerified: bool,
-  localNickname: string,
-  alias: string,
-  icon: string,
-  colorId: int,
-  colorHash: string,
-  onlineStatus: OnlineStatus,
-  isContact: bool,
-  isBlocked: bool,
-  contactRequest: ContactRequest,
-  #TODO: #14964 - remove defaults
-  isCurrentUser: bool = false,
-  lastUpdated: int64 = 0,
-  lastUpdatedLocally: int64 = 0,
-  bio: string = "",
-  thumbnailImage: string = "",
-  largeImage: string = "",
-  isContactRequestReceived: bool = false,
-  isContactRequestSent: bool = false,
-  isRemoved: bool = false,
-  trustStatus: TrustStatus = TrustStatus.Unknown,
-  ) =
+proc setup*(
+    self: UserItem,
+    pubKey: string,
+    displayName: string,
+    ensName: string,
+    isEnsVerified: bool,
+    localNickname: string,
+    alias: string,
+    icon: string,
+    colorId: int,
+    colorHash: string,
+    onlineStatus: OnlineStatus,
+    isContact: bool,
+    isBlocked: bool,
+    contactRequest: ContactRequest,
+    #TODO: #14964 - remove defaults
+    isCurrentUser: bool = false,
+    lastUpdated: int64 = 0,
+    lastUpdatedLocally: int64 = 0,
+    bio: string = "",
+    thumbnailImage: string = "",
+    largeImage: string = "",
+    isContactRequestReceived: bool = false,
+    isContactRequestSent: bool = false,
+    isRemoved: bool = false,
+    trustStatus: TrustStatus = TrustStatus.Unknown,
+) =
   self.pubKey = pubKey
   self.displayName = displayName
   self.ensName = ensName
@@ -123,7 +128,7 @@ proc initUserItem*(
     isContactRequestSent: bool = false,
     isRemoved: bool = false,
     trustStatus: TrustStatus = TrustStatus.Unknown,
-    ): UserItem =
+): UserItem =
   result = UserItem()
   result.setup(
     pubKey = pubKey,
@@ -149,10 +154,11 @@ proc initUserItem*(
     isContactRequestSent = isContactRequestSent,
     isRemoved = isRemoved,
     trustStatus = trustStatus,
-    )
+  )
 
 proc `$`*(self: UserItem): string =
-  result = fmt"""User Item(
+  result =
+    fmt"""User Item(
     pubKey: {self.pubkey},
     displayName: {self.displayName},
     ensName: {self.ensName},

@@ -14,15 +14,19 @@ QtObject:
   proc delete*(self: LinkPreviewThumbnail) =
     self.QObject.delete()
 
-  proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string)
+  proc update*(
+    self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string
+  )
 
   proc copy*(self: LinkPreviewThumbnail, other: LinkPreviewThumbnail) =
     if other != nil:
       self.update(other.width, other.height, other.url, other.dataUri)
     else:
       self.update(0, 0, "", "")
-    
-  proc newLinkPreviewThumbnail*(width: int = 0, height: int = 0, url: string = "", dataUri: string = ""): LinkPreviewThumbnail =
+
+  proc newLinkPreviewThumbnail*(
+      width: int = 0, height: int = 0, url: string = "", dataUri: string = ""
+  ): LinkPreviewThumbnail =
     new(result, delete)
     result.setup()
     result.update(width, height, url, dataUri)
@@ -30,6 +34,7 @@ QtObject:
   proc widthChanged*(self: LinkPreviewThumbnail) {.signal.}
   proc getWidth*(self: LinkPreviewThumbnail): int {.slot.} =
     result = self.width
+
   QtProperty[int] width:
     read = getWidth
     notify = widthChanged
@@ -37,6 +42,7 @@ QtObject:
   proc heightChanged*(self: LinkPreviewThumbnail) {.signal.}
   proc getHeight*(self: LinkPreviewThumbnail): int {.slot.} =
     result = self.height
+
   QtProperty[int] height:
     read = getHeight
     notify = heightChanged
@@ -44,6 +50,7 @@ QtObject:
   proc urlChanged*(self: LinkPreviewThumbnail) {.signal.}
   proc getUrl*(self: LinkPreviewThumbnail): string {.slot.} =
     result = self.url
+
   QtProperty[string] url:
     read = getUrl
     notify = urlChanged
@@ -51,10 +58,10 @@ QtObject:
   proc dataUriChanged*(self: LinkPreviewThumbnail) {.signal.}
   proc getDataUri*(self: LinkPreviewThumbnail): string {.slot.} =
     result = self.dataUri
+
   QtProperty[string] dataUri:
     read = getDataUri
     notify = dataUriChanged
-
 
   proc toLinkPreviewThumbnail*(jsonObj: JsonNode): LinkPreviewThumbnail =
     result = LinkPreviewThumbnail()
@@ -64,7 +71,8 @@ QtObject:
     discard jsonObj.getProp("dataUri", result.dataUri)
 
   proc `$`*(self: LinkPreviewThumbnail): string =
-    result = fmt"""LinkPreviewThumbnail(
+    result =
+      fmt"""LinkPreviewThumbnail(
       width: {self.width},
       height: {self.height},
       urlLength: {self.url.len},
@@ -72,14 +80,17 @@ QtObject:
     )"""
 
   proc `%`*(self: LinkPreviewThumbnail): JsonNode =
-    result = %*{
-      "width": self.width,
-      "height": self.height,
-      "url": self.url,
-      "dataUri": self.dataUri
-    }
+    result =
+      %*{
+        "width": self.width,
+        "height": self.height,
+        "url": self.url,
+        "dataUri": self.dataUri,
+      }
 
-  proc update*(self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string) =
+  proc update*(
+      self: LinkPreviewThumbnail, width: int, height: int, url: string, dataUri: string
+  ) =
     if self.width != width:
       self.width = width
       self.widthChanged()

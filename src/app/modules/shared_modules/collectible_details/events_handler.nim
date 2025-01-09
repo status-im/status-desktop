@@ -6,16 +6,15 @@ import app/core/signals/types
 
 import backend/collectibles as backend_collectibles
 
-type EventCallbackProc = proc (eventObject: JsonNode)
+type EventCallbackProc = proc(eventObject: JsonNode)
 
 # EventsHandler responsible for catching collectibles related backend events and reporting them
 QtObject:
-  type
-    EventsHandler* = ref object of QObject
-      events: EventEmitter
-      eventHandlers: Table[string, EventCallbackProc]
+  type EventsHandler* = ref object of QObject
+    events: EventEmitter
+    eventHandlers: Table[string, EventCallbackProc]
 
-      requestId: int32
+    requestId: int32
 
   proc setup(self: EventsHandler) =
     self.QObject.setup
@@ -54,7 +53,7 @@ QtObject:
     new(result, delete)
 
     result.requestId = requestId
-  
+
     result.events = events
     result.eventHandlers = initTable[string, EventCallbackProc]()
 
@@ -62,7 +61,8 @@ QtObject:
 
     # Register for wallet events
     let eventsHandler = result
-    result.events.on(SignalType.Wallet.event, proc(e: Args) =
-        eventsHandler.handleApiEvents(e)
+    result.events.on(
+      SignalType.Wallet.event,
+      proc(e: Args) =
+        eventsHandler.handleApiEvents(e),
     )
- 

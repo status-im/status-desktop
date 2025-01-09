@@ -41,29 +41,29 @@ QtObject:
     if allowLogging:
       trace "Raw signal data", data = $jsonSignal
 
-    var signal:Signal
+    var signal: Signal
     try:
       signal = self.decode(jsonSignal)
     except CatchableError:
       if allowLogging:
-        warn "Error decoding signal", err=getCurrentExceptionMsg()
+        warn "Error decoding signal", err = getCurrentExceptionMsg()
       return
 
     if signal.signalType == SignalType.NodeLogin and NodeSignal(signal).error != "":
       if allowLogging:
-        error "node.login", error=NodeSignal(signal).error
+        error "node.login", error = NodeSignal(signal).error
 
     if signal.signalType == SignalType.NodeCrashed:
       if allowLogging:
-        error "node.crashed", error=statusSignal
+        error "node.crashed", error = statusSignal
 
     self.events.emit(signal.signalType.event, signal)
 
   proc receiveSignal(self: SignalsManager, signal: string) {.slot.} =
-    self.processSignal(signal, allowLogging=true)
+    self.processSignal(signal, allowLogging = true)
 
   proc receiveChroniclesLogEvent(self: SignalsManager, signal: string) {.slot.} =
-    self.processSignal(signal, allowLogging=false)
+    self.processSignal(signal, allowLogging = false)
 
   proc decode(self: SignalsManager, jsonSignal: JsonNode): Signal =
     let signalString = jsonSignal{"type"}.getStr
@@ -73,78 +73,129 @@ QtObject:
     except CatchableError:
       raise newException(ValueError, "Unknown signal received: " & signalString)
 
-    result = case signalType:
-      of SignalType.Message: MessageSignal.fromEvent(jsonSignal)
-      of SignalType.MessageDelivered: MessageDeliveredSignal.fromEvent(jsonSignal)
-      of SignalType.EnvelopeSent: EnvelopeSentSignal.fromEvent(jsonSignal)
-      of SignalType.EnvelopeExpired: EnvelopeExpiredSignal.fromEvent(jsonSignal)
-      of SignalType.WhisperFilterAdded: WhisperFilterSignal.fromEvent(jsonSignal)
-      of SignalType.Wallet,
-        SignalType.WalletSignTransactions,
-        SignalType.WalletRouterSendingTransactionsStarted,
-        SignalType.WalletRouterSignTransactions,
-        SignalType.WalletRouterTransactionsSent,
-        SignalType.WalletTransactionStatusChanged,
-        SignalType.WalletSuggestedRoutes:
-          WalletSignal.fromEvent(signalType, jsonSignal)
-      of SignalType.NodeReady,
-        SignalType.NodeCrashed,
-        SignalType.NodeStarted,
-        SignalType.NodeStopped,
-        SignalType.NodeLogin:
-          NodeSignal.fromEvent(signalType, jsonSignal)
-      of SignalType.PeerStats: PeerStatsSignal.fromEvent(jsonSignal)
-      of SignalType.DiscoverySummary: DiscoverySummarySignal.fromEvent(jsonSignal)
-      of SignalType.MailserverRequestCompleted: MailserverRequestCompletedSignal.fromEvent(jsonSignal)
-      of SignalType.MailserverRequestExpired: MailserverRequestExpiredSignal.fromEvent(jsonSignal)
-      of SignalType.CommunityFound: CommunitySignal.fromEvent(jsonSignal)
-      of SignalType.CuratedCommunitiesUpdated: CuratedCommunitiesSignal.fromEvent(jsonSignal)
-      of SignalType.Stats: StatsSignal.fromEvent(jsonSignal)
-      of SignalType.ChroniclesLogs: ChroniclesLogsSignal.fromEvent(jsonSignal)
-      of SignalType.HistoryRequestCompleted: HistoryRequestCompletedSignal.fromEvent(jsonSignal)
-      of SignalType.HistoryRequestSuccess: HistoryRequestSuccessSignal.fromEvent(jsonSignal)
-      of SignalType.HistoryRequestStarted: HistoryRequestStartedSignal.fromEvent(jsonSignal)
-      of SignalType.HistoryRequestFailed: HistoryRequestFailedSignal.fromEvent(jsonSignal)
-      of SignalType.MailserverAvailable: MailserverAvailableSignal.fromEvent(jsonSignal)
-      of SignalType.MailserverChanged: MailserverChangedSignal.fromEvent(jsonSignal)
-      of SignalType.MailserverNotWorking: MailserverNotWorkingSignal.fromEvent(jsonSignal)
-      of SignalType.HistoryArchivesProtocolEnabled: HistoryArchivesSignal.historyArchivesProtocolEnabledFromEvent(jsonSignal)
-      of SignalType.HistoryArchivesProtocolDisabled: HistoryArchivesSignal.historyArchivesProtocolDisabledFromEvent(jsonSignal)
-      of SignalType.CreatingHistoryArchives: HistoryArchivesSignal.creatingHistoryArchivesFromEvent(jsonSignal)
-      of SignalType.NoHistoryArchivesCreated: HistoryArchivesSignal.noHistoryArchivesCreatedFromEvent(jsonSignal)
-      of SignalType.HistoryArchivesCreated: HistoryArchivesSignal.historyArchivesCreatedFromEvent(jsonSignal)
-      of SignalType.HistoryArchivesSeeding: HistoryArchivesSignal.historyArchivesSeedingFromEvent(jsonSignal)
-      of SignalType.HistoryArchivesUnseeded: HistoryArchivesSignal.historyArchivesUnseededFromEvent(jsonSignal)
-      of SignalType.HistoryArchiveDownloaded: HistoryArchivesSignal.historyArchiveDownloadedFromEvent(jsonSignal)
-      of SignalType.DownloadingHistoryArchivesStarted: HistoryArchivesSignal.downloadingHistoryArchivesStartedFromEvent(jsonSignal)
-      of SignalType.DownloadingHistoryArchivesFinished: HistoryArchivesSignal.downloadingHistoryArchivesFinishedFromEvent(jsonSignal)
-      of SignalType.ImportingHistoryArchiveMessages: HistoryArchivesSignal.importingHistoryArchiveMessagesFromEvent(jsonSignal)
-      of SignalType.UpdateAvailable: UpdateAvailableSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordCategoriesAndChannelsExtracted: DiscordCategoriesAndChannelsExtractedSignal.fromEvent(jsonSignal)
-      of SignalType.StatusUpdatesTimedout: StatusUpdatesTimedoutSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordCommunityImportFinished: DiscordCommunityImportFinishedSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordCommunityImportProgress: DiscordCommunityImportProgressSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordCommunityImportCancelled: DiscordCommunityImportCancelledSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordCommunityImportCleanedUp: DiscordCommunityImportCleanedUpSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordChannelImportFinished: DiscordChannelImportFinishedSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordChannelImportProgress: DiscordChannelImportProgressSignal.fromEvent(jsonSignal)
-      of SignalType.DiscordChannelImportCancelled: DiscordChannelImportCancelledSignal.fromEvent(jsonSignal)
-      of SignalType.MemberReevaluationStatus: CommunityMemberReevaluationStatusSignal.fromEvent(jsonSignal)
+    result =
+      case signalType
+      of SignalType.Message:
+        MessageSignal.fromEvent(jsonSignal)
+      of SignalType.MessageDelivered:
+        MessageDeliveredSignal.fromEvent(jsonSignal)
+      of SignalType.EnvelopeSent:
+        EnvelopeSentSignal.fromEvent(jsonSignal)
+      of SignalType.EnvelopeExpired:
+        EnvelopeExpiredSignal.fromEvent(jsonSignal)
+      of SignalType.WhisperFilterAdded:
+        WhisperFilterSignal.fromEvent(jsonSignal)
+      of SignalType.Wallet, SignalType.WalletSignTransactions,
+          SignalType.WalletRouterSendingTransactionsStarted,
+          SignalType.WalletRouterSignTransactions,
+          SignalType.WalletRouterTransactionsSent,
+          SignalType.WalletTransactionStatusChanged, SignalType.WalletSuggestedRoutes:
+        WalletSignal.fromEvent(signalType, jsonSignal)
+      of SignalType.NodeReady, SignalType.NodeCrashed, SignalType.NodeStarted,
+          SignalType.NodeStopped, SignalType.NodeLogin:
+        NodeSignal.fromEvent(signalType, jsonSignal)
+      of SignalType.PeerStats:
+        PeerStatsSignal.fromEvent(jsonSignal)
+      of SignalType.DiscoverySummary:
+        DiscoverySummarySignal.fromEvent(jsonSignal)
+      of SignalType.MailserverRequestCompleted:
+        MailserverRequestCompletedSignal.fromEvent(jsonSignal)
+      of SignalType.MailserverRequestExpired:
+        MailserverRequestExpiredSignal.fromEvent(jsonSignal)
+      of SignalType.CommunityFound:
+        CommunitySignal.fromEvent(jsonSignal)
+      of SignalType.CuratedCommunitiesUpdated:
+        CuratedCommunitiesSignal.fromEvent(jsonSignal)
+      of SignalType.Stats:
+        StatsSignal.fromEvent(jsonSignal)
+      of SignalType.ChroniclesLogs:
+        ChroniclesLogsSignal.fromEvent(jsonSignal)
+      of SignalType.HistoryRequestCompleted:
+        HistoryRequestCompletedSignal.fromEvent(jsonSignal)
+      of SignalType.HistoryRequestSuccess:
+        HistoryRequestSuccessSignal.fromEvent(jsonSignal)
+      of SignalType.HistoryRequestStarted:
+        HistoryRequestStartedSignal.fromEvent(jsonSignal)
+      of SignalType.HistoryRequestFailed:
+        HistoryRequestFailedSignal.fromEvent(jsonSignal)
+      of SignalType.MailserverAvailable:
+        MailserverAvailableSignal.fromEvent(jsonSignal)
+      of SignalType.MailserverChanged:
+        MailserverChangedSignal.fromEvent(jsonSignal)
+      of SignalType.MailserverNotWorking:
+        MailserverNotWorkingSignal.fromEvent(jsonSignal)
+      of SignalType.HistoryArchivesProtocolEnabled:
+        HistoryArchivesSignal.historyArchivesProtocolEnabledFromEvent(jsonSignal)
+      of SignalType.HistoryArchivesProtocolDisabled:
+        HistoryArchivesSignal.historyArchivesProtocolDisabledFromEvent(jsonSignal)
+      of SignalType.CreatingHistoryArchives:
+        HistoryArchivesSignal.creatingHistoryArchivesFromEvent(jsonSignal)
+      of SignalType.NoHistoryArchivesCreated:
+        HistoryArchivesSignal.noHistoryArchivesCreatedFromEvent(jsonSignal)
+      of SignalType.HistoryArchivesCreated:
+        HistoryArchivesSignal.historyArchivesCreatedFromEvent(jsonSignal)
+      of SignalType.HistoryArchivesSeeding:
+        HistoryArchivesSignal.historyArchivesSeedingFromEvent(jsonSignal)
+      of SignalType.HistoryArchivesUnseeded:
+        HistoryArchivesSignal.historyArchivesUnseededFromEvent(jsonSignal)
+      of SignalType.HistoryArchiveDownloaded:
+        HistoryArchivesSignal.historyArchiveDownloadedFromEvent(jsonSignal)
+      of SignalType.DownloadingHistoryArchivesStarted:
+        HistoryArchivesSignal.downloadingHistoryArchivesStartedFromEvent(jsonSignal)
+      of SignalType.DownloadingHistoryArchivesFinished:
+        HistoryArchivesSignal.downloadingHistoryArchivesFinishedFromEvent(jsonSignal)
+      of SignalType.ImportingHistoryArchiveMessages:
+        HistoryArchivesSignal.importingHistoryArchiveMessagesFromEvent(jsonSignal)
+      of SignalType.UpdateAvailable:
+        UpdateAvailableSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCategoriesAndChannelsExtracted:
+        DiscordCategoriesAndChannelsExtractedSignal.fromEvent(jsonSignal)
+      of SignalType.StatusUpdatesTimedout:
+        StatusUpdatesTimedoutSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportFinished:
+        DiscordCommunityImportFinishedSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportProgress:
+        DiscordCommunityImportProgressSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportCancelled:
+        DiscordCommunityImportCancelledSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportCleanedUp:
+        DiscordCommunityImportCleanedUpSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordChannelImportFinished:
+        DiscordChannelImportFinishedSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordChannelImportProgress:
+        DiscordChannelImportProgressSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordChannelImportCancelled:
+        DiscordChannelImportCancelledSignal.fromEvent(jsonSignal)
+      of SignalType.MemberReevaluationStatus:
+        CommunityMemberReevaluationStatusSignal.fromEvent(jsonSignal)
       # sync from waku part
-      of SignalType.WakuFetchingBackupProgress: WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpKeypair: WakuBackedUpKeypairSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpWatchOnlyAccount: WakuBackedUpWatchOnlyAccountSignal.fromEvent(jsonSignal)
+      of SignalType.WakuFetchingBackupProgress:
+        WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpProfile:
+        WakuBackedUpProfileSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpSettings:
+        WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpKeypair:
+        WakuBackedUpKeypairSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpWatchOnlyAccount:
+        WakuBackedUpWatchOnlyAccountSignal.fromEvent(jsonSignal)
       # pairing
-      of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)
-      of SignalType.CommunityTokenTransactionStatusChanged: CommunityTokenTransactionStatusChangedSignal.fromEvent(jsonSignal)
-      of SignalType.CommunityTokenAction: CommunityTokenActionSignal.fromEvent(jsonSignal)
+      of SignalType.LocalPairing:
+        LocalPairingSignal.fromEvent(jsonSignal)
+      of SignalType.CommunityTokenTransactionStatusChanged:
+        CommunityTokenTransactionStatusChangedSignal.fromEvent(jsonSignal)
+      of SignalType.CommunityTokenAction:
+        CommunityTokenActionSignal.fromEvent(jsonSignal)
       # connector
-      of SignalType.ConnectorSendRequestAccounts: ConnectorSendRequestAccountsSignal.fromEvent(jsonSignal)
-      of SignalType.ConnectorSendTransaction: ConnectorSendTransactionSignal.fromEvent(jsonSignal)
-      of SignalType.ConnectorGrantDAppPermission: ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
-      of SignalType.ConnectorRevokeDAppPermission: ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
-      of SignalType.ConnectorSign: ConnectorSignSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorSendRequestAccounts:
+        ConnectorSendRequestAccountsSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorSendTransaction:
+        ConnectorSendTransactionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorGrantDAppPermission:
+        ConnectorGrantDAppPermissionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorRevokeDAppPermission:
+        ConnectorRevokeDAppPermissionSignal.fromEvent(jsonSignal)
+      of SignalType.ConnectorSign:
+        ConnectorSignSignal.fromEvent(jsonSignal)
       else:
         Signal(signalType: signalType)

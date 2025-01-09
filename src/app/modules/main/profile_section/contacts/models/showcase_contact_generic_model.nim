@@ -1,19 +1,16 @@
 import NimQml, tables, strutils, sequtils, json
 
-type
-  ShowcaseContactGenericItem* = object of RootObj
-    showcaseKey*: string
-    showcasePosition*: int
+type ShowcaseContactGenericItem* = object of RootObj
+  showcaseKey*: string
+  showcasePosition*: int
 
-type
-  ModelRole {.pure.} = enum
-    ShowcaseKey
-    ShowcasePosition
+type ModelRole {.pure.} = enum
+  ShowcaseKey
+  ShowcasePosition
 
 QtObject:
-  type
-    ShowcaseContactGenericModel* = ref object of QAbstractListModel
-      items: seq[ShowcaseContactGenericItem]
+  type ShowcaseContactGenericModel* = ref object of QAbstractListModel
+    items: seq[ShowcaseContactGenericItem]
 
   proc delete(self: ShowcaseContactGenericModel) =
     self.items = @[]
@@ -38,7 +35,9 @@ QtObject:
       ModelRole.ShowcasePosition.int: "showcasePosition",
     }.toTable
 
-  method data(self: ShowcaseContactGenericModel, index: QModelIndex, role: int): QVariant =
+  method data(
+      self: ShowcaseContactGenericModel, index: QModelIndex, role: int
+  ): QVariant =
     if (not index.isValid):
       return
 
@@ -48,13 +47,15 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ShowcaseKey:
       result = newQVariant(item.showcaseKey)
     of ModelRole.ShowcasePosition:
       result = newQVariant(item.showcasePosition)
 
-  proc setItems*(self: ShowcaseContactGenericModel, items: seq[ShowcaseContactGenericItem]) =
+  proc setItems*(
+      self: ShowcaseContactGenericModel, items: seq[ShowcaseContactGenericItem]
+  ) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()

@@ -6,19 +6,20 @@ import app_service/service/chat/service as chat_service
 import app_service/service/network/service as network_service
 import app_service/service/message/dto/message as message_dto
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    contactsService: contacts_service.Service
-    chatService: chat_service.Service
-    networkService: network_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  contactsService: contacts_service.Service
+  chatService: chat_service.Service
+  networkService: network_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  contactsService: contacts_service.Service,
-  chatService: chat_service.Service,
-  networkService: network_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    contactsService: contacts_service.Service,
+    chatService: chat_service.Service,
+    networkService: network_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -30,7 +31,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_CONTACTS_LOADED) do(e:Args):
+  self.events.on(SIGNAL_CONTACTS_LOADED) do(e: Args):
     self.delegate.onContactsLoaded()
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
@@ -65,7 +66,7 @@ proc init*(self: Controller) =
     var args = TrustArgs(e)
     self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
     self.delegate.onTrustStatusRemoved(args.publicKey)
-    
+
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.addOrUpdateContactItem(args.contactId)
@@ -88,7 +89,9 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED) do(e: Args):
     let args = ProfileShowcaseForContactArgs(e)
-    self.delegate.onProfileShowcaseAccountsByAddressFetched(args.profileShowcase.accounts)
+    self.delegate.onProfileShowcaseAccountsByAddressFetched(
+      args.profileShowcase.accounts
+    )
 
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactsService.getContactsByGroup(group)
@@ -96,8 +99,9 @@ proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
 proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getContactNameAndImage*(
+    self: Controller, contactId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
@@ -118,13 +122,19 @@ proc changeContactNickname*(self: Controller, publicKey: string, nickname: strin
 proc sendContactRequest*(self: Controller, publicKey: string, message: string) =
   self.contactsService.sendContactRequest(publicKey, message)
 
-proc acceptContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+proc acceptContactRequest*(
+    self: Controller, publicKey: string, contactRequestId: string
+) =
   self.contactsService.acceptContactRequest(publicKey, contactRequestId)
 
-proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+proc dismissContactRequest*(
+    self: Controller, publicKey: string, contactRequestId: string
+) =
   self.contactsService.dismissContactRequest(publicKey, contactRequestId)
 
-proc getLatestContactRequestForContact*(self: Controller, publicKey: string): message_dto.MessageDto =
+proc getLatestContactRequestForContact*(
+    self: Controller, publicKey: string
+): message_dto.MessageDto =
   self.contactsService.getLatestContactRequestForContact(publicKey)
 
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string) =
@@ -154,7 +164,9 @@ proc shareUserUrlWithChatKey*(self: Controller, pubkey: string): string =
 proc shareUserUrlWithENS*(self: Controller, pubkey: string): string =
   self.contactsService.shareUserUrlWithENS(pubkey)
 
-proc requestProfileShowcaseForContact*(self: Controller, contactId: string, validated: bool) =
+proc requestProfileShowcaseForContact*(
+    self: Controller, contactId: string, validated: bool
+) =
   self.contactsService.requestProfileShowcaseForContact(contactId, validated)
 
 proc fetchProfileShowcaseAccountsByAddress*(self: Controller, address: string) =

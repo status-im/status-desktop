@@ -4,16 +4,15 @@ import ./models/[sticker_list, sticker_pack_list]
 import ./io_interface, ./item
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      packsLoaded*: bool
-      installedStickerPacksLoaded*: bool
-      packsLoadFailed*: bool
-      stickerPacks*: StickerPackList
-      recentStickers*: StickerList
-      signingPhrase: string
-      stickersMarketAddress: string
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    packsLoaded*: bool
+    installedStickerPacksLoaded*: bool
+    packsLoadFailed*: bool
+    stickerPacks*: StickerPackList
+    recentStickers*: StickerList
+    signingPhrase: string
+    stickersMarketAddress: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -31,13 +30,15 @@ QtObject:
     self.stickersMarketAddress = stickersMarketAddress
     self.delegate.viewDidLoad()
 
-  proc addStickerPackToList*(self: View, stickerPack: PackItem, isInstalled, isBought, isPending: bool) =
+  proc addStickerPackToList*(
+      self: View, stickerPack: PackItem, isInstalled, isBought, isPending: bool
+  ) =
     self.stickerPacks.addStickerPackToList(
       stickerPack,
       newStickerList(self.delegate, stickerPack.stickers),
       isInstalled,
       isBought,
-      isPending
+      isPending,
     )
 
   proc getStickerPackList(self: View): QVariant {.slot.} =
@@ -54,7 +55,9 @@ QtObject:
     read = getRecentStickerList
     notify = recentStickersUpdated
 
-  proc transactionWasSent*(self: View, chainId: int, txHash: string, error: string) {.signal.}
+  proc transactionWasSent*(
+    self: View, chainId: int, txHash: string, error: string
+  ) {.signal.}
 
   proc transactionCompleted*(self: View, success: bool, txHash: string) {.signal.}
 
@@ -72,10 +75,14 @@ QtObject:
   proc clearStickerPacks*(self: View) =
     self.stickerPacks.clear()
 
-  proc populateInstalledStickerPacks*(self: View, installedStickerPacks: seq[PackItem]) =
+  proc populateInstalledStickerPacks*(
+      self: View, installedStickerPacks: seq[PackItem]
+  ) =
     for stickerPack in installedStickerPacks:
       if not self.stickerPacks.hasKey(stickerPack.id):
-        self.addStickerPackToList(stickerPack, isInstalled = true, isBought = true, isPending = false)
+        self.addStickerPackToList(
+          stickerPack, isInstalled = true, isBought = true, isPending = false
+        )
 
   proc getNumInstalledStickerPacks(self: View): int {.slot.} =
     self.delegate.getNumInstalledStickerPacks()
@@ -87,7 +94,7 @@ QtObject:
   proc install*(self: View, packId: string) {.slot.} =
     self.delegate.installStickerPack(packId)
 
-  proc onStickerPackInstalled*(self:View, packId: string) =
+  proc onStickerPackInstalled*(self: View, packId: string) =
     self.stickerPacks.updateStickerPackInList(packId, true, false)
     self.installedStickerPacksUpdated()
     self.stickerPackInstalled(packId)
@@ -154,7 +161,14 @@ QtObject:
     if not self.installedStickerPacksLoaded:
       self.delegate.getInstalledStickerPacks()
 
-  proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
+  proc send*(
+      self: View,
+      channelId: string,
+      hash: string,
+      replyTo: string,
+      pack: string,
+      url: string,
+  ) {.slot.} =
     let sticker = initItem(hash, pack, url)
     self.addRecentStickerToList(sticker)
     self.delegate.sendSticker(channelId, replyTo, sticker)
@@ -171,10 +185,14 @@ QtObject:
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
 
-
   proc getStatusTokenKey*(self: View): string {.slot.} =
     return self.delegate.getStatusTokenKey()
 
-  proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string) {.signal.}
-  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, packID: string, trxType: string) =
+  proc transactionCompleted(
+    self: View, success: bool, txHash: string, packID: string, trxType: string
+  ) {.signal.}
+
+  proc emitTransactionCompletedSignal*(
+      self: View, success: bool, txHash: string, packID: string, trxType: string
+  ) =
     self.transactionCompleted(success, txHash, packID, trxType)

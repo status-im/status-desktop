@@ -12,7 +12,7 @@ QtObject:
     new(result, delete)
     result.QObject.setup()
 
-  proc stateWrapperChanged*(self:StateWrapper) {.signal.}
+  proc stateWrapperChanged*(self: StateWrapper) {.signal.}
 
   proc setStateObj*(self: StateWrapper, stateObj: State) =
     self.stateObj = stateObj
@@ -22,17 +22,19 @@ QtObject:
     return self.stateObj
 
   proc getStateType(self: StateWrapper): string {.slot.} =
-    if(self.stateObj.isNil):
+    if (self.stateObj.isNil):
       return $StateType.NoState
     return $self.stateObj.stateType()
+
   QtProperty[string] stateType:
     read = getStateType
     notify = stateWrapperChanged
 
   proc getDisplayBackButton(self: StateWrapper): bool {.slot.} =
-    if(self.stateObj.isNil):
+    if (self.stateObj.isNil):
       return false
     return self.stateObj.displayBackButton()
+
   QtProperty[bool] displayBackButton:
     read = getDisplayBackButton
     notify = stateWrapperChanged

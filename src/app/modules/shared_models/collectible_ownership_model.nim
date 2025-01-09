@@ -3,16 +3,14 @@ import stint
 
 import backend/collectibles_types as backend
 
-type
-  ModelRole {.pure.} = enum
-    AccountAddress = UserRole + 1,
-    Balance
-    TxTimestamp
+type ModelRole {.pure.} = enum
+  AccountAddress = UserRole + 1
+  Balance
+  TxTimestamp
 
 QtObject:
-  type
-    OwnershipModel* = ref object of QAbstractListModel
-      items: seq[backend.AccountBalance]
+  type OwnershipModel* = ref object of QAbstractListModel
+    items: seq[backend.AccountBalance]
 
   proc delete(self: OwnershipModel) =
     self.items = @[]
@@ -43,9 +41,9 @@ QtObject:
 
   method roleNames(self: OwnershipModel): Table[int, string] =
     {
-      ModelRole.AccountAddress.int:"accountAddress",
-      ModelRole.Balance.int:"balance",
-      ModelRole.TxTimestamp.int:"txTimestamp",
+      ModelRole.AccountAddress.int: "accountAddress",
+      ModelRole.Balance.int: "balance",
+      ModelRole.TxTimestamp.int: "txTimestamp",
     }.toTable
 
   method data(self: OwnershipModel, index: QModelIndex, role: int): QVariant =
@@ -58,7 +56,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.AccountAddress:
       result = newQVariant(item.address)
     of ModelRole.Balance:
@@ -71,7 +69,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
-  
+
   proc getBalance*(self: OwnershipModel, address: string): UInt256 =
     var balance = stint.u256(0)
     for item in self.items:

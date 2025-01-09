@@ -17,8 +17,7 @@ export utils
 export global_events
 export loader_deactivator
 
-type
-  GlobalSingleton = object
+type GlobalSingleton = object
   # Don't export GlobalSingleton type.
   # Other global things like local/global settings will be added here.
 
@@ -36,7 +35,9 @@ proc localAccountSettings*(self: GlobalSingleton): LocalAccountSettings =
     localAccountSettings = newLocalAccountSettings()
   return localAccountSettings
 
-proc localAccountSensitiveSettings*(self: GlobalSingleton): LocalAccountSensitiveSettings =
+proc localAccountSensitiveSettings*(
+    self: GlobalSingleton
+): LocalAccountSensitiveSettings =
   var localAccountSensitiveSettings {.global.}: LocalAccountSensitiveSettings
   if (localAccountSensitiveSettings.isNil):
     localAccountSensitiveSettings = newLocalAccountSensitiveSettings()

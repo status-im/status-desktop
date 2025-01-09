@@ -1,19 +1,70 @@
 import strutils, stew/shims/strformat, stint, chronicles
 from web3 import Address, fromHex
 
-const CompressedKeyChars* = {'0'..'9', 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
+const CompressedKeyChars* = {
+  '0' .. '9',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+}
 
-const SystemMentionChars* = {'0'..'9', 'x'}
+const SystemMentionChars* = {'0' .. '9', 'x'}
 
 const SystemTagMapping* = [("@everyone", "@0x00001")]
 
 proc isCompressedPubKey*(strPubKey: string): bool =
   let length = len(strPubKey)
-  return length >= 48 and length <= 50 and
-         strPubKey.startsWith("zQ3sh") and
-         allCharsInSet(strPubKey, CompressedKeyChars)
+  return
+    length >= 48 and length <= 50 and strPubKey.startsWith("zQ3sh") and
+    allCharsInSet(strPubKey, CompressedKeyChars)
 
-proc isSystemMention*(mention: string) : bool =
+proc isSystemMention*(mention: string): bool =
   mention.startsWith("0x") and allCharsInSet(mention, SystemMentionChars)
 
 proc parseAddress*(strAddress: string): Address =
@@ -32,7 +83,7 @@ proc isAddress*(strAddress: string): bool =
   return true
 
 proc toStUInt*[bits: static[int]](flt: float, T: typedesc[StUint[bits]]): T =
-  var stringValue =  fmt"{flt:<.0f}"
+  var stringValue = fmt"{flt:<.0f}"
   stringValue.removeSuffix('.')
   if (flt >= 0):
     result = parse($stringValue, StUint[bits])
@@ -78,14 +129,22 @@ proc wei2Eth*(input: string, decimals: int): string =
       input256 = input.u256
     result = wei2Eth(input256, decimals)
   except Exception as e:
-    error "Error parsing this wei value", input, msg=e.msg
+    error "Error parsing this wei value", input, msg = e.msg
     result = "0"
 
 proc wei2Gwei*(input: string): string =
   result = wei2Eth(input, 9)
 
 proc intToEnum*[T](intVal: int, defaultVal: T): T =
-  result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: defaultVal
+  result =
+    if (intVal >= ord(low(T)) and intVal <= ord(high(T))):
+      T(intVal)
+    else:
+      defaultVal
 
 proc intToEnum*[T](intVal: int): T =
-  result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: raise newException(ValueError, "Can't convert int to enum")
+  result =
+    if (intVal >= ord(low(T)) and intVal <= ord(high(T))):
+      T(intVal)
+    else:
+      raise newException(ValueError, "Can't convert int to enum")

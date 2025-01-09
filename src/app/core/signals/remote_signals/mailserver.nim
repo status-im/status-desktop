@@ -10,8 +10,7 @@ type MailserverRequestCompletedSignal* = ref object of Signal
   errorMessage*: string
   error*: bool
 
-type MailserverRequestExpiredSignal* = ref object of Signal
-  # TODO
+type MailserverRequestExpiredSignal* = ref object of Signal # TODO
 
 type HistoryRequestStartedSignal* = ref object of Signal
   numBatches*: int
@@ -37,7 +36,9 @@ type MailserverChangedSignal* = ref object of Signal
 
 type MailserverNotWorkingSignal* = ref object of Signal
 
-proc fromEvent*(T: type MailserverRequestCompletedSignal, jsonSignal: JsonNode): MailserverRequestCompletedSignal =
+proc fromEvent*(
+    T: type MailserverRequestCompletedSignal, jsonSignal: JsonNode
+): MailserverRequestCompletedSignal =
   result = MailserverRequestCompletedSignal()
   result.signalType = SignalType.MailserverRequestCompleted
   if jsonSignal["event"].kind != JNull:
@@ -47,27 +48,37 @@ proc fromEvent*(T: type MailserverRequestCompletedSignal, jsonSignal: JsonNode):
     result.errorMessage = jsonSignal["event"]{"errorMessage"}.getStr()
     result.error = result.errorMessage != ""
 
-proc fromEvent*(T: type MailserverRequestExpiredSignal, jsonSignal: JsonNode): MailserverRequestExpiredSignal =
+proc fromEvent*(
+    T: type MailserverRequestExpiredSignal, jsonSignal: JsonNode
+): MailserverRequestExpiredSignal =
   # TODO: parse signal
   result = MailserverRequestExpiredSignal()
   result.signalType = SignalType.MailserverRequestExpired
 
-proc fromEvent*(T: type HistoryRequestStartedSignal, jsonSignal: JsonNode): HistoryRequestStartedSignal =
+proc fromEvent*(
+    T: type HistoryRequestStartedSignal, jsonSignal: JsonNode
+): HistoryRequestStartedSignal =
   result = HistoryRequestStartedSignal()
   result.signalType = SignalType.HistoryRequestStarted
   result.numBatches = jsonSIgnal["event"]{"numBatches"}.getInt()
 
-proc fromEvent*(T: type HistoryRequestSuccessSignal, jsonSignal: JsonNode): HistoryRequestSuccessSignal =
+proc fromEvent*(
+    T: type HistoryRequestSuccessSignal, jsonSignal: JsonNode
+): HistoryRequestSuccessSignal =
   result = HistoryRequestSuccessSignal()
   result.signalType = SignalType.HistoryRequestSuccess
   result.requestId = jsonSignal["event"]{"requestId"}.getStr()
   result.peerId = jsonSignal["event"]{"peerId"}.getStr()
 
-proc fromEvent*(T: type HistoryRequestCompletedSignal, jsonSignal: JsonNode): HistoryRequestCompletedSignal =
+proc fromEvent*(
+    T: type HistoryRequestCompletedSignal, jsonSignal: JsonNode
+): HistoryRequestCompletedSignal =
   result = HistoryRequestCompletedSignal()
   result.signalType = SignalType.HistoryRequestCompleted
 
-proc fromEvent*(T: type HistoryRequestFailedSignal, jsonSignal: JsonNode): HistoryRequestFailedSignal =
+proc fromEvent*(
+    T: type HistoryRequestFailedSignal, jsonSignal: JsonNode
+): HistoryRequestFailedSignal =
   result = HistoryRequestFailedSignal()
   result.signalType = SignalType.HistoryRequestFailed
   result.requestId = jsonSignal["event"]{"requestId"}.getStr()
@@ -76,17 +87,23 @@ proc fromEvent*(T: type HistoryRequestFailedSignal, jsonSignal: JsonNode): Histo
     result.errorMessage = jsonSignal["event"]{"errorMessage"}.getStr()
     result.error = result.errorMessage != ""
 
-proc fromEvent*(T: type MailserverAvailableSignal, jsonSignal: JsonNode): MailserverAvailableSignal =
+proc fromEvent*(
+    T: type MailserverAvailableSignal, jsonSignal: JsonNode
+): MailserverAvailableSignal =
   result = MailserverAvailableSignal()
   result.signalType = SignalType.MailserverAvailable
   result.address = jsonSignal["event"]{"address"}.getStr()
 
-proc fromEvent*(T: type MailserverChangedSignal, jsonSignal: JsonNode): MailserverChangedSignal =
+proc fromEvent*(
+    T: type MailserverChangedSignal, jsonSignal: JsonNode
+): MailserverChangedSignal =
   result = MailserverChangedSignal()
   result.signalType = SignalType.MailserverChanged
   result.address = jsonSignal["event"]{"address"}.getStr()
   result.id = jsonSignal["event"]{"id"}.getStr()
 
-proc fromEvent*(T: type MailserverNotWorkingSignal, jsonSignal: JsonNode): MailserverNotWorkingSignal =
+proc fromEvent*(
+    T: type MailserverNotWorkingSignal, jsonSignal: JsonNode
+): MailserverNotWorkingSignal =
   result = MailserverNotWorkingSignal()
   result.signalType = SignalType.MailserverNotWorking

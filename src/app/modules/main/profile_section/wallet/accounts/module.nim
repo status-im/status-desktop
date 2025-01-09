@@ -18,22 +18,21 @@ import backend/collectibles as backend_collectibles
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: accountsc.Controller
-    moduleLoaded: bool
-    walletAccountService: wallet_account_service.Service
-    collectiblesController: collectiblesc.Controller
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: accountsc.Controller
+  moduleLoaded: bool
+  walletAccountService: wallet_account_service.Service
+  collectiblesController: collectiblesc.Controller
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -46,7 +45,7 @@ proc newModule*(
     requestId = int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase),
     loadType = collectiblesc.LoadType.AutoLoadSingleUpdate,
     networkService = networkService,
-    events = events
+    events = events,
   )
   result.moduleLoaded = false
 
@@ -65,7 +64,9 @@ method getModuleAsVariant*(self: Module): QVariant =
 method getCollectiblesModel*(self: Module): QVariant =
   return self.collectiblesController.getModelAsVariant()
 
-proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAccountDto): KeyPairAccountItem =
+proc convertWalletAccountDtoToKeyPairAccountItem(
+    self: Module, account: WalletAccountDto
+): KeyPairAccountItem =
   result = newKeyPairAccountItem(
     name = account.name,
     path = account.path,
@@ -79,21 +80,32 @@ proc convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAc
     operability = account.operable,
     isDefaultAccount = account.isWallet,
     self.controller.areTestNetworksEnabled(),
-    hideFromTotalBalance = account.hideFromTotalBalance)
+    hideFromTotalBalance = account.hideFromTotalBalance,
+  )
 
 proc setBalance(self: Module, accountAddresses: seq[string]) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   for acc in accountAddresses:
-    let balance =  currencyAmountToItem(self.controller.getTotalCurrencyBalance(acc, enabledChainIds), currencyFormat)
+    let balance = currencyAmountToItem(
+      self.controller.getTotalCurrencyBalance(acc, enabledChainIds), currencyFormat
+    )
     self.view.setBalanceForKeyPairs(acc, balance)
 
-proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
-  var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
-  excludePrivateKeyKeypairs = false, self.controller.areTestNetworksEnabled())
+proc createKeypairItems(
+    self: Module, walletAccounts: seq[WalletAccountDto]
+): seq[KeyPairItem] =
+  var keyPairItems = keypairs.buildKeyPairsList(
+    self.controller.getKeypairs(),
+    excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false,
+    self.controller.areTestNetworksEnabled(),
+  )
 
-  var watchOnlyAccounts = walletAccounts.filter(a => a.walletType == WalletTypeWatch).map(x => self.convertWalletAccountDtoToKeyPairAccountItem(x))
+  var watchOnlyAccounts = walletAccounts
+    .filter(a => a.walletType == WalletTypeWatch)
+    .map(x => self.convertWalletAccountDtoToKeyPairAccountItem(x))
   if watchOnlyAccounts.len > 0:
     var item = newKeyPairItem()
     item.setIcon("show")
@@ -107,7 +119,10 @@ proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): se
   for item in keyPairItems:
     let accounts = item.getAccountsModel().getItems()
     for acc in accounts:
-      let balance =  currencyAmountToItem(self.controller.getTotalCurrencyBalance(acc.getAddress(), enabledChainIds), currencyFormat)
+      let balance = currencyAmountToItem(
+        self.controller.getTotalCurrencyBalance(acc.getAddress(), enabledChainIds),
+        currencyFormat,
+      )
       acc.setBalance(balance)
 
   return keyPairItems
@@ -115,11 +130,14 @@ proc createKeypairItems(self: Module, walletAccounts: seq[WalletAccountDto]): se
 method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
 
-  let items = walletAccounts.map(w => (block:
-    let keycardAccount = self.controller.isKeycardAccount(w)
-    let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
-    walletAccountToWalletAccountItem(w, keycardAccount, areTestNetworksEnabled)
-  ))
+  let items = walletAccounts.map(
+    w => (
+      block:
+        let keycardAccount = self.controller.isKeycardAccount(w)
+        let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
+        walletAccountToWalletAccountItem(w, keycardAccount, areTestNetworksEnabled)
+    )
+  )
 
   self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts))
   self.view.setItems(items)
@@ -127,32 +145,38 @@ method refreshWalletAccounts*(self: Module) =
   let ownedWalletAccounts = walletAccounts.filter(a => a.walletType != WalletTypeWatch)
   let ownedWalletAccountAddresses = ownedWalletAccounts.map(a => a.address)
   let enabledNetworks = self.controller.getEnabledChainIds()
-  self.collectiblesController.setFilterAddressesAndChains(ownedWalletAccountAddresses, enabledNetworks)
+  self.collectiblesController.setFilterAddressesAndChains(
+    ownedWalletAccountAddresses, enabledNetworks
+  )
 
 method load*(self: Module) =
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     let arg = TokensPerAccountArgs(e)
     self.setBalance(arg.accountAddresses)
 
   self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     let args = AccountArgs(e)
     let keycardAccount = self.controller.isKeycardAccount(args.account)
     let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
-    self.view.onUpdatedAccount(walletAccountToWalletAccountItem(args.account, keycardAccount, areTestNetworksEnabled))
+    self.view.onUpdatedAccount(
+      walletAccountToWalletAccountItem(
+        args.account, keycardAccount, areTestNetworksEnabled
+      )
+    )
 
-  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e:Args):
+  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e: Args):
     let args = KeypairsArgs(e)
     if args.error.len != 0:
       return
@@ -175,16 +199,18 @@ method load*(self: Module) =
     let args = KeypairArgs(e)
     self.onKeypairRenamed(args.keypair.keyUid, args.keypair.name)
 
-  self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e: Args):
     let args = SettingsTextValueArgs(e)
     self.onKeypairRenamed(singletonInstance.userProfile.getKeyUid(), args.value)
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e: Args):
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
     let args = AccountArgs(e)
-    self.view.onHideFromTotalBalanceUpdated(args.account.keyUid, args.account.address, args.account.hideFromTotalBalance)
+    self.view.onHideFromTotalBalanceUpdated(
+      args.account.keyUid, args.account.address, args.account.hideFromTotalBalance
+    )
 
   self.controller.init()
   self.view.load()
@@ -197,7 +223,9 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
+method updateAccount*(
+    self: Module, address: string, accountName: string, colorId: string, emoji: string
+) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
 
 method moveAccountFinally*(self: Module, fromPosition: int, toPosition: int) =
@@ -215,5 +243,9 @@ method renameKeypair*(self: Module, keyUid: string, name: string) =
 proc onKeypairRenamed(self: Module, keyUid: string, name: string) =
   self.view.keyPairModel.updateKeypairName(keyUid, name)
 
-method updateWatchAccountHiddenFromTotalBalance*(self: Module, address: string, hideFromTotalBalance: bool) =
-  self.controller.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+method updateWatchAccountHiddenFromTotalBalance*(
+    self: Module, address: string, hideFromTotalBalance: bool
+) =
+  self.controller.updateWatchAccountHiddenFromTotalBalance(
+    address, hideFromTotalBalance
+  )

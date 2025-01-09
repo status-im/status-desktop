@@ -1,30 +1,27 @@
-
 import json, json_serialization, stew/shims/strformat
 import options
 
 include app_service/common/json_utils
 import app_service/service/token/dto
 
-type
-  CryptoRampDto* = ref object of RootObj
-    id*: string
-    name*: string
-    description*: string
-    fees*: string
-    logoUrl*: string
-    hostname*: string
-    supportsSinglePurchase*: bool
-    supportsRecurrentPurchase*: bool
-    supportedChainIds*: seq[int]
-    supportedTokens*: seq[TokenDto]
-    urlsNeedParameters*: bool
+type CryptoRampDto* = ref object of RootObj
+  id*: string
+  name*: string
+  description*: string
+  fees*: string
+  logoUrl*: string
+  hostname*: string
+  supportsSinglePurchase*: bool
+  supportsRecurrentPurchase*: bool
+  supportedChainIds*: seq[int]
+  supportedTokens*: seq[TokenDto]
+  urlsNeedParameters*: bool
 
-type 
-  CryptoRampParametersDto* = ref object of RootObj
-    isRecurrent*: bool
-    destinationAddress*: Option[string]
-    chainID*: Option[int]
-    symbol*: Option[string]
+type CryptoRampParametersDto* = ref object of RootObj
+  isRecurrent*: bool
+  destinationAddress*: Option[string]
+  chainID*: Option[int]
+  symbol*: Option[string]
 
 proc `$`*(self: CryptoRampDto): string =
   result = "CryptoRampDto("
@@ -68,7 +65,9 @@ proc `%`*(self: CryptoRampParametersDto): JsonNode =
   if self.symbol.isSome:
     result["symbol"] = %(self.symbol.get)
 
-proc fromJson*(self: JsonNode, T: typedesc[CryptoRampParametersDto]): CryptoRampParametersDto {.inline.}  =
+proc fromJson*(
+    self: JsonNode, T: typedesc[CryptoRampParametersDto]
+): CryptoRampParametersDto {.inline.} =
   result = CryptoRampParametersDto()
   discard self.getProp("isRecurrent", result.isRecurrent)
   if self.contains("destAddress"):

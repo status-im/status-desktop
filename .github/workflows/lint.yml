@@ -1,0 +1,25 @@
+name: "Check `nph` formatting"
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: "Check `nph` formatting"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check nph formatting
+        # Pin nph to a specific version to avoid sudden style differences.
+        # Updating nph version should be accompanied with running the new
+        # version on the fluffy directory.
+        uses: arnetheduck/nph-action@v1
+        with:
+          version: 0.6.1
+          options: "src test"

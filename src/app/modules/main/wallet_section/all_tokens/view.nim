@@ -1,25 +1,28 @@
 import NimQml, sequtils, strutils, chronicles
 
-import ./io_interface, ./sources_of_tokens_model, ./flat_tokens_model, ./token_by_symbol_model
+import
+  ./io_interface,
+  ./sources_of_tokens_model,
+  ./flat_tokens_model,
+  ./token_by_symbol_model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      marketHistoryIsLoading: bool
-      balanceHistoryIsLoading: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    marketHistoryIsLoading: bool
+    balanceHistoryIsLoading: bool
 
-      tokenListUpdatedAt: int64
-      # This contains the different sources for the tokens list
-      # ex. uniswap list, status tokens list
-      sourcesOfTokensModel: SourcesOfTokensModel
-      # this list contains the complete list of tokens with separate
-      # entry per token which has a unique address + network pair */
-      flatTokensModel: FlatTokensModel
-      # this list contains list of tokens grouped by symbol
-      # EXCEPTION: We may have different entries for the same symbol in case
-      # of symbol clash when minting community tokens
-      tokensBySymbolModel: TokensBySymbolModel
+    tokenListUpdatedAt: int64
+    # This contains the different sources for the tokens list
+    # ex. uniswap list, status tokens list
+    sourcesOfTokensModel: SourcesOfTokensModel
+    # this list contains the complete list of tokens with separate
+    # entry per token which has a unique address + network pair */
+    flatTokensModel: FlatTokensModel
+    # this list contains list of tokens grouped by symbol
+    # EXCEPTION: We may have different entries for the same symbol in case
+    # of symbol clash when minting community tokens
+    tokensBySymbolModel: TokensBySymbolModel
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -30,13 +33,15 @@ QtObject:
     result.delegate = delegate
     result.marketHistoryIsLoading = false
     result.balanceHistoryIsLoading = false
-    result.sourcesOfTokensModel = newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
+    result.sourcesOfTokensModel =
+      newSourcesOfTokensModel(delegate.getSourcesOfTokensModelDataSource())
     result.flatTokensModel = newFlatTokensModel(
-      delegate.getFlatTokenModelDataSource(),
-      delegate.getTokenMarketValuesDataSource())
+      delegate.getFlatTokenModelDataSource(), delegate.getTokenMarketValuesDataSource()
+    )
     result.tokensBySymbolModel = newTokensBySymbolModel(
       delegate.getTokenBySymbolModelDataSource(),
-      delegate.getTokenMarketValuesDataSource())
+      delegate.getTokenMarketValuesDataSource(),
+    )
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -44,11 +49,13 @@ QtObject:
   proc marketHistoryIsLoadingChanged*(self: View) {.signal.}
   proc getMarketHistoryIsLoading(self: View): QVariant {.slot.} =
     return newQVariant(self.marketHistoryIsLoading)
+
   proc setMarketHistoryIsLoading(self: View, isLoading: bool) =
     if self.marketHistoryIsLoading == isLoading:
       return
     self.marketHistoryIsLoading = isLoading
     self.marketHistoryIsLoadingChanged()
+
   QtProperty[QVariant] marketHistoryIsLoading:
     read = getMarketHistoryIsLoading
     notify = marketHistoryIsLoadingChanged
@@ -56,9 +63,11 @@ QtObject:
   proc tokenListUpdatedAtChanged*(self: View) {.signal.}
   proc getTokenListUpdatedAt(self: View): QVariant {.slot.} =
     return newQVariant(self.tokenListUpdatedAt)
+
   proc setTokenListUpdatedAt*(self: View, updatedAt: int64) =
     self.tokenListUpdatedAt = updatedAt
     self.tokenListUpdatedAtChanged()
+
   QtProperty[QVariant] tokenListUpdatedAt:
     read = getTokenListUpdatedAt
     notify = tokenListUpdatedAtChanged
@@ -66,16 +75,20 @@ QtObject:
   proc balanceHistoryIsLoadingChanged*(self: View) {.signal.}
   proc getBalanceHistoryIsLoading(self: View): QVariant {.slot.} =
     return newQVariant(self.balanceHistoryIsLoading)
+
   proc setBalanceHistoryIsLoading(self: View, isLoading: bool) =
     if self.balanceHistoryIsLoading == isLoading:
       return
     self.balanceHistoryIsLoading = isLoading
     self.balanceHistoryIsLoadingChanged()
+
   QtProperty[QVariant] balanceHistoryIsLoading:
     read = getBalanceHistoryIsLoading
     notify = balanceHistoryIsLoadingChanged
 
-  proc getHistoricalDataForToken*(self: View, symbol: string, currency: string) {.slot.} =
+  proc getHistoricalDataForToken*(
+      self: View, symbol: string, currency: string
+  ) {.slot.} =
     self.setMarketHistoryIsLoading(true)
     self.delegate.getHistoricalDataForToken(symbol, currency)
 
@@ -85,9 +98,17 @@ QtObject:
     self.setMarketHistoryIsLoading(false)
     self.tokenHistoricalDataReady(tokenDetails)
 
-  proc fetchHistoricalBalanceForTokenAsJson*(self: View, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.slot.} =
+  proc fetchHistoricalBalanceForTokenAsJson*(
+      self: View,
+      address: string,
+      tokenSymbol: string,
+      currencySymbol: string,
+      timeIntervalEnum: int,
+  ) {.slot.} =
     self.setBalanceHistoryIsLoading(true)
-    self.delegate.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
+    self.delegate.fetchHistoricalBalanceForTokenAsJson(
+      address, tokenSymbol, currencySymbol, timeIntervalEnum
+    )
 
   proc tokenBalanceHistoryDataReady*(self: View, balanceHistoryJson: string) {.signal.}
 
@@ -98,6 +119,7 @@ QtObject:
   proc sourcesOfTokensModelChanged*(self: View) {.signal.}
   proc getSourcesOfTokensModel(self: View): QVariant {.slot.} =
     return newQVariant(self.sourcesOfTokensModel)
+
   QtProperty[QVariant] sourcesOfTokensModel:
     read = getSourcesOfTokensModel
     notify = sourcesOfTokensModelChanged
@@ -105,6 +127,7 @@ QtObject:
   proc flatTokensModelChanged*(self: View) {.signal.}
   proc getFlatTokensModel(self: View): QVariant {.slot.} =
     return newQVariant(self.flatTokensModel)
+
   QtProperty[QVariant] flatTokensModel:
     read = getFlatTokensModel
     notify = flatTokensModelChanged
@@ -112,6 +135,7 @@ QtObject:
   proc tokensBySymbolModelChanged*(self: View) {.signal.}
   proc getTokensBySymbolModel(self: View): QVariant {.slot.} =
     return newQVariant(self.tokensBySymbolModel)
+
   QtProperty[QVariant] tokensBySymbolModel:
     read = getTokensBySymbolModel
     notify = tokensBySymbolModelChanged

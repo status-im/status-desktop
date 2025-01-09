@@ -31,7 +31,7 @@ logScope:
 include signals_and_payloads
 include utils
 include async_tasks
-include  ../../common/json_utils
+include ../../common/json_utils
 
 QtObject:
   type Service* = ref object of QObject
@@ -52,12 +52,21 @@ QtObject:
   # Forward declaration
   proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service, addresses: seq[string])
-  proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
+  proc handleWalletAccount(
+    self: Service, account: WalletAccountDto, notify: bool = true
+  )
+
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
   proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string)
-  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64
-  proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int)
+  proc parseCurrencyValueByTokensKey*(
+    self: Service, tokensKey: string, amountInt: UInt256
+  ): float64
+
+  proc fetchENSNamesForAddressesAsync(
+    self: Service, addresses: seq[string], chainId: int
+  )
+
   # All slots defined in included files have to be forward declared
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.}
   proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.}
@@ -66,7 +75,10 @@ QtObject:
   proc onKeycardAdded*(self: Service, response: string) {.slot.}
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.}
   proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.}
-  proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.}
+  proc onNonProfileKeycardKeypairMigratedToApp*(
+    self: Service, response: string
+  ) {.slot.}
+
   proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.}
   proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
@@ -75,13 +87,13 @@ QtObject:
     self.QObject.delete
 
   proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool,
-    settingsService: settings_service.Service,
-    accountsService: accounts_service.Service,
-    tokenService: token_service.Service,
-    networkService: network_service.Service,
-    currencyService: currency_service.Service,
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service,
+      accountsService: accounts_service.Service,
+      tokenService: token_service.Service,
+      networkService: network_service.Service,
+      currencyService: currency_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -99,11 +111,14 @@ QtObject:
     try:
       let response = backend.isChecksumValidForAddress(address)
       if not response.error.isNil:
-        error "status-go error", procName="isChecksumValidForAddress", errCode=response.error.code, errDesription=response.error.message
+        error "status-go error",
+          procName = "isChecksumValidForAddress",
+          errCode = response.error.code,
+          errDesription = response.error.message
       return response.result.getBool
     except Exception as e:
-      error "error: ", procName="isChecksumValidForAddress", errName=e.name, errDesription=e.msg
-
+      error "error: ",
+        procName = "isChecksumValidForAddress", errName = e.name, errDesription = e.msg
 
   include service_account
   include service_token

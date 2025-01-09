@@ -2,17 +2,16 @@ import NimQml, Tables, sequtils
 import item
 import ../../../../../app_service/service/devices/dto/[installation]
 
-type
-  ModelRole {.pure.} = enum
-    InstallationId = UserRole + 1,
-    Identity
-    Version
-    Enabled
-    Timestamp
-    Name
-    DeviceType
-    FcmToken
-    IsCurrentDevice
+type ModelRole {.pure.} = enum
+  InstallationId = UserRole + 1
+  Identity
+  Version
+  Enabled
+  Timestamp
+  Name
+  DeviceType
+  FcmToken
+  IsCurrentDevice
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -36,6 +35,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -43,6 +43,7 @@ QtObject:
   proc pairedCountChanged(self: Model) {.signal.}
   proc getPairedCount(self: Model): int {.slot.} =
     self.pairedCount
+
   QtProperty[int] pairedCount:
     read = getPairedCount
     notify = pairedCountChanged
@@ -52,15 +53,15 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.InstallationId.int:"installationId",
-      ModelRole.Identity.int:"identity",
-      ModelRole.Version.int:"version",
-      ModelRole.Enabled.int:"enabled",
-      ModelRole.Timestamp.int:"timestamp",
-      ModelRole.Name.int:"name",
-      ModelRole.DeviceType.int:"deviceType",
-      ModelRole.FcmToken.int:"fcmToken",
-      ModelRole.IsCurrentDevice.int:"isCurrentDevice",
+      ModelRole.InstallationId.int: "installationId",
+      ModelRole.Identity.int: "identity",
+      ModelRole.Version.int: "version",
+      ModelRole.Enabled.int: "enabled",
+      ModelRole.Timestamp.int: "timestamp",
+      ModelRole.Name.int: "name",
+      ModelRole.DeviceType.int: "deviceType",
+      ModelRole.FcmToken.int: "fcmToken",
+      ModelRole.IsCurrentDevice.int: "isCurrentDevice",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -71,25 +72,25 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
-      of ModelRole.InstallationId:
-        result = newQVariant(item.installation.id)
-      of ModelRole.Identity:
-        result = newQVariant(item.installation.identity)
-      of ModelRole.Version:
-        result = newQVariant(item.installation.version)
-      of ModelRole.Enabled:
-        result = newQVariant(item.installation.enabled)
-      of ModelRole.Timestamp:
-        result = newQVariant(item.installation.timestamp)
-      of ModelRole.Name:
-        result = newQVariant(item.installation.metadata.name)
-      of ModelRole.DeviceType:
-        result = newQVariant(item.installation.metadata.deviceType)
-      of ModelRole.FcmToken:
-        result = newQVariant(item.installation.metadata.fcmToken)
-      of ModelRole.IsCurrentDevice:
-        result = newQVariant(item.isCurrentDevice)
+    case enumRole
+    of ModelRole.InstallationId:
+      result = newQVariant(item.installation.id)
+    of ModelRole.Identity:
+      result = newQVariant(item.installation.identity)
+    of ModelRole.Version:
+      result = newQVariant(item.installation.version)
+    of ModelRole.Enabled:
+      result = newQVariant(item.installation.enabled)
+    of ModelRole.Timestamp:
+      result = newQVariant(item.installation.timestamp)
+    of ModelRole.Name:
+      result = newQVariant(item.installation.metadata.name)
+    of ModelRole.DeviceType:
+      result = newQVariant(item.installation.metadata.deviceType)
+    of ModelRole.FcmToken:
+      result = newQVariant(item.installation.metadata.fcmToken)
+    of ModelRole.IsCurrentDevice:
+      result = newQVariant(item.isCurrentDevice)
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -100,7 +101,8 @@ QtObject:
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -109,7 +111,7 @@ QtObject:
     self.updatePairedCount()
 
   proc findIndexByInstallationId(self: Model, installationId: string): int =
-    for i in 0..<self.items.len:
+    for i in 0 ..< self.items.len:
       if installationId == self.items[i].installation.id:
         return i
     return -1
@@ -119,31 +121,33 @@ QtObject:
 
   proc updateItem*(self: Model, installation: InstallationDto) =
     var i = self.findIndexByInstallationId(installation.id)
-    if(i == -1):
+    if (i == -1):
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
 
     self.items[i].installation = installation
-    self.dataChanged(index, index, @[
-      ModelRole.Identity.int,
-      ModelRole.Version.int,
-      ModelRole.Enabled.int,
-      ModelRole.Timestamp.int,
-      ModelRole.Name.int,
-      ModelRole.DeviceType.int,
-      ModelRole.FcmToken.int,
-    ])
+    self.dataChanged(
+      index,
+      index,
+      @[
+        ModelRole.Identity.int, ModelRole.Version.int, ModelRole.Enabled.int,
+        ModelRole.Timestamp.int, ModelRole.Name.int, ModelRole.DeviceType.int,
+        ModelRole.FcmToken.int,
+      ],
+    )
     self.updatePairedCount()
 
   proc updateItemName*(self: Model, installationId: string, name: string) =
     var i = self.findIndexByInstallationId(installationId)
-    if(i == -1):
+    if (i == -1):
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
 
     self.items[i].installation.metadata.name = name
     self.dataChanged(index, index, @[ModelRole.Name.int])
@@ -153,7 +157,7 @@ QtObject:
 
   proc updatePairedCount(self: Model) =
     var count = 0
-    for i in 0..<self.items.len:
+    for i in 0 ..< self.items.len:
       if self.items[i].installation.enabled:
         count += 1
     if count != self.pairedCount:

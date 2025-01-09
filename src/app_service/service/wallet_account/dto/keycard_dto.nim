@@ -1,6 +1,6 @@
 import json
 
-include  app_service/common/json_utils
+include app_service/common/json_utils
 
 const ParamKeycardUid = "keycard-uid"
 const ParamKeycardName = "keycard-name"
@@ -40,7 +40,7 @@ proc toKeycardDto*(jsonObj: JsonNode): KeycardDto =
   discard jsonObj.getProp(ParamKeyUid, result.keyUid)
 
   var jArr: JsonNode
-  if(jsonObj.getProp(ParamAccountAddresses, jArr) and jArr.kind == JArray):
+  if (jsonObj.getProp(ParamAccountAddresses, jArr) and jArr.kind == JArray):
     for addrObj in jArr:
       result.accountsAddresses.add(addrObj.getStr)
 
@@ -50,14 +50,15 @@ proc toKeycardActionDto*(jsonObj: JsonNode): KeycardActionDto =
   discard jsonObj.getProp(ParamOldKeycardUid, result.oldKeycardUid)
 
   var keycardObj: JsonNode
-  if(jsonObj.getProp("keycard", keycardObj)):
+  if (jsonObj.getProp("keycard", keycardObj)):
     result.keycard = toKeycardDto(keycardObj)
 
 proc toJsonNode*(self: KeycardDto): JsonNode =
-  result = %* {
-    ParamKeycardUid: self.keycardUid,
-    ParamKeycardName: self.keycardName,
-    ParamKeycardLocked: self.keycardLocked,
-    ParamKeyUid: self.keyUid,
-    ParamAccountAddresses: self.accountsAddresses
-  }
+  result =
+    %*{
+      ParamKeycardUid: self.keycardUid,
+      ParamKeycardName: self.keycardName,
+      ParamKeycardLocked: self.keycardLocked,
+      ParamKeyUid: self.keyUid,
+      ParamAccountAddresses: self.accountsAddresses,
+    }

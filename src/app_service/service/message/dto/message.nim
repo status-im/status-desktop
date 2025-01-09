@@ -21,8 +21,8 @@ const PARSED_TEXT_CHILD_TYPE_STATUS_TAG* = "status-tag"
 const PARSED_TEXT_CHILD_TYPE_DEL* = "del"
 const PARSED_TEXT_CHILD_TYPE_LINK* = "link"
 
-const PARSED_TEXT_OUTGOING_STATUS_SENDING*   = "sending"
-const PARSED_TEXT_OUTGOING_STATUS_SENT*      = "sent"
+const PARSED_TEXT_OUTGOING_STATUS_SENDING* = "sending"
+const PARSED_TEXT_OUTGOING_STATUS_SENT* = "sent"
 const PARSED_TEXT_OUTGOING_STATUS_DELIVERED* = "delivered"
 const PARSED_TEXT_OUTGOING_STATUS_EXPIRED* = "expired"
 const PARSED_TEXT_OUTGOING_STATUS_FAILED_RESENDING* = "failedResending"
@@ -143,7 +143,7 @@ proc toParsedText*(jsonObj: JsonNode): ParsedText =
   discard jsonObj.getProp("destination", result.destination)
 
   var childrenArr: JsonNode
-  if(jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
+  if (jsonObj.getProp("children", childrenArr) and childrenArr.kind == JArray):
     for childObj in childrenArr:
       result.children.add(toParsedText(childObj))
 
@@ -154,7 +154,6 @@ proc toDiscordMessageAuthor*(jsonObj: JsonNode): DiscordMessageAuthor =
   discard jsonObj.getProp("nickname", result.nickname)
   discard jsonObj.getProp("avatarUrl", result.avatarUrl)
   discard jsonObj.getProp("localUrl", result.localUrl)
-
 
 proc toDiscordMessageAttachment*(jsonObj: JsonNode): DiscordMessageAttachment =
   result = DiscordMessageAttachment()
@@ -173,12 +172,12 @@ proc toDiscordMessage*(jsonObj: JsonNode): DiscordMessage =
   discard jsonObj.getProp("content", result.content)
 
   var discordMessageAuthorObj: JsonNode
-  if(jsonObj.getProp("author", discordMessageAuthorObj)):
+  if (jsonObj.getProp("author", discordMessageAuthorObj)):
     result.author = toDiscordMessageAuthor(discordMessageAuthorObj)
 
   result.attachments = @[]
   var attachmentsArr: JsonNode
-  if(jsonObj.getProp("attachments", attachmentsArr) and attachmentsArr.kind == JArray):
+  if (jsonObj.getProp("attachments", attachmentsArr) and attachmentsArr.kind == JArray):
     for attachment in attachmentsArr:
       result.attachments.add(toDiscordMessageAttachment(attachment))
 
@@ -202,16 +201,16 @@ proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   discard jsonObj.getProp("deleted", result.deleted)
 
   var parsedTextArr: JsonNode
-  if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
+  if (jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
       result.parsedText.add(toParsedText(pTextObj))
 
   var discordMessageObj: JsonNode
-  if(jsonObj.getProp("discordMessage", discordMessageObj)):
+  if (jsonObj.getProp("discordMessage", discordMessageObj)):
     result.discordMessage = toDiscordMessage(discordMessageObj)
 
   var bridgeMessageObj: JsonNode
-  if(jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
+  if (jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
     result.bridgeMessage = toBridgeMessage(bridgeMessageObj)
 
   var quotedImagesArr: JsonNode
@@ -283,27 +282,27 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("replied", result.replied)
 
   var quotedMessageObj: JsonNode
-  if(jsonObj.getProp("quotedMessage", quotedMessageObj)):
+  if (jsonObj.getProp("quotedMessage", quotedMessageObj)):
     result.quotedMessage = toQuotedMessage(quotedMessageObj)
 
   var discordMessageObj: JsonNode
-  if(jsonObj.getProp("discordMessage", discordMessageObj)):
+  if (jsonObj.getProp("discordMessage", discordMessageObj)):
     result.discordMessage = toDiscordMessage(discordMessageObj)
 
   var bridgeMessageObj: JsonNode
-  if(jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
+  if (jsonObj.getProp("bridgeMessage", bridgeMessageObj)):
     result.bridgeMessage = toBridgeMessage(bridgeMessageObj)
 
   var stickerObj: JsonNode
-  if(jsonObj.getProp("sticker", stickerObj)):
+  if (jsonObj.getProp("sticker", stickerObj)):
     result.sticker = toSticker(stickerObj)
 
   var gapParametersObj: JsonNode
-  if(jsonObj.getProp("gapParameters", gapParametersObj)):
+  if (jsonObj.getProp("gapParameters", gapParametersObj)):
     result.gapParameters = toGapParameters(gapParametersObj)
 
   var linksArr: JsonNode
-  if(jsonObj.getProp("links", linksArr)):
+  if (jsonObj.getProp("links", linksArr)):
     for link in linksArr:
       result.links.add(link.getStr)
 
@@ -323,12 +322,12 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
       result.paymentRequests.add(element.toPaymentRequest())
 
   var parsedTextArr: JsonNode
-  if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
+  if (jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
       result.parsedText.add(toParsedText(pTextObj))
 
   var transactionParametersObj: JsonNode
-  if(jsonObj.getProp("commandParameters", transactionParametersObj)):
+  if (jsonObj.getProp("commandParameters", transactionParametersObj)):
     result.transactionParameters = toTransactionParameters(transactionParametersObj)
 
 proc containsContactMentions*(self: MessageDto): bool =
@@ -341,7 +340,10 @@ proc containsContactMentions*(self: MessageDto): bool =
 proc isPersonalMention*(self: MessageDto, publicKey: string): bool =
   for pText in self.parsedText:
     for child in pText.children:
-      if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION and child.literal.contains(publicKey)):
+      if (
+        child.type == PARSED_TEXT_CHILD_TYPE_MENTION and
+        child.literal.contains(publicKey)
+      ):
         return true
   return false
 

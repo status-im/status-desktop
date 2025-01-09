@@ -13,29 +13,30 @@ export io_interface
 
 const cancelledRequest* = "cancelled"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  stickersService: stickers_service.Service,
-  settingsService: settings_Service.Service,
-  walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service,
-  tokenService: token_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    stickersService: stickers_service.Service,
+    settingsService: settings_Service.Service,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
+    tokenService: token_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService,
-    networkService, tokenService)
+  result.controller = controller.newController(
+    result, events, stickersService, settingsService, walletAccountService,
+    networkService, tokenService,
+  )
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)
@@ -80,10 +81,8 @@ method removeRecentStickers*(self: Module, packId: string) =
 method sendSticker*(self: Module, channelId: string, replyTo: string, sticker: Item) =
   let stickerDto = StickerDto(hash: sticker.getHash, packId: sticker.getPackId)
   self.controller.sendSticker(
-    channelId,
-    replyTo,
-    stickerDto,
-    singletonInstance.userProfile.getPreferredName())
+    channelId, replyTo, stickerDto, singletonInstance.userProfile.getPreferredName()
+  )
 
 method addRecentStickerToList*(self: Module, sticker: StickerDto) =
   self.view.addRecentStickerToList(initItem(sticker.hash, sticker.packId, sticker.url))
@@ -106,30 +105,40 @@ method allPacksLoaded*(self: Module) =
 method allPacksLoadFailed*(self: Module) =
   self.view.allPacksLoadFailed()
 
-method populateInstalledStickerPacks*(self: Module, stickers: Table[string, StickerPackDto]) =
+method populateInstalledStickerPacks*(
+    self: Module, stickers: Table[string, StickerPackDto]
+) =
   var stickerPackItems: seq[PackItem] = @[]
   for stickerPack in stickers.values:
-    stickerPackItems.add(initPackItem(
-      stickerPack.id,
-      stickerPack.name,
-      stickerPack.author,
-      stickerPack.price,
-      stickerPack.preview,
-      stickerPack.stickers.map(s => initItem(s.hash, s.packId, s.url)),
-      stickerPack.thumbnail
-    ))
+    stickerPackItems.add(
+      initPackItem(
+        stickerPack.id,
+        stickerPack.name,
+        stickerPack.author,
+        stickerPack.price,
+        stickerPack.preview,
+        stickerPack.stickers.map(s => initItem(s.hash, s.packId, s.url)),
+        stickerPack.thumbnail,
+      )
+    )
   self.view.populateInstalledStickerPacks(stickerPackItems)
 
-method addStickerPackToList*(self: Module, stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) =
+method addStickerPackToList*(
+    self: Module,
+    stickerPack: StickerPackDto,
+    isInstalled: bool,
+    isBought: bool,
+    isPending: bool,
+) =
   let stickerPackItem = initPackItem(
-          stickerPack.id,
-          stickerPack.name,
-          stickerPack.author,
-          stickerPack.price,
-          stickerPack.preview,
-          stickerPack.stickers.map(s => initItem(s.hash, s.packId, s.url)),
-          stickerPack.thumbnail
-        )
+    stickerPack.id,
+    stickerPack.name,
+    stickerPack.author,
+    stickerPack.price,
+    stickerPack.preview,
+    stickerPack.stickers.map(s => initItem(s.hash, s.packId, s.url)),
+    stickerPack.thumbnail,
+  )
   self.view.addStickerPackToList(stickerPackItem, isInstalled, isBought, isPending)
 
 method getWalletDefaultAddress*(self: Module): string =
@@ -138,23 +147,30 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-
-
-
-
-
 method getStatusTokenKey*(self: Module): string =
   return self.controller.getStatusTokenKey()
 
-method stickerTransactionSent*(self: Module, chainId: int, packId: string, txHash: string, error: string) =
-  self.view.stickerPacks.updateStickerPackInList(packId, installed = false, pending = true)
+method stickerTransactionSent*(
+    self: Module, chainId: int, packId: string, txHash: string, error: string
+) =
+  self.view.stickerPacks.updateStickerPackInList(
+    packId, installed = false, pending = true
+  )
   self.view.transactionWasSent(chainId, txHash, error)
 
-method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
-  self.view.stickerPacks.updateStickerPackInList(packID, installed = true, pending = false)
+method stickerTransactionConfirmed*(
+    self: Module, trxType: string, packID: string, transactionHash: string
+) =
+  self.view.stickerPacks.updateStickerPackInList(
+    packID, installed = true, pending = false
+  )
   self.controller.installStickerPack(packID)
   self.view.emitTransactionCompletedSignal(true, transactionHash, packID, trxType)
 
-method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string) =
-  self.view.stickerPacks.updateStickerPackInList(packID, installed = false, pending = false)
+method stickerTransactionReverted*(
+    self: Module, trxType: string, packID: string, transactionHash: string
+) =
+  self.view.stickerPacks.updateStickerPackInList(
+    packID, installed = false, pending = false
+  )
   self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType)

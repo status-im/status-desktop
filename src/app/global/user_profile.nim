@@ -31,7 +31,13 @@ QtObject:
     result.setup
     result.localAccountSettings = localAccountSettings
 
-  proc setFixedData*(self: UserProfile, username: string, keyUid: string, pubKey: string, isKeycardUser: bool) =
+  proc setFixedData*(
+      self: UserProfile,
+      username: string,
+      keyUid: string,
+      pubKey: string,
+      isKeycardUser: bool,
+  ) =
     self.username = username
     self.keyUid = keyUid
     self.pubKey = pubKey
@@ -39,32 +45,35 @@ QtObject:
 
   proc getKeyUid*(self: UserProfile): string {.slot.} =
     self.keyUid
+
   QtProperty[string] keyUid:
     read = getKeyUid
 
-
   proc getPubKey*(self: UserProfile): string {.slot.} =
     self.pubKey
+
   QtProperty[string] pubKey:
     read = getPubKey
 
   proc getCompressedPubKey*(self: UserProfile): string {.slot.} =
     compressPk(self.pubKey)
+
   QtProperty[string] compressedPubKey:
     read = getCompressedPubKey
 
   proc getIsKeycardUser*(self: UserProfile): bool {.slot.} =
     self.isKeycardUser
+
   QtProperty[bool] isKeycardUser:
     read = getIsKeycardUser
 
   proc getUsingBiometricLogin*(self: UserProfile): bool {.slot.} =
-    if(not main_constants.IS_MACOS):
+    if (not main_constants.IS_MACOS):
       return false
     return self.localAccountSettings.getStoreToKeychainValue() == LS_VALUE_STORE
+
   QtProperty[bool] usingBiometricLogin:
     read = getUsingBiometricLogin
-
 
   proc nameChanged*(self: UserProfile) {.signal.}
 
@@ -77,7 +86,7 @@ QtObject:
 
   # this is not a slot
   proc setPreferredName*(self: UserProfile, name: string) =
-    if(self.preferredName == name):
+    if (self.preferredName == name):
       return
     self.preferredName = name
     self.nameChanged()
@@ -90,7 +99,7 @@ QtObject:
     notify = nameChanged
 
   proc setDisplayName*(self: UserProfile, displayName: string) = # Not a slot
-    if(self.displayName == displayName):
+    if (self.displayName == displayName):
       return
     self.displayName = displayName
     self.nameChanged()
@@ -103,9 +112,9 @@ QtObject:
     notify = nameChanged
 
   proc getName*(self: UserProfile): string {.slot.} =
-    if(self.preferredName.len > 0):
+    if (self.preferredName.len > 0):
       return self.getPreferredName()
-    elif(self.displayName.len > 0):
+    elif (self.displayName.len > 0):
       return self.getDisplayName()
     return self.username
 
@@ -118,13 +127,12 @@ QtObject:
   proc getThumbnailImage*(self: UserProfile): string {.slot.} =
     return self.thumbnailImage
 
-
   proc getIcon*(self: UserProfile): string {.slot.} =
     return self.thumbnailImage
 
   # this is not a slot
   proc setThumbnailImage*(self: UserProfile, image: string) =
-    if(self.thumbnailImage == image):
+    if (self.thumbnailImage == image):
       return
 
     self.thumbnailImage = image
@@ -145,7 +153,7 @@ QtObject:
 
   # this is not a slot
   proc setLargeImage*(self: UserProfile, image: string) =
-    if(self.largeImage == image):
+    if (self.largeImage == image):
       return
     self.largeImage = image
     self.largeImageChanged()
@@ -161,7 +169,7 @@ QtObject:
 
   # this is not a slot
   proc setCurrentUserStatus*(self: UserProfile, status: int) =
-    if(self.currentUserStatus == status):
+    if (self.currentUserStatus == status):
       return
     self.currentUserStatus = status
     self.currentUserStatusChanged()

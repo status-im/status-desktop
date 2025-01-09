@@ -3,8 +3,7 @@ import ./item
 
 import app_service/service/stickers/service as stickers_service
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -52,7 +51,9 @@ method allPacksLoaded*(self: AccessInterface) {.base.} =
 method allPacksLoadFailed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method estimate*(self: AccessInterface, packId: string, address: string, price: string, uuid: string) {.base.} =
+method estimate*(
+    self: AccessInterface, packId: string, address: string, price: string, uuid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method installStickerPack*(self: AccessInterface, packId: string) {.base.} =
@@ -64,17 +65,26 @@ method onStickerPackInstalled*(self: AccessInterface, packId: string) {.base.} =
 method uninstallStickerPack*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
 method removeRecentStickers*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendSticker*(self: AccessInterface, channelId: string, replyTo: string, sticker: Item) {.base.} =
+method sendSticker*(
+    self: AccessInterface, channelId: string, replyTo: string, sticker: Item
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method populateInstalledStickerPacks*(self: AccessInterface, stickers: Table[string, StickerPackDto]) {.base.} =
+method populateInstalledStickerPacks*(
+    self: AccessInterface, stickers: Table[string, StickerPackDto]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addStickerPackToList*(self: AccessInterface, stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) {.base.} =
+method addStickerPackToList*(
+    self: AccessInterface,
+    stickerPack: StickerPackDto,
+    isInstalled: bool,
+    isBought: bool,
+    isPending: bool,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
@@ -83,15 +93,20 @@ method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
 method getStatusTokenKey*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method stickerTransactionSent*(self: AccessInterface, chainId: int, packId: string, txHash: string, error: string) {.base.} =
+method stickerTransactionSent*(
+    self: AccessInterface, chainId: int, packId: string, txHash: string, error: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
+method stickerTransactionConfirmed*(
+    self: AccessInterface, trxType: string, packID: string, transactionHash: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =
+method stickerTransactionReverted*(
+    self: AccessInterface, trxType: string, packID: string, transactionHash: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")

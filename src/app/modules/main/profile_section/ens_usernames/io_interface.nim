@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -15,39 +14,66 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensUsernameAvailabilityChecked*(self: AccessInterface, availabilityStatus: string) {.base.} =
+method ensUsernameAvailabilityChecked*(
+    self: AccessInterface, availabilityStatus: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDetailsForEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string, address: string, pubkey: string,
-  isStatus: bool, expirationTime: int) {.base.} =
+method onDetailsForEnsUsername*(
+    self: AccessInterface,
+    chainId: int,
+    ensUsername: string,
+    address: string,
+    pubkey: string,
+    isStatus: bool,
+    expirationTime: int,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensTransactionSent*(self: AccessInterface, trxType: string, chainId: int, ensUsername: string, txHash: string, err: string) {.base.} =
+method ensTransactionSent*(
+    self: AccessInterface,
+    trxType: string,
+    chainId: int,
+    ensUsername: string,
+    txHash: string,
+    err: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensTransactionConfirmed*(self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string)
-  {.base.} =
+method ensTransactionConfirmed*(
+    self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensTransactionReverted*(self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string) {.base.} =
+method ensTransactionReverted*(
+    self: AccessInterface, trxType: string, ensUsername: string, transactionHash: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkEnsUsernameAvailability*(self: AccessInterface, desiredEnsUsername: string, statusDomain: bool) {.base.} =
+method checkEnsUsernameAvailability*(
+    self: AccessInterface, desiredEnsUsername: string, statusDomain: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method numOfPendingEnsUsernames*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchDetailsForEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string) {.base.} =
+method fetchDetailsForEnsUsername*(
+    self: AccessInterface, chainId: int, ensUsername: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeEnsUsername*(self: AccessInterface, chainId: int, ensUsername: string): bool {.base.} =
+method removeEnsUsername*(
+    self: AccessInterface, chainId: int, ensUsername: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method connectOwnedUsername*(self: AccessInterface, ensUsername: string, isStatus: bool) {.base.} =
+method connectOwnedUsername*(
+    self: AccessInterface, ensUsername: string, isStatus: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getEnsRegisteredAddress*(self: AccessInterface): string {.base.} =
@@ -59,15 +85,19 @@ method getWalletDefaultAddress*(self: AccessInterface): string {.base.} =
 method getCurrentCurrency*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getFiatValue*(self: AccessInterface, cryptoBalance: string, cryptoSymbol: string): string
-  {.base.} =
+method getFiatValue*(
+    self: AccessInterface, cryptoBalance: string, cryptoSymbol: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCryptoValue*(self: AccessInterface, fiatAmount: string, cryptoSymbol: string): string
-  {.base.} =
+method getCryptoValue*(
+    self: AccessInterface, fiatAmount: string, cryptoSymbol: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: string): string {.base.} =
+method getGasEthValue*(
+    self: AccessInterface, gweiValue: string, gasLimit: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getStatusTokenKey*(self: AccessInterface): string {.base.} =

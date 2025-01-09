@@ -40,37 +40,41 @@
 ##  The error correction level in a QR Code symbol.
 ##
 
-type
-  qrcodegen_Ecc* = enum ##  Must be declared in ascending order of error protection
-                     ##  so that an internal qrcodegen function works properly
-    qrcodegen_Ecc_LOW = 0,      ##  The QR Code can tolerate about  7% erroneous codewords
-    qrcodegen_Ecc_MEDIUM,     ##  The QR Code can tolerate about 15% erroneous codewords
-    qrcodegen_Ecc_QUARTILE,   ##  The QR Code can tolerate about 25% erroneous codewords
-    qrcodegen_Ecc_HIGH        ##  The QR Code can tolerate about 30% erroneous codewords
-
+type qrcodegen_Ecc* = enum
+  ##  Must be declared in ascending order of error protection
+  ##  so that an internal qrcodegen function works properly
+  qrcodegen_Ecc_LOW = 0 ##  The QR Code can tolerate about  7% erroneous codewords
+  qrcodegen_Ecc_MEDIUM ##  The QR Code can tolerate about 15% erroneous codewords
+  qrcodegen_Ecc_QUARTILE ##  The QR Code can tolerate about 25% erroneous codewords
+  qrcodegen_Ecc_HIGH ##  The QR Code can tolerate about 30% erroneous codewords
 
 ##
 ##  The mask pattern used in a QR Code symbol.
 ##
 
-type
-  qrcodegen_Mask* = enum        ##  A special value to tell the QR Code encoder to
-                      ##  automatically select an appropriate mask pattern
-    qrcodegen_Mask_AUTO = -1,   ##  The eight actual mask patterns
-    qrcodegen_Mask_0 = 0, qrcodegen_Mask_1, qrcodegen_Mask_2, qrcodegen_Mask_3,
-    qrcodegen_Mask_4, qrcodegen_Mask_5, qrcodegen_Mask_6, qrcodegen_Mask_7
-
+type qrcodegen_Mask* = enum
+  ##  A special value to tell the QR Code encoder to
+  ##  automatically select an appropriate mask pattern
+  qrcodegen_Mask_AUTO = -1 ##  The eight actual mask patterns
+  qrcodegen_Mask_0 = 0
+  qrcodegen_Mask_1
+  qrcodegen_Mask_2
+  qrcodegen_Mask_3
+  qrcodegen_Mask_4
+  qrcodegen_Mask_5
+  qrcodegen_Mask_6
+  qrcodegen_Mask_7
 
 ##
 ##  Describes how a segment's data bits are interpreted.
 ##
 
-type
-  qrcodegen_Mode* = enum
-    qrcodegen_Mode_NUMERIC = 0x00000001, qrcodegen_Mode_ALPHANUMERIC = 0x00000002,
-    qrcodegen_Mode_BYTE = 0x00000004, qrcodegen_Mode_ECI = 0x00000007,
-    qrcodegen_Mode_KANJI = 0x00000008
-
+type qrcodegen_Mode* = enum
+  qrcodegen_Mode_NUMERIC = 0x00000001
+  qrcodegen_Mode_ALPHANUMERIC = 0x00000002
+  qrcodegen_Mode_BYTE = 0x00000004
+  qrcodegen_Mode_ECI = 0x00000007
+  qrcodegen_Mode_KANJI = 0x00000008
 
 ##
 ##  A segment of character/binary/control data in a QR Code symbol.
@@ -84,19 +88,19 @@ type
 ##  the largest QR Code (version 40) has 31329 modules.
 ##
 
-type
-  qrcodegen_Segment* {.bycopy.} = object
-    mode*: qrcodegen_Mode      ##  The mode indicator of this segment.
-    ##  The length of this segment's unencoded data. Measured in characters for
-    ##  numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
-    ##  Always zero or positive. Not the same as the data's bit length.
-    numChars*: cint ##  The data bits of this segment, packed in bitwise big endian.
-                  ##  Can be null if the bit length is zero.
-    data*: ptr uint8 ##  The number of valid data bits used in the buffer. Requires
-                    ##  0 <= bitLength <= 32767, and bitLength <= (capacity of data array) * 8.
-                    ##  The character count (numChars) must agree with the mode and the bit buffer length.
-    bitLength*: cint
-
+type qrcodegen_Segment* {.bycopy.} = object
+  mode*: qrcodegen_Mode ##  The mode indicator of this segment.
+  ##  The length of this segment's unencoded data. Measured in characters for
+  ##  numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
+  ##  Always zero or positive. Not the same as the data's bit length.
+  numChars*: cint
+    ##  The data bits of this segment, packed in bitwise big endian.
+    ##  Can be null if the bit length is zero.
+  data*: ptr uint8
+    ##  The number of valid data bits used in the buffer. Requires
+    ##  0 <= bitLength <= 32767, and bitLength <= (capacity of data array) * 8.
+    ##  The character count (numChars) must agree with the mode and the bit buffer length.
+  bitLength*: cint
 
 ## ---- Macro constants and functions ----
 
@@ -116,9 +120,8 @@ template qrcodegen_BUFFER_LEN_FOR_VERSION*(n: untyped): untyped =
 ##  version 40. This value equals 3918, which is just under 4 kilobytes.
 ##  Use this more convenient value to avoid calculating tighter memory bounds for buffers.
 
-const
-  qrcodegen_BUFFER_LEN_MAX* = qrcodegen_BUFFER_LEN_FOR_VERSION(
-      qrcodegen_VERSION_MAX)
+const qrcodegen_BUFFER_LEN_MAX* =
+  qrcodegen_BUFFER_LEN_FOR_VERSION(qrcodegen_VERSION_MAX)
 
 ## ---- Functions (high level) to generate QR Codes ----
 ##
@@ -141,9 +144,16 @@ const
 ##    data capacities per version, ECC level, and text encoding mode.
 ##
 
-proc qrcodegen_encodeText*(text: cstring; tempBuffer: ptr uint8;
-                          qrcode: ptr uint8; ecl: qrcodegen_Ecc; minVersion: cint;
-                          maxVersion: cint; mask: qrcodegen_Mask; boostEcl: bool): bool {.importc: "qrcodegen_encodeText".}
+proc qrcodegen_encodeText*(
+  text: cstring,
+  tempBuffer: ptr uint8,
+  qrcode: ptr uint8,
+  ecl: qrcodegen_Ecc,
+  minVersion: cint,
+  maxVersion: cint,
+  mask: qrcodegen_Mask,
+  boostEcl: bool,
+): bool {.importc: "qrcodegen_encodeText".}
 
 #proc qrcodegen_makeEci*(assignVal: clong; buf: ptr uint8): qrcodegen_Segment
 ## ---- Functions to extract raw data from QR Codes ----
@@ -161,4 +171,6 @@ proc qrcodegen_getSize*(qrcode: ptr uint8): cint {.importc: "qrcodegen_getSize".
 ##  If the given coordinates are out of bounds, then false (white) is returned.
 ##
 
-proc qrcodegen_getModule*(qrcode: ptr uint8; x: cint; y: cint): bool {.importc: "qrcodegen_getModule".}
+proc qrcodegen_getModule*(
+  qrcode: ptr uint8, x: cint, y: cint
+): bool {.importc: "qrcodegen_getModule".}

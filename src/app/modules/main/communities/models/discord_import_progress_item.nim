@@ -1,18 +1,17 @@
 import stew/shims/strformat
-type
-  DiscordImportProgressItem* = object
-    communityId*: string
-    progress*: float
-    errorsCount*: int
-    warningsCount*: int
-    stopped*: bool
+type DiscordImportProgressItem* = object
+  communityId*: string
+  progress*: float
+  errorsCount*: int
+  warningsCount*: int
+  stopped*: bool
 
 proc initDiscordImportProgressItem*(
-  communityId: string,
-  progress: float,
-  errorsCount: int,
-  warningsCount: int,
-  stopped: bool,
+    communityId: string,
+    progress: float,
+    errorsCount: int,
+    warningsCount: int,
+    stopped: bool,
 ): DiscordImportProgressItem =
   result.communityId = communityId
   result.progress = progress
@@ -21,7 +20,8 @@ proc initDiscordImportProgressItem*(
   result.stopped = stopped
 
 proc `$`*(self: DiscordImportProgressItem): string =
-  result = fmt"""DiscordImportProgressItem(
+  result =
+    fmt"""DiscordImportProgressItem(
     communityId: {self.communityId},
     progress: {self.progress},
     errorsCount: {self.errorsCount},

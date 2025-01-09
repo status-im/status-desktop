@@ -1,20 +1,25 @@
-type
-  KeyPairMigrateFailureState* = ref object of State
+type KeyPairMigrateFailureState* = ref object of State
 
-proc newKeyPairMigrateFailureState*(flowType: FlowType, backState: State): KeyPairMigrateFailureState =
+proc newKeyPairMigrateFailureState*(
+    flowType: FlowType, backState: State
+): KeyPairMigrateFailureState =
   result = KeyPairMigrateFailureState()
   result.setup(flowType, StateType.KeyPairMigrateFailure, backState)
 
 proc delete*(self: KeyPairMigrateFailureState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: KeyPairMigrateFailureState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: KeyPairMigrateFailureState, controller: Controller
+) =
   var profileMigrated = false
   if self.flowType == FlowType.SetupNewKeycard:
     profileMigrated = controller.getSelectedKeyPairIsProfile()
   elif self.flowType == FlowType.MigrateFromKeycardToApp or
-    self.flowType == FlowType.MigrateFromAppToKeycard:
-      profileMigrated = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+      self.flowType == FlowType.MigrateFromAppToKeycard:
+    profileMigrated =
+      controller.getKeyPairForProcessing().getKeyUid() ==
+      singletonInstance.userProfile.getKeyUid()
 
   if not profileMigrated:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
@@ -27,8 +32,10 @@ method executeCancelCommand*(self: KeyPairMigrateFailureState, controller: Contr
   if self.flowType == FlowType.SetupNewKeycard:
     profileMigrated = controller.getSelectedKeyPairIsProfile()
   elif self.flowType == FlowType.MigrateFromKeycardToApp or
-    self.flowType == FlowType.MigrateFromAppToKeycard:
-      profileMigrated = controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+      self.flowType == FlowType.MigrateFromAppToKeycard:
+    profileMigrated =
+      controller.getKeyPairForProcessing().getKeyUid() ==
+      singletonInstance.userProfile.getKeyUid()
 
   if not profileMigrated:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)

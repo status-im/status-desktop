@@ -2,16 +2,14 @@ import NimQml, Tables, strutils
 
 import ./io_interface
 
-type
-  ModelRole* {.pure.} = enum
-    Prod = UserRole + 1,
-    Test
-    Layer
+type ModelRole* {.pure.} = enum
+  Prod = UserRole + 1
+  Test
+  Layer
 
 QtObject:
-  type
-    CombinedModel* = ref object of QAbstractListModel
-      delegate: io_interface.NetworksDataSource
+  type CombinedModel* = ref object of QAbstractListModel
+    delegate: io_interface.NetworksDataSource
 
   proc delete(self: CombinedModel) =
     self.QAbstractListModel.delete
@@ -27,6 +25,7 @@ QtObject:
   proc countChanged(self: CombinedModel) {.signal.}
   proc getCount(self: CombinedModel): int {.slot.} =
     return self.delegate.getCombinedNetworksList().len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -36,9 +35,9 @@ QtObject:
 
   method roleNames(self: CombinedModel): Table[int, string] =
     {
-      ModelRole.Prod.int:"prod",
-      ModelRole.Test.int:"test",
-      ModelRole.Layer.int:"layer",
+      ModelRole.Prod.int: "prod",
+      ModelRole.Test.int: "test",
+      ModelRole.Layer.int: "layer",
     }.toTable
 
   method data(self: CombinedModel, index: QModelIndex, role: int): QVariant =
@@ -51,7 +50,7 @@ QtObject:
     let item = self.delegate.getCombinedNetworksList()[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Prod:
       result = newQVariant(item.prod)
     of ModelRole.Test:

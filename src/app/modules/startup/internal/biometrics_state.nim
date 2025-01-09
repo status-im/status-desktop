@@ -1,6 +1,5 @@
-type
-  BiometricsState* = ref object of State
-    storeToKeychain: bool
+type BiometricsState* = ref object of State
+  storeToKeychain: bool
 
 proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState =
   result = BiometricsState()
@@ -12,7 +11,7 @@ proc delete*(self: BiometricsState) =
 
 method getNextPrimaryState*(self: BiometricsState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
-    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+      self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return createState(StateType.ProfileFetching, self.flowType, nil)
   return nil
 
@@ -46,9 +45,14 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
 method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   self.command(controller, false)
 
-method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent,
-  controller: Controller): State =
+method resolveKeycardNextState*(
+    self: BiometricsState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
   if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and keycardEvent.error.len == 0:
-        controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(self.storeToKeychain, keycardReplacement = true)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
+        keycardEvent.error.len == 0:
+      controller.setKeycardEvent(keycardEvent)
+      controller.loginAccountKeycard(self.storeToKeychain, keycardReplacement = true)

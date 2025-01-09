@@ -7,7 +7,9 @@ import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+import
+  ../../../../app_service/service/visual_identity/service as
+    procs_from_visual_identity_service
 
 import ../../../core/signals/types
 import ../../../core/eventemitter
@@ -21,28 +23,30 @@ type ResultItemDetails = object
   messageId*: string
 
 proc isEmpty(self: ResultItemDetails): bool =
-  self.sectionId.len == 0 and
-  self.channelId.len == 0 and
-  self.messageId.len == 0
+  self.sectionId.len == 0 and self.channelId.len == 0 and self.messageId.len == 0
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    contactsService: contact_service.Service
-    chatService: chat_service.Service
-    communityService: community_service.Service
-    messageService: message_service.Service
-    activeSectionId: string
-    activeChatId: string
-    searchLocation: string
-    searchSubLocation: string
-    searchTerm: string
-    resultItems: Table[string, ResultItemDetails] # [resultItemId, ResultItemDetails]
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  contactsService: contact_service.Service
+  chatService: chat_service.Service
+  communityService: community_service.Service
+  messageService: message_service.Service
+  activeSectionId: string
+  activeChatId: string
+  searchLocation: string
+  searchSubLocation: string
+  searchTerm: string
+  resultItems: Table[string, ResultItemDetails] # [resultItemId, ResultItemDetails]
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    contactsService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -56,7 +60,7 @@ proc delete*(self: Controller) =
   self.resultItems.clear
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
+  self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e: Args):
     let args = MessagesArgs(e)
     self.delegate.onSearchMessagesDone(args.messages)
 
@@ -67,8 +71,8 @@ proc activeChatId*(self: Controller): string =
   return self.activeChatId
 
 proc setActiveSectionIdAndChatId*(self: Controller, sectionId: string, chatId: string) =
-    self.activeSectionId = sectionId
-    self.activeChatId = chatId
+  self.activeSectionId = sectionId
+  self.activeChatId = chatId
 
 proc searchTerm*(self: Controller): string =
   return self.searchTerm
@@ -80,10 +84,10 @@ proc searchSubLocation*(self: Controller): string =
   return self.searchSubLocation
 
 proc setSearchLocation*(self: Controller, location: string, subLocation: string) =
-    ## Setting location and subLocation to an empty string means we're
-    ## searching in all available chats/channels/communities.
-    self.searchLocation = location
-    self.searchSubLocation = subLocation
+  ## Setting location and subLocation to an empty string means we're
+  ## searching in all available chats/channels/communities.
+  self.searchLocation = location
+  self.searchSubLocation = subLocation
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
@@ -136,30 +140,40 @@ proc searchMessages*(self: Controller, searchTerm: string) =
 
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
-proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getOneToOneChatNameAndImage*(
+    self: Controller, chatId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getContactNameAndImage*(
+    self: Controller, contactId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
-  self.resultItems[itemId] = ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId)
+proc addResultItemDetails*(
+    self: Controller, itemId: string, sectionId = "", channelId = "", messageId = ""
+) =
+  self.resultItems[itemId] =
+    ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId)
 
 proc resultItemClicked*(self: Controller, itemId: string) =
   let itemDetails = self.resultItems.getOrDefault(itemId)
-  if(itemDetails.isEmpty()):
+  if (itemDetails.isEmpty()):
     # we shouldn't be here ever
-    info "important: we don't have stored details for a searched result item with id: ", itemId
+    info "important: we don't have stored details for a searched result item with id: ",
+      itemId
     return
 
-  let data = ActiveSectionChatArgs(sectionId: itemDetails.sectionId,
+  let data = ActiveSectionChatArgs(
+    sectionId: itemDetails.sectionId,
     chatId: itemDetails.channelId,
-    messageId: itemDetails.messageId)
+    messageId: itemDetails.messageId,
+  )
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
-proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
+proc getRenderedText*(
+    self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]
+): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =

@@ -32,10 +32,13 @@ proc convertFeesInfoToHex*(feesInfoJson: string): string =
       maxPriorityFeePerGasWei = uint64(maxPriorityFeePerGasFloat * 1e9)
 
     # Assemble the JSON and return it
-    var resultJson = %* {
-      "maxFeePerGas": "0x" & toHex(maxFeePerGasWei).strip(chars = {'0'}, trailing = false),
-      "maxPriorityFeePerGas": "0x" & toHex(maxPriorityFeePerGasWei).strip(chars = {'0'}, trailing = false)
-    }
+    var resultJson =
+      %*{
+        "maxFeePerGas":
+          "0x" & toHex(maxFeePerGasWei).strip(chars = {'0'}, trailing = false),
+        "maxPriorityFeePerGas":
+          "0x" & toHex(maxPriorityFeePerGasWei).strip(chars = {'0'}, trailing = false),
+      }
     return $resultJson
   except Exception as e:
-    error "cannot convert fees info to hex: ", msg=e.msg
+    error "cannot convert fees info to hex: ", msg = e.msg

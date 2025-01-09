@@ -1,7 +1,6 @@
 import json
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -22,10 +21,18 @@ method loadAllWalletAccounts*(self: AccessInterface) {.base.} =
 method filterChanged*(self: AccessInterface, chainIds: seq[int]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
+method updateAccount*(
+    self: AccessInterface,
+    address: string,
+    accountName: string,
+    colorId: string,
+    emoji: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getWalletAccountAsJson*(self: AccessInterface, address: string): JsonNode {.base.} =
+method getWalletAccountAsJson*(
+    self: AccessInterface, address: string
+): JsonNode {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
@@ -34,5 +41,7 @@ method getWalletAccountAsJson*(self: AccessInterface, address: string): JsonNode
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateWatchAccountHiddenFromTotalBalance*(self: AccessInterface, address: string, hideFromTotalBalance: bool) {.base.} =
+method updateWatchAccountHiddenFromTotalBalance*(
+    self: AccessInterface, address: string, hideFromTotalBalance: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")

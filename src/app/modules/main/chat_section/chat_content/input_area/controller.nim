@@ -1,6 +1,5 @@
 import io_interface, tables, sets
 
-
 import ../../../../../../app_service/service/settings/service as settings_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -16,25 +15,24 @@ import ./link_preview_cache
 
 const MESSAGE_LINK_PREVIEWS_LIMIT = 5
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    sectionId: string
-    events: UniqueUUIDEventEmitter
-    chatId: string
-    belongsToCommunity: bool
-    communityService: community_service.Service
-    contactService: contact_service.Service
-    chatService: chat_service.Service
-    messageService: message_service.Service
-    settingsService: settings_service.Service
-    linkPreviewCache: LinkPreviewCache
-    linkPreviewPersistentSetting: UrlUnfurlingMode
-    linkPreviewCurrentMessageSetting: UrlUnfurlingMode
-    unfurlRequests: HashSet[string]
-    unfurlingPlanActiveRequest: string
-    unfurlingPlanActiveRequestUnfurlAfter: bool
-    unfurlingPlan: UrlsUnfurlingPlan
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  sectionId: string
+  events: UniqueUUIDEventEmitter
+  chatId: string
+  belongsToCommunity: bool
+  communityService: community_service.Service
+  contactService: contact_service.Service
+  chatService: chat_service.Service
+  messageService: message_service.Service
+  settingsService: settings_service.Service
+  linkPreviewCache: LinkPreviewCache
+  linkPreviewPersistentSetting: UrlUnfurlingMode
+  linkPreviewCurrentMessageSetting: UrlUnfurlingMode
+  unfurlRequests: HashSet[string]
+  unfurlingPlanActiveRequest: string
+  unfurlingPlanActiveRequestUnfurlAfter: bool
+  unfurlingPlan: UrlsUnfurlingPlan
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -46,8 +44,8 @@ proc newController*(
     communityService: community_service.Service,
     contactService: contact_service.Service,
     messageService: message_service.Service,
-    settingsService: settings_service.Service
-    ): Controller =
+    settingsService: settings_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = initUniqueUUIDEventEmitter(events)
@@ -77,14 +75,14 @@ proc delete*(self: Controller) =
   self.events.disconnect()
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_URLS_UNFURLED) do(e:Args):
+  self.events.on(SIGNAL_URLS_UNFURLED) do(e: Args):
     let args = LinkPreviewDataArgs(e)
     if not self.unfurlRequests.contains(args.requestUuid):
       return
     self.unfurlRequests.excl(args.requestUuid)
     self.onUrlsUnfurled(args)
 
-  self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_URL_UNFURLING_MODE_UPDATED) do(e: Args):
     let args = UrlUnfurlingModeArgs(e)
     self.onUnfurlingModeChanged(args.value)
 
@@ -96,13 +94,13 @@ proc init*(self: Controller) =
     self.unfurlingPlanActiveRequest = ""
     self.handleUnfurlingPlan(self.unfurlingPlanActiveRequestUnfurlAfter)
 
-  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e: Args):
     let args = MessageSendingSuccess(e)
     if self.chatId != args.chat.id:
       return
     self.delegate.onSendingMessageSuccess()
 
-  self.events.on(SIGNAL_SENDING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_SENDING_FAILED) do(e: Args):
     let args = MessageSendingFailure(e)
     if self.chatId != args.chatId:
       return
@@ -115,7 +113,8 @@ proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
 proc setLinkPreviewEnabledForThisMessage*(self: Controller, enabled: bool) =
-  self.linkPreviewCurrentMessageSetting = if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
+  self.linkPreviewCurrentMessageSetting =
+    if enabled: UrlUnfurlingMode.Enabled else: UrlUnfurlingMode.Disabled
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc resetLinkPreviews(self: Controller) =
@@ -124,45 +123,46 @@ proc resetLinkPreviews(self: Controller) =
   self.linkPreviewCurrentMessageSetting = self.linkPreviewPersistentSetting
   self.delegate.setAskToEnableLinkPreview(false)
 
-proc sendImages*(self: Controller,
-                 imagePathsAndDataJson: string,
-                 msg: string,
-                 replyTo: string,
-                 preferredUsername: string = "",
-                 linkPreviews: seq[LinkPreview],
-                 paymentRequests: seq[PaymentRequest]) =
+proc sendImages*(
+    self: Controller,
+    imagePathsAndDataJson: string,
+    msg: string,
+    replyTo: string,
+    preferredUsername: string = "",
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest],
+) =
   self.resetLinkPreviews()
   self.chatService.asyncSendImages(
-    self.chatId,
-    imagePathsAndDataJson,
-    msg,
-    replyTo,
-    preferredUsername,
-    linkPreviews,
-    paymentRequests
+    self.chatId, imagePathsAndDataJson, msg, replyTo, preferredUsername, linkPreviews,
+    paymentRequests,
   )
 
-proc sendChatMessage*(self: Controller,
-                      msg: string,
-                      replyTo: string,
-                      contentType: int,
-                      preferredUsername: string = "",
-                      linkPreviews: seq[LinkPreview],
-                      paymentRequests: seq[PaymentRequest]) =
+proc sendChatMessage*(
+    self: Controller,
+    msg: string,
+    replyTo: string,
+    contentType: int,
+    preferredUsername: string = "",
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest],
+) =
   self.resetLinkPreviews()
-  self.chatService.asyncSendChatMessage(self.chatId,
-    msg,
-    replyTo,
-    contentType,
-    preferredUsername,
-    linkPreviews,
-    paymentRequests
+  self.chatService.asyncSendChatMessage(
+    self.chatId, msg, replyTo, contentType, preferredUsername, linkPreviews,
+    paymentRequests,
   )
 
-proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
-  self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)
+proc requestAddressForTransaction*(
+    self: Controller, fromAddress: string, amount: string, tokenAddress: string
+) =
+  self.chatService.requestAddressForTransaction(
+    self.chatId, fromAddress, amount, tokenAddress
+  )
 
-proc requestTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
+proc requestTransaction*(
+    self: Controller, fromAddress: string, amount: string, tokenAddress: string
+) =
   self.chatService.requestTransaction(self.chatId, fromAddress, amount, tokenAddress)
 
 proc declineRequestTransaction*(self: Controller, messageId: string) =
@@ -171,17 +171,25 @@ proc declineRequestTransaction*(self: Controller, messageId: string) =
 proc declineRequestAddressForTransaction*(self: Controller, messageId: string) =
   self.chatService.declineRequestAddressForTransaction(messageId)
 
-proc acceptRequestAddressForTransaction*(self: Controller, messageId: string, address: string) =
+proc acceptRequestAddressForTransaction*(
+    self: Controller, messageId: string, address: string
+) =
   self.chatService.acceptRequestAddressForTransaction(messageId, address)
 
-proc acceptRequestTransaction*(self: Controller, transactionHash: string, messageId: string, signature: string) =
+proc acceptRequestTransaction*(
+    self: Controller, transactionHash: string, messageId: string, signature: string
+) =
   self.chatService.acceptRequestTransaction(transactionHash, messageId, signature)
 
 proc getLinkPreviewEnabled*(self: Controller): bool =
-  return self.linkPreviewPersistentSetting == UrlUnfurlingMode.Enabled or self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.Enabled
+  return
+    self.linkPreviewPersistentSetting == UrlUnfurlingMode.Enabled or
+    self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.Enabled
 
 proc shouldAskToEnableLinkPreview(self: Controller): bool =
-  return self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
+  return
+    self.linkPreviewPersistentSetting == UrlUnfurlingMode.AlwaysAsk and
+    self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk
 
 proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
   if text == "":
@@ -194,7 +202,8 @@ proc setText*(self: Controller, text: string, unfurlNewUrls: bool) =
 
 proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
   var allUrls = newSeq[string]() # Used for URLs syntax highlighting only
-  var allAllowedUrls = newSeq[string]() # Used for LinkPreviewsModel to keep the urls order
+  var allAllowedUrls = newSeq[string]()
+    # Used for LinkPreviewsModel to keep the urls order
   var statusAllowedUrls = newSeq[string]()
   var otherAllowedUrls = newSeq[string]()
   var askToEnableLinkPreview = false
@@ -203,8 +212,8 @@ proc handleUnfurlingPlan*(self: Controller, unfurlNewUrls: bool) =
     allUrls.add(metadata.url)
 
     if metadata.permission == UrlUnfurlingForbiddenBySettings or
-       metadata.permission == UrlUnfurlingNotSupported:
-        continue
+        metadata.permission == UrlUnfurlingNotSupported:
+      continue
 
     if metadata.permission == UrlUnfurlingAskUser:
       if self.linkPreviewCurrentMessageSetting == UrlUnfurlingMode.AlwaysAsk:
@@ -251,7 +260,9 @@ proc asyncUnfurlUnknownUrls(self: Controller, urls: seq[string]) =
   let newUrls = self.linkPreviewCache.unknownUrls(urls)
   self.asyncUnfurlUrls(newUrls)
 
-proc linkPreviewsFromCache*(self: Controller, urls: seq[string]): Table[string, LinkPreview] =
+proc linkPreviewsFromCache*(
+    self: Controller, urls: seq[string]
+): Table[string, LinkPreview] =
   return self.linkPreviewCache.linkPreviews(urls)
 
 proc clearLinkPreviewCache*(self: Controller) =

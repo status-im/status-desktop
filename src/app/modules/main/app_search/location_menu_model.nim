@@ -2,20 +2,18 @@ import NimQml, Tables, strutils
 
 import location_menu_item, location_menu_sub_item
 
-type
-  ModelRole {.pure.} = enum
-    Value = UserRole + 1
-    Title
-    ImageSource
-    IconName
-    IconColor
-    SubItems
-    HasSubItems
+type ModelRole {.pure.} = enum
+  Value = UserRole + 1
+  Title
+  ImageSource
+  IconName
+  IconColor
+  SubItems
+  HasSubItems
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete(self: Model) =
     for i in 0 ..< self.items.len:
@@ -35,13 +33,13 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Value.int:"value",
-      ModelRole.Title.int:"title",
-      ModelRole.ImageSource.int:"imageSource",
-      ModelRole.IconName.int:"iconName",
-      ModelRole.IconColor.int:"iconColor",
-      ModelRole.SubItems.int:"subItems",
-      ModelRole.HasSubItems.int:"hasSubItems"
+      ModelRole.Value.int: "value",
+      ModelRole.Title.int: "title",
+      ModelRole.ImageSource.int: "imageSource",
+      ModelRole.IconName.int: "iconName",
+      ModelRole.IconColor.int: "iconColor",
+      ModelRole.SubItems.int: "subItems",
+      ModelRole.HasSubItems.int: "hasSubItems",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -54,7 +52,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Value:
       result = newQVariant(item.value)
     of ModelRole.Title:

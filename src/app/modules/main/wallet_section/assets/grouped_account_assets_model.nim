@@ -2,16 +2,14 @@ import NimQml, Tables, sequtils
 
 import ./io_interface, ./balances_model
 
-type
-  ModelRole {.pure.} = enum
-    TokensKey = UserRole + 1,
-    Balances
+type ModelRole {.pure.} = enum
+  TokensKey = UserRole + 1
+  Balances
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      delegate: io_interface.GroupedAccountAssetsDataSource
-      balancesPerChain: seq[BalancesModel]
+  type Model* = ref object of QAbstractListModel
+    delegate: io_interface.GroupedAccountAssetsDataSource
+    balancesPerChain: seq[BalancesModel]
 
   proc delete(self: Model) =
     self.balancesPerChain = @[]
@@ -29,6 +27,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
     return self.delegate.getGroupedAccountsAssetsList().len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -37,22 +36,19 @@ QtObject:
     return self.delegate.getGroupedAccountsAssetsList().len
 
   method roleNames(self: Model): Table[int, string] =
-    {
-      ModelRole.TokensKey.int:"tokensKey",
-      ModelRole.Balances.int:"balances",
-    }.toTable
+    {ModelRole.TokensKey.int: "tokensKey", ModelRole.Balances.int: "balances"}.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
     if index.row < 0 or index.row >= self.rowCount() or
-      index.row >= self.balancesPerChain.len:
+        index.row >= self.balancesPerChain.len:
       return
 
     let enumRole = role.ModelRole
     let item = self.delegate.getGroupedAccountsAssetsList()[index.row]
-    case enumRole:
+    case enumRole
     of ModelRole.TokensKey:
       result = newQVariant(item.tokensKey)
     of ModelRole.Balances:
@@ -69,7 +65,9 @@ QtObject:
     # as there is no balance or accounts were deleted because it causes a crash on UI.
     # Also this will automatically be removed on the next time app is restarted
     if lengthOfGroupedAssets > balancesPerChainLen:
-      for i in countup(0, diff-1):
-        self.balancesPerChain.add(newBalancesModel(self.delegate, balancesPerChainLen+i))
+      for i in countup(0, diff - 1):
+        self.balancesPerChain.add(
+          newBalancesModel(self.delegate, balancesPerChainLen + i)
+        )
     self.endResetModel()
     self.countChanged()

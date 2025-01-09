@@ -4,24 +4,27 @@ import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 
 logScope:
   topics = "profile-section-sync-module-controller"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    settingsService: settings_service.Service
-    nodeConfigurationService: node_configuration_service.Service
-    mailserversService: mailservers_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  settingsService: settings_service.Service
+  nodeConfigurationService: node_configuration_service.Service
+  mailserversService: mailservers_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  mailserversService: mailservers_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    mailserversService: mailservers_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -39,7 +42,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_PINNED_MAILSERVER_CHANGED) do(e: Args):
     self.delegate.onPinnedMailserverChanged()
 
-proc getAllMailservers*(self: Controller): seq[tuple[name: string, nodeAddress: string]] =
+proc getAllMailservers*(
+    self: Controller
+): seq[tuple[name: string, nodeAddress: string]] =
   return self.mailserversService.getAllMailservers()
 
 proc getPinnedMailserverId*(self: Controller): string =

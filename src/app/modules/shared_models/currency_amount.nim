@@ -16,10 +16,7 @@ QtObject:
     self.QObject.delete
 
   proc newCurrencyAmount*(
-    amount: float64,
-    symbol: string,
-    displayDecimals: int,
-    stripTrailingZeroes: bool,
+      amount: float64, symbol: string, displayDecimals: int, stripTrailingZeroes: bool
   ): CurrencyAmount =
     new(result, delete)
     result.setup
@@ -28,11 +25,12 @@ QtObject:
     result.displayDecimals = displayDecimals
     result.stripTrailingZeroes = stripTrailingZeroes
 
-  proc newCurrencyAmount*: CurrencyAmount =
+  proc newCurrencyAmount*(): CurrencyAmount =
     result = newCurrencyAmount(0.0, "", 0, true)
 
   proc `$`*(self: CurrencyAmount): string =
-    result = fmt"""CurrencyAmount(
+    result =
+      fmt"""CurrencyAmount(
       amount: {self.amount},
       symbol: {self.symbol},
       displayDecimals: {self.displayDecimals},
@@ -47,27 +45,31 @@ QtObject:
 
   proc getSymbol*(self: CurrencyAmount): string {.slot.} =
     return self.symbol
+
   QtProperty[string] symbol:
     read = getSymbol
 
   proc getDisplayDecimals*(self: CurrencyAmount): int {.slot.} =
     return self.displayDecimals
+
   QtProperty[int] displayDecimals:
     read = getDisplayDecimals
 
   proc isStripTrailingZeroesActive*(self: CurrencyAmount): bool {.slot.} =
     return self.stripTrailingZeroes
+
   QtProperty[bool] stripTrailingZeroes:
     read = isStripTrailingZeroesActive
 
   # Needed to expose object to QML, see issue #8913
   proc toJsonNode*(self: CurrencyAmount): JsonNode =
-    result = %* {
-      "amount": self.amount,
-      "symbol": self.symbol,
-      "displayDecimals": self.displayDecimals,
-      "stripTrailingZeroes": self.stripTrailingZeroes
-    }
+    result =
+      %*{
+        "amount": self.amount,
+        "symbol": self.symbol,
+        "displayDecimals": self.displayDecimals,
+        "stripTrailingZeroes": self.stripTrailingZeroes,
+      }
 
   # Needed by profile showcase
   proc toCurrencyAmount*(jsonObj: JsonNode): CurrencyAmount =

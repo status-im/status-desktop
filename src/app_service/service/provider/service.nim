@@ -14,11 +14,10 @@ include ./async_tasks
 const HTTPS_SCHEME* = "https"
 const PROVIDER_SIGNAL_ON_POST_MESSAGE* = "provider-signal-on-post-message"
 
-type
-  OnPostMessageArgs* = ref object of Args
-    payloadMethod*: string
-    result*: string
-    chainId*: string
+type OnPostMessageArgs* = ref object of Args
+  payloadMethod*: string
+  result*: string
+  chainId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -30,9 +29,7 @@ QtObject:
     self.QObject.delete
 
   proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool,
-    ensService: ens_service.Service
+      events: EventEmitter, threadpool: ThreadPool, ensService: ens_service.Service
   ): Service =
     result = Service()
     result.QObject.setup
@@ -43,7 +40,9 @@ QtObject:
   proc init*(self: Service) =
     discard
 
-  proc ensResourceURL*(self: Service, username: string, url: string): (string, string, string, string, bool) =
+  proc ensResourceURL*(
+      self: Service, username: string, url: string
+  ): (string, string, string, string, bool) =
     let (scheme, host, path) = self.ensService.resourceUrl(username)
     if host == "":
       return (url, url, HTTPS_SCHEME, "", false)
@@ -63,15 +62,17 @@ QtObject:
 
       self.events.emit(PROVIDER_SIGNAL_ON_POST_MESSAGE, data)
     except Exception as e:
-      error "error: ", procName="postMessageResolved", errMsg=e.msg
+      error "error: ", procName = "postMessageResolved", errMsg = e.msg
 
-  proc postMessage*(self: Service, payloadMethod: string, requestType: string, message: string) =
+  proc postMessage*(
+      self: Service, payloadMethod: string, requestType: string, message: string
+  ) =
     let arg = PostMessageTaskArg(
       tptr: postMessageTask,
       vptr: cast[uint](self.vptr),
       slot: "postMessageResolved",
       payloadMethod: payloadMethod,
       requestType: requestType,
-      message: message
+      message: message,
     )
     self.threadpool.start(arg)
