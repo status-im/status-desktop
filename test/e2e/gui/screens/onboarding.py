@@ -97,7 +97,7 @@ class KeysView(OnboardingView):
     @allure.step('Open Enter Seed Phrase view')
     def open_enter_seed_phrase_view(self) -> 'ImportSeedPhraseView':
         self._import_seed_phrase_button.click()
-        return SeedPhraseInputView().wait_until_appears()
+        return SeedPhraseInputView().wait_until_appears(timeout_msec=10000)
 
     @allure.step('Go back')
     def back(self) -> WelcomeToStatusView:
