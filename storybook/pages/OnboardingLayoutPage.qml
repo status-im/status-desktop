@@ -1,26 +1,19 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQml 2.15
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
 
-import Models 1.0
-import Storybook 1.0
-
-import utils 1.0
-
-import AppLayouts.Onboarding2 1.0
-import AppLayouts.Onboarding2.stores 1.0
 import AppLayouts.Onboarding.enums 1.0
+import AppLayouts.Onboarding2 1.0
+import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding2.stores 1.0
 
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
+import utils 1.0
+
+import Storybook 1.0
 
 SplitView {
     id: root
@@ -30,8 +23,10 @@ SplitView {
 
     QtObject {
         id: mockDriver
+
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
         readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+        readonly property string pin: "111111"
 
         // TODO simulation
         function restart() {
@@ -47,18 +42,22 @@ SplitView {
         SplitView.fillHeight: true
 
         onboardingStore: OnboardingStore {
-            readonly property int keycardState: ctrlKeycardState.currentValue // enum Onboarding.KeycardState
+            id: store
+
+            property int keycardState: Onboarding.KeycardState.NoPCSCService
+            property int addKeyPairState: Onboarding.AddKeyPairState.InProgress
+            property int syncState: Onboarding.SyncState.InProgress
+
             property int keycardRemainingPinAttempts: 5
 
             function setPin(pin: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
-                const valid = pin === ctrlPin.text
+                const valid = pin === mockDriver.pin
                 if (!valid)
                     keycardRemainingPinAttempts--
                 return valid
             }
 
-            property int addKeyPairState // enum Onboarding.AddKeyPairState
             function startKeypairTransfer() { // -> void
                 logs.logEvent("OnboardingStore.startKeypairTransfer")
                 addKeyPairState = Onboarding.AddKeyPairState.InProgress
@@ -75,22 +74,25 @@ SplitView {
                 logs.logEvent("OnboardingStore.validMnemonic", ["mnemonic"], arguments)
                 return mnemonic === mockDriver.mnemonic
             }
+
             function getMnemonic() { // -> string
                 logs.logEvent("OnboardingStore.getMnemonic()")
                 return mockDriver.seedWords.join(" ")
             }
+
             function mnemonicWasShown() { // -> void
                 logs.logEvent("OnboardingStore.mnemonicWasShown()")
             }
+
             function removeMnemonic() { // -> void
                 logs.logEvent("OnboardingStore.removeMnemonic()")
             }
 
-            readonly property int syncState: Onboarding.SyncState.InProgress // enum Onboarding.SyncState
             function validateLocalPairingConnectionString(connectionString: string) { // -> bool
                 logs.logEvent("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"], arguments)
                 return !Number.isNaN(parseInt(connectionString))
             }
+
             function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
                 logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
@@ -126,23 +128,138 @@ SplitView {
             console.warn("!!! SIMULATION: SHOWING SPLASH")
             stack.clear()
             stack.push(splashScreen, { runningProgressAnimation: true })
-            ctrlKeycardState.currentIndex = 0
+
+            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
         }
         onKeycardFactoryResetRequested: {
             logs.logEvent("onKeycardFactoryResetRequested")
             console.warn("!!! FACTORY RESET; RESTARTING FLOW")
             restartFlow()
-            ctrlKeycardState.currentIndex = 0
+            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
         }
         onKeycardReloaded: {
             logs.logEvent("onKeycardReloaded")
             console.warn("!!! RELOAD KEYCARD")
-            ctrlKeycardState.currentIndex = 0
+            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
+        }
+
+        Button {
+            text: "Paste password"
+            focusPolicy: Qt.NoFocus
+
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof CreatePasswordPage
+
+            onClicked: {
+                const password = "somepassword"
+                const currentItem = onboarding.stack.currentItem
+
+                const input1 = StorybookUtils.findChild(
+                                 currentItem,
+                                 "passwordViewNewPassword")
+                const input2 = StorybookUtils.findChild(
+                                 currentItem,
+                                 "passwordViewNewPasswordConfirm")
+
+                if (!input1 || !input2)
+                    return
+
+                input1.text = password
+                input2.text = password
+            }
+        }
+
+        Button {
+            text: "Paste seed phrase"
+            focusPolicy: Qt.NoFocus
+
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof SeedphrasePage
+
+            onClicked: {
+                for (let i = 1;; i++) {
+                    const input = StorybookUtils.findChild(
+                                    onboarding.stack.currentItem,
+                                    `enterSeedPhraseInputField${i}`)
+
+                    if (input === null)
+                        break
+
+                    input.text = "dog"
+                }
+            }
+        }
+
+        Button {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof KeycardEnterPinPage ||
+                     onboarding.stack.currentItem instanceof KeycardCreatePinPage
+
+            text: "Copy valid PIN (\"%1\")".arg(mockDriver.pin)
+            focusPolicy: Qt.NoFocus
+            onClicked: ClipboardUtils.setText(mockDriver.pin)
+        }
+
+        Button {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof BackupSeedphraseVerify
+
+            text: "Paste seed phrase verification"
+            focusPolicy: Qt.NoFocus
+            onClicked: {
+                for (let i = 0;; i++) {
+                    const input = StorybookUtils.findChild(
+                                    onboarding.stack.currentItem,
+                                    `seedInput_${i}`)
+
+                    if (input === null)
+                        break
+
+                    const index = input.seedWordIndex
+                    input.text = mockDriver.seedWords[index]
+                }
+            }
+        }
+
+        Button {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof BackupSeedphraseAcks
+
+            text: "Paste seed phrase verification"
+            focusPolicy: Qt.NoFocus
+            onClicked: {
+                for (let i = 1;; i++) {
+                    const checkBox = StorybookUtils.findChild(
+                                       onboarding.stack.currentItem,
+                                       `ack${i}`)
+
+                    if (checkBox === null)
+                        break
+
+                    checkBox.checked = true
+                }
+            }
         }
     }
 
     Component {
         id: splashScreen
+
         DidYouKnowSplashScreen {
             property bool runningProgressAnimation
             NumberAnimation on progress {
@@ -161,6 +278,7 @@ SplitView {
 
     Connections {
         target: Global
+
         function onOpenLink(link: string) {
             console.warn("Opening link in an external web browser:", link)
             Qt.openUrlExternally(link)
@@ -174,89 +292,63 @@ SplitView {
     LogsAndControlsPanel {
         id: logsAndControlsPanel
 
-        SplitView.minimumHeight: 150
-        SplitView.preferredHeight: 150
+        SplitView.minimumHeight: 250
+        SplitView.preferredHeight: 250
 
         logsView.logText: logs.logText
 
-        RowLayout {
+        ColumnLayout {
             anchors.fill: parent
-            ColumnLayout {
+
+            spacing: 10
+
+            Label {
                 Layout.fillWidth: true
-                Label {
-                    text: "Current page: %1".arg(InspectionUtils.baseName(onboarding.stack.currentItem))
+
+                text: {
+                    const stack = onboarding.stack
+                    let content = `Stack (${stack.depth}):`
+
+                    for (let i = 0; i < stack.depth; i++)
+                        content += " " + InspectionUtils.baseName(
+                                    stack.get(i, StackView.ForceLoad))
+
+                    return content
                 }
-                Label {
-                    text: "Stack depth: %1".arg(onboarding.stack.depth)
+
+                wrapMode: Text.Wrap
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+                Button {
+                    text: "Restart"
+                    focusPolicy: Qt.NoFocus
+                    onClicked: onboarding.restartFlow()
+                }
+
+                Switch {
+                    id: ctrlBiometrics
+                    text: "Biometrics available"
+                    checked: true
                 }
             }
-            Item { Layout.fillWidth: true }
-            ColumnLayout {
-                Layout.fillWidth: true
-                RowLayout {
-                    Button {
-                        text: "Restart"
-                        focusPolicy: Qt.NoFocus
-                        onClicked: onboarding.restartFlow()
-                    }
-                    Button {
-                        text: "Copy password"
-                        focusPolicy: Qt.NoFocus
-                        onClicked: ClipboardUtils.setText("0123456789")
-                    }
-                    Button {
-                        text: "Copy seedphrase"
-                        focusPolicy: Qt.NoFocus
-                        onClicked: ClipboardUtils.setText(mockDriver.mnemonic)
-                    }
-                    Button {
-                        text: "Paste seed phrase verification"
-                        focusPolicy: Qt.NoFocus
-                        onClicked: {
-                            for (let i = 0;; i++) {
-                                const input = StorybookUtils.findChild(
-                                                onboarding.stack.currentItem,
-                                                `seedInput_${i}`)
 
-                                if (input === null)
-                                    break
-
-                                const index = input.seedWordIndex
-                                input.text = mockDriver.seedWords[index]
-                            }
-                        }
-                    }
-
-                    Button {
-                        text: "Copy PIN (\"%1\")".arg(ctrlPin.text)
-                        focusPolicy: Qt.NoFocus
-                        enabled: ctrlPin.acceptableInput
-                        onClicked: ClipboardUtils.setText(ctrlPin.text)
-                    }
-                    Switch {
-                        id: ctrlBiometrics
-                        text: "Biometrics?"
-                        checked: true
-                    }
+            RowLayout {
+                Label {
+                    text: "Keycard state:"
                 }
-                RowLayout {
-                    Label {
-                        text: "Keycard PIN:"
+
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: keycardStateButtonGroup
                     }
-                    TextField {
-                        id: ctrlPin
-                        text: "111111"
-                        inputMask: "999999"
-                    }
-                    Label {
-                        text: "State:"
-                    }
-                    ComboBox {
-                        Layout.preferredWidth: 300
-                        id: ctrlKeycardState
-                        focusPolicy: Qt.NoFocus
-                        textRole: "text"
-                        valueRole: "value"
+
+                    Repeater {
                         model: [
                             { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
                             { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
@@ -269,8 +361,87 @@ SplitView {
                             { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
                             { value: Onboarding.KeycardState.Empty, text: "Empty" }
                         ]
+
+                        RoundButton {
+                            text: modelData.text
+                            checkable: true
+                            checked: store.keycardState === modelData.value
+
+                            ButtonGroup.group: keycardStateButtonGroup
+
+                            onClicked: store.keycardState = modelData.value
+                        }
                     }
                 }
+            }
+
+            RowLayout {
+                Label {
+                    text: "Add key pair state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: addKeypairStateButtonGroup
+                    }
+
+                    Repeater {
+                        model: [
+                            { value: Onboarding.AddKeyPairState.InProgress, text: "InProgress" },
+                            { value: Onboarding.AddKeyPairState.Success, text: "Success" },
+                            { value: Onboarding.AddKeyPairState.Failed, text: "Failed" }
+                        ]
+
+                        RoundButton {
+                            text: modelData.text
+                            checkable: true
+                            checked: store.addKeyPairState === modelData.value
+
+                            ButtonGroup.group: addKeypairStateButtonGroup
+
+                            onClicked: store.addKeyPairState = modelData.value
+                        }
+                    }
+                }
+
+                ToolSeparator {}
+
+                Label {
+                    text: "Sync state:"
+                }
+
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: syncStateButtonGroup
+                    }
+
+                    Repeater {
+                        model: [
+                            { value: Onboarding.SyncState.InProgress, text: "InProgress" },
+                            { value: Onboarding.SyncState.Success, text: "Success" },
+                            { value: Onboarding.SyncState.Failed, text: "Failed" }
+                        ]
+
+                        RoundButton {
+                            text: modelData.text
+                            checkable: true
+                            checked: store.syncState === modelData.value
+
+                            ButtonGroup.group: syncStateButtonGroup
+
+                            onClicked: store.syncState = modelData.value
+                        }
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillHeight: true
             }
         }
     }
