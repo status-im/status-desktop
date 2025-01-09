@@ -34,7 +34,7 @@ Dialog {
 
     padding: 16
     // by design
-    margins: root.contentItem.Window.window.height <= 780 ? 28: 64
+    margins: root.contentItem.Window.height <= 780 ? 28 : 64
     modal: true
 
     // workaround for https://bugreports.qt.io/browse/QTBUG-87804
