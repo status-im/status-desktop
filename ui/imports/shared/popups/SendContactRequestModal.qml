@@ -9,6 +9,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 
@@ -44,13 +45,16 @@ CommonContactDialog {
     }
 
     readonly property var _conn: Connections {
-        target: root.rootStore.contactStore.contactsModule
+        enabled: root.loadingContactDetails
+        target: root.rootStore.contactStore
 
         function onContactInfoRequestFinished(publicKey, ok) {
-            if (publicKey !== root.publicKey)
+            if (publicKey !== root.publicKey) {
                 return
-            if (ok)
-                root.contactDetails = Utils.getContactDetailsAsJson(root.publicKey, false)
+            }
+            if (ok) {
+                root.contactDetails = SQUtils.ModelUtils.getByKey(root.rootStore.contactStore.contactsModel, "pubKey", root.publicKey)
+            }
             root.loadingContactDetails = false
         }
     }
