@@ -38,6 +38,7 @@ SQUtils.QObject {
     signal setPasswordRequested(string password)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
+    signal keyPairTransferRequested
 
     signal finished(int flow)
 
@@ -164,6 +165,7 @@ SQUtils.QObject {
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onKeyPairTransferRequested: root.keyPairTransferRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
 
