@@ -132,7 +132,7 @@ SettingsContentBase {
             colorId: root.profileStore.colorId
             colorHash: root.profileStore.colorHash
             onlineStatus: root.profileStore.currentUserStatus
-
+            isCurrentUser: true
             displayName: descriptionPanel.displayName.text
             bio: descriptionPanel.bio.text
             largeImage: profileHeader.previewIcon
