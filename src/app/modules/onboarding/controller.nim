@@ -120,3 +120,6 @@ proc loginLocalPairingAccount*(self: Controller, account: AccountDto, password, 
     password,
     chatPrivateKey = chatKey
   )
+
+proc finishPairingThroughSeedPhraseProcess*(self: Controller, installationId: string) =
+  self.devicesService.finishPairingThroughSeedPhraseProcess(installationId)

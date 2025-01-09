@@ -388,12 +388,10 @@ StatusWindow {
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
-                duration: startupOnboardingLoader.item.splashScreenDurationMs
+                // TODO find a way to unhardcode this
+                // Though there is no easy way to do it, because we do not get progress signals
+                duration: 3000
                 running: runningProgressAnimation
-                onStopped: {
-                    console.warn("!!! SPLASH SCREEN DONE")
-                    // TODO move to main screen
-                }
             }
         }
     }
@@ -438,7 +436,6 @@ StatusWindow {
             anchors.fill: parent
 
             networkChecksEnabled: true
-            splashScreenDurationMs: 3000
             biometricsAvailable: Qt.platform.os === Constants.mac
 
             onboardingStore: onboardingStoreLoader.item

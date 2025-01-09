@@ -135,7 +135,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           seedPhrase,
           recoverAccount = true,
           keycardInstanceUID = "",
-        )
+        )        
       of SecondaryFlow.LoginWithSyncing:
         # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
         self.controller.loginLocalPairingAccount(
@@ -183,6 +183,10 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
   #   # TODO: Handle error
   #   return
 
+  if self.localPairingStatus.installation.id != "":
+    # We tried to login by pairing, so finilize the process
+    self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
+  
   self.finishAppLoading2()
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
