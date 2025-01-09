@@ -17,7 +17,6 @@ SQUtils.QObject {
     required property int syncState
     required property var seedWords
     required property int remainingAttempts
-    required property int splashScreenDurationMs
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -193,8 +192,6 @@ SQUtils.QObject {
         stackView: root.stackView
         validateConnectionString: root.validateConnectionString
         syncState: root.syncState
-
-        splashScreenDurationMs: root.splashScreenDurationMs
 
         onSyncProceedWithConnectionString: (connectionString) =>
                                            root.syncProceedWithConnectionString(connectionString)
