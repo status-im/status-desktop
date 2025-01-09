@@ -160,7 +160,6 @@ SQUtils.QObject {
         seedWords: root.seedWords
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         isSeedPhraseValid: root.isSeedPhraseValid
-        splashScreenDurationMs: root.splashScreenDurationMs
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
