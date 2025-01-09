@@ -13,18 +13,10 @@ OnboardingPage {
     id: root
 
     required property int syncState // Onboarding.SyncState.xxx
-    property int timeoutInterval: 30000
 
     signal loginToAppRequested()
     signal restartSyncRequested()
     signal loginWithSeedphraseRequested()
-
-    Timer {
-        id: timer
-        interval: root.timeoutInterval
-        running: root.syncState === Onboarding.SyncState.InProgress
-        onTriggered: root.syncState = Onboarding.SyncState.Failed
-    }
 
     states: [
         State {

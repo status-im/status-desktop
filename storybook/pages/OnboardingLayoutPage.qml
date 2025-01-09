@@ -113,7 +113,6 @@ SplitView {
             readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
         }
 
-        splashScreenDurationMs: 3000
         biometricsAvailable: ctrlBiometrics.checked
 
         QtObject {
@@ -262,10 +261,11 @@ SplitView {
 
         DidYouKnowSplashScreen {
             property bool runningProgressAnimation
+
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
-                duration: onboarding.splashScreenDurationMs
+                duration: 3000
                 running: runningProgressAnimation
                 onStopped: {
                     console.warn("!!! SPLASH SCREEN DONE")

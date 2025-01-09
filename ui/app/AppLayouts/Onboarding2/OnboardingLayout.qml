@@ -21,7 +21,6 @@ Page {
     // TODO backend: externalize the metrics handling too?
     required property SharedStores.MetricsStore metricsStore
 
-    property int splashScreenDurationMs: 30000
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
     property bool networkChecksEnabled: true
 
@@ -129,7 +128,6 @@ Page {
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
         biometricsAvailable: root.biometricsAvailable
-        splashScreenDurationMs: root.splashScreenDurationMs
         networkChecksEnabled: root.networkChecksEnabled
 
         passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore

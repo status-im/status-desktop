@@ -11,9 +11,10 @@ Item {
 
     KeycardAddKeyPairPage {
         id: progressPage
+
         anchors.fill: parent
         addKeyPairState: Onboarding.AddKeyPairState.InProgress
-        timeoutInterval: 5000
+
         onKeypairAddTryAgainRequested: {
             console.warn("!!! onKeypairAddTryAgainRequested")
             addKeyPairState = Onboarding.AddKeyPairState.InProgress

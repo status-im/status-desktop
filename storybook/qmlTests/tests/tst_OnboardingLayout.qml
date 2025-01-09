@@ -85,7 +85,6 @@ Item {
                 readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
             }
 
-            splashScreenDurationMs: 3000
             biometricsAvailable: mockDriver.biometricsAvailable
 
             QtObject {

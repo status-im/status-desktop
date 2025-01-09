@@ -13,8 +13,6 @@ SQUtils.QObject {
     required property var validateConnectionString
     required property int syncState
 
-    required property int splashScreenDurationMs
-
     signal syncProceedWithConnectionString(string connectionString)
     signal loginWithSeedphraseRequested
     signal finished
@@ -45,7 +43,6 @@ SQUtils.QObject {
                 root.syncState !== Onboarding.SyncState.InProgress
 
             syncState: root.syncState
-            timeoutInterval: root.splashScreenDurationMs
 
             onLoginToAppRequested: root.finished()
             onRestartSyncRequested: {
