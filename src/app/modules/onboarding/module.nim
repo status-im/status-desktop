@@ -34,6 +34,7 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
+    localPairingStatus: LocalPairingStatus
 
 proc newModule*[T](
     delegate: T,
@@ -136,7 +137,12 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           keycardInstanceUID = "",
         )
       of SecondaryFlow.LoginWithSyncing:
-        self.controller.inputConnectionStringForBootstrapping(data["connectionString"].str)
+        # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
+        self.controller.loginLocalPairingAccount(
+          self.localPairingStatus.account,
+          self.localPairingStatus.password,
+          self.localPairingStatus.chatKey,
+        )
       of SecondaryFlow.LoginWithKeycard:
         # TODO implement keycard function
         discard
@@ -178,5 +184,9 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
   #   return
 
   self.finishAppLoading2()
+
+method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
+  self.localPairingStatus = status
+  self.view.setSyncState(status.state.int)
 
 {.pop.}

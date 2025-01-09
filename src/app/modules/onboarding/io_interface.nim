@@ -3,6 +3,7 @@ type
 
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
+from app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -35,6 +36,9 @@ method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionS
   raise newException(ValueError, "No implementation available")
 
 method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

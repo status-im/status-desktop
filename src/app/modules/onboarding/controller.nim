@@ -53,6 +53,13 @@ proc init*(self: Controller) =
     self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
   self.connectionIds.add(handlerId)
 
+  handlerId = self.events.onWithUUID(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
+    let args = LocalPairingStatus(e)
+    if args.pairingType != PairingType.AppSync:
+      return
+    self.delegate.onLocalPairingStatusUpdate(args)
+  self.connectionIds.add(handlerId)
+
 proc setPin*(self: Controller, pin: string): bool =
   self.keycardServiceV2.setPin(pin)
   discard
@@ -106,3 +113,10 @@ proc restoreAccountAndLogin*(self: Controller, password, mnemonic: string, recov
 proc setLoggedInAccount*(self: Controller, account: AccountDto) =
   self.accountsService.setLoggedInAccount(account)
   self.accountsService.updateLoggedInAccount(account.name, account.images)
+
+proc loginLocalPairingAccount*(self: Controller, account: AccountDto, password, chatkey: string) =
+  self.accountsService.login(
+    account,
+    password,
+    chatPrivateKey = chatKey
+  )

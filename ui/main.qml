@@ -29,7 +29,7 @@ StatusWindow {
     readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
     // TODO get rid of direct access when the new login is available
     // We need this to make sure the module is loaded before we can use it
-    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && !!onboardingModule
+    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
 
@@ -404,39 +404,6 @@ StatusWindow {
 
         sourceComponent: OnboardingStore {
             onAppLoaded: moveToAppMain()
-
-            function setPin(pin: string) { // -> bool
-                console.log("OnboardingStore.setPin", ["pin"])
-                return true
-            }
-
-            function startKeypairTransfer() { // -> void
-                console.log("OnboardingStore.startKeypairTransfer")
-            }
-
-            // seedphrase/mnemonic
-            function validMnemonic(mnemonic: string) { // -> bool
-                console.log("OnboardingStore.validMnemonic", ["mnemonic"])
-                return true
-            }
-            function getMnemonic() { // -> string
-                console.log("OnboardingStore.getMnemonic()")
-                return ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"].join(" ")
-            }
-            function mnemonicWasShown() { // -> void
-                console.log("OnboardingStore.mnemonicWasShown()")
-            }
-            function removeMnemonic() { // -> void
-                console.log("OnboardingStore.removeMnemonic()")
-            }
-
-            function validateLocalPairingConnectionString(connectionString: string) { // -> bool
-                console.log("OnboardingStore.validateLocalPairingConnectionString", ["connectionString"])
-                return !Number.isNaN(parseInt(connectionString))
-            }
-            function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
-                console.log("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"])
-            }
         }
     }
 

@@ -47,9 +47,10 @@ public:
     };
 
     enum class SyncState {
+        Idle,
         InProgress,
-        Success,
-        Failed
+        Failed,
+        Success
     };
 
 private:
