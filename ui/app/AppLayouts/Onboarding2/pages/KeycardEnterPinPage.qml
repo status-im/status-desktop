@@ -146,9 +146,7 @@ KeycardBasePage {
                 enabled: false
             }
             StateChangeScript {
-                script: {
-                    Backpressure.debounce(root, 2000, () => root.keycardPinEntered(pinInput.pinInput))()
-                }
+                script: root.keycardPinEntered(pinInput.pinInput)
             }
         },
         State {

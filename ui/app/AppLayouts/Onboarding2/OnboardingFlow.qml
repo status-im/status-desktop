@@ -22,6 +22,8 @@ SQUtils.QObject {
     required property bool displayKeycardPromoBanner
     required property bool networkChecksEnabled
 
+    property int keycardPinInfoPageDelay: 2000
+
     // functions
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
@@ -161,6 +163,8 @@ SQUtils.QObject {
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         isSeedPhraseValid: root.isSeedPhraseValid
 
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
         onKeyPairTransferRequested: root.keyPairTransferRequested()
@@ -215,6 +219,8 @@ SQUtils.QObject {
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         tryToSetPinFunction: root.tryToSetPinFunction
         isSeedPhraseValid: root.isSeedPhraseValid
+
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onKeycardPinEntered: (pin) => root.keycardPinEntered(pin)
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
