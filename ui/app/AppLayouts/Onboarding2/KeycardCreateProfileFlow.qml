@@ -23,6 +23,7 @@ SQUtils.QObject {
 
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
+    signal keyPairTransferRequested
     signal keycardPinCreated(string pin)
     signal seedphraseSubmitted(string seedphrase)
 
@@ -168,6 +169,7 @@ SQUtils.QObject {
         KeycardCreatePinPage {
             onKeycardPinCreated: {
                 root.keycardPinCreated(pin)
+                root.keyPairTransferRequested()
                 root.stackView.push(addKeypairPage)
             }
         }
