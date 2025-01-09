@@ -148,6 +148,13 @@ proc connect(self: AppController) =
       elif defined(production):
         setLogLevel(chronicles.LogLevel.INFO)
 
+# TODO remove these functions once we have only the new onboarding module
+proc shouldStartWithOnboardingScreen(self: AppController): bool =
+  return self.accountsService.openedAccounts().len == 0
+proc shouldUseTheNewOnboardingModule(self: AppController): bool =
+  # Only the onboarding for new users is implemented in the new module for now
+  return singletonInstance.featureFlags().getOnboardingV2Enabled() and self.shouldStartWithOnboardingScreen()
+
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.syncKeycardBasedOnAppWalletState = false
@@ -244,7 +251,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
   # Modules
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+  if result.shouldUseTheNewOnboardingModule():
     result.onboardingModule = onboarding_module.newModule[AppController](
       result,
       statusFoundation.events,
@@ -420,9 +427,6 @@ proc initializeQmlContext(self: AppController) =
     self.startupModule.startUpUIRaised()
 
 proc startupDidLoad*(self: AppController) =
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
-    # We will inialize in onboardingDidLoad
-    return
   self.initializeQmlContext()
 
 proc onboardingDidLoad*(self: AppController) =
@@ -443,7 +447,7 @@ proc start*(self: AppController) =
   self.accountsService.init()
   self.devicesService.init()
 
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+  if self.shouldUseTheNewOnboardingModule():
     self.onboardingModule.load()
   else:
     self.startupModule.load()

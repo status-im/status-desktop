@@ -68,9 +68,6 @@ QtObject:
 
   ### slots ###
 
-  proc shouldStartWithOnboardingScreen(self: View): bool {.slot.} =
-    return self.delegate.shouldStartWithOnboardingScreen()
-
   proc setPin(self: View, pin: string): bool {.slot.} =
     return self.delegate.setPin(pin)
 

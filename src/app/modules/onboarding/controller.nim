@@ -53,9 +53,6 @@ proc init*(self: Controller) =
     self.delegate.onNodeLogin(signal.error, signal.account, signal.settings)
   self.connectionIds.add(handlerId)
 
-proc shouldStartWithOnboardingScreen*(self: Controller): bool =
-  return self.accountsService.openedAccounts().len == 0
-
 proc setPin*(self: Controller, pin: string): bool =
   self.keycardServiceV2.setPin(pin)
   discard

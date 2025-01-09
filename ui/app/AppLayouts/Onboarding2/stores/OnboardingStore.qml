@@ -22,10 +22,6 @@ QtObject {
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
 
-    function shouldStartWithOnboardingScreen() { // -> bool
-        return d.onboardingModuleInst.shouldStartWithOnboardingScreen()
-    }
-
     function finishOnboardingFlow(flow: int, data: Object) { // -> bool
         return d.onboardingModuleInst.finishOnboardingFlow(flow, JSON.stringify(data))
     }

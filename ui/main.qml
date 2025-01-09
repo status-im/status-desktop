@@ -27,7 +27,9 @@ StatusWindow {
     property bool appIsReady: false
 
     readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
-    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled
+    // TODO get rid of direct access when the new login is available
+    // We need this to make sure the module is loaded before we can use it
+    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && !!onboardingModule
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
 
@@ -443,10 +445,8 @@ StatusWindow {
         anchors.fill: parent
         sourceComponent: {
             if (applicationWindow.onboardingV2Enabled) {
-                if (onboardingStoreLoader.item.shouldStartWithOnboardingScreen()) {
-                    // TODO select a new component when we have the new login screens (for old users)
-                    return onboardingV2
-                }
+                // TODO select a new component when we have the new login screens (for old users)
+                return onboardingV2
             }
             return onboardingV1
         }
