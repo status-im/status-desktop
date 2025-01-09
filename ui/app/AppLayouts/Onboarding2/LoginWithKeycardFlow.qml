@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
@@ -15,6 +16,8 @@ SQUtils.QObject {
     required property var tryToSetPinFunction
     required property int remainingAttempts
     required property var isSeedPhraseValid
+
+    required property int keycardPinInfoPageDelay
 
     property bool displayKeycardPromoBanner
 
@@ -85,9 +88,11 @@ SQUtils.QObject {
             remainingAttempts: root.remainingAttempts
             unlockUsingSeedphrase: true
 
-            onKeycardPinEntered: {
-                root.keycardPinEntered(pin)
-                root.finished()
+            onKeycardPinEntered: (pin) => {
+                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
+                    root.keycardPinEntered(pin)
+                    root.finished()
+                })()
             }
 
             onReloadKeycardRequested: d.reload()
@@ -114,9 +119,11 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinPage {
-            onKeycardPinCreated: {
-                root.keycardPinCreated(pin)
-                root.finished()
+            onKeycardPinCreated: (pin) => {
+                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
+                    root.keycardPinCreated(pin)
+                    root.finished()
+                })()
             }
         }
     }

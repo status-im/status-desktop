@@ -34,7 +34,11 @@ Item {
 
         OnboardingLayout {
             anchors.fill: parent
+
             networkChecksEnabled: false
+            biometricsAvailable: mockDriver.biometricsAvailable
+            keycardPinInfoPageDelay: 0
+
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
                 property int keycardRemainingPinAttempts: 5
@@ -70,6 +74,7 @@ Item {
                 }
                 function inputConnectionStringForBootstrapping(connectionString: string) {}
             }
+
             metricsStore: SharedStores.MetricsStore {
                 readonly property var d: QtObject {
                     id: d
@@ -84,8 +89,6 @@ Item {
 
                 readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
             }
-
-            biometricsAvailable: mockDriver.biometricsAvailable
 
             QtObject {
                 id: localAppSettings

@@ -23,6 +23,7 @@ Page {
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
     property bool networkChecksEnabled: true
+    property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
     readonly property alias stack: stack
 
