@@ -789,6 +789,11 @@ Item {
             }
         }
 
+        function maybeDisplayIntroduceYourselfPopup() {
+            if (!appMainLocalSettings.introduceYourselfPopupSeen && featureFlagsStore.onboardingV2Enabled)
+                introduceYourselfPopupComponent.createObject(appMain).open()
+        }
+
         function ensName(username) {
             if (!username.endsWith(".stateofus.eth") && !username.endsWith(".eth")) {
                 return "%1.%2".arg(username).arg("stateofus.eth")
@@ -803,6 +808,7 @@ Item {
     Settings {
         id: appMainLocalSettings
         property var whitelistedUnfurledDomains: []
+        property bool introduceYourselfPopupSeen
     }
 
     Popups {
@@ -1791,6 +1797,12 @@ Item {
                         // We should never end up here
                         console.error("AppMain: Unknown section type")
                     }
+                    onCurrentIndexChanged: {
+                        const sectionType = appMain.rootStore.mainModuleInst.activeSection.sectionType
+                        if (sectionType !== Constants.appSection.profile && sectionType !== Constants.appSection.wallet) {
+                            d.maybeDisplayIntroduceYourselfPopup()
+                        }
+                    }
 
                     // NOTE:
                     // If we ever change stack layout component order we need to updade
@@ -1933,8 +1945,7 @@ Item {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppDisconnectInitiated)
                                 dAppsServiceLoader.dappDisconnectRequested(dappUrl)
                             }
-			                onSendTokenRequested: sendModalHandler.sendToken(
-                                                      senderAddress, tokenId, tokenType)
+			                onSendTokenRequested: sendModalHandler.sendToken(senderAddress, tokenId, tokenType)
                             onBridgeTokenRequested: sendModalHandler.bridgeToken(tokenId, tokenType)
                         }
                         onLoaded: {
@@ -2583,6 +2594,19 @@ Item {
             onClosed: {
                 savedAddressActivity.close()
             }
+        }
+    }
+
+    Component {
+        id: introduceYourselfPopupComponent
+        IntroduceYourselfPopup {
+            visible: true
+            destroyOnClose: true
+            pubKey: appMain.profileStore.compressedPubKey
+            colorId: appMain.profileStore.colorId
+            colorHash: appMain.profileStore.colorHash
+            onClosed: appMainLocalSettings.introduceYourselfPopupSeen = true
+            onAccepted: Global.changeAppSectionBySectionType(Constants.appSection.profile)
         }
     }
 

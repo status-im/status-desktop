@@ -14,6 +14,7 @@ ImageContextMenu 1.0 ImageContextMenu.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
+IntroduceYourselfPopup 1.0 IntroduceYourselfPopup.qml
 MarkAsIDVerifiedDialog 1.0 MarkAsIDVerifiedDialog.qml
 MarkAsUntrustedPopup 1.0 MarkAsUntrustedPopup.qml
 MetricsEnablePopup 1.0 MetricsEnablePopup.qml
