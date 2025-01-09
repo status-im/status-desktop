@@ -13,7 +13,6 @@ Item {
         id: progressPage
         anchors.fill: parent
         syncState: Onboarding.SyncState.InProgress
-        timeoutInterval: 5000
         onRestartSyncRequested: {
             console.warn("!!! RESTART SYNC REQUESTED")
             syncState = Onboarding.SyncState.InProgress

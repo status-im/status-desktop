@@ -17,7 +17,6 @@ SQUtils.QObject {
 
     required property var seedWords
     required property var isSeedPhraseValid
-    required property int splashScreenDurationMs
 
     property bool displayKeycardPromoBanner
 
@@ -182,7 +181,6 @@ SQUtils.QObject {
             readonly property bool backAvailableHint: false
 
             addKeyPairState: root.addKeyPairState
-            timeoutInterval: root.splashScreenDurationMs
 
             onKeypairAddContinueRequested: root.finished(d.fromBackupSeedphrase)
 

@@ -14,19 +14,11 @@ OnboardingPage {
     id: root
 
     required property int addKeyPairState // Onboarding.AddKeyPairState.xxx
-    property int timeoutInterval: 30000
 
     signal keypairAddContinueRequested()
     signal keypairAddTryAgainRequested()
     signal reloadKeycardRequested()
     signal createProfilePageRequested()
-
-    Timer {
-        id: timer
-        interval: root.timeoutInterval
-        running: root.addKeyPairState === Onboarding.AddKeyPairState.InProgress
-        onTriggered: root.addKeyPairState = Onboarding.AddKeyPairState.Failed
-    }
 
     states: [
         State {
