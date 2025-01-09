@@ -21,7 +21,8 @@ type TokenDataDto* = object
   tokenType*: int
 
 proc `$`*(self: TokenDataDto): string =
-  result = fmt"""TokenDataDto(
+  result =
+    fmt"""TokenDataDto(
     chainId: {$self.chainId},
     collectibleId: {self.collectibleId},
     txHash: {self.txHash},
@@ -49,4 +50,4 @@ proc toTokenDataDto*(jsonObj: JsonNode): TokenDataDto =
   discard jsonObj.getProp("tokenType", result.tokenType)
 
   if jsonObj.contains("collectibleId") and jsonObj{"collectibleId"}.kind != JNull:
-      result.collectibleId = fromJson(jsonObj["collectibleId"], CollectibleUniqueID)
+    result.collectibleId = fromJson(jsonObj["collectibleId"], CollectibleUniqueID)

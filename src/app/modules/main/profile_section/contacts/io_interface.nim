@@ -5,8 +5,7 @@ import app_service/common/types
 
 import app_service/service/contacts/dto/profile_showcase
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -30,25 +29,37 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method onContactsLoaded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method switchToOrCreateOneToOneChat*(self: AccessInterface, publicKey: string) {.base.} =
+method switchToOrCreateOneToOneChat*(
+    self: AccessInterface, publicKey: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendContactRequest*(self: AccessInterface, publicKey: string, message: string) {.base.} =
+method sendContactRequest*(
+    self: AccessInterface, publicKey: string, message: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
+method acceptContactRequest*(
+    self: AccessInterface, publicKey: string, contactRequestId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
+method dismissContactRequest*(
+    self: AccessInterface, publicKey: string, contactRequestId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method dismissContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLatestContactRequestForContactAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
+method getLatestContactRequestForContactAsJson*(
+    self: AccessInterface, publicKey: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
+method changeContactNickname*(
+    self: AccessInterface, publicKey: string, nickname: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method unblockContact*(self: AccessInterface, publicKey: string) {.base.} =
@@ -68,13 +79,17 @@ method addOrUpdateContactItem*(self: AccessInterface, publicKey: string) {.base.
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, trustStatus: TrustStatus) {.base.} =
+method contactTrustStatusChanged*(
+    self: AccessInterface, publicKey: string, trustStatus: TrustStatus
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onTrustStatusRemoved*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
+method contactsStatusUpdated*(
+    self: AccessInterface, statusUpdates: seq[StatusUpdateDto]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markAsTrusted*(self: AccessInterface, publicKey: string): void {.base.} =
@@ -89,13 +104,17 @@ method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base
 method requestContactInfo*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onContactInfoRequestFinished*(self: AccessInterface, publicKey: string, ok: bool) {.base.} =
+method onContactInfoRequestFinished*(
+    self: AccessInterface, publicKey: string, ok: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method shareUserUrlWithData*(self: AccessInterface, pubkey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method shareUserUrlWithChatKey*(self: AccessInterface, pubkey: string): string {.base.} =
+method shareUserUrlWithChatKey*(
+    self: AccessInterface, pubkey: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method shareUserUrlWithENS*(self: AccessInterface, pubkey: string): string {.base.} =
@@ -107,13 +126,19 @@ method requestProfileShowcase*(self: AccessInterface, publicKey: string) {.base.
 method onProfileShowcaseUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loadProfileShowcase*(self: AccessInterface, profileShowcase: ProfileShowcaseDto, validated: bool) {.base.} =
+method loadProfileShowcase*(
+    self: AccessInterface, profileShowcase: ProfileShowcaseDto, validated: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchProfileShowcaseAccountsByAddress*(self: AccessInterface, address: string) {.base.} =
+method fetchProfileShowcaseAccountsByAddress*(
+    self: AccessInterface, address: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onProfileShowcaseAccountsByAddressFetched*(self: AccessInterface, accounts: seq[ProfileShowcaseAccount]) {.base.} =
+method onProfileShowcaseAccountsByAddressFetched*(
+    self: AccessInterface, accounts: seq[ProfileShowcaseAccount]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getShowcaseCollectiblesModel*(self: AccessInterface): QVariant {.base.} =

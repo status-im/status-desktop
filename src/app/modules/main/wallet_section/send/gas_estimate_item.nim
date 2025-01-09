@@ -6,10 +6,11 @@ QtObject:
     totalTokenFees: float
     totalTime: int
 
-  proc setup*(self: GasEstimateItem,
-    totalFeesInEth: float,
-    totalTokenFees: float,
-    totalTime: int
+  proc setup*(
+      self: GasEstimateItem,
+      totalFeesInEth: float,
+      totalTokenFees: float,
+      totalTime: int,
   ) =
     self.QObject.setup
     self.totalFeesInEth = totalFeesInEth
@@ -17,15 +18,13 @@ QtObject:
     self.totalTime = totalTime
 
   proc delete*(self: GasEstimateItem) =
-      self.QObject.delete
+    self.QObject.delete
 
   proc newGasEstimateItem*(
-    totalFeesInEth: float = 0,
-    totalTokenFees: float = 0,
-    totalTime: int = 0
-    ): GasEstimateItem =
-      new(result, delete)
-      result.setup(totalFeesInEth, totalTokenFees, totalTime)
+      totalFeesInEth: float = 0, totalTokenFees: float = 0, totalTime: int = 0
+  ): GasEstimateItem =
+    new(result, delete)
+    result.setup(totalFeesInEth, totalTokenFees, totalTime)
 
   proc `$`*(self: GasEstimateItem): string =
     result = "GasEstimateItem("
@@ -37,6 +36,7 @@ QtObject:
   proc totalFeesInEthChanged*(self: GasEstimateItem) {.signal.}
   proc getTotalFeesInEth*(self: GasEstimateItem): float {.slot.} =
     return self.totalFeesInEth
+
   QtProperty[float] totalFeesInEth:
     read = getTotalFeesInEth
     notify = totalFeesInEthChanged
@@ -44,6 +44,7 @@ QtObject:
   proc totalTokenFeesChanged*(self: GasEstimateItem) {.signal.}
   proc getTotalTokenFees*(self: GasEstimateItem): float {.slot.} =
     return self.totalTokenFees
+
   QtProperty[float] totalTokenFees:
     read = getTotalTokenFees
     notify = totalTokenFeesChanged
@@ -51,6 +52,7 @@ QtObject:
   proc totalTimeChanged*(self: GasEstimateItem) {.signal.}
   proc getTotalTime*(self: GasEstimateItem): int {.slot.} =
     return self.totalTime
+
   QtProperty[int] totalTime:
     read = getTotalTime
     notify = totalTimeChanged

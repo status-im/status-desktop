@@ -1,15 +1,13 @@
-
 import hashes, stew/shims/strformat, json_serialization
 
 import ./types
 
 export types
 
-type
-  UxEnabledState* {.pure.} = enum
-    Enabled
-    AllEnabled
-    Disabled
+type UxEnabledState* {.pure.} = enum
+  Enabled
+  AllEnabled
+  Disabled
 
 type NetworkDto* = ref object
   chainId* {.serializedFieldName("chainId").}: int
@@ -32,7 +30,8 @@ type NetworkDto* = ref object
   enabledState*: UxEnabledState
 
 proc `$`*(self: NetworkDto): string =
-  return fmt"""Network(
+  return
+    fmt"""Network(
     chainId:{self.chainId},
     nativeCurrencyDecimals:{self.nativeCurrencyDecimals},
     layer:{self.layer},
@@ -59,13 +58,15 @@ type CombinedNetworkDto* = ref object
   test* {.serializedFieldName("Test").}: NetworkDto
 
 proc `$`*(self: CombinedNetworkDto): string =
-  return fmt"""CombinedNetworkDto(
+  return
+    fmt"""CombinedNetworkDto(
     prod:{$self.prod},
     test:{$self.test},
   )"""
 
 proc networkEnabledToUxEnabledState*(enabled: bool, allEnabled: bool): UxEnabledState =
-  return if allEnabled:
+  return
+    if allEnabled:
       UxEnabledState.AllEnabled
     elif enabled:
       UxEnabledState.Enabled

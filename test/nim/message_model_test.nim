@@ -10,11 +10,7 @@ import app/modules/shared_models/message_transaction_parameters_item
 
 proc createTestMessageItem(id: string, clock: int64): Item =
   return message_model.createMessageItemFromDtos(
-    message = MessageDto(
-      id: id,
-      clock: clock,
-      contentType: ContentType.Unknown,
-    ),
+    message = MessageDto(id: id, clock: clock, contentType: ContentType.Unknown),
     communityId = "",
     sender = ContactDetails(),
     isCurrentUser = false,
@@ -50,7 +46,9 @@ suite "empty model":
 suite "inserting new messages":
   setup:
     let model = newModel()
-    model.insertItemsBasedOnClock(@[message0_fetchMoreMessages, message0_chatIdentifier])
+    model.insertItemsBasedOnClock(
+      @[message0_fetchMoreMessages, message0_chatIdentifier]
+    )
 
   test "insert same message twice":
     model.insertItemBasedOnClock(message1)
@@ -100,56 +98,48 @@ suite "inserting new messages":
 suite "inserting multiple new messages":
   setup:
     let model = newModel()
-    model.insertItemsBasedOnClock(@[message0_fetchMoreMessages, message0_chatIdentifier])
+    model.insertItemsBasedOnClock(
+      @[message0_fetchMoreMessages, message0_chatIdentifier]
+    )
 
   test "insert to empty model":
-    model.insertItemsBasedOnClock(@[message5,
-                                    message4,
-                                    message3,
-                                    message2,
-                                    message1])
+    model.insertItemsBasedOnClock(@[message5, message4, message3, message2, message1])
     checkOrder(model)
 
   test "insert to model with only newer messages":
     model.insertItemBasedOnClock(message5)
     model.insertItemBasedOnClock(message4)
-    model.insertItemsBasedOnClock(@[message3,
-                                    message2,
-                                    message1])
+    model.insertItemsBasedOnClock(@[message3, message2, message1])
     checkOrder(model)
 
   test "insert to model with only older messages":
     model.insertItemBasedOnClock(message2)
     model.insertItemBasedOnClock(message1)
-    model.insertItemsBasedOnClock(@[message5,
-                                    message4,
-                                    message3])
+    model.insertItemsBasedOnClock(@[message5, message4, message3])
     checkOrder(model)
 
   test "insert to model with newer and older messages":
     model.insertItemBasedOnClock(message5)
     model.insertItemBasedOnClock(message1)
-    model.insertItemsBasedOnClock(@[message4,
-                                    message3,
-                                    message2])
+    model.insertItemsBasedOnClock(@[message4, message3, message2])
     checkOrder(model)
 
   test "insert to model with newer and older messages and some in between":
     model.insertItemBasedOnClock(message5)
     model.insertItemBasedOnClock(message1)
     model.insertItemBasedOnClock(message3) # in between
-    model.insertItemsBasedOnClock(@[message4,
-                                    message2])
+    model.insertItemsBasedOnClock(@[message4, message2])
     checkOrder(model)
 
 suite "new messages marker":
   setup:
     let model = newModel()
-    model.insertItemsBasedOnClock(@[message0_fetchMoreMessages, message0_chatIdentifier])
+    model.insertItemsBasedOnClock(
+      @[message0_fetchMoreMessages, message0_chatIdentifier]
+    )
 
   test "set new messages marker":
-    model.insertItemsBasedOnClock(@[message1,
-                                    message2])
+    model.insertItemsBasedOnClock(@[message1, message2])
     require(model.items.len == 4)
 
     # add new messages marker
@@ -164,8 +154,7 @@ suite "new messages marker":
     check(model.items[4].id == message0_chatIdentifier.id)
 
   test "remove new messages marker":
-    model.insertItemsBasedOnClock(@[message1,
-                                    message2])
+    model.insertItemsBasedOnClock(@[message1, message2])
     require(model.items.len == 4)
 
     # add new messages marker
@@ -185,7 +174,9 @@ suite "new messages marker":
 suite "simulations":
   setup:
     let model = newModel()
-    model.insertItemsBasedOnClock(@[message0_fetchMoreMessages, message0_chatIdentifier])
+    model.insertItemsBasedOnClock(
+      @[message0_fetchMoreMessages, message0_chatIdentifier]
+    )
 
   test "simulate messages loading":
     # load first two messages
@@ -254,11 +245,7 @@ suite "simulations":
     check(model.items[7].id == message0_chatIdentifier.id)
 
   test "simulate chat identifier update":
-    model.insertItemsBasedOnClock(@[message5,
-                                    message4,
-                                    message3,
-                                    message2,
-                                    message1])
+    model.insertItemsBasedOnClock(@[message5, message4, message3, message2, message1])
     checkOrder(model)
 
     # set new messages marker
@@ -279,17 +266,16 @@ suite "simulations":
     check(model.items[6].id == message0_fetchMoreMessages.id)
     check(model.items[7].id == message0_chatIdentifier.id)
 
-
 suite "mark as seen":
   setup:
     let model = newModel()
 
     var msg1 = createTestMessageItem("0xa", 1)
-    msg1.seen=false
+    msg1.seen = false
     let msg2 = createTestMessageItem("0xb", 2)
-    msg2.seen=false
+    msg2.seen = false
     let msg3 = createTestMessageItem("0xc", 3)
-    msg3.seen=true
+    msg3.seen = true
 
     model.insertItemsBasedOnClock(@[msg1, msg2, msg3])
     require(model.items.len == 3)
@@ -363,7 +349,6 @@ suite "mark message as unread":
     model.markMessageAsUnread("0xa")
     model.markMessageAsUnread("0xc")
     model.markMessageAsUnread("0xb")
-
 
     # Because new row is inserted for message marker
     require(model.items.len == 4)

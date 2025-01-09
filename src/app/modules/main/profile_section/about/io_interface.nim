@@ -1,5 +1,4 @@
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -23,7 +22,9 @@ method getNodeVersion*(self: AccessInterface): string {.base.} =
 method getStatusGoVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method versionFetched*(self: AccessInterface, available: bool, version: string, url: string) {.base.} =
+method versionFetched*(
+    self: AccessInterface, available: bool, version: string, url: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkForUpdates*(self: AccessInterface) {.base.} =

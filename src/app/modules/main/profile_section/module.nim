@@ -10,7 +10,9 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/privacy/service as privacy_service
-import ../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 import ../../../../app_service/service/devices/service as devices_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -42,52 +44,52 @@ import ./wallet/module as wallet_module
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
-    profileModule: profile_module.AccessInterface
-    languageModule: language_module.AccessInterface
-    contactsModule: contacts_module.AccessInterface
-    privacyModule: privacy_module.AccessInterface
-    aboutModule: about_module.AccessInterface
-    advancedModule: advanced_module.AccessInterface
-    devicesModule: devices_module.AccessInterface
-    syncModule: sync_module.AccessInterface
-    wakuModule: waku_module.AccessInterface
-    notificationsModule: notifications_module.AccessInterface
-    ensUsernamesModule: ens_usernames_module.AccessInterface
-    communitiesModule: communities_module.AccessInterface
-    keycardModule: keycard_module.AccessInterface
-    walletModule: wallet_module.AccessInterface
+  profileModule: profile_module.AccessInterface
+  languageModule: language_module.AccessInterface
+  contactsModule: contacts_module.AccessInterface
+  privacyModule: privacy_module.AccessInterface
+  aboutModule: about_module.AccessInterface
+  advancedModule: advanced_module.AccessInterface
+  devicesModule: devices_module.AccessInterface
+  syncModule: sync_module.AccessInterface
+  wakuModule: waku_module.AccessInterface
+  notificationsModule: notifications_module.AccessInterface
+  ensUsernamesModule: ens_usernames_module.AccessInterface
+  communitiesModule: communities_module.AccessInterface
+  keycardModule: keycard_module.AccessInterface
+  walletModule: wallet_module.AccessInterface
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  accountsService: accounts_service.Service,
-  settingsService: settings_service.Service,
-  stickersService: stickers_service.Service,
-  profileService: profile_service.Service,
-  contactsService: contacts_service.Service,
-  aboutService: about_service.Service,
-  languageService: language_service.Service,
-  privacyService: privacy_service.Service,
-  nodeConfigurationService: node_configuration_service.Service,
-  devicesService: devices_service.Service,
-  mailserversService: mailservers_service.Service,
-  chatService: chat_service.Service,
-  ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  generalService: general_service.Service,
-  communityService: community_service.Service,
-  networkService: network_service.Service,
-  keycardService: keycard_service.Service,
-  keychainService: keychain_service.Service,
-  tokenService: token_service.Service,
-  nodeService: node_service.Service
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    accountsService: accounts_service.Service,
+    settingsService: settings_service.Service,
+    stickersService: stickers_service.Service,
+    profileService: profile_service.Service,
+    contactsService: contacts_service.Service,
+    aboutService: about_service.Service,
+    languageService: language_service.Service,
+    privacyService: privacy_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    devicesService: devices_service.Service,
+    mailserversService: mailservers_service.Service,
+    chatService: chat_service.Service,
+    ensService: ens_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    generalService: general_service.Service,
+    communityService: community_service.Service,
+    networkService: network_service.Service,
+    keycardService: keycard_service.Service,
+    keychainService: keychain_service.Service,
+    tokenService: token_service.Service,
+    nodeService: node_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -96,27 +98,49 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, events, profileService, settingsService, communityService, walletAccountService, tokenService)
-  result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService, networkService)
+  result.profileModule = profile_module.newModule(
+    result, events, profileService, settingsService, communityService,
+    walletAccountService, tokenService,
+  )
+  result.contactsModule = contacts_module.newModule(
+    result, events, contactsService, chatService, networkService
+  )
   result.languageModule = language_module.newModule(result, events, languageService)
-  result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService, generalService)
+  result.privacyModule = privacy_module.newModule(
+    result, events, settingsService, keychainService, privacyService, generalService
+  )
   result.aboutModule = about_module.newModule(result, events, aboutService)
-  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
-  result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
-  result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService, mailserversService)
-  result.wakuModule = waku_module.newModule(result, events, settingsService, nodeConfigurationService)
-  result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService, communityService)
+  result.advancedModule = advanced_module.newModule(
+    result, events, settingsService, stickersService, nodeConfigurationService
+  )
+  result.devicesModule =
+    devices_module.newModule(result, events, settingsService, devicesService)
+  result.syncModule = sync_module.newModule(
+    result, events, settingsService, nodeConfigurationService, mailserversService
+  )
+  result.wakuModule =
+    waku_module.newModule(result, events, settingsService, nodeConfigurationService)
+  result.notificationsModule = notifications_module.newModule(
+    result, events, settingsService, chatService, contactsService, communityService
+  )
   result.ensUsernamesModule = ens_usernames_module.newModule(
-    result, events, settingsService, ensService, walletAccountService, networkService, tokenService
+    result, events, settingsService, ensService, walletAccountService, networkService,
+    tokenService,
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
-  result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService,
-    privacyService, accountsService, walletAccountService, keychainService)
+  result.keycardModule = keycard_module.newModule(
+    result, events, keycardService, settingsService, networkService, privacyService,
+    accountsService, walletAccountService, keychainService,
+  )
 
-  result.walletModule = wallet_module.newModule(result, events, accountsService, walletAccountService, settingsService,
-    networkService, devicesService, nodeService)
+  result.walletModule = wallet_module.newModule(
+    result, events, accountsService, walletAccountService, settingsService,
+    networkService, devicesService, nodeService,
+  )
 
-  singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "profileSectionModule", result.viewVariant
+  )
 
 method delete*(self: Module) =
   self.profileModule.delete
@@ -156,46 +180,46 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 proc checkIfModuleDidLoad(self: Module) =
-  if(not self.profileModule.isLoaded()):
+  if (not self.profileModule.isLoaded()):
     return
 
-  if(not self.contactsModule.isLoaded()):
+  if (not self.contactsModule.isLoaded()):
     return
 
-  if(not self.languageModule.isLoaded()):
+  if (not self.languageModule.isLoaded()):
     return
 
-  if(not self.privacyModule.isLoaded()):
+  if (not self.privacyModule.isLoaded()):
     return
 
-  if(not self.aboutModule.isLoaded()):
+  if (not self.aboutModule.isLoaded()):
     return
 
-  if(not self.advancedModule.isLoaded()):
+  if (not self.advancedModule.isLoaded()):
     return
 
-  if(not self.devicesModule.isLoaded()):
+  if (not self.devicesModule.isLoaded()):
     return
 
-  if(not self.syncModule.isLoaded()):
+  if (not self.syncModule.isLoaded()):
     return
 
-  if(not self.wakuModule.isLoaded()):
+  if (not self.wakuModule.isLoaded()):
     return
 
-  if(not self.notificationsModule.isLoaded()):
+  if (not self.notificationsModule.isLoaded()):
     return
 
-  if(not self.ensUsernamesModule.isLoaded()):
+  if (not self.ensUsernamesModule.isLoaded()):
     return
 
-  if(not self.communitiesModule.isLoaded()):
+  if (not self.communitiesModule.isLoaded()):
     return
 
-  if(not self.keycardModule.isLoaded()):
+  if (not self.keycardModule.isLoaded()):
     return
 
-  if(not self.walletModule.isLoaded()):
+  if (not self.walletModule.isLoaded()):
     return
 
   self.moduleLoaded = true

@@ -22,34 +22,34 @@ logScope:
 import io_interface
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    events: EventEmitter
-    moduleLoaded: bool
-    accountsService: accounts_service.Service
-    walletAccountService: wallet_account_service.Service
-    devicesService: devices_service.Service
-    nodeService: node_service.Service
-    accountsModule: accounts_module.AccessInterface
-    keypairImportModule: keypair_import_module.AccessInterface
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  events: EventEmitter
+  moduleLoaded: bool
+  accountsService: accounts_service.Service
+  walletAccountService: wallet_account_service.Service
+  devicesService: devices_service.Service
+  nodeService: node_service.Service
+  accountsModule: accounts_module.AccessInterface
+  keypairImportModule: keypair_import_module.AccessInterface
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
-  networkService: network_service.Service,
-  devicesService: devices_service.Service,
-  nodeService: node_service.Service
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
+    networkService: network_service.Service,
+    devicesService: devices_service.Service,
+    nodeService: node_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, events, walletAccountService, nodeService)
+  result.controller =
+    controller.newController(result, events, walletAccountService, nodeService)
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.events = events
@@ -57,7 +57,8 @@ proc newModule*(
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.devicesService = devicesService
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService)
+  result.accountsModule =
+    accounts_module.newModule(result, events, walletAccountService, networkService)
 
 method delete*(self: Module) =
   self.controller.delete
@@ -81,7 +82,7 @@ method getCollectiblesModel*(self: Module): QVariant =
   return self.accountsModule.getCollectiblesModel()
 
 proc checkIfModuleDidLoad(self: Module) =
-  if(not self.accountsModule.isLoaded()):
+  if (not self.accountsModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -104,9 +105,13 @@ method destroyKeypairImportPopup*(self: Module) =
   self.keypairImportModule = nil
   self.view.emitKeypairImportModuleChangedSignal()
 
-method runKeypairImportPopup*(self: Module, keyUid: string, mode: ImportKeypairModuleMode) =
-  self.keypairImportModule = keypair_import_module.newModule(self, self.events, self.accountsService,
-    self.walletAccountService, self.devicesService)
+method runKeypairImportPopup*(
+    self: Module, keyUid: string, mode: ImportKeypairModuleMode
+) =
+  self.keypairImportModule = keypair_import_module.newModule(
+    self, self.events, self.accountsService, self.walletAccountService,
+    self.devicesService,
+  )
   self.view.emitKeypairImportModuleChangedSignal()
   self.keypairImportModule.load(keyUid, mode)
 

@@ -1,4 +1,5 @@
-import NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
+import
+  NimQml, Tables, os, json, stew/shims/strformat, sequtils, strutils, times, std/options
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
@@ -22,20 +23,21 @@ import ../../../constants as main_constants
 export dto_accounts
 export dto_generated_accounts
 
-
 logScope:
   topics = "accounts-service"
 
-const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
+const ACCOUNT_ALREADY_EXISTS_ERROR* = "account already exists"
 const KDF_ITERATIONS* {.intdefine.} = 256_000
-const DEFAULT_CUSTOMIZATION_COLOR = "primary"  # to match `CustomizationColor` on the go side
+const DEFAULT_CUSTOMIZATION_COLOR = "primary"
+  # to match `CustomizationColor` on the go side
 
 # allow runtime override via environment variable. core contributors can set a
 # specific peer to set for testing messaging and mailserver functionality with squish.
 let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
 const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
-const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* = "derivedAddressesFromNotImportedMnemonicFetched"
+const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* =
+  "derivedAddressesFromNotImportedMnemonicFetched"
 const SIGNAL_LOGIN_ERROR* = "errorWhileLogin"
 
 type ResultArgs* = ref object of Args
@@ -68,7 +70,11 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, fleetConfiguration: FleetConfiguration): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      fleetConfiguration: FleetConfiguration,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -76,7 +82,9 @@ QtObject:
     result.fleetConfiguration = fleetConfiguration
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
 
-  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000)
+  proc scheduleReencrpytion(
+    self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000
+  )
 
   proc setLocalAccountSettingsFile(self: Service) =
     if self.loggedInAccount.isValid():
@@ -95,7 +103,8 @@ QtObject:
     singletonInstance.localAccountSettings.setFileName(displayName)
 
   proc setKeyStoreDir(self: Service, key: string) =
-    self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
+    self.keyStoreDir =
+      joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
     discard status_general.initKeystore(self.keyStoreDir)
 
   proc getKeyStoreDir*(self: Service): string =
@@ -104,7 +113,9 @@ QtObject:
   proc connectToFetchingFromWakuEvents*(self: Service) =
     self.events.on(SignalType.WakuBackedUpProfile.event) do(e: Args):
       var receivedData = WakuBackedUpProfileSignal(e)
-      self.updateLoggedInAccount(receivedData.backedUpProfile.displayName, receivedData.backedUpProfile.images)
+      self.updateLoggedInAccount(
+        receivedData.backedUpProfile.displayName, receivedData.backedUpProfile.images
+      )
 
   proc init*(self: Service) =
     discard
@@ -119,25 +130,35 @@ QtObject:
         return ("", response.result["error"].getStr)
       return (response.result["keyUID"].getStr, "")
     except Exception as e:
-      error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "validateMnemonic", errName = e.name, errDesription = e.msg
 
   proc openedAccounts*(self: Service): seq[AccountDto] =
     try:
       let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
-      self.accounts = map(response.result{"accounts"}.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
+      self.accounts = map(
+        response.result{"accounts"}.getElems(),
+        proc(x: JsonNode): AccountDto =
+          toAccountDto(x),
+      )
 
       return self.accounts
-
     except Exception as e:
-      error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "openedAccounts", errName = e.name, errDesription = e.msg
 
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
     return (keyUID in self.openedAccounts().mapIt(it.keyUid))
 
   # FIXME: remove this method, settings should be processed in status-go
   # https://github.com/status-im/status-go/issues/5359
-  proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
+  proc addKeycardDetails(
+      self: Service,
+      kcInstance: string,
+      settingsJson: var JsonNode,
+      accountData: var JsonNode,
+  ) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
     let now = now().toTime().toUnix()
@@ -145,8 +166,8 @@ QtObject:
       if instanceUid != kcInstance:
         continue
       if not settingsJson.isNil:
-        settingsJson["keycard-instance-uid"] = %* instanceUid
-        settingsJson["keycard-paired-on"] = %* now
+        settingsJson["keycard-instance-uid"] = %*instanceUid
+        settingsJson["keycard-paired-on"] = %*now
         settingsJson["keycard-pairing"] = kcDataObj{"key"}
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
@@ -174,23 +195,28 @@ QtObject:
 
   proc defaultCreateAccountRequest*(): CreateAccountRequest =
     return CreateAccountRequest(
-        rootDataDir: main_constants.STATUSGODIR,
-        kdfIterations: KDF_ITERATIONS,
-        customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
-        logLevel: some(main_constants.getStatusGoLogLevel()),
-        wakuV2LightClient: false,
-        wakuV2EnableMissingMessageVerification: true,
-        wakuV2EnableStoreConfirmationForMessagesSent: true,
-        previewPrivacy: true,
-        torrentConfigEnabled: some(false),
-        torrentConfigPort: some(TORRENT_CONFIG_PORT),
-        keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
-        walletSecretsConfig: buildWalletSecrets(),
-        apiConfig: defaultApiConfig(),
-        statusProxyEnabled: true,
-      )
+      rootDataDir: main_constants.STATUSGODIR,
+      kdfIterations: KDF_ITERATIONS,
+      customizationColor: DEFAULT_CUSTOMIZATION_COLOR,
+      logLevel: some(main_constants.getStatusGoLogLevel()),
+      wakuV2LightClient: false,
+      wakuV2EnableMissingMessageVerification: true,
+      wakuV2EnableStoreConfirmationForMessagesSent: true,
+      previewPrivacy: true,
+      torrentConfigEnabled: some(false),
+      torrentConfigPort: some(TORRENT_CONFIG_PORT),
+      keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
+      walletSecretsConfig: buildWalletSecrets(),
+      apiConfig: defaultApiConfig(),
+      statusProxyEnabled: true,
+    )
 
-  proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
+  proc buildCreateAccountRequest(
+      password: string,
+      displayName: string,
+      imagePath: string,
+      imageCropRectangle: ImageCropRectangle,
+  ): CreateAccountRequest =
     var request = defaultCreateAccountRequest()
     request.password = hashPassword(password)
     request.displayName = displayName
@@ -198,9 +224,16 @@ QtObject:
     request.imageCropRectangle = imageCropRectangle
     return request
 
-  proc createAccountAndLogin*(self: Service, password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): string =
+  proc createAccountAndLogin*(
+      self: Service,
+      password: string,
+      displayName: string,
+      imagePath: string,
+      imageCropRectangle: ImageCropRectangle,
+  ): string =
     try:
-      let request = buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
+      let request =
+        buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle)
       let response = status_account.createAccountAndLogin(request)
 
       if not response.result.contains("error"):
@@ -214,38 +247,39 @@ QtObject:
 
       error "createAccountAndLogin status-go error: ", error
       return "createAccountAndLogin failed: " & error
-
     except Exception as e:
-      error "failed to create account or login", procName="createAccountAndLogin", errName = e.name, errDesription = e.msg
+      error "failed to create account or login",
+        procName = "createAccountAndLogin", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc importAccountAndLogin*(self: Service,
-    mnemonic: string,
-    password: string,
-    recoverAccount: bool,
-    displayName: string,
-    imagePath: string,
-    imageCropRectangle: ImageCropRectangle,
-    keycardInstanceUID: string = "",
+  proc importAccountAndLogin*(
+      self: Service,
+      mnemonic: string,
+      password: string,
+      recoverAccount: bool,
+      displayName: string,
+      imagePath: string,
+      imageCropRectangle: ImageCropRectangle,
+      keycardInstanceUID: string = "",
   ): string =
-
     var request = RestoreAccountRequest(
       mnemonic: mnemonic,
       fetchBackup: recoverAccount,
-      createAccountRequest: buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
+      createAccountRequest:
+        buildCreateAccountRequest(password, displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardInstanceUID
 
     self.restoreAccountAndLogin(request)
 
-  proc restoreKeycardAccountAndLogin*(self: Service,
-    keycardData: KeycardEvent,
-    recoverAccount: bool,
-    displayName: string,
-    imagePath: string,
-    imageCropRectangle: ImageCropRectangle,
-    ): string =
-
+  proc restoreKeycardAccountAndLogin*(
+      self: Service,
+      keycardData: KeycardEvent,
+      recoverAccount: bool,
+      displayName: string,
+      imagePath: string,
+      imageCropRectangle: ImageCropRectangle,
+  ): string =
     let keycard = KeycardData(
       keyUid: keycardData.keyUid,
       address: keycardData.masterKey.address,
@@ -262,7 +296,8 @@ QtObject:
     var request = RestoreAccountRequest(
       keycard: keycard,
       fetchBackup: recoverAccount,
-      createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
+      createAccountRequest:
+        buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
 
@@ -283,11 +318,13 @@ QtObject:
 
       error "restoreAccountAndLogin status-go error: ", error
       return "restoreAccountAndLogin failed: " & error
-
     except Exception as e:
-      error "restore account failed", procName="restoreAccountAndLogin", errName = e.name, errDesription = e.msg
+      error "restore account failed",
+        procName = "restoreAccountAndLogin", errName = e.name, errDesription = e.msg
 
-  proc createAccountFromPrivateKey*(self: Service, privateKey: string): GeneratedAccountDto =
+  proc createAccountFromPrivateKey*(
+      self: Service, privateKey: string
+  ): GeneratedAccountDto =
     if privateKey.len == 0:
       error "empty private key"
       return
@@ -295,20 +332,37 @@ QtObject:
       let response = status_account.createAccountFromPrivateKey(privateKey)
       return toGeneratedAccountDto(response.result)
     except Exception as e:
-      error "error: ", procName="createAccountFromPrivateKey", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "createAccountFromPrivateKey",
+        errName = e.name,
+        errDesription = e.msg
 
-  proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
+  proc createAccountFromMnemonic*(
+      self: Service, mnemonic: string, paths: seq[string]
+  ): GeneratedAccountDto =
     if mnemonic.len == 0:
       error "empty mnemonic"
       return
     try:
-      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
+      let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(
+        mnemonic, paths
+      )
       return toGeneratedAccountDto(response.result)
     except Exception as e:
-      error "error: ", procName="createAccountFromMnemonicAndDeriveAccountsForPaths", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "createAccountFromMnemonicAndDeriveAccountsForPaths",
+        errName = e.name,
+        errDesription = e.msg
 
-  proc createAccountFromMnemonic*(self: Service, mnemonic: string, includeEncryption = false, includeWhisper = false,
-    includeRoot = false, includeDefaultWallet = false, includeEip1581 = false): GeneratedAccountDto =
+  proc createAccountFromMnemonic*(
+      self: Service,
+      mnemonic: string,
+      includeEncryption = false,
+      includeWhisper = false,
+      includeRoot = false,
+      includeDefaultWallet = false,
+      includeEip1581 = false,
+  ): GeneratedAccountDto =
     var paths: seq[string]
     if includeEncryption:
       paths.add(PATH_ENCRYPTION)
@@ -322,7 +376,9 @@ QtObject:
       paths.add(PATH_EIP_1581)
     return self.createAccountFromMnemonic(mnemonic, paths)
 
-  proc fetchAddressesFromNotImportedMnemonic*(self: Service, mnemonic: string, paths: seq[string])=
+  proc fetchAddressesFromNotImportedMnemonic*(
+      self: Service, mnemonic: string, paths: seq[string]
+  ) =
     let arg = FetchAddressesFromNotImportedMnemonicArg(
       mnemonic: mnemonic,
       paths: paths,
@@ -332,7 +388,9 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc onAddressesFromNotImportedMnemonicFetched*(self: Service, jsonString: string) {.slot.} =
+  proc onAddressesFromNotImportedMnemonicFetched*(
+      self: Service, jsonString: string
+  ) {.slot.} =
     var data = DerivedAddressesFromNotImportedMnemonicArgs()
     try:
       let response = parseJson(jsonString)
@@ -340,37 +398,52 @@ QtObject:
       if data.error.len == 0:
         data.derivations = toGeneratedAccountDto(response["derivedAddresses"]).derivedAccounts.derivations
     except Exception as e:
-      error "error: ", procName="fetchAddressesFromNotImportedMnemonic", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "fetchAddressesFromNotImportedMnemonic",
+        errName = e.name,
+        errDesription = e.msg
       data.error = e.msg
     self.events.emit(SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED, data)
 
   proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
     try:
-      let response = status_account.verifyAccountPassword(account, utils.hashPassword(password), self.keyStoreDir)
-      if(response.result.contains("error")):
+      let response = status_account.verifyAccountPassword(
+        account, utils.hashPassword(password), self.keyStoreDir
+      )
+      if (response.result.contains("error")):
         let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
+        if (errMsg.len == 0):
           return true
         else:
-          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
+          error "error: ", procName = "verifyAccountPassword", errDesription = errMsg
       return false
     except Exception as e:
-      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "verifyAccountPassword", errName = e.name, errDesription = e.msg
 
-  proc verifyDatabasePassword*(self: Service, keyuid: string, hashedPassword: string): bool =
+  proc verifyDatabasePassword*(
+      self: Service, keyuid: string, hashedPassword: string
+  ): bool =
     try:
       let response = status_account.verifyDatabasePassword(keyuid, hashedPassword)
-      if(response.result.contains("error")):
+      if (response.result.contains("error")):
         let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
+        if (errMsg.len == 0):
           return true
         else:
-          error "error: ", procName="verifyDatabasePassword", errDesription = errMsg
+          error "error: ", procName = "verifyDatabasePassword", errDesription = errMsg
       return false
     except Exception as e:
-      error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, passwordHash: string, chatPrivateKey: string = "", mnemonic: string = "") =
+  proc doLogin(
+      self: Service,
+      account: AccountDto,
+      passwordHash: string,
+      chatPrivateKey: string = "",
+      mnemonic: string = "",
+  ) =
     var request = LoginAccountRequest(
       keyUid: account.keyUid,
       kdfIterations: account.kdfIterations,
@@ -380,7 +453,7 @@ QtObject:
       walletSecretsConfig: buildWalletSecrets(),
       bandwidthStatsEnabled: true,
       apiConfig: defaultApiConfig(),
-      statusProxyEnabled: true # TODO: read from settings
+      statusProxyEnabled: true, # TODO: read from settings
     )
 
     if main_constants.runtimeLogLevelSet():
@@ -389,21 +462,33 @@ QtObject:
     let response = status_account.loginAccount(request)
 
     if response.result{"error"}.getStr != "":
-      self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
+      self.events.emit(
+        SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr)
+      )
       return
 
     debug "account logged in"
     self.setLocalAccountSettingsFile()
 
-  proc login*(self: Service, account: AccountDto, hashedPassword: string, chatPrivateKey: string = "", mnemonic: string = "") =
+  proc login*(
+      self: Service,
+      account: AccountDto,
+      hashedPassword: string,
+      chatPrivateKey: string = "",
+      mnemonic: string = "",
+  ) =
     try:
       # WARNING: Is this keystore migration still needed?
-      let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
+      let keyStoreDir =
+        joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
       if not dirExists(keyStoreDir):
         os.createDir(keyStoreDir)
-        status_core.migrateKeyStoreDir($ %* {
-          "key-uid": account.keyUid
-        }, hashedPassword, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
+        status_core.migrateKeyStoreDir(
+          $ %*{"key-uid": account.keyUid},
+          hashedPassword,
+          main_constants.ROOTKEYSTOREDIR,
+          keyStoreDir,
+        )
 
       self.setKeyStoreDir(account.keyUid)
 
@@ -414,12 +499,13 @@ QtObject:
           return
 
       self.doLogin(account, hashedPassword, chatPrivateKey, mnemonic)
-
     except Exception as e:
       error "login failed", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
 
-  proc scheduleReencrpytion(self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000) =
+  proc scheduleReencrpytion(
+      self: Service, account: AccountDto, hashedPassword: string, timeout: int = 1000
+  ) =
     debug "database reencryption scheduled"
 
     # Save tmp properties so that we can login after the timer
@@ -430,7 +516,7 @@ QtObject:
       tptr: timerTask,
       vptr: cast[uint](self.vptr),
       slot: "onWaitForReencryptionTimeout",
-      timeoutInMilliseconds: timeout
+      timeoutInMilliseconds: timeout,
     )
     self.threadpool.start(arg)
 
@@ -439,7 +525,9 @@ QtObject:
 
     # Reencryption (can freeze and take up to 30 minutes)
     let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
-    discard status_privacy.changeDatabasePassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
+    discard status_privacy.changeDatabasePassword(
+      self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword
+    )
 
     # Normal login after reencryption
     self.doLogin(self.tmpAccount, self.tmpHashedPassword)
@@ -448,12 +536,12 @@ QtObject:
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
 
-  proc convertRegularProfileKeypairToKeycard*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
-    var accountDataJson = %* {
-      "key-uid": self.getLoggedInAccount().keyUid,
-      "kdfIterations": KDF_ITERATIONS
-    }
-    var settingsJson = %* { }
+  proc convertRegularProfileKeypairToKeycard*(
+      self: Service, keycardUid, currentPassword: string, newPassword: string
+  ) =
+    var accountDataJson =
+      %*{"key-uid": self.getLoggedInAccount().keyUid, "kdfIterations": KDF_ITERATIONS}
+    var settingsJson = %*{}
 
     self.addKeycardDetails(keycardUid, settingsJson, accountDataJson)
 
@@ -466,27 +554,33 @@ QtObject:
       settingsJson: settingsJson,
       keycardUid: keycardUid,
       hashedCurrentPassword: hashedCurrentPassword,
-      newPassword: newPassword
+      newPassword: newPassword,
     )
 
     DB_BLOCKED_DUE_TO_PROFILE_MIGRATION = true
     self.threadpool.start(arg)
 
-  proc onConvertRegularProfileKeypairToKeycard*(self: Service, response: string) {.slot.} =
+  proc onConvertRegularProfileKeypairToKeycard*(
+      self: Service, response: string
+  ) {.slot.} =
     var result = false
     try:
       let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
-      if(rpcResponse.result.contains("error")):
+      if (rpcResponse.result.contains("error")):
         let errMsg = rpcResponse.result["error"].getStr
-        if(errMsg.len == 0):
+        if (errMsg.len == 0):
           result = true
         else:
-          error "error: ", procName="onConvertRegularProfileKeypairToKeycard", errDesription = errMsg
+          error "error: ",
+            procName = "onConvertRegularProfileKeypairToKeycard", errDesription = errMsg
     except Exception as e:
-      error "error handilng migrated keypair response", procName="onConvertRegularProfileKeypairToKeycard", errDesription=e.msg
+      error "error handilng migrated keypair response",
+        procName = "onConvertRegularProfileKeypairToKeycard", errDesription = e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
-  proc convertKeycardProfileKeypairToRegular*(self: Service, mnemonic: string, currentPassword: string, newPassword: string) =
+  proc convertKeycardProfileKeypairToRegular*(
+      self: Service, mnemonic: string, currentPassword: string, newPassword: string
+  ) =
     let hashedNewPassword = hashPassword(newPassword)
     let arg = ConvertKeycardProfileKeypairToRegularTaskArg(
       tptr: convertKeycardProfileKeypairToRegularTask,
@@ -494,24 +588,28 @@ QtObject:
       slot: "onConvertKeycardProfileKeypairToRegular",
       mnemonic: mnemonic,
       currentPassword: currentPassword,
-      hashedNewPassword: hashedNewPassword
+      hashedNewPassword: hashedNewPassword,
     )
 
     DB_BLOCKED_DUE_TO_PROFILE_MIGRATION = true
     self.threadpool.start(arg)
 
-  proc onConvertKeycardProfileKeypairToRegular*(self: Service, response: string) {.slot.} =
+  proc onConvertKeycardProfileKeypairToRegular*(
+      self: Service, response: string
+  ) {.slot.} =
     var result = false
     try:
       let rpcResponse = Json.decode(response, RpcResponse[JsonNode])
-      if(rpcResponse.result.contains("error")):
+      if (rpcResponse.result.contains("error")):
         let errMsg = rpcResponse.result["error"].getStr
-        if(errMsg.len == 0):
+        if (errMsg.len == 0):
           result = true
         else:
-          error "failed to convert keycard account", procName="onConvertKeycardProfileKeypairToRegular", errDesription = errMsg
+          error "failed to convert keycard account",
+            procName = "onConvertKeycardProfileKeypairToRegular", errDesription = errMsg
     except Exception as e:
-      error "error handilng migrated keypair response", procName="onConvertKeycardProfileKeypairToRegular", errDesription=e.msg
+      error "error handilng migrated keypair response",
+        procName = "onConvertKeycardProfileKeypairToRegular", errDesription = e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc verifyPassword*(self: Service, password: string): bool =
@@ -520,7 +618,8 @@ QtObject:
       let response = status_account.verifyPassword(hashedPassword)
       return response.result.getBool
     except Exception as e:
-      error "error: ", procName="verifyPassword", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "verifyPassword", errName = e.name, errDesription = e.msg
     return false
 
   proc getKdfIterations*(self: Service): int =

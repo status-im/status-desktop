@@ -6,20 +6,18 @@ import web3/ethtypes as eth
 import backend/activity as backend_activity
 import app_service/common/types
 
-type
-  CollectibleRole* {.pure.} = enum
-    Uid = UserRole + 1,
-    ChainId
-    ContractAddress
-    TokenId
-    Name
-    ImageUrl
+type CollectibleRole* {.pure.} = enum
+  Uid = UserRole + 1
+  ChainId
+  ContractAddress
+  TokenId
+  Name
+  ImageUrl
 
 QtObject:
-  type
-    CollectiblesModel* = ref object of QAbstractListModel
-      items: seq[CollectibleItem]
-      hasMore: bool
+  type CollectiblesModel* = ref object of QAbstractListModel
+    items: seq[CollectibleItem]
+    hasMore: bool
 
   proc delete(self: CollectiblesModel) =
     self.items = @[]
@@ -44,7 +42,7 @@ QtObject:
   proc countChanged(self: CollectiblesModel) {.signal.}
   proc getCount*(self: CollectiblesModel): int {.slot.} =
     return self.items.len
-    
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -52,6 +50,7 @@ QtObject:
   proc hasMoreChanged*(self: CollectiblesModel) {.signal.}
   proc getHasMore*(self: CollectiblesModel): bool {.slot.} =
     self.hasMore
+
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
@@ -78,12 +77,12 @@ QtObject:
 
   method roleNames(self: CollectiblesModel): Table[int, string] =
     {
-      CollectibleRole.Uid.int:"uid",
-      CollectibleRole.ChainId.int:"chainId",
-      CollectibleRole.ContractAddress.int:"contractAddress",
-      CollectibleRole.TokenId.int:"tokenId",
-      CollectibleRole.Name.int:"name",
-      CollectibleRole.ImageUrl.int:"imageUrl",
+      CollectibleRole.Uid.int: "uid",
+      CollectibleRole.ChainId.int: "chainId",
+      CollectibleRole.ContractAddress.int: "contractAddress",
+      CollectibleRole.TokenId.int: "tokenId",
+      CollectibleRole.Name.int: "name",
+      CollectibleRole.ImageUrl.int: "imageUrl",
     }.toTable
 
   method data(self: CollectiblesModel, index: QModelIndex, role: int): QVariant =
@@ -97,7 +96,7 @@ QtObject:
 
     if index.row < self.items.len:
       let item = self.items[index.row]
-      case enumRole:
+      case enumRole
       of CollectibleRole.Uid:
         result = newQVariant(item.getId())
       of CollectibleRole.ChainId:
@@ -119,7 +118,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     # Start after the current last real item
     let startIdx = self.items.len
@@ -130,19 +130,20 @@ QtObject:
     self.items.insert(newItems, startIdx)
     self.endInsertRows()
     self.countChanged()
-  
+
   proc removeCollectibleItems(self: CollectiblesModel) =
     if self.items.len <= 0:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-  
+    defer:
+      parentModelIndex.delete
+
     # Start from the beginning
     let startIdx = 0
     # End at the last real item
     let endIdx = startIdx + self.items.len - 1
-  
+
     self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
     self.items = @[]
     self.endRemoveRows()
@@ -151,7 +152,12 @@ QtObject:
   proc getItems*(self: CollectiblesModel): seq[CollectibleItem] =
     return self.items
 
-  proc setItems*(self: CollectiblesModel, newItems: seq[CollectibleItem], offset: int, hasMore: bool) =
+  proc setItems*(
+      self: CollectiblesModel,
+      newItems: seq[CollectibleItem],
+      offset: int,
+      hasMore: bool,
+  ) =
     if offset == 0:
       self.removeCollectibleItems()
     elif offset != self.getCollectiblesCount():
@@ -163,19 +169,19 @@ QtObject:
 
   proc getImageUrl*(self: CollectiblesModel, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if (cmpIgnoreCase(item.getId(), id) == 0):
         return item.getImageUrl()
     return ""
 
   proc getName*(self: CollectiblesModel, id: string): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if (cmpIgnoreCase(item.getId(), id) == 0):
         return item.getName()
     return ""
 
   proc getActivityToken*(self: CollectiblesModel, id: string): backend_activity.Token =
     for item in self.items:
-      if(cmpIgnoreCase(item.getId(), id) == 0):
+      if (cmpIgnoreCase(item.getId(), id) == 0):
         result.tokenType = TokenType.ERC721
         result.chainId = backend_activity.ChainId(item.getChainId())
         var contract = item.getContractAddress()
@@ -187,7 +193,7 @@ QtObject:
         if tokenId > 0:
           result.tokenId = some(backend_activity.TokenId("0x" & stint.toHex(tokenId)))
         return result
-    
+
     # Fallback, use data from id
     var parts = id.split("+")
     if len(parts) == 3:
@@ -198,9 +204,14 @@ QtObject:
 
     return result
 
-  proc getUidForData*(self: CollectiblesModel, tokenId: string, tokenAddress: string, chainId: int): string {.slot.} =
+  proc getUidForData*(
+      self: CollectiblesModel, tokenId: string, tokenAddress: string, chainId: int
+  ): string {.slot.} =
     for item in self.items:
-      if(cmpIgnoreCase(item.getTokenId().toString(), tokenId) == 0 and cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0):
+      if (
+        cmpIgnoreCase(item.getTokenId().toString(), tokenId) == 0 and
+        cmpIgnoreCase(item.getContractAddress(), tokenAddress) == 0
+      ):
         return item.getId()
     # Fallback, create uid from data, because it still might not be fetched
     if chainId > 0 and len(tokenAddress) > 0 and len(tokenId) > 0:

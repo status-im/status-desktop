@@ -1,5 +1,4 @@
-type
-  ExportKeypairState* = ref object of State
+type ExportKeypairState* = ref object of State
 
 proc newExportKeypairState*(backState: State): ExportKeypairState =
   result = ExportKeypairState()
@@ -8,5 +7,7 @@ proc newExportKeypairState*(backState: State): ExportKeypairState =
 proc delete*(self: ExportKeypairState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: ExportKeypairState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: ExportKeypairState, controller: Controller
+) =
   controller.closeKeypairImportPopup()

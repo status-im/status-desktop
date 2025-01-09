@@ -1,5 +1,4 @@
-type
-  DisplaySeedPhraseState* = ref object of State
+type DisplaySeedPhraseState* = ref object of State
 
 proc newDisplaySeedPhraseState*(backState: State): DisplaySeedPhraseState =
   result = DisplaySeedPhraseState()
@@ -7,6 +6,8 @@ proc newDisplaySeedPhraseState*(backState: State): DisplaySeedPhraseState =
 
 proc delete*(self: DisplaySeedPhraseState) =
   self.State.delete
-  
-method getNextPrimaryState*(self: DisplaySeedPhraseState, controller: Controller): State =
+
+method getNextPrimaryState*(
+    self: DisplaySeedPhraseState, controller: Controller
+): State =
   return createState(StateType.EnterSeedPhraseWord1, self)

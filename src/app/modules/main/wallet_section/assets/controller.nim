@@ -4,20 +4,19 @@ import app_service/service/network/service as network_service
 import app_service/service/token/service as token_service
 import app_service/service/currency/service as currency_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    walletAccountService: wallet_account_service.Service
-    networkService: network_service.Service
-    tokenService: token_service.Service
-    currencyService: currency_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  walletAccountService: wallet_account_service.Service
+  networkService: network_service.Service
+  tokenService: token_service.Service
+  currencyService: currency_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service,
-  tokenService: token_service.Service,
-  currencyService: currency_service.Service,
+    delegate: io_interface.AccessInterface,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
+    tokenService: token_service.Service,
+    currencyService: currency_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate

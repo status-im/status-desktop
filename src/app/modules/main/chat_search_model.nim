@@ -1,17 +1,16 @@
 import NimQml, Tables
 import chat_search_item
 
-type
-  ModelRole {.pure.} = enum
-    ChatId = UserRole + 1
-    Name
-    Color
-    ColorId
-    Icon
-    ColorHash
-    SectionId
-    SectionName
-    Emoji
+type ModelRole {.pure.} = enum
+  ChatId = UserRole + 1
+  Name
+  Color
+  ColorId
+  Icon
+  ColorHash
+  SectionId
+  SectionName
+  Emoji
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -38,15 +37,15 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.ChatId.int:"chatId",
-      ModelRole.Name.int:"name",
-      ModelRole.Color.int:"color",
-      ModelRole.ColorId.int:"colorId",
-      ModelRole.Icon.int:"icon",
-      ModelRole.ColorHash.int:"colorHash",
-      ModelRole.SectionId.int:"sectionId",
-      ModelRole.SectionName.int:"sectionName",
-      ModelRole.Emoji.int:"emoji",
+      ModelRole.ChatId.int: "chatId",
+      ModelRole.Name.int: "name",
+      ModelRole.Color.int: "color",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.Icon.int: "icon",
+      ModelRole.ColorHash.int: "colorHash",
+      ModelRole.SectionId.int: "sectionId",
+      ModelRole.SectionName.int: "sectionName",
+      ModelRole.Emoji.int: "emoji",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -57,22 +56,22 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
-      of ModelRole.ChatId:
-        result = newQVariant(item.chatId)
-      of ModelRole.Name:
-        result = newQVariant(item.name)
-      of ModelRole.Color:
-        result = newQVariant(item.color)
-      of ModelRole.ColorId:
-        result = newQVariant(item.colorId)
-      of ModelRole.Icon:
-        result = newQVariant(item.icon)
-      of ModelRole.ColorHash:
-        result = newQVariant(item.colorHash)
-      of ModelRole.SectionId:
-        result = newQVariant(item.sectionId)
-      of ModelRole.SectionName:
-        result = newQVariant(item.sectionName)
-      of ModelRole.Emoji:
-        result = newQVariant(item.emoji)
+    case enumRole
+    of ModelRole.ChatId:
+      result = newQVariant(item.chatId)
+    of ModelRole.Name:
+      result = newQVariant(item.name)
+    of ModelRole.Color:
+      result = newQVariant(item.color)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)
+    of ModelRole.Icon:
+      result = newQVariant(item.icon)
+    of ModelRole.ColorHash:
+      result = newQVariant(item.colorHash)
+    of ModelRole.SectionId:
+      result = newQVariant(item.sectionId)
+    of ModelRole.SectionName:
+      result = newQVariant(item.sectionName)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)

@@ -23,28 +23,31 @@ include app_service/common/json_utils
 
 const cancelledRequest* = "cancelled"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    events: EventEmitter
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  events: EventEmitter
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.Service, ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service,
-  tokenService: token_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    ensService: ens_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
+    tokenService: token_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService,
-    networkService, tokenService)
+  result.controller = controller.newController(
+    result, events, settingsService, ensService, walletAccountService, networkService,
+    tokenService,
+  )
   result.moduleLoaded = false
   result.events = events
 
@@ -57,7 +60,8 @@ method load*(self: Module) =
   self.controller.init()
 
   let txLink = self.controller.getAppNetwork().blockExplorerUrl & EXPLORER_TX_PATH
-  let addressLink = self.controller.getAppNetwork().blockExplorerUrl & EXPLORER_ADDRESS_PATH
+  let addressLink =
+    self.controller.getAppNetwork().blockExplorerUrl & EXPLORER_ADDRESS_PATH
   self.view.load(txLink, addressLink)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
@@ -68,18 +72,15 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   # add registered ens usernames
-  let registeredEnsUsernames = self.controller.getAllMyEnsUsernames(includePendingEnsUsernames = false)
+  let registeredEnsUsernames =
+    self.controller.getAllMyEnsUsernames(includePendingEnsUsernames = false)
   for dto in registeredEnsUsernames:
-    let item = Item(chainId: dto.chainId,
-                    ensUsername: dto.username,
-                    isPending: false)
+    let item = Item(chainId: dto.chainId, ensUsername: dto.username, isPending: false)
     self.view.model().addItem(item)
   # add pending ens usernames
   let pendingEnsUsernames = self.controller.getMyPendingEnsUsernames()
   for dto in pendingEnsUsernames:
-    let item = Item(chainId: dto.chainId,
-                    ensUsername: dto.username,
-                    isPending: true)
+    let item = Item(chainId: dto.chainId, ensUsername: dto.username, isPending: true)
     self.view.model().addItem(item)
 
   self.moduleLoaded = true
@@ -88,7 +89,9 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method checkEnsUsernameAvailability*(self: Module, desiredEnsUsername: string, statusDomain: bool) =
+method checkEnsUsernameAvailability*(
+    self: Module, desiredEnsUsername: string, statusDomain: bool
+) =
   self.controller.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
 
 method ensUsernameAvailabilityChecked*(self: Module, availabilityStatus: string) =
@@ -100,9 +103,18 @@ method numOfPendingEnsUsernames*(self: Module): int =
 method fetchDetailsForEnsUsername*(self: Module, chainId: int, ensUsername: string) =
   self.controller.fetchDetailsForEnsUsername(chainId, ensUsername)
 
-method onDetailsForEnsUsername*(self: Module, chainId: int, ensUsername: string, address: string, pubkey: string, isStatus: bool,
-  expirationTime: int) =
-  self.view.processObtainedEnsUsermesDetails(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
+method onDetailsForEnsUsername*(
+    self: Module,
+    chainId: int,
+    ensUsername: string,
+    address: string,
+    pubkey: string,
+    isStatus: bool,
+    expirationTime: int,
+) =
+  self.view.processObtainedEnsUsermesDetails(
+    chainId, ensUsername, address, pubkey, isStatus, expirationTime
+  )
 
 proc onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
   if (self.controller.getPreferredEnsUsername() == ensUsername):
@@ -111,7 +123,8 @@ proc onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
 
 method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool =
   if (not self.controller.removeEnsUsername(chainId, ensUsername)):
-    info "an error occurred removing ens username", methodName="removeEnsUsername", ensUsername, chainId
+    info "an error occurred removing ens username",
+      methodName = "removeEnsUsername", ensUsername, chainId
     return false
   self.onEnsUsernameRemoved(chainId, ensUsername)
   return true
@@ -119,21 +132,32 @@ method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool
 method connectOwnedUsername*(self: Module, ensUsername: string, isStatus: bool) =
   let chainId = self.controller.getAppNetwork().chainId
   let finalEnsUsername = ens_utils.addDomain(ensUsername)
-  if(not self.controller.addEnsUsername(chainId, finalEnsUsername)):
-    info "an error occurred saving ens username", methodName="connectOwnedUsername"
+  if (not self.controller.addEnsUsername(chainId, finalEnsUsername)):
+    info "an error occurred saving ens username", methodName = "connectOwnedUsername"
     return
   self.controller.fixPreferredName()
-  self.view.model().addItem(Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: false))
+  self.view.model().addItem(
+    Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: false)
+  )
 
-method ensTransactionSent*(self: Module, trxType: string, chainId: int, ensUsername: string, txHash: string, err: string) =
+method ensTransactionSent*(
+    self: Module,
+    trxType: string,
+    chainId: int,
+    ensUsername: string,
+    txHash: string,
+    err: string,
+) =
   var finalError = err
   defer:
-    self.view.emitTransactionWasSentSignal(trxType, chainId, txHash, ensUsername, finalError)
+    self.view.emitTransactionWasSentSignal(
+      trxType, chainId, txHash, ensUsername, finalError
+    )
   if (err.len != 0):
-    error "sending ens tx failed", errMsg=err, methodName="ensTransactionSent"
+    error "sending ens tx failed", errMsg = err, methodName = "ensTransactionSent"
     return
   let finalEnsUsername = ens_utils.addDomain(ensUsername)
-  case trxType:
+  case trxType
   of $SetPubKey:
     let item = Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: true)
     self.view.model().addItem(item)
@@ -145,23 +169,33 @@ method ensTransactionSent*(self: Module, trxType: string, chainId: int, ensUsern
     self.view.model().addItem(item)
   else:
     finalError = "unknown ens action"
-    error "sending ens tx failed", errMsg=err, methodName="ensTransactionSent"
+    error "sending ens tx failed", errMsg = err, methodName = "ensTransactionSent"
 
-method ensTransactionConfirmed*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
+method ensTransactionConfirmed*(
+    self: Module, trxType: string, ensUsername: string, transactionHash: string
+) =
   let chainId = self.controller.getAppNetwork().chainId
   self.controller.fixPreferredName()
   let finalEnsUsername = ens_utils.addDomain(ensUsername)
-  if(self.view.model().containsEnsUsername(chainId, finalEnsUsername)):
+  if (self.view.model().containsEnsUsername(chainId, finalEnsUsername)):
     self.view.model().updatePendingStatus(chainId, finalEnsUsername, false)
   elif trxType != $ReleaseENS:
-    self.view.model().addItem(Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: false))
-  self.view.emitTransactionCompletedSignal(true, transactionHash, finalEnsUsername, trxType)
+    self.view.model().addItem(
+      Item(chainId: chainId, ensUsername: finalEnsUsername, isPending: false)
+    )
+  self.view.emitTransactionCompletedSignal(
+    true, transactionHash, finalEnsUsername, trxType
+  )
 
-method ensTransactionReverted*(self: Module, trxType: string, ensUsername: string, transactionHash: string) =
+method ensTransactionReverted*(
+    self: Module, trxType: string, ensUsername: string, transactionHash: string
+) =
   let chainId = self.controller.getAppNetwork().chainId
   let finalEnsUsername = ens_utils.addDomain(ensUsername)
   self.view.model().removeItemByEnsUsername(chainId, finalEnsUsername)
-  self.view.emitTransactionCompletedSignal(false, transactionHash, finalEnsUsername, trxType)
+  self.view.emitTransactionCompletedSignal(
+    false, transactionHash, finalEnsUsername, trxType
+  )
 
 method getEnsRegisteredAddress*(self: Module): string =
   return self.controller.getEnsRegisteredAddress()
@@ -172,7 +206,9 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string): string =
+method getFiatValue*(
+    self: Module, cryptoBalance: string, cryptoSymbol: string
+): string =
   var floatCryptoBalance: float = 0
   try:
     floatCryptoBalance = parseFloat(cryptoBalance)
@@ -200,11 +236,13 @@ method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string): 
   let value = fiatAmountBalance / price
   return fmt"{value}"
 
-method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
-  var gasLimitInt:int
+method getGasEthValue*(
+    self: Module, gweiValue: string, gasLimit: string
+): string {.slot.} =
+  var gasLimitInt: int
 
-  if(gasLimit.parseInt(gasLimitInt) == 0):
-    info "an error occurred parsing gas limit", methodName="getGasEthValue"
+  if (gasLimit.parseInt(gasLimitInt) == 0):
+    info "an error occurred parsing gas limit", methodName = "getGasEthValue"
     return ""
 
   # The following check prevents app crash, cause we're trying to promote

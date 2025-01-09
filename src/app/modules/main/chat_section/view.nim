@@ -8,35 +8,35 @@ import ../../../../app_service/common/types
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: chats_model.Model
-      modelVariant: QVariant
-      activeItem: ActiveItem
-      activeItemVariant: QVariant
-      tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
-      contactRequestsModel: user_model.Model
-      contactRequestsModelVariant: QVariant
-      editCategoryChannelsModel: chats_model.Model
-      editCategoryChannelsVariant: QVariant
-      loadingHistoryMessagesInProgress: bool
-      tokenPermissionsModel: TokenPermissionsModel
-      tokenPermissionsVariant: QVariant
-      allTokenRequirementsMet: bool
-      requiresTokenPermissionToJoin: bool
-      amIMember: bool
-      chatsLoaded: bool
-      communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
-      permissionsCheckOngoing: bool
-      isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
-      shardingInProgress: bool
-      allChannelsAreHiddenBecauseNotPermitted: bool
-      memberMessagesModel: member_msg_model.Model
-      memberMessagesModelVariant: QVariant
-      requestToJoinState: RequestToJoinState
-      communityMemberReevaluationStatus: int
-
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: chats_model.Model
+    modelVariant: QVariant
+    activeItem: ActiveItem
+    activeItemVariant: QVariant
+    tmpChatId: string
+      # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
+    contactRequestsModel: user_model.Model
+    contactRequestsModelVariant: QVariant
+    editCategoryChannelsModel: chats_model.Model
+    editCategoryChannelsVariant: QVariant
+    loadingHistoryMessagesInProgress: bool
+    tokenPermissionsModel: TokenPermissionsModel
+    tokenPermissionsVariant: QVariant
+    allTokenRequirementsMet: bool
+    requiresTokenPermissionToJoin: bool
+    amIMember: bool
+    chatsLoaded: bool
+    communityMetrics: string
+      # NOTE: later this should be replaced with QAbstractListModel-based model
+    permissionsCheckOngoing: bool
+    isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin: bool
+    shardingInProgress: bool
+    allChannelsAreHiddenBecauseNotPermitted: bool
+    memberMessagesModel: member_msg_model.Model
+    memberMessagesModelVariant: QVariant
+    requestToJoinState: RequestToJoinState
+    communityMemberReevaluationStatus: int
 
   proc delete*(self: View) =
     self.model.delete
@@ -105,6 +105,7 @@ QtObject:
 
   proc getChatsLoaded*(self: View): bool {.slot.} =
     return self.chatsLoaded
+
   QtProperty[bool] chatsLoaded:
     read = getChatsLoaded
     notify = chatsLoadedChanged
@@ -123,10 +124,11 @@ QtObject:
 
   proc getContactRequestsModel(self: View): QVariant {.slot.} =
     return self.contactRequestsModelVariant
+
   QtProperty[QVariant] contactRequestsModel:
     read = getContactRequestsModel
 
-  proc activeItemChanged*(self:View) {.signal.}
+  proc activeItemChanged*(self: View) {.signal.}
 
   proc getActiveItem(self: View): QVariant {.slot.} =
     return self.activeItemVariant
@@ -158,12 +160,14 @@ QtObject:
   proc getChatContentModule*(self: View): QVariant {.slot.} =
     var chatContentVariant = self.delegate.getChatContentModule(self.tmpChatId)
     self.tmpChatId = ""
-    if(chatContentVariant.isNil):
+    if (chatContentVariant.isNil):
       return newQVariant()
 
     return chatContentVariant
 
-  proc createOneToOneChat*(self: View, communityID: string, chatId: string, ensName: string) {.slot.} =
+  proc createOneToOneChat*(
+      self: View, communityID: string, chatId: string, ensName: string
+  ) {.slot.} =
     self.delegate.createOneToOneChat(communityID, chatId, ensName)
 
   proc leaveChat*(self: View, id: string) {.slot.} =
@@ -199,13 +203,17 @@ QtObject:
   proc getCurrentFleet*(self: View): string {.slot.} =
     self.delegate.getCurrentFleet()
 
-  proc acceptContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
+  proc acceptContactRequest*(
+      self: View, publicKey: string, contactRequestId: string
+  ) {.slot.} =
     self.delegate.acceptContactRequest(publicKey, contactRequestId)
 
   proc acceptAllContactRequests*(self: View) {.slot.} =
     self.delegate.acceptAllContactRequests()
 
-  proc dismissContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
+  proc dismissContactRequest*(
+      self: View, publicKey: string, contactRequestId: string
+  ) {.slot.} =
     self.delegate.dismissContactRequest(publicKey, contactRequestId)
 
   proc dismissAllContactRequests*(self: View) {.slot.} =
@@ -214,41 +222,76 @@ QtObject:
   proc blockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.blockContact(publicKey)
 
-  proc removeCommunityChat*(self: View, chatId: string) {.slot} =
+  proc removeCommunityChat*(self: View, chatId: string) {.slot.} =
     self.delegate.removeCommunityChat(chatId)
 
   proc addGroupMembers*(self: View, chatId: string, pubKeys: string) {.slot.} =
     self.delegate.addGroupMembers(chatId, pubKeys)
 
-  proc removeMemberFromGroupChat*(self: View, communityID: string, chatId: string, pubKey: string) {.slot.} =
+  proc removeMemberFromGroupChat*(
+      self: View, communityID: string, chatId: string, pubKey: string
+  ) {.slot.} =
     self.delegate.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-  proc removeMembersFromGroupChat*(self: View, communityID: string, chatId: string, pubKeys: string) {.slot.} =
+  proc removeMembersFromGroupChat*(
+      self: View, communityID: string, chatId: string, pubKeys: string
+  ) {.slot.} =
     self.delegate.removeMembersFromGroupChat(communityID, chatId, pubKeys)
 
   proc renameGroupChat*(self: View, chatId: string, newName: string) {.slot.} =
     self.delegate.renameGroupChat(chatId, newName)
 
-  proc updateGroupChatDetails(self: View, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) {.slot.} =
-    self.delegate.updateGroupChatDetails(chatId, newGroupName, newGroupColor, newGroupImage)
+  proc updateGroupChatDetails(
+      self: View,
+      chatId: string,
+      newGroupName: string,
+      newGroupColor: string,
+      newGroupImage: string,
+  ) {.slot.} =
+    self.delegate.updateGroupChatDetails(
+      chatId, newGroupName, newGroupColor, newGroupImage
+    )
 
-  proc makeAdmin*(self: View, communityID: string, chatId: string, pubKey: string) {.slot.} =
+  proc makeAdmin*(
+      self: View, communityID: string, chatId: string, pubKey: string
+  ) {.slot.} =
     self.delegate.makeAdmin(communityID, chatId, pubKey)
 
-  proc createGroupChat*(self: View, communityID: string, groupName: string, pubKeys: string) {.slot.} =
+  proc createGroupChat*(
+      self: View, communityID: string, groupName: string, pubKeys: string
+  ) {.slot.} =
     self.delegate.createGroupChat(communityID, groupName, pubKeys)
 
-  proc joinGroupChatFromInvitation*(self: View, groupName: string, chatId: string, adminPK: string) {.slot.} =
+  proc joinGroupChatFromInvitation*(
+      self: View, groupName: string, chatId: string, adminPK: string
+  ) {.slot.} =
     self.delegate.joinGroupChatFromInvitation(groupName, chatId, adminPK)
 
-  proc acceptRequestToJoinCommunity*(self: View, requestId: string, communityId: string) {.slot.} =
+  proc acceptRequestToJoinCommunity*(
+      self: View, requestId: string, communityId: string
+  ) {.slot.} =
     self.delegate.acceptRequestToJoinCommunity(requestId, communityId)
 
-  proc declineRequestToJoinCommunity*(self: View, requestId: string, communityId: string) {.slot.} =
+  proc declineRequestToJoinCommunity*(
+      self: View, requestId: string, communityId: string
+  ) {.slot.} =
     self.delegate.declineRequestToJoinCommunity(requestId, communityId)
 
-  proc openNoPermissionsToJoinPopup*(self:View, communityName: string, userName: string, communityId: string, requestId: string) {.signal.}
-  proc emitOpenNoPermissionsToJoinPopupSignal*(self: View, communityName: string, userName: string, communityId: string, requestId: string) =
+  proc openNoPermissionsToJoinPopup*(
+    self: View,
+    communityName: string,
+    userName: string,
+    communityId: string,
+    requestId: string,
+  ) {.signal.}
+
+  proc emitOpenNoPermissionsToJoinPopupSignal*(
+      self: View,
+      communityName: string,
+      userName: string,
+      communityId: string,
+      requestId: string,
+  ) =
     self.openNoPermissionsToJoinPopup(communityName, userName, communityId, requestId)
 
   proc createCommunityChannel*(
@@ -260,8 +303,11 @@ QtObject:
       categoryId: string,
       viewersCanPostReactions: bool,
       hideIfPermissionsNotMet: bool,
-      ) {.slot.} =
-    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions, hideIfPermissionsNotMet)
+  ) {.slot.} =
+    self.delegate.createCommunityChannel(
+      name, description, emoji, color, categoryId, viewersCanPostReactions,
+      hideIfPermissionsNotMet,
+    )
 
   proc editCommunityChannel*(
       self: View,
@@ -273,18 +319,11 @@ QtObject:
       categoryId: string,
       position: int,
       viewersCanPostReactions: bool,
-      hideIfPermissionsNotMet: bool
-    ) {.slot.} =
+      hideIfPermissionsNotMet: bool,
+  ) {.slot.} =
     self.delegate.editCommunityChannel(
-      channelId,
-      name,
-      description,
-      emoji,
-      color,
-      categoryId,
-      position,
-      viewersCanPostReactions,
-      hideIfPermissionsNotMet
+      channelId, name, description, emoji, color, categoryId, position,
+      viewersCanPostReactions, hideIfPermissionsNotMet,
     )
 
   proc leaveCommunity*(self: View) {.slot.} =
@@ -293,14 +332,29 @@ QtObject:
   proc removeUserFromCommunity*(self: View, pubKey: string) {.slot.} =
     self.delegate.removeUserFromCommunity(pubKey)
 
-  proc banUserFromCommunity*(self: View, pubKey: string, deleteAllMessages: bool) {.slot.} =
+  proc banUserFromCommunity*(
+      self: View, pubKey: string, deleteAllMessages: bool
+  ) {.slot.} =
     self.delegate.banUserFromCommunity(pubKey, deleteAllMessages)
 
-  proc editCommunity*(self: View, name: string, description: string, introMessage: string, outroMessage: string, access: int,
-                      color: string, tags: string, logoJsonData: string, bannerJsonData: string, historyArchiveSupportEnabled: bool,
-                      pinMessageAllMembersEnabled: bool) {.slot.} =
-    self.delegate.editCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                logoJsonData, bannerJsonData, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  proc editCommunity*(
+      self: View,
+      name: string,
+      description: string,
+      introMessage: string,
+      outroMessage: string,
+      access: int,
+      color: string,
+      tags: string,
+      logoJsonData: string,
+      bannerJsonData: string,
+      historyArchiveSupportEnabled: bool,
+      pinMessageAllMembersEnabled: bool,
+  ) {.slot.} =
+    self.delegate.editCommunity(
+      name, description, introMessage, outroMessage, access, color, tags, logoJsonData,
+      bannerJsonData, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+    )
 
   proc unbanUserFromCommunity*(self: View, pubKey: string) {.slot.} =
     self.delegate.unbanUserFromCommunity(pubKey)
@@ -311,15 +365,27 @@ QtObject:
   proc setCommunityMuted*(self: View, mutedType: int) {.slot.} =
     self.delegate.setCommunityMuted(mutedType)
 
-  proc shareCommunityToUsers*(self: View, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
+  proc shareCommunityToUsers*(
+      self: View, pubKeysJSON: string, inviteMessage: string
+  ): string {.slot.} =
     result = self.delegate.shareCommunityToUsers(pubKeysJSON, inviteMessage)
 
   proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
-    let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
+    let channelsSeq = map(
+      parseJson(channels).getElems(),
+      proc(x: JsonNode): string =
+        x.getStr(),
+    )
     self.delegate.createCommunityCategory(name, channelsSeq)
 
-  proc editCommunityCategory*(self: View, categoryId: string, name: string, channels: string) {.slot.} =
-    let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
+  proc editCommunityCategory*(
+      self: View, categoryId: string, name: string, channels: string
+  ) {.slot.} =
+    let channelsSeq = map(
+      parseJson(channels).getElems(),
+      proc(x: JsonNode): string =
+        x.getStr(),
+    )
     self.delegate.editCommunityCategory(categoryId, name, channelsSeq)
 
   proc deleteCommunityCategory*(self: View, categoryId: string) {.slot.} =
@@ -328,14 +394,20 @@ QtObject:
   proc prepareEditCategoryModel*(self: View, categoryId: string) {.slot.} =
     self.delegate.prepareEditCategoryModel(categoryId)
 
-  proc reorderCommunityCategories*(self: View, categoryId: string, categoryPosition: int) {.slot} =
+  proc reorderCommunityCategories*(
+      self: View, categoryId: string, categoryPosition: int
+  ) {.slot.} =
     self.delegate.reorderCommunityCategories(categoryId, categoryPosition)
 
-  proc toggleCollapsedCommunityCategory*(self: View, categoryId: string, collapsed: bool) {.slot} =
+  proc toggleCollapsedCommunityCategory*(
+      self: View, categoryId: string, collapsed: bool
+  ) {.slot.} =
     self.model.changeCategoryOpened(categoryId, not collapsed)
     self.delegate.toggleCollapsedCommunityCategoryAsync(categoryId, collapsed)
 
-  proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int) {.slot} =
+  proc reorderCommunityChat*(
+      self: View, categoryId: string, chatId: string, position: int
+  ) {.slot.} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
 
   proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
@@ -347,7 +419,8 @@ QtObject:
     read = getLoadingHistoryMessagesInProgress
     notify = loadingHistoryMessagesInProgressChanged
 
-  proc setLoadingHistoryMessagesInProgress*(self: View, value: bool) = # this is not a slot
+  proc setLoadingHistoryMessagesInProgress*(self: View, value: bool) =
+    # this is not a slot
     if (value == self.loadingHistoryMessagesInProgress):
       return
     self.loadingHistoryMessagesInProgress = value
@@ -359,18 +432,29 @@ QtObject:
   proc tokenPermissionsModel*(self: View): TokenPermissionsModel =
     result = self.tokenPermissionsModel
 
-  proc getTokenPermissionsModel(self: View): QVariant{.slot.} =
+  proc getTokenPermissionsModel(self: View): QVariant {.slot.} =
     return self.tokenPermissionsVariant
 
   QtProperty[QVariant] permissionsModel:
     read = getTokenPermissionsModel
 
-  proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: string, isPrivate: bool) {.slot.} =
-
+  proc createOrEditCommunityTokenPermission*(
+      self: View,
+      communityId: string,
+      permissionId: string,
+      permissionType: int,
+      tokenCriteriaJson: string,
+      channelIDs: string,
+      isPrivate: bool,
+  ) {.slot.} =
     let chatIDs = channelIDs.split(',')
-    self.delegate.createOrEditCommunityTokenPermission(communityId, permissionId, permissionType, tokenCriteriaJson, chatIDs, isPrivate)
+    self.delegate.createOrEditCommunityTokenPermission(
+      communityId, permissionId, permissionType, tokenCriteriaJson, chatIDs, isPrivate
+    )
 
-  proc deleteCommunityTokenPermission*(self: View, communityId: string, permissionId: string) {.slot.} =
+  proc deleteCommunityTokenPermission*(
+      self: View, communityId: string, permissionId: string
+  ) {.slot.} =
     self.delegate.deleteCommunityTokenPermission(communityId, permissionId)
 
   proc requiresTokenPermissionToJoinChanged*(self: View) {.signal.}
@@ -431,7 +515,9 @@ QtObject:
     self.communityMetrics = communityMetrics
     self.overviewChartDataChanged()
 
-  proc collectCommunityMetricsMessagesTimestamps*(self: View, intervals: string) {.slot.} =
+  proc collectCommunityMetricsMessagesTimestamps*(
+      self: View, intervals: string
+  ) {.slot.} =
     self.delegate.collectCommunityMetricsMessagesTimestamps(intervals)
 
   proc collectCommunityMetricsMessagesCount*(self: View, intervals: string) {.slot.} =
@@ -452,10 +538,14 @@ QtObject:
     self.permissionsCheckOngoing = value
     self.permissionsCheckOngoingChanged()
 
-  proc getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View): bool {.slot.} =
+  proc getWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(
+      self: View
+  ): bool {.slot.} =
     return self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin
 
-  proc isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged*(self: View) {.signal.}
+  proc isWaitingOnNewCommunityOwnerToConfirmRequestToRejoinChanged*(
+    self: View
+  ) {.signal.}
 
   proc setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin*(self: View, value: bool) =
     if (value == self.isWaitingOnNewCommunityOwnerToConfirmRequestToRejoin):
@@ -501,6 +591,7 @@ QtObject:
       return
     self.allChannelsAreHiddenBecauseNotPermitted = allAreHidden
     self.allChannelsAreHiddenBecauseNotPermittedChanged()
+
   proc getMemberMessagesModel*(self: View): member_msg_model.Model =
     return self.memberMessagesModel
 
@@ -510,13 +601,19 @@ QtObject:
   QtProperty[QVariant] memberMessagesModel:
     read = getMemberMessagesModelVariant
 
-  proc loadCommunityMemberMessages*(self: View, communityId: string, memberPubKey: string) {.slot.} =
+  proc loadCommunityMemberMessages*(
+      self: View, communityId: string, memberPubKey: string
+  ) {.slot.} =
     self.delegate.loadCommunityMemberMessages(communityId, memberPubKey)
 
-  proc deleteCommunityMemberMessages*(self: View, memberPubKey: string, messageId: string, chatId: string) {.slot.} =
+  proc deleteCommunityMemberMessages*(
+      self: View, memberPubKey: string, messageId: string, chatId: string
+  ) {.slot.} =
     self.delegate.deleteCommunityMemberMessages(memberPubKey, messageId, chatId)
 
-  proc openCommunityChatAndScrollToMessage*(self: View, chatId: string, messageId: string) {.slot.} =
+  proc openCommunityChatAndScrollToMessage*(
+      self: View, chatId: string, messageId: string
+  ) {.slot.} =
     self.delegate.openCommunityChatAndScrollToMessage(chatId, messageId)
 
   proc requestToJoinStateChanged*(self: View) {.signal.}

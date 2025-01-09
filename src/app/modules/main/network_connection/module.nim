@@ -4,22 +4,23 @@ import io_interface, view, controller
 import ../io_interface as delegate_interface
 import ../../../global/global_singleton
 import ../../../core/eventemitter
-import ../../../../app_service/service/network_connection/service as network_connection_service
+import
+  ../../../../app_service/service/network_connection/service as
+    network_connection_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  networkConnectionService: network_connection_service.Service,
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    networkConnectionService: network_connection_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -28,7 +29,9 @@ proc newModule*(
   result.controller = controller.newController(result, events, networkConnectionService)
   result.moduleLoaded = false
 
-  singletonInstance.engine.setRootContextProperty("networkConnectionModule", result.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "networkConnectionModule", result.viewVariant
+  )
 
 method delete*(self: Module) =
   self.view.delete
@@ -49,8 +52,17 @@ proc checkIfModuleDidLoad(self: Module) =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method networkConnectionStatusUpdate*(self: Module, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) =
-  self.view.updateNetworkConnectionStatus(website, completelyDown, connectionState, chainIds, lastCheckedAt)
+method networkConnectionStatusUpdate*(
+    self: Module,
+    website: string,
+    completelyDown: bool,
+    connectionState: int,
+    chainIds: string,
+    lastCheckedAt: int,
+) =
+  self.view.updateNetworkConnectionStatus(
+    website, completelyDown, connectionState, chainIds, lastCheckedAt
+  )
 
 method refreshBlockchainValues*(self: Module) =
   self.controller.refreshBlockchainValues()

@@ -1,5 +1,4 @@
-type
-  ImportSeedPhraseState* = ref object of State
+type ImportSeedPhraseState* = ref object of State
 
 proc newImportSeedPhraseState*(backState: State): ImportSeedPhraseState =
   result = ImportSeedPhraseState()
@@ -8,5 +7,7 @@ proc newImportSeedPhraseState*(backState: State): ImportSeedPhraseState =
 proc delete*(self: ImportSeedPhraseState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: ImportSeedPhraseState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: ImportSeedPhraseState, controller: Controller
+) =
   controller.authenticateLoggedInUser()

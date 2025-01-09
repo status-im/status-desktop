@@ -2,23 +2,21 @@ import NimQml, Tables, strutils
 
 import login_account_item
 
-type
-  ModelRole {.pure.} = enum
-    Order = UserRole + 1
-    Name
-    Icon
-    ThumbnailImage
-    LargeImage
-    KeyUid
-    ColorHash
-    ColorId
-    KeycardPairing
-    KeycardCreatedAccount
+type ModelRole {.pure.} = enum
+  Order = UserRole + 1
+  Name
+  Icon
+  ThumbnailImage
+  LargeImage
+  KeyUid
+  ColorHash
+  ColorId
+  KeycardPairing
+  KeycardCreatedAccount
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -34,7 +32,8 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
-  QtProperty[int]count:
+
+  QtProperty[int] count:
     read = getCount
     notify = countChanged
 
@@ -43,16 +42,16 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Order.int:"order",
-      ModelRole.Name.int:"username",
-      ModelRole.Icon.int:"icon",
-      ModelRole.ThumbnailImage.int:"thumbnailImage",
-      ModelRole.LargeImage.int:"largeImage",
-      ModelRole.KeyUid.int:"keyUid",
-      ModelRole.ColorHash.int:"colorHash",
-      ModelRole.ColorId.int:"colorId",
-      ModelRole.KeycardPairing.int:"keycardPairing",
-      ModelRole.KeycardCreatedAccount.int:"keycardCreatedAccount"
+      ModelRole.Order.int: "order",
+      ModelRole.Name.int: "username",
+      ModelRole.Icon.int: "icon",
+      ModelRole.ThumbnailImage.int: "thumbnailImage",
+      ModelRole.LargeImage.int: "largeImage",
+      ModelRole.KeyUid.int: "keyUid",
+      ModelRole.ColorHash.int: "colorHash",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.KeycardPairing.int: "keycardPairing",
+      ModelRole.KeycardCreatedAccount.int: "keycardCreatedAccount",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -65,7 +64,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Order:
       result = newQVariant(item.getOrder())
     of ModelRole.Name:
@@ -94,7 +93,7 @@ QtObject:
     self.countChanged()
 
   proc getItemAtIndex*(self: Model, index: int): Item =
-    if(index < 0 or index >= self.items.len):
+    if (index < 0 or index >= self.items.len):
       return
 
     return self.items[index]

@@ -1,7 +1,8 @@
-type
-  KeycardFlowStartedState* = ref object of State
+type KeycardFlowStartedState* = ref object of State
 
-proc newKeycardFlowStartedState*(flowType: FlowType, backState: State): KeycardFlowStartedState =
+proc newKeycardFlowStartedState*(
+    flowType: FlowType, backState: State
+): KeycardFlowStartedState =
   result = KeycardFlowStartedState()
   result.setup(flowType, StateType.KeycardFlowStarted, backState)
 

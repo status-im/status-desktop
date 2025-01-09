@@ -1,9 +1,8 @@
 import stew/shims/strformat
 
-type
-  Item* = ref object
-    segmentLength: int
-    colorId: int
+type Item* = ref object
+  segmentLength: int
+  colorId: int
 
 proc initItem*(segmentLength: int, colorId: int): Item =
   result = Item()
@@ -11,7 +10,8 @@ proc initItem*(segmentLength: int, colorId: int): Item =
   result.colorId = colorId
 
 proc `$`*(self: Item): string =
-  result = fmt"""ColorHashItem(
+  result =
+    fmt"""ColorHashItem(
     segmentLength: {$self.segmentLength},
     colorId: {$self.colorId},
     ]"""

@@ -4,7 +4,6 @@ import status_community_link_preview
 import status_community_channel_link_preview
 include ../../../common/json_utils
 
-
 type StatusLinkPreview* = ref object
   url*: string
   contact*: StatusContactLinkPreview
@@ -28,9 +27,7 @@ proc toStatusLinkPreview*(jsonObj: JsonNode): StatusLinkPreview =
     result.channel = toStatusCommunityChannelLinkPreview(contact)
 
 proc `%`*(self: StatusLinkPreview): JsonNode =
-  var obj = %*{
-    "url": self.url
-  }
+  var obj = %*{"url": self.url}
   if self.contact != nil:
     obj["contact"] = %*self.contact
   if self.community != nil:

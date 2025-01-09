@@ -1,8 +1,8 @@
-  proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
-    if self.watchOnlyAccounts.hasKey(account.address):
-      error "trying to store an already existing watch only account"
-      return
-    self.watchOnlyAccounts[account.address] = account
+proc storeWatchOnlyAccount(self: Service, account: WalletAccountDto) =
+  if self.watchOnlyAccounts.hasKey(account.address):
+    error "trying to store an already existing watch only account"
+    return
+  self.watchOnlyAccounts[account.address] = account
 
 proc storeKeypair(self: Service, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:
@@ -42,7 +42,9 @@ proc storeAccountToKeypair(self: Service, account: WalletAccountDto) =
   if account.keyUid.len == 0:
     error "trying to store a keypair related account with empty keyUid"
     return
-  if self.keypairs[account.keyUid].accounts.filter(acc => cmpIgnoreCase(acc.address, account.address) == 0).len != 0:
+  if self.keypairs[account.keyUid].accounts.filter(
+    acc => cmpIgnoreCase(acc.address, account.address) == 0
+  ).len != 0:
     error "trying to store an already existing keytpair related account"
     return
   self.keypairs[account.keyUid].accounts.add(account)
@@ -78,14 +80,18 @@ proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     if accounts.len == 1:
       return accounts[0]
 
-proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletAccountDto] =
+proc getAccountsByAddresses*(
+    self: Service, addresses: seq[string]
+): seq[WalletAccountDto] =
   for address in addresses:
     let acc = self.getAccountByAddress(address)
     if acc.isNil:
       continue
     result.add(acc)
 
-proc getWalletAccounts*(self: Service, excludeWatchOnly: bool = false): seq[WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Service, excludeWatchOnly: bool = false
+): seq[WalletAccountDto] =
   for _, kp in self.keypairs:
     if kp.keypairType == KeypairTypeProfile:
       for acc in kp.accounts:
@@ -99,7 +105,8 @@ proc getWalletAccounts*(self: Service, excludeWatchOnly: bool = false): seq[Wall
   result.sort(walletAccountsCmp)
 
 proc getWalletAddresses*(self: Service): seq[string] =
-  return self.getWalletAccounts().filter(a => not a.hideFromTotalBalance).map(a => a.address)
+  return
+    self.getWalletAccounts().filter(a => not a.hideFromTotalBalance).map(a => a.address)
 
 proc updateAssetsLoadingState(self: Service, address: string, loading: bool) =
   var acc = self.getAccountByAddress(address)
@@ -118,6 +125,7 @@ proc getIndex*(self: Service, address: string): int =
   for i in 0 ..< accounts.len:
     if cmpIgnoreCase(accounts[i].address, address) == 0:
       return i
+
 # The same for `getWalletAccount`, both of them need to be removed. Parts of the app which are using them
 # need refactor for sure.
 proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
@@ -125,10 +133,11 @@ proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
   if accountIndex < 0 or accountIndex >= accounts.len:
     return
   return accounts[accountIndex]
+
 #################################################
 
 proc startWallet(self: Service) =
-  if(not main_constants.WALLET_ENABLED):
+  if (not main_constants.WALLET_ENABLED):
     return
   discard backend.startWallet()
 
@@ -168,15 +177,15 @@ proc init*(self: Service) =
       self.updateAccountsPositions()
       self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
-  self.events.on(SignalType.Wallet.event) do(e:Args):
+  self.events.on(SignalType.Wallet.event) do(e: Args):
     var data = WalletSignal(e)
-    case data.eventType:
-      of "wallet-tick-reload":
-        let addresses = self.getWalletAddresses()
-        self.buildAllTokens(addresses, store = true)
-        self.checkRecentHistory(addresses)
+    case data.eventType
+    of "wallet-tick-reload":
+      let addresses = self.getWalletAddresses()
+      self.buildAllTokens(addresses, store = true)
+      self.checkRecentHistory(addresses)
 
-  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e: Args):
     self.buildAllTokens(self.getWalletAddresses(), store = true)
 
   self.events.on(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS) do(e: Args):
@@ -232,7 +241,9 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: accDb))
 
-proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify: bool = true) =
+proc removeAccountFromLocalStoreAndNotify(
+    self: Service, address: string, notify: bool = true
+) =
   var acc = self.getAccountByAddress(address)
   if acc.isNil:
     return
@@ -245,7 +256,7 @@ proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify
         index = i
         break
     if index == -1:
-      error "cannot find account with the address to remove", address=address
+      error "cannot find account with the address to remove", address = address
       return
     self.keypairs[acc.keyUid].accounts.del(index)
     if self.keypairs[acc.keyUid].accounts.len == 0:
@@ -253,7 +264,9 @@ proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify
   if notify:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: acc))
 
-proc updateKeypairOperabilityInLocalStoreAndNotify*(self: Service, importedKeyUids: seq[string]) =
+proc updateKeypairOperabilityInLocalStoreAndNotify*(
+    self: Service, importedKeyUids: seq[string]
+) =
   var updatedKeypairs: seq[KeypairDto]
   let localKeypairs = self.getKeypairs()
   for keyUid in importedKeyUids:
@@ -263,7 +276,8 @@ proc updateKeypairOperabilityInLocalStoreAndNotify*(self: Service, importedKeyUi
         foundKp = kp
         break
     if foundKp.isNil:
-      error "there is no known keypair", keyUid=keyUid, procName="updateKeypairOperabilityInLocalStoreAndNotify"
+      error "there is no known keypair",
+        keyUid = keyUid, procName = "updateKeypairOperabilityInLocalStoreAndNotify"
       return
     for acc in foundKp.accounts:
       acc.operable = AccountFullyOperable
@@ -280,13 +294,20 @@ proc updateAccountsPositions(self: Service) =
       continue
     localAcc.position = dbAcc.position
 
-proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, ensName: string = "",
-  operable: string = "", positionUpdated: Option[bool] = none(bool), notify: bool = true) =
+proc updateAccountInLocalStoreAndNotify(
+    self: Service,
+    address, name, colorId, emoji: string,
+    ensName: string = "",
+    operable: string = "",
+    positionUpdated: Option[bool] = none(bool),
+    notify: bool = true,
+) =
   if address.len > 0:
     var account = self.getAccountByAddress(address)
     if account.isNil:
       return
-    if name.len > 0 or colorId.len > 0 or emoji.len > 0 or operable.len > 0 or ensName.len > 0:
+    if name.len > 0 or colorId.len > 0 or emoji.len > 0 or operable.len > 0 or
+        ensName.len > 0:
       if name.len > 0 and name != account.name:
         account.name = name
       if colorId.len > 0 and colorId != account.colorId:
@@ -295,9 +316,11 @@ proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, e
         account.emoji = emoji
       if ensName.len > 0 and ensName != account.ens:
         account.ens = ensName
-      if operable.len > 0 and operable != account.operable and
-        (operable == AccountNonOperable or operable == AccountPartiallyOperable or operable == AccountFullyOperable):
-          account.operable = operable
+      if operable.len > 0 and operable != account.operable and (
+        operable == AccountNonOperable or operable == AccountPartiallyOperable or
+        operable == AccountFullyOperable
+      ):
+        account.operable = operable
       if notify:
         self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
   else:
@@ -310,31 +333,49 @@ proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, e
       self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
 ## if password is not provided local keystore file won't be created
-proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
-  keyUid, accountType, colorId, emoji: string, hideFromTotalBalance: bool): string =
+proc addWalletAccount*(
+    self: Service,
+    password: string,
+    doPasswordHashing: bool,
+    name, address, path, publicKey, keyUid, accountType, colorId, emoji: string,
+    hideFromTotalBalance: bool,
+): string =
   try:
     var response: RpcResponse[JsonNode]
     if password.len == 0:
-      response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, address, path, publicKey, keyUid,
-        accountType, colorId, emoji, hideFromTotalBalance)
+      response = status_go_accounts.addAccountWithoutKeystoreFileCreation(
+        name, address, path, publicKey, keyUid, accountType, colorId, emoji,
+        hideFromTotalBalance,
+      )
     else:
       var finalPassword = password
       if doPasswordHashing:
         finalPassword = utils.hashPassword(password)
-      response = status_go_accounts.addAccount(finalPassword, name, address, path, publicKey, keyUid, accountType,
-        colorId, emoji, hideFromTotalBalance)
+      response = status_go_accounts.addAccount(
+        finalPassword, name, address, path, publicKey, keyUid, accountType, colorId,
+        emoji, hideFromTotalBalance,
+      )
     if not response.error.isNil:
-      error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "addWalletAccount",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
     self.addNewKeypairsAccountsToLocalStoreAndNotify()
     return ""
   except Exception as e:
-    error "error: ", procName="addWalletAccount", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "addWalletAccount", errName = e.name, errDesription = e.msg
     return e.msg
 
 ## Mandatory fields for account: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
-proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool,
-  keyUid, keypairName, rootWalletMasterKey: string, account: WalletAccountDto): string =
+proc addNewPrivateKeyKeypair*(
+    self: Service,
+    privateKey, password: string,
+    doPasswordHashing: bool,
+    keyUid, keypairName, rootWalletMasterKey: string,
+    account: WalletAccountDto,
+): string =
   if password.len == 0:
     let err = "for adding new private key account, password must be provided"
     error "error", err
@@ -345,40 +386,69 @@ proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPas
   try:
     var response = status_go_accounts.importPrivateKey(privateKey, finalPassword)
     if not response.error.isNil:
-      error "status-go error importing private key", procName="addNewPrivateKeyKeypair", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error importing private key",
+        procName = "addNewPrivateKeyKeypair",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
-    response = status_go_accounts.addKeypair(finalPassword, keyUid, keypairName, KeypairTypeKey, rootWalletMasterKey, @[account])
+    response = status_go_accounts.addKeypair(
+      finalPassword,
+      keyUid,
+      keypairName,
+      KeypairTypeKey,
+      rootWalletMasterKey,
+      @[account],
+    )
     if not response.error.isNil:
-      error "status-go error adding keypair", procName="addNewPrivateKeyKeypair", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error adding keypair",
+        procName = "addNewPrivateKeyKeypair",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
     self.addNewKeypairsAccountsToLocalStoreAndNotify()
     return ""
   except Exception as e:
-    error "error: ", procName="addNewPrivateKeyKeypair", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "addNewPrivateKeyKeypair", errName = e.name, errDesription = e.msg
     return e.msg
 
-proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, password: string, doPasswordHashing: bool): string =
+proc makePrivateKeyKeypairFullyOperable*(
+    self: Service, keyUid, privateKey, password: string, doPasswordHashing: bool
+): string =
   if password.len == 0:
-    let err = "for making a private key keypair fully operable, password must be provided"
+    let err =
+      "for making a private key keypair fully operable, password must be provided"
     error "error", err
     return err
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   try:
-    var response = status_go_accounts.makePrivateKeyKeypairFullyOperable(privateKey, finalPassword)
+    var response =
+      status_go_accounts.makePrivateKeyKeypairFullyOperable(privateKey, finalPassword)
     if not response.error.isNil:
-      error "status-go error", procName="makePrivateKeyKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "makePrivateKeyKeypairFullyOperable",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
     self.updateKeypairOperabilityInLocalStoreAndNotify(@[keyUid])
     return ""
   except Exception as e:
-    error "error: ", procName="makePrivateKeyKeypairFullyOperable", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "makePrivateKeyKeypairFullyOperable",
+      errName = e.name,
+      errDesription = e.msg
     return e.msg
 
 ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
-proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
-  keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
+proc addNewSeedPhraseKeypair*(
+    self: Service,
+    seedPhrase, password: string,
+    doPasswordHashing: bool,
+    keyUid, keypairName, rootWalletMasterKey: string,
+    accounts: seq[WalletAccountDto],
+): string =
   var finalPassword = password
   if password.len > 0 and doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -386,39 +456,60 @@ proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPas
     if seedPhrase.len > 0 and password.len > 0:
       let response = status_go_accounts.importMnemonic(seedPhrase, finalPassword)
       if not response.error.isNil:
-        error "status-go error importing private key", procName="addNewSeedPhraseKeypair", errCode=response.error.code, errDesription=response.error.message
+        error "status-go error importing private key",
+          procName = "addNewSeedPhraseKeypair",
+          errCode = response.error.code,
+          errDesription = response.error.message
         return response.error.message
-    let response = status_go_accounts.addKeypair(finalPassword, keyUid, keypairName, KeypairTypeSeed, rootWalletMasterKey, accounts)
+    let response = status_go_accounts.addKeypair(
+      finalPassword, keyUid, keypairName, KeypairTypeSeed, rootWalletMasterKey, accounts
+    )
     if not response.error.isNil:
-      error "status-go error adding keypair", procName="addNewSeedPhraseKeypair", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error adding keypair",
+        procName = "addNewSeedPhraseKeypair",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
     for i in 0 ..< accounts.len:
       self.addNewKeypairsAccountsToLocalStoreAndNotify()
     return ""
   except Exception as e:
-    error "error: ", procName="addNewSeedPhraseKeypair", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "addNewSeedPhraseKeypair", errName = e.name, errDesription = e.msg
     return e.msg
 
-proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =
+proc makeSeedPhraseKeypairFullyOperable*(
+    self: Service, keyUid, mnemonic, password: string, doPasswordHashing: bool
+): string =
   if password.len == 0:
-    let err = "for making a private key keypair fully operable, password must be provided"
+    let err =
+      "for making a private key keypair fully operable, password must be provided"
     error "error", err
     return err
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   try:
-    var response = status_go_accounts.makeSeedPhraseKeypairFullyOperable(mnemonic, finalPassword)
+    var response =
+      status_go_accounts.makeSeedPhraseKeypairFullyOperable(mnemonic, finalPassword)
     if not response.error.isNil:
-      error "status-go error", procName="makeSeedPhraseKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "makeSeedPhraseKeypairFullyOperable",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return response.error.message
     self.updateKeypairOperabilityInLocalStoreAndNotify(@[keyUid])
     return ""
   except Exception as e:
-    error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "makeSeedPhraseKeypairFullyOperable",
+      errName = e.name,
+      errDesription = e.msg
     return e.msg
 
-proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, doPasswordHashing: bool) =
+proc makePartiallyOperableAccoutsFullyOperable(
+    self: Service, password: string, doPasswordHashing: bool
+) =
   if password.len == 0:
     error "for making partially operable accounts a fully operable, password must be provided"
     return
@@ -426,21 +517,34 @@ proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, 
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
   try:
-    var response = status_go_accounts.makePartiallyOperableAccoutsFullyOperable(finalPassword)
+    var response =
+      status_go_accounts.makePartiallyOperableAccoutsFullyOperable(finalPassword)
     if not response.error.isNil:
-      error "status-go error", procName="makePartiallyOperableAccoutsFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "makePartiallyOperableAccoutsFullyOperable",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return
     let affectedAccounts = map(response.result.getElems(), x => x.getStr())
     for acc in affectedAccounts:
-      self.updateAccountInLocalStoreAndNotify(acc, name = "", colorId = "", emoji = "", ensName = "", operable = AccountFullyOperable)
+      self.updateAccountInLocalStoreAndNotify(
+        acc,
+        name = "",
+        colorId = "",
+        emoji = "",
+        ensName = "",
+        operable = AccountFullyOperable,
+      )
   except Exception as e:
-    error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "makeSeedPhraseKeypairFullyOperable",
+      errName = e.name,
+      errDesription = e.msg
 
-proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {.slot.} =
-  var data = KeycardArgs(
-    success: false,
-    keycard: KeycardDto()
-  )
+proc onNonProfileKeycardKeypairMigratedToApp*(
+    self: Service, response: string
+) {.slot.} =
+  var data = KeycardArgs(success: false, keycard: KeycardDto())
   try:
     let responseObj = response.parseJson
     discard responseObj.getProp("success", data.success)
@@ -451,10 +555,12 @@ proc onNonProfileKeycardKeypairMigratedToApp*(self: Service, response: string) {
     else:
       kp.keycards = @[]
   except Exception as e:
-    error "error handling migrated keycard response", errDesription=e.msg
+    error "error handling migrated keycard response", errDesription = e.msg
   self.events.emit(SIGNAL_ALL_KEYCARDS_DELETED, data)
 
-proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
+proc migrateNonProfileKeycardKeypairToAppAsync*(
+    self: Service, keyUid, seedPhrase, password: string, doPasswordHashing: bool
+) =
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -464,7 +570,7 @@ proc migrateNonProfileKeycardKeypairToAppAsync*(self: Service, keyUid, seedPhras
     slot: "onNonProfileKeycardKeypairMigratedToApp",
     keyUid: keyUid,
     seedPhrase: seedPhrase,
-    password: finalPassword
+    password: finalPassword,
   )
   self.threadpool.start(arg)
 
@@ -477,17 +583,21 @@ proc onENSNamesFetched*(self: Service, response: string) {.slot.} =
       let ensName = name.getStr
       if ensName.len == 0:
         continue
-      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", ensName)
+      self.updateAccountInLocalStoreAndNotify(
+        address, name = "", colorId = "", emoji = "", ensName
+      )
   except Exception as e:
-    error "error getting ENS names for accounts", errDesription=e.msg
+    error "error getting ENS names for accounts", errDesription = e.msg
 
-proc fetchENSNamesForAddressesAsync(self: Service, addresses: seq[string], chainId: int) =
+proc fetchENSNamesForAddressesAsync(
+    self: Service, addresses: seq[string], chainId: int
+) =
   let arg = FetchENSNamesForAddressesTaskArg(
     tptr: fetchENSNamesForAddressesTask,
     vptr: cast[uint](self.vptr),
     slot: "onENSNamesFetched",
     addresses: addresses,
-    chainId: chainId
+    chainId: chainId,
   )
   self.threadpool.start(arg)
 
@@ -495,32 +605,42 @@ proc getRandomMnemonic*(self: Service): string =
   try:
     let response = status_go_accounts.getRandomMnemonic()
     if not response.error.isNil:
-      error "status-go error", procName="getRandomMnemonic", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "getRandomMnemonic",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return ""
     return response.result.getStr
   except Exception as e:
-    error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "getRandomMnemonic", errName = e.name, errDesription = e.msg
     return ""
 
 proc deleteAccount*(self: Service, address: string) =
   try:
     let response = status_go_accounts.deleteAccount(address)
     if not response.error.isNil:
-      error "status-go error", procName="deleteAccount", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "deleteAccount",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return
     self.removeAccountFromLocalStoreAndNotify(address)
   except Exception as e:
-    error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg
+    error "error: ", procName = "deleteAccount", errName = e.name, errDesription = e.msg
 
 proc deleteKeypair*(self: Service, keyUid: string) =
   try:
     let kp = self.getKeypairByKeyUid(keyUid)
     if kp.isNil:
-      error "there is no known keypair", keyUid=keyUid, procName="deleteKeypair"
+      error "there is no known keypair", keyUid = keyUid, procName = "deleteKeypair"
       return
     let response = status_go_accounts.deleteKeypair(keyUid)
     if not response.error.isNil:
-      error "status-go error", procName="deleteKeypair", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "deleteKeypair",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return
     self.updateAccountsPositions()
     let addresses = kp.accounts.map(a => a.address)
@@ -528,7 +648,7 @@ proc deleteKeypair*(self: Service, keyUid: string) =
       self.removeAccountFromLocalStoreAndNotify(address)
     self.events.emit(SIGNAL_KEYPAIR_DELETED, KeypairArgs(keyPairName: kp.name))
   except Exception as e:
-    error "error: ", procName="deleteKeypair", errName = e.name, errDesription = e.msg
+    error "error: ", procName = "deleteKeypair", errName = e.name, errDesription = e.msg
 
 proc updateCurrency*(self: Service, newCurrency: string) =
   discard self.settingsService.saveCurrency(newCurrency)
@@ -544,40 +664,64 @@ proc toggleTestNetworksEnabled*(self: Service) =
   self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
-proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =
+proc updateWalletAccount*(
+    self: Service, address: string, accountName: string, colorId: string, emoji: string
+): bool =
   try:
     var account = self.getAccountByAddress(address)
     if account.isNil:
-      error "account's address is not among known addresses: ", address=address, procName="updateWalletAccount"
+      error "account's address is not among known addresses: ",
+        address = address, procName = "updateWalletAccount"
       return false
-    let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.hideFromTotalBalance)
+    let response = status_go_accounts.updateAccount(
+      accountName, account.address, account.path, account.publicKey, account.keyUid,
+      account.walletType, colorId, emoji, account.isWallet, account.isChat,
+      account.hideFromTotalBalance,
+    )
     if not response.error.isNil:
-      error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "updateWalletAccount",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return false
     self.updateAccountInLocalStoreAndNotify(address, accountName, colorId, emoji)
     return true
   except Exception as e:
-    error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "updateWalletAccount", errName = e.name, errDesription = e.msg
   return false
 
-proc updateWatchAccountHiddenFromTotalBalance*(self: Service, address: string, hideFromTotalBalance: bool): bool =
+proc updateWatchAccountHiddenFromTotalBalance*(
+    self: Service, address: string, hideFromTotalBalance: bool
+): bool =
   try:
     var account = self.getAccountByAddress(address)
     if account.isNil:
-      error "account's address is not among known addresses: ", address=address, procName="updateWatchAccountHiddenFromTotalBalance"
+      error "account's address is not among known addresses: ",
+        address = address, procName = "updateWatchAccountHiddenFromTotalBalance"
       return false
-    let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
-      account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, hideFromTotalBalance)
+    let response = status_go_accounts.updateAccount(
+      account.name, account.address, account.path, account.publicKey, account.keyUid,
+      account.walletType, account.colorId, account.emoji, account.isWallet,
+      account.isChat, hideFromTotalBalance,
+    )
     if not response.error.isNil:
-      error "status-go error", procName="updateWatchAccountHiddenFromTotalBalance", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "updateWatchAccountHiddenFromTotalBalance",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return false
     if hideFromTotalBalance != account.hideFromTotalBalance:
       account.hideFromTotalBalance = hideFromTotalBalance
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED, AccountArgs(account: account))
+    self.events.emit(
+      SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED, AccountArgs(account: account)
+    )
     return true
   except Exception as e:
-    error "error: ", procName="updateWatchAccountHiddenFromTotalBalance", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "updateWatchAccountHiddenFromTotalBalance",
+      errName = e.name,
+      errDesription = e.msg
   return false
 
 proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
@@ -585,37 +729,59 @@ proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
   try:
     let response = backend.moveWalletAccount(fromPosition, toPosition)
     if not response.error.isNil:
-      error "status-go error", procName="moveAccountFinally", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "moveAccountFinally",
+        errCode = response.error.code,
+        errDesription = response.error.message
     updated = true
   except Exception as e:
-    error "error: ", procName="moveAccountFinally", errName=e.name, errDesription=e.msg
-  self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", ensName = "", operable = "", some(updated))
+    error "error: ",
+      procName = "moveAccountFinally", errName = e.name, errDesription = e.msg
+  self.updateAccountInLocalStoreAndNotify(
+    address = "",
+    name = "",
+    colorId = "",
+    emoji = "",
+    ensName = "",
+    operable = "",
+    some(updated),
+  )
 
 proc updateKeypairName*(self: Service, keyUid: string, name: string) =
   try:
     let kp = self.getKeypairByKeyUid(keyUid)
     if kp.isNil:
-      error "there is no known keypair", keyUid=keyUid, procName="updateKeypairName"
+      error "there is no known keypair", keyUid = keyUid, procName = "updateKeypairName"
       return
     let response = backend.updateKeypairName(keyUid, name)
     if not response.error.isNil:
-      error "status-go error", procName="updateKeypairName", errCode=response.error.code, errDesription=response.error.message
+      error "status-go error",
+        procName = "updateKeypairName",
+        errCode = response.error.code,
+        errDesription = response.error.message
       return
     var data = KeypairArgs(
-      keypair: KeypairDto(
-        keyUid: keyUid,
-        name: name
-        ),
-      oldKeypairName: kp.name
-      )
+      keypair: KeypairDto(keyUid: keyUid, name: name), oldKeypairName: kp.name
+    )
     kp.name = name
     self.events.emit(SIGNAL_KEYPAIR_NAME_CHANGED, data)
   except Exception as e:
-    error "error: ", procName="updateKeypairName", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "updateKeypairName", errName = e.name, errDesription = e.msg
 
-proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool) =
+proc fetchDerivedAddresses*(
+    self: Service,
+    password: string,
+    derivedFrom: string,
+    paths: seq[string],
+    hashPassword: bool,
+) =
   let arg = FetchDerivedAddressesTaskArg(
-    password: if hashPassword: utils.hashPassword(password) else: password,
+    password:
+      if hashPassword:
+        utils.hashPassword(password)
+      else:
+        password,
     derivedFrom: derivedFrom,
     paths: paths,
     tptr: fetchDerivedAddressesTask,
@@ -627,14 +793,17 @@ proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string
 proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.} =
   let response = parseJson(jsonString)
   var derivedAddress: seq[DerivedAddressDto] = @[]
-  derivedAddress = response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
+  derivedAddress =
+    response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
   let error = response["error"].getStr()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED, DerivedAddressesArgs(
-    derivedAddresses: derivedAddress,
-    error: error
-  ))
+  self.events.emit(
+    SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED,
+    DerivedAddressesArgs(derivedAddresses: derivedAddress, error: error),
+  )
 
-proc fetchDerivedAddressesForMnemonic*(self: Service, mnemonic: string, paths: seq[string])=
+proc fetchDerivedAddressesForMnemonic*(
+    self: Service, mnemonic: string, paths: seq[string]
+) =
   let arg = FetchDerivedAddressesForMnemonicTaskArg(
     mnemonic: mnemonic,
     paths: paths,
@@ -647,14 +816,17 @@ proc fetchDerivedAddressesForMnemonic*(self: Service, mnemonic: string, paths: s
 proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.slot.} =
   let response = parseJson(jsonString)
   var derivedAddress: seq[DerivedAddressDto] = @[]
-  derivedAddress = response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
+  derivedAddress =
+    response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
   let error = response["error"].getStr()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED, DerivedAddressesArgs(
-    derivedAddresses: derivedAddress,
-    error: error
-  ))
+  self.events.emit(
+    SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED,
+    DerivedAddressesArgs(derivedAddresses: derivedAddress, error: error),
+  )
 
-proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
+proc fetchDetailsForAddresses*(
+    self: Service, uniqueId: string, addresses: seq[string]
+) =
   let network = self.networkService.getAppNetwork()
   let arg = FetchDetailsForAddressesTaskArg(
     uniqueId: uniqueId,
@@ -674,19 +846,30 @@ proc onAddressDetailsFetched*(self: Service, jsonString: string) {.slot.} =
     data.derivedAddresses.add(addrDto)
     data.error = response["error"].getStr()
   except Exception as e:
-    error "error: ", procName="fetchAddressDetails", errName = e.name, errDesription = e.msg
+    error "error: ",
+      procName = "fetchAddressDetails", errName = e.name, errDesription = e.msg
     data.error = e.msg
   self.events.emit(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED, data)
 
-proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true) =
+proc handleWalletAccount(
+    self: Service, account: WalletAccountDto, notify: bool = true
+) =
   if account.removed:
     self.updateAccountsPositions()
     self.removeAccountFromLocalStoreAndNotify(account.address, notify)
   else:
     var localAcc = self.getAccountByAddress(account.address)
     if not localAcc.isNil:
-      self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-        account.ens, account.operable, none(bool), notify)
+      self.updateAccountInLocalStoreAndNotify(
+        account.address,
+        account.name,
+        account.colorId,
+        account.emoji,
+        account.ens,
+        account.operable,
+        none(bool),
+        notify,
+      )
     else:
       self.addNewKeypairsAccountsToLocalStoreAndNotify(notify)
 
@@ -703,7 +886,9 @@ proc handleKeypair(self: Service, keypair: KeypairDto) =
     for address in addresses:
       let accAddress = address
       if keypair.accounts.filter(a => cmpIgnoreCase(a.address, accAddress) == 0).len == 0:
-        self.handleWalletAccount(WalletAccountDto(address: accAddress, removed: true), notify = false)
+        self.handleWalletAccount(
+          WalletAccountDto(address: accAddress, removed: true), notify = false
+        )
     # - second add/update new/existing accounts
     for acc in keypair.accounts:
       self.handleWalletAccount(acc, notify = false)
@@ -715,12 +900,15 @@ proc handleKeypair(self: Service, keypair: KeypairDto) =
 
 proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
   let response = parseJson(jsonString)
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED, ChainIdForUrlArgs(
-    chainId: response{"chainId"}.getInt,
-    success: response{"success"}.getBool,
-    url: response{"url"}.getStr,
-    isMainUrl: response{"isMainUrl"}.getBool
-  ))
+  self.events.emit(
+    SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED,
+    ChainIdForUrlArgs(
+      chainId: response{"chainId"}.getInt,
+      success: response{"success"}.getBool,
+      url: response{"url"}.getStr,
+      isMainUrl: response{"isMainUrl"}.getBool,
+    ),
+  )
 
 proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
   let arg = FetchChainIdForUrlTaskArg(
@@ -728,7 +916,7 @@ proc fetchChainIdForUrl*(self: Service, url: string, isMainUrl: bool) =
     vptr: cast[uint](self.vptr),
     slot: "onFetchChainIdForUrl",
     url: url,
-    isMainUrl: isMainUrl
+    isMainUrl: isMainUrl,
   )
   self.threadpool.start(arg)
 
@@ -746,9 +934,11 @@ proc hasPairedDevices*(self: Service): bool =
 
 proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string) =
   ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
-  if  keyUid != singletonInstance.userProfile.getKeyUid():
+  if keyUid != singletonInstance.userProfile.getKeyUid():
     return
-  self.makePartiallyOperableAccoutsFullyOperable(password, not singletonInstance.userProfile.getIsKeycardUser())
+  self.makePartiallyOperableAccoutsFullyOperable(
+    password, not singletonInstance.userProfile.getIsKeycardUser()
+  )
 
 proc addressWasShown*(self: Service, address: string) =
   try:
@@ -756,7 +946,8 @@ proc addressWasShown*(self: Service, address: string) =
     if not response.error.isNil:
       raise newException(CatchableError, response.error.message)
   except Exception as e:
-    error "error: ", procName="addressWasShown", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "addressWasShown", errName = e.name, errDesription = e.msg
 
 proc getNumOfAddressesToGenerateForKeypair*(self: Service, keyUid: string): int =
   try:
@@ -765,7 +956,10 @@ proc getNumOfAddressesToGenerateForKeypair*(self: Service, keyUid: string): int 
       raise newException(CatchableError, response.error.message)
     return response.result.getInt
   except Exception as e:
-    error "error: ", procName="getNumOfAddressesToGenerateForKeypair", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "getNumOfAddressesToGenerateForKeypair",
+      errName = e.name,
+      errDesription = e.msg
 
 proc resolveSuggestedPathForKeypair*(self: Service, keyUid: string): string =
   try:
@@ -774,7 +968,10 @@ proc resolveSuggestedPathForKeypair*(self: Service, keyUid: string): string =
       raise newException(CatchableError, response.error.message)
     return response.result.getStr
   except Exception as e:
-    error "error: ", procName="resolveSuggestedPathForKeypair", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "resolveSuggestedPathForKeypair",
+      errName = e.name,
+      errDesription = e.msg
 
 proc remainingAccountCapacity*(self: Service): int =
   try:
@@ -783,7 +980,8 @@ proc remainingAccountCapacity*(self: Service): int =
       raise newException(CatchableError, response.error.message)
     return response.result.getInt
   except Exception as e:
-    error "error: ", procName="remainingAccountCapacity", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "remainingAccountCapacity", errName = e.name, errDesription = e.msg
 
 proc remainingKeypairCapacity*(self: Service): int =
   try:
@@ -792,7 +990,8 @@ proc remainingKeypairCapacity*(self: Service): int =
       raise newException(CatchableError, response.error.message)
     return response.result.getInt
   except Exception as e:
-    error "error: ", procName="remainingKeypairCapacity", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "remainingKeypairCapacity", errName = e.name, errDesription = e.msg
 
 proc remainingWatchOnlyAccountCapacity*(self: Service): int =
   try:
@@ -801,4 +1000,7 @@ proc remainingWatchOnlyAccountCapacity*(self: Service): int =
       raise newException(CatchableError, response.error.message)
     return response.result.getInt
   except Exception as e:
-    error "error: ", procName="remainingWatchOnlyAccountCapacity", errName=e.name, errDesription=e.msg
+    error "error: ",
+      procName = "remainingWatchOnlyAccountCapacity",
+      errName = e.name,
+      errDesription = e.msg

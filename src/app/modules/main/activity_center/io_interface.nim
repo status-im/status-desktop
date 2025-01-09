@@ -1,9 +1,9 @@
 import Tables
 import ./item
-import ../../../../app_service/service/activity_center/service as activity_center_service
+import
+  ../../../../app_service/service/activity_center/service as activity_center_service
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -24,7 +24,9 @@ method hasMoreToShow*(self: AccessInterface): bool {.base.} =
 method unreadActivityCenterNotificationsCount*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method unreadActivityCenterNotificationsCountFromView*(self: AccessInterface): int {.base.} =
+method unreadActivityCenterNotificationsCountFromView*(
+    self: AccessInterface
+): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasUnseenActivityCenterNotifications*(self: AccessInterface): bool {.base.} =
@@ -39,7 +41,10 @@ method onUnseenChanged*(self: AccessInterface, hasUnseen: bool) {.base.} =
 method hasUnseenActivityCenterNotificationsChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method convertToItems*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]): seq[Item] {.base.} =
+method convertToItems*(
+    self: AccessInterface,
+    activityCenterNotifications: seq[ActivityCenterNotificationDto],
+): seq[Item] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchActivityCenterNotifications*(self: AccessInterface) {.base.} =
@@ -51,46 +56,72 @@ method markAllActivityCenterNotificationsRead*(self: AccessInterface): string {.
 method markAllActivityCenterNotificationsReadDone*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markActivityCenterNotificationReadDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
+method markActivityCenterNotificationReadDone*(
+    self: AccessInterface, notificationIds: seq[string]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markActivityCenterNotificationUnreadDone*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
+method markActivityCenterNotificationUnreadDone*(
+    self: AccessInterface, notificationIds: seq[string]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeActivityCenterNotifications*(self: AccessInterface, notificationIds: seq[string]) {.base.} =
+method removeActivityCenterNotifications*(
+    self: AccessInterface, notificationIds: seq[string]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markActivityCenterNotificationRead*(self: AccessInterface, notificationId: string) {.base.} =
+method markActivityCenterNotificationRead*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markActivityCenterNotificationUnread*(self: AccessInterface, notificationId: string) {.base.} =
+method markActivityCenterNotificationUnread*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method markAsSeenActivityCenterNotifications*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptActivityCenterNotification*(self: AccessInterface, notificationId: string) {.base.} =
+method acceptActivityCenterNotification*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissActivityCenterNotification*(self: AccessInterface, notificationId: string) {.base.} =
+method dismissActivityCenterNotification*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptActivityCenterNotificationDone*(self: AccessInterface, notificationId: string) {.base.} =
+method acceptActivityCenterNotificationDone*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissActivityCenterNotificationDone*(self: AccessInterface, notificationId: string) {.base.} =
+method dismissActivityCenterNotificationDone*(
+    self: AccessInterface, notificationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
+method addActivityCenterNotifications*(
+    self: AccessInterface,
+    activityCenterNotifications: seq[ActivityCenterNotificationDto],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resetActivityCenterNotifications*(self: AccessInterface, activityCenterNotifications: seq[ActivityCenterNotificationDto]) {.base.} =
+method resetActivityCenterNotifications*(
+    self: AccessInterface,
+    activityCenterNotifications: seq[ActivityCenterNotificationDto],
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDetails*(self: AccessInterface, sectionId: string, chatId: string): string {.base.} =
+method getDetails*(
+    self: AccessInterface, sectionId: string, chatId: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatDetailsAsJson*(self: AccessInterface, chatId: string): string {.base.} =
@@ -108,8 +139,12 @@ method setActivityCenterReadType*(self: AccessInterface, readType: int) {.base.}
 method getActivityCenterReadType*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActivityGroupCounters*(self: AccessInterface, counters: Table[ActivityCenterGroup, int]) {.base.} =
+method setActivityGroupCounters*(
+    self: AccessInterface, counters: Table[ActivityCenterGroup, int]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method enableInstallationAndSync*(self: AccessInterface, installationId: string) {.base.} =
+method enableInstallationAndSync*(
+    self: AccessInterface, installationId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")

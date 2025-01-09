@@ -1,10 +1,8 @@
-
 import json, stew/shims/strformat
 import base_item, location_menu_sub_model, location_menu_sub_item
 
-type
-  Item* = ref object of BaseItem
-    subItems: SubModel
+type Item* = ref object of BaseItem
+  subItems: SubModel
 
 proc initItem*(value, text, image, icon, iconColor: string = ""): Item =
   result = Item()
@@ -19,7 +17,8 @@ proc subItems*(self: Item): SubModel {.inline.} =
   self.subItems
 
 proc `$`*(self: Item): string =
-  result = fmt"""SearchMenuItem(
+  result =
+    fmt"""SearchMenuItem(
     value: {self.value},
     title: {self.text},
     imageSource: {self.image},
@@ -30,13 +29,14 @@ proc `$`*(self: Item): string =
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
-  result = %* {
-    "value": self.value,
-    "title": self.text,
-    "imageSource": self.image,
-    "iconName": self.icon,
-    "iconColor": self.iconColor,
-  }
+  result =
+    %*{
+      "value": self.value,
+      "title": self.text,
+      "imageSource": self.image,
+      "iconName": self.icon,
+      "iconColor": self.iconColor,
+    }
 
 proc setSubItems*(self: Item, subItems: seq[SubItem]) =
   self.subItems.setItems(subItems)

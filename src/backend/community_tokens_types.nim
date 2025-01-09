@@ -6,7 +6,9 @@ import web3/ethtypes as eth
 type
   # see protocol/communities/token/community_token.go PrivilegesLevel
   PrivilegesLevel* {.pure.} = enum
-    Owner, Master, Community
+    Owner
+    Master
+    Community
 
   CommunityTokenReceivedPayload* = object
     address*: eth.Address
@@ -25,7 +27,9 @@ type
     txHash*: string
     isFirst*: bool
 
-proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): CommunityTokenReceivedPayload {.inline.}=
+proc fromJson*(
+    t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]
+): CommunityTokenReceivedPayload {.inline.} =
   let addressField = "address"
   discard t.getProp("name", result.name)
   discard t.getProp("symbol", result.symbol)
@@ -41,7 +45,7 @@ proc fromJson*(t: JsonNode, T: typedesc[CommunityTokenReceivedPayload]): Communi
   fromJson(t[addressField], addressField, result.address)
 
   var communityDataObj: JsonNode
-  if(t.getProp("community_data", communityDataObj)):
+  if (t.getProp("community_data", communityDataObj)):
     discard communityDataObj.getProp("id", result.communityId)
     discard communityDataObj.getProp("name", result.communityName)
     discard communityDataObj.getProp("color", result.communityColor)

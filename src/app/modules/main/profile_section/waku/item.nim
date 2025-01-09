@@ -1,7 +1,5 @@
-
-type
-  Item* = ref object
-    nodeAddress: string
+type Item* = ref object
+  nodeAddress: string
 
 proc initItem*(nodeAddress: string): Item =
   result = Item()

@@ -2,8 +2,7 @@ import NimQml
 import app_service/service/wallet_account/dto/keypair_dto
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -24,8 +23,14 @@ method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
 method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool,
-  nextFlow: FlowType, forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) {.base.} =
+method onSharedKeycarModuleFlowTerminated*(
+    self: AccessInterface,
+    lastStepInTheCurrentFlow: bool,
+    nextFlow: FlowType,
+    forceFlow: bool,
+    nextKeyUid: string,
+    returnToFlow: keycard_shared_module.FlowType,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runSetupKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
@@ -43,7 +48,9 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: AccessInterface) {.base.} =
 method runImportFromKeycardToAppPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runUnlockKeycardPopupForKeycardWithUid*(self: AccessInterface, keyUid: string) {.base.} =
+method runUnlockKeycardPopupForKeycardWithUid*(
+    self: AccessInterface, keyUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runDisplayKeycardContentPopup*(self: AccessInterface) {.base.} =
@@ -58,7 +65,9 @@ method runRenameKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
 method runChangePinPopup*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runCreateBackupCopyOfAKeycardPopup*(self: AccessInterface, keyUid: string) {.base.} =
+method runCreateBackupCopyOfAKeycardPopup*(
+    self: AccessInterface, keyUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runCreatePukPopup*(self: AccessInterface, keyUid: string) {.base.} =
@@ -82,19 +91,29 @@ method onKeypairSynced*(self: AccessInterface, keypair: KeypairDto) {.base.} =
 method onKeycardChange*(self: AccessInterface, keycard: KeycardDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onWalletAccountChange*(self: AccessInterface, account: WalletAccountDto) {.base.} =
+method onWalletAccountChange*(
+    self: AccessInterface, account: WalletAccountDto
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardLocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =
+method onKeycardLocked*(
+    self: AccessInterface, keyUid: string, keycardUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardUnlocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =
+method onKeycardUnlocked*(
+    self: AccessInterface, keyUid: string, keycardUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardNameChanged*(self: AccessInterface, keycardUid: string, keycardNewName: string) {.base.} =
+method onKeycardNameChanged*(
+    self: AccessInterface, keycardUid: string, keycardNewName: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =
+method onKeycardUidUpdated*(
+    self: AccessInterface, keycardUid: string, keycardNewUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prepareKeycardDetailsModel*(self: AccessInterface, keyUid: string) {.base.} =
@@ -105,7 +124,6 @@ method remainingKeypairCapacity*(self: AccessInterface): int {.base.} =
 
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
-
 
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi

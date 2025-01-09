@@ -1,5 +1,4 @@
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -17,15 +16,21 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method networkConnectionStatusUpdate*(self: AccessInterface, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) {.base.} =
+method networkConnectionStatusUpdate*(
+    self: AccessInterface,
+    website: string,
+    completelyDown: bool,
+    connectionState: int,
+    chainIds: string,
+    lastCheckedAt: int,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method refreshBlockchainValues*(self: AccessInterface)  {.base.} =
+method refreshBlockchainValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method refreshMarketValues*(self: AccessInterface)  {.base.} =
+method refreshMarketValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method refreshCollectiblesValues*(self: AccessInterface)  {.base.} =
+method refreshCollectiblesValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-

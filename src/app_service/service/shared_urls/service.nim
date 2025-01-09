@@ -15,7 +15,7 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-  
+
   proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
     result = Service()
     result.QObject.setup
@@ -24,7 +24,7 @@ QtObject:
   proc parseSharedUrl*(self: Service, url: string): UrlDataDto =
     try:
       let response = status_general.parseSharedUrl(url)
-      if  response.result.contains("error"):
+      if response.result.contains("error"):
         let errMsg = response.result["error"].getStr()
         raise newException(Exception, errMsg)
       # not a status shared url

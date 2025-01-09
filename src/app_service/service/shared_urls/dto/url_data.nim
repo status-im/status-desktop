@@ -29,7 +29,8 @@ type UrlDataDto* = object
   community*: CommunityUrlDataDto
   channel*: CommunityChannelUrlDataDto
   contact*: ContactUrlDataDto
-  notASupportedStatusLink*: bool # If this is true, it was not a supported status link, so we should open it in a browser
+  notASupportedStatusLink*: bool
+    # If this is true, it was not a supported status link, so we should open it in a browser
 
 proc getShard*(jsonObj: JsonNode): Shard =
   var shardObj: JsonNode
@@ -86,13 +87,15 @@ proc toUrlDataDto*(jsonObj: JsonNode): UrlDataDto =
 
 proc toJsonNode*(communityUrlDataDto: CommunityUrlDataDto): JsonNode =
   var jsonObj = newJObject()
-  jsonObj["displayName"] = %* communityUrlDataDto.displayName
-  jsonObj["description"] = %* communityUrlDataDto.description
-  jsonObj["membersCount"] = %* communityUrlDataDto.membersCount
-  jsonObj["color"] = %* communityUrlDataDto.color
-  jsonObj["communityId"] = %* communityUrlDataDto.communityId
-  jsonObj["shardCluster"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.cluster else: -1)
-  jsonObj["shardIndex"] = %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.index else: -1)
+  jsonObj["displayName"] = %*communityUrlDataDto.displayName
+  jsonObj["description"] = %*communityUrlDataDto.description
+  jsonObj["membersCount"] = %*communityUrlDataDto.membersCount
+  jsonObj["color"] = %*communityUrlDataDto.color
+  jsonObj["communityId"] = %*communityUrlDataDto.communityId
+  jsonObj["shardCluster"] =
+    %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.cluster else: -1)
+  jsonObj["shardIndex"] =
+    %*(if communityUrlDataDto.shard != nil: communityUrlDataDto.shard.index else: -1)
   return jsonObj
 
 proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =
@@ -100,16 +103,16 @@ proc `$`*(communityUrlDataDto: CommunityUrlDataDto): string =
 
 proc `$`*(communityChannelUrlDataDto: CommunityChannelUrlDataDto): string =
   var jsonObj = newJObject()
-  jsonObj["displayName"] = %* communityChannelUrlDataDto.displayName
-  jsonObj["description"] = %* communityChannelUrlDataDto.description
-  jsonObj["emoji"] = %* communityChannelUrlDataDto.emoji
-  jsonObj["color"] = %* communityChannelUrlDataDto.color
-  jsonObj["uuid"] = %* communityChannelUrlDataDto.uuid
+  jsonObj["displayName"] = %*communityChannelUrlDataDto.displayName
+  jsonObj["description"] = %*communityChannelUrlDataDto.description
+  jsonObj["emoji"] = %*communityChannelUrlDataDto.emoji
+  jsonObj["color"] = %*communityChannelUrlDataDto.color
+  jsonObj["uuid"] = %*communityChannelUrlDataDto.uuid
   return $jsonObj
 
 proc `$`*(contactUrlDataDto: ContactUrlDataDto): string =
   var jsonObj = newJObject()
-  jsonObj["displayName"] = %* contactUrlDataDto.displayName
-  jsonObj["description"] = %* contactUrlDataDto.description
-  jsonObj["publicKey"] = %* contactUrlDataDto.publicKey
+  jsonObj["displayName"] = %*contactUrlDataDto.displayName
+  jsonObj["description"] = %*contactUrlDataDto.description
+  jsonObj["publicKey"] = %*contactUrlDataDto.publicKey
   return $jsonObj

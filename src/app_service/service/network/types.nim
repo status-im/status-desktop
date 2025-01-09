@@ -12,18 +12,17 @@ const NETWORK_LAYER_2 = 2
 export Mainnet, Ropsten, Rinkeby, Optimism, Poa, XDai, Sepolia
 export NETWORK_LAYER_1, NETWORK_LAYER_2
 
-type
-  NetworkType* {.pure.} = enum
-    Mainnet = "mainnet_rpc",
-    Testnet = "testnet_rpc",
-    Rinkeby = "rinkeby_rpc",
-    Sepolia = "sepolia_rpc",
-    XDai = "xdai_rpc",
-    Poa = "poa_rpc",
-    Other = "other"
+type NetworkType* {.pure.} = enum
+  Mainnet = "mainnet_rpc"
+  Testnet = "testnet_rpc"
+  Rinkeby = "rinkeby_rpc"
+  Sepolia = "sepolia_rpc"
+  XDai = "xdai_rpc"
+  Poa = "poa_rpc"
+  Other = "other"
 
 proc toNetworkType*(networkName: string): NetworkType =
-  case networkName:
+  case networkName
   of "mainnet_rpc":
     result = NetworkType.Mainnet
   of "testnet_rpc":
@@ -40,11 +39,18 @@ proc toNetworkType*(networkName: string): NetworkType =
     result = NetworkType.Other
 
 proc toChainId*(self: NetworkType): int =
-  case self:
-    of NetworkType.Mainnet: result = Mainnet
-    of NetworkType.Testnet: result = Ropsten
-    of NetworkType.Rinkeby: result = Rinkeby
-    of NetworkType.Sepolia: result = Sepolia
-    of NetworkType.XDai: result = XDai
-    of NetworkType.Poa: result = 99
-    of NetworkType.Other: result = -1
+  case self
+  of NetworkType.Mainnet:
+    result = Mainnet
+  of NetworkType.Testnet:
+    result = Ropsten
+  of NetworkType.Rinkeby:
+    result = Rinkeby
+  of NetworkType.Sepolia:
+    result = Sepolia
+  of NetworkType.XDai:
+    result = XDai
+  of NetworkType.Poa:
+    result = 99
+  of NetworkType.Other:
+    result = -1

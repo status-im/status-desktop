@@ -8,24 +8,29 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: UniqueUUIDEventEmitter
-    sectionId: string
-    chatId: string
-    belongsToCommunity: bool
-    isUsersListAvailable: bool #users list is not available for 1:1 chat
-    contactService: contact_service.Service
-    chatService: chat_service.Service
-    communityService: community_service.Service
-    messageService: message_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: UniqueUUIDEventEmitter
+  sectionId: string
+  chatId: string
+  belongsToCommunity: bool
+  isUsersListAvailable: bool #users list is not available for 1:1 chat
+  contactService: contact_service.Service
+  chatService: chat_service.Service
+  communityService: community_service.Service
+  messageService: message_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    sectionId: string,
+    chatId: string,
+    belongsToCommunity: bool,
+    isUsersListAvailable: bool,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -121,8 +126,9 @@ proc getMyChatId*(self: Controller): string =
 proc getMyChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
+proc getContactNameAndImage*(
+    self: Controller, contactId: string
+): tuple[name: string, image: string, largeImage: string] =
   return self.contactService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =

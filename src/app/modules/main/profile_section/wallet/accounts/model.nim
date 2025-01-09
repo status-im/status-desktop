@@ -2,22 +2,20 @@ import NimQml, Tables, strutils, sequtils, stew/shims/strformat
 
 import ../../../../shared_models/wallet_account_item
 
-type
-  ModelRole {.pure.} = enum
-    Name = UserRole + 1,
-    Address,
-    Path,
-    ColorId,
-    WalletType,
-    Emoji,
-    KeyUid,
-    Position,
-    KeycardAccount
+type ModelRole {.pure.} = enum
+  Name = UserRole + 1
+  Address
+  Path
+  ColorId
+  WalletType
+  Emoji
+  KeyUid
+  Position
+  KeycardAccount
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[WalletAccountItem]
+  type Model* = ref object of QAbstractListModel
+    items: seq[WalletAccountItem]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -48,17 +46,16 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"name",
-      ModelRole.Address.int:"address",
-      ModelRole.Path.int:"path",
-      ModelRole.ColorId.int:"colorId",
-      ModelRole.WalletType.int:"walletType",
+      ModelRole.Name.int: "name",
+      ModelRole.Address.int: "address",
+      ModelRole.Path.int: "path",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.WalletType.int: "walletType",
       ModelRole.Emoji.int: "emoji",
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.Position.int: "position",
       ModelRole.KeycardAccount.int: "keycardAccount",
     }.toTable
-
 
   proc setItems*(self: Model, items: seq[WalletAccountItem]) =
     self.beginResetModel()
@@ -74,8 +71,13 @@ QtObject:
         item.colorId = account.colorId
         item.emoji = account.emoji
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
-        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int])
+        defer:
+          index.delete
+        self.dataChanged(
+          index,
+          index,
+          @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int],
+        )
         break
       i.inc
 
@@ -89,7 +91,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Name:
       result = newQVariant(item.name())
     of ModelRole.Address:
@@ -114,9 +116,11 @@ QtObject:
       return false
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
+    defer:
+      sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
+    defer:
+      destIndex.delete
 
     var destRow = toRow
     if toRow > fromRow:

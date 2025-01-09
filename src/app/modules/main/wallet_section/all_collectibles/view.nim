@@ -5,10 +5,9 @@ import ./io_interface
 import app/modules/shared_models/collectibles_model as collectibles_model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      allCollectiblesModel: collectibles_model.Model
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    allCollectiblesModel: collectibles_model.Model
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -24,12 +23,15 @@ QtObject:
 
   proc getAllCollectiblesModel(self: View): QVariant {.slot.} =
     return newQVariant(self.allCollectiblesModel)
+
   QtProperty[QVariant] allCollectiblesModel:
     read = getAllCollectiblesModel
 
   proc collectiblePreferencesUpdated*(self: View, result: bool) {.signal.}
 
-  proc updateCollectiblePreferences*(self: View, collectiblePreferencesJson: string) {.slot.} =
+  proc updateCollectiblePreferences*(
+      self: View, collectiblePreferencesJson: string
+  ) {.slot.} =
     self.delegate.updateCollectiblePreferences(collectiblePreferencesJson)
 
   proc getCollectiblePreferencesJson(self: View): QVariant {.slot.} =

@@ -26,10 +26,9 @@ type
 
   Conf* = Table[string, Table[string, Table[string, string]]]
 
-type
-  FleetConfiguration* = ref object
-    fleet: Conf
-    meta: Meta
+type FleetConfiguration* = ref object
+  fleet: Conf
+  meta: Meta
 
 ## Forward declaration
 proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.}
@@ -52,18 +51,26 @@ proc extractConfig(self: FleetConfiguration, jsonString: string) {.gcsafe.} =
     for nodes in fleetJson["fleets"][fleet].keys():
       self.fleet[fleet][nodes] = initTable[string, string]()
       for server in fleetJson["fleets"][fleet][nodes].keys():
-        self.fleet[fleet][nodes][server] = fleetJson["fleets"][fleet][nodes][server].getStr
+        self.fleet[fleet][nodes][server] =
+          fleetJson["fleets"][fleet][nodes][server].getStr
 
-proc getNodes*(self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes): seq[string] =
+proc getNodes*(
+    self: FleetConfiguration, fleet: Fleet, nodeType: FleetNodes = FleetNodes.Bootnodes
+): seq[string] =
   var t = nodeType
   if fleet == Fleet.StatusProd or fleet == Fleet.StatusStaging:
-    case nodeType:
-      of Bootnodes: t = WakuBoot
-      of Mailservers: t = WakuStore
-      of WakuENR: t = WakuBootENR
-      else: discard
+    case nodeType
+    of Bootnodes:
+      t = WakuBoot
+    of Mailservers:
+      t = WakuStore
+    of WakuENR:
+      t = WakuBootENR
+    else:
+      discard
 
-  if not self.fleet[$fleet].hasKey($t): return
+  if not self.fleet[$fleet].hasKey($t):
+    return
   result = toSeq(self.fleet[$fleet][$t].values)
 
 proc getMailservers*(self: FleetConfiguration, fleet: Fleet): Table[string, string] =

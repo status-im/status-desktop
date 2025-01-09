@@ -3,10 +3,9 @@ import eventemitter
 import # deps
   uuids
 
-type
-  UniqueUUIDEventEmitter* = ref object
-    events: EventEmitter
-    handlerId: UUID
+type UniqueUUIDEventEmitter* = ref object
+  events: EventEmitter
+  handlerId: UUID
 
 proc initUniqueUUIDEventEmitter*(events: EventEmitter): UniqueUUIDEventEmitter =
   result = UniqueUUIDEventEmitter()
@@ -23,4 +22,4 @@ proc disconnect*(self: UniqueUUIDEventEmitter) =
   self.events.disconnect(self.handlerId)
 
 proc eventsEmitter*(self: UniqueUUIDEventEmitter): EventEmitter =
-    return self.events
+  return self.events

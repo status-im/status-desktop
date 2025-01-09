@@ -41,9 +41,18 @@ QtObject:
     soundManager: StatusSoundManager
     notificationSetUp: bool
 
-  proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails)
+  proc processNotification(
+    self: NotificationsManager,
+    title: string,
+    message: string,
+    details: NotificationDetails,
+  )
 
-  proc setup(self: NotificationsManager, events: EventEmitter, settingsService: settings_service.Service) =
+  proc setup(
+      self: NotificationsManager,
+      events: EventEmitter,
+      settingsService: settings_service.Service,
+  ) =
     self.QObject.setup
     self.events = events
     self.settingsService = settingsService
@@ -54,7 +63,9 @@ QtObject:
       self.soundManager.delete
     self.QObject.delete
 
-  proc newNotificationsManager*(events: EventEmitter, settingsService: settings_service.Service): NotificationsManager =
+  proc newNotificationsManager*(
+      events: EventEmitter, settingsService: settings_service.Service
+  ): NotificationsManager =
     new(result, delete)
     result.setup(events, settingsService)
 
@@ -62,43 +73,119 @@ QtObject:
     self.osNotification = newStatusOSNotification()
     self.soundManager = newStatusSoundManager()
 
-    signalConnect(self.osNotification, "notificationClicked(QString)", self, "onOSNotificationClicked(QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showTestNotification(QString, QString)",
-      self, "onShowTestNotification(QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showMessageNotification(QString, QString, QString, bool, bool, QString, bool, QString, int, bool, bool)",
-      self, "onShowMessageNotification(QString, QString, QString, bool, bool, QString, bool, QString, int, bool, bool)", 2)
-    signalConnect(singletonInstance.globalEvents, "showNewContactRequestNotification(QString, QString, QString)",
-      self, "onShowNewContactRequestNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showAcceptedContactRequest(QString, QString, QString)",
-      self, "onShowAcceptedContactRequest(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showContactRemoved(QString, QString, QString)",
-      self, "onShowContactRemoved(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "newCommunityMembershipRequestNotification(QString, QString, QString)",
-      self, "onNewCommunityMembershipRequestNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityAcccepted(QString, QString, QString)",
-      self, "onMyRequestToJoinCommunityAcccepted(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityRejected(QString, QString, QString)",
-      self, "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "meMentionedIconBadgeNotification(int)",
-      self, "onMeMentionedIconBadgeNotification(int)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreatedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", self, "onShowCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)", 2)
+    signalConnect(
+      self.osNotification, "notificationClicked(QString)", self,
+      "onOSNotificationClicked(QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents, "showTestNotification(QString, QString)", self,
+      "onShowTestNotification(QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showMessageNotification(QString, QString, QString, bool, bool, QString, bool, QString, int, bool, bool)",
+      self,
+      "onShowMessageNotification(QString, QString, QString, bool, bool, QString, bool, QString, int, bool, bool)",
+      2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showNewContactRequestNotification(QString, QString, QString)", self,
+      "onShowNewContactRequestNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showAcceptedContactRequest(QString, QString, QString)", self,
+      "onShowAcceptedContactRequest(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents, "showContactRemoved(QString, QString, QString)",
+      self, "onShowContactRemoved(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "newCommunityMembershipRequestNotification(QString, QString, QString)", self,
+      "onNewCommunityMembershipRequestNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "myRequestToJoinCommunityAcccepted(QString, QString, QString)", self,
+      "onMyRequestToJoinCommunityAcccepted(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "myRequestToJoinCommunityRejected(QString, QString, QString)", self,
+      "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents, "meMentionedIconBadgeNotification(int)", self,
+      "onMeMentionedIconBadgeNotification(int)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionCreatedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionCreatedNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionUpdatedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionUpdatedNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionDeletedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionDeletedNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionCreationFailedNotification(QString, QString, QString)",
+      2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionUpdateFailedNotification(QString, QString, QString)",
+      2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)",
+      self,
+      "onShowCommunityTokenPermissionDeletionFailedNotification(QString, QString, QString)",
+      2,
+    )
 
-    signalConnect(singletonInstance.globalEvents, "showCommunityMemberKickedNotification(QString, QString, QString)", self, "onShowCommunityMemberKickedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityMemberBannedNotification(QString, QString, QString)", self, "onShowCommunityMemberBannedNotification(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "showCommunityMemberUnbannedNotification(QString, QString, QString)", self, "onShowCommunityMemberUnbannedNotification(QString, QString, QString)", 2)
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityMemberKickedNotification(QString, QString, QString)", self,
+      "onShowCommunityMemberKickedNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityMemberBannedNotification(QString, QString, QString)", self,
+      "onShowCommunityMemberBannedNotification(QString, QString, QString)", 2,
+    )
+    signalConnect(
+      singletonInstance.globalEvents,
+      "showCommunityMemberUnbannedNotification(QString, QString, QString)", self,
+      "onShowCommunityMemberUnbannedNotification(QString, QString, QString)", 2,
+    )
 
     self.notificationSetUp = true
 
   proc init*(self: NotificationsManager) =
-    self.events.once(FAKE_LOADING_SCREEN_FINISHED) do(e:Args):
+    self.events.once(FAKE_LOADING_SCREEN_FINISHED) do(e: Args):
       self.onAppReady()
 
-  proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
+  proc showOSNotification(
+      self: NotificationsManager, title: string, message: string, identifier: string
+  ) =
     if defined(windows):
       let data = NotificationArgs(title: title, message: message)
       self.events.emit(SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION, data)
@@ -107,37 +194,61 @@ QtObject:
       ## "identifier" is used to uniquely define notification bubble.
       self.osNotification.showNotification(title, message, identifier)
 
-  proc onOSNotificationClicked(self: NotificationsManager, identifier: string) {.slot.} =
+  proc onOSNotificationClicked(
+      self: NotificationsManager, identifier: string
+  ) {.slot.} =
     ## This slot is called once user clicks OS notificaiton bubble, "identifier"
     ## contains data which uniquely define that notification.
-    debug "OS notification clicked", identifier=identifier
+    debug "OS notification clicked", identifier = identifier
 
     # Make the app the top most window.
     app_makeItActive(singletonInstance.engine)
 
     let details = toNotificationDetails(parseJson(identifier))
-    if(details.isEmpty()):
+    if (details.isEmpty()):
       info "Notification details are empty"
       return
-    if(details.notificationType == NotificationType.TestNotification):
+    if (details.notificationType == NotificationType.TestNotification):
       info "Test notification was clicked"
       return
 
-    if(details.notificationType == NotificationType.NewMessage or
+    if (
+      details.notificationType == NotificationType.NewMessage or
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
-      details.notificationType == NotificationType.NewMessageWithGlobalMention):
-      let data = ActiveSectionChatArgs(sectionId: details.sectionId, chatId: details.chatId, messageId: details.messageId)
+      details.notificationType == NotificationType.NewMessageWithGlobalMention
+    ):
+      let data = ActiveSectionChatArgs(
+        sectionId: details.sectionId,
+        chatId: details.chatId,
+        messageId: details.messageId,
+      )
       self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
     else:
-      self.events.emit(SIGNAL_OS_NOTIFICATION_CLICKED, ClickedNotificationArgs(details: details))
+      self.events.emit(
+        SIGNAL_OS_NOTIFICATION_CLICKED, ClickedNotificationArgs(details: details)
+      )
 
-  proc onShowTestNotification(self: NotificationsManager, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.TestNotification)
+  proc onShowTestNotification(
+      self: NotificationsManager, title: string, message: string
+  ) {.slot.} =
+    let details =
+      NotificationDetails(notificationType: NotificationType.TestNotification)
     self.processNotification(title, message, details)
 
-  proc onShowMessageNotification(self: NotificationsManager, title: string, message: string, sectionId: string,
-    isCommunitySection: bool, isSectionActive: bool, chatId: string, isChatActive: bool, messageId: string,
-    notificationType: int, isOneToOne: bool, isGroupChat: bool) {.slot.} =
+  proc onShowMessageNotification(
+      self: NotificationsManager,
+      title: string,
+      message: string,
+      sectionId: string,
+      isCommunitySection: bool,
+      isSectionActive: bool,
+      chatId: string,
+      isChatActive: bool,
+      messageId: string,
+      notificationType: int,
+      isOneToOne: bool,
+      isGroupChat: bool,
+  ) {.slot.} =
     let details = NotificationDetails(
       notificationType: notificationType.NotificationType,
       sectionId: sectionId,
@@ -147,86 +258,166 @@ QtObject:
       chatActive: isChatActive,
       isOneToOne: isOneToOne,
       isGroupChat: isGroupChat,
-      messageId: messageId)
+      messageId: messageId,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionCreatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreated, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionCreatedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionCreated,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionUpdatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionUpdated, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionUpdatedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionUpdated,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionDeletedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionDeleted, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionDeletedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionDeleted,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionCreationFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreationFailed, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionCreationFailedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionCreationFailed,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionUpdateFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionUpdateFailed, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionUpdateFailedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionUpdateFailed,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityTokenPermissionDeletionFailedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionDeletionFailed, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityTokenPermissionDeletionFailedNotification*(
+      self: NotificationsManager, sectionId: string, title: string, message: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityTokenPermissionDeletionFailed,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowNewContactRequestNotification*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.NewContactRequest, sectionId: sectionId)
+  proc onShowNewContactRequestNotification*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.NewContactRequest, sectionId: sectionId
+    )
     self.processNotification(title, message, details)
 
-  proc onShowAcceptedContactRequest*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.AcceptedContactRequest, sectionId: sectionId)
+  proc onShowAcceptedContactRequest*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.AcceptedContactRequest, sectionId: sectionId
+    )
     self.processNotification(title, message, details)
 
-  proc onShowContactRemoved*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.ContactRemoved, sectionId: sectionId)
+  proc onShowContactRemoved*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.ContactRemoved, sectionId: sectionId
+    )
     self.processNotification(title, message, details)
 
-  proc onNewCommunityMembershipRequestNotification*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.JoinCommunityRequest, sectionId: sectionId)
+  proc onNewCommunityMembershipRequestNotification*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.JoinCommunityRequest, sectionId: sectionId
+    )
     self.processNotification(title, message, details)
 
-  proc onMyRequestToJoinCommunityAcccepted*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.MyRequestToJoinCommunityAccepted,
-    sectionId: sectionId)
+  proc onMyRequestToJoinCommunityAcccepted*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.MyRequestToJoinCommunityAccepted,
+      sectionId: sectionId,
+    )
     self.processNotification(title, message, details)
 
-  proc onMyRequestToJoinCommunityRejected*(self: NotificationsManager, title: string, message: string,
-    sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.MyRequestToJoinCommunityRejected,
-    sectionId: sectionId)
+  proc onMyRequestToJoinCommunityRejected*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.MyRequestToJoinCommunityRejected,
+      sectionId: sectionId,
+    )
     self.processNotification(title, message, details)
 
-  proc onMeMentionedIconBadgeNotification(self: NotificationsManager, allMentions: int) {.slot.} =
+  proc onMeMentionedIconBadgeNotification(
+      self: NotificationsManager, allMentions: int
+  ) {.slot.} =
     self.osNotification.showIconBadgeNotification(allMentions)
 
-  proc onShowCommunityMemberKickedNotification*(self: NotificationsManager, title: string, message: string, sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityMemberKicked, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityMemberKickedNotification*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityMemberKicked,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityMemberBannedNotification*(self: NotificationsManager, title: string, message: string, sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityMemberBanned, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityMemberBannedNotification*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityMemberBanned,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc onShowCommunityMemberUnbannedNotification*(self: NotificationsManager, title: string, message: string, sectionId: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.CommunityMemberUnbanned, sectionId: sectionId, isCommunitySection: true)
+  proc onShowCommunityMemberUnbannedNotification*(
+      self: NotificationsManager, title: string, message: string, sectionId: string
+  ) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.CommunityMemberUnbanned,
+      sectionId: sectionId,
+      isCommunitySection: true,
+    )
     self.processNotification(title, message, details)
 
-  proc notificationCheck(self: NotificationsManager, title: string, message: string, details: NotificationDetails,
-      notificationWay: string) =
+  proc notificationCheck(
+      self: NotificationsManager,
+      title: string,
+      message: string,
+      details: NotificationDetails,
+      notificationWay: string,
+  ) =
     var data = NotificationArgs(title: title, message: message, details: details)
     # All but the NewMessage notifications go to Activity Center
     if details.notificationType != NotificationType.NewMessage:
-      debug "Add AC notification", notificationType=details.notificationType
+      debug "Add AC notification", notificationType = details.notificationType
       self.events.emit(SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER, data)
 
     # An exemption from the diagrams, at least for now, is that we don't need to implement the "Badge Check" block here,
@@ -240,38 +431,43 @@ QtObject:
         details.notificationType == NotificationType.NewContactRequest or
         details.notificationType == NotificationType.ContactRemoved or
         details.notificationType == NotificationType.IdentityVerificationRequest:
-
       if notificationWay == VALUE_NOTIF_DELIVER_QUIETLY:
         return
 
-      if (details.notificationType == NotificationType.NewMessage or
-          details.notificationType == NotificationType.NewMessageWithPersonalMention or
-          details.notificationType == NotificationType.NewMessageWithGlobalMention) and
-          details.sectionActive and
-          details.chatActive and appIsActive:
+      if (
+        details.notificationType == NotificationType.NewMessage or
+        details.notificationType == NotificationType.NewMessageWithPersonalMention or
+        details.notificationType == NotificationType.NewMessageWithGlobalMention
+      ) and details.sectionActive and details.chatActive and appIsActive:
         return
 
     if appIsActive:
-      debug "Add APP notification", notificationType=details.notificationType
+      debug "Add APP notification", notificationType = details.notificationType
       self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
 
     if not appIsActive or details.notificationType == NotificationType.TestNotification:
       # Check anonymity level
-      if(self.settingsService.getNotificationMessagePreview() == PREVIEW_ANONYMOUS):
+      if (self.settingsService.getNotificationMessagePreview() == PREVIEW_ANONYMOUS):
         data.title = "Status"
         data.message = "You have a new message"
-      elif(self.settingsService.getNotificationMessagePreview() == PREVIEW_NAME_ONLY):
+      elif (self.settingsService.getNotificationMessagePreview() == PREVIEW_NAME_ONLY):
         data.message = "You have a new message"
 
       let identifier = $(details.toJsonNode())
-      debug "Add OS notification", notificationType=details.notificationType, identifier=identifier
+      debug "Add OS notification",
+        notificationType = details.notificationType, identifier = identifier
       self.showOSNotification(data.title, data.message, identifier)
 
     if self.settingsService.getNotificationSoundsEnabled():
       self.soundManager.setPlayerVolume(self.settingsService.getNotificationVolume())
       self.soundManager.playSound(NOTIFICATION_SOUND)
 
-  proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails) =
+  proc processNotification(
+      self: NotificationsManager,
+      title: string,
+      message: string,
+      details: NotificationDetails,
+  ) =
     ## This is the main method which need to be called to process an event according to the preferences set in the
     ## "Notifications & Sounds" panel of the "Settings" section.
     ##
@@ -283,72 +479,114 @@ QtObject:
     # - https://drive.google.com/file/d/1L_9c2CMObcDcSuhVUu97s9-_26gtutES/view
     # - https://drive.google.com/file/d/1KmG7lJDJIx6R_HJWeFvMYT2wk32RoTJQ/view
 
-    if(not self.settingsService.getNotifSettingAllowNotifications()):
+    if (not self.settingsService.getNotifSettingAllowNotifications()):
       return
 
     # In case of contact request
-    if(details.notificationType == NotificationType.NewContactRequest):
-      if(self.settingsService.getNotifSettingContactRequests() != VALUE_NOTIF_TURN_OFF):
-        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingContactRequests())
+    if (details.notificationType == NotificationType.NewContactRequest):
+      if (self.settingsService.getNotifSettingContactRequests() != VALUE_NOTIF_TURN_OFF):
+        self.notificationCheck(
+          title, message, details, self.settingsService.getNotifSettingContactRequests()
+        )
         return
 
     # In case of new message (regardless it's message with mention or not)
-    elif(details.notificationType == NotificationType.NewMessage or
+    elif (
+      details.notificationType == NotificationType.NewMessage or
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
-      details.notificationType == NotificationType.NewMessageWithGlobalMention):
-      if(self.settingsService.getNotifSettingAllMessages() != VALUE_NOTIF_TURN_OFF):
-        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingAllMessages())
+      details.notificationType == NotificationType.NewMessageWithGlobalMention
+    ):
+      if (self.settingsService.getNotifSettingAllMessages() != VALUE_NOTIF_TURN_OFF):
+        self.notificationCheck(
+          title, message, details, self.settingsService.getNotifSettingAllMessages()
+        )
         return
 
       let messageBelongsToCommunity = details.isCommunitySection
-      if(messageBelongsToCommunity):
-        let exemptions = self.settingsService.getNotifSettingExemptions(details.sectionId)
-        if(exemptions.muteAllMessages):
+      if (messageBelongsToCommunity):
+        let exemptions =
+          self.settingsService.getNotifSettingExemptions(details.sectionId)
+        if (exemptions.muteAllMessages):
           return
 
-        if(details.notificationType == NotificationType.NewMessageWithPersonalMention and
-          exemptions.personalMentions != VALUE_NOTIF_TURN_OFF):
+        if (
+          details.notificationType == NotificationType.NewMessageWithPersonalMention and
+          exemptions.personalMentions != VALUE_NOTIF_TURN_OFF
+        ):
           self.notificationCheck(title, message, details, exemptions.personalMentions)
           return
 
-        if(details.notificationType == NotificationType.NewMessageWithGlobalMention and
-          exemptions.globalMentions != VALUE_NOTIF_TURN_OFF):
+        if (
+          details.notificationType == NotificationType.NewMessageWithGlobalMention and
+          exemptions.globalMentions != VALUE_NOTIF_TURN_OFF
+        ):
           self.notificationCheck(title, message, details, exemptions.globalMentions)
           return
 
-        if(details.notificationType == NotificationType.NewMessage and
-          exemptions.otherMessages != VALUE_NOTIF_TURN_OFF):
+        if (
+          details.notificationType == NotificationType.NewMessage and
+          exemptions.otherMessages != VALUE_NOTIF_TURN_OFF
+        ):
           self.notificationCheck(title, message, details, exemptions.otherMessages)
           return
 
         return
       else:
-        if(details.isOneToOne or details.isGroupChat):
-          let exemptions = self.settingsService.getNotifSettingExemptions(details.chatId)
+        if (details.isOneToOne or details.isGroupChat):
+          let exemptions =
+            self.settingsService.getNotifSettingExemptions(details.chatId)
           if exemptions.muteAllMessages or
-              # Don't show a notification for group messages that are NOT mentions
-              (details.isGroupChat and details.notificationType != NotificationType.NewMessageWithPersonalMention):
+          # Don't show a notification for group messages that are NOT mentions
+          (
+            details.isGroupChat and
+            details.notificationType != NotificationType.NewMessageWithPersonalMention
+          ):
             return
 
-        if(details.notificationType == NotificationType.NewMessageWithPersonalMention and
-          self.settingsService.getNotifSettingPersonalMentions() != VALUE_NOTIF_TURN_OFF):
-          self.notificationCheck(title, message, details, self.settingsService.getNotifSettingPersonalMentions())
+        if (
+          details.notificationType == NotificationType.NewMessageWithPersonalMention and
+          self.settingsService.getNotifSettingPersonalMentions() != VALUE_NOTIF_TURN_OFF
+        ):
+          self.notificationCheck(
+            title,
+            message,
+            details,
+            self.settingsService.getNotifSettingPersonalMentions(),
+          )
           return
 
-        if(details.notificationType == NotificationType.NewMessageWithGlobalMention and
-          self.settingsService.getNotifSettingGlobalMentions() != VALUE_NOTIF_TURN_OFF):
-          self.notificationCheck(title, message, details, self.settingsService.getNotifSettingGlobalMentions())
+        if (
+          details.notificationType == NotificationType.NewMessageWithGlobalMention and
+          self.settingsService.getNotifSettingGlobalMentions() != VALUE_NOTIF_TURN_OFF
+        ):
+          self.notificationCheck(
+            title,
+            message,
+            details,
+            self.settingsService.getNotifSettingGlobalMentions(),
+          )
           return
 
-        if(details.notificationType == NotificationType.NewMessage):
-          if(details.isOneToOne and
-            self.settingsService.getNotifSettingOneToOneChats() != VALUE_NOTIF_TURN_OFF):
-            self.notificationCheck(title, message, details, self.settingsService.getNotifSettingOneToOneChats())
+        if (details.notificationType == NotificationType.NewMessage):
+          if (
+            details.isOneToOne and
+            self.settingsService.getNotifSettingOneToOneChats() != VALUE_NOTIF_TURN_OFF
+          ):
+            self.notificationCheck(
+              title,
+              message,
+              details,
+              self.settingsService.getNotifSettingOneToOneChats(),
+            )
             return
 
-          if(details.isGroupChat and
-            self.settingsService.getNotifSettingGroupChats() != VALUE_NOTIF_TURN_OFF):
-            self.notificationCheck(title, message, details, self.settingsService.getNotifSettingGroupChats())
+          if (
+            details.isGroupChat and
+            self.settingsService.getNotifSettingGroupChats() != VALUE_NOTIF_TURN_OFF
+          ):
+            self.notificationCheck(
+              title, message, details, self.settingsService.getNotifSettingGroupChats()
+            )
             return
 
     # In all other cases (TestNotification, AcceptedContactRequest, ContactRemoved, JoinCommunityRequest,  MyRequestToJoinCommunityAccepted,

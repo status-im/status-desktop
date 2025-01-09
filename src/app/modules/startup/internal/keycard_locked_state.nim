@@ -1,5 +1,4 @@
-type
-  KeycardLockedState* = ref object of State
+type KeycardLockedState* = ref object of State
 
 proc newKeycardLockedState*(flowType: FlowType, backState: State): KeycardLockedState =
   result = KeycardLockedState()

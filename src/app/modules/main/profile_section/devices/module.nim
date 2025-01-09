@@ -15,23 +15,25 @@ export io_interface
 logScope:
   topics = "profile-section-devices-module"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  devicesService: devices_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    devicesService: devices_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, devicesService)
+  result.controller =
+    controller.newController(result, events, settingsService, devicesService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -90,7 +92,7 @@ method enableDevice*(self: Module, installationId: string, enable: bool) =
   self.controller.enableDevice(installationId, enable)
 
 method updateOrAddDevice*(self: Module, installation: InstallationDto) =
-  if(self.view.model().isItemWithInstallationIdAdded(installation.id)):
+  if (self.view.model().isItemWithInstallationIdAdded(installation.id)):
     self.view.model().updateItem(installation)
   else:
     let item = initItem(installation, self.isMyDevice(installation.id))
@@ -105,14 +107,21 @@ method generateConnectionStringAndRunSetupSyncingPopup*(self: Module) =
     additionalBip44Paths.add(account_constants.PATH_WHISPER)
   self.controller.authenticateLoggedInUser(additionalBip44Paths)
 
-method onLoggedInUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string, additinalPathsDetails: Table[string, KeyDetails]) =
+method onLoggedInUserAuthenticated*(
+    self: Module,
+    pin: string,
+    password: string,
+    keyUid: string,
+    additinalPathsDetails: Table[string, KeyDetails],
+) =
   var chatKey = ""
   if singletonInstance.userProfile.getIsKeycardUser() and
-    additinalPathsDetails.contains(account_constants.PATH_WHISPER):
-      chatKey = additinalPathsDetails[account_constants.PATH_WHISPER].privateKey
-      if chatKey.startsWith("0x"):
-        chatKey = chatKey[2..^1]
-  let connectionString = self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+      additinalPathsDetails.contains(account_constants.PATH_WHISPER):
+    chatKey = additinalPathsDetails[account_constants.PATH_WHISPER].privateKey
+    if chatKey.startsWith("0x"):
+      chatKey = chatKey[2 ..^ 1]
+  let connectionString =
+    self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
   if password.len == 0 and pin.len == 0:
     return
   self.view.openPopupWithConnectionString(connectionString)

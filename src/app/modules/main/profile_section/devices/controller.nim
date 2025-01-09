@@ -7,22 +7,24 @@ import app_service/service/devices/service as devices_service
 
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
-const UNIQUE_SYNCING_LOGGED_IN_USER_AUTHENTICATION_IDENTIFIER* = "Syncing-LoggedInUser-Authentication"
+const UNIQUE_SYNCING_LOGGED_IN_USER_AUTHENTICATION_IDENTIFIER* =
+  "Syncing-LoggedInUser-Authentication"
 
 logScope:
   topics = "profile-section-devices-module-controller"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    settingsService: settings_service.Service
-    devicesService: devices_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  settingsService: settings_service.Service
+  devicesService: devices_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  devicesService: devices_service.Service): Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    devicesService: devices_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -52,14 +54,15 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_SYNCING_LOGGED_IN_USER_AUTHENTICATION_IDENTIFIER:
       return
-    self.delegate.onLoggedInUserAuthenticated(args.pin, args.password, args.keyUid, args.additinalPathsDetails)
+    self.delegate.onLoggedInUserAuthenticated(
+      args.pin, args.password, args.keyUid, args.additinalPathsDetails
+    )
 
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
     let args = LocalPairingStatus(e)
     if args.pairingType != PairingType.AppSync:
       return
     self.delegate.onLocalPairingStatusUpdate(args)
-
 
 proc getMyInstallationId*(self: Controller): string =
   return self.settingsService.getInstallationId()
@@ -89,10 +92,12 @@ proc enableDevice*(self: Controller, deviceId: string, enable: bool) =
 # Pairing status
 #
 
-proc authenticateLoggedInUser*(self: Controller, additionalBip44Paths: seq[string] = @[]) =
+proc authenticateLoggedInUser*(
+    self: Controller, additionalBip44Paths: seq[string] = @[]
+) =
   var data = SharedKeycarModuleAuthenticationArgs(
     uniqueIdentifier: UNIQUE_SYNCING_LOGGED_IN_USER_AUTHENTICATION_IDENTIFIER,
-    additionalBip44Paths: additionalBip44Paths
+    additionalBip44Paths: additionalBip44Paths,
   )
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
@@ -103,8 +108,14 @@ proc authenticateLoggedInUser*(self: Controller, additionalBip44Paths: seq[strin
 proc validateConnectionString*(self: Controller, connectionString: string): string =
   return self.devicesService.validateConnectionString(connectionString)
 
-proc getConnectionStringForBootstrappingAnotherDevice*(self: Controller, password, chatKey: string): string =
-  return self.devicesService.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+proc getConnectionStringForBootstrappingAnotherDevice*(
+    self: Controller, password, chatKey: string
+): string =
+  return self.devicesService.getConnectionStringForBootstrappingAnotherDevice(
+    password, chatKey
+  )
 
-proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string) =
+proc inputConnectionStringForBootstrapping*(
+    self: Controller, connectionString: string
+) =
   self.devicesService.inputConnectionStringForBootstrapping(connectionString)

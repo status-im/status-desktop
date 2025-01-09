@@ -2,15 +2,13 @@ import NimQml, json, strutils
 import io_interface
 import ../../../core/signals/types
 
-
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      callResult: string
-      lastMessage*: string
-      stats*: Stats
-      peerSize: int
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    callResult: string
+    lastMessage*: string
+    stats*: Stats
+    peerSize: int
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -32,7 +30,8 @@ QtObject:
 
   proc setCallResult(self: View, callResult: string) =
     echo $callResult # Added so we can copy paste response from terminal
-    if self.callResult == callResult: return
+    if self.callResult == callResult:
+      return
     self.callResult = callResult
     self.callResultChanged(callResult)
 
@@ -68,19 +67,22 @@ QtObject:
     self.stats = stats
     self.statsChanged()
 
-  proc uploadRate*(self: View): string {.slot.} = $self.stats.uploadRate
+  proc uploadRate*(self: View): string {.slot.} =
+    $self.stats.uploadRate
 
   QtProperty[string] uploadRate:
     read = uploadRate
     notify = statsChanged
 
-  proc downloadRate*(self: View): string {.slot.} = $self.stats.downloadRate
+  proc downloadRate*(self: View): string {.slot.} =
+    $self.stats.downloadRate
 
   QtProperty[string] downloadRate:
     read = downloadRate
     notify = statsChanged
 
-  proc getPeerSize*(self: View): int {.slot.} = self.peerSize
+  proc getPeerSize*(self: View): int {.slot.} =
+    self.peerSize
 
   proc peerSizeChanged*(self: View, value: int) {.signal.}
 
@@ -97,7 +99,8 @@ QtObject:
 
   proc log*(self: View, logContent: string) {.signal.}
 
-  proc getWakuV2LightClient(self: View): bool {.slot.} = self.delegate.isLightClient()
+  proc getWakuV2LightClient(self: View): bool {.slot.} =
+    self.delegate.isLightClient()
 
   QtProperty[bool] WakuV2LightClient:
     read = getWakuV2LightClient

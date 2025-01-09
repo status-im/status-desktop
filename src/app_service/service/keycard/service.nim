@@ -9,7 +9,8 @@ import constants
 
 type KCSFlowType* {.pure.} = enum
   NoFlow = -1 # this type is added only for the desktop app purpose
-  GetAppInfo = 0 # enumeration of these flows should follow enumeration in the `status-keycard-go`
+  GetAppInfo = 0
+    # enumeration of these flows should follow enumeration in the `status-keycard-go`
   RecoverAccount
   LoadAccount
   Login
@@ -54,10 +55,9 @@ include ../../common/mnemonics
 include internal
 include ../../common/async_tasks
 
-type
-  KeycardLibArgs* = ref object of Args
-    flowType*: string
-    flowEvent*: KeycardEvent
+type KeycardLibArgs* = ref object of Args
+  flowType*: string
+  flowEvent*: KeycardEvent
 
 QtObject:
   type Service* = ref object of QObject
@@ -70,7 +70,7 @@ QtObject:
     doLogging: bool
     busy: bool
     waitingFlows: seq[tuple[flow: KCSFlowType, payload: JsonNode]]
-    registeredCallback: proc ()
+    registeredCallback: proc()
 
   ## Forward declaration
   proc startFlow(self: Service, payload: JsonNode)
@@ -96,7 +96,7 @@ QtObject:
 
   proc init*(self: Service) =
     if self.doLogging:
-      debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
+      debug "init keycard using ", pairingsJson = status_const.KEYCARDPAIRINGDATAFILE
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
@@ -115,17 +115,21 @@ QtObject:
       return
 
     if self.doLogging:
-      debug "keycard_signal", response=signal
+      debug "keycard_signal", response = signal
 
     var typeObj, eventObj: JsonNode
-    if(not jsonSignal.getProp(ResponseKeyType, typeObj) or
-      not jsonSignal.getProp(ResponseKeyEvent, eventObj)):
+    if (
+      not jsonSignal.getProp(ResponseKeyType, typeObj) or
+      not jsonSignal.getProp(ResponseKeyEvent, eventObj)
+    ):
       return
 
     let flowType = typeObj.getStr
     let flowEvent = toKeycardEvent(eventObj)
     self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
-    self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent))
+    self.events.emit(
+      SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent)
+    )
 
   proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
     self.busy = false
@@ -136,21 +140,27 @@ QtObject:
       self.currentFlow = flow
       self.startFlow(payload)
 
-  proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] =
+  proc getLastReceivedKeycardData*(
+      self: Service
+  ): tuple[flowType: string, flowEvent: KeycardEvent] =
     return self.lastReceivedKeycardData
 
   proc cleanReceivedKeycardData*(self: Service) =
     self.lastReceivedKeycardData = ("", KeycardEvent())
 
-  proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] =
+  proc buildSeedPhrasesFromIndexes*(
+      self: Service, seedPhraseIndexes: seq[int]
+  ): seq[string] =
     var seedPhrase: seq[string]
     for ind in seedPhraseIndexes:
       seedPhrase.add(englishWords[ind])
     return seedPhrase
 
-  proc updateLocalPayloadForCurrentFlow(self: Service, obj: JsonNode, cleanBefore = false) =
+  proc updateLocalPayloadForCurrentFlow(
+      self: Service, obj: JsonNode, cleanBefore = false
+  ) =
     if cleanBefore:
-      self.setPayloadForCurrentFlow = %* {}
+      self.setPayloadForCurrentFlow = %*{}
     for k, v in obj:
       self.setPayloadForCurrentFlow[k] = v
 
@@ -165,14 +175,16 @@ QtObject:
     self.updateLocalPayloadForCurrentFlow(payload, cleanBefore = true)
     let response = keycard_go.keycardStartFlow(self.currentFlow.int, $payload)
     if self.doLogging:
-      debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
+      debug "keycardStartFlow",
+        kcServiceCurrFlow = ($self.currentFlow), payload = payload, response = response
 
   proc resumeFlow(self: Service, payload: JsonNode) =
     self.busy = true
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
     if self.doLogging:
-      debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
+      debug "keycardResumeFlow",
+        kcServiceCurrFlow = ($self.currentFlow), payload = payload, response = response
 
   proc cancelCurrentFlow*(self: Service) =
     # Do not remove the sleep 700
@@ -186,18 +198,34 @@ QtObject:
     self.currentFlow = KCSFlowType.NoFlow
     self.busy = false
     if self.doLogging:
-      debug "keycardCancelFlow", kcServiceCurrFlow=($self.currentFlow), response=response
+      debug "keycardCancelFlow",
+        kcServiceCurrFlow = ($self.currentFlow), response = response
 
   ##########################################################
   ## Used in test env only, for testing keycard flows
-  proc registerMockedKeycard*(self: Service, cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) =
+  proc registerMockedKeycard*(
+      self: Service,
+      cardIndex: int,
+      readerState: int,
+      keycardState: int,
+      mockedKeycard: string,
+      mockedKeycardHelper: string,
+  ) =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "registerMockedKeycard can be used only in test env"
       return
-    let response = keycard_go.mockedLibRegisterKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+    let response = keycard_go.mockedLibRegisterKeycard(
+      cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper
+    )
     if self.doLogging:
-      debug "mockedLibRegisterKeycard", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, readerState=readerState, keycardState=keycardState, mockedKeycard=mockedKeycard, mockedKeycardHelper=mockedKeycardHelper, response=response
+      debug "mockedLibRegisterKeycard",
+        kcServiceCurrFlow = ($self.currentFlow),
+        cardIndex = cardIndex,
+        readerState = readerState,
+        keycardState = keycardState,
+        mockedKeycard = mockedKeycard,
+        mockedKeycardHelper = mockedKeycardHelper,
+        response = response
 
   proc pluginMockedReaderAction*(self: Service) =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
@@ -205,7 +233,8 @@ QtObject:
       return
     let response = keycard_go.mockedLibReaderPluggedIn()
     if self.doLogging:
-      debug "mockedLibReaderPluggedIn", kcServiceCurrFlow=($self.currentFlow), response=response
+      debug "mockedLibReaderPluggedIn",
+        kcServiceCurrFlow = ($self.currentFlow), response = response
 
   proc unplugMockedReaderAction*(self: Service) =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
@@ -213,7 +242,8 @@ QtObject:
       return
     let response = keycard_go.mockedLibReaderUnplugged()
     if self.doLogging:
-      debug "mockedLibReaderUnplugged", kcServiceCurrFlow=($self.currentFlow), response=response
+      debug "mockedLibReaderUnplugged",
+        kcServiceCurrFlow = ($self.currentFlow), response = response
 
   proc insertMockedKeycardAction*(self: Service, cardIndex: int) =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
@@ -221,7 +251,10 @@ QtObject:
       return
     let response = keycard_go.mockedLibKeycardInserted(cardIndex)
     if self.doLogging:
-      debug "mockedLibKeycardInserted", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, response=response
+      debug "mockedLibKeycardInserted",
+        kcServiceCurrFlow = ($self.currentFlow),
+        cardIndex = cardIndex,
+        response = response
 
   proc removeMockedKeycardAction*(self: Service) =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
@@ -229,7 +262,9 @@ QtObject:
       return
     let response = keycard_go.mockedLibKeycardRemoved()
     if self.doLogging:
-      debug "mockedLibKeycardRemoved", kcServiceCurrFlow=($self.currentFlow), response=response
+      debug "mockedLibKeycardRemoved",
+        kcServiceCurrFlow = ($self.currentFlow), response = response
+
   ##########################################################
 
   proc generateRandomPUK*(self: Service): string =
@@ -239,14 +274,17 @@ QtObject:
 
   proc onTimeout(self: Service, response: string) {.slot.} =
     if response == $TimerReason.ReRunCurrentFlowLater:
-      if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
+      if (self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
         return
       if self.doLogging:
-        debug "onTimeout, about to start flow: ", kcServiceCurrFlow=($self.currentFlow)
+        debug "onTimeout, about to start flow: ",
+          kcServiceCurrFlow = ($self.currentFlow)
       self.startFlow(self.setPayloadForCurrentFlow)
     elif response == $TimerReason.WaitForKeycardAvailability:
       if self.busy:
-        self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)
+        self.runTimer(
+          CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability
+        )
         return
       if self.registeredCallback != nil:
         self.registeredCallback()
@@ -255,7 +293,7 @@ QtObject:
       error "unknown timer reason", reason = response
 
   proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string) =
-    if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
+    if (self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
 
     let arg = TimerTaskArg(
@@ -263,106 +301,131 @@ QtObject:
       vptr: cast[uint](self.vptr),
       slot: "onTimeout",
       timeoutInMilliseconds: timeoutInMilliseconds,
-      reason: reason
+      reason: reason,
     )
     self.threadpool.start(arg)
 
-  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, pin: string, puk: string,
-    factoryReset: bool) =
-    var payload = %* { }
+  proc startLoadAccountFlow*(
+      self: Service,
+      seedPhraseLength: int,
+      seedPhrase: string,
+      pin: string,
+      puk: string,
+      factoryReset: bool,
+  ) =
+    var payload = %*{}
     if seedPhrase.len > 0 and seedPhraseLength > 0:
-      payload[RequestParamMnemonic] = %* seedPhrase
-      payload[RequestParamMnemonicLen] = %* seedPhraseLength
-      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+      payload[RequestParamMnemonic] = %*seedPhrase
+      payload[RequestParamMnemonicLen] = %*seedPhraseLength
+      payload[RequestParamNewPUK] = %*self.generateRandomPUK()
     if pin.len > 0:
-      payload[RequestParamPIN] = %* pin
-      payload[RequestParamNewPIN] = %* pin
-      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+      payload[RequestParamPIN] = %*pin
+      payload[RequestParamNewPIN] = %*pin
+      payload[RequestParamNewPUK] = %*self.generateRandomPUK()
     if puk.len > 0:
-      payload[RequestParamNewPUK] = %* puk
+      payload[RequestParamNewPUK] = %*puk
     if factoryReset:
-      payload[RequestParamFactoryReset] = %* factoryReset
+      payload[RequestParamFactoryReset] = %*factoryReset
     self.currentFlow = KCSFlowType.LoadAccount
     self.startFlow(payload)
 
   proc startLoginFlow*(self: Service) =
-    let payload = %* { }
+    let payload = %*{}
     self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
   proc startLoginFlowAutomatically*(self: Service, pin: string) =
-    let payload = %* {
-      RequestParamPIN: pin
-    }
+    let payload = %*{RequestParamPIN: pin}
     self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
-  proc startRecoverAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
-    var payload = %* { }
+  proc startRecoverAccountFlow*(
+      self: Service,
+      seedPhraseLength: int,
+      seedPhrase: string,
+      puk: string,
+      factoryReset: bool,
+  ) =
+    var payload = %*{}
     if seedPhrase.len > 0 and seedPhraseLength > 0:
-      payload[RequestParamMnemonic] = %* seedPhrase
-      payload[RequestParamMnemonicLen] = %* seedPhraseLength
-      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
+      payload[RequestParamMnemonic] = %*seedPhrase
+      payload[RequestParamMnemonicLen] = %*seedPhraseLength
+      payload[RequestParamNewPUK] = %*self.generateRandomPUK()
     if puk.len > 0:
-      payload[RequestParamNewPUK] = %* puk
+      payload[RequestParamNewPUK] = %*puk
     if factoryReset:
-      payload[RequestParamFactoryReset] = %* factoryReset
+      payload[RequestParamFactoryReset] = %*factoryReset
     self.currentFlow = KCSFlowType.RecoverAccount
     self.startFlow(payload)
 
   proc startGetAppInfoFlow*(self: Service, factoryReset: bool) =
-    var payload = %* { }
+    var payload = %*{}
     if factoryReset:
-      payload[RequestParamFactoryReset] = %* factoryReset
+      payload[RequestParamFactoryReset] = %*factoryReset
     self.currentFlow = KCSFlowType.GetAppInfo
     self.startFlow(payload)
 
-  proc startGetMetadataFlow*(self: Service, resolveAddress: bool, exportMasterAddr = false, pin = "") =
-    var payload = %* { }
+  proc startGetMetadataFlow*(
+      self: Service, resolveAddress: bool, exportMasterAddr = false, pin = ""
+  ) =
+    var payload = %*{}
     if resolveAddress:
-      payload[RequestParamResolveAddr] = %* resolveAddress
+      payload[RequestParamResolveAddr] = %*resolveAddress
     if exportMasterAddr:
-      payload[RequestParamExportMasterAddress] = %* exportMasterAddr
+      payload[RequestParamExportMasterAddress] = %*exportMasterAddr
     if pin.len > 0:
-      payload[RequestParamPIN] = %* pin
+      payload[RequestParamPIN] = %*pin
     self.currentFlow = KCSFlowType.GetMetadata
     self.startFlow(payload)
 
   proc startChangePinFlow*(self: Service) =
-    var payload = %* { }
+    var payload = %*{}
     self.currentFlow = KCSFlowType.ChangePIN
     self.startFlow(payload)
 
   proc startChangePukFlow*(self: Service) =
-    var payload = %* { }
+    var payload = %*{}
     self.currentFlow = KCSFlowType.ChangePUK
     self.startFlow(payload)
 
   proc startChangePairingFlow*(self: Service) =
-    var payload = %* { }
+    var payload = %*{}
     self.currentFlow = KCSFlowType.ChangePairing
     self.startFlow(payload)
 
-  proc startExportPublicFlow*(self: Service, path: string, exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+  proc startExportPublicFlow*(
+      self: Service,
+      path: string,
+      exportMasterAddr = false,
+      exportPrivateAddr = false,
+      pin = "",
+  ) =
     ## Exports addresses for passed `path`. Result of this flow sets instance of `GeneratedWalletAccount` under
     ## `generatedWalletAccount` property in `KeycardEvent`.
     if exportPrivateAddr and not path.startsWith(DefaultEIP1581Path):
       error "in order to export private address path must not be outside of eip1581 tree"
       return
 
-    var payload = %* {
-      RequestParamBIP44Path: DefaultBIP44Path,
-      RequestParamExportMasterAddress: exportMasterAddr,
-      RequestParamExportPrivate: exportPrivateAddr
-    }
+    var payload =
+      %*{
+        RequestParamBIP44Path: DefaultBIP44Path,
+        RequestParamExportMasterAddress: exportMasterAddr,
+        RequestParamExportPrivate: exportPrivateAddr,
+      }
     if path.len > 0:
-      payload[RequestParamBIP44Path] = %* path
+      payload[RequestParamBIP44Path] = %*path
     if pin.len > 0:
-      payload[RequestParamPIN] = %* pin
+      payload[RequestParamPIN] = %*pin
     self.currentFlow = KCSFlowType.ExportPublic
     self.startFlow(payload)
 
-  proc startExportPublicFlow*(self: Service, paths: seq[string], exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+  proc startExportPublicFlow*(
+      self: Service,
+      paths: seq[string],
+      exportMasterAddr = false,
+      exportPrivateAddr = false,
+      pin = "",
+  ) =
     ## Exports addresses for passed `path`. Result of this flow sets array of `GeneratedWalletAccount` under
     ## `generatedWalletAccounts` property in `KeycardEvent`. The order of keys set in `generatedWalletAccounts` array
     ## mathch the order of `paths` sent to this flow.
@@ -372,41 +435,45 @@ QtObject:
           error "one of paths in the list refers to a private address path which is not in eip1581 tree"
           return
 
-    var payload = %* {
-      RequestParamBIP44Path: DefaultBIP44Path,
-      RequestParamExportMasterAddress: exportMasterAddr,
-      RequestParamExportPrivate: exportPrivateAddr
-    }
+    var payload =
+      %*{
+        RequestParamBIP44Path: DefaultBIP44Path,
+        RequestParamExportMasterAddress: exportMasterAddr,
+        RequestParamExportPrivate: exportPrivateAddr,
+      }
     if paths.len > 0:
-      payload[RequestParamBIP44Path] = %* paths
+      payload[RequestParamBIP44Path] = %*paths
     if pin.len > 0:
-      payload[RequestParamPIN] = %* pin
+      payload[RequestParamPIN] = %*pin
     self.currentFlow = KCSFlowType.ExportPublic
     self.startFlow(payload)
 
-  proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
+  proc startStoreMetadataFlow*(
+      self: Service, cardName: string, pin: string, walletPaths: seq[string]
+  ) =
     var name = cardName
     if cardName.len > CardNameLength:
       name = cardName[0 .. CardNameLength - 1]
-    let payload = %* {
-      RequestParamPIN: pin,
-      RequestParamCardName: name,
-      RequestParamWalletPaths: walletPaths
-    }
+    let payload =
+      %*{
+        RequestParamPIN: pin,
+        RequestParamCardName: name,
+        RequestParamWalletPaths: walletPaths,
+      }
     self.currentFlow = KCSFlowType.StoreMetadata
     self.startFlow(payload)
 
-  proc startSignFlow*(self: Service, bip44Path: string, txHash: string, pin: string = "") =
-    var payload = %* {
-      RequestParamTXHash: EmptyTxHash,
-      RequestParamBIP44Path: DefaultBIP44Path
-    }
+  proc startSignFlow*(
+      self: Service, bip44Path: string, txHash: string, pin: string = ""
+  ) =
+    var payload =
+      %*{RequestParamTXHash: EmptyTxHash, RequestParamBIP44Path: DefaultBIP44Path}
     if txHash.len > 0:
-      payload[RequestParamTXHash] = %* txHash
+      payload[RequestParamTXHash] = %*txHash
     if bip44Path.len > 0:
-      payload[RequestParamBIP44Path] = %* bip44Path
+      payload[RequestParamBIP44Path] = %*bip44Path
     if pin.len > 0:
-      payload[RequestParamPIN] = %* pin
+      payload[RequestParamPIN] = %*pin
     self.currentFlow = KCSFlowType.Sign
     self.startFlow(payload)
 
@@ -414,70 +481,66 @@ QtObject:
     if pin.len == 0:
       error "empty pin provided"
       return
-    var payload = %* {
-      RequestParamOverwrite: true,
-      RequestParamMnemonicLen: MnemonicLengthForStatusApp,
-      RequestParamPIN: pin,
-      RequestParamNewPIN: pin
-    }
+    var payload =
+      %*{
+        RequestParamOverwrite: true,
+        RequestParamMnemonicLen: MnemonicLengthForStatusApp,
+        RequestParamPIN: pin,
+        RequestParamNewPIN: pin,
+      }
     if puk.len > 0:
-      payload[RequestParamNewPUK] = %* puk
+      payload[RequestParamNewPUK] = %*puk
     self.resumeFlow(payload)
 
   proc enterPin*(self: Service, pin: string) =
     if pin.len == 0:
       error "empty pin provided"
       return
-    var payload = %* {
-      RequestParamPIN: pin
-    }
+    var payload = %*{RequestParamPIN: pin}
     self.resumeFlow(payload)
 
   proc storePuk*(self: Service, puk: string) =
     if puk.len == 0:
       error "empty puk provided"
       return
-    var payload = %* {
-      RequestParamOverwrite: true,
-      RequestParamPUK: puk,
-      RequestParamNewPUK: puk
-    }
+    var payload =
+      %*{RequestParamOverwrite: true, RequestParamPUK: puk, RequestParamNewPUK: puk}
     self.resumeFlow(payload)
 
   proc enterPuk*(self: Service, puk: string) =
     if puk.len == 0:
       error "empty puk provided"
       return
-    var payload = %* {
-      RequestParamPUK: puk
-    }
+    var payload = %*{RequestParamPUK: puk}
     self.resumeFlow(payload)
 
   proc storePairingCode*(self: Service, pairingCode: string) =
     if pairingCode.len == 0:
       error "empty pairing code provided"
       return
-    var payload = %* {
-      RequestParamOverwrite: true,
-      RequestParamPairingPass: pairingCode,
-      RequestParamNewPairingPass: pairingCode
-    }
+    var payload =
+      %*{
+        RequestParamOverwrite: true,
+        RequestParamPairingPass: pairingCode,
+        RequestParamNewPairingPass: pairingCode,
+      }
     self.resumeFlow(payload)
 
   proc storeSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string) =
     if seedPhrase.len == 0:
       error "empty seed phrase provided"
       return
-    var payload = %* {
-      RequestParamOverwrite: true,
-      RequestParamMnemonicLen: seedPhraseLength,
-      RequestParamNewPUK: self.generateRandomPUK(),
-      RequestParamMnemonic: seedPhrase
-    }
+    var payload =
+      %*{
+        RequestParamOverwrite: true,
+        RequestParamMnemonicLen: seedPhraseLength,
+        RequestParamNewPUK: self.generateRandomPUK(),
+        RequestParamMnemonic: seedPhrase,
+      }
     self.resumeFlow(payload)
 
   proc resumeCurrentFlow*(self: Service) =
-    var payload = %* { }
+    var payload = %*{}
     self.resumeFlow(payload)
 
   proc reRunCurrentFlow*(self: Service) =
@@ -497,4 +560,6 @@ QtObject:
       error "registerForKeycardAvailability can be called only when keycard is busy"
       return
     self.registeredCallback = p
-    self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)
+    self.runTimer(
+      CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability
+    )

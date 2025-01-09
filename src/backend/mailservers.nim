@@ -7,42 +7,51 @@ export response_type
 logScope:
   topics = "mailserver"
 
-proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [{
-      "id": id,
-      "name": name,
-      "address": enode,
-      "fleet": fleet
-    }]
+proc saveMailserver*(
+    id: string, name: string, enode: string, fleet: string
+): RpcResponse[JsonNode] =
+  let payload = %*[{"id": id, "name": name, "address": enode, "fleet": fleet}]
   result = core.callPrivateRPC("mailservers_addMailserver", payload)
 
 proc getMailservers*(): RpcResponse[JsonNode] =
   result = core.callPrivateRPC("mailservers_getMailservers")
 
 proc setPinnedMailservers*(mailservers: JsonNode): RpcResponse[JsonNode] =
-  result = core.callPrivateRPC("setPinnedMailservers".prefix, %*[ mailservers ])
+  result = core.callPrivateRPC("setPinnedMailservers".prefix, %*[mailservers])
 
 proc toggleUseMailservers*(value: bool): RpcResponse[JsonNode] =
-  result = core.callPrivateRPC("toggleUseMailservers".prefix, %*[ value ])
+  result = core.callPrivateRPC("toggleUseMailservers".prefix, %*[value])
 
 proc syncChatFromSyncedFrom*(chatId: string): RpcResponse[JsonNode] =
   let payload = %*[chatId]
   result = core.callPrivateRPC("syncChatFromSyncedFrom".prefix, payload)
-  info "syncChatFromSyncedFrom", topics="mailserver-interaction", rpc_method="wakuext_syncChatFromSyncedFrom", chatId, result
+  info "syncChatFromSyncedFrom",
+    topics = "mailserver-interaction",
+    rpc_method = "wakuext_syncChatFromSyncedFrom",
+    chatId,
+    result
 
 proc fillGaps*(chatId: string, messageIds: seq[string]): RpcResponse[JsonNode] =
   let payload = %*[chatId, messageIds]
   result = core.callPrivateRPC("fillGaps".prefix, payload)
-  info "fillGaps", topics="mailserver-interaction", rpc_method="wakuext_fillGaps", chatId, messageIds, result
+  info "fillGaps",
+    topics = "mailserver-interaction",
+    rpc_method = "wakuext_fillGaps",
+    chatId,
+    messageIds,
+    result
 
-proc requestAllHistoricMessagesWithRetries*(forceFetchingBackup: bool): RpcResponse[JsonNode] =
+proc requestAllHistoricMessagesWithRetries*(
+    forceFetchingBackup: bool
+): RpcResponse[JsonNode] =
   let payload = %*[forceFetchingBackup]
   result = core.callPrivateRPC("requestAllHistoricMessagesWithRetries".prefix, payload)
 
 proc requestMoreMessages*(chatId: string): RpcResponse[JsonNode] =
-  let payload = %*[{
-    "id": chatId
-  }]
+  let payload = %*[{"id": chatId}]
   result = core.callPrivateRPC("fetchMessages".prefix, payload)
-  info "requestMoreMessages", topics="mailserver-interaction", rpc_method="wakuext_fetchMessages", chatId, result
+  info "requestMoreMessages",
+    topics = "mailserver-interaction",
+    rpc_method = "wakuext_fetchMessages",
+    chatId,
+    result

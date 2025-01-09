@@ -12,24 +12,22 @@ const invalidTimestamp* = high(int)
 # Additional data needed to build an Entry, which is
 # not included in the backend data and needs to be
 # fetched from a different source.
-type
-  ExtraData* = object
-    networkShortName*: string
-    networkColor*: string
-    networkIconURL*: string
+type ExtraData* = object
+  networkShortName*: string
+  networkColor*: string
+  networkIconURL*: string
 
 # It is used to display a detailed collectibles entry in the QML UI
 QtObject:
-  type
-    CollectiblesEntry* = ref object of QObject
-      id: backend.CollectibleUniqueID
-      data: backend.Collectible
-      extradata: ExtraData
-      traits: TraitModel
-      ownership: OwnershipModel
-      generatedId: string
-      generatedCollectionId: string
-      tokenType: TokenType
+  type CollectiblesEntry* = ref object of QObject
+    id: backend.CollectibleUniqueID
+    data: backend.Collectible
+    extradata: ExtraData
+    traits: TraitModel
+    ownership: OwnershipModel
+    generatedId: string
+    generatedCollectionId: string
+    tokenType: TokenType
 
   proc setup(self: CollectiblesEntry) =
     self.QObject.setup
@@ -50,7 +48,8 @@ QtObject:
     self.setup()
 
   proc `$`*(self: CollectiblesEntry): string =
-    return fmt"""CollectiblesEntry(
+    return
+      fmt"""CollectiblesEntry(
       id:{self.id},
       data:{self.data},
       extradata:{self.extradata},
@@ -125,7 +124,7 @@ QtObject:
     if self.hasCollectibleData():
       result = self.data.collectibleData.get().name
     if result == "":
-      result = "#" & self.getTokenIDAsString() 
+      result = "#" & self.getTokenIDAsString()
 
   QtProperty[string] name:
     read = getName
@@ -157,7 +156,8 @@ QtObject:
     notify = mediaURLChanged
 
   proc getOriginalMediaType(self: CollectiblesEntry): string =
-    if not self.hasCollectibleData() or isNone(self.getCollectibleData().animationMediaType):
+    if not self.hasCollectibleData() or
+        isNone(self.getCollectibleData().animationMediaType):
       return ""
     return self.getCollectibleData().animationMediaType.get()
 
@@ -236,6 +236,7 @@ QtObject:
   proc ownershipChanged*(self: CollectiblesEntry) {.signal.}
   proc getOwnershipModel*(self: CollectiblesEntry): OwnershipModel =
     return self.ownership
+
   proc getOwnershipModelAsVariant*(self: CollectiblesEntry): QVariant {.slot.} =
     return newQVariant(self.ownership)
 
@@ -314,7 +315,7 @@ QtObject:
 
   proc tokenTypeChanged*(self: CollectiblesEntry) {.signal.}
   proc getTokenType*(self: CollectiblesEntry): int {.slot.} =
-   return self.tokenType.int
+    return self.tokenType.int
 
   QtProperty[int] tokenType:
     read = getTokenType
@@ -335,6 +336,7 @@ QtObject:
     if not self.hasCollectionData():
       return ""
     return self.getCollectionData().socials.website
+
   QtProperty[string] website:
     read = getWebsite
     notify = websiteChanged
@@ -344,6 +346,7 @@ QtObject:
     if not self.hasCollectionData():
       return ""
     return self.getCollectionData().socials.twitterHandle
+
   QtProperty[string] twitterHandle:
     read = getTwitterHandle
     notify = twitterHandleChanged
@@ -359,7 +362,7 @@ QtObject:
   proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.Collectible): bool =
     if self.id != update.id:
       return false
-    
+
     self.setData(update)
 
     # Notify changes for all properties
@@ -381,25 +384,35 @@ QtObject:
     self.communityImageChanged()
     return true
 
-  proc contractTypeToTokenType(contractType : ContractType): TokenType =
-    case contractType:
-      of ContractType.ContractTypeUnknown: return TokenType.Unknown
-      of ContractType.ContractTypeERC20: return TokenType.ERC20
-      of ContractType.ContractTypeERC721: return TokenType.ERC721
-      of ContractType.ContractTypeERC1155: return TokenType.ERC1155
-      else: return TokenType.Unknown
+  proc contractTypeToTokenType(contractType: ContractType): TokenType =
+    case contractType
+    of ContractType.ContractTypeUnknown:
+      return TokenType.Unknown
+    of ContractType.ContractTypeERC20:
+      return TokenType.ERC20
+    of ContractType.ContractTypeERC721:
+      return TokenType.ERC721
+    of ContractType.ContractTypeERC1155:
+      return TokenType.ERC1155
+    else:
+      return TokenType.Unknown
 
-  proc newCollectibleDetailsFullEntry*(data: backend.Collectible, extradata: ExtraData): CollectiblesEntry =
+  proc newCollectibleDetailsFullEntry*(
+      data: backend.Collectible, extradata: ExtraData
+  ): CollectiblesEntry =
     new(result, delete)
     result.id = data.id
     result.setData(data)
     result.extradata = extradata
     result.generatedId = result.id.toString()
     result.generatedCollectionId = result.id.contractID.toString()
-    result.tokenType = contractTypeToTokenType(data.contractType.get(ContractType.ContractTypeUnknown))
+    result.tokenType =
+      contractTypeToTokenType(data.contractType.get(ContractType.ContractTypeUnknown))
     result.setup()
 
-  proc newCollectibleDetailsBasicEntry*(id: backend.CollectibleUniqueID, extradata: ExtraData): CollectiblesEntry =
+  proc newCollectibleDetailsBasicEntry*(
+      id: backend.CollectibleUniqueID, extradata: ExtraData
+  ): CollectiblesEntry =
     new(result, delete)
     result.id = id
     result.extradata = extradata
@@ -411,16 +424,14 @@ QtObject:
 
   proc newCollectibleDetailsEmptyEntry*(): CollectiblesEntry =
     let id = backend.CollectibleUniqueID(
-      contractID: backend.ContractID(
-        chainID: 0,
-        address: ""
-      ),
-      tokenID: stint.u256(0)
+      contractID: backend.ContractID(chainID: 0, address: ""), tokenID: stint.u256(0)
     )
     let extradata = ExtraData()
     return newCollectibleDetailsBasicEntry(id, extradata)
 
-  proc updateDataIfSameID*(self: CollectiblesEntry, update: backend.CollectionSocialsMessage) =
+  proc updateDataIfSameID*(
+      self: CollectiblesEntry, update: backend.CollectionSocialsMessage
+  ) =
     if self.id.contractID != update.id:
       return
 

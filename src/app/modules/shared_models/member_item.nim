@@ -5,38 +5,37 @@ import ../../../app_service/common/types
 
 export user_item
 
-type
-  MemberItem* = ref object of UserItem
-    memberRole: MemberRole
-    joined: bool
-    requestToJoinId: string
-    requestToJoinLoading*: bool
-    airdropAddress*: string
-    membershipRequestState*: MembershipRequestState
+type MemberItem* = ref object of UserItem
+  memberRole: MemberRole
+  joined: bool
+  requestToJoinId: string
+  requestToJoinLoading*: bool
+  airdropAddress*: string
+  membershipRequestState*: MembershipRequestState
 
 # FIXME: remove defaults
 proc initMemberItem*(
-  pubKey: string,
-  displayName: string,
-  ensName: string,
-  isEnsVerified: bool,
-  localNickname: string,
-  alias: string,
-  icon: string,
-  colorId: int,
-  colorHash: string = "",
-  onlineStatus: OnlineStatus = OnlineStatus.Inactive,
-  isCurrentUser: bool = false,
-  isContact: bool = false,
-  trustStatus: TrustStatus = TrustStatus.Unknown,
-  isBlocked: bool = false,
-  contactRequest: ContactRequest = ContactRequest.None,
-  memberRole: MemberRole = MemberRole.None,
-  joined: bool = false,
-  requestToJoinId: string = "",
-  requestToJoinLoading: bool = false,
-  airdropAddress: string = "",
-  membershipRequestState: MembershipRequestState = MembershipRequestState.None,
+    pubKey: string,
+    displayName: string,
+    ensName: string,
+    isEnsVerified: bool,
+    localNickname: string,
+    alias: string,
+    icon: string,
+    colorId: int,
+    colorHash: string = "",
+    onlineStatus: OnlineStatus = OnlineStatus.Inactive,
+    isCurrentUser: bool = false,
+    isContact: bool = false,
+    trustStatus: TrustStatus = TrustStatus.Unknown,
+    isBlocked: bool = false,
+    contactRequest: ContactRequest = ContactRequest.None,
+    memberRole: MemberRole = MemberRole.None,
+    joined: bool = false,
+    requestToJoinId: string = "",
+    requestToJoinLoading: bool = false,
+    airdropAddress: string = "",
+    membershipRequestState: MembershipRequestState = MembershipRequestState.None,
 ): MemberItem =
   result = MemberItem()
   result.memberRole = memberRole
@@ -64,7 +63,8 @@ proc initMemberItem*(
   )
 
 proc `$`*(self: MemberItem): string =
-  result = fmt"""Member Item(
+  result =
+    fmt"""Member Item(
     pubKey: {self.pubkey},
     displayName: {self.displayName},
     ensName: {self.ensName},

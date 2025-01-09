@@ -12,26 +12,28 @@ QtObject:
     isWallet: bool
     canSend: bool
 
-  proc setup*(self: Item,
-    name: string,
-    address: string,
-    path: string,
-    colorId: string,
-    walletType: string,
-    currencyBalance: CurrencyAmount,
-    emoji: string,
-    keyUid: string,
-    createdAt: int,
-    position: int,
-    keycardAccount: bool,
-    assetsLoading: bool,
-    isWallet: bool,
-    areTestNetworksEnabled: bool,
-    hideFromTotalBalance: bool,
-    canSend: bool
+  proc setup*(
+      self: Item,
+      name: string,
+      address: string,
+      path: string,
+      colorId: string,
+      walletType: string,
+      currencyBalance: CurrencyAmount,
+      emoji: string,
+      keyUid: string,
+      createdAt: int,
+      position: int,
+      keycardAccount: bool,
+      assetsLoading: bool,
+      isWallet: bool,
+      areTestNetworksEnabled: bool,
+      hideFromTotalBalance: bool,
+      canSend: bool,
   ) =
     self.QObject.setup
-    self.WalletAccountItem.setup(name,
+    self.WalletAccountItem.setup(
+      name,
       address,
       colorId,
       emoji,
@@ -42,7 +44,8 @@ QtObject:
       position,
       operability = wa_dto.AccountFullyOperable,
       areTestNetworksEnabled,
-      hideFromTotalBalance)
+      hideFromTotalBalance,
+    )
     self.createdAt = createdAt
     self.assetsLoading = assetsLoading
     self.currencyBalance = currencyBalance
@@ -53,40 +56,29 @@ QtObject:
     self.QObject.delete
 
   proc newItem*(
-    name: string = "",
-    address: string = "",
-    path: string = "",
-    colorId: string = "",
-    walletType: string = "",
-    currencyBalance: CurrencyAmount = nil,
-    emoji: string = "",
-    keyUid: string = "",
-    createdAt: int = 0,
-    position: int = 0,
-    keycardAccount: bool = false,
-    assetsLoading: bool = true,
-    isWallet: bool = false,
-    areTestNetworksEnabled: bool = false,
-    hideFromTotalBalance: bool = false,
-    canSend: bool = true
+      name: string = "",
+      address: string = "",
+      path: string = "",
+      colorId: string = "",
+      walletType: string = "",
+      currencyBalance: CurrencyAmount = nil,
+      emoji: string = "",
+      keyUid: string = "",
+      createdAt: int = 0,
+      position: int = 0,
+      keycardAccount: bool = false,
+      assetsLoading: bool = true,
+      isWallet: bool = false,
+      areTestNetworksEnabled: bool = false,
+      hideFromTotalBalance: bool = false,
+      canSend: bool = true,
   ): Item =
     new(result, delete)
-    result.setup(name,
-      address,
-      path,
-      colorId,
-      walletType,
-      currencyBalance,
-      emoji,
-      keyUid,
-      createdAt,
-      position,
-      keycardAccount,
-      assetsLoading,
-      isWallet,
-      areTestNetworksEnabled,
-      hideFromTotalBalance,
-      canSend)
+    result.setup(
+      name, address, path, colorId, walletType, currencyBalance, emoji, keyUid,
+      createdAt, position, keycardAccount, assetsLoading, isWallet,
+      areTestNetworksEnabled, hideFromTotalBalance, canSend,
+    )
 
   proc `$`*(self: Item): string =
     result = "WalletSection-Accounts-Item("
@@ -111,6 +103,7 @@ QtObject:
   proc currencyBalanceChanged*(self: Item) {.signal.}
   proc getCurrencyBalanceAsQVariant*(self: Item): QVariant {.slot.} =
     return newQVariant(self.currencyBalance)
+
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalanceAsQVariant
     notify = currencyBalanceChanged

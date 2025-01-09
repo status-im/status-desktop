@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -21,7 +20,6 @@ method changeLanguage*(self: AccessInterface, language: string) {.base.} =
 
 method onCurrentLanguageChanged*(self: AccessInterface, language: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
 
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi

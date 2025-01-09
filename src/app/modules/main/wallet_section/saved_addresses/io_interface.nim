@@ -1,5 +1,4 @@
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -17,16 +16,26 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method loadSavedAddresses*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrUpdateSavedAddress*(self: AccessInterface, name: string, address: string, ens: string, colorId: string) {.base.} =
+method createOrUpdateSavedAddress*(
+    self: AccessInterface, name: string, address: string, ens: string, colorId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteSavedAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressUpdated*(self: AccessInterface, name: string, address: string, isTestAddress: bool, errorMsg: string) {.base.} =
+method savedAddressUpdated*(
+    self: AccessInterface,
+    name: string,
+    address: string,
+    isTestAddress: bool,
+    errorMsg: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method savedAddressDeleted*(self: AccessInterface, address: string, isTestAddress: bool, errorMsg: string) {.base.} =
+method savedAddressDeleted*(
+    self: AccessInterface, address: string, isTestAddress: bool, errorMsg: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method savedAddressNameExists*(self: AccessInterface, name: string): bool {.base.} =

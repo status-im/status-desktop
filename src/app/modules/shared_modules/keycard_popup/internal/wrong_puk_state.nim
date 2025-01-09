@@ -1,5 +1,4 @@
-type
-  WrongPukState* = ref object of State
+type WrongPukState* = ref object of State
 
 proc newWrongPukState*(flowType: FlowType, backState: State): WrongPukState =
   result = WrongPukState()
@@ -17,24 +16,27 @@ method executeCancelCommand*(self: WrongPukState, controller: Controller) =
   if self.flowType == FlowType.UnlockKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method resolveKeycardNextState*(self: WrongPukState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: WrongPukState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  let state =
+    ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.UnlockKeycard:
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == RequestParamPUK:
-        controller.setRemainingAttempts(keycardEvent.pukRetries)
-        controller.setPukValid(false)
-        if keycardEvent.pukRetries > 0:
-          return nil
-        return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueSwapCard and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == RequestParamPUKRetries:
-        return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and keycardEvent.error.len > 0 and
+        keycardEvent.error == RequestParamPUK:
+      controller.setRemainingAttempts(keycardEvent.pukRetries)
+      controller.setPukValid(false)
+      if keycardEvent.pukRetries > 0:
+        return nil
+      return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueSwapCard and keycardEvent.error.len > 0 and
+        keycardEvent.error == RequestParamPUKRetries:
+      return createState(StateType.MaxPukRetriesReached, self.flowType, nil)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       if keycardEvent.error.len == 0:
         controller.setPukValid(true)

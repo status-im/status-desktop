@@ -5,29 +5,26 @@ import stint, strutils, random
 import backend/collectibles_types
 import app/modules/shared_models/collectibles_model
 import app/modules/shared_models/collectibles_entry
-    
+
 proc createTestCollectible(seed: int): CollectiblesEntry =
-    let data = Collectible(
-        dataType: UniqueID,
-        id: CollectibleUniqueID(
-            contractID: ContractID(
-                address: seed.toHex,
-                chainID: seed mod 4
-            ),
-            tokenID: u256(seed)
-        )
-    )
-    let extradata = ExtraData(
-        networkShortName: "Chain" & seed.toHex,
-        networkColor: "Color" & seed.toHex,
-        networkIconURL: "URL" & seed.toHex,
-    )
-    return newCollectibleDetailsFullEntry(data, extradata)
+  let data = Collectible(
+    dataType: UniqueID,
+    id: CollectibleUniqueID(
+      contractID: ContractID(address: seed.toHex, chainID: seed mod 4),
+      tokenID: u256(seed),
+    ),
+  )
+  let extradata = ExtraData(
+    networkShortName: "Chain" & seed.toHex,
+    networkColor: "Color" & seed.toHex,
+    networkIconURL: "URL" & seed.toHex,
+  )
+  return newCollectibleDetailsFullEntry(data, extradata)
 
 proc createTestCollectibles(seed: int, count: int): seq[CollectiblesEntry] =
-    result = @[]
-    for i in 0..<count:
-        result.add(createTestCollectible(seed + i))
+  result = @[]
+  for i in 0 ..< count:
+    result.add(createTestCollectible(seed + i))
 
 suite "collectibles model":
   test "Collectible list set":
@@ -65,18 +62,18 @@ suite "collectibles model":
     newCollectibles.del(2)
     newCollectibles.del(7)
     for newC in createTestCollectibles(100, 7):
-        newCollectibles.add(newC)
-    
+      newCollectibles.add(newC)
+
     var r = initRand(678)
     r.shuffle(newCollectibles)
-    
+
     model.updateItems(newCollectibles)
 
     for c in model.getItems():
-        check(c in newCollectibles)
-    
+      check(c in newCollectibles)
+
     for c in newCollectibles:
-        check(c in model.getItems())
-    
+      check(c in model.getItems())
+
     model.updateItems(@[])
     check(model.getItems().len == 0)

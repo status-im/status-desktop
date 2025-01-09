@@ -3,13 +3,16 @@ import stew/shims/strformat
 include ../../../common/json_utils
 
 type PaymentRequest* = object
-    receiver*: string
-    amount*: string
-    symbol*: string
-    chainId*: int
+  receiver*: string
+  amount*: string
+  symbol*: string
+  chainId*: int
 
-proc newPaymentRequest*(receiver: string, amount: string, symbol: string, chainId: int): PaymentRequest =
-  result = PaymentRequest(receiver: receiver, amount: amount, symbol: symbol, chainId: chainId)
+proc newPaymentRequest*(
+    receiver: string, amount: string, symbol: string, chainId: int
+): PaymentRequest =
+  result =
+    PaymentRequest(receiver: receiver, amount: amount, symbol: symbol, chainId: chainId)
 
 proc toPaymentRequest*(jsonObj: JsonNode): PaymentRequest =
   result = PaymentRequest()
@@ -19,15 +22,17 @@ proc toPaymentRequest*(jsonObj: JsonNode): PaymentRequest =
   discard jsonObj.getProp("chainId", result.chainId)
 
 proc `%`*(self: PaymentRequest): JsonNode =
-  return %*{
-    "receiver": self.receiver,
-    "amount": self.amount,
-    "symbol": self.symbol,
-    "chainId": self.chainId
-  }
+  return
+    %*{
+      "receiver": self.receiver,
+      "amount": self.amount,
+      "symbol": self.symbol,
+      "chainId": self.chainId,
+    }
 
 proc `$`*(self: PaymentRequest): string =
-  result = fmt"""PaymentRequest(
+  result =
+    fmt"""PaymentRequest(
     receiver: {self.receiver},
     amount: {self.amount},
     symbol: {self.symbol},

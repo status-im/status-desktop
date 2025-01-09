@@ -5,15 +5,14 @@ import ../../visual_identity/dto
 
 include ../../../common/json_utils
 
-type
-  Image* = object
-    keyUid*: string
-    imgType*: string
-    uri*: string
-    width: int
-    height: int
-    fileSize: int
-    resizeTarget: int
+type Image* = object
+  keyUid*: string
+  imgType*: string
+  uri*: string
+  width: int
+  height: int
+  fileSize: int
+  resizeTarget: int
 
 type AccountDto* = object
   name*: string
@@ -55,7 +54,7 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
     result.colorHash = toColorHashDto(jsonObj["colorHash"])
 
   var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
+  if (jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
     for imgObj in imagesObj:
       result.images.add(toImage(imgObj))
 
@@ -70,6 +69,6 @@ proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   discard jsonObj.getProp("displayName", result.displayName)
 
   var obj: JsonNode
-  if(jsonObj.getProp("images", obj) and obj.kind == JArray):
+  if (jsonObj.getProp("images", obj) and obj.kind == JArray):
     for imgObj in obj:
       result.images.add(toImage(imgObj))

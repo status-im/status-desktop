@@ -5,15 +5,16 @@ import app_service/common/types as common_types
 # This file holds the data types used by models internally
 
 type SupportedSourcesItem* = ref object of RootObj
-    name*: string
-    updatedAt* : int64
-    source*: string
-    version*: string
-    # Needed to show upfront on ui count of tokens on each list
-    tokensCount*: int
+  name*: string
+  updatedAt*: int64
+  source*: string
+  version*: string
+  # Needed to show upfront on ui count of tokens on each list
+  tokensCount*: int
 
 proc `$`*(self: SupportedSourcesItem): string =
-  result = fmt"""SupportedSourcesItem[
+  result =
+    fmt"""SupportedSourcesItem[
     name: {self.name},
     updatedAt: {self.updatedAt},
     source: {self.source},
@@ -21,24 +22,23 @@ proc `$`*(self: SupportedSourcesItem): string =
     tokensCount: {self.tokensCount}
     ]"""
 
-type
-  TokenItem* = ref object of RootObj
-    # key is created using chainId and Address
-    key*: string
-    name*: string
-    symbol*: string
-    # uniswap/status/custom seq[string]
-    sources*: seq[string]
-    chainID*: int
-    address*: string
-    decimals*: int
-    # will remain empty until backend provides us this data
-    image*: string
-    `type`*: common_types.TokenType
-    communityId*: string
+type TokenItem* = ref object of RootObj # key is created using chainId and Address
+  key*: string
+  name*: string
+  symbol*: string
+  # uniswap/status/custom seq[string]
+  sources*: seq[string]
+  chainID*: int
+  address*: string
+  decimals*: int
+  # will remain empty until backend provides us this data
+  image*: string
+  `type`*: common_types.TokenType
+  communityId*: string
 
 proc `$`*(self: TokenItem): string =
-  result = fmt"""TokenItem[
+  result =
+    fmt"""TokenItem[
     key: {self.key},
     name: {self.name},
     symbol: {self.symbol},
@@ -52,21 +52,22 @@ proc `$`*(self: TokenItem): string =
     ]"""
 
 type AddressPerChain* = ref object of RootObj
-    chainId*: int
-    address*: string
+  chainId*: int
+  address*: string
 
 proc `$`*(self: AddressPerChain): string =
-  result = fmt"""AddressPerChain[
+  result =
+    fmt"""AddressPerChain[
     chainId: {self.chainId},
     address: {self.address}
     ]"""
 
-type
-  TokenBySymbolItem* = ref object of TokenItem
-    addressPerChainId*: seq[AddressPerChain]
+type TokenBySymbolItem* = ref object of TokenItem
+  addressPerChainId*: seq[AddressPerChain]
 
 proc `$`*(self: TokenBySymbolItem): string =
-  result = fmt"""TokenBySymbolItem[
+  result =
+    fmt"""TokenBySymbolItem[
     key: {self.key},
     name: {self.name},
     symbol: {self.symbol},
@@ -80,25 +81,26 @@ proc `$`*(self: TokenBySymbolItem): string =
 
 # In case of community tokens only the description will be available
 type TokenDetailsItem* = ref object of RootObj
-    description*: string
-    assetWebsiteUrl*: string
+  description*: string
+  assetWebsiteUrl*: string
 
 proc `$`*(self: TokenDetailsItem): string =
-  result = fmt"""TokenDetailsItem[
+  result =
+    fmt"""TokenDetailsItem[
     description: {self.description},
     assetWebsiteUrl: {self.assetWebsiteUrl}
     ]"""
 
-type
-  TokenPreferencesItem* = ref object of RootObj
-    key*: string
-    position*: int
-    groupPosition*: int
-    visible*: bool
-    communityId*: string
+type TokenPreferencesItem* = ref object of RootObj
+  key*: string
+  position*: int
+  groupPosition*: int
+  visible*: bool
+  communityId*: string
 
 proc `$`*(self: TokenPreferencesItem): string =
-  result = fmt"""TokenPreferencesItem[
+  result =
+    fmt"""TokenPreferencesItem[
     key: {self.key},
     position: {self.position},
     groupPosition: {self.groupPosition},
@@ -106,18 +108,18 @@ proc `$`*(self: TokenPreferencesItem): string =
     communityId: {self.communityId}
     ]"""
 
-type
-  TokenMarketValuesItem* = object
-    marketCap*: float64
-    highDay*: float64
-    lowDay*: float64
-    changePctHour*: float64
-    changePctDay*: float64
-    changePct24hour*: float64
-    change24hour*: float64
+type TokenMarketValuesItem* = object
+  marketCap*: float64
+  highDay*: float64
+  lowDay*: float64
+  changePctHour*: float64
+  changePctDay*: float64
+  changePct24hour*: float64
+  change24hour*: float64
 
 proc `$`*(self: TokenMarketValuesItem): string =
-  result = fmt"""TokenBySymbolItem[
+  result =
+    fmt"""TokenBySymbolItem[
     marketCap: {self.marketCap},
     highDay: {self.highDay},
     lowDay: {self.lowDay},
@@ -128,7 +130,7 @@ proc `$`*(self: TokenMarketValuesItem): string =
     ]"""
 
 proc cmpTokenItem*(x, y: TokenItem): int =
-    cmp(x.name, y.name)
+  cmp(x.name, y.name)
 
 proc cmpTokenBySymbolItem*(x, y: TokenBySymbolItem): int =
-    cmp(x.name, y.name)
+  cmp(x.name, y.name)

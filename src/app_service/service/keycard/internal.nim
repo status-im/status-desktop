@@ -74,9 +74,11 @@ proc toWalletAccount(jsonObj: JsonNode): WalletAccount =
 
 proc toGeneratedWalletAccount(jsonObj: JsonNode): GeneratedWalletAccount =
   discard jsonObj.getProp(ResponseParamAddress, result.address)
-  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey) and not result.publicKey.startsWith("0x"):
+  if jsonObj.getProp(ResponseParamPublicKey, result.publicKey) and
+      not result.publicKey.startsWith("0x"):
     result.publicKey = "0x" & result.publicKey
-  if jsonObj.getProp(ResponseParamPrivateKey, result.privateKey) and not result.privateKey.startsWith("0x"):
+  if jsonObj.getProp(ResponseParamPrivateKey, result.privateKey) and
+      not result.privateKey.startsWith("0x"):
     result.privateKey = "0x" & result.privateKey
 
 proc toCardMetadata(jsonObj: JsonNode): CardMetadata =
@@ -102,31 +104,30 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamPINRetries, result.pinRetries)
   discard jsonObj.getProp(ResponseParamPUKRetries, result.pukRetries)
   discard jsonObj.getProp(ResponseParamMasterKeyAddress, result.masterKeyAddress)
-  if jsonObj.getProp(ResponseParamKeyUID, result.keyUid) and
-    result.keyUid.len > 0 and
-    not result.keyUid.startsWith("0x"):
-      result.keyUid = "0x" & result.keyUid
+  if jsonObj.getProp(ResponseParamKeyUID, result.keyUid) and result.keyUid.len > 0 and
+      not result.keyUid.startsWith("0x"):
+    result.keyUid = "0x" & result.keyUid
 
   var obj: JsonNode
-  if(jsonObj.getProp(ResponseParamAppInfo, obj)):
+  if (jsonObj.getProp(ResponseParamAppInfo, obj)):
     result.applicationInfo = toApplicationInfo(obj)
 
-  if(jsonObj.getProp(ResponseParamEIP1581Key, obj)):
+  if (jsonObj.getProp(ResponseParamEIP1581Key, obj)):
     result.eip1581Key = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamEncKey, obj)):
+  if (jsonObj.getProp(ResponseParamEncKey, obj)):
     result.encryptionKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamMasterKey, obj)):
+  if (jsonObj.getProp(ResponseParamMasterKey, obj)):
     result.masterKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamWalletKey, obj)):
+  if (jsonObj.getProp(ResponseParamWalletKey, obj)):
     result.walletKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamWalletRootKey, obj)):
+  if (jsonObj.getProp(ResponseParamWalletRootKey, obj)):
     result.walletRootKey = toKeyDetails(obj)
 
-  if(jsonObj.getProp(ResponseParamWhisperKey, obj)):
+  if (jsonObj.getProp(ResponseParamWhisperKey, obj)):
     result.whisperKey = toKeyDetails(obj)
 
   var indexesArr: JsonNode
@@ -134,7 +135,7 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
     for ind in indexesArr:
       result.seedPhraseIndexes.add(ind.getInt)
 
-  if(jsonObj.getProp(ResponseParamCardMeta, obj)):
+  if (jsonObj.getProp(ResponseParamCardMeta, obj)):
     result.cardMetadata = toCardMetadata(obj)
 
   if jsonObj.getProp(ResponseParamExportedKey, obj):
@@ -144,5 +145,5 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
     else:
       result.generatedWalletAccount = toGeneratedWalletAccount(obj)
 
-  if(jsonObj.getProp(ResponseParamTXSignature, obj)):
+  if (jsonObj.getProp(ResponseParamTXSignature, obj)):
     result.txSignature = toTransactionSignature(obj)

@@ -13,31 +13,33 @@ import ../../../../../app_service/service/general/service as general_service
 
 export io_interface
 
-type
-  KeychainActivityReason {.pure.} = enum
-    StoreTo = 0
-    RemoveFrom
+type KeychainActivityReason {.pure.} = enum
+  StoreTo = 0
+  RemoveFrom
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
-    keychainActivityReason: KeychainActivityReason
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
+  keychainActivityReason: KeychainActivityReason
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.Service,
-  keychainService: keychain_service.Service,
-  privacyService: privacy_service.Service,
-  generalService: general_service.Service):
-  Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    keychainService: keychain_service.Service,
+    privacyService: privacy_service.Service,
+    generalService: general_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, keychainService, privacyService, generalService)
+  result.controller = controller.newController(
+    result, events, settingsService, keychainService, privacyService, generalService
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -88,7 +90,7 @@ method getMessagesFromContactsOnly*(self: Module): bool =
   return self.controller.getMessagesFromContactsOnly()
 
 method setMessagesFromContactsOnly*(self: Module, value: bool) =
-  if(not self.controller.setMessagesFromContactsOnly(value)):
+  if (not self.controller.setMessagesFromContactsOnly(value)):
     error "an error occurred while saving messages from contacts only flag"
 
 method urlUnfurlingMode*(self: Module): int =
@@ -101,9 +103,13 @@ method validatePassword*(self: Module, password: string): bool =
   self.controller.validatePassword(password)
 
 method getPasswordStrengthScore*(self: Module, password: string): int =
-  return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())
+  return self.controller.getPasswordStrengthScore(
+    password, singletonInstance.userProfile.getUsername()
+  )
 
-method onStoreToKeychainError*(self: Module, errorDescription: string, errorType: string) =
+method onStoreToKeychainError*(
+    self: Module, errorDescription: string, errorType: string
+) =
   self.view.emitStoreToKeychainError(errorDescription)
 
 method onStoreToKeychainSuccess*(self: Module, data: string) =
@@ -121,7 +127,9 @@ method tryRemoveFromKeyChain*(self: Module) =
   let myKeyUid = singletonInstance.userProfile.getKeyUid()
   self.controller.removeFromKeychain(myKeyUid)
 
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+method onUserAuthenticated*(
+    self: Module, pin: string, password: string, keyUid: string
+) =
   self.keychainActivityReason = KeychainActivityReason.StoreTo
   if pin.len > 0:
     self.controller.storeToKeychain(pin)

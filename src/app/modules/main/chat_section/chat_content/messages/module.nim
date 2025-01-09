@@ -29,34 +29,40 @@ const CHAT_IDENTIFIER_CLOCK = -2
 const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
 const FETCH_MORE_MESSAGES_CLOCK = -1
 
-type
-  FirstUnseenMessageState = tuple
-    initialized: bool
-    fetching: bool
-    scrollToWhenFetched: bool
+type FirstUnseenMessageState =
+  tuple[initialized: bool, fetching: bool, scrollToWhenFetched: bool]
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    initialMessagesLoaded: bool
-    firstUnseenMessageState: FirstUnseenMessageState
-    getMessageRequestId: UUID
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  initialMessagesLoaded: bool
+  firstUnseenMessageState: FirstUnseenMessageState
+  getMessageRequestId: UUID
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-    belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
-    chatService: chat_service.Service, messageService: message_service.Service,
-    mailserversService: mailservers_service.Service, sharedUrlsService: shared_urls_service.Service):
-  Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    sectionId: string,
+    chatId: string,
+    belongsToCommunity: bool,
+    contactService: contact_service.Service,
+    communityService: community_service.Service,
+    chatService: chat_service.Service,
+    messageService: message_service.Service,
+    mailserversService: mailservers_service.Service,
+    sharedUrlsService: shared_urls_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService,
-    communityService, chatService, messageService, mailserversService, sharedUrlsService)
+  result.controller = controller.newController(
+    result, events, sectionId, chatId, belongsToCommunity, contactService,
+    communityService, chatService, messageService, mailserversService, sharedUrlsService,
+  )
   result.moduleLoaded = false
   result.initialMessagesLoaded = false
   result.firstUnseenMessageState = (false, false, false)
@@ -67,7 +73,10 @@ proc createFetchMoreMessagesItem(self: Module): Item
 proc setChatDetails(self: Module, chatDetails: ChatDto)
 proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto): bool
 proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver: bool)
-proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool)
+proc updateLinkPreviewsCommunities(
+  self: Module, item: Item, requestFromMailserver: bool
+)
+
 proc currentUserWalletContainsAddress(self: Module, address: string): bool
 proc updateQuotedImages(self: Module, items: var seq[Item], message: MessageDto)
 
@@ -97,7 +106,9 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto] = @[]): seq[Item] =
+proc createMessageItemsFromMessageDtos(
+    self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto] = @[]
+): seq[Item] =
   for message in messages:
     # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
@@ -106,7 +117,11 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
 
     # Add image to album if album already exists
     if (message.contentType == ContentType.Image and len(message.albumId) != 0):
-      if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
+      if (
+        self.view.model().updateAlbumIfExists(
+          message.albumId, message.image, message.id
+        )
+      ):
         continue
 
       self.updateQuotedImages(result, message)
@@ -118,35 +133,40 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
 
     var quotedMessageAuthorDetails = ContactDetails()
     if message.quotedMessage.`from` != "":
-      if(message.`from` == message.quotedMessage.`from`):
+      if (message.`from` == message.quotedMessage.`from`):
         quotedMessageAuthorDetails = sender
       else:
-        quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+        quotedMessageAuthorDetails =
+          self.controller.getContactDetails(message.quotedMessage.`from`)
 
     var deletedByContactDetails = ContactDetails()
     if message.deletedBy != "":
-      if(message.`from` == message.deletedBy):
+      if (message.`from` == message.deletedBy):
         deletedByContactDetails = sender
       else:
         deletedByContactDetails = self.controller.getContactDetails(message.deletedBy)
 
     # remove a message which has replace parameters filled
     let index = self.view.model().findIndexForMessageId(message.replace)
-    if(index != -1):
+    if (index != -1):
       self.view.model().removeItem(message.replace)
 
     var communityChats: seq[ChatDto]
     communityChats = self.controller.getCommunityDetails().chats
 
-    var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+    var renderedMessageText =
+      self.controller.getRenderedText(message.parsedText, communityChats)
 
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
-    if(message.contentType == ContentType.Transaction):
-      (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+    if (message.contentType == ContentType.Transaction):
+      (transactionContract, transactionValue) =
+        self.controller.getTransactionDetails(message)
       if message.transactionParameters.fromAddress != "":
-        isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+        isCurrentUser = self.currentUserWalletContainsAddress(
+          message.transactionParameters.fromAddress
+        )
 
     var item = message_model.createMessageItemFromDtos(
       message,
@@ -168,25 +188,31 @@ proc createMessageItemsFromMessageDtos(self: Module, messages: seq[MessageDto], 
     self.updateLinkPreviewsCommunities(item, requestFromMailserver = item.seen)
 
     for r in reactions:
-      if(r.messageId == message.id):
+      if (r.messageId == message.id):
         var emojiIdAsEnum: EmojiId
-        if(message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
+        if (message_reaction_item.toEmojiIdAsEnum(r.emojiId, emojiIdAsEnum)):
           let userWhoAddedThisReaction = self.controller.getContactById(r.`from`)
-          let didIReactWithThisEmoji = userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
-          item.addReaction(emojiIdAsEnum, didIReactWithThisEmoji, userWhoAddedThisReaction.id,
-            userWhoAddedThisReaction.userDefaultDisplayName(), r.id)
+          let didIReactWithThisEmoji =
+            userWhoAddedThisReaction.id == singletonInstance.userProfile.getPubKey()
+          item.addReaction(
+            emojiIdAsEnum,
+            didIReactWithThisEmoji,
+            userWhoAddedThisReaction.id,
+            userWhoAddedThisReaction.userDefaultDisplayName(),
+            r.id,
+          )
         else:
-          error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
+          error "wrong emoji id found when loading messages",
+            methodName = "newMessagesLoaded"
 
     if message.editedAt != 0:
       item.isEdited = true
 
-    if(message.contentType == ContentType.Gap):
+    if (message.contentType == ContentType.Gap):
       item.gapFrom = message.gapParameters.`from`
       item.gapTo = message.gapParameters.to
 
     result.add(item)
-
 
 proc createFetchMoreMessagesItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
@@ -197,11 +223,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
       contentType: ContentType.FetchMoreMessagesButton,
     ),
     communityId = "",
-    sender = ContactDetails(
-      dto: ContactsDto(
-        id: chatDto.id,
-      ),
-    ),
+    sender = ContactDetails(dto: ContactsDto(id: chatDto.id)),
     isCurrentUser = false,
     renderedMessageText = "",
     clearText = "",
@@ -229,14 +251,11 @@ proc createChatIdentifierItem(self: Module): Item =
     ),
     communityId = "",
     sender = ContactDetails(
-    defaultDisplayName: chatName,
-    icon: chatIcon,
-    colorHash: senderColorHash,
-    dto: ContactsDto(
-      id: chatDto.id,
-      added: senderIsAdded,
+      defaultDisplayName: chatName,
+      icon: chatIcon,
+      colorHash: senderColorHash,
+      dto: ContactsDto(id: chatDto.id, added: senderIsAdded),
     ),
-  ),
     isCurrentUser = false,
     renderedMessageText = "",
     clearText = "",
@@ -274,13 +293,14 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  let loading = not self.initialMessagesLoaded or
-                not self.firstUnseenMessageState.initialized or
-                self.firstUnseenMessageState.fetching or
-                self.view.getMessageSearchOngoing()
+  let loading =
+    not self.initialMessagesLoaded or not self.firstUnseenMessageState.initialized or
+    self.firstUnseenMessageState.fetching or self.view.getMessageSearchOngoing()
   self.view.setLoading(loading)
 
-method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
+method newMessagesLoaded*(
+    self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]
+) =
   if messages.len > 0:
     var viewItems = self.createMessageItemsFromMessageDtos(messages, reactions)
 
@@ -330,52 +350,82 @@ method loadMoreMessages*(self: Module) =
 
 method toggleReaction*(self: Module, messageId: string, emojiId: int) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+  if (message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let item = self.view.model().getItemWithMessageId(messageId)
-    if(item.isNil):
+    if (item.isNil):
       return
     let myPublicKey = singletonInstance.userProfile.getPubKey()
-    if(item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
+    if (item.shouldAddReaction(emojiIdAsEnum, myPublicKey)):
       self.controller.addReaction(messageId, emojiId)
     else:
       let reactionId = item.getReactionId(emojiIdAsEnum, myPublicKey)
       self.controller.removeReaction(messageId, emojiId, reactionId)
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReaction"
+    error "wrong emoji id found on reaction added response",
+      emojiId, methodName = "toggleReaction"
 
-method onReactionAdded*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+method onReactionAdded*(
+    self: Module, messageId: string, emojiId: int, reactionId: string
+) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+  if (message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let myPublicKey = singletonInstance.userProfile.getPubKey()
     let myName = singletonInstance.userProfile.getName()
-    self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = true, myPublicKey, myName,
-    reactionId)
+    self.view.model().addReaction(
+      messageId,
+      emojiIdAsEnum,
+      didIReactWithThisEmoji = true,
+      myPublicKey,
+      myName,
+      reactionId,
+    )
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="onReactionAdded"
+    error "wrong emoji id found on reaction added response",
+      emojiId, methodName = "onReactionAdded"
 
-method onReactionRemoved*(self: Module, messageId: string, emojiId: int, reactionId: string) =
+method onReactionRemoved*(
+    self: Module, messageId: string, emojiId: int, reactionId: string
+) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
-    self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true)
+  if (message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+    self.view.model().removeReaction(
+      messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = true
+    )
   else:
-    error "wrong emoji id found on reaction remove response", emojiId, methodName="onReactionRemoved"
+    error "wrong emoji id found on reaction remove response",
+      emojiId, methodName = "onReactionRemoved"
 
-method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, reactionId: string,
-  reactionFrom: string) =
+method toggleReactionFromOthers*(
+    self: Module,
+    messageId: string,
+    emojiId: int,
+    reactionId: string,
+    reactionFrom: string,
+) =
   var emojiIdAsEnum: EmojiId
-  if(message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
+  if (message_reaction_item.toEmojiIdAsEnum(emojiId, emojiIdAsEnum)):
     let item = self.view.model().getItemWithMessageId(messageId)
-    if(item.isNil):
-      info "message with this id is not loaded yet ", msgId=messageId, methodName="toggleReactionFromOthers"
+    if (item.isNil):
+      info "message with this id is not loaded yet ",
+        msgId = messageId, methodName = "toggleReactionFromOthers"
       return
-    if(item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
+    if (item.shouldAddReaction(emojiIdAsEnum, reactionFrom)):
       let userWhoAddedThisReaction = self.controller.getContactById(reactionFrom)
-      self.view.model().addReaction(messageId, emojiIdAsEnum, didIReactWithThisEmoji = false,
-      userWhoAddedThisReaction.id, userWhoAddedThisReaction.userDefaultDisplayName(), reactionId)
+      self.view.model().addReaction(
+        messageId,
+        emojiIdAsEnum,
+        didIReactWithThisEmoji = false,
+        userWhoAddedThisReaction.id,
+        userWhoAddedThisReaction.userDefaultDisplayName(),
+        reactionId,
+      )
     else:
-      self.view.model().removeReaction(messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false)
+      self.view.model().removeReaction(
+        messageId, emojiIdAsEnum, reactionId, didIRemoveThisReaction = false
+      )
   else:
-    error "wrong emoji id found on reaction added response", emojiId, methodName="toggleReactionFromOthers"
+    error "wrong emoji id found on reaction added response",
+      emojiId, methodName = "toggleReactionFromOthers"
 
 method pinUnpinMessage*(self: Module, messageId: string, pin: bool) =
   self.controller.pinUnpinMessage(messageId, pin)
@@ -416,14 +466,16 @@ method amIChatAdmin*(self: Module): bool =
     for member in chatDto.members:
       if (member.id == singletonInstance.userProfile.getPubKey()):
         # TODO untangle this. There is no special roles for group chats
-        return member.role == MemberRole.Owner or member.role == MemberRole.Admin or member.role == MemberRole.TokenMaster
+        return
+          member.role == MemberRole.Owner or member.role == MemberRole.Admin or
+          member.role == MemberRole.TokenMaster
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.isPrivilegedUser
 
 method pinMessageAllowedForMembers*(self: Module): bool =
-  if(self.controller.belongsToCommunity()):
+  if (self.controller.belongsToCommunity()):
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.adminSettings.pinMessageAllMembersEnabled
   return false
@@ -434,7 +486,8 @@ method getNumberOfPinnedMessages*(self: Module): int =
 method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
 
-  let updatedSenderIcon = singletonInstance.utils().addTimestampToURL(updatedContact.icon)
+  let updatedSenderIcon =
+    singletonInstance.utils().addTimestampToURL(updatedContact.icon)
   for item in self.view.model().modelContactUpdateIterator(contactId):
     if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
@@ -452,7 +505,8 @@ method updateContactDetails*(self: Module, contactId: string) =
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
       let communityChats = self.controller.getCommunityDetails().chats
-      item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
+      item.messageText =
+        self.controller.getRenderedText(item.parsedText, communityChats)
 
     item.linkPreviewModel.setContactInfo(updatedContact)
 
@@ -464,7 +518,7 @@ method onMessageRemoved*(self: Module, messageId, removedBy: string) =
   if removedBy == "":
     # removedBy is empty if it was removed by the sender
     let messageItem = self.view.model().getItemWithMessageId(messageId)
-    if(messageItem.isNil):
+    if (messageItem.isNil):
       return
     if messageItem.id == "":
       return
@@ -481,7 +535,7 @@ method editMessage*(self: Module, messageId: string, updatedMsg: string) =
 
 method onMessageEdited*(self: Module, message: MessageDto) =
   let itemBeforeChange = self.view.model().getItemWithMessageId(message.id)
-  if(itemBeforeChange.isNil):
+  if (itemBeforeChange.isNil):
     # We received the edited message before we received the real message. Just show the final message as is
     self.messagesAdded(@[message])
     return
@@ -505,8 +559,8 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     message.mentioned,
     message.containsContactMentions(),
     message.links,
-    message.mentionedUsersPks
-    )
+    message.mentionedUsersPks,
+  )
 
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
@@ -546,17 +600,25 @@ method scrollToMessage*(self: Module, messageId: string) =
   self.controller.setSearchedMessageId(messageId)
   self.view.setMessageSearchOngoing(true)
 
-method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
+method onGetMessageById*(
+    self: Module,
+    requestId: UUID,
+    messageId: string,
+    message: MessageDto,
+    errorMessage: string,
+) =
   if self.getMessageRequestId != requestId:
     return
 
   if errorMessage != "":
-    error "attempted to scroll to a not fetched message", errorMessage, messageId, chatId = self.controller.getMyChatId()
+    error "attempted to scroll to a not fetched message",
+      errorMessage, messageId, chatId = self.controller.getMyChatId()
     self.view.setMessageSearchOngoing(false)
     return
 
   if message.contentType == ContentType.ContactIdentityVerification:
-    warn "attempted to scroll to a non-visual message", messageId, contentType = $message.contentType
+    warn "attempted to scroll to a non-visual message",
+      messageId, contentType = $message.contentType
     self.view.setMessageSearchOngoing(false)
     return
 
@@ -572,13 +634,15 @@ method fillGaps*(self: Module, messageId: string) =
 method leaveChat*(self: Module) =
   self.controller.leaveChat()
 
-method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
+method onChatMemberUpdated*(
+    self: Module, publicKey: string, memberRole: MemberRole, joined: bool
+) =
   let chatDto = self.controller.getChatDetails()
-  if(chatDto.chatType != ChatType.PrivateGroupChat):
+  if (chatDto.chatType != ChatType.PrivateGroupChat):
     return
 
   let myPublicKey = singletonInstance.userProfile.getPubKey()
-  if(publicKey != myPublicKey):
+  if (publicKey != myPublicKey):
     return
 
   self.view.model().refreshItemWithId(CHAT_IDENTIFIER_MESSAGE_ID)
@@ -617,7 +681,9 @@ method markMessagesAsRead*(self: Module, messages: seq[string]) =
 method updateCommunityDetails*(self: Module, community: CommunityDto) =
   if community.id == self.getSectionId():
     self.view.setAmIChatAdmin(community.isPrivilegedUser)
-    self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
+    self.view.setIsPinMessageAllowedForMembers(
+      community.adminSettings.pinMessageAllMembersEnabled
+    )
 
   for item in self.view.model().items:
     item.linkPreviewModel.setCommunityInfo(community)
@@ -685,11 +751,14 @@ proc updateLinkPreviewsContacts(self: Module, item: Item, requestFromMailserver:
     if not requestFromMailserver:
       continue
 
-    debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver", contactId
+    debug "updateLinkPreviewsContacts: contact not found, requesting from mailserver",
+      contactId
     item.linkPreviewModel.onContactDataRequested(contactId)
     self.controller.requestContactInfo(contactId)
 
-proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserver: bool) =
+proc updateLinkPreviewsCommunities(
+    self: Module, item: Item, requestFromMailserver: bool
+) =
   for communityId, url in item.linkPreviewModel.getCommunityLinks().pairs:
     let community = self.controller.getCommunityById(communityId)
 
@@ -702,5 +771,9 @@ proc updateLinkPreviewsCommunities(self: Module, item: Item, requestFromMailserv
     debug "updateLinkPreviewsCommunites: requesting from mailserver", communityId
     let urlData = self.controller.parseSharedUrl(url)
     item.linkPreviewModel.onCommunityInfoRequested(communityId)
-    self.controller.requestCommunityInfo(communityId, urlData.community.shard, useDatabase = false, initDuration(minutes = 10))
-
+    self.controller.requestCommunityInfo(
+      communityId,
+      urlData.community.shard,
+      useDatabase = false,
+      initDuration(minutes = 10),
+    )

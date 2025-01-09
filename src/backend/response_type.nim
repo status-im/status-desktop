@@ -2,20 +2,17 @@
 
 import stew/shims/strformat
 
-type
-  RpcException* = object of CatchableError
+type RpcException* = object of CatchableError
 
-type
-  RpcError* = ref object
-    code*: int
-    message*: string
+type RpcError* = ref object
+  code*: int
+  message*: string
 
-type
-  RpcResponse*[T] = object
-    jsonrpc*: string
-    result*: T
-    id*: int
-    error*: RpcError
+type RpcResponse*[T] = object
+  jsonrpc*: string
+  result*: T
+  id*: int
+  error*: RpcError
 
 proc `$`*(self: RpcError): string =
   try:
@@ -25,4 +22,3 @@ proc `$`*(self: RpcError): string =
       )"""
   except ValueError:
     raiseAssert "static fmt"
-

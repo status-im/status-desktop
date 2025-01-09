@@ -42,5 +42,5 @@ proc toInstallationDto*(jsonObj: JsonNode): InstallationDto =
   discard jsonObj.getProp("timestamp", result.timestamp)
 
   var metadataObj: JsonNode
-  if(jsonObj.getProp("metadata", metadataObj)):
+  if (jsonObj.getProp("metadata", metadataObj)):
     result.metadata = toMetadata(metadataObj)

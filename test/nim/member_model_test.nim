@@ -5,16 +5,16 @@ import app_service/common/types
 
 proc createTestMemberItem(pubKey: string): MemberItem =
   return initMemberItem(
-      pubKey = pubKey,
-      displayName = "",
-      ensName = "",
-      isEnsVerified = false,
-      localNickname = "",
-      alias = "",
-      icon = "",
-      colorId = 0,
-      trustStatus = TrustStatus.Unknown,
-    )
+    pubKey = pubKey,
+    displayName = "",
+    ensName = "",
+    isEnsVerified = false,
+    localNickname = "",
+    alias = "",
+    icon = "",
+    colorId = 0,
+    trustStatus = TrustStatus.Unknown,
+  )
 
 let memberA = createTestMemberItem("0xa")
 let memberB = createTestMemberItem("0xb")
@@ -36,21 +36,21 @@ suite "updating member items":
 
   test "update only display name":
     let updatedRoles = model.updateItem(
-        pubkey = "0xa",
-        displayName = "newName",
-        ensName = "",
-        isEnsVerified = false,
-        localNickname = "",
-        alias = "",
-        icon = "",
-        isContact = false,
-        isBlocked = false,
-        memberRole = MemberRole.None,
-        joined = false,
-        trustStatus = TrustStatus.Unknown,
-        contactRequest = ContactRequest.None,
-        callDataChanged = false,
-      )
+      pubkey = "0xa",
+      displayName = "newName",
+      ensName = "",
+      isEnsVerified = false,
+      localNickname = "",
+      alias = "",
+      icon = "",
+      isContact = false,
+      isBlocked = false,
+      memberRole = MemberRole.None,
+      joined = false,
+      trustStatus = TrustStatus.Unknown,
+      contactRequest = ContactRequest.None,
+      callDataChanged = false,
+    )
     # Two updated roles, because preferredDisplayName gets updated too
     check(updatedRoles.len() == 2)
     let item = model.getMemberItem("0xa")
@@ -58,21 +58,21 @@ suite "updating member items":
 
   test "update two properties not related to name":
     let updatedRoles = model.updateItem(
-        pubkey = "0xb",
-        displayName = "",
-        ensName = "",
-        isEnsVerified = false,
-        localNickname = "",
-        alias = "",
-        icon = "icon",
-        isContact = true,
-        isBlocked = false,
-        memberRole = MemberRole.None,
-        joined = false,
-        trustStatus = TrustStatus.Unknown,
-        contactRequest = ContactRequest.None,
-        callDataChanged = false,
-      )
+      pubkey = "0xb",
+      displayName = "",
+      ensName = "",
+      isEnsVerified = false,
+      localNickname = "",
+      alias = "",
+      icon = "icon",
+      isContact = true,
+      isBlocked = false,
+      memberRole = MemberRole.None,
+      joined = false,
+      trustStatus = TrustStatus.Unknown,
+      contactRequest = ContactRequest.None,
+      callDataChanged = false,
+    )
     check(updatedRoles.len() == 2)
     let item = model.getMemberItem("0xb")
     check(item.icon == "icon")

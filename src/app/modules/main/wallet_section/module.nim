@@ -52,77 +52,76 @@ logScope:
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    moduleLoaded: bool
-    controller: controller.Controller
-    view: View
-    viewVariant: QVariant
-    filter: Filter
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  moduleLoaded: bool
+  controller: controller.Controller
+  view: View
+  viewVariant: QVariant
+  filter: Filter
 
-    # shared modules
-    addAccountModule: add_account_module.AccessInterface
-    keypairImportModule: keypair_import_module.AccessInterface
-    # modules
-    accountsModule: accounts_module.AccessInterface
-    allTokensModule: all_tokens_module.AccessInterface
-    allCollectiblesModule: all_collectibles_module.AccessInterface
-    assetsModule: assets_module.AccessInterface
-    sendModule: send_module.AccessInterface
-    # TODO: replace this with sendModule when old one is removed
-    newSendModule: new_send_module.AccessInterface
-    savedAddressesModule: saved_addresses_module.AccessInterface
-    buySellCryptoModule: buy_sell_crypto_module.AccessInterface
-    overviewModule: overview_module.AccessInterface
-    networksModule: networks_module.AccessInterface
-    networksService: network_service.Service
-    rampService: ramp_service.Service
-    transactionService: transaction_service.Service
-    keycardService: keycard_service.Service
-    accountsService: accounts_service.Service
-    walletAccountService: wallet_account_service.Service
-    savedAddressService: saved_address_service.Service
-    devicesService: devices_service.Service
-    walletConnectService: wc_service.Service
-    walletConnectController: wc_controller.Controller
-    dappsConnectorService: connector_service.Service
-    dappsConnectorController: connector_controller.Controller
+  # shared modules
+  addAccountModule: add_account_module.AccessInterface
+  keypairImportModule: keypair_import_module.AccessInterface
+  # modules
+  accountsModule: accounts_module.AccessInterface
+  allTokensModule: all_tokens_module.AccessInterface
+  allCollectiblesModule: all_collectibles_module.AccessInterface
+  assetsModule: assets_module.AccessInterface
+  sendModule: send_module.AccessInterface
+  # TODO: replace this with sendModule when old one is removed
+  newSendModule: new_send_module.AccessInterface
+  savedAddressesModule: saved_addresses_module.AccessInterface
+  buySellCryptoModule: buy_sell_crypto_module.AccessInterface
+  overviewModule: overview_module.AccessInterface
+  networksModule: networks_module.AccessInterface
+  networksService: network_service.Service
+  rampService: ramp_service.Service
+  transactionService: transaction_service.Service
+  keycardService: keycard_service.Service
+  accountsService: accounts_service.Service
+  walletAccountService: wallet_account_service.Service
+  savedAddressService: saved_address_service.Service
+  devicesService: devices_service.Service
+  walletConnectService: wc_service.Service
+  walletConnectController: wc_controller.Controller
+  dappsConnectorService: connector_service.Service
+  dappsConnectorController: connector_controller.Controller
 
-    activityController: activityc.Controller
-    collectibleDetailsController: collectible_detailsc.Controller
-    # Instances to be used in temporary, short-lived, workflows (e.g. send popup). There's probably tidier ways of
-    # doing this (one for each required module, create them dynamically) but for now this will do.
-    # We need one for each app "layer" that simultaneously needs to show a different list of activity
-    # entries (e.g. send popup is one "layer" above the collectible details activity tab)
-    tmpActivityControllers: ActivityControllerArray
+  activityController: activityc.Controller
+  collectibleDetailsController: collectible_detailsc.Controller
+  # Instances to be used in temporary, short-lived, workflows (e.g. send popup). There's probably tidier ways of
+  # doing this (one for each required module, create them dynamically) but for now this will do.
+  # We need one for each app "layer" that simultaneously needs to show a different list of activity
+  # entries (e.g. send popup is one "layer" above the collectible details activity tab)
+  tmpActivityControllers: ActivityControllerArray
 
-    threadpool: ThreadPool
+  threadpool: ThreadPool
 
 ## Forward declaration
 proc onUpdatedKeypairsOperability*(self: Module, updatedKeypairs: seq[KeypairDto])
 proc onLocalPairingStatusUpdate*(self: Module, data: LocalPairingStatus)
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  tokenService: token_service.Service,
-  collectibleService: collectible_service.Service,
-  currencyService: currency_service.Service,
-  rampService: ramp_service.Service,
-  transactionService: transaction_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service,
-  savedAddressService: saved_address_service.Service,
-  networkService: network_service.Service,
-  accountsService: accounts_service.Service,
-  keycardService: keycard_service.Service,
-  nodeService: node_service.Service,
-  networkConnectionService: network_connection_service.Service,
-  devicesService: devices_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  threadpool: ThreadPool
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    tokenService: token_service.Service,
+    collectibleService: collectible_service.Service,
+    currencyService: currency_service.Service,
+    rampService: ramp_service.Service,
+    transactionService: transaction_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
+    savedAddressService: saved_address_service.Service,
+    networkService: network_service.Service,
+    accountsService: accounts_service.Service,
+    keycardService: keycard_service.Service,
+    nodeService: node_service.Service,
+    networkConnectionService: network_connection_service.Service,
+    devicesService: devices_service.Service,
+    communityTokensService: community_tokens_service.Service,
+    threadpool: ThreadPool,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -133,52 +132,76 @@ proc newModule*(
   result.savedAddressService = savedAddressService
   result.devicesService = devicesService
   result.moduleLoaded = false
-  result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
+  result.controller = newController(
+    result, settingsService, walletAccountService, currencyService, networkService
+  )
   result.threadpool = threadpool
 
-  result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
-  result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService, settingsService, communityTokensService)
-  let allCollectiblesModule = all_collectibles_module.newModule(result, events, collectibleService, networkService, walletAccountService, settingsService)
+  result.accountsModule = accounts_module.newModule(
+    result, events, walletAccountService, networkService, currencyService
+  )
+  result.allTokensModule = all_tokens_module.newModule(
+    result, events, tokenService, walletAccountService, settingsService,
+    communityTokensService,
+  )
+  let allCollectiblesModule = all_collectibles_module.newModule(
+    result, events, collectibleService, networkService, walletAccountService,
+    settingsService,
+  )
   result.allCollectiblesModule = allCollectiblesModule
-  result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService,
-    currencyService)
-  result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService,
-  transactionService, keycardService)
-  result.newSendModule = newSendModule.newModule(result, events, walletAccountService, networkService, transactionService, keycardService)
-  result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
-  result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, rampService)
-  result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
-  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
+  result.assetsModule = assets_module.newModule(
+    result, events, walletAccountService, networkService, tokenService, currencyService
+  )
+  result.sendModule = send_module.newModule(
+    result, events, walletAccountService, networkService, currencyService,
+    transactionService, keycardService,
+  )
+  result.newSendModule = newSendModule.newModule(
+    result, events, walletAccountService, networkService, transactionService,
+    keycardService,
+  )
+  result.savedAddressesModule =
+    saved_addresses_module.newModule(result, events, savedAddressService)
+  result.buySellCryptoModule =
+    buy_sell_crypto_module.newModule(result, events, rampService)
+  result.overviewModule =
+    overview_module.newModule(result, events, walletAccountService, currencyService)
+  result.networksModule = networks_module.newModule(
+    result, events, networkService, walletAccountService, settingsService
+  )
   result.networksService = networkService
 
   result.transactionService = transactionService
-  result.activityController = activityc.newController(
-    currencyService,
-    tokenService,
-    savedAddressService,
-    events)
+  result.activityController =
+    activityc.newController(currencyService, tokenService, savedAddressService, events)
   result.tmpActivityControllers = [
-    activityc.newController(
-      currencyService,
-      tokenService,
-      savedAddressService,
-      events),
-    activityc.newController(
-      currencyService,
-      tokenService,
-      savedAddressService,
-      events)
+    activityc.newController(currencyService, tokenService, savedAddressService, events),
+    activityc.newController(currencyService, tokenService, savedAddressService, events),
   ]
 
-  result.collectibleDetailsController = collectible_detailsc.newController(int32(backend_collectibles.CollectiblesRequestID.WalletAccount), networkService, events)
+  result.collectibleDetailsController = collectible_detailsc.newController(
+    int32(backend_collectibles.CollectiblesRequestID.WalletAccount),
+    networkService,
+    events,
+  )
   result.filter = initFilter(result.controller)
 
-  result.walletConnectService = wc_service.newService(result.events, result.threadpool, settingsService, transactionService, keycardService)
-  result.walletConnectController = wc_controller.newController(result.walletConnectService, walletAccountService, result.events)
+  result.walletConnectService = wc_service.newService(
+    result.events, result.threadpool, settingsService, transactionService,
+    keycardService,
+  )
+  result.walletConnectController = wc_controller.newController(
+    result.walletConnectService, walletAccountService, result.events
+  )
 
   result.dappsConnectorService = connector_service.newService(result.events)
-  result.dappsConnectorController = connector_controller.newController(result.dappsConnectorService, result.events)
-  result.view = newView(result, result.activityController, result.tmpActivityControllers, result.collectibleDetailsController, result.walletConnectController, result.dappsConnectorController)
+  result.dappsConnectorController =
+    connector_controller.newController(result.dappsConnectorService, result.events)
+  result.view = newView(
+    result, result.activityController, result.tmpActivityControllers,
+    result.collectibleDetailsController, result.walletConnectController,
+    result.dappsConnectorController,
+  )
   result.viewVariant = newQVariant(result.view)
 
 method delete*(self: Module) =
@@ -194,7 +217,7 @@ method delete*(self: Module) =
   self.viewVariant.delete
   self.view.delete
   self.activityController.delete
-  for i in 0..self.tmpActivityControllers.len-1:
+  for i in 0 .. self.tmpActivityControllers.len - 1:
     self.tmpActivityControllers[i].delete
   self.collectibleDetailsController.delete
 
@@ -215,13 +238,19 @@ proc getWalletAddressesNotHidden(self: Module): seq[string] =
 
 method setTotalCurrencyBalance*(self: Module) =
   let addresses = self.getWalletAddressesNotHidden()
-  self.view.setTotalCurrencyBalance(self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds))
+  self.view.setTotalCurrencyBalance(
+    self.controller.getTotalCurrencyBalance(addresses, self.filter.chainIds)
+  )
 
 proc notifyModulesOnFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.chainIds)
-  self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.isDirty)
-  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled)
+  self.sendModule.filterChanged(
+    self.filter.addresses, self.filter.chainIds, self.filter.isDirty
+  )
+  self.activityController.globalFilterChanged(
+    self.filter.addresses, self.filter.chainIds, self.filter.allChainsEnabled
+  )
   self.allTokensModule.filterChanged(self.filter.addresses)
   self.allCollectiblesModule.refreshWalletAccounts()
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
@@ -240,7 +269,9 @@ proc notifyFilterChanged(self: Module) =
   self.updateViewWithAddressFilterChanged()
   self.notifyModulesOnFilterChanged()
 
-method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
+method getCurrencyAmount*(
+    self: Module, amount: float64, symbol: string
+): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
 
 proc setKeypairOperabilityForObservedAccount(self: Module, address: string) =
@@ -276,38 +307,38 @@ method load*(self: Module) =
       if acc.removed:
         self.filter.removeAddress(acc.address)
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     let args = AccountArgs(e)
     self.setTotalCurrencyBalance()
     self.setFilterAddress(args.account.address)
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     let args = AccountArgs(e)
     self.setTotalCurrencyBalance()
     self.filter.removeAddress(args.account.address)
     self.view.emitWalletAccountRemoved(args.account.address)
-    if(cmpIgnoreCase(self.view.getAddressFilters(), args.account.address) == 0):
+    if (cmpIgnoreCase(self.view.getAddressFilters(), args.account.address) == 0):
       self.setFilterAllAddresses()
     else:
       self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.filter.updateNetworks()
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     let args = TokensPerAccountArgs(e)
     self.setTotalCurrencyBalance()
     self.notifyModulesBalanceIsLoaded()
     self.view.setLastReloadTimestamp(args.timestamp)
     self.view.setIsAccountTokensReloading(false)
-  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_TOKENS_PRICES_UPDATED) do(e: Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e: Args):
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
@@ -320,19 +351,19 @@ method load*(self: Module) =
     if not args.success:
       return
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e: Args):
     self.notifyFilterChanged()
-  self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do (e:Args):
+  self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do(e: Args):
     self.view.setIsNonArchivalNode(true)
   self.events.on(SIGNAL_TRANSACTION_DECODED) do(e: Args):
     let args = TransactionDecodedArgs(e)
     self.view.txDecoded(args.txHash, args.dataDecoded)
-  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e:Args):
+  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e: Args):
     let args = KeypairsArgs(e)
     if args.error.len != 0:
       return
     self.onUpdatedKeypairsOperability(args.keypairs)
-  self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e:Args):
+  self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
     let data = LocalPairingStatus(e)
     self.onLocalPairingStatusUpdate(data)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
@@ -342,7 +373,7 @@ method load*(self: Module) =
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
 
-  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_UPDATED) do(e: Args):
     let args = SettingsTextValueArgs(e)
     self.view.setCurrentCurrency(args.value)
 
@@ -366,34 +397,34 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 proc checkIfModuleDidLoad(self: Module) =
-  if(not self.accountsModule.isLoaded()):
+  if (not self.accountsModule.isLoaded()):
     return
 
-  if(not self.allTokensModule.isLoaded()):
+  if (not self.allTokensModule.isLoaded()):
     return
 
-  if(not self.allCollectiblesModule.isLoaded()):
+  if (not self.allCollectiblesModule.isLoaded()):
     return
 
-  if(not self.assetsModule.isLoaded()):
+  if (not self.assetsModule.isLoaded()):
     return
 
-  if(not self.savedAddressesModule.isLoaded()):
+  if (not self.savedAddressesModule.isLoaded()):
     return
 
-  if(not self.buySellCryptoModule.isLoaded()):
+  if (not self.buySellCryptoModule.isLoaded()):
     return
 
-  if(not self.overviewModule.isLoaded()):
+  if (not self.overviewModule.isLoaded()):
     return
 
-  if(not self.sendModule.isLoaded()):
+  if (not self.sendModule.isLoaded()):
     return
 
-  if(not self.newSendModule.isLoaded()):
+  if (not self.newSendModule.isLoaded()):
     return
 
-  if(not self.networksModule.isLoaded()):
+  if (not self.networksModule.isLoaded()):
     return
 
   let signingPhrase = self.controller.getSigningPhrase()
@@ -457,14 +488,18 @@ method destroyAddAccountPopup*(self: Module) =
 
 method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()
-  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
-    self.walletAccountService, self.savedAddressService)
+  self.addAccountModule = add_account_module.newModule(
+    self, self.events, self.keycardService, self.accountsService,
+    self.walletAccountService, self.savedAddressService,
+  )
   self.addAccountModule.loadForAddingAccount(addingWatchOnlyAccount)
 
 method runEditAccountPopup*(self: Module, address: string) =
   self.destroyAddAccountPopup()
-  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
-    self.walletAccountService, self.savedAddressService)
+  self.addAccountModule = add_account_module.newModule(
+    self, self.events, self.keycardService, self.accountsService,
+    self.walletAccountService, self.savedAddressService,
+  )
   self.addAccountModule.loadForEditingAccount(address)
 
 method getAddAccountModule*(self: Module): QVariant =
@@ -507,9 +542,13 @@ method runKeypairImportPopup*(self: Module) =
   let keypair = self.controller.getKeypairByAccountAddress(self.filter.addresses[0])
   if keypair.isNil:
     return
-  self.keypairImportModule = keypair_import_module.newModule(self, self.events, self.accountsService,
-    self.walletAccountService, self.devicesService)
-  self.keypairImportModule.load(keypair.keyUid, ImportKeypairModuleMode.SelectImportMethod)
+  self.keypairImportModule = keypair_import_module.newModule(
+    self, self.events, self.accountsService, self.walletAccountService,
+    self.devicesService,
+  )
+  self.keypairImportModule.load(
+    keypair.keyUid, ImportKeypairModuleMode.SelectImportMethod
+  )
   self.view.emitKeypairImportModuleChangedSignal()
 
 method getKeypairImportModule*(self: Module): QVariant =
@@ -533,12 +572,18 @@ method getRpcStats*(self: Module): string =
 method resetRpcStats*(self: Module) =
   self.view.resetRpcStats()
 
-method canProfileProveOwnershipOfProvidedAddresses*(self: Module, addresses: string): bool =
+method canProfileProveOwnershipOfProvidedAddresses*(
+    self: Module, addresses: string
+): bool =
   var addressesForProvingOwnership: seq[string]
   try:
-    addressesForProvingOwnership = map(parseJson(addresses).getElems(), proc(x:JsonNode):string = x.getStr())
+    addressesForProvingOwnership = map(
+      parseJson(addresses).getElems(),
+      proc(x: JsonNode): string =
+        x.getStr(),
+    )
   except Exception as e:
-    error "Failed to parse addresses for proving ownership: ", msg=e.msg
+    error "Failed to parse addresses for proving ownership: ", msg = e.msg
     return false
 
   for address in addressesForProvingOwnership:

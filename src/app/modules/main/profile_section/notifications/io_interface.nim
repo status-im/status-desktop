@@ -2,8 +2,7 @@ import NimQml
 from ../../../../../app_service/service/community/dto/community import CommunityDto
 from ../../../../../app_service/service/chat/dto/chat import ChatDto
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -20,14 +19,22 @@ method initModel*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendTestNotification*(self: AccessInterface, title: string, message: string) {.base.} =
+method sendTestNotification*(
+    self: AccessInterface, title: string, message: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveExemptions*(self: AccessInterface, itemId: string, muteAllMessages: bool, personalMentions: string, 
-  globalMentions: string, allMessages: string) {.base.} =
+method saveExemptions*(
+    self: AccessInterface,
+    itemId: string,
+    muteAllMessages: bool,
+    personalMentions: string,
+    globalMentions: string,
+    allMessages: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addCommunity*(self: AccessInterface, communityDto: CommunityDto) {.base.} =
@@ -38,7 +45,7 @@ method editCommunity*(self: AccessInterface, communityDto: CommunityDto) {.base.
 
 method removeItemWithId*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method addChat*(self: AccessInterface, chatDto: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

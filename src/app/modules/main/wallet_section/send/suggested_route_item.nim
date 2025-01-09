@@ -23,25 +23,26 @@ QtObject:
     approvalAmountRequired: string
     approvalContractAddress: string
 
-  proc setup*(self: SuggestedRouteItem,
-    bridgeName: string,
-    fromNetwork: int,
-    toNetwork: int,
-    maxAmountIn: string,
-    amountIn: string,
-    amountOut: string,
-    gasAmount: string,
-    gasFees: GasFeesItem,
-    tokenFees: float,
-    cost: float,
-    estimatedTime: int,
-    amountInLocked: bool,
-    isFirstSimpleTx: bool,
-    isFirstBridgeTx: bool,
-    approvalRequired: bool,
-    approvalGasFees: float,
-    approvalAmountRequired: string,
-    approvalContractAddress: string,
+  proc setup*(
+      self: SuggestedRouteItem,
+      bridgeName: string,
+      fromNetwork: int,
+      toNetwork: int,
+      maxAmountIn: string,
+      amountIn: string,
+      amountOut: string,
+      gasAmount: string,
+      gasFees: GasFeesItem,
+      tokenFees: float,
+      cost: float,
+      estimatedTime: int,
+      amountInLocked: bool,
+      isFirstSimpleTx: bool,
+      isFirstBridgeTx: bool,
+      approvalRequired: bool,
+      approvalGasFees: float,
+      approvalAmountRequired: string,
+      approvalContractAddress: string,
   ) =
     self.QObject.setup
     self.bridgeName = bridgeName
@@ -64,32 +65,35 @@ QtObject:
     self.approvalContractAddress = approvalContractAddress
 
   proc delete*(self: SuggestedRouteItem) =
-      self.QObject.delete
+    self.QObject.delete
 
   proc newSuggestedRouteItem*(
-    bridgeName: string = "",
-    fromNetwork: int = 0,
-    toNetwork: int = 0,
-    maxAmountIn: string = "",
-    amountIn: string = "",
-    amountOut: string = "",
-    gasAmount: string = "",
-    gasFees: GasFeesItem = newGasFeesItem(),
-    tokenFees: float = 0,
-    cost: float = 0,
-    estimatedTime: int = 0,
-    amountInLocked: bool = false,
-    isFirstSimpleTx: bool = false,
-    isFirstBridgeTx: bool = false,
-    approvalRequired: bool = false,
-    approvalGasFees: float = 0,
-    approvalAmountRequired: string = "",
-    approvalContractAddress: string = ""
-    ): SuggestedRouteItem =
-      new(result, delete)
-      result.setup(bridgeName, fromNetwork, toNetwork, maxAmountIn, amountIn, amountOut, gasAmount, gasFees, tokenFees,
-        cost, estimatedTime, amountInLocked, isFirstSimpleTx, isFirstBridgeTx, approvalRequired, approvalGasFees,
-        approvalAmountRequired, approvalContractAddress)
+      bridgeName: string = "",
+      fromNetwork: int = 0,
+      toNetwork: int = 0,
+      maxAmountIn: string = "",
+      amountIn: string = "",
+      amountOut: string = "",
+      gasAmount: string = "",
+      gasFees: GasFeesItem = newGasFeesItem(),
+      tokenFees: float = 0,
+      cost: float = 0,
+      estimatedTime: int = 0,
+      amountInLocked: bool = false,
+      isFirstSimpleTx: bool = false,
+      isFirstBridgeTx: bool = false,
+      approvalRequired: bool = false,
+      approvalGasFees: float = 0,
+      approvalAmountRequired: string = "",
+      approvalContractAddress: string = "",
+  ): SuggestedRouteItem =
+    new(result, delete)
+    result.setup(
+      bridgeName, fromNetwork, toNetwork, maxAmountIn, amountIn, amountOut, gasAmount,
+      gasFees, tokenFees, cost, estimatedTime, amountInLocked, isFirstSimpleTx,
+      isFirstBridgeTx, approvalRequired, approvalGasFees, approvalAmountRequired,
+      approvalContractAddress,
+    )
 
   proc `$`*(self: SuggestedRouteItem): string =
     result = "SuggestedRouteItem("
@@ -116,6 +120,7 @@ QtObject:
   proc bridgeNameChanged*(self: SuggestedRouteItem) {.signal.}
   proc getBridgeName*(self: SuggestedRouteItem): string {.slot.} =
     return self.bridgeName
+
   QtProperty[string] bridgeName:
     read = getBridgeName
     notify = bridgeNameChanged
@@ -123,6 +128,7 @@ QtObject:
   proc fromNetworkChanged*(self: SuggestedRouteItem) {.signal.}
   proc getfromNetwork*(self: SuggestedRouteItem): int {.slot.} =
     return self.fromNetwork
+
   QtProperty[int] fromNetwork:
     read = getfromNetwork
     notify = fromNetworkChanged
@@ -130,6 +136,7 @@ QtObject:
   proc toNetworkChanged*(self: SuggestedRouteItem) {.signal.}
   proc getToNetwork*(self: SuggestedRouteItem): int {.slot.} =
     return self.toNetwork
+
   QtProperty[int] toNetwork:
     read = getToNetwork
     notify = toNetworkChanged
@@ -137,6 +144,7 @@ QtObject:
   proc maxAmountInChanged*(self: SuggestedRouteItem) {.signal.}
   proc getMaxAmountIn*(self: SuggestedRouteItem): string {.slot.} =
     return self.maxAmountIn
+
   QtProperty[string] maxAmountIn:
     read = getMaxAmountIn
     notify = maxAmountInChanged
@@ -144,6 +152,7 @@ QtObject:
   proc amountInChanged*(self: SuggestedRouteItem) {.signal.}
   proc getAmountIn*(self: SuggestedRouteItem): string {.slot.} =
     return self.amountIn
+
   QtProperty[string] amountIn:
     read = getAmountIn
     notify = amountInChanged
@@ -151,6 +160,7 @@ QtObject:
   proc amountOutChanged*(self: SuggestedRouteItem) {.signal.}
   proc getAmountOut*(self: SuggestedRouteItem): string {.slot.} =
     return self.amountOut
+
   QtProperty[string] amountOut:
     read = getAmountOut
     notify = amountOutChanged
@@ -158,6 +168,7 @@ QtObject:
   proc gasAmountChanged*(self: SuggestedRouteItem) {.signal.}
   proc getGasAmount*(self: SuggestedRouteItem): string {.slot.} =
     return self.gasAmount
+
   QtProperty[string] gasAmount:
     read = getGasAmount
     notify = gasAmountChanged
@@ -165,6 +176,7 @@ QtObject:
   proc gasFeesChanged*(self: SuggestedRouteItem) {.signal.}
   proc getGasFees*(self: SuggestedRouteItem): QVariant {.slot.} =
     return newQVariant(self.gasFees)
+
   QtProperty[QVariant] gasFees:
     read = getGasFees
     notify = gasFeesChanged
@@ -172,6 +184,7 @@ QtObject:
   proc tokenFeesChanged*(self: SuggestedRouteItem) {.signal.}
   proc getTokenFees*(self: SuggestedRouteItem): float {.slot.} =
     return self.tokenFees
+
   QtProperty[float] tokenFees:
     read = getTokenFees
     notify = tokenFeesChanged
@@ -179,6 +192,7 @@ QtObject:
   proc costChanged*(self: SuggestedRouteItem) {.signal.}
   proc getCost*(self: SuggestedRouteItem): float {.slot.} =
     return self.cost
+
   QtProperty[float] cost:
     read = getCost
     notify = costChanged
@@ -186,6 +200,7 @@ QtObject:
   proc estimatedTimeChanged*(self: SuggestedRouteItem) {.signal.}
   proc getEstimatedTime*(self: SuggestedRouteItem): int {.slot.} =
     return self.estimatedTime
+
   QtProperty[int] estimatedTime:
     read = getEstimatedTime
     notify = estimatedTimeChanged
@@ -193,6 +208,7 @@ QtObject:
   proc amountInLockedChanged*(self: SuggestedRouteItem) {.signal.}
   proc getAmountInLocked*(self: SuggestedRouteItem): bool {.slot.} =
     return self.amountInLocked
+
   QtProperty[bool] amountInLocked:
     read = getAmountInLocked
     notify = amountInLockedChanged
@@ -200,6 +216,7 @@ QtObject:
   proc isFirstSimpleTxChanged*(self: SuggestedRouteItem) {.signal.}
   proc getIsFirstSimpleTx*(self: SuggestedRouteItem): bool {.slot.} =
     return self.isFirstSimpleTx
+
   QtProperty[bool] isFirstSimpleTx:
     read = getIsFirstSimpleTx
     notify = isFirstSimpleTxChanged
@@ -207,6 +224,7 @@ QtObject:
   proc isFirstBridgeTxChanged*(self: SuggestedRouteItem) {.signal.}
   proc getIsFirstBridgeTx*(self: SuggestedRouteItem): bool {.slot.} =
     return self.isFirstBridgeTx
+
   QtProperty[bool] isFirstBridgeTx:
     read = getIsFirstBridgeTx
     notify = isFirstBridgeTxChanged
@@ -214,6 +232,7 @@ QtObject:
   proc approvalRequiredChanged*(self: SuggestedRouteItem) {.signal.}
   proc getApprovalRequired*(self: SuggestedRouteItem): bool {.slot.} =
     return self.approvalRequired
+
   QtProperty[bool] approvalRequired:
     read = getApprovalRequired
     notify = approvalRequiredChanged
@@ -221,6 +240,7 @@ QtObject:
   proc approvalGasFeesChanged*(self: SuggestedRouteItem) {.signal.}
   proc getApprovalGasFees*(self: SuggestedRouteItem): float {.slot.} =
     return self.approvalGasFees
+
   QtProperty[float] approvalGasFees:
     read = getApprovalGasFees
     notify = approvalGasFeesChanged
@@ -228,6 +248,7 @@ QtObject:
   proc approvalAmountRequiredChanged*(self: SuggestedRouteItem) {.signal.}
   proc getApprovalAmountRequired*(self: SuggestedRouteItem): string {.slot.} =
     return self.approvalAmountRequired
+
   QtProperty[string] approvalAmountRequired:
     read = getApprovalAmountRequired
     notify = approvalAmountRequiredChanged
@@ -235,6 +256,7 @@ QtObject:
   proc approvalContractAddressChanged*(self: SuggestedRouteItem) {.signal.}
   proc getApprovalContractAddress*(self: SuggestedRouteItem): string {.slot.} =
     return self.approvalContractAddress
+
   QtProperty[string] approvalContractAddress:
     read = getApprovalContractAddress
     notify = approvalContractAddressChanged

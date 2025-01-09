@@ -7,17 +7,17 @@ import ../../../../../app_service/service/community/service as community_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  communityService: community_service.Service):
-  Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    communityService: community_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -41,8 +41,11 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method shareCommunityToUsers*(self: Module, communityID: string, pubKeysJSON: string, inviteMessage: string): string =
-  result = self.controller.shareCommunityToUsers(communityID, pubKeysJSON, inviteMessage)
+method shareCommunityToUsers*(
+    self: Module, communityID: string, pubKeysJSON: string, inviteMessage: string
+): string =
+  result =
+    self.controller.shareCommunityToUsers(communityID, pubKeysJSON, inviteMessage)
 
 method leaveCommunity*(self: Module, communityID: string) =
   self.controller.leaveCommunity(communityID)

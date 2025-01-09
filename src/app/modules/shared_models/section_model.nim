@@ -7,50 +7,48 @@ import ../main/communities/tokens/models/[token_item, token_model]
 import model_utils
 import ../../../app_service/common/types
 
-type
-  ModelRole {.pure.} = enum
-    Id = UserRole + 1
-    SectionType
-    Name
-    MemberRole
-    IsControlNode
-    Description
-    IntroMessage
-    OutroMessage
-    Image
-    BannerImageData
-    Icon
-    Color
-    Tags
-    HasNotification
-    NotificationsCount
-    Active
-    Enabled
-    Joined
-    Spectated
-    IsMember
-    CanJoin
-    CanManageUsers
-    CanRequestAccess
-    Access
-    EnsOnly
-    Muted
-    MembersModel
-    HistoryArchiveSupportEnabled
-    PinMessageAllMembersEnabled
-    Encrypted
-    CommunityTokensModel
-    AmIBanned
-    PubsubTopic
-    PubsubTopicKey
-    ShardIndex
-    IsPendingOwnershipRequest
-    ActiveMembersCount
+type ModelRole {.pure.} = enum
+  Id = UserRole + 1
+  SectionType
+  Name
+  MemberRole
+  IsControlNode
+  Description
+  IntroMessage
+  OutroMessage
+  Image
+  BannerImageData
+  Icon
+  Color
+  Tags
+  HasNotification
+  NotificationsCount
+  Active
+  Enabled
+  Joined
+  Spectated
+  IsMember
+  CanJoin
+  CanManageUsers
+  CanRequestAccess
+  Access
+  EnsOnly
+  Muted
+  MembersModel
+  HistoryArchiveSupportEnabled
+  PinMessageAllMembersEnabled
+  Encrypted
+  CommunityTokensModel
+  AmIBanned
+  PubsubTopic
+  PubsubTopicKey
+  ShardIndex
+  IsPendingOwnershipRequest
+  ActiveMembersCount
 
 QtObject:
-  type
-    SectionModel* = ref object of QAbstractListModel
-      items: seq[SectionItem]
+  type SectionModel* = ref object of QAbstractListModel
+    items: seq[SectionItem]
 
   proc delete(self: SectionModel) =
     self.items = @[]
@@ -65,7 +63,8 @@ QtObject:
 
   proc `$`*(self: SectionModel): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""
+      result &=
+        fmt"""
       [{i}]:({$self.items[i]})
       """
 
@@ -83,43 +82,43 @@ QtObject:
 
   method roleNames(self: SectionModel): Table[int, string] =
     {
-      ModelRole.Id.int:"id",
-      ModelRole.SectionType.int:"sectionType",
-      ModelRole.Name.int:"name",
+      ModelRole.Id.int: "id",
+      ModelRole.SectionType.int: "sectionType",
+      ModelRole.Name.int: "name",
       ModelRole.MemberRole.int: "memberRole",
       ModelRole.IsControlNode.int: "isControlNode",
-      ModelRole.Description.int:"description",
-      ModelRole.IntroMessage.int:"introMessage",
-      ModelRole.OutroMessage.int:"outroMessage",
-      ModelRole.Image.int:"image",
-      ModelRole.BannerImageData.int:"bannerImageData",
-      ModelRole.Icon.int:"icon",
-      ModelRole.Color.int:"color",
-      ModelRole.Tags.int:"tags",
-      ModelRole.HasNotification.int:"hasNotification",
-      ModelRole.NotificationsCount.int:"notificationsCount",
-      ModelRole.Active.int:"active",
-      ModelRole.Enabled.int:"enabled",
-      ModelRole.Joined.int:"joined",
-      ModelRole.Spectated.int:"spectated",
-      ModelRole.IsMember.int:"isMember",
-      ModelRole.CanJoin.int:"canJoin",
-      ModelRole.CanManageUsers.int:"canManageUsers",
-      ModelRole.CanRequestAccess.int:"canRequestAccess",
-      ModelRole.Access.int:"access",
-      ModelRole.EnsOnly.int:"ensOnly",
-      ModelRole.Muted.int:"muted",
-      ModelRole.MembersModel.int:"allMembers",
-      ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
-      ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
-      ModelRole.Encrypted.int:"encrypted",
-      ModelRole.CommunityTokensModel.int:"communityTokens",
-      ModelRole.AmIBanned.int:"amIBanned",
-      ModelRole.PubsubTopic.int:"pubsubTopic",
-      ModelRole.PubsubTopicKey.int:"pubsubTopicKey",
-      ModelRole.ShardIndex.int:"shardIndex",
-      ModelRole.IsPendingOwnershipRequest.int:"isPendingOwnershipRequest",
-      ModelRole.ActiveMembersCount.int:"activeMembersCount",
+      ModelRole.Description.int: "description",
+      ModelRole.IntroMessage.int: "introMessage",
+      ModelRole.OutroMessage.int: "outroMessage",
+      ModelRole.Image.int: "image",
+      ModelRole.BannerImageData.int: "bannerImageData",
+      ModelRole.Icon.int: "icon",
+      ModelRole.Color.int: "color",
+      ModelRole.Tags.int: "tags",
+      ModelRole.HasNotification.int: "hasNotification",
+      ModelRole.NotificationsCount.int: "notificationsCount",
+      ModelRole.Active.int: "active",
+      ModelRole.Enabled.int: "enabled",
+      ModelRole.Joined.int: "joined",
+      ModelRole.Spectated.int: "spectated",
+      ModelRole.IsMember.int: "isMember",
+      ModelRole.CanJoin.int: "canJoin",
+      ModelRole.CanManageUsers.int: "canManageUsers",
+      ModelRole.CanRequestAccess.int: "canRequestAccess",
+      ModelRole.Access.int: "access",
+      ModelRole.EnsOnly.int: "ensOnly",
+      ModelRole.Muted.int: "muted",
+      ModelRole.MembersModel.int: "allMembers",
+      ModelRole.HistoryArchiveSupportEnabled.int: "historyArchiveSupportEnabled",
+      ModelRole.PinMessageAllMembersEnabled.int: "pinMessageAllMembersEnabled",
+      ModelRole.Encrypted.int: "encrypted",
+      ModelRole.CommunityTokensModel.int: "communityTokens",
+      ModelRole.AmIBanned.int: "amIBanned",
+      ModelRole.PubsubTopic.int: "pubsubTopic",
+      ModelRole.PubsubTopicKey.int: "pubsubTopicKey",
+      ModelRole.ShardIndex.int: "shardIndex",
+      ModelRole.IsPendingOwnershipRequest.int: "isPendingOwnershipRequest",
+      ModelRole.ActiveMembersCount.int: "activeMembersCount",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -132,7 +131,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Id:
       result = newQVariant(item.id)
     of ModelRole.SectionType:
@@ -210,13 +209,14 @@ QtObject:
 
   proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
-      if(it.id == id):
+      if (it.id == id):
         return true
     return false
 
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -227,7 +227,8 @@ QtObject:
 
   proc addItem*(self: SectionModel, item: SectionItem, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, index, index)
@@ -241,7 +242,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -264,7 +266,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -272,7 +275,7 @@ QtObject:
 
     self.countChanged()
 
-  proc setMuted*(self: SectionModel, id: string, muted: bool) = 
+  proc setMuted*(self: SectionModel, id: string, muted: bool) =
     let index = self.getItemIndex(id)
     if index == -1:
       return
@@ -280,16 +283,17 @@ QtObject:
     if self.items[index].muted == muted:
       return
 
-    self.items[index].muted = muted 
+    self.items[index].muted = muted
     let dataIndex = self.createIndex(index, 0, nil)
-    defer: dataIndex.delete
+    defer:
+      dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
   proc editItem*(self: SectionModel, item: SectionItem) =
     let ind = self.getItemIndex(item.id)
     if ind == -1:
       return
-    
+
     var roles: seq[int] = @[]
 
     updateRoleWithValue(name, Name, item.name)
@@ -316,13 +320,22 @@ QtObject:
     updateRoleWithValue(access, Access, item.access)
     updateRoleWithValue(ensOnly, EnsOnly, item.ensOnly)
     updateRoleWithValue(muted, Muted, item.muted)
-    updateRoleWithValue(historyArchiveSupportEnabled, HistoryArchiveSupportEnabled, item.historyArchiveSupportEnabled)
-    updateRoleWithValue(pinMessageAllMembersEnabled, PinMessageAllMembersEnabled, item.pinMessageAllMembersEnabled)
+    updateRoleWithValue(
+      historyArchiveSupportEnabled, HistoryArchiveSupportEnabled,
+      item.historyArchiveSupportEnabled,
+    )
+    updateRoleWithValue(
+      pinMessageAllMembersEnabled, PinMessageAllMembersEnabled,
+      item.pinMessageAllMembersEnabled,
+    )
     updateRoleWithValue(encrypted, Encrypted, item.encrypted)
     updateRoleWithValue(pubsubTopic, PubsubTopic, item.pubsubTopic)
     updateRoleWithValue(pubsubTopicKey, PubsubTopicKey, item.pubsubTopicKey)
     updateRoleWithValue(shardIndex, ShardIndex, item.shardIndex)
-    updateRoleWithValue(isPendingOwnershipRequest, IsPendingOwnershipRequest, item.isPendingOwnershipRequest)
+    updateRoleWithValue(
+      isPendingOwnershipRequest, IsPendingOwnershipRequest,
+      item.isPendingOwnershipRequest,
+    )
     updateRoleWithValue(activeMembersCount, ActiveMembersCount, item.activeMembersCount)
 
     self.items[ind].members.updateToTheseItems(item.members.getItems())
@@ -331,7 +344,8 @@ QtObject:
       return
 
     let dataIndex = self.createIndex(ind, 0, nil)
-    defer: dataIndex.delete
+    defer:
+      dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
   proc updateMemberItemInSections*(
@@ -347,20 +361,11 @@ QtObject:
       isBlocked: bool,
       trustStatus: TrustStatus,
       contactRequest: ContactRequest,
-    ) =
+  ) =
     for item in self.items:
       item.members.updateItem(
-        pubKey,
-        displayName,
-        ensName,
-        isEnsVerified,
-        localNickname,
-        alias,
-        icon,
-        isContact,
-        isBlocked,
-        trustStatus,
-        contactRequest,
+        pubKey, displayName, ensName, isEnsVerified, localNickname, alias, icon,
+        isContact, isBlocked, trustStatus, contactRequest,
       )
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
@@ -376,29 +381,35 @@ QtObject:
 
   proc getItemById*(self: SectionModel, id: string): SectionItem =
     for it in self.items:
-      if(it.id == id):
+      if (it.id == id):
         return it
 
-  proc getItemBySectionType*(self: SectionModel, sectionType: SectionType): SectionItem =
+  proc getItemBySectionType*(
+      self: SectionModel, sectionType: SectionType
+  ): SectionItem =
     for it in self.items:
-      if(it.sectionType == sectionType):
+      if (it.sectionType == sectionType):
         return it
 
-  proc getItemEnabledBySectionType*(self: SectionModel, sectionType: int): bool {.slot.} =
-    let item = self.getItemBySectionType((SectionType)sectionType)
+  proc getItemEnabledBySectionType*(
+      self: SectionModel, sectionType: int
+  ): bool {.slot.} =
+    let item = self.getItemBySectionType((SectionType) sectionType)
     return not item.isEmpty() and item.enabled()
 
   proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
       if self.items[i].active:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
+        defer:
+          index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
       if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
+        defer:
+          index.delete
         self.items[i].active = true
 
         self.dataChanged(index, index, @[ModelRole.Active.int])
@@ -414,7 +425,8 @@ QtObject:
           if self.items[i].enabled == value:
             continue
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
+          defer:
+            index.delete
           self.items[i].enabled = value
           self.dataChanged(index, index, @[ModelRole.Enabled.int])
     else:
@@ -430,8 +442,10 @@ QtObject:
 
       let topIndex = self.createIndex(topInd, 0, nil)
       let bottomIndex = self.createIndex(bottomInd, 0, nil)
-      defer: topIndex.delete
-      defer: bottomIndex.delete
+      defer:
+        topIndex.delete
+      defer:
+        bottomIndex.delete
       self.dataChanged(topIndex, bottomIndex, @[ModelRole.Enabled.int])
 
     # This signal is emitted to update buttons visibility in the left navigation bar,
@@ -445,7 +459,8 @@ QtObject:
     self.enableDisableSection(sectionType, false)
 
   proc isAMessengerItem*(item: SectionItem): bool =
-    return item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community
+    return
+      item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community
 
   # Count all mentions from all chat&community sections
   proc allMentionsCount*(self: SectionModel): int =
@@ -453,11 +468,14 @@ QtObject:
       if item.isAMessengerItem():
         result += item.notificationsCount
 
-  proc updateIsPendingOwnershipRequest*(self: SectionModel, id: string, isPending: bool) =
+  proc updateIsPendingOwnershipRequest*(
+      self: SectionModel, id: string, isPending: bool
+  ) =
     for i in 0 ..< self.items.len:
       if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
+        defer:
+          index.delete
 
         if self.items[i].isPendingOwnershipRequest == isPending:
           return
@@ -466,7 +484,9 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.IsPendingOwnershipRequest.int])
         return
 
-  proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
+  proc updateNotifications*(
+      self: SectionModel, id: string, hasNotification: bool, notificationsCount: int
+  ) =
     for ind in 0 ..< self.items.len:
       if self.items[ind].id == id:
         var roles: seq[int] = @[]
@@ -478,7 +498,8 @@ QtObject:
           return
 
         let index = self.createIndex(ind, 0, nil)
-        defer: index.delete
+        defer:
+          index.delete
         self.dataChanged(index, index, roles)
         self.notificationsCountChanged()
         return
@@ -491,9 +512,10 @@ QtObject:
 
   proc appendCommunityToken*(self: SectionModel, id: string, item: TokenItem) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
+      if (self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
+        defer:
+          index.delete
         self.items[i].appendCommunityToken(item)
         return
 
@@ -501,45 +523,50 @@ QtObject:
     for item in self.items:
       if item.id == sectionId:
         return item.name
-    
+
   proc getSectionByIdJson(self: SectionModel, sectionId: string): string {.slot.} =
     for item in self.items:
       if (item.id == sectionId):
-        let jsonObj = %* {
-          "id": item.id,
-          "name": item.name,
-          "memberRole": item.memberRole.int,
-          "isControlNode": item.isControlNode,
-          "description": item.description,
-          "introMessage": item.introMessage,
-          "outroMessage": item.outroMessage,
-          "image": item.image,
-          "bannerImageData": item.bannerImageData,
-          "icon": item.icon,
-          "color": item.color,
-          "tags": item.tags,
-          "hasNotification": item.hasNotification,
-          "notificationsCount": item.notificationsCount,
-          "active": item.active,
-          "enabled": item.enabled,
-          "joined": item.joined,
-          "spectated": item.spectated,
-          "canJoin": item.canJoin,
-          "canManageUsers": item.canManageUsers,
-          "canRequestAccess": item.canRequestAccess,
-          "isMember": item.isMember,
-          "amIBanned": item.amIBanned,
-          "access": item.access,
-          "ensOnly": item.ensOnly,
-          "nbMembers": item.members.getCount(),
-          "encrypted": item.encrypted,
-          "pubsubTopic": item.pubsubTopic,
-          "pubsubTopicKey": item.pubsubTopicKey,
-          "shardIndex": item.shardIndex,
-        }
+        let jsonObj =
+          %*{
+            "id": item.id,
+            "name": item.name,
+            "memberRole": item.memberRole.int,
+            "isControlNode": item.isControlNode,
+            "description": item.description,
+            "introMessage": item.introMessage,
+            "outroMessage": item.outroMessage,
+            "image": item.image,
+            "bannerImageData": item.bannerImageData,
+            "icon": item.icon,
+            "color": item.color,
+            "tags": item.tags,
+            "hasNotification": item.hasNotification,
+            "notificationsCount": item.notificationsCount,
+            "active": item.active,
+            "enabled": item.enabled,
+            "joined": item.joined,
+            "spectated": item.spectated,
+            "canJoin": item.canJoin,
+            "canManageUsers": item.canManageUsers,
+            "canRequestAccess": item.canRequestAccess,
+            "isMember": item.isMember,
+            "amIBanned": item.amIBanned,
+            "access": item.access,
+            "ensOnly": item.ensOnly,
+            "nbMembers": item.members.getCount(),
+            "encrypted": item.encrypted,
+            "pubsubTopic": item.pubsubTopic,
+            "pubsubTopicKey": item.pubsubTopicKey,
+            "shardIndex": item.shardIndex,
+          }
         return $jsonObj
 
-  proc setMembersAirdropAddress*(self: SectionModel, id: string, communityMembersAirdropAddress: Table[string, string]) = 
+  proc setMembersAirdropAddress*(
+      self: SectionModel,
+      id: string,
+      communityMembersAirdropAddress: Table[string, string],
+  ) =
     let index = self.getItemIndex(id)
     if (index == -1):
       return
@@ -547,7 +574,9 @@ QtObject:
     for pubkey, airdropAddress in communityMembersAirdropAddress.pairs:
       self.items[index].members.setAirdropAddress(pubkey, airdropAddress)
 
-  proc setTokenItems*(self: SectionModel, id: string, communityTokensItems: seq[TokenItem]) =
+  proc setTokenItems*(
+      self: SectionModel, id: string, communityTokensItems: seq[TokenItem]
+  ) =
     let index = self.getItemIndex(id)
     if (index == -1):
       return

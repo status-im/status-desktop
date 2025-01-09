@@ -11,80 +11,151 @@ from ./gen import rpc
 # Mirrors the transfer event from status-go, services/wallet/transfer/commands.go
 const eventCommunityTokenReceived*: string = "wallet-community-token-received"
 
-proc deployCollectibles*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, deploymentParams, txData, hashedPassword]
+proc deployCollectibles*(
+    chainId: int, deploymentParams: JsonNode, txData: JsonNode, hashedPassword: string
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, deploymentParams, txData, hashedPassword]
   return core.callPrivateRPC("communitytokens_deployCollectibles", payload)
 
-proc deployAssets*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, deploymentParams, txData, hashedPassword]
+proc deployAssets*(
+    chainId: int, deploymentParams: JsonNode, txData: JsonNode, hashedPassword: string
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, deploymentParams, txData, hashedPassword]
   return core.callPrivateRPC("communitytokens_deployAssets", payload)
 
 proc removeCommunityToken*(chainId: int, address: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, address]
+  let payload = %*[chainId, address]
   return core.callPrivateRPC("wakuext_removeCommunityToken", payload)
 
 proc getCommunityTokens*(communityId: string): RpcResponse[JsonNode] =
-  let payload = %* [communityId]
+  let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_getCommunityTokens", payload)
 
 proc getAllCommunityTokens*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   return core.callPrivateRPC("wakuext_getAllCommunityTokens", payload)
 
-proc saveCommunityToken*(token: CommunityTokenDto, croppedImageJson: string): RpcResponse[JsonNode] =
-  let croppedImage = if len(croppedImageJson) > 0: newCroppedImage(croppedImageJson) else: nil
-  let payload = %* [token.toJsonNode(), croppedImage]
+proc saveCommunityToken*(
+    token: CommunityTokenDto, croppedImageJson: string
+): RpcResponse[JsonNode] =
+  let croppedImage =
+    if len(croppedImageJson) > 0:
+      newCroppedImage(croppedImageJson)
+    else:
+      nil
+  let payload = %*[token.toJsonNode(), croppedImage]
   return core.callPrivateRPC("wakuext_saveCommunityToken", payload)
 
-proc addCommunityToken*(communityId: string, chainId: int, address: string): RpcResponse[JsonNode] =
-  let payload = %* [communityId, chainId, address]
+proc addCommunityToken*(
+    communityId: string, chainId: int, address: string
+): RpcResponse[JsonNode] =
+  let payload = %*[communityId, chainId, address]
   return core.callPrivateRPC("wakuext_addCommunityToken", payload)
 
-proc updateCommunityTokenState*(chainId: int, contractAddress: string, deployState: DeployState): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, deployState.int]
+proc updateCommunityTokenState*(
+    chainId: int, contractAddress: string, deployState: DeployState
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress, deployState.int]
   return core.callPrivateRPC("wakuext_updateCommunityTokenState", payload)
 
-proc updateCommunityTokenAddress*(chainId: int, oldContractAddress: string, newContractAddress: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, oldContractAddress, newContractAddress]
+proc updateCommunityTokenAddress*(
+    chainId: int, oldContractAddress: string, newContractAddress: string
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, oldContractAddress, newContractAddress]
   return core.callPrivateRPC("wakuext_updateCommunityTokenAddress", payload)
 
-proc updateCommunityTokenSupply*(chainId: int, contractAddress: string, supply: Uint256): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, supply.toString(10)]
+proc updateCommunityTokenSupply*(
+    chainId: int, contractAddress: string, supply: Uint256
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress, supply.toString(10)]
   return core.callPrivateRPC("wakuext_updateCommunityTokenSupply", payload)
 
-proc mintTokens*(chainId: int, contractAddress: string, txData: JsonNode, hashedPasword: string, walletAddresses: seq[string], amount: Uint256): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, txData, hashedPasword, walletAddresses, amount.toString(10)]
+proc mintTokens*(
+    chainId: int,
+    contractAddress: string,
+    txData: JsonNode,
+    hashedPasword: string,
+    walletAddresses: seq[string],
+    amount: Uint256,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[
+      chainId,
+      contractAddress,
+      txData,
+      hashedPasword,
+      walletAddresses,
+      amount.toString(10),
+    ]
   return core.callPrivateRPC("communitytokens_mintTokens", payload)
 
-proc estimateMintTokens*(chainId: int, contractAddress: string, fromAddress: string, walletAddresses: seq[string], amount: Uint256): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, fromAddress, walletAddresses, amount.toString(10)]
+proc estimateMintTokens*(
+    chainId: int,
+    contractAddress: string,
+    fromAddress: string,
+    walletAddresses: seq[string],
+    amount: Uint256,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[chainId, contractAddress, fromAddress, walletAddresses, amount.toString(10)]
   return core.callPrivateRPC("communitytokens_estimateMintTokens", payload)
 
-proc remoteBurn*(chainId: int, contractAddress: string, txData: JsonNode, hashedPassword: string, tokenIds: seq[UInt256], additionalData: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, txData, hashedPassword, tokenIds.map(x => x.toString(10)), additionalData]
+proc remoteBurn*(
+    chainId: int,
+    contractAddress: string,
+    txData: JsonNode,
+    hashedPassword: string,
+    tokenIds: seq[UInt256],
+    additionalData: string,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[
+      chainId,
+      contractAddress,
+      txData,
+      hashedPassword,
+      tokenIds.map(x => x.toString(10)),
+      additionalData,
+    ]
   return core.callPrivateRPC("communitytokens_remoteBurn", payload)
 
-proc estimateRemoteBurn*(chainId: int, contractAddress: string, fromAddress: string, tokenIds: seq[UInt256]): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, fromAddress, tokenIds.map(x => x.toString(10))]
+proc estimateRemoteBurn*(
+    chainId: int, contractAddress: string, fromAddress: string, tokenIds: seq[UInt256]
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[chainId, contractAddress, fromAddress, tokenIds.map(x => x.toString(10))]
   return core.callPrivateRPC("communitytokens_estimateRemoteBurn", payload)
 
-proc burn*(chainId: int, contractAddress: string, txData: JsonNode, hashedPassword: string, amount: Uint256): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, txData, hashedPassword, amount.toString(10)]
+proc burn*(
+    chainId: int,
+    contractAddress: string,
+    txData: JsonNode,
+    hashedPassword: string,
+    amount: Uint256,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[chainId, contractAddress, txData, hashedPassword, amount.toString(10)]
   return core.callPrivateRPC("communitytokens_burn", payload)
 
-proc estimateBurn*(chainId: int, contractAddress: string, fromAddress: string, amount: Uint256): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, fromAddress, amount.toString(10)]
+proc estimateBurn*(
+    chainId: int, contractAddress: string, fromAddress: string, amount: Uint256
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress, fromAddress, amount.toString(10)]
   return core.callPrivateRPC("communitytokens_estimateBurn", payload)
 
-proc estimateSetSignerPubKey*(chainId: int, contractAddress: string, fromAddress: string, newSignerPubkey: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, fromAddress, newSignerPubkey]
+proc estimateSetSignerPubKey*(
+    chainId: int, contractAddress: string, fromAddress: string, newSignerPubkey: string
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress, fromAddress, newSignerPubkey]
   return core.callPrivateRPC("communitytokens_estimateSetSignerPubKey", payload)
 
 proc remainingSupply*(chainId: int, contractAddress: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress]
+  let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_remainingSupply", payload)
 
-proc deployCollectiblesEstimate*(chainId: int, addressFrom: string): RpcResponse[JsonNode] =
+proc deployCollectiblesEstimate*(
+    chainId: int, addressFrom: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, addressFrom]
   return core.callPrivateRPC("communitytokens_deployCollectiblesEstimate", payload)
 
@@ -92,39 +163,76 @@ proc deployAssetsEstimate*(chainId: int, addressFrom: string): RpcResponse[JsonN
   let payload = %*[chainId, addressFrom]
   return core.callPrivateRPC("communitytokens_deployAssetsEstimate", payload)
 
-proc remoteDestructedAmount*(chainId: int, contractAddress: string): RpcResponse[JsonNode] =
+proc remoteDestructedAmount*(
+    chainId: int, contractAddress: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_remoteDestructedAmount", payload)
 
-proc deployOwnerTokenEstimate*(chainId: int, addressFrom: string, ownerParams: JsonNode, masterParams: JsonNode, communityId: string, signerPubKey: string): RpcResponse[JsonNode] =
-  let payload = %*[chainId, addressFrom, ownerParams, masterParams, communityId, signerPubKey]
+proc deployOwnerTokenEstimate*(
+    chainId: int,
+    addressFrom: string,
+    ownerParams: JsonNode,
+    masterParams: JsonNode,
+    communityId: string,
+    signerPubKey: string,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[chainId, addressFrom, ownerParams, masterParams, communityId, signerPubKey]
   return core.callPrivateRPC("communitytokens_deployOwnerTokenEstimate", payload)
 
-proc deployOwnerToken*(chainId: int, ownerParams: JsonNode, masterParams: JsonNode, signerPubKey: string, txData: JsonNode, hashedPassword: string): RpcResponse[JsonNode] =
-  let payload = %*[chainId, ownerParams, masterParams, signerPubKey, txData, hashedPassword]
+proc deployOwnerToken*(
+    chainId: int,
+    ownerParams: JsonNode,
+    masterParams: JsonNode,
+    signerPubKey: string,
+    txData: JsonNode,
+    hashedPassword: string,
+): RpcResponse[JsonNode] =
+  let payload =
+    %*[chainId, ownerParams, masterParams, signerPubKey, txData, hashedPassword]
   return core.callPrivateRPC("communitytokens_deployOwnerToken", payload)
 
-proc getMasterTokenContractAddressFromHash*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
+proc getMasterTokenContractAddressFromHash*(
+    chainId: int, transactionHash: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, transactionHash]
-  return core.callPrivateRPC("communitytokens_getMasterTokenContractAddressFromHash", payload)
+  return core.callPrivateRPC(
+    "communitytokens_getMasterTokenContractAddressFromHash", payload
+  )
 
-proc getOwnerTokenContractAddressFromHash*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
+proc getOwnerTokenContractAddressFromHash*(
+    chainId: int, transactionHash: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, transactionHash]
-  return core.callPrivateRPC("communitytokens_getOwnerTokenContractAddressFromHash", payload)
+  return
+    core.callPrivateRPC("communitytokens_getOwnerTokenContractAddressFromHash", payload)
 
-proc createCommunityTokenDeploymentSignature*(chainId: int, addressFrom: string, signerAddress: string): RpcResponse[JsonNode] =
+proc createCommunityTokenDeploymentSignature*(
+    chainId: int, addressFrom: string, signerAddress: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, addressFrom, signerAddress]
   return core.callPrivateRPC("wakuext_createCommunityTokenDeploymentSignature", payload)
 
-proc setSignerPubKey*(chainId: int, contractAddress: string, txData: JsonNode, newSignerPubKey: string, hashedPassword: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, contractAddress, txData, hashedPassword, newSignerPubKey]
+proc setSignerPubKey*(
+    chainId: int,
+    contractAddress: string,
+    txData: JsonNode,
+    newSignerPubKey: string,
+    hashedPassword: string,
+): RpcResponse[JsonNode] =
+  let payload = %*[chainId, contractAddress, txData, hashedPassword, newSignerPubKey]
   return core.callPrivateRPC("communitytokens_setSignerPubKey", payload)
 
-proc registerOwnerTokenReceivedNotification*(communityId: string): RpcResponse[JsonNode] =
+proc registerOwnerTokenReceivedNotification*(
+    communityId: string
+): RpcResponse[JsonNode] =
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerOwnerTokenReceivedNotification", payload)
 
-proc registerReceivedOwnershipNotification*(communityId: string): RpcResponse[JsonNode] =
+proc registerReceivedOwnershipNotification*(
+    communityId: string
+): RpcResponse[JsonNode] =
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerReceivedOwnershipNotification", payload)
 
@@ -132,7 +240,9 @@ proc registerSetSignerFailedNotification*(communityId: string): RpcResponse[Json
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerSetSignerFailedNotification", payload)
 
-proc registerSetSignerDeclinedNotification*(communityId: string): RpcResponse[JsonNode] =
+proc registerSetSignerDeclinedNotification*(
+    communityId: string
+): RpcResponse[JsonNode] =
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerSetSignerDeclinedNotification", payload)
 
@@ -140,15 +250,24 @@ proc registerLostOwnershipNotification*(communityId: string): RpcResponse[JsonNo
   let payload = %*[communityId]
   return core.callPrivateRPC("wakuext_registerLostOwnershipNotification", payload)
 
-proc getOwnerTokenOwnerAddress*(chainId: int, contractAddress: string): RpcResponse[JsonNode] =
+proc getOwnerTokenOwnerAddress*(
+    chainId: int, contractAddress: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, contractAddress]
   return core.callPrivateRPC("communitytokens_ownerTokenOwnerAddress", payload)
 
-proc reTrackOwnerTokenDeploymentTransaction*(chainId: int, contractAddress: string): RpcResponse[JsonNode] =
+proc reTrackOwnerTokenDeploymentTransaction*(
+    chainId: int, contractAddress: string
+): RpcResponse[JsonNode] =
   let payload = %*[chainId, contractAddress]
-  return core.callPrivateRPC("communitytokens_reTrackOwnerTokenDeploymentTransaction", payload)
+  return core.callPrivateRPC(
+    "communitytokens_reTrackOwnerTokenDeploymentTransaction", payload
+  )
 
 rpc(registerReceivedCommunityTokenNotification, "wakuext"):
-  communityId: string
-  isFirst: bool
-  toTokenData: string
+  communityId:
+    string
+  isFirst:
+    bool
+  toTokenData:
+    string

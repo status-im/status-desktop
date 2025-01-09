@@ -2,45 +2,43 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import ./path_item
 
-type
-  ModelRole {.pure.} = enum
-    ProcessorName = UserRole + 1,
-    FromChain,
-    ToChain,
-    FromToken,
-    ToToken,
-    AmountIn,
-    AmountInLocked,
-    AmountOut,
-    SuggestedLevelsForMaxFeesPerGas,
-    TxNonce,
-    TxMaxFeesPerGas,
-    TxBaseFee,
-    TxPriorityFee,
-    TxGasAmount,
-    TxBonderFees,
-    TxTokenFees,
-    TxEstimatedTime,
-    TxFee,
-    TxL1Fee,
-    TxTotalFee,
-    ApprovalRequired,
-    ApprovalAmountRequired,
-    ApprovalContractAddress,
-    ApprovalTxNonce,
-    ApprovalMaxFeesPerGas,
-    ApprovalBaseFee,
-    ApprovalPriorityFee,
-    ApprovalGasAmount,
-    ApprovalEstimatedTime,
-    ApprovalFee,
-    ApprovalL1Fee,
-    EstimatedTime
+type ModelRole {.pure.} = enum
+  ProcessorName = UserRole + 1
+  FromChain
+  ToChain
+  FromToken
+  ToToken
+  AmountIn
+  AmountInLocked
+  AmountOut
+  SuggestedLevelsForMaxFeesPerGas
+  TxNonce
+  TxMaxFeesPerGas
+  TxBaseFee
+  TxPriorityFee
+  TxGasAmount
+  TxBonderFees
+  TxTokenFees
+  TxEstimatedTime
+  TxFee
+  TxL1Fee
+  TxTotalFee
+  ApprovalRequired
+  ApprovalAmountRequired
+  ApprovalContractAddress
+  ApprovalTxNonce
+  ApprovalMaxFeesPerGas
+  ApprovalBaseFee
+  ApprovalPriorityFee
+  ApprovalGasAmount
+  ApprovalEstimatedTime
+  ApprovalFee
+  ApprovalL1Fee
+  EstimatedTime
 
 QtObject:
-  type
-    PathModel* = ref object of QAbstractListModel
-      items*: seq[PathItem]
+  type PathModel* = ref object of QAbstractListModel
+    items*: seq[PathItem]
 
   proc delete(self: PathModel) =
     self.items = @[]
@@ -93,7 +91,7 @@ QtObject:
       ModelRole.ApprovalEstimatedTime.int: "approvalEstimatedTime",
       ModelRole.ApprovalFee.int: "approvalFee",
       ModelRole.ApprovalL1Fee.int: "approvalL1Fee",
-      ModelRole.EstimatedTime.int: "estimatedTime"
+      ModelRole.EstimatedTime.int: "estimatedTime",
     }.toTable
 
   proc setItems*(self: PathModel, items: seq[PathItem]) =
@@ -111,7 +109,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ProcessorName:
       result = newQVariant(item.processorName)
     of ModelRole.FromChain:

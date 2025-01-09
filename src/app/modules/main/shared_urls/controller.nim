@@ -4,17 +4,16 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/shared_urls/service as urls_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    sharedUrlsService: urls_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  sharedUrlsService: urls_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     sharedUrlsService: urls_service.Service,
-    ): Controller =
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -27,7 +26,9 @@ proc parseCommunitySharedUrl*(self: Controller, url: string): CommunityUrlDataDt
   let data = self.sharedUrlsService.parseSharedUrl(url)
   return data.community
 
-proc parseCommunityChannelSharedUrl*(self: Controller, url: string): CommunityChannelUrlDataDto =
+proc parseCommunityChannelSharedUrl*(
+    self: Controller, url: string
+): CommunityChannelUrlDataDto =
   let data = self.sharedUrlsService.parseSharedUrl(url)
   return data.channel
 

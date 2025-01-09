@@ -1,12 +1,11 @@
 import locale_table
 
-type
-  Item* = object
-    locale: string
-    name: string
-    native: string
-    flag: string # unicode emoji
-    state: locale_table.State
+type Item* = object
+  locale: string
+  name: string
+  native: string
+  flag: string # unicode emoji
+  state: locale_table.State
 
 proc initItem*(locale, name, native, flag: string, state: locale_table.State): Item =
   result.locale = locale

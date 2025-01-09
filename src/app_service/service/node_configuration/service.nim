@@ -19,31 +19,31 @@ const
   SIGNAL_NODE_LOG_LEVEL_UPDATE* = "nodeLogLevelUpdated"
   DEBUG_LOG_LEVELS = @["DEBUG", "TRACE"]
 
-type
-  NodeLogLevelUpdatedArgs* = ref object of Args
-    logLevel*: LogLevel
+type NodeLogLevelUpdatedArgs* = ref object of Args
+  logLevel*: LogLevel
 
-type
-  ErrorArgs* = ref object of Args
-    msg*: string
+type ErrorArgs* = ref object of Args
+  msg*: string
 
-type
-  Service* = ref object of RootObj
-    configuration: NodeConfigDto
-    fleetConfiguration: FleetConfiguration
-    settingsService: settings_service.Service
-    wakuNodes: seq[string]
-    events: EventEmitter
+type Service* = ref object of RootObj
+  configuration: NodeConfigDto
+  fleetConfiguration: FleetConfiguration
+  settingsService: settings_service.Service
+  wakuNodes: seq[string]
+  events: EventEmitter
 
 # Forward declarations
 proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool
 proc enableCommunityHistoryArchiveSupport*(self: Service): bool
 
-
 proc delete*(self: Service) =
   discard
 
-proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settings_service.Service, events: EventEmitter): Service =
+proc newService*(
+    fleetConfiguration: FleetConfiguration,
+    settingsService: settings_service.Service,
+    events: EventEmitter,
+): Service =
   result = Service()
   result.fleetConfiguration = fleetConfiguration
   result.settingsService = settingsService
@@ -106,8 +106,9 @@ proc isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
 
 proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
   let response = status_node_config.enableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error enabling community history archive support: ", errDescription = response.error.message
+  if (not response.error.isNil):
+    error "error enabling community history archive support: ",
+      errDescription = response.error.message
     return false
 
   self.configuration.TorrentConfig.Enabled = true
@@ -115,8 +116,9 @@ proc enableCommunityHistoryArchiveSupport*(self: Service): bool =
 
 proc disableCommunityHistoryArchiveSupport*(self: Service): bool =
   let response = status_node_config.disableCommunityHistoryArchiveSupport()
-  if(not response.error.isNil):
-    error "error disabling community history archive support: ", errDescription = response.error.message
+  if (not response.error.isNil):
+    error "error disabling community history archive support: ",
+      errDescription = response.error.message
     return false
 
   self.configuration.TorrentConfig.Enabled = false
@@ -231,7 +233,9 @@ proc setLogLevel*(self: Service, logLevel: LogLevel): bool =
     return false
 
   self.configuration.LogLevel = $logLevel
-  self.events.emit(SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel))
+  self.events.emit(
+    SIGNAL_NODE_LOG_LEVEL_UPDATE, NodeLogLevelUpdatedArgs(logLevel: logLevel)
+  )
   return true
 
 proc getNimbusProxyConfig(self: Service): bool =
@@ -247,10 +251,10 @@ proc setNimbusProxyConfigEnabled*(self: Service, enabled: bool): bool =
   return true
 
 proc isLightClient*(self: Service): bool =
-   return self.configuration.WakuV2Config.LightClient
+  return self.configuration.WakuV2Config.LightClient
 
 proc isFullNode*(self: Service): bool =
-   return self.configuration.WakuConfig.FullNode
+  return self.configuration.WakuConfig.FullNode
 
 proc getLogMaxBackups*(self: Service): int =
   return self.configuration.LogMaxBackups

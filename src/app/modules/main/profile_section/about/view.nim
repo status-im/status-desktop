@@ -4,10 +4,9 @@ import NimQml, json
 import ./io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      fetching*: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    fetching*: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -30,7 +29,9 @@ QtObject:
   proc getStatusGoVersion*(self: View): string {.slot.} =
     return self.delegate.getStatusGoVersion()
 
-  proc appVersionFetched*(self: View, available: bool, version: string, url: string) {.signal.}
+  proc appVersionFetched*(
+    self: View, available: bool, version: string, url: string
+  ) {.signal.}
 
   proc fetchingChanged(self: View) {.signal.}
 

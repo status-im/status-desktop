@@ -9,29 +9,33 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node/service as node_service
-import ../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  settingsService: settings_service.Service,
-  nodeService: node_service.Service,
-  nodeConfigurationService:  node_configuration_service.Service
-  ): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    nodeService: node_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, nodeService, nodeConfigurationService)
+  result.controller = controller.newController(
+    result, events, settingsService, nodeService, nodeConfigurationService
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -55,17 +59,17 @@ method sendRPCMessageRaw*(self: Module, inputJSON: string): string =
   return self.controller.sendRPCMessageRaw(inputJSON)
 
 method setLightClient*(self: Module, enabled: bool) =
-  if(self.controller.setLightClient(enabled)):
+  if (self.controller.setLightClient(enabled)):
     quit(QuitSuccess) # quits the app TODO: change this to logout instead when supported
 
 method isLightClient*(self: Module): bool =
   return self.controller.isLightClient()
 
 method isFullNode*(self: Module): bool =
-   return self.controller.isFullNode()
+  return self.controller.isFullNode()
 
 method getWakuVersion*(self: Module): int =
-   return self.controller.getWakuVersion()
+  return self.controller.getWakuVersion()
 
 method setLastMessage*(self: Module, lastMessage: string) =
   self.view.setLastMessage(lastMessage)

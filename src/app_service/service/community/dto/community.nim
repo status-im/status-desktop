@@ -12,41 +12,41 @@ import ../../../../app_service/common/types
 
 import backend/collectibles_types
 
-type RequestToJoinType* {.pure.}= enum
-  Pending = 1,
-  Declined = 2,
-  Accepted = 3,
-  Canceled = 4,
-  AcceptedPending = 5,
-  DeclinedPending = 6,
-  AwaitingAddress = 7,
+type RequestToJoinType* {.pure.} = enum
+  Pending = 1
+  Declined = 2
+  Accepted = 3
+  Canceled = 4
+  AcceptedPending = 5
+  DeclinedPending = 6
+  AwaitingAddress = 7
 
-type MutedType* {.pure.}= enum
-  For15min = 1,
-  For1hr = 2,
-  For8hr = 3,
-  For1week = 4,
-  TillUnmuted = 5,
-  For1min = 6,
+type MutedType* {.pure.} = enum
+  For15min = 1
+  For1hr = 2
+  For8hr = 3
+  For1week = 4
+  TillUnmuted = 5
+  For1min = 6
   Unmuted = 7
 
-type
-  CommunityMetricsType* {.pure.} = enum
-    MessagesTimestamps = 0,
-    MessagesCount,
-    Members,
-    ControlNodeUptime
+type CommunityMetricsType* {.pure.} = enum
+  MessagesTimestamps = 0
+  MessagesCount
+  Members
+  ControlNodeUptime
 
-type
-  CommunityMemberPendingBanOrKick* {.pure.} = enum
-    Banned = 0,
-    BanPending,
-    UnbanPending,
-    KickPending,
-    BannedWithAllMessagesDelete
+type CommunityMemberPendingBanOrKick* {.pure.} = enum
+  Banned = 0
+  BanPending
+  UnbanPending
+  KickPending
+  BannedWithAllMessagesDelete
 
 proc isBanned*(state: CommunityMemberPendingBanOrKick): bool =
-  return state == CommunityMemberPendingBanOrKick.Banned or state == CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete
+  return
+    state == CommunityMemberPendingBanOrKick.Banned or
+    state == CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete
 
 type RevealedAccount* = object
   address*: string
@@ -65,7 +65,8 @@ type CommunityMembershipRequestDto* = object
   revealedAccounts*: seq[RevealedAccount]
 
 proc `$`*(self: CommunityMembershipRequestDto): string =
-  return fmt"""CommunityMembershipRequestDto(
+  return
+    fmt"""CommunityMembershipRequestDto(
     id:{self.id}, 
     publicKey:{self.publicKey},
     chatId:{self.chatId},
@@ -83,20 +84,20 @@ type CommunitySettingsDto* = object
 type CommunityAdminSettingsDto* = object
   pinMessageAllMembersEnabled*: bool
 
-type TokenPermissionType* {.pure.}= enum
-  Unknown = 0,
-  BecomeAdmin = 1,
-  BecomeMember = 2,
-  View = 3,
-  ViewAndPost = 4,
-  BecomeTokenMaster = 5,
+type TokenPermissionType* {.pure.} = enum
+  Unknown = 0
+  BecomeAdmin = 1
+  BecomeMember = 2
+  View = 3
+  ViewAndPost = 4
+  BecomeTokenMaster = 5
   BecomeTokenOwner = 6
 
-type TokenPermissionState* {.pure.}= enum
-  Approved = 0,
-  AdditionPending = 1,
-  UpdatePending = 2,
-  RemovalPending = 3,
+type TokenPermissionState* {.pure.} = enum
+  Approved = 0
+  AdditionPending = 1
+  UpdatePending = 2
+  RemovalPending = 3
 
 type TokenCriteriaDto* = object
   contractAddresses* {.serializedFieldName("contract_addresses").}: Table[int, string]
@@ -202,9 +203,9 @@ type DiscordChannelDto* = object
   description*: string
   filePath*: string
 
-type DiscordImportErrorCode* {.pure.}= enum
-  Unknown = 1,
-  Warning = 2,
+type DiscordImportErrorCode* {.pure.} = enum
+  Unknown = 1
+  Warning = 2
   Error = 3
 
 type DiscordImportError* = object
@@ -222,7 +223,8 @@ type DiscordImportTaskProgress* = object
 
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
-  discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
+  discard
+    jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
 
 proc toDiscordCategoryDto*(jsonObj: JsonNode): DiscordCategoryDto =
   result = DiscordCategoryDto()
@@ -269,7 +271,7 @@ proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress 
   result.state = jsonObj{"state"}.getStr()
 
   var importErrorsObj: JsonNode
-  if(jsonObj.getProp("errors", importErrorsObj) and importErrorsObj.kind == JArray):
+  if (jsonObj.getProp("errors", importErrorsObj) and importErrorsObj.kind == JArray):
     for error in importErrorsObj:
       let importError = error.toDiscordImportError()
       result.errors.add(importError)
@@ -286,16 +288,19 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
   var typeInt: int
   discard jsonObj.getProp("type", typeInt)
   if (typeInt >= ord(low(TokenType)) and typeInt <= ord(high(TokenType))):
-      result.`type` = TokenType(typeInt)
+    result.`type` = TokenType(typeInt)
 
   var contractAddressesObj: JsonNode
-  if(jsonObj.getProp("contract_addresses", contractAddressesObj) and contractAddressesObj.kind == JObject):
+  if (
+    jsonObj.getProp("contract_addresses", contractAddressesObj) and
+    contractAddressesObj.kind == JObject
+  ):
     result.contractAddresses = initTable[int, string]()
     for chainId, contractAddress in contractAddressesObj:
       result.contractAddresses[parseInt(chainId)] = contractAddress.getStr
 
   var tokenIdsObj: JsonNode
-  if(jsonObj.getProp("tokenIds", tokenIdsObj) and tokenIdsObj.kind == JArray):
+  if (jsonObj.getProp("tokenIds", tokenIdsObj) and tokenIdsObj.kind == JArray):
     for tokenId in tokenIdsObj:
       result.tokenIds.add(tokenId.getStr)
 
@@ -317,21 +322,27 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
   discard jsonObj.getProp("is_private", result.isPrivate)
   var tokenPermissionTypeInt: int
   discard jsonObj.getProp("type", tokenPermissionTypeInt)
-  if (tokenPermissionTypeInt >= ord(low(TokenPermissionType)) and tokenPermissionTypeInt <= ord(high(TokenPermissionType))):
-      result.`type` = TokenPermissionType(tokenPermissionTypeInt)
+  if (
+    tokenPermissionTypeInt >= ord(low(TokenPermissionType)) and
+    tokenPermissionTypeInt <= ord(high(TokenPermissionType))
+  ):
+    result.`type` = TokenPermissionType(tokenPermissionTypeInt)
 
   var tokenPermissionStateInt: int
   discard jsonObj.getProp("state", tokenPermissionStateInt)
-  if (tokenPermissionStateInt >= ord(low(TokenPermissionState)) and tokenPermissionStateInt <= ord(high(TokenPermissionState))):
-      result.state = TokenPermissionState(tokenPermissionStateInt)
+  if (
+    tokenPermissionStateInt >= ord(low(TokenPermissionState)) and
+    tokenPermissionStateInt <= ord(high(TokenPermissionState))
+  ):
+    result.state = TokenPermissionState(tokenPermissionStateInt)
 
   var tokenCriteriaObj: JsonNode
-  if(jsonObj.getProp("token_criteria", tokenCriteriaObj)):
+  if (jsonObj.getProp("token_criteria", tokenCriteriaObj)):
     for tokenCriteria in tokenCriteriaObj:
       result.tokenCriteria.add(tokenCriteria.toTokenCriteriaDto)
 
   var chatIdsObj: JsonNode
-  if(jsonObj.getProp("chat_ids", chatIdsObj) and chatIdsObj.kind == JArray):
+  if (jsonObj.getProp("chat_ids", chatIdsObj) and chatIdsObj.kind == JArray):
     for chatId in chatIdsObj:
       result.chatIds.add(chatId.getStr)
 
@@ -340,37 +351,47 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
   if jsonObj.hasKey("key"):
     discard jsonObj.getProp("key", result.id)
 
-proc toAccountChainIDsCombinationDto*(jsonObj: JsonNode): AccountChainIDsCombinationDto =
+proc toAccountChainIDsCombinationDto*(
+    jsonObj: JsonNode
+): AccountChainIDsCombinationDto =
   result = AccountChainIDsCombinationDto()
   discard jsonObj.getProp("address", result.address)
   var chainIdsObj: JsonNode
-  if(jsonObj.getProp("chainIds", chainIdsObj) and chainIdsObj.kind == JArray):
+  if (jsonObj.getProp("chainIds", chainIdsObj) and chainIdsObj.kind == JArray):
     for chainId in chainIdsObj:
       result.chainIds.add(chainId.getInt)
 
-proc toCheckPermissionsToJoinResponseDto*(jsonObj: JsonNode): CheckPermissionsToJoinResponseDto =
+proc toCheckPermissionsToJoinResponseDto*(
+    jsonObj: JsonNode
+): CheckPermissionsToJoinResponseDto =
   result = CheckPermissionsToJoinResponseDto()
   discard jsonObj.getProp("satisfied", result.satisfied)
 
   var validCombinationsObj: JsonNode
-  if(jsonObj.getProp("validCombinations", validCombinationsObj) and validCombinationsObj.kind == JArray):
+  if (
+    jsonObj.getProp("validCombinations", validCombinationsObj) and
+    validCombinationsObj.kind == JArray
+  ):
     for validCombination in validCombinationsObj:
       result.validCombinations.add(validCombination.toAccountChainIDsCombinationDto)
 
   var permissionsObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
+  if (jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
     result.permissions = initTable[string, CheckPermissionsResultDto]()
     for permissionId, permission in permissionsObj:
       result.permissions[permissionId] = permission.toCheckPermissionsResultDto
 
-proc toCheckAllChannelsPermissionsResponseDto*(jsonObj: JsonNode): CheckAllChannelsPermissionsResponseDto =
+proc toCheckAllChannelsPermissionsResponseDto*(
+    jsonObj: JsonNode
+): CheckAllChannelsPermissionsResponseDto =
   result = CheckAllChannelsPermissionsResponseDto()
   result.channels = initTable[string, CheckChannelPermissionsResponseDto]()
 
   var channelsObj: JsonNode
-  if(jsonObj.getProp("channels", channelsObj) and channelsObj.kind == JObject):
+  if (jsonObj.getProp("channels", channelsObj) and channelsObj.kind == JObject):
     for channelId, permissionResponse in channelsObj:
-      result.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
+      result.channels[channelId] =
+        permissionResponse.toCheckChannelPermissionsResponseDto()
 
 proc toMetricsIntervalDto*(jsonObj: JsonNode): MetricsIntervalDto =
   result = MetricsIntervalDto()
@@ -391,8 +412,12 @@ proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
 
   result.metricsType = CommunityMetricsType.MessagesTimestamps
   var metricsTypeInt: int
-  if (jsonObj.getProp("type", metricsTypeInt) and (metricsTypeInt >= ord(low(CommunityMetricsType)) and
-      metricsTypeInt <= ord(high(CommunityMetricsType)))):
+  if (
+    jsonObj.getProp("type", metricsTypeInt) and (
+      metricsTypeInt >= ord(low(CommunityMetricsType)) and
+      metricsTypeInt <= ord(high(CommunityMetricsType))
+    )
+  ):
     result.metricsType = CommunityMetricsType(metricsTypeInt)
 
   var intervalsObj: JsonNode
@@ -418,7 +443,9 @@ proc toRevealedAccounts*(revealedAccountsObj: JsonNode): seq[RevealedAccount] =
   for revealedAccountObj in revealedAccountsObj:
     result.add(revealedAccountObj.toRevealedAccount())
 
-proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
+proc toCommunityMembershipRequestDto*(
+    jsonObj: JsonNode
+): CommunityMembershipRequestDto =
   result = CommunityMembershipRequestDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("publicKey", result.publicKey)
@@ -428,7 +455,7 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
   discard jsonObj.getProp("our", result.our)
 
   var revealedAccountObj: JsonNode
-  if(jsonObj.getProp("revealedAccounts", revealedAccountObj)):
+  if (jsonObj.getProp("revealedAccounts", revealedAccountObj)):
     result.revealedAccounts = toRevealedAccounts(revealedAccountObj)
 
 proc toCollapsedCategoryDto*(jsonObj: JsonNode, isCollapsed: bool = false): Category =
@@ -456,49 +483,58 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("isMember", result.isMember)
 
   var categoriesObj: JsonNode
-  if(jsonObj.getProp("categories", categoriesObj)):
+  if (jsonObj.getProp("categories", categoriesObj)):
     for _, categoryObj in categoriesObj:
       result.categories.add(toCategory(categoryObj))
 
   var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj)):
+  if (jsonObj.getProp("images", imagesObj)):
     result.images = toImages(imagesObj)
 
   var permissionObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionObj)):
+  if (jsonObj.getProp("permissions", permissionObj)):
     result.permissions = toPermission(permissionObj)
 
   var tokenPermissionsObj: JsonNode
-  if(jsonObj.getProp("tokenPermissions", tokenPermissionsObj) and tokenPermissionsObj.kind == JObject):
+  if (
+    jsonObj.getProp("tokenPermissions", tokenPermissionsObj) and
+    tokenPermissionsObj.kind == JObject
+  ):
     result.tokenPermissions = initTable[string, CommunityTokenPermissionDto]()
     for tokenPermissionId, tokenPermission in tokenPermissionsObj:
-      result.tokenPermissions[tokenPermissionId] = toCommunityTokenPermissionDto(tokenPermission)
+      result.tokenPermissions[tokenPermissionId] =
+        toCommunityTokenPermissionDto(tokenPermission)
 
   var adminSettingsObj: JsonNode
-  if(jsonObj.getProp("adminSettings", adminSettingsObj)):
+  if (jsonObj.getProp("adminSettings", adminSettingsObj)):
     result.adminSettings = toCommunityAdminSettingsDto(adminSettingsObj)
 
   var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
+  if (jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
       result.members.add(toChannelMember(memberObj, memberId))
 
   var chatsObj: JsonNode
-  if(jsonObj.getProp("chats", chatsObj)):
+  if (jsonObj.getProp("chats", chatsObj)):
     for _, chatObj in chatsObj:
       result.chats.add(chatObj.toChatDto(result.id, result.members))
 
   var tagsObj: JsonNode
-  if(jsonObj.getProp("tags", tagsObj)):
+  if (jsonObj.getProp("tags", tagsObj)):
     toUgly(result.tags, tagsObj)
   else:
     result.tags = "[]"
 
   var pendingAndBannedMembersObj: JsonNode
-  if (jsonObj.getProp("pendingAndBannedMembers", pendingAndBannedMembersObj) and pendingAndBannedMembersObj.kind == JObject):
-    result.pendingAndBannedMembers = initTable[string, CommunityMemberPendingBanOrKick]()
+  if (
+    jsonObj.getProp("pendingAndBannedMembers", pendingAndBannedMembersObj) and
+    pendingAndBannedMembersObj.kind == JObject
+  ):
+    result.pendingAndBannedMembers =
+      initTable[string, CommunityMemberPendingBanOrKick]()
     for memberId, pendingKickOrBanMember in pendingAndBannedMembersObj:
-      result.pendingAndBannedMembers[memberId] = CommunityMemberPendingBanOrKick(pendingKickOrBanMember.getInt())
+      result.pendingAndBannedMembers[memberId] =
+        CommunityMemberPendingBanOrKick(pendingKickOrBanMember.getInt())
 
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
@@ -510,7 +546,10 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("activeMembersCount", result.activeMembersCount)
 
   var communityTokensMetadataObj: JsonNode
-  if(jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and communityTokensMetadataObj.kind == JArray):
+  if (
+    jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and
+    communityTokensMetadataObj.kind == JArray
+  ):
     for tokenObj in communityTokensMetadataObj:
       result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
 
@@ -519,27 +558,32 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   result.shard = jsonObj.getShard()
 
-proc toMembershipRequestState*(state: CommunityMemberPendingBanOrKick): MembershipRequestState =
-  case state:
-    of CommunityMemberPendingBanOrKick.Banned:
-      return MembershipRequestState.Banned
-    of CommunityMemberPendingBanOrKick.BanPending:
-      return MembershipRequestState.BannedPending
-    of CommunityMemberPendingBanOrKick.UnbanPending:
-      return MembershipRequestState.UnbannedPending
-    of CommunityMemberPendingBanOrKick.KickPending:
-      return MembershipRequestState.KickedPending
-    of CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete:
-      return MembershipRequestState.BannedWithAllMessagesDelete
-    else:
-      return MembershipRequestState.None
+proc toMembershipRequestState*(
+    state: CommunityMemberPendingBanOrKick
+): MembershipRequestState =
+  case state
+  of CommunityMemberPendingBanOrKick.Banned:
+    return MembershipRequestState.Banned
+  of CommunityMemberPendingBanOrKick.BanPending:
+    return MembershipRequestState.BannedPending
+  of CommunityMemberPendingBanOrKick.UnbanPending:
+    return MembershipRequestState.UnbannedPending
+  of CommunityMemberPendingBanOrKick.KickPending:
+    return MembershipRequestState.KickedPending
+  of CommunityMemberPendingBanOrKick.BannedWithAllMessagesDelete:
+    return MembershipRequestState.BannedWithAllMessagesDelete
+  else:
+    return MembershipRequestState.None
 
 proc toCommunitySettingsDto*(jsonObj: JsonNode): CommunitySettingsDto =
   result = CommunitySettingsDto()
   discard jsonObj.getProp("communityId", result.id)
-  discard jsonObj.getProp("historyArchiveSupportEnabled", result.historyArchiveSupportEnabled)
+  discard
+    jsonObj.getProp("historyArchiveSupportEnabled", result.historyArchiveSupportEnabled)
 
-proc parseCommunities*(response: JsonNode, categories: seq[Category]): seq[CommunityDto] =
+proc parseCommunities*(
+    response: JsonNode, categories: seq[Category]
+): seq[CommunityDto] =
   var categoryCollapsedMap = initTable[string, bool]()
   for category in categories:
     categoryCollapsedMap[category.id] = true
@@ -569,10 +613,11 @@ proc parseCuratedCommunities*(response: JsonNode): seq[CommunityDto] =
   if (response["communities"].kind == JObject):
     result = parseKnownCuratedCommunities(response["communities"])
   if (response["unknownCommunities"].kind == JArray):
-    result = concat(result, parseUnknownCuratedCommunities(response["unknownCommunities"]))
+    result =
+      concat(result, parseUnknownCuratedCommunities(response["unknownCommunities"]))
   if (response["contractFeaturedCommunities"].kind == JArray):
     let featuredCommunityIDs = response["contractFeaturedCommunities"].to(seq[string])
-    for i in 0..<result.len:
+    for i in 0 ..< result.len:
       let communityID = result[i].id
       result[i].featuredInDirectory = any(featuredCommunityIDs, id => id == communityID)
 
@@ -590,8 +635,11 @@ proc getBannedMembersIds*(self: CommunityDto): seq[string] =
   return bannedIds
 
 proc parseCommunitiesSettings*(response: JsonNode): seq[CommunitySettingsDto] =
-  result = map(response["result"].getElems(),
-    proc(x: JsonNode): CommunitySettingsDto = x.toCommunitySettingsDto())
+  result = map(
+    response["result"].getElems(),
+    proc(x: JsonNode): CommunitySettingsDto =
+      x.toCommunitySettingsDto(),
+  )
 
 proc parseDiscordCategories*(response: RpcResponse[JsonNode]): seq[DiscordCategoryDto] =
   if (response.result["discordCategories"].kind == JArray):
@@ -613,7 +661,9 @@ proc parseDiscordChannels*(response: JsonNode): seq[DiscordChannelDto] =
     for channel in response["discordChannels"].items():
       result.add(channel.toDiscordChannelDto())
 
-proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRevealedAccounts =
+proc toMembersRevealedAccounts*(
+    membersRevealedAccountsObj: JsonNode
+): MembersRevealedAccounts =
   result = initTable[string, seq[RevealedAccount]]()
   for (pubkey, revealedAccountsObj) in membersRevealedAccountsObj.pairs:
     result[pubkey] = revealedAccountsObj.toRevealedAccounts()

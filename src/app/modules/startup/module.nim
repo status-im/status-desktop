@@ -12,7 +12,8 @@ import constants as main_constants
 import app/global/app_translatable_constants as atc
 
 const dummyUsage = main_constants.IS_MACOS # dummy usage to prevent false-alarm warning
-const dummyUsage2 = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER # dummy usage to prevent false-alarm warning
+const dummyUsage2 = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER
+  # dummy usage to prevent false-alarm warning
 
 import app_service/service/keychain/service as keychain_service
 import app_service/service/accounts/service as accounts_service
@@ -42,37 +43,38 @@ const FetchingFromWakuKeypairsIcon = "wallet"
 const FetchingFromWakuWatchOnlyAccounts = "watchOnlyAccounts"
 const FetchingFromWakuWatchOnlyAccountsIcon = "wallet"
 
-const listOfEntitiesWeExpectToBeSynced = @[
+const listOfEntitiesWeExpectToBeSynced =
+  @[
     (FetchingFromWakuProfile, FetchingFromWakuProfileIcon),
     (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
     (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
     (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon),
     (FetchingFromWakuKeypairs, FetchingFromWakuKeypairsIcon),
-    (FetchingFromWakuWatchOnlyAccounts, FetchingFromWakuWatchOnlyAccountsIcon)
+    (FetchingFromWakuWatchOnlyAccounts, FetchingFromWakuWatchOnlyAccountsIcon),
   ]
 
-type
-  Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    events: EventEmitter
-    keycardService: keycard_service.Service
-    accountsService: accounts_service.Service
-    keychainService: keychain_service.Service
-    devicesService: devices_service.Service
-    keycardSharedModule: keycard_shared_module.AccessInterface
+type Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+  delegate: T
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  events: EventEmitter
+  keycardService: keycard_service.Service
+  accountsService: accounts_service.Service
+  keychainService: keychain_service.Service
+  devicesService: devices_service.Service
+  keycardSharedModule: keycard_shared_module.AccessInterface
 
-proc newModule*[T](delegate: T,
-  events: EventEmitter,
-  keychainService: keychain_service.Service,
-  accountsService: accounts_service.Service,
-  generalService: general_service.Service,
-  profileService: profile_service.Service,
-  keycardService: keycard_service.Service,
-  devicesService: devices_service.Service):
-  Module[T] =
+proc newModule*[T](
+    delegate: T,
+    events: EventEmitter,
+    keychainService: keychain_service.Service,
+    accountsService: accounts_service.Service,
+    generalService: general_service.Service,
+    profileService: profile_service.Service,
+    keycardService: keycard_service.Service,
+    devicesService: devices_service.Service,
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.events = events
@@ -82,8 +84,10 @@ proc newModule*[T](delegate: T,
   result.devicesService = devicesService
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, generalService, accountsService, keychainService,
-  profileService, keycardService, devicesService)
+  result.controller = controller.newController(
+    result, events, generalService, accountsService, keychainService, profileService,
+    keycardService, devicesService,
+  )
 
 {.push warning[Deprecated]: off.}
 
@@ -106,12 +110,16 @@ method onAppLoaded*[T](self: Module[T]) =
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
 
-proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string,
-  largeImage: var string) =
+proc extractImages(
+    self: Module,
+    account: AccountDto,
+    thumbnailImage: var string,
+    largeImage: var string,
+) =
   for img in account.images:
-    if(img.imgType == "thumbnail"):
+    if (img.imgType == "thumbnail"):
       thumbnailImage = img.uri
-    elif(img.imgType == "large"):
+    elif (img.imgType == "large"):
       largeImage = img.uri
 
 method load*[T](self: Module[T]) =
@@ -123,25 +131,60 @@ method load*[T](self: Module[T]) =
   else:
     let openedAccounts = self.controller.getOpenedAccounts()
     var items: seq[login_acc_item.Item]
-    for i in 0..<openedAccounts.len:
+    for i in 0 ..< openedAccounts.len:
       let acc = openedAccounts[i]
       var thumbnailImage: string
       var largeImage: string
       self.extractImages(acc, thumbnailImage, largeImage)
-      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash,
-        acc.colorId, acc.keycardPairing))
+      items.add(
+        login_acc_item.initItem(
+          order = i,
+          acc.name,
+          icon = "",
+          thumbnailImage,
+          largeImage,
+          acc.keyUid,
+          acc.colorHash,
+          acc.colorId,
+          acc.keycardPairing,
+        )
+      )
     # set the first account as slected one
     if items.len == 0:
       # we should never be here, since else block of `if (shouldStartWithOnboardingScreen)`
       # ensures that `openedAccounts` is not empty array
       error "cannot run the app in login flow cause list of login accounts is empty"
       quit() # quit the app
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER, icon = "add",
-      thumbnailImage = "", largeImage = "", keyUid = ""))
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER, icon = "wallet",
-      thumbnailImage = "", largeImage = "", keyUid = ""))
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_LOST_KEYCARD, icon = "keycard",
-      thumbnailImage = "", largeImage = "", keyUid = ""))
+    items.add(
+      login_acc_item.initItem(
+        order = items.len,
+        name = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER,
+        icon = "add",
+        thumbnailImage = "",
+        largeImage = "",
+        keyUid = "",
+      )
+    )
+    items.add(
+      login_acc_item.initItem(
+        order = items.len,
+        name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER,
+        icon = "wallet",
+        thumbnailImage = "",
+        largeImage = "",
+        keyUid = "",
+      )
+    )
+    items.add(
+      login_acc_item.initItem(
+        order = items.len,
+        name = atc.LOGIN_ACCOUNTS_LIST_LOST_KEYCARD,
+        icon = "keycard",
+        thumbnailImage = "",
+        largeImage = "",
+        keyUid = "",
+      )
+    )
     self.view.setLoginAccountsModelItems(items)
     self.setSelectedLoginAccount(items[0])
   self.delegate.startupDidLoad()
@@ -154,9 +197,18 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
     return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER,
-    self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService,
-    walletAccountService = nil, self.keychainService)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](
+    self,
+    UNIQUE_STARTUP_MODULE_IDENTIFIER,
+    self.events,
+    self.keycardService,
+    settingsService = nil,
+    networkService = nil,
+    privacyService = nil,
+    self.accountsService,
+    walletAccountService = nil,
+    self.keychainService,
+  )
 
 method moveToLoadingAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.AppLoadingState)
@@ -182,80 +234,94 @@ method onBackActionClicked*[T](self: Module[T]) =
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "back_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "back_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executeBackCommand(self.controller)
   let backState = currStateObj.getBackState()
   if backState.isNil:
     return
   self.view.setCurrentStartupState(backState)
-  debug "back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
+  debug "back_action - set state",
+    setCurrFlow = backState.flowType(), newCurrState = backState.stateType()
 
 method onPrimaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "primary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "primary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executePrimaryCommand(self.controller)
   let nextState = currStateObj.getNextPrimaryState(self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "primary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "primary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onSecondaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "secondary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "secondary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executeSecondaryCommand(self.controller)
   let nextState = currStateObj.getNextSecondaryState(self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "secondary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "secondary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onTertiaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "tertiary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "tertiary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executeTertiaryCommand(self.controller)
   let nextState = currStateObj.getNextTertiaryState(self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "tertiary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onQuaternaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "quaternary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "quaternary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executeQuaternaryCommand(self.controller)
   let nextState = currStateObj.getNextQuaternaryState(self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "quaternary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "quaternary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onQuinaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "quinary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "quinary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   currStateObj.executeQuinaryCommand(self.controller)
   let nextState = currStateObj.getNextQuinaryState(self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "quinary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "quinary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
-method generateImage*[T](self: Module[T], imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
+method generateImage*[T](
+    self: Module[T], imageUrl: string, aX: int, aY: int, bX: int, bY: int
+): string =
   return self.controller.generateImage(imageUrl, aX, aY, bX, bY)
 
 method getCroppedProfileImage*[T](self: Module[T]): string =
@@ -296,7 +362,9 @@ method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
   if item.getKeyUid().len == 0:
     error "all accounts must have non empty key uid"
     return
-  self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
+  self.controller.setSelectedLoginAccount(
+    item.getKeyUid(), item.getKeycardCreatedAccount()
+  )
   if item.getKeycardCreatedAccount():
     self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
     self.controller.runLoginFlow()
@@ -306,14 +374,18 @@ method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
       self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
       self.controller.tryToObtainDataFromKeychain()
     else:
-      self.view.setCurrentStartupState(newLoginKeycardEnterPasswordState(state.FlowType.AppLogin, nil))
+      self.view.setCurrentStartupState(
+        newLoginKeycardEnterPasswordState(state.FlowType.AppLogin, nil)
+      )
   self.view.setSelectedLoginAccount(item)
 
 method emitAccountLoginError*[T](self: Module[T], error: string) =
   self.controller.setPassword("")
   self.view.emitAccountLoginError(error)
 
-method emitObtainingPasswordError*[T](self: Module[T], errorDescription: string, errorType: string) =
+method emitObtainingPasswordError*[T](
+    self: Module[T], errorDescription: string, errorType: string
+) =
   self.view.emitObtainingPasswordError(errorDescription, errorType)
 
 method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
@@ -326,16 +398,18 @@ method finishAppLoading*[T](self: Module[T]) =
     var eventType = "user-logged-in"
     if currStateObj.flowType() != FlowType.AppLogin:
       eventType = "onboarding-completed"
-    singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
-      $(%*{"flowType": currStateObj.flowType()}))
+    singletonInstance.globalEvents.addCentralizedMetricIfEnabled(
+      eventType, $(%*{"flowType": currStateObj.flowType()})
+    )
 
   self.delegate.finishAppLoading()
-
 
 method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
     if self.view.getLocalPairingInstallationId() != "":
-      self.controller.finishPairingThroughSeedPhraseProcess(self.view.getLocalPairingInstallationId())
+      self.controller.finishPairingThroughSeedPhraseProcess(
+        self.view.getLocalPairingInstallationId()
+      )
     self.finishAppLoading()
     return
   let currStateObj = self.view.currentStartupStateObj()
@@ -345,9 +419,16 @@ method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   let nextState = newProfileFetchingAnnouncementState(currStateObj.flowType(), nil)
   self.view.setCurrentStartupState(nextState)
 
-method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
-  totalMessages: int, receivedMessageAtPosition: int) =
-  if not self.view.fetchingDataModel().evaluateWhetherToProcessReceivedData(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced):
+method onFetchingFromWakuMessageReceived*[T](
+    self: Module[T],
+    backedUpMsgClock: uint64,
+    section: string,
+    totalMessages: int,
+    receivedMessageAtPosition: int,
+) =
+  if not self.view.fetchingDataModel().evaluateWhetherToProcessReceivedData(
+    backedUpMsgClock, listOfEntitiesWeExpectToBeSynced
+  ):
     return
   if self.view.fetchingDataModel().allMessagesLoaded():
     return
@@ -356,31 +437,38 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
     error "cannot resolve current state for fetching data model update"
     return
   if currStateObj.flowType() != state.FlowType.FirstRunOldUserImportSeedPhrase and
-    currStateObj.flowType() != state.FlowType.FirstRunOldUserKeycardImport:
-      error "update fetching data model is out of context for the flow", flow=currStateObj.flowType()
-      return
+      currStateObj.flowType() != state.FlowType.FirstRunOldUserKeycardImport:
+    error "update fetching data model is out of context for the flow",
+      flow = currStateObj.flowType()
+    return
   if totalMessages > 0:
     self.view.fetchingDataModel().updateTotalMessages(section, totalMessages)
   else:
     self.view.fetchingDataModel().removeSection(section)
   if receivedMessageAtPosition > 0:
-    self.view.fetchingDataModel().receivedMessageAtPosition(section, receivedMessageAtPosition)
+    self.view.fetchingDataModel().receivedMessageAtPosition(
+      section, receivedMessageAtPosition
+    )
   if self.view.fetchingDataModel().allMessagesLoaded():
-    self.view.setCurrentStartupState(newProfileFetchingSuccessState(currStateObj.flowType(), nil))
+    self.view.setCurrentStartupState(
+      newProfileFetchingSuccessState(currStateObj.flowType(), nil)
+    )
 
 method prepareAndInitFetchingData*[T](self: Module[T]) =
   # fetching data from waku starts when messenger starts
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 
-proc logoutAndDisplayError[T](self: Module[T], error: string, errType: StartupErrorType) =
+proc logoutAndDisplayError[T](
+    self: Module[T], error: string, errType: StartupErrorType
+) =
   self.delegate.logout()
   if self.controller.isSelectedLoginAccountKeycardAccount() and
-    errType == StartupErrorType.ConvertToRegularAccError:
-      self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
-      self.controller.runLoginFlow()
-      self.moveToStartupState()
-      self.emitStartupError(error, errType)
-      return
+      errType == StartupErrorType.ConvertToRegularAccError:
+    self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
+    self.controller.runLoginFlow()
+    self.moveToStartupState()
+    self.emitStartupError(error, errType)
+    return
   self.moveToStartupState()
   self.emitAccountLoginError(error)
 
@@ -390,16 +478,20 @@ method onProfileConverted*[T](self: Module[T], success: bool) =
     return
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
-    error "cannot determine current startup state", procName="onProfileConverted"
+    error "cannot determine current startup state", procName = "onProfileConverted"
     quit() # quit the app
   self.delegate.logout()
   self.moveToStartupState()
-  self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
+  self.view.setCurrentStartupState(
+    newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil)
+  )
 
-method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
+method onNodeLogin*[T](
+    self: Module[T], error: string, account: AccountDto, settings: SettingsDto
+) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
-    error "cannot determine current startup state", procName="onNodeLogin"
+    error "cannot determine current startup state", procName = "onNodeLogin"
     quit() # quit the app
 
   if error.len != 0:
@@ -411,7 +503,7 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
       self.emitAccountLoginError(error)
     else:
       self.emitStartupError(error, StartupErrorType.SetupAccError)
-    error "login error", methodName="onNodeLogin", errDesription =error
+    error "login error", methodName = "onNodeLogin", errDesription = error
     return
 
   self.controller.setLoggedInAccount(account)
@@ -420,7 +512,7 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
   self.view.notifyLoggedInAccountChanged()
 
   if currStateObj.flowType() == state.FlowType.FirstRunOldUserImportSeedPhrase or
-    currStateObj.flowType() == state.FlowType.FirstRunOldUserKeycardImport:
+      currStateObj.flowType() == state.FlowType.FirstRunOldUserKeycardImport:
     let err = self.delegate.userLoggedIn()
     if err.len > 0:
       self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
@@ -442,7 +534,7 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
 
   # TODO: Remove this block when implemented https://github.com/status-im/status-go/issues/4977
   if currStateObj.flowType() == FlowType.FirstRunNewUserNewKeycardKeys or
-    currStateObj.flowType() == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      currStateObj.flowType() == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     let images = self.controller.storeIdentityImage()
     self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
     self.view.notifyLoggedInAccountChanged()
@@ -458,7 +550,9 @@ method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, sett
   self.view.setCurrentStartupState(nextState)
   self.moveToStartupState()
 
-method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
+method onKeycardResponse*[T](
+    self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent
+) =
   if self.isSharedKeycardModuleFlowRunning():
     debug "shared flow is currently active"
     return
@@ -466,12 +560,15 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
   if currStateObj.isNil:
     error "cannot resolve current state"
     return
-  debug "on_keycard_response", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  let nextState = currStateObj.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
+  debug "on_keycard_response",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
+  let nextState =
+    currStateObj.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
   if nextState.isNil:
     return
   self.view.setCurrentStartupState(nextState)
-  debug "on_keycard_response - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "on_keycard_response - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): bool =
   self.controller.setPinMatch(false)
@@ -509,7 +606,9 @@ method runFactoryResetPopup*[T](self: Module[T]) =
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
 
-method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+method onSharedKeycarModuleFlowTerminated*[T](
+    self: Module[T], lastStepInTheCurrentFlow: bool
+) =
   if self.isSharedKeycardModuleFlowRunning():
     self.controller.cancelCurrentFlow()
     self.view.emitDestroyKeycardSharedModuleFlow()
@@ -521,14 +620,16 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
         error "cannot resolve current state for onboarding/login flow continuation"
         return
       if currStateObj.flowType() == state.FlowType.FirstRunNewUserNewKeycardKeys or
-        currStateObj.flowType() == state.FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
-        currStateObj.flowType() == state.FlowType.LostKeycardReplacement:
-          let newState = currStateObj.getBackState()
-          if newState.isNil:
-            error "cannot resolve new state for onboarding/login flow continuation after shared flow is terminated"
-            return
-          self.view.setCurrentStartupState(newState)
-          debug "new state for onboarding/login flow continuation after shared flow is terminated", setCurrFlow=newState.flowType(), newCurrState=newState.stateType()
+          currStateObj.flowType() ==
+          state.FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
+          currStateObj.flowType() == state.FlowType.LostKeycardReplacement:
+        let newState = currStateObj.getBackState()
+        if newState.isNil:
+          error "cannot resolve new state for onboarding/login flow continuation after shared flow is terminated"
+          return
+        self.view.setCurrentStartupState(newState)
+        debug "new state for onboarding/login flow continuation after shared flow is terminated",
+          setCurrFlow = newState.flowType(), newCurrState = newState.stateType()
 
 method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
@@ -536,13 +637,19 @@ method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
 method applyKeycardReplacementAfterLogin*[T](self: Module[T]) =
   self.delegate.applyKeycardReplacementAfterLogin()
 
-method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](self: Module[T], oldKeycardUid: string, newKeycardUid: string) =
-  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
+method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](
+    self: Module[T], oldKeycardUid: string, newKeycardUid: string
+) =
+  self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(
+    oldKeycardUid, newKeycardUid
+  )
 
 method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*[T](self: Module[T]) =
   self.delegate.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
   if self.view.getLocalPairingInstallationId() != "":
-    self.controller.finishPairingThroughSeedPhraseProcess(self.view.getLocalPairingInstallationId())
+    self.controller.finishPairingThroughSeedPhraseProcess(
+      self.view.getLocalPairingInstallationId()
+    )
 
 method getConnectionString*[T](self: Module[T]): string =
   return self.controller.getConnectionString()
@@ -550,7 +657,9 @@ method getConnectionString*[T](self: Module[T]): string =
 method setConnectionString*[T](self: Module[T], connectionString: string) =
   self.controller.setConnectionString(connectionString)
 
-method validateLocalPairingConnectionString*[T](self: Module[T], connectionString: string): string =
+method validateLocalPairingConnectionString*[T](
+    self: Module[T], connectionString: string
+): string =
   return self.controller.validateLocalPairingConnectionString(connectionString)
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
@@ -562,16 +671,24 @@ method onReencryptionProcessStarted*[T](self: Module[T]) =
 method onReencryptionProcessFinished*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if not currStateObj.isNil and
-    currStateObj.flowType() == FlowType.LostKeycardConvertToRegularAccount and
-    currStateObj.stateType() == StateType.LoginKeycardConvertedToRegularAccount:
-      self.moveToStartupState()
-      return
+      currStateObj.flowType() == FlowType.LostKeycardConvertToRegularAccount and
+      currStateObj.stateType() == StateType.LoginKeycardConvertedToRegularAccount:
+    self.moveToStartupState()
+    return
   self.moveToLoadingAppState()
 
 ## Used in test env only, for testing keycard flows
-method registerMockedKeycard*[T](self: Module[T], cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) =
-  self.keycardService.registerMockedKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+method registerMockedKeycard*[T](
+    self: Module[T],
+    cardIndex: int,
+    readerState: int,
+    keycardState: int,
+    mockedKeycard: string,
+    mockedKeycardHelper: string,
+) =
+  self.keycardService.registerMockedKeycard(
+    cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper
+  )
 
 method pluginMockedReaderAction*[T](self: Module[T]) =
   self.keycardService.pluginMockedReaderAction()
@@ -585,7 +702,7 @@ method insertMockedKeycardAction*[T](self: Module[T], cardIndex: int) =
 method removeMockedKeycardAction*[T](self: Module[T]) =
   self.keycardService.removeMockedKeycardAction()
 
-method notificationsNeedsEnable*[T](self: Module[T]): bool = 
+method notificationsNeedsEnable*[T](self: Module[T]): bool =
   return self.controller.notificationsNeedsEnable()
 
 method getLoggedInAccountPublicKey*[T](self: Module[T]): string =

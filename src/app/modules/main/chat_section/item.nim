@@ -7,56 +7,48 @@ import ../../shared_models/[color_hash_item, color_hash_model]
 
 const CATEGORY_TYPE* = -1
 
-type
-  Item* = ref object
-    id: string
-    name: string
-    `type`: int
-    memberRole: MemberRole
-    icon: string
-    color: string
-    colorId: int # only for oneToOne sections
-    emoji: string
-    colorHash: color_hash_model.Model
-    description: string
-    lastMessageTimestamp: int
-    hasUnreadMessages: bool
-    notificationsCount: int
-    muted: bool
-    blocked: bool
-    active: bool
-    position: int
-    categoryId: string
-    categoryPosition: int
-    categoryOpened: bool
-    highlight: bool
-    trustStatus: TrustStatus
-    onlineStatus: OnlineStatus
-    loaderActive: bool
-    locked: bool
-    requiresPermissions: bool
-    canPostReactions: bool
-    canPost: bool
-    canView: bool
-    viewersCanPostReactions: bool
-    hideIfPermissionsNotMet: bool
-    missingEncryptionKey: bool
+type Item* = ref object
+  id: string
+  name: string
+  `type`: int
+  memberRole: MemberRole
+  icon: string
+  color: string
+  colorId: int # only for oneToOne sections
+  emoji: string
+  colorHash: color_hash_model.Model
+  description: string
+  lastMessageTimestamp: int
+  hasUnreadMessages: bool
+  notificationsCount: int
+  muted: bool
+  blocked: bool
+  active: bool
+  position: int
+  categoryId: string
+  categoryPosition: int
+  categoryOpened: bool
+  highlight: bool
+  trustStatus: TrustStatus
+  onlineStatus: OnlineStatus
+  loaderActive: bool
+  locked: bool
+  requiresPermissions: bool
+  canPostReactions: bool
+  canPost: bool
+  canView: bool
+  viewersCanPostReactions: bool
+  hideIfPermissionsNotMet: bool
+  missingEncryptionKey: bool
 
 proc initItem*(
-    id,
-    name,
-    icon,
-    color,
-    emoji,
-    description: string,
+    id, name, icon, color, emoji, description: string,
     `type`: int,
     memberRole: MemberRole,
     lastMessageTimestamp: int,
     hasUnreadMessages: bool,
     notificationsCount: int,
-    muted,
-    blocked,
-    active: bool,
+    muted, blocked, active: bool,
     position: int,
     categoryId: string = "",
     categoryPosition: int = -1,
@@ -74,8 +66,8 @@ proc initItem*(
     canPostReactions = true,
     viewersCanPostReactions = true,
     hideIfPermissionsNotMet: bool,
-    missingEncryptionKey: bool
-    ): Item =
+    missingEncryptionKey: bool,
+): Item =
   result = Item()
   result.id = id
   result.name = name
@@ -85,7 +77,9 @@ proc initItem*(
   result.colorId = colorId
   result.emoji = emoji
   result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
+  result.colorHash.setItems(
+    map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx))
+  )
   result.description = description
   result.`type` = `type`
   result.lastMessageTimestamp = lastMessageTimestamp
@@ -112,7 +106,8 @@ proc initItem*(
   result.missingEncryptionKey = missingEncryptionKey
 
 proc `$`*(self: Item): string =
-  result = fmt"""chat_section/Item(
+  result =
+    fmt"""chat_section/Item(
     id: {self.id},
     name: {$self.name},
     memberRole: {$self.memberRole},
@@ -146,38 +141,39 @@ proc `$`*(self: Item): string =
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
-  result = %* {
-    "itemId": self.id,
-    "name": self.name,
-    "memberRole": self.memberRole,
-    "icon": self.icon,
-    "color": self.color,
-    "colorId": self.colorId,
-    "emoji": self.emoji,
-    "description": self.description,
-    "type": self.`type`,
-    "lastMessageTimestamp": self.lastMessageTimestamp,
-    "hasUnreadMessages": self.hasUnreadMessages,
-    "notificationsCount": self.notificationsCount,
-    "muted": self.muted,
-    "blocked": self.blocked,
-    "active": self.active,
-    "position": self.position,
-    "categoryId": self.categoryId,
-    "categoryPosition": self.categoryPosition,
-    "highlight": self.highlight,
-    "categoryOpened": self.categoryOpened,
-    "trustStatus": self.trustStatus,
-    "onlineStatus": self.onlineStatus,
-    "loaderActive": self.loaderActive,
-    "locked": self.locked,
-    "requiresPermissions": self.requiresPermissions,
-    "canPost": self.canPost,
-    "canView": self.canView,
-    "canPostReactions": self.canPostReactions,
-    "viewersCanPostReactions": self.viewersCanPostReactions,
-    "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
-  }
+  result =
+    %*{
+      "itemId": self.id,
+      "name": self.name,
+      "memberRole": self.memberRole,
+      "icon": self.icon,
+      "color": self.color,
+      "colorId": self.colorId,
+      "emoji": self.emoji,
+      "description": self.description,
+      "type": self.`type`,
+      "lastMessageTimestamp": self.lastMessageTimestamp,
+      "hasUnreadMessages": self.hasUnreadMessages,
+      "notificationsCount": self.notificationsCount,
+      "muted": self.muted,
+      "blocked": self.blocked,
+      "active": self.active,
+      "position": self.position,
+      "categoryId": self.categoryId,
+      "categoryPosition": self.categoryPosition,
+      "highlight": self.highlight,
+      "categoryOpened": self.categoryOpened,
+      "trustStatus": self.trustStatus,
+      "onlineStatus": self.onlineStatus,
+      "loaderActive": self.loaderActive,
+      "locked": self.locked,
+      "requiresPermissions": self.requiresPermissions,
+      "canPost": self.canPost,
+      "canView": self.canView,
+      "canPostReactions": self.canPostReactions,
+      "viewersCanPostReactions": self.viewersCanPostReactions,
+      "hideIfPermissionsNotMet": self.hideIfPermissionsNotMet,
+    }
 
 proc delete*(self: Item) =
   discard

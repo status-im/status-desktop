@@ -1,5 +1,4 @@
-type
-  KeycardEmptyState* = ref object of State
+type KeycardEmptyState* = ref object of State
 
 proc newKeycardEmptyState*(flowType: FlowType, backState: State): KeycardEmptyState =
   result = KeycardEmptyState()
@@ -13,6 +12,12 @@ method executePrimaryCommand*(self: KeycardEmptyState, controller: Controller) =
     self.setFlowType(FlowType.FirstRunNewUserNewKeycardKeys)
     controller.runLoadAccountFlow()
 
-method resolveKeycardNextState*(self: KeycardEmptyState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: KeycardEmptyState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(
+    self, keycardFlowType, keycardEvent, controller
+  )

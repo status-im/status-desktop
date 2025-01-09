@@ -8,22 +8,21 @@ import app_service/service/network/service as network_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/settings/service as settings_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    collectibleService: collectible_service.Service
-    networkService: network_service.Service
-    walletAccountService: wallet_account_service.Service
-    settingsService: settings_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  collectibleService: collectible_service.Service
+  networkService: network_service.Service
+  walletAccountService: wallet_account_service.Service
+  settingsService: settings_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  collectibleService: collectible_service.Service,
-  networkService: network_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    collectibleService: collectible_service.Service,
+    networkService: network_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
 ): Controller =
   result = Controller()
   result.events = events
@@ -37,10 +36,10 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     self.delegate.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     self.delegate.refreshWalletAccounts()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):

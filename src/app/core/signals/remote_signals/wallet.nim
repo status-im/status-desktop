@@ -33,7 +33,9 @@ type WalletSignal* = ref object of Signal
   routerSentTransactions*: RouterSentTransactionsDto
   transactionStatusChange*: TransactionStatusChange
 
-proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
+proc fromEvent*(
+    T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode
+): WalletSignal =
   result = WalletSignal()
   result.signalType = signalType
   let event = jsonSignal["event"]

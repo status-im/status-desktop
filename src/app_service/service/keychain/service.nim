@@ -11,12 +11,11 @@ const ERROR_TYPE_KEYCHAIN* = "keychain"
 const SIGNAL_KEYCHAIN_SERVICE_SUCCESS* = "keychainServiceSuccess"
 const SIGNAL_KEYCHAIN_SERVICE_ERROR* = "keychainServiceError"
 
-type
-  KeyChainServiceArg* = ref object of Args
-    data*: string
-    errCode*: int
-    errType*: string
-    errDescription*: string
+type KeyChainServiceArg* = ref object of Args
+  data*: string
+  errCode*: int
+  errType*: string
+  errDescription*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -34,31 +33,39 @@ QtObject:
     new(result, delete)
     result.setup()
     result.events = events
-    result.keychainManager = newStatusKeychainManager("StatusDesktop", "authenticate you")
+    result.keychainManager =
+      newStatusKeychainManager("StatusDesktop", "authenticate you")
 
   proc init*(self: Service) =
-    signalConnect(self.keychainManager, "success(QString)", self,
-    "onKeychainManagerSuccess(QString)", 2)
-    signalConnect(self.keychainManager, "error(QString, int, QString)", self,
-    "onKeychainManagerError(QString, int, QString)", 2)
+    signalConnect(
+      self.keychainManager, "success(QString)", self,
+      "onKeychainManagerSuccess(QString)", 2,
+    )
+    signalConnect(
+      self.keychainManager, "error(QString, int, QString)", self,
+      "onKeychainManagerError(QString, int, QString)", 2,
+    )
 
   proc storeData*(self: Service, key: string, data: string) =
     self.keychainManager.storeDataAsync(key, data)
- 
+
   proc tryToObtainData*(self: Service, key: string) =
     self.keychainManager.readDataAsync(key)
 
   proc tryToDeleteData*(self: Service, key: string) =
     self.keychainManager.deleteDataAsync(key)
 
-  proc onKeychainManagerError*(self: Service, errorType: string, errorCode: int,
-    errorDescription: string) {.slot.} =
+  proc onKeychainManagerError*(
+      self: Service, errorType: string, errorCode: int, errorDescription: string
+  ) {.slot.} =
     ## This slot is called in case an error occured while we're dealing with
     ## KeychainManager. So far we're just logging the error.
-    info "KeychainManager stopped: ", errCode=errorCode, errType=errorType, errDesc=errorDescription
+    info "KeychainManager stopped: ",
+      errCode = errorCode, errType = errorType, errDesc = errorDescription
 
-    let arg = KeyChainServiceArg(errCode: errorCode, errType: errorType,
-    errDescription: errorDescription)
+    let arg = KeyChainServiceArg(
+      errCode: errorCode, errType: errorType, errDescription: errorDescription
+    )
     self.events.emit(SIGNAL_KEYCHAIN_SERVICE_ERROR, arg)
 
   proc onKeychainManagerSuccess*(self: Service, data: string) {.slot.} =

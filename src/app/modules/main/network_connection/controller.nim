@@ -1,18 +1,19 @@
 import ./io_interface
 import ../../../core/eventemitter
-import ../../../../app_service/service/network_connection/service as network_connection_service
+import
+  ../../../../app_service/service/network_connection/service as
+    network_connection_service
 import ../../../../app_service/service/node/service as node_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    networkConnectionService: network_connection_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  networkConnectionService: network_connection_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  networkConnectionService: network_connection_service.Service
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    networkConnectionService: network_connection_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -23,9 +24,15 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
+  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e: Args):
     let args = NetworkConnectionsArgs(e)
-    self.delegate.networkConnectionStatusUpdate(args.website, args.completelyDown, ord(args.connectionState), args.chainIds, args.lastCheckedAt)
+    self.delegate.networkConnectionStatusUpdate(
+      args.website,
+      args.completelyDown,
+      ord(args.connectionState),
+      args.chainIds,
+      args.lastCheckedAt,
+    )
 
   self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
     self.networkConnectionService.networkConnected(true)

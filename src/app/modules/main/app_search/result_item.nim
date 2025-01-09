@@ -20,11 +20,15 @@ type Item* = object
   colorId: int
   colorHash: color_hash_model.Model
 
-proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color,
-  badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool, 
-  isUserIcon: bool = false, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[]):
-  Item =
-
+proc initItem*(
+    itemId, content, time, titleId, title, sectionName: string,
+    image, color, badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor:
+      string,
+    badgeIsLetterIdenticon: bool,
+    isUserIcon: bool = false,
+    colorId: int = 0,
+    colorHash: seq[ColorHashSegment] = @[],
+): Item =
   result.itemId = itemId
   result.content = content
   result.time = time
@@ -41,7 +45,9 @@ proc initItem*(itemId, content, time, titleId, title, sectionName: string, image
   result.isUserIcon = isUserIcon
   result.colorId = colorId
   result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
+  result.colorHash.setItems(
+    map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx))
+  )
 
 proc `$`*(self: Item): string =
   result = "SearchResultItem("

@@ -1,16 +1,15 @@
 import Nimqml, json, stew/shims/strformat
 
 QtObject:
-  type
-    TransactionParametersItem* = ref object of QObject
-      id: string
-      fromAddress: string
-      address: string
-      contract: string
-      value: string
-      transactionHash: string
-      commandState: int
-      signature: string
+  type TransactionParametersItem* = ref object of QObject
+    id: string
+    fromAddress: string
+    address: string
+    contract: string
+    value: string
+    transactionHash: string
+    commandState: int
+    signature: string
 
   proc setup(self: TransactionParametersItem) =
     self.QObject.setup
@@ -27,7 +26,7 @@ QtObject:
       transactionHash: string,
       commandState: int,
       signature: string,
-      ): TransactionParametersItem =
+  ): TransactionParametersItem =
     new(result, delete)
     result.setup
     result.id = id
@@ -40,7 +39,8 @@ QtObject:
     result.signature = signature
 
   proc `$`*(self: TransactionParametersItem): string =
-    result = fmt"""TransactionParametersItem(
+    result =
+      fmt"""TransactionParametersItem(
       id: {$self.id},
       fromAddress: {$self.fromAddress},
       address: {$self.address},

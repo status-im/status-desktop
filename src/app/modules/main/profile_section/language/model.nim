@@ -2,18 +2,16 @@ import NimQml, tables
 
 import item
 
-type
-  ModelRole {.pure.} = enum
-    Locale = UserRole + 1
-    Name
-    Native
-    Flag
-    State
+type ModelRole {.pure.} = enum
+  Locale = UserRole + 1
+  Name
+  Native
+  Flag
+  State
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -53,7 +51,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Locale:
       result = newQVariant(item.locale)
     of ModelRole.Name:

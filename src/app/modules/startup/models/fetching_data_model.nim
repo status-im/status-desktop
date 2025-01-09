@@ -2,19 +2,17 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import fetching_data_item
 
-type
-  ModelRole {.pure.} = enum
-    Entity = UserRole + 1
-    Icon
-    LoadedMessages
-    TotalMessages
+type ModelRole {.pure.} = enum
+  Entity = UserRole + 1
+  Icon
+  LoadedMessages
+  TotalMessages
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
-      allTotalsSet: bool
-      lastKnownBackedUpMsgClock: uint64
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
+    allTotalsSet: bool
+    lastKnownBackedUpMsgClock: uint64
 
   proc reevaluateAllTotals(self: Model)
 
@@ -39,7 +37,8 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
-  QtProperty[int]count:
+
+  QtProperty[int] count:
     read = getCount
     notify = countChanged
 
@@ -48,10 +47,10 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Entity.int:"entity",
-      ModelRole.Icon.int:"icon",
-      ModelRole.LoadedMessages.int:"loadedMessages",
-      ModelRole.TotalMessages.int:"totalMessages"
+      ModelRole.Entity.int: "entity",
+      ModelRole.Icon.int: "icon",
+      ModelRole.LoadedMessages.int: "loadedMessages",
+      ModelRole.TotalMessages.int: "totalMessages",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -64,7 +63,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Entity:
       result = newQVariant(item.entity())
     of ModelRole.Icon:
@@ -76,7 +75,7 @@ QtObject:
 
   proc findIndexForEntity(self: Model, entity: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].entity == entity):
+      if (self.items[i].entity == entity):
         return i
     return -1
 
@@ -91,15 +90,20 @@ QtObject:
 
   proc receivedMessageAtPosition*(self: Model, entity: string, position: int) =
     let ind = self.findIndexForEntity(entity)
-    if(ind == -1):
+    if (ind == -1):
       return
     self.items[ind].receivedMessageAtPosition(position)
     self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
 
-  proc evaluateWhetherToProcessReceivedData*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]): bool =
+  proc evaluateWhetherToProcessReceivedData*(
+      self: Model,
+      backedUpMsgClock: uint64,
+      entities: seq[tuple[entity: string, icon: string]],
+  ): bool =
     if self.lastKnownBackedUpMsgClock > backedUpMsgClock:
       return false
     if self.lastKnownBackedUpMsgClock < backedUpMsgClock:
@@ -118,22 +122,26 @@ QtObject:
     if self.allTotalsSet:
       return
     let ind = self.findIndexForEntity(entity)
-    if(ind == -1):
+    if (ind == -1):
       return
     self.items[ind].totalMessages = totalMessages
     self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
+    defer:
+      index.delete
+    self.dataChanged(
+      index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int]
+    )
 
   proc removeSection*(self: Model, entity: string) =
     if self.allTotalsSet:
       return
     let ind = self.findIndexForEntity(entity)
-    if(ind == -1):
+    if (ind == -1):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
@@ -150,6 +158,8 @@ QtObject:
 
   proc isEntityLoaded*(self: Model, entity: string): bool =
     let ind = self.findIndexForEntity(entity)
-    if(ind == -1):
+    if (ind == -1):
       return false
-    return self.items[ind].totalMessages > 0 and self.items[ind].loadedMessages == self.items[ind].totalMessages
+    return
+      self.items[ind].totalMessages > 0 and
+      self.items[ind].loadedMessages == self.items[ind].totalMessages

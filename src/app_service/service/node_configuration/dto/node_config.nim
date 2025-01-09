@@ -1,6 +1,6 @@
 import json, marshal
 
-include  ../../../common/json_utils
+include ../../../common/json_utils
 
 #################################################
 # Important note:
@@ -44,7 +44,6 @@ type
     WakuNodes*: seq[string]
     DiscV5BootstrapNodes*: seq[string]
     ClusterID*: int
-
 
   LightEthConfig* = object
     Enabled*: bool
@@ -129,7 +128,8 @@ type
     VerifyENSURL*: string
     VerifyENSContractAddress*: string
     VerifyTransactionChainID*: int
-    DefaultPushNotificationsServers*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
+    DefaultPushNotificationsServers*: seq[string]
+      # not sure about the type, but we don't use it, so doesn't matter
     AnonMetricsSendID*: string
     AnonMetricsServerEnabled*: bool
     AnonMetricsServerPostgresURI*: string
@@ -178,62 +178,61 @@ type
     GorushURL*: string
     #Logger*: seq[string] # not sure about the type, but we don't use it, so doesn't matter
 
-type
-  NodeConfigDto* = object
-    NetworkId*: int
-    DataDir*: string
-    KeyStoreDir*: string
-    NodeKey*: string
-    NoDiscovery*: bool
-    Rendezvous*: bool
-    ListenAddr*: string
-    AdvertiseAddr*: string
-    Name*: string
-    Version*: string
-    APIModules*: string
-    HTTPEnabled*: bool
-    HTTPHost*: string
-    HTTPPort*: int
-    # HTTPVirtualHosts*: string # not sure about the type, but we don't use it, so doesn't matter
-    # HTTPCors*: string # not sure about the type, but we don't use it, so doesn't matter
-    IPCEnabled*: bool
-    IPCFile*: string
-    TLSEnabled*: bool
-    MaxPeers*: int
-    MaxPendingPeers*: int
-    LogEnabled*: bool
-    LogMobileSystem*: bool
-    LogDir*: string
-    LogFile*: string
-    LogLevel*: string
-    LogMaxBackups*: int
-    LogMaxSize*: int
-    LogCompressRotated*: bool
-    LogToStderr*: bool
-    EnableStatusService*: bool
-    EnableNTPSync*: bool
-    UpstreamConfig*: UpstreamConfig
-    Networks*: seq[Network]
-    ClusterConfig*: ClusterConfig
-    LightEthConfig*: LightEthConfig
-    WakuConfig*: WakuConfig
-    WakuV2Config*: Waku2Config
-    TorrentConfig*: TorrentConfig
-    BridgeConfig*: BridgeConfig
-    ShhextConfig*: ShhextConfig
-    WalletConfig*: WalletConfig
-    LocalNotificationsConfig*: LocalNotificationsConfig
-    BrowsersConfig*: BrowsersConfig
-    PermissionsConfig*: PermissionsConfig
-    MailserversConfig*: MailserversConfig
-    Web3ProviderConfig*: Web3ProviderConfig
-    EnsConfig*: EnsConfig
-    SwarmConfig*: SwarmConfig
-    RegisterTopics*: seq[string]
-    RequireTopics*: RequireTopics
-    MailServerRegistryAddress*: string
-    PushNotificationServerConfig*: PushNotificationServerConfig # not used in the app yet
-    NimbusProxyConfig*: NimbusProxyConfig
+type NodeConfigDto* = object
+  NetworkId*: int
+  DataDir*: string
+  KeyStoreDir*: string
+  NodeKey*: string
+  NoDiscovery*: bool
+  Rendezvous*: bool
+  ListenAddr*: string
+  AdvertiseAddr*: string
+  Name*: string
+  Version*: string
+  APIModules*: string
+  HTTPEnabled*: bool
+  HTTPHost*: string
+  HTTPPort*: int
+  # HTTPVirtualHosts*: string # not sure about the type, but we don't use it, so doesn't matter
+  # HTTPCors*: string # not sure about the type, but we don't use it, so doesn't matter
+  IPCEnabled*: bool
+  IPCFile*: string
+  TLSEnabled*: bool
+  MaxPeers*: int
+  MaxPendingPeers*: int
+  LogEnabled*: bool
+  LogMobileSystem*: bool
+  LogDir*: string
+  LogFile*: string
+  LogLevel*: string
+  LogMaxBackups*: int
+  LogMaxSize*: int
+  LogCompressRotated*: bool
+  LogToStderr*: bool
+  EnableStatusService*: bool
+  EnableNTPSync*: bool
+  UpstreamConfig*: UpstreamConfig
+  Networks*: seq[Network]
+  ClusterConfig*: ClusterConfig
+  LightEthConfig*: LightEthConfig
+  WakuConfig*: WakuConfig
+  WakuV2Config*: Waku2Config
+  TorrentConfig*: TorrentConfig
+  BridgeConfig*: BridgeConfig
+  ShhextConfig*: ShhextConfig
+  WalletConfig*: WalletConfig
+  LocalNotificationsConfig*: LocalNotificationsConfig
+  BrowsersConfig*: BrowsersConfig
+  PermissionsConfig*: PermissionsConfig
+  MailserversConfig*: MailserversConfig
+  Web3ProviderConfig*: Web3ProviderConfig
+  EnsConfig*: EnsConfig
+  SwarmConfig*: SwarmConfig
+  RegisterTopics*: seq[string]
+  RequireTopics*: RequireTopics
+  MailServerRegistryAddress*: string
+  PushNotificationServerConfig*: PushNotificationServerConfig # not used in the app yet
+  NimbusProxyConfig*: NimbusProxyConfig
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
@@ -260,41 +259,40 @@ proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
   discard jsonObj.getProp("ClusterID", result.ClusterID)
 
   var arr: JsonNode
-  if(jsonObj.getProp("StaticNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("StaticNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.StaticNodes.add(valueObj.getStr)
 
-  if(jsonObj.getProp("BootNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("BootNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.BootNodes.add(valueObj.getStr)
 
-  if(jsonObj.getProp("TrustedMailServers", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("TrustedMailServers", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.TrustedMailServers.add(valueObj.getStr)
 
-  if(jsonObj.getProp("PushNotificationsServers", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("PushNotificationsServers", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.PushNotificationsServers.add(valueObj.getStr)
 
-  if(jsonObj.getProp("RendezvousNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("RendezvousNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.RendezvousNodes.add(valueObj.getStr)
 
-  if(jsonObj.getProp("WakuNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("WakuNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.WakuNodes.add(valueObj.getStr)
 
-  if(jsonObj.getProp("DiscV5BootstrapNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("DiscV5BootstrapNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.DiscV5BootstrapNodes.add(valueObj.getStr)
-
 
 proc toLightEthConfig*(jsonObj: JsonNode): LightEthConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
@@ -302,8 +300,8 @@ proc toLightEthConfig*(jsonObj: JsonNode): LightEthConfig =
   discard jsonObj.getProp("MinTrustedFraction", result.MinTrustedFraction)
 
   var arr: JsonNode
-  if(jsonObj.getProp("TrustedNodes", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("TrustedNodes", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.TrustedNodes.add(valueObj.getStr)
 
@@ -313,7 +311,7 @@ proc toPGConfig*(jsonObj: JsonNode): PGConfig =
 
 proc toDatabaseConfig*(jsonObj: JsonNode): DatabaseConfig =
   var pgConfigObj: JsonNode
-  if(jsonObj.getProp("PGConfig", pgConfigObj)):
+  if (jsonObj.getProp("PGConfig", pgConfigObj)):
     result.PGConfig = toPGConfig(pgConfigObj)
 
 proc toTorrentConfig*(jsonObj: JsonNode): TorrentConfig =
@@ -366,12 +364,12 @@ proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
   discard jsonObj.getProp("Rendezvous", result.Rendezvous)
 
   var databaseConfigObj: JsonNode
-  if(jsonObj.getProp("DatabaseConfig", databaseConfigObj)):
+  if (jsonObj.getProp("DatabaseConfig", databaseConfigObj)):
     result.DatabaseConfig = toDatabaseConfig(databaseConfigObj)
 
   var arr: JsonNode
-  if(jsonObj.getProp("SoftBlacklistedPeerIDs", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("SoftBlacklistedPeerIDs", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.SoftBlacklistedPeerIDs.add(valueObj.getStr)
 
@@ -385,9 +383,11 @@ proc toShhextConfig*(jsonObj: JsonNode): ShhextConfig =
   discard jsonObj.getProp("ConnectionTarget", result.ConnectionTarget)
   discard jsonObj.getProp("RequestsDelay", result.RequestsDelay)
   discard jsonObj.getProp("MaxServerFailures", result.MaxServerFailures)
-  discard jsonObj.getProp("MaxMessageDeliveryAttempts", result.MaxMessageDeliveryAttempts)
+  discard
+    jsonObj.getProp("MaxMessageDeliveryAttempts", result.MaxMessageDeliveryAttempts)
   discard jsonObj.getProp("WhisperCacheDir", result.WhisperCacheDir)
-  discard jsonObj.getProp("DisableGenericDiscoveryTopic", result.DisableGenericDiscoveryTopic)
+  discard
+    jsonObj.getProp("DisableGenericDiscoveryTopic", result.DisableGenericDiscoveryTopic)
   discard jsonObj.getProp("SendV1Messages", result.SendV1Messages)
   discard jsonObj.getProp("DataSyncEnabled", result.DataSyncEnabled)
   discard jsonObj.getProp("VerifyTransactionURL", result.VerifyTransactionURL)
@@ -396,12 +396,13 @@ proc toShhextConfig*(jsonObj: JsonNode): ShhextConfig =
   discard jsonObj.getProp("VerifyTransactionChainID", result.VerifyTransactionChainID)
   discard jsonObj.getProp("AnonMetricsSendID", result.AnonMetricsSendID)
   discard jsonObj.getProp("AnonMetricsServerEnabled", result.AnonMetricsServerEnabled)
-  discard jsonObj.getProp("AnonMetricsServerPostgresURI", result.AnonMetricsServerPostgresURI)
+  discard
+    jsonObj.getProp("AnonMetricsServerPostgresURI", result.AnonMetricsServerPostgresURI)
   discard jsonObj.getProp("BandwidthStatsEnabled", result.BandwidthStatsEnabled)
 
   var arr: JsonNode
-  if(jsonObj.getProp("DefaultPushNotificationsServers", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("DefaultPushNotificationsServers", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.DefaultPushNotificationsServers.add(valueObj.getStr)
 
@@ -438,7 +439,7 @@ proc toWhisper*(jsonObj: JsonNode): Whisper =
 
 proc toRequireTopics*(jsonObj: JsonNode): RequireTopics =
   var whisperObj: JsonNode
-  if(jsonObj.getProp("whisper", whisperObj)):
+  if (jsonObj.getProp("whisper", whisperObj)):
     result.whisper = toWhisper(whisperObj)
 
 proc toPushNotificationServerConfig*(jsonObj: JsonNode): PushNotificationServerConfig =
@@ -492,92 +493,94 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
   discard jsonObj.getProp("MailServerRegistryAddress", result.MailServerRegistryAddress)
 
   var nimbusProxyConfigObj: JsonNode
-  if(jsonObj.getProp("NimbusProxyConfig", nimbusProxyConfigObj)):
+  if (jsonObj.getProp("NimbusProxyConfig", nimbusProxyConfigObj)):
     result.NimbusProxyConfig = toNimbusProxyConfig(nimbusProxyConfigObj)
 
   var upstreamConfigObj: JsonNode
-  if(jsonObj.getProp("UpstreamConfig", upstreamConfigObj)):
+  if (jsonObj.getProp("UpstreamConfig", upstreamConfigObj)):
     result.UpstreamConfig = toUpstreamConfig(upstreamConfigObj)
 
   var networksArr: JsonNode
-  if(jsonObj.getProp("Networks", networksArr)):
-    if(networksArr.kind == JArray):
+  if (jsonObj.getProp("Networks", networksArr)):
+    if (networksArr.kind == JArray):
       for networkObj in networksArr:
         result.Networks.add(toNetwork(networkObj))
 
   var clusterConfigObj: JsonNode
-  if(jsonObj.getProp("ClusterConfig", clusterConfigObj)):
+  if (jsonObj.getProp("ClusterConfig", clusterConfigObj)):
     result.ClusterConfig = toClusterConfig(clusterConfigObj)
 
   var lightEthConfigObj: JsonNode
-  if(jsonObj.getProp("LightEthConfig", lightEthConfigObj)):
+  if (jsonObj.getProp("LightEthConfig", lightEthConfigObj)):
     result.LightEthConfig = toLightEthConfig(lightEthConfigObj)
 
   var wakuConfigObj: JsonNode
-  if(jsonObj.getProp("WakuConfig", wakuConfigObj)):
+  if (jsonObj.getProp("WakuConfig", wakuConfigObj)):
     result.WakuConfig = toWakuConfig(wakuConfigObj)
 
   var torrentConfigObj: JsonNode
-  if(jsonObj.getProp("TorrentConfig", torrentConfigObj)):
+  if (jsonObj.getProp("TorrentConfig", torrentConfigObj)):
     result.TorrentConfig = toTorrentConfig(torrentConfigObj)
 
   var wakuV2ConfigObj: JsonNode
-  if(jsonObj.getProp("WakuV2Config", wakuV2ConfigObj)):
+  if (jsonObj.getProp("WakuV2Config", wakuV2ConfigObj)):
     result.WakuV2Config = toWaku2Config(wakuV2ConfigObj)
 
   var shhextConfigObj: JsonNode
-  if(jsonObj.getProp("ShhextConfig", shhextConfigObj)):
+  if (jsonObj.getProp("ShhextConfig", shhextConfigObj)):
     result.ShhextConfig = toShhextConfig(shhextConfigObj)
 
   var bridgeConfigObj: JsonNode
-  if(jsonObj.getProp("BridgeConfig", bridgeConfigObj)):
+  if (jsonObj.getProp("BridgeConfig", bridgeConfigObj)):
     result.BridgeConfig = toBridgeConfig(bridgeConfigObj)
 
   var walletConfigObj: JsonNode
-  if(jsonObj.getProp("WalletConfig", walletConfigObj)):
+  if (jsonObj.getProp("WalletConfig", walletConfigObj)):
     result.WalletConfig = toWalletConfig(walletConfigObj)
 
   var localNotificationsConfigObj: JsonNode
-  if(jsonObj.getProp("LocalNotificationsConfig", localNotificationsConfigObj)):
-    result.LocalNotificationsConfig = toLocalNotificationsConfig(localNotificationsConfigObj)
+  if (jsonObj.getProp("LocalNotificationsConfig", localNotificationsConfigObj)):
+    result.LocalNotificationsConfig =
+      toLocalNotificationsConfig(localNotificationsConfigObj)
 
   var browsersConfigObj: JsonNode
-  if(jsonObj.getProp("BrowsersConfig", browsersConfigObj)):
+  if (jsonObj.getProp("BrowsersConfig", browsersConfigObj)):
     result.BrowsersConfig = toBrowsersConfig(browsersConfigObj)
 
   var permissionsConfigObj: JsonNode
-  if(jsonObj.getProp("PermissionsConfig", permissionsConfigObj)):
+  if (jsonObj.getProp("PermissionsConfig", permissionsConfigObj)):
     result.PermissionsConfig = toPermissionsConfig(permissionsConfigObj)
 
   var mailserversConfigObj: JsonNode
-  if(jsonObj.getProp("MailserversConfig", mailserversConfigObj)):
+  if (jsonObj.getProp("MailserversConfig", mailserversConfigObj)):
     result.MailserversConfig = toMailserversConfig(mailserversConfigObj)
 
   var web3ProviderConfig: JsonNode
-  if(jsonObj.getProp("Web3ProviderConfig", web3ProviderConfig)):
+  if (jsonObj.getProp("Web3ProviderConfig", web3ProviderConfig)):
     result.Web3ProviderConfig = toWeb3ProviderConfig(web3ProviderConfig)
 
   var ensConfig: JsonNode
-  if(jsonObj.getProp("EnsConfig", ensConfig)):
+  if (jsonObj.getProp("EnsConfig", ensConfig)):
     result.EnsConfig = toEnsConfig(ensConfig)
 
   var swarmConfigObj: JsonNode
-  if(jsonObj.getProp("SwarmConfig", swarmConfigObj)):
+  if (jsonObj.getProp("SwarmConfig", swarmConfigObj)):
     result.SwarmConfig = toSwarmConfig(swarmConfigObj)
 
   var arr: JsonNode
-  if(jsonObj.getProp("RegisterTopics", arr)):
-    if(arr.kind == JArray):
+  if (jsonObj.getProp("RegisterTopics", arr)):
+    if (arr.kind == JArray):
       for valueObj in arr:
         result.RegisterTopics.add(valueObj.getStr)
 
   var requireTopicsObj: JsonNode
-  if(jsonObj.getProp("RequireTopics", requireTopicsObj)):
+  if (jsonObj.getProp("RequireTopics", requireTopicsObj)):
     result.RequireTopics = toRequireTopics(requireTopicsObj)
 
   var pushNotificationServerConfigObj: JsonNode
-  if(jsonObj.getProp("PushNotificationServerConfig", pushNotificationServerConfigObj)):
-    result.PushNotificationServerConfig = toPushNotificationServerConfig(pushNotificationServerConfigObj)
+  if (jsonObj.getProp("PushNotificationServerConfig", pushNotificationServerConfigObj)):
+    result.PushNotificationServerConfig =
+      toPushNotificationServerConfig(pushNotificationServerConfigObj)
 
 proc toJsonNode*(nodeConfigDto: NodeConfigDto): JsonNode =
   let nodeConfigDtoAsString = $$nodeConfigDto

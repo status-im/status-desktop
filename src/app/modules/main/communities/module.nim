@@ -12,8 +12,12 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
-import app/modules/shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
-  token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model, keypair_model]
+import
+  app/modules/shared_models/[
+    member_item, section_model, section_item, token_permissions_model,
+    token_permission_item, token_list_item, token_list_model, token_criteria_item,
+    token_criteria_model, token_permission_chat_list_model, keypair_model,
+  ]
 import app/global/global_singleton
 import app/global/app_signals
 import app/core/eventemitter
@@ -35,38 +39,35 @@ import app/modules/shared/keypairs
 
 export io_interface
 
-type
-  ImportCommunityState {.pure.} = enum
-    Imported = 0
-    ImportingInProgress
-    ImportingError
-    ImportingCanceled
+type ImportCommunityState {.pure.} = enum
+  Imported = 0
+  ImportingInProgress
+  ImportingError
+  ImportingCanceled
 
-type
-  Action {.pure.} = enum
-    None = 0,
-    JoinCommunity
-    EditSharedAddresses
+type Action {.pure.} = enum
+  None = 0
+  JoinCommunity
+  EditSharedAddresses
 
-type
-  AddressToShareDetails = object
-    keyUid: string
-    address: string
-    path: string
-    isAirdropAddress: bool
-    messageToBeSigned: string
-    signature: string
+type AddressToShareDetails = object
+  keyUid: string
+  address: string
+  path: string
+  isAirdropAddress: bool
+  messageToBeSigned: string
+  signature: string
 
-type
-  JoiningCommunityDetails = object
-    communityId: string
-    communityIdForPermissions: string
-    communityIdForRevealedAccounts: string
-    ensName: string
-    addressesToShare: OrderedTable[string, AddressToShareDetails] ## [address, AddressToShareDetails]
-    profilePassword: string
-    profilePin: string
-    action: Action
+type JoiningCommunityDetails = object
+  communityId: string
+  communityIdForPermissions: string
+  communityIdForRevealedAccounts: string
+  ensName: string
+  addressesToShare: OrderedTable[string, AddressToShareDetails]
+    ## [address, AddressToShareDetails]
+  profilePassword: string
+  profilePin: string
+  action: Action
 
 proc clear(self: var JoiningCommunityDetails) =
   self = JoiningCommunityDetails()
@@ -77,26 +78,28 @@ proc allSigned(self: JoiningCommunityDetails): bool =
       return false
   return true
 
-type
-  Module*  = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
-    events: EventEmitter
-    curatedCommunitiesLoaded: bool
-    communityTokensModule: community_tokens_module.AccessInterface
-    checkingPermissionToJoinInProgress: bool
-    checkingAllChannelPermissionsInProgress: bool
-    joiningCommunityDetails: JoiningCommunityDetails
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
+  events: EventEmitter
+  curatedCommunitiesLoaded: bool
+  communityTokensModule: community_tokens_module.AccessInterface
+  checkingPermissionToJoinInProgress: bool
+  checkingAllChannelPermissionsInProgress: bool
+  joiningCommunityDetails: JoiningCommunityDetails
 
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
 proc buildTokensAndCollectiblesFromAllCommunities(self: Module)
-proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto])
+proc buildTokensAndCollectiblesFromCommunities(
+  self: Module, communities: seq[CommunityDto]
+)
+
 proc setCheckingPermissionToJoinInProgress(self: Module, inProgress: bool)
 
 proc newModule*(
@@ -111,24 +114,19 @@ proc newModule*(
     chatService: chat_service.Service,
     walletAccountService: wallet_account_service.Service,
     keycardService: keycard_service.Service,
-    ): Module =
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
-    result,
-    events,
-    communityService,
-    contactsService,
-    communityTokensService,
-    networksService,
-    tokensService,
-    chatService,
-    walletAccountService,
-    keycardService,
+    result, events, communityService, contactsService, communityTokensService,
+    networksService, tokensService, chatService, walletAccountService, keycardService,
   )
-  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService, communityService)
+  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(
+    result, events, communityTokensService, transactionService, networksService,
+    communityService,
+  )
   result.moduleLoaded = false
   result.events = events
   result.curatedCommunitiesLoaded = false
@@ -181,7 +179,9 @@ method curatedCommunitiesLoadingFailed*(self: Module) =
   self.curatedCommunitiesLoaded = true
   self.view.setCuratedCommunitiesLoading(false)
 
-proc createMemberItem(self: Module, memberId, requestId: string, status: MembershipRequestState): MemberItem =
+proc createMemberItem(
+    self: Module, memberId, requestId: string, status: MembershipRequestState
+): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   result = initMemberItem(
     pubKey = memberId,
@@ -193,7 +193,8 @@ proc createMemberItem(self: Module, memberId, requestId: string, status: Members
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     colorHash = contactDetails.colorHash,
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
+    onlineStatus =
+      toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
     isContact = contactDetails.dto.isContact,
     isCurrentUser = contactDetails.isCurrentUser,
     trustStatus = contactDetails.dto.trustStatus,
@@ -206,59 +207,73 @@ method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
   for member in community.members:
     var communityMemberState = MembershipRequestState.Accepted
     if community.pendingAndBannedMembers.hasKey(member.id):
-      let memberState = community.pendingAndBannedMembers[member.id].toMembershipRequestState()
-      if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
+      let memberState =
+        community.pendingAndBannedMembers[member.id].toMembershipRequestState()
+      if memberState == MembershipRequestState.BannedPending or
+          memberState == MembershipRequestState.KickedPending:
         communityMemberState = memberState
     memberItems.add(self.createMemberItem(member.id, "", communityMemberState))
 
   var bannedMembers: seq[MemberItem] = @[]
   for memberId, communityMemberState in community.pendingAndBannedMembers:
-    bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
+    bannedMembers.add(
+      self.createMemberItem(
+        memberId, "", toMembershipRequestState(communityMemberState)
+      )
+    )
 
-  let pendingMembers = community.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
-    )
-  let declinedMemberItems = community.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
-    )
+  let pendingMembers = community.pendingRequestsToJoin.map(
+    proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(
+        requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state)
+      )
+  )
+  let declinedMemberItems = community.declinedRequestsToJoin.map(
+    proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      result = self.createMemberItem(
+        requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state)
+      )
+  )
 
   memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)
 
   return initItem(
-      community.id,
-      SectionType.Community,
-      community.name,
-      community.memberRole,
-      community.isControlNode,
-      community.description,
-      community.introMessage,
-      community.outroMessage,
-      community.images.thumbnail,
-      community.images.banner,
-      icon = "",
-      community.color,
-      community.tags,
-      hasNotification = false,
-      notificationsCount = 0,
-      active = false,
-      enabled = true,
-      community.joined,
-      community.canJoin,
-      community.spectated,
-      community.canManageUsers,
-      community.canRequestAccess,
-      community.isMember,
-      community.permissions.access,
-      community.permissions.ensOnly,
-      community.muted,
-      members = memberItems,
-      historyArchiveSupportEnabled = community.settings.historyArchiveSupportEnabled,
-      encrypted = community.encrypted,
-      communityTokens = @[],
-      activeMembersCount = int(community.activeMembersCount),
-    )
+    community.id,
+    SectionType.Community,
+    community.name,
+    community.memberRole,
+    community.isControlNode,
+    community.description,
+    community.introMessage,
+    community.outroMessage,
+    community.images.thumbnail,
+    community.images.banner,
+    icon = "",
+    community.color,
+    community.tags,
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+    community.joined,
+    community.canJoin,
+    community.spectated,
+    community.canManageUsers,
+    community.canRequestAccess,
+    community.isMember,
+    community.permissions.access,
+    community.permissions.ensOnly,
+    community.muted,
+    members = memberItems,
+    historyArchiveSupportEnabled = community.settings.historyArchiveSupportEnabled,
+    encrypted = community.encrypted,
+    communityTokens = @[],
+    activeMembersCount = int(community.activeMembersCount),
+  )
 
-proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedCommunityItem =
+proc getCuratedCommunityItem(
+    self: Module, community: CommunityDto
+): CuratedCommunityItem =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
@@ -291,19 +306,11 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
   )
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
-  return initDiscordCategoryItem(
-      c.id,
-      c.name,
-      true)
+  return initDiscordCategoryItem(c.id, c.name, true)
 
 proc getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelItem =
-  return initDiscordChannelItem(
-      c.id,
-      c.categoryId,
-      c.name,
-      c.description,
-      c.filePath,
-      true)
+  return
+    initDiscordChannelItem(c.id, c.categoryId, c.name, c.description, c.filePath, true)
 
 method isDisplayNameDupeOfCommunityMember*(self: Module, displayName: string): bool =
   self.controller.isDisplayNameDupeOfCommunityMember(displayName)
@@ -346,20 +353,33 @@ method curatedCommunityEdited*(self: Module, community: CommunityDto) =
     # otherwise the state will vanish. For instance, the `listedInDirectory` and `featuredInDirectory`
     # fields are vanished when community update is received.
     var communityCopy = community
-    communityCopy.featuredInDirectory = self.view.curatedCommunitiesModel.getItemById(community.id).getFeatured()
-    self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(communityCopy))
+    communityCopy.featuredInDirectory =
+      self.view.curatedCommunitiesModel.getItemById(community.id).getFeatured()
+    self.view.curatedCommunitiesModel().addItem(
+      self.getCuratedCommunityItem(communityCopy)
+    )
 
-method createCommunity*(self: Module, name: string,
-                        description, introMessage: string, outroMessage: string,
-                        access: int, color: string, tags: string,
-                        imagePath: string,
-                        aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool,
-                        bannerJsonStr: string) =
-  self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
-                                  bannerJsonStr)
+method createCommunity*(
+    self: Module,
+    name: string,
+    description, introMessage: string,
+    outroMessage: string,
+    access: int,
+    color: string,
+    tags: string,
+    imagePath: string,
+    aX: int,
+    aY: int,
+    bX: int,
+    bY: int,
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool,
+    bannerJsonStr: string,
+) =
+  self.controller.createCommunity(
+    name, description, introMessage, outroMessage, access, color, tags, imagePath, aX,
+    aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr,
+  )
 
 method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
@@ -388,10 +408,18 @@ method communityHistoryArchivesDownloadStarted*(self: Module, communityId: strin
 method communityHistoryArchivesDownloadFinished*(self: Module, communityId: string) =
   self.view.setDownloadingCommunityHistoryArchives(false)
 
-method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) =
-
+method discordCategoriesAndChannelsExtracted*(
+    self: Module,
+    categories: seq[DiscordCategoryDto],
+    channels: seq[DiscordChannelDto],
+    oldestMessageTimestamp: int,
+    errors: Table[string, DiscordImportError],
+    errorsCount: int,
+) =
   for filePath in errors.keys:
-    self.view.discordFileListModel().updateErrorState(filePath, errors[filePath].message, errors[filePath].code)
+    self.view.discordFileListModel().updateErrorState(
+      filePath, errors[filePath].message, errors[filePath].code
+    )
 
   self.view.discordFileListModel().setAllValidated()
 
@@ -400,7 +428,9 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
   self.view.setDiscordOldestMessageTimestamp(oldestMessageTimestamp)
 
   for discordCategory in categories:
-    self.view.discordCategoriesModel().addItem(self.getDiscordCategoryItem(discordCategory))
+    self.view.discordCategoriesModel().addItem(
+      self.getDiscordCategoryItem(discordCategory)
+    )
   for discordChannel in channels:
     self.view.discordChannelsModel().addItem(self.getDiscordChannelItem(discordChannel))
 
@@ -411,14 +441,19 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
 method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
   self.controller.cancelRequestToJoinCommunity(communityId)
 
-method requestCommunityInfo*(self: Module, communityId: string, shardCluster: int, shardIndex: int, importing: bool) =
-  let shard = Shard(
-    cluster: shardCluster,
-    index: shardIndex,
-  )
+method requestCommunityInfo*(
+    self: Module,
+    communityId: string,
+    shardCluster: int,
+    shardIndex: int,
+    importing: bool,
+) =
+  let shard = Shard(cluster: shardCluster, index: shardIndex)
   self.controller.requestCommunityInfo(communityId, shard, importing)
 
-method requestCommunityInfo*(self: Module, communityId: string, shard: Shard, importing: bool) =
+method requestCommunityInfo*(
+    self: Module, communityId: string, shard: Shard, importing: bool
+) =
   let cluster = if shard == nil: -1 else: shard.cluster
   let index = if shard == nil: -1 else: shard.index
   self.requestCommunityInfo(communityId, cluster, index, importing)
@@ -437,37 +472,70 @@ method communityDataImported*(self: Module, community: CommunityDto) =
   self.buildTokensAndCollectiblesFromCommunities(@[community])
   self.view.emitCommunityInfoRequestCompleted(community.id, "")
 
-method communityInfoRequestFailed*(self: Module, communityId: string, errorMsg: string) =
+method communityInfoRequestFailed*(
+    self: Module, communityId: string, errorMsg: string
+) =
   self.view.emitCommunityInfoRequestCompleted(communityId, errorMsg)
 
-method onImportCommunityErrorOccured*(self: Module, communityId: string, error: string) =
-  self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingError.int, error)
+method onImportCommunityErrorOccured*(
+    self: Module, communityId: string, error: string
+) =
+  self.view.emitImportingCommunityStateChangedSignal(
+    communityId, ImportCommunityState.ImportingError.int, error
+  )
 
-method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
+method requestExtractDiscordChannelsAndCategories*(
+    self: Module, filesToImport: seq[string]
+) =
   self.view.setDiscordDataExtractionInProgress(true)
   self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
 
-method requestImportDiscordCommunity*(self: Module, name: string, description, introMessage, outroMessage: string, access: int,
-                        color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string],
-                        fromTimestamp: int) =
+method requestImportDiscordCommunity*(
+    self: Module,
+    name: string,
+    description, introMessage, outroMessage: string,
+    access: int,
+    color: string,
+    tags: string,
+    imagePath: string,
+    aX: int,
+    aY: int,
+    bX: int,
+    bY: int,
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool,
+    filesToImport: seq[string],
+    fromTimestamp: int,
+) =
   self.view.setDiscordImportHasCommunityImage(imagePath != "")
-  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+  self.controller.requestImportDiscordCommunity(
+    name, description, introMessage, outroMessage, access, color, tags, imagePath, aX,
+    aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+    filesToImport, fromTimestamp,
+  )
 
-method requestImportDiscordChannel*(self: Module, name: string, discordChannelId: string, communityId: string, description: string,
-                        color: string, emoji: string, filesToImport: seq[string],
-                        fromTimestamp: int) =
-  self.controller.requestImportDiscordChannel(name, discordChannelId, communityId, description, color, emoji, filesToImport, fromTimestamp)
+method requestImportDiscordChannel*(
+    self: Module,
+    name: string,
+    discordChannelId: string,
+    communityId: string,
+    description: string,
+    color: string,
+    emoji: string,
+    filesToImport: seq[string],
+    fromTimestamp: int,
+) =
+  self.controller.requestImportDiscordChannel(
+    name, discordChannelId, communityId, description, color, emoji, filesToImport,
+    fromTimestamp,
+  )
 
-proc getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
+proc getDiscordImportTaskItem(
+    self: Module, t: DiscordImportTaskProgress
+): DiscordImportTaskItem =
   return initDiscordImportTaskItem(
-      t.`type`,
-      t.progress,
-      t.state,
-      t.errors,
-      t.stopped,
-      t.errorsCount,
-      t.warningsCount)
+    t.`type`, t.progress, t.state, t.errors, t.stopped, t.errorsCount, t.warningsCount
+  )
 
 method discordImportProgressUpdated*(
     self: Module,
@@ -480,8 +548,8 @@ method discordImportProgressUpdated*(
     warningsCount: int,
     stopped: bool,
     totalChunksCount: int,
-    currentChunk: int
-  ) =
+    currentChunk: int,
+) =
   for task in tasks:
     if not self.view.discordImportTasksModel().hasItemByType(task.`type`):
       self.view.discordImportTasksModel().addItem(self.getDiscordImportTaskItem(task))
@@ -496,7 +564,7 @@ method discordImportProgressUpdated*(
   # For some reason, exposing the global `progress` as QtProperty[float]`
   # doesn't translate well into QML.
   # That's why we pass it as integer instead.
-  self.view.setDiscordImportProgress((progress*100).int)
+  self.view.setDiscordImportProgress((progress * 100).int)
   self.view.setDiscordImportProgressStopped(stopped)
   self.view.setDiscordImportProgressTotalChunksCount(totalChunksCount)
   self.view.setDiscordImportProgressCurrentChunk(currentChunk)
@@ -506,12 +574,14 @@ method discordImportProgressUpdated*(
 method removeCommunityChat*(self: Module, communityId: string, channelId: string) =
   self.controller.removeCommunityChat(communityId, channelId)
 
-method discordImportChannelFinished*(self: Module, communityId: string, channelId: string) =
-    self.view.setDiscordImportedChannelCommunityId(communityId)
-    self.view.setDiscordImportedChannelId(channelId)
-    self.view.setDiscordImportProgress(100)
-    self.view.setDiscordImportProgressStopped(true)
-    self.view.setDiscordImportInProgress(false)
+method discordImportChannelFinished*(
+    self: Module, communityId: string, channelId: string
+) =
+  self.view.setDiscordImportedChannelCommunityId(communityId)
+  self.view.setDiscordImportedChannelId(channelId)
+  self.view.setDiscordImportProgress(100)
+  self.view.setDiscordImportProgressStopped(true)
+  self.view.setDiscordImportInProgress(false)
 
 method discordImportChannelCanceled*(self: Module, channelId: string) =
   if self.view.getDiscordImportChannelId() == channelId:
@@ -529,8 +599,8 @@ method discordImportChannelProgressUpdated*(
     warningsCount: int,
     stopped: bool,
     totalChunksCount: int,
-    currentChunk: int
-  ) =
+    currentChunk: int,
+) =
   for task in tasks:
     if not self.view.discordImportTasksModel().hasItemByType(task.`type`):
       self.view.discordImportTasksModel().addItem(self.getDiscordImportTaskItem(task))
@@ -544,7 +614,7 @@ method discordImportChannelProgressUpdated*(
   # For some reason, exposing the global `progress` as QtProperty[float]`
   # doesn't translate well into QML.
   # That's why we pass it as integer instead.
-  self.view.setDiscordImportProgress((progress*100).int)
+  self.view.setDiscordImportProgress((progress * 100).int)
   self.view.setDiscordImportProgressStopped(stopped)
   self.view.setDiscordImportProgressTotalChunksCount(totalChunksCount)
   self.view.setDiscordImportProgressCurrentChunk(currentChunk)
@@ -557,10 +627,20 @@ method requestCancelDiscordCommunityImport*(self: Module, id: string) =
 method requestCancelDiscordChannelImport*(self: Module, discordChannelId: string) =
   self.controller.requestCancelDiscordChannelImport(discordChannelId)
 
-proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
-    infiniteSupply: bool, privilegesLevel: int): TokenListItem =
+proc createCommunityTokenItem(
+    self: Module,
+    token: CommunityTokensMetadataDto,
+    communityId: string,
+    supply: string,
+    infiniteSupply: bool,
+    privilegesLevel: int,
+): TokenListItem =
   let communityTokenDecimals = if token.tokenType == TokenType.ERC20: 18 else: 0
-  let key = if token.tokenType == TokenType.ERC721: token.getContractIdFromFirstAddress() else: token.symbol
+  let key =
+    if token.tokenType == TokenType.ERC721:
+      token.getContractIdFromFirstAddress()
+    else:
+      token.symbol
   result = initTokenListItem(
     key = key,
     name = token.name,
@@ -572,11 +652,15 @@ proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, c
     supply,
     infiniteSupply,
     communityTokenDecimals,
-    privilegesLevel
+    privilegesLevel,
   )
 
-proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[CommunityTokenDto],
-    token: CommunityTokensMetadataDto, communityId: string): TokenListItem =
+proc buildCommunityTokenItemFallback(
+    self: Module,
+    communityTokens: seq[CommunityTokenDto],
+    token: CommunityTokensMetadataDto,
+    communityId: string,
+): TokenListItem =
   # Set fallback supply to infinite in case we don't have it
   var supply = "1"
   var infiniteSupply = true
@@ -587,25 +671,33 @@ proc buildCommunityTokenItemFallback(self: Module, communityTokens: seq[Communit
       infiniteSupply = communityToken.infiniteSupply
       privilegesLevel = communityToken.privilegesLevel.int
       break
-  return self.createCommunityTokenItem(token, communityId, supply, infiniteSupply, privilegesLevel)
+  return self.createCommunityTokenItem(
+    token, communityId, supply, infiniteSupply, privilegesLevel
+  )
 
-proc buildTokensAndCollectiblesFromCommunities(self: Module, communities: seq[CommunityDto]) =
+proc buildTokensAndCollectiblesFromCommunities(
+    self: Module, communities: seq[CommunityDto]
+) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
 
   let communityTokens = self.controller.getAllCommunityTokens()
   for community in communities:
     for tokenMetadata in community.communityTokensMetadata:
-      var communityTokenItem = self.buildCommunityTokenItemFallback(communityTokens, tokenMetadata, community.id)
+      var communityTokenItem = self.buildCommunityTokenItemFallback(
+        communityTokens, tokenMetadata, community.id
+      )
 
       if tokenMetadata.tokenType == TokenType.ERC20 and
-        not self.view.tokenListModel().hasItem(tokenMetadata.symbol, community.id):
-      # Community ERC20 tokens
+          not self.view.tokenListModel().hasItem(tokenMetadata.symbol, community.id):
+        # Community ERC20 tokens
         tokenListItems.add(communityTokenItem)
 
       if tokenMetadata.tokenType == TokenType.ERC721 and
-        not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol, community.id):
-      # Community collectibles (ERC721 and others)
+          not self.view.collectiblesListModel().hasItem(
+            tokenMetadata.symbol, community.id
+          ):
+        # Community collectibles (ERC721 and others)
         collectiblesListItems.add(communityTokenItem)
 
   self.view.tokenListModel.addItems(tokenListItems)
@@ -620,10 +712,14 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
 
   # Common ERC20 tokens
   let allNetworks = self.controller.getCurrentNetworksChainIds()
-  let erc20Tokens = self.controller.getTokenBySymbolList().filter(t => (block:
-    let filteredChains = t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
-    return filteredChains.len != 0
-    ))
+  let erc20Tokens = self.controller.getTokenBySymbolList().filter(
+      t => (
+        block:
+          let filteredChains =
+            t.addressPerChainId.filter(apC => allNetworks.contains(apc.chainId))
+          return filteredChains.len != 0
+      )
+    )
   for token in erc20Tokens:
     let communityTokens = self.controller.getCommunityTokens(token.communityId)
     var privilegesLevel = PrivilegesLevel.Community.int
@@ -641,7 +737,7 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
       image = "",
       category = ord(TokenListItemCategory.General),
       decimals = token.decimals,
-      privilegesLevel = privilegesLevel
+      privilegesLevel = privilegesLevel,
     )
     tokenListItems.add(tokenListItem)
 
@@ -650,9 +746,12 @@ proc buildTokensAndCollectiblesFromWallet(self: Module) =
 method onWalletAccountTokensRebuilt*(self: Module) =
   self.buildTokensAndCollectiblesFromWallet()
 
-method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
+method onCommunityTokenMetadataAdded*(
+    self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto
+) =
   let communityTokens = self.controller.getCommunityTokens(communityId)
-  var tokenListItem = self.buildCommunityTokenItemFallback(communityTokens, tokenMetadata, communityId)
+  var tokenListItem =
+    self.buildCommunityTokenItemFallback(communityTokens, tokenMetadata, communityId)
 
   if tokenMetadata.tokenType == TokenType.ERC721 and
       not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol, communityId):
@@ -669,10 +768,14 @@ method shareCommunityUrlWithChatKey*(self: Module, communityId: string): string 
 method shareCommunityUrlWithData*(self: Module, communityId: string): string =
   return self.controller.shareCommunityUrlWithData(communityId)
 
-method shareCommunityChannelUrlWithChatKey*(self: Module, communityId: string, chatId: string): string =
+method shareCommunityChannelUrlWithChatKey*(
+    self: Module, communityId: string, chatId: string
+): string =
   return self.controller.shareCommunityChannelUrlWithChatKey(communityId, chatId)
 
-method shareCommunityChannelUrlWithData*(self: Module, communityId: string, chatId: string): string =
+method shareCommunityChannelUrlWithData*(
+    self: Module, communityId: string, chatId: string
+): string =
   return self.controller.shareCommunityChannelUrlWithData(communityId, chatId)
 
 proc signRevealedAddressesForNonKeycardKeypairs(self: Module): bool =
@@ -682,35 +785,45 @@ proc signRevealedAddressesForNonKeycardKeypairs(self: Module): bool =
       continue
     let keypair = self.controller.getKeypairByAccountAddress(address)
     if keypair.isNil:
-      self.communityAccessFailed(self.joiningCommunityDetails.communityId, "cannot resolve keypair for address" & address)
+      self.communityAccessFailed(
+        self.joiningCommunityDetails.communityId,
+        "cannot resolve keypair for address" & address,
+      )
       return false
     if keypair.migratedToKeycard():
       continue
     var finalPassword = self.joiningCommunityDetails.profilePassword
     if not singletonInstance.userProfile.getIsKeycardUser():
-      finalPassword = common_utils.hashPassword(self.joiningCommunityDetails.profilePassword)
+      finalPassword =
+        common_utils.hashPassword(self.joiningCommunityDetails.profilePassword)
     signingParams.add(
       SignParamsDto(
-        address: address,
-        data: details.messageToBeSigned,
-        password: finalPassword,
+        address: address, data: details.messageToBeSigned, password: finalPassword
       )
     )
   if signingParams.len == 0:
     return true
   # signatures are returned in the same order as signingParams
-  let signatures = self.controller.signCommunityRequests(self.joiningCommunityDetails.communityId, signingParams)
+  let signatures = self.controller.signCommunityRequests(
+    self.joiningCommunityDetails.communityId, signingParams
+  )
   for i in 0 ..< len(signingParams):
-    self.joiningCommunityDetails.addressesToShare[signingParams[i].address].signature = signatures[i]
-    self.view.keypairsSigningModel().setOwnershipVerified(self.joiningCommunityDetails.addressesToShare[signingParams[i].address].keyUid, true)
+    self.joiningCommunityDetails.addressesToShare[signingParams[i].address].signature =
+      signatures[i]
+    self.view.keypairsSigningModel().setOwnershipVerified(
+      self.joiningCommunityDetails.addressesToShare[signingParams[i].address].keyUid,
+      true,
+    )
   return true
 
 proc signRevealedAddressesForNonKeycardKeypairsAndEmitSignal(self: Module) =
-  if self.signRevealedAddressesForNonKeycardKeypairs() and self.joiningCommunityDetails.allSigned():
+  if self.signRevealedAddressesForNonKeycardKeypairs() and
+      self.joiningCommunityDetails.allSigned():
     self.view.sendAllSharedAddressesSignedSignal()
 
 proc anyProfileKeyPairAddressSelectedToBeRevealed(self: Module): bool =
-  let profileKeypair = self.controller.getKeypairByKeyUid(singletonInstance.userProfile.getKeyUid())
+  let profileKeypair =
+    self.controller.getKeypairByKeyUid(singletonInstance.userProfile.getKeyUid())
   if profileKeypair.isNil:
     error "profile keypair not found"
     return false
@@ -720,7 +833,9 @@ proc anyProfileKeyPairAddressSelectedToBeRevealed(self: Module): bool =
         return true
   return false
 
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+method onUserAuthenticated*(
+    self: Module, pin: string, password: string, keyUid: string
+) =
   if password == "" and pin == "":
     info "unsuccesful authentication"
     return
@@ -732,14 +847,23 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
   # for revealed profile addresses first, then using pubic encryption key to sign other non keycard key pairs.
   # If the profile is not a keycard user, we sign the request for it calling `signRevealedAddressesForNonKeycardKeypairs` function.
   if keyUid == singletonInstance.userProfile.getKeyUid() and
-    singletonInstance.userProfile.getIsKeycardUser() and
-    self.anyProfileKeyPairAddressSelectedToBeRevealed():
-      self.signSharedAddressesForKeypair(keyUid, pin)
-      return
+      singletonInstance.userProfile.getIsKeycardUser() and
+      self.anyProfileKeyPairAddressSelectedToBeRevealed():
+    self.signSharedAddressesForKeypair(keyUid, pin)
+    return
   self.signRevealedAddressesForNonKeycardKeypairsAndEmitSignal()
 
-method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: string, v: string, pin: string) =
-  if keyUid.len == 0 or path.len == 0 or r.len == 0 or s.len == 0 or v.len == 0 or pin.len == 0:
+method onDataSigned*(
+    self: Module,
+    keyUid: string,
+    path: string,
+    r: string,
+    s: string,
+    v: string,
+    pin: string,
+) =
+  if keyUid.len == 0 or path.len == 0 or r.len == 0 or s.len == 0 or v.len == 0 or
+      pin.len == 0:
     # being here is not an error
     return
 
@@ -748,7 +872,8 @@ method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: s
   for address, details in self.joiningCommunityDetails.addressesToShare.pairs:
     if details.keyUid != keyUid or details.path != path:
       continue
-    self.joiningCommunityDetails.addressesToShare[address].signature = "0x" & r & s & vFixed
+    self.joiningCommunityDetails.addressesToShare[address].signature =
+      "0x" & r & s & vFixed
     break
   self.signSharedAddressesForKeypair(keyUid, pin)
 
@@ -757,19 +882,33 @@ method onDataSigned*(self: Module, keyUid: string, path: string, r: string, s: s
   if keyUid == singletonInstance.userProfile.getKeyUid():
     self.signRevealedAddressesForNonKeycardKeypairsAndEmitSignal()
 
-method prepareKeypairsForSigning*(self: Module, communityId, ensName: string, addresses: string,
-  airdropAddress: string, editMode: bool) =
+method prepareKeypairsForSigning*(
+    self: Module,
+    communityId, ensName: string,
+    addresses: string,
+    airdropAddress: string,
+    editMode: bool,
+) =
   var addressesToShare: seq[string]
   try:
-    addressesToShare = map(parseJson(addresses).getElems(), proc(x:JsonNode):string = x.getStr())
+    addressesToShare = map(
+      parseJson(addresses).getElems(),
+      proc(x: JsonNode): string =
+        x.getStr(),
+    )
   except Exception as e:
     self.communityAccessFailed(communityId, "error parsing addresses: " & e.msg)
     return
 
-  let allKeypairs = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
-    excludePrivateKeyKeypairs = false)
+  let allKeypairs = keypairs.buildKeyPairsList(
+    self.controller.getKeypairs(),
+    excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false,
+  )
   for it in allKeypairs:
-    let addressesToRemove = it.getAccountsModel().getItems()
+    let addressesToRemove = it
+      .getAccountsModel()
+      .getItems()
       .map(x => x.getAddress())
       .filter(x => addressesToShare.filter(y => cmpIgnoreCase(y, x) == 0).len == 0)
     for address in addressesToRemove:
@@ -783,14 +922,18 @@ method prepareKeypairsForSigning*(self: Module, communityId, ensName: string, ad
   if editMode:
     self.joiningCommunityDetails.action = Action.EditSharedAddresses
     signingParams = self.controller.generateEditCommunityRequestsForSigning(
-      singletonInstance.userProfile.getPubKey(), communityId, addressesToShare)
+      singletonInstance.userProfile.getPubKey(), communityId, addressesToShare
+    )
   else:
     self.joiningCommunityDetails.action = Action.JoinCommunity
     self.joiningCommunityDetails.ensName = ensName
     signingParams = self.controller.generateJoiningCommunityRequestsForSigning(
-      singletonInstance.userProfile.getPubKey(), communityId, addressesToShare)
+      singletonInstance.userProfile.getPubKey(), communityId, addressesToShare
+    )
 
-  let findKeyUidAndPathForAddress = proc (items: seq[KeyPairItem], address: string): tuple[keyUid: string, path: string] =
+  let findKeyUidAndPathForAddress = proc(
+      items: seq[KeyPairItem], address: string
+  ): tuple[keyUid: string, path: string] =
     for it in items:
       for acc in it.getAccountsModel().getItems():
         if cmpIgnoreCase(acc.getAddress(), address) == 0:
@@ -803,8 +946,9 @@ method prepareKeypairsForSigning*(self: Module, communityId, ensName: string, ad
       keyUid: keyUid,
       address: param.address,
       path: path,
-      isAirdropAddress: if cmpIgnoreCase(param.address, airdropAddress) == 0: true else: false,
-      messageToBeSigned: param.data
+      isAirdropAddress:
+        if cmpIgnoreCase(param.address, airdropAddress) == 0: true else: false,
+      messageToBeSigned: param.data,
     )
     self.joiningCommunityDetails.addressesToShare[param.address] = details
 
@@ -815,7 +959,10 @@ method signProfileKeypairAndAllNonKeycardKeypairs*(self: Module) =
 method signSharedAddressesForKeypair*(self: Module, keyUid: string, pin: string) =
   let keypair = self.controller.getKeypairByKeyUid(keyUid)
   if keypair.isNil:
-    self.communityAccessFailed(self.joiningCommunityDetails.communityId, "cannot resolve keypair for keyUid " & keyUid)
+    self.communityAccessFailed(
+      self.joiningCommunityDetails.communityId,
+      "cannot resolve keypair for keyUid " & keyUid,
+    )
     return
   for acc in keypair.accounts:
     for address, details in self.joiningCommunityDetails.addressesToShare.pairs:
@@ -823,7 +970,9 @@ method signSharedAddressesForKeypair*(self: Module, keyUid: string, pin: string)
         continue
       if details.signature.len > 0:
         continue
-      self.controller.runSigningOnKeycard(keyUid, details.path, details.messageToBeSigned, pin)
+      self.controller.runSigningOnKeycard(
+        keyUid, details.path, details.messageToBeSigned, pin
+      )
       return
   self.view.keypairsSigningModel().setOwnershipVerified(keyUid, true)
   if self.joiningCommunityDetails.allSigned():
@@ -831,7 +980,10 @@ method signSharedAddressesForKeypair*(self: Module, keyUid: string, pin: string)
 
 method joinCommunityOrEditSharedAddresses*(self: Module) =
   if not self.joiningCommunityDetails.allSigned():
-    self.communityAccessFailed(self.joiningCommunityDetails.communityId, "unexpected call to join community function before all addresses are signed")
+    self.communityAccessFailed(
+      self.joiningCommunityDetails.communityId,
+      "unexpected call to join community function before all addresses are signed",
+    )
     return
   var
     addressesToShare: seq[string]
@@ -845,31 +997,42 @@ method joinCommunityOrEditSharedAddresses*(self: Module) =
     signatures.add(details.signature)
 
   if self.joiningCommunityDetails.action == Action.JoinCommunity:
-    self.controller.asyncRequestToJoinCommunity(self.joiningCommunityDetails.communityId,
-      self.joiningCommunityDetails.ensName,
-      addressesToShare,
-      airdropAddress,
-      signatures)
+    self.controller.asyncRequestToJoinCommunity(
+      self.joiningCommunityDetails.communityId, self.joiningCommunityDetails.ensName,
+      addressesToShare, airdropAddress, signatures,
+    )
 
-    self.delegate.updateRequestToJoinState(self.joiningCommunityDetails.communityId, RequestToJoinState.InProgress)
+    self.delegate.updateRequestToJoinState(
+      self.joiningCommunityDetails.communityId, RequestToJoinState.InProgress
+    )
 
     # The user reveals address after sending join coummunity request, before that he sees only the name of the wallet account, not the address.
-    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
+    self.events.emit(
+      MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare)
+    )
     return
   if self.joiningCommunityDetails.action == Action.EditSharedAddresses:
-    self.controller.asyncEditSharedAddresses(self.joiningCommunityDetails.communityId,
-      addressesToShare,
-      airdropAddress,
-      signatures)
+    self.controller.asyncEditSharedAddresses(
+      self.joiningCommunityDetails.communityId, addressesToShare, airdropAddress,
+      signatures,
+    )
     # The user reveals address after sending edit coummunity request, before that he sees only the name of the wallet account, not the address.
-    self.events.emit(MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare))
+    self.events.emit(
+      MARK_WALLET_ADDRESSES_AS_SHOWN, WalletAddressesArgs(addresses: addressesToShare)
+    )
     return
-  self.communityAccessFailed(self.joiningCommunityDetails.communityId, "unexpected action")
+  self.communityAccessFailed(
+    self.joiningCommunityDetails.communityId, "unexpected action"
+  )
 
-method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
+method getCommunityPublicKeyFromPrivateKey*(
+    self: Module, communityPrivateKey: string
+): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
-method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
+method checkPermissions*(
+    self: Module, communityId: string, sharedAddresses: seq[string]
+) =
   self.joiningCommunityDetails.communityIdForPermissions = communityId
 
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
@@ -884,7 +1047,9 @@ method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq
 
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   self.joiningCommunityDetails.communityIdForRevealedAccounts = communityId
-  self.controller.asyncGetRevealedAccountsForMember(communityId, singletonInstance.userProfile.getPubKey())
+  self.controller.asyncGetRevealedAccountsForMember(
+    communityId, singletonInstance.userProfile.getPubKey()
+  )
 
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
@@ -897,7 +1062,9 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
   self.checkPermissions(communityId, @[])
 
-method prepareTokenModelForCommunityChat*(self: Module, communityId: string, chatId: string) =
+method prepareTokenModelForCommunityChat*(
+    self: Module, communityId: string, chatId: string
+) =
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
   for id, tokenPermission in community.tokenPermissions:
@@ -916,14 +1083,19 @@ method prepareTokenModelForCommunityChat*(self: Module, communityId: string, cha
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
   self.checkPermissions(communityId, @[])
 
-proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
+proc applyPermissionResponse*(
+    self: Module,
+    communityId: string,
+    permissions: Table[string, CheckPermissionsResultDto],
+) =
   let community = self.controller.getCommunityById(communityId)
   for id, criteriaResult in permissions:
     if not community.tokenPermissions.hasKey(id):
       warn "unknown permission", id
       continue
 
-    let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
+    let tokenPermissionItem =
+      self.view.spectatedCommunityPermissionModel.getItemById(id)
     if tokenPermissionItem.id == "":
       warn "no permission in model", id
       continue
@@ -936,7 +1108,7 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
       let criteriaMet = criteriaResult.criteria[index]
 
       if tokenCriteriaItem.criteriaMet != criteriaMet:
-          aCriteriaChanged = true
+        aCriteriaChanged = true
 
       let updatedTokenCriteriaItem = initTokenCriteriaItem(
         tokenCriteriaItem.symbol,
@@ -945,7 +1117,7 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
         tokenCriteriaItem.`type`,
         tokenCriteriaItem.ensPattern,
         criteriaResult.criteria[index],
-        tokenCriteriaItem.addresses
+        tokenCriteriaItem.addresses,
       )
 
       if criteriaResult.criteria[index] == false:
@@ -955,20 +1127,23 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
 
     if not aCriteriaChanged:
       continue
-      
+
     let updatedTokenPermissionItem = initTokenPermissionItem(
-        tokenPermissionItem.id,
-        tokenPermissionItem.`type`,
-        updatedTokenCriteriaItems,
-        tokenPermissionItem.getChatList().getItems(),
-        tokenPermissionItem.isPrivate,
-        permissionSatisfied,
-        tokenPermissionItem.state
+      tokenPermissionItem.id,
+      tokenPermissionItem.`type`,
+      updatedTokenCriteriaItems,
+      tokenPermissionItem.getChatList().getItems(),
+      tokenPermissionItem.isPrivate,
+      permissionSatisfied,
+      tokenPermissionItem.state,
     )
-    self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
+    self.view.spectatedCommunityPermissionModel.updateItem(
+      id, updatedTokenPermissionItem
+    )
 
 proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = false) =
-  if self.checkingPermissionToJoinInProgress != self.checkingAllChannelPermissionsInProgress:
+  if self.checkingPermissionToJoinInProgress !=
+      self.checkingAllChannelPermissionsInProgress:
     # Wait until both join and channel permissions have returned to update the loading
     return
   self.view.setCheckingPermissionsInProgress(inProgress)
@@ -982,18 +1157,25 @@ proc setCheckingPermissionToJoinInProgress(self: Module, inProgress: bool) =
   self.checkingPermissionToJoinInProgress = inProgress
   self.view.checkingPermissionToJoinInProgressChanged()
 
-method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
+method onCommunityCheckPermissionsToJoinFailed*(
+    self: Module, communityId: string, error: string
+) =
   self.view.setJoinPermissionsCheckSuccessful(false)
   self.setCheckingPermissionToJoinInProgress(false)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
-method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
+method onCommunityCheckAllChannelPermissionsFailed*(
+    self: Module, communityId: string, error: string
+) =
   self.view.setChannelsPermissionsCheckSuccessful(false)
   self.checkingAllChannelPermissionsInProgress = false
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
-method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
-    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+method onCommunityCheckPermissionsToJoinResponse*(
+    self: Module,
+    communityId: string,
+    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto,
+) =
   if not self.checkingPermissionToJoinInProgress and
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
@@ -1002,8 +1184,11 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: str
   self.view.setJoinPermissionsCheckSuccessful(true)
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
-method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
-    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+method onCommunityCheckAllChannelsPermissionsResponse*(
+    self: Module,
+    communityId: string,
+    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto,
+) =
   if not self.checkingAllChannelPermissionsInProgress and
       self.joiningCommunityDetails.communityIdForPermissions != communityId:
     return
@@ -1012,16 +1197,17 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId
   self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
   for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
     self.applyPermissionResponse(
-      communityId,
-      channelPermissionResponse.viewOnlyPermissions.permissions,
+      communityId, channelPermissionResponse.viewOnlyPermissions.permissions
     )
     self.applyPermissionResponse(
-      communityId,
-      channelPermissionResponse.viewAndPostPermissions.permissions,
+      communityId, channelPermissionResponse.viewAndPostPermissions.permissions
     )
 
-method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, memberPubkey: string,
-    revealedAccounts: seq[RevealedAccount]) =
+method onCommunityMemberRevealedAccountsLoaded*(
+    self: Module,
+    communityId, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount],
+) =
   if self.joiningCommunityDetails.communityIdForRevealedAccounts != communityId:
     return
   if memberPubkey == singletonInstance.userProfile.getPubKey():

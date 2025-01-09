@@ -29,10 +29,14 @@ proc delete*(self: StatusFoundation) =
   self.signalsManager.delete()
   self.urlsManager.delete()
 
-proc initUrlSchemeManager*(self: StatusFoundation, urlSchemeEvent: StatusEvent,
-    singleInstance: SingleInstance, protocolUriOnStart: string) =
-  self.urlsManager = newUrlsManager(self.events, urlSchemeEvent, singleInstance,
-    protocolUriOnStart)
+proc initUrlSchemeManager*(
+    self: StatusFoundation,
+    urlSchemeEvent: StatusEvent,
+    singleInstance: SingleInstance,
+    protocolUriOnStart: string,
+) =
+  self.urlsManager =
+    newUrlsManager(self.events, urlSchemeEvent, singleInstance, protocolUriOnStart)
 
 proc appReady*(self: StatusFoundation) =
   self.urlsManager.appReady()

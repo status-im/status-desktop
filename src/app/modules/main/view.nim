@@ -10,21 +10,21 @@ from app_service/common/conversion import intToEnum
 from app_service/common/types import StatusType
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: section_model.SectionModel
-      modelVariant: QVariant
-      sectionsLoaded: bool
-      chatsLoadingFailed: bool
-      notificationAvailable: bool
-      activeSection: SectionDetails
-      activeSectionVariant: QVariant
-      chatSearchModel: chat_search_model.Model
-      chatSearchModelVariant: QVariant
-      ephemeralNotificationModel: ephemeralNotification_model.Model
-      ephemeralNotificationModelVariant: QVariant
-      tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: section_model.SectionModel
+    modelVariant: QVariant
+    sectionsLoaded: bool
+    chatsLoadingFailed: bool
+    notificationAvailable: bool
+    activeSection: SectionDetails
+    activeSectionVariant: QVariant
+    chatSearchModel: chat_search_model.Model
+    chatSearchModelVariant: QVariant
+    ephemeralNotificationModel: ephemeralNotification_model.Model
+    ephemeralNotificationModelVariant: QVariant
+    tmpCommunityId: string
+      # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
 
   proc activeSectionSet*(self: View, item: SectionItem)
 
@@ -53,9 +53,13 @@ QtObject:
     result.chatSearchModel = chat_search_model.newModel()
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
     result.ephemeralNotificationModel = ephemeralNotification_model.newModel()
-    result.ephemeralNotificationModelVariant = newQVariant(result.ephemeralNotificationModel)
+    result.ephemeralNotificationModelVariant =
+      newQVariant(result.ephemeralNotificationModel)
 
-    signalConnect(result.model, "notificationsCountChanged()", result, "onNotificationsCountChanged()", 2)
+    signalConnect(
+      result.model, "notificationsCountChanged()", result,
+      "onNotificationsCountChanged()", 2,
+    )
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
@@ -64,6 +68,7 @@ QtObject:
   proc appNetworkChanged*(self: View) {.signal.}
   proc getAppNetworkId*(self: View): int {.slot.} =
     return self.delegate.getAppNetwork().chainId
+
   QtProperty[int] appNetworkId:
     read = getAppNetworkId
     notify = appNetworkChanged
@@ -100,6 +105,7 @@ QtObject:
   proc chatSearchModelChanged*(self: View) {.signal.}
   proc getChatSearchModel(self: View): QVariant {.slot.} =
     return self.chatSearchModelVariant
+
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel
     notify = chatSearchModelChanged
@@ -110,25 +116,55 @@ QtObject:
   proc ephemeralNotificationModelChanged*(self: View) {.signal.}
   proc getEphemeralNotificationModel(self: View): QVariant {.slot.} =
     return self.ephemeralNotificationModelVariant
+
   QtProperty[QVariant] ephemeralNotificationModel:
     read = getEphemeralNotificationModel
     notify = ephemeralNotificationModelChanged
 
-  proc displayEphemeralNotification*(self: View, title: string, subTitle: string, icon: string, loading: bool,
-    ephNotifType: int, url: string) {.slot.} =
-    self.delegate.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
+  proc displayEphemeralNotification*(
+      self: View,
+      title: string,
+      subTitle: string,
+      icon: string,
+      loading: bool,
+      ephNotifType: int,
+      url: string,
+  ) {.slot.} =
+    self.delegate.displayEphemeralNotification(
+      title, subTitle, icon, loading, ephNotifType, url
+    )
 
   # TO UNIFY with the one above. Now creating a specific method for not introuducing regression.
   # Further refactor will be done in a next step
-  proc displayEphemeralWithActionNotification*(self: View, title: string, subTitle: string, icon: string, iconColor: string, loading: bool,
-    ephNotifType: int, actionType: int, actionData: string) {.slot.} =
-    self.delegate.displayEphemeralWithActionNotification(title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData)
+  proc displayEphemeralWithActionNotification*(
+      self: View,
+      title: string,
+      subTitle: string,
+      icon: string,
+      iconColor: string,
+      loading: bool,
+      ephNotifType: int,
+      actionType: int,
+      actionData: string,
+  ) {.slot.} =
+    self.delegate.displayEphemeralWithActionNotification(
+      title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData
+    )
 
   # TO UNIFY with the one above.
   # Further refactor will be done in a next step
-  proc displayEphemeralImageWithActionNotification*(self: View, title: string, subTitle: string, image: string, ephNotifType: int,
-    actionType: int, actionData: string) {.slot.} =
-    self.delegate.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
+  proc displayEphemeralImageWithActionNotification*(
+      self: View,
+      title: string,
+      subTitle: string,
+      image: string,
+      ephNotifType: int,
+      actionType: int,
+      actionData: string,
+  ) {.slot.} =
+    self.delegate.displayEphemeralImageWithActionNotification(
+      title, subTitle, image, ephNotifType, actionType, actionData
+    )
 
   proc removeEphemeralNotification*(self: View, id: string) {.slot.} =
     self.delegate.removeEphemeralNotification(id.parseInt)
@@ -138,11 +174,13 @@ QtObject:
 
   proc openStoreToKeychainPopup*(self: View) {.signal.}
 
-  proc mailserverWorking*(self:View) {.signal.}
+  proc mailserverWorking*(self: View) {.signal.}
 
-  proc mailserverNotWorking*(self:View) {.signal.}
+  proc mailserverNotWorking*(self: View) {.signal.}
 
-  proc displayWindowsOsNotification*(self:View, title: string, message: string) {.signal.}
+  proc displayWindowsOsNotification*(
+    self: View, title: string, message: string
+  ) {.signal.}
 
   proc emitMailserverWorking*(self: View) =
     self.mailserverWorking()
@@ -153,7 +191,7 @@ QtObject:
   proc activeSection*(self: View): SectionDetails =
     return self.activeSection
 
-  proc activeSectionChanged*(self:View) {.signal.}
+  proc activeSectionChanged*(self: View) {.signal.}
 
   proc getActiveSection(self: View): QVariant {.slot.} =
     return self.activeSectionVariant
@@ -192,6 +230,7 @@ QtObject:
 
   proc getSectionsLoaded(self: View): bool {.slot.} =
     return self.sectionsLoaded
+
   QtProperty[bool] sectionsLoaded:
     read = getSectionsLoaded
     notify = sectionsLoadedChanged
@@ -204,6 +243,7 @@ QtObject:
 
   proc getChatsLoadingFailed(self: View): bool {.slot.} =
     return self.chatsLoadingFailed
+
   QtProperty[bool] chatsLoadingFailed:
     read = getChatsLoadingFailed
     notify = chatsLoadingFailedChanged
@@ -212,13 +252,15 @@ QtObject:
   # prepareCommunitySectionModuleForCommunityId(self: View, communityId: string): QVariant {.slot.}
   # we're using combination of
   # prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
-  proc prepareCommunitySectionModuleForCommunityId*(self: View, communityId: string) {.slot.} =
+  proc prepareCommunitySectionModuleForCommunityId*(
+      self: View, communityId: string
+  ) {.slot.} =
     self.tmpCommunityId = communityId
 
   proc getCommunitySectionModule*(self: View): QVariant {.slot.} =
     var communityVariant = self.delegate.getCommunitySectionModule(self.tmpCommunityId)
     self.tmpCommunityId = ""
-    if(communityVariant.isNil):
+    if (communityVariant.isNil):
       return newQVariant()
 
     return communityVariant
@@ -232,21 +274,33 @@ QtObject:
   QtProperty[QVariant] appSearchModule:
     read = getAppSearchModule
 
-  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool,
-    includeDetails: bool): string {.slot.} =
-    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus, includeDetails)
+  proc getContactDetailsAsJson(
+      self: View,
+      publicKey: string,
+      getVerificationRequest: bool,
+      getOnlineStatus: bool,
+      includeDetails: bool,
+  ): string {.slot.} =
+    return self.delegate.getContactDetailsAsJson(
+      publicKey, getVerificationRequest, getOnlineStatus, includeDetails
+    )
 
   proc getOwnerTokenAsJson(self: View, communityId: string): string {.slot.} =
     return self.delegate.getOwnerTokenAsJson(communityId)
 
-  proc isEnsVerified(self:View, publicKey: string): bool {.slot.} =
+  proc isEnsVerified(self: View, publicKey: string): bool {.slot.} =
     return self.delegate.isEnsVerified(publicKey)
 
   proc resolveENS*(self: View, ensName: string, uuid: string) {.slot.} =
     self.delegate.resolveENS(ensName, uuid)
 
-  proc resolvedENS*(self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string) {.signal.}
-  proc emitResolvedENSSignal*(self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string) =
+  proc resolvedENS*(
+    self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string
+  ) {.signal.}
+
+  proc emitResolvedENSSignal*(
+      self: View, resolvedPubKey: string, resolvedAddress: string, uuid: string
+  ) =
     self.resolvedENS(resolvedPubKey, resolvedAddress, uuid)
 
   proc openActivityCenter*(self: View) {.signal.}
@@ -284,7 +338,7 @@ QtObject:
     read = notificationAvailable
     notify = notificationAvailableChanged
 
-  proc displayUserProfile*(self:View, publicKey: string) {.signal.}
+  proc displayUserProfile*(self: View, publicKey: string) {.signal.}
   proc emitDisplayUserProfileSignal*(self: View, publicKey: string) =
     self.displayUserProfile(publicKey)
 
@@ -293,6 +347,7 @@ QtObject:
     if not module.isNil:
       return module
     return newQVariant()
+
   QtProperty[QVariant] keycardSharedModuleForAuthenticationOrSigning:
     read = getKeycardSharedModuleForAuthenticationOrSigning
 
@@ -304,6 +359,7 @@ QtObject:
     if not module.isNil:
       return module
     return newQVariant()
+
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
 
@@ -336,12 +392,19 @@ QtObject:
   proc showToastAccountAdded*(self: View, name: string) {.signal.}
   proc showToastAccountRemoved*(self: View, name: string) {.signal.}
   proc showToastKeypairRenamed*(self: View, oldName: string, newName: string) {.signal.}
-  proc showNetworkEndpointUpdated*(self: View, name: string, isTest: bool, revertedToDefault: bool) {.signal.}
+  proc showNetworkEndpointUpdated*(
+    self: View, name: string, isTest: bool, revertedToDefault: bool
+  ) {.signal.}
+
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
-  proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}
+  proc showToastKeypairsImported*(
+    self: View, keypairName: string, keypairsCount: int, error: string
+  ) {.signal.}
+
   proc showToastPairingFallbackCompleted*(self: View) {.signal.}
 
-  proc showTransactionToast*(self: View,
+  proc showTransactionToast*(
+    self: View,
     uuid: string,
     txType: int,
     fromChainId: int,
@@ -362,12 +425,21 @@ QtObject:
     publicKey: string,
     packId: string,
     status: string,
-    error: string) {.signal.}
+    error: string,
+  ) {.signal.}
 
   ## Used in test env only, for testing keycard flows
-  proc registerMockedKeycard*(self: View, cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) {.slot.} =
-    self.delegate.registerMockedKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+  proc registerMockedKeycard*(
+      self: View,
+      cardIndex: int,
+      readerState: int,
+      keycardState: int,
+      mockedKeycard: string,
+      mockedKeycardHelper: string,
+  ) {.slot.} =
+    self.delegate.registerMockedKeycard(
+      cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper
+    )
 
   proc pluginMockedReaderAction*(self: View) {.slot.} =
     self.delegate.pluginMockedReaderAction()
@@ -389,13 +461,20 @@ QtObject:
   proc addressWasShown*(self: View, address: string) {.slot.} =
     self.delegate.addressWasShown(address)
 
-  proc communityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string, membershipState: int) {.signal.}
+  proc communityMemberStatusEphemeralNotification*(
+    self: View, communityName: string, memberName: string, membershipState: int
+  ) {.signal.}
 
-  proc emitCommunityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string,
-    membershipState: int) =
-    self.communityMemberStatusEphemeralNotification(communityName, memberName, membershipState)
+  proc emitCommunityMemberStatusEphemeralNotification*(
+      self: View, communityName: string, memberName: string, membershipState: int
+  ) =
+    self.communityMemberStatusEphemeralNotification(
+      communityName, memberName, membershipState
+    )
 
-  proc startTokenHoldersManagement*(self: View, communityId: string, chainId: int, contractAddress: string) {.slot.} =
+  proc startTokenHoldersManagement*(
+      self: View, communityId: string, chainId: int, contractAddress: string
+  ) {.slot.} =
     self.delegate.startTokenHoldersManagement(communityId, chainId, contractAddress)
 
   proc stopTokenHoldersManagement*(self: View) {.slot.} =

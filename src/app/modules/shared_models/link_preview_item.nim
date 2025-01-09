@@ -1,13 +1,12 @@
 import stew/shims/strformat
 import ../../../app_service/service/message/dto/link_preview
 
-type
-  Item* = ref object
-    unfurled*: bool
-    immutable*: bool
-    isLocalData*: bool
-    loadingLocalData*: bool
-    linkPreview*: LinkPreview
+type Item* = ref object
+  unfurled*: bool
+  immutable*: bool
+  isLocalData*: bool
+  loadingLocalData*: bool
+  linkPreview*: LinkPreview
 
 proc delete*(self: Item) =
   self.linkPreview.delete
@@ -19,7 +18,8 @@ proc `linkPreview=`*(self: Item, linkPreview: LinkPreview) {.inline.} =
   self.linkPreview = linkPreview
 
 proc `$`*(self: Item): string =
-  result = fmt"""LinkPreviewItem(
+  result =
+    fmt"""LinkPreviewItem(
     unfurled: {self.unfurled},
     immutable: {self.immutable},
     linkPreview: {self.linkPreview},

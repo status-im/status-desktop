@@ -2,29 +2,27 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import result_item
 
-type
-  ModelRole {.pure.} = enum
-    ItemId = UserRole + 1
-    Content
-    Time
-    TitleId
-    Title
-    SectionName
-    Image
-    Color
-    BadgePrimaryText
-    BadgeSecondaryText
-    BadgeImage
-    BadgeIconColor
-    BadgeIsLetterIdenticon
-    IsUserIcon
-    ColorId
-    ColorHash
+type ModelRole {.pure.} = enum
+  ItemId = UserRole + 1
+  Content
+  Time
+  TitleId
+  Title
+  SectionName
+  Image
+  Color
+  BadgePrimaryText
+  BadgeSecondaryText
+  BadgeImage
+  BadgeIconColor
+  BadgeIsLetterIdenticon
+  IsUserIcon
+  ColorId
+  ColorHash
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      resultList: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    resultList: seq[Item]
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete
@@ -38,13 +36,15 @@ QtObject:
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.resultList.len:
-      result &= fmt"""SearchResultMessageModel:
+      result &=
+        fmt"""SearchResultMessageModel:
       [{i}]:({$self.resultList[i]})
       """
 
   proc countChanged*(self: Model) {.signal.}
-  proc count*(self: Model): int {.slot.}  =
+  proc count*(self: Model): int {.slot.} =
     self.resultList.len
+
   QtProperty[int] count:
     read = count
     notify = countChanged
@@ -54,22 +54,22 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.ItemId.int:"itemId",
-      ModelRole.Content.int:"content",
-      ModelRole.Time.int:"time",
-      ModelRole.TitleId.int:"titleId",
-      ModelRole.Title.int:"title",
-      ModelRole.SectionName.int:"sectionName",
-      ModelRole.Image.int:"image",
-      ModelRole.Color.int:"color",
-      ModelRole.BadgePrimaryText.int:"badgePrimaryText",
-      ModelRole.BadgeSecondaryText.int:"badgeSecondaryText",
-      ModelRole.BadgeImage.int:"badgeImage",
-      ModelRole.BadgeIconColor.int:"badgeIconColor",
-      ModelRole.BadgeIsLetterIdenticon.int:"badgeIsLetterIdenticon",
-      ModelRole.IsUserIcon.int:"isUserIcon",
-      ModelRole.ColorId.int:"colorId",
-      ModelRole.ColorHash.int:"colorHash"
+      ModelRole.ItemId.int: "itemId",
+      ModelRole.Content.int: "content",
+      ModelRole.Time.int: "time",
+      ModelRole.TitleId.int: "titleId",
+      ModelRole.Title.int: "title",
+      ModelRole.SectionName.int: "sectionName",
+      ModelRole.Image.int: "image",
+      ModelRole.Color.int: "color",
+      ModelRole.BadgePrimaryText.int: "badgePrimaryText",
+      ModelRole.BadgeSecondaryText.int: "badgeSecondaryText",
+      ModelRole.BadgeImage.int: "badgeImage",
+      ModelRole.BadgeIconColor.int: "badgeIconColor",
+      ModelRole.BadgeIsLetterIdenticon.int: "badgeIsLetterIdenticon",
+      ModelRole.IsUserIcon.int: "isUserIcon",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.ColorHash.int: "colorHash",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -82,7 +82,7 @@ QtObject:
     let item = self.resultList[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ItemId:
       result = newQVariant(item.itemId)
     of ModelRole.Content:
@@ -118,7 +118,8 @@ QtObject:
 
   proc add*(self: Model, item: Item) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
     self.beginInsertRows(modelIndex, self.resultList.len, self.resultList.len)
     self.resultList.add(item)
     self.endInsertRows()

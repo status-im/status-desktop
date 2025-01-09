@@ -2,20 +2,19 @@ import NimQml
 import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
-from ../../../app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
+from ../../../app_service/service/devices/dto/local_pairing_status import
+  LocalPairingStatus
 from ../../../app_service/service/settings/dto/settings import SettingsDto
 
 const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
-type
-  StartupErrorType* {.pure.} = enum
-    UnknownType = 0
-    ImportAccError
-    SetupAccError
-    ConvertToRegularAccError
+type StartupErrorType* {.pure.} = enum
+  UnknownType = 0
+  ImportAccError
+  SetupAccError
+  ConvertToRegularAccError
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -32,7 +31,9 @@ method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
 method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
+method onSharedKeycarModuleFlowTerminated*(
+    self: AccessInterface, lastStepInTheCurrentFlow: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method moveToLoadingAppState*(self: AccessInterface) {.base.} =
@@ -68,7 +69,9 @@ method startUpUIRaised*(self: AccessInterface) {.base.} =
 method emitLogOut*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method generateImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.base.} =
+method generateImage*(
+    self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCroppedProfileImage*(self: AccessInterface): string {.base.} =
@@ -95,19 +98,27 @@ method setPuk*(self: AccessInterface, value: string) {.base.} =
 method getPin*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPasswordStrengthScore*(self: AccessInterface, password: string, userName: string): int {.base.} =
+method getPasswordStrengthScore*(
+    self: AccessInterface, password: string, userName: string
+): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method emitStartupError*(self: AccessInterface, error: string, errType: StartupErrorType) {.base.} =
+method emitStartupError*(
+    self: AccessInterface, error: string, errType: StartupErrorType
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method validMnemonic*(self: AccessInterface, mnemonic: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setSelectedLoginAccount*(self: AccessInterface, item: login_acc_item.Item) {.base.} =
+method setSelectedLoginAccount*(
+    self: AccessInterface, item: login_acc_item.Item
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
+method onNodeLogin*(
+    self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onProfileConverted*(self: AccessInterface, success: bool) {.base.} =
@@ -116,16 +127,22 @@ method onProfileConverted*(self: AccessInterface, success: bool) {.base.} =
 method emitAccountLoginError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method emitObtainingPasswordError*(self: AccessInterface, errorDescription: string, errorType: string) {.base.} =
+method emitObtainingPasswordError*(
+    self: AccessInterface, errorDescription: string, errorType: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method emitObtainingPasswordSuccess*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
+method onKeycardResponse*(
+    self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkRepeatedKeycardPinWhileTyping*(self: AccessInterface, pin: string): bool {.base.} =
+method checkRepeatedKeycardPinWhileTyping*(
+    self: AccessInterface, pin: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getSeedPhrase*(self: AccessInterface): string {.base.} =
@@ -149,15 +166,23 @@ method syncKeycardBasedOnAppWalletStateAfterLogin*(self: AccessInterface) {.base
 method applyKeycardReplacementAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AccessInterface, oldKeycardUid: string,
-  newKeycardUid: string) {.base.} =
+method addToKeycardUidPairsToCheckForAChangeAfterLogin*(
+    self: AccessInterface, oldKeycardUid: string, newKeycardUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AccessInterface) {.base.} =
+method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(
+    self: AccessInterface
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgClock: uint64, section: string,
-  totalMessages: int, loadedMessages: int) {.base.} =
+method onFetchingFromWakuMessageReceived*(
+    self: AccessInterface,
+    backedUpMsgClock: uint64,
+    section: string,
+    totalMessages: int,
+    loadedMessages: int,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prepareAndInitFetchingData*(self: AccessInterface) {.base.} =
@@ -169,16 +194,20 @@ method finishAppLoading*(self: AccessInterface) {.base.} =
 method checkFetchingStatusAndProceed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getConnectionString*(self: AccessInterface): string {.base} =
+method getConnectionString*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setConnectionString*(self: AccessInterface, connectionString: string) {.base} =
+method setConnectionString*(self: AccessInterface, connectionString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validateLocalPairingConnectionString*(self: AccessInterface, connectionString: string): string {.base.} =
+method validateLocalPairingConnectionString*(
+    self: AccessInterface, connectionString: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
+method onLocalPairingStatusUpdate*(
+    self: AccessInterface, status: LocalPairingStatus
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onReencryptionProcessStarted*(self: AccessInterface) {.base.} =
@@ -188,8 +217,14 @@ method onReencryptionProcessFinished*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 ## Used in test env only, for testing keycard flows
-method registerMockedKeycard*(self: AccessInterface, cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) {.base.} =
+method registerMockedKeycard*(
+    self: AccessInterface,
+    cardIndex: int,
+    readerState: int,
+    keycardState: int,
+    mockedKeycard: string,
+    mockedKeycardHelper: string,
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method pluginMockedReaderAction*(self: AccessInterface) {.base.} =
@@ -220,13 +255,13 @@ method notifyLoggedInAccountChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
-type
-  DelegateInterface* = concept c
-    c.startupDidLoad()
-    c.userLoggedIn()
-    c.finishAppLoading()
-    c.appReady()
-    c.syncKeycardBasedOnAppWalletStateAfterLogin()
-    c.applyKeycardReplacementAfterLogin()
-    c.addToKeycardUidPairsToCheckForAChangeAfterLogin(string, string)
-    c.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
+type DelegateInterface* =
+  concept c
+      c.startupDidLoad()
+      c.userLoggedIn()
+      c.finishAppLoading()
+      c.appReady()
+      c.syncKeycardBasedOnAppWalletStateAfterLogin()
+      c.applyKeycardReplacementAfterLogin()
+      c.addToKeycardUidPairsToCheckForAChangeAfterLogin(string, string)
+      c.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()

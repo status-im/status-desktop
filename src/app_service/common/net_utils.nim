@@ -4,7 +4,8 @@ import net
 proc isPortBusy*(port: Port): bool =
   result = false
   let socket = newSocket()
-  defer: socket.close()
+  defer:
+    socket.close()
 
   try:
     socket.connect("localhost", port)

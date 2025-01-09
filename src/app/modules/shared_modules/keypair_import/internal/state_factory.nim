@@ -34,4 +34,5 @@ proc createState*(stateToBeCreated: StateType, backState: State): State =
   if stateToBeCreated == StateType.DisplayInstructions:
     return newDisplayInstructionsState(backState)
 
-  error "Keypair import - no implementation available for state", state=stateToBeCreated
+  error "Keypair import - no implementation available for state",
+    state = stateToBeCreated

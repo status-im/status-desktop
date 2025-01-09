@@ -8,54 +8,52 @@ import ../../global/global_singleton
 import ../../../app_service/common/types
 import ../../../app_service/service/community_tokens/community_collectible_owner
 
-type
-  SectionType* {.pure.} = enum
-    Wallet = 0,
-    Chat,
-    Community,
-    ProfileSettings,
-    NodeManagement,
-    CommunitiesPortal,
-    LoadingSection,
+type SectionType* {.pure.} = enum
+  Wallet = 0
+  Chat
+  Community
+  ProfileSettings
+  NodeManagement
+  CommunitiesPortal
+  LoadingSection
 
-type
-  SectionItem* = object
-    sectionType: SectionType
-    id: string
-    name: string
-    memberRole: MemberRole
-    isControlNode: bool
-    description: string
-    introMessage: string
-    outroMessage: string
-    image: string
-    bannerImageData: string
-    icon: string
-    color: string
-    tags: string
-    hasNotification: bool
-    notificationsCount: int
-    active: bool
-    enabled: bool
-    isMember: bool
-    joined: bool
-    canJoin: bool
-    spectated: bool
-    canManageUsers: bool
-    canRequestAccess: bool
-    access: int
-    ensOnly: bool
-    muted: bool
-    membersModel: member_model.Model
-    historyArchiveSupportEnabled: bool
-    pinMessageAllMembersEnabled: bool
-    encrypted: bool
-    communityTokensModel: community_tokens_model.TokenModel
-    pubsubTopic: string
-    pubsubTopicKey: string
-    shardIndex: int
-    isPendingOwnershipRequest: bool
-    activeMembersCount: int
+type SectionItem* = object
+  sectionType: SectionType
+  id: string
+  name: string
+  memberRole: MemberRole
+  isControlNode: bool
+  description: string
+  introMessage: string
+  outroMessage: string
+  image: string
+  bannerImageData: string
+  icon: string
+  color: string
+  tags: string
+  hasNotification: bool
+  notificationsCount: int
+  active: bool
+  enabled: bool
+  isMember: bool
+  joined: bool
+  canJoin: bool
+  spectated: bool
+  canManageUsers: bool
+  canRequestAccess: bool
+  access: int
+  ensOnly: bool
+  muted: bool
+  membersModel: member_model.Model
+  historyArchiveSupportEnabled: bool
+  pinMessageAllMembersEnabled: bool
+  encrypted: bool
+  communityTokensModel: community_tokens_model.TokenModel
+  pubsubTopic: string
+  pubsubTopicKey: string
+  shardIndex: int
+  isPendingOwnershipRequest: bool
+  activeMembersCount: int
 
 proc initItem*(
     id: string,
@@ -94,7 +92,7 @@ proc initItem*(
     shardIndex = -1,
     isPendingOwnershipRequest: bool = false,
     activeMembersCount: int = 0,
-    ): SectionItem =
+): SectionItem =
   result.id = id
   result.sectionType = sectionType
   result.name = name
@@ -138,7 +136,8 @@ proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
 
 proc `$`*(self: SectionItem): string =
-  result = fmt"""SectionItem(
+  result =
+    fmt"""SectionItem(
     id: {self.id},
     sectionType: {self.sectionType.int},
     name: {self.name},
@@ -335,7 +334,9 @@ proc members*(self: SectionItem): member_model.Model {.inline.} =
 proc hasMember*(self: SectionItem, pubkey: string): bool =
   self.membersModel.isContactWithIdAdded(pubkey)
 
-proc setOnlineStatusForMember*(self: SectionItem, pubKey: string, onlineStatus: OnlineStatus) =
+proc setOnlineStatusForMember*(
+    self: SectionItem, pubKey: string, onlineStatus: OnlineStatus
+) =
   self.membersModel.setOnlineStatus(pubkey, onlineStatus)
 
 proc amIBanned*(self: SectionItem): bool {.inline.} =
@@ -371,40 +372,85 @@ proc `encrypted=`*(self: var SectionItem, value: bool) {.inline.} =
 proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
   self.communityTokensModel.appendItem(item)
 
-proc removeCommunityToken*(self: SectionItem, chainId: int, contractAddress: string) {.inline.} =
+proc removeCommunityToken*(
+    self: SectionItem, chainId: int, contractAddress: string
+) {.inline.} =
   self.communityTokensModel.removeItemByChainIdAndAddress(chainId, contractAddress)
 
-proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
+proc updateCommunityTokenDeployState*(
+    self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState
+) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 
-proc updateCommunityTokenAddress*(self: SectionItem, chainId: int, oldContractAddress: string, newContractAddress: string) {.inline.} =
-  self.communityTokensModel.updateAddress(chainId, oldContractAddress, newContractAddress)
+proc updateCommunityTokenAddress*(
+    self: SectionItem,
+    chainId: int,
+    oldContractAddress: string,
+    newContractAddress: string,
+) {.inline.} =
+  self.communityTokensModel.updateAddress(
+    chainId, oldContractAddress, newContractAddress
+  )
 
-proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: Uint256, destructedAmount: Uint256) {.inline.} =
-  self.communityTokensModel.updateSupply(chainId, contractAddress, supply, destructedAmount)
+proc updateCommunityTokenSupply*(
+    self: SectionItem,
+    chainId: int,
+    contractAddress: string,
+    supply: Uint256,
+    destructedAmount: Uint256,
+) {.inline.} =
+  self.communityTokensModel.updateSupply(
+    chainId, contractAddress, supply, destructedAmount
+  )
 
-proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: Uint256) {.inline.} =
-  self.communityTokensModel.updateRemainingSupply(chainId, contractAddress, remainingSupply)
+proc updateCommunityRemainingSupply*(
+    self: SectionItem, chainId: int, contractAddress: string, remainingSupply: Uint256
+) {.inline.} =
+  self.communityTokensModel.updateRemainingSupply(
+    chainId, contractAddress, remainingSupply
+  )
 
-proc updateBurnState*(self: SectionItem, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.inline.} =
+proc updateBurnState*(
+    self: SectionItem,
+    chainId: int,
+    contractAddress: string,
+    burnState: ContractTransactionStatus,
+) {.inline.} =
   self.communityTokensModel.updateBurnState(chainId, contractAddress, burnState)
 
-proc updateRemoteDestructedAddresses*(self: SectionItem, chainId: int, contractAddress: string, addresess: seq[string]) {.inline.} =
-  self.communityTokensModel.updateRemoteDestructedAddresses(chainId, contractAddress, addresess)
+proc updateRemoteDestructedAddresses*(
+    self: SectionItem, chainId: int, contractAddress: string, addresess: seq[string]
+) {.inline.} =
+  self.communityTokensModel.updateRemoteDestructedAddresses(
+    chainId, contractAddress, addresess
+  )
 
-proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.inline.} =
+proc setCommunityTokenOwners*(
+    self: SectionItem,
+    chainId: int,
+    contractAddress: string,
+    owners: seq[CommunityCollectibleOwner],
+) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 
-proc setCommunityTokenHoldersLoading*(self: SectionItem, chainId: int, contractAddress: string, value: bool) {.inline.} =
-  self.communityTokensModel.setCommunityTokenHoldersLoading(chainId, contractAddress, value)
+proc setCommunityTokenHoldersLoading*(
+    self: SectionItem, chainId: int, contractAddress: string, value: bool
+) {.inline.} =
+  self.communityTokensModel.setCommunityTokenHoldersLoading(
+    chainId, contractAddress, value
+  )
 
 proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =
   self.communityTokensModel
 
-proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
+proc updatePendingRequestLoadingState*(
+    self: SectionItem, memberKey: string, loading: bool
+) {.inline.} =
   self.membersModel.updateLoadingState(memberKey, loading)
 
-proc updateMembershipStatus*(self: SectionItem, memberKey: string, state: MembershipRequestState) {.inline.} =
+proc updateMembershipStatus*(
+    self: SectionItem, memberKey: string, state: MembershipRequestState
+) {.inline.} =
   self.membersModel.updateMembershipStatus(memberKey, state)
 
 proc pubsubTopic*(self: SectionItem): string {.inline.} =

@@ -2,8 +2,7 @@ import NimQml
 import app/modules/shared_modules/keypair_import/module as keypair_import_module
 import app_service/service/devices/service as devices_service
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -43,13 +42,17 @@ method onKeypairImportModuleLoaded*(self: AccessInterface) {.base.} =
 method destroyKeypairImportPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runKeypairImportPopup*(self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode) {.base.} =
+method runKeypairImportPopup*(
+    self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasPairedDevices*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onLocalPairingStatusUpdate*(self: AccessInterface, data: LocalPairingStatus) {.base.} =
+method onLocalPairingStatusUpdate*(
+    self: AccessInterface, data: LocalPairingStatus
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getRpcStats*(self: AccessInterface): string {.base.} =

@@ -1,7 +1,8 @@
-type
-  SeedPhraseDisplayState* = ref object of State
+type SeedPhraseDisplayState* = ref object of State
 
-proc newSeedPhraseDisplayState*(flowType: FlowType, backState: State): SeedPhraseDisplayState =
+proc newSeedPhraseDisplayState*(
+    flowType: FlowType, backState: State
+): SeedPhraseDisplayState =
   result = SeedPhraseDisplayState()
   result.setup(flowType, StateType.SeedPhraseDisplay, backState)
 
@@ -10,8 +11,10 @@ proc delete*(self: SeedPhraseDisplayState) =
 
 method executeCancelCommand*(self: SeedPhraseDisplayState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard or
-    self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-      controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
+      self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
+    controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method getNextPrimaryState*(self: SeedPhraseDisplayState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: SeedPhraseDisplayState, controller: Controller
+): State =
   return createState(StateType.SeedPhraseEnterWords, self.flowType, self)

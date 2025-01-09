@@ -1,5 +1,4 @@
-type
-  NotificationState* = ref object of State
+type NotificationState* = ref object of State
 
 proc newNotificationState*(flowType: FlowType, backState: State): NotificationState =
   result = NotificationState()

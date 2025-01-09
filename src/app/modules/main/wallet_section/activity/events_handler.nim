@@ -8,17 +8,16 @@ import app/core/signals/types
 
 import backend/activity as backend_activity
 
-type EventCallbackProc = proc (eventObject: JsonNode)
+type EventCallbackProc = proc(eventObject: JsonNode)
 
 # EventsHandler responsible for catching activity related backend events and reporting them
 # Events are processed on the main thread and don't overlap with UI calls; see src/app/core/signals/signals_manager.nim
 QtObject:
-  type
-    EventsHandler* = ref object of QObject
-      events: EventEmitter
-      eventHandlers: Table[string, EventCallbackProc]
+  type EventsHandler* = ref object of QObject
+    events: EventEmitter
+    eventHandlers: Table[string, EventCallbackProc]
 
-      sessionId: Option[int32]
+    sessionId: Option[int32]
 
   proc setup(self: EventsHandler) =
     self.QObject.setup
@@ -70,8 +69,10 @@ QtObject:
 
     # Register for wallet events
     let eventsHandler = result
-    result.events.on(SignalType.Wallet.event, proc(e: Args) =
-        eventsHandler.handleApiEvents(e)
+    result.events.on(
+      SignalType.Wallet.event,
+      proc(e: Args) =
+        eventsHandler.handleApiEvents(e),
     )
 
   proc getSessionId*(self: EventsHandler): int32 =
@@ -85,4 +86,3 @@ QtObject:
 
   proc clearSessionId*(self: EventsHandler) =
     self.sessionId = none(int32)
-

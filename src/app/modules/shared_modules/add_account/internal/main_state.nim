@@ -1,5 +1,4 @@
-type
-  MainState* = ref object of State
+type MainState* = ref object of State
 
 proc newMainState*(backState: State): MainState =
   result = MainState()
@@ -7,7 +6,7 @@ proc newMainState*(backState: State): MainState =
 
 proc delete*(self: MainState) =
   self.State.delete
-  
+
 method executePrePrimaryStateCommand*(self: MainState, controller: Controller) =
   controller.finalizeAction()
 

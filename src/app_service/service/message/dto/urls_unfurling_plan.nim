@@ -1,7 +1,7 @@
 import json, stew/shims/strformat, chronicles, Tables
 include ../../../common/json_utils
 
-type 
+type
   UrlUnfurlingPermission* {.pure.} = enum
     UrlUnfurlingAllowed = 0
     UrlUnfurlingAskUser
@@ -39,7 +39,7 @@ proc toUrlUnfurlingMetadata*(jsonObj: JsonNode): UrlUnfurlingMetadata =
 
 proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
   result = UrlsUnfurlingPlan()
-  
+
   if jsonObj.kind != JObject:
     warn "node is not an object", source = "toUrlUnfurlingPlan"
     return
@@ -56,7 +56,8 @@ proc toUrlUnfurlingPlan*(jsonObj: JsonNode): UrlsUnfurlingPlan =
 proc `$`*(self: UrlUnfurlingMetadata): string =
   if self == nil:
     return "nil"
-  return fmt"""UrlUnfurlingMetadata( permission: {self.permission}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
+  return
+    fmt"""UrlUnfurlingMetadata( permission: {self.permission}, isStatusSharedUrl: {self.isStatusSharedUrl} )"""
 
 proc `$`*(self: UrlsUnfurlingPlan): string =
   if self == nil:
@@ -64,8 +65,10 @@ proc `$`*(self: UrlsUnfurlingPlan): string =
 
   var rows = ""
   for url, metadata in self.urls:
-    rows = fmt"""{rows}
+    rows =
+      fmt"""{rows}
     url: {url}, metadata: {metadata}"""
 
-  result = fmt"""UrlsUnfurlingPlan({rows}
-  )""" 
+  result =
+    fmt"""UrlsUnfurlingPlan({rows}
+  )"""

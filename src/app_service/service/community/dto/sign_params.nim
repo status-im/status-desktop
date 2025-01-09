@@ -14,8 +14,4 @@ proc toSignParamsDto*(jsonObj: JsonNode): SignParamsDto =
   discard jsonObj.getProp("password", result.password)
 
 proc toJson*(self: SignParamsDto): JsonNode =
-  return %* {
-    "data": $self.data,
-    "account": $self.address,
-    "password": $self.password
-  }
+  return %*{"data": $self.data, "account": $self.address, "password": $self.password}

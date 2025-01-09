@@ -2,14 +2,12 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import ./suggested_route_item
 
-type
-  ModelRole {.pure.} = enum
-    Route = UserRole + 1,
+type ModelRole {.pure.} = enum
+  Route = UserRole + 1
 
 QtObject:
-  type
-    SuggestedRouteModel* = ref object of QAbstractListModel
-      items*: seq[SuggestedRouteItem]
+  type SuggestedRouteModel* = ref object of QAbstractListModel
+    items*: seq[SuggestedRouteItem]
 
   proc delete(self: SuggestedRouteModel) =
     self.items = @[]
@@ -45,9 +43,7 @@ QtObject:
     return self.items.len
 
   method roleNames(self: SuggestedRouteModel): Table[int, string] =
-    {
-      ModelRole.Route.int:"route",
-    }.toTable
+    {ModelRole.Route.int: "route"}.toTable
 
   proc setItems*(self: SuggestedRouteModel, items: seq[SuggestedRouteItem]) =
     self.beginResetModel()
@@ -65,6 +61,6 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Route:
       result = newQVariant(item)

@@ -1,5 +1,4 @@
-type
-  LoginState* = ref object of State
+type LoginState* = ref object of State
 
 proc newLoginState*(flowType: FlowType, backState: State): LoginState =
   result = LoginState()
@@ -39,6 +38,12 @@ method getNextQuinaryState*(self: LoginState, controller: Controller): State =
     controller.cancelCurrentFlow()
     return createState(StateType.LostKeycardOptions, self.flowType, self)
 
-method resolveKeycardNextState*(self: LoginState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: LoginState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  return ensureReaderAndCardPresenceAndResolveNextLoginState(
+    self, keycardFlowType, keycardEvent, controller
+  )

@@ -21,34 +21,44 @@ type NetworkEndpointUpdatedArgs* = ref object of Args
   networkName*: string
   revertedToDefault*: bool
 
-type
-  Service* = ref object of RootObj
-    events: EventEmitter
-    combinedNetworks: seq[CombinedNetworkItem]
-    flatNetworks: seq[NetworkItem]
-    settingsService: settings_service.Service
+type Service* = ref object of RootObj
+  events: EventEmitter
+  combinedNetworks: seq[CombinedNetworkItem]
+  flatNetworks: seq[NetworkItem]
+  settingsService: settings_service.Service
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(events: EventEmitter, settingsService: settings_service.Service): Service =
+proc newService*(
+    events: EventEmitter, settingsService: settings_service.Service
+): Service =
   result = Service()
   result.events = events
   result.settingsService = settingsService
 
-proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
+proc fetchNetworks*(self: Service): seq[CombinedNetworkItem] =
   let response = backend.getEthereumChains()
   if not response.error.isNil:
-    raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
-  let combinedNetworksDto = if response.result.isNil or response.result.kind == JNull: @[]
-            else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
+    raise newException(
+      Exception, "Error getting combinedNetworks: " & response.error.message
+    )
+  let combinedNetworksDto =
+    if response.result.isNil or response.result.kind == JNull:
+      @[]
+    else:
+      Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
   result = combinedNetworksDto.map(x => x.combinedNetworkDtoToCombinedItem())
   self.combinedNetworks = result
-  let allTestEnabled = self.combinedNetworks.filter(n => n.test.isEnabled).len == self.combinedNetworks.len
-  let allProdEnabled = self.combinedNetworks.filter(n => n.prod.isEnabled).len == self.combinedNetworks.len
+  let allTestEnabled =
+    self.combinedNetworks.filter(n => n.test.isEnabled).len == self.combinedNetworks.len
+  let allProdEnabled =
+    self.combinedNetworks.filter(n => n.prod.isEnabled).len == self.combinedNetworks.len
   for n in self.combinedNetworks:
-    n.test.enabledState = networkEnabledToUxEnabledState(n.test.isEnabled, allTestEnabled)
-    n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.isEnabled, allProdEnabled)
+    n.test.enabledState =
+      networkEnabledToUxEnabledState(n.test.isEnabled, allTestEnabled)
+    n.prod.enabledState =
+      networkEnabledToUxEnabledState(n.prod.isEnabled, allProdEnabled)
   self.flatNetworks = @[]
   for network in self.combinedNetworks:
     self.flatNetworks.add(network.test)
@@ -78,43 +88,47 @@ proc getEnabledChainIds*(self: Service): seq[int] =
   return self.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
 
 proc upsertNetwork*(self: Service, network: NetworkItem): bool =
-  let response = backend.addEthereumChain(backend.Network(
-    chainId: network.chainId,
-    nativeCurrencyDecimals: network.nativeCurrencyDecimals,
-    layer: network.layer,
-    chainName: network.chainName,
-    rpcURL: network.rpcURL,
-    originalRpcURL: network.originalRpcURL,
-    fallbackURL: network.fallbackURL,
-    originalFallbackURL: network.originalFallbackURL,
-    blockExplorerURL: network.blockExplorerURL,
-    iconURL: network.iconURL,
-    nativeCurrencyName: network.nativeCurrencyName,
-    nativeCurrencySymbol: network.nativeCurrencySymbol,
-    isTest: network.isTest,
-    enabled: network.isEnabled,
-    chainColor: network.chainColor,
-    shortName: network.shortName,
-    relatedChainID: network.relatedChainId
-  ))
+  let response = backend.addEthereumChain(
+    backend.Network(
+      chainId: network.chainId,
+      nativeCurrencyDecimals: network.nativeCurrencyDecimals,
+      layer: network.layer,
+      chainName: network.chainName,
+      rpcURL: network.rpcURL,
+      originalRpcURL: network.originalRpcURL,
+      fallbackURL: network.fallbackURL,
+      originalFallbackURL: network.originalFallbackURL,
+      blockExplorerURL: network.blockExplorerURL,
+      iconURL: network.iconURL,
+      nativeCurrencyName: network.nativeCurrencyName,
+      nativeCurrencySymbol: network.nativeCurrencySymbol,
+      isTest: network.isTest,
+      enabled: network.isEnabled,
+      chainColor: network.chainColor,
+      shortName: network.shortName,
+      relatedChainID: network.relatedChainId,
+    )
+  )
   return response.error == nil
 
 proc deleteNetwork*(self: Service, network: NetworkItem) =
   discard backend.deleteEthereumChain(network.chainId)
 
-proc getNetworkByChainId*(self: Service, chainId: int, testNetworksEnabled: bool): NetworkItem =
+proc getNetworkByChainId*(
+    self: Service, chainId: int, testNetworksEnabled: bool
+): NetworkItem =
   var networks = self.combinedNetworks
   if self.combinedNetworks.len == 0:
     networks = self.fetchNetworks()
   for network in networks:
-    let net = if testNetworksEnabled: network.test
-              else: network.prod
+    let net = if testNetworksEnabled: network.test else: network.prod
     if chainId == net.chainId:
-        return net
+      return net
   return nil
 
 proc getNetworkByChainId*(self: Service, chainId: int): NetworkItem =
-  return self.getNetworkByChainId(chainId, self.settingsService.areTestNetworksEnabled())
+  return
+    self.getNetworkByChainId(chainId, self.settingsService.areTestNetworksEnabled())
 
 proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
   for chainId in chainIds:
@@ -149,7 +163,13 @@ proc getAppNetwork*(self: Service): NetworkItem =
     quit() # quit the app
   return network
 
-proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+proc updateNetworkEndPointValues*(
+    self: Service,
+    chainId: int,
+    testNetwork: bool,
+    newMainRpcInput, newFailoverRpcUrl: string,
+    revertToDefault: bool,
+) =
   let network = self.getNetworkByChainId(chainId, testNetwork)
 
   if not network.isNil:
@@ -160,4 +180,11 @@ proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool
       network.fallbackURL = newFailoverRpcUrl
 
     if self.upsertNetwork(network):
-      self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName, revertedToDefault: revertToDefault))
+      self.events.emit(
+        SIGNAL_NETWORK_ENDPOINT_UPDATED,
+        NetworkEndpointUpdatedArgs(
+          isTest: network.isTest,
+          networkName: network.chainName,
+          revertedToDefault: revertToDefault,
+        ),
+      )

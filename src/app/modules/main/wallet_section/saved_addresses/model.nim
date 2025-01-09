@@ -5,19 +5,17 @@ import app_service/common/account_constants
 
 export item
 
-type
-  ModelRole {.pure.} = enum
-    Name = UserRole + 1,
-    Address
-    MixedcaseAddress
-    Ens
-    ColorId
-    IsTest
+type ModelRole {.pure.} = enum
+  Name = UserRole + 1
+  Address
+  MixedcaseAddress
+  Ens
+  ColorId
+  IsTest
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -49,12 +47,12 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"name",
-      ModelRole.Address.int:"address",
-      ModelRole.MixedcaseAddress.int:"mixedcaseAddress",
-      ModelRole.Ens.int:"ens",
-      ModelRole.ColorId.int:"colorId",
-      ModelRole.IsTest.int:"isTest",
+      ModelRole.Name.int: "name",
+      ModelRole.Address.int: "address",
+      ModelRole.MixedcaseAddress.int: "mixedcaseAddress",
+      ModelRole.Ens.int: "ens",
+      ModelRole.ColorId.int: "colorId",
+      ModelRole.IsTest.int: "isTest",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -67,7 +65,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Name:
       result = newQVariant(item.getName())
     of ModelRole.Address:
@@ -88,19 +86,17 @@ QtObject:
     self.countChanged()
 
     for item in items:
-        self.itemChanged(item.getAddress())
+      self.itemChanged(item.getAddress())
 
   proc getItemByAddress*(self: Model, address: string, isTest: bool): Item =
     if address.len == 0 or address == ZERO_ADDRESS:
       return
     for item in self.items:
-      if cmpIgnoreCase(item.getAddress(), address) == 0 and
-        (item.getIsTest() == isTest):
-          return item
+      if cmpIgnoreCase(item.getAddress(), address) == 0 and (item.getIsTest() == isTest):
+        return item
 
   proc nameExists*(self: Model, name: string, isTest: bool): bool =
     for item in self.items:
-      if item.getName() == name and
-        (item.getIsTest() == isTest):
-          return true
+      if item.getName() == name and (item.getIsTest() == isTest):
+        return true
     return false

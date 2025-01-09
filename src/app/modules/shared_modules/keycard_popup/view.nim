@@ -4,23 +4,25 @@ import internal/[state, state_wrapper]
 import ../../shared_models/[keypair_model, keypair_item]
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      returnToFlow: FlowType
-      forceFlow: bool # used to disable any possibility of closing the popup, the user is forced to complete the flow or forcibly close the app (no other way to close the popup)
-      disablePopup: bool # used to disable popup after each action, to block users do multiple clikcs which the action is ongoing
-      currentState: StateWrapper
-      currentStateVariant: QVariant
-      keyPairModel: KeyPairModel
-      keyPairModelVariant: QVariant
-      keyPairStoredOnKeycardIsKnown: bool
-      keyPairHelper: KeyPairItem
-      keyPairHelperVariant: QVariant
-      keyPairForProcessing: KeyPairItem
-      keyPairForProcessingVariant: QVariant
-      keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
-      remainingAttempts: int
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    returnToFlow: FlowType
+    forceFlow: bool
+      # used to disable any possibility of closing the popup, the user is forced to complete the flow or forcibly close the app (no other way to close the popup)
+    disablePopup: bool
+      # used to disable popup after each action, to block users do multiple clikcs which the action is ongoing
+    currentState: StateWrapper
+    currentStateVariant: QVariant
+    keyPairModel: KeyPairModel
+    keyPairModelVariant: QVariant
+    keyPairStoredOnKeycardIsKnown: bool
+    keyPairHelper: KeyPairItem
+    keyPairHelperVariant: QVariant
+    keyPairForProcessing: KeyPairItem
+    keyPairForProcessingVariant: QVariant
+    keycardData: string
+      # used to temporary store the data coming from keycard, depends on current state different data may be stored
+    remainingAttempts: int
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -50,20 +52,35 @@ QtObject:
     result.forceFlow = false
     result.disablePopup = false
 
-    signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
-    signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
-    signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
-    signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
-    signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
+    signalConnect(
+      result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2
+    )
+    signalConnect(
+      result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()",
+      2,
+    )
+    signalConnect(
+      result.currentState, "secondaryActionClicked()", result,
+      "onSecondaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentState, "tertiaryActionClicked()", result,
+      "onTertiaryActionClicked()", 2,
+    )
 
   proc returnToFlowChanged*(self: View) {.signal.}
   proc getReturnToFlowStr(self: View): string {.slot.} =
     return $self.returnToFlow
+
   QtProperty[string] returnToFlow:
     read = getReturnToFlowStr
     notify = returnToFlowChanged
   proc getReturnToFlow*(self: View): FlowType =
     return self.returnToFlow
+
   proc setReturnToFlow*(self: View, value: FlowType) =
     self.returnToFlow = value
     self.returnToFlowChanged()
@@ -71,6 +88,7 @@ QtObject:
   proc forceFlowChanged*(self: View) {.signal.}
   proc getForceFlow*(self: View): bool {.slot.} =
     return self.forceFlow
+
   QtProperty[bool] forceFlow:
     read = getForceFlow
     notify = forceFlowChanged
@@ -81,6 +99,7 @@ QtObject:
   proc diablePopupChanged*(self: View) {.signal.}
   proc getDisablePopup*(self: View): bool {.slot.} =
     return self.disablePopup
+
   QtProperty[bool] disablePopup:
     read = getDisablePopup
     notify = diablePopupChanged
@@ -94,8 +113,10 @@ QtObject:
   proc setCurrentState*(self: View, state: State) =
     self.setDisablePopup(false)
     self.currentState.setStateObj(state)
+
   proc getCurrentState(self: View): QVariant {.slot.} =
     return self.currentStateVariant
+
   QtProperty[QVariant] currentState:
     read = getCurrentState
 
@@ -105,8 +126,10 @@ QtObject:
       return
     self.keycardData = value
     self.keycardDataChanged()
+
   proc getKeycardData*(self: View): string {.slot.} =
     return self.keycardData
+
   QtProperty[string] keycardData:
     read = getKeycardData
     write = setKeycardData
@@ -118,8 +141,10 @@ QtObject:
       return
     self.remainingAttempts = value
     self.remainingAttemptsChanged()
+
   proc getRemainingAttempts*(self: View): int {.slot.} =
     return self.remainingAttempts
+
   QtProperty[int] remainingAttempts:
     read = getRemainingAttempts
     notify = remainingAttemptsChanged
@@ -147,6 +172,7 @@ QtObject:
     if self.keyPairModelVariant.isNil:
       return newQVariant()
     return self.keyPairModelVariant
+
   QtProperty[QVariant] keyPairModel:
     read = getKeyPairModel
     notify = keyPairModelChanged
@@ -165,6 +191,7 @@ QtObject:
 
   proc getKeyPairStoredOnKeycardIsKnown*(self: View): bool {.slot.} =
     return self.keyPairStoredOnKeycardIsKnown
+
   QtProperty[bool] keyPairStoredOnKeycardIsKnown:
     read = getKeyPairStoredOnKeycardIsKnown
   proc setKeyPairStoredOnKeycardIsKnown*(self: View, value: bool) =
@@ -172,10 +199,12 @@ QtObject:
 
   proc getKeyPairForProcessing*(self: View): KeyPairItem =
     return self.keyPairForProcessing
+
   proc getKeyPairForProcessingAsVariant*(self: View): QVariant {.slot.} =
     if self.keyPairForProcessingVariant.isNil:
       return newQVariant()
     return self.keyPairForProcessingVariant
+
   QtProperty[QVariant] keyPairForProcessing:
     read = getKeyPairForProcessingAsVariant
   proc setKeyPairForProcessing*(self: View, item: KeyPairItem) =
@@ -184,6 +213,7 @@ QtObject:
     if self.keyPairForProcessingVariant.isNil:
       self.keyPairForProcessingVariant = newQVariant(self.keyPairForProcessing)
     self.keyPairForProcessing.setItem(item)
+
   proc setLockedPropForKeyPairForProcessing*(self: View, locked: bool) =
     if self.keyPairForProcessing.isNil:
       return
@@ -191,10 +221,12 @@ QtObject:
 
   proc getKeyPairHelper*(self: View): KeyPairItem =
     return self.keyPairHelper
+
   proc getKeyPairHelperAsVariant*(self: View): QVariant {.slot.} =
     if self.keyPairHelperVariant.isNil:
       return newQVariant()
     return self.keyPairHelperVariant
+
   QtProperty[QVariant] keyPairHelper:
     read = getKeyPairHelperAsVariant
   proc setKeyPairHelper*(self: View, item: KeyPairItem) =

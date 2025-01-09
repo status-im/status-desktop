@@ -9,9 +9,7 @@ type Filter* = ref object
   allChainsEnabled*: bool
   isDirty*: bool
 
-proc initFilter*(
-  controller: controller.Controller
-): Filter =
+proc initFilter*(controller: controller.Controller): Filter =
   result = Filter()
   result.controller = controller
   result.addresses = @[]
@@ -20,7 +18,8 @@ proc initFilter*(
   result.isDirty = true
 
 proc `$`*(self: Filter): string =
-  result = fmt"""WalletFilter(
+  result =
+    fmt"""WalletFilter(
     addresses: {self.addresses},
     chainIds: {self.chainIds},
     )"""
@@ -46,7 +45,8 @@ proc removeAddress*(self: Filter, address: string) =
 
 proc updateNetworks*(self: Filter) =
   self.chainIds = self.controller.getEnabledChainIds()
-  self.allChainsEnabled = (self.chainIds.len == self.controller.getCurrentNetworks().len)
+  self.allChainsEnabled =
+    (self.chainIds.len == self.controller.getCurrentNetworks().len)
   self.isDirty = true
 
 proc load*(self: Filter) =

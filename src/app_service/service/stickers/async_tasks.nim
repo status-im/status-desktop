@@ -4,6 +4,7 @@ include ../../../app/core/tasks/common
 type
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
+
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
     packId*: string
     chainId*: int
@@ -17,10 +18,7 @@ proc asyncGetRecentStickersTask(argEncoded: string) {.gcsafe, nimcall.} =
     let response = status_stickers.recent()
     arg.finish(response)
   except Exception as e:
-    arg.finish(%* {
-      "error": e.msg,
-    })
-
+    arg.finish(%*{"error": e.msg})
 
 proc asyncGetInstalledStickerPacksTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetInstalledStickerPacksTaskArg](argEncoded)
@@ -28,16 +26,16 @@ proc asyncGetInstalledStickerPacksTask(argEncoded: string) {.gcsafe, nimcall.} =
     let response = status_stickers.installed()
     arg.finish(response)
   except Exception as e:
-    arg.finish(%* {
-      "error": e.msg,
-    })
+    arg.finish(%*{"error": e.msg})
 
-proc getMarketStickerPacks*(chainId: int):
-    tuple[stickers: Table[string, StickerPackDto], error: string] =
+proc getMarketStickerPacks*(
+    chainId: int
+): tuple[stickers: Table[string, StickerPackDto], error: string] =
   result = (initTable[string, StickerPackDto](), "")
   try:
     let marketResponse = status_stickers.market(chainId)
-    if marketResponse.result.kind != JArray: return
+    if marketResponse.result.kind != JArray:
+      return
     for currItem in marketResponse.result.items():
       let stickerPack = currItem.toStickerPackDto()
       result.stickers[stickerPack.id] = stickerPack
@@ -70,13 +68,12 @@ proc installStickerPackTask(argEncoded: string) {.gcsafe, nimcall.} =
   let tpl: tuple[packId: string, installed: bool] = (arg.packId, installed)
   arg.finish(tpl)
 
-type
-  AsyncSendStickerTaskArg = ref object of QObjectTaskArg
-    chatId: string
-    replyTo: string
-    stickerHash: string
-    stickerPackId: string
-    preferredUsername: string
+type AsyncSendStickerTaskArg = ref object of QObjectTaskArg
+  chatId: string
+  replyTo: string
+  stickerHash: string
+  stickerPackId: string
+  preferredUsername: string
 
 const asyncSendStickerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncSendStickerTaskArg](argEncoded)
@@ -95,13 +92,6 @@ const asyncSendStickerTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
       arg.stickerPackId,
     )
 
-    arg.finish(%* {
-      "response": response,
-      "chatId": arg.chatId,
-      "error": "",
-    })
+    arg.finish(%*{"response": response, "chatId": arg.chatId, "error": ""})
   except Exception as e:
-    arg.finish(%* {
-      "error": e.msg,
-      "chatId": arg.chatId,
-    })
+    arg.finish(%*{"error": e.msg, "chatId": arg.chatId})

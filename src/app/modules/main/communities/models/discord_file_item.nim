@@ -1,18 +1,17 @@
 import stew/shims/strformat
-type
-  DiscordFileItem* = object
-    filePath*: string
-    errorMessage*: string
-    errorCode*: int
-    selected*: bool
-    validated*: bool
+type DiscordFileItem* = object
+  filePath*: string
+  errorMessage*: string
+  errorCode*: int
+  selected*: bool
+  validated*: bool
 
 proc initDiscordFileItem*(
-  filePath: string,
-  errorMessage: string,
-  errorCode: int,
-  selected: bool,
-  validated: bool,
+    filePath: string,
+    errorMessage: string,
+    errorCode: int,
+    selected: bool,
+    validated: bool,
 ): DiscordFileItem =
   result.filePath = filePath
   result.errorMessage = errorMessage
@@ -21,7 +20,8 @@ proc initDiscordFileItem*(
   result.validated = validated
 
 proc `$`*(self: DiscordFileItem): string =
-  result = fmt"""DiscordFileItem(
+  result =
+    fmt"""DiscordFileItem(
     filePath: {self.filePath},
     errorMessage: {self.errorMessage},
     errorCode: {self.errorCode},

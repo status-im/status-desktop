@@ -1,14 +1,17 @@
-type
-  CopyingKeycardSuccessState* = ref object of State
+type CopyingKeycardSuccessState* = ref object of State
 
-proc newCopyingKeycardSuccessState*(flowType: FlowType, backState: State): CopyingKeycardSuccessState =
+proc newCopyingKeycardSuccessState*(
+    flowType: FlowType, backState: State
+): CopyingKeycardSuccessState =
   result = CopyingKeycardSuccessState()
   result.setup(flowType, StateType.CopyingKeycardSuccess, backState)
 
 proc delete*(self: CopyingKeycardSuccessState) =
   self.State.delete
 
-method executePrePrimaryStateCommand*(self: CopyingKeycardSuccessState, controller: Controller) =
+method executePrePrimaryStateCommand*(
+    self: CopyingKeycardSuccessState, controller: Controller
+) =
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
 

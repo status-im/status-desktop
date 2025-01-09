@@ -15,6 +15,7 @@ logScope:
 type
   ThreadPool* = ref object
     pool: Taskpool
+
   ThreadSafeTaskArg* = object
     tptr: common.Task
     payload: cstring
@@ -48,18 +49,18 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall, raises: [].} =
   try:
     parsed = parseJson(taskArg)
   except Exception as e:
-    error "[threadpool task thread] parsing task arg", error=e.msg
+    error "[threadpool task thread] parsing task arg", error = e.msg
     return
 
   let messageType = parsed{"$type"}.getStr
 
-  debug "[threadpool task thread] initiating task", messageType=messageType,
-    threadid=getThreadId(), task=taskArg
+  debug "[threadpool task thread] initiating task",
+    messageType = messageType, threadid = getThreadId(), task = taskArg
 
   try:
     safeTaskArg.tptr(taskArg)
   except Exception as e:
-    error "[threadpool task thread] exception", error=e.msg
+    error "[threadpool task thread] exception", error = e.msg
 
 proc start*[T: TaskArg](self: ThreadPool, arg: T) =
   self.pool.spawn runTask(arg.safe())

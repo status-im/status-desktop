@@ -3,13 +3,12 @@ import Nimqml, json, stew/shims/strformat
 import ../../../app_service/service/message/dto/message
 
 QtObject:
-  type
-    DiscordMessageItem* = ref object of QObject
-      id: string
-      timestamp: string
-      timestampEdited: string
-      content: string
-      author: DiscordMessageAuthor
+  type DiscordMessageItem* = ref object of QObject
+    id: string
+    timestamp: string
+    timestampEdited: string
+    content: string
+    author: DiscordMessageAuthor
 
   proc setup(self: DiscordMessageItem) =
     self.QObject.setup
@@ -22,8 +21,8 @@ QtObject:
       timestamp: string,
       timestampEdited: string,
       content: string,
-      author: DiscordMessageAuthor
-      ): DiscordMessageItem =
+      author: DiscordMessageAuthor,
+  ): DiscordMessageItem =
     new(result, delete)
     result.setup
     result.id = id
@@ -33,7 +32,8 @@ QtObject:
     result.author = author
 
   proc `$`*(self: DiscordMessageItem): string =
-    result = fmt"""DiscordMessageItem(
+    result =
+      fmt"""DiscordMessageItem(
       id: {$self.id},
       timestamp: {$self.timestamp},
       timestampEdited: {$self.timestampEdited},

@@ -3,7 +3,7 @@ import NimQml
 import app/modules/shared_models/[keypair_item]
 import app_service/service/wallet_account/dto/derived_address_dto
 
-type ImportKeypairModuleMode* {.pure.}= enum
+type ImportKeypairModuleMode* {.pure.} = enum
   SelectKeypair = 1
   SelectImportMethod
   ImportViaSeedPhrase
@@ -11,13 +11,14 @@ type ImportKeypairModuleMode* {.pure.}= enum
   ImportViaQr
   ExportKeypairQr
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode) {.base.} =
+method load*(
+    self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method closeKeypairImportPopup*(self: AccessInterface) {.base.} =
@@ -38,7 +39,9 @@ method onSecondaryActionClicked*(self: AccessInterface) {.base.} =
 method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+method onUserAuthenticated*(
+    self: AccessInterface, pin: string, password: string, keyUid: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method changePrivateKey*(self: AccessInterface, privateKey: string) {.base.} =
@@ -50,7 +53,9 @@ method changeSeedPhrase*(self: AccessInterface, seedPhrase: string) {.base.} =
 method validSeedPhrase*(self: AccessInterface, seedPhrase: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAddressDetailsFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+method onAddressDetailsFetched*(
+    self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getSelectedKeypair*(self: AccessInterface): KeyPairItem {.base.} =
@@ -68,11 +73,12 @@ method setSelectedKeyPairByKeyUid*(self: AccessInterface, keyUid: string) {.base
 method generateConnectionStringForExporting*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method validateConnectionString*(self: AccessInterface, connectionString: string): string {.base.} =
+method validateConnectionString*(
+    self: AccessInterface, connectionString: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
-type
-  DelegateInterface* = concept c
-    c.onKeypairImportModuleLoaded()
-    c.destroyKeypairImportPopup()
+type DelegateInterface* =
+  concept c
+      c.onKeypairImportModuleLoaded()
+      c.destroyKeypairImportPopup()

@@ -2,8 +2,7 @@ import NimQml
 import ../../shared_models/currency_amount
 export CurrencyAmount
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -30,7 +29,9 @@ method getCurrentCurrency*(self: AccessInterface): string {.base.} =
 method setTotalCurrencyBalance*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getCurrencyAmount*(self: AccessInterface, amount: float64, symbol: string): CurrencyAmount {.base.} =
+method getCurrencyAmount*(
+    self: AccessInterface, amount: float64, symbol: string
+): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
@@ -76,7 +77,9 @@ method newSendModuleDidLoad*(self: AccessInterface) {.base.} =
 method overviewModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runAddAccountPopup*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
+method runAddAccountPopup*(
+    self: AccessInterface, addingWatchOnlyAccount: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runEditAccountPopup*(self: AccessInterface, address: string) {.base.} =
@@ -94,10 +97,14 @@ method destroyAddAccountPopup*(self: AccessInterface) {.base.} =
 method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getEstimatedLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
+method getEstimatedLatestBlockNumber*(
+    self: AccessInterface, chainId: int
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchDecodedTxData*(self: AccessInterface, txHash: string, data: string) {.base.} =
+method fetchDecodedTxData*(
+    self: AccessInterface, txHash: string, data: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runKeypairImportPopup*(self: AccessInterface) {.base.} =
@@ -121,11 +128,15 @@ method getRpcStats*(self: AccessInterface): string {.base.} =
 method resetRpcStats*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method canProfileProveOwnershipOfProvidedAddresses*(self: AccessInterface, addresses: string): bool {.base.} =
+method canProfileProveOwnershipOfProvidedAddresses*(
+    self: AccessInterface, addresses: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method reloadAccountTokens*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isChecksumValidForAddress*(self: AccessInterface, address: string): bool {.base.} =
+method isChecksumValidForAddress*(
+    self: AccessInterface, address: string
+): bool {.base.} =
   raise newException(ValueError, "No implementation available")

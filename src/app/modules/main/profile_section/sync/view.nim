@@ -2,11 +2,10 @@ import NimQml
 import io_interface, model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
@@ -44,7 +43,7 @@ QtObject:
   proc activeMailserverIdChanged*(self: View) {.signal.}
 
   proc getActiveMailserverId(self: View): string {.slot.} =
-    let res =  self.delegate.getActiveMailserverId()
+    let res = self.delegate.getActiveMailserverId()
     return res
 
   QtProperty[string] activeMailserverId:

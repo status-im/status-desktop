@@ -1,25 +1,31 @@
-type
-  UserProfileConfirmPasswordState* = ref object of State
+type UserProfileConfirmPasswordState* = ref object of State
 
-proc newUserProfileConfirmPasswordState*(flowType: FlowType, backState: State): UserProfileConfirmPasswordState =
+proc newUserProfileConfirmPasswordState*(
+    flowType: FlowType, backState: State
+): UserProfileConfirmPasswordState =
   result = UserProfileConfirmPasswordState()
   result.setup(flowType, StateType.UserProfileConfirmPassword, backState)
 
 proc delete*(self: UserProfileConfirmPasswordState) =
   self.State.delete
 
-method getNextPrimaryState*(self: UserProfileConfirmPasswordState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: UserProfileConfirmPasswordState, controller: Controller
+): State =
   if main_constants.SUPPORTS_FINGERPRINT:
     return createState(StateType.Biometrics, self.flowType, self)
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
-    self.flowType == FlowType.FirstRunOldUserKeycardImport:
+      self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return createState(StateType.ProfileFetching, self.flowType, nil)
   return nil
 
-method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
+method executePrimaryCommand*(
+    self: UserProfileConfirmPasswordState, controller: Controller
+) =
   if main_constants.SUPPORTS_FINGERPRINT:
     return
-  let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
+  let storeToKeychain = false
+    # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
     controller.createAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:

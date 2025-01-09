@@ -2,13 +2,12 @@ import NimQml
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      syncState: int
-      keycardState: int
-      keycardRemainingPinAttempts: int
-      addKeyPairState: int
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    syncState: int
+    keycardState: int
+    keycardRemainingPinAttempts: int
+    addKeyPairState: int
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -21,6 +20,7 @@ QtObject:
   proc syncStateChanged*(self: View) {.signal.}
   proc getSyncState(self: View): int {.slot.} =
     return self.syncState
+
   QtProperty[int] syncState:
     read = getSyncState
     notify = syncStateChanged
@@ -31,6 +31,7 @@ QtObject:
   proc keycardStateChanged*(self: View) {.signal.}
   proc getKeycardState(self: View): int {.slot.} =
     return self.keycardState
+
   QtProperty[int] keycardState:
     read = getKeycardState
     notify = keycardStateChanged
@@ -41,6 +42,7 @@ QtObject:
   proc keycardRemainingPinAttemptsChanged*(self: View) {.signal.}
   proc getKeycardRemainingPinAttempts(self: View): int {.slot.} =
     return self.keycardRemainingPinAttempts
+
   QtProperty[int] keycardRemainingPinAttempts:
     read = getKeycardRemainingPinAttempts
     notify = keycardRemainingPinAttemptsChanged
@@ -51,6 +53,7 @@ QtObject:
   proc addKeyPairStateChanged*(self: View) {.signal.}
   proc getAddKeyPairState(self: View): int {.slot.} =
     return self.addKeyPairState
+
   QtProperty[int] addKeyPairState:
     read = getAddKeyPairState
     notify = addKeyPairStateChanged
@@ -65,7 +68,9 @@ QtObject:
   # proc startKeypairTransfer(self: View) {.slot.} =
   #   self.delegate.startKeypairTransfer()
 
-  proc getPasswordStrengthScore(self: View, password: string, userName: string): int {.slot.} =
+  proc getPasswordStrengthScore(
+      self: View, password: string, userName: string
+  ): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
 
   proc validMnemonic(self: View, mnemonic: string): bool {.slot.} =
@@ -74,15 +79,21 @@ QtObject:
   proc getMnemonic(self: View): string {.slot.} =
     return self.delegate.getMnemonic()
 
-  proc validateLocalPairingConnectionString(self: View, connectionString: string): bool {.slot.} =
+  proc validateLocalPairingConnectionString(
+      self: View, connectionString: string
+  ): bool {.slot.} =
     return self.delegate.validateLocalPairingConnectionString(connectionString)
 
-  proc inputConnectionStringForBootstrapping(self: View, connectionString: string) {.slot.} =
+  proc inputConnectionStringForBootstrapping(
+      self: View, connectionString: string
+  ) {.slot.} =
     self.delegate.inputConnectionStringForBootstrapping(connectionString)
 
   # TODO find what does this do
   # proc mnemonicWasShown(self: View): string {.slot.} =
   #   return self.delegate.getMnemonic()
 
-  proc finishOnboardingFlow(self: View, primaryFlowInt: int, secondaryFlowInt: int, dataJson: string): string {.slot.} =
+  proc finishOnboardingFlow(
+      self: View, primaryFlowInt: int, secondaryFlowInt: int, dataJson: string
+  ): string {.slot.} =
     self.delegate.finishOnboardingFlow(primaryFlowInt, secondaryFlowInt, dataJson)

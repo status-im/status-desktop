@@ -14,13 +14,13 @@ QtObject:
     self.QObject.delete
 
   proc newDerivedAddressItem*(
-    order: int = 0,
-    address: string = "",
-    publicKey: string = "",
-    path: string = "",
-    alreadyCreated: bool = false,
-    hasActivity: bool = false,
-    loaded: bool = false
+      order: int = 0,
+      address: string = "",
+      publicKey: string = "",
+      path: string = "",
+      alreadyCreated: bool = false,
+      hasActivity: bool = false,
+      loaded: bool = false,
   ): DerivedAddressItem =
     new(result, delete)
     result.QObject.setup
@@ -33,7 +33,8 @@ QtObject:
     result.loaded = loaded
 
   proc `$`*(self: DerivedAddressItem): string =
-    result = fmt"""DerivedAddressItem(
+    result =
+      fmt"""DerivedAddressItem(
       order: {self.order},
       address: {self.address},
       publicKey: {self.publicKey},
@@ -46,9 +47,11 @@ QtObject:
   proc orderChanged*(self: DerivedAddressItem) {.signal.}
   proc getOrder*(self: DerivedAddressItem): int {.slot.} =
     return self.order
+
   proc setOrder*(self: DerivedAddressItem, value: int) {.slot.} =
     self.order = value
     self.orderChanged()
+
   QtProperty[int] order:
     read = getOrder
     write = setOrder
@@ -57,9 +60,11 @@ QtObject:
   proc addressChanged*(self: DerivedAddressItem) {.signal.}
   proc getAddress*(self: DerivedAddressItem): string {.slot.} =
     return self.address
+
   proc setAddress*(self: DerivedAddressItem, value: string) {.slot.} =
     self.address = value
     self.addressChanged()
+
   QtProperty[string] address:
     read = getAddress
     write = setAddress
@@ -68,9 +73,11 @@ QtObject:
   proc publicKeyChanged*(self: DerivedAddressItem) {.signal.}
   proc getPublicKey*(self: DerivedAddressItem): string {.slot.} =
     return self.publicKey
+
   proc setPublicKey*(self: DerivedAddressItem, value: string) {.slot.} =
     self.publicKey = value
     self.publicKeyChanged()
+
   QtProperty[string] publicKey:
     read = getPublicKey
     write = setPublicKey
@@ -79,9 +86,11 @@ QtObject:
   proc pathChanged*(self: DerivedAddressItem) {.signal.}
   proc getPath*(self: DerivedAddressItem): string {.slot.} =
     return self.path
+
   proc setPath*(self: DerivedAddressItem, value: string) {.slot.} =
     self.path = value
     self.pathChanged()
+
   QtProperty[string] path:
     read = getPath
     write = setPath
@@ -90,9 +99,11 @@ QtObject:
   proc alreadyCreatedChanged*(self: DerivedAddressItem) {.signal.}
   proc getAlreadyCreated*(self: DerivedAddressItem): bool {.slot.} =
     return self.alreadyCreated
+
   proc setAlreadyCreated*(self: DerivedAddressItem, value: bool) {.slot.} =
     self.alreadyCreated = value
     self.alreadyCreatedChanged()
+
   QtProperty[bool] alreadyCreated:
     read = getAlreadyCreated
     write = setAlreadyCreated
@@ -101,9 +112,11 @@ QtObject:
   proc hasActivityChanged*(self: DerivedAddressItem) {.signal.}
   proc getHasActivity*(self: DerivedAddressItem): bool {.slot.} =
     return self.hasActivity
+
   proc setHasActivity*(self: DerivedAddressItem, value: bool) {.slot.} =
     self.hasActivity = value
     self.hasActivityChanged()
+
   QtProperty[bool] hasActivity:
     read = getHasActivity
     write = setHasActivity
@@ -112,9 +125,11 @@ QtObject:
   proc loadedChanged*(self: DerivedAddressItem) {.signal.}
   proc getLoaded*(self: DerivedAddressItem): bool {.slot.} =
     return self.loaded
+
   proc setLoaded*(self: DerivedAddressItem, value: bool) {.slot.} =
     self.loaded = value
     self.loadedChanged()
+
   QtProperty[bool] loaded:
     read = getLoaded
     write = setLoaded

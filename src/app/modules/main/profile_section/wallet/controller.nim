@@ -4,18 +4,17 @@ import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/devices/service as devices_service
 import app_service/service/node/service as node_service
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    walletAccountService: wallet_account_service.Service
-    nodeService: node_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  walletAccountService: wallet_account_service.Service
+  nodeService: node_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  walletAccountService: wallet_account_service.Service,
-  nodeService: node_service.Service
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    walletAccountService: wallet_account_service.Service,
+    nodeService: node_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -27,7 +26,7 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e:Args):
+  self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
     let data = LocalPairingStatus(e)
     self.delegate.onLocalPairingStatusUpdate(data)
 

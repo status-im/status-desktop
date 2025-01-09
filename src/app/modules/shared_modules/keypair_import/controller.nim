@@ -13,27 +13,28 @@ import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_m
 logScope:
   topics = "wallet-keycard-import-controller"
 
-const UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER* = "WalletSection-KeypairImportModule"
+const UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER* =
+  "WalletSection-KeypairImportModule"
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    accountsService: accounts_service.Service
-    walletAccountService: wallet_account_service.Service
-    devicesService: devices_service.Service
-    connectionIds: seq[UUID]
-    uniqueFetchingDetailsId: string
-    tmpPrivateKey: string
-    tmpSeedPhrase: string
-    tmpGeneratedAccount: GeneratedAccountDto
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  accountsService: accounts_service.Service
+  walletAccountService: wallet_account_service.Service
+  devicesService: devices_service.Service
+  connectionIds: seq[UUID]
+  uniqueFetchingDetailsId: string
+  tmpPrivateKey: string
+  tmpSeedPhrase: string
+  tmpGeneratedAccount: GeneratedAccountDto
 
-proc newController*(delegate: io_interface.AccessInterface,
-  events: EventEmitter,
-  accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  devicesService: devices_service.Service):
-  Controller =
+proc newController*(
+    delegate: io_interface.AccessInterface,
+    events: EventEmitter,
+    accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    devicesService: devices_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
@@ -49,14 +50,18 @@ proc delete*(self: Controller) =
   self.disconnectAll()
 
 proc init*(self: Controller) =
-  var handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+  var handlerId = self.events.onWithUUID(
+    SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED
+  ) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER:
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED) do(
+    e: Args
+  ):
     var args = DerivedAddressesArgs(e)
     if args.uniqueId != self.uniqueFetchingDetailsId:
       return
@@ -79,18 +84,25 @@ proc getSeedPhrase*(self: Controller): string =
   return self.tmpSeedPhrase
 
 proc authenticateLoggedInUser*(self: Controller) =
-  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER)
+  let data = SharedKeycarModuleAuthenticationArgs(
+    uniqueIdentifier: UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER
+  )
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
-proc createAccountFromPrivateKey*(self: Controller, privateKey: string): GeneratedAccountDto =
+proc createAccountFromPrivateKey*(
+    self: Controller, privateKey: string
+): GeneratedAccountDto =
   self.setPrivateKey(privateKey)
-  self.tmpGeneratedAccount = self.accountsService.createAccountFromPrivateKey(privateKey)
+  self.tmpGeneratedAccount =
+    self.accountsService.createAccountFromPrivateKey(privateKey)
   return self.tmpGeneratedAccount
 
-proc createAccountFromSeedPhrase*(self: Controller, seedPhrase: string): GeneratedAccountDto =
+proc createAccountFromSeedPhrase*(
+    self: Controller, seedPhrase: string
+): GeneratedAccountDto =
   self.setSeedPhrase(seedPhrase)
   self.tmpGeneratedAccount = self.accountsService.createAccountFromMnemonic(seedPhrase)
   return self.tmpGeneratedAccount
@@ -100,13 +112,23 @@ proc getGeneratedAccount*(self: Controller): GeneratedAccountDto =
 
 proc fetchDetailsForAddresses*(self: Controller, addresses: seq[string]) =
   self.uniqueFetchingDetailsId = $now().toTime().toUnix()
-  self.walletAccountService.fetchDetailsForAddresses(self.uniqueFetchingDetailsId, addresses)
+  self.walletAccountService.fetchDetailsForAddresses(
+    self.uniqueFetchingDetailsId, addresses
+  )
 
-proc makePrivateKeyKeypairFullyOperable*(self: Controller, keyUid, privateKey, password: string, doPasswordHashing: bool): string =
-  return self.walletAccountService.makePrivateKeyKeypairFullyOperable(keyUid, privateKey, password, doPasswordHashing)
+proc makePrivateKeyKeypairFullyOperable*(
+    self: Controller, keyUid, privateKey, password: string, doPasswordHashing: bool
+): string =
+  return self.walletAccountService.makePrivateKeyKeypairFullyOperable(
+    keyUid, privateKey, password, doPasswordHashing
+  )
 
-proc makeSeedPhraseKeypairFullyOperable*(self: Controller, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =
-  return self.walletAccountService.makeSeedPhraseKeypairFullyOperable(keyUid, mnemonic, password, doPasswordHashing)
+proc makeSeedPhraseKeypairFullyOperable*(
+    self: Controller, keyUid, mnemonic, password: string, doPasswordHashing: bool
+): string =
+  return self.walletAccountService.makeSeedPhraseKeypairFullyOperable(
+    keyUid, mnemonic, password, doPasswordHashing
+  )
 
 proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
   return self.walletAccountService.getKeypairs()
@@ -120,11 +142,19 @@ proc clearSelectedKeypair*(self: Controller) =
 proc setConnectionString*(self: Controller, connectionString: string) =
   self.delegate.setConnectionString(connectionString)
 
-proc generateConnectionStringForExportingKeypairsKeystores*(self: Controller, keyUids: seq[string], password: string): tuple[res: string, err: string] =
-  return self.devicesService.generateConnectionStringForExportingKeypairsKeystores(keyUids, password)
+proc generateConnectionStringForExportingKeypairsKeystores*(
+    self: Controller, keyUids: seq[string], password: string
+): tuple[res: string, err: string] =
+  return self.devicesService.generateConnectionStringForExportingKeypairsKeystores(
+    keyUids, password
+  )
 
 proc validateConnectionString*(self: Controller, connectionString: string): string =
   return self.devicesService.validateConnectionString(connectionString)
 
-proc inputConnectionStringForImportingKeypairsKeystores*(self: Controller, keyUids: seq[string], connectionString: string, password: string): string =
-  return self.devicesService.inputConnectionStringForImportingKeypairsKeystores(keyUids, connectionString, password)
+proc inputConnectionStringForImportingKeypairsKeystores*(
+    self: Controller, keyUids: seq[string], connectionString: string, password: string
+): string =
+  return self.devicesService.inputConnectionStringForImportingKeypairsKeystores(
+    keyUids, connectionString, password
+  )

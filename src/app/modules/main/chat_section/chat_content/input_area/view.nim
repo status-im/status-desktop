@@ -2,26 +2,30 @@ import NimQml, sets
 import ./io_interface
 import ./preserved_properties
 import ./urls_model
-import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
-import ../../../../../../app/modules/shared_models/payment_request_model as payment_request_model
-import ../../../../../../app/modules/shared_models/emoji_reactions_model as emoji_reactions_model
+import
+  ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
+import
+  ../../../../../../app/modules/shared_models/payment_request_model as
+    payment_request_model
+import
+  ../../../../../../app/modules/shared_models/emoji_reactions_model as
+    emoji_reactions_model
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      preservedProperties: PreservedProperties
-      preservedPropertiesVariant: QVariant
-      linkPreviewModel: link_preview_model.Model
-      linkPreviewModelVariant: QVariant
-      paymentRequestModel: payment_request_model.Model
-      paymentRequestModelVariant: QVariant
-      urlsModel: urls_model.Model
-      urlsModelVariant: QVariant
-      sendingInProgress: bool
-      askToEnableLinkPreview: bool
-      emojiReactionsModel: emoji_reactions_model.Model
-      emojiReactionsModelVariant: QVariant
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    preservedProperties: PreservedProperties
+    preservedPropertiesVariant: QVariant
+    linkPreviewModel: link_preview_model.Model
+    linkPreviewModelVariant: QVariant
+    paymentRequestModel: payment_request_model.Model
+    paymentRequestModelVariant: QVariant
+    urlsModel: urls_model.Model
+    urlsModelVariant: QVariant
+    sendingInProgress: bool
+    askToEnableLinkPreview: bool
+    emojiReactionsModel: emoji_reactions_model.Model
+    emojiReactionsModelVariant: QVariant
 
   proc setSendingInProgress*(self: View, value: bool)
 
@@ -58,37 +62,55 @@ QtObject:
     self.delegate.viewDidLoad()
 
   proc sendMessage*(
-      self: View,
-      msg: string,
-      replyTo: string,
-      contentType: int) {.slot.} =
+      self: View, msg: string, replyTo: string, contentType: int
+  ) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
-    self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
+    self.delegate.sendChatMessage(
+      msg,
+      replyTo,
+      contentType,
+      self.linkPreviewModel.getUnfuledLinkPreviews(),
+      self.payment_request_model.getPaymentRequests(),
+    )
 
-  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
+  proc sendImages*(
+      self: View, imagePathsAndDataJson: string, msg: string, replyTo: string
+  ) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
-    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
+    self.delegate.sendImages(
+      imagePathsAndDataJson,
+      msg,
+      replyTo,
+      self.linkPreviewModel.getUnfuledLinkPreviews(),
+      self.payment_request_model.getPaymentRequests(),
+    )
 
-  proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
+  proc acceptAddressRequest*(self: View, messageId: string, address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
 
   proc declineAddressRequest*(self: View, messageId: string) {.slot.} =
     self.delegate.declineRequestAddressForTransaction(messageId)
 
-  proc requestAddress*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
+  proc requestAddress*(
+      self: View, fromAddress: string, amount: string, tokenAddress: string
+  ) {.slot.} =
     self.delegate.requestAddressForTransaction(fromAddress, amount, tokenAddress)
 
-  proc request*(self: View, fromAddress: string, amount: string, tokenAddress: string) {.slot.} =
+  proc request*(
+      self: View, fromAddress: string, amount: string, tokenAddress: string
+  ) {.slot.} =
     self.delegate.requestTransaction(fromAddress, amount, tokenAddress)
 
   proc declineRequest*(self: View, messageId: string) {.slot.} =
     self.delegate.declineRequestTransaction(messageId)
 
-  proc acceptRequestTransaction*(self: View, transactionHash: string, messageId: string, signature: string) {.slot.} =
+  proc acceptRequestTransaction*(
+      self: View, transactionHash: string, messageId: string, signature: string
+  ) {.slot.} =
     self.delegate.acceptRequestTransaction(transactionHash, messageId, signature)
 
   proc getPreservedProperties(self: View): QVariant {.slot.} =
@@ -112,6 +134,7 @@ QtObject:
   proc askToEnableLinkPreviewChanged(self: View) {.signal.}
   proc getAskToEnableLinkPreview(self: View): bool {.slot.} =
     return self.askToEnableLinkPreview
+
   proc setAskToEnableLinkPreview*(self: View, value: bool) {.slot.} =
     self.askToEnableLinkPreview = value
     self.askToEnableLinkPreviewChanged()
@@ -119,7 +142,7 @@ QtObject:
   QtProperty[bool] askToEnableLinkPreview:
     read = getAskToEnableLinkPreview
     notify = askToEnableLinkPreviewChanged
-    
+
   # Currently used to fetch link previews, but could be used elsewhere
   proc setText*(self: View, text: string) {.slot.} =
     self.delegate.setText(text, true)
@@ -130,7 +153,7 @@ QtObject:
   proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
     self.linkPreviewModel.updateLinkPreviews(linkPreviews)
-    
+
     for contactId in self.linkPreviewModel.getContactIds().items:
       let contact = self.delegate.getContactDetails(contactId)
       if contact.dto.displayName != "":
@@ -145,16 +168,16 @@ QtObject:
 
   proc reloadLinkPreview(self: View, link: string) {.slot.} =
     self.delegate.loadLinkPreviews(@[link])
-  
+
   proc loadLinkPreviews(self: View, links: seq[string]) =
     self.delegate.loadLinkPreviews(links)
-  
+
   proc enableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(true)
-  
+
   proc disableLinkPreview(self: View) {.slot.} =
     self.delegate.setLinkPreviewEnabled(false)
-  
+
   proc setLinkPreviewEnabledForCurrentMessage(self: View, enabled: bool) {.slot.} =
     self.delegate.setLinkPreviewEnabledForThisMessage(enabled)
     self.delegate.reloadUnfurlingPlan()
@@ -162,7 +185,9 @@ QtObject:
   proc removeLinkPreviewData*(self: View, index: int) {.slot.} =
     self.linkPreviewModel.removePreviewData(index)
 
-  proc addPaymentRequest*(self: View, receiver: string, amount: string, symbol: string, chainId: int) {.slot.} =
+  proc addPaymentRequest*(
+      self: View, receiver: string, amount: string, symbol: string, chainId: int
+  ) {.slot.} =
     self.paymentRequestModel.addPaymentRequest(receiver, amount, symbol, chainId)
 
   proc removePaymentRequestPreviewData*(self: View, index: int) {.slot.} =

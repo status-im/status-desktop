@@ -7,30 +7,28 @@ import app/modules/shared_models/currency_amount
 import app/modules/shared_modules/wallet_connect/controller as wc_controller
 import app/modules/shared_modules/connector/controller as connector_controller
 
-type
-  ActivityControllerArray* = array[2, activityc.Controller]
+type ActivityControllerArray* = array[2, activityc.Controller]
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      totalCurrencyBalance: CurrencyAmount
-      signingPhrase: string
-      isMnemonicBackedUp: bool
-      tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
-      activityController: activityc.Controller
-      tmpActivityControllers: ActivityControllerArray
-      collectibleDetailsController: collectible_detailsc.Controller
-      isNonArchivalNode: bool
-      keypairOperabilityForObservedAccount: string
-      wcController: QVariant
-      dappsConnectorController: QVariant
-      walletReady: bool
-      addressFilters: string
-      currentCurrency: string
-      isAccountTokensReloading: bool
-      lastReloadTimestamp: int64
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    totalCurrencyBalance: CurrencyAmount
+    signingPhrase: string
+    isMnemonicBackedUp: bool
+    tmpAmount: float # shouldn't be used anywhere except in prepare*/getPrepared* procs
+    tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
+    activityController: activityc.Controller
+    tmpActivityControllers: ActivityControllerArray
+    collectibleDetailsController: collectible_detailsc.Controller
+    isNonArchivalNode: bool
+    keypairOperabilityForObservedAccount: string
+    wcController: QVariant
+    dappsConnectorController: QVariant
+    walletReady: bool
+    addressFilters: string
+    currentCurrency: string
+    isAccountTokensReloading: bool
+    lastReloadTimestamp: int64
 
   proc setup(self: View) =
     self.QObject.setup
@@ -41,12 +39,14 @@ QtObject:
 
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface,
-    activityController: activityc.Controller,
-    tmpActivityControllers: ActivityControllerArray,
-    collectibleDetailsController: collectible_detailsc.Controller,
-    wcController: wc_controller.Controller,
-    dappsConnectorController: connector_controller.Controller): View =
+  proc newView*(
+      delegate: io_interface.AccessInterface,
+      activityController: activityc.Controller,
+      tmpActivityControllers: ActivityControllerArray,
+      collectibleDetailsController: collectible_detailsc.Controller,
+      wcController: wc_controller.Controller,
+      dappsConnectorController: connector_controller.Controller,
+  ): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
@@ -63,16 +63,19 @@ QtObject:
   proc currentCurrencyChanged*(self: View) {.signal.}
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
+
   proc setCurrentCurrency*(self: View, currency: string) =
     self.currentCurrency = currency
     self.currentCurrencyChanged()
+
   proc getCurrentCurrency(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
+
   QtProperty[string] currentCurrency:
     read = getCurrentCurrency
     notify = currentCurrencyChanged
 
-  proc filterChanged*(self: View, addresses: string)  {.signal.}
+  proc filterChanged*(self: View, addresses: string) {.signal.}
 
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
@@ -99,8 +102,10 @@ QtObject:
   proc setAddressFilters*(self: View, address: string) =
     self.addressFilters = address
     self.addressFiltersChanged()
+
   proc getAddressFilters*(self: View): string {.slot.} =
     return self.addressFilters
+
   QtProperty[string] addressFilters:
     read = getAddressFilters
     notify = addressFiltersChanged
@@ -115,11 +120,11 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
-# Returning a QVariant from a slot with parameters other than "self" won't compile
-#  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
-#    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
+  # Returning a QVariant from a slot with parameters other than "self" won't compile
+  #  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
+  #    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
 
-# As a workaround, we do it in two steps: First call prepareCurrencyAmount, then getPreparedCurrencyAmount
+  # As a workaround, we do it in two steps: First call prepareCurrencyAmount, then getPreparedCurrencyAmount
   proc prepareCurrencyAmount*(self: View, amount: float, symbol: string) {.slot.} =
     self.tmpAmount = amount
     self.tmpSymbol = symbol
@@ -142,6 +147,7 @@ QtObject:
 
   proc getAddAccountModule(self: View): QVariant {.slot.} =
     return self.delegate.getAddAccountModule()
+
   QtProperty[QVariant] addAccountModule:
     read = getAddAccountModule
 
@@ -159,21 +165,25 @@ QtObject:
 
   proc getActivityController(self: View): QVariant {.slot.} =
     return newQVariant(self.activityController)
+
   QtProperty[QVariant] activityController:
     read = getActivityController
 
   proc getCollectibleDetailsController(self: View): QVariant {.slot.} =
     return newQVariant(self.collectibleDetailsController)
+
   QtProperty[QVariant] collectibleDetailsController:
     read = getCollectibleDetailsController
 
   proc getTmpActivityController0(self: View): QVariant {.slot.} =
     return newQVariant(self.tmpActivityControllers[0])
+
   QtProperty[QVariant] tmpActivityController0:
     read = getTmpActivityController0
 
   proc getTmpActivityController1(self: View): QVariant {.slot.} =
     return newQVariant(self.tmpActivityControllers[1])
+
   QtProperty[QVariant] tmpActivityController1:
     read = getTmpActivityController1
 
@@ -183,7 +193,7 @@ QtObject:
   proc getEstimatedLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
     return self.delegate.getEstimatedLatestBlockNumber(chainId)
 
-  proc fetchDecodedTxData*(self: View, txHash: string, data: string) {.slot.}   =
+  proc fetchDecodedTxData*(self: View, txHash: string, data: string) {.slot.} =
     self.delegate.fetchDecodedTxData(txHash, data)
 
   proc getIsNonArchivalNode(self: View): bool {.slot.} =
@@ -204,8 +214,10 @@ QtObject:
   proc hasPairedDevicesChanged*(self: View) {.signal.}
   proc emitHasPairedDevicesChangedSignal*(self: View) =
     self.hasPairedDevicesChanged()
+
   proc getHasPairedDevices(self: View): bool {.slot.} =
     return self.delegate.hasPairedDevices()
+
   QtProperty[bool] hasPairedDevices:
     read = getHasPairedDevices
     notify = hasPairedDevicesChanged
@@ -213,6 +225,7 @@ QtObject:
   proc keypairOperabilityForObservedAccountChanged(self: View) {.signal.}
   proc getKeypairOperabilityForObservedAccount(self: View): string {.slot.} =
     return self.keypairOperabilityForObservedAccount
+
   QtProperty[string] keypairOperabilityForObservedAccount:
     read = getKeypairOperabilityForObservedAccount
     notify = keypairOperabilityForObservedAccountChanged
@@ -226,8 +239,10 @@ QtObject:
   proc keypairImportModuleChanged*(self: View) {.signal.}
   proc emitKeypairImportModuleChangedSignal*(self: View) =
     self.keypairImportModuleChanged()
+
   proc getKeypairImportModule(self: View): QVariant {.slot.} =
     return self.delegate.getKeypairImportModule()
+
   QtProperty[QVariant] keypairImportModule:
     read = getKeypairImportModule
     notify = keypairImportModuleChanged
@@ -272,10 +287,13 @@ QtObject:
 
   proc getRpcStats*(self: View): string {.slot.} =
     return self.delegate.getRpcStats()
+
   proc resetRpcStats*(self: View) {.slot.} =
     self.delegate.resetRpcStats()
 
-  proc canProfileProveOwnershipOfProvidedAddresses*(self: View, addresses: string): bool {.slot.} =
+  proc canProfileProveOwnershipOfProvidedAddresses*(
+      self: View, addresses: string
+  ): bool {.slot.} =
     return self.delegate.canProfileProveOwnershipOfProvidedAddresses(addresses)
 
   proc reloadAccountTokens*(self: View) {.slot.} =

@@ -11,11 +11,11 @@ type StickerDto* = object
   url*: string
 
 type StickerPackStatus* = enum
-  Unknown = -1,
-  Available = 0,
-  Installed = 1,
-  Pending = 2,
-  Purchased = 3,
+  Unknown = -1
+  Available = 0
+  Installed = 1
+  Pending = 2
+  Purchased = 3
 
 type StickerPackDto* = object
   id*: string
@@ -25,7 +25,7 @@ type StickerPackDto* = object
   preview*: string
   stickers*: seq[StickerDto]
   thumbnail*: string
-  status* : StickerPackStatus
+  status*: StickerPackStatus
   txHash*: string
 
 proc toStickerPackStatus*(value: int): StickerPackStatus =
@@ -35,15 +35,16 @@ proc toStickerPackStatus*(value: int): StickerPackStatus =
   except:
     warn "Unknown stickerpack status", value
 
-
 proc `$`(self: StickerDto): string =
-  result = fmt"""StickerDto(
+  result =
+    fmt"""StickerDto(
     hash: {self.hash},
     packId: {$self.packId},
     ]"""
 
 proc `$`*(self: StickerPackDto): string =
-  result = fmt"""StickerPackDto(
+  result =
+    fmt"""StickerPackDto(
     id: {$self.id},
     name: {self.name},
     author: {self.author},
@@ -54,12 +55,12 @@ proc `$`*(self: StickerPackDto): string =
     status:{self.status}
     )"""
 
-
 proc `%`*(stuint256: Stuint[256]): JsonNode =
   newJString($stuint256)
 
-proc readValue*(reader: var JsonReader, value: var Stuint[256])
-               {.raises: [IOError, SerializationError, Defect].} =
+proc readValue*(
+    reader: var JsonReader, value: var Stuint[256]
+) {.raises: [IOError, SerializationError, Defect].} =
   try:
     let strVal = reader.readValue(string)
     value = strVal.parse(Stuint[256])
@@ -68,7 +69,9 @@ proc readValue*(reader: var JsonReader, value: var Stuint[256])
       let intVal = reader.readValue(int)
       value = intVal.stuint(256)
     except:
-      raise newException(SerializationError, "Expected string or int representation of Stuint[256]")
+      raise newException(
+        SerializationError, "Expected string or int representation of Stuint[256]"
+      )
 
 proc toStickerDto*(jsonObj: JsonNode): StickerDto =
   result = StickerDto()

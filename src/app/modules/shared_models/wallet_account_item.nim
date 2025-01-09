@@ -18,50 +18,52 @@ QtObject:
     areTestNetworksEnabled: bool
     hideFromTotalBalance: bool
 
-  proc setup*(self: WalletAccountItem,
-    name: string = "",
-    address: string = "",
-    colorId: string = "",
-    emoji: string = "",
-    walletType: string = "",
-    path: string = "",
-    keyUid: string = "",
-    keycardAccount: bool = false,
-    position: int = 0,
-    operability: string = wa_dto.AccountFullyOperable,
-    areTestNetworksEnabled: bool = false,
-    hideFromTotalBalance: bool = true
-    ) =
-      self.QObject.setup
-      self.name = name
-      self.address = address
-      self.colorId = colorId
-      self.emoji = emoji
-      self.walletType = walletType
-      self.path = path
-      self.keyUid = keyUid
-      self.keycardAccount = keycardAccount
-      self.position = position
-      self.operability = operability
-      self.areTestNetworksEnabled = areTestNetworksEnabled
-      self.hideFromTotalBalance = hideFromTotalBalance
+  proc setup*(
+      self: WalletAccountItem,
+      name: string = "",
+      address: string = "",
+      colorId: string = "",
+      emoji: string = "",
+      walletType: string = "",
+      path: string = "",
+      keyUid: string = "",
+      keycardAccount: bool = false,
+      position: int = 0,
+      operability: string = wa_dto.AccountFullyOperable,
+      areTestNetworksEnabled: bool = false,
+      hideFromTotalBalance: bool = true,
+  ) =
+    self.QObject.setup
+    self.name = name
+    self.address = address
+    self.colorId = colorId
+    self.emoji = emoji
+    self.walletType = walletType
+    self.path = path
+    self.keyUid = keyUid
+    self.keycardAccount = keycardAccount
+    self.position = position
+    self.operability = operability
+    self.areTestNetworksEnabled = areTestNetworksEnabled
+    self.hideFromTotalBalance = hideFromTotalBalance
 
   proc delete*(self: WalletAccountItem) =
-      self.QObject.delete
+    self.QObject.delete
 
   proc newWalletAccountItem*(
-    name: string = "",
-    address: string = "",
-    colorId: string = "",
-    emoji: string = "",
-    walletType: string = "",
-    path: string = "",
-    keyUid: string = "",
-    keycardAccount: bool = false,
-    position: int = 0,
-    operability: string = wa_dto.AccountFullyOperable,
-    areTestNetworksEnabled: bool = false,
-    hideFromTotalBalance: bool = true): WalletAccountItem =
+      name: string = "",
+      address: string = "",
+      colorId: string = "",
+      emoji: string = "",
+      walletType: string = "",
+      path: string = "",
+      keyUid: string = "",
+      keycardAccount: bool = false,
+      position: int = 0,
+      operability: string = wa_dto.AccountFullyOperable,
+      areTestNetworksEnabled: bool = false,
+      hideFromTotalBalance: bool = true,
+  ): WalletAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -78,7 +80,8 @@ QtObject:
     result.hideFromTotalBalance = hideFromTotalBalance
 
   proc `$`*(self: WalletAccountItem): string =
-    result = fmt"""WalletAccountItem(
+    result =
+      fmt"""WalletAccountItem(
       name: {self.name},
       address: {self.address},
       colorId: {self.colorId},
@@ -96,9 +99,11 @@ QtObject:
   proc nameChanged*(self: WalletAccountItem) {.signal.}
   proc name*(self: WalletAccountItem): string {.slot.} =
     return self.name
+
   proc `name=`*(self: WalletAccountItem, value: string) {.inline.} =
     self.name = value
     self.nameChanged()
+
   QtProperty[string] name:
     read = name
     notify = nameChanged
@@ -106,9 +111,10 @@ QtObject:
   proc addressChanged*(self: WalletAccountItem) {.signal.}
   proc address*(self: WalletAccountItem): string {.slot.} =
     return self.address
-#  proc setAddress*(self: WalletAccountItem, value: string) {.slot.} =
-#    self.address = value
-#    self.addressChanged()
+
+  #  proc setAddress*(self: WalletAccountItem, value: string) {.slot.} =
+  #    self.address = value
+  #    self.addressChanged()
   QtProperty[string] address:
     read = address
     notify = addressChanged
@@ -116,9 +122,11 @@ QtObject:
   proc colorIdChanged*(self: WalletAccountItem) {.signal.}
   proc colorId*(self: WalletAccountItem): string {.slot.} =
     return self.colorId
+
   proc `colorId=`*(self: WalletAccountItem, value: string) {.inline.} =
     self.colorId = value
     self.colorIdChanged()
+
   QtProperty[string] colorId:
     read = colorId
     notify = colorIdChanged
@@ -126,9 +134,11 @@ QtObject:
   proc emojiChanged*(self: WalletAccountItem) {.signal.}
   proc emoji*(self: WalletAccountItem): string {.slot.} =
     return self.emoji
+
   proc `emoji=`*(self: WalletAccountItem, value: string) {.inline.} =
     self.emoji = value
     self.emojiChanged()
+
   QtProperty[string] emoji:
     read = emoji
     notify = emojiChanged
@@ -136,6 +146,7 @@ QtObject:
   proc walletTypeChanged*(self: WalletAccountItem) {.signal.}
   proc walletType*(self: WalletAccountItem): string {.slot.} =
     return self.walletType
+
   QtProperty[string] walletType:
     read = walletType
     notify = walletTypeChanged
@@ -143,6 +154,7 @@ QtObject:
   proc pathChanged*(self: WalletAccountItem) {.signal.}
   proc path*(self: WalletAccountItem): string {.slot.} =
     return self.path
+
   QtProperty[string] path:
     read = path
     notify = pathChanged
@@ -150,6 +162,7 @@ QtObject:
   proc keyUidChanged*(self: WalletAccountItem) {.signal.}
   proc keyUid*(self: WalletAccountItem): string {.slot.} =
     return self.keyUid
+
   QtProperty[string] keyUid:
     read = keyUid
     notify = keyUidChanged
@@ -157,6 +170,7 @@ QtObject:
   proc keycardAccountChanged*(self: WalletAccountItem) {.signal.}
   proc keycardAccount*(self: WalletAccountItem): bool {.slot.} =
     return self.keycardAccount
+
   QtProperty[bool] keycardAccount:
     read = keycardAccount
     notify = keycardAccountChanged
@@ -164,9 +178,11 @@ QtObject:
   proc positionChanged*(self: WalletAccountItem) {.signal.}
   proc getPosition*(self: WalletAccountItem): int {.slot.} =
     return self.position
+
   proc setPosition*(self: WalletAccountItem, value: int) {.slot.} =
     self.position = value
     self.positionChanged()
+
   QtProperty[int] position:
     read = getPosition
     write = setPosition
@@ -175,9 +191,11 @@ QtObject:
   proc operabilityChanged*(self: WalletAccountItem) {.signal.}
   proc getOperability*(self: WalletAccountItem): string {.slot.} =
     return self.operability
+
   proc setOperability*(self: WalletAccountItem, value: string) {.slot.} =
     self.operability = value
     self.operabilityChanged()
+
   QtProperty[string] operability:
     read = getOperability
     write = setOperability
@@ -186,6 +204,7 @@ QtObject:
   proc hideFromTotalBalanceChanged*(self: WalletAccountItem) {.signal.}
   proc hideFromTotalBalance*(self: WalletAccountItem): bool {.slot.} =
     return self.hideFromTotalBalance
+
   QtProperty[bool] hideFromTotalBalance:
     read = hideFromTotalBalance
     notify = hideFromTotalBalanceChanged

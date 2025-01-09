@@ -1,7 +1,6 @@
 import ../../../../app_service/service/shared_urls/service as urls_service
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -18,7 +17,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method parseCommunitySharedUrl*(self: AccessInterface, url: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method parseCommunityChannelSharedUrl*(self: AccessInterface, url: string): string {.base.} =
+method parseCommunityChannelSharedUrl*(
+    self: AccessInterface, url: string
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method parseContactSharedUrl*(self: AccessInterface, url: string): string {.base.} =
@@ -28,6 +29,6 @@ method parseSharedUrl*(self: AccessInterface, url: string): UrlDataDto {.base.} 
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
-type
-  DelegateInterface* = concept c
-    c.mainDidLoad()
+type DelegateInterface* =
+  concept c
+      c.mainDidLoad()

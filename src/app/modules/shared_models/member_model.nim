@@ -8,38 +8,36 @@ import member_item
 import contacts_utils
 import model_utils
 
-type
-  ModelRole {.pure.} = enum
-    PubKey = UserRole + 1
-    CompressedPubKey
-    IsCurrentUser
-    DisplayName
-    PreferredDisplayName
-    EnsName
-    IsEnsVerified
-    LocalNickname
-    Alias
-    Icon
-    ColorId
-    ColorHash
-    OnlineStatus
-    IsContact
-    IsVerified
-    IsUntrustworthy
-    TrustStatus
-    IsBlocked
-    ContactRequest
-    MemberRole
-    Joined
-    RequestToJoinId
-    RequestToJoinLoading
-    AirdropAddress
-    MembershipRequestState
+type ModelRole {.pure.} = enum
+  PubKey = UserRole + 1
+  CompressedPubKey
+  IsCurrentUser
+  DisplayName
+  PreferredDisplayName
+  EnsName
+  IsEnsVerified
+  LocalNickname
+  Alias
+  Icon
+  ColorId
+  ColorHash
+  OnlineStatus
+  IsContact
+  IsVerified
+  IsUntrustworthy
+  TrustStatus
+  IsBlocked
+  ContactRequest
+  MemberRole
+  Joined
+  RequestToJoinId
+  RequestToJoinLoading
+  AirdropAddress
+  MembershipRequestState
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[MemberItem]
+  type Model* = ref object of QAbstractListModel
+    items: seq[MemberItem]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -65,14 +63,15 @@ QtObject:
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""Member Model:
+      result &=
+        fmt"""Member Model:
       [{i}]:({$self.items[i]})
       """
 
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
-  QtProperty[int]count:
+  QtProperty[int] count:
     read = getCount
     notify = countChanged
 
@@ -105,7 +104,7 @@ QtObject:
       ModelRole.RequestToJoinId.int: "requestToJoinId",
       ModelRole.RequestToJoinLoading.int: "requestToJoinLoading",
       ModelRole.AirdropAddress.int: "airdropAddress",
-      ModelRole.MembershipRequestState.int: "membershipRequestState"
+      ModelRole.MembershipRequestState.int: "membershipRequestState",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -118,7 +117,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.PubKey:
       result = newQVariant(item.pubKey)
     of ModelRole.CompressedPubKey:
@@ -128,8 +127,11 @@ QtObject:
     of ModelRole.DisplayName:
       result = newQVariant(item.displayName)
     of ModelRole.PreferredDisplayName:
-      return newQVariant(resolvePreferredDisplayName(
-        item.localNickname, item.ensName, item.displayName, item.alias))
+      return newQVariant(
+        resolvePreferredDisplayName(
+          item.localNickname, item.ensName, item.displayName, item.alias
+        )
+      )
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
     of ModelRole.IsEnsVerified:
@@ -149,9 +151,12 @@ QtObject:
     of ModelRole.IsContact:
       result = newQVariant(item.isContact)
     of ModelRole.IsVerified:
-      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Trusted)
+      result =
+        newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Trusted)
     of ModelRole.IsUntrustworthy:
-      result = newQVariant(not item.isCurrentUser and item.trustStatus == TrustStatus.Untrustworthy)
+      result = newQVariant(
+        not item.isCurrentUser and item.trustStatus == TrustStatus.Untrustworthy
+      )
     of ModelRole.TrustStatus:
       result = newQVariant(item.trustStatus.int)
     of ModelRole.IsBlocked:
@@ -173,7 +178,8 @@ QtObject:
 
   proc addItem*(self: Model, item: MemberItem) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
     self.beginInsertRows(modelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -197,7 +203,8 @@ QtObject:
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -226,7 +233,8 @@ QtObject:
       return
 
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
+    defer:
+      modelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -239,7 +247,13 @@ QtObject:
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexForMember(id) != -1
 
-  proc setName*(self: Model, pubKey: string, displayName: string, ensName: string, localNickname: string) =
+  proc setName*(
+      self: Model,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      localNickname: string,
+  ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -247,8 +261,15 @@ QtObject:
     var roles: seq[int] = @[]
 
     let preferredDisplayNameChanged =
-      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
-      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
+      resolvePreferredDisplayName(
+        self.items[ind].localNickname,
+        self.items[ind].ensName,
+        self.items[ind].displayName,
+        self.items[ind].alias,
+      ) !=
+      resolvePreferredDisplayName(
+        localNickname, ensName, displayName, self.items[ind].alias
+      )
 
     updateRole(displayName, DisplayName)
     updateRole(ensName, EnsName)
@@ -261,7 +282,8 @@ QtObject:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -275,7 +297,8 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -295,7 +318,7 @@ QtObject:
       trustStatus: TrustStatus,
       contactRequest: ContactRequest,
       callDataChanged: bool = true,
-    ): seq[int] =
+  ): seq[int] =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -303,8 +326,15 @@ QtObject:
     var roles: seq[int] = @[]
 
     let preferredDisplayNameChanged =
-      resolvePreferredDisplayName(self.items[ind].localNickname, self.items[ind].ensName, self.items[ind].displayName, self.items[ind].alias) !=
-      resolvePreferredDisplayName(localNickname, ensName, displayName, self.items[ind].alias)
+      resolvePreferredDisplayName(
+        self.items[ind].localNickname,
+        self.items[ind].ensName,
+        self.items[ind].displayName,
+        self.items[ind].alias,
+      ) !=
+      resolvePreferredDisplayName(
+        localNickname, ensName, displayName, self.items[ind].alias
+      )
 
     let trustStatusChanged = trustStatus != self.items[ind].trustStatus
 
@@ -325,7 +355,9 @@ QtObject:
     if updatedMembershipRequestState == MembershipRequestState.None:
       updatedMembershipRequestState = self.items[ind].membershipRequestState
 
-    updateRoleWithValue(membershipRequestState, MembershipRequestState, updatedMembershipRequestState)
+    updateRoleWithValue(
+      membershipRequestState, MembershipRequestState, updatedMembershipRequestState
+    )
 
     if preferredDisplayNameChanged:
       roles.add(ModelRole.PreferredDisplayName.int)
@@ -339,7 +371,8 @@ QtObject:
 
     if callDataChanged:
       let index = self.createIndex(ind, 0, nil)
-      defer: index.delete
+      defer:
+        index.delete
       self.dataChanged(index, index, roles)
 
     return roles
@@ -381,10 +414,11 @@ QtObject:
 
     let startModelIndex = self.createIndex(startIndex, 0, nil)
     let endModelIndex = self.createIndex(endIndex, 0, nil)
-    defer: startModelIndex.delete
-    defer: endModelIndex.delete
+    defer:
+      startModelIndex.delete
+    defer:
+      endModelIndex.delete
     self.dataChanged(startModelIndex, endModelIndex, allRoles)
-
 
   proc updateToTheseItems*(self: Model, items: seq[MemberItem]) =
     if items.len == 0:
@@ -401,7 +435,7 @@ QtObject:
           break
       if not found:
         itemsToRemove.add(oldItem.pubKey)
-    
+
     for itemToRemove in itemsToRemove:
       self.removeItemById(itemToRemove)
 
@@ -435,8 +469,8 @@ QtObject:
       isContact: bool,
       isBlocked: bool,
       trustStatus: TrustStatus,
-      contactRequest: ContactRequest
-    ) =
+      contactRequest: ContactRequest,
+  ) =
     let ind = self.findIndexForMember(pubKey)
     if ind == -1:
       return
@@ -468,10 +502,9 @@ QtObject:
 
     self.items[idx].onlineStatus = onlineStatus
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.OnlineStatus.int
-    ])
+    defer:
+      index.delete
+    self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
 
   proc setAirdropAddress*(self: Model, pubKey: string, airdropAddress: string) =
     let idx = self.findIndexForMember(pubKey)
@@ -483,10 +516,9 @@ QtObject:
 
     self.items[idx].airdropAddress = airdropAddress
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.AirdropAddress.int
-    ])
+    defer:
+      index.delete
+    self.dataChanged(index, index, @[ModelRole.AirdropAddress.int])
 
   proc getAirdropAddressForMember*(self: Model, pubKey: string): string =
     let idx = self.findIndexForMember(pubKey)
@@ -495,7 +527,7 @@ QtObject:
 
     return self.items[idx].airdropAddress
 
-# TODO: rename me to getItemsAsPubkeys
+  # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
 
@@ -509,12 +541,13 @@ QtObject:
 
     self.items[idx].requestToJoinLoading = requestToJoinLoading
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.RequestToJoinLoading.int
-    ])
+    defer:
+      index.delete
+    self.dataChanged(index, index, @[ModelRole.RequestToJoinLoading.int])
 
-  proc updateMembershipStatus*(self: Model, memberKey: string, membershipRequestState: MembershipRequestState) {.inline.} =
+  proc updateMembershipStatus*(
+      self: Model, memberKey: string, membershipRequestState: MembershipRequestState
+  ) {.inline.} =
     let idx = self.findIndexForMember(memberKey)
     if idx == -1:
       return
@@ -524,12 +557,11 @@ QtObject:
 
     self.items[idx].membershipRequestState = membershipRequestState
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
-    self.dataChanged(index, index, @[
-      ModelRole.MembershipRequestState.int
-    ])
+    defer:
+      index.delete
+    self.dataChanged(index, index, @[ModelRole.MembershipRequestState.int])
 
-  proc getNewMembers*(self: Model, pubkeys: seq[string]): seq[string] = 
+  proc getNewMembers*(self: Model, pubkeys: seq[string]): seq[string] =
     for pubkey in pubkeys:
       var found = false
       for item in self.items:
@@ -539,8 +571,10 @@ QtObject:
       if not found:
         result.add(pubkey)
 
-  proc isUserBanned*(self: Model, pubkey: string): bool = 
+  proc isUserBanned*(self: Model, pubkey: string): bool =
     let ind = self.findIndexForMember(pubkey)
     if ind == -1:
       return false
-    return self.getMemberItemByIndex(ind).membershipRequestState == MembershipRequestState.Banned
+    return
+      self.getMemberItemByIndex(ind).membershipRequestState ==
+      MembershipRequestState.Banned

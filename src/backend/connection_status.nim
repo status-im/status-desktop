@@ -5,8 +5,8 @@ const INVALID_TIMESTAMP* = -1
 type
   # Mirrors services/wallet/connection/types.go StateValue
   StateValue* {.pure.} = enum
-    Unknown,
-    Connected,
+    Unknown
+    Connected
     Disconnected
 
   # Mirrors services/wallet/connection/types.go State
@@ -19,14 +19,19 @@ type
   ConnectionStatusNotification* = Table[string, ConnectionState]
 
 # ConnectionState
-proc initConnectionState*(value: StateValue, lastCheckedAt: int = INVALID_TIMESTAMP, lastSuccessAt: int = INVALID_TIMESTAMP): ConnectionState =
+proc initConnectionState*(
+    value: StateValue,
+    lastCheckedAt: int = INVALID_TIMESTAMP,
+    lastSuccessAt: int = INVALID_TIMESTAMP,
+): ConnectionState =
   result = ConnectionState()
   result.value = value
   result.lastCheckedAt = lastCheckedAt
   result.lastSuccessAt = lastSuccessAt
 
 proc `$`*(self: ConnectionState): string =
-  return fmt"""ConnectionState(
+  return
+    fmt"""ConnectionState(
     value:{self.value},
     lastCheckedAt:{self.lastCheckedAt},
     lastSuccessAt:{self.lastSuccessAt}
@@ -42,7 +47,9 @@ proc fromJson*(t: JsonNode, T: typedesc[ConnectionState]): ConnectionState {.inl
 proc initCustomStatusNotification*(): ConnectionStatusNotification =
   result = initTable[string, ConnectionState]()
 
-proc fromJson*(t: JsonNode, T: typedesc[ConnectionStatusNotification]): ConnectionStatusNotification {.inline.} =
+proc fromJson*(
+    t: JsonNode, T: typedesc[ConnectionStatusNotification]
+): ConnectionStatusNotification {.inline.} =
   result = initCustomStatusNotification()
   if t.kind != JNull:
     for k, v in t.pairs:

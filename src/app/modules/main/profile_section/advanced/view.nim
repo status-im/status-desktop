@@ -2,9 +2,8 @@ import NimQml
 import io_interface
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -20,6 +19,7 @@ QtObject:
   proc fleetChanged*(self: View) {.signal.}
   proc getFleet*(self: View): string {.slot.} =
     return self.delegate.getFleet()
+
   QtProperty[string] fleet:
     read = getFleet
     notify = fleetChanged
@@ -37,6 +37,7 @@ QtObject:
   proc wakuV2LightClientEnabledChanged*(self: View) {.signal.}
   proc getWakuV2LightClientEnabled*(self: View): bool {.slot.} =
     return self.delegate.getWakuV2LightClientEnabled()
+
   QtProperty[bool] wakuV2LightClientEnabled:
     read = getWakuV2LightClientEnabled
     notify = wakuV2LightClientEnabledChanged
@@ -51,6 +52,7 @@ QtObject:
   proc isTelemetryEnabledChanged*(self: View) {.signal.}
   proc getIsTelemetryEnabled*(self: View): bool {.slot.} =
     return self.delegate.isTelemetryEnabled()
+
   QtProperty[bool] isTelemetryEnabled:
     read = getIsTelemetryEnabled
     notify = isTelemetryEnabledChanged
@@ -64,6 +66,7 @@ QtObject:
   proc isAutoMessageEnabledChanged*(self: View) {.signal.}
   proc getIsAutoMessageEnabled*(self: View): bool {.slot.} =
     return self.delegate.isAutoMessageEnabled()
+
   QtProperty[bool] isAutoMessageEnabled:
     read = getIsAutoMessageEnabled
     notify = isAutoMessageEnabledChanged
@@ -77,6 +80,7 @@ QtObject:
   proc isDebugEnabledChanged*(self: View) {.signal.}
   proc getIsDebugEnabled*(self: View): bool {.slot.} =
     return self.delegate.isDebugEnabled()
+
   QtProperty[bool] isDebugEnabled:
     read = getIsDebugEnabled
     notify = isDebugEnabledChanged
@@ -91,6 +95,7 @@ QtObject:
   proc isNimbusProxyEnabledChanged*(self: View) {.signal.}
   proc getIsNimbusProxyEnabled*(self: View): bool {.slot.} =
     return self.delegate.isNimbusProxyEnabled()
+
   QtProperty[bool] isNimbusProxyEnabled:
     read = getIsNimbusProxyEnabled
     notify = isNimbusProxyEnabledChanged
@@ -100,12 +105,14 @@ QtObject:
 
   proc getIsRuntimeLogLevelSet*(self: View): bool {.slot.} =
     return self.delegate.isRuntimeLogLevelSet()
+
   QtProperty[bool] isRuntimeLogLevelSet:
     read = getIsRuntimeLogLevelSet
 
   proc archiveProtocolEnabledChanged*(self: View) {.signal.}
   proc getArchiveProtocolEnabled*(self: View): bool {.slot.} =
     return self.delegate.isCommunityHistoryArchiveSupportEnabled()
+
   QtProperty[bool] archiveProtocolEnabled:
     read = getArchiveProtocolEnabled
     notify = archiveProtocolEnabledChanged
@@ -134,6 +141,7 @@ QtObject:
   proc logMaxBackupsChanged*(self: View) {.signal.}
   proc getLogMaxBackups*(self: View): int {.slot.} =
     return self.delegate.getLogMaxBackups()
+
   QtProperty[int] logMaxBackups:
     read = getLogMaxBackups
     notify = logMaxBackupsChanged

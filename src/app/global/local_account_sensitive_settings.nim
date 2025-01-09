@@ -6,7 +6,8 @@ import ../../constants
 const LSS_KEY_CHAT_SPLIT_VIEW* = "chatSplitView"
 const LSS_KEY_WALLET_SPLIT_VIEW* = "walletSplitView"
 const LSS_KEY_PROFILE_SPLIT_VIEW* = "profileSplitView"
-const LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED* = "isExperimentalCommunityPermissionsEnabled"
+const LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED* =
+  "isExperimentalCommunityPermissionsEnabled"
 const DEFAULT_IS_COMMUNITY_PERMISSIONS_ENABLED = false
 const LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED* = "isExperimentalCommunityTokensEnabled"
 const DEFAULT_IS_COMMUNITY_TOKENS_ENABLED = false
@@ -23,7 +24,8 @@ const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
 const DEFAULT_RECENT_EMOJIS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS* = "hiddenCommunityWelcomeBanners"
 const DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS = ""
-const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* = "hiddenCommunityChannelsAndCategoriesBanner"
+const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* =
+  "hiddenCommunityChannelsAndCategoriesBanner"
 const DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
 const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
@@ -88,37 +90,62 @@ QtObject:
     self.settingsFileDir = os.joinPath(DATADIR, "qt")
 
   proc delete*(self: LocalAccountSensitiveSettings) =
-    if(not self.settings.isNil):
+    if (not self.settings.isNil):
       self.settings.delete
 
     self.QObject.delete
 
-  proc newLocalAccountSensitiveSettings*():
-    LocalAccountSensitiveSettings =
+  proc newLocalAccountSensitiveSettings*(): LocalAccountSensitiveSettings =
     new(result, delete)
     result.setup
 
   proc setFileName*(self: LocalAccountSensitiveSettings, fileName: string) =
-    if(not self.settings.isNil):
+    if (not self.settings.isNil):
       self.settings.delete
 
     let filePath = os.joinPath(self.settingsFileDir, fileName)
     self.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
   # float type must be exposed through QVariant property.
-  proc getSettingsPropQVariant(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): QVariant =
-    result = if(self.settings.isNil): default else: self.settings.value(prop, default)
+  proc getSettingsPropQVariant(
+      self: LocalAccountSensitiveSettings, prop: string, default: QVariant
+  ): QVariant =
+    result =
+      if (self.settings.isNil):
+        default
+      else:
+        self.settings.value(prop, default)
 
-  proc getSettingsPropString(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): string =
-    result = if(self.settings.isNil): default.stringVal else: self.settings.value(prop, default).stringVal
+  proc getSettingsPropString(
+      self: LocalAccountSensitiveSettings, prop: string, default: QVariant
+  ): string =
+    result =
+      if (self.settings.isNil):
+        default.stringVal
+      else:
+        self.settings.value(prop, default).stringVal
 
-  proc getSettingsPropInt(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): int =
-    result = if(self.settings.isNil): default.intVal else: self.settings.value(prop, default).intVal
+  proc getSettingsPropInt(
+      self: LocalAccountSensitiveSettings, prop: string, default: QVariant
+  ): int =
+    result =
+      if (self.settings.isNil):
+        default.intVal
+      else:
+        self.settings.value(prop, default).intVal
 
-  proc getSettingsPropBool(self: LocalAccountSensitiveSettings, prop: string, default: QVariant): bool =
-    result = if(self.settings.isNil): default.boolVal else: self.settings.value(prop, default).boolVal
+  proc getSettingsPropBool(
+      self: LocalAccountSensitiveSettings, prop: string, default: QVariant
+  ): bool =
+    result =
+      if (self.settings.isNil):
+        default.boolVal
+      else:
+        self.settings.value(prop, default).boolVal
 
-  template getSettingsProp[T](self: LocalAccountSensitiveSettings, prop: string, default: QVariant): untyped =
+  template getSettingsProp[T](
+      self: LocalAccountSensitiveSettings, prop: string, default: QVariant
+  ): untyped =
     # This doesn't work in case of QVariant, such properties will be handled in a common way.
     when T is string:
       result = getSettingsPropString(self, prop, default)
@@ -127,52 +154,76 @@ QtObject:
     when T is bool:
       result = getSettingsPropBool(self, prop, default)
 
-  template getSettingsGroupProp[T](self: LocalAccountSensitiveSettings, group: string, prop: string, default: QVariant): untyped =
+  template getSettingsGroupProp[T](
+      self: LocalAccountSensitiveSettings,
+      group: string,
+      prop: string,
+      default: QVariant,
+  ): untyped =
     # This doesn't work in case of QVariant, such properties will be handled in a common way.
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
 
-    self.settings.beginGroup(group);
+    self.settings.beginGroup(group)
     getSettingsProp[T](self, prop, default)
-    self.settings.endGroup();
-  
+    self.settings.endGroup()
 
-  template setSettingsProp(self: LocalAccountSensitiveSettings, prop: string, value: QVariant, signal: untyped) =
-    if(self.settings.isNil):
+  template setSettingsProp(
+      self: LocalAccountSensitiveSettings,
+      prop: string,
+      value: QVariant,
+      signal: untyped,
+  ) =
+    if (self.settings.isNil):
       return
 
     self.settings.setValue(prop, value)
     signal
 
-  template setSettingsGroupProp(self: LocalAccountSensitiveSettings, group: string, key: string, value: QVariant) =
-    if(self.settings.isNil):
+  template setSettingsGroupProp(
+      self: LocalAccountSensitiveSettings, group: string, key: string, value: QVariant
+  ) =
+    if (self.settings.isNil):
       return
 
     self.settings.beginGroup(group)
     self.settings.setValue(key, value)
     self.settings.endGroup()
 
-  proc removeSettingsGroupKey(self: LocalAccountSensitiveSettings, group: string, key: string) =
-    if(self.settings.isNil):
+  proc removeSettingsGroupKey(
+      self: LocalAccountSensitiveSettings, group: string, key: string
+  ) =
+    if (self.settings.isNil):
       return
 
     self.settings.beginGroup(group)
     self.settings.remove(key)
     self.settings.endGroup()
 
-  proc getSectionLastOpenChat*(self: LocalAccountSensitiveSettings, sectionId: string): string =
-    getSettingsGroupProp[string](self, LAST_SECTION_CHAT, sectionId, newQVariant(DEFAULT_ACTIVE_CHAT))
+  proc getSectionLastOpenChat*(
+      self: LocalAccountSensitiveSettings, sectionId: string
+  ): string =
+    getSettingsGroupProp[string](
+      self, LAST_SECTION_CHAT, sectionId, newQVariant(DEFAULT_ACTIVE_CHAT)
+    )
 
-  proc setSectionLastOpenChat*(self: LocalAccountSensitiveSettings, sectionId: string, value: string) =
+  proc setSectionLastOpenChat*(
+      self: LocalAccountSensitiveSettings, sectionId: string, value: string
+  ) =
     self.setSettingsGroupProp(LAST_SECTION_CHAT, sectionId, newQVariant(value))
-    
-  proc removeSectionChatRecord*(self: LocalAccountSensitiveSettings, sectionId: string) =
+
+  proc removeSectionChatRecord*(
+      self: LocalAccountSensitiveSettings, sectionId: string
+  ) =
     self.removeSettingsGroupKey(LAST_SECTION_CHAT, sectionId)
 
   proc chatSplitViewChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getChatSplitView*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_CHAT_SPLIT_VIEW, newQVariant())
-  proc setChatSplitView*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+
+  proc setChatSplitView*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_CHAT_SPLIT_VIEW, value):
       self.chatSplitViewChanged()
 
@@ -181,11 +232,13 @@ QtObject:
     write = setChatSplitView
     notify = chatSplitViewChanged
 
-
   proc walletSplitViewChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getWalletSplitView*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_WALLET_SPLIT_VIEW, newQVariant())
-  proc setWalletSplitView*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+
+  proc setWalletSplitView*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_WALLET_SPLIT_VIEW, value):
       self.walletSplitViewChanged()
 
@@ -194,11 +247,13 @@ QtObject:
     write = setWalletSplitView
     notify = walletSplitViewChanged
 
-
   proc profileSplitViewChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getProfileSplitView*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
     getSettingsPropQVariant(self, LSS_KEY_PROFILE_SPLIT_VIEW, newQVariant())
-  proc setProfileSplitView*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+
+  proc setProfileSplitView*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_PROFILE_SPLIT_VIEW, value):
       self.profileSplitViewChanged()
 
@@ -209,8 +264,15 @@ QtObject:
 
   proc nodeManagementEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNodeManagementEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_NODE_MANAGEMENT_ENABLED, newQVariant(DEFAULT_NODE_MANAGEMENT_ENABLED))
-  proc setNodeManagementEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_NODE_MANAGEMENT_ENABLED,
+      newQVariant(DEFAULT_NODE_MANAGEMENT_ENABLED),
+    )
+
+  proc setNodeManagementEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_NODE_MANAGEMENT_ENABLED, newQVariant(value)):
       self.nodeManagementEnabledChanged()
 
@@ -219,10 +281,22 @@ QtObject:
     write = setNodeManagementEnabled
     notify = nodeManagementEnabledChanged
 
-  proc ensCommunityPermissionsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getEnsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(DEFAULT_COMMUNITY_PERMISSIONS_ENABLED))
-  proc setEnsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc ensCommunityPermissionsEnabledChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
+
+  proc getEnsCommunityPermissionsEnabled*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED,
+      newQVariant(DEFAULT_COMMUNITY_PERMISSIONS_ENABLED),
+    )
+
+  proc setEnsCommunityPermissionsEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(value)):
       self.ensCommunityPermissionsEnabledChanged()
 
@@ -233,7 +307,10 @@ QtObject:
 
   proc showOnlineUsersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getShowOnlineUsers*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_SHOW_ONLINE_USERS, newQVariant(DEFAULT_SHOW_ONLINE_USERS))
+    getSettingsProp[bool](
+      self, LSS_KEY_SHOW_ONLINE_USERS, newQVariant(DEFAULT_SHOW_ONLINE_USERS)
+    )
+
   proc setShowOnlineUsers*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_SHOW_ONLINE_USERS, newQVariant(value)):
       self.showOnlineUsersChanged()
@@ -243,10 +320,12 @@ QtObject:
     write = setShowOnlineUsers
     notify = showOnlineUsersChanged
 
-
   proc expandUsersListChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getExpandUsersList*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_EXPAND_USERS_LIST, newQVariant(DEFAULT_EXPAND_USERS_LIST))
+    getSettingsProp[bool](
+      self, LSS_KEY_EXPAND_USERS_LIST, newQVariant(DEFAULT_EXPAND_USERS_LIST)
+    )
+
   proc setExpandUsersList*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_EXPAND_USERS_LIST, newQVariant(value)):
       self.expandUsersListChanged()
@@ -256,10 +335,12 @@ QtObject:
     write = setExpandUsersList
     notify = expandUsersListChanged
 
-
   proc recentEmojisChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getRecentEmojis*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_RECENT_EMOJIS, newQVariant(DEFAULT_RECENT_EMOJIS))
+    getSettingsPropQVariant(
+      self, LSS_KEY_RECENT_EMOJIS, newQVariant(DEFAULT_RECENT_EMOJIS)
+    )
+
   proc setRecentEmojis*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
     setSettingsProp(self, LSS_KEY_RECENT_EMOJIS, value):
       self.recentEmojisChanged()
@@ -269,11 +350,22 @@ QtObject:
     write = setRecentEmojis
     notify = recentEmojisChanged
 
+  proc hiddenCommunityWelcomeBannersChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
 
-  proc hiddenCommunityWelcomeBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS))
-  proc setHiddenCommunityWelcomeBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+  proc getHiddenCommunityWelcomeBanners*(
+      self: LocalAccountSensitiveSettings
+  ): QVariant {.slot.} =
+    getSettingsPropQVariant(
+      self,
+      LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS,
+      newQVariant(DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS),
+    )
+
+  proc setHiddenCommunityWelcomeBanners*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS, value):
       self.hiddenCommunityWelcomeBannersChanged()
 
@@ -282,11 +374,25 @@ QtObject:
     write = setHiddenCommunityWelcomeBanners
     notify = hiddenCommunityWelcomeBannersChanged
 
-  proc hiddenCommunityChannelAndCategoriesBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS))
-  proc setHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
-    setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, value):
+  proc hiddenCommunityChannelAndCategoriesBannersChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
+
+  proc getHiddenCommunityChannelAndCategoriesBanners*(
+      self: LocalAccountSensitiveSettings
+  ): QVariant {.slot.} =
+    getSettingsPropQVariant(
+      self,
+      LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS,
+      newQVariant(DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS),
+    )
+
+  proc setHiddenCommunityChannelAndCategoriesBanners*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
+    setSettingsProp(
+      self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, value
+    ):
       self.hiddenCommunityChannelAndCategoriesBannersChanged()
 
   QtProperty[QVariant] hiddenCommunityChannelAndCategoriesBanners:
@@ -294,10 +400,22 @@ QtObject:
     write = setHiddenCommunityChannelAndCategoriesBanners
     notify = hiddenCommunityChannelAndCategoriesBannersChanged
 
-  proc hiddenCommunityBackUpBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
-    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS))
-  proc setHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+  proc hiddenCommunityBackUpBannersChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
+
+  proc getHiddenCommunityBackUpBanners*(
+      self: LocalAccountSensitiveSettings
+  ): QVariant {.slot.} =
+    getSettingsPropQVariant(
+      self,
+      LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS,
+      newQVariant(DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS),
+    )
+
+  proc setHiddenCommunityBackUpBanners*(
+      self: LocalAccountSensitiveSettings, value: QVariant
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS, value):
       self.hiddenCommunityBackUpBannersChanged()
 
@@ -306,10 +424,22 @@ QtObject:
     write = setHiddenCommunityBackUpBanners
     notify = hiddenCommunityBackUpBannersChanged
 
-  proc neverAskAboutUnfurlingAgainChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNeverAskAboutUnfurlingAgain*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN, newQVariant(DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN))
-  proc setNeverAskAboutUnfurlingAgain*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc neverAskAboutUnfurlingAgainChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
+
+  proc getNeverAskAboutUnfurlingAgain*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN,
+      newQVariant(DEFAULT_NEVER_ASK_ABOUT_UNFURLING_AGAIN),
+    )
+
+  proc setNeverAskAboutUnfurlingAgain*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN, newQVariant(value)):
       self.neverAskAboutUnfurlingAgainChanged()
 
@@ -318,11 +448,17 @@ QtObject:
     write = setNeverAskAboutUnfurlingAgain
     notify = neverAskAboutUnfurlingAgainChanged
 
-
   proc hideChannelSuggestionsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHideChannelSuggestions*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_HIDE_CHANNEL_SUGGESTIONS, newQVariant(DEFAULT_HIDE_CHANNEL_SUGGESTIONS))
-  proc setHideChannelSuggestions*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_HIDE_CHANNEL_SUGGESTIONS,
+      newQVariant(DEFAULT_HIDE_CHANNEL_SUGGESTIONS),
+    )
+
+  proc setHideChannelSuggestions*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDE_CHANNEL_SUGGESTIONS, newQVariant(value)):
       self.hideChannelSuggestionsChanged()
 
@@ -331,10 +467,10 @@ QtObject:
     write = setHideChannelSuggestions
     notify = hideChannelSuggestionsChanged
 
-
   proc fontSizeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getfontSize*(self: LocalAccountSensitiveSettings): int {.slot.} =
     getSettingsProp[int](self, LSS_KEY_FONT_SIZE, newQVariant(DEFAULT_FONT_SIZE))
+
   proc setfontSize*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
     setSettingsProp(self, LSS_KEY_FONT_SIZE, newQVariant(value)):
       self.fontSizeChanged()
@@ -344,11 +480,15 @@ QtObject:
     write = setfontSize
     notify = fontSizeChanged
 
-
   proc hideSignPhraseModalChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHideSignPhraseModal*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_HIDE_SIGN_PHRASE_MODAL, newQVariant(DEFAULT_HIDE_SIGN_PHRASE_MODAL))
-  proc setHideSignPhraseModal*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_HIDE_SIGN_PHRASE_MODAL, newQVariant(DEFAULT_HIDE_SIGN_PHRASE_MODAL)
+    )
+
+  proc setHideSignPhraseModal*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_HIDE_SIGN_PHRASE_MODAL, newQVariant(value)):
       self.hideSignPhraseModalChanged()
 
@@ -357,10 +497,12 @@ QtObject:
     write = setHideSignPhraseModal
     notify = hideSignPhraseModalChanged
 
-
   proc quitOnCloseChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getQuitOnClose*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(DEFAULT_QUITE_ON_CLOSE))
+    getSettingsProp[bool](
+      self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(DEFAULT_QUITE_ON_CLOSE)
+    )
+
   proc setQuitOnClose*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(value)):
       self.quitOnCloseChanged()
@@ -370,10 +512,10 @@ QtObject:
     write = setQuitOnClose
     notify = quitOnCloseChanged
 
-
   proc skinColorChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getSkinColor*(self: LocalAccountSensitiveSettings): string {.slot.} =
     getSettingsProp[string](self, LSS_KEY_SKIN_COLOR, newQVariant(DEFAULT_SKIN_COLOR))
+
   proc setSkinColor*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
     setSettingsProp(self, LSS_KEY_SKIN_COLOR, newQVariant(value)):
       self.skinColorChanged()
@@ -383,11 +525,19 @@ QtObject:
     write = setSkinColor
     notify = skinColorChanged
 
-
   proc showDeleteMessageWarningChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getShowDeleteMessageWarning*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_SHOW_DELETE_MESSAGE_WARNING, newQVariant(DEFAULT_SHOW_DELETE_MESSAGE_WARNING))
-  proc setShowDeleteMessageWarning*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc getShowDeleteMessageWarning*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_SHOW_DELETE_MESSAGE_WARNING,
+      newQVariant(DEFAULT_SHOW_DELETE_MESSAGE_WARNING),
+    )
+
+  proc setShowDeleteMessageWarning*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_SHOW_DELETE_MESSAGE_WARNING, newQVariant(value)):
       self.showDeleteMessageWarningChanged()
 
@@ -396,11 +546,22 @@ QtObject:
     write = setShowDeleteMessageWarning
     notify = showDeleteMessageWarningChanged
 
+  proc downloadChannelMessagesEnabledChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
 
-  proc downloadChannelMessagesEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getDownloadChannelMessagesEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED, newQVariant(DEFAULT_DOWNLOAD_CHANNEL_MESSAGES_ENABLED))
-  proc setDownloadChannelMessagesEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc getDownloadChannelMessagesEnabled*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED,
+      newQVariant(DEFAULT_DOWNLOAD_CHANNEL_MESSAGES_ENABLED),
+    )
+
+  proc setDownloadChannelMessagesEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED, newQVariant(value)):
       self.downloadChannelMessagesEnabledChanged()
 
@@ -409,10 +570,12 @@ QtObject:
     write = setDownloadChannelMessagesEnabled
     notify = downloadChannelMessagesEnabledChanged
 
-
   proc activeSectionChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getActiveSection*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_ACTIVE_SECTION, newQVariant(DEFAULT_ACTIVE_SECTION))
+    getSettingsProp[string](
+      self, LSS_KEY_ACTIVE_SECTION, newQVariant(DEFAULT_ACTIVE_SECTION)
+    )
+
   proc setActiveSection*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
     setSettingsProp(self, LSS_KEY_ACTIVE_SECTION, newQVariant(value)):
       self.activeSectionChanged()
@@ -422,10 +585,12 @@ QtObject:
     write = setActiveSection
     notify = activeSectionChanged
 
-
   proc autoLoadImagesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getAutoLoadImages*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_AUTO_LOAD_IMAGES, newQVariant(DEFAULT_AUTO_LOAD_IMAGES))
+    getSettingsProp[bool](
+      self, LSS_KEY_AUTO_LOAD_IMAGES, newQVariant(DEFAULT_AUTO_LOAD_IMAGES)
+    )
+
   proc setAutoLoadImages*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_AUTO_LOAD_IMAGES, newQVariant(value)):
       self.autoLoadImagesChanged()
@@ -435,11 +600,15 @@ QtObject:
     write = setAutoLoadImages
     notify = autoLoadImagesChanged
 
-
   proc javaScriptEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getJavaScriptEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_JAVA_SCRIPT_ENABLED, newQVariant(DEFAULT_JAVA_SCRIPT_ENABLED))
-  proc setJavaScriptEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_JAVA_SCRIPT_ENABLED, newQVariant(DEFAULT_JAVA_SCRIPT_ENABLED)
+    )
+
+  proc setJavaScriptEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_JAVA_SCRIPT_ENABLED, newQVariant(value)):
       self.javaScriptEnabledChanged()
 
@@ -448,10 +617,12 @@ QtObject:
     write = setJavaScriptEnabled
     notify = javaScriptEnabledChanged
 
-
   proc errorPageEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getErrorPageEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_ERROR_PAGE_ENABLED, newQVariant(DEFAULT_ERROR_PAGE_ENABLED))
+    getSettingsProp[bool](
+      self, LSS_KEY_ERROR_PAGE_ENABLED, newQVariant(DEFAULT_ERROR_PAGE_ENABLED)
+    )
+
   proc setErrorPageEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_ERROR_PAGE_ENABLED, newQVariant(value)):
       self.errorPageEnabledChanged()
@@ -461,10 +632,12 @@ QtObject:
     write = setErrorPageEnabled
     notify = errorPageEnabledChanged
 
-
   proc pluginsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getPluginsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_PLUGINS_ENABLED, newQVariant(DEFAULT_PLUGINS_ENABLED))
+    getSettingsProp[bool](
+      self, LSS_KEY_PLUGINS_ENABLED, newQVariant(DEFAULT_PLUGINS_ENABLED)
+    )
+
   proc setPluginsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_PLUGINS_ENABLED, newQVariant(value)):
       self.pluginsEnabledChanged()
@@ -474,11 +647,17 @@ QtObject:
     write = setPluginsEnabled
     notify = pluginsEnabledChanged
 
-
   proc autoLoadIconsForPageChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getAutoLoadIconsForPage*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE, newQVariant(DEFAULT_AUTO_LOAD_ICONS_FOR_PAGE))
-  proc setAutoLoadIconsForPage*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE,
+      newQVariant(DEFAULT_AUTO_LOAD_ICONS_FOR_PAGE),
+    )
+
+  proc setAutoLoadIconsForPage*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE, newQVariant(value)):
       self.autoLoadIconsForPageChanged()
 
@@ -487,11 +666,15 @@ QtObject:
     write = setAutoLoadIconsForPage
     notify = autoLoadIconsForPageChanged
 
-
   proc touchIconsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getTouchIconsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_TOUCH_ICONS_ENABLED, newQVariant(DEFAULT_TOUCH_ICONS_ENABLED))
-  proc setTouchIconsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_TOUCH_ICONS_ENABLED, newQVariant(DEFAULT_TOUCH_ICONS_ENABLED)
+    )
+
+  proc setTouchIconsEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_TOUCH_ICONS_ENABLED, newQVariant(value)):
       self.touchIconsEnabledChanged()
 
@@ -500,11 +683,22 @@ QtObject:
     write = setTouchIconsEnabled
     notify = touchIconsEnabledChanged
 
+  proc webRTCPublicInterfacesOnlyChanged*(
+    self: LocalAccountSensitiveSettings
+  ) {.signal.}
 
-  proc webRTCPublicInterfacesOnlyChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getWebRTCPublicInterfacesOnly*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_WEB_RTC_PUBLIC_INTERFACES_ONLY, newQVariant(DEFAULT_WEB_RTC_PUBLIC_INTERFACES_ONLY))
-  proc setWebRTCPublicInterfacesOnly*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc getWebRTCPublicInterfacesOnly*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_WEB_RTC_PUBLIC_INTERFACES_ONLY,
+      newQVariant(DEFAULT_WEB_RTC_PUBLIC_INTERFACES_ONLY),
+    )
+
+  proc setWebRTCPublicInterfacesOnly*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_WEB_RTC_PUBLIC_INTERFACES_ONLY, newQVariant(value)):
       self.webRTCPublicInterfacesOnlyChanged()
 
@@ -513,10 +707,12 @@ QtObject:
     write = setWebRTCPublicInterfacesOnly
     notify = webRTCPublicInterfacesOnlyChanged
 
-
   proc devToolsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getDevToolsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_DEV_TOOLS_ENABLED, newQVariant(DEFAULT_DEV_TOOLS_ENABLED))
+    getSettingsProp[bool](
+      self, LSS_KEY_DEV_TOOLS_ENABLED, newQVariant(DEFAULT_DEV_TOOLS_ENABLED)
+    )
+
   proc setDevToolsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_DEV_TOOLS_ENABLED, newQVariant(value)):
       self.devToolsEnabledChanged()
@@ -526,10 +722,12 @@ QtObject:
     write = setDevToolsEnabled
     notify = devToolsEnabledChanged
 
-
   proc pdfViewerEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getPdfViewerEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_PDF_VIEWER_ENABLED, newQVariant(DEFAULT_PDF_VIEWER_ENABLED))
+    getSettingsProp[bool](
+      self, LSS_KEY_PDF_VIEWER_ENABLED, newQVariant(DEFAULT_PDF_VIEWER_ENABLED)
+    )
+
   proc setPdfViewerEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
     setSettingsProp(self, LSS_KEY_PDF_VIEWER_ENABLED, newQVariant(value)):
       self.pdfViewerEnabledChanged()
@@ -539,11 +737,15 @@ QtObject:
     write = setPdfViewerEnabled
     notify = pdfViewerEnabledChanged
 
-
   proc compatibilityModeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getCompatibilityMode*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_COMPATIBILITY_MODE, newQVariant(DEFAULT_COMPATIBILITY_MODE))
-  proc setCompatibilityMode*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_COMPATIBILITY_MODE, newQVariant(DEFAULT_COMPATIBILITY_MODE)
+    )
+
+  proc setCompatibilityMode*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_COMPATIBILITY_MODE, newQVariant(value)):
       self.compatibilityModeChanged()
 
@@ -552,11 +754,15 @@ QtObject:
     write = setCompatibilityMode
     notify = compatibilityModeChanged
 
-
   proc stickersEnsRopstenChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getStickersEnsRopsten*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_STICKERS_ENS_ROPSTEN, newQVariant(DEFAULT_STICKERS_ENS_ROPSTEN))
-  proc setStickersEnsRopsten*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_STICKERS_ENS_ROPSTEN, newQVariant(DEFAULT_STICKERS_ENS_ROPSTEN)
+    )
+
+  proc setStickersEnsRopsten*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_STICKERS_ENS_ROPSTEN, newQVariant(value)):
       self.stickersEnsRopstenChanged()
 
@@ -566,9 +772,18 @@ QtObject:
     notify = stickersEnsRopstenChanged
 
   proc userDeclinedBackupBannerChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getUserDeclinedBackupBanner*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_USER_DECLINED_BACKUP_BANNER, newQVariant(DEFAULT_USER_DECLINED_BACKUP_BANNER))
-  proc setUserDeclinedBackupBanner*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+  proc getUserDeclinedBackupBanner*(
+      self: LocalAccountSensitiveSettings
+  ): bool {.slot.} =
+    getSettingsProp[bool](
+      self,
+      LSS_KEY_USER_DECLINED_BACKUP_BANNER,
+      newQVariant(DEFAULT_USER_DECLINED_BACKUP_BANNER),
+    )
+
+  proc setUserDeclinedBackupBanner*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_USER_DECLINED_BACKUP_BANNER, newQVariant(value)):
       self.userDeclinedBackupBannerChanged()
 
@@ -579,8 +794,13 @@ QtObject:
 
   proc gifUnfurlingEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getGifUnfurlingEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_GIF_UNFURLING_ENABLED, newQVariant(DEFAULT_GIF_UNFURLING_ENABLED))
-  proc setGifUnfurlingEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    getSettingsProp[bool](
+      self, LSS_KEY_GIF_UNFURLING_ENABLED, newQVariant(DEFAULT_GIF_UNFURLING_ENABLED)
+    )
+
+  proc setGifUnfurlingEnabled*(
+      self: LocalAccountSensitiveSettings, value: bool
+  ) {.slot.} =
     setSettingsProp(self, LSS_KEY_GIF_UNFURLING_ENABLED, newQVariant(value)):
       self.gifUnfurlingEnabledChanged()
 
@@ -590,42 +810,75 @@ QtObject:
     notify = gifUnfurlingEnabledChanged
 
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
-    if(self.settings.isNil):
+    if (self.settings.isNil):
       return
 
     self.settings.remove(key)
 
-    case key:
-      of LSS_KEY_CHAT_SPLIT_VIEW: self.chatSplitViewChanged()
-      of LSS_KEY_WALLET_SPLIT_VIEW: self.walletSplitViewChanged()
-      of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
-      of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
-      of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED: self.ensCommunityPermissionsEnabledChanged()
-      of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
-      of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
-      of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
-      of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS: self.hiddenCommunityBackUpBannersChanged()
-      of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
-      of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
-      of LSS_KEY_FONT_SIZE: self.fontSizeChanged()
-      of LSS_KEY_HIDE_SIGN_PHRASE_MODAL: self.hideSignPhraseModalChanged()
-      of LSS_KEY_QUITE_ON_CLOSE: self.quitOnCloseChanged()
-      of LSS_KEY_SKIN_COLOR: self.skinColorChanged()
-      of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()
-      of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED: self.downloadChannelMessagesEnabledChanged()
-      of LSS_KEY_ACTIVE_SECTION: self.activeSectionChanged()
-      of LSS_KEY_AUTO_LOAD_IMAGES: self.autoLoadImagesChanged()
-      of LSS_KEY_JAVA_SCRIPT_ENABLED: self.javaScriptEnabledChanged()
-      of LSS_KEY_ERROR_PAGE_ENABLED: self.errorPageEnabledChanged()
-      of LSS_KEY_PLUGINS_ENABLED: self.pluginsEnabledChanged()
-      of LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE: self.autoLoadIconsForPageChanged()
-      of LSS_KEY_TOUCH_ICONS_ENABLED: self.touchIconsEnabledChanged()
-      of LSS_KEY_WEB_RTC_PUBLIC_INTERFACES_ONLY: self.webRTCPublicInterfacesOnlyChanged()
-      of LSS_KEY_DEV_TOOLS_ENABLED: self.devToolsEnabledChanged()
-      of LSS_KEY_PDF_VIEWER_ENABLED: self.pdfViewerEnabledChanged()
-      of LSS_KEY_COMPATIBILITY_MODE: self.compatibilityModeChanged()
-      of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
-      of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()
-      of LSS_KEY_GIF_UNFURLING_ENABLED: self.gifUnfurlingEnabledChanged()
+    case key
+    of LSS_KEY_CHAT_SPLIT_VIEW:
+      self.chatSplitViewChanged()
+    of LSS_KEY_WALLET_SPLIT_VIEW:
+      self.walletSplitViewChanged()
+    of LSS_KEY_PROFILE_SPLIT_VIEW:
+      self.profileSplitViewChanged()
+    of LSS_KEY_NODE_MANAGEMENT_ENABLED:
+      self.nodeManagementEnabledChanged()
+    of LSS_KEY_ENS_COMMUNITY_PERMISSIONS_ENABLED:
+      self.ensCommunityPermissionsEnabledChanged()
+    of LSS_KEY_SHOW_ONLINE_USERS:
+      self.showOnlineUsersChanged()
+    of LSS_KEY_EXPAND_USERS_LIST:
+      self.expandUsersListChanged()
+    of LSS_KEY_RECENT_EMOJIS:
+      self.recentEmojisChanged()
+    of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS:
+      self.hiddenCommunityWelcomeBannersChanged()
+    of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS:
+      self.hiddenCommunityChannelAndCategoriesBannersChanged()
+    of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS:
+      self.hiddenCommunityBackUpBannersChanged()
+    of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN:
+      self.neverAskAboutUnfurlingAgainChanged()
+    of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS:
+      self.hideChannelSuggestionsChanged()
+    of LSS_KEY_FONT_SIZE:
+      self.fontSizeChanged()
+    of LSS_KEY_HIDE_SIGN_PHRASE_MODAL:
+      self.hideSignPhraseModalChanged()
+    of LSS_KEY_QUITE_ON_CLOSE:
+      self.quitOnCloseChanged()
+    of LSS_KEY_SKIN_COLOR:
+      self.skinColorChanged()
+    of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING:
+      self.showDeleteMessageWarningChanged()
+    of LSS_KEY_DOWNLOAD_CHANNEL_MESSAGES_ENABLED:
+      self.downloadChannelMessagesEnabledChanged()
+    of LSS_KEY_ACTIVE_SECTION:
+      self.activeSectionChanged()
+    of LSS_KEY_AUTO_LOAD_IMAGES:
+      self.autoLoadImagesChanged()
+    of LSS_KEY_JAVA_SCRIPT_ENABLED:
+      self.javaScriptEnabledChanged()
+    of LSS_KEY_ERROR_PAGE_ENABLED:
+      self.errorPageEnabledChanged()
+    of LSS_KEY_PLUGINS_ENABLED:
+      self.pluginsEnabledChanged()
+    of LSS_KEY_AUTO_LOAD_ICONS_FOR_PAGE:
+      self.autoLoadIconsForPageChanged()
+    of LSS_KEY_TOUCH_ICONS_ENABLED:
+      self.touchIconsEnabledChanged()
+    of LSS_KEY_WEB_RTC_PUBLIC_INTERFACES_ONLY:
+      self.webRTCPublicInterfacesOnlyChanged()
+    of LSS_KEY_DEV_TOOLS_ENABLED:
+      self.devToolsEnabledChanged()
+    of LSS_KEY_PDF_VIEWER_ENABLED:
+      self.pdfViewerEnabledChanged()
+    of LSS_KEY_COMPATIBILITY_MODE:
+      self.compatibilityModeChanged()
+    of LSS_KEY_STICKERS_ENS_ROPSTEN:
+      self.stickersEnsRopstenChanged()
+    of LSS_KEY_USER_DECLINED_BACKUP_BANNER:
+      self.userDeclinedBackupBannerChanged()
+    of LSS_KEY_GIF_UNFURLING_ENABLED:
+      self.gifUnfurlingEnabledChanged()

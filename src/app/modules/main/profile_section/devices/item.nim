@@ -1,10 +1,9 @@
 import ../../../../../app_service/service/devices/service as devices_service
 import ../../../../../app_service/service/devices/dto/[installation]
 
-type
-  Item* = ref object
-    installation: InstallationDto
-    isCurrentDevice: bool
+type Item* = ref object
+  installation: InstallationDto
+  isCurrentDevice: bool
 
 proc initItem*(installation: InstallationDto, isCurrentDevice: bool): Item =
   result = Item()

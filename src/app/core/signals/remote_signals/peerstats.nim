@@ -9,5 +9,5 @@ proc fromEvent*(T: type PeerStatsSignal, jsonSignal: JsonNode): PeerStatsSignal 
   result = PeerStatsSignal()
   result.signalType = SignalType.PeerStats
   if jsonSignal["event"].kind != JNull:
-    for (node, protocols)  in jsonSignal["event"]["peers"].pairs():
+    for (node, protocols) in jsonSignal["event"]["peers"].pairs():
       result.peers.add(node)

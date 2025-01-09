@@ -23,35 +23,36 @@ export io_interface
 logScope:
   topics = "profile-section-profile-module"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
-    events: EventEmitter
-    keycardService: keycard_service.Service
-    settingsService: settings_service.Service
-    networkService: network_service.Service
-    privacyService: privacy_service.Service
-    accountsService: accounts_service.Service
-    walletAccountService: wallet_account_service.Service
-    keychainService: keychain_service.Service
-    keycardSharedModule: keycard_shared_module.AccessInterface
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
+  events: EventEmitter
+  keycardService: keycard_service.Service
+  settingsService: settings_service.Service
+  networkService: network_service.Service
+  privacyService: privacy_service.Service
+  accountsService: accounts_service.Service
+  walletAccountService: wallet_account_service.Service
+  keychainService: keychain_service.Service
+  keycardSharedModule: keycard_shared_module.AccessInterface
 
 ## Forward declarations
 proc buildKeycardList(self: Module)
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  keycardService: keycard_service.Service,
-  settingsService: settings_service.Service,
-  networkService: network_service.Service,
-  privacyService: privacy_service.Service,
-  accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  keychainService: keychain_service.Service): Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    keycardService: keycard_service.Service,
+    settingsService: settings_service.Service,
+    networkService: network_service.Service,
+    privacyService: privacy_service.Service,
+    accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    keychainService: keychain_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
@@ -101,19 +102,29 @@ proc createSharedKeycardModule(self: Module) =
     info "keycard shared module is still running"
     self.view.emitSharedModuleBusy()
     return
-  self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER,
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
-    self.walletAccountService, self.keychainService)
+  self.keycardSharedModule = keycard_shared_module.newModule[Module](
+    self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER, self.events, self.keycardService,
+    self.settingsService, self.networkService, self.privacyService,
+    self.accountsService, self.walletAccountService, self.keychainService,
+  )
 
-method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool, nextFlow: keycard_shared_module.FlowType,
-  forceFlow: bool, nextKeyUid: string, returnToFlow: keycard_shared_module.FlowType) =
+method onSharedKeycarModuleFlowTerminated*(
+    self: Module,
+    lastStepInTheCurrentFlow: bool,
+    nextFlow: keycard_shared_module.FlowType,
+    forceFlow: bool,
+    nextKeyUid: string,
+    returnToFlow: keycard_shared_module.FlowType,
+) =
   if self.isSharedKeycardModuleFlowRunning():
     if nextFlow == keycard_shared_module.FlowType.General:
       self.view.emitDestroyKeycardSharedModuleFlow()
       self.keycardSharedModule.delete
       self.keycardSharedModule = nil
       return
-    self.keycardSharedModule.runFlow(nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow)
+    self.keycardSharedModule.runFlow(
+      nextFlow, nextKeyUid, bip44Paths = @[], txHash = "", forceFlow, returnToFlow
+    )
 
 method onDisplayKeycardSharedModuleFlow*(self: Module) =
   self.view.emitDisplayKeycardSharedModuleFlow()
@@ -122,25 +133,33 @@ method runSetupKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycard, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.SetupNewKeycard, keyUid
+  )
 
 method runStopUsingKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.MigrateFromKeycardToApp, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.MigrateFromKeycardToApp, keyUid
+  )
 
 method runCreateNewKeycardWithNewSeedPhrasePopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardNewSeedPhrase)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.SetupNewKeycardNewSeedPhrase
+  )
 
 method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardOldSeedPhrase)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.SetupNewKeycardOldSeedPhrase
+  )
 
 method runImportFromKeycardToAppPopup*(self: Module) =
   self.createSharedKeycardModule()
@@ -176,33 +195,45 @@ method runChangePinPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPin, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.ChangeKeycardPin, keyUid
+  )
 
 method runCreateBackupCopyOfAKeycardPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.CreateCopyOfAKeycard, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.CreateCopyOfAKeycard, keyUid
+  )
 
 method runCreatePukPopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.ChangeKeycardPuk, keyUid
+  )
 
 method runCreateNewPairingCodePopup*(self: Module, keyUid: string) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangePairingCode, keyUid)
+  self.keycardSharedModule.runFlow(
+    keycard_shared_module.FlowType.ChangePairingCode, keyUid
+  )
 
-proc findAccountByAccountAddress(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =
+proc findAccountByAccountAddress(
+    accounts: seq[WalletAccountDto], address: string
+): WalletAccountDto =
   for acc in accounts:
     if cmpIgnoreCase(acc.address, address) == 0:
       return acc
   return nil
 
-proc addAccountsToKeycardItem(self: Module, item: KeycardItem, accounts: seq[WalletAccountDto]) =
+proc addAccountsToKeycardItem(
+    self: Module, item: KeycardItem, accounts: seq[WalletAccountDto]
+) =
   if accounts.len == 0:
     return
   var accType = accounts[0].walletType
@@ -222,24 +253,37 @@ proc addAccountsToKeycardItem(self: Module, item: KeycardItem, accounts: seq[Wal
     var icon = ""
     if acc.emoji.len == 0:
       icon = "wallet"
-    item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-      icon = icon))
+    item.addAccount(
+      newKeyPairAccountItem(
+        acc.name,
+        acc.path,
+        acc.address,
+        acc.publicKey,
+        acc.emoji,
+        acc.colorId,
+        icon = icon,
+      )
+    )
 
 proc buildMainViewKeycardItem(self: Module, keypair: KeypairDto): KeycardItem =
   if keypair.isNil or not keypair.migratedToKeycard():
     return
-  var item = initKeycardItem(keycardUid = "",
+  var item = initKeycardItem(
+    keycardUid = "",
     keyUid = keypair.keyUid,
     pubKey = "",
     locked = false,
-    name = keypair.name)
+    name = keypair.name,
+  )
   ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
   item.setLocked(keypair.keycards.all(kp => kp.keycardLocked))
   self.addAccountsToKeycardItem(item, keypair.accounts)
   return item
 
 proc buildDetailsViewKeycardItem(self: Module, keycard: KeycardDto): KeycardItem =
-  let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
+  let isAccountInKnownAccounts = proc(
+      knownAccounts: seq[WalletAccountDto], address: string
+  ): bool =
     for i in 0 ..< knownAccounts.len:
       if cmpIgnoreCase(knownAccounts[i].address, address) == 0:
         return true
@@ -262,11 +306,13 @@ proc buildDetailsViewKeycardItem(self: Module, keycard: KeycardDto): KeycardItem
       unknownAccountsAddresses.add(accAddr)
       continue
     knownAccounts.add(account)
-  var item = initKeycardItem(keycardUid = keycard.keycardUid,
+  var item = initKeycardItem(
+    keycardUid = keycard.keycardUid,
     keyUid = keycard.keyUid,
     pubKey = "",
     locked = keycard.keycardLocked,
-    name = keycard.keycardName)
+    name = keycard.keycardName,
+  )
   if knownAccounts.len == 0:
     item.setPairType(KeyPairType.SeedImport.int)
     item.setIcon("keycard")
@@ -281,7 +327,17 @@ proc buildDetailsViewKeycardItem(self: Module, keycard: KeycardDto): KeycardItem
   for ua in unknownAccountsAddresses:
     i.inc
     let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $i
-    item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", colorId = "undefined", icon = "wallet"))
+    item.addAccount(
+      newKeyPairAccountItem(
+        name,
+        path = "",
+        ua,
+        pubKey = "",
+        emoji = "",
+        colorId = "undefined",
+        icon = "wallet",
+      )
+    )
   return item
 
 proc buildKeycardList(self: Module) =
@@ -296,13 +352,19 @@ proc buildKeycardList(self: Module) =
     self.view.setKeycardItems(items)
 
 method onLoggedInUserNameChanged*(self: Module) =
-  self.view.keycardModel().setName(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getName())
+  self.view.keycardModel().setName(
+    singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getName()
+  )
 
 method onLoggedInUserImageChanged*(self: Module) =
-  self.view.keycardModel().setImage(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon())
+  self.view.keycardModel().setImage(
+    singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon()
+  )
   if self.view.keycardDetailsModel().isNil:
     return
-  self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon())
+  self.view.keycardDetailsModel().setImage(
+    singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon()
+  )
 
 proc resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:
@@ -310,7 +372,8 @@ proc resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
     return
 
   let
-    thereAreDisplayedKeycardsForKeypair = not self.view.keycardModel().getItemForKeyUid(keypair.keyUid).isNil
+    thereAreDisplayedKeycardsForKeypair =
+      not self.view.keycardModel().getItemForKeyUid(keypair.keyUid).isNil
     detailsViewCurrentlyDisplayed = not self.view.keycardDetailsModel().isNil
 
   # create main view item
@@ -399,7 +462,9 @@ method onKeycardNameChanged*(self: Module, keycardUid: string, keycardNewName: s
   # keycard on the main view should always follow corresponding keypair
   if self.view.keycardDetailsModel().isNil:
     return
-  self.view.keycardDetailsModel().setNameForKeycardWithKeycardUid(keycardUid, keycardNewName)
+  self.view.keycardDetailsModel().setNameForKeycardWithKeycardUid(
+    keycardUid, keycardNewName
+  )
 
 method onKeycardUidUpdated*(self: Module, keycardUid: string, keycardNewUid: string) =
   if self.view.keycardDetailsModel().isNil:

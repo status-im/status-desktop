@@ -7,21 +7,20 @@ import backend/activity as backend_activity
 
 # Status's responsibility is to keep track and report the general state of the backend
 QtObject:
-  type
-    Status* = ref object of QObject
-      loadingData: bool
-      errorCode: backend_activity.ErrorCode
+  type Status* = ref object of QObject
+    loadingData: bool
+    errorCode: backend_activity.ErrorCode
 
-      loadingCollectibles: Atomic[int]
-      # No need for synchronization primitives, all operations are serialized on the main thread; see events_handler.nim
-      loadingRecipients: bool
-      loadingStartTimestamp: bool
+    loadingCollectibles: Atomic[int]
+    # No need for synchronization primitives, all operations are serialized on the main thread; see events_handler.nim
+    loadingRecipients: bool
+    loadingStartTimestamp: bool
 
-      startTimestamp: int
+    startTimestamp: int
 
-      newDataAvailable: bool
+    newDataAvailable: bool
 
-      isFilterDirty: bool
+    isFilterDirty: bool
 
   proc setup(self: Status) =
     self.QObject.setup
@@ -109,8 +108,11 @@ QtObject:
     self.startTimestampChanged()
 
   proc getStartTimestamp*(self: Status): int {.slot.} =
-    return if self.startTimestamp > 0: self.startTimestamp
-           else: int(times.parse("2000-01-01", "yyyy-MM-dd").toTime().toUnix())
+    return
+      if self.startTimestamp > 0:
+        self.startTimestamp
+      else:
+        int(times.parse("2000-01-01", "yyyy-MM-dd").toTime().toUnix())
 
   QtProperty[int] startTimestamp:
     read = getStartTimestamp

@@ -1,5 +1,4 @@
-type
-  RepeatPukState* = ref object of State
+type RepeatPukState* = ref object of State
 
 proc newRepeatPukState*(flowType: FlowType, backState: State): RepeatPukState =
   result = RepeatPukState()

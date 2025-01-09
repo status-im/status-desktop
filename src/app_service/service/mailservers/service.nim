@@ -49,29 +49,27 @@ const SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED* = "historyRequestCompleted"
 proc requestMoreMessagesTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
   try:
-    info "Requesting additional message history for chat", chatId=arg.chatId
+    info "Requesting additional message history for chat", chatId = arg.chatId
     let response = status_mailservers.requestMoreMessages(arg.chatId)
 
-    if(not response.error.isNil):
-      error "Could not request additional messages due to error", errDescription = response.error.message
+    if (not response.error.isNil):
+      error "Could not request additional messages due to error",
+        errDescription = response.error.message
       arg.finish(%*{"error": response.error.message})
     else:
-      info "synced mailserver successfully", chatID=arg.chatId
+      info "synced mailserver successfully", chatID = arg.chatId
       arg.finish(%*{"error": ""})
-
   except Exception as e:
-    warn "Could not request additional messages due to error", errDescription=e.msg
-    arg.finish(%* {
-      "error": e.msg
-    })
+    warn "Could not request additional messages due to error", errDescription = e.msg
+    arg.finish(%*{"error": e.msg})
 
 proc fillGapsTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FillGapsTaskArg](argEncoded)
   try:
-    info "Requesting fill gaps", chatId=arg.chatId, messageIds=arg.messageIds
+    info "Requesting fill gaps", chatId = arg.chatId, messageIds = arg.messageIds
     discard status_mailservers.fillGaps(arg.chatId, arg.messageIds)
   except Exception as e:
-    warn "Could not fill gaps due to error", errDescription=e.msg
+    warn "Could not fill gaps due to error", errDescription = e.msg
 
 QtObject:
   type Service* = ref object of QObject
@@ -92,10 +90,13 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    fleetConfiguration: FleetConfiguration): Service =
+  proc newService*(
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      settingsService: settings_service.Service,
+      nodeConfigurationService: node_configuration_service.Service,
+      fleetConfiguration: FleetConfiguration,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -103,7 +104,8 @@ QtObject:
     result.settingsService = settingsService
     result.nodeConfigurationService = nodeConfigurationService
     result.fleetConfiguration = fleetConfiguration
-    result.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: "", nodeId: "")
+    result.activeMailserverData =
+      ActiveMailserverChangedArgs(nodeAddress: "", nodeId: "")
 
   proc init*(self: Service) =
     self.doConnect()
@@ -128,9 +130,7 @@ QtObject:
 
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
-      tptr: requestMoreMessagesTask,
-      vptr: cast[uint](self.vptr),
-      chatId: chatId,
+      tptr: requestMoreMessagesTask, vptr: cast[uint](self.vptr), chatId: chatId
     )
     self.threadpool.start(arg)
 
@@ -139,7 +139,7 @@ QtObject:
       tptr: fillGapsTask,
       vptr: cast[uint](self.vptr),
       chatId: chatId,
-      messageIds: @[messageId]
+      messageIds: @[messageId],
     )
     self.threadpool.start(arg)
 
@@ -152,8 +152,9 @@ QtObject:
       if address == "":
         info "removing active mailserver"
       else:
-        info "active mailserver changed", node=address, id = id
-      self.activeMailserverData = ActiveMailserverChangedArgs(nodeAddress: address, nodeId: id)
+        info "active mailserver changed", node = address, id = id
+      self.activeMailserverData =
+        ActiveMailserverChangedArgs(nodeAddress: address, nodeId: id)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, self.activeMailserverData)
 
     self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
@@ -167,7 +168,7 @@ QtObject:
 
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
       let h = HistoryRequestStartedSignal(e)
-      info "history request started", numBatches=h.numBatches
+      info "history request started", numBatches = h.numBatches
       self.events.emit(SIGNAL_MAILSERVER_HISTORY_REQUEST_STARTED, Args())
 
     self.events.on(SignalType.HistoryRequestCompleted.event) do(e: Args):
@@ -177,18 +178,19 @@ QtObject:
 
     self.events.on(SignalType.HistoryRequestFailed.event) do(e: Args):
       let h = HistoryRequestFailedSignal(e)
-      info "history request failed", requestId=h.requestId, peerId=h.peerId, errorMessage=h.errorMessage
+      info "history request failed",
+        requestId = h.requestId, peerId = h.peerId, errorMessage = h.errorMessage
 
     self.events.on(SignalType.HistoryRequestSuccess.event) do(e: Args):
       let h = HistoryRequestSuccessSignal(e)
-      info "history request success", requestId=h.requestId, peerId=h.peerId
+      info "history request success", requestId = h.requestId, peerId = h.peerId
 
   proc initMailservers(self: Service) =
     let fleet = self.nodeConfigurationService.getFleet()
     let mailservers = self.fleetConfiguration.getMailservers(fleet)
 
     for (name, nodeAddress) in mailservers.pairs():
-      info "initMailservers", topics="mailserver-interaction", name, nodeAddress
+      info "initMailservers", topics = "mailserver-interaction", name, nodeAddress
       self.mailservers.add((name: name, nodeAddress: nodeAddress))
 
   proc getActiveMailserverId*(self: Service): string =
@@ -197,18 +199,22 @@ QtObject:
   proc fetchMailservers(self: Service) =
     try:
       let response = status_mailservers.getMailservers()
-      info "fetch mailservers", topics="mailserver-interaction", rpc_proc="mailservers_getMailservers", response
+      info "fetch mailservers",
+        topics = "mailserver-interaction",
+        rpc_proc = "mailservers_getMailservers",
+        response
 
       for el in response.result.getElems():
         let dto = el.toMailserverDto()
         self.mailservers.add((name: dto.name, nodeAddress: dto.address))
-
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
       return
 
-  proc getAllMailservers*(self: Service): seq[tuple[name: string, nodeAddress: string]] =
+  proc getAllMailservers*(
+      self: Service
+  ): seq[tuple[name: string, nodeAddress: string]] =
     return self.mailservers
 
   proc saveMailserver*(self: Service, name: string, nodeAddress: string): string =
@@ -217,12 +223,14 @@ QtObject:
       let id = $genUUID()
 
       let response = status_mailservers.saveMailserver(id, name, nodeAddress, fleet)
-      info "save mailserver", topics="mailserver-interaction", rpc_proc="mailservers_addMailserver", response
+      info "save mailserver",
+        topics = "mailserver-interaction",
+        rpc_proc = "mailservers_addMailserver",
+        response
       # once we have more info from `status-go` we may emit a signal from here and
       # update view or display an error accordingly
 
       return id
-
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription

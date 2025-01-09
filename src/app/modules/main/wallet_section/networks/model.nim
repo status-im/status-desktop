@@ -5,30 +5,28 @@ import ./io_interface
 
 from app_service/service/network/service import EXPLORER_TX_PATH
 
-type
-  ModelRole* {.pure.} = enum
-    ChainId = UserRole + 1,
-    Layer
-    ChainName
-    RpcURL
-    BlockExplorerURL
-    NativeCurrencyName
-    NativeCurrencySymbol
-    NativeCurrencyDecimals
-    IsTest
-    IsEnabled
-    IconUrl
-    ChainColor
-    ShortName
-    EnabledState
-    FallbackURL
-    OriginalRpcURL
-    OriginalFallbackURL
+type ModelRole* {.pure.} = enum
+  ChainId = UserRole + 1
+  Layer
+  ChainName
+  RpcURL
+  BlockExplorerURL
+  NativeCurrencyName
+  NativeCurrencySymbol
+  NativeCurrencyDecimals
+  IsTest
+  IsEnabled
+  IconUrl
+  ChainColor
+  ShortName
+  EnabledState
+  FallbackURL
+  OriginalRpcURL
+  OriginalFallbackURL
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      delegate: io_interface.NetworksDataSource
+  type Model* = ref object of QAbstractListModel
+    delegate: io_interface.NetworksDataSource
 
   proc delete(self: Model) =
     self.QAbstractListModel.delete
@@ -55,17 +53,17 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.ChainId.int:"chainId",
-      ModelRole.NativeCurrencyDecimals.int:"nativeCurrencyDecimals",
-      ModelRole.Layer.int:"layer",
-      ModelRole.ChainName.int:"chainName",
-      ModelRole.RpcURL.int:"rpcURL",
-      ModelRole.BlockExplorerURL.int:"blockExplorerURL",
-      ModelRole.NativeCurrencyName.int:"nativeCurrencyName",
-      ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
-      ModelRole.IsTest.int:"isTest",
-      ModelRole.IsEnabled.int:"isEnabled",
-      ModelRole.IconUrl.int:"iconUrl",
+      ModelRole.ChainId.int: "chainId",
+      ModelRole.NativeCurrencyDecimals.int: "nativeCurrencyDecimals",
+      ModelRole.Layer.int: "layer",
+      ModelRole.ChainName.int: "chainName",
+      ModelRole.RpcURL.int: "rpcURL",
+      ModelRole.BlockExplorerURL.int: "blockExplorerURL",
+      ModelRole.NativeCurrencyName.int: "nativeCurrencyName",
+      ModelRole.NativeCurrencySymbol.int: "nativeCurrencySymbol",
+      ModelRole.IsTest.int: "isTest",
+      ModelRole.IsEnabled.int: "isEnabled",
+      ModelRole.IconUrl.int: "iconUrl",
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
       ModelRole.EnabledState.int: "enabledState",
@@ -84,7 +82,7 @@ QtObject:
     let item = self.delegate.getFlatNetworksList()[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.ChainId:
       result = newQVariant(item.chainId)
     of ModelRole.NativeCurrencyDecimals:
@@ -127,48 +125,56 @@ QtObject:
 
   proc getBlockExplorerTxURL*(self: Model, chainId: int): string =
     for item in self.delegate.getFlatNetworksList():
-      if(item.chainId == chainId):
+      if (item.chainId == chainId):
         return item.blockExplorerURL & EXPLORER_TX_PATH
     return ""
 
   proc getEnabledState*(self: Model, chainId: int): UxEnabledState =
     for item in self.delegate.getFlatNetworksList():
-      if(item.chainId == chainId):
+      if (item.chainId == chainId):
         return item.enabledState
     return UxEnabledState.Disabled
 
   # Returns the chains that need to be enabled or disabled (the second return value)
   #   to satisty the transitions: all enabled to only chainId enabled and
   #   only chainId enabled to all enabled
-  proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int, areTestNetworksEnabled: bool): (seq[int], bool) =
-    let filteredNetworks = self.delegate.getFlatNetworksList().filter(n => n.isTest == areTestNetworksEnabled)
+  proc networksToChangeStateOnUserActionFor*(
+      self: Model, chainId: int, areTestNetworksEnabled: bool
+  ): (seq[int], bool) =
+    let filteredNetworks = self.delegate.getFlatNetworksList().filter(
+        n => n.isTest == areTestNetworksEnabled
+      )
     var chainIds: seq[int] = @[]
     var enable = false
-    case self.getEnabledState(chainId):
-      of UxEnabledState.Enabled:
-        # Iterate to check for the only chainId enabled case ...
-        for item in filteredNetworks:
-          if item.enabledState == UxEnabledState.Enabled and item.chainId != chainId:
-            # ... as soon as we find another enabled chain mark this by adding it to the list
-            chainIds.add(chainId)
-            break
+    case self.getEnabledState(chainId)
+    of UxEnabledState.Enabled:
+      # Iterate to check for the only chainId enabled case ...
+      for item in filteredNetworks:
+        if item.enabledState == UxEnabledState.Enabled and item.chainId != chainId:
+          # ... as soon as we find another enabled chain mark this by adding it to the list
+          chainIds.add(chainId)
+          break
 
-        # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
-        if chainIds.len == 0:
-          for item in filteredNetworks:
-            if item.chainId != chainId:
-              chainIds.add(item.chainId)
-          enable = true
-      of UxEnabledState.Disabled:
-        chainIds.add(chainId)
-        enable = true
-      of UxEnabledState.AllEnabled:
-        # disable all but chainId
+      # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
+      if chainIds.len == 0:
         for item in filteredNetworks:
           if item.chainId != chainId:
             chainIds.add(item.chainId)
+        enable = true
+    of UxEnabledState.Disabled:
+      chainIds.add(chainId)
+      enable = true
+    of UxEnabledState.AllEnabled:
+      # disable all but chainId
+      for item in filteredNetworks:
+        if item.chainId != chainId:
+          chainIds.add(item.chainId)
 
     return (chainIds, enable)
 
   proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
-    return self.delegate.getFlatNetworksList().filter(n => n.isEnabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")
+    return self.delegate
+      .getFlatNetworksList()
+      .filter(n => n.isEnabled and n.isTest == areTestNetworksEnabled)
+      .map(n => n.chainId)
+      .join(":")

@@ -45,9 +45,11 @@ const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 const KEY_TOKEN_GROUP_BY_COMMUNITY* = "token-group-by-community?"
-const KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS* = "show-community-asset-when-sending-tokens?"
+const KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS* =
+  "show-community-asset-when-sending-tokens?"
 const KEY_DISPLAY_ASSETS_BELOW_BALANCE* = "display-assets-below-balance?"
-const KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD* = "display-assets-below-balance-threshold"
+const KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD* =
+  "display-assets-below-balance-threshold"
 const KEY_COLLECTIBLE_GROUP_BY_COMMUNITY* = "collectible-group-by-community?"
 const KEY_COLLECTIBLE_GROUP_BY_COLLECTION* = "collectible-group-by-collection?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
@@ -101,67 +103,66 @@ type CurrentUserStatus* = object
   clock*: int64
   text*: string
 
-type
-  SettingsFieldDto* = object
-    name*: string
-    value*: JsonNode
+type SettingsFieldDto* = object
+  name*: string
+  value*: JsonNode
 
-type
-  SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
-    address*: string
-    currency*: string
-    dappsAddress*: string
-    eip1581Address*: string
-    installationId*: string
-    displayName*: string
-    bio*: string
-    preferredName*: string
-    ensUsernames*: seq[string]
-    keyUid*: string
-    latestDerivedPath*: int
-    linkPreviewRequestEnabled*: bool
-    messagesFromContactsOnly*: bool
-    mnemonic*: string
-    name*: string # user alias
-    photoPath*: string
-    pinnedMailserver*: PinnedMailserver
-    previewPrivacy*: bool
-    publicKey*: string
-    signingPhrase*: string
-    defaultSyncPeriod*: int
-    sendPushNotifications*: bool
-    appearance*: int
-    useMailservers*: bool
-    walletRootAddress*: string
-    sendStatusUpdates*: bool
-    telemetryServerUrl*: string
-    fleet*: string
-    currentUserStatus*: CurrentUserStatus
-    nodeConfig*: JsonNode
-    wakuBloomFilterMode*: bool
-    autoMessageEnabled*: bool
-    gifRecents*: JsonNode
-    gifFavorites*: JsonNode
-    testNetworksEnabled*: bool
-    notificationsAllowNotifications*: bool
-    notificationsOneToOneChats*: string
-    notificationsGroupChats*: string
-    notificationsPersonalMentions*: string
-    notificationsGlobalMentions*: string
-    notificationsAllMessages*: string
-    notificationsContactRequests*: string
-    notificationsIdentityVerificationRequests*: string
-    notificationsSoundsEnabled*: bool
-    notificationsVolume*: int
-    notificationsMessagePreview*: int
-    profileMigrationNeeded*: bool
-    tokenGroupByCommunity*: bool
-    showCommunityAssetWhenSendingTokens*: bool
-    displayAssetsBelowBalance*: bool
-    displayAssetsBelowBalanceThreshold*: int64
-    collectibleGroupByCommunity*: bool
-    collectibleGroupByCollection*: bool
-    urlUnfurlingMode*: UrlUnfurlingMode
+type SettingsDto* = object
+  # There is no point to keep all these info as settings, but we must follow status-go response
+  address*: string
+  currency*: string
+  dappsAddress*: string
+  eip1581Address*: string
+  installationId*: string
+  displayName*: string
+  bio*: string
+  preferredName*: string
+  ensUsernames*: seq[string]
+  keyUid*: string
+  latestDerivedPath*: int
+  linkPreviewRequestEnabled*: bool
+  messagesFromContactsOnly*: bool
+  mnemonic*: string
+  name*: string # user alias
+  photoPath*: string
+  pinnedMailserver*: PinnedMailserver
+  previewPrivacy*: bool
+  publicKey*: string
+  signingPhrase*: string
+  defaultSyncPeriod*: int
+  sendPushNotifications*: bool
+  appearance*: int
+  useMailservers*: bool
+  walletRootAddress*: string
+  sendStatusUpdates*: bool
+  telemetryServerUrl*: string
+  fleet*: string
+  currentUserStatus*: CurrentUserStatus
+  nodeConfig*: JsonNode
+  wakuBloomFilterMode*: bool
+  autoMessageEnabled*: bool
+  gifRecents*: JsonNode
+  gifFavorites*: JsonNode
+  testNetworksEnabled*: bool
+  notificationsAllowNotifications*: bool
+  notificationsOneToOneChats*: string
+  notificationsGroupChats*: string
+  notificationsPersonalMentions*: string
+  notificationsGlobalMentions*: string
+  notificationsAllMessages*: string
+  notificationsContactRequests*: string
+  notificationsIdentityVerificationRequests*: string
+  notificationsSoundsEnabled*: bool
+  notificationsVolume*: int
+  notificationsMessagePreview*: int
+  profileMigrationNeeded*: bool
+  tokenGroupByCommunity*: bool
+  showCommunityAssetWhenSendingTokens*: bool
+  displayAssetsBelowBalance*: bool
+  displayAssetsBelowBalanceThreshold*: int64
+  collectibleGroupByCommunity*: bool
+  collectibleGroupByCollection*: bool
+  urlUnfurlingMode*: UrlUnfurlingMode
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -194,8 +195,10 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_BIO, result.bio)
   discard jsonObj.getProp(KEY_KEY_UID, result.keyUid)
   discard jsonObj.getProp(KEY_LATEST_DERIVED_PATH, result.latestDerivedPath)
-  discard jsonObj.getProp(KEY_LINK_PREVIEW_REQUEST_ENABLED, result.linkPreviewRequestEnabled)
-  discard jsonObj.getProp(KEY_MESSAGES_FROM_CONTACTS_ONLY, result.messagesFromContactsOnly)
+  discard
+    jsonObj.getProp(KEY_LINK_PREVIEW_REQUEST_ENABLED, result.linkPreviewRequestEnabled)
+  discard
+    jsonObj.getProp(KEY_MESSAGES_FROM_CONTACTS_ONLY, result.messagesFromContactsOnly)
   discard jsonObj.getProp(KEY_MNEMONIC, result.mnemonic)
   discard jsonObj.getProp(KEY_NAME, result.name)
   discard jsonObj.getProp(KEY_PHOTO_PATH, result.photoPath)
@@ -215,11 +218,22 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
   discard jsonObj.getProp(KEY_TOKEN_GROUP_BY_COMMUNITY, result.tokenGroupByCommunity)
-  discard jsonObj.getProp(KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS, result.showCommunityAssetWhenSendingTokens)
-  discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE, result.displayAssetsBelowBalance)
-  discard jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD, result.displayAssetsBelowBalanceThreshold)
-  discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, result.collectibleGroupByCommunity)
-  discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, result.collectibleGroupByCollection)
+  discard jsonObj.getProp(
+    KEY_SHOW_COMMUNITY_ASSET_WHEN_SENDING_TOKENS,
+    result.showCommunityAssetWhenSendingTokens,
+  )
+  discard
+    jsonObj.getProp(KEY_DISPLAY_ASSETS_BELOW_BALANCE, result.displayAssetsBelowBalance)
+  discard jsonObj.getProp(
+    KEY_DISPLAY_ASSETS_BELOW_BALANCE_THRESHOLD,
+    result.displayAssetsBelowBalanceThreshold,
+  )
+  discard jsonObj.getProp(
+    KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, result.collectibleGroupByCommunity
+  )
+  discard jsonObj.getProp(
+    KEY_COLLECTIBLE_GROUP_BY_COLLECTION, result.collectibleGroupByCollection
+  )
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
 
   var urlUnfurlingMode: int

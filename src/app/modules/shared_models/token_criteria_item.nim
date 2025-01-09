@@ -1,24 +1,23 @@
 import stew/shims/strformat, tables
 import backend/collectibles_types
 
-type
-  TokenCriteriaItem* = object
-    symbol*: string
-    name*: string
-    amount*: string
-    `type`*: int
-    ensPattern*: string
-    criteriaMet*: bool
-    addresses*: Table[int, string]
+type TokenCriteriaItem* = object
+  symbol*: string
+  name*: string
+  amount*: string
+  `type`*: int
+  ensPattern*: string
+  criteriaMet*: bool
+  addresses*: Table[int, string]
 
 proc initTokenCriteriaItem*(
-  symbol: string,
-  name: string,
-  amount: string,
-  `type`: int,
-  ensPattern: string,
-  criteriaMet: bool,
-  addresses: Table[int, string]
+    symbol: string,
+    name: string,
+    amount: string,
+    `type`: int,
+    ensPattern: string,
+    criteriaMet: bool,
+    addresses: Table[int, string],
 ): TokenCriteriaItem =
   result.symbol = symbol
   result.name = name
@@ -29,7 +28,8 @@ proc initTokenCriteriaItem*(
   result.addresses = addresses
 
 proc `$`*(self: TokenCriteriaItem): string =
-  result = fmt"""TokenCriteriaItem(
+  result =
+    fmt"""TokenCriteriaItem(
     symbol: {self.symbol},
     name: {self.name},
     amount: {self.amount},

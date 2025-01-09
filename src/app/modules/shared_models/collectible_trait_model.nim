@@ -2,17 +2,15 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import backend/collectibles as backend
 
-type
-  ModelRole {.pure.} = enum
-    TraitType = UserRole + 1,
-    Value
-    DisplayType
-    MaxValue
+type ModelRole {.pure.} = enum
+  TraitType = UserRole + 1
+  Value
+  DisplayType
+  MaxValue
 
 QtObject:
-  type
-    TraitModel* = ref object of QAbstractListModel
-      items: seq[backend.CollectibleTrait]
+  type TraitModel* = ref object of QAbstractListModel
+    items: seq[backend.CollectibleTrait]
 
   proc delete(self: TraitModel) =
     self.items = @[]
@@ -43,10 +41,10 @@ QtObject:
 
   method roleNames(self: TraitModel): Table[int, string] =
     {
-      ModelRole.TraitType.int:"traitType",
-      ModelRole.Value.int:"value",
-      ModelRole.DisplayType.int:"displayType",
-      ModelRole.MaxValue.int:"maxValue",
+      ModelRole.TraitType.int: "traitType",
+      ModelRole.Value.int: "value",
+      ModelRole.DisplayType.int: "displayType",
+      ModelRole.MaxValue.int: "maxValue",
     }.toTable
 
   method data(self: TraitModel, index: QModelIndex, role: int): QVariant =
@@ -59,7 +57,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.TraitType:
       result = newQVariant(item.trait_type)
     of ModelRole.Value:

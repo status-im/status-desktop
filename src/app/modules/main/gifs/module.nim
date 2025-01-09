@@ -10,20 +10,18 @@ import ../../../../app_service/service/gif/dto
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     gifService: gif_service.Service,
-    ):
-  Module =
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)

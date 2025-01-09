@@ -1,13 +1,12 @@
 import NimQml, Tables
 import discord_file_item
 
-type
-  ModelRole {.pure.} = enum
-    FilePath = UserRole + 1
-    ErrorMessage
-    ErrorCode
-    Selected
-    Validated
+type ModelRole {.pure.} = enum
+  FilePath = UserRole + 1
+  ErrorMessage
+  ErrorCode
+  Selected
+  Validated
 
 QtObject:
   type DiscordFileListModel* = ref object of QAbstractListModel
@@ -74,37 +73,39 @@ QtObject:
 
   method roleNames(self: DiscordFileListModel): Table[int, string] =
     {
-      ModelRole.FilePath.int:"filePath",
-      ModelRole.ErrorMessage.int:"errorMessage",
-      ModelRole.ErrorCode.int:"errorCode",
-      ModelRole.Selected.int:"selected",
-      ModelRole.Validated.int:"validated",
+      ModelRole.FilePath.int: "filePath",
+      ModelRole.ErrorMessage.int: "errorMessage",
+      ModelRole.ErrorCode.int: "errorCode",
+      ModelRole.Selected.int: "selected",
+      ModelRole.Validated.int: "validated",
     }.toTable
 
-  method setData(self: DiscordFileListModel, index: QModelIndex, value: QVariant, role: int): bool =
+  method setData(
+      self: DiscordFileListModel, index: QModelIndex, value: QVariant, role: int
+  ): bool =
     if not index.isValid:
       return false
     let row = index.row
     if row < 0 or row >= self.items.len:
       return false
-    case role.ModelRole:
-      of ModelRole.FilePath:
-        self.items[index.row].filePath = value.stringVal()
-        self.dataChanged(index, index, @[ModelRole.FilePath.int])
-      of ModelRole.ErrorMessage:
-        self.items[index.row].errorMessage = value.stringVal()
-        self.dataChanged(index, index, @[ModelRole.ErrorMessage.int])
-      of ModelRole.ErrorCode:
-        self.items[index.row].errorCode = value.intVal()
-        self.dataChanged(index, index, @[ModelRole.ErrorCode.int])
-      of ModelRole.Selected:
-        self.items[index.row].selected = value.boolVal()
-        self.dataChanged(index, index, @[ModelRole.Selected.int])
-        self.selectedCountChanged()
-      of ModelRole.Validated:
-        self.items[index.row].validated = value.boolVal()
-        self.dataChanged(index, index, @[ModelRole.Validated.int])
-        self.selectedFilesValidChanged()
+    case role.ModelRole
+    of ModelRole.FilePath:
+      self.items[index.row].filePath = value.stringVal()
+      self.dataChanged(index, index, @[ModelRole.FilePath.int])
+    of ModelRole.ErrorMessage:
+      self.items[index.row].errorMessage = value.stringVal()
+      self.dataChanged(index, index, @[ModelRole.ErrorMessage.int])
+    of ModelRole.ErrorCode:
+      self.items[index.row].errorCode = value.intVal()
+      self.dataChanged(index, index, @[ModelRole.ErrorCode.int])
+    of ModelRole.Selected:
+      self.items[index.row].selected = value.boolVal()
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
+      self.selectedCountChanged()
+    of ModelRole.Validated:
+      self.items[index.row].validated = value.boolVal()
+      self.dataChanged(index, index, @[ModelRole.Validated.int])
+      self.selectedFilesValidChanged()
     return true
 
   method data(self: DiscordFileListModel, index: QModelIndex, role: int): QVariant =
@@ -114,31 +115,32 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
-      of ModelRole.FilePath:
-        result = newQVariant(item.getFilePath())
-      of ModelRole.ErrorMessage:
-        result = newQVariant(item.getErrorMessage())
-      of ModelRole.ErrorCode:
-        result = newQVariant(item.getErrorCode())
-      of ModelRole.Selected:
-        result = newQVariant(item.getSelected())
-      of ModelRole.Validated:
-        result = newQVariant(item.getValidated())
+    case enumRole
+    of ModelRole.FilePath:
+      result = newQVariant(item.getFilePath())
+    of ModelRole.ErrorMessage:
+      result = newQVariant(item.getErrorMessage())
+    of ModelRole.ErrorCode:
+      result = newQVariant(item.getErrorCode())
+    of ModelRole.Selected:
+      result = newQVariant(item.getSelected())
+    of ModelRole.Validated:
+      result = newQVariant(item.getValidated())
 
   proc findIndexByFilePath(self: DiscordFileListModel, filePath: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].getFilePath() == filePath):
+      if (self.items[i].getFilePath() == filePath):
         return i
     return -1
 
   proc removeItem*(self: DiscordFileListModel, filePath: string) =
     let idx = self.findIndexByFilePath(filePath)
-    if(idx == -1):
+    if (idx == -1):
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -146,36 +148,43 @@ QtObject:
     self.countChanged()
 
   proc addItem*(self: DiscordFileListModel, item: DiscordFileItem) =
-      let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
-      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-      self.items.add(item)
-      self.endInsertRows()
-      self.countChanged()
+    let parentModelIndex = newQModelIndex()
+    defer:
+      parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
 
   proc setAllValidated*(self: DiscordFileListModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
+      defer:
+        index.delete
       self.items[i].validated = true
       self.dataChanged(index, index, @[ModelRole.Validated.int])
     self.selectedFilesValidChanged()
 
-  proc updateErrorState*(self: DiscordFileListModel, filePath: string, errorMessage: string, errorCode: int) =
+  proc updateErrorState*(
+      self: DiscordFileListModel, filePath: string, errorMessage: string, errorCode: int
+  ) =
     let idx = self.findIndexByFilePath(filePath)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
+      defer:
+        index.delete
       self.items[idx].errorMessage = errorMessage
       self.items[idx].errorCode = errorCode
       self.items[idx].selected = false
       self.items[idx].validated = true
-      self.dataChanged(index, index, @[
-        ModelRole.ErrorMessage.int,
-        ModelRole.ErrorCode.int,
-        ModelRole.Selected.int,
-        ModelRole.Validated.int
-      ])
+      self.dataChanged(
+        index,
+        index,
+        @[
+          ModelRole.ErrorMessage.int, ModelRole.ErrorCode.int, ModelRole.Selected.int,
+          ModelRole.Validated.int,
+        ],
+      )
       self.selectedCountChanged()
 
   proc clearItems*(self: DiscordFileListModel) =
@@ -185,4 +194,3 @@ QtObject:
     self.countChanged()
     self.selectedCountChanged()
     self.selectedFilesValidChanged()
-

@@ -35,26 +35,28 @@ const SIGNAL_SEARCH_GIFS_STARTED* = "searchGifsStarted"
 const SIGNAL_SEARCH_GIFS_DONE* = "searchGifsDone"
 const SIGNAL_SEARCH_GIFS_ERROR* = "searchGifsError"
 
-type
-  GifsArgs* = ref object of Args
-    gifs*: seq[GifDto]
-    error*: string
+type GifsArgs* = ref object of Args
+  gifs*: seq[GifDto]
+  error*: string
 
 QtObject:
-  type
-    Service* = ref object of QObject
-      threadpool: ThreadPool
-      settingsService: settings_service.Service
-      favorites: seq[GifDto]
-      recents: seq[GifDto]
-      trending: seq[GifDto]
-      events: EventEmitter
-      apiKeySet: bool
+  type Service* = ref object of QObject
+    threadpool: ThreadPool
+    settingsService: settings_service.Service
+    favorites: seq[GifDto]
+    recents: seq[GifDto]
+    trending: seq[GifDto]
+    events: EventEmitter
+    apiKeySet: bool
 
   proc delete*(self: Service) =
     discard
 
-  proc newService*(settingsService: settings_service.Service, events: EventEmitter, threadpool: ThreadPool): Service =
+  proc newService*(
+      settingsService: settings_service.Service,
+      events: EventEmitter,
+      threadpool: ThreadPool,
+  ): Service =
     result = Service()
     result.QObject.setup
     result.settingsService = settingsService
@@ -70,7 +72,7 @@ QtObject:
       let arg = AsyncGetRecentGifsTaskArg(
         tptr: asyncGetRecentGifsTask,
         vptr: cast[uint](self.vptr),
-        slot: "onAsyncGetRecentGifsDone"
+        slot: "onAsyncGetRecentGifsDone",
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -85,7 +87,7 @@ QtObject:
       self.recents = map(rpcResponseObj{"result"}.getElems(), settingToGifDto)
       self.events.emit(SIGNAL_LOAD_RECENT_GIFS_DONE, GifsArgs(gifs: self.recents))
     except Exception as e:
-      error "error loading recent gifs: ", errMsg=e.msg
+      error "error loading recent gifs: ", errMsg = e.msg
 
   proc asyncLoadFavoriteGifs*(self: Service) =
     self.events.emit(SIGNAL_LOAD_FAVORITE_GIFS_STARTED, Args())
@@ -93,7 +95,7 @@ QtObject:
       let arg = AsyncGetFavoriteGifsTaskArg(
         tptr: asyncGetFavoriteGifsTask,
         vptr: cast[uint](self.vptr),
-        slot: "onAsyncGetFavoriteGifsDone"
+        slot: "onAsyncGetFavoriteGifsDone",
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -153,7 +155,9 @@ QtObject:
   proc onAsyncTenorQueryDone*(self: Service, response: string) {.slot.} =
     let rpcResponseObj = response.parseJson
     try:
-      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+      if (
+        rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""
+      ):
         raise newException(RpcException, rpcResponseObj{"error"}.getStr)
 
       self.apiKeySet = true

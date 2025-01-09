@@ -1,15 +1,14 @@
 import NimQml, Tables, stew/shims/strformat, stint
 import token_owners_item
 
-type
-  ModelRole {.pure.} = enum
-    Name = UserRole + 1
-    ContactId,
-    ImageSource,
-    NumberOfMessages,
-    WalletAddress,
-    Amount,
-    RemotelyDestructState
+type ModelRole {.pure.} = enum
+  Name = UserRole + 1
+  ContactId
+  ImageSource
+  NumberOfMessages
+  WalletAddress
+  Amount
+  RemotelyDestructState
 
 QtObject:
   type TokenOwnersModel* = ref object of QAbstractListModel
@@ -46,22 +45,28 @@ QtObject:
 
   method roleNames(self: TokenOwnersModel): Table[int, string] =
     {
-      ModelRole.Name.int:"name",
-      ModelRole.ContactId.int:"contactId",
-      ModelRole.ImageSource.int:"imageSource",
-      ModelRole.NumberOfMessages.int:"numberOfMessages",
-      ModelRole.WalletAddress.int:"walletAddress",
-      ModelRole.Amount.int:"amount",
-      ModelRole.RemotelyDestructState.int:"remotelyDestructState"
+      ModelRole.Name.int: "name",
+      ModelRole.ContactId.int: "contactId",
+      ModelRole.ImageSource.int: "imageSource",
+      ModelRole.NumberOfMessages.int: "numberOfMessages",
+      ModelRole.WalletAddress.int: "walletAddress",
+      ModelRole.Amount.int: "amount",
+      ModelRole.RemotelyDestructState.int: "remotelyDestructState",
     }.toTable
 
-  proc updateRemoteDestructState*(self: TokenOwnersModel, remoteDestructedAddresses: seq[string]) =
+  proc updateRemoteDestructState*(
+      self: TokenOwnersModel, remoteDestructedAddresses: seq[string]
+  ) =
     let indexBegin = self.createIndex(0, 0, nil)
     let indexEnd = self.createIndex(self.items.len - 1, 0, nil)
-    defer: indexBegin.delete
-    defer: indexEnd.delete
+    defer:
+      indexBegin.delete
+    defer:
+      indexEnd.delete
     for i in 0 ..< self.items.len:
-      self.items[0].remotelyDestructState = remoteDestructTransactionStatus(remoteDestructedAddresses, self.items[0].ownerDetails.address)
+      self.items[0].remotelyDestructState = remoteDestructTransactionStatus(
+        remoteDestructedAddresses, self.items[0].ownerDetails.address
+      )
     self.dataChanged(indexBegin, indexEnd, @[ModelRole.RemotelyDestructState.int])
 
   method data(self: TokenOwnersModel, index: QModelIndex, role: int): QVariant =
@@ -71,24 +76,25 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-    case enumRole:
-      of ModelRole.Name:
-        result = newQVariant(item.name)
-      of ModelRole.ContactId:
-        result = newQVariant(item.contactId)
-      of ModelRole.ImageSource:
-        result = newQVariant(item.imageSource)
-      of ModelRole.NumberOfMessages:
-        result = newQVariant(item.numberOfMessages)
-      of ModelRole.WalletAddress:
-        result = newQVariant(item.ownerDetails.address)
-      of ModelRole.Amount:
-        result = newQVariant(item.amount.toString(10))
-      of ModelRole.RemotelyDestructState:
-        result = newQVariant(item.remotelyDestructState.int)
+    case enumRole
+    of ModelRole.Name:
+      result = newQVariant(item.name)
+    of ModelRole.ContactId:
+      result = newQVariant(item.contactId)
+    of ModelRole.ImageSource:
+      result = newQVariant(item.imageSource)
+    of ModelRole.NumberOfMessages:
+      result = newQVariant(item.numberOfMessages)
+    of ModelRole.WalletAddress:
+      result = newQVariant(item.ownerDetails.address)
+    of ModelRole.Amount:
+      result = newQVariant(item.amount.toString(10))
+    of ModelRole.RemotelyDestructState:
+      result = newQVariant(item.remotelyDestructState.int)
 
   proc `$`*(self: TokenOwnersModel): string =
-      for i in 0 ..< self.items.len:
-        result &= fmt"""TokenOwnersModel:
+    for i in 0 ..< self.items.len:
+      result &=
+        fmt"""TokenOwnersModel:
         [{i}]:({$self.items[i]})
         """

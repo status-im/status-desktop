@@ -4,7 +4,6 @@ import app_service/service/accounts/dto/accounts
 import app_service/service/devices/dto/installation
 import app_service/service/devices/dto/local_pairing_event
 
-
 type LocalPairingSignal* = ref object of Signal
   eventType*: EventType
   action*: Action
@@ -23,15 +22,19 @@ proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal
     result.action = e["action"].getInt().parse()
   if e.contains("error"):
     result.error = e["error"].getStr()
-  debug "local pairing event", `type` = result.eventType, action = result.action, error = result.error, event = $event
+  debug "local pairing event",
+    `type` = result.eventType,
+    action = result.action,
+    error = result.error,
+    event = $event
   if not e.contains("data"):
     return
-  case result.eventType:
-    of EventReceivedAccount:
-      result.accountData = e["data"].toLocalPairingAccountData()
-    of EventReceivedInstallation:
-      result.installation = e["data"].toInstallationDto()
-    of EventReceivedKeystoreFiles:
-      result.transferredKeypairs = map(e["data"].getElems(), x => x.getStr())
-    else:
-      discard
+  case result.eventType
+  of EventReceivedAccount:
+    result.accountData = e["data"].toLocalPairingAccountData()
+  of EventReceivedInstallation:
+    result.installation = e["data"].toInstallationDto()
+  of EventReceivedKeystoreFiles:
+    result.transferredKeypairs = map(e["data"].getElems(), x => x.getStr())
+  else:
+    discard

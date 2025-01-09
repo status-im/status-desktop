@@ -1,7 +1,6 @@
 import app/modules/shared_models/collectibles_model as collectibles_model
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -13,7 +12,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getAllCollectiblesModel*(self: AccessInterface): collectibles_model.Model {.base.} =
+method getAllCollectiblesModel*(
+    self: AccessInterface
+): collectibles_model.Model {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshNetworks*(self: AccessInterface) {.base.} =
@@ -22,7 +23,9 @@ method refreshNetworks*(self: AccessInterface) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateCollectiblePreferences*(self: AccessInterface, collectiblePreferencesJson: string) {.base.} =
+method updateCollectiblePreferences*(
+    self: AccessInterface, collectiblePreferencesJson: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCollectiblePreferencesJson*(self: AccessInterface): string {.base.} =

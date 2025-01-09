@@ -3,7 +3,7 @@ import
   web3/[encoding, ethtypes], stew/byteutils, nimcrypto, json_serialization, chronicles
 import json, tables, json_serialization
 
-include  ../../../common/json_utils
+include ../../../common/json_utils
 
 type
   Transfer* = object
@@ -17,7 +17,7 @@ type
 # TODO: Figure out a way to parse a bool as a Bool instead of bool, as it is
 # done in nim-web3
 func decode*(input: string, offset: int, to: var bool): int {.inline.} =
-  let val = input[offset..offset+63].parse(Int256)
+  let val = input[offset .. offset + 63].parse(Int256)
   to = val.truncate(int) == 1
   64
 

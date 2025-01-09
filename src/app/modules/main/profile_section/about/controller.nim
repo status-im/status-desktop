@@ -2,17 +2,16 @@ import io_interface
 import ../../../../../app_service/service/about/service as about_service
 import ../../../../core/eventemitter
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    events: EventEmitter
-    aboutService: about_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  events: EventEmitter
+  aboutService: about_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
-    aboutService: about_service.Service
-    ): Controller =
+    aboutService: about_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events

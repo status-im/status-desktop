@@ -35,72 +35,82 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(
-    events: EventEmitter
-  ): Service =
+  proc newService*(events: EventEmitter): Service =
     new(result, delete)
     result.QObject.setup
 
     result.events = events
 
   proc init*(self: Service) =
-    self.events.on(SignalType.ConnectorSendRequestAccounts.event, proc(e: Args) =
-      if self.eventHandler == nil:
-        return
+    self.events.on(
+      SignalType.ConnectorSendRequestAccounts.event,
+      proc(e: Args) =
+        if self.eventHandler == nil:
+          return
 
-      var data = ConnectorSendRequestAccountsSignal(e)
+        var data = ConnectorSendRequestAccountsSignal(e)
 
-      if not data.requestId.len() == 0:
-        error "ConnectorSendRequestAccountsSignal failed, requestId is empty"
-        return
+        if not data.requestId.len() == 0:
+          error "ConnectorSendRequestAccountsSignal failed, requestId is empty"
+          return
 
-      self.events.emit(SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS, data)
+        self.events.emit(SIGNAL_CONNECTOR_SEND_REQUEST_ACCOUNTS, data),
     )
-    self.events.on(SignalType.ConnectorSendTransaction.event, proc(e: Args) =
-      if self.eventHandler == nil:
-        return
- 
-      var data = ConnectorSendTransactionSignal(e)
+    self.events.on(
+      SignalType.ConnectorSendTransaction.event,
+      proc(e: Args) =
+        if self.eventHandler == nil:
+          return
 
-      if not data.requestId.len() == 0:
-        error "ConnectorSendTransactionSignal failed, requestId is empty"
-        return
+        var data = ConnectorSendTransactionSignal(e)
 
-      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION, data)
+        if not data.requestId.len() == 0:
+          error "ConnectorSendTransactionSignal failed, requestId is empty"
+          return
+
+        self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SEND_TRANSACTION, data),
     )
-    self.events.on(SignalType.ConnectorGrantDAppPermission.event, proc(e: Args) =
-      if self.eventHandler == nil:
-        return
+    self.events.on(
+      SignalType.ConnectorGrantDAppPermission.event,
+      proc(e: Args) =
+        if self.eventHandler == nil:
+          return
 
-      var data = ConnectorGrantDAppPermissionSignal(e)
+        var data = ConnectorGrantDAppPermissionSignal(e)
 
-      self.events.emit(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION, data)
+        self.events.emit(SIGNAL_CONNECTOR_GRANT_DAPP_PERMISSION, data),
     )
-    self.events.on(SignalType.ConnectorRevokeDAppPermission.event, proc(e: Args) =
-      if self.eventHandler == nil:
-        return
+    self.events.on(
+      SignalType.ConnectorRevokeDAppPermission.event,
+      proc(e: Args) =
+        if self.eventHandler == nil:
+          return
 
-      var data = ConnectorRevokeDAppPermissionSignal(e)
+        var data = ConnectorRevokeDAppPermissionSignal(e)
 
-      self.events.emit(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION, data)
+        self.events.emit(SIGNAL_CONNECTOR_REVOKE_DAPP_PERMISSION, data),
     )
-    self.events.on(SignalType.ConnectorSign.event, proc(e: Args) =
-      if self.eventHandler == nil:
-        return
+    self.events.on(
+      SignalType.ConnectorSign.event,
+      proc(e: Args) =
+        if self.eventHandler == nil:
+          return
 
-      var data = ConnectorSignSignal(e)
+        var data = ConnectorSignSignal(e)
 
-      if not data.requestId.len() == 0:
-        error "ConnectorSignSignal failed, requestId is empty"
-        return
+        if not data.requestId.len() == 0:
+          error "ConnectorSignSignal failed, requestId is empty"
+          return
 
-      self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN, data)
+        self.events.emit(SIGNAL_CONNECTOR_EVENT_CONNECTOR_SIGN, data),
     )
 
   proc registerEventsHandler*(self: Service, handler: EventHandlerFn) =
     self.eventHandler = handler
 
-  proc approveDappConnect*(self: Service, requestId: string, account: string, chainID: uint): bool =
+  proc approveDappConnect*(
+      self: Service, requestId: string, account: string, chainID: uint
+  ): bool =
     try:
       var args = RequestAccountsAcceptedArgs()
 
@@ -109,12 +119,13 @@ QtObject:
       args.chainId = chainId
 
       return status_go.requestAccountsAcceptedFinishedRpc(args)
-
     except Exception as e:
-      error "requestAccountsAcceptedFinishedRpc failed: ", err=e.msg
+      error "requestAccountsAcceptedFinishedRpc failed: ", err = e.msg
       return false
-  
-  proc approveTransactionRequest*(self: Service, requestId: string, hash: string): bool =
+
+  proc approveTransactionRequest*(
+      self: Service, requestId: string, hash: string
+  ): bool =
     try:
       var args = SendTransactionAcceptedArgs()
 
@@ -122,47 +133,57 @@ QtObject:
       args.hash = hash
 
       return status_go.sendTransactionAcceptedFinishedRpc(args)
-
     except Exception as e:
-      error "sendTransactionAcceptedFinishedRpc failed: ", err=e.msg
+      error "sendTransactionAcceptedFinishedRpc failed: ", err = e.msg
       return false
 
-  proc rejectRequest*(self: Service, requestId: string, rpcCall: proc(args: RejectedArgs): bool, message: static[string]): bool =
+  proc rejectRequest*(
+      self: Service,
+      requestId: string,
+      rpcCall: proc(args: RejectedArgs): bool,
+      message: static[string],
+  ): bool =
     try:
       var args = RejectedArgs()
       args.requestId = requestId
 
       return rpcCall(args)
-
     except Exception as e:
-      error message, err=e.msg
+      error message, err = e.msg
       return false
 
   proc rejectTransactionSigning*(self: Service, requestId: string): bool =
-    rejectRequest(self, requestId, status_go.sendTransactionRejectedFinishedRpc, "sendTransactionRejectedFinishedRpc failed: ")
+    rejectRequest(
+      self, requestId, status_go.sendTransactionRejectedFinishedRpc,
+      "sendTransactionRejectedFinishedRpc failed: ",
+    )
 
   proc rejectDappConnect*(self: Service, requestId: string): bool =
-    rejectRequest(self, requestId, status_go.requestAccountsRejectedFinishedRpc, "requestAccountsRejectedFinishedRpc failed: ")
+    rejectRequest(
+      self, requestId, status_go.requestAccountsRejectedFinishedRpc,
+      "requestAccountsRejectedFinishedRpc failed: ",
+    )
 
   proc recallDAppPermission*(self: Service, dAppUrl: string): bool =
     try:
       return status_go.recallDAppPermissionFinishedRpc(dAppUrl)
-
     except Exception as e:
-      error "recallDAppPermissionFinishedRpc failed: ", err=e.msg
+      error "recallDAppPermissionFinishedRpc failed: ", err = e.msg
       return false
 
   proc getDApps*(self: Service): string =
     try:
       let response = status_go.getPermittedDAppsList()
       if not response.error.isNil:
-        raise newException(Exception, "Error getting connector dapp list: " & response.error.message)
+        raise newException(
+          Exception, "Error getting connector dapp list: " & response.error.message
+        )
 
       # Expect nil golang array to be valid empty array
       let jsonArray = $response.result
       return if jsonArray != "null": jsonArray else: "[]"
     except Exception as e:
-      error "getDApps failed: ", err=e.msg
+      error "getDApps failed: ", err = e.msg
       return "[]"
 
   proc approveSignRequest*(self: Service, requestId: string, signature: string): bool =
@@ -172,10 +193,12 @@ QtObject:
       args.signature = signature
 
       return status_go.sendSignAcceptedFinishedRpc(args)
-
     except Exception as e:
-      error "sendSigAcceptedFinishedRpc failed: ", err=e.msg
+      error "sendSigAcceptedFinishedRpc failed: ", err = e.msg
       return false
 
   proc rejectSigning*(self: Service, requestId: string): bool =
-    rejectRequest(self, requestId, status_go.sendSignRejectedFinishedRpc, "sendSignRejectedFinishedRpc failed: ")
+    rejectRequest(
+      self, requestId, status_go.sendSignRejectedFinishedRpc,
+      "sendSignRejectedFinishedRpc failed: ",
+    )

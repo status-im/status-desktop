@@ -8,19 +8,18 @@ import ../../../../../app_service/service/about/service as about_service
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    controller: Controller
-    view: View
-    viewVariant: QVariant
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  controller: Controller
+  view: View
+  viewVariant: QVariant
+  moduleLoaded: bool
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
-    aboutService: about_service.Service
-    ): Module =
+    aboutService: about_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)

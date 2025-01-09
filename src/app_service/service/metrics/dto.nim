@@ -23,12 +23,13 @@ type CentralizedMetricDto* = object
   appVersion*: string
 
 proc toJsonNode*(self: CentralizedMetricDto): JsonNode =
-  result = %* {
-    "id": self.id,
-    "userId": self.userId,
-    "eventName": self.eventName,
-    "eventValue": self.eventValue,
-    "timestamp": self.timestamp,
-    "platform": self.platform,
-    "appVersion": self.appVersion,
-  }
+  result =
+    %*{
+      "id": self.id,
+      "userId": self.userId,
+      "eventName": self.eventName,
+      "eventValue": self.eventValue,
+      "timestamp": self.timestamp,
+      "platform": self.platform,
+      "appVersion": self.appVersion,
+    }

@@ -12,7 +12,8 @@ proc initItem*(chainID: int, address: string): Item =
   result.address = address
 
 proc `$`*(self: Item): string =
-  result = fmt"""ContractItem(
+  result =
+    fmt"""ContractItem(
     key: {self.key},
     chainId: {$self.chainId},
     address: {self.address},

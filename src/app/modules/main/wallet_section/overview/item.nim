@@ -1,29 +1,28 @@
 import stew/shims/strformat, strutils
 
-type
-  Item* = object
-    name: string
-    mixedCaseAddress: string
-    ens: string
-    balanceLoading: bool
-    colorId: string
-    emoji: string
-    isWatchOnlyAccount: bool
-    isAllAccounts: bool
-    colorIds: seq[string]
-    canSend: bool
+type Item* = object
+  name: string
+  mixedCaseAddress: string
+  ens: string
+  balanceLoading: bool
+  colorId: string
+  emoji: string
+  isWatchOnlyAccount: bool
+  isAllAccounts: bool
+  colorIds: seq[string]
+  canSend: bool
 
 proc initItem*(
-  name: string = "",
-  mixedCaseAddress: string = "",
-  ens: string = "",
-  balanceLoading: bool  = true,
-  colorId: string,
-  emoji: string,
-  isWatchOnlyAccount: bool=false,
-  isAllAccounts: bool = false,
-  colorIds: seq[string] = @[],
-  canSend: bool = true,
+    name: string = "",
+    mixedCaseAddress: string = "",
+    ens: string = "",
+    balanceLoading: bool = true,
+    colorId: string,
+    emoji: string,
+    isWatchOnlyAccount: bool = false,
+    isAllAccounts: bool = false,
+    colorIds: seq[string] = @[],
+    canSend: bool = true,
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
@@ -37,7 +36,8 @@ proc initItem*(
   result.canSend = canSend
 
 proc `$`*(self: Item): string =
-  result = fmt"""OverviewItem(
+  result =
+    fmt"""OverviewItem(
     name: {self.name},
     mixedCaseAddress: {self.mixedCaseAddress},
     ens: {self.ens},

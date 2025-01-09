@@ -2,13 +2,13 @@ import stew/shims/strformat
 
 import app/modules/shared_models/contract_model as contract_model
 import app/modules/shared_models/contract_item as contract_item
-  
+
 type Item* = object
   id: string
   name: string
   description: string
   fees: string
-  logoUrl: string  
+  logoUrl: string
   hostname: string
   supportsSinglePurchase: bool
   supportsRecurrentPurchase: bool
@@ -16,16 +16,17 @@ type Item* = object
   urlsNeedParameters: bool
 
 proc initItem*(
-  id: string, 
-  name: string, 
-  description: string, 
-  fees: string, 
-  logoUrl: string, 
-  hostname: string, 
-  supportsSinglePurchase: bool, 
-  supportsRecurrentPurchase: bool, 
-  supportedAssets: seq[contract_item.Item], 
-  urlsNeedParameters: bool): Item =
+    id: string,
+    name: string,
+    description: string,
+    fees: string,
+    logoUrl: string,
+    hostname: string,
+    supportsSinglePurchase: bool,
+    supportsRecurrentPurchase: bool,
+    supportedAssets: seq[contract_item.Item],
+    urlsNeedParameters: bool,
+): Item =
   result.id = id
   result.name = name
   result.description = description

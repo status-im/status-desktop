@@ -1,12 +1,9 @@
-type
-  FetchAllCurrencyFormatsTaskArg = ref object of QObjectTaskArg
-    discard
+type FetchAllCurrencyFormatsTaskArg = ref object of QObjectTaskArg
+  discard
 
 proc fetchAllCurrencyFormatsTaskArg(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchAllCurrencyFormatsTaskArg](argEncoded)
-  let output = %* {
-    "formats": ""
-  }
+  let output = %*{"formats": ""}
   try:
     let response = backend.fetchAllCurrencyFormats()
     output["formats"] = response.result

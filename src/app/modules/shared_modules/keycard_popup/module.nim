@@ -9,7 +9,8 @@ import app/global/global_singleton
 import app/core/eventemitter
 
 import app/global/app_translatable_constants as atc
-const dummyUsage = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT # dummy usage to prevent false-alarm warning
+const dummyUsage = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT
+  # dummy usage to prevent false-alarm warning
 
 import app_service/common/utils
 import app_service/service/keycard/constants
@@ -26,43 +27,47 @@ export io_interface
 logScope:
   topics = "keycard-popup-module"
 
-type
-  Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    initialized: bool
-    tmpLocalState: State # used when flow is run, until response arrives to determine next state appropriatelly
-    authenticationPopupIsAlreadyRunning: bool
-    runningFlow: FlowType # in general used to mark the global shared flow that is being running (`Authentication` or `Sign`)
+type Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
+  delegate: T
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  initialized: bool
+  tmpLocalState: State
+    # used when flow is run, until response arrives to determine next state appropriatelly
+  authenticationPopupIsAlreadyRunning: bool
+  runningFlow: FlowType
+    # in general used to mark the global shared flow that is being running (`Authentication` or `Sign`)
 
-    # temporary variables used to store data while we're wiating for keycard lib to get ready
-    tmpFlowToRun: FlowType
-    tmpKeyUid: string
-    tmpBip44Paths: seq[string]
-    tmpTxHash: string
-    tmpForceFlow: bool
-    tmpReturnToFlow: FlowType
-    tmpPin: string
+  # temporary variables used to store data while we're wiating for keycard lib to get ready
+  tmpFlowToRun: FlowType
+  tmpKeyUid: string
+  tmpBip44Paths: seq[string]
+  tmpTxHash: string
+  tmpForceFlow: bool
+  tmpReturnToFlow: FlowType
+  tmpPin: string
 
-proc newModule*[T](delegate: T,
-  uniqueIdentifier: string,
-  events: EventEmitter,
-  keycardService: keycard_service.Service,
-  settingsService: settings_service.Service,
-  networkService: network_service.Service,
-  privacyService: privacy_service.Service,
-  accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  keychainService: keychain_service.Service):
-  Module[T] =
+proc newModule*[T](
+    delegate: T,
+    uniqueIdentifier: string,
+    events: EventEmitter,
+    keycardService: keycard_service.Service,
+    settingsService: settings_service.Service,
+    networkService: network_service.Service,
+    privacyService: privacy_service.Service,
+    accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    keychainService: keychain_service.Service,
+): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, uniqueIdentifier, events, keycardService, settingsService,
-    networkService, privacyService, accountsService, walletAccountService, keychainService)
+  result.controller = controller.newController(
+    result, uniqueIdentifier, events, keycardService, settingsService, networkService,
+    privacyService, accountsService, walletAccountService, keychainService,
+  )
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
   result.runningFlow = FlowType.General
@@ -70,8 +75,19 @@ proc newModule*[T](delegate: T,
 {.push warning[Deprecated]: off.}
 
 ## Forward declarations
-proc proceedWithSyncKeycardBasedOnAppState[T](self: Module[T], keyUid: string, pin: string)
-proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string, bip44Paths: seq[string], txHash: string, forceFlow: bool, returnToFlow: FlowType)
+proc proceedWithSyncKeycardBasedOnAppState[T](
+  self: Module[T], keyUid: string, pin: string
+)
+
+proc proceedWithRunFlow[T](
+  self: Module[T],
+  flowToRun: FlowType,
+  keyUid: string,
+  bip44Paths: seq[string],
+  txHash: string,
+  forceFlow: bool,
+  returnToFlow: FlowType,
+)
 
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -88,7 +104,10 @@ method keycardReady*[T](self: Module[T]) =
   if self.tmpPin.len > 0:
     self.proceedWithSyncKeycardBasedOnAppState(self.tmpKeyUid, self.tmpPin)
   else:
-    self.proceedWithRunFlow(self.tmpFlowToRun, self.tmpKeyUid, self.tmpBip44Paths, self.tmpTxHash, self.tmpForceFlow, self.tmpReturnToFlow)
+    self.proceedWithRunFlow(
+      self.tmpFlowToRun, self.tmpKeyUid, self.tmpBip44Paths, self.tmpTxHash,
+      self.tmpForceFlow, self.tmpReturnToFlow,
+    )
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
@@ -180,8 +199,8 @@ method getMnemonic*[T](self: Module[T]): string =
   if flowType == FlowType.SetupNewKeycard:
     return self.controller.getProfileMnemonic()
   if flowType == FlowType.SetupNewKeycardNewSeedPhrase or
-    flowType == FlowType.SetupNewKeycardOldSeedPhrase:
-      return self.controller.getSeedPhrase()
+      flowType == FlowType.SetupNewKeycardOldSeedPhrase:
+    return self.controller.getSeedPhrase()
 
 method setSeedPhrase*[T](self: Module[T], value: string) =
   self.controller.setSeedPhrase(value)
@@ -196,69 +215,81 @@ method migratingProfileKeyPair*[T](self: Module[T]): bool =
   let flowType = self.getCurrentFlowType()
   if flowType == FlowType.SetupNewKeycard:
     return self.controller.getSelectedKeyPairIsProfile()
-  return self.controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
+  return
+    self.controller.getKeyPairForProcessing().getKeyUid() ==
+    singletonInstance.userProfile.getKeyUid()
 
 method getSigningPhrase*[T](self: Module[T]): string =
   return self.controller.getSigningPhrase()
 
-proc preActionActivities[T](self: Module[T], currFlowType: FlowType, currStateType: StateType) =
+proc preActionActivities[T](
+    self: Module[T], currFlowType: FlowType, currStateType: StateType
+) =
   if currStateType == StateType.ManageKeycardAccounts or
-    currStateType == StateType.CreatePin or
-    currStateType == StateType.RepeatPin or
-    currStateType == StateType.CreatePuk or
-    currStateType == StateType.RepeatPuk or
-    currStateType == StateType.EnterPuk or
-    currStateType == StateType.WrongPuk:
-      self.view.setDisablePopup(false)
-      return
-  if currStateType == StateType.EnterPin or
-    currStateType == StateType.CreatePin or
-    currStateType == StateType.RepeatPin or
-    currStateType == StateType.WrongPin:
-      let disable = self.controller.getPin().len == PINLengthForStatusApp
-      self.view.setDisablePopup(disable)
-      return
-  if currStateType == StateType.CreatePuk or
-    currStateType == StateType.RepeatPuk:
-      let disable = self.controller.getPUK().len == PUKLengthForStatusApp
-      self.view.setDisablePopup(disable)
-      return
+      currStateType == StateType.CreatePin or currStateType == StateType.RepeatPin or
+      currStateType == StateType.CreatePuk or currStateType == StateType.RepeatPuk or
+      currStateType == StateType.EnterPuk or currStateType == StateType.WrongPuk:
+    self.view.setDisablePopup(false)
+    return
+  if currStateType == StateType.EnterPin or currStateType == StateType.CreatePin or
+      currStateType == StateType.RepeatPin or currStateType == StateType.WrongPin:
+    let disable = self.controller.getPin().len == PINLengthForStatusApp
+    self.view.setDisablePopup(disable)
+    return
+  if currStateType == StateType.CreatePuk or currStateType == StateType.RepeatPuk:
+    let disable = self.controller.getPUK().len == PUKLengthForStatusApp
+    self.view.setDisablePopup(disable)
+    return
   self.view.setDisablePopup(true)
 
-proc preStateActivities[T](self: Module[T], currFlowType: FlowType, nextStateType: StateType) =
+proc preStateActivities[T](
+    self: Module[T], currFlowType: FlowType, nextStateType: StateType
+) =
   if nextStateType == StateType.MaxPinRetriesReached or
-    nextStateType == StateType.MaxPukRetriesReached or
-    nextStateType == StateType.MaxPairingSlotsReached or
-    nextStateType == StateType.UnlockKeycardOptions:
-      ## in case the card is locked on another device, we're updating its state in the DB
-      let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
-      self.controller.setCurrentKeycardStateToLocked(flowEvent.keyUid, flowEvent.instanceUID)
+      nextStateType == StateType.MaxPukRetriesReached or
+      nextStateType == StateType.MaxPairingSlotsReached or
+      nextStateType == StateType.UnlockKeycardOptions:
+    ## in case the card is locked on another device, we're updating its state in the DB
+    let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
+    self.controller.setCurrentKeycardStateToLocked(
+      flowEvent.keyUid, flowEvent.instanceUID
+    )
 
-  if currFlowType == FlowType.Authentication or
-    currFlowType == FlowType.Sign:
-      self.view.setLockedPropForKeyPairForProcessing(nextStateType == StateType.MaxPinRetriesReached)
+  if currFlowType == FlowType.Authentication or currFlowType == FlowType.Sign:
+    self.view.setLockedPropForKeyPairForProcessing(
+      nextStateType == StateType.MaxPinRetriesReached
+    )
 
   if currFlowType == FlowType.UnlockKeycard:
     if nextStateType == StateType.UnlockKeycardOptions:
       let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
       let offerPuk = flowEvent.pukRetries > 0
-      self.controller.setKeycardData(updatePredefinedKeycardData(self.controller.getKeycardData(), PredefinedKeycardData.OfferPukForUnlock, add = offerPuk))
+      self.controller.setKeycardData(
+        updatePredefinedKeycardData(
+          self.controller.getKeycardData(),
+          PredefinedKeycardData.OfferPukForUnlock,
+          add = offerPuk,
+        )
+      )
 
-proc reEvaluateKeyPairForProcessing[T](self: Module[T], currFlowType: FlowType, currStateType: StateType) =
-  if currFlowType == FlowType.UnlockKeycard or
-    currFlowType == FlowType.RenameKeycard or
-    currFlowType == FlowType.ChangeKeycardPin or
-    currFlowType == FlowType.ChangeKeycardPuk or
-    currFlowType == FlowType.ChangePairingCode or
-    currFlowType == FlowType.CreateCopyOfAKeycard:
-      if currStateType != StateType.PluginReader and
+proc reEvaluateKeyPairForProcessing[T](
+    self: Module[T], currFlowType: FlowType, currStateType: StateType
+) =
+  if currFlowType == FlowType.UnlockKeycard or currFlowType == FlowType.RenameKeycard or
+      currFlowType == FlowType.ChangeKeycardPin or
+      currFlowType == FlowType.ChangeKeycardPuk or
+      currFlowType == FlowType.ChangePairingCode or
+      currFlowType == FlowType.CreateCopyOfAKeycard:
+    if currStateType != StateType.PluginReader and
         currStateType != StateType.ReadingKeycard:
-          return
-      let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
-      var keycardUid = ""
-      if self.getKeyPairForProcessing().getKeyUid() == flowEvent.keyUid:
-        keycardUid = flowEvent.instanceUID
-      self.prepareKeyPairForProcessing(self.getKeyPairForProcessing().getKeyUid(), keycardUid)
+      return
+    let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
+    var keycardUid = ""
+    if self.getKeyPairForProcessing().getKeyUid() == flowEvent.keyUid:
+      keycardUid = flowEvent.instanceUID
+    self.prepareKeyPairForProcessing(
+      self.getKeyPairForProcessing().getKeyUid(), keycardUid
+    )
 
 proc handleKeycardSyncing[T](self: Module[T]) =
   if not self.controller.keycardSyncingInProgress():
@@ -269,13 +300,18 @@ proc handleKeycardSyncing[T](self: Module[T]) =
     if flowEvent.keyUid != self.controller.getKeyUidWhichIsBeingSyncing():
       self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
       return
-    if eventType == ResponseTypeValueKeycardFlowResult and (flowEvent.error.len == 0 or flowEvent.error == ErrorNoData):
-      var kpDto = KeycardDto(keycardUid: flowEvent.instanceUID,
+    if eventType == ResponseTypeValueKeycardFlowResult and
+        (flowEvent.error.len == 0 or flowEvent.error == ErrorNoData):
+      var kpDto = KeycardDto(
+        keycardUid: flowEvent.instanceUID,
         keycardName: flowEvent.cardMetadata.name,
         keycardLocked: false,
         accountsAddresses: @[],
-        keyUid: flowEvent.keyUid)
-      let alreadySetKeycards = self.controller.getAllKnownKeycards().filter(kp => kp.keycardUid == flowEvent.instanceUID)
+        keyUid: flowEvent.keyUid,
+      )
+      let alreadySetKeycards = self.controller.getAllKnownKeycards().filter(
+          kp => kp.keycardUid == flowEvent.instanceUID
+        )
       if alreadySetKeycards.len <= 1:
         var accountsToRemove: seq[string]
         if alreadySetKeycards.len == 1:
@@ -308,25 +344,36 @@ proc handleKeycardSyncing[T](self: Module[T]) =
             kpDto.accountsAddresses.add(appAcc.address)
         if not containsPathOutOfTheDefaultStatusDerivationTree:
           if accountsToRemove.len > 0:
-            self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
+            self.controller.removeMigratedAccountsForKeycard(
+              kpDto.keyUid, kpDto.keycardUid, accountsToRemove
+            )
           if kpDto.accountsAddresses.len > 0:
-            self.controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
+            self.controller.addKeycardOrAccounts(
+              kpDto, accountsComingFromKeycard = true
+            )
           # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
           # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
           if activeValidPathsToStoreToAKeycard.len > 0:
             ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
             ## or if the paths are different
-            var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
+            var storeToKeycard =
+              activeValidPathsToStoreToAKeycard.len !=
+              flowEvent.cardMetadata.walletAccounts.len
             if not storeToKeycard:
               for wa in flowEvent.cardMetadata.walletAccounts:
                 if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
                   storeToKeycard = true
                   break
             if storeToKeycard:
-              self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
+              self.controller.runStoreMetadataFlow(
+                flowEvent.cardMetadata.name,
+                self.controller.getPin(),
+                activeValidPathsToStoreToAKeycard,
+              )
               return
       elif alreadySetKeycards.len > 1:
-        error "it's impossible to have more then one keycard with the same uid", keycarUid=flowEvent.instanceUID
+        error "it's impossible to have more then one keycard with the same uid",
+          keycarUid = flowEvent.instanceUID
   self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
   self.controller.rebuildKeycards()
 
@@ -343,19 +390,24 @@ method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: stri
   self.tmpPin = pin
   self.controller.checkKeycardAvailability()
 
-proc proceedWithSyncKeycardBasedOnAppState[T](self: Module[T], keyUid: string, pin: string) =
+proc proceedWithSyncKeycardBasedOnAppState[T](
+    self: Module[T], keyUid: string, pin: string
+) =
   self.init(fullConnect = false)
   self.controller.setKeyUidWhichIsBeingSyncing(keyUid)
   self.controller.setPin(pin)
   self.controller.setKeycardSyncingInProgress(true)
-  self.controller.runGetMetadataFlow(resolveAddress = true, exportMasterAddr = true, pin)
+  self.controller.runGetMetadataFlow(
+    resolveAddress = true, exportMasterAddr = true, pin
+  )
 
 method onBackActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
-  debug "sm_back_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "sm_back_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreBackStateCommand(self.controller)
   let backState = currStateObj.getBackState()
@@ -364,14 +416,16 @@ method onBackActionClicked*[T](self: Module[T]) =
   self.preStateActivities(backState.flowType(), backState.stateType())
   self.view.setCurrentState(backState)
   currStateObj.executePostBackStateCommand(self.controller)
-  debug "sm_back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
+  debug "sm_back_action - set state",
+    setCurrFlow = backState.flowType(), newCurrState = backState.stateType()
 
 method onCancelActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
-  debug "sm_cancel_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "sm_cancel_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executeCancelCommand(self.controller)
 
@@ -380,7 +434,8 @@ method onPrimaryActionClicked*[T](self: Module[T]) =
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
-  debug "sm_primary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "sm_primary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePrePrimaryStateCommand(self.controller)
   let nextState = currStateObj.getNextPrimaryState(self.controller)
@@ -390,14 +445,16 @@ method onPrimaryActionClicked*[T](self: Module[T]) =
   self.reEvaluateKeyPairForProcessing(currStateObj.flowType(), currStateObj.stateType())
   self.view.setCurrentState(nextState)
   currStateObj.executePostPrimaryStateCommand(self.controller)
-  debug "sm_primary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "sm_primary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onSecondaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
-  debug "sm_secondary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "sm_secondary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreSecondaryStateCommand(self.controller)
   let nextState = currStateObj.getNextSecondaryState(self.controller)
@@ -407,14 +464,16 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
   self.reEvaluateKeyPairForProcessing(currStateObj.flowType(), currStateObj.stateType())
   self.view.setCurrentState(nextState)
   currStateObj.executePostSecondaryStateCommand(self.controller)
-  debug "sm_secondary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "sm_secondary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 method onTertiaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     error "sm_cannot resolve current state"
     return
-  debug "sm_tertiary_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
+  debug "sm_tertiary_action",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executePreTertiaryStateCommand(self.controller)
   let nextState = currStateObj.getNextTertiaryState(self.controller)
@@ -424,48 +483,63 @@ method onTertiaryActionClicked*[T](self: Module[T]) =
   self.reEvaluateKeyPairForProcessing(currStateObj.flowType(), currStateObj.stateType())
   self.view.setCurrentState(nextState)
   currStateObj.executePostTertiaryStateCommand(self.controller)
-  debug "sm_tertiary_action - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "sm_tertiary_action - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
-method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
+method onKeycardResponse*[T](
+    self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent
+) =
   if self.controller.keycardSyncingInProgress():
     self.handleKeycardSyncing()
     return
   ## Check local state first, in case postponed flow is run
   if not self.tmpLocalState.isNil:
-    let nextState = self.tmpLocalState.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
+    let nextState = self.tmpLocalState.resolveKeycardNextState(
+      keycardFlowType, keycardEvent, self.controller
+    )
     defer:
       self.tmpLocalState.delete
       self.tmpLocalState = nil
     if nextState.isNil:
       return
     self.preStateActivities(nextState.flowType(), nextState.stateType())
-    self.reEvaluateKeyPairForProcessing(self.tmpLocalState.flowType(), self.tmpLocalState.stateType())
+    self.reEvaluateKeyPairForProcessing(
+      self.tmpLocalState.flowType(), self.tmpLocalState.stateType()
+    )
     self.view.setCurrentState(nextState)
-    debug "sm_on_keycard_response - from_local - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+    debug "sm_on_keycard_response - from_local - set state",
+      setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
     return
   ## Check regular flows
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
     return
-  debug "sm_on_keycard_response", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
-  let nextState = currStateObj.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
+  debug "sm_on_keycard_response",
+    currFlow = currStateObj.flowType(), currState = currStateObj.stateType()
+  let nextState =
+    currStateObj.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
   if nextState.isNil:
     return
   self.preStateActivities(nextState.flowType(), nextState.stateType())
   self.reEvaluateKeyPairForProcessing(currStateObj.flowType(), currStateObj.stateType())
   self.view.setCurrentState(nextState)
-  debug "sm_on_keycard_response - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
+  debug "sm_on_keycard_response - set state",
+    setCurrFlow = nextState.flowType(), setCurrState = nextState.stateType()
 
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
-    excludePrivateKeyKeypairs = false)
+  let items = keypairs.buildKeyPairsList(
+    self.controller.getKeypairs(),
+    excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false,
+  )
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
       break
   if item.getName().len == 0:
-    error "sm_cannot find keypair among known keypairs for the given keyUid for authentication", keyUid=keyUid
+    error "sm_cannot find keypair among known keypairs for the given keyUid for authentication",
+      keyUid = keyUid
   item.setPubKey("")
   item.setImage("")
   item.setIcon("keycard")
@@ -478,16 +552,22 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
     return
   self.view.setKeyPairForProcessing(item)
 
-method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
+method prepareKeyPairForProcessing*[T](
+    self: Module[T], keyUid: string, keycardUid = ""
+) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
-    excludePrivateKeyKeypairs = false)
+  let items = keypairs.buildKeyPairsList(
+    self.controller.getKeypairs(),
+    excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false,
+  )
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
       break
   if item.getName().len == 0:
-    error "sm_cannot find keypair among known keypairs for the given keyUid for processing", keyUid=keyUid
+    error "sm_cannot find keypair among known keypairs for the given keyUid for processing",
+      keyUid = keyUid
   if keycardUid.len > 0:
     let keyPairs = self.controller.getAllKnownKeycards()
     for kp in keyPairs:
@@ -497,16 +577,31 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
-proc displayKeycardFlowStartedState[T](self: Module[T], flowType: FlowType, backState: State, displayStartedState: bool = true) =
+proc displayKeycardFlowStartedState[T](
+    self: Module[T],
+    flowType: FlowType,
+    backState: State,
+    displayStartedState: bool = true,
+) =
   self.tmpLocalState = newReadingKeycardState(flowType, backState)
   if not displayStartedState:
     return
   let keycardFlowStartedState = newKeycardFlowStartedState(flowType, backState)
   self.view.setCurrentState(keycardFlowStartedState)
   self.controller.readyToDisplayPopup()
-  debug "sm_cannot - display reading state", setCurrFlow=keycardFlowStartedState.flowType(), setCurrState=keycardFlowStartedState.stateType()
+  debug "sm_cannot - display reading state",
+    setCurrFlow = keycardFlowStartedState.flowType(),
+    setCurrState = keycardFlowStartedState.stateType()
 
-method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "", forceFlow = false, returnToFlow = FlowType.General) =
+method runFlow*[T](
+    self: Module[T],
+    flowToRun: FlowType,
+    keyUid = "",
+    bip44Paths: seq[string] = @[],
+    txHash = "",
+    forceFlow = false,
+    returnToFlow = FlowType.General,
+) =
   ## In case of `Authentication` or `Sign` flow, if keyUid is provided, that keypair will be authenticated,
   ## otherwise the logged in profile will be authenticated.
   if flowToRun == FlowType.General:
@@ -521,7 +616,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
   self.tmpReturnToFlow = returnToFlow
   self.controller.checkKeycardAvailability()
 
-proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string, bip44Paths: seq[string], txHash: string, forceFlow: bool, returnToFlow: FlowType) =
+proc proceedWithRunFlow[T](
+    self: Module[T],
+    flowToRun: FlowType,
+    keyUid: string,
+    bip44Paths: seq[string],
+    txHash: string,
+    forceFlow: bool,
+    returnToFlow: FlowType,
+) =
   self.init()
   self.view.setForceFlow(forceFlow)
   self.view.setReturnToFlow(returnToFlow)
@@ -532,8 +635,11 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
-    let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = true,
-      excludePrivateKeyKeypairs = false)
+    let items = keypairs.buildKeyPairsList(
+      self.controller.getKeypairs(),
+      excludeAlreadyMigratedPairs = true,
+      excludePrivateKeyKeypairs = false,
+    )
     if keyUid.len == 0:
       self.view.createKeyPairModel(items)
       self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
@@ -552,9 +658,13 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
     self.runningFlow = flowToRun
     if keyUid.len == 0 or keyUid == singletonInstance.userProfile.getKeyUid():
       if singletonInstance.userProfile.getIsKeycardUser():
-        self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
+        self.prepareKeyPairItemForAuthentication(
+          singletonInstance.userProfile.getKeyUid()
+        )
         self.displayKeycardFlowStartedState(flowToRun, nil)
-        self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid(), bip44Paths)
+        self.controller.runAuthenticationFlow(
+          singletonInstance.userProfile.getKeyUid(), bip44Paths
+        )
         if singletonInstance.userProfile.getUsingBiometricLogin():
           self.controller.connectKeychainSignals()
           self.controller.tryToObtainDataFromKeychain()
@@ -599,9 +709,9 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
     self.displayKeycardFlowStartedState(flowToRun, nil)
     self.controller.runSignFlow(keyUid, bip44Paths[0], txHash)
     if finalKeyUid == singletonInstance.userProfile.getKeyUid() and
-      singletonInstance.userProfile.getUsingBiometricLogin():
-        self.controller.connectKeychainSignals()
-        self.controller.tryToObtainDataFromKeychain()
+        singletonInstance.userProfile.getUsingBiometricLogin():
+      self.controller.connectKeychainSignals()
+      self.controller.tryToObtainDataFromKeychain()
     return
   if flowToRun == FlowType.UnlockKeycard:
     ## since we can run unlock keycard flow from an already running flow, in order to avoid changing displayed keypair
@@ -617,7 +727,8 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
   if flowToRun == FlowType.RenameKeycard:
     self.prepareKeyPairForProcessing(keyUid)
     self.displayKeycardFlowStartedState(flowToRun, nil)
-    self.controller.runGetMetadataFlow(resolveAddress = true) # we're firstly displaying the keycard content
+    self.controller.runGetMetadataFlow(resolveAddress = true)
+      # we're firstly displaying the keycard content
     return
   if flowToRun == FlowType.ChangeKeycardPin:
     self.prepareKeyPairForProcessing(keyUid)
@@ -672,18 +783,23 @@ proc proceedWithRunFlow[T](self: Module[T], flowToRun: FlowType, keyUid: string,
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
-  var keycardDto = KeycardDto(keycardUid: "", # will be set during migration
+  var keycardDto = KeycardDto(
+    keycardUid: "", # will be set during migration
     keycardName: item.getName(),
     keycardLocked: item.getLocked(),
-    keyUid: item.getKeyUid())
+    keyUid: item.getKeyUid(),
+  )
   for a in item.getAccountsModel().getItems():
     paths.add(a.getPath())
     keycardDto.accountsAddresses.add(a.getAddress())
-  self.controller.setSelectedKeyPair(isProfile = item.getPairType() == KeyPairType.Profile.int,
-    paths, keycardDto)
+  self.controller.setSelectedKeyPair(
+    isProfile = item.getPairType() == KeyPairType.Profile.int, paths, keycardDto
+  )
   self.setKeyPairForProcessing(item)
 
-method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) =
+method onTokensRebuilt*[T](
+    self: Module[T], accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]
+) =
   if self.getKeyPairForProcessing().isNil and self.getKeyPairHelper().isNil:
     return
   var totalTokenBalance = 0.0
@@ -692,23 +808,29 @@ method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accou
   for address in accountAddresses:
     let accAdd = address
     for token in accountTokens:
-      let filteredBalances = token.balancesPerAccount.filter(b =>  b.account == accAdd)
+      let filteredBalances = token.balancesPerAccount.filter(b => b.account == accAdd)
       for balance in filteredBalances:
-          totalTokenBalance += self.controller.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
-      let balance =  currencyAmountToItem(totalTokenBalance, currencyFormat)
+        totalTokenBalance +=
+          self.controller.parseCurrencyValueByTokensKey(
+            token.tokensKey, balance.balance
+          )
+      let balance = currencyAmountToItem(totalTokenBalance, currencyFormat)
       if not self.getKeyPairForProcessing().isNil:
         self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
       if not self.getKeyPairHelper().isNil:
         self.getKeyPairHelper().setBalanceForAddress(address, balance)
 
-proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata):
-  tuple[item: KeyPairItem, knownKeyPair: bool] =
-  result.item = newKeyPairItem(keyUid = "",
+proc buildKeyPairItemBasedOnCardMetadata[T](
+    self: Module[T], cardMetadata: CardMetadata
+): tuple[item: KeyPairItem, knownKeyPair: bool] =
+  result.item = newKeyPairItem(
+    keyUid = "",
     pubKey = "",
     locked = false,
     name = cardMetadata.name,
     image = "",
-    icon = "keycard")
+    icon = "keycard",
+  )
   let currKp = self.getKeyPairForProcessing()
   if not currKp.isNil:
     result.item.setKeyUid(currKp.getKeyUid())
@@ -718,13 +840,26 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
   let accounts = self.controller.getWalletAccounts()
   for acc in accounts:
     for cardAcc in cardMetadata.walletAccounts:
-      if acc.isChat or acc.walletType == WalletTypeWatch or cmpIgnoreCase(acc.address, cardAcc.address) != 0:
+      if acc.isChat or acc.walletType == WalletTypeWatch or
+          cmpIgnoreCase(acc.address, cardAcc.address) != 0:
         continue
       var icon = ""
       if acc.emoji.len == 0:
         icon = "wallet"
-      result.item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon,
-        balance = newCurrencyAmount(), balanceFetched = true, operability = acc.operable))
+      result.item.addAccount(
+        newKeyPairAccountItem(
+          acc.name,
+          acc.path,
+          acc.address,
+          acc.publicKey,
+          acc.emoji,
+          acc.colorId,
+          icon,
+          balance = newCurrencyAmount(),
+          balanceFetched = true,
+          operability = acc.operable,
+        )
+      )
   # handle unknown accounts
   var unknownAccountNumber = 0
   for cardAcc in cardMetadata.walletAccounts:
@@ -734,21 +869,35 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
         found = true
         break
     if not found:
-      let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(cardAcc.address)
+      let (balance, balanceFetched) =
+        self.controller.getOrFetchBalanceForAddressInPreferredCurrency(cardAcc.address)
       result.knownKeyPair = false
       unknownAccountNumber.inc
-      let currencyFormat = self.controller.getCurrencyFormat(self.controller.getCurrency())
-      let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknownAccountNumber
-      result.item.addAccount(newKeyPairAccountItem(name, cardAcc.path, cardAcc.address, pubKey = cardAcc.publicKey,
-        emoji = "", colorId = "undefined", icon = "wallet", currencyAmountToItem(balance, currencyFormat), balanceFetched))
+      let currencyFormat =
+        self.controller.getCurrencyFormat(self.controller.getCurrency())
+      let name =
+        atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknownAccountNumber
+      result.item.addAccount(
+        newKeyPairAccountItem(
+          name,
+          cardAcc.path,
+          cardAcc.address,
+          pubKey = cardAcc.publicKey,
+          emoji = "",
+          colorId = "undefined",
+          icon = "wallet",
+          currencyAmountToItem(balance, currencyFormat),
+          balanceFetched,
+        )
+      )
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
-  let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
+  let (item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
   self.view.setKeyPairForProcessing(item)
 
 method updateKeyPairHelper*[T](self: Module[T], cardMetadata: CardMetadata) =
-  let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
+  let (item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
   self.view.setKeyPairStoredOnKeycardIsKnown(knownKeyPair)
   self.view.setKeyPairHelper(item)
 
@@ -757,41 +906,44 @@ method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
     self.view.setDisablePopup(false)
     return
   let flowType = self.getCurrentFlowType()
-  if flowType == FlowType.SetupNewKeycard or
-    flowType == FlowType.MigrateFromKeycardToApp or
-    flowType == FlowType.MigrateFromAppToKeycard:
-      self.controller.setPassword(password)
-      self.onTertiaryActionClicked()
+  if flowType == FlowType.SetupNewKeycard or flowType == FlowType.MigrateFromKeycardToApp or
+      flowType == FlowType.MigrateFromAppToKeycard:
+    self.controller.setPassword(password)
+    self.onTertiaryActionClicked()
 
-method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string, errorType: string) =
+method keychainObtainedDataFailure*[T](
+    self: Module[T], errorDescription: string, errorType: string
+) =
   let currStateObj = self.view.currentStateObj()
-  if currStateObj.isNil or
-    currStateObj.stateType() == StateType.EnterPassword or
-    currStateObj.stateType() == StateType.WrongPassword or
-    currStateObj.stateType() == StateType.BiometricsPasswordFailed:
-      self.view.setCurrentState(newBiometricsPasswordFailedState(FlowType.Authentication, nil))
-      if not self.authenticationPopupIsAlreadyRunning:
-        self.authenticationPopupIsAlreadyRunning = true
-        self.controller.readyToDisplayPopup()
-      return
+  if currStateObj.isNil or currStateObj.stateType() == StateType.EnterPassword or
+      currStateObj.stateType() == StateType.WrongPassword or
+      currStateObj.stateType() == StateType.BiometricsPasswordFailed:
+    self.view.setCurrentState(
+      newBiometricsPasswordFailedState(FlowType.Authentication, nil)
+    )
+    if not self.authenticationPopupIsAlreadyRunning:
+      self.authenticationPopupIsAlreadyRunning = true
+      self.controller.readyToDisplayPopup()
+    return
   if not currStateObj.isNil:
     self.view.setCurrentState(newBiometricsPinFailedState(self.runningFlow, nil))
 
 method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
   let currStateObj = self.view.currentStateObj()
-  if currStateObj.isNil or
-    currStateObj.stateType() == StateType.EnterPassword or
-    currStateObj.stateType() == StateType.WrongPassword or
-    currStateObj.stateType() == StateType.BiometricsPasswordFailed:
-      if self.controller.verifyPassword(data):
-        self.controller.setPassword(data)
-        self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
-      else:
-        self.view.setCurrentState(newEnterBiometricsPasswordState(FlowType.Authentication, nil))
-        if not self.authenticationPopupIsAlreadyRunning:
-          self.authenticationPopupIsAlreadyRunning = true
-          self.controller.readyToDisplayPopup()
-      return
+  if currStateObj.isNil or currStateObj.stateType() == StateType.EnterPassword or
+      currStateObj.stateType() == StateType.WrongPassword or
+      currStateObj.stateType() == StateType.BiometricsPasswordFailed:
+    if self.controller.verifyPassword(data):
+      self.controller.setPassword(data)
+      self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+    else:
+      self.view.setCurrentState(
+        newEnterBiometricsPasswordState(FlowType.Authentication, nil)
+      )
+      if not self.authenticationPopupIsAlreadyRunning:
+        self.authenticationPopupIsAlreadyRunning = true
+        self.controller.readyToDisplayPopup()
+    return
   if not currStateObj.isNil:
     if data.len == PINLengthForStatusApp:
       self.controller.setPin(data)

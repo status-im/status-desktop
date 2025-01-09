@@ -7,33 +7,33 @@ import models/login_account_model as login_acc_model
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
 
-import ../../../app_service/service/devices/dto/local_pairing_status as local_pairing_status
+import
+  ../../../app_service/service/devices/dto/local_pairing_status as local_pairing_status
 import ../../../app_service/service/visual_identity/dto as visual_identity
 
-type
-  AppState* {.pure.} = enum
-    StartupState = 0
-    AppLoadingState
-    MainAppState
-    AppEncryptionProcessState
+type AppState* {.pure.} = enum
+  StartupState = 0
+  AppLoadingState
+  MainAppState
+  AppEncryptionProcessState
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      showBeforeGetStartedPopup: bool
-      currentStartupState: StateWrapper
-      currentStartupStateVariant: QVariant
-      selectedLoginAccount: SelectedLoginAccount
-      selectedLoginAccountVariant: QVariant
-      loginAccountsModel: login_acc_model.Model
-      loginAccountsModelVariant: QVariant
-      appState: AppState
-      keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
-      remainingAttempts: int
-      fetchingDataModel: fetch_model.Model
-      fetchingDataModelVariant: QVariant
-      localPairingStatus: LocalPairingStatus
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    showBeforeGetStartedPopup: bool
+    currentStartupState: StateWrapper
+    currentStartupStateVariant: QVariant
+    selectedLoginAccount: SelectedLoginAccount
+    selectedLoginAccountVariant: QVariant
+    loginAccountsModel: login_acc_model.Model
+    loginAccountsModelVariant: QVariant
+    appState: AppState
+    keycardData: string
+      # used to temporary store the data coming from keycard, depends on current state different data may be stored
+    remainingAttempts: int
+    fetchingDataModel: fetch_model.Model
+    fetchingDataModelVariant: QVariant
+    localPairingStatus: LocalPairingStatus
 
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
@@ -62,25 +62,48 @@ QtObject:
     result.loginAccountsModel = login_acc_model.newModel()
     result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
     result.remainingAttempts = -1
-    result.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
+    result.localPairingStatus =
+      newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
-    signalConnect(result.currentStartupState, "backActionClicked()", result, "onBackActionClicked()", 2)
-    signalConnect(result.currentStartupState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
-    signalConnect(result.currentStartupState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
-    signalConnect(result.currentStartupState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
-    signalConnect(result.currentStartupState, "quaternaryActionClicked()", result, "onQuaternaryActionClicked()", 2)
-    signalConnect(result.currentStartupState, "quinaryActionClicked()", result, "onQuinaryActionClicked()", 2)
+    signalConnect(
+      result.currentStartupState, "backActionClicked()", result,
+      "onBackActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentStartupState, "primaryActionClicked()", result,
+      "onPrimaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentStartupState, "secondaryActionClicked()", result,
+      "onSecondaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentStartupState, "tertiaryActionClicked()", result,
+      "onTertiaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentStartupState, "quaternaryActionClicked()", result,
+      "onQuaternaryActionClicked()", 2,
+    )
+    signalConnect(
+      result.currentStartupState, "quinaryActionClicked()", result,
+      "onQuinaryActionClicked()", 2,
+    )
 
   proc currentStartupStateObj*(self: View): State =
     return self.currentStartupState.getStateObj()
 
   proc setCurrentStartupState*(self: View, state: State) =
     # If metrics is enabled, we send a metric of the screen visited
-    singletonInstance.globalEvents.addCentralizedMetricIfEnabled("navigation", $(%*{"viewId": state.stateType, "flowType": state.flowType}))
+    singletonInstance.globalEvents.addCentralizedMetricIfEnabled(
+      "navigation", $(%*{"viewId": state.stateType, "flowType": state.flowType})
+    )
 
     self.currentStartupState.setStateObj(state)
+
   proc getCurrentStartupState(self: View): QVariant {.slot.} =
     return self.currentStartupStateVariant
+
   QtProperty[QVariant] currentStartupState:
     read = getCurrentStartupState
 
@@ -89,6 +112,7 @@ QtObject:
     if not module.isNil:
       return module
     return newQVariant()
+
   QtProperty[QVariant] keycardSharedModule:
     read = getKeycardSharedModule
 
@@ -114,18 +138,21 @@ QtObject:
 
   proc showBeforeGetStartedPopup*(self: View): bool {.slot.} =
     return self.showBeforeGetStartedPopup
+
   proc beforeGetStartedPopupAccepted*(self: View) {.slot.} =
     self.showBeforeGetStartedPopup = false
 
   proc appStateChanged*(self: View, state: int) {.signal.}
   proc getAppState(self: View): int {.slot.} =
     return self.appState.int
+
   proc setAppState*(self: View, state: AppState) =
-    if(self.appState == state):
+    if (self.appState == state):
       return
     debug "app state changed ", state
     self.appState = state
     self.appStateChanged(self.appState.int)
+
   QtProperty[int] appState:
     read = getAppState
     notify = appStateChanged
@@ -134,7 +161,9 @@ QtObject:
   proc emitLogOut*(self: View) =
     self.logOut()
 
-  proc generateImage*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+  proc generateImage*(
+      self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int
+  ): string {.slot.} =
     return self.delegate.generateImage(imageUrl, aX, aY, bX, bY)
 
   proc getCroppedProfileImage*(self: View): string {.slot.} =
@@ -161,7 +190,9 @@ QtObject:
   proc setPuk*(self: View, value: string) {.slot.} =
     self.delegate.setPuk(value)
 
-  proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
+  proc getPasswordStrengthScore*(
+      self: View, password: string, userName: string
+  ): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
 
   proc startupError*(self: View, error: string, errType: int) {.signal.}
@@ -174,12 +205,15 @@ QtObject:
   proc selectedLoginAccountChanged*(self: View) {.signal.}
   proc getSelectedLoginAccount(self: View): QVariant {.slot.} =
     return self.selectedLoginAccountVariant
+
   proc setSelectedLoginAccount*(self: View, item: login_acc_item.Item) =
     self.selectedLoginAccount.setData(item)
     self.selectedLoginAccountChanged()
+
   proc setSelectedLoginAccountByIndex*(self: View, index: int) {.slot.} =
     let item = self.loginAccountsModel.getItemAtIndex(index)
     self.delegate.setSelectedLoginAccount(item)
+
   QtProperty[QVariant] selectedLoginAccount:
     read = getSelectedLoginAccount
     notify = selectedLoginAccountChanged
@@ -187,9 +221,11 @@ QtObject:
   proc loginAccountsModelChanged*(self: View) {.signal.}
   proc getLoginAccountsModel(self: View): QVariant {.slot.} =
     return self.loginAccountsModelVariant
+
   proc setLoginAccountsModelItems*(self: View, accounts: seq[login_acc_item.Item]) =
     self.loginAccountsModel.setItems(accounts)
     self.loginAccountsModelChanged()
+
   QtProperty[QVariant] loginAccountsModel:
     read = getLoginAccountsModel
     notify = loginAccountsModelChanged
@@ -198,11 +234,16 @@ QtObject:
   proc emitAccountLoginError*(self: View, error: string) =
     self.accountLoginError(error)
 
-  proc obtainingPasswordError*(self:View, errorDescription: string, errorType: string) {.signal.}
-  proc emitObtainingPasswordError*(self: View, errorDescription: string, errorType: string) =
+  proc obtainingPasswordError*(
+    self: View, errorDescription: string, errorType: string
+  ) {.signal.}
+
+  proc emitObtainingPasswordError*(
+      self: View, errorDescription: string, errorType: string
+  ) =
     self.obtainingPasswordError(errorDescription, errorType)
 
-  proc obtainingPasswordSuccess*(self:View, password: string) {.signal.}
+  proc obtainingPasswordSuccess*(self: View, password: string) {.signal.}
   proc emitObtainingPasswordSuccess*(self: View, password: string) =
     self.obtainingPasswordSuccess(password)
 
@@ -218,8 +259,10 @@ QtObject:
       return
     self.keycardData = value
     self.keycardDataChanged()
+
   proc getKeycardData*(self: View): string {.slot.} =
     return self.keycardData
+
   QtProperty[string] keycardData:
     read = getKeycardData
     notify = keycardDataChanged
@@ -230,8 +273,10 @@ QtObject:
       return
     self.remainingAttempts = value
     self.remainingAttemptsChanged()
+
   proc getRemainingAttempts*(self: View): int {.slot.} =
     return self.remainingAttempts
+
   QtProperty[int] remainingAttempts:
     read = getRemainingAttempts
     notify = remainingAttemptsChanged
@@ -252,11 +297,14 @@ QtObject:
     if self.fetchingDataModelVariant.isNil:
       return newQVariant()
     return self.fetchingDataModelVariant
+
   QtProperty[QVariant] fetchingDataModel:
     read = getFetchingDataModel
     notify = fetchingDataModelChanged
 
-  proc createAndInitFetchingDataModel*(self: View, sections: seq[tuple[entity: string, icon: string]]) =
+  proc createAndInitFetchingDataModel*(
+      self: View, sections: seq[tuple[entity: string, icon: string]]
+  ) =
     if self.fetchingDataModel.isNil:
       self.fetchingDataModel = fetch_model.newModel()
     if self.fetchingDataModelVariant.isNil:
@@ -274,55 +322,64 @@ QtObject:
 
   proc getLocalPairingState*(self: View): int {.slot.} =
     return self.localPairingStatus.state.int
+
   QtProperty[int] localPairingState:
     read = getLocalPairingState
     notify = localPairingStatusChanged
 
-  proc getLocalPairingError*(self: View): string {.slot.}  =
+  proc getLocalPairingError*(self: View): string {.slot.} =
     return self.localPairingStatus.error
+
   QtProperty[string] localPairingError:
     read = getLocalPairingError
     notify = localPairingStatusChanged
 
-  proc getLocalPairingName*(self: View): string {.slot.}  =
+  proc getLocalPairingName*(self: View): string {.slot.} =
     return self.localPairingStatus.account.name
+
   QtProperty[string] localPairingName:
     read = getLocalPairingName
     notify = localPairingStatusChanged
 
-  proc getLocalPairingColorId*(self: View): int {.slot.}  =
+  proc getLocalPairingColorId*(self: View): int {.slot.} =
     return self.localPairingStatus.account.colorId
+
   QtProperty[int] localPairingColorId:
     read = getLocalPairingColorId
     notify = localPairingStatusChanged
 
-  proc getLocalPairingColorHash*(self: View): string {.slot.}  =
+  proc getLocalPairingColorHash*(self: View): string {.slot.} =
     return self.localPairingStatus.account.colorHash.toJson()
+
   QtProperty[string] localPairingColorHash:
     read = getLocalPairingColorHash
     notify = localPairingStatusChanged
 
-  proc getLocalPairingImage*(self: View): string {.slot.}  =
+  proc getLocalPairingImage*(self: View): string {.slot.} =
     if self.localPairingStatus.account.images.len != 0:
       return self.localPairingStatus.account.images[0].uri
+
   QtProperty[string] localPairingImage:
     read = getLocalPairingImage
     notify = localPairingStatusChanged
 
-  proc getLocalPairingInstallationId*(self: View): string {.slot.}  =
+  proc getLocalPairingInstallationId*(self: View): string {.slot.} =
     return self.localPairingStatus.installation.id
+
   QtProperty[string] localPairingInstallationId:
     read = getLocalPairingInstallationId
     notify = localPairingStatusChanged
 
-  proc getLocalPairingInstallationName*(self: View): string {.slot.}  =
+  proc getLocalPairingInstallationName*(self: View): string {.slot.} =
     return self.localPairingStatus.installation.metadata.name
+
   QtProperty[string] localPairingInstallationName:
     read = getLocalPairingInstallationName
     notify = localPairingStatusChanged
 
-  proc getLocalPairingInstallationDeviceType*(self: View): string {.slot.}  =
+  proc getLocalPairingInstallationDeviceType*(self: View): string {.slot.} =
     return self.localPairingStatus.installation.metadata.deviceType
+
   QtProperty[string] localPairingInstallationDeviceType:
     read = getLocalPairingInstallationDeviceType
     notify = localPairingStatusChanged
@@ -331,13 +388,23 @@ QtObject:
     self.localPairingStatus = status
     self.localPairingStatusChanged()
 
-  proc validateLocalPairingConnectionString*(self: View, connectionString: string): string {.slot.} =
+  proc validateLocalPairingConnectionString*(
+      self: View, connectionString: string
+  ): string {.slot.} =
     return self.delegate.validateLocalPairingConnectionString(connectionString)
 
   ## Used in test env only, for testing keycard flows
-  proc registerMockedKeycard*(self: View, cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) {.slot.} =
-    self.delegate.registerMockedKeycard(cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper)
+  proc registerMockedKeycard*(
+      self: View,
+      cardIndex: int,
+      readerState: int,
+      keycardState: int,
+      mockedKeycard: string,
+      mockedKeycardHelper: string,
+  ) {.slot.} =
+    self.delegate.registerMockedKeycard(
+      cardIndex, readerState, keycardState, mockedKeycard, mockedKeycardHelper
+    )
 
   proc pluginMockedReaderAction*(self: View) {.slot.} =
     self.delegate.pluginMockedReaderAction()
@@ -353,11 +420,13 @@ QtObject:
 
   proc getNotificationsNeedsEnable*(self: View): bool {.slot.} =
     return self.delegate.notificationsNeedsEnable()
+
   QtProperty[bool] notificationsNeedsEnable:
     read = getNotificationsNeedsEnable
 
   proc getLoggedInAccountPublicKey*(self: View): string {.slot.} =
     return self.delegate.getLoggedInAccountPublicKey()
+
   proc loggedInAccountChanged*(self: View) {.signal.}
   QtProperty[string] loggedInAccountPublicKey:
     read = getLoggedInAccountPublicKey
@@ -365,12 +434,14 @@ QtObject:
 
   proc getLoggedInAccountDisplayName*(self: View): string {.slot.} =
     return self.delegate.getLoggedInAccountDisplayName()
+
   QtProperty[string] loggedInAccountDisplayName:
     read = getLoggedInAccountDisplayName
     notify = loggedInAccountChanged
 
   proc getLoggedInAccountImage*(self: View): string {.slot.} =
     return self.delegate.getLoggedInAccountImage()
+
   QtProperty[string] loggedInAccountImage:
     read = getLoggedInAccountImage
     notify = loggedInAccountChanged

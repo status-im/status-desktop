@@ -10,7 +10,7 @@ import ../settings/service as settings_service
 import ../token/service as token_service
 import ./dto
 
-include  ../../common/json_utils
+include ../../common/json_utils
 include async_tasks
 
 export dto
@@ -18,9 +18,8 @@ export dto
 # Signals which may be emitted by this service:
 const SIGNAL_CURRENCY_FORMATS_UPDATED* = "currencyFormatsUpdated"
 
-type
-  CurrencyFormatsUpdatedArgs* = ref object of Args
-    discard
+type CurrencyFormatsUpdatedArgs* = ref object of Args
+  discard
 
 QtObject:
   type Service* = ref object of QObject
@@ -38,10 +37,10 @@ QtObject:
     self.QObject.delete
 
   proc newService*(
-    events: EventEmitter,
-    threadpool: ThreadPool,
-    tokenService: token_service.Service,
-    settingsService: settings_service.Service,
+      events: EventEmitter,
+      threadpool: ThreadPool,
+      tokenService: token_service.Service,
+      settingsService: settings_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -51,18 +50,18 @@ QtObject:
     result.settingsService = settingsService
 
   proc init*(self: Service) =
-    self.events.on(SignalType.Wallet.event) do(e:Args):
+    self.events.on(SignalType.Wallet.event) do(e: Args):
       var data = WalletSignal(e)
-      case data.eventType:
-        of "wallet-currency-tick-update-format":
-          self.fetchAllCurrencyFormats()
-          discard
+      case data.eventType
+      of "wallet-currency-tick-update-format":
+        self.fetchAllCurrencyFormats()
+        discard
     # Load cache from DB
     self.currencyFormatCache = self.getCachedCurrencyFormats()
     # Trigger async fetch
     self.fetchAllCurrencyFormats()
 
-  proc jsonToFormatsTable(node: JsonNode) : Table[string, CurrencyFormatDto] =
+  proc jsonToFormatsTable(node: JsonNode): Table[string, CurrencyFormatDto] =
     result = initTable[string, CurrencyFormatDto]()
 
     for (symbol, formatObj) in node.pairs:
@@ -80,7 +79,6 @@ QtObject:
     try:
       let responseObj = response.parseJson
       if (responseObj.kind == JObject):
-
         var formatsJson: JsonNode
         discard responseObj.getProp("formats", formatsJson)
         if formatsJson.isNil or formatsJson.kind == JNull:
@@ -133,7 +131,9 @@ QtObject:
       decimals = token.decimals
     return u256ToFloat(decimals, amountInt)
 
-  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
+  proc parseCurrencyValueByTokensKey*(
+      self: Service, tokensKey: string, amountInt: UInt256
+  ): float64 =
     let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
     var decimals: int = 0
     if token != nil:

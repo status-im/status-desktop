@@ -14,13 +14,12 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/contacts/service as contact_service
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -32,14 +31,16 @@ proc newModule*(
     communityService: community_service.Service,
     contactService: contact_service.Service,
     messageService: message_service.Service,
-    settingsService: settings_service.Service
-    ):
-  Module =
+    settingsService: settings_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, contactService, messageService, settingsService)
+  result.controller = controller.newController(
+    result, events, sectionId, chatId, belongsToCommunity, chatService,
+    communityService, contactService, messageService, settingsService,
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -48,7 +49,9 @@ method delete*(self: Module) =
   self.controller.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("chatSectionChatContentInputArea", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "chatSectionChatContentInputArea", self.viewVariant
+  )
 
   self.controller.init()
   self.view.load()
@@ -66,8 +69,22 @@ method getModuleAsVariant*(self: Module): QVariant =
 proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
-method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) =
-  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
+method sendImages*(
+    self: Module,
+    imagePathsAndDataJson: string,
+    msg: string,
+    replyTo: string,
+    linkPreviews: seq[LinkPreview],
+    paymentRequests: seq[PaymentRequest],
+) =
+  self.controller.sendImages(
+    imagePathsAndDataJson,
+    msg,
+    replyTo,
+    singletonInstance.userProfile.getPreferredName(),
+    linkPreviews,
+    paymentRequests,
+  )
 
 method sendChatMessage*(
     self: Module,
@@ -75,14 +92,25 @@ method sendChatMessage*(
     replyTo: string,
     contentType: int,
     linkPreviews: seq[LinkPreview],
-    paymentRequests: seq[PaymentRequest]) =
-  self.controller.sendChatMessage(msg, replyTo, contentType,
-    singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
+    paymentRequests: seq[PaymentRequest],
+) =
+  self.controller.sendChatMessage(
+    msg,
+    replyTo,
+    contentType,
+    singletonInstance.userProfile.getPreferredName(),
+    linkPreviews,
+    paymentRequests,
+  )
 
-method requestAddressForTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
+method requestAddressForTransaction*(
+    self: Module, fromAddress: string, amount: string, tokenAddress: string
+) =
   self.controller.requestAddressForTransaction(fromAddress, amount, tokenAddress)
 
-method requestTransaction*(self: Module, fromAddress: string, amount: string, tokenAddress: string) =
+method requestTransaction*(
+    self: Module, fromAddress: string, amount: string, tokenAddress: string
+) =
   self.controller.requestTransaction(fromAddress, amount, tokenAddress)
 
 method declineRequestTransaction*(self: Module, messageId: string) =
@@ -91,10 +119,14 @@ method declineRequestTransaction*(self: Module, messageId: string) =
 method declineRequestAddressForTransaction*(self: Module, messageId: string) =
   self.controller.declineRequestAddressForTransaction(messageId)
 
-method acceptRequestAddressForTransaction*(self: Module, messageId: string, address: string) =
+method acceptRequestAddressForTransaction*(
+    self: Module, messageId: string, address: string
+) =
   self.controller.acceptRequestAddressForTransaction(messageId, address)
 
-method acceptRequestTransaction*(self: Module, transactionHash: string, messageId: string, signature: string) =
+method acceptRequestTransaction*(
+    self: Module, transactionHash: string, messageId: string, signature: string
+) =
   self.controller.acceptRequestTransaction(transactionHash, messageId, signature)
 
 method setText*(self: Module, text: string, unfurlNewUrls: bool) =
@@ -112,7 +144,9 @@ method updateLinkPreviewsFromCache*(self: Module, urls: seq[string]) =
 method setLinkPreviewUrls*(self: Module, urls: seq[string]) =
   self.view.setLinkPreviewUrls(urls)
 
-method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
+method linkPreviewsFromCache*(
+    self: Module, urls: seq[string]
+): Table[string, LinkPreview] =
   return self.controller.linkPreviewsFromCache(urls)
 
 method reloadUnfurlingPlan*(self: Module) =

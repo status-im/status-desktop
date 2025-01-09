@@ -1,7 +1,8 @@
-type
-  RecoverOldUserState* = ref object of State
+type RecoverOldUserState* = ref object of State
 
-proc newRecoverOldUserState*(flowType: FlowType, backState: State): RecoverOldUserState =
+proc newRecoverOldUserState*(
+    flowType: FlowType, backState: State
+): RecoverOldUserState =
   result = RecoverOldUserState()
   result.setup(flowType, StateType.RecoverOldUser, backState)
 
@@ -13,8 +14,16 @@ method executeSecondaryCommand*(self: RecoverOldUserState, controller: Controlle
   controller.runRecoverAccountFlow()
 
 method getNextTertiaryState*(self: RecoverOldUserState, controller: Controller): State =
-  return createState(StateType.UserProfileEnterSeedPhrase, FlowType.FirstRunOldUserImportSeedPhrase, self)
+  return createState(
+    StateType.UserProfileEnterSeedPhrase, FlowType.FirstRunOldUserImportSeedPhrase, self
+  )
 
-method resolveKeycardNextState*(self: RecoverOldUserState, keycardFlowType: string, keycardEvent: KeycardEvent, 
-  controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)
+method resolveKeycardNextState*(
+    self: RecoverOldUserState,
+    keycardFlowType: string,
+    keycardEvent: KeycardEvent,
+    controller: Controller,
+): State =
+  return ensureReaderAndCardPresenceAndResolveNextOnboardingState(
+    self, keycardFlowType, keycardEvent, controller
+  )

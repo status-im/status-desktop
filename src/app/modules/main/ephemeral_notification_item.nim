@@ -1,12 +1,11 @@
 import ../../core/notifications/details
 
-type
-  EphemeralNotificationType* {.pure.} = enum
-    Default = 0
-    Success
-    Danger
+type EphemeralNotificationType* {.pure.} = enum
+  Default = 0
+  Success
+  Danger
 
-type EphemeralActionType* {.pure} = enum
+type EphemeralActionType* {.pure.} = enum
   None = 0
   NavigateToCommunityAdmin
   OpenFinaliseOwnershipPopup
@@ -14,24 +13,24 @@ type EphemeralActionType* {.pure} = enum
   ViewTransactionDetails
   OpenFirstCommunityTokenPopup
 
-type
-  Item* = object
-    id: int64
-    timestamp: string
-    title: string
-    durationInMs: int
-    subTitle: string
-    image: string
-    icon: string
-    iconColor: string
-    loading: bool
-    ephNotifType: EphemeralNotificationType
-    url: string
-    actionType: EphemeralActionType
-    actionData: string
-    details: NotificationDetails
+type Item* = object
+  id: int64
+  timestamp: string
+  title: string
+  durationInMs: int
+  subTitle: string
+  image: string
+  icon: string
+  iconColor: string
+  loading: bool
+  ephNotifType: EphemeralNotificationType
+  url: string
+  actionType: EphemeralActionType
+  actionData: string
+  details: NotificationDetails
 
-proc initItem*(id: int64,
+proc initItem*(
+    id: int64,
     title: string,
     durationInMs = 0,
     subTitle = "",
@@ -43,7 +42,8 @@ proc initItem*(id: int64,
     url = "",
     actionType = EphemeralActionType.None, # It means, no action enabled
     actionData = "",
-    details: NotificationDetails): Item =
+    details: NotificationDetails,
+): Item =
   result = Item()
   result.id = id
   result.timestamp = $id

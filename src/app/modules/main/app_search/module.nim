@@ -28,23 +28,28 @@ const SEARCH_RESULT_CHATS_SECTION_NAME = "Chats"
 const SEARCH_RESULT_CHANNELS_SECTION_NAME = "Channels"
 const SEARCH_RESULT_MESSAGES_SECTION_NAME = "Messages"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, contactsService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service, messageService: message_service.Service):
-  Module =
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    contactsService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, contactsService, chatService, communityService,
-  messageService)
+  result.controller = controller.newController(
+    result, events, contactsService, chatService, communityService, messageService
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -66,14 +71,17 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category] = @[]): seq[location_menu_sub_item.SubItem] =
+proc getChatSubItems(
+    self: Module, chats: seq[ChatDto], categories: seq[Category] = @[]
+): seq[location_menu_sub_item.SubItem] =
   var highestPosition = 0
-  var categoryChats: OrderedTable[int, seq[ChatDto]] = initOrderedTable[int, seq[ChatDto]]()
+  var categoryChats: OrderedTable[int, seq[ChatDto]] =
+    initOrderedTable[int, seq[ChatDto]]()
 
   for chatDto in chats:
     if not chatDto.canView and not chatDto.missingEncryptionKey:
       continue
-    
+
     var chatName = chatDto.name
     var chatImage = chatDto.icon
     var colorHash: ColorHashDto = @[]
@@ -117,26 +125,26 @@ proc getChatSubItems(self: Module, chats: seq[ChatDto], categories: seq[Category
     highestPosition.inc()
     for chat in categoryChats[categoryPosition]:
       let chatPosition = chat.position + highestPosition
-      result.add(location_menu_sub_item.initSubItem(
-        chat.id,
-        chat.name,
-        chat.emoji,
-        icon = "",
-        chat.color,
-        isUserIcon = false,
-        isImage = false,
-        chatPosition,
-        chat.timestamp.int,
-      ))
+      result.add(
+        location_menu_sub_item.initSubItem(
+          chat.id,
+          chat.name,
+          chat.emoji,
+          icon = "",
+          chat.color,
+          isUserIcon = false,
+          isImage = false,
+          chatPosition,
+          chat.timestamp.int,
+        )
+      )
     highestPosition += categoryChats[categoryPosition].len
 
-proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): location_menu_item.Item =
+proc buildLocationMenuForCommunity(
+    self: Module, community: CommunityDto
+): location_menu_item.Item =
   var item = location_menu_item.initItem(
-    community.id,
-    community.name,
-    community.images.thumbnail,
-    icon="",
-    community.color
+    community.id, community.name, community.images.thumbnail, icon = "", community.color
   )
 
   var subItems = self.getChatSubItems(community.chats, community.categories)
@@ -177,21 +185,19 @@ method setSearchLocation*(self: Module, location: string, subLocation: string) =
 method getSearchLocationObject*(self: Module): string =
   ## This method returns location and subLocation with their details so we
   ## may set initial search location on the side of qml.
-  var jsonObject = %* {
-    "location": "",
-    "subLocation": ""
-  }
+  var jsonObject = %*{"location": "", "subLocation": ""}
 
-  if(self.controller.activeSectionId().len == 0):
+  if (self.controller.activeSectionId().len == 0):
     return Json.encode(jsonObject)
 
-  let item = self.view.locationMenuModel().getItemForValue(self.controller.activeSectionId())
-  if(not item.isNil):
+  let item =
+    self.view.locationMenuModel().getItemForValue(self.controller.activeSectionId())
+  if (not item.isNil):
     jsonObject["location"] = item.toJsonNode()
 
-    if(self.controller.activeChatId().len > 0):
+    if (self.controller.activeChatId().len > 0):
       let subItem = item.getSubItemForValue(self.controller.activeChatId())
-      if(not subItem.isNil):
+      if (not subItem.isNil):
         jsonObject["subLocation"] = subItem.toJsonNode()
 
   return Json.encode(jsonObject)
@@ -204,10 +210,13 @@ method searchMessages*(self: Module, searchTerm: string) =
 
   self.controller.searchMessages(searchTerm)
 
-proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto], sectionName: string): seq[result_item.Item] =
-  if (self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0) or
-      self.controller.searchLocation() == sectionId:
-    
+proc getResultItemFromChats(
+    self: Module, sectionId: string, chats: seq[ChatDto], sectionName: string
+): seq[result_item.Item] =
+  if (
+    self.controller.searchSubLocation().len == 0 and
+    self.controller.searchLocation().len == 0
+  ) or self.controller.searchLocation() == sectionId:
     let searchTerm = self.controller.searchTerm().toLower
     for chatDto in chats:
       if chatDto.isHiddenChat:
@@ -218,33 +227,35 @@ proc getResultItemFromChats(self: Module, sectionId: string, chats: seq[ChatDto]
       var colorHash: ColorHashDto = @[]
       var colorId: int = 0
       let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
-      if(isOneToOneChat):
-        (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+      if (isOneToOneChat):
+        (chatName, chatImage, _) =
+          self.controller.getOneToOneChatNameAndImage(chatDto.id)
         colorHash = self.controller.getColorHash(chatDto.id)
         colorId = self.controller.getColorId(chatDto.id)
 
       var rawChatName = chatName
-      if(chatName.startsWith("@")):
+      if (chatName.startsWith("@")):
         rawChatName = chatName[1 ..^ 1]
 
       if rawChatName.toLower.contains(searchTerm):
         let item = result_item.initItem(
           chatDto.id,
-          content="",
-          time="",
-          titleId=chatDto.id,
-          title=chatName,
+          content = "",
+          time = "",
+          titleId = chatDto.id,
+          title = chatName,
           SEARCH_RESULT_CHANNELS_SECTION_NAME,
           chatImage,
           chatDto.color,
-          badgePrimaryText="",
-          badgeSecondaryText="",
+          badgePrimaryText = "",
+          badgeSecondaryText = "",
           chatImage,
           chatDto.color,
           false,
           isOneToOneChat,
           colorId,
-          colorHash)
+          colorHash,
+        )
 
         self.controller.addResultItemDetails(chatDto.id, sectionId, chatDto.id)
         result.add(item)
@@ -254,7 +265,11 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
   # Add Personal section chats
   let myPubKey = singletonInstance.userProfile.getPubKey()
-  let personalItems = self.getResultItemFromChats(myPubKey, self.controller.getChatsForPersonalSection(), SEARCH_RESULT_CHATS_SECTION_NAME)
+  let personalItems = self.getResultItemFromChats(
+    myPubKey,
+    self.controller.getChatsForPersonalSection(),
+    SEARCH_RESULT_CHATS_SECTION_NAME,
+  )
   var channels = personalItems
 
   # Add Communities
@@ -266,24 +281,27 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         community.name.toLower.contains(searchTerm):
       let item = result_item.initItem(
         community.id,
-        content="",
-        time="",
-        titleId=community.id,
-        title=community.name,
+        content = "",
+        time = "",
+        titleId = community.id,
+        title = community.name,
         SEARCH_RESULT_COMMUNITIES_SECTION_NAME,
         community.images.thumbnail,
         community.color,
-        badgePrimaryText="",
-        badgeSecondaryText="",
+        badgePrimaryText = "",
+        badgeSecondaryText = "",
         community.images.thumbnail,
         community.color,
-        badgeIsLetterIdenticon=false)
+        badgeIsLetterIdenticon = false,
+      )
 
       self.controller.addResultItemDetails(community.id, community.id)
       items.add(item)
 
     # Add channels
-    let communityChatItems = self.getResultItemFromChats(community.id, community.chats, SEARCH_RESULT_CHANNELS_SECTION_NAME)
+    let communityChatItems = self.getResultItemFromChats(
+      community.id, community.chats, SEARCH_RESULT_CHANNELS_SECTION_NAME
+    )
     if communityChatItems.len > 0:
       channels = channels.concat(channels, communityChatItems)
 
@@ -297,34 +315,67 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
     var (senderName, senderImage, _) = self.controller.getContactNameAndImage(m.`from`)
-    if(m.`from` == singletonInstance.userProfile.getPubKey()):
+    if (m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
 
     let communityChats = self.controller.getCommunityById(chatDto.communityId).chats
 
-    let renderedMessageText = self.controller.getRenderedText(m.parsedText, communityChats)
+    let renderedMessageText =
+      self.controller.getRenderedText(m.parsedText, communityChats)
     let colorHash = self.controller.getColorHash(m.`from`)
     let colorId = self.controller.getColorId(m.`from`)
 
-    if(chatDto.communityId.len == 0):
+    if (chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.icon
-      if(chatDto.chatType == ChatType.OneToOne):
-        (chatName, chatImage, _) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
-        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
-        chatDto.color, false, true, colorId, colorHash)
+      if (chatDto.chatType == ChatType.OneToOne):
+        (chatName, chatImage, _) =
+          self.controller.getOneToOneChatNameAndImage(chatDto.id)
+      let item = result_item.initItem(
+        m.id,
+        renderedMessageText,
+        $m.timestamp,
+        m.`from`,
+        senderName,
+        SEARCH_RESULT_MESSAGES_SECTION_NAME,
+        senderImage,
+        chatDto.color,
+        chatName,
+        "",
+        chatImage,
+        chatDto.color,
+        false,
+        true,
+        colorId,
+        colorHash,
+      )
 
-      self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
-        chatDto.id, m.id)
+      self.controller.addResultItemDetails(
+        m.id, singletonInstance.userProfile.getPubKey(), chatDto.id, m.id
+      )
       items.add(item)
     else:
       let community = self.controller.getCommunityById(chatDto.communityId)
       let channelName = "#" & chatDto.name
 
-      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
-        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, community.name,
-        channelName, community.images.thumbnail, community.color, false, true, colorId, colorHash)
+      let item = result_item.initItem(
+        m.id,
+        renderedMessageText,
+        $m.timestamp,
+        m.`from`,
+        senderName,
+        SEARCH_RESULT_MESSAGES_SECTION_NAME,
+        senderImage,
+        chatDto.color,
+        community.name,
+        channelName,
+        community.images.thumbnail,
+        community.color,
+        false,
+        true,
+        colorId,
+        colorHash,
+      )
 
       self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
       items.add(item)

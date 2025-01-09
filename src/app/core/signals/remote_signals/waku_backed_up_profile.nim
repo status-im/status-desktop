@@ -6,7 +6,9 @@ import ../../../../app_service/service/accounts/dto/[accounts]
 type WakuBackedUpProfileSignal* = ref object of Signal
   backedUpProfile*: WakuBackedUpProfileDto
 
-proc fromEvent*(T: type WakuBackedUpProfileSignal, event: JsonNode): WakuBackedUpProfileSignal =
+proc fromEvent*(
+    T: type WakuBackedUpProfileSignal, event: JsonNode
+): WakuBackedUpProfileSignal =
   result = WakuBackedUpProfileSignal()
   result.signalType = SignalType.WakuBackedUpProfile
 

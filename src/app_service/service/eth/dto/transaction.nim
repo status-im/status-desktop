@@ -2,33 +2,39 @@ import strutils, json
 import web3/ethtypes, web3/conversions, options, stint
 import ../utils
 
-type
-  TransactionDataDto* = object
-    source*: Address             # the address the transaction is send from.
-    to*: Option[Address]         # (optional when creating new contract) the address the transaction is directed to.
-    gas*: Option[Quantity]            # (optional, default: 90000) integer of the gas provided for the transaction execution. It will return unused gas.
-    gasPrice*: Option[int]       # (optional, default: To-Be-Determined) integer of the gasPrice used for each paid gas.
-    maxPriorityFeePerGas*: Option[Uint256]
-    maxFeePerGas*: Option[Uint256]
-    value*: Option[Uint256]          # (optional) integer of the value sent with this transaction.
-    data*: string                # the compiled code of a contract OR the hash of the invoked proc signature and encoded parameters. For details see Ethereum Contract ABI.
-    input*: string
-    nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
-    txType*: string
+type TransactionDataDto* = object
+  source*: Address # the address the transaction is send from.
+  to*: Option[Address]
+    # (optional when creating new contract) the address the transaction is directed to.
+  gas*: Option[Quantity]
+    # (optional, default: 90000) integer of the gas provided for the transaction execution. It will return unused gas.
+  gasPrice*: Option[int]
+    # (optional, default: To-Be-Determined) integer of the gasPrice used for each paid gas.
+  maxPriorityFeePerGas*: Option[Uint256]
+  maxFeePerGas*: Option[Uint256]
+  value*: Option[Uint256] # (optional) integer of the value sent with this transaction.
+  data*: string
+    # the compiled code of a contract OR the hash of the invoked proc signature and encoded parameters. For details see Ethereum Contract ABI.
+  input*: string
+  nonce*: Option[Nonce]
+    # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
+  txType*: string
 
-    chainID*: Option[int]     # (optional) source chainID
-    chainIDTo*: Option[int]     # (optional) destination chainID
-    symbol*: Option[string]      # (optional) symbol in case of a bridge hop transaction
-    recipient*: Option[Address]  # (optional) recipient in case of a bridge hop transaction
-    amount*: Option[UInt256]         # (optional) amount in case of a bridge hop transaction
-    amountOutMin*: Option[UInt256]   # (optional) amountOutMin in case of a bridge hop transaction
-    bonderFee*: Option[UInt256]      # (optional) bonderFee in case of a bridge hop transaction
+  chainID*: Option[int] # (optional) source chainID
+  chainIDTo*: Option[int] # (optional) destination chainID
+  symbol*: Option[string] # (optional) symbol in case of a bridge hop transaction
+  recipient*: Option[Address] # (optional) recipient in case of a bridge hop transaction
+  amount*: Option[UInt256] # (optional) amount in case of a bridge hop transaction
+  amountOutMin*: Option[UInt256]
+    # (optional) amountOutMin in case of a bridge hop transaction
+  bonderFee*: Option[UInt256] # (optional) bonderFee in case of a bridge hop transaction
 
-    tokenID*: Option[UInt256]     # (optional) chainID in case of a ERC721 transaction
+  tokenID*: Option[UInt256] # (optional) chainID in case of a ERC721 transaction
 
-    tokenIdFrom*: Option[string]    # (optional) source token symbol
-    tokenIdTo*: Option[string]    # (optional) destination token symbol
-    slippagePercentage*: Option[float]    # (optional) max slippage percentage allowed in case of a Swap transaction
+  tokenIdFrom*: Option[string] # (optional) source token symbol
+  tokenIdTo*: Option[string] # (optional) destination token symbol
+  slippagePercentage*: Option[float]
+    # (optional) max slippage percentage allowed in case of a Swap transaction
 
 proc `%`*(x: TransactionDataDto): JsonNode =
   result = newJobject()

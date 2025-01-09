@@ -1,98 +1,81 @@
 #################################################
 # Async load derivedAddreses
 #################################################
-type
-  FetchAddressesArg* = ref object of QObjectTaskArg
-    paths: seq[string]
+type FetchAddressesArg* = ref object of QObjectTaskArg
+  paths: seq[string]
 
-type
-  FetchDerivedAddressesTaskArg* = ref object of FetchAddressesArg
-    password: string
-    derivedFrom: string
+type FetchDerivedAddressesTaskArg* = ref object of FetchAddressesArg
+  password: string
+  derivedFrom: string
 
 proc fetchDerivedAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesTaskArg](argEncoded)
-  var output = %*{
-    "derivedAddresses": "",
-    "error": ""
-  }
+  var output = %*{"derivedAddresses": "", "error": ""}
   try:
-    let response = status_go_accounts.getDerivedAddresses(arg.password, arg.derivedFrom, arg.paths)
+    let response =
+      status_go_accounts.getDerivedAddresses(arg.password, arg.derivedFrom, arg.paths)
     output["derivedAddresses"] = response.result
   except Exception as e:
-    output["error"] = %* fmt"Error fetching derived address: {e.msg}"
+    output["error"] = %*fmt"Error fetching derived address: {e.msg}"
   arg.finish(output)
 
-type
-  FetchDerivedAddressesForMnemonicTaskArg* = ref object of FetchAddressesArg
-    mnemonic: string
+type FetchDerivedAddressesForMnemonicTaskArg* = ref object of FetchAddressesArg
+  mnemonic: string
 
 proc fetchDerivedAddressesForMnemonicTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesForMnemonicTaskArg](argEncoded)
-  var output = %*{
-    "derivedAddresses": "",
-    "error": ""
-  }
+  var output = %*{"derivedAddresses": "", "error": ""}
   try:
-    let response = status_go_accounts.getDerivedAddressesForMnemonic(arg.mnemonic, arg.paths)
+    let response =
+      status_go_accounts.getDerivedAddressesForMnemonic(arg.mnemonic, arg.paths)
     output["derivedAddresses"] = response.result
   except Exception as e:
-    output["error"] = %* fmt"Error fetching derived address for mnemonic: {e.msg}"
+    output["error"] = %*fmt"Error fetching derived address for mnemonic: {e.msg}"
   arg.finish(output)
 
-type
-  FetchDetailsForAddressesTaskArg* = ref object of QObjectTaskArg
-    uniqueId: string
-    addresses: seq[string]
+type FetchDetailsForAddressesTaskArg* = ref object of QObjectTaskArg
+  uniqueId: string
+  addresses: seq[string]
 
 proc fetchDetailsForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDetailsForAddressesTaskArg](argEncoded)
   for address in arg.addresses:
-    var data = %* {
-      "uniqueId": arg.uniqueId,
-      "details": "",
-      "error": ""
-    }
-    var jsonReponse = %* {
-      "address": address,
-      "alreadyCreated": false,
-      "path": "",
-      "hasActivity": false
-    }
+    var data = %*{"uniqueId": arg.uniqueId, "details": "", "error": ""}
+    var jsonReponse =
+      %*{"address": address, "alreadyCreated": false, "path": "", "hasActivity": false}
     try:
       var response = status_go_accounts.addressExists(address)
       if response.result.getBool:
         jsonReponse["alreadyCreated"] = %*true
       else:
-        response = status_go_accounts.getAddressDetails(address, chainIds = @[], timeoutInMilliseconds = 3000)
+        response = status_go_accounts.getAddressDetails(
+          address, chainIds = @[], timeoutInMilliseconds = 3000
+        )
         jsonReponse = response.result
       sleep(250)
       data["details"] = jsonReponse
     except Exception as e:
       if not jsonReponse["alreadyCreated"].getBool:
         let err = fmt"Error fetching details for an address: {e.msg}"
-        data["error"] = %* err
+        data["error"] = %*err
     arg.finish(data)
 
 #################################################
 # Async building token
 #################################################
 
-type
-  BuildTokensTaskArg = ref object of QObjectTaskArg
-    accounts: seq[string]
-    storeResult: bool
+type BuildTokensTaskArg = ref object of QObjectTaskArg
+  accounts: seq[string]
+  storeResult: bool
 
 proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
-  var output = %*{
-    "result": "",
-    "storeResult": false
-  }
+  var output = %*{"result": "", "storeResult": false}
   try:
-    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts, false) # TODO: think should we need to use arg.storeResult or not and if yes, is it everywhere set proprely
+    let response = backend.fetchOrGetCachedWalletBalances(arg.accounts, false)
+      # TODO: think should we need to use arg.storeResult or not and if yes, is it everywhere set proprely
     output["result"] = response.result
-    output["storeResult"] = %* arg.storeResult
+    output["storeResult"] = %*arg.storeResult
   except Exception as e:
     let err = fmt"Error getting wallet tokens"
   arg.finish(output)
@@ -101,31 +84,27 @@ proc prepareTokensTask(argEncoded: string) {.gcsafe, nimcall.} =
 # Async add new keycard or accounts
 #################################################
 
-type
-  SaveOrUpdateKeycardTaskArg* = ref object of QObjectTaskArg
-    keycard: KeycardDto
-    accountsComingFromKeycard: bool
+type SaveOrUpdateKeycardTaskArg* = ref object of QObjectTaskArg
+  keycard: KeycardDto
+  accountsComingFromKeycard: bool
 
 proc saveOrUpdateKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[SaveOrUpdateKeycardTaskArg](argEncoded)
-  var responseJson = %*{
-    "success": false,
-    "keycard": arg.keycard.toJsonNode()
-  }
+  var responseJson = %*{"success": false, "keycard": arg.keycard.toJsonNode()}
   try:
     let response = backend.saveOrUpdateKeycard(
-      %* {
+      %*{
         "keycard-uid": arg.keycard.keycardUid,
         "keycard-name": arg.keycard.keycardName,
         # "keycard-locked" - no need to set it here, cause it will be set to false by the status-go
         "key-uid": arg.keycard.keyUid,
         "accounts-addresses": arg.keycard.accountsAddresses,
-        # "position": - no need to set it here, cause it is fully maintained by the status-go
+          # "position": - no need to set it here, cause it is fully maintained by the status-go
       },
-      arg.accountsComingFromKeycard
-      )
+      arg.accountsComingFromKeycard,
+    )
     let success = responseHasNoErrors("saveOrUpdateKeycard", response)
-    responseJson["success"] = %* success
+    responseJson["success"] = %*success
   except Exception as e:
     error "error adding new keycard: ", message = e.msg
   arg.finish(responseJson)
@@ -134,23 +113,18 @@ proc saveOrUpdateKeycardTask*(argEncoded: string) {.gcsafe, nimcall.} =
 # Async remove migrated accounts for keycard
 #################################################
 
-type
-  DeleteKeycardAccountsTaskArg* = ref object of QObjectTaskArg
-    keycard: KeycardDto
+type DeleteKeycardAccountsTaskArg* = ref object of QObjectTaskArg
+  keycard: KeycardDto
 
 proc deleteKeycardAccountsTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[DeleteKeycardAccountsTaskArg](argEncoded)
-  var responseJson = %*{
-    "success": false,
-    "keycard": arg.keycard.toJsonNode()
-  }
+  var responseJson = %*{"success": false, "keycard": arg.keycard.toJsonNode()}
   try:
     let response = backend.deleteKeycardAccounts(
-      arg.keycard.keycardUid,
-      arg.keycard.accountsAddresses
-      )
+      arg.keycard.keycardUid, arg.keycard.accountsAddresses
+    )
     let success = responseHasNoErrors("deleteKeycardAccounts", response)
-    responseJson["success"] = %* success
+    responseJson["success"] = %*success
   except Exception as e:
     error "error remove accounts from keycard: ", message = e.msg
 
@@ -160,50 +134,46 @@ proc deleteKeycardAccountsTask*(argEncoded: string) {.gcsafe, nimcall.} =
 # Async fetch chain id for url
 #################################################
 
-type
-  FetchChainIdForUrlTaskArg* = ref object of QObjectTaskArg
-    url: string
-    isMainUrl: bool
+type FetchChainIdForUrlTaskArg* = ref object of QObjectTaskArg
+  url: string
+  isMainUrl: bool
 
 proc fetchChainIdForUrlTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchChainIdForUrlTaskArg](argEncoded)
   try:
     let response = backend.fetchChainIDForURL(arg.url)
-    arg.finish(%*{
-      "success": true,
-      "chainId": response.result.getInt,
-      "url": arg.url,
-      "isMainUrl": arg.isMainUrl
-    })
+    arg.finish(
+      %*{
+        "success": true,
+        "chainId": response.result.getInt,
+        "url": arg.url,
+        "isMainUrl": arg.isMainUrl,
+      }
+    )
   except Exception as e:
     error "error when fetching chaind id from url: ", message = e.msg
-    arg.finish(%*{
-      "success": false,
-      "chainId": -1,
-      "url": arg.url,
-      "isMainUrl": arg.isMainUrl
-    })
+    arg.finish(
+      %*{"success": false, "chainId": -1, "url": arg.url, "isMainUrl": arg.isMainUrl}
+    )
 
 #################################################
 # Async migration of a non profile keycard keypair to the app
 #################################################
 
-type
-  MigrateNonProfileKeycardKeypairToAppTaskArg* = ref object of QObjectTaskArg
-    keyUid: string
-    seedPhrase: string
-    password: string
+type MigrateNonProfileKeycardKeypairToAppTaskArg* = ref object of QObjectTaskArg
+  keyUid: string
+  seedPhrase: string
+  password: string
 
 proc migrateNonProfileKeycardKeypairToAppTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[MigrateNonProfileKeycardKeypairToAppTaskArg](argEncoded)
-  var responseJson = %*{
-    "success": false,
-    "keyUid": arg.keyUid
-  }
+  var responseJson = %*{"success": false, "keyUid": arg.keyUid}
   try:
-    let response = status_go_accounts.migrateNonProfileKeycardKeypairToApp(arg.seedPhrase, arg.password)
+    let response = status_go_accounts.migrateNonProfileKeycardKeypairToApp(
+      arg.seedPhrase, arg.password
+    )
     let success = responseHasNoErrors("migrateNonProfileKeycardKeypairToApp", response)
-    responseJson["success"] = %* success
+    responseJson["success"] = %*success
   except Exception as e:
     error "error migrating a non profile keycard keypair: ", message = e.msg
   arg.finish(responseJson)
@@ -212,66 +182,68 @@ proc migrateNonProfileKeycardKeypairToAppTask*(argEncoded: string) {.gcsafe, nim
 # Async fetching of token balances for a given account(s)
 #################################################
 
-type
-  BalanceHistoryTimeInterval* {.pure.} = enum
-    BalanceHistory7Hours = 0,
-    BalanceHistory1Month,
-    BalanceHistory6Months,
-    BalanceHistory1Year,
-    BalanceHistoryAllTime
+type BalanceHistoryTimeInterval* {.pure.} = enum
+  BalanceHistory7Hours = 0
+  BalanceHistory1Month
+  BalanceHistory6Months
+  BalanceHistory1Year
+  BalanceHistoryAllTime
 
-type
-  GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
-    chainIds: seq[int]
-    addresses: seq[string]
-    tokenSymbol: string
-    currencySymbol: string
-    timeInterval: BalanceHistoryTimeInterval
+type GetTokenBalanceHistoryDataTaskArg = ref object of QObjectTaskArg
+  chainIds: seq[int]
+  addresses: seq[string]
+  tokenSymbol: string
+  currencySymbol: string
+  timeInterval: BalanceHistoryTimeInterval
 
 proc getTokenBalanceHistoryDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenBalanceHistoryDataTaskArg](argEncoded)
   var response = %*{}
   try:
     # status-go time intervals are starting from 1
-    response = backend.getBalanceHistory(arg.chainIds, arg.addresses, arg.tokenSymbol, arg.currencySymbol, int(arg.timeInterval) + 1).result
+    response = backend.getBalanceHistory(
+      arg.chainIds,
+      arg.addresses,
+      arg.tokenSymbol,
+      arg.currencySymbol,
+      int(arg.timeInterval) + 1,
+    ).result
 
-    let output = %* {
+    let output =
+      %*{
         "chainIds": arg.chainIds,
         "addresses": arg.addresses,
         "tokenSymbol": arg.tokenSymbol,
         "currencySymbol": arg.currencySymbol,
         "timeInterval": int(arg.timeInterval),
-        "historicalData": response
-    }
+        "historicalData": response,
+      }
 
     arg.finish(output)
     return
   except Exception as e:
-    let output = %* {
-      "chainIds": arg.chainIds,
-      "addresses": arg.addresses,
-      "tokenSymbol": arg.tokenSymbol,
-      "currencySymbol": arg.currencySymbol,
-      "timeInterval": int(arg.timeInterval),
-      "error": e.msg,
-    }
+    let output =
+      %*{
+        "chainIds": arg.chainIds,
+        "addresses": arg.addresses,
+        "tokenSymbol": arg.tokenSymbol,
+        "currencySymbol": arg.currencySymbol,
+        "timeInterval": int(arg.timeInterval),
+        "error": e.msg,
+      }
     arg.finish(output)
 
 #################################################
 # Async get ENS names for account
 #################################################
 
-type
-  FetchENSNamesForAddressesTaskArg = ref object of QObjectTaskArg
-    chainId: int
-    addresses: seq[string]
+type FetchENSNamesForAddressesTaskArg = ref object of QObjectTaskArg
+  chainId: int
+  addresses: seq[string]
 
 proc fetchENSNamesForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchENSNamesForAddressesTaskArg](argEncoded)
-  var response = %* {
-    "result": [],
-    "error": "",
-  }
+  var response = %*{"result": [], "error": ""}
   try:
     var result = newJobject()
     for address in arg.addresses:
@@ -279,5 +251,5 @@ proc fetchENSNamesForAddressesTask*(argEncoded: string) {.gcsafe, nimcall.} =
       result[address] = %name
     response["result"] = result
   except Exception as e:
-    response["error"] = %* e.msg
+    response["error"] = %*e.msg
   arg.finish(response)

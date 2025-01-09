@@ -1,5 +1,4 @@
-type
-  ConfirmSeedPhraseBackupState* = ref object of State
+type ConfirmSeedPhraseBackupState* = ref object of State
 
 proc newConfirmSeedPhraseBackupState*(backState: State): ConfirmSeedPhraseBackupState =
   result = ConfirmSeedPhraseBackupState()
@@ -7,6 +6,8 @@ proc newConfirmSeedPhraseBackupState*(backState: State): ConfirmSeedPhraseBackup
 
 proc delete*(self: ConfirmSeedPhraseBackupState) =
   self.State.delete
-  
-method getNextPrimaryState*(self: ConfirmSeedPhraseBackupState, controller: Controller): State =
+
+method getNextPrimaryState*(
+    self: ConfirmSeedPhraseBackupState, controller: Controller
+): State =
   return createState(StateType.EnterKeypairName, self)

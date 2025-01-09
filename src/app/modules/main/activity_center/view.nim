@@ -1,18 +1,18 @@
 import NimQml, json, strutils, sequtils, std/tables
-import ../../../../app_service/service/activity_center/service as activity_center_service
+import
+  ../../../../app_service/service/activity_center/service as activity_center_service
 
 import ./model
 import ./io_interface, ./item
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      groupCounters: Table[ActivityCenterGroup, int]
-      unreadCount: int
-      hasUnseen: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    groupCounters: Table[ActivityCenterGroup, int]
+    unreadCount: int
+    hasUnseen: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -90,7 +90,9 @@ QtObject:
   proc markAllActivityCenterNotificationsReadDone*(self: View) {.slot.} =
     self.model.markAllAsRead()
 
-  proc markActivityCenterNotificationRead(self: View, notificationId: string): void {.slot.} =
+  proc markActivityCenterNotificationRead(
+      self: View, notificationId: string
+  ): void {.slot.} =
     self.delegate.markActivityCenterNotificationRead(notificationId)
 
   proc markActivityCenterNotificationReadDone*(self: View, notificationId: string) =
@@ -102,17 +104,23 @@ QtObject:
   proc removeActivityCenterNotifications*(self: View, notificationIds: seq[string]) =
     self.model.removeNotifications(notificationIds)
 
-  proc markActivityCenterNotificationUnread(self: View, notificationId: string): void {.slot.} =
+  proc markActivityCenterNotificationUnread(
+      self: View, notificationId: string
+  ): void {.slot.} =
     self.delegate.markActivityCenterNotificationUnread(notificationId)
 
   proc markAsSeenActivityCenterNotifications(self: View): void {.slot.} =
     self.delegate.markAsSeenActivityCenterNotifications()
     self.hasUnseenActivityCenterNotificationsChanged()
 
-  proc acceptActivityCenterNotification(self: View, notificationId: string): void {.slot.} =
+  proc acceptActivityCenterNotification(
+      self: View, notificationId: string
+  ): void {.slot.} =
     self.delegate.acceptActivityCenterNotification(notificationId)
 
-  proc dismissActivityCenterNotification(self: View, notificationId: string): void {.slot.} =
+  proc dismissActivityCenterNotification(
+      self: View, notificationId: string
+  ): void {.slot.} =
     self.delegate.dismissActivityCenterNotification(notificationId)
 
   proc acceptActivityCenterNotificationDone*(self: View, notificationId: string) =
@@ -121,13 +129,19 @@ QtObject:
   proc dismissActivityCenterNotificationDone*(self: View, notificationId: string) =
     self.model.activityCenterNotificationDismissed(notificationId)
 
-  proc addActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
+  proc addActivityCenterNotifications*(
+      self: View, activityCenterNotifications: seq[Item]
+  ) =
     self.model.upsertActivityCenterNotifications(activityCenterNotifications)
 
-  proc resetActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
+  proc resetActivityCenterNotifications*(
+      self: View, activityCenterNotifications: seq[Item]
+  ) =
     self.model.setNewData(activityCenterNotifications)
 
-  proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =
+  proc switchTo*(
+      self: View, sectionId: string, chatId: string, messageId: string
+  ) {.slot.} =
     self.delegate.switchTo(sectionId, chatId, messageId)
 
   proc getDetails*(self: View, sectionId: string, chatId: string): string {.slot.} =
@@ -201,7 +215,9 @@ QtObject:
     read = getMembershipCount
     notify = groupCountersChanged
 
-  proc setActivityGroupCounters*(self: View, counters: Table[ActivityCenterGroup, int]) =
+  proc setActivityGroupCounters*(
+      self: View, counters: Table[ActivityCenterGroup, int]
+  ) =
     self.groupCounters = counters
     self.groupCountersChanged()
 

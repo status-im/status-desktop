@@ -2,23 +2,22 @@ import json, stint
 import ../../../../backend/interpret/cropped_image
 import ../../../common/types
 
-type
-  DeploymentParameters* = object
-    name*: string
-    symbol*: string
-    supply*: Uint256
-    infiniteSupply*: bool
-    transferable*: bool
-    remoteSelfDestruct*: bool
-    tokenUri*: string
-    ownerTokenAddress*: string
-    masterTokenAddress*: string
-    description*: string
-    communityId*: string
-    croppedImageJson*: string
-    base64image*: string
-    tokenType*: TokenType
-    decimals*: int
+type DeploymentParameters* = object
+  name*: string
+  symbol*: string
+  supply*: Uint256
+  infiniteSupply*: bool
+  transferable*: bool
+  remoteSelfDestruct*: bool
+  tokenUri*: string
+  ownerTokenAddress*: string
+  masterTokenAddress*: string
+  description*: string
+  communityId*: string
+  croppedImageJson*: string
+  base64image*: string
+  tokenType*: TokenType
+  decimals*: int
 
 proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()

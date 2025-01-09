@@ -1,6 +1,11 @@
 import NimQml, Tables, json, sequtils, strutils, stint, chronicles
 
-import ./io_interface, ./network_route_model, ./network_route_item, ./suggested_route_item, ./transaction_routes
+import
+  ./io_interface,
+  ./network_route_model,
+  ./network_route_item,
+  ./suggested_route_item,
+  ./transaction_routes
 import app_service/service/network/service as network_service
 import app_service/service/transaction/dto as transaction_dto
 
@@ -9,25 +14,24 @@ import app_service/service/eth/utils as eth_utils
 from backend/eth import ExtraKeyPackId
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      # for send modal
-      fromNetworksRouteModel: NetworkRouteModel
-      toNetworksRouteModel: NetworkRouteModel
-      transactionRoutes: TransactionRoutes
-      errCode: string
-      errDescription: string
-      selectedAssetKey: string
-      selectedToAssetKey: string
-      showUnPreferredChains: bool
-      sendType: transaction_dto.SendType
-      selectedTokenIsOwnerToken: bool
-      selectedTokenName: string
-      selectedRecipient: string
-      selectedSenderAccountAddress: string
-      # for receive modal
-      selectedReceiveAccountAddress: string
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    # for send modal
+    fromNetworksRouteModel: NetworkRouteModel
+    toNetworksRouteModel: NetworkRouteModel
+    transactionRoutes: TransactionRoutes
+    errCode: string
+    errDescription: string
+    selectedAssetKey: string
+    selectedToAssetKey: string
+    showUnPreferredChains: bool
+    sendType: transaction_dto.SendType
+    selectedTokenIsOwnerToken: bool
+    selectedTokenName: string
+    selectedRecipient: string
+    selectedSenderAccountAddress: string
+    # for receive modal
+    selectedReceiveAccountAddress: string
 
   # Forward declaration
   proc updateNetworksDisabledChains(self: View)
@@ -53,10 +57,12 @@ QtObject:
   proc selectedSenderAccountAddressChanged*(self: View) {.signal.}
   proc getSelectedSenderAccountAddress*(self: View): string {.slot.} =
     return self.selectedSenderAccountAddress
+
   proc setSelectedSenderAccountAddress*(self: View, address: string) {.slot.} =
     self.selectedSenderAccountAddress = address
     self.updateNetworksTokenBalance()
     self.selectedSenderAccountAddressChanged()
+
   QtProperty[string] selectedSenderAccountAddress:
     read = getSelectedSenderAccountAddress
     notify = selectedSenderAccountAddressChanged
@@ -64,9 +70,11 @@ QtObject:
   proc selectedReceiveAccountAddressChanged*(self: View) {.signal.}
   proc getSelectedReceiveAccountAddress*(self: View): string {.slot.} =
     return self.selectedReceiveAccountAddress
+
   proc setSelectedReceiveAccountAddress*(self: View, address: string) {.slot.} =
     self.selectedReceiveAccountAddress = address
     self.selectedReceiveAccountAddressChanged()
+
   QtProperty[string] selectedReceiveAccountAddress:
     read = getSelectedReceiveAccountAddress
     notify = selectedReceiveAccountAddressChanged
@@ -74,6 +82,7 @@ QtObject:
   proc fromNetworksRouteModelChanged*(self: View) {.signal.}
   proc getfromNetworksRouteModel(self: View): QVariant {.slot.} =
     return newQVariant(self.fromNetworksRouteModel)
+
   QtProperty[QVariant] fromNetworksRouteModel:
     read = getfromNetworksRouteModel
     notify = fromNetworksRouteModelChanged
@@ -81,6 +90,7 @@ QtObject:
   proc toNetworksRouteModelChanged*(self: View) {.signal.}
   proc gettoNetworksRouteModel(self: View): QVariant {.slot.} =
     return newQVariant(self.toNetworksRouteModel)
+
   QtProperty[QVariant] toNetworksRouteModel:
     read = gettoNetworksRouteModel
     notify = toNetworksRouteModelChanged
@@ -88,10 +98,12 @@ QtObject:
   proc selectedAssetKeyChanged*(self: View) {.signal.}
   proc getSelectedAssetKey*(self: View): string {.slot.} =
     return self.selectedAssetKey
+
   proc setSelectedAssetKey(self: View, assetKey: string) {.slot.} =
     self.selectedAssetKey = assetKey
     self.updateNetworksTokenBalance()
     self.selectedAssetKeyChanged()
+
   QtProperty[string] selectedAssetKey:
     write = setSelectedAssetKey
     read = getSelectedAssetKey
@@ -100,10 +112,12 @@ QtObject:
   proc selectedToAssetKeyChanged*(self: View) {.signal.}
   proc getSelectedToAssetKey*(self: View): string {.slot.} =
     return self.selectedToAssetKey
+
   proc setSelectedToAssetKey(self: View, assetKey: string) {.slot.} =
     self.selectedToAssetKey = assetKey
     self.updateNetworksTokenBalance()
     self.selectedToAssetKeyChanged()
+
   QtProperty[string] selectedToAssetKey:
     write = setSelectedToAssetKey
     read = getSelectedToAssetKey
@@ -112,10 +126,12 @@ QtObject:
   proc showUnPreferredChainsChanged*(self: View) {.signal.}
   proc getShowUnPreferredChains(self: View): bool {.slot.} =
     return self.showUnPreferredChains
+
   proc toggleShowUnPreferredChains*(self: View) {.slot.} =
     self.showUnPreferredChains = not self.showUnPreferredChains
     self.updateNetworksDisabledChains()
     self.showUnPreferredChainsChanged()
+
   QtProperty[bool] showUnPreferredChains:
     read = getShowUnPreferredChains
     notify = showUnPreferredChainsChanged
@@ -123,9 +139,11 @@ QtObject:
   proc sendTypeChanged*(self: View) {.signal.}
   proc getSendType(self: View): int {.slot.} =
     return ord(self.sendType)
+
   proc setSendType(self: View, sendType: int) {.slot.} =
-    self.sendType = (SendType)sendType
+    self.sendType = (SendType) sendType
     self.sendTypeChanged()
+
   QtProperty[int] sendType:
     write = setSendType
     read = getSendType
@@ -134,9 +152,11 @@ QtObject:
   proc selectedRecipientChanged*(self: View) {.signal.}
   proc getSelectedRecipient(self: View): string {.slot.} =
     return self.selectedRecipient
+
   proc setSelectedRecipient(self: View, selectedRecipient: string) {.slot.} =
     self.selectedRecipient = selectedRecipient
     self.selectedRecipientChanged()
+
   QtProperty[string] selectedRecipient:
     read = getSelectedRecipient
     write = setSelectedRecipient
@@ -157,15 +177,42 @@ QtObject:
 
   proc updateNetworksTokenBalance(self: View) =
     for chainId in self.toNetworksRouteModel.getAllNetworksChainIds():
-      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
-      self.toNetworksRouteModel.updateTokenBalanceForSymbol(chainId, self.delegate.getTokenBalance(self.selectedSenderAccountAddress, chainId, self.selectedAssetKey))
+      self.fromNetworksRouteModel.updateTokenBalanceForSymbol(
+        chainId,
+        self.delegate.getTokenBalance(
+          self.selectedSenderAccountAddress, chainId, self.selectedAssetKey
+        ),
+      )
+      self.toNetworksRouteModel.updateTokenBalanceForSymbol(
+        chainId,
+        self.delegate.getTokenBalance(
+          self.selectedSenderAccountAddress, chainId, self.selectedAssetKey
+        ),
+      )
 
-  proc setNetworkItems*(self: View, fromNetworks: seq[NetworkRouteItem], toNetworks: seq[NetworkRouteItem]) =
+  proc setNetworkItems*(
+      self: View, fromNetworks: seq[NetworkRouteItem], toNetworks: seq[NetworkRouteItem]
+  ) =
     self.fromNetworksRouteModel.setItems(fromNetworks)
     self.toNetworksRouteModel.setItems(toNetworks)
 
-  proc transactionSent*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
-  proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
+  proc transactionSent*(
+    self: View,
+    uuid: string,
+    chainId: int,
+    approvalTx: bool,
+    txHash: string,
+    error: string,
+  ) {.signal.}
+
+  proc sendTransactionSentSignal*(
+      self: View,
+      uuid: string,
+      chainId: int,
+      approvalTx: bool,
+      txHash: string,
+      error: string,
+  ) =
     self.transactionSent(uuid, chainId, approvalTx, txHash, error)
 
   proc parseChainIds(chainIds: string): seq[int] =
@@ -174,22 +221,39 @@ QtObject:
       parsedChainIds.add(chainId.parseInt())
     return parsedChainIds
 
-  proc authenticateAndTransfer*(self: View, uuid: string, slippagePercentageString: string) {.slot.} =
+  proc authenticateAndTransfer*(
+      self: View, uuid: string, slippagePercentageString: string
+  ) {.slot.} =
     var slippagePercentage: float
     try:
       slippagePercentage = slippagePercentageString.parseFloat()
     except:
-      error "parsing slippage failed", slippage=slippagePercentageString
-    self.delegate.authenticateAndTransfer(self.selectedSenderAccountAddress, uuid, slippagePercentage)
+      error "parsing slippage failed", slippage = slippagePercentageString
+    self.delegate.authenticateAndTransfer(
+      self.selectedSenderAccountAddress, uuid, slippagePercentage
+    )
 
-  proc suggestedRoutesReady*(self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string) {.signal.}
-  proc setTransactionRoute*(self: View, routes: TransactionRoutes, errCode: string, errDescription: string) =
+  proc suggestedRoutesReady*(
+    self: View, suggestedRoutes: QVariant, errCode: string, errDescription: string
+  ) {.signal.}
+
+  proc setTransactionRoute*(
+      self: View, routes: TransactionRoutes, errCode: string, errDescription: string
+  ) =
     self.transactionRoutes = routes
     self.errCode = errCode
     self.errDescription = errDescription
-    self.suggestedRoutesReady(newQVariant(self.transactionRoutes), errCode, errDescription)
+    self.suggestedRoutesReady(
+      newQVariant(self.transactionRoutes), errCode, errDescription
+    )
 
-  proc suggestedRoutes*(self: View, uuid: string, amountIn: string, amountOut: string, extraParamsJson: string) {.slot.} =
+  proc suggestedRoutes*(
+      self: View,
+      uuid: string,
+      amountIn: string,
+      amountOut: string,
+      extraParamsJson: string,
+  ) {.slot.} =
     var extraParamsTable: Table[string, string]
     try:
       if extraParamsJson.len > 0:
@@ -201,7 +265,7 @@ QtObject:
           else:
             extraParamsTable[key] = value.getStr()
     except Exception as e:
-      error "Error parsing extraParamsJson: ", msg=e.msg
+      error "Error parsing extraParamsJson: ", msg = e.msg
 
     self.delegate.suggestedRoutes(
       uuid,
@@ -216,7 +280,7 @@ QtObject:
       self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksRouteModel.getRouteDisabledNetworkChainIds(),
       self.fromNetworksRouteModel.getRouteLockedChainIds(),
-      extraParamsTable
+      extraParamsTable,
     )
 
   proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =
@@ -225,12 +289,16 @@ QtObject:
   proc updateRoutePreferredChains*(self: View, chainIds: string) {.slot.} =
     self.toNetworksRouteModel.updateRoutePreferredChains(chainIds)
 
-  proc updatedNetworksWithRoutes*(self: View, paths: seq[SuggestedRouteItem], chainsWithNoGas: Table[int, string]) =
+  proc updatedNetworksWithRoutes*(
+      self: View, paths: seq[SuggestedRouteItem], chainsWithNoGas: Table[int, string]
+  ) =
     self.fromNetworksRouteModel.resetPathData()
     self.toNetworksRouteModel.resetPathData()
     for path in paths:
       let fromChainId = path.getfromNetwork()
-      self.fromNetworksRouteModel.updateFromNetworks(path, not chainsWithNoGas.hasKey(fromChainId))
+      self.fromNetworksRouteModel.updateFromNetworks(
+        path, not chainsWithNoGas.hasKey(fromChainId)
+      )
       self.toNetworksRouteModel.updateToNetworks(path)
 
   proc resetStoredProperties*(self: View) {.slot.} =
@@ -242,53 +310,64 @@ QtObject:
     self.selectedAssetKey = ""
     self.showUnPreferredChains = false
 
-  proc splitAndFormatAddressPrefix(self: View, text : string, updateInStore: bool): string {.slot.} =
+  proc splitAndFormatAddressPrefix(
+      self: View, text: string, updateInStore: bool
+  ): string {.slot.} =
     return self.delegate.splitAndFormatAddressPrefix(text, updateInStore)
 
-  proc getAddressFromFormattedString(self: View, text : string): string {.slot.} =
+  proc getAddressFromFormattedString(self: View, text: string): string {.slot.} =
     var splitWords = plainText(text).split(':')
-    for i in countdown(splitWords.len-1, 0):
+    for i in countdown(splitWords.len - 1, 0):
       if splitWords[i].startsWith("0x"):
         return splitWords[i]
     return ""
 
-# "Stateless" methods
-  proc fetchSuggestedRoutesWithParameters*(self: View,
-    uuid: string,
-    accountFrom: string,
-    accountTo: string,
-    amountIn: string,
-    amountOut: string,
-    token: string,
-    toToken: string,
-    disabledFromChainIDs: string,
-    disabledToChainIDs: string,
-    sendType: int,
-    lockedInAmounts: string) {.slot.} =
-      # Prepare lockedInAmountsTable
-      var lockedInAmountsTable = Table[string, string] : initTable[string, string]()
-      try:
-        for chainId, lockedAmount in parseJson(lockedInAmounts):
-          lockedInAmountsTable[chainId] = lockedAmount.getStr
-      except:
-        discard
-      # Resolve the best route
-      self.delegate.suggestedRoutes(
-        uuid,
-        SendType(sendType),
-        accountFrom,
-        accountTo,
-        token,
-        self.selectedTokenIsOwnerToken,
-        amountIn,
-        toToken,
-        amountOut,
-        parseChainIds(disabledFromChainIDs),
-        parseChainIds(disabledToChainIDs),
-        lockedInAmountsTable)
+  # "Stateless" methods
+  proc fetchSuggestedRoutesWithParameters*(
+      self: View,
+      uuid: string,
+      accountFrom: string,
+      accountTo: string,
+      amountIn: string,
+      amountOut: string,
+      token: string,
+      toToken: string,
+      disabledFromChainIDs: string,
+      disabledToChainIDs: string,
+      sendType: int,
+      lockedInAmounts: string,
+  ) {.slot.} =
+    # Prepare lockedInAmountsTable
+    var lockedInAmountsTable = Table[string, string]:
+      initTable[string, string]()
+    try:
+      for chainId, lockedAmount in parseJson(lockedInAmounts):
+        lockedInAmountsTable[chainId] = lockedAmount.getStr
+    except:
+      discard
+    # Resolve the best route
+    self.delegate.suggestedRoutes(
+      uuid,
+      SendType(sendType),
+      accountFrom,
+      accountTo,
+      token,
+      self.selectedTokenIsOwnerToken,
+      amountIn,
+      toToken,
+      amountOut,
+      parseChainIds(disabledFromChainIDs),
+      parseChainIds(disabledToChainIDs),
+      lockedInAmountsTable,
+    )
 
-  proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
-  proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =
+  proc transactionSendingComplete*(
+    self: View, txHash: string, status: string
+  ) {.signal.}
+
+  proc sendtransactionSendingCompleteSignal*(
+      self: View, txHash: string, status: string
+  ) =
     self.transactionSendingComplete(txHash, status)
 
   proc setSenderAccount*(self: View, address: string) {.slot.} =

@@ -5,8 +5,7 @@ import ../../../../../../app_service/service/message/dto/[message]
 import ../../../../../../app_service/service/contacts/dto/[status_update]
 import ../../../../../../app_service/common/types
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -29,7 +28,9 @@ method onNewMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto]) {.
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUpdateDto]) {.base.} =
+method contactsStatusUpdated*(
+    self: AccessInterface, statusUpdates: seq[StatusUpdateDto]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
@@ -50,7 +51,9 @@ method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
 method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMemberUpdated*(self: AccessInterface, id: string, memberRole: MemberRole, joined: bool) {.base.} =
+method onChatMemberUpdated*(
+    self: AccessInterface, id: string, memberRole: MemberRole, joined: bool
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
@@ -62,5 +65,7 @@ method addGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
 method removeGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateMembersList*(self: AccessInterface, membersToReset: seq[ChatMember] = @[]) {.base.} =
+method updateMembersList*(
+    self: AccessInterface, membersToReset: seq[ChatMember] = @[]
+) {.base.} =
   raise newException(ValueError, "No implementation available")

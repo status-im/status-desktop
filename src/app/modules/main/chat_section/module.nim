@@ -24,7 +24,9 @@ import ../../../core/unique_event_emitter
 import ../../../core/notifications/details as notification_details
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
-import ../../../../app_service/service/node_configuration/service as node_configuration_service
+import
+  ../../../../app_service/service/node_configuration/service as
+    node_configuration_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/network/service as network_service
@@ -33,7 +35,8 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
-import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import
+  ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
@@ -44,16 +47,15 @@ export io_interface
 logScope:
   topics = "chat-section-module"
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
-    moduleLoaded: bool
-    chatsLoaded: bool
-    membersListModule: users_module.AccessInterface
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
+  moduleLoaded: bool
+  chatsLoaded: bool
+  membersListModule: users_module.AccessInterface
 
 # Forward declaration
 proc buildChatSectionUI(
@@ -70,27 +72,47 @@ proc buildChatSectionUI(
   mailserversService: mailservers_service.Service,
   sharedUrlsService: shared_urls_service.Service,
 )
+
 proc reevaluateRequiresTokenPermissionToJoin(self: Module)
-proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool)
-method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto)
-method onCommunityCheckChannelPermissionsResponse*(self: Module, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto)
-method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto)
-method addOrUpdateChat(self: Module,
-    chat: ChatDto,
-    belongsToCommunity: bool,
-    events: UniqueUUIDEventEmitter,
-    settingsService: settings_service.Service,
-    nodeConfigurationService: node_configuration_service.Service,
-    contactService: contact_service.Service,
-    chatService: chat_service.Service,
-    communityService: community_service.Service,
-    messageService: message_service.Service,
-    mailserversService: mailservers_service.Service,
-    sharedUrlsService: shared_urls_service.Service,
-    setChatAsActive: bool = true,
-    insertIntoModel: bool = true,
-    isSectionBuild: bool = false,
-  ): chat_item.Item
+proc changeCanPostValues*(
+  self: Module,
+  chatId: string,
+  canPost, canView, canPostReactions, viewersCanPostReactions: bool,
+)
+
+method onCommunityCheckPermissionsToJoinResponse*(
+  self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto
+)
+
+method onCommunityCheckChannelPermissionsResponse*(
+  self: Module,
+  chatId: string,
+  checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto,
+)
+
+method onCommunityCheckAllChannelsPermissionsResponse*(
+  self: Module,
+  checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto,
+)
+
+method addOrUpdateChat(
+  self: Module,
+  chat: ChatDto,
+  belongsToCommunity: bool,
+  events: UniqueUUIDEventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  mailserversService: mailservers_service.Service,
+  sharedUrlsService: shared_urls_service.Service,
+  setChatAsActive: bool = true,
+  insertIntoModel: bool = true,
+  isSectionBuild: bool = false,
+): chat_item.Item
+
 proc updateParentBadgeNotifications(self: Module)
 
 proc newModule*(
@@ -110,21 +132,35 @@ proc newModule*(
     communityTokensService: community_tokens_service.Service,
     sharedUrlsService: shared_urls_service.Service,
     networkService: network_service.Service,
-  ): Module =
+): Module =
   result = Module()
   result.delegate = delegate
-  result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService,
-    nodeConfigurationService, contactService, chatService, communityService, messageService,
-    mailserversService, walletAccountService, tokenService, communityTokensService, sharedUrlsService, networkService)
+  result.controller = controller.newController(
+    result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
+    contactService, chatService, communityService, messageService, mailserversService,
+    walletAccountService, tokenService, communityTokensService, sharedUrlsService,
+    networkService,
+  )
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   result.chatsLoaded = false
 
-  result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
+  result.chatContentModules =
+    initOrderedTable[string, chat_content_module.AccessInterface]()
   if isCommunity:
-    result.membersListModule = users_module.newModule(events, sectionId, chatId = "", isCommunity,
-      isUsersListAvailable = true, contactService, chatService, communityService, messageService, isSectionMemberList = true)
+    result.membersListModule = users_module.newModule(
+      events,
+      sectionId,
+      chatId = "",
+      isCommunity,
+      isUsersListAvailable = true,
+      contactService,
+      chatService,
+      communityService,
+      messageService,
+      isSectionMemberList = true,
+    )
   else:
     result.membersListModule = nil
 
@@ -138,7 +174,9 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 # TODO: duplicates in chats and messages
-proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_msg_item.Item =
+proc buildCommunityMemberMessageItem(
+    self: Module, message: MessageDto
+): member_msg_item.Item =
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getAllChats(self.getMySectionId())
   var quotedMessageAuthorDetails = ContactDetails()
@@ -146,15 +184,18 @@ proc buildCommunityMemberMessageItem(self: Module, message: MessageDto): member_
     if message.`from` == message.quotedMessage.`from`:
       quotedMessageAuthorDetails = contactDetails
     else:
-      quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
+      quotedMessageAuthorDetails =
+        self.controller.getContactDetails(message.quotedMessage.`from`)
 
   var transactionContract = message.transactionParameters.contract
   var transactionValue = message.transactionParameters.value
   var isCurrentUser = contactDetails.isCurrentUser
   if message.contentType == ContentType.Transaction:
-    (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
+    (transactionContract, transactionValue) =
+      self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
-      isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
+      isCurrentUser =
+        self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
 
   return member_msg_model.createMessageItemFromDtos(
     message,
@@ -208,40 +249,60 @@ proc addSubmodule(
     messageService: message_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
-  ) =
-  self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
-    belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService, mailserversService, sharedUrlsService)
+) =
+  self.chatContentModules[chatId] = chat_content_module.newModule(
+    self,
+    events,
+    self.controller.getMySectionId(),
+    chatId,
+    belongToCommunity,
+    isUsersListAvailable,
+    settingsService,
+    nodeConfigurationService,
+    contactService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    sharedUrlsService,
+  )
 
 proc removeSubmodule(self: Module, chatId: string) =
-  if(not self.chatContentModules.contains(chatId)):
+  if (not self.chatContentModules.contains(chatId)):
     return
   self.chatContentModules.del(chatId)
 
-
-proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): chat_item.Item =
-  let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityId, category.id)
+proc addCategoryItem(
+    self: Module,
+    category: Category,
+    memberRole: MemberRole,
+    communityId: string,
+    insertIntoModel: bool = true,
+): chat_item.Item =
+  let hasUnreadMessages =
+    self.controller.categoryHasUnreadMessages(communityId, category.id)
   result = chat_item.initItem(
-        id = category.id,
-        category.name,
-        icon = "",
-        color = "",
-        emoji = "",
-        description = "",
-        `type` = chat_item.CATEGORY_TYPE,
-        memberRole,
-        lastMessageTimestamp = 0,
-        hasUnreadMessages,
-        notificationsCount = 0,
-        muted = false,
-        blocked = false,
-        active = false,
-        position = -1, # Set position as -1, so that the Category Item is on top of its Channels
-        category.id,
-        category.position,
-        hideIfPermissionsNotMet = false,
-        missingEncryptionKey = false,
-      )
+    id = category.id,
+    category.name,
+    icon = "",
+    color = "",
+    emoji = "",
+    description = "",
+    `type` = chat_item.CATEGORY_TYPE,
+    memberRole,
+    lastMessageTimestamp = 0,
+    hasUnreadMessages,
+    notificationsCount = 0,
+    muted = false,
+    blocked = false,
+    active = false,
+    position = -1,
+      # Set position as -1, so that the Category Item is on top of its Channels
+    category.id,
+    category.position,
+    hideIfPermissionsNotMet = false,
+    missingEncryptionKey = false,
+  )
 
   if insertIntoModel:
     self.view.chatsModel().appendItem(result)
@@ -259,9 +320,11 @@ proc buildChatSectionUI(
     messageService: message_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
-  ) =
+) =
   var selectedItemId = ""
-  let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
+  let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(
+    self.controller.getMySectionId()
+  )
 
   var items: seq[chat_item.Item] = @[]
   for categoryDto in community.categories:
@@ -273,26 +336,29 @@ proc buildChatSectionUI(
     var isActive = false
     # restore on a startup last open channel for the section or
     # make the first channel which doesn't belong to any category active
-    if (selectedItemId.len == 0 and sectionLastOpenChat.len == 0) or chatDto.id == sectionLastOpenChat:
+    if (selectedItemId.len == 0 and sectionLastOpenChat.len == 0) or
+        chatDto.id == sectionLastOpenChat:
       selectedItemId = chatDto.id
       isActive = true
 
-    items.add(self.addOrUpdateChat(
-      chatDto,
-      belongsToCommunity = chatDto.communityId.len > 0,
-      events,
-      settingsService,
-      nodeConfigurationService,
-      contactService,
-      chatService,
-      communityService,
-      messageService,
-      mailserversService,
-      sharedUrlsService,
-      setChatAsActive = false,
-      insertIntoModel = false,
-      isSectionBuild = true,
-    ))
+    items.add(
+      self.addOrUpdateChat(
+        chatDto,
+        belongsToCommunity = chatDto.communityId.len > 0,
+        events,
+        settingsService,
+        nodeConfigurationService,
+        contactService,
+        chatService,
+        communityService,
+        messageService,
+        mailserversService,
+        sharedUrlsService,
+        setChatAsActive = false,
+        insertIntoModel = false,
+        isSectionBuild = true,
+      )
+    )
 
   self.updateParentBadgeNotifications()
 
@@ -312,7 +378,8 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     colorHash = if not contactDetails.dto.ensVerified: contactDetails.colorHash else: "",
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
+    onlineStatus =
+      toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contactDetails.dto.isContact(),
     trustStatus = contactDetails.dto.trustStatus,
     isBlocked = contactDetails.dto.isBlocked(),
@@ -320,7 +387,8 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
 
 proc initContactRequestsModel(self: Module) =
   var contactsWhoAddedMe: seq[UserItem]
-  let contacts = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
+  let contacts =
+    self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
     contactsWhoAddedMe.add(item)
@@ -354,10 +422,18 @@ proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
-  return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
+  return map(
+    parseJson(pubKeys).getElems(),
+    proc(x: JsonNode): string =
+      x.getStr,
+  )
 
-proc showPermissionUpdateNotification(self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto): bool =
-  return tokenPermission.state == TokenPermissionState.Approved and (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
+proc showPermissionUpdateNotification(
+    self: Module, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto
+): bool =
+  return
+    tokenPermission.state == TokenPermissionState.Approved and
+    (community.isControlNode or not tokenPermission.isPrivate) and community.isMember
 
 method load*(self: Module) =
   self.controller.init()
@@ -376,11 +452,13 @@ method onChatsLoaded*(
     messageService: message_service.Service,
     mailserversService: mailservers_service.Service,
     sharedUrlsService: shared_urls_service.Service,
-  ) =
+) =
   self.chatsLoaded = true
-  
-  self.buildChatSectionUI(community, chats, events, settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, mailserversService, sharedUrlsService)
+
+  self.buildChatSectionUI(
+    community, chats, events, settingsService, nodeConfigurationService, contactService,
+    chatService, communityService, messageService, mailserversService, sharedUrlsService,
+  )
 
   # Generate members list
   if self.membersListModule != nil:
@@ -392,7 +470,9 @@ method onChatsLoaded*(
   else:
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
-    self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(community.id))
+    self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(
+      self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(community.id)
+    )
     var requestToJoinState = RequestToJoinState.None
     if self.controller.isMyCommunityRequestPending():
       requestToJoinState = RequestToJoinState.Requested
@@ -414,11 +494,11 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   for cModule in self.chatContentModules.values:
-    if(not cModule.isLoaded()):
+    if (not cModule.isLoaded()):
       return
 
   self.moduleLoaded = true
-  if(self.controller.isCommunity()):
+  if (self.controller.isCommunity()):
     self.delegate.communitySectionDidLoad()
   else:
     self.delegate.chatSectionDidLoad()
@@ -446,7 +526,11 @@ proc updateActiveChatMembership*(self: Module) =
   let chat = self.controller.getChatDetails(activeChatId)
 
   if chat.chatType == ChatType.PrivateGroupChat:
-    let amIMember = any(chat.members, proc (member: ChatMember): bool = member.id == singletonInstance.userProfile.getPubKey())
+    let amIMember = any(
+      chat.members,
+      proc(member: ChatMember): bool =
+        member.id == singletonInstance.userProfile.getPubKey(),
+    )
     self.view.setAmIMember(amIMember)
 
 method activeItemSet*(self: Module, itemId: string) =
@@ -457,9 +541,9 @@ method activeItemSet*(self: Module, itemId: string) =
     return
 
   let chat_item = self.view.chatsModel().getItemById(itemId)
-  if(chat_item.isNil):
+  if (chat_item.isNil):
     # Should never be here
-    error "chat-view unexisting item id: ", itemId, methodName="activeItemSet"
+    error "chat-view unexisting item id: ", itemId, methodName = "activeItemSet"
     return
 
   # update view maintained by this module
@@ -478,9 +562,12 @@ method activeItemSet*(self: Module, itemId: string) =
       chatContentModule.onMadeInactive()
 
   # save last open chat in settings for restore on the next app launch
-  singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(mySectionId, activeChatId)
+  singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(
+    mySectionId, activeChatId
+  )
 
-  let (deactivateSectionId, deactivateChatId) = singletonInstance.loaderDeactivator.addChatInMemory(mySectionId, activeChatId)
+  let (deactivateSectionId, deactivateChatId) =
+    singletonInstance.loaderDeactivator.addChatInMemory(mySectionId, activeChatId)
 
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(mySectionId, activeChatId)
@@ -489,25 +576,28 @@ method activeItemSet*(self: Module, itemId: string) =
   if self.controller.isCommunity():
     let community = self.controller.getMyCommunity()
     if not community.isPrivilegedUser:
-      if not chat_item.missingEncryptionKey and (not chat_item.canView or not chat_item.canPost):
+      if not chat_item.missingEncryptionKey and
+          (not chat_item.canView or not chat_item.canPost):
         # User doesn't have full access to this channel. Check permissions to know what is missing
         self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
 
-      self.onCommunityCheckChannelPermissionsResponse(activeChatId, CheckChannelPermissionsResponseDto(
-        viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto(
-          satisfied: chat_item.canView
+      self.onCommunityCheckChannelPermissionsResponse(
+        activeChatId,
+        CheckChannelPermissionsResponseDto(
+          viewOnlyPermissions:
+            ViewOnlyOrViewAndPostPermissionsResponseDto(satisfied: chat_item.canView),
+          viewAndPostPermissions:
+            ViewOnlyOrViewAndPostPermissionsResponseDto(satisfied: chat_item.canPost),
         ),
-        viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto(
-          satisfied: chat_item.canPost
-        ),
-      ))
+      )
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method getChatContentModule*(self: Module, chatId: string): QVariant =
-  if(not self.chatContentModules.contains(chatId)):
-    error "getChatContentModule: unexisting chat key", chatId, methodName="getChatContentModule"
+  if (not self.chatContentModules.contains(chatId)):
+    error "getChatContentModule: unexisting chat key",
+      chatId, methodName = "getChatContentModule"
     return
 
   return self.chatContentModules[chatId].getModuleAsVariant()
@@ -519,51 +609,70 @@ proc updateParentBadgeNotifications(self: Module) =
     sectionIsMuted = myCommunity.muted
 
   let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
-    self.controller.getMySectionId(),
-    sectionIsMuted,
+    self.controller.getMySectionId(), sectionIsMuted
   )
   self.delegate.onNotificationsUpdated(
-    self.controller.getMySectionId(),
-    unviewedMessagesCount > 0,
-    unviewedMentionsCount
+    self.controller.getMySectionId(), unviewedMessagesCount > 0, unviewedMentionsCount
   )
 
 proc updateChatLocked(self: Module, communityChat: ChatDto) =
   if not self.controller.isCommunity():
     return
-  self.view.chatsModel().setItemLocked(communityChat.id, communityChat.tokenGated and not communityChat.canPost)
+  self.view.chatsModel().setItemLocked(
+    communityChat.id, communityChat.tokenGated and not communityChat.canPost
+  )
 
 proc updatePermissionsRequiredOnChat(self: Module, communityChat: ChatDto) =
   if not self.controller.isCommunity():
     return
-  self.view.chatsModel().setItemPermissionsRequired(communityChat.id, communityChat.tokenGated)
+  self.view.chatsModel().setItemPermissionsRequired(
+    communityChat.id, communityChat.tokenGated
+  )
 
-proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int, skipParentBadge: bool = false) =
+proc updateBadgeNotifications(
+    self: Module,
+    chat: ChatDto,
+    hasUnreadMessages: bool,
+    unviewedMentionsCount: int,
+    skipParentBadge: bool = false,
+) =
   let chatId = chat.id
 
   if self.chatsLoaded:
-    self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
+    self.view.chatsModel().updateNotificationsForItemById(
+      chatId, hasUnreadMessages, unviewedMentionsCount
+    )
 
     if (self.chatContentModules.contains(chatId)):
-      self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+      self.chatContentModules[chatId].onNotificationsUpdated(
+        hasUnreadMessages, unviewedMentionsCount
+      )
 
     if self.isCommunity:
       let myCommunity = self.controller.getMyCommunity()
       let communityChat = myCommunity.getCommunityChat(chatId)
 
       if communityChat.categoryId != "":
-        let hasUnreadMessages = self.controller.categoryHasUnreadMessages(communityChat.communityId, communityChat.categoryId)
-        self.view.chatsModel().setCategoryHasUnreadMessages(communityChat.categoryId, hasUnreadMessages)
+        let hasUnreadMessages = self.controller.categoryHasUnreadMessages(
+          communityChat.communityId, communityChat.categoryId
+        )
+        self.view.chatsModel().setCategoryHasUnreadMessages(
+          communityChat.categoryId, hasUnreadMessages
+        )
 
   # We skip evaluation the parent badge when initiating the section, since it's heavy and can be done at the end
   if not skipParentBadge:
     self.updateParentBadgeNotifications()
 
-method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
-  self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
+method updateLastMessageTimestamp*(
+    self: Module, chatId: string, lastMessageTimestamp: int
+) =
+  self.view.chatsModel().updateLastMessageTimestampOnItemById(
+    chatId, lastMessageTimestamp
+  )
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
-  if(sectionId != self.controller.getMySectionId()):
+  if (sectionId != self.controller.getMySectionId()):
     self.controller.setIsCurrentSectionActive(false)
     return
 
@@ -586,11 +695,13 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
         self.controller.asyncCheckPermissionsToJoin()
       else:
         # We do not care about the combinations when we do satisfy
-        self.onCommunityCheckPermissionsToJoinResponse(CheckPermissionsToJoinResponseDto(
-          satisfied: true
-        ))
+        self.onCommunityCheckPermissionsToJoinResponse(
+          CheckPermissionsToJoinResponseDto(satisfied: true)
+        )
 
-  self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
+  self.delegate.onActiveChatChange(
+    self.controller.getMySectionId(), self.controller.getActiveChatId()
+  )
 
 method chatsModel*(self: Module): chats_model.Model =
   return self.view.chatsModel()
@@ -600,8 +711,7 @@ proc getChatItemFromChatDto(
     chatDto: ChatDto,
     community: CommunityDto,
     setChatAsActive: bool = true,
-    ): chat_item.Item =
-
+): chat_item.Item =
   let hasNotification = chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -621,8 +731,8 @@ proc getChatItemFromChatDto(
     if not contactDetails.dto.ensVerified:
       colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
-
+    onlineStatus =
+      toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
   elif chatDto.chatType == ChatType.PrivateGroupChat:
     chatImage = chatDto.icon
 
@@ -639,9 +749,12 @@ proc getChatItemFromChatDto(
   var categoryOpened = true
 
   if chatDto.categoryId != "":
-    let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
+    let category = self.controller.getCommunityCategoryDetails(
+      self.controller.getMySectionId(), chatDto.categoryId
+    )
     if category.id == "":
-      error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
+      error "No category found for chat",
+        chatName = chatDto.name, categoryId = chatDto.categoryId
     else:
       categoryOpened = not category.collapsed
       categoryPosition = category.position
@@ -649,7 +762,6 @@ proc getChatItemFromChatDto(
       # TODO: This call will update the model for each category in channels which is not
       # preferable. Please fix-me in https://github.com/status-im/status-desktop/issues/14431
       self.view.chatsModel().changeCategoryOpened(category.id, categoryOpened)
-
 
   var canPost = true
   var canView = true
@@ -709,7 +821,7 @@ proc getChatItemFromChatDto(
     canPostReactions = canPostReactions,
     viewersCanPostReactions = viewersCanPostReactions,
     hideIfPermissionsNotMet = hideIfPermissionsNotMet,
-    missingEncryptionKey = missingEncryptionKey
+    missingEncryptionKey = missingEncryptionKey,
   )
 
 proc addNewChat(
@@ -728,23 +840,13 @@ proc addNewChat(
     sharedUrlsService: shared_urls_service.Service,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
-  ) =
-
+) =
   let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
 
   self.addSubmodule(
-    chatDto.id,
-    belongsToCommunity,
-    isUsersListAvailable,
-    events,
-    settingsService,
-    nodeConfigurationService,
-    contactService,
-    chatService,
-    communityService,
-    messageService,
-    mailserversService,
-    sharedUrlsService,
+    chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService,
+    nodeConfigurationService, contactService, chatService, communityService,
+    messageService, mailserversService, sharedUrlsService,
   )
 
   self.chatContentModules[chatDto.id].load(chatItem)
@@ -754,7 +856,7 @@ proc addNewChat(
     self.setActiveItem(chatItem.id)
 
 method switchToChannel*(self: Module, channelName: string) =
-  if(not self.controller.isCommunity()):
+  if (not self.controller.isCommunity()):
     return
   let chats = self.controller.getAllChats(self.controller.getMySectionId())
   for c in chats:
@@ -769,42 +871,32 @@ method doesTopLevelChatExist*(self: Module, chatId: string): bool =
   return self.view.chatsModel().isItemWithIdAdded(chatId)
 
 method removeCommunityChat*(self: Module, chatId: string) =
-  if(not self.chatContentModules.contains(chatId)):
+  if (not self.chatContentModules.contains(chatId)):
     return
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
   # Update category itself
-  self.view.chatsModel().updateCategoryDetailsById(
-    cat.id,
-    cat.name,
-    cat.position
-  )
+  self.view.chatsModel().updateCategoryDetailsById(cat.id, cat.name, cat.position)
   # Update chat items that have that category
-  self.view.chatsModel().updateItemsWithCategoryDetailsById(
-    chats,
-    cat.id,
-    cat.position,
-  )
+  self.view.chatsModel().updateItemsWithCategoryDetailsById(chats, cat.id, cat.position)
 
-method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto], communityId: string) =
+method onCommunityCategoryCreated*(
+    self: Module, cat: Category, chats: seq[ChatDto], communityId: string
+) =
   if (self.doesCatOrChatExist(cat.id)):
     return
 
   let community = self.controller.getMyCommunity()
   discard self.addCategoryItem(cat, community.memberRole, communityId)
   # Update chat items that now belong to that category
-  self.view.chatsModel().updateItemsWithCategoryDetailsById(
-    chats,
-    cat.id,
-    cat.position,
-  )
+  self.view.chatsModel().updateItemsWithCategoryDetailsById(chats, cat.id, cat.position)
 
 method onCommunityCategoryDeleted*(self: Module, cat: Category, chats: seq[ChatDto]) =
   self.view.chatsModel().removeCategory(cat.id, chats)
 
 method setFirstChannelAsActive*(self: Module) =
-  if(self.view.chatsModel().getCount() == 0):
+  if (self.view.chatsModel().getCount() == 0):
     self.setActiveItem("")
     return
 
@@ -835,7 +927,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   let activeChatId = self.controller.getActiveChatId()
   if chatId == activeChatId:
     self.setFirstChannelAsActive()
-  
+
   self.updateParentBadgeNotifications()
 
 proc refreshHiddenBecauseNotPermittedState(self: Module) =
@@ -845,16 +937,23 @@ proc refreshHiddenBecauseNotPermittedState(self: Module) =
   if activeChatItem == nil:
     return
 
-  let activeItemShouldBeHidden = self.view.chatsModel().itemShouldBeHiddenBecauseNotPermitted(activeChatItem)
+  let activeItemShouldBeHidden =
+    self.view.chatsModel().itemShouldBeHiddenBecauseNotPermitted(activeChatItem)
   if activeItemShouldBeHidden:
     let firstNotHiddenItemId = self.view.chatsModel().firstNotHiddenItemId()
     self.setActiveItem(firstNotHiddenItemId)
 
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
-  if(not self.chatContentModules.contains(chat.id)):
+  if (not self.chatContentModules.contains(chat.id)):
     return
-  self.changeCanPostValues(chat.id, chat.canPost, chat.canView, chat.canPostReactions, chat.viewersCanPostReactions)
-  self.view.chatsModel().updateItemDetailsById(chat.id, chat.name, chat.description, chat.emoji, chat.color, chat.hideIfPermissionsNotMet)
+  self.changeCanPostValues(
+    chat.id, chat.canPost, chat.canView, chat.canPostReactions,
+    chat.viewersCanPostReactions,
+  )
+  self.view.chatsModel().updateItemDetailsById(
+    chat.id, chat.name, chat.description, chat.emoji, chat.color,
+    chat.hideIfPermissionsNotMet,
+  )
   self.refreshHiddenBecauseNotPermittedState()
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
@@ -865,17 +964,19 @@ method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   if (self.delegate.getActiveSectionId() != self.controller.getMySectionId()):
     self.delegate.setActiveSectionById(self.controller.getMySectionId())
 
-  if(self.chatContentModules.hasKey(chatId)):
+  if (self.chatContentModules.hasKey(chatId)):
     self.setActiveItem(chatId)
     return
 
   self.controller.createOneToOneChat("", chatId, "")
 
-method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
-  if(self.controller.isCommunity()):
-     # initiate chat creation in the `Chat` seciton module.
-     self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
-     return
+method createOneToOneChat*(
+    self: Module, communityID: string, chatId: string, ensName: string
+) =
+  if (self.controller.isCommunity()):
+    # initiate chat creation in the `Chat` seciton module.
+    self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
+    return
 
   # Adding this call here we have the same as we had before (didn't inspect what are all cases when this
   # `createOneToOneChat` is called), but I am sure that after checking all cases and inspecting them, this can be improved.
@@ -906,27 +1007,48 @@ method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted)
   self.updateParentBadgeNotifications()
 
-proc changeCanPostValues*(self: Module, chatId: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
-  self.view.chatsModel().changeCanPostValues(chatId, canPost, canView, canPostReactions, viewersCanPostReactions)
+proc changeCanPostValues*(
+    self: Module,
+    chatId: string,
+    canPost, canView, canPostReactions, viewersCanPostReactions: bool,
+) =
+  self.view.chatsModel().changeCanPostValues(
+    chatId, canPost, canView, canPostReactions, viewersCanPostReactions
+  )
 
 proc updateChatsRequiredPermissions(self: Module, communityChats: seq[ChatDto]) =
   for communityChat in communityChats:
     self.updatePermissionsRequiredOnChat(communityChat)
 
-proc displayTokenPermissionChangeNotification(self: Module, title: string, message: string, community: CommunityDto, tokenPermission: CommunityTokenPermissionDto) =
+proc displayTokenPermissionChangeNotification(
+    self: Module,
+    title: string,
+    message: string,
+    community: CommunityDto,
+    tokenPermission: CommunityTokenPermissionDto,
+) =
   if self.showPermissionUpdateNotification(community, tokenPermission):
-    singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(community.id, title, message)
+    singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(
+      community.id, title, message
+    )
 
-method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+method onCommunityTokenPermissionDeleted*(
+    self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto
+) =
   self.view.tokenPermissionsModel.removeItemWithId(tokenPermission.id)
   self.reevaluateRequiresTokenPermissionToJoin()
   let community = self.controller.getMyCommunity()
   let communityChats = community.getCommunityChats(tokenPermission.chatIds)
 
   self.updateChatsRequiredPermissions(communityChats)
-  self.displayTokenPermissionChangeNotification("Community permission deleted", "A token permission has been removed", community, tokenPermission)
+  self.displayTokenPermissionChangeNotification(
+    "Community permission deleted", "A token permission has been removed", community,
+    tokenPermission,
+  )
 
-method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+method onCommunityTokenPermissionCreated*(
+    self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto
+) =
   let community = self.controller.getMyCommunity()
   let communityChats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, communityChats)
@@ -934,10 +1056,17 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
   self.updateChatsRequiredPermissions(communityChats)
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
-  self.displayTokenPermissionChangeNotification("Community permission created", "A token permission has been added", community, tokenPermission)
+  self.displayTokenPermissionChangeNotification(
+    "Community permission created", "A token permission has been added", community,
+    tokenPermission,
+  )
 
 # Returns true if there was an update
-proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto): bool =
+proc updateTokenPermissionModel*(
+    self: Module,
+    permissions: Table[string, CheckPermissionsResultDto],
+    community: CommunityDto,
+): bool =
   var thereWasAnUpdate = false
   for id, criteriaResult in permissions:
     if community.tokenPermissions.hasKey(id):
@@ -962,7 +1091,7 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
           tokenCriteriaItem.`type`,
           tokenCriteriaItem.ensPattern,
           criteriaResult.criteria[index],
-          tokenCriteriaItem.addresses
+          tokenCriteriaItem.addresses,
         )
 
         if criteriaResult.criteria[index] == false:
@@ -975,13 +1104,13 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
       thereWasAnUpdate = true
       let updatedTokenPermissionItem = initTokenPermissionItem(
-          tokenPermissionItem.id,
-          tokenPermissionItem.`type`,
-          updatedTokenCriteriaItems,
-          tokenPermissionItem.getChatList().getItems(),
-          tokenPermissionItem.isPrivate,
-          permissionSatisfied,
-          tokenPermissionItem.state
+        tokenPermissionItem.id,
+        tokenPermissionItem.`type`,
+        updatedTokenCriteriaItems,
+        tokenPermissionItem.getChatList().getItems(),
+        tokenPermissionItem.isPrivate,
+        permissionSatisfied,
+        tokenPermissionItem.state,
       )
       self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 
@@ -990,29 +1119,55 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 proc updateCommunityPermissionsView*(self: Module) =
   let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
 
-  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
-    tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
+  let memberPermissions = filter(
+    tokenPermissionsItems,
+    tokenPermissionsItem =>
+      tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int,
+  )
 
-  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
-    tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
+  let adminPermissions = filter(
+    tokenPermissionsItems,
+    tokenPermissionsItem =>
+      tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int,
+  )
 
-  let tokenMasterPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
-    tokenPermissionsItem.getType() == TokenPermissionType.BecomeTokenMaster.int)
+  let tokenMasterPermissions = filter(
+    tokenPermissionsItems,
+    tokenPermissionsItem =>
+      tokenPermissionsItem.getType() == TokenPermissionType.BecomeTokenMaster.int,
+  )
 
   # multiple permissions of the same type act as logical OR
   # so if at least one of them is fulfilled we can mark the view
   # as all lights green
-  let memberRequirementMet = memberPermissions.len() > 0 and any(memberPermissions,
-    proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+  let memberRequirementMet =
+    memberPermissions.len() > 0 and
+    any(
+      memberPermissions,
+      proc(item: TokenPermissionItem): bool =
+        item.tokenCriteriaMet,
+    )
 
-  let adminRequirementMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+  let adminRequirementMet =
+    adminPermissions.len() > 0 and
+    any(
+      adminPermissions,
+      proc(item: TokenPermissionItem): bool =
+        item.tokenCriteriaMet,
+    )
 
-  let tmRequirementMet = tokenMasterPermissions.len() > 0 and any(tokenMasterPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
-
+  let tmRequirementMet =
+    tokenMasterPermissions.len() > 0 and
+    any(
+      tokenMasterPermissions,
+      proc(item: TokenPermissionItem): bool =
+        item.tokenCriteriaMet,
+    )
 
   let requiresPermissionToJoin = memberPermissions.len() > 0
 
-  let tokenRequirementsMet = if requiresPermissionToJoin:
+  let tokenRequirementsMet =
+    if requiresPermissionToJoin:
       tmRequirementMet or adminRequirementMet or memberRequirementMet
     else:
       true
@@ -1025,11 +1180,12 @@ proc updateChannelPermissionViewData*(
     chatId: string,
     viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto,
     viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto,
-    community: CommunityDto
-  ) =
-
-  let viewOnlyUpdated = self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
-  let viewAndPostUpdated = self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
+    community: CommunityDto,
+) =
+  let viewOnlyUpdated =
+    self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
+  let viewAndPostUpdated =
+    self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
   if viewOnlyUpdated or viewAndPostUpdated:
     let communityChat = community.getCommunityChat(chatId)
     self.updatePermissionsRequiredOnChat(communityChat)
@@ -1039,14 +1195,20 @@ proc updateChannelPermissionViewData*(
     self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
   self.refreshHiddenBecauseNotPermittedState()
 
-method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+method onCommunityCheckPermissionsToJoinResponse*(
+    self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto
+) =
   let community = self.controller.getMyCommunity()
   self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
-  discard self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
+  discard self.updateTokenPermissionModel(
+    checkPermissionsToJoinResponse.permissions, community
+  )
   self.updateCommunityPermissionsView()
   self.setPermissionsToJoinCheckOngoing(false)
 
-method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+method onCommunityTokenPermissionUpdated*(
+    self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto
+) =
   let community = self.controller.getMyCommunity()
   let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
@@ -1054,34 +1216,57 @@ method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tok
   self.reevaluateRequiresTokenPermissionToJoin()
 
   if self.showPermissionUpdateNotification(community, tokenPermission):
-    singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
+    singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(
+      communityId, "Community permission updated", "A token permission has been updated"
+    )
 
 method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionCreationFailedNotification(communityId, "Failed to create community permission", "Something went wrong")
+  singletonInstance.globalEvents.showCommunityTokenPermissionCreationFailedNotification(
+    communityId, "Failed to create community permission", "Something went wrong"
+  )
 
 method onCommunityTokenPermissionUpdateFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionUpdateFailedNotification(communityId, "Failed to update community permission", "Something went wrong")
+  singletonInstance.globalEvents.showCommunityTokenPermissionUpdateFailedNotification(
+    communityId, "Failed to update community permission", "Something went wrong"
+  )
 
 method onCommunityTokenPermissionDeletionFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionDeletionFailedNotification(communityId, "Failed to delete community permission", "Something went wrong")
+  singletonInstance.globalEvents.showCommunityTokenPermissionDeletionFailedNotification(
+    communityId, "Failed to delete community permission", "Something went wrong"
+  )
 
-method onCommunityCheckChannelPermissionsResponse*(self: Module, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto) =
+method onCommunityCheckChannelPermissionsResponse*(
+    self: Module,
+    chatId: string,
+    checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto,
+) =
   let community = self.controller.getMyCommunity()
   if community.id != "":
-    self.updateChannelPermissionViewData(chatId, checkChannelPermissionsResponse.viewOnlyPermissions, checkChannelPermissionsResponse.viewAndPostPermissions, community)
+    self.updateChannelPermissionViewData(
+      chatId, checkChannelPermissionsResponse.viewOnlyPermissions,
+      checkChannelPermissionsResponse.viewAndPostPermissions, community,
+    )
 
-method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+method onCommunityCheckAllChannelsPermissionsResponse*(
+    self: Module,
+    checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto,
+) =
   let community = self.controller.getMyCommunity()
   if community.id == "":
     return
 
   for chatId, permissionResult in checkAllChannelsPermissionsResponse.channels:
-    self.updateChannelPermissionViewData(chatId, permissionResult.viewOnlyPermissions, permissionResult.viewAndPostPermissions, community)
+    self.updateChannelPermissionViewData(
+      chatId, permissionResult.viewOnlyPermissions,
+      permissionResult.viewAndPostPermissions, community,
+    )
 
 method onKickedFromCommunity*(self: Module) =
   self.view.setAmIMember(false)
   let communityId = self.controller.getMySectionId()
-  self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(communityId))
+  self.view.setWaitingOnNewCommunityOwnerToConfirmRequestToRejoin(
+    self.controller.waitingOnNewCommunityOwnerToConfirmRequestToRejoin(communityId)
+  )
 
 method onJoinedCommunity*(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -1090,10 +1275,14 @@ method onJoinedCommunity*(self: Module) =
   self.view.setRequestToJoinState(RequestToJoinState.None)
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
-  self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
+  self.updateBadgeNotifications(
+    chat, hasUnreadMessages = false, unviewedMentionsCount = 0
+  )
 
 method onMarkMessageAsUnread*(self: Module, chat: ChatDto) =
-  self.updateBadgeNotifications(chat, hasUnreadMessages=true, chat.unviewedMentionsCount)
+  self.updateBadgeNotifications(
+    chat, hasUnreadMessages = true, chat.unviewedMentionsCount
+  )
 
 method onSectionMutedChanged*(self: Module) =
   self.updateParentBadgeNotifications()
@@ -1110,7 +1299,9 @@ method clearChatHistory*(self: Module, chatId: string) =
 method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
 
-method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+method acceptContactRequest*(
+    self: Module, publicKey: string, contactRequestId: string
+) =
   self.controller.acceptContactRequest(publicKey, contactRequestId)
 
 method onContactAdded*(self: Module, publicKey: string) =
@@ -1125,7 +1316,9 @@ method acceptAllContactRequests*(self: Module) =
   for pk in pubKeys:
     self.acceptContactRequest(pk, "")
 
-method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+method dismissContactRequest*(
+    self: Module, publicKey: string, contactRequestId: string
+) =
   self.controller.dismissContactRequest(publicKey, contactRequestId)
 
 method onContactRejected*(self: Module, publicKey: string) =
@@ -1141,35 +1334,47 @@ method blockContact*(self: Module, publicKey: string) =
 
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
-  self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=true)
+  self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked = true)
   self.onCommunityChannelDeletedOrChatLeft(publicKey)
 
 method onContactUnblocked*(self: Module, publicKey: string) =
-  self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=false)
+  self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked = false)
   self.onContactDetailsUpdated(publicKey)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
-  if(self.controller.isCommunity()):
+  if (self.controller.isCommunity()):
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
-  if (contactDetails.dto.isContactRequestReceived() and
-    not contactDetails.dto.isContactRequestSent() and
-    not contactDetails.dto.isBlocked() and
-    not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)):
-      let item = self.createItemFromPublicKey(publicKey)
-      self.view.contactRequestsModel().addItem(item)
-      singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request",
+  if (
+    contactDetails.dto.isContactRequestReceived() and
+    not contactDetails.dto.isContactRequestSent() and not contactDetails.dto.isBlocked() and
+    not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)
+  ):
+    let item = self.createItemFromPublicKey(publicKey)
+    self.view.contactRequestsModel().addItem(item)
+    singletonInstance.globalEvents.showNewContactRequestNotification(
+      "New Contact Request",
       fmt "{contactDetails.defaultDisplayName} added you as contact",
-        singletonInstance.userProfile.getPubKey())
+      singletonInstance.userProfile.getPubKey(),
+    )
 
   let chatName = contactDetails.defaultDisplayName
   let chatImage = contactDetails.icon
   let trustStatus = contactDetails.dto.trustStatus
-  self.view.chatsModel().updateItemDetailsById(publicKey, chatName, chatImage, trustStatus)
+  self.view.chatsModel().updateItemDetailsById(
+    publicKey, chatName, chatImage, trustStatus
+  )
 
-method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,
-    chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int,
-    message: MessageDto) =
+method onNewMessagesReceived*(
+    self: Module,
+    sectionIdMsgBelongsTo: string,
+    chatIdMsgBelongsTo: string,
+    chatTypeMsgBelongsTo: ChatType,
+    lastMessageTimestamp: int,
+    unviewedMessagesCount: int,
+    unviewedMentionsCount: int,
+    message: MessageDto,
+) =
   self.updateLastMessageTimestamp(chatIdMsgBelongsTo, lastMessageTimestamp)
 
   # Any type of message coming from ourselves should never be shown as notification
@@ -1190,16 +1395,20 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
 
   # Prepare notification
   var notificationType = notification_details.NotificationType.NewMessage
-  if(message.isPersonalMention(myPK)):
-    notificationType = notification_details.NotificationType.NewMessageWithPersonalMention
-  elif(message.isGlobalMention()):
+  if (message.isPersonalMention(myPK)):
+    notificationType =
+      notification_details.NotificationType.NewMessageWithPersonalMention
+  elif (message.isGlobalMention()):
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
-  var senderDisplayName = self.controller.getContactDetails(message.`from`).defaultDisplayName
+  var senderDisplayName =
+    self.controller.getContactDetails(message.`from`).defaultDisplayName
   let communityChats = community.chats
-  let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+  let renderedMessageText =
+    self.controller.getRenderedText(message.parsedText, communityChats)
   var plainText = singletonInstance.utils.plainText(renderedMessageText)
-  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):
+  if message.contentType == ContentType.Sticker or
+      (message.contentType == ContentType.Image and len(plainText) == 0):
     plainText = "🖼️"
   if message.contentType == ContentType.BridgeMessage:
     senderDisplayName = message.bridgeMessage.userName
@@ -1207,84 +1416,146 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
 
   var notificationTitle = senderDisplayName
 
-  case chatDetails.chatType:
-    of ChatType.PrivateGroupChat:
-      notificationTitle.add(fmt" ({chatDetails.name})")
-    of ChatType.CommunityChat:
-      if (chatDetails.categoryId.len == 0):
-        notificationTitle.add(fmt" (#{chatDetails.name})")
-      else:
-        let categoryDetails = self.controller.getCommunityCategoryDetails(chatDetails.communityId, chatDetails.categoryId)
-        notificationTitle.add(fmt" (#{chatDetails.name}, {categoryDetails.name})")
+  case chatDetails.chatType
+  of ChatType.PrivateGroupChat:
+    notificationTitle.add(fmt" ({chatDetails.name})")
+  of ChatType.CommunityChat:
+    if (chatDetails.categoryId.len == 0):
+      notificationTitle.add(fmt" (#{chatDetails.name})")
     else:
-      discard
+      let categoryDetails = self.controller.getCommunityCategoryDetails(
+        chatDetails.communityId, chatDetails.categoryId
+      )
+      notificationTitle.add(fmt" (#{chatDetails.name}, {categoryDetails.name})")
+  else:
+    discard
 
-  let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and
+  let messageBelongsToActiveSection =
+    sectionIdMsgBelongsTo == self.controller.getMySectionId() and
     self.controller.getMySectionId() == self.delegate.getActiveSectionId()
-  let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
+  let messageBelongsToActiveChat =
+    self.controller.getActiveChatId() == chatIdMsgBelongsTo
 
-  singletonInstance.globalEvents.showMessageNotification(notificationTitle, plainText, sectionIdMsgBelongsTo,
-    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
-    message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
-    chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
+  singletonInstance.globalEvents.showMessageNotification(
+    notificationTitle,
+    plainText,
+    sectionIdMsgBelongsTo,
+    self.controller.isCommunity(),
+    messageBelongsToActiveSection,
+    chatIdMsgBelongsTo,
+    messageBelongsToActiveChat,
+    message.id,
+    notificationType.int,
+    chatTypeMsgBelongsTo == ChatType.OneToOne,
+    chatTypeMsgBelongsTo == ChatType.PrivateGroupChat,
+  )
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
 
-method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
+method removeMemberFromGroupChat*(
+    self: Module, communityID: string, chatId: string, pubKey: string
+) =
   self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-method removeMembersFromGroupChat*(self: Module, communityID: string, chatId: string, pubKeys: string) =
-  self.controller.removeMembersFromGroupChat(communityID, chatId, self.convertPubKeysToJson(pubKeys))
+method removeMembersFromGroupChat*(
+    self: Module, communityID: string, chatId: string, pubKeys: string
+) =
+  self.controller.removeMembersFromGroupChat(
+    communityID, chatId, self.convertPubKeysToJson(pubKeys)
+  )
 
 method renameGroupChat*(self: Module, chatId: string, newName: string) =
   self.controller.renameGroupChat(chatId, newName)
 
-method updateGroupChatDetails*(self: Module, chatId: string, newGroupName: string, newGroupColor: string, newGroupImageJson: string) =
-  self.controller.updateGroupChatDetails(chatId, newGroupName, newGroupColor, newGroupImageJson)
+method updateGroupChatDetails*(
+    self: Module,
+    chatId: string,
+    newGroupName: string,
+    newGroupColor: string,
+    newGroupImageJson: string,
+) =
+  self.controller.updateGroupChatDetails(
+    chatId, newGroupName, newGroupColor, newGroupImageJson
+  )
 
 method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.makeAdmin(communityID, chatId, pubKey)
 
-method createGroupChat*(self: Module, communityID: string, groupName: string, pubKeys: string) =
-  self.controller.createGroupChat(communityID, groupName, self.convertPubKeysToJson(pubKeys))
+method createGroupChat*(
+    self: Module, communityID: string, groupName: string, pubKeys: string
+) =
+  self.controller.createGroupChat(
+    communityID, groupName, self.convertPubKeysToJson(pubKeys)
+  )
 
 method createGroupChat*(self: Module, groupName: string, pubKeys: seq[string]) =
   self.controller.createGroupChat("", groupName, pubKeys)
 
-method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
+method joinGroupChatFromInvitation*(
+    self: Module, groupName: string, chatId: string, adminPK: string
+) =
   self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)
 
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItemById(chatId, newName)
   self.view.tokenPermissionsModel().renameChatById(chatId, newName)
 
-method onGroupChatDetailsUpdated*(self: Module, chatId, newName, newColor, newImage: string) =
-  self.view.chatsModel().updateNameColorIconOnItemById(chatId, newName, newColor, newImage)
+method onGroupChatDetailsUpdated*(
+    self: Module, chatId, newName, newColor, newImage: string
+) =
+  self.view.chatsModel().updateNameColorIconOnItemById(
+    chatId, newName, newColor, newImage
+  )
 
-method acceptRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
+method acceptRequestToJoinCommunity*(
+    self: Module, requestId: string, communityId: string
+) =
   self.controller.acceptRequestToJoinCommunity(requestId, communityId)
 
-method declineRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
+method declineRequestToJoinCommunity*(
+    self: Module, requestId: string, communityId: string
+) =
   self.controller.declineRequestToJoinCommunity(requestId, communityId)
 
-method onAcceptRequestToJoinFailedNoPermission*(self: Module, communityId: string, memberKey: string, requestId: string) =
+method onAcceptRequestToJoinFailedNoPermission*(
+    self: Module, communityId: string, memberKey: string, requestId: string
+) =
   let community = self.controller.getMyCommunity()
   let contact = self.controller.getContactById(memberKey)
-  self.view.emitOpenNoPermissionsToJoinPopupSignal(community.name, contact.displayName,  community.id, requestId)
+  self.view.emitOpenNoPermissionsToJoinPopupSignal(
+    community.name, contact.displayName, community.id, requestId
+  )
 
-method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string, viewersCanPostReactions: bool, hideIfPermissionsNotMet: bool) =
-  self.controller.createCommunityChannel(name, description, emoji, color, categoryId, viewersCanPostReactions, hideIfPermissionsNotMet)
+method createCommunityChannel*(
+    self: Module,
+    name, description, emoji, color, categoryId: string,
+    viewersCanPostReactions: bool,
+    hideIfPermissionsNotMet: bool,
+) =
+  self.controller.createCommunityChannel(
+    name, description, emoji, color, categoryId, viewersCanPostReactions,
+    hideIfPermissionsNotMet,
+  )
 
-method editCommunityChannel*(self: Module, channelId, name, description, emoji, color,
-    categoryId: string, position: int, viewersCanPostReactions: bool, hideIfPermissionsNotMet: bool) =
-  self.controller.editCommunityChannel(channelId, name, description, emoji, color, categoryId,
-    position, viewersCanPostReactions, hideIfPermissionsNotMet)
+method editCommunityChannel*(
+    self: Module,
+    channelId, name, description, emoji, color, categoryId: string,
+    position: int,
+    viewersCanPostReactions: bool,
+    hideIfPermissionsNotMet: bool,
+) =
+  self.controller.editCommunityChannel(
+    channelId, name, description, emoji, color, categoryId, position,
+    viewersCanPostReactions, hideIfPermissionsNotMet,
+  )
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)
 
-method editCommunityCategory*(self: Module, categoryId: string, name: string, channels: seq[string]) =
+method editCommunityCategory*(
+    self: Module, categoryId: string, name: string, channels: seq[string]
+) =
   self.controller.editCommunityCategory(categoryId, name, channels)
 
 method deleteCommunityCategory*(self: Module, categoryId: string) =
@@ -1302,15 +1573,22 @@ method banUserFromCommunity*(self: Module, pubKey: string, deleteAllMessages: bo
 method unbanUserFromCommunity*(self: Module, pubKey: string) =
   self.controller.unbanUserFromCommunity(pubkey)
 
-method editCommunity*(self: Module, name: string,
-                        description, introMessage, outroMessage: string,
-                        access: int, color: string, tags: string,
-                        logoJsonStr: string,
-                        bannerJsonStr: string,
-                        historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool) =
-  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, tags, logoJsonStr,
-                                bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+method editCommunity*(
+    self: Module,
+    name: string,
+    description, introMessage, outroMessage: string,
+    access: int,
+    color: string,
+    tags: string,
+    logoJsonStr: string,
+    bannerJsonStr: string,
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool,
+) =
+  self.controller.editCommunity(
+    name, description, introMessage, outroMessage, access, color, tags, logoJsonStr,
+    bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
+  )
 
 method exportCommunity*(self: Module): string =
   self.controller.exportCommunity()
@@ -1318,34 +1596,36 @@ method exportCommunity*(self: Module): string =
 method setCommunityMuted*(self: Module, mutedType: int) =
   self.controller.setCommunityMuted(mutedType)
 
-method shareCommunityToUsers*(self: Module, pubKeysJSON: string, inviteMessage: string): string =
+method shareCommunityToUsers*(
+    self: Module, pubKeysJSON: string, inviteMessage: string
+): string =
   result = self.controller.shareCommunityToUsers(pubKeysJSON, inviteMessage)
 
 method prepareEditCategoryModel*(self: Module, categoryId: string) =
   self.view.editCategoryChannelsModel().clearItems()
   let communityId = self.controller.getMySectionId()
-  let chats = self.controller.getChats(communityId, categoryId="")
+  let chats = self.controller.getChats(communityId, categoryId = "")
   for chat in chats:
     let c = self.controller.getChatDetails(chat.id)
     let chatItem = chat_item.initItem(
       c.id,
       c.name,
-      icon="",
+      icon = "",
       c.color,
       c.emoji,
       c.description,
       c.chatType.int,
-      memberRole=MemberRole.None,
-      lastMessageTimestamp=(-1),
-      hasUnreadMessages=false,
-      notificationsCount=0,
+      memberRole = MemberRole.None,
+      lastMessageTimestamp = (-1),
+      hasUnreadMessages = false,
+      notificationsCount = 0,
       c.muted,
-      blocked=false,
-      active=false,
+      blocked = false,
+      active = false,
       c.position,
-      categoryId="",
-      hideIfPermissionsNotMet=false,
-      missingEncryptionKey=false,
+      categoryId = "",
+      hideIfPermissionsNotMet = false,
+      missingEncryptionKey = false,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem)
   let catChats = self.controller.getChats(communityId, categoryId)
@@ -1354,42 +1634,49 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     let chatItem = chat_item.initItem(
       c.id,
       c.name,
-      icon="",
+      icon = "",
       c.color,
       c.emoji,
       c.description,
       c.chatType.int,
-      memberRole=MemberRole.None,
-      lastMessageTimestamp=(-1),
-      hasUnreadMessages=false,
-      notificationsCount=0,
+      memberRole = MemberRole.None,
+      lastMessageTimestamp = (-1),
+      hasUnreadMessages = false,
+      notificationsCount = 0,
       c.muted,
-      blocked=false,
-      active=false,
+      blocked = false,
+      active = false,
       c.position,
       categoryId,
-      hideIfPermissionsNotMet=false,
-      missingEncryptionKey=false,
+      hideIfPermissionsNotMet = false,
+      missingEncryptionKey = false,
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
-method reorderCommunityCategories*(self: Module, categoryId: string, categoryPosition: int) =
+method reorderCommunityCategories*(
+    self: Module, categoryId: string, categoryPosition: int
+) =
   var finalPosition = categoryPosition
   if finalPosition < 0:
     finalPosition = 0
 
   self.controller.reorderCommunityCategories(categoryId, finalPosition)
 
-method toggleCollapsedCommunityCategoryAsync*(self: Module, categoryId: string, collapsed: bool) =
+method toggleCollapsedCommunityCategoryAsync*(
+    self: Module, categoryId: string, collapsed: bool
+) =
   self.controller.toggleCollapsedCommunityCategoryAsync(categoryId, collapsed)
 
-method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int) =
+method reorderCommunityChat*(
+    self: Module, categoryId: string, chatId: string, toPosition: int
+) =
   self.controller.reorderCommunityChat(categoryId, chatId, toPosition + 1)
 
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
-method addOrUpdateChat(self: Module,
+method addOrUpdateChat(
+    self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
@@ -1404,12 +1691,17 @@ method addOrUpdateChat(self: Module,
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
     isSectionBuild: bool = false,
-  ): chat_item.Item =
+): chat_item.Item =
   let sectionId = self.controller.getMySectionId()
   if belongsToCommunity and sectionId != chat.communityId or
-    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
+      not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey():
     return
-  self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount, skipParentBadge = isSectionBuild)
+  self.updateBadgeNotifications(
+    chat,
+    chat.unviewedMessagesCount > 0,
+    chat.unviewedMentionsCount,
+    skipParentBadge = isSectionBuild,
+  )
 
   if not self.chatsLoaded:
     return
@@ -1428,10 +1720,17 @@ method addOrUpdateChat(self: Module,
       self.chatContentModules[chat.id].onChatUpdated(result)
 
     self.changeMutedOnChat(chat.id, chat.muted)
-    self.changeCanPostValues(chat.id, result.canPost, result.canView, result.canPostReactions, result.viewersCanPostReactions)
-    self.view.chatsModel().setItemPermissionsRequired(chat.id, result.requiresPermissions)
+    self.changeCanPostValues(
+      chat.id, result.canPost, result.canView, result.canPostReactions,
+      result.viewersCanPostReactions,
+    )
+    self.view.chatsModel().setItemPermissionsRequired(
+      chat.id, result.requiresPermissions
+    )
     self.view.chatsModel().setItemLocked(chat.id, result.locked)
-    self.view.chatsModel().updateMissingEncryptionKey(chat.id, result.missingEncryptionKey)
+    self.view.chatsModel().updateMissingEncryptionKey(
+      chat.id, result.missingEncryptionKey
+    )
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
     elif (chat.chatType != ChatType.OneToOne):
@@ -1439,25 +1738,25 @@ method addOrUpdateChat(self: Module,
     return
 
   self.addNewChat(
-      result,
-      chat,
-      belongsToCommunity,
-      events.eventsEmitter(),
-      settingsService,
-      nodeConfigurationService,
-      contactService,
-      chatService,
-      communityService,
-      messageService,
-      mailserversService,
-      sharedUrlsService,
-      setChatAsActive,
-      insertIntoModel,
-    )
+    result,
+    chat,
+    belongsToCommunity,
+    events.eventsEmitter(),
+    settingsService,
+    nodeConfigurationService,
+    contactService,
+    chatService,
+    communityService,
+    messageService,
+    mailserversService,
+    sharedUrlsService,
+    setChatAsActive,
+    insertIntoModel,
+  )
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =
-  if(not self.chatContentModules.contains(chatId)):
-    error "unexisting chat key: ", chatId, methodName="downloadMessages"
+  if (not self.chatContentModules.contains(chatId)):
+    error "unexisting chat key: ", chatId, methodName = "downloadMessages"
     return
 
   self.chatContentModules[chatId].downloadMessages(filePath)
@@ -1467,20 +1766,27 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
     let status = toOnlineStatus(s.statusType)
     self.view.chatsModel().updateItemOnlineStatusById(s.publicKey, status)
 
-method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
-
+method createOrEditCommunityTokenPermission*(
+    self: Module,
+    communityId: string,
+    permissionId: string,
+    permissionType: int,
+    tokenCriteriaJson: string,
+    channelIDs: seq[string],
+    isPrivate: bool,
+) =
   var tokenPermission = CommunityTokenPermissionDto()
   tokenPermission.id = permissionId
   tokenPermission.isPrivate = isPrivate
   tokenPermission.`type` = TokenPermissionType(permissionType)
   tokenPermission.chatIDs = channelIDs
 
-  if tokenPermission.`type` != TokenPermissionType.View and tokenPermission.`type` != TokenPermissionType.ViewAndPost:
+  if tokenPermission.`type` != TokenPermissionType.View and
+      tokenPermission.`type` != TokenPermissionType.ViewAndPost:
     tokenPermission.chatIDs = @[]
 
   let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
   for tokenCriteria in tokenCriteriaJsonObj:
-
     let tokenKey = tokenCriteria{"key"}.getStr()
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
     if tokenCriteriaDto.`type` == TokenType.ERC20:
@@ -1500,7 +1806,9 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
   self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
 
-method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
+method deleteCommunityTokenPermission*(
+    self: Module, communityId: string, permissionId: string
+) =
   self.controller.deleteCommunityTokenPermission(communityId, permissionId)
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
@@ -1541,7 +1849,9 @@ method setCommunityShard*(self: Module, shardIndex: int) =
 method setShardingInProgress*(self: Module, value: bool) =
   self.view.setShardingInProgress(value)
 
-method loadCommunityMemberMessages*(self: Module, communityId: string, memberPubKey: string) =
+method loadCommunityMemberMessages*(
+    self: Module, communityId: string, memberPubKey: string
+) =
   self.view.getMemberMessagesModel().clear()
   self.controller.loadCommunityMemberMessages(communityId, memberPubKey)
 
@@ -1556,7 +1866,9 @@ method onCommunityMemberMessagesLoaded*(self: Module, messages: seq[MessageDto])
 
   self.view.getMemberMessagesModel().insertItemsBasedOnClock(viewItems)
 
-method deleteCommunityMemberMessages*(self: Module, memberPubKey: string, messageId: string, chatId: string) =
+method deleteCommunityMemberMessages*(
+    self: Module, memberPubKey: string, messageId: string, chatId: string
+) =
   self.controller.deleteCommunityMemberMessages(memberPubKey, messageId, chatId)
 
 method onCommunityMemberMessagesDeleted*(self: Module, deletedMessages: seq[string]) =
@@ -1567,7 +1879,9 @@ method onCommunityMemberMessagesDeleted*(self: Module, deletedMessages: seq[stri
 method communityContainsChat*(self: Module, chatId: string): bool =
   return self.chatContentModules.hasKey(chatId)
 
-method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messageId: string) =
+method openCommunityChatAndScrollToMessage*(
+    self: Module, chatId: string, messageId: string
+) =
   if chatId in self.chatContentModules:
     self.setActiveItem(chatId)
     self.chatContentModules[chatId].scrollToMessage(messageId)
@@ -1575,7 +1889,9 @@ method openCommunityChatAndScrollToMessage*(self: Module, chatId: string, messag
 method updateRequestToJoinState*(self: Module, state: RequestToJoinState) =
   self.view.setRequestToJoinState(state)
 
-method communityMemberReevaluationStatusUpdated*(self: Module, status: CommunityMemberReevaluationStatus) =
+method communityMemberReevaluationStatusUpdated*(
+    self: Module, status: CommunityMemberReevaluationStatus
+) =
   self.view.setCommunityMemberReevaluationStatus(status.int)
 
 method markAllReadInCommunity*(self: Module) =

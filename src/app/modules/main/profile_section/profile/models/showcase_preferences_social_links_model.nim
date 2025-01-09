@@ -1,21 +1,18 @@
 import NimQml, tables, strutils, sequtils, json
 
-type
-  ShowcasePreferencesSocialLinkItem* = object of RootObj
-    url*: string
-    text*: string
-    showcasePosition*: int
+type ShowcasePreferencesSocialLinkItem* = object of RootObj
+  url*: string
+  text*: string
+  showcasePosition*: int
 
-type
-  ModelRole {.pure.} = enum
-    Url
-    Text
-    ShowcasePosition
+type ModelRole {.pure.} = enum
+  Url
+  Text
+  ShowcasePosition
 
 QtObject:
-  type
-    ShowcasePreferencesSocialLinkModel* = ref object of QAbstractListModel
-      items: seq[ShowcasePreferencesSocialLinkItem]
+  type ShowcasePreferencesSocialLinkModel* = ref object of QAbstractListModel
+    items: seq[ShowcasePreferencesSocialLinkItem]
 
   proc delete(self: ShowcasePreferencesSocialLinkModel) =
     self.items = @[]
@@ -28,10 +25,14 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc items*(self: ShowcasePreferencesSocialLinkModel): seq[ShowcasePreferencesSocialLinkItem] =
+  proc items*(
+      self: ShowcasePreferencesSocialLinkModel
+  ): seq[ShowcasePreferencesSocialLinkItem] =
     self.items
 
-  method rowCount(self: ShowcasePreferencesSocialLinkModel, index: QModelIndex = nil): int =
+  method rowCount(
+      self: ShowcasePreferencesSocialLinkModel, index: QModelIndex = nil
+  ): int =
     return self.items.len
 
   method roleNames(self: ShowcasePreferencesSocialLinkModel): Table[int, string] =
@@ -41,7 +42,9 @@ QtObject:
       ModelRole.ShowcasePosition.int: "showcasePosition",
     }.toTable
 
-  method data(self: ShowcasePreferencesSocialLinkModel, index: QModelIndex, role: int): QVariant =
+  method data(
+      self: ShowcasePreferencesSocialLinkModel, index: QModelIndex, role: int
+  ): QVariant =
     if (not index.isValid):
       return
 
@@ -51,7 +54,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Url:
       result = newQVariant(item.url)
     of ModelRole.Text:
@@ -59,7 +62,10 @@ QtObject:
     of ModelRole.ShowcasePosition:
       result = newQVariant(item.showcasePosition)
 
-  proc setItems*(self: ShowcasePreferencesSocialLinkModel, items: seq[ShowcasePreferencesSocialLinkItem]) =
+  proc setItems*(
+      self: ShowcasePreferencesSocialLinkModel,
+      items: seq[ShowcasePreferencesSocialLinkItem],
+  ) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()

@@ -1,7 +1,7 @@
 import NimQml
 
 import ./io_interface, ./view
-import  ./controller as all_collectibles_controller
+import ./controller as all_collectibles_controller
 import ../io_interface as delegate_interface
 
 import app/global/global_singleton
@@ -17,34 +17,36 @@ import backend/collectibles as backend_collectibles
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: all_collectibles_controller.Controller
-    collectiblesController: collectibles_controller.Controller
-    moduleLoaded: bool
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: all_collectibles_controller.Controller
+  collectiblesController: collectibles_controller.Controller
+  moduleLoaded: bool
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  collectibleService: collectible_service.Service,
-  networkService: network_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  settingsService: settings_service.Service
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    collectibleService: collectible_service.Service,
+    networkService: network_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    settingsService: settings_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.controller = all_collectibles_controller.newController(result, events, collectibleService, networkService, walletAccountService, settingsService)
+  result.controller = all_collectibles_controller.newController(
+    result, events, collectibleService, networkService, walletAccountService,
+    settingsService,
+  )
 
   let collectiblesController = collectibles_controller.newController(
     requestId = int32(backend_collectibles.CollectiblesRequestID.AllCollectibles),
     loadType = collectibles_controller.LoadType.AutoLoadSingleUpdate,
     networkService = networkService,
-    events = events
+    events = events,
   )
   result.collectiblesController = collectiblesController
 
@@ -59,7 +61,9 @@ method delete*(self: Module) =
   self.collectiblesController.delete
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAllCollectibles", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionAllCollectibles", self.viewVariant
+  )
 
   self.events.on(SIGNAL_COLLECTIBLE_PREFERENCES_UPDATED) do(e: Args):
     let args = ResultArgs(e)
@@ -93,7 +97,9 @@ method refreshNetworks*(self: Module) =
 method refreshWalletAccounts*(self: Module) =
   self.refreshCollectiblesFilter()
 
-method updateCollectiblePreferences*(self: Module, collectiblePreferencesJson: string) {.slot.} =
+method updateCollectiblePreferences*(
+    self: Module, collectiblePreferencesJson: string
+) {.slot.} =
   self.controller.updateCollectiblePreferences(collectiblePreferencesJson)
 
 method getCollectiblePreferencesJson*(self: Module): string =

@@ -1,5 +1,4 @@
-type
-  CopyToKeycardState* = ref object of State
+type CopyToKeycardState* = ref object of State
 
 proc newCopyToKeycardState*(flowType: FlowType, backState: State): CopyToKeycardState =
   result = CopyToKeycardState()

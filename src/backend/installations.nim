@@ -4,46 +4,41 @@ import response_type
 
 export response_type
 
-proc setInstallationMetadata*(installationId: string, deviceName: string, deviceType: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [installationId, {
-    "name": deviceName,
-    "deviceType": deviceType
-  }]
+proc setInstallationMetadata*(
+    installationId: string, deviceName: string, deviceType: string
+): RpcResponse[JsonNode] =
+  let payload = %*[installationId, {"name": deviceName, "deviceType": deviceType}]
   result = callPrivateRPC("setInstallationMetadata".prefix, payload)
 
-proc setInstallationName*(installationId: string, name: string):
-  RpcResponse[JsonNode] =
-  let payload = %* [installationId, name]
+proc setInstallationName*(installationId: string, name: string): RpcResponse[JsonNode] =
+  let payload = %*[installationId, name]
   result = callPrivateRPC("setInstallationName".prefix, payload)
 
 proc getOurInstallations*(): RpcResponse[JsonNode] =
-  let payload = %* []
+  let payload = %*[]
   result = callPrivateRPC("getOurInstallations".prefix, payload)
 
 proc syncDevices*(preferredName: string, photoPath: string): RpcResponse[JsonNode] =
-  let payload = %* [preferredName, photoPath]
+  let payload = %*[preferredName, photoPath]
   result = callPrivateRPC("syncDevices".prefix, payload)
 
 proc sendPairInstallation*(): RpcResponse[JsonNode] =
   result = callPrivateRPC("sendPairInstallation".prefix)
 
 proc enableInstallation*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [installationId]
+  let payload = %*[installationId]
   result = callPrivateRPC("enableInstallation".prefix, payload)
 
 proc disableInstallation*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [installationId]
+  let payload = %*[installationId]
   result = callPrivateRPC("disableInstallation".prefix, payload)
 
-proc finishPairingThroughSeedPhraseProcess*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [{
-    "installationId": installationId,
-  }]
+proc finishPairingThroughSeedPhraseProcess*(
+    installationId: string
+): RpcResponse[JsonNode] =
+  let payload = %*[{"installationId": installationId}]
   result = callPrivateRPC("enableInstallationAndPair".prefix, payload)
 
 proc enableInstallationAndSync*(installationId: string): RpcResponse[JsonNode] =
-  let payload = %* [{
-    "installationId": installationId,
-  }]
+  let payload = %*[{"installationId": installationId}]
   result = callPrivateRPC("enableInstallationAndSync".prefix, payload)

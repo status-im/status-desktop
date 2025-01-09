@@ -4,13 +4,12 @@ import model
 from app_service/service/ens/utils import ENS_REGISTRY
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      etherscanTxLink: string
-      etherscanAddressLink: string
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    etherscanTxLink: string
+    etherscanAddressLink: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -35,6 +34,7 @@ QtObject:
   proc modelChanged*(self: View) {.signal.}
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
+
   QtProperty[QVariant] model:
     read = getModel
     notify = modelChanged
@@ -46,26 +46,62 @@ QtObject:
   proc sendUsernameAvailabilityCheckedSignal*(self: View, availabilityStatus: string) =
     self.usernameAvailabilityChecked(availabilityStatus)
 
-  proc checkEnsUsernameAvailability*(self: View, desiredEnsUsername: string, statusDomain: bool) {.slot.} =
+  proc checkEnsUsernameAvailability*(
+      self: View, desiredEnsUsername: string, statusDomain: bool
+  ) {.slot.} =
     self.delegate.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
 
   proc numOfPendingEnsUsernames*(self: View): int {.slot.} =
     return self.delegate.numOfPendingEnsUsernames()
 
   proc loading(self: View, isLoading: bool) {.signal.}
-  proc detailsObtained(self: View, chainId: int, ensName: string, address: string, pubkey: string, isStatus: bool, expirationTime: int) {.signal.}
+  proc detailsObtained(
+    self: View,
+    chainId: int,
+    ensName: string,
+    address: string,
+    pubkey: string,
+    isStatus: bool,
+    expirationTime: int,
+  ) {.signal.}
 
-  proc fetchDetailsForEnsUsername*(self: View, chainId: int, ensUsername: string) {.slot.} =
+  proc fetchDetailsForEnsUsername*(
+      self: View, chainId: int, ensUsername: string
+  ) {.slot.} =
     self.loading(true)
     self.delegate.fetchDetailsForEnsUsername(chainId, ensUsername)
 
-  proc processObtainedEnsUsermesDetails*(self: View, chainId: int, ensUsername: string, address: string, pubkey: string, isStatus: bool,
-    expirationTime: int) =
+  proc processObtainedEnsUsermesDetails*(
+      self: View,
+      chainId: int,
+      ensUsername: string,
+      address: string,
+      pubkey: string,
+      isStatus: bool,
+      expirationTime: int,
+  ) =
     self.loading(false)
-    self.detailsObtained(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
+    self.detailsObtained(
+      chainId, ensUsername, address, pubkey, isStatus, expirationTime
+    )
 
-  proc transactionWasSent(self: View, trxType: string, chainId: int, txHash: string, username: string, error: string) {.signal.}
-  proc emitTransactionWasSentSignal*(self: View, trxType: string, chainId: int, txHash: string, username: string, error: string) =
+  proc transactionWasSent(
+    self: View,
+    trxType: string,
+    chainId: int,
+    txHash: string,
+    username: string,
+    error: string,
+  ) {.signal.}
+
+  proc emitTransactionWasSentSignal*(
+      self: View,
+      trxType: string,
+      chainId: int,
+      txHash: string,
+      username: string,
+      error: string,
+  ) =
     self.transactionWasSent(trxType, chainId, txHash, username, error)
 
   proc getEtherscanTxLink*(self: View): string {.slot.} =
@@ -74,11 +110,18 @@ QtObject:
   proc getEtherscanAddressLink*(self: View): string {.slot.} =
     return self.etherscanAddressLink
 
-  proc transactionCompleted(self: View, success: bool, txHash: string, username: string, trxType: string) {.signal.}
-  proc emitTransactionCompletedSignal*(self: View, success: bool, txHash: string, username: string, trxType: string) =
+  proc transactionCompleted(
+    self: View, success: bool, txHash: string, username: string, trxType: string
+  ) {.signal.}
+
+  proc emitTransactionCompletedSignal*(
+      self: View, success: bool, txHash: string, username: string, trxType: string
+  ) =
     self.transactionCompleted(success, txHash, username, trxType)
 
-  proc removeEnsUsername*(self: View, chainId: int, ensUsername: string): bool {.slot.} =
+  proc removeEnsUsername*(
+      self: View, chainId: int, ensUsername: string
+  ): bool {.slot.} =
     return self.delegate.removeEnsUsername(chainId, ensUsername)
 
   proc connectOwnedUsername*(self: View, ensUsername: string, isStatus: bool) {.slot.} =
@@ -93,13 +136,19 @@ QtObject:
   proc getCurrentCurrency*(self: View): string {.slot.} =
     return self.delegate.getCurrentCurrency()
 
-  proc getFiatValue*(self: View, cryptoBalance: string, cryptoSymbol: string): string {.slot.} =
+  proc getFiatValue*(
+      self: View, cryptoBalance: string, cryptoSymbol: string
+  ): string {.slot.} =
     return self.delegate.getFiatValue(cryptoBalance, cryptoSymbol)
 
-  proc getCryptoValue*(self: View, fiatAmount: string, cryptoSymbol: string): string {.slot.} =
+  proc getCryptoValue*(
+      self: View, fiatAmount: string, cryptoSymbol: string
+  ): string {.slot.} =
     return self.delegate.getCryptoValue(fiatAmount, cryptoSymbol)
 
-  proc getGasEthValue*(self: View, gweiValue: string, gasLimit: string): string {.slot.} =
+  proc getGasEthValue*(
+      self: View, gweiValue: string, gasLimit: string
+  ): string {.slot.} =
     return self.delegate.getGasEthValue(gweiValue, gasLimit)
 
   proc getStatusTokenKey*(self: View): string {.slot.} =

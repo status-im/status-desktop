@@ -1,56 +1,62 @@
-import
-  strutils, options, json
+import strutils, options, json
 
-import
-  nimcrypto, web3/[encoding, ethtypes]
+import nimcrypto, web3/[encoding, ethtypes]
 
 import ../../../../backend/eth as status_eth
 
-import
-  ./transaction,
-  ./coder
-
+import ./transaction, ./coder
 
 type MethodDto* = object
   name*: string
   signature*: string
 
-const ERC20_procS* = @[
-  ("name", MethodDto(signature: "name()")),
-  ("symbol", MethodDto(signature: "symbol()")),
-  ("decimals", MethodDto(signature: "decimals()")),
-  ("totalSupply", MethodDto(signature: "totalSupply()")),
-  ("balanceOf", MethodDto(signature: "balanceOf(address)")),
-  ("transfer", MethodDto(signature: "transfer(address,uint256)")),
-  ("allowance", MethodDto(signature: "allowance(address,address)")),
-  ("approve", MethodDto(signature: "approve(address,uint256)")),
-  ("transferFrom", MethodDto(signature: "approve(address,address,uint256)")),
-  ("increaseAllowance", MethodDto(signature: "increaseAllowance(address,uint256)")),
-  ("decreaseAllowance", MethodDto(signature: "decreaseAllowance(address,uint256)")),
-  ("approveAndCall", MethodDto(signature: "approveAndCall(address,uint256,bytes)"))
-]
+const ERC20_procS* =
+  @[
+    ("name", MethodDto(signature: "name()")),
+    ("symbol", MethodDto(signature: "symbol()")),
+    ("decimals", MethodDto(signature: "decimals()")),
+    ("totalSupply", MethodDto(signature: "totalSupply()")),
+    ("balanceOf", MethodDto(signature: "balanceOf(address)")),
+    ("transfer", MethodDto(signature: "transfer(address,uint256)")),
+    ("allowance", MethodDto(signature: "allowance(address,address)")),
+    ("approve", MethodDto(signature: "approve(address,uint256)")),
+    ("transferFrom", MethodDto(signature: "approve(address,address,uint256)")),
+    ("increaseAllowance", MethodDto(signature: "increaseAllowance(address,uint256)")),
+    ("decreaseAllowance", MethodDto(signature: "decreaseAllowance(address,uint256)")),
+    ("approveAndCall", MethodDto(signature: "approveAndCall(address,uint256,bytes)")),
+  ]
 
-const ERC721_ENUMERABLE_procS* = @[
-  ("balanceOf", MethodDto(signature: "balanceOf(address)")),
-  ("ownerOf", MethodDto(signature: "ownerOf(uint256)")),
-  ("name", MethodDto(signature: "name()")),
-  ("symbol", MethodDto(signature: "symbol()")),
-  ("tokenURI", MethodDto(signature: "tokenURI(uint256)")),
-  ("baseURI", MethodDto(signature: "baseURI()")),
-  ("tokenOfOwnerByIndex", MethodDto(signature: "tokenOfOwnerByIndex(address,uint256)")),
-  ("totalSupply", MethodDto(signature: "totalSupply()")),
-  ("tokenByIndex", MethodDto(signature: "tokenByIndex(uint256)")),
-  ("approve", MethodDto(signature: "approve(address,uint256)")),
-  ("getApproved", MethodDto(signature: "getApproved(uint256)")),
-  ("setApprovalForAll", MethodDto(signature: "setApprovalForAll(address,bool)")),
-  ("isApprovedForAll", MethodDto(signature: "isApprovedForAll(address,address)")),
-  ("transferFrom", MethodDto(signature: "transferFrom(address,address,uint256)")),
-  ("safeTransferFrom", MethodDto(signature: "safeTransferFrom(address,address,uint256)")),
-  ("safeTransferFromWithData", MethodDto(signature: "safeTransferFrom(address,address,uint256,bytes)"))
-]
+const ERC721_ENUMERABLE_procS* =
+  @[
+    ("balanceOf", MethodDto(signature: "balanceOf(address)")),
+    ("ownerOf", MethodDto(signature: "ownerOf(uint256)")),
+    ("name", MethodDto(signature: "name()")),
+    ("symbol", MethodDto(signature: "symbol()")),
+    ("tokenURI", MethodDto(signature: "tokenURI(uint256)")),
+    ("baseURI", MethodDto(signature: "baseURI()")),
+    (
+      "tokenOfOwnerByIndex",
+      MethodDto(signature: "tokenOfOwnerByIndex(address,uint256)"),
+    ),
+    ("totalSupply", MethodDto(signature: "totalSupply()")),
+    ("tokenByIndex", MethodDto(signature: "tokenByIndex(uint256)")),
+    ("approve", MethodDto(signature: "approve(address,uint256)")),
+    ("getApproved", MethodDto(signature: "getApproved(uint256)")),
+    ("setApprovalForAll", MethodDto(signature: "setApprovalForAll(address,bool)")),
+    ("isApprovedForAll", MethodDto(signature: "isApprovedForAll(address,address)")),
+    ("transferFrom", MethodDto(signature: "transferFrom(address,address,uint256)")),
+    (
+      "safeTransferFrom",
+      MethodDto(signature: "safeTransferFrom(address,address,uint256)"),
+    ),
+    (
+      "safeTransferFromWithData",
+      MethodDto(signature: "safeTransferFrom(address,address,uint256,bytes)"),
+    ),
+  ]
 
 proc encodeproc(self: MethodDto): string =
-  ($nimcrypto.keccak256.digest(self.signature))[0..<8].toLower
+  ($nimcrypto.keccak256.digest(self.signature))[0 ..< 8].toLower
 
 proc encodeAbi*(self: MethodDto, obj: object = RootObj()): string =
   result = "0x" & self.encodeproc()
@@ -61,7 +67,7 @@ proc encodeAbi*(self: MethodDto, obj: object = RootObj()): string =
   for i in obj.fields:
     fieldCount += 1
   var
-    offset = 32*fieldCount
+    offset = 32 * fieldCount
     data = ""
 
   for field in obj.fields:
@@ -74,7 +80,13 @@ proc encodeAbi*(self: MethodDto, obj: object = RootObj()): string =
       result &= encoded.data
   result &= data
 
-proc estimateGas*(self: MethodDto, chainId: int, tx: var TransactionDataDto, procDescriptor: object, success: var bool): string =
+proc estimateGas*(
+    self: MethodDto,
+    chainId: int,
+    tx: var TransactionDataDto,
+    procDescriptor: object,
+    success: var bool,
+): string =
   success = true
   tx.data = self.encodeAbi(procDescriptor)
   try:
@@ -85,11 +97,19 @@ proc estimateGas*(self: MethodDto, chainId: int, tx: var TransactionDataDto, pro
     success = false
     result = e.msg
 
-proc getEstimateGasData*(self: MethodDto, tx: var TransactionDataDto, procDescriptor: object): JsonNode =
+proc getEstimateGasData*(
+    self: MethodDto, tx: var TransactionDataDto, procDescriptor: object
+): JsonNode =
   tx.data = self.encodeAbi(procDescriptor)
   return %*[%tx]
 
-proc call[T](self: MethodDto, chainId: int, tx: var TransactionDataDto, procDescriptor: object, success: var bool): T =
+proc call[T](
+    self: MethodDto,
+    chainId: int,
+    tx: var TransactionDataDto,
+    procDescriptor: object,
+    success: var bool,
+): T =
   success = true
   tx.data = self.encodeAbi(procDescriptor)
   let response: RpcResponse

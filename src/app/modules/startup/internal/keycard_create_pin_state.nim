@@ -1,8 +1,9 @@
-type
-  KeycardCreatePinState* = ref object of State
-    pinValid: bool 
+type KeycardCreatePinState* = ref object of State
+  pinValid: bool
 
-proc newKeycardCreatePinState*(flowType: FlowType, backState: State): KeycardCreatePinState =
+proc newKeycardCreatePinState*(
+    flowType: FlowType, backState: State
+): KeycardCreatePinState =
   result = KeycardCreatePinState()
   result.setup(flowType, StateType.KeycardCreatePin, backState)
   result.pinValid = false
@@ -14,7 +15,9 @@ method executeBackCommand*(self: KeycardCreatePinState, controller: Controller) 
   controller.setPin("")
   controller.setPinMatch(false)
 
-method getNextPrimaryState*(self: KeycardCreatePinState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: KeycardCreatePinState, controller: Controller
+): State =
   if not self.pinValid:
     return nil
   return createState(StateType.KeycardRepeatPin, self.flowType, self)

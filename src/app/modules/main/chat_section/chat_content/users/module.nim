@@ -14,23 +14,30 @@ from ../../../../../../app_service/common/conversion import intToEnum
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    isPublicCommunityChannel: bool
-    isSectionMemberList: bool
+type Module* = ref object of io_interface.AccessInterface
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  isPublicCommunityChannel: bool
+  isSectionMemberList: bool
 
 # Forward declaration
-proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): tuple[doAdd: bool, memberItem: MemberItem]
+proc processChatMember(
+  self: Module, member: ChatMember, reset: bool = false
+): tuple[doAdd: bool, memberItem: MemberItem]
 
 proc newModule*(
-  events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
-  chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service, isSectionMemberList: bool = false,
+    events: EventEmitter,
+    sectionId: string,
+    chatId: string,
+    belongsToCommunity: bool,
+    isUsersListAvailable: bool,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    isSectionMemberList: bool = false,
 ): Module =
   result = Module()
   result.view = view.newView(result)
@@ -71,11 +78,9 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().setName(
-    publicKey,
-    contactDetails.dto.displayName,
-    contactDetails.dto.name,
-    contactDetails.dto.localNickname
-    )
+    publicKey, contactDetails.dto.displayName, contactDetails.dto.name,
+    contactDetails.dto.localNickname,
+  )
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   if self.isPublicCommunityChannel:
@@ -110,11 +115,15 @@ method userProfileUpdated*(self: Module) =
 method loggedInUserImageChanged*(self: Module) =
   if self.isPublicCommunityChannel:
     return
-  self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
+  self.view.model().setIcon(
+    singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon()
+  )
 
 # This function either removes the member if it is no longer part of the community,
 # does nothing if the member is already in the model or creates the MemberItem
-proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): tuple[doAdd: bool, memberItem: MemberItem] =
+proc processChatMember(
+    self: Module, member: ChatMember, reset: bool = false
+): tuple[doAdd: bool, memberItem: MemberItem] =
   result.doAdd = false
   if member.id == "":
     return
@@ -132,7 +141,9 @@ proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): 
   let contactDetails = self.controller.getContactDetails(member.id)
   var status = OnlineStatus.Online
   if isMe:
-    let currentUserStatus = intToEnum(singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown)
+    let currentUserStatus = intToEnum(
+      singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown
+    )
     status = toOnlineStatus(currentUserStatus)
   else:
     let statusUpdateDto = self.controller.getStatusForContact(member.id)
@@ -165,7 +176,9 @@ method onChatMembersAdded*(self: Module, ids: seq[string]) =
   var memberItems: seq[MemberItem] = @[]
 
   for memberId in ids:
-    let (doAdd, item) = self.processChatMember(ChatMember(id: memberId, role: MemberRole.None, joined: true))
+    let (doAdd, item) = self.processChatMember(
+      ChatMember(id: memberId, role: MemberRole.None, joined: true)
+    )
     if doAdd:
       memberItems.add(item)
 
@@ -176,12 +189,13 @@ method onChatMemberRemoved*(self: Module, id: string) =
     return
   self.view.model().removeItemById(id)
 
-method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
+method onMembersChanged*(self: Module, members: seq[ChatMember]) =
   if self.isPublicCommunityChannel:
     return
   let modelIDs = self.view.model().getItemIds()
   let membersAdded = filter(members, member => not modelIDs.contains(member.id))
-  let membersRemoved = filter(modelIDs, id => not members.any(member => member.id == id))
+  let membersRemoved =
+    filter(modelIDs, id => not members.any(member => member.id == id))
 
   var memberItems: seq[MemberItem] = @[]
   for member in membersAdded:
@@ -193,25 +207,27 @@ method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
   for id in membersRemoved:
     self.onChatMemberRemoved(id)
 
-method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
+method onChatMemberUpdated*(
+    self: Module, publicKey: string, memberRole: MemberRole, joined: bool
+) =
   if self.isPublicCommunityChannel:
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
   discard self.view.model().updateItem(
-    pubKey = publicKey,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    isContact = contactDetails.dto.isContact,
-    isBlocked = contactDetails.dto.isBlocked,
-    memberRole,
-    joined,
-    trustStatus = contactDetails.dto.trustStatus,
-    contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
-  )
+      pubKey = publicKey,
+      displayName = contactDetails.dto.displayName,
+      ensName = contactDetails.dto.name,
+      isEnsVerified = contactDetails.dto.ensVerified,
+      localNickname = contactDetails.dto.localNickname,
+      alias = contactDetails.dto.alias,
+      icon = contactDetails.icon,
+      isContact = contactDetails.dto.isContact,
+      isBlocked = contactDetails.dto.isBlocked,
+      memberRole,
+      joined,
+      trustStatus = contactDetails.dto.trustStatus,
+      contactRequest = toContactStatus(contactDetails.dto.contactRequestState),
+    )
 
 method addGroupMembers*(self: Module, pubKeys: seq[string]) =
   self.controller.addGroupMembers(pubKeys)

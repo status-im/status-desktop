@@ -1,16 +1,19 @@
-type
-  Item* = ref object
-    chatId: string
-    name: string
-    color: string
-    colorId: int
-    icon: string
-    sectionId: string
-    sectionName: string
-    colorHash: string
-    emoji: string
+type Item* = ref object
+  chatId: string
+  name: string
+  color: string
+  colorId: int
+  icon: string
+  sectionId: string
+  sectionName: string
+  colorHash: string
+  emoji: string
 
-proc initItem*(chatId, name, color: string, colorId: int, icon, colorHash, sectionId, sectionName, emoji: string): Item =
+proc initItem*(
+    chatId, name, color: string,
+    colorId: int,
+    icon, colorHash, sectionId, sectionName, emoji: string,
+): Item =
   result = Item()
   result.chatId = chatId
   result.name = name

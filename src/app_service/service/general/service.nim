@@ -45,33 +45,38 @@ QtObject:
   proc getPasswordStrengthScore*(self: Service, password, userName: string): int =
     try:
       let response = status_general.getPasswordStrengthScore(password, @[userName])
-      if(response.result.contains("error")):
+      if (response.result.contains("error")):
         let errMsg = response.result["error"].getStr()
-        error "error: ", methodName="getPasswordStrengthScore", errDesription = errMsg
+        error "error: ", methodName = "getPasswordStrengthScore", errDesription = errMsg
         return
 
       return response.result["score"].getInt()
     except Exception as e:
-      error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg
+      error "error: ",
+        methodName = "getPasswordStrengthScore", errName = e.name, errDesription = e.msg
 
-  proc generateImages*(self: Service, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
+  proc generateImages*(
+      self: Service, image: string, aX: int, aY: int, bX: int, bY: int
+  ): seq[Image] =
     try:
       let response = status_general.generateImages(image, aX, aY, bX, bY)
-      if(response.result.kind != JArray):
-        error "error: ", procName="generateImages", errDesription = "response is not an array"
+      if (response.result.kind != JArray):
+        error "error: ",
+          procName = "generateImages", errDesription = "response is not an array"
         return
 
       for img in response.result:
         result.add(toImage(img))
     except Exception as e:
-      error "error: ", procName="generateImages", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "generateImages", errName = e.name, errDesription = e.msg
 
   proc runTimer(self: Service) =
     let arg = TimerTaskArg(
       tptr: timerTask,
       vptr: cast[uint](self.vptr),
       slot: "onTimeout",
-      timeoutInMilliseconds: TimerIntervalInMilliseconds
+      timeoutInMilliseconds: TimerIntervalInMilliseconds,
     )
     self.threadpool.start(arg)
 
@@ -81,7 +86,8 @@ QtObject:
     self.runTimer()
 
   proc onTimeout(self: Service, response: string) {.slot.} =
-    self.timeoutInMilliseconds = self.timeoutInMilliseconds - TimerIntervalInMilliseconds
+    self.timeoutInMilliseconds =
+      self.timeoutInMilliseconds - TimerIntervalInMilliseconds
     if self.timeoutInMilliseconds <= 0:
       self.events.emit(SIGNAL_GENERAL_TIMEOUT, Args())
     else:
@@ -89,15 +95,18 @@ QtObject:
 
   proc fetchWakuMessages*(self: Service) =
     try:
-      let response = status_mailservers.requestAllHistoricMessagesWithRetries(forceFetchingBackup = true)
-      if(not response.error.isNil):
+      let response = status_mailservers.requestAllHistoricMessagesWithRetries(
+        forceFetchingBackup = true
+      )
+      if (not response.error.isNil):
         error "could not set display name"
     except Exception as e:
-      error "error: ", procName="fetchWakuMessages", errName = e.name, errDesription = e.msg
+      error "error: ",
+        procName = "fetchWakuMessages", errName = e.name, errDesription = e.msg
 
   proc backupData*(self: Service): int64 =
     try:
-      let response =  status_general.backupData()
+      let response = status_general.backupData()
       return response.result.getInt
     except Exception as e:
-      error "error: ", procName="backupData", errName = e.name, errDesription = e.msg
+      error "error: ", procName = "backupData", errName = e.name, errDesription = e.msg

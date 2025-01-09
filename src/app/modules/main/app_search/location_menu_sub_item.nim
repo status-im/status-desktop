@@ -4,28 +4,23 @@ import ../../shared_models/[color_hash_item, color_hash_model]
 
 export base_item
 
-type
-  SubItem* = ref object of BaseItem
-    isUserIcon: bool
-    isImage: bool
-    colorId: int
-    colorHash: color_hash_model.Model
-    position: int
-    lastMessageTimestamp: int
+type SubItem* = ref object of BaseItem
+  isUserIcon: bool
+  isImage: bool
+  colorId: int
+  colorHash: color_hash_model.Model
+  position: int
+  lastMessageTimestamp: int
 
 proc initSubItem*(
-    value,
-    text,
-    image,
-    icon,
-    iconColor: string,
+    value, text, image, icon, iconColor: string,
     isUserIcon: bool,
     isImage: bool,
     position: int,
     lastMessageTimestamp: int,
     colorId: int = 0,
-    colorHash: seq[ColorHashSegment] = @[]
-  ): SubItem =
+    colorHash: seq[ColorHashSegment] = @[],
+): SubItem =
   result = SubItem()
   result.setup(value, text, image, icon, iconColor)
   result.isUserIcon = isUserIcon
@@ -34,13 +29,16 @@ proc initSubItem*(
   result.lastMessageTimestamp = lastMessageTimestamp
   result.colorId = colorId
   result.colorHash = color_hash_model.newModel()
-  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
+  result.colorHash.setItems(
+    map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx))
+  )
 
 proc delete*(self: SubItem) =
   self.BaseItem.delete
 
 proc `$`*(self: SubItem): string =
-  result = fmt"""SearchMenuSubItem(
+  result =
+    fmt"""SearchMenuSubItem(
     value: {self.value},
     text: {self.text},
     position: {self.position},
@@ -53,19 +51,20 @@ proc `$`*(self: SubItem): string =
     ]"""
 
 proc toJsonNode*(self: SubItem): JsonNode =
-  result = %* {
-    "value": self.value,
-    "text": self.text,
-    "position": self.position,
-    "lastMessageTimestamp": self.lastMessageTimestamp,
-    "imageSource": self.image,
-    "iconName": self.icon,
-    "iconColor": self.iconColor,
-    "isUserIcon": self.isUserIcon,
-    "isImage": self.isImage,
-    "colorId": self.colorId,
-    "colorHash": self.colorHash.toJson()
-  }
+  result =
+    %*{
+      "value": self.value,
+      "text": self.text,
+      "position": self.position,
+      "lastMessageTimestamp": self.lastMessageTimestamp,
+      "imageSource": self.image,
+      "iconName": self.icon,
+      "iconColor": self.iconColor,
+      "isUserIcon": self.isUserIcon,
+      "isImage": self.isImage,
+      "colorId": self.colorId,
+      "colorHash": self.colorHash.toJson(),
+    }
 
 proc position*(self: SubItem): int =
   return self.position

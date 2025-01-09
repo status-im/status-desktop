@@ -13,7 +13,7 @@ type StatsSignal* = ref object of Signal
 proc toStats(jsonMsg: JsonNode): Stats =
   result = Stats(
     uploadRate: uint64(jsonMsg{"uploadRate"}.getBiggestInt()),
-    downloadRate: uint64(jsonMsg{"downloadRate"}.getBiggestInt())
+    downloadRate: uint64(jsonMsg{"downloadRate"}.getBiggestInt()),
   )
 
 proc fromEvent*(T: type StatsSignal, event: JsonNode): StatsSignal =

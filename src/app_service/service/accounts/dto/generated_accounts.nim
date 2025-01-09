@@ -18,7 +18,8 @@ type DerivedAccounts* = object
   defaultWallet*: DerivedAccountDetails
   eip1581*: DerivedAccountDetails
   encryption*: DerivedAccountDetails
-  derivations*: Table[string, DerivedAccountDetails] # used to keep all derivations even for custom paths
+  derivations*: Table[string, DerivedAccountDetails]
+    # used to keep all derivations even for custom paths
 
 type GeneratedAccountDto* = object
   id*: string
@@ -32,11 +33,13 @@ type GeneratedAccountDto* = object
   alias*: string
 
 proc isValid*(self: GeneratedAccountDto): bool =
-  result = self.id.len > 0 and self.publicKey.len > 0 and
-    self.address.len > 0 and self.keyUid.len > 0
+  result =
+    self.id.len > 0 and self.publicKey.len > 0 and self.address.len > 0 and
+    self.keyUid.len > 0
 
-proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string):
-  DerivedAccountDetails =
+proc toDerivedAccountDetails(
+    jsonObj: JsonNode, derivationPath: string
+): DerivedAccountDetails =
   # Mapping this DTO is not strightforward since only keys are used for id. We
   # handle it a bit different.
   result = DerivedAccountDetails()
@@ -48,16 +51,17 @@ proc toDerivedAccountDetails(jsonObj: JsonNode, derivationPath: string):
 proc toDerivedAccounts*(jsonObj: JsonNode): DerivedAccounts =
   result = DerivedAccounts()
   for derivationPath, derivedObj in jsonObj:
-    result.derivations[derivationPath] = toDerivedAccountDetails(derivedObj, derivationPath)
-    if(derivationPath == PATH_WHISPER):
+    result.derivations[derivationPath] =
+      toDerivedAccountDetails(derivedObj, derivationPath)
+    if (derivationPath == PATH_WHISPER):
       result.whisper = toDerivedAccountDetails(derivedObj, derivationPath)
-    elif(derivationPath == PATH_WALLET_ROOT):
+    elif (derivationPath == PATH_WALLET_ROOT):
       result.walletRoot = toDerivedAccountDetails(derivedObj, derivationPath)
-    elif(derivationPath == PATH_DEFAULT_WALLET):
+    elif (derivationPath == PATH_DEFAULT_WALLET):
       result.defaultWallet = toDerivedAccountDetails(derivedObj, derivationPath)
-    elif(derivationPath == PATH_EIP_1581):
+    elif (derivationPath == PATH_EIP_1581):
       result.eip1581 = toDerivedAccountDetails(derivedObj, derivationPath)
-    elif(derivationPath == PATH_ENCRYPTION):
+    elif (derivationPath == PATH_ENCRYPTION):
       result.encryption = toDerivedAccountDetails(derivedObj, derivationPath)
 
 proc toGeneratedAccountDto*(jsonObj: JsonNode): GeneratedAccountDto =
@@ -70,5 +74,5 @@ proc toGeneratedAccountDto*(jsonObj: JsonNode): GeneratedAccountDto =
   discard jsonObj.getProp("mnemonic", result.mnemonic)
 
   var derivationsObj: JsonNode
-  if(jsonObj.getProp("derived", derivationsObj)):
+  if (jsonObj.getProp("derived", derivationsObj)):
     result.derivedAccounts = toDerivedAccounts(derivationsObj)

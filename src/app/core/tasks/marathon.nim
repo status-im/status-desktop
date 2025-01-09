@@ -11,9 +11,8 @@ export marathon_common
 logScope:
   topics = "marathon"
 
-type
-  Marathon* = ref object
-    workers: Table[string, MarathonWorker]
+type Marathon* = ref object
+  workers: Table[string, MarathonWorker]
 
 proc start*[T: MarathonTaskArg](self: MarathonWorker, arg: T) =
   self.chanSendToWorker.sendSync(arg.encode.safe)
@@ -30,7 +29,10 @@ proc newMarathon*(worker: MarathonWorker): Marathon =
 
 proc `[]`*(self: Marathon, name: string): MarathonWorker =
   if not self.workers.contains(name):
-    raise newException(ValueError, &"""Worker '{name}' is not registered. Use 'registerWorker("{name}", {name}Worker)' to register the worker first.""")
+    raise newException(
+      ValueError,
+      &"""Worker '{name}' is not registered. Use 'registerWorker("{name}", {name}Worker)' to register the worker first.""",
+    )
   self.workers[name]
 
 proc teardown*(self: Marathon) =

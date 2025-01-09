@@ -4,23 +4,21 @@ import item
 import ../../../../../app_service/service/settings/dto/settings
 import ../../../shared_models/model_utils
 
-type
-  ModelRole {.pure.} = enum
-    Id = UserRole + 1
-    Name
-    Image
-    Color
-    Type
-    Customized
-    MuteAllMessages
-    PersonalMentions
-    GlobalMentions
-    OtherMessages
+type ModelRole {.pure.} = enum
+  Id = UserRole + 1
+  Name
+  Image
+  Color
+  Type
+  Customized
+  MuteAllMessages
+  PersonalMentions
+  GlobalMentions
+  OtherMessages
 
 QtObject:
-  type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+  type Model* = ref object of QAbstractListModel
+    items: seq[Item]
 
   proc delete*(self: Model) =
     self.items = @[]
@@ -36,6 +34,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -45,16 +44,16 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Id.int:"itemId",
-      ModelRole.Name.int:"name",
-      ModelRole.Image.int:"image",
-      ModelRole.Color.int:"color",
-      ModelRole.Type.int:"type",
-      ModelRole.Customized.int:"customized",
-      ModelRole.MuteAllMessages.int:"muteAllMessages",
-      ModelRole.PersonalMentions.int:"personalMentions",
-      ModelRole.GlobalMentions.int:"globalMentions",
-      ModelRole.OtherMessages.int:"otherMessages"
+      ModelRole.Id.int: "itemId",
+      ModelRole.Name.int: "name",
+      ModelRole.Image.int: "image",
+      ModelRole.Color.int: "color",
+      ModelRole.Type.int: "type",
+      ModelRole.Customized.int: "customized",
+      ModelRole.MuteAllMessages.int: "muteAllMessages",
+      ModelRole.PersonalMentions.int: "personalMentions",
+      ModelRole.GlobalMentions.int: "globalMentions",
+      ModelRole.OtherMessages.int: "otherMessages",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -67,7 +66,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Id:
       result = newQVariant(item.id)
     of ModelRole.Name:
@@ -93,15 +92,16 @@ QtObject:
     # add most recent item on top
     var position = -1
     for i in 0 ..< self.items.len:
-      if(item.joinedTimestamp >= self.items[i].joinedTimestamp):
+      if (item.joinedTimestamp >= self.items[i].joinedTimestamp):
         position = i
         break
 
-    if(position == -1):
+    if (position == -1):
       position = self.items.len
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
@@ -113,7 +113,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, 0, items.len - 1)
     self.items = items
@@ -123,7 +124,7 @@ QtObject:
   proc findIndexForItemId*(self: Model, id: string): int =
     var ind = 0
     for it in self.items:
-      if(it.id == id):
+      if (it.id == id):
         return ind
       ind.inc
     return -1
@@ -134,7 +135,8 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
+    defer:
+      parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -146,12 +148,18 @@ QtObject:
     for i in 0 ..< self.items.len:
       yield self.items[i]
 
-  proc updateExemptions*(self: Model, id: string, muteAllMessages = false, personalMentions = VALUE_NOTIF_SEND_ALERTS, 
-    globalMentions = VALUE_NOTIF_SEND_ALERTS, otherMessages = VALUE_NOTIF_TURN_OFF) =
+  proc updateExemptions*(
+      self: Model,
+      id: string,
+      muteAllMessages = false,
+      personalMentions = VALUE_NOTIF_SEND_ALERTS,
+      globalMentions = VALUE_NOTIF_SEND_ALERTS,
+      otherMessages = VALUE_NOTIF_TURN_OFF,
+  ) =
     let ind = self.findIndexForItemId(id)
-    if(ind == -1):
+    if (ind == -1):
       return
-    
+
     var roles: seq[int] = @[]
 
     updateRole(muteAllMessages, MuteAllMessages)
@@ -165,7 +173,8 @@ QtObject:
     roles.add(ModelRole.Customized.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, roles)
 
   proc updateName*(self: Model, id: string, name: string) =
@@ -176,7 +185,8 @@ QtObject:
     self.items[ind].name = name
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, @[ModelRole.Name.int])
 
   proc updateItem*(self: Model, id, name, image, color: string) =
@@ -194,5 +204,6 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
+    defer:
+      index.delete
     self.dataChanged(index, index, roles)

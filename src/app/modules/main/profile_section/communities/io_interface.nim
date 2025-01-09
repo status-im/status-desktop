@@ -1,7 +1,6 @@
 import NimQml
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
 
 method delete*(self: AccessInterface) {.base.} =
@@ -22,12 +21,18 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method shareCommunityToUsers*(self: AccessInterface, communityID: string, pubKeysJSON: string, inviteMessage: string): string {.base.} =
+method shareCommunityToUsers*(
+    self: AccessInterface,
+    communityID: string,
+    pubKeysJSON: string,
+    inviteMessage: string,
+): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method leaveCommunity*(self: AccessInterface, communityID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCommunityMuted*(self: AccessInterface, communityID: string, mutedType: int) {.base.} =
+method setCommunityMuted*(
+    self: AccessInterface, communityID: string, mutedType: int
+) {.base.} =
   raise newException(ValueError, "No implementation available")
-

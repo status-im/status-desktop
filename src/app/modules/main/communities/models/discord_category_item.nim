@@ -1,22 +1,20 @@
 import stew/shims/strformat
 
-type
-  DiscordCategoryItem* = object
-    id*: string
-    name*: string
-    selected*: bool
+type DiscordCategoryItem* = object
+  id*: string
+  name*: string
+  selected*: bool
 
 proc initDiscordCategoryItem*(
-  id: string,
-  name: string,
-  selected: bool
+    id: string, name: string, selected: bool
 ): DiscordCategoryItem =
   result.id = id
   result.name = name
   result.selected = selected
 
 proc `$`*(self: DiscordCategoryItem): string =
-  result = fmt"""DiscordCategoryItem(
+  result =
+    fmt"""DiscordCategoryItem(
     id: {self.id},
     name: {self.name},
     ]"""

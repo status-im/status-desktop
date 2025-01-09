@@ -1,5 +1,4 @@
-type
-  SelectKeypairState* = ref object of State
+type SelectKeypairState* = ref object of State
 
 proc newSelectKeypairState*(backState: State): SelectKeypairState =
   result = SelectKeypairState()

@@ -2,14 +2,13 @@ import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/currency/dto
 
-type
-  Controller* = ref object of RootObj
-    delegate: io_interface.AccessInterface
-    walletAccountService: wallet_account_service.Service
+type Controller* = ref object of RootObj
+  delegate: io_interface.AccessInterface
+  walletAccountService: wallet_account_service.Service
 
 proc newController*(
-  delegate: io_interface.AccessInterface,
-  walletAccountService: wallet_account_service.Service,
+    delegate: io_interface.AccessInterface,
+    walletAccountService: wallet_account_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -21,11 +20,20 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(
+    self: Controller
+): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string) =
-  discard self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
+proc updateAccount*(
+    self: Controller,
+    address: string,
+    accountName: string,
+    colorId: string,
+    emoji: string,
+) =
+  discard
+    self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
 
 proc moveAccountFinally*(self: Controller, fromPosition: int, toPosition: int) =
   self.walletAccountService.moveAccountFinally(fromPosition, toPosition)
@@ -63,8 +71,14 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
 
-proc getTotalCurrencyBalance*(self: Controller, address: string, chainIds: seq[int]): float64 =
+proc getTotalCurrencyBalance*(
+    self: Controller, address: string, chainIds: seq[int]
+): float64 =
   return self.walletAccountService.getTotalCurrencyBalance(@[address], chainIds)
 
-proc updateWatchAccountHiddenFromTotalBalance*(self: Controller, address: string, hideFromTotalBalance: bool) =
-  discard self.walletAccountService.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+proc updateWatchAccountHiddenFromTotalBalance*(
+    self: Controller, address: string, hideFromTotalBalance: bool
+) =
+  discard self.walletAccountService.updateWatchAccountHiddenFromTotalBalance(
+    address, hideFromTotalBalance
+  )

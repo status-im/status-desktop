@@ -1,4 +1,5 @@
-import NimQml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
+import
+  NimQml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
 
 import status_go
 import keycard_go
@@ -10,12 +11,11 @@ import app/global/global_singleton
 import app/global/local_app_settings
 import app/boot/app_controller
 
-
 when defined(macosx) and defined(arm64):
   import posix
 
 when defined(windows):
-    {.link: "../status.o".}
+  {.link: "../status.o".}
 
 logScope:
   topics = "status-app"
@@ -24,13 +24,22 @@ var signalsManagerQObjPointer: pointer
 var keycardServiceQObjPointer: pointer
 
 proc isExperimental(): string =
-  result = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
+  result = if getEnv("EXPERIMENTAL") == "1": "1" else: "0"
+    # value explicity passed to avoid trusting input
 
 proc determineResourcePath(): string =
-  result = if defined(windows) and defined(production): "/../resources/resources.rcc" else: "/../resources.rcc"
+  result =
+    if defined(windows) and defined(production):
+      "/../resources/resources.rcc"
+    else:
+      "/../resources.rcc"
 
 proc determineFleetsPath(): string =
-  result = if defined(windows) and defined(production): "/../resources/fleets.json" else: "/../fleets.json"
+  result =
+    if defined(windows) and defined(production):
+      "/../resources/fleets.json"
+    else:
+      "/../fleets.json"
 
 proc determineOpenUri(): string =
   if OPENURI.len > 0:
@@ -49,18 +58,27 @@ proc determineStatusAppIconPath(): string =
 proc prepareLogging() =
   # Outputs logs in the node tab
   when compiles(defaultChroniclesStream.output.writer):
-    defaultChroniclesStream.output.writer =
-      proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
-        try:
-          if signalsManagerQObjPointer != nil:
-            signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveChroniclesLogEvent")
-        except:
-          logLoggingFailure(cstring(msg), getCurrentException())
+    defaultChroniclesStream.output.writer = proc(
+        logLevel: LogLevel, msg: LogOutputStr
+    ) {.gcsafe, raises: [Defect].} =
+      try:
+        if signalsManagerQObjPointer != nil:
+          signal_handler(
+            signalsManagerQObjPointer,
+            ($(%*{"type": "chronicles-log", "event": msg})).cstring,
+            "receiveChroniclesLogEvent",
+          )
+      except:
+        logLoggingFailure(cstring(msg), getCurrentException())
 
-  let defaultLogLvl = if defined(production): chronicles.LogLevel.INFO else: chronicles.LogLevel.DEBUG
+  let defaultLogLvl =
+    if defined(production): chronicles.LogLevel.INFO else: chronicles.LogLevel.DEBUG
   # default log level can be overriden by LOG_LEVEL env parameter
-  let logLvl = try: parseEnum[chronicles.LogLevel](main_constants.LOG_LEVEL)
-               except: defaultLogLvl
+  let logLvl =
+    try:
+      parseEnum[chronicles.LogLevel](main_constants.LOG_LEVEL)
+    except:
+      defaultLogLvl
 
   setLogLevel(logLvl)
 
@@ -77,7 +95,9 @@ proc setupRemoteSignalsHandling() =
       signal_handler(signalsManagerQObjPointer, p0, "receiveSignal")
   status_go.setSignalEventCallback(callbackStatusGo)
 
-  var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(p0: cstring) {.cdecl.} =
+  var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(
+      p0: cstring
+  ) {.cdecl.} =
     if keycardServiceQObjPointer != nil:
       signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
   keycard_go.setSignalEventCallback(callbackKeycardGo)
@@ -87,10 +107,17 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(tmpDir)
   createDir(logDir)
 
-proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, file: cstring, function: cstring, line: cint) {.cdecl, exportc.} =
+proc logHandlerCallback(
+    messageType: cint,
+    message: cstring,
+    category: cstring,
+    file: cstring,
+    function: cstring,
+    line: cint,
+) {.cdecl, exportc.} =
   # Initialize Nim GC stack bottom for foreign threads
   # https://status-im.github.io/nim-style-guide/interop.html#calling-nim-code-from-other-languages
-  when declared(setupForeignThreadGc): 
+  when declared(setupForeignThreadGc):
     setupForeignThreadGc()
   when declared(nimGC_setStackBottom):
     var locals {.volatile, noinit.}: pointer
@@ -101,8 +128,9 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
   let fileString = $file
 
   if fileString != "" and text.startsWith(fileString):
-    text = text[fileString.len..^1]              # Remove filepath
-    text = text.replace(re"[:0-9]+:\s*")  # Remove line, column, colons and space separator
+    text = text[fileString.len ..^ 1] # Remove filepath
+    text = text.replace(re"[:0-9]+:\s*")
+      # Remove line, column, colons and space separator
 
   logScope:
     chroniclesLineNumbers = false
@@ -111,22 +139,21 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
     file = fileString & ":" & $line
     text
 
-  case int(messageType):
-    of 0: # QtDebugMsg
-      debug "qt message"
-    of 1: # QtWarningMsg
-      warn "qt warning"
-    of 2: # QtCriticalMsg
-      error "qt error"
-    of 3: # QtFatalMsg
-      fatal "qt fatal error"
-    of 4: # QtInfoMsg
-      info "qt message"
-    else:
-      warn "qt message of unknown type", messageType = int(messageType)
+  case int(messageType)
+  of 0: # QtDebugMsg
+    debug "qt message"
+  of 1: # QtWarningMsg
+    warn "qt warning"
+  of 2: # QtCriticalMsg
+    error "qt error"
+  of 3: # QtFatalMsg
+    fatal "qt fatal error"
+  of 4: # QtInfoMsg
+    info "qt message"
+  else:
+    warn "qt message of unknown type", messageType = int(messageType)
 
 proc mainProc() =
-
   when defined(macosx) and defined(arm64):
     var signalStack: cstring = cast[cstring](allocShared(SIGSTKSZ))
     var ss: ptr Stack = cast[ptr Stack](allocShared0(sizeof(Stack)))
@@ -135,8 +162,8 @@ proc mainProc() =
     ss.ss_flags = 0
     ss.ss_size = SIGSTKSZ
     if sigaltstack(ss[], ss2[]) < 0:
-        echo("sigaltstack error!")
-        quit()
+      echo("sigaltstack error!")
+      quit()
 
     var sa: ptr Sigaction = cast[ptr Sigaction](allocShared0(sizeof(Sigaction)))
     var sa2: Sigaction
@@ -145,8 +172,8 @@ proc mainProc() =
     sa.sa_flags = SA_ONSTACK
 
     if sigaction(SIGURG, sa[], addr sa2) < 0:
-        echo("sigaction error!")
-        quit()
+      echo("sigaction error!")
+      quit()
 
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
@@ -201,17 +228,27 @@ proc mainProc() =
 
   singletonInstance.engine.addImportPath("qrc:/")
   singletonInstance.engine.addImportPath("qrc:/./imports")
-  singletonInstance.engine.addImportPath("qrc:/./app");
+  singletonInstance.engine.addImportPath("qrc:/./app")
   singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)
-  singletonInstance.engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
-  singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))
-  singletonInstance.engine.setRootContextProperty("isExperimental", isExperimentalQVariant)
-  singletonInstance.engine.setRootContextProperty("fleetSelectionEnabled", newQVariant(FLEET_SELECTION_ENABLED))
+  singletonInstance.engine.setRootContextProperty(
+    "uiScaleFilePath", newQVariant(uiScaleFilePath)
+  )
+  singletonInstance.engine.setRootContextProperty(
+    "singleInstance", newQVariant(singleInstance)
+  )
+  singletonInstance.engine.setRootContextProperty(
+    "isExperimental", isExperimentalQVariant
+  )
+  singletonInstance.engine.setRootContextProperty(
+    "fleetSelectionEnabled", newQVariant(FLEET_SELECTION_ENABLED)
+  )
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
   singletonInstance.engine.setRootContextProperty("production", isProductionQVariant)
 
   # Ensure we have the featureFlags instance available from the start
-  singletonInstance.engine.setRootContextProperty("featureFlagsRootContextProperty", newQVariant(singletonInstance.featureFlags()))
+  singletonInstance.engine.setRootContextProperty(
+    "featureFlagsRootContextProperty", newQVariant(singletonInstance.featureFlags())
+  )
 
   statusq_registerQmlTypes()
 
@@ -243,7 +280,7 @@ proc mainProc() =
   keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
   setupRemoteSignalsHandling()
 
-  info "app info", version=APP_VERSION, commit=GIT_COMMIT, currentDateTime=now()
+  info "app info", version = APP_VERSION, commit = GIT_COMMIT, currentDateTime = now()
 
   info "starting application controller..."
   appController.start()

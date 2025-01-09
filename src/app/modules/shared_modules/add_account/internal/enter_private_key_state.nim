@@ -1,5 +1,4 @@
-type
-  EnterPrivateKeyState* = ref object of State
+type EnterPrivateKeyState* = ref object of State
 
 proc newEnterPrivateKeyState*(backState: State): EnterPrivateKeyState =
   result = EnterPrivateKeyState()
@@ -7,8 +6,10 @@ proc newEnterPrivateKeyState*(backState: State): EnterPrivateKeyState =
 
 proc delete*(self: EnterPrivateKeyState) =
   self.State.delete
-  
-method executePrePrimaryStateCommand*(self: EnterPrivateKeyState, controller: Controller) =
+
+method executePrePrimaryStateCommand*(
+    self: EnterPrivateKeyState, controller: Controller
+) =
   controller.buildNewPrivateKeyKeypairAndAddItToOrigin()
 
 method getNextPrimaryState*(self: EnterPrivateKeyState, controller: Controller): State =

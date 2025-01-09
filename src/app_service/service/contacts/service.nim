@@ -1,4 +1,13 @@
-import NimQml, Tables, json, sequtils, stew/shims/strformat, chronicles, strutils, times, std/times
+import
+  NimQml,
+  Tables,
+  json,
+  sequtils,
+  stew/shims/strformat,
+  chronicles,
+  strutils,
+  times,
+  std/times
 
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
@@ -83,17 +92,17 @@ const SIGNAL_APPEND_CHAT_MESSAGES* = "appendChatMessages"
 
 const SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED* = "contactProfileShowcaseUpdated"
 const SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED* = "contactProfileShowcaseLoaded"
-const SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* = "profileShowcaseAccountsByAddressFetched"
+const SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED* =
+  "profileShowcaseAccountsByAddressFetched"
 
-type
-  ContactsGroup* {.pure.} = enum
-    AllKnownContacts
-    MyMutualContacts
-    IncomingPendingContactRequests
-    OutgoingPendingContactRequests
-    IncomingRejectedContactRequests
-    OutgoingRejectedContactRequests
-    BlockedContacts
+type ContactsGroup* {.pure.} = enum
+  AllKnownContacts
+  MyMutualContacts
+  IncomingPendingContactRequests
+  OutgoingPendingContactRequests
+  IncomingRejectedContactRequests
+  OutgoingRejectedContactRequests
+  BlockedContacts
 
 QtObject:
   type Service* = ref object of QObject
@@ -122,8 +131,8 @@ QtObject:
       events: EventEmitter,
       threadpool: ThreadPool,
       networkService: network_service.Service,
-      settingsService: settings_service.Service
-      ): Service =
+      settingsService: settings_service.Service,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.closingApp = false
@@ -137,7 +146,8 @@ QtObject:
   proc addContact(self: Service, contact: ContactDetails) =
     # Private proc, used for adding contacts only.
     self.contacts[contact.dto.id] = contact
-    self.contactsStatus[contact.dto.id] = StatusUpdateDto(publicKey: contact.dto.id, statusType: StatusType.Unknown)
+    self.contactsStatus[contact.dto.id] =
+      StatusUpdateDto(publicKey: contact.dto.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
     let arg = AsyncFetchContactsTaskArg(
@@ -146,7 +156,7 @@ QtObject:
       slot: "fetchContactsDone",
     )
     self.threadpool.start(arg)
-    
+
   proc fetchContactsDone*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
@@ -159,7 +169,7 @@ QtObject:
 
   proc updateAndEmitStatuses(self: Service, statusUpdates: seq[StatusUpdateDto]) =
     for s in statusUpdates:
-      if(not self.contactsStatus.hasKey(s.publicKey)):
+      if (not self.contactsStatus.hasKey(s.publicKey)):
         # we shouldn't be here ever, but the following line ensures we have added a contact before setting status for it
         discard self.getContactById(s.publicKey)
 
@@ -169,9 +179,9 @@ QtObject:
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
   proc doConnect(self: Service) =
-    self.events.on(SignalType.Message.event) do(e:Args):
+    self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
-      if(receivedData.statusUpdates.len > 0):
+      if (receivedData.statusUpdates.len > 0):
         self.updateAndEmitStatuses(receivedData.statusUpdates)
 
       if receivedData.contacts.len > 0:
@@ -182,11 +192,13 @@ QtObject:
           self.saveContact(receivedContact)
 
           # Check if the contact request was sent by us and if it was approved by the recipient
-          if localContact.added and not localContact.hasAddedUs and receivedContact.hasAddedUs:
+          if localContact.added and not localContact.hasAddedUs and
+              receivedContact.hasAddedUs:
             singletonInstance.globalEvents.showAcceptedContactRequest(
               "Contact request accepted",
               fmt "{receivedContact.displayName} accepted your contact request",
-              receivedContact.id)
+              receivedContact.id,
+            )
 
           let data = ContactArgs(contactId: c.id)
           self.events.emit(SIGNAL_CONTACT_UPDATED, data)
@@ -195,11 +207,13 @@ QtObject:
       let receivedData = MessageSignal(e)
       if receivedData.updatedProfileShowcaseContactIDs.len > 0:
         for contactId in receivedData.updatedProfileShowcaseContactIDs:
-          self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
-            ProfileShowcaseContactIdArgs(contactId: contactId))
-    self.events.on(SignalType.StatusUpdatesTimedout.event) do(e:Args):
+          self.events.emit(
+            SIGNAL_CONTACT_PROFILE_SHOWCASE_UPDATED,
+            ProfileShowcaseContactIdArgs(contactId: contactId),
+          )
+    self.events.on(SignalType.StatusUpdatesTimedout.event) do(e: Args):
       var receivedData = StatusUpdatesTimedoutSignal(e)
-      if(receivedData.statusUpdates.len > 0):
+      if (receivedData.statusUpdates.len > 0):
         self.updateAndEmitStatuses(receivedData.statusUpdates)
 
   proc setImageServerUrl(self: Service) =
@@ -216,8 +230,14 @@ QtObject:
     self.fetchContacts()
     self.doConnect()
 
-    signalConnect(singletonInstance.userProfile, "nameChanged()", self, "onLoggedInUserNameChange()", 2)
-    signalConnect(singletonInstance.userProfile, "imageChanged()", self, "onLoggedInUserImageChange()", 2)
+    signalConnect(
+      singletonInstance.userProfile, "nameChanged()", self,
+      "onLoggedInUserNameChange()", 2,
+    )
+    signalConnect(
+      singletonInstance.userProfile, "imageChanged()", self,
+      "onLoggedInUserImageChange()", 2,
+    )
 
   proc onLoggedInUserNameChange*(self: Service) {.slot.} =
     let data = Args()
@@ -241,22 +261,17 @@ QtObject:
       of ContactsGroup.AllKnownContacts:
         contacts.add(dto)
       of ContactsGroup.IncomingPendingContactRequests:
-        if dto.isContactRequestReceived() and
-           not dto.isContactRequestSent() and
-           not dto.isContactRemoved() and
-           not dto.isReceivedContactRequestRejected() and
-           not dto.isBlocked():
+        if dto.isContactRequestReceived() and not dto.isContactRequestSent() and
+            not dto.isContactRemoved() and not dto.isReceivedContactRequestRejected() and
+            not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.OutgoingPendingContactRequests:
-        if dto.isContactRequestSent() and
-           not dto.isContactRequestReceived() and
-           not dto.isContactRemoved() and
-           not dto.isBlocked():
+        if dto.isContactRequestSent() and not dto.isContactRequestReceived() and
+            not dto.isContactRemoved() and not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.IncomingRejectedContactRequests:
-        if dto.isContactRequestReceived() and
-           dto.isReceivedContactRequestRejected() and
-           not dto.isBlocked():
+        if dto.isContactRequestReceived() and dto.isReceivedContactRequestRejected() and
+            not dto.isBlocked():
           contacts.add(dto)
       of ContactsGroup.OutgoingRejectedContactRequests:
         # if dto.isContactRequestSent() and
@@ -274,20 +289,21 @@ QtObject:
     return contacts
 
   proc generateAlias*(self: Service, publicKey: string): string =
-    if(publicKey.len == 0):
+    if (publicKey.len == 0):
       error "cannot generate an alias from the empty public key"
       return
     return status_accounts.generateAlias(publicKey).result.getStr
 
-  proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
-      tuple[name: string, optionalName: string, image: string, largeImage: string] =
+  proc getContactNameAndImageInternal(
+      self: Service, contactDto: ContactsDto
+  ): tuple[name: string, optionalName: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
     result.name = contactDto.userDefaultDisplayName()
     result.optionalName = contactDto.userOptionalName()
-    if(contactDto.image.thumbnail.len > 0):
+    if (contactDto.image.thumbnail.len > 0):
       result.image = contactDto.image.thumbnail
-    if(contactDto.image.large.len > 0):
+    if (contactDto.image.large.len > 0):
       result.largeImage = contactDto.image.large
 
   proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails =
@@ -300,16 +316,17 @@ QtObject:
     result.isCurrentUser = contactDto.id == singletonInstance.userProfile.getPubKey()
     result.dto = contactDto
     if not contactDto.ensVerified:
-      result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
+      result.colorHash =
+        procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
 
   proc getContactDetails*(self: Service, id: string): ContactDetails =
     var pubkey = id
 
     if service_conversion.isCompressedPubKey(id):
-        pubkey = status_accounts.decompressPk(id).result
+      pubkey = status_accounts.decompressPk(id).result
 
     if len(pubkey) == 0:
-        return
+      return
 
     if pubkey == singletonInstance.userProfile.getPubKey():
       # If we try to get the contact details of ourselves, just return our own info
@@ -323,7 +340,7 @@ QtObject:
           added: true,
           image: Images(
             thumbnail: singletonInstance.userProfile.getThumbnailImage(),
-            large: singletonInstance.userProfile.getLargeImage()
+            large: singletonInstance.userProfile.getLargeImage(),
           ),
           trustStatus: TrustStatus.Trusted,
           bio: self.settingsService.getBio(),
@@ -365,19 +382,22 @@ QtObject:
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
     if publicKey == singletonInstance.userProfile.getPubKey():
       let currentUserStatus = self.settingsService.getCurrentUserStatus()
-      return StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
+      return StatusUpdateDto(
+        publicKey: singletonInstance.userProfile.getPubKey(),
         statusType: currentUserStatus.statusType,
         clock: currentUserStatus.clock.uint64,
-        text: currentUserStatus.text)
+        text: currentUserStatus.text,
+      )
     # This proc will fetch current accurate status from `status-go` once we add an api point there for it.
-    if(not self.contactsStatus.hasKey(publicKey)):
+    if (not self.contactsStatus.hasKey(publicKey)):
       # following line ensures that we have added a contact before setting status for it
       discard self.getContactById(publicKey)
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImage*(self: Service, publicKey: string):
-      tuple[name: string, image: string, largeImage: string] =
+  proc getContactNameAndImage*(
+      self: Service, publicKey: string
+  ): tuple[name: string, image: string, largeImage: string] =
     let contactDto = self.getContactById(publicKey)
     let tempRes = self.getContactNameAndImageInternal(contactDto)
     return (tempRes.name, tempRes.image, tempRes.largeImage)
@@ -390,10 +410,15 @@ QtObject:
     var signal = SIGNAL_CONTACT_ADDED
     let publicKey = contact.id
     if self.contacts.hasKey(publicKey):
-      if self.contacts[publicKey].dto.added and not self.contacts[publicKey].dto.removed and contact.added and not contact.removed:
+      if self.contacts[publicKey].dto.added and not self.contacts[publicKey].dto.removed and
+          contact.added and not contact.removed:
         signal = SIGNAL_CONTACT_UPDATED
       if contact.removed and not self.contacts[publicKey].dto.removed:
-        singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
+        singletonInstance.globalEvents.showContactRemoved(
+          "Contact removed",
+          fmt "You removed {contact.displayName} as a contact",
+          contact.id,
+        )
         signal = SIGNAL_CONTACT_REMOVED
 
     self.contacts[publicKey] = self.constructContactDetails(contact)
@@ -417,16 +442,19 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
-        chatId: publicKey,
-        messages: response.result{"messages"}
-      ))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
+      self.events.emit(
+        SIGNAL_APPEND_CHAT_MESSAGES,
+        AppendChatMessagesArgs(chatId: publicKey, messages: response.result{"messages"}),
+      )
+      checkAndEmitACNotificationsFromResponse(
+        self.events, response.result{"activityCenterNotifications"}
+      )
     except Exception as e:
       error "an error occurred while sending the contact request", msg = e.msg
 
-  proc acceptContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
+  proc acceptContactRequest*(
+      self: Service, publicKey: string, contactRequestId: string
+  ) =
     try:
       # NOTE: publicKey used for accepting last request
       let response =
@@ -440,16 +468,19 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
-        chatId: publicKey,
-        messages: response.result{"messages"}
-      ))
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
+      self.events.emit(
+        SIGNAL_APPEND_CHAT_MESSAGES,
+        AppendChatMessagesArgs(chatId: publicKey, messages: response.result{"messages"}),
+      )
+      checkAndEmitACNotificationsFromResponse(
+        self.events, response.result{"activityCenterNotifications"}
+      )
     except Exception as e:
-      error "an error occurred while accepting the contact request", msg=e.msg
+      error "an error occurred while accepting the contact request", msg = e.msg
 
-  proc dismissContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
+  proc dismissContactRequest*(
+      self: Service, publicKey: string, contactRequestId: string
+  ) =
     try:
       # NOTE: publicKey used for dismissing last request
       let response =
@@ -463,12 +494,15 @@ QtObject:
         return
 
       self.parseContactsResponse(response)
-      checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
-
+      checkAndEmitACNotificationsFromResponse(
+        self.events, response.result{"activityCenterNotifications"}
+      )
     except Exception as e:
-      error "an error occurred while dismissing the contact request", msg=e.msg
+      error "an error occurred while dismissing the contact request", msg = e.msg
 
-  proc getLatestContactRequestForContact*(self: Service, publicKey: string): message_dto.MessageDto =
+  proc getLatestContactRequestForContact*(
+      self: Service, publicKey: string
+  ): message_dto.MessageDto =
     try:
       let response = status_contacts.getLatestContactRequestForContact(publicKey)
 
@@ -482,15 +516,15 @@ QtObject:
         return
 
       return messages[0].toMessageDto()
-
     except Exception as e:
-      error "an error occurred while getting incoming contact request", msg=e.msg
+      error "an error occurred while getting incoming contact request", msg = e.msg
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getContactById(publicKey)
     contact.localNickname = nickname
 
-    let response = status_contacts.setContactLocalNickname(contact.id, contact.localNickname)
+    let response =
+      status_contacts.setContactLocalNickname(contact.id, contact.localNickname)
     if not response.error.isNil:
       error "error setting local name ", msg = response.error.message
       return
@@ -527,27 +561,30 @@ QtObject:
       error "error removing contact ", msg = response.error.message
       return
 
-    self.events.emit(SIGNAL_APPEND_CHAT_MESSAGES, AppendChatMessagesArgs(
-      chatId: publicKey,
-      messages: response.result{"messages"}
-    ))
+    self.events.emit(
+      SIGNAL_APPEND_CHAT_MESSAGES,
+      AppendChatMessagesArgs(chatId: publicKey, messages: response.result{"messages"}),
+    )
     self.parseContactsResponse(response)
-    checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
+    checkAndEmitACNotificationsFromResponse(
+      self.events, response.result{"activityCenterNotifications"}
+    )
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
     try:
       let jsonObj = jsonObj.parseJson()
       let data = ResolvedContactArgs(
-          pubkey: jsonObj["id"].getStr,
-          address: jsonObj["address"].getStr,
-          uuid: jsonObj["uuid"].getStr,
-          reason: jsonObj["reason"].getStr)
+        pubkey: jsonObj["id"].getStr,
+        address: jsonObj["address"].getStr,
+        uuid: jsonObj["uuid"].getStr,
+        reason: jsonObj["reason"].getStr,
+      )
       self.events.emit(SIGNAL_ENS_RESOLVED, data)
     except Exception as e:
-      error "error resolving ENS ", msg=e.msg
+      error "error resolving ENS ", msg = e.msg
 
   proc resolveENS*(self: Service, value: string, uuid: string = "", reason = "") =
-    if(self.closingApp):
+    if (self.closingApp):
       return
     let arg = LookupContactTaskArg(
       tptr: lookupContactTask,
@@ -556,18 +593,21 @@ QtObject:
       value: value,
       chainId: self.networkService.getAppNetwork().chainId,
       uuid: uuid,
-      reason: reason
+      reason: reason,
     )
     self.threadpool.start(arg)
 
-  proc emitCurrentUserStatusChanged*(self: Service, currentStatusUser: CurrentUserStatus) =
-    let currentUserStatusUpdate = StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
-                                                  statusType: currentStatusUser.statusType,
-                                                  clock: currentStatusUser.clock.uint64,
-                                                  text: currentStatusUser.text)
+  proc emitCurrentUserStatusChanged*(
+      self: Service, currentStatusUser: CurrentUserStatus
+  ) =
+    let currentUserStatusUpdate = StatusUpdateDto(
+      publicKey: singletonInstance.userProfile.getPubKey(),
+      statusType: currentStatusUser.statusType,
+      clock: currentStatusUser.clock.uint64,
+      text: currentStatusUser.text,
+    )
     let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
-
 
   proc markAsTrusted*(self: Service, publicKey: string) =
     let response = status_contacts.markAsTrusted(publicKey)
@@ -578,8 +618,12 @@ QtObject:
     if self.contacts.hasKey(publicKey):
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
 
-    self.events.emit(SIGNAL_CONTACT_TRUSTED,
-      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
+    self.events.emit(
+      SIGNAL_CONTACT_TRUSTED,
+      TrustArgs(
+        publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus
+      ),
+    )
 
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
@@ -590,8 +634,12 @@ QtObject:
     if self.contacts.hasKey(publicKey):
       self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
 
-    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
-      TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
+    self.events.emit(
+      SIGNAL_CONTACT_UNTRUSTWORTHY,
+      TrustArgs(
+        publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus
+      ),
+    )
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
     try:
@@ -604,9 +652,13 @@ QtObject:
 
       if self.contacts.hasKey(publicKey):
         self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
-        
-      self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
-        TrustArgs(publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus))
+
+      self.events.emit(
+        SIGNAL_REMOVED_TRUST_STATUS,
+        TrustArgs(
+          publicKey: publicKey, trustStatus: self.contacts[publicKey].dto.trustStatus
+        ),
+      )
     except Exception as e:
       error "error in removeTrustStatus request", msg = e.msg
 
@@ -615,7 +667,7 @@ QtObject:
       let rpcResponseObj = pubkeyAndRpcResponse.parseJson
       let publicKey = rpcResponseObj{"publicKey"}.getStr
       let requestError = rpcResponseObj{"error"}
-      var error : string
+      var error: string
 
       if requestError.kind != JNull:
         error = requestError.getStr
@@ -626,12 +678,18 @@ QtObject:
 
       if len(error) != 0:
         error "error requesting contact info", msg = error, publicKey
-        self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
+        self.events.emit(
+          SIGNAL_CONTACT_INFO_REQUEST_FINISHED,
+          ContactInfoRequestArgs(publicKey: publicKey, ok: false),
+        )
         return
 
       let contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
       self.saveContact(contact)
-      self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: true))
+      self.events.emit(
+        SIGNAL_CONTACT_INFO_REQUEST_FINISHED,
+        ContactInfoRequestArgs(publicKey: publicKey, ok: true),
+      )
     except Exception as e:
       error "error in contact info loaded", msg = e.msg
 
@@ -668,7 +726,9 @@ QtObject:
     except Exception as e:
       error "Error getting user url with ens name", msg = e.msg, pubkey
 
-  proc requestProfileShowcaseForContact*(self: Service, contactId: string, validate: bool) =
+  proc requestProfileShowcaseForContact*(
+      self: Service, contactId: string, validate: bool
+  ) =
     let arg = AsyncGetProfileShowcaseForContactTaskArg(
       pubkey: contactId,
       validate: validate,
@@ -678,21 +738,25 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc asyncProfileShowcaseForContactLoaded*(self: Service, rpcResponse: string) {.slot.} =
+  proc asyncProfileShowcaseForContactLoaded*(
+      self: Service, rpcResponse: string
+  ) {.slot.} =
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        error "Error requesting profile showcase for a contact", msg = rpcResponseObj{"error"}
+        error "Error requesting profile showcase for a contact",
+          msg = rpcResponseObj{"error"}
         return
 
       let profileShowcase = rpcResponseObj["response"]["result"].toProfileShowcaseDto()
       let validated = rpcResponseObj["validated"].getBool
 
-      self.events.emit(SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED,
+      self.events.emit(
+        SIGNAL_CONTACT_PROFILE_SHOWCASE_LOADED,
         ProfileShowcaseForContactArgs(
-          profileShowcase: profileShowcase,
-          validated: validated
-      ))
+          profileShowcase: profileShowcase, validated: validated
+        ),
+      )
     except Exception as e:
       error "Error requesting profile showcase for a contact", msg = e.msg
 
@@ -705,12 +769,11 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc onProfileShowcaseAccountsByAddressFetched*(self: Service, rpcResponse: string) {.slot.} =
-    var data = ProfileShowcaseForContactArgs(
-      profileShowcase: ProfileShowcaseDto(
-        accounts: @[],
-      ),
-    )
+  proc onProfileShowcaseAccountsByAddressFetched*(
+      self: Service, rpcResponse: string
+  ) {.slot.} =
+    var data =
+      ProfileShowcaseForContactArgs(profileShowcase: ProfileShowcaseDto(accounts: @[]))
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
@@ -718,7 +781,11 @@ QtObject:
       if rpcResponseObj{"response"}.kind != JArray:
         raise newException(CatchableError, "invalid response")
 
-      data.profileShowcase.accounts = map(rpcResponseObj{"response"}.getElems(), proc(x: JsonNode): ProfileShowcaseAccount = toProfileShowcaseAccount(x))
+      data.profileShowcase.accounts = map(
+        rpcResponseObj{"response"}.getElems(),
+        proc(x: JsonNode): ProfileShowcaseAccount =
+          toProfileShowcaseAccount(x),
+      )
     except Exception as e:
       error "onProfileShowcaseAccountsByAddressFetched", msg = e.msg
     self.events.emit(SIGNAL_CONTACT_SHOWCASE_ACCOUNTS_BY_ADDRESS_FETCHED, data)

@@ -7,16 +7,15 @@ import io_interface
 import chat_details
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      pinnedMessagesModel: pinned_msg_model.Model
-      pinnedMessagesModelVariant: QVariant
-      chatDetails: ChatDetails
-      chatDetailsVariant: QVariant
-      permissionsCheckOngoing: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    pinnedMessagesModel: pinned_msg_model.Model
+    pinnedMessagesModelVariant: QVariant
+    chatDetails: ChatDetails
+    chatDetailsVariant: QVariant
+    permissionsCheckOngoing: bool
 
-  proc chatDetailsChanged*(self:View) {.signal.}
+  proc chatDetailsChanged*(self: View) {.signal.}
 
   proc delete*(self: View) =
     self.pinnedMessagesModel.delete
@@ -42,21 +41,25 @@ QtObject:
 
   proc getInputAreaModule(self: View): QVariant {.slot.} =
     return self.delegate.getInputAreaModule()
+
   QtProperty[QVariant] inputAreaModule:
     read = getInputAreaModule
 
   proc getMessagesModule(self: View): QVariant {.slot.} =
     return self.delegate.getMessagesModule()
+
   QtProperty[QVariant] messagesModule:
     read = getMessagesModule
 
   proc getUsersModule(self: View): QVariant {.slot.} =
     return self.delegate.getUsersModule()
+
   QtProperty[QVariant] usersModule:
     read = getUsersModule
 
   proc getPinnedMessagesModel(self: View): QVariant {.slot.} =
     return self.pinnedMessagesModelVariant
+
   QtProperty[QVariant] pinnedMessagesModel:
     read = getPinnedMessagesModel
 
@@ -113,7 +116,9 @@ QtObject:
   proc updateTrustStatus*(self: View, trustStatus: TrustStatus) =
     self.chatDetails.setTrustStatus(trustStatus)
 
-  proc updateChatDetailsNotifications*(self: View, hasUnreadMessages: bool, notificationCount: int) =
+  proc updateChatDetailsNotifications*(
+      self: View, hasUnreadMessages: bool, notificationCount: int
+  ) =
     self.chatDetails.setHasUnreadMessages(hasUnreadMessages)
     self.chatDetails.setNotificationCount(notificationCount)
     if self.chatDetails.getHighlight and not hasUnreadMessages:
@@ -121,6 +126,7 @@ QtObject:
 
   proc getChatDetails(self: View): QVariant {.slot.} =
     return self.chatDetailsVariant
+
   QtProperty[QVariant] chatDetails:
     read = getChatDetails
     notify = chatDetailsChanged

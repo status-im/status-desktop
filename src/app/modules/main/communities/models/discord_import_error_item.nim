@@ -1,21 +1,19 @@
 import stew/shims/strformat
-type
-  DiscordImportErrorItem* = object
-    taskId*: string
-    code*: int
-    message*: string
+type DiscordImportErrorItem* = object
+  taskId*: string
+  code*: int
+  message*: string
 
 proc initDiscordImportErrorItem*(
-  taskId: string,
-  code: int,
-  message: string,
+    taskId: string, code: int, message: string
 ): DiscordImportErrorItem =
   result.taskId = taskId
   result.code = code
   result.message = message
 
 proc `$`*(self: DiscordImportErrorItem): string =
-  result = fmt"""DiscordImportErrorItem(
+  result =
+    fmt"""DiscordImportErrorItem(
     taskId: {self.taskId},
     code: {self.code},
     message: {self.message}

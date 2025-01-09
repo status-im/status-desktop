@@ -1,7 +1,8 @@
-type
-  KeycardRecoverState* = ref object of State
+type KeycardRecoverState* = ref object of State
 
-proc newKeycardRecoverState*(flowType: FlowType, backState: State): KeycardRecoverState =
+proc newKeycardRecoverState*(
+    flowType: FlowType, backState: State
+): KeycardRecoverState =
   result = KeycardRecoverState()
   result.setup(flowType, StateType.KeycardRecover, backState)
 
@@ -10,12 +11,14 @@ proc delete*(self: KeycardRecoverState) =
 
 method getNextPrimaryState*(self: KeycardRecoverState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or
-    self.flowType == FlowType.AppLogin:
-      controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(true)
-      return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self)
+      self.flowType == FlowType.AppLogin:
+    controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(true)
+    return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self)
 
-method getNextSecondaryState*(self: KeycardRecoverState, controller: Controller): State =
+method getNextSecondaryState*(
+    self: KeycardRecoverState, controller: Controller
+): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or
-    self.flowType == FlowType.AppLogin:
-      controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(false)
-      return createState(StateType.KeycardEnterPuk, self.flowType, self)
+      self.flowType == FlowType.AppLogin:
+    controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(false)
+    return createState(StateType.KeycardEnterPuk, self.flowType, self)

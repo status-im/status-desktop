@@ -1,7 +1,8 @@
-type
-  KeycardNoPCSCServiceState* = ref object of State
+type KeycardNoPCSCServiceState* = ref object of State
 
-proc newKeycardNoPCSCServiceState*(flowType: FlowType, backState: State): KeycardNoPCSCServiceState =
+proc newKeycardNoPCSCServiceState*(
+    flowType: FlowType, backState: State
+): KeycardNoPCSCServiceState =
   result = KeycardNoPCSCServiceState()
   result.setup(flowType, StateType.KeycardNoPCSCService, backState)
 
@@ -14,5 +15,7 @@ method executeBackCommand*(self: KeycardNoPCSCServiceState, controller: Controll
 method executePrimaryCommand*(self: KeycardNoPCSCServiceState, controller: Controller) =
   controller.reRunCurrentFlow()
 
-method getNextPrimaryState*(self: KeycardNoPCSCServiceState, controller: Controller): State =
+method getNextPrimaryState*(
+    self: KeycardNoPCSCServiceState, controller: Controller
+): State =
   return self.getBackState

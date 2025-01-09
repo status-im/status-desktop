@@ -8,12 +8,11 @@ import ./io_interface
 import app_service/service/ramp/dto
 
 QtObject:
-  type
-    View* = ref object of QObject
-      delegate: io_interface.AccessInterface
-      model: Model
-      modelVariant: QVariant
-      isFetching: bool
+  type View* = ref object of QObject
+    delegate: io_interface.AccessInterface
+    model: Model
+    modelVariant: QVariant
+    isFetching: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -62,16 +61,16 @@ QtObject:
   proc fetchProviders*(self: View) {.slot.} =
     self.delegate.fetchProviders()
 
-  proc fetchProviderUrl*(self: View, 
-    uuid: string, 
-    providerID: string, 
-    isRecurrent: bool, 
-    destinationAccountAddress: string, 
-    chainID: int, 
-    symbol: string) {.slot.} =
-    let parameters = CryptoRampParametersDto(
-      isRecurrent: isRecurrent,
-    )
+  proc fetchProviderUrl*(
+      self: View,
+      uuid: string,
+      providerID: string,
+      isRecurrent: bool,
+      destinationAccountAddress: string,
+      chainID: int,
+      symbol: string,
+  ) {.slot.} =
+    let parameters = CryptoRampParametersDto(isRecurrent: isRecurrent)
 
     if destinationAccountAddress.len > 0:
       parameters.destinationAddress = some(destinationAccountAddress)

@@ -26,13 +26,14 @@ proc defaultAPIConfig*(): APIConfig =
   result.wsPort = 8586
 
 proc toJson*(self: APIConfig): JsonNode =
-  return %* {
-    "apiModules": self.apiModules,
-    "connectorEnabled": self.connectorEnabled,
-    "httpEnabled": self.httpEnabled,
-    "httpHost": self.httpHost,
-    "httpPort": self.httpPort,
-    "wsEnabled": self.wsEnabled,
-    "wsHost": self.wsHost,
-    "wsPort": self.wsPort
-  }
+  return
+    %*{
+      "apiModules": self.apiModules,
+      "connectorEnabled": self.connectorEnabled,
+      "httpEnabled": self.httpEnabled,
+      "httpHost": self.httpHost,
+      "httpPort": self.httpPort,
+      "wsEnabled": self.wsEnabled,
+      "wsHost": self.wsHost,
+      "wsPort": self.wsPort,
+    }

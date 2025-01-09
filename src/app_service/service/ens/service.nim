@@ -22,7 +22,6 @@ export ens_username_dto
 logScope:
   topics = "ens-service"
 
-
 const ENS_AVAILABILITY_STATUS_ALREADY_CONNECTED = "already-connected"
 const ENS_AVAILABILITY_STATUS_AVAILABLE = "available"
 const ENS_AVAILABILITY_STATUS_OWNED = "owned"
@@ -68,16 +67,15 @@ const SIGNAL_ENS_TRANSACTION_CONFIRMED* = "ensTransactionConfirmed"
 const SIGNAL_ENS_TRANSACTION_REVERTED* = "ensTransactionReverted"
 
 QtObject:
-  type
-    Service* = ref object of QObject
-      events: EventEmitter
-      threadpool: ThreadPool
-      pendingEnsUsernames*: Table[string, EnsUsernameDto]
-      settingsService: settings_service.Service
-      walletAccountService: wallet_account_service.Service
-      transactionService: transaction_service.Service
-      networkService: network_service.Service
-      tokenService: token_service.Service
+  type Service* = ref object of QObject
+    events: EventEmitter
+    threadpool: ThreadPool
+    pendingEnsUsernames*: Table[string, EnsUsernameDto]
+    settingsService: settings_service.Service
+    walletAccountService: wallet_account_service.Service
+    transactionService: transaction_service.Service
+    networkService: network_service.Service
+    tokenService: token_service.Service
 
   ## Forward declarations
   proc add*(self: Service, chainId: int, username: string): bool
@@ -93,8 +91,8 @@ QtObject:
       walletAccountService: wallet_account_service.Service,
       transactionService: transaction_service.Service,
       networkService: network_service.Service,
-      tokenService: token_service.Service
-      ): Service =
+      tokenService: token_service.Service,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -117,7 +115,9 @@ QtObject:
     if isStatus:
       result = result & ens_utils.STATUS_DOMAIN
 
-  proc updateEnsUsernames(self: Service, chainId: int, transactionHash: string, status: string) =
+  proc updateEnsUsernames(
+      self: Service, chainId: int, transactionHash: string, status: string
+  ) =
     if status == TxStatusPending:
       return
 
@@ -138,29 +138,42 @@ QtObject:
 
     if status == TxStatusSuccess:
       self.pendingEnsUsernames[key].txStatus = TxStatusSuccess
-      let data = EnsTransactionArgs(txHash: transactionHash, ensUsername: ensDto.username, transactionType: $ensDto.txType)
+      let data = EnsTransactionArgs(
+        txHash: transactionHash,
+        ensUsername: ensDto.username,
+        transactionType: $ensDto.txType,
+      )
       self.events.emit(SIGNAL_ENS_TRANSACTION_CONFIRMED, data)
       return
     if status == TxStatusFailed:
       self.pendingEnsUsernames[key].txStatus = TxStatusFailed
-      let data = EnsTransactionArgs(txHash: transactionHash, ensUsername: ensDto.username, transactionType: $ensDto.txType)
+      let data = EnsTransactionArgs(
+        txHash: transactionHash,
+        ensUsername: ensDto.username,
+        transactionType: $ensDto.txType,
+      )
       self.events.emit(SIGNAL_ENS_TRANSACTION_REVERTED, data)
       return
     error "Error updating ens username status", message = "unknown status: " & status
 
   proc doConnect(self: Service) =
-    self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+    self.events.on(SIGNAL_TRANSACTION_SENT) do(e: Args):
       let args = TransactionArgs(e)
       let txType = SendType(args.sendDetails.sendType)
-      if txType != SendType.ENSRegister and txType != SendType.ENSSetPubKey and txType != SendType.ENSRelease:
+      if txType != SendType.ENSRegister and txType != SendType.ENSSetPubKey and
+          txType != SendType.ENSRelease:
         return
 
-      var err = if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
+      var err =
+        if not args.sendDetails.errorResponse.isNil:
+          args.sendDetails.errorResponse.details
+        else:
+          ""
       var dto = EnsUsernameDto(
         chainId: args.sendDetails.fromChain,
         username: args.sendDetails.username,
         txHash: args.sentTransaction.hash,
-        txStatus: args.status
+        txStatus: args.status,
       )
 
       if txType == SendType.ENSRegister:
@@ -192,43 +205,45 @@ QtObject:
         chainId: args.sendDetails.fromChain,
         ensUsername: args.sendDetails.username,
         txHash: args.sentTransaction.hash,
-        error: err
+        error: err,
       )
       self.events.emit(SIGNAL_ENS_TRANSACTION_SENT, data)
 
-    self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e:Args):
+    self.events.on(SIGNAL_TRANSACTION_STATUS_CHANGED) do(e: Args):
       let args = TransactionArgs(e)
-      self.updateEnsUsernames(args.sentTransaction.fromChain, args.sentTransaction.hash, args.status)
+      self.updateEnsUsernames(
+        args.sentTransaction.fromChain, args.sentTransaction.hash, args.status
+      )
 
   proc init*(self: Service) =
     self.doConnect()
 
     for trx in self.transactionService.getPendingTransactions():
       if trx.typeValue == $PendingTransactionTypeDto.RegisterENS or
-        trx.typeValue == $PendingTransactionTypeDto.SetPubKey or
-        trx.typeValue == $PendingTransactionTypeDto.ReleaseENS:
-          let dto = EnsUsernameDto(chainId: trx.chainId, username: trx.additionalData)
-          self.pendingEnsUsernames[makeKey(dto.username, dto.chainId)] = dto
+          trx.typeValue == $PendingTransactionTypeDto.SetPubKey or
+          trx.typeValue == $PendingTransactionTypeDto.ReleaseENS:
+        let dto = EnsUsernameDto(chainId: trx.chainId, username: trx.additionalData)
+        self.pendingEnsUsernames[makeKey(dto.username, dto.chainId)] = dto
 
   proc getMyPendingEnsUsernames*(self: Service): seq[EnsUsernameDto] =
     for i in self.pendingEnsUsernames.values:
       result.add(i)
 
   proc getAllMyEnsUsernames*(self: Service, includePending: bool): seq[EnsUsernameDto] =
-
     var response: JsonNode
     try:
       let rpcResponse = status_ens.getEnsUsernames()
       if rpcResponse.error != nil:
-        error "failed to get ens usernames", procName="getAllMyEnsUsernames", error = $rpcResponse.error
+        error "failed to get ens usernames",
+          procName = "getAllMyEnsUsernames", error = $rpcResponse.error
         return
       response = rpcResponse.result
     except Exception as e:
-      error "error occurred", procName="getAllMyEnsUsernames", msg = e.msg
+      error "error occurred", procName = "getAllMyEnsUsernames", msg = e.msg
       return
 
     if (response.kind != JArray):
-      warn "expected response is not a json object", procName="getAllMyEnsUsernames"
+      warn "expected response is not a json object", procName = "getAllMyEnsUsernames"
       return
 
     for jsonContact in response:
@@ -246,7 +261,7 @@ QtObject:
         error "error adding ens username ", msg
         return false
     except Exception as e:
-      error "error occurred", procName="add", msg = e.msg
+      error "error occurred", procName = "add", msg = e.msg
       return false
     return true
 
@@ -258,7 +273,7 @@ QtObject:
         error "error removing ens username ", msg
         return false
     except Exception as e:
-      error "error occurred", procName="remove", msg = e.msg
+      error "error occurred", procName = "remove", msg = e.msg
       return false
     return true
 
@@ -276,17 +291,24 @@ QtObject:
       let data = EnsUsernameAvailabilityArgs(availabilityStatus: availablilityStatus)
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
     except Exception as e:
-      error "error: ", procName="onEnsUsernameAvailabilityChecked", msg = e.msg
+      error "error: ", procName = "onEnsUsernameAvailabilityChecked", msg = e.msg
       # notify view, this is important
-      self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, EnsUsernameAvailabilityArgs())
+      self.events.emit(
+        SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, EnsUsernameAvailabilityArgs()
+      )
 
-  proc checkEnsUsernameAvailability*(self: Service, ensUsername: string, isStatus: bool) =
+  proc checkEnsUsernameAvailability*(
+      self: Service, ensUsername: string, isStatus: bool
+  ) =
     let registeredEnsUsernames = self.getAllMyEnsUsernames(true)
-    let dto = EnsUsernameDto(chainId: self.getChainId(),
-                             username: self.formatUsername(ensUsername, isStatus))
+    let dto = EnsUsernameDto(
+      chainId: self.getChainId(), username: self.formatUsername(ensUsername, isStatus)
+    )
     var availability = ""
     if registeredEnsUsernames.find(dto) >= 0:
-      let data = EnsUsernameAvailabilityArgs(availabilityStatus: ENS_AVAILABILITY_STATUS_ALREADY_CONNECTED)
+      let data = EnsUsernameAvailabilityArgs(
+        availabilityStatus: ENS_AVAILABILITY_STATUS_ALREADY_CONNECTED
+      )
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, data)
     else:
       let arg = CheckEnsAvailabilityTaskArg(
@@ -297,7 +319,7 @@ QtObject:
         chainId: self.getChainId(),
         isStatus: isStatus,
         myPublicKey: self.settingsService.getPublicKey(),
-        myAddresses: self.walletAccountService.getWalletAccounts().map(a => a.address)
+        myAddresses: self.walletAccountService.getWalletAccounts().map(a => a.address),
       )
       self.threadpool.start(arg)
 
@@ -319,7 +341,7 @@ QtObject:
       discard responseObj.getProp("expirationTime", data.expirationTime)
       self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, data)
     except Exception as e:
-      error "error: ", procName="onEnsUsernameDetailsFetched", msg = e.msg
+      error "error: ", procName = "onEnsUsernameDetailsFetched", msg = e.msg
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, EnsUsernameDetailsArgs())
 
@@ -336,12 +358,12 @@ QtObject:
       slot: "onEnsUsernameDetailsFetched",
       ensUsername: username,
       chainId: chainId,
-      isStatus: isStatus
+      isStatus: isStatus,
     )
     self.threadpool.start(arg)
 
-  proc extractCoordinates(self: Service, pubkey: string):tuple[x: string, y:string] =
-    result = ("0x" & pubkey[4..67], "0x" & pubkey[68..131])
+  proc extractCoordinates(self: Service, pubkey: string): tuple[x: string, y: string] =
+    result = ("0x" & pubkey[4 .. 67], "0x" & pubkey[68 .. 131])
 
   proc getEnsRegisteredAddress*(self: Service): string =
     try:
@@ -350,12 +372,16 @@ QtObject:
         raise newException(ValueError, res.error.message)
       return res.result.getStr
     except Exception as e:
-      error "Error getting ENS registered address", err=e.msg
+      error "Error getting ENS registered address", err = e.msg
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:
       let response = status_ens.resourceURL(self.getChainId(), username)
-      return (response.result{"Scheme"}.getStr, response.result{"Host"}.getStr, response.result{"Path"}.getStr)
+      return (
+        response.result{"Scheme"}.getStr,
+        response.result{"Host"}.getStr,
+        response.result{"Path"}.getStr,
+      )
     except Exception as e:
-      error "Error getting ENS resourceUrl", username=username, exception=e.msg
+      error "Error getting ENS resourceUrl", username = username, exception = e.msg
       raise

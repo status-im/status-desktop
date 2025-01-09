@@ -13,23 +13,22 @@ import app/modules/shared/wallet_utils
 
 export io_interface
 
-type
-  Module* = ref object of io_interface.AccessInterface
-    delegate: delegate_interface.AccessInterface
-    events: EventEmitter
-    view: View
-    viewVariant: QVariant
-    controller: Controller
-    moduleLoaded: bool
-    walletAccountService: wallet_account_service.Service
-    filterChainIds: seq[int]
+type Module* = ref object of io_interface.AccessInterface
+  delegate: delegate_interface.AccessInterface
+  events: EventEmitter
+  view: View
+  viewVariant: QVariant
+  controller: Controller
+  moduleLoaded: bool
+  walletAccountService: wallet_account_service.Service
+  filterChainIds: seq[int]
 
 proc newModule*(
-  delegate: delegate_interface.AccessInterface,
-  events: EventEmitter,
-  walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service,
-  currencyService: currency_service.Service
+    delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
+    currencyService: currency_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -37,7 +36,9 @@ proc newModule*(
   result.walletAccountService = walletAccountService
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, walletAccountService, networkService, currencyService)
+  result.controller = controller.newController(
+    result, walletAccountService, networkService, currencyService
+  )
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -45,9 +46,11 @@ method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-proc getWalletAccounts(self: Module, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts(
+    self: Module, addresses: seq[string]
+): seq[wallet_account_service.WalletAccountDto] =
   if addresses.len > 0:
-     return self.controller.getWalletAccountsByAddresses(addresses)
+    return self.controller.getWalletAccountsByAddresses(addresses)
   return self.controller.getWalletAccounts()
 
 proc refreshWalletAccountsBalances(self: Module, addresses: seq[string]) =
@@ -56,30 +59,42 @@ proc refreshWalletAccountsBalances(self: Module, addresses: seq[string]) =
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   let marketValuesLoading = self.controller.getTokensMarketValuesLoading()
   for walletAccount in walletAccounts:
-    let currencyBalance = self.controller.getTotalCurrencyBalance(walletAccount.address, self.filterChainIds)
-    self.view.updateBalance(walletAccount.address, currencyAmountToItem(currencyBalance, currencyFormat), walletAccount.assetsLoading or marketValuesLoading)
-  
+    let currencyBalance = self.controller.getTotalCurrencyBalance(
+      walletAccount.address, self.filterChainIds
+    )
+    self.view.updateBalance(
+      walletAccount.address,
+      currencyAmountToItem(currencyBalance, currencyFormat),
+      walletAccount.assetsLoading or marketValuesLoading,
+    )
+
 proc refreshAllWalletAccountsBalances(self: Module) =
   self.refreshWalletAccountsBalances(@[])
 
-proc getWalletItems(self: Module, addresses: seq[string]): seq[wallet_accounts_item.Item] =
+proc getWalletItems(
+    self: Module, addresses: seq[string]
+): seq[wallet_accounts_item.Item] =
   let walletAccounts = self.getWalletAccounts(addresses)
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
 
-  return walletAccounts.map(w => (block:
-    let currencyBalance = self.controller.getTotalCurrencyBalance(w.address, self.filterChainIds)
-    let isKeycardAccount = self.controller.isKeycardAccount(w)
-    walletAccountToWalletAccountsItem(
-      w,
-      isKeycardAccount,
-      currencyBalance,
-      currencyFormat,
-      areTestNetworksEnabled,
-      self.controller.getTokensMarketValuesLoading()
+  return walletAccounts.map(
+    w => (
+      block:
+        let currencyBalance =
+          self.controller.getTotalCurrencyBalance(w.address, self.filterChainIds)
+        let isKeycardAccount = self.controller.isKeycardAccount(w)
+        walletAccountToWalletAccountsItem(
+          w,
+          isKeycardAccount,
+          currencyBalance,
+          currencyFormat,
+          areTestNetworksEnabled,
+          self.controller.getTokensMarketValuesLoading(),
+        )
     )
-  ))
+  )
 
 proc updateWalletAccounts(self: Module, addresses: seq[string]) =
   self.view.updateItems(self.getWalletItems(addresses))
@@ -94,27 +109,29 @@ method filterChanged*(self: Module, chainIds: seq[int]) =
   self.refreshAllWalletAccountsBalances()
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionAccounts", self.viewVariant)
+  singletonInstance.engine.setRootContextProperty(
+    "walletSectionAccounts", self.viewVariant
+  )
   self.controller.init()
   self.view.load()
 
-  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_TOKENS_MARKET_VALUES_UPDATED) do(e: Args):
     self.refreshAllWalletAccountsBalances()
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e: Args):
     self.refreshAllWalletAccountsBalances()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.refreshAllWalletAccountsBalances()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.refreshAllWalletAccountsBalances()
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
     self.loadAllWalletAccounts()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     let accountArgs = AccountArgs(e)
     self.updateWalletAccounts(@[accountArgs.account.address])
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     let accountArgs = AccountArgs(e)
     self.updateWalletAccounts(@[accountArgs.account.address])
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     let accountArgs = AccountArgs(e)
     self.view.onAccountRemoved(accountArgs.account.address)
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
@@ -129,7 +146,9 @@ method load*(self: Module) =
     self.view.updateAccountsPositions(accountPositions)
   self.events.on(SIGNAL_WALLET_ACCOUNT_HIDDEN_UPDATED) do(e: Args):
     let accountArgs = AccountArgs(e)
-    self.view.updateAccountHiddenFromTotalBalance(accountArgs.account.address, accountArgs.account.hideFromTotalBalance)
+    self.view.updateAccountHiddenFromTotalBalance(
+      accountArgs.account.address, accountArgs.account.hideFromTotalBalance
+    )
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -141,14 +160,20 @@ method viewDidLoad*(self: Module) =
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
 
-method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
+method updateAccount*(
+    self: Module, address: string, accountName: string, colorId: string, emoji: string
+) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
 
-method updateWatchAccountHiddenFromTotalBalance*(self: Module, address: string, hideFromTotalBalance: bool) =
-  self.controller.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
+method updateWatchAccountHiddenFromTotalBalance*(
+    self: Module, address: string, hideFromTotalBalance: bool
+) =
+  self.controller.updateWatchAccountHiddenFromTotalBalance(
+    address, hideFromTotalBalance
+  )
 
 method getWalletAccountAsJson*(self: Module, address: string): JsonNode =
   let walletAccountDto = self.controller.getWalletAccount(address)
   if walletAccountDto.isNil:
     return newJNull()
-  return % walletAccountDto
+  return %walletAccountDto

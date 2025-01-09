@@ -2,8 +2,7 @@ import NimQml
 
 import ../../../../app_service/service/message/dto/message
 
-type
-  AccessInterface* {.pure inheritable.} = ref object of RootObj
+type AccessInterface* {.pure, inheritable.} = ref object of RootObj
 
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -17,10 +16,14 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
+method onActiveChatChange*(
+    self: AccessInterface, sectionId: string, chatId: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onSearchMessagesDone*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
+method onSearchMessagesDone*(
+    self: AccessInterface, messages: seq[MessageDto]
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
@@ -29,7 +32,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method prepareLocationMenuModel*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setSearchLocation*(self: AccessInterface, location: string, subLocation: string) {.base.} =
+method setSearchLocation*(
+    self: AccessInterface, location: string, subLocation: string
+) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getSearchLocationObject*(self: AccessInterface): string {.base.} =
@@ -41,5 +46,7 @@ method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
 method resultItemClicked*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateSearchLocationIfPointToChatWithId*(self: AccessInterface, chatId: string) {.base.} =
-    raise newException(ValueError, "No implementation available")
+method updateSearchLocationIfPointToChatWithId*(
+    self: AccessInterface, chatId: string
+) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -1,21 +1,18 @@
 import NimQml, tables, strutils, sequtils, json
 
-type
-  ShowcaseContactSocialLinkItem* = object of RootObj
-    url*: string
-    text*: string
-    showcasePosition*: int
+type ShowcaseContactSocialLinkItem* = object of RootObj
+  url*: string
+  text*: string
+  showcasePosition*: int
 
-type
-  ModelRole {.pure.} = enum
-    Url
-    Text
-    ShowcasePosition
+type ModelRole {.pure.} = enum
+  Url
+  Text
+  ShowcasePosition
 
 QtObject:
-  type
-    ShowcaseContactSocialLinkModel* = ref object of QAbstractListModel
-      items: seq[ShowcaseContactSocialLinkItem]
+  type ShowcaseContactSocialLinkModel* = ref object of QAbstractListModel
+    items: seq[ShowcaseContactSocialLinkItem]
 
   proc delete(self: ShowcaseContactSocialLinkModel) =
     self.items = @[]
@@ -28,7 +25,9 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc items*(self: ShowcaseContactSocialLinkModel): seq[ShowcaseContactSocialLinkItem] =
+  proc items*(
+      self: ShowcaseContactSocialLinkModel
+  ): seq[ShowcaseContactSocialLinkItem] =
     self.items
 
   method rowCount(self: ShowcaseContactSocialLinkModel, index: QModelIndex = nil): int =
@@ -41,7 +40,9 @@ QtObject:
       ModelRole.ShowcasePosition.int: "showcasePosition",
     }.toTable
 
-  method data(self: ShowcaseContactSocialLinkModel, index: QModelIndex, role: int): QVariant =
+  method data(
+      self: ShowcaseContactSocialLinkModel, index: QModelIndex, role: int
+  ): QVariant =
     if (not index.isValid):
       return
 
@@ -51,7 +52,7 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
 
-    case enumRole:
+    case enumRole
     of ModelRole.Url:
       result = newQVariant(item.url)
     of ModelRole.Text:
@@ -59,7 +60,9 @@ QtObject:
     of ModelRole.ShowcasePosition:
       result = newQVariant(item.showcasePosition)
 
-  proc setItems*(self: ShowcaseContactSocialLinkModel, items: seq[ShowcaseContactSocialLinkItem]) =
+  proc setItems*(
+      self: ShowcaseContactSocialLinkModel, items: seq[ShowcaseContactSocialLinkItem]
+  ) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
