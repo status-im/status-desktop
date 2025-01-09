@@ -148,6 +148,8 @@ Page {
             root.onboardingStore.setPin(pin)
         }
 
+        onKeyPairTransferRequested: root.onboardingStore.startKeypairTransfer()
+
         onShareUsageDataRequested: (enabled) => {
             root.metricsStore.toggleCentralizedMetrics(enabled)
             Global.addCentralizedMetricIfEnabled(

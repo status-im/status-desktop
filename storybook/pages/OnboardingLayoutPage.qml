@@ -302,7 +302,7 @@ SplitView {
 
             spacing: 10
 
-            Label {
+            TextField {
                 Layout.fillWidth: true
 
                 text: {
@@ -316,6 +316,9 @@ SplitView {
                     return content
                 }
 
+                background: null
+                readOnly: true
+                selectByMouse: true
                 wrapMode: Text.Wrap
             }
 
