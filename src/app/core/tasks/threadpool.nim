@@ -53,8 +53,12 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall, raises: [].} =
 
   let messageType = parsed{"$type"}.getStr
 
-  debug "[threadpool task thread] initiating task", messageType=messageType,
-    threadid=getThreadId(), task=taskArg
+  if defined(production):
+    debug "[threadpool task thread] initiating task", messageType=messageType,
+      threadid=getThreadId()
+  else:
+    debug "[threadpool task thread] initiating task", messageType=messageType,
+      threadid=getThreadId(), task=taskArg
 
   try:
     safeTaskArg.tptr(taskArg)
