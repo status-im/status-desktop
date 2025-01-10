@@ -468,6 +468,14 @@ StatusWindow {
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
             }
+
+            onShareUsageDataRequested: {
+                applicationWindow.metricsStore.toggleCentralizedMetrics(enabled)
+                if (enabled) {
+                    Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})
+                }
+            }
+            onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
         }
     }
 

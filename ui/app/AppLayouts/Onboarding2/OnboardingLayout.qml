@@ -29,6 +29,7 @@ Page {
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
     readonly property alias stack: stack
+    readonly property string currentPageName: stack.currentItem ? Utils.objectTypeName(stack.currentItem) : ""
 
     signal shareUsageDataRequested(bool enabled)
 

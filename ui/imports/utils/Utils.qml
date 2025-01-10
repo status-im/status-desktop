@@ -967,4 +967,23 @@ QtObject {
 
         return ""
     }
+
+    function objectTypeName(item) {
+        let typeName = item.toString()
+
+        if (typeName.startsWith("QQuick"))
+            typeName = name.substring(6)
+
+        const underscoreIndex = typeName.indexOf("_")
+
+        if (underscoreIndex !== -1)
+            return typeName.substring(0, underscoreIndex)
+
+        const bracketIndex = typeName.indexOf("(")
+
+        if (bracketIndex !== -1)
+            return typeName.substring(0, bracketIndex)
+
+        return typeName
+    }
 }

@@ -1,4 +1,5 @@
 import NimQml, chronicles, json
+import logging
 
 import io_interface
 import view, controller
@@ -26,7 +27,8 @@ type SecondaryFlow* {.pure} = enum
   CreateProfileWithKeycardExistingSeedphrase,
   LoginWithSeedphrase,
   LoginWithSyncing,
-  LoginWithKeycard
+  LoginWithKeycard,
+  ActualLogin, # TODO get the real name and value for this when it's implemented on the front-end
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -35,6 +37,7 @@ type
     viewVariant: QVariant
     controller: Controller
     localPairingStatus: LocalPairingStatus
+    currentFlow: SecondaryFlow
 
 proc newModule*[T](
     delegate: T,
@@ -99,7 +102,7 @@ method inputConnectionStringForBootstrapping*[T](self: Module[T], connectionStri
 
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
   try:
-    let flow = SecondaryFlow(flowInt)
+    self.currentFlow = SecondaryFlow(flowInt)
 
     let data = parseJson(dataJson)
     let password = data["password"].str
@@ -107,7 +110,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
 
     var err = ""
 
-    case flow:
+    case self.currentFlow:
       # CREATE PROFILE FLOWS
       of SecondaryFlow.CreateProfileWithPassword:
         err = self.controller.createAccountAndLogin(password)
@@ -147,7 +150,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         # TODO implement keycard function
         discard
       else:
-        raise newException(ValueError, "Unknown flow: " & $flow)
+        raise newException(ValueError, "Unknown flow: " & $self.currentFlow)
 
     return err
   except Exception as e:
@@ -158,13 +161,11 @@ proc finishAppLoading2[T](self: Module[T]) =
   self.delegate.appReady()
 
   # TODO get the flow to send the right metric
-  # let currStateObj = self.view.currentStartupStateObj()
-  # if not currStateObj.isNil:
-  #   var eventType = "user-logged-in"
-  #   if currStateObj.flowType() != FlowType.AppLogin:
-  #     eventType = "onboarding-completed"
-  #   singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
-  #     $(%*{"flowType": currStateObj.flowType()}))
+  var eventType = "user-logged-in"
+  if self.currentFlow != SecondaryFlow.ActualLogin:
+    eventType = "onboarding-completed"
+  singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
+    $(%*{"flowType": repr(self.currentFlow)}))
 
   self.delegate.finishAppLoading()
   
