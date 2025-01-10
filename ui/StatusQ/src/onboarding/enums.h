@@ -25,6 +25,11 @@ public:
         LoginWithKeycard
     };
 
+    enum class LoginMethod {
+        Password,
+        Keycard,
+    };
+
     enum class KeycardState {
         NoPCSCService,
         PluginReader,
@@ -56,6 +61,7 @@ public:
 private:
     Q_ENUM(PrimaryFlow)
     Q_ENUM(SecondaryFlow)
+    Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
     Q_ENUM(AddKeyPairState)
     Q_ENUM(SyncState)

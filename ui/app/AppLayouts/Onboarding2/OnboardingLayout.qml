@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Qt.labs.settings 1.1
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -16,7 +17,14 @@ Page {
 
     required property OnboardingStore onboardingStore
 
+    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
+    // NB: this also decides whether we show the Login screen (if not empty), or the Onboarding
+    required property var loginAccountsModel
+
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
+    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    signal biometricsRequested() // emitted when the user wants to try the biometrics prompt again
+
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
@@ -27,17 +35,24 @@ Page {
     // flow: Onboarding.SecondaryFlow
     signal finished(int flow, var data)
 
+    // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;
+    //    "data:var": contains "password" or "pin"
+    signal loginRequested(string keyUid, int method, var data)
+
+    signal reloadKeycardRequested()
+
     function restartFlow() {
-        stack.clear()
-        d.resetState()
-        d.settings.reset()
-        onboardingFlow.init()
+        unload()
+
+        if (loginAccountsModel.ModelCount.empty)
+            onboardingFlow.init()
+        else
+            stack.push(loginScreenComponent)
     }
 
     function unload() {
         stack.clear()
         d.resetState()
-        d.settings.reset()
     }
 
     QtObject {
@@ -155,12 +170,35 @@ Page {
 
         onKeyPairTransferRequested: root.onboardingStore.startKeypairTransfer()
         onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
+        onReloadKeycardRequested: root.reloadKeycardRequested()
+        onMnemonicWasShown: root.onboardingStore.mnemonicWasShown()
+        onMnemonicRemovalRequested: root.onboardingStore.removeMnemonic()
+
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
         onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
         onSetPasswordRequested: (password) => d.password = password
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
         onFinished: (flow) => d.finishFlow(flow)
+        onKeycardFactoryResetRequested: ; // TODO invoke external popup and finish the flow
+    }
+
+    Component {
+        id: loginScreenComponent
+        LoginScreen {
+            onboardingStore: root.onboardingStore
+            loginAccountsModel: root.loginAccountsModel
+            biometricsAvailable: root.biometricsAvailable
+            isBiometricsLogin: root.isBiometricsLogin
+            onBiometricsRequested: root.biometricsRequested()
+            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
+
+            onOnboardingCreateProfileFlowRequested: onboardingFlow.startCreateProfileFlow()
+            onOnboardingLoginFlowRequested: onboardingFlow.startLoginFlow()
+            onUnlockWithSeedphraseRequested: console.warn("!!! FIXME onUnlockWithSeedphraseRequested")
+            onUnlockWithPukRequested: console.warn("!!! FIXME onUnlockWithPukRequested")
+            onLostKeycard: console.warn("!!! FIXME onLostKeycard flow")
+        }
     }
 
     Connections {
@@ -175,5 +213,5 @@ Page {
         }
     }
 
-    Component.onCompleted: root.restartFlow()
+    Component.onCompleted: restartFlow()
 }

@@ -59,7 +59,7 @@ Item {
             id: ctrlDisplayPromo
             text: "Promo banner"
             checked: true
-            visible: ctrlKeycardState.currentValue === Onboarding.KeycardState.InsertKeycard
+            visible: ctrlKeycardState.currentValue === Onboarding.KeycardState.PluginReader
         }
         ToolButton {
             text: "<"

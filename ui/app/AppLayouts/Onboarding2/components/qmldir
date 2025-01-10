@@ -1,3 +1,5 @@
 NewsCarousel 1.0 NewsCarousel.qml
 SeedphraseVerifyInput 1.0 SeedphraseVerifyInput.qml
 StepIndicator 1.0 StepIndicator.qml
+LoginKeycardBox 1.0 LoginKeycardBox.qml
+LoginPasswordBox 1.0 LoginPasswordBox.qml

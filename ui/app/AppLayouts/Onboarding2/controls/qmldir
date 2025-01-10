@@ -3,3 +3,7 @@ OnboardingButtonFrame 1.0 OnboardingButtonFrame.qml
 OnboardingFrame 1.0 OnboardingFrame.qml
 ListItemButton 1.0 ListItemButton.qml
 MaybeOutlineButton 1.0 MaybeOutlineButton.qml
+LoginUserSelector 1.0 LoginUserSelector.qml
+LoginUserSelectorDelegate 1.0 LoginUserSelectorDelegate.qml
+LoginPasswordInput 1.0 LoginPasswordInput.qml
+LoginTouchIdIndicator 1.0 LoginTouchIdIndicator.qml

@@ -15,6 +15,7 @@ OnboardingPage {
 
     required property var seedWords
 
+    signal mnemonicWasShown()
     signal backupSeedphraseConfirmed()
 
     QtObject {
@@ -100,7 +101,10 @@ OnboardingPage {
                     icon.name: "show"
                     type: StatusBaseButton.Type.Primary
                     visible: !d.seedphraseRevealed
-                    onClicked: d.seedphraseRevealed = true
+                    onClicked: {
+                        d.seedphraseRevealed = true
+                        root.mnemonicWasShown()
+                    }
                 }
             }
 

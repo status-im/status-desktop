@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtTest 1.15
 
 import StatusQ 0.1 // ClipboardUtils
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2 1.0
 import AppLayouts.Onboarding2.pages 1.0
@@ -11,6 +12,8 @@ import AppLayouts.Onboarding.enums 1.0
 import shared.stores 1.0 as SharedStores
 
 import utils 1.0
+
+import Models 1.0
 
 Item {
     id: root
@@ -29,6 +32,14 @@ Item {
         readonly property string dummyNewPassword: "0123456789"
     }
 
+    LoginAccountsModel {
+        id: loginAccountsModel
+    }
+
+    ListModel {
+        id: emptyModel
+    }
+
     Component {
         id: componentUnderTest
 
@@ -38,6 +49,9 @@ Item {
             networkChecksEnabled: false
             biometricsAvailable: mockDriver.biometricsAvailable
             keycardPinInfoPageDelay: 0
+
+            loginAccountsModel: emptyModel
+            isBiometricsLogin: biometricsAvailable
 
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
@@ -73,6 +87,19 @@ Item {
                     return !Number.isNaN(parseInt(connectionString))
                 }
                 function inputConnectionStringForBootstrapping(connectionString: string) {}
+
+                // password signals
+                signal accountLoginError(string error, bool wrongPassword)
+
+                // biometrics signals
+                signal obtainingPasswordSuccess(string password)
+                signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
+            }
+            onLoginRequested: (keyUid, method, data) => {
+                // SIMULATION: emit an error in case of wrong password
+                if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) {
+                    onboardingStore.accountLoginError("An error ocurred, wrong password?", Math.random() < 0.5)
+                }
             }
         }
     }
@@ -97,6 +124,12 @@ Item {
         id: finishedSpy
         target: controlUnderTest
         signalName: "finished"
+    }
+
+    SignalSpy {
+        id: loginSpy
+        target: controlUnderTest
+        signalName: "loginRequested"
     }
 
     property OnboardingLayout controlUnderTest: null
@@ -124,6 +157,7 @@ Item {
             mockDriver.existingPin = ""
             dynamicSpy.cleanup()
             finishedSpy.clear()
+            loginSpy.clear()
         }
 
         function keyClickSequence(keys) {
@@ -672,7 +706,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in -> Enter recovery phrase
-            page = getCurrentPage(stack, LoginPage)
+            page = getCurrentPage(stack, NewAccountLoginPage)
             const btnWithSeedphrase = findChild(page, "btnWithSeedphrase")
             verify(!!btnWithSeedphrase)
             mouseClick(btnWithSeedphrase)
@@ -765,7 +799,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in
-            page = getCurrentPage(stack, LoginPage)
+            page = getCurrentPage(stack, NewAccountLoginPage)
             const btnBySyncing = findChild(page, "btnBySyncing")
             verify(!!btnBySyncing)
             mouseClick(btnBySyncing)
@@ -858,7 +892,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], data.shareResult)
 
             // PAGE 3: Log in -> Login with Keycard
-            page = getCurrentPage(stack, LoginPage)
+            page = getCurrentPage(stack, NewAccountLoginPage)
             const btnWithKeycard = findChild(page, "btnWithKeycard")
             verify(!!btnWithKeycard)
             mouseClick(btnWithKeycard)
@@ -897,6 +931,171 @@ Item {
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, mockDriver.existingPin)
             compare(resultData.seedphrase, "")
+        }
+
+        // LOGIN SCREEN
+        function test_loginScreen_data() {
+            return [
+              // password based profile ("uid_1")
+              { tag: "correct password", keyUid: "uid_1", password: mockDriver.dummyNewPassword, biometrics: false },
+              { tag: "correct password+biometrics", keyUid: "uid_1", password: mockDriver.dummyNewPassword, biometrics: true },
+              { tag: "wrong password", keyUid: "uid_1", password: "foobar", biometrics: false },
+              { tag: "wrong password+biometrics", keyUid: "uid_1", password: "foobar", biometrics: true },
+              // keycard based profile ("uid_4")
+              { tag: "correct PIN", keyUid: "uid_4", pin: "111111", biometrics: false },
+              { tag: "correct PIN+biometrics", keyUid: "uid_4", pin: "111111", biometrics: true },
+              { tag: "wrong PIN", keyUid: "uid_4", pin: "123321", biometrics: false },
+              { tag: "wrong PIN+biometrics", keyUid: "uid_4", pin: "123321", biometrics: true },
+            ]
+        }
+        function test_loginScreen(data) {
+            verify(!!controlUnderTest)
+            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
+            controlUnderTest.restartFlow()
+
+            mockDriver.existingPin = "111111" // let this be the correct PIN
+
+            const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
+
+            const userSelector = findChild(page, "loginUserSelector")
+            verify(!!userSelector)
+            userSelector.setSelection(data.keyUid) // select the right profile, keycard or regular one (password)
+            tryCompare(userSelector, "selectedProfileKeyId", data.keyUid)
+            tryCompare(userSelector, "keycardCreatedAccount", !!data.pin && data.pin !== "")
+
+            if (!!data.password) { // regular profile, no keycard
+                const loginButton = findChild(page, "loginButton")
+                verify(!!loginButton)
+                tryCompare(loginButton, "visible", true)
+                compare(loginButton.enabled, false)
+
+                const passwordBox = findChild(page, "passwordBox")
+                verify(!!passwordBox)
+
+                const passwordInput = findChild(page, "loginPasswordInput")
+                verify(!!passwordInput)
+                tryCompare(passwordInput, "activeFocus", true)
+                if (data.biometrics) { // biometrics + password
+                    if (data.password === mockDriver.dummyNewPassword) { // expecting correct fingerprint
+                        // simulate the external biometrics signal
+                        controlUnderTest.onboardingStore.obtainingPasswordSuccess(data.password)
+
+                        tryCompare(passwordBox, "biometricsSuccessful", true)
+                        tryCompare(passwordBox, "biometricsFailed", false)
+                        tryCompare(passwordBox, "validationError", "")
+
+                        // this fills the password and submits it, emits the loginRequested() signal below
+                        tryCompare(passwordInput, "text", data.password)
+                    } else { // expecting wrong fingerprint
+                        // simulate the external biometrics signal
+                        controlUnderTest.onboardingStore.obtainingPasswordError("ERROR", Constants.keychain.errorType.keychain, true)
+
+                        tryCompare(passwordBox, "biometricsSuccessful", false)
+                        tryCompare(passwordBox, "biometricsFailed", true)
+                        tryCompare(passwordBox, "validationError", "Fingerprint not recognised. Try entering password instead.")
+
+                        // this fails and switches to the password method; so just verify we have an error and can enter the pass manually
+                        tryCompare(passwordInput, "hasError", true)
+                        tryCompare(passwordInput, "activeFocus", true)
+                        tryCompare(passwordInput, "text", "")
+                        expectFail(data.tag, "Wrong fingerprint, expected to fail to login")
+                    }
+                } else { // manual password
+                    keyClickSequence(data.password)
+                    tryCompare(passwordInput, "text", data.password)
+                    compare(loginButton.enabled, true)
+                    mouseClick(loginButton)
+                }
+
+                // verify the final "loginRequested" signal emission and params
+                tryCompare(loginSpy, "count", 1)
+                compare(loginSpy.signalArguments[0][0], data.keyUid)
+                compare(loginSpy.signalArguments[0][1], Onboarding.LoginMethod.Password)
+                const resultData = loginSpy.signalArguments[0][2]
+                verify(!!resultData)
+                compare(resultData.password, data.password)
+
+                // verify validation & pass error
+                tryCompare(passwordInput, "hasError", data.password !== mockDriver.dummyNewPassword)
+            } else if (!!data.pin) { // keycard profile
+                mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // happy path; keycard ready
+                const pinInput = findChild(page, "pinInput")
+                verify(!!pinInput)
+                tryCompare(pinInput, "visible", true)
+                compare(pinInput.pinInput, "")
+
+                const keycardBox = findChild(page, "keycardBox")
+                verify(!!keycardBox)
+
+                if (data.biometrics) { // biometrics + PIN
+                    if (data.pin === mockDriver.existingPin) { // expecting correct fingerprint
+                        // simulate the external biometrics signal
+                        controlUnderTest.onboardingStore.obtainingPasswordSuccess(data.pin)
+
+                        tryCompare(keycardBox, "biometricsSuccessful", true)
+                        tryCompare(keycardBox, "biometricsFailed", false)
+
+                        // this fills the password and submits it, emits the loginRequested() signal below
+                        tryCompare(pinInput, "pinInput", data.pin)
+                    } else { // expecting wrong fingerprint
+                        // simulate the external biometrics signal
+                        controlUnderTest.onboardingStore.obtainingPasswordError("Fingerprint not recognized",
+                                                                                Constants.keychain.errorType.keychain, true)
+
+                        tryCompare(keycardBox, "biometricsSuccessful", false)
+                        tryCompare(keycardBox, "biometricsFailed", true)
+
+                        // this fails and lets the user enter the PIN manually; so just verify we have an error and empty PIN
+                        tryCompare(pinInput, "pinInput", "")
+                        expectFail(data.tag, "Wrong fingerprint, expected to fail to login")
+                    }
+                } else { // manual PIN
+                    keyClickSequence(data.pin)
+                    if (data.pin !== mockDriver.existingPin) {
+                        expectFail(data.tag, "Wrong PIN entered, expected to fail to login")
+                    }
+                }
+
+                // verify the final "loginRequested" signal emission and params
+                tryCompare(loginSpy, "count", 1)
+                compare(loginSpy.signalArguments[0][0], data.keyUid)
+                compare(loginSpy.signalArguments[0][1], Onboarding.LoginMethod.Keycard)
+                const resultData = loginSpy.signalArguments[0][2]
+                verify(!!resultData)
+                compare(resultData.pin, data.pin)
+            }
+        }
+
+        function test_loginScreen_launchesExternalFlow_data() {
+            return [
+              { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPageTitle: "Create profile" },
+              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested",  landingPageTitle: "Log in"},
+              // TODO cover also `signal unlockWithSeedphraseRequested()` and `signal lostKeycard()`
+            ]
+        }
+        function test_loginScreen_launchesExternalFlow(data) {
+            verify(!!controlUnderTest)
+            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.restartFlow()
+
+            const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
+
+            const loginUserSelector = findChild(page, "loginUserSelector")
+            verify(!!loginUserSelector)
+            mouseClick(loginUserSelector)
+
+            const dropdown = findChild(loginUserSelector, "dropdown")
+            verify(!!dropdown)
+            tryCompare(dropdown, "opened", true)
+
+            const menuDelegate = findChild(dropdown, data.delegateName)
+            verify(!!menuDelegate)
+            dynamicSpy.setup(page, data.signalName)
+            mouseClick(menuDelegate)
+            tryCompare(dynamicSpy, "count", 1)
+
+            tryCompare(controlUnderTest.stack.currentItem, "title", data.landingPageTitle)
         }
     }
 }

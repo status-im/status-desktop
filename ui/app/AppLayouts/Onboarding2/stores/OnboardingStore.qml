@@ -6,14 +6,22 @@ import AppLayouts.Onboarding.enums 1.0
 
 QtObject {
     id: root
+
     signal appLoaded()
 
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
+
         readonly property var conn: Connections {
             target: d.onboardingModuleInst
-            onAppLoaded: root.appLoaded()
+
+            Component.onCompleted: {
+                onboardingModuleInst.appLoaded.connect(root.appLoaded)
+                onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+                onboardingModuleInst.obtainingPasswordSuccess.connect(root.obtainingPasswordSuccess)
+                onboardingModuleInst.obtainingPasswordError.connect(root.obtainingPasswordError)
+            }
         }
     }
 
@@ -35,9 +43,15 @@ QtObject {
     }
 
     // password
+    signal accountLoginError(string error, bool wrongPassword)
+
     function getPasswordStrengthScore(password: string) { // -> int
         return d.onboardingModuleInst.getPasswordStrengthScore(password, "") // The second argument is username
     }
+
+    // biometrics
+    signal obtainingPasswordSuccess(string password)
+    signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
 
     // seedphrase/mnemonic
     function validMnemonic(mnemonic: string) { // -> bool
