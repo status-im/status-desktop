@@ -16,7 +16,6 @@ import ../../../../../../app_service/service/mailservers/service as mailservers_
 import ../../../../../../app_service/service/shared_urls/service as shared_urls_service
 import ../../../../../../app_service/service/contacts/dto/contact_details
 import ../../../../../../app_service/common/types
-import ../../../../../global/utils as utils
 import ../../../../../global/global_singleton
 
 export io_interface
@@ -434,12 +433,11 @@ method getNumberOfPinnedMessages*(self: Module): int =
 method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
 
-  let updatedSenderIcon = singletonInstance.utils().addTimestampToURL(updatedContact.icon)
   for item in self.view.model().modelContactUpdateIterator(contactId):
     if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
       item.senderOptionalName = updatedContact.optionalName
-      item.senderIcon = updatedSenderIcon
+      item.senderIcon = updatedContact.icon
       item.senderColorHash = updatedContact.colorHash
       item.senderIsAdded = updatedContact.dto.added
       item.senderTrustStatus = updatedContact.dto.trustStatus
@@ -448,7 +446,7 @@ method updateContactDetails*(self: Module, contactId: string) =
     if item.quotedMessageAuthorDetails.dto.id == contactId:
       item.quotedMessageAuthorDetails = updatedContact
       item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
-      item.quotedMessageAuthorAvatar = updatedSenderIcon
+      item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
       let communityChats = self.controller.getCommunityDetails().chats

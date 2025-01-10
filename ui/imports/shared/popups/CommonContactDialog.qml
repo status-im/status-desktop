@@ -49,7 +49,7 @@ StatusDialog {
                 name: root.mainDisplayName
                 colorHash: contactDetails.colorHash
                 colorId: contactDetails.colorId
-                image: Utils.addTimestampToURL(contactDetails.largeImage)
+                image: contactDetails.largeImage
                 interactive: false
                 imageWidth: 60
                 imageHeight: 60

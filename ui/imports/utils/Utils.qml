@@ -949,8 +949,4 @@ QtObject {
 
         return ""
     }
-
-    function addTimestampToURL(url) {
-        return globalUtilsInst.addTimestampToURL(url)
-    }
 }

@@ -332,10 +332,6 @@ QtObject:
       roles.add(ModelRole.IsUntrustworthy.int)
       roles.add(ModelRole.IsVerified.int)
 
-    # The image is actually a URL that doesn't change. We need to force refresh it just in case
-    roles.add(ModelRole.ThumbnailImage.int)
-    roles.add(ModelRole.LargeImage.int)
-
     if roles.len == 0:
       return
 
