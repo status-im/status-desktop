@@ -9,8 +9,6 @@ import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding2.stores 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-import shared.stores 1.0 as SharedStores
-
 import utils 1.0
 
 Page {
@@ -18,20 +16,16 @@ Page {
 
     required property OnboardingStore onboardingStore
 
-    // TODO backend: externalize the metrics handling too?
-    required property SharedStores.MetricsStore metricsStore
-
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
     readonly property alias stack: stack
 
+    signal shareUsageDataRequested(bool enabled)
+
     // flow: Onboarding.SecondaryFlow
     signal finished(int flow, var data)
-
-    signal keycardFactoryResetRequested() // TODO integrate/switch to an external flow, needed?
-    signal keycardReloaded()
 
     function restartFlow() {
         stack.clear()
@@ -95,7 +89,6 @@ Page {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         enabled: stack.depth > 1 && !stack.busy
-        cursorShape: undefined
         onClicked: stack.pop()
     }
 
@@ -148,23 +141,12 @@ Page {
         }
 
         onKeyPairTransferRequested: root.onboardingStore.startKeypairTransfer()
-
-        onShareUsageDataRequested: (enabled) => {
-            root.metricsStore.toggleCentralizedMetrics(enabled)
-            Global.addCentralizedMetricIfEnabled(
-                        "usage_data_shared",
-                        { placement: Constants.metricsEnablePlacement.onboarding })
-            localAppSettings.metricsPopupSeen = true
-        }
-
+        onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
-
         onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
         onSetPasswordRequested: (password) => d.password = password
-
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
-
         onFinished: (flow) => d.finishFlow(flow)
     }
 
