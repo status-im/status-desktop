@@ -74,26 +74,6 @@ Item {
                 }
                 function inputConnectionStringForBootstrapping(connectionString: string) {}
             }
-
-            metricsStore: SharedStores.MetricsStore {
-                readonly property var d: QtObject {
-                    id: d
-                    property bool isCentralizedMetricsEnabled
-                }
-
-                function toggleCentralizedMetrics(enabled) {
-                    d.isCentralizedMetricsEnabled = enabled
-                }
-
-                function addCentralizedMetricIfEnabled(eventName, eventValue = null) {}
-
-                readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
-            }
-
-            QtObject {
-                id: localAppSettings
-                property bool metricsPopupSeen
-            }
         }
     }
 

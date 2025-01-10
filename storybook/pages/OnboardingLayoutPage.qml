@@ -10,7 +10,6 @@ import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding2.stores 1.0
 
 import shared.panels 1.0
-import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import Storybook 1.0
@@ -98,27 +97,7 @@ SplitView {
             }
         }
 
-        metricsStore: SharedStores.MetricsStore {
-            readonly property var d: QtObject {
-                id: d
-                property bool isCentralizedMetricsEnabled
-            }
-
-            function toggleCentralizedMetrics(enabled) {
-                d.isCentralizedMetricsEnabled = enabled
-            }
-
-            function addCentralizedMetricIfEnabled(eventName, eventValue = null) {}
-
-            readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
-        }
-
         biometricsAvailable: ctrlBiometrics.checked
-
-        QtObject {
-            id: localAppSettings
-            property bool metricsPopupSeen
-        }
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
@@ -128,17 +107,6 @@ SplitView {
             stack.clear()
             stack.push(splashScreen, { runningProgressAnimation: true })
 
-            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
-        }
-        onKeycardFactoryResetRequested: {
-            logs.logEvent("onKeycardFactoryResetRequested")
-            console.warn("!!! FACTORY RESET; RESTARTING FLOW")
-            restartFlow()
-            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
-        }
-        onKeycardReloaded: {
-            logs.logEvent("onKeycardReloaded")
-            console.warn("!!! RELOAD KEYCARD")
             flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
         }
 
