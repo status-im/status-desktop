@@ -93,16 +93,7 @@ Item {
     }
     readonly property WalletStores.BuyCryptoStore buyCryptoStore: WalletStores.BuyCryptoStore {}
 
-    readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
-        readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
-
-        connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
-        dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
-        swapEnabled: featureFlags ? featureFlags.swapEnabled : false
-        sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
-        paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
-        simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
-    }
+    required property AppStores.FeatureFlagsStore featureFlagsStore
     // TODO: Only until the  old send modal transaction store can be replaced with this one
     readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
 

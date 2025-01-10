@@ -14,6 +14,7 @@ import shared.popups 1.0
 import shared.stores 1.0
 
 import mainui 1.0
+import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
 import AppLayouts.Onboarding2 1.0 as Onboarding2
 import AppLayouts.Onboarding2.stores 1.0
@@ -26,10 +27,20 @@ StatusWindow {
 
     property bool appIsReady: false
 
-    readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
-    // TODO get rid of direct access when the new login is available
-    // We need this to make sure the module is loaded before we can use it
-    readonly property bool onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+    readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
+        readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
+
+        connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
+        dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
+        swapEnabled: featureFlags ? featureFlags.swapEnabled : false
+        sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
+        paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
+        simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
+        // TODO get rid of direct access when the new login is available
+        // We need this to make sure the module is loaded before we can use it
+        onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+    }
+
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
 
@@ -198,8 +209,8 @@ StatusWindow {
 
     //TODO remove direct backend access
     Connections {
-        enabled: !applicationWindow.onboardingV2Enabled
-        target: !applicationWindow.onboardingV2Enabled ? startupModule : null
+        enabled: !featureFlagsStore.onboardingV2Enabled
+        target: !featureFlagsStore.onboardingV2Enabled ? startupModule : null
 
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
@@ -345,6 +356,7 @@ StatusWindow {
         id: app
         AppMain {
             utilsStore: applicationWindow.utilsStore
+            featureFlagsStore: applicationWindow.featureFlagsStore
 
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
@@ -397,7 +409,7 @@ StatusWindow {
 
     Loader {
         id: onboardingStoreLoader
-        active: applicationWindow.onboardingV2Enabled
+        active: featureFlagsStore.onboardingV2Enabled
 
         sourceComponent: OnboardingStore {
             onAppLoaded: moveToAppMain()
@@ -408,7 +420,7 @@ StatusWindow {
         id: startupOnboardingLoader
         anchors.fill: parent
         sourceComponent: {
-            if (applicationWindow.onboardingV2Enabled) {
+            if (featureFlagsStore.onboardingV2Enabled) {
                 // TODO select a new component when we have the new login screens (for old users)
                 return onboardingV2
             }
@@ -439,23 +451,6 @@ StatusWindow {
 
             onboardingStore: onboardingStoreLoader.item
 
-            metricsStore: MetricsStore {
-                readonly property var d: QtObject {
-                    id: d
-                    property bool isCentralizedMetricsEnabled
-                }
-
-                function toggleCentralizedMetrics(enabled) {
-                    d.isCentralizedMetricsEnabled = enabled
-                }
-
-                function addCentralizedMetricIfEnabled(eventName, eventValue = null) {
-                    console.log("MetricsStore.addCentralizedMetricIfEnabled", ["eventName", "eventValue"])
-                }
-
-                readonly property bool isCentralizedMetricsEnabled : d.isCentralizedMetricsEnabled
-            }
-
             onFinished: (flow, data) => {
                 console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
 
@@ -469,12 +464,6 @@ StatusWindow {
                 console.warn("!!! Onboarding completed!")
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
-            }
-            onKeycardFactoryResetRequested: {
-                console.warn("!!! FACTORY RESET; RESTARTING FLOW")
-            }
-            onKeycardReloaded: {
-                console.warn("!!! RELOAD KEYCARD")
             }
         }
     }

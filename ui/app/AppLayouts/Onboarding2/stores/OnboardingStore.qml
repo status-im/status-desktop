@@ -11,11 +11,10 @@ QtObject {
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
-    }
-
-    readonly property var _conn: Connections {
-        target: d.onboardingModuleInst
-        onAppLoaded: root.appLoaded()
+        readonly property var conn: Connections {
+            target: d.onboardingModuleInst
+            onAppLoaded: root.appLoaded()
+        }
     }
 
     // keycard
