@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, strutils, chronicles, stint
 
-import ./io_interface, ./view, ./controller, ./max_fee_levels_item, ./path_item
+import ./io_interface, ./view, ./controller, ./path_item
 import ../io_interface as delegate_interface
 
 import app/global/global_singleton
@@ -92,13 +92,6 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
 
-proc convertFeeLevelsDtoToMaxFeeLevelsItem(self: Module, feeLevels: SuggestedLevelsForMaxFeesPerGasDto): MaxFeeLevelsItem =
-  result = newMaxFeeLevelsItem(
-    low = $feeLevels.low,
-    medium = $feeLevels.medium,
-    high = $feeLevels.high
-    )
-
 proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPathDtoV2): PathItem =
   var fromChainId = 0
   var toChainid = 0
@@ -122,7 +115,12 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     amountIn = $txPath.amountIn,
     amountInLocked = txPath.amountInLocked,
     amountOut = $txPath.amountOut,
-    suggestedLevelsForMaxFeesPerGas = self.convertFeeLevelsDtoToMaxFeeLevelsItem(txPath.suggestedLevelsForMaxFeesPerGas),
+    suggestedMaxFeesPerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.low,
+    suggestedMaxFeesPerGasMediumLevel = $txPath.suggestedLevelsForMaxFeesPerGas.medium,
+    suggestedMaxFeesPerGasHighLevel = $txPath.suggestedLevelsForMaxFeesPerGas.high,
+    suggestedMinPriorityFee = $txPath.suggestedMinPriorityFee,
+    suggestedMaxPriorityFee = $txPath.suggestedMaxPriorityFee,
+    currentBaseFee = $txPath.currentBaseFee,
     txNonce = $txPath.txNonce,
     txMaxFeesPerGas = $txPath.txMaxFeesPerGas,
     txBaseFee = $txPath.txBaseFee,

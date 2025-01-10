@@ -1,7 +1,6 @@
 import NimQml
 
 import app_service/common/wallet_constants
-import ./max_fee_levels_item
 
 QtObject:
   type PathItem* = ref object of QObject
@@ -13,7 +12,12 @@ QtObject:
     amountIn: string
     amountInLocked: bool
     amountOut: string
-    suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem
+    suggestedMaxFeesPerGasLowLevel: string
+    suggestedMaxFeesPerGasMediumLevel: string
+    suggestedMaxFeesPerGasHighLevel: string
+    suggestedMinPriorityFee: string
+    suggestedMaxPriorityFee: string
+    currentBaseFee: string
     txNonce: string
     txMaxFeesPerGas: string
     txBaseFee: string
@@ -46,7 +50,12 @@ QtObject:
     amountIn: string,
     amountInLocked: bool,
     amountOut: string,
-    suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
+    suggestedMaxFeesPerGasLowLevel: string,
+    suggestedMaxFeesPerGasMediumLevel: string,
+    suggestedMaxFeesPerGasHighLevel: string,
+    suggestedMinPriorityFee: string,
+    suggestedMaxPriorityFee: string,
+    currentBaseFee: string,
     txNonce: string,
     txMaxFeesPerGas: string,
     txBaseFee: string,
@@ -79,7 +88,12 @@ QtObject:
     self.amountIn = amountIn
     self.amountInLocked = amountInLocked
     self.amountOut = amountOut
-    self.suggestedLevelsForMaxFeesPerGas = suggestedLevelsForMaxFeesPerGas
+    self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
+    self.suggestedMaxFeesPerGasMediumLevel = suggestedMaxFeesPerGasMediumLevel
+    self.suggestedMaxFeesPerGasHighLevel = suggestedMaxFeesPerGasHighLevel
+    self.suggestedMinPriorityFee = suggestedMinPriorityFee
+    self.suggestedMaxPriorityFee = suggestedMaxPriorityFee
+    self.currentBaseFee = currentBaseFee
     self.txNonce = txNonce
     self.txMaxFeesPerGas = txMaxFeesPerGas
     self.txBaseFee = txBaseFee
@@ -115,7 +129,12 @@ QtObject:
     amountIn: string,
     amountInLocked: bool,
     amountOut: string,
-    suggestedLevelsForMaxFeesPerGas: MaxFeeLevelsItem,
+    suggestedMaxFeesPerGasLowLevel: string,
+    suggestedMaxFeesPerGasMediumLevel: string,
+    suggestedMaxFeesPerGasHighLevel: string,
+    suggestedMinPriorityFee: string,
+    suggestedMaxPriorityFee: string,
+    currentBaseFee: string,
     txNonce: string,
     txMaxFeesPerGas: string,
     txBaseFee: string,
@@ -141,10 +160,11 @@ QtObject:
   ): PathItem =
     new(result, delete)
     result.setup(processorName, fromChain, toChain, fromToken, toToken, amountIn, amountInLocked, amountOut,
-      suggestedLevelsForMaxFeesPerGas, txNonce, txMaxFeesPerGas, txBaseFee,txPriorityFee, txGasAmount, txBonderFees,
-      txTokenFees, txEstimatedTime, txFee, txL1Fee, txTotalFee, approvalRequired, approvalAmountRequired,
-      approvalContractAddress, approvalTxNonce, approvalMaxFeesPerGas, approvalBaseFee, approvalPriorityFee,
-      approvalGasAmount, approvalEstimatedTime, approvalFee, approvalL1Fee)
+      suggestedMaxFeesPerGasLowLevel, suggestedMaxFeesPerGasMediumLevel, suggestedMaxFeesPerGasHighLevel,
+      suggestedMinPriorityFee, suggestedMaxPriorityFee, currentBaseFee, txNonce, txMaxFeesPerGas, txBaseFee,
+      txPriorityFee, txGasAmount, txBonderFees, txTokenFees, txEstimatedTime, txFee, txL1Fee, txTotalFee,
+      approvalRequired, approvalAmountRequired, approvalContractAddress, approvalTxNonce, approvalMaxFeesPerGas,
+      approvalBaseFee, approvalPriorityFee, approvalGasAmount, approvalEstimatedTime, approvalFee, approvalL1Fee)
 
   proc `$`*(self: PathItem): string =
     result = "PathItem("
@@ -156,7 +176,12 @@ QtObject:
     result &= "\namountIn: " & $self.amountIn
     result &= "\namountInLocked: " & $self.amountInLocked
     result &= "\namountOut: " & $self.amountOut
-    result &= "\nsuggestedLevelsForMaxFeesPerGas: " & $self.suggestedLevelsForMaxFeesPerGas
+    result &= "\nsuggestedMaxFeesPerGasLowLevel: " & $self.suggestedMaxFeesPerGasLowLevel
+    result &= "\nsuggestedMaxFeesPerGasMediumLevel: " & $self.suggestedMaxFeesPerGasMediumLevel
+    result &= "\nsuggestedMaxFeesPerGasHighLevel: " & $self.suggestedMaxFeesPerGasHighLevel
+    result &= "\nsuggestedMinPriorityFee: " & $self.suggestedMinPriorityFee
+    result &= "\nsuggestedMaxPriorityFee: " & $self.suggestedMaxPriorityFee
+    result &= "\ncurrentBaseFee: " & $self.currentBaseFee
     result &= "\ntxNonce: " & $self.txNonce
     result &= "\ntxMaxFeesPerGas: " & $self.txMaxFeesPerGas
     result &= "\ntxBaseFee: " & $self.txBaseFee
@@ -205,8 +230,23 @@ QtObject:
   proc amountOut*(self: PathItem): string =
     return self.amountOut
 
-  proc suggestedLevelsForMaxFeesPerGas*(self: PathItem): MaxFeeLevelsItem =
-    return self.suggestedLevelsForMaxFeesPerGas
+  proc suggestedMaxFeesPerGasLowLevel*(self: PathItem): string =
+    return self.suggestedMaxFeesPerGasLowLevel
+
+  proc suggestedMaxFeesPerGasMediumLevel*(self: PathItem): string =
+    return self.suggestedMaxFeesPerGasMediumLevel
+
+  proc suggestedMaxFeesPerGasHighLevel*(self: PathItem): string =
+    return self.suggestedMaxFeesPerGasHighLevel
+
+  proc suggestedMinPriorityFee*(self: PathItem): string =
+    return self.suggestedMinPriorityFee
+
+  proc suggestedMaxPriorityFee*(self: PathItem): string =
+    return self.suggestedMaxPriorityFee
+
+  proc currentBaseFee*(self: PathItem): string =
+    return self.currentBaseFee
 
   proc txNonce*(self: PathItem): string =
     return self.txNonce
