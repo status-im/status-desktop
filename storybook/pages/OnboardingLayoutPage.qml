@@ -1,8 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
 
 import StatusQ 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0
@@ -13,6 +18,7 @@ import shared.panels 1.0
 import utils 1.0
 
 import Storybook 1.0
+import Models 1.0
 
 SplitView {
     id: root
@@ -26,12 +32,21 @@ SplitView {
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
         readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
         readonly property string pin: "111111"
+        readonly property string password: "somepassword"
 
         // TODO simulation
         function restart() {
             // add keypair state
             // sync state
         }
+    }
+
+    LoginAccountsModel {
+        id: loginAccountsModel
+    }
+
+    ListModel {
+        id: emptyModel
     }
 
     OnboardingLayout {
@@ -47,13 +62,18 @@ SplitView {
             property int addKeyPairState: Onboarding.AddKeyPairState.InProgress
             property int syncState: Onboarding.SyncState.InProgress
 
-            property int keycardRemainingPinAttempts: 5
+            property int keycardRemainingPinAttempts: ctrlUnlockWithPuk.checked ? 1 : 5
 
             function setPin(pin: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
+                ctrlLoginResult.result = "🯄"
                 const valid = pin === mockDriver.pin
                 if (!valid)
                     keycardRemainingPinAttempts--
+                if (keycardRemainingPinAttempts <= 0) { // SIMULATION: "lock" the keycard
+                    keycardState = Onboarding.KeycardState.Locked
+                    keycardRemainingPinAttempts = ctrlUnlockWithPuk.checked ? 1 : 5
+                }
                 return valid
             }
 
@@ -95,9 +115,20 @@ SplitView {
             function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
                 logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
+
+            // password signals
+            signal accountLoginError(string error, bool wrongPassword)
+
+            // biometrics signals
+            signal obtainingPasswordSuccess(string password)
+            signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
         }
 
+        loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
+
         biometricsAvailable: ctrlBiometrics.checked
+        isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+        onBiometricsRequested: biometricsPopup.open()
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
@@ -107,7 +138,27 @@ SplitView {
             stack.clear()
             stack.push(splashScreen, { runningProgressAnimation: true })
 
-            flow.currentKeycardState = Onboarding.KeycardState.NoPCSCService
+            store.keycardState = Onboarding.KeycardState.NoPCSCService
+        }
+
+        onLoginRequested: (keyUid, method, data) => {
+            logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
+
+            // SIMULATION: emit an error in case of wrong password
+            if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.password) {
+                onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5)
+                ctrlLoginResult.result = "<font color='red'>⛔</font>"
+            } else {
+                ctrlLoginResult.result = "<font color='green'>✔</font>"
+            }
+        }
+
+        onReloadKeycardRequested: store.keycardState = Onboarding.KeycardState.NoPCSCService
+
+        // mocks
+        QtObject {
+            id: localAccountSettings
+            readonly property string storeToKeychainValue: ctrlTouchIdUser.checked ? Constants.keychain.storedValue.store : ""
         }
 
         Button {
@@ -118,11 +169,19 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof CreatePasswordPage
+            visible: onboarding.stack.currentItem instanceof CreatePasswordPage ||
+                     (onboarding.stack.currentItem instanceof LoginScreen && !onboarding.stack.currentItem.selectedProfileIsKeycard)
 
             onClicked: {
-                const password = "somepassword"
                 const currentItem = onboarding.stack.currentItem
+
+                const loginPassInput = StorybookUtils.findChild(
+                                         currentItem,
+                                         "loginPasswordInput")
+                if (!!loginPassInput) {
+                    ClipboardUtils.setText(mockDriver.password)
+                    loginPassInput.paste()
+                }
 
                 const input1 = StorybookUtils.findChild(
                                  currentItem,
@@ -134,8 +193,8 @@ SplitView {
                 if (!input1 || !input2)
                     return
 
-                input1.text = password
-                input2.text = password
+                input1.text = mockDriver.password
+                input2.text = mockDriver.password
             }
         }
 
@@ -169,7 +228,8 @@ SplitView {
             anchors.margins: 10
 
             visible: onboarding.stack.currentItem instanceof KeycardEnterPinPage ||
-                     onboarding.stack.currentItem instanceof KeycardCreatePinPage
+                     onboarding.stack.currentItem instanceof KeycardCreatePinPage ||
+                     (onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard)
 
             text: "Copy valid PIN (\"%1\")".arg(mockDriver.pin)
             focusPolicy: Qt.NoFocus
@@ -222,6 +282,17 @@ SplitView {
                 }
             }
         }
+    }
+
+    BiometricsPopup {
+        id: biometricsPopup
+        visible: onboarding.stack.currentItem instanceof LoginScreen && ctrlBiometrics.checked && ctrlTouchIdUser.checked
+        x: root.Window.width - width
+        password: mockDriver.password
+        pin: mockDriver.pin
+        onAccountLoginError: (error, wrongPassword) => store.accountLoginError(error, wrongPassword)
+        onObtainingPasswordSuccess: (password) => store.obtainingPasswordSuccess(password)
+        onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => store.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
     }
 
     Component {
@@ -304,6 +375,34 @@ SplitView {
                     text: "Biometrics available"
                     checked: true
                 }
+
+                ToolSeparator {}
+
+                Switch {
+                    id: ctrlLoginScreen
+                    text: "Show login screen"
+                    checkable: true
+                    onToggled: onboarding.restartFlow()
+                }
+
+                Switch {
+                    id: ctrlTouchIdUser
+                    text: "Touch ID login"
+                    enabled: ctrlBiometrics.checked
+                    checked: ctrlBiometrics.checked
+                }
+
+                Switch {
+                    id: ctrlUnlockWithPuk
+                    text: "Unlock with PUK available"
+                    checked: true
+                }
+
+                Text {
+                    id: ctrlLoginResult
+                    property string result: "🯄"
+                    text: "Login result: %1".arg(result)
+                }
             }
 
             RowLayout {
@@ -340,7 +439,10 @@ SplitView {
 
                             ButtonGroup.group: keycardStateButtonGroup
 
-                            onClicked: store.keycardState = modelData.value
+                            onClicked: {
+                                store.keycardState = modelData.value
+                                ctrlLoginResult.result = "🯄"
+                            }
                         }
                     }
                 }

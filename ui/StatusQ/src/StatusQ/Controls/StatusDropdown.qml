@@ -32,10 +32,10 @@ QC.Popup {
     id: root
 
     dim: false
-    closePolicy: QC.Popup.CloseOnPressOutside | QC.Popup.CloseOnEscape
+
     background: Rectangle {
        color: Theme.palette.statusMenu.backgroundColor
-       radius: 8
+       radius: Theme.radius
        border.color: "transparent"
        layer.enabled: true
        layer.effect: DropShadow {
@@ -50,7 +50,7 @@ QC.Popup {
     }
 
     // workaround for https://bugreports.qt.io/browse/QTBUG-87804
-    Binding on margins{
+    Binding on margins {
         id: workaroundBinding
 
         when: false

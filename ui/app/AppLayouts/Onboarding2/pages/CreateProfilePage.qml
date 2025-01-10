@@ -15,7 +15,7 @@ import utils 1.0
 OnboardingPage {
     id: root
 
-    title: qsTr("Create your profile")
+    title: qsTr("Create profile")
 
     signal createProfileWithPasswordRequested()
     signal createProfileWithSeedphraseRequested()

@@ -7,8 +7,6 @@ import StatusQ.Core.Backpressure 0.1
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-
-
 SQUtils.QObject {
     id: root
 
@@ -33,6 +31,8 @@ SQUtils.QObject {
     signal reloadKeycardRequested
     signal createProfileWithoutKeycardRequested
 
+    signal mnemonicWasShown()
+    signal mnemonicRemovalRequested()
     signal finished(bool fromBackupSeedphrase)
 
     function init() {
@@ -121,8 +121,8 @@ SQUtils.QObject {
         BackupSeedphraseReveal {
             seedWords: root.seedWords
 
-            onBackupSeedphraseConfirmed:
-                root.stackView.push(backupSeedVerifyPage)
+            onMnemonicWasShown: root.mnemonicWasShown()
+            onBackupSeedphraseConfirmed: root.stackView.push(backupSeedVerifyPage)
         }
     }
 
@@ -144,8 +144,10 @@ SQUtils.QObject {
         id: backupSeedOutroPage
 
         BackupSeedphraseOutro {
-            onBackupSeedphraseRemovalConfirmed:
+            onBackupSeedphraseRemovalConfirmed: {
+                root.mnemonicRemovalRequested()
                 root.stackView.push(keycardCreatePinPage)
+            }
         }
     }
 

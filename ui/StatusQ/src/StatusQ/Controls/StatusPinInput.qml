@@ -1,5 +1,6 @@
 import QtQuick 2.15
 
+import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -98,6 +99,8 @@ Item {
        This additionalSpacing won't be applied if `additionalSpacingOnEveryNItems` is set to `0`.
     */
     property int additionalSpacing: 0
+
+    signal pinEditedManually()
 
     QtObject {
         id: d
@@ -226,9 +229,15 @@ Item {
 
             // Some component validations:
             if(text.length !== d.currentPinIndex)
-                console.error("StatusPinInput input management error. Current pin length must be "+ text.length + "and is " + d.currentPinIndex)
+                console.error("StatusPinInput input management error. Current pin length must be "+ text.length + " and is " + d.currentPinIndex)
         }
         onFocusChanged: { if(!focus) { d.deactivateBlink () } }
+        onTextEdited: root.pinEditedManually()
+
+        Keys.onShortcutOverride: event.accepted = event.matches(StandardKey.Paste)
+        Keys.onPressed: if (event.matches(StandardKey.Paste)) {
+                            root.setPin(ClipboardUtils.text)
+                        }
     }
 
     // Pin input visual objects:

@@ -8,6 +8,7 @@ FeesModel 1.0 FeesModel.qml
 FlatTokensModel 1.0 FlatTokensModel.qml
 IconModel 1.0 IconModel.qml
 LinkPreviewModel 1.0 LinkPreviewModel.qml
+LoginAccountsModel 1.0 LoginAccountsModel.qml
 MintedTokensModel 1.0 MintedTokensModel.qml
 ManageCollectiblesModel 1.0 ManageCollectiblesModel.qml
 RecipientModel 1.0 RecipientModel.qml

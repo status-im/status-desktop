@@ -35,6 +35,8 @@ StatusTextField {
     */
     property string signingPhrase: ""
 
+    property bool hasError
+
     QtObject {
         id: d
 
@@ -44,7 +46,6 @@ StatusTextField {
         readonly property int signingPhraseWordPadding: 8
         readonly property int signingPhraseWordsSpacing: 8
         readonly property int signingPhraseWordsHeight: 30
-
     }
 
     leftPadding: d.inputTextPadding
@@ -57,13 +58,12 @@ StatusTextField {
     selectByMouse: true
 
     echoMode: TextInput.Password
-    color: Theme.palette.directColor1
 
     background: Rectangle {
         color: Theme.palette.baseColor2
         radius: d.radius
-        border.width: root.focus ? 1 : 0
-        border.color: Theme.palette.primaryColor1
+        border.width: root.focus || root.hasError ? 1 : 0
+        border.color: root.hasError ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
     }
 
     RowLayout {

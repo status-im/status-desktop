@@ -41,10 +41,21 @@ SQUtils.QObject {
     signal keycardFactoryResetRequested
     signal keyPairTransferRequested
 
+    signal mnemonicWasShown()
+    signal mnemonicRemovalRequested()
+
     signal finished(int flow)
 
     function init() {
         root.stackView.push(welcomePage)
+    }
+
+    function startCreateProfileFlow() {
+        root.stackView.push(createProfilePage)
+    }
+
+    function startLoginFlow() {
+        root.stackView.push(loginPage)
     }
 
     QtObject {
@@ -115,7 +126,7 @@ SQUtils.QObject {
     Component {
         id: loginPage
 
-        LoginPage {
+        NewAccountLoginPage {
             networkChecksEnabled: root.networkChecksEnabled
 
             onLoginWithSyncingRequested: logInBySyncingFlow.init()
@@ -170,6 +181,7 @@ SQUtils.QObject {
         onKeyPairTransferRequested: root.keyPairTransferRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
+        onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
 
         onCreateProfileWithoutKeycardRequested: {
             const page = stackView.find(
@@ -177,6 +189,9 @@ SQUtils.QObject {
 
             stackView.replace(page, createProfilePage, StackView.PopTransition)
         }
+
+        onMnemonicWasShown: root.mnemonicWasShown()
+        onMnemonicRemovalRequested: root.mnemonicRemovalRequested()
 
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
