@@ -12,7 +12,12 @@ type
     AmountIn,
     AmountInLocked,
     AmountOut,
-    SuggestedLevelsForMaxFeesPerGas,
+    SuggestedMaxFeesPerGasLowLevel,
+    SuggestedMaxFeesPerGasMediumLevel,
+    SuggestedMaxFeesPerGasHighLevel,
+    SuggestedMinPriorityFee,
+    SuggestedMaxPriorityFee,
+    CurrentBaseFee,
     TxNonce,
     TxMaxFeesPerGas,
     TxBaseFee,
@@ -70,7 +75,12 @@ QtObject:
       ModelRole.AmountIn.int: "amountIn",
       ModelRole.AmountInLocked.int: "amountInLocked",
       ModelRole.AmountOut.int: "amountOut",
-      ModelRole.SuggestedLevelsForMaxFeesPerGas.int: "suggestedLevelsForMaxFeesPerGas",
+      ModelRole.SuggestedMaxFeesPerGasLowLevel.int: "suggestedMaxFeesPerGasLowLevel",
+      ModelRole.SuggestedMaxFeesPerGasMediumLevel.int: "suggestedMaxFeesPerGasMediumLevel",
+      ModelRole.SuggestedMaxFeesPerGasHighLevel.int: "suggestedMaxFeesPerGasHighLevel",
+      ModelRole.SuggestedMinPriorityFee.int: "suggestedMinPriorityFee",
+      ModelRole.SuggestedMaxPriorityFee.int: "suggestedMaxPriorityFee",
+      ModelRole.CurrentBaseFee.int: "currentBaseFee",
       ModelRole.TxNonce.int: "txNonce",
       ModelRole.TxMaxFeesPerGas.int: "txMaxFeesPerGas",
       ModelRole.TxBaseFee.int: "txBaseFee",
@@ -128,8 +138,18 @@ QtObject:
       result = newQVariant(item.amountInLocked)
     of ModelRole.AmountOut:
       result = newQVariant(item.amountOut)
-    of ModelRole.SuggestedLevelsForMaxFeesPerGas:
-      result = newQVariant(item.suggestedLevelsForMaxFeesPerGas)
+    of ModelRole.SuggestedMaxFeesPerGasLowLevel:
+      result = newQVariant(item.suggestedMaxFeesPerGasLowLevel)
+    of ModelRole.SuggestedMaxFeesPerGasMediumLevel:
+      result = newQVariant(item.suggestedMaxFeesPerGasMediumLevel)
+    of ModelRole.SuggestedMaxFeesPerGasHighLevel:
+      result = newQVariant(item.suggestedMaxFeesPerGasHighLevel)
+    of ModelRole.SuggestedMinPriorityFee:
+      result = newQVariant(item.suggestedMinPriorityFee)
+    of ModelRole.SuggestedMaxPriorityFee:
+      result = newQVariant(item.suggestedMaxPriorityFee)
+    of ModelRole.CurrentBaseFee:
+      result = newQVariant(item.currentBaseFee)
     of ModelRole.TxNonce:
       result = newQVariant(item.txNonce)
     of ModelRole.TxMaxFeesPerGas:
