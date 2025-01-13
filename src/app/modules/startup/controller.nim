@@ -219,8 +219,8 @@ proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: in
       )
       return img.uri
 
-proc fetchWakuMessages*(self: Controller) =
-  self.generalService.fetchWakuMessages()
+proc asyncFetchWakuBackupMessages*(self: Controller) =
+  self.generalService.asyncFetchWakuBackupMessages()
 
 proc getCroppedProfileImage*(self: Controller): string =
   return self.tmpProfileImageDetails.croppedImage

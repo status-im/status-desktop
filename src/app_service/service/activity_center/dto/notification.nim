@@ -34,6 +34,10 @@ type ActivityCenterNotificationType* {.pure.}= enum
   CommunityUnbanned = 22
   NewInstallationReceived = 23
   NewInstallationCreated = 24
+  BackupSyncingFetching = 25
+  BackupSyncingSuccess = 26
+  BackupSyncingPartialFailure = 27
+  BackupSyncingFailure = 28
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -178,6 +182,10 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.CommunityUnbanned.int,
         ActivityCenterNotificationType.NewInstallationReceived.int,
         ActivityCenterNotificationType.NewInstallationCreated.int,
+        ActivityCenterNotificationType.BackupSyncingFetching.int,
+        ActivityCenterNotificationType.BackupSyncingSuccess.int,
+        ActivityCenterNotificationType.BackupSyncingPartialFailure.int,
+        ActivityCenterNotificationType.BackupSyncingFailure.int,
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]

@@ -11,7 +11,7 @@ proc delete*(self: ProfileFetchingAnnouncementState) =
 method executePrimaryCommand*(self: ProfileFetchingAnnouncementState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      controller.fetchWakuMessages()
+      controller.asyncFetchWakuBackupMessages()
 
 method getNextPrimaryState*(self: ProfileFetchingAnnouncementState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
