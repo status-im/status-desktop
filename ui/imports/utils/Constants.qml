@@ -500,6 +500,7 @@ QtObject {
         readonly property int mutualContacts: 0
         readonly property int pendingContacts: 1
         readonly property int blockedContacts: 2
+        readonly property int rejectedReceivedContactRequest: 3
     }
 
     readonly property QtObject keypair: QtObject {

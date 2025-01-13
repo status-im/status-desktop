@@ -12,12 +12,14 @@ ContactListItemDelegate {
     property bool showSendMessageButton: false
     property bool showRejectContactRequestButton: false
     property bool showAcceptContactRequestButton: false
+    property bool showRemoveRejectionButton: false
     property string contactText: ""
 
     signal contextMenuRequested
     signal sendMessageRequested
     signal acceptContactRequested
     signal rejectRequestRequested
+    signal removeRejectionRequested
 
     icon.width: 40
     icon.height: 40

@@ -42,6 +42,7 @@ Item {
         mutualContactsModel: adaptor.mutualContacts
         blockedContactsModel: adaptor.blockedContacts
         pendingContactsModel: adaptor.pendingContacts
+        dismissedReceivedRequestContactsModel: adaptor.dismissedReceivedRequestContactsModel
         pendingReceivedContactsCount: adaptor.pendingReceivedRequestContacts.count
     }
 
