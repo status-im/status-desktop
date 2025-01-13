@@ -401,8 +401,8 @@ QtObject {
         })
     }
 
-    function openSwapModal(parameters) {
-        openPopup(swapModal, {swapInputParamsForm: parameters})
+    function openSwapModal(parameters, callback) {
+        openPopup(swapModal, {swapInputParamsForm: parameters}, callback)
     }
 
     function openBuyCryptoModal(parameters) {
@@ -1254,7 +1254,10 @@ QtObject {
                     swapOutputData: SwapOutputData{}
                 }
                 loginType: root.rootStore.loginType
-                onClosed: destroy()
+                onClosed: {
+                    destroy()
+                    swapInputParamsForm.resetFormData()
+                }
             }
         },
         Component {

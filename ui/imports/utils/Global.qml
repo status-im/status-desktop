@@ -90,7 +90,7 @@ QtObject {
     signal openPaymentRequestModalRequested(var callback)
 
     // Swap
-    signal openSwapModalRequested(var formDataParams)
+    signal openSwapModalRequested(var formDataParams, var callback)
 
     // BuyCrypto
     signal openBuyCryptoModalRequested(var formDataParams)
