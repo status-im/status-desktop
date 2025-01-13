@@ -20,6 +20,7 @@ ColumnLayout {
     property alias asset: listItem.asset
     property alias components: listItem.components
     property int listItemHeight: 76
+    property bool highlighted
 
     StatusBaseText {
         text: root.caption
@@ -41,6 +42,7 @@ ColumnLayout {
         asset.bgHeight: 40
         border.width: 1
         border.color: Theme.palette.baseColor2
+        highlighted: root.highlighted
 
         sensor.enabled: false
 

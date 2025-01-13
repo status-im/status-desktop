@@ -13,6 +13,12 @@ StatusRoundedMedia {
     property bool isCollectibleLoading: false
     property bool isMetadataValid: false
 
+    QtObject {
+        id: d
+
+        property bool isUnknown: root.isError && root.componentMediaType === StatusRoundedMedia.MediaType.Unknown
+    }
+
     radius: Theme.radius
     color: isError || isEmpty ? Theme.palette.baseColor5 : backgroundColor
 
@@ -20,22 +26,24 @@ StatusRoundedMedia {
         id: loadingCompLoader
         anchors.fill: parent
         active: root.isCollectibleLoading || root.isLoading
-        sourceComponent: LoadingComponent {radius: root.radius}
+        sourceComponent: LoadingComponent {
+            objectName: "loadingComponent"
+            radius: root.radius
+        }
     }
 
     Loader {
         anchors.fill: parent
         active: (root.isError || root.isEmpty) && !loadingCompLoader.active
         sourceComponent: LoadingErrorComponent {
+            objectName: "loadingErrorComponent"
             radius: root.radius
+            icon: d.isUnknown ? "frowny": "help"
             text: {
-                if (root.isError && root.componentMediaType === StatusRoundedMedia.MediaType.Unkown) {
+                if (d.isUnknown) {
                     return qsTr("Unsupported\nfile format")
                 }
-                if (!root.isMetadataValid) {
-                    return qsTr("Info can't\nbe fetched")
-                }
-                return qsTr("Failed\nto load")
+                return ""
             }
         }
     }

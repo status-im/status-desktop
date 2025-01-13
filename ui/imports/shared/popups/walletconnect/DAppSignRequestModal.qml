@@ -54,7 +54,7 @@ SignTransactionModalBase {
         badgeIcon: Theme.svg("sign-blue")
     }
 
-    gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
+    gradientColor: root.accountColor
     headerMainText: root.signingTransaction ? qsTr("%1 wants you to sign this transaction with %2").arg(root.dappName).arg(root.accountName)
                                             : qsTr("%1 wants you to sign this message with %2").arg(root.dappName).arg(root.accountName)
 
