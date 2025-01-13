@@ -113,6 +113,7 @@ class ImportSeedPhraseView(OnboardingView):
 
     @allure.step('Open seed phrase input view')
     def open_seed_phrase_input_view(self):
+        time.sleep(0.5)
         self._import_seed_phrase_button.click()
         return SeedPhraseInputView().wait_until_appears()
 
@@ -450,6 +451,7 @@ class CreatePasswordView(OnboardingView):
         self._strength_indicator = QObject(
             onboarding_names.mainWindow_strengthInditactor_StatusPasswordStrengthIndicator)
         self._indicator_panel_object = QObject(onboarding_names.mainWindow_RowLayout)
+        self.password_component_indicator = QObject(onboarding_names.mainWindow_ComponentIndicator)
         self._show_icon = QObject(onboarding_names.mainWindow_show_icon_StatusIcon)
         self._hide_icon = QObject(onboarding_names.mainWindow_hide_icon_StatusIcon)
 
@@ -483,7 +485,7 @@ class CreatePasswordView(OnboardingView):
         messages = []
         color = ColorCodes.GREEN.value
 
-        for item in driver.findAllObjects(self._indicator_panel_object.real_name):
+        for item in driver.findAllObjects(self.password_component_indicator.real_name):
             if str(item.color.name) == color:
                 messages.append(str(item.text))
         return messages
