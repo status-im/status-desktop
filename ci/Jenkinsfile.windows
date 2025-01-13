@@ -37,8 +37,8 @@ pipeline {
       name: 'WINDOWS_CODESIGN_TIMESTAMP_URL',
       description: 'Time Stamp Authority (TSA) server for signing binaries.',
       choices: [
-        'http://timestamp.apple.com/ts01',
         'http://timestamp.digicert.com', /* Known to cause 0x80096005, 0x800700e1 errors. */
+        'http://timestamp.apple.com/ts01',
         'http://timestamp.sectigo.com?td=sha256',
         'http://time.certum.pl',
         'https://freetsa.org',
