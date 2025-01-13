@@ -261,7 +261,11 @@ Item {
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
-                Global.openSwapModalRequested(d.swapFormData)
+                Global.openSwapModalRequested(d.swapFormData, (popup) => {
+                    popup.Component.destruction.connect(() => {
+                        d.swapFormData.resetFormData()
+                    })
+                })
             }
             onDappListRequested: root.dappListRequested()
             onDappConnectRequested: root.dappConnectRequested()
@@ -389,7 +393,11 @@ Item {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }
                 d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
-                Global.openSwapModalRequested(d.swapFormData)
+                Global.openSwapModalRequested(d.swapFormData, (popup) => {
+                    popup.Component.destruction.connect(() => {
+                        d.swapFormData.resetFormData()
+                    })
+                })
             }
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
