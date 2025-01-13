@@ -58,18 +58,14 @@ Item {
         model: SortFilterProxyModel {
             sourceModel: root.model
 
-            sorters: [
-                StringSorter {
-                    roleName: "preferredDisplayName"
-                    caseSensitivity: Qt.CaseInsensitive
-                }
-            ]
+            sorters: StringSorter {
+                roleName: "preferredDisplayName"
+                caseSensitivity: Qt.CaseInsensitive
+            }
 
-            filters: [
-                UserSearchFilterContainer {
-                    searchString: root.searchString
-                }
-            ]
+            filters: UserSearchFilter {
+                searchString: root.searchString
+            }
         }
 
         spacing: 0

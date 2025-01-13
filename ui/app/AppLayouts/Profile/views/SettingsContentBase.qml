@@ -20,7 +20,7 @@ FocusScope {
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
     property alias bottomHeaderComponents: secondHeaderRow.contentItem
-    default property alias content: contentWrapper.children
+    default property alias content: contentWrapper.data
     property alias titleLayout: titleLayout
 
     property bool stickTitleRowComponentLoader: false
