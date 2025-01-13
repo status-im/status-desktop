@@ -610,15 +610,13 @@ QtObject {
                     Theme.palette.warningColor1
     }
 
-    function getEtherscanUrl(networkShortName, testnetMode, addressOrTx, isAddressNotTx)  {
-        const type = isAddressNotTx
-            ? Constants.networkExplorerLinks.addressPath
-            : Constants.networkExplorerLinks.txPath
+    function getExplorerDomain(networkShortName, testnetMode) {
         let link = Constants.networkExplorerLinks.etherscan
-        if (testnetMode) {
-            link = Constants.networkExplorerLinks.sepoliaEtherscan
+        if (networkShortName === Constants.networkShortChainNames.mainnet) {
+            if (testnetMode) {
+                link = Constants.networkExplorerLinks.sepoliaEtherscan
+            }
         }
-
         if (networkShortName === Constants.networkShortChainNames.arbitrum) {
             link = Constants.networkExplorerLinks.arbiscan
             if (testnetMode) {
@@ -629,7 +627,20 @@ QtObject {
             if (testnetMode) {
                 link = Constants.networkExplorerLinks.sepoliaOptimism
             }
+        } else if (networkShortName === Constants.networkShortChainNames.base) {
+            link = Constants.networkExplorerLinks.base
+            if (testnetMode) {
+                link = Constants.networkExplorerLinks.sepoliaBase
+            }
         }
+        return link
+    }
+
+    function getEtherscanUrl(networkShortName, testnetMode, addressOrTx, isAddressNotTx)  {
+        const type = isAddressNotTx
+            ? Constants.networkExplorerLinks.addressPath
+            : Constants.networkExplorerLinks.txPath
+        let link = getExplorerDomain(networkShortName, testnetMode)
 
         return "%1/%2/%3".arg(link).arg(type).arg(addressOrTx)
     }
@@ -652,6 +663,9 @@ QtObject {
         if (networkShortName === Constants.networkShortChainNames.optimism) {
             return qsTr("Optimistic")
         }
+        if (networkShortName === Constants.networkShortChainNames.base) {
+            return qsTr("BaseScan")
+        }
         return qsTr("Etherscan")
     }
 
@@ -667,6 +681,9 @@ QtObject {
             case Constants.chains.optimismChainId:
             case Constants.chains.optimismSepoliaChainId:
                 return Constants.networkShortChainNames.optimism
+            case Constants.chains.baseChainId:
+            case Constants.chains.baseSepoliaChainId:
+                return Constants.networkShortChainNames.base
         }
         return ""
     }
@@ -677,6 +694,7 @@ QtObject {
             case Constants.chains.mainnetChainId:
             case Constants.chains.arbitrumChainId:
             case Constants.chains.optimismChainId:
+            case Constants.chains.baseChainId:
                 return false
         }
         return true

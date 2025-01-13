@@ -97,9 +97,10 @@ ColumnLayout {
         bgBorderColor: Theme.palette.primaryColor2
         tagPrimaryLabel.textFormat: Text.RichText
         tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
-        tagPrimaryLabel.text: qsTr("Activity is in beta. If transactions are missing, check %1, %2, or %3.")
+        tagPrimaryLabel.text: qsTr("Activity is in beta. If transactions are missing, check %1, %2, %3 or %4.")
             .arg(Utils.getStyledLink("Etherscan", "https://etherscan.io/", tagPrimaryLabel.hoveredLink))
             .arg(Utils.getStyledLink("OP Explorer", "https://optimistic.etherscan.io/", tagPrimaryLabel.hoveredLink))
+            .arg(Utils.getStyledLink("BaseScan", "https://basescan.org/", tagPrimaryLabel.hoveredLink))
             .arg(Utils.getStyledLink("Arbiscan", "https://arbiscan.io/", tagPrimaryLabel.hoveredLink))
         tagPrimaryLabel.onLinkActivated: (link) => {
             const explorerUrl = root.walletRootStore.showAllAccounts ? link

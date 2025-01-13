@@ -9115,6 +9115,8 @@
         <file>assets/img/icons/mask/dummyLineGraph.svg</file>
         <file>assets/img/icons/network/Network=Arbitrum.svg</file>
         <file>assets/img/icons/network/Network=Arbitrum-test.svg</file>
+        <file>assets/img/icons/network/Network=Base.svg</file>
+        <file>assets/img/icons/network/Network=Base-test.svg</file>
         <file>assets/img/icons/network/Network=Custom.svg</file>
         <file>assets/img/icons/network/Network=Ethereum.svg</file>
         <file>assets/img/icons/network/Network=Ethereum-test.svg</file>
@@ -9140,6 +9142,7 @@
         <file>assets/img/icons/protocol/Protocol=Hop.svg</file>
         <file>assets/img/icons/protocol/Protocol=Uniswap.svg</file>
         <file>assets/img/icons/tiny/network/Network=Arbitrum.svg</file>
+        <file>assets/img/icons/tiny/network/Network=Base.svg</file>
         <file>assets/img/icons/tiny/network/Network=Custom.svg</file>
         <file>assets/img/icons/tiny/network/Network=Ethereum.svg</file>
         <file>assets/img/icons/tiny/network/Network=Hermez.svg</file>

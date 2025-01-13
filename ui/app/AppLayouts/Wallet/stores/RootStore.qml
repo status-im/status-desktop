@@ -399,29 +399,8 @@ QtObject {
         return d.mainModuleInst.addressWasShown(address)
     }
 
-    function getExplorerDomain(networkShortName) {
-        let link = Constants.networkExplorerLinks.etherscan
-        if (networkShortName === Constants.networkShortChainNames.mainnet) {
-            if (root.areTestNetworksEnabled) {
-                link = Constants.networkExplorerLinks.sepoliaEtherscan
-            }
-        }
-        if (networkShortName === Constants.networkShortChainNames.arbitrum) {
-            link = Constants.networkExplorerLinks.arbiscan
-            if (root.areTestNetworksEnabled) {
-                link = Constants.networkExplorerLinks.sepoliaArbiscan
-            }
-        } else if (networkShortName === Constants.networkShortChainNames.optimism) {
-            link = Constants.networkExplorerLinks.optimism
-            if (root.areTestNetworksEnabled) {
-                link = Constants.networkExplorerLinks.sepoliaOptimism
-            }
-        }
-        return link
-    }
-
     function getExplorerUrl(networkShortName, contractAddress, tokenId) {
-        let link = getExplorerDomain(networkShortName)
+        let link = Utils.getExplorerDomain(networkShortName)
         if (networkShortName === Constants.networkShortChainNames.mainnet) {
             return "%1/nft/%2/%3".arg(link).arg(contractAddress).arg(tokenId)
         }
@@ -436,6 +415,9 @@ QtObject {
         }
         if (networkShortName === Constants.networkShortChainNames.optimism) {
             return qsTr("Optimism Explorer")
+        }
+        if (networkShortName === Constants.networkShortChainNames.base) {
+            return qsTr("Base Explorer")
         }
         return qsTr("Etherscan Explorer")
     }
@@ -456,6 +438,11 @@ QtObject {
             networkName = Constants.openseaExplorerLinks.optimism
             if (root.areTestNetworksEnabled) {
                 networkName = Constants.openseaExplorerLinks.sepoliaOptimism
+            }
+        } else if (networkShortName === Constants.networkShortChainNames.base) {
+            networkName = Constants.openseaExplorerLinks.base
+            if (root.areTestNetworksEnabled) {
+                networkName = Constants.openseaExplorerLinks.sepoliaBase
             }
         }
         return networkName
