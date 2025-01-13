@@ -21,6 +21,8 @@ QtObject {
         readonly property int optimismSepoliaChainId: 11155420
         readonly property int arbitrumChainId: 42161
         readonly property int arbitrumSepoliaChainId: 421614
+        readonly property int baseChainId: 8453
+        readonly property int baseSepoliaChainId: 84532
     }
 
     readonly property QtObject startupFlow: QtObject {
@@ -888,16 +890,19 @@ QtObject {
         readonly property string mainnet: "eth"
         readonly property string arbitrum: "arb1"
         readonly property string optimism: "oeth"
+        readonly property string base: "base"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
         readonly property string etherscan: "https://etherscan.io"
         readonly property string arbiscan: "https://arbiscan.io"
         readonly property string optimism: "https://optimistic.etherscan.io"
+        readonly property string base: "https://basescan.org"
 
         readonly property string sepoliaEtherscan: "https://sepolia.etherscan.io/"
         readonly property string sepoliaArbiscan: "https://sepolia.arbiscan.io/"
         readonly property string sepoliaOptimism: "https://sepolia-optimism.etherscan.io/"
+        readonly property string sepoliaBase: "https://sepolia.basescan.org/"
 
         readonly property string addressPath: "address"
         readonly property string txPath: "tx"
@@ -910,10 +915,12 @@ QtObject {
         readonly property string ethereum: "ethereum"
         readonly property string arbitrum: "arbitrum"
         readonly property string optimism: "optimism"
+        readonly property string base: "base"
 
         readonly property string sepoliaEthereum: "sepolia"
         readonly property string sepoliaArbitrum: "arbitrum-sepolia"
         readonly property string sepoliaOptimism: "optimism-sepolia"
+        readonly property string sepoliaBase: "base-sepolia"
     }
 
     readonly property string api_request: "api-request"
