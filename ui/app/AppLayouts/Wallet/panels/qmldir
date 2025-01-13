@@ -16,3 +16,5 @@ SendModalHeader 1.0 SendModalHeader.qml
 StickySendModalHeader 1.0 StickySendModalHeader.qml
 RecipientSelectorPanel 1.0 RecipientSelectorPanel.qml
 SimpleTransactionsFees 1.0 SimpleTransactionsFees.qml
+RecipientInfoButtonWithMenu 1.0 RecipientInfoButtonWithMenu.qml
+SignCollectibleInfoBox 1.0 SignCollectibleInfoBox.qml

@@ -16,6 +16,8 @@ import StatusQ.Popups.Dialog 0.1
 import shared.controls 1.0
 import shared.stores 1.0
 
+import AppLayouts.Wallet.views.collectibles 1.0
+
 import utils 1.0
 
 StatusDialog {
@@ -88,6 +90,9 @@ StatusDialog {
     property string infoTagText
     readonly property alias infoTag: infoTag
     property bool showHeaderDivider: true
+    property bool isCollectible
+    readonly property alias fromAccountSmartIdenticon: fromAccountSmartIdenticon
+    readonly property alias collectibleMedia: collectibleMedia
 
     default property alias contents: contentsLayout.data
 
@@ -139,7 +144,7 @@ StatusDialog {
                 Layout.rightMargin: -parent.anchors.rightMargin - scrollView.rightPadding
                 Layout.preferredHeight: childrenRect.height + 80 - countdownPill.height // 40 + 40 top/bottomMargin
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: root.gradientColor }
+                    GradientStop { position: 0.0; color: Utils.setColorAlpha(root.gradientColor, 0.05) }
                     GradientStop { position: 1.0; color: root.backgroundColor }
                 }
 
@@ -148,7 +153,7 @@ StatusDialog {
                     spacing: 12
                     anchors.centerIn: parent
 
-                    Row {
+                    RowLayout {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.topMargin: 4
                         spacing: -10
@@ -200,6 +205,54 @@ StatusDialog {
                             asset.color: "transparent"
                             asset.bgColor: "transparent"
                         }
+                        visible: !root.isCollectible
+                    }
+
+                    RowLayout {
+                        Layout.alignment: Qt.AlignCenter
+                        spacing: -fromAccountSmartIdenticon.width+4
+                        Item {
+                            height: 120
+                            width: 120
+                            CollectibleMedia {
+                                id: collectibleMedia
+
+                                objectName: "collectibleMedia"
+                                manualMaxDimension: 120
+                                radius: 12
+                            }
+                            layer.enabled: true
+                            layer.effect: DropShadow {
+                                horizontalOffset: 0
+                                verticalOffset: 0
+                                samples: 37
+                                color: Utils.setColorAlpha(root.gradientColor, 0.15)
+                            }
+                        }
+                        Rectangle {
+                            Layout.alignment: Qt.AlignBottom
+                            Layout.bottomMargin: -4
+
+                            Layout.preferredWidth: fromAccountSmartIdenticon.width + 4
+                            Layout.preferredHeight: fromAccountSmartIdenticon.height + 4
+                            radius: width/2
+                            color: root.backgroundColor
+
+                            StatusSmartIdenticon {
+                                id: fromAccountSmartIdenticon
+
+                                anchors.centerIn: parent
+                                objectName: "fromAccountSmartIdenticon"
+                                asset.bgWidth: 28
+                                asset.bgHeight: 28
+                                visible: !!asset.name || !!asset.source
+                                asset.width: 28
+                                asset.height: 28
+                                asset.color: "transparent"
+                                asset.bgColor: "transparent"
+                            }
+                        }
+                        visible: root.isCollectible
                     }
 
                     StatusBaseText {

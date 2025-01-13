@@ -48,7 +48,7 @@ SignTransactionModalBase {
     //: e.g. (swap) 100 DAI to 100 USDT
     subtitle: qsTr("%1 to %2").arg(formatBigNumber(fromTokenAmount, fromTokenSymbol)).arg(formatBigNumber(toTokenAmount, toTokenSymbol))
 
-    gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
+    gradientColor: root.accountColor
     fromImageSource: Constants.tokenIcon(root.fromTokenSymbol)
     toImageSource: Constants.tokenIcon(root.toTokenSymbol)
 

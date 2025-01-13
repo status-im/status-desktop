@@ -40,8 +40,14 @@ Control {
     */
     property string text: qsTr("Failed\nto load")
 
+    /*!
+        \qmlproperty string LoadingComponent::icon
+        This property lets user set error icon
+    */
+    property alias icon: errorIcon.icon
+
     background: Rectangle {
-        color: Theme.palette.baseColor5
+        color: Theme.palette.baseColor4
         radius: root.radius
     }
 
@@ -50,10 +56,11 @@ Control {
             anchors.centerIn: parent
             spacing: 10
             StatusIcon {
+                id: errorIcon
+
                 anchors.horizontalCenter: parent.horizontalCenter
                 icon: "frowny"
-                opacity: 0.1
-                color: Theme.palette.directColor1
+                color: Theme.palette.directColor7
             }
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter

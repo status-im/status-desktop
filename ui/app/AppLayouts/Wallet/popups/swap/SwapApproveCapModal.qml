@@ -51,7 +51,7 @@ SignTransactionModalBase {
     title: qsTr("Approve spending cap")
     subtitle: root.serviceProviderHostname
 
-    gradientColor: Utils.setColorAlpha(root.accountColor, 0.05) // 5% of wallet color
+    gradientColor: root.accountColor
     fromImageSmartIdenticon.asset.name: "filled-account"
     fromImageSmartIdenticon.asset.emoji: root.accountEmoji
     fromImageSmartIdenticon.asset.color: root.accountColor
