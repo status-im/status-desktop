@@ -8,12 +8,13 @@ import ../../shared_models/message_item_qobject as msg_item_qobj
 import ../../../global/global_singleton
 import ../../../global/app_sections_config as conf
 import ../../../core/eventemitter
-import ../../../../app_service/service/activity_center/service as activity_center_service
-import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/devices/service as devices_service
+import app_service/service/activity_center/service as activity_center_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/message/service as message_service
+import app_service/service/chat/service as chat_service
+import app_service/service/community/service as community_service
+import app_service/service/devices/service as devices_service
+import app_service/service/general/service as general_service
 
 export io_interface
 
@@ -35,6 +36,7 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     devicesService: devices_service.Service,
+    generalService: general_service.Service,
     ): Module =
   result = Module()
   result.delegate = delegate
@@ -49,6 +51,7 @@ proc newModule*(
     chatService,
     communityService,
     devicesService,
+    generalService,
   )
   result.moduleLoaded = false
 
@@ -288,3 +291,6 @@ method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGro
 
 method enableInstallationAndSync*(self: Module, installationId: string) =
   self.controller.enableInstallationAndSync(installationId)
+
+method tryFetchingAgain*(self: Module) =
+  self.controller.tryFetchingAgain()

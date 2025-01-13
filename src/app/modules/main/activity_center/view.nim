@@ -207,3 +207,6 @@ QtObject:
 
   proc enableInstallationAndSync*(self: View, installationId: string) {.slot.} =
     self.delegate.enableInstallationAndSync(installationId)
+
+  proc tryFetchingAgain*(self: View) {.slot.} =
+    self.delegate.tryFetchingAgain()

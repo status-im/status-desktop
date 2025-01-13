@@ -152,6 +152,11 @@ Popup {
                 case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationReceived:
                 case ActivityCenterStore.ActivityCenterNotificationType.NewInstallationCreated:
                     return newDeviceDetectedComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFetching:
+                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingSuccess:
+                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
+                case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
+                    return backupSyncingComponent
                 default:
                     return null
                 }
@@ -334,6 +339,23 @@ Popup {
                         });
                         break;
                 }
+            }
+        }
+    }
+
+    Component {
+        id: backupSyncingComponent
+
+        ActivityNotificationProfileFetching {
+            id: activityNotificationProfileFetching
+            type: setType(notification)
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            onTryAgainClicked: {
+                // Force the type back to in progress since the fetching is async and the state will not update imediately
+                activityNotificationProfileFetching.type = ActivityNotificationProfileFetching.FetchingState.Fetching
+
+                root.activityCenterStore.tryFetchingAgain()
             }
         }
     }

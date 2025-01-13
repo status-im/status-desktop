@@ -2,12 +2,13 @@ import ./io_interface
 
 import ../../../global/app_signals
 import ../../../core/eventemitter
-import ../../../../app_service/service/activity_center/service as activity_center_service
-import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/message/service as message_service
-import ../../../../app_service/service/community/service as community_service
-import ../../../../app_service/service/chat/service as chat_service
-import ../../../../app_service/service/devices/service as devices_service
+import app_service/service/activity_center/service as activity_center_service
+import app_service/service/contacts/service as contacts_service
+import app_service/service/message/service as message_service
+import app_service/service/community/service as community_service
+import app_service/service/chat/service as chat_service
+import app_service/service/devices/service as devices_service
+import app_service/service/general/service as general_service
 
 type
   Controller* = ref object of RootObj
@@ -19,6 +20,7 @@ type
     chatService: chat_service.Service
     communityService: community_service.Service
     devicesService: devices_service.Service
+    generalService: general_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -29,6 +31,7 @@ proc newController*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     devicesService: devices_service.Service,
+    generalService: general_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -39,6 +42,7 @@ proc newController*(
   result.chatService = chatService
   result.communityService = communityService
   result.devicesService = devicesService
+  result.generalService = generalService
 
 proc delete*(self: Controller) =
   discard
@@ -169,3 +173,6 @@ proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
 
 proc enableInstallationAndSync*(self: Controller, installationId: string) =
   self.devicesService.enableInstallationAndSync(installationId)
+
+proc tryFetchingAgain*(self: Controller) =
+  self.generalService.asyncFetchWakuBackupMessages()
