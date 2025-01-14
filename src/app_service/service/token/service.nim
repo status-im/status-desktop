@@ -564,6 +564,10 @@ QtObject:
       error "error: ", procName="updateTokenPreferences", errName=e.name, errDesription=e.msg
 
   proc updateTokenPrices*(self: Service, updatedPrices: Table[string, float64]) =
-      for tokenSymbol, price in updatedPrices:
+    var anyUpdated = false
+    for tokenSymbol, price in updatedPrices:
+      if not self.tokenPriceTable.hasKey(tokenSymbol) or self.tokenPriceTable[tokenSymbol] != price:
+        anyUpdated = true
         self.tokenPriceTable[tokenSymbol] = price
+    if anyUpdated:
       self.events.emit(SIGNAL_TOKENS_PRICES_UPDATED, Args())

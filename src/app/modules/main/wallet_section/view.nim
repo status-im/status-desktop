@@ -112,6 +112,8 @@ QtObject:
     self.delegate.setFilterAllAddresses()
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
+    if totalCurrencyBalance == self.totalCurrencyBalance:
+      return
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
