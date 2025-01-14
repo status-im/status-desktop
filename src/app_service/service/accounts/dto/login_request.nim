@@ -19,7 +19,6 @@ type
     apiConfig*: APIConfig
     statusProxyEnabled*: bool
 
-
 proc toJson*(self: LoginAccountRequest): JsonNode =
   result = %* {
     "password": self.passwordHash,

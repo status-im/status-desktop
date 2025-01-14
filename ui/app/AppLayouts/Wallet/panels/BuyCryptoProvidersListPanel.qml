@@ -5,6 +5,7 @@ import SortFilterProxyModel 0.2
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Wallet.controls 1.0
 
@@ -32,8 +33,6 @@ ColumnLayout {
 
     StatusSwitchTabBar {
         id: tabBar
-        // As we skip Mercuryo and it is the only provider supported for recurrent, we hide the tab bar until there is at least one recurrent provider
-        visible: false
         objectName: "tabBar"
         Layout.alignment: Qt.AlignHCenter
         Layout.fillWidth: true
@@ -55,9 +54,9 @@ ColumnLayout {
             model: SortFilterProxyModel {
                 sourceModel: root.providersModel
                 filters: ValueFilter {
-                    roleName: "name"
-                    value: "Mercuryo"
-                    inverted: true
+                    enabled: tabBar.currentIndex
+                    roleName: "supportsRecurrentPurchase"
+                    value: true
                 }
             }
             delegate: BuyCryptoProvidersDelegate {
