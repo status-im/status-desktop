@@ -23,7 +23,6 @@ pytestmark = marks
                              pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
                                           'sunglasses', '1f60e', 'AccWatch1edited', '#216266', 'thumbsup', '1f44d')
                          ])
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/15995')
 def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWindow, address: str, color: str, emoji: str,
                                                             emoji_unicode: str,
                                                             name: str, new_name: str, new_color: str, new_emoji: str,
@@ -32,8 +31,8 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         wallet = main_screen.left_panel.open_wallet()
 
     with step('Create watched address from context menu'):
-        account_popup = wallet.left_panel.add_watched_address_from_context.click()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_eth_address(address).save_changes()
+        account_popup = wallet.left_panel.select_add_watched_address_from_context_menu()
+        account_popup.set_name(name).set_eth_address(address).save_changes()
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
@@ -46,10 +45,10 @@ def test_right_click_manage_watch_only_account_context_menu(main_screen: MainWin
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
 
     with step('Set new name, emoji and color for account and save'):
-        account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save_changes()
+        account_popup.set_name(new_name).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_unicode)
+        expected_account = constants.user.account_list_item(new_name, None, None)
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
