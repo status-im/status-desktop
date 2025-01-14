@@ -31,6 +31,7 @@ SettingsContentBase {
     required property var blockedContactsModel
     required property var pendingContactsModel
     required property int pendingReceivedContactsCount
+    required property var dismissedReceivedRequestContactsModel
 
     property alias searchStr: searchBox.text
 
@@ -86,6 +87,13 @@ SettingsContentBase {
                 enabled: !root.pendingContactsModel.ModelCount.empty
                 text: qsTr("Pending Requests")
                 badge.value: root.pendingReceivedContactsCount
+            }
+            StatusTabButton {
+                objectName: "ContactsView_DismissedRequest_Button"
+
+                width: implicitWidth
+                enabled: !root.dismissedReceivedRequestContactsModel.ModelCount.empty
+                text: qsTr("Dismissed Requests")
             }
             StatusTabButton {
                 objectName: "ContactsView_Blocked_Button"
@@ -177,6 +185,21 @@ SettingsContentBase {
 
         ContactsList {
             model: SortFilterProxyModel {
+                sourceModel: root.dismissedReceivedRequestContactsModel
+
+                filters: UserSearchFilter {
+                    searchString: searchBox.text
+                }
+
+                sorters: StringSorter {
+                    roleName: "preferredDisplayName"
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+            }
+        }
+
+        ContactsList {
+            model: SortFilterProxyModel {
                 sourceModel: root.blockedContactsModel
 
                 filters: UserSearchFilter {
@@ -198,6 +221,7 @@ SettingsContentBase {
         onSendMessageRequested: root.contactsStore.joinPrivateChat(publicKey)
         onAcceptContactRequested: root.contactsStore.acceptContactRequest(publicKey, "")
         onRejectContactRequested: root.contactsStore.dismissContactRequest(publicKey, "")
+        onRejectionRemoved: root.contactsStore.acceptContactRequest(publicKey, "")
     }
 
     component SectionComponent: Rectangle {

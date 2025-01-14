@@ -16,6 +16,7 @@ StatusListView {
     signal sendMessageRequested(string publicKey)
     signal acceptContactRequested(string publicKey)
     signal rejectContactRequested(string publicKey)
+    signal rejectionRemoved(string publicKey)
 
     objectName: "ContactListPanel_ListView"
 
@@ -32,6 +33,7 @@ StatusListView {
         showRejectContactRequestButton:
             model.contactRequest === Constants.ContactRequestState.Received
         showAcceptContactRequestButton: showRejectContactRequestButton
+        showRemoveRejectionButton: model.contactRequest === Constants.ContactRequestState.Dismissed
 
         contactText: model.contactRequest === Constants.ContactRequestState.Sent
                      ? qsTr("Contact Request Sent") : ""
@@ -41,5 +43,6 @@ StatusListView {
         onSendMessageRequested: root.sendMessageRequested(model.pubKey)
         onAcceptContactRequested: root.acceptContactRequested(model.pubKey)
         onRejectRequestRequested: root.rejectContactRequested(model.pubKey)
+        onRemoveRejectionRequested: root.rejectionRemoved(model.pubKey)
     }
 }

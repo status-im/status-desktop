@@ -1752,6 +1752,7 @@ Item {
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
                             pendingContactsModel: contactsModelAdaptor.pendingContacts
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
+                            dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection

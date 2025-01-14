@@ -57,6 +57,7 @@ StatusSectionLayout {
     property var blockedContactsModel
     property var pendingContactsModel
     property int pendingReceivedContactsCount
+    property var dismissedReceivedRequestContactsModel
 
     required property bool isCentralizedMetricsEnabled
 
@@ -246,6 +247,7 @@ StatusSectionLayout {
                 blockedContactsModel: root.blockedContactsModel
                 pendingContactsModel: root.pendingContactsModel
                 pendingReceivedContactsCount: root.pendingReceivedContactsCount
+                dismissedReceivedRequestContactsModel: root.dismissedReceivedRequestContactsModel
             }
         }
 
