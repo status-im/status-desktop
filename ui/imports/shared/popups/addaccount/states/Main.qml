@@ -9,8 +9,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
-import StatusQ 0.1
-import SortFilterProxyModel 0.2
 
 import "../stores"
 import "../panels"
@@ -54,20 +52,6 @@ Item {
     QtObject {
         id: d
         readonly property bool isEdit: root.store.editMode
-
-        readonly property SortFilterProxyModel originModelWithoutWatchOnlyAcc: SortFilterProxyModel {
-            id: originModelWithoutWatchOnlyAcc
-            objectName: "originModelWithoutWatchOnlyAcc"
-            sourceModel: root.store.originModel
-
-            readonly property string addWatchOnlyAccKeyUid: Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
-            filters: [
-                FastExpressionFilter {
-                    expression: model.keyPair.keyUid !== originModelWithoutWatchOnlyAcc.addWatchOnlyAccKeyUid
-                    expectedRoles: ["keyPair"]
-                }
-            ]
-        }
 
         function openEmojiPopup(showLeft) {
             if (!root.store.emojiPopup) {
@@ -191,7 +175,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 userProfilePublicKey: root.store.userProfilePublicKey
-                originModel: root.store.editMode? [] : d.originModelWithoutWatchOnlyAcc
+                originModel: root.store.editMode? [] : root.store.originModel
                 selectedOrigin: root.store.selectedOrigin
                 caretVisible: !root.store.editMode
                 enabled: !root.store.editMode
