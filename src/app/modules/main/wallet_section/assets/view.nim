@@ -42,6 +42,8 @@ QtObject:
     notify = hasBalanceCacheChanged
 
   proc setHasBalanceCache*(self: View, hasBalanceCache: bool) =
+    if self.hasBalanceCache == hasBalanceCache:
+      return
     self.hasBalanceCache = hasBalanceCache
     self.hasBalanceCacheChanged()
 
@@ -53,6 +55,8 @@ QtObject:
     notify = hasMarketValuesCacheChanged
 
   proc setHasMarketValuesCache*(self: View, hasMarketValuesCache: bool) =
+    if self.hasMarketValuesCache == hasMarketValuesCache:
+      return
     self.hasMarketValuesCache = hasMarketValuesCache
     self.hasMarketValuesCacheChanged()
 
