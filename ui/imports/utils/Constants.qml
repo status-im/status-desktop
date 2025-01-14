@@ -1433,4 +1433,10 @@ QtObject {
         Theme.svg("walletconnect"),
         Theme.png("status-logo")
     ]
+
+    enum LimitWarning {
+        Accounts,
+        Keypairs,
+        WatchOnlyAccounts
+    }
 }

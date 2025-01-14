@@ -54,6 +54,9 @@ BasePopupStore {
         Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive
     ]
 
+    readonly property bool isWatchOnlyImport: root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
+                                            root.selectedOrigin.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
+
     signal showLimitPopup(int warningType)
     signal resolvedENS(string resolvedPubKey, string resolvedAddress, string uuid)
 
@@ -97,23 +100,31 @@ BasePopupStore {
             return
         }
 
-        if(!event) {
-            if (!root.editMode && root.remainingAccountCapacity() === 0) {
-                root.showLimitPopup(0)
-                return
-            }
-
-            root.currentState.doPrimaryAction()
+        const handleEvent = !event || event.key === Qt.Key_Return || event.key === Qt.Key_Enter
+        if (!handleEvent) {
+            return
         }
-        else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+
+        if (handleEvent && !!event) {
             event.accepted = true
-            if (!root.editMode && root.remainingAccountCapacity() === 0) {
-                root.showLimitPopup(0)
-                return
-            }
-
-            root.currentState.doPrimaryAction()
         }
+
+        if (root.editMode) {
+            root.currentState.doPrimaryAction()
+            return
+        }
+
+        if (root.isWatchOnlyImport && root.remainingWatchOnlyAccountCapacity() === 0) {
+            root.showLimitPopup(Constants.LimitWarning.WatchOnlyAccounts)
+            return
+        }
+
+        if (root.remainingAccountCapacity() === 0) {
+            root.showLimitPopup(Constants.LimitWarning.Accounts)
+            return
+        }
+
+        root.currentState.doPrimaryAction()
     }
 
     function getSeedPhrase() {

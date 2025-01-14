@@ -20,12 +20,6 @@ StatusModal {
 
     property AddAccountStore store: AddAccountStore { }
 
-    enum LimitWarning {
-        Accounts,
-        Keypairs,
-        WatchOnlyAccounts
-    }
-
     width: Constants.addAccountPopup.popupWidth
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -74,13 +68,13 @@ StatusModal {
                 property string content
 
                 function showPopup(warningType) {
-                    if (warningType === AddAccountPopup.LimitWarning.Accounts) {
+                    if (warningType === Constants.LimitWarning.Accounts) {
                         limitPopup.title = Constants.walletConstants.maxNumberOfAccountsTitle
                         limitPopup.content = Constants.walletConstants.maxNumberOfAccountsContent
-                    } else if (warningType === AddAccountPopup.LimitWarning.Keypairs) {
+                    } else if (warningType === Constants.LimitWarning.Keypairs) {
                         limitPopup.title = Constants.walletConstants.maxNumberOfKeypairsTitle
                         limitPopup.content = Constants.walletConstants.maxNumberOfKeypairsContent
-                    } else if (warningType === AddAccountPopup.LimitWarning.WatchOnlyAccounts) {
+                    } else if (warningType === Constants.LimitWarning.WatchOnlyAccounts) {
                         limitPopup.title = Constants.walletConstants.maxNumberOfWatchOnlyAccountsTitle
                         limitPopup.content = Constants.walletConstants.maxNumberOfSavedAddressesContent
                     } else {
@@ -158,10 +152,10 @@ StatusModal {
                     store: root.store
 
                     onWatchOnlyAccountsLimitReached: {
-                        limitPopup.showPopup(AddAccountPopup.LimitWarning.WatchOnlyAccounts)
+                        limitPopup.showPopup(Constants.LimitWarning.WatchOnlyAccounts)
                     }
                     onKeypairLimitReached: {
-                        limitPopup.showPopup(AddAccountPopup.LimitWarning.Keypairs)
+                        limitPopup.showPopup(Constants.LimitWarning.Keypairs)
                     }
                 }
             }
