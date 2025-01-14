@@ -189,7 +189,7 @@ QtObject:
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: buildWalletSecrets(),
         apiConfig: defaultApiConfig(),
-        statusProxyEnabled: true,
+        statusProxyEnabled: true
       )
 
   proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
