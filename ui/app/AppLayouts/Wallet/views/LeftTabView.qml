@@ -75,7 +75,6 @@ Rectangle {
             walletType: account ? account.walletType : ""
             canDelete: account && !account.isWallet
             hideFromTotalBalance: account && account.hideFromTotalBalance
-            canAddWatchOnlyAccount: !production
 
             onClosed: {
                 walletAccountContextMenu.active = false

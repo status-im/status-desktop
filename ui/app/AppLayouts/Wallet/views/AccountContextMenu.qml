@@ -14,7 +14,7 @@ StatusMenu {
     property string walletType
     property bool canDelete
     property bool hideFromTotalBalance
-    property bool canAddWatchOnlyAccount: false
+    property bool canAddWatchOnlyAccount: true
 
     signal editAccountClicked()
     signal deleteAccountClicked()
