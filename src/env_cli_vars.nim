@@ -255,6 +255,16 @@ type StatusDesktopConfig = object
     desc: "Enables status-go API logging"
     name: $BASE_NAME_API_LOGGING
     abbr: "api-logging" .}: bool
+  wakuMetricsEnabled* {.
+    defaultValue: false
+    desc: "Enables waku metrics and starts prometheus"
+    name: "WAKU_METRICS"
+    abbr: "waku-metrics" .}: bool
+  wakuMetricsPort* {.
+    defaultValue: 9305
+    desc: "Sets port for prometheus metrics"
+    name: "WAKU_METRICS_PORT"
+    abbr: "waku-metrics-port" .}: int
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process

@@ -67,6 +67,8 @@ let
   SENTRY_DSN_STATUS_GO* = BUILD_SENTRY_DSN_STATUS_GO
   SENTRY_DSN_STATUS_GO_DESKTOP* = BUILD_SENTRY_DSN_STATUS_DESKTOP
   API_LOGGING* = desktopConfig.apiLogging
+  WAKU_METRICS_ENABLED* = desktopConfig.wakuMetricsEnabled
+  WAKU_METRICS_PORT* = desktopConfig.wakuMetricsPort
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
