@@ -51,6 +51,8 @@ let
   ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyArbitrumSepoliaToken
   ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismMainnetToken
   ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyOptimismSepoliaToken
+  ALCHEMY_BASE_MAINNET_TOKEN_RESOLVED* = desktopConfig.alchemyBaseMainnetToken
+  ALCHEMY_BASE_SEPOLIA_TOKEN_RESOLVED* = desktopConfig.alchemyBaseSepoliaToken
   OPENSEA_API_KEY_RESOLVED* = desktopConfig.openseaApiKey
   RARIBLE_MAINNET_API_KEY_RESOLVED* = desktopConfig.raribleMainnetApiKey
   RARIBLE_TESTNET_API_KEY_RESOLVED* = desktopConfig.raribleTestnetApiKey

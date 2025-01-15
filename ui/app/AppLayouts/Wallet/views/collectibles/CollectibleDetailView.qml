@@ -110,7 +110,7 @@ Item {
             }
         }
         onOpenCollectibleExternally: Global.openLinkWithConfirmation(d.collectibleLink, root.walletRootStore.getOpenseaDomainName())
-        onOpenCollectibleOnExplorer: Global.openLinkWithConfirmation(d.blockExplorerLink, root.walletRootStore.getExplorerDomain(networkShortName))
+        onOpenCollectibleOnExplorer: Global.openLinkWithConfirmation(d.blockExplorerLink, Utils.getExplorerDomain(networkShortName))
     }
 
     ColumnLayout {

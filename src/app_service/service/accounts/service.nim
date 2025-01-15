@@ -165,6 +165,8 @@ QtObject:
       alchemyArbitrumSepoliaToken: ALCHEMY_ARBITRUM_SEPOLIA_TOKEN_RESOLVED,
       alchemyOptimismMainnetToken: ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
       alchemyOptimismSepoliaToken: ALCHEMY_OPTIMISM_SEPOLIA_TOKEN_RESOLVED,
+      alchemyBaseMainnetToken: ALCHEMY_BASE_MAINNET_TOKEN_RESOLVED,
+      alchemyBaseSepoliaToken: ALCHEMY_BASE_SEPOLIA_TOKEN_RESOLVED,
       statusProxyStageName: STATUS_PROXY_STAGE_NAME_RESOLVED,
       statusProxyMarketUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
