@@ -191,6 +191,7 @@ class MainWindow(Window):
             AllowNotificationsView().start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
         if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
+            time.sleep(1)
             BetaConsentPopup().confirm()
         assert SigningPhrasePopup().ok_got_it_button.is_visible
         SigningPhrasePopup().confirm_phrase()
