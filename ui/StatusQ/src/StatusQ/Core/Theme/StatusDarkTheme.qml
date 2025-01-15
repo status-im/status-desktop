@@ -64,6 +64,8 @@ ThemePalette {
     miscColor11: getColor('yellow2')
     miscColor12: getColor('green6')
 
+    neutral95: "#060F1F"
+
     dropShadow: getColor('black', 0.08)
     dropShadow2: getColor('blue8', 0.02)
 

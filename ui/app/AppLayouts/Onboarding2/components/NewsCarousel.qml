@@ -14,7 +14,7 @@ Control {
     required property var newsModel
 
     background: Rectangle {
-        color: StatusColors.colors["neutral-95"]
+        color: Theme.palette.neutral95
         radius: 20
     }
 

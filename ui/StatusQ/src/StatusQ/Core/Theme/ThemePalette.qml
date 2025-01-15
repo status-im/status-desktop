@@ -77,6 +77,8 @@ QtObject {
     property color miscColor11
     property color miscColor12
 
+    property color neutral95
+
     property color statusFloatingButtonHighlight
 
     property color statusLoadingHighlight

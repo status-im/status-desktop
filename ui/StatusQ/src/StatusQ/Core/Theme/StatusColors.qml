@@ -85,9 +85,6 @@ QtObject {
         'brown2Hovered': '#7C6926',
 
         'lightDesktopBlue10': '#ECEFFB',
-        'darkDesktopBlue10': '#273251',
-
-        // new/mobile colors
-        'neutral-95': '#0D1625'
+        'darkDesktopBlue10': '#273251'
     }
 }
