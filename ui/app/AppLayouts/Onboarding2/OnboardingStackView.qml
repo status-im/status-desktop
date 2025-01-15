@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ.Core.Theme 0.1
+
 StackView {
     id: root
 
@@ -9,6 +11,10 @@ StackView {
 
         readonly property int opacityDuration: 50
         readonly property int swipeDuration: 400
+    }
+
+    background: Rectangle {
+        color: Theme.palette.background
     }
 
     pushEnter: Transition {
