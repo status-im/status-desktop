@@ -79,6 +79,10 @@ Page {
         }
     }
 
+    background: Rectangle {
+        color: Theme.palette.background
+    }
+
     // page stack
     OnboardingStackView {
         id: stack
@@ -91,9 +95,12 @@ Page {
                               : false
     }
 
+    // needs to be on top of the stack
+    // we're here only to provide the Back button feature
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
+        cursorShape: undefined // don't override the cursor coming from the stack
         enabled: stack.depth > 1 && !stack.busy
         onClicked: stack.pop()
     }
