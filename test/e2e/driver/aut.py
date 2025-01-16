@@ -105,6 +105,7 @@ class AUT:
             str(self.path),
             f'--datadir={self.app_data}',
             f'--LOG_LEVEL={configs.testpath.LOG_LEVEL}',
+            '--api-logging'
         ]
         try:
             with open(configs.AUT_LOG_FILE, "ab") as log:

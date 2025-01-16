@@ -95,7 +95,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
 
     with step('Verify that user avatar background color'):
         avatar_color = str(main_window.left_panel.profile_button.object.identicon.asset.color.name).upper()
-        assert avatar_color in constants.AvatarColors.available_colors(), \
+        assert avatar_color in constants.UserPictureColors.profile_colors(), \
             f'Avatar color should be one of the allowed colors but is {avatar_color}'
 
     with step('Open online identifier and check the data'):

@@ -1,10 +1,12 @@
+import json
 import random
 import string
 from zpywallet import HDWallet
 from zpywallet.network import EthereumMainNet
 from eth_account.hdaccount import generate_mnemonic, Mnemonic
 
-from constants import user
+import configs
+from constants import user, WalletAccountColors
 
 
 def random_name_string():
@@ -80,3 +82,15 @@ def get_wallet_address_from_mnemonic(mnemonic_data) -> str:
 
 def random_text_message():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 141))
+
+
+def random_emoji_with_unicode() -> tuple:
+    with open(configs.testpath.TEST_FILES / 'emojis_unicodes_list.json', "r", encoding="utf-8") as file:
+        data = json.load(file)
+        random_item = random.choice(data)
+        return random_item['shortname'], random_item['unicode']
+
+
+def random_wallet_account_color():
+    color = random.choice(WalletAccountColors.wallet_account_colors())
+    return color.lower()
