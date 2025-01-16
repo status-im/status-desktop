@@ -178,12 +178,6 @@ StatusWindow {
     }
 
     function moveToAppMain() {
-        // We set main module to the Global singleton once user is logged in and we move to the main app.
-        appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-        appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-        if (!appLoadingAnimation.runningProgressAnimation) {
-            mainModule.fakeLoadingScreenFinished()
-        }
         Global.appIsReady = true
 
         loader.sourceComponent = app
@@ -233,6 +227,12 @@ StatusWindow {
                 startupOnboardingLoader.item.visible = false
             }
             else if(state === Constants.appState.main) {
+                // We set main module to the Global singleton once user is logged in and we move to the main app.
+                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
+                if (!appLoadingAnimation.runningProgressAnimation) {
+                    mainModule.fakeLoadingScreenFinished()
+                }
                 moveToAppMain()
             } else if(state === Constants.appState.appEncryptionProcess) {
                 loader.sourceComponent = undefined
