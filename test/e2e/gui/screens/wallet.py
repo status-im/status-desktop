@@ -50,13 +50,13 @@ class LeftPanel(QObject):
     def accounts(self) -> typing.List[constants.user.account_list_item]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
-        time.sleep(1) # to give a chance for the left panel to refresh
+        time.sleep(1)  # to give a chance for the left panel to refresh
         raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
         if len(raw_data) > 0:
             for account_item in raw_data:
-                name = str(account_item.title)
                 # TODO: to fix properly with account data class implementation
+                name = str(account_item.title)
                 color = str(account_item.asset.color.name).lower()
                 emoji = ''
                 for child in walk_children(account_item):

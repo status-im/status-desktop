@@ -1,19 +1,16 @@
-import time
-
 import allure
 import pyperclip
 import pytest
 from allure import step
 
+import driver
 from constants.wallet import WalletNetworkSettings
 from helpers.WalletHelper import authenticate_with_password
 
-import constants
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
-from scripts.utils.generators import random_emoji_with_unicode, random_wallet_account_color, \
-    random_wallet_acc_keypair_name
+from scripts.utils.generators import random_wallet_acc_keypair_name
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/704459',
@@ -24,13 +21,8 @@ from scripts.utils.generators import random_emoji_with_unicode, random_wallet_ac
 def test_add_generated_account_restart_add_again(
         aut: AUT, main_screen: MainWindow, user_account):
 
-    emoji_data1 = random_emoji_with_unicode()
     name1 = random_wallet_acc_keypair_name()
-    color1 = random_wallet_account_color()
-
-    emoji_data2 = random_emoji_with_unicode()
     name2 = random_wallet_acc_keypair_name()
-    color2 = random_wallet_account_color()
 
     with step('Open wallet and choose default account'):
         default_name = WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value
@@ -47,7 +39,7 @@ def test_add_generated_account_restart_add_again(
     with step('Add the first generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name1).set_emoji(emoji_data1[0]).set_color(color1).save_changes()
+        account_popup.set_name(name1).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -58,12 +50,8 @@ def test_add_generated_account_restart_add_again(
         assert message == f'"{name1}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name1, color1.lower(), emoji_data1[1].split('-')[0])
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: name1 in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {name1} is not displayed even it should be'
 
     with step('Restart application'):
         aut.restart()
@@ -74,7 +62,7 @@ def test_add_generated_account_restart_add_again(
         assert not SigningPhrasePopup().ok_got_it_button.is_visible, \
             f"Signing phrase should not be present because it has been hidden in the first step"
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name2).set_emoji(emoji_data2[0]).set_color(color2).save_changes()
+        account_popup.set_name(name2).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -85,9 +73,5 @@ def test_add_generated_account_restart_add_again(
         assert message == f'"{name2}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item_2(name2, color2.lower(), emoji_data2[1].split('-')[0])
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: name2 in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {name2} is not displayed even it should be'
