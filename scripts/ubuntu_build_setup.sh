@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-GO_VERSION="1.19.5"
+GO_VERSION="1.22.10"
 GO_INSTALL_DIR="/usr/local/go"
 QT_VERSION="5.15.2"
 QT_INSTALL_DIR="/opt/qt"
@@ -66,14 +66,15 @@ function install_golang {
   fi
   declare -A GO_SHA256_MAP
   GO_SHA256_MAP=(
-    ["amd64"]="698ef3243972a51ddb4028e4a1ac63dc6d60821bf18e59a807e051fee0a385bd"
-    ["arm64"]="105889992ee4b1d40c7c108555222ca70ae43fccb42e20fbf1eebb822f5e72c6"
-    ["armv6l"]="0b75ca23061a9996840111f5f19092a1bdbc42ec1ae25237ed2eec1c838bd819"
+    ["amd64"]="736ce492a19d756a92719a6121226087ccd91b652ed5caec40ad6dbfb2252092"
+    ["arm64"]="5213c5e32fde3bd7da65516467b7ffbfe40d2bb5a5f58105e387eef450583eec"
+    ["armv6l"]="a7bbbc80fe736269820bbdf3555e91ada5d18a5cde2276aac3b559bc1d52fc70"
   )
   echo "Install GoLang ${GO_VERSION}"
   GO_OS=$(uname -s | tr '[:upper:]' '[:lower:]')
   GO_ARCH=$(get_go_arch)
   GO_TARBALL="go${GO_VERSION}.${GO_OS}-${GO_ARCH}.tar.gz"
+  # example: https://dl.google.com/go/go1.22.10.linux-amd64.tar.gz
   wget -q "https://dl.google.com/go/${GO_TARBALL}" -O "${GO_TARBALL}"
   echo "${GO_SHA256_MAP[${GO_ARCH}]} ${GO_TARBALL}" | sha256sum -c
   tar -C "${GO_INSTALL_DIR}" -xzf "${GO_TARBALL}"
@@ -85,7 +86,7 @@ function success_message {
   msg="
 SUCCESS!
 
-Before you attempt to build status-dektop you'll need a few environment variables set:
+Before you attempt to build status-desktop you'll need a few environment variables set:
 
 export QTDIR=${QT_INSTALL_DIR}/${QT_VERSION}/gcc_64
 export PATH=\$QTDIR:\$QTDIR/bin:\$(go env GOPATH)\bin:$PATH

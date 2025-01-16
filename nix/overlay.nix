@@ -37,8 +37,8 @@ in {
   # - development/compilers/go/print-hashes.sh 1.21.11
   # TODO: compile, not binary
   # Binary is used because of initial complexity of both package override and copy from newer nixpkgs
-  go_1_21 = callPackage ./pkgs/go/bootstrap121.nix { };
-  buildGo121Module = callPackage ./pkgs/go-module { go = final.go_1_21; };
+  go_1_22 = callPackage ./pkgs/go/bootstrap122.nix { };
+  buildGo122Module = callPackage ./pkgs/go-module { go = final.go_1_22; };
 
   # Fix for linuxdeployqt running ldd from nix with system shell
   # ERROR: findDependencyInfo: "/bin/sh: /nix/store/HASH-glibc-2.31-74/lib/libc.so.6: version `GLIBC_2.33' not found (required by /bin/sh)\n/bin/sh: /nix/store/0c7c96gikmzv87i7lv3vq5s1cmfjd6zf-glibc-2.31-74/lib/libc.so.6: version `GLIBC_2.34' not found (required by /bin/sh)"
