@@ -1,8 +1,8 @@
 { pkgs ? import <nixpkgs> { } }:
 
-let 
-  inherit (pkgs) lib buildGo121Module fetchFromGitHub;
-in buildGo121Module rec {
+let
+  inherit (pkgs) lib buildGo122Module fetchFromGitHub;
+in buildGo122Module rec {
   pname = "protoc-gen-go";
   version = "1.34.1";
 
