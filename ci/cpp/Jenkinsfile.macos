@@ -67,7 +67,7 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_DMG)
+            env.PKG_URL = s5cmd.upload(env.STATUS_CLIENT_DMG)
             jenkins.setBuildDesc(Dmg: env.PKG_URL)
           } }
         }

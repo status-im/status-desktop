@@ -1,6 +1,6 @@
-{ buildGo121Module, fetchFromGitHub, lib }:
+{ buildGo122Module, fetchFromGitHub, lib }:
 
-buildGo121Module rec {
+buildGo122Module rec {
   pname = "mockgen";
   version = "0.4.0";
 
