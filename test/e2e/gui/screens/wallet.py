@@ -57,13 +57,13 @@ class LeftPanel(QObject):
             for account_item in raw_data:
                 name = str(account_item.title)
                 # TODO: to fix properly with account data class implementation
-                # color = str(account_item.asset.color.name).lower()
-                # emoji = ''
-                # for child in walk_children(account_item):
-                #     if hasattr(child, 'emojiId'):
-                #         emoji = str(child.emojiId)
-                #         break
-                accounts.append(constants.user.account_list_item(name, None, None))
+                color = str(account_item.asset.color.name).lower()
+                emoji = ''
+                for child in walk_children(account_item):
+                    if hasattr(child, 'emojiId'):
+                        emoji = str(child.emojiId)
+                        break
+                accounts.append(constants.user.account_list_item(name, color, emoji.split('-')[0]))
         else:
             raise LookupError("Account items were not found")
         return accounts

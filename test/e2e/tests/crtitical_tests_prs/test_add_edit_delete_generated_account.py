@@ -5,7 +5,8 @@ import pytest
 from allure_commons._allure import step
 
 from helpers.WalletHelper import authenticate_with_password
-from scripts.utils.generators import random_wallet_acc_keypair_name
+from scripts.utils.generators import random_wallet_acc_keypair_name, random_emoji_with_unicode, \
+    random_wallet_account_color
 
 import constants
 import driver
@@ -17,10 +18,13 @@ from gui.main_window import MainWindow
 @pytest.mark.critical
 def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,):
     with step('Create generated wallet account'):
+        emoji_data = random_emoji_with_unicode()
         name = random_wallet_acc_keypair_name()
+        color = random_wallet_account_color()
+
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).save_changes()
+        account_popup.set_name(name).set_emoji(emoji_data[0]).set_color(color).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
 
@@ -31,7 +35,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, None, None)
+        expected_account = constants.user.account_list_item(name, color.lower(), emoji_data[1].split('-')[0])
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
@@ -40,11 +44,13 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
 
     with step('Edit wallet account'):
         new_name = random_wallet_acc_keypair_name()
+        new_emoji_data = random_emoji_with_unicode()
+        new_color = random_wallet_account_color()
         account_popup = wallet.left_panel.open_edit_account_popup_from_context_menu(name)
-        account_popup.set_name(new_name).save_changes()
+        account_popup.set_name(new_name).set_emoji(new_emoji_data[0]).set_color(new_color).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(new_name, None, None)
+        expected_account = constants.user.account_list_item(new_name, new_color.lower(), new_emoji_data[1].split('-')[0])
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)

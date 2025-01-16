@@ -9,7 +9,7 @@ from constants import ColorCodes
 from scripts.tools.image import Image
 from scripts.utils.generators import random_name_string, random_password_string, random_community_name, \
     random_community_description, random_community_introduction, random_community_leave_message, random_community_tags, \
-    random_color
+    random_color, random_wallet_acc_keypair_name, random_emoji_with_unicode, random_wallet_account_color
 
 
 @dataclass
@@ -80,6 +80,22 @@ user_account_one = UserAccount('squisher', '0000000000', [
 user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
 ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
+
+
+@dataclass
+class WalletAccount:
+    name: str = None
+    color: str = None
+    emoji: str = None
+
+
+class RandomWalletAccount(WalletAccount):
+    def __init__(self):
+        super().__init__(
+            name=random_wallet_acc_keypair_name(),
+            color=random_wallet_account_color(),
+            emoji=random_emoji_with_unicode()
+        )
 
 
 account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])

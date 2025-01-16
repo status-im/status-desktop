@@ -56,14 +56,10 @@ class ColorCodes(Enum):
     GRAY = '#939ba1'
 
 
-class EmojiCodes(Enum):
-    SMILING_FACE_WITH_SUNGLASSES = '1f60e'
-    THUMBSUP_SIGN = '1f44d'
-
-
-class AvatarColors:
+class UserPictureColors:
+    # ui/StatusQ/src/StatusQ/Core/Theme/StatusLightTheme.qml
     @staticmethod
-    def available_colors():
+    def profile_colors():
         return [
             "#2946C4",
             "#887AF9",
@@ -78,4 +74,24 @@ class AvatarColors:
             "#C0C0C0",
             "#A9A9A9"
 
+        ]
+
+
+class WalletAccountColors:
+    # ui/StatusQ/src/StatusQ/Core/Theme/StatusLightTheme.qml
+    @staticmethod
+    def wallet_account_colors():
+        return [
+            "#2A4AF5",
+            "#7140FD",
+            "#FF7D46",
+            "#216266",
+            "#2A799B",
+            "#1992D7",
+            "#F6AF3C",
+            "#F66F8F",
+            "#CB6256",
+            "#C78F67",
+            "#EC266C",
+            "#09101C"
         ]

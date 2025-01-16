@@ -3,6 +3,9 @@ import time
 import allure
 import pytest
 from allure_commons._allure import step
+
+from scripts.utils.generators import random_emoji_with_unicode, random_wallet_acc_keypair_name, \
+    random_wallet_account_color
 from tests.wallet_main_screen import marks
 
 import constants
@@ -15,19 +18,21 @@ pytestmark = marks
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703026', 'Manage a watch-only account')
 @pytest.mark.case(703026, 738788, 738815)
 @pytest.mark.smoke
-@pytest.mark.skip(reason="https://github.com/status-im/status-desktop/issues/15933")
 # TODO: to add a step of account removal
-@pytest.mark.parametrize('address, name, color, emoji, emoji_unicode', [
-    pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A', 'AccWatch1', '#2a4af5',
-                 'sunglasses', '1f60e')
+@pytest.mark.parametrize('address', [
+    pytest.param('0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A')
 ])
-def test_plus_button_add_watched_address(
-        main_screen: MainWindow, address: str, color: str, emoji: str, emoji_unicode: str,
-        name: str):
+def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
+
+    emoji_data = random_emoji_with_unicode()
+    name = random_wallet_acc_keypair_name()
+    color = random_wallet_account_color()
+
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_watched_address(address).save_changes()
+        account_popup.set_name(name).set_emoji(
+            emoji_data[0]).set_color(color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 
     with step('Check authentication popup does not appear'):
@@ -41,7 +46,7 @@ def test_plus_button_add_watched_address(
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_unicode)
+        expected_account = constants.user.account_list_item(name, color.lower(), emoji_data[1].split('-')[0])
         started_at = time.monotonic()
         while expected_account not in wallet.left_panel.accounts:
             time.sleep(1)
