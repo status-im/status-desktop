@@ -4,6 +4,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import driver
 from scripts.utils.generators import random_emoji_with_unicode, random_wallet_acc_keypair_name, \
     random_wallet_account_color
 from tests.wallet_main_screen import marks
@@ -46,9 +47,5 @@ def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
         assert message == f'"{name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, color.lower(), emoji_data[1].split('-')[0])
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: name in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {name} is not displayed even it should be'

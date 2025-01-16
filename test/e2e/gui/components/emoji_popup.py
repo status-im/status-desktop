@@ -25,6 +25,8 @@ class EmojiPopup(QObject):
         return self
 
     @allure.step('Select emoji')
+    # FIXME: fix the method to handle multiple emojis with the same name (for example, person keyword returns
+    #  multiple results with their own unicodes)
     def select(self, name: str, attempts: int = 2):
         self._search_text_edit.text = name
         self._emoji_item.real_name['objectName'] = 'statusEmoji_' + name
