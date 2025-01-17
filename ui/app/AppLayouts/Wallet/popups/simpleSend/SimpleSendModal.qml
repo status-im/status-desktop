@@ -119,6 +119,9 @@ StatusDialog {
                 !amountToSend.markAsInvalid &&
                 amountToSend.valid
 
+    /** Output property if a collectible is selected in the the send modal **/
+    readonly property bool isCollectibleSelected: d.isCollectibleSelected
+
     /** TODO: replace with new and improved recipient selector StatusDateRangePicker
     TBD under https://github.com/status-im/status-desktop/issues/16916 **/
     required property var savedAddressesModel
@@ -487,7 +490,9 @@ StatusDialog {
         estimatedFees: root.estimatedFiatFees
 
         error: d.errNotEnoughGas
-        errorTags: amountToSend.markAsInvalid || !!root.routerErrorCode ?
+        errorTags: amountToSend.markAsInvalid ||
+                   !!root.routerErrorCode ||
+                   !!root.routerError?
                        errorTagsModel: null
 
         loading: root.routesLoading && root.allValuesFilledCorrectly
@@ -509,10 +514,12 @@ StatusDialog {
             errorDetails: !d.errNotEnoughGas ?
                               root.routerErrorDetails: ""
             buttonText: qsTr("Add ETH")
-            expandable: !d.errNotEnoughGas
+            expandable: !d.errNotEnoughGas ||
+                        !(!root.routerErrorCode &&
+                          !!root.routerError)
             onButtonClicked: root.launchBuyFlow()
 
-            visible: !!root.routerErrorCode
+            visible: !!root.routerErrorCode || !!root.routerError
         }
     }
 }

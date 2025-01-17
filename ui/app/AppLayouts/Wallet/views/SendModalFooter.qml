@@ -92,7 +92,7 @@ StatusDialogFooter {
             disabledColor: Theme.palette.directColor8
             enabled: !!root.estimatedTime &&
                      !!root.estimatedFees &&
-                     !root.loading
+                     !root.loading && !root.error
 
             text: qsTr("Review Send")
 

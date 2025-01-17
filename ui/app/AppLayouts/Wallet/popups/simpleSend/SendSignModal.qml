@@ -16,75 +16,107 @@ import utils 1.0
 SignTransactionModalBase {
     id: root
 
-    required property string fromTokenSymbol
-    required property string fromTokenAmount
-    required property string fromTokenContractAddress
+    /** Input property holding selected token symbol **/
+    required property string tokenSymbol
+    /** Input property holding selected token amount **/
+    required property string tokenAmount
+    /** Input property holding selected token contract address **/
+    required property string tokenContractAddress
 
+    /** Input property holding selected account name **/
     required property string accountName
+    /** Input property holding selected account address **/
     required property string accountAddress
+    /** Input property holding selected account emoji **/
     required property string accountEmoji
+    /** Input property holding selected account color **/
     required property color accountColor
 
     /** TODO: Use new recipients appraoch from
     https://github.com/status-im/status-desktop/issues/16916 **/
     required property string recipientAddress
 
-    required property string networkShortName // e.g. "oeth"
-    required property string networkName // e.g. "Optimism"
-    required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
+    /** Input property holding selected network short name **/
+    required property string networkShortName
+    /** Input property holding selected network name **/
+    required property string networkName
+    /** Input property holding selected network icon path
+    e.g. `Theme.svg("network/Network=Optimism")`**/
+    required property string networkIconPath
+    /** Input property holding selected network blockchain
+    explorer name **/
     required property string networkBlockExplorerUrl
 
+    /** Input property holding localised path fees in fiat **/
     required property string fiatFees
+    /** Input property holding localised path fees in crypto **/
     required property string cryptoFees
+    /** Input property holding localised path estimate time **/
     required property string estimatedTime
 
-    required property string collectibleContractAddress
-    required property string collectibleTokenId
+    /** Input property holding selected collectible name **/
     required property string collectibleName
-    required property string collectibleBackgroundColor
-    required property bool collectibleIsMetadataValid
+    /** Input property holding selected collectible token id **/
+    required property string collectibleTokenId
+    /** Input property holding selected collectible media url **/
     required property string collectibleMediaUrl
+    /** Input property holding selected collectible media type **/
     required property string collectibleMediaType
+    /** Input property holding selected collectible fallback media url **/
     required property string collectibleFallbackImageUrl
+    /** Input property holding selected collectible contract address **/
+    required property string collectibleContractAddress
+    /** Input property holding selected collectible background color **/
+    required property string collectibleBackgroundColor
+    /** Input property holding selected if collectible meta data is valid **/
+    required property bool collectibleIsMetadataValid
 
+    /** Input property holding function openSea explorer url for the collectible **/
     required property var fnGetOpenSeaExplorerUrl
 
     title: qsTr("Sign Send")
     //: e.g. (Send) 100 DAI to batista.eth
     subtitle: {
-        const tokenToSend = root.isCollectible ?
-                              root.collectibleName:
-                              formatBigNumber(fromTokenAmount, fromTokenSymbol)
+        const tokenToSend = root.isCollectible ? root.collectibleName:
+                              "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
         return qsTr("%1 to %2").
         arg(tokenToSend).
         arg(SQUtils.Utils.elideAndFormatWalletAddress(root.recipientAddress))
     }
 
+    headerActionsCloseButtonVisible: true
+
+    // Wallet account background color to be used as gardient in the header
     gradientColor: root.accountColor
+
+    // In case if selected token is an asset then this displays the account selected
     fromImageSmartIdenticon.asset.name: "filled-account"
     fromImageSmartIdenticon.asset.emoji: root.accountEmoji
     fromImageSmartIdenticon.asset.color: root.accountColor
     fromImageSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
 
-    fromAccountSmartIdenticon.asset.name: "filled-account"
-    fromAccountSmartIdenticon.asset.emoji: root.accountEmoji
-    fromAccountSmartIdenticon.asset.color: root.accountColor
-    fromAccountSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
-    fromAccountSmartIdenticon.asset.isImage: root.isCollectible
+    // In case if selected token is an asset then this displays the token selected
+    toImageSource: Constants.tokenIcon(root.tokenSymbol)
 
-    toImageSource: Constants.tokenIcon(root.fromTokenSymbol)
-
+    // Collectible data in header in case a collectible is selected
     collectibleMedia.backgroundColor: root.collectibleBackgroundColor
     collectibleMedia.isMetadataValid: root.collectibleIsMetadataValid
     collectibleMedia.mediaUrl: root.collectibleMediaUrl
     collectibleMedia.mediaType: root.collectibleMediaType
     collectibleMedia.fallbackImageUrl: root.collectibleFallbackImageUrl
 
+    /** In case if selected token is an collectible then
+    this displays the account selected as badge **/
+    accountSmartIdenticon.asset.name: "filled-account"
+    accountSmartIdenticon.asset.emoji: root.accountEmoji
+    accountSmartIdenticon.asset.color: root.accountColor
+    accountSmartIdenticon.asset.isLetterIdenticon: !!root.accountEmoji
+    accountSmartIdenticon.asset.isImage: root.isCollectible
+
     //: e.g. "Send 100 DAI to recipient on <network chain name>"
     headerMainText: {
-        const tokenToSend = root.isCollectible ?
-                              root.collectibleName:
-                              formatBigNumber(fromTokenAmount, fromTokenSymbol)
+        const tokenToSend = root.isCollectible ? root.collectibleName:
+                               "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
         return qsTr("Send %1 to %2 on %3").arg(tokenToSend)
         .arg(SQUtils.Utils.elideAndFormatWalletAddress(root.recipientAddress)).arg(root.networkName)
     }
@@ -143,10 +175,10 @@ SignTransactionModalBase {
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.bigPadding
         caption: qsTr("Send")
-        primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol)
-        secondaryText: root.fromTokenSymbol !== Constants.ethToken ?
-                           SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
-        icon: Constants.tokenIcon(root.fromTokenSymbol)
+        primaryText: "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
+        secondaryText: root.tokenSymbol !== Constants.ethToken ?
+                           SQUtils.Utils.elideAndFormatWalletAddress(root.tokenContractAddress) : ""
+        icon: Constants.tokenIcon(root.tokenSymbol)
         badge: root.networkIconPath
         highlighted: contractInfoButtonWithMenu.hovered
         components: [
@@ -154,9 +186,9 @@ SignTransactionModalBase {
                 id: contractInfoButtonWithMenu
 
                 objectName: "contractInfoButtonWithMenu"
-                visible: root.fromTokenSymbol !== Constants.ethToken
-                symbol: root.fromTokenSymbol
-                contractAddress: root.fromTokenContractAddress
+                visible: root.tokenSymbol !== Constants.ethToken
+                symbol: root.tokenSymbol
+                contractAddress: root.tokenContractAddress
                 networkName: root.networkName
                 networkShortName: root.networkShortName
                 networkBlockExplorerUrl: root.networkBlockExplorerUrl
@@ -185,6 +217,7 @@ SignTransactionModalBase {
             tokenId: root.collectibleTokenId
             networkShortName: root.networkShortName
             networkBlockExplorerUrl: root.networkBlockExplorerUrl
+            loading: root.isCollectibleLoading
             openSeaExplorerUrl: root.fnGetOpenSeaExplorerUrl(root.networkShortName)
             onOpenLink: (link) => root.openLinkWithConfirmation(link)
         }

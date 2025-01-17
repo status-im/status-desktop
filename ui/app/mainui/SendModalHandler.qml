@@ -1,9 +1,11 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -105,17 +107,46 @@ QtObject {
     required property var savedAddressesModel
     required property var recentRecipientsModel
 
-    /** required function to resolve an ens name **/
+    /** required function to resolve an ens name
+    - ensName      [string] - ensName to be resolved
+    - uuid         [string] - unique identifier for the request
+    **/
     required property var fnResolveENS
     /** required signal to receive resolved ens name address **/
     signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
 
     /** curently selected fiat currency symbol **/
     required property string currentCurrency
-    /** required function to format currency amount to locale string **/
+    /** required function to format currency amount to locale string
+    - amount         [real] - amount to be formatted as a number
+    - symbol         [string] - fiat/crypto currency symbol
+    **/
     required property var fnFormatCurrencyAmount
-    /** required function to format to currency amount from big int **/
+    /** required function to format to currency amount from big int
+    - amount         [real] - amount to be formatted as a number
+    - symbol         [string] - fiat/crypto currency symbol
+    - decimals       [int] - decimals of the crypto token
+    **/
     required property var fnFormatCurrencyAmountFromBigInt
+
+    /** required property holds the detailed collectible **/
+    required property var detailedCollectible
+    /** required property holds if collectible details is loading **/
+    required property bool isDetailedCollectibleLoading
+    /** required function to fetch detailed collectible
+      chainId, contractAddress, tokenId
+    - chainId           [int] - chainId of collectible
+    - contractAddress   [string] - contract address of collectible
+    - tokenId           [string] - token id of collectible
+    **/
+    required property var fnGetDetailedCollectible
+    /** required function to reset the detailed collectible **/
+    required property var fnResetDetailedCollectible
+
+    /** required function to get openSea explorer url
+    - networkShortName      [string] - collectible networks short name
+    **/
+    required property var fnGetOpenSeaUrl
 
     /** signal to request launch of buy crypto modal **/
     signal launchBuyFlowRequested(string accountAddress, int chainId, string tokenKey)
@@ -256,10 +287,10 @@ QtObject {
         SimpleSendModal {
             id: simpleSendModal
 
-            accountsModel: backendHandler.accountsSelectorAdaptor.processedWalletAccounts
-            assetsModel: backendHandler.assetsSelectorViewAdaptor.outputAssetsModel
-            collectiblesModel: backendHandler.collectiblesSelectionAdaptor.model
-            networksModel: backendHandler.filteredFlatNetworksModel
+            accountsModel: handler.accountsSelectorAdaptor.processedWalletAccounts
+            assetsModel: handler.assetsSelectorViewAdaptor.outputAssetsModel
+            collectiblesModel: handler.collectiblesSelectionAdaptor.model
+            networksModel: handler.filteredFlatNetworksModel
             savedAddressesModel: root.savedAddressesModel
             recentRecipientsModel: root.recentRecipientsModel
 
@@ -273,11 +304,11 @@ QtObject {
             }
 
             onFormChanged: {
-                backendHandler.resetRouterValues()
+                handler.resetRouterValues()
                 if(allValuesFilledCorrectly) {
-                    backendHandler.uuid = Utils.uuid()
+                    handler.uuid = Utils.uuid()
                     simpleSendModal.routesLoading = true
-                    root.transactionStoreNew.fetchSuggestedRoutes(backendHandler.uuid,
+                    root.transactionStoreNew.fetchSuggestedRoutes(handler.uuid,
                                                                   sendType,
                                                                   selectedChainId,
                                                                   selectedAccountAddress,
@@ -287,16 +318,22 @@ QtObject {
                 }
             }
 
-            // TODO: this should be called from the Reiew and Sign Modal instead
             onReviewSendClicked: {
-                root.transactionStoreNew.authenticateAndTransfer(backendHandler.uuid, selectedAccountAddress)
+                if (handler.selectedCollectibleEntry.available &&
+                        !!handler.selectedCollectibleEntry.item) {
+                    root.fnGetDetailedCollectible(simpleSendModal.selectedChainId ,
+                                                  handler.selectedCollectibleEntry.item.contractAddress,
+                                                  handler.selectedCollectibleEntry.item.tokenId)
+                }
+                Global.openPopup(sendSignModalCmp)
             }
 
             onLaunchBuyFlow: {
                 root.launchBuyFlowRequested(selectedAccountAddress, selectedChainId, selectedTokenKey)
             }
 
-            readonly property var backendHandler: QtObject {
+            QtObject {
+                id: handler
                 property string uuid
                 property var fetchedPathModel
 
@@ -307,7 +344,7 @@ QtObject {
 
                 function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
                     simpleSendModal.routesLoading = false
-                    if(returnedUuid !== uuid) {
+                    if(returnedUuid !== handler.uuid) {
                         // Suggested routes for a different fetch, ignore
                         return
                     }
@@ -319,7 +356,7 @@ QtObject {
                 }
 
                 function transactionSent(returnedUuid, chainId, approvalTx, txHash, error) {
-                    if(returnedUuid !== uuid) {
+                    if(returnedUuid !== handler.uuid) {
                         // Suggested routes for a different fetch, ignore
                         return
                     }
@@ -327,7 +364,7 @@ QtObject {
                         if (error.includes(Constants.walletSection.authenticationCanceled)) {
                             return
                         }
-                        // TODO: handle error here
+                        simpleSendModal.routerError = error
                         return
                     }
                     close()
@@ -337,7 +374,7 @@ QtObject {
                     accounts: root.walletAccountsModel
                     assetsModel: root.groupedAccountAssetsModel
                     tokensBySymbolModel: root.plainTokensBySymbolModel
-                    filteredFlatNetworksModel: backendHandler.filteredFlatNetworksModel
+                    filteredFlatNetworksModel: handler.filteredFlatNetworksModel
 
                     selectedTokenKey: simpleSendModal.selectedTokenKey
                     selectedNetworkChainId: simpleSendModal.selectedChainId
@@ -346,7 +383,6 @@ QtObject {
                 }
 
                 readonly property var assetsSelectorViewAdaptor: TokenSelectorViewAdaptor {
-                    // TODO: remove all store dependecies and add specific properties to the handler instead
                     assetsModel: root.groupedAccountAssetsModel
                     flatNetworksModel: root.flatNetworksModel
 
@@ -361,7 +397,7 @@ QtObject {
                     accountKey: simpleSendModal.selectedAccountAddress
                     enabledChainIds: [simpleSendModal.selectedChainId]
 
-                    networksModel: backendHandler.filteredFlatNetworksModel
+                    networksModel: handler.filteredFlatNetworksModel
                     collectiblesModel: SortFilterProxyModel {
                         sourceModel: root.collectiblesBySymbolModel
                         filters: ValueFilter {
@@ -372,8 +408,8 @@ QtObject {
                 }
 
                 readonly property var totalFeesAggregator: FunctionAggregator {
-                    model: !!backendHandler.fetchedPathModel ?
-                               backendHandler.fetchedPathModel: null
+                    model: !!handler.fetchedPathModel ?
+                               handler.fetchedPathModel: null
                     initialValue: "0"
                     roleName: "txTotalFee"
 
@@ -382,8 +418,8 @@ QtObject {
                                            SQUtils.AmountsArithmetic.fromString(value)).toString()
 
                     onValueChanged: {
-                        let decimals = !!backendHandler.ethTokenEntry.item ? backendHandler.ethTokenEntry.item.decimals: 18
-                        let ethFiatValue = !!backendHandler.ethTokenEntry.item ? backendHandler.ethTokenEntry.item.marketDetails.currencyPrice.amount: 1
+                        let decimals = !!handler.ethTokenEntry.item ? handler.ethTokenEntry.item.decimals: 18
+                        let ethFiatValue = !!handler.ethTokenEntry.item ? handler.ethTokenEntry.item.marketDetails.currencyPrice.amount: 1
                         let totalFees = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(value), SQUtils.AmountsArithmetic.fromNumber(1, decimals))
                         let totalFeesInFiat = root.fnFormatCurrencyAmount(ethFiatValue*totalFees, root.currentCurrency).toString()
                         simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), Constants.ethToken)
@@ -393,8 +429,8 @@ QtObject {
 
 
                 readonly property var estimatedTimeAggregator: FunctionAggregator {
-                    model: !!backendHandler.fetchedPathModel ?
-                               backendHandler.fetchedPathModel: null
+                    model: !!handler.fetchedPathModel ?
+                               handler.fetchedPathModel: null
                     initialValue: Constants.TransactionEstimatedTime.Unknown
                     roleName: "estimatedTime"
 
@@ -417,6 +453,13 @@ QtObject {
                     value: Constants.ethToken
                 }
 
+                readonly property var selectedCollectibleEntry: ModelEntry {
+                    sourceModel: simpleSendModal.isCollectibleSelected ?
+                                     root.collectiblesBySymbolModel: null
+                    value: simpleSendModal.selectedTokenKey
+                    key: "symbol"
+                }
+
                 Component.onCompleted: {
                     root.ensNameResolved.connect(ensNameResolved)
                     root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
@@ -432,6 +475,69 @@ QtObject {
                     simpleSendModal.routerErrorCode = ""
                     simpleSendModal.routerError = ""
                     simpleSendModal.routerErrorDetails = ""
+                }
+            }
+
+            SignSendAdaptor {
+                id: signSendAdaptor
+                accountKey: simpleSendModal.selectedAccountAddress
+                accountsModel: root.walletAccountsModel
+                chainId: simpleSendModal.selectedChainId
+                networksModel: root.flatNetworksModel
+                tokenKey: simpleSendModal.selectedTokenKey
+                tokenBySymbolModel: root.tokenBySymbolModel
+                selectedAmountInBaseUnit: simpleSendModal.selectedAmountInBaseUnit
+            }
+
+            Component {
+                id: sendSignModalCmp
+                SendSignModal {
+                    closePolicy: Popup.CloseOnEscape
+                    destroyOnClose: true
+                    onClosed: root.fnResetDetailedCollectible()
+                    // Unused
+                    formatBigNumber: function(number, symbol, noSymbolOption) {}
+
+                    tokenSymbol: !!signSendAdaptor.selectedAsset &&
+                                     !!signSendAdaptor.selectedAsset.symbol ?
+                                         signSendAdaptor.selectedAsset.symbol: ""
+                    tokenAmount: signSendAdaptor.selectedAmount
+                    tokenContractAddress: signSendAdaptor.selectedAssetContractAddress
+
+                    accountName: signSendAdaptor.selectedAccount.name
+                    accountAddress: signSendAdaptor.selectedAccount.address
+                    accountEmoji: signSendAdaptor.selectedAccount.emoji
+                    accountColor: Utils.getColorForId(signSendAdaptor.selectedAccount.colorId)
+
+                    recipientAddress: simpleSendModal.selectedRecipientAddress
+
+                    networkShortName: signSendAdaptor.selectedNetwork.shortName
+                    networkName: signSendAdaptor.selectedNetwork.chainName
+                    networkIconPath: Theme.svg(signSendAdaptor.selectedNetwork.iconUrl)
+                    networkBlockExplorerUrl: signSendAdaptor.selectedNetwork.blockExplorerURL
+
+                    fiatFees: simpleSendModal.estimatedFiatFees
+                    cryptoFees: simpleSendModal.estimatedCryptoFees
+                    estimatedTime: simpleSendModal.estimatedTime
+
+                    loginType: root.loginType
+
+                    isCollectible: simpleSendModal.isCollectibleSelected
+                    isCollectibleLoading: root.isDetailedCollectibleLoading
+                    collectibleContractAddress: root.detailedCollectible.contractAddress
+                    collectibleTokenId: root.detailedCollectible.tokenId
+                    collectibleName: root.detailedCollectible.name
+                    collectibleBackgroundColor: root.detailedCollectible.backgroundColor
+                    collectibleIsMetadataValid: root.detailedCollectible.isMetadataValid
+                    collectibleMediaUrl: root.detailedCollectible.mediaUrl
+                    collectibleMediaType: root.detailedCollectible.mediaType
+                    collectibleFallbackImageUrl: root.detailedCollectible.imageUrl
+
+                    fnGetOpenSeaExplorerUrl: root.fnGetOpenSeaUrl
+
+                    onAccepted: {
+                        root.transactionStoreNew.authenticateAndTransfer(handler.uuid, simpleSendModal.selectedAccountAddress)
+                    }
                 }
             }
         }

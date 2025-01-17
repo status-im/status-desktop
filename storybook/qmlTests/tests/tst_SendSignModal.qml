@@ -24,9 +24,9 @@ Item {
 
             formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2) + (noSymbolOption ? "" : " " + symbol)
 
-            fromTokenSymbol: "DAI"
-            fromTokenAmount: "100.07"
-            fromTokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+            tokenSymbol: "DAI"
+            tokenAmount: "100.07"
+            tokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
 
             accountName: "Hot wallet (generated)"
             accountAddress: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
@@ -101,15 +101,15 @@ Item {
 
         function test_fromToProps() {
             verify(!!controlUnderTest)
-            controlUnderTest.fromTokenSymbol = "DAI"
-            controlUnderTest.fromTokenAmount = "1000.123456789"
-            controlUnderTest.fromTokenContractAddress = "Oxdeadbeef"
+            controlUnderTest.tokenSymbol = "DAI"
+            controlUnderTest.tokenAmount = "1000.123456789"
+            controlUnderTest.tokenContractAddress = "Oxdeadbeef"
 
             // title
             compare(controlUnderTest.title, qsTr("Sign Send"))
 
             // subtitle
-            compare(controlUnderTest.subtitle, qsTr("%1 to %2").arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol))
+            compare(controlUnderTest.subtitle, qsTr("%1 %2 to %3").arg(controlUnderTest.tokenAmount).arg(controlUnderTest.tokenSymbol)
                     .arg(SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.recipientAddress)))
 
             compare(controlUnderTest.gradientColor, controlUnderTest.accountColor)
@@ -120,8 +120,8 @@ Item {
             // info box
             const headerText = findChild(controlUnderTest.contentItem, "headerText")
             verify(!!headerText)
-            compare(headerText.text, qsTr("Send %1 to %2 on %3").
-                    arg(controlUnderTest.formatBigNumber(controlUnderTest.fromTokenAmount, controlUnderTest.fromTokenSymbol)).
+            compare(headerText.text, qsTr("Send %1 %2 to %3 on %4").
+                    arg(controlUnderTest.tokenAmount).arg(controlUnderTest.tokenSymbol).
                     arg(SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.recipientAddress)).arg(controlUnderTest.networkName))
             const fromImage = findChild(controlUnderTest.contentItem, "fromImageIdenticon")
             verify(!!fromImage)
@@ -132,14 +132,14 @@ Item {
 
             const toImage = findChild(controlUnderTest.contentItem, "toImageIdenticon")
             verify(!!toImage)
-            compare(toImage.asset.name, Constants.tokenIcon(controlUnderTest.fromTokenSymbol))
+            compare(toImage.asset.name, Constants.tokenIcon(controlUnderTest.tokenSymbol))
 
             // send box
             const sendBox = findChild(controlUnderTest.contentItem, "sendAssetBox")
             verify(!!sendBox)
             compare(sendBox.caption, qsTr("Send"))
-            compare(sendBox.primaryText, "1,000.12 DAI")
-            compare(sendBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.fromTokenContractAddress))
+            compare(sendBox.primaryText, "1000.123456789 DAI")
+            compare(sendBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.tokenContractAddress))
         }
 
         function test_tokenContextmenu() {
@@ -165,14 +165,14 @@ Item {
 
             const externalLink = findChild(contextMenu, "externalLink")
             verify(!!externalLink)
-            compare(externalLink.text, !!controlUnderTest.fromTokenSymbol ?
-                        qsTr("View %1 %2 contract address on %3").arg(controlUnderTest.networkName).arg(controlUnderTest.fromTokenSymbol).arg("Etherscan")
+            compare(externalLink.text, !!controlUnderTest.tokenSymbol ?
+                        qsTr("View %1 %2 contract address on %3").arg(controlUnderTest.networkName).arg(controlUnderTest.tokenSymbol).arg("Etherscan")
                       : qsTr("View %1 contract address on %2").arg(controlUnderTest.networkName).arg("Etherscan"))
             compare(externalLink.icon.name, "external-link")
             externalLink.triggered()
             tryCompare(signalSpyOpenLink, "count", 1)
             compare(signalSpyOpenLink.signalArguments[0][0],
-                    "%1/%2/%3".arg(controlUnderTest.networkBlockExplorerUrl).arg(Constants.networkExplorerLinks.addressPath).arg(controlUnderTest.fromTokenContractAddress))
+                    "%1/%2/%3".arg(controlUnderTest.networkBlockExplorerUrl).arg(Constants.networkExplorerLinks.addressPath).arg(controlUnderTest.tokenContractAddress))
             verify(!contextMenu.opened)
 
             contractInfoButtonWithMenu.clicked(0)
@@ -274,12 +274,12 @@ Item {
             verify(!!loadingComponent)
             verify(loadingComponent.visible)
 
-            const fromAccountSmartIdenticon = findChild(controlUnderTest.contentItem, "fromAccountSmartIdenticon")
-            verify(!!fromAccountSmartIdenticon)
-            compare(fromAccountSmartIdenticon.asset.name, "filled-account")
-            compare(fromAccountSmartIdenticon.asset.emoji, controlUnderTest.accountEmoji)
-            compare(fromAccountSmartIdenticon.asset.color, controlUnderTest.accountColor)
-            compare(fromAccountSmartIdenticon.asset.isLetterIdenticon, !!controlUnderTest.accountEmoji)
+            const accountSmartIdenticon = findChild(controlUnderTest.contentItem, "accountSmartIdenticon")
+            verify(!!accountSmartIdenticon)
+            compare(accountSmartIdenticon.asset.name, "filled-account")
+            compare(accountSmartIdenticon.asset.emoji, controlUnderTest.accountEmoji)
+            compare(accountSmartIdenticon.asset.color, controlUnderTest.accountColor)
+            compare(accountSmartIdenticon.asset.isLetterIdenticon, !!controlUnderTest.accountEmoji)
 
             // send collectible box
             const collectibleCaption = findChild(controlUnderTest.contentItem, "collectibleCaption")
@@ -325,7 +325,7 @@ Item {
             blockchainExternalLink.triggered()
             tryCompare(signalSpyOpenLink, "count", 2)
             compare(signalSpyOpenLink.signalArguments[1][0],
-                    "%1/nft/%2/%3".arg("Etherscan").arg(data.contractAddress).arg(data.tokenId))
+                    "%1/nft/%2/%3".arg("https://etherscan.io/").arg(data.contractAddress).arg(data.tokenId))
 
             const copyButton = findChild(moreMenu, "copyButton")
             verify(!!copyButton)

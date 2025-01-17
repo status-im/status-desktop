@@ -78,9 +78,9 @@ SplitView {
                     formatBigNumber: (number, symbol, noSymbolOption) => parseFloat(number).toLocaleString(Qt.locale(), 'f', 2)
                                      + (noSymbolOption ? "" : " " + (symbol || Qt.locale().currencySymbol(Locale.CurrencyIsoCode)))
 
-                    fromTokenSymbol: ctrlFromSymbol.text
-                    fromTokenAmount: ctrlFromAmount.text
-                    fromTokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+                    tokenSymbol: ctrlFromSymbol.text
+                    tokenAmount: ctrlFromAmount.text
+                    tokenContractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F"
 
                     accountName: priv.selectedAccount.name
                     accountAddress: priv.selectedAccount.address
@@ -98,6 +98,7 @@ SplitView {
                     cryptoFees: formatBigNumber(0.06, "ETH")
                     estimatedTime: qsTr("> 5 minutes")
 
+                    isCollectibleLoading: isCollectibleLoadingCheckbox.checked
                     isCollectible: isCollectibleCheckbox.checked
                     collectibleContractAddress: !!collectibleComboBox.currentCollectible ?
                                                     collectibleComboBox.currentCollectible.contractAddress: ""
@@ -151,6 +152,10 @@ SplitView {
             CheckBox {
                 id: isCollectibleCheckbox
                 text:"is collectible"
+            }
+            CheckBox {
+                id: isCollectibleLoadingCheckbox
+                text:"is collectible loading"
             }
             ComboBox {
                 id: collectibleComboBox

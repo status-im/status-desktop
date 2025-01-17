@@ -465,6 +465,12 @@ QtObject {
         return root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
     }
 
+    function getOpenSeaUrl(networkShortName) {
+        let networkName = getOpenSeaNetworkName(networkShortName)
+        let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink
+         return "%1/assets/%2".arg(baseLink).arg(networkName)
+    }
+
     function getOpenSeaCollectionUrl(networkShortName, contractAddress) {
         let networkName = getOpenSeaNetworkName(networkShortName)
         let baseLink = root.areTestNetworksEnabled ? Constants.openseaExplorerLinks.testnetLink : Constants.openseaExplorerLinks.mainnetLink

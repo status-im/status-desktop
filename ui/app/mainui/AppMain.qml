@@ -679,13 +679,27 @@ Item {
         savedAddressesModel: WalletStores.RootStore.savedAddresses
         recentRecipientsModel: appMain.transactionStore.tempActivityController1Model
 
+        isDetailedCollectibleLoading: appMain.walletCollectiblesStore.isDetailedCollectibleLoading
+        detailedCollectible: appMain.walletCollectiblesStore.detailedCollectible
+
         currentCurrency: appMain.currencyStore.currentCurrency
         fnFormatCurrencyAmount: appMain.currencyStore.formatCurrencyAmount
         fnFormatCurrencyAmountFromBigInt: appMain.currencyStore.formatCurrencyAmountFromBigInt
 
-        // TODO remove this call to mainModule under #16919
         fnResolveENS: function(ensName, uuid) {
             appMain.rootStore.resolveENS(ensName, uuid)
+        }
+
+        fnGetDetailedCollectible: function(chainId, contractAddress, tokenId) {
+            appMain.walletCollectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
+        }
+
+        fnResetDetailedCollectible: function() {
+            appMain.walletCollectiblesStore.resetDetailedCollectible()
+        }
+
+        fnGetOpenSeaUrl: function(networkShortName) {
+            return WalletStores.RootStore.getOpenSeaUrl(networkShortName)
         }
 
         onLaunchBuyFlowRequested: {

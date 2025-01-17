@@ -51,6 +51,7 @@ Control {
 
                 color: Theme.palette.dangerColor1
                 font.pixelSize: Theme.additionalTextSize
+                elide: Text.ElideRight
             }
             StatusButton {
                 id: addBalanceButton
