@@ -15,18 +15,30 @@ import AppLayouts.Wallet.views.collectibles 1.0
 Control {
     id: root
 
+    /** Input property holding collectible name **/
     required property string name
-
-    required property string backgroundColor
+    /** Input property holding collectible background color **/
+    required property color backgroundColor
+    /** Input property holding if collectible has valid metadata **/
     required property bool isMetadataValid
+    /** Input property holding collectible fallback image url **/
     required property string fallbackImageUrl
+    /** Input property holding collectible contract address **/
     required property string contractAddress
+    /** Input property holding collectible tokenId **/
     required property string tokenId
+    /** Input property holding if collectible is loading **/
+    required property bool loading
 
+    /** Input property holding network short name **/
     required property string networkShortName
+    /** Input property holding network explorer url **/
     required property string networkBlockExplorerUrl
+
+    /** Input property holding openSea explorer url **/
     required property string openSeaExplorerUrl
 
+    /** Signal to launch link **/
     signal openLink(string link)
 
     QtObject {
@@ -38,10 +50,10 @@ Control {
 
         readonly property string collectibleBlockExplorerLink: {
             if (root.networkShortName === Constants.networkShortChainNames.mainnet) {
-                return "%1/nft/%2/%3".arg(getExplorerName()).arg(root.contractAddress).arg(root.tokenId)
+                return "%1/nft/%2/%3".arg(root.networkBlockExplorerUrl).arg(root.contractAddress).arg(root.tokenId)
             }
             else {
-                return "%1/token/%2?a=%3".arg(getExplorerName()).arg(root.contractAddress).arg(root.tokenId)
+                return "%1/token/%2?a=%3".arg(root.networkBlockExplorerUrl).arg(root.contractAddress).arg(root.tokenId)
             }
         }
     }
@@ -73,6 +85,7 @@ Control {
                 Layout.preferredWidth: 40
                 Layout.preferredHeight: 40
                 radius: 4
+                isCollectibleLoading: root.loading
             }
 
             ColumnLayout {

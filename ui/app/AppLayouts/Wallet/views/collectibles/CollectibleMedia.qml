@@ -16,7 +16,7 @@ StatusRoundedMedia {
     QtObject {
         id: d
 
-        property bool isUnknown: root.isError && root.componentMediaType === StatusRoundedMedia.MediaType.Unknown
+        readonly property bool isUnknown: root.isError && root.componentMediaType === StatusRoundedMedia.MediaType.Unknown
     }
 
     radius: Theme.radius

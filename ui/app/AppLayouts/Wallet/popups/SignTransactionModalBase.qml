@@ -48,6 +48,9 @@ StatusDialog {
     property int expirationSeconds
     property bool hasExpiryDate: false
 
+    // Close hidden explicitely until we have persistent notifications in place to reopen this dialog from outside
+    property bool headerActionsCloseButtonVisible: false
+
     property ObjectModel leftFooterContents
     property ObjectModel rightFooterContents: ObjectModel {
         RowLayout {
@@ -91,7 +94,8 @@ StatusDialog {
     readonly property alias infoTag: infoTag
     property bool showHeaderDivider: true
     property bool isCollectible
-    readonly property alias fromAccountSmartIdenticon: fromAccountSmartIdenticon
+    property bool isCollectibleLoading
+    readonly property alias accountSmartIdenticon: accountSmartIdenticon
     readonly property alias collectibleMedia: collectibleMedia
 
     default property alias contents: contentsLayout.data
@@ -109,7 +113,8 @@ StatusDialog {
         visible: root.title || root.subtitle
         headline.title: root.title
         headline.subtitle: root.subtitle
-        actions.closeButton.visible: false // Close hidden explicitely until we have persistent notifications in place to reopen this dialog from outside
+        actions.closeButton.visible: root.headerActionsCloseButtonVisible
+        actions.closeButton.onClicked: root.close()
 
         leftComponent: root.headerIconComponent
     }
@@ -210,7 +215,7 @@ StatusDialog {
 
                     RowLayout {
                         Layout.alignment: Qt.AlignCenter
-                        spacing: -fromAccountSmartIdenticon.width+4
+                        spacing: -accountSmartIdenticon.width+4
                         Item {
                             height: 120
                             width: 120
@@ -220,6 +225,7 @@ StatusDialog {
                                 objectName: "collectibleMedia"
                                 manualMaxDimension: 120
                                 radius: 12
+                                isCollectibleLoading: root.isCollectibleLoading
                             }
                             layer.enabled: true
                             layer.effect: DropShadow {
@@ -233,16 +239,16 @@ StatusDialog {
                             Layout.alignment: Qt.AlignBottom
                             Layout.bottomMargin: -4
 
-                            Layout.preferredWidth: fromAccountSmartIdenticon.width + 4
-                            Layout.preferredHeight: fromAccountSmartIdenticon.height + 4
+                            Layout.preferredWidth: accountSmartIdenticon.width + 4
+                            Layout.preferredHeight: accountSmartIdenticon.height + 4
                             radius: width/2
                             color: root.backgroundColor
 
                             StatusSmartIdenticon {
-                                id: fromAccountSmartIdenticon
+                                id: accountSmartIdenticon
 
                                 anchors.centerIn: parent
-                                objectName: "fromAccountSmartIdenticon"
+                                objectName: "accountSmartIdenticon"
                                 asset.bgWidth: 28
                                 asset.bgHeight: 28
                                 visible: !!asset.name || !!asset.source
