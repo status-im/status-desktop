@@ -1,15 +1,13 @@
-import time
-
 import allure
 import pytest
 from allure import step
 
+import driver
+from constants import RandomWalletAccount
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
 from tests.wallet_main_screen import marks
 
-import constants
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
@@ -19,13 +17,13 @@ pytestmark = marks
                  'Manage an account created from the generated seed phrase')
 @pytest.mark.case(703036)
 def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, user_account):
-    name = random_wallet_acc_keypair_name()
+    wallet_account = RandomWalletAccount()
     keypair_name = random_wallet_acc_keypair_name()
 
     with step('Create generated seed phrase wallet account'):
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_origin_new_seed_phrase(
+        account_popup.set_name(wallet_account.name).set_origin_new_seed_phrase(
             keypair_name).save_changes()
         authenticate_with_password(user_account)
         account_popup.wait_until_hidden()
@@ -34,13 +32,10 @@ def test_plus_button_manage_account_added_for_new_seed(main_screen: MainWindow, 
         assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
         message = main_screen.wait_for_notification()[0]
-        assert message == f'"{name}" successfully added'
+        assert message == f'"{wallet_account.name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(name, None, None)
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts],
+                              10000), \
+            f'Account with {wallet_account.name} is not displayed even it should be'
 

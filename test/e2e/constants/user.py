@@ -98,11 +98,8 @@ class RandomWalletAccount(WalletAccount):
         )
 
 
-account_list_item = namedtuple('AccountListItem', ['name', 'color', 'emoji'])
 wallet_account_list_item = namedtuple('WalletAccountListItem', ['name', 'icon_color', 'icon_emoji', 'object'])
 
-account_list_item_2 = namedtuple('AccountListItem', ['name2', 'color2', 'emoji2'])
-wallet_account_list_item_2 = namedtuple('WalletAccountListItem', ['name', 'icon', 'object'])
 
 wallet_account = namedtuple('PrivateKeyAddressPair', ['private_key', 'wallet_address'])
 private_key_address_pair_1 = wallet_account('2daa36a3abe381a9c01610bf10fda272fbc1b8a22179a39f782c512346e3e470',

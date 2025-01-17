@@ -6,6 +6,8 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import driver
+from constants import RandomWalletAccount
 from helpers.WalletHelper import authenticate_with_password
 from constants.wallet import WalletAccountPopup
 
@@ -24,6 +26,9 @@ from gui.main_window import MainWindow
                          ])
 def test_add_new_account_from_wallet_settings(
         main_screen: MainWindow, user_account, account_name: str, color: str, emoji: str, emoji_unicode: str):
+
+    wallet_account = RandomWalletAccount()
+
     with step('Open add account pop up from wallet settings'):
         add_account_popup = \
             main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_add_account_pop_up()
@@ -35,7 +40,7 @@ def test_add_new_account_from_wallet_settings(
                                                               string.digits, k=4)))
             assert add_account_popup.get_error_message() == WalletAccountPopup.WALLET_ACCOUNT_NAME_MIN.value
 
-        add_account_popup.set_name(account_name).save_changes()
+        add_account_popup.set_name(wallet_account.name).save_changes()
         authenticate_with_password(user_account)
         add_account_popup.wait_until_hidden()
 
@@ -43,14 +48,9 @@ def test_add_new_account_from_wallet_settings(
         assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
         message = main_screen.wait_for_notification()[0]
-        assert message == f'"{account_name}" successfully added'
+        assert message == f'"{wallet_account.name}" successfully added'
 
-    with step('Verify that the account is correctly displayed in accounts list on main wallet screen'):
-
+    with step('Verify that the account is correctly displayed in accounts list'):
         wallet = main_screen.left_panel.open_wallet()
-        expected_account = constants.user.account_list_item(account_name, None, None)
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-        if time.monotonic() - started_at > 15:
-            raise LookupError(f'Account {account_name} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {wallet_account.name} is not found in {wallet.left_panel.accounts}'

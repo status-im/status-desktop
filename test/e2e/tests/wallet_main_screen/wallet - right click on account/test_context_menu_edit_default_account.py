@@ -4,6 +4,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+import driver
 from constants.wallet import WalletNetworkSettings
 from scripts.utils.generators import random_wallet_acc_keypair_name
 from tests.wallet_main_screen import marks
@@ -34,9 +35,6 @@ def test_context_menu_edit_default_account(main_screen: MainWindow, user_account
         account_popup.set_name(new_name).save_changes()
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        expected_account = constants.user.account_list_item(new_name, None, None)
-        started_at = time.monotonic()
-        while expected_account not in wallet.left_panel.accounts:
-            time.sleep(1)
-            if time.monotonic() - started_at > 15:
-                raise LookupError(f'Account {expected_account} not found in {wallet.left_panel.accounts}')
+        assert driver.waitFor(lambda: new_name in [account.name for account in wallet.left_panel.accounts],
+                              10000), \
+            f'Account with {name} is not displayed even it should be'
