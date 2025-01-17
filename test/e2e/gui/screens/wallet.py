@@ -5,7 +5,7 @@ import allure
 import pyperclip
 
 import configs
-import constants.user
+import constants
 import driver
 from driver.objects_access import walk_children
 from gui.components.context_menu import ContextMenu
@@ -47,26 +47,26 @@ class LeftPanel(QObject):
 
     @property
     @allure.step('Get all accounts from list')
-    def accounts(self) -> typing.List[constants.user.account_list_item]:
+    def accounts(self) -> typing.List[constants.WalletAccount]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
         time.sleep(1)  # to give a chance for the left panel to refresh
         raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
         if len(raw_data) > 0:
-            for account_item in raw_data:
-                # TODO: to fix properly with account data class implementation
-                name = str(account_item.title)
-                color = str(account_item.asset.color.name).lower()
-                emoji = ''
-                for child in walk_children(account_item):
-                    if hasattr(child, 'emojiId'):
-                        emoji = str(child.emojiId)
-                        break
-                accounts.append(constants.user.account_list_item(name, color, emoji.split('-')[0]))
-        else:
-            raise LookupError("Account items were not found")
-        return accounts
+            try:
+                for account_item in raw_data:
+                    name = str(account_item.title)
+                    color = str(account_item.asset.color.name).lower()
+                    emoji = ''
+                    for child in walk_children(account_item):
+                        if hasattr(child, 'emojiId'):
+                            emoji = str(child.emojiId)
+                            break
+                    accounts.append(constants.WalletAccount(name, color, emoji.split('-')[0]))
+                return accounts
+            except LookupError as err:
+                raise err
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):

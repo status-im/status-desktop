@@ -30,7 +30,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: name in [account.name for account in wallet.left_panel.accounts], 10000), \
-            f'Account with {name} is not displayed even it should be'
+            f'Account with {name} is not found in {wallet.left_panel.accounts}'
 
     with step('Edit wallet account'):
         new_name = random_wallet_acc_keypair_name()
@@ -39,7 +39,7 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: new_name in [account.name for account in wallet.left_panel.accounts], 10000), \
-            f'Account with {new_name} is not displayed even it should be'
+            f'Account with {new_name} is not found in {wallet.left_panel.accounts}'
 
     with step('Delete wallet account with agreement'):
         wallet.left_panel.delete_account_from_context_menu(new_name).agree_and_confirm()
@@ -51,4 +51,4 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
 
     with step('Verify that the account is not displayed in accounts list'):
         assert driver.waitFor(lambda: new_name not in [account.name for account in wallet.left_panel.accounts], 10000), \
-            f'Account with {new_name} is still displayed even it should not be'
+            f'Account with {new_name} is found in {wallet.left_panel.accounts} after removal'

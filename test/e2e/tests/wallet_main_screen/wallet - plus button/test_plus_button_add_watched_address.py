@@ -1,15 +1,11 @@
-import time
-
 import allure
 import pytest
 from allure_commons._allure import step
 
 import driver
-from scripts.utils.generators import random_emoji_with_unicode, random_wallet_acc_keypair_name, \
-    random_wallet_account_color
+from constants import RandomWalletAccount
 from tests.wallet_main_screen import marks
 
-import constants
 from gui.components.authenticate_popup import AuthenticatePopup
 from gui.main_window import MainWindow
 
@@ -25,15 +21,15 @@ pytestmark = marks
 ])
 def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
 
-    emoji_data = random_emoji_with_unicode()
-    name = random_wallet_acc_keypair_name()
-    color = random_wallet_account_color()
+    wallet_account = RandomWalletAccount()
 
     with step('Add watched address with plus action button'):
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
-        account_popup.set_name(name).set_emoji(
-            emoji_data[0]).set_color(color).set_origin_watched_address(address).save_changes()
+        account_popup\
+            .set_name(wallet_account.name)\
+            .set_emoji(wallet_account.emoji[0])\
+            .set_color(wallet_account.color).set_origin_watched_address(address).save_changes()
         account_popup.wait_until_hidden()
 
     with step('Check authentication popup does not appear'):
@@ -44,8 +40,8 @@ def test_plus_button_add_watched_address(main_screen: MainWindow, address: str):
         assert len(main_screen.wait_for_notification()) == 1, \
             f"Multiple toast messages appeared"
         message = main_screen.wait_for_notification()[0]
-        assert message == f'"{name}" successfully added'
+        assert message == f'"{wallet_account.name}" successfully added'
 
     with step('Verify that the account is correctly displayed in accounts list'):
-        assert driver.waitFor(lambda: name in [account.name for account in wallet.left_panel.accounts], 10000), \
-            f'Account with {name} is not displayed even it should be'
+        assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts], 10000), \
+            f'Account with {wallet_account.name} is not displayed even it should be'
