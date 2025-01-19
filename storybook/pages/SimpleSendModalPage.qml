@@ -203,6 +203,8 @@ SplitView {
 
         networksModel: d.filteredNetworksModel
         collectiblesModel: collectiblesBySymbolModel
+
+        filterCommunityOwnerAndMasterTokens: true
     }
 
     ListModel {

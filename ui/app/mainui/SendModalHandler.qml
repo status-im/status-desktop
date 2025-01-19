@@ -369,6 +369,7 @@ QtObject {
                             value: false
                         }
                     }
+                    filterCommunityOwnerAndMasterTokens: true
                 }
 
                 readonly property var totalFeesAggregator: FunctionAggregator {
