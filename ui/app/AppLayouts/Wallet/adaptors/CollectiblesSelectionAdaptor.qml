@@ -78,6 +78,9 @@ QObject {
     // In case collectibles are to be shown only on specific networks
     property var enabledChainIds: []
 
+    // in case the community ownership and master tokens are to be filtered out
+    property bool filterCommunityOwnerAndMasterTokens: false
+
     LeftJoinModel {
         id: jointCollectiblesByNwChainId
         leftModel: collectiblesModel ?? null
@@ -140,6 +143,18 @@ QObject {
                 expression: root.enabledChainIds.includes(model.chainId)
                 expectedRoles: ["chainId"]
                 enabled: root.enabledChainIds.length
+            },
+            ValueFilter {
+                roleName: "communityPrivilegesLevel"
+                value: Constants.TokenPrivilegesLevel.Owner
+                enabled: root.filterCommunityOwnerAndMasterTokens
+                inverted: true
+            },
+            ValueFilter {
+                roleName: "communityPrivilegesLevel"
+                value: Constants.TokenPrivilegesLevel.TMaster
+                enabled: root.filterCommunityOwnerAndMasterTokens
+                inverted: true
             }
         ]
 
