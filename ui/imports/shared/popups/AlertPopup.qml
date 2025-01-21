@@ -15,8 +15,11 @@ StatusDialog {
     id: root
 
     property alias acceptBtnText: acceptBtn.text
+    property alias acceptBtn: acceptBtn
+    property alias cancelBtn: cancelBtn
     property alias alertText: contentTextItem.text
     property alias alertLabel: contentTextItem
+    property alias alertNote: contentNoteItem
     property int acceptBtnType: StatusBaseButton.Type.Danger
 
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -36,12 +39,22 @@ StatusDialog {
     implicitWidth: 400 // by design
     topPadding: Theme.padding
     bottomPadding: topPadding
-    contentItem: StatusBaseText {
-        id: contentTextItem
-
-        font.pixelSize: Theme.primaryTextFontSize
-        wrapMode: Text.WordWrap
-        lineHeight: 1.2
+    contentItem: Column {
+        StatusBaseText {
+            id: contentTextItem
+            width: parent.width
+            font.pixelSize: Theme.primaryTextFontSize
+            wrapMode: Text.WordWrap
+            lineHeight: 1.2
+        }
+        StatusBaseText {
+            id: contentNoteItem
+            visible: false
+            width: parent.width
+            font.pixelSize: Theme.primaryTextFontSize
+            wrapMode: Text.WordWrap
+            lineHeight: 1.2
+        }
     }
 
     header: StatusDialogHeader {
@@ -61,6 +74,7 @@ StatusDialog {
         rightButtons: ObjectModel {
 
             StatusButton {
+                id: cancelBtn
                 text: qsTr("Cancel")
                 normalColor: "transparent"
 
@@ -74,6 +88,8 @@ StatusDialog {
                 id: acceptBtn
 
                 type: root.acceptBtnType
+
+                Component.onCompleted: acceptBtn.forceActiveFocus()
 
                 onClicked: {
                     root.acceptClicked()
