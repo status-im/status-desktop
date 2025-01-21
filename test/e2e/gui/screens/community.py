@@ -8,12 +8,12 @@ import configs
 import driver
 from constants import CommunityChannel
 from driver.objects_access import walk_children
-from gui.components.community.community_category_popup import NewCategoryPopup, EditCategoryPopup, CategoryPopup
+from gui.components.community.community_category_popup import NewCategoryPopup
 from gui.components.community.community_channel_popups import EditChannelPopup, NewChannelPopup
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.community.welcome_community import WelcomeCommunityPopup
 from gui.components.context_menu import ContextMenu
-from gui.components.delete_popup import DeletePopup, DeleteCategoryPopup
+from gui.components.delete_popup import DeletePopup
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.elements.button import Button
 from gui.elements.list import List
