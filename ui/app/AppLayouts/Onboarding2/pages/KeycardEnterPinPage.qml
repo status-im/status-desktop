@@ -36,6 +36,7 @@ KeycardBasePage {
         StatusPinInput {
             id: pinInput
             anchors.horizontalCenter: parent.horizontalCenter
+            pinLen: Constants.keycard.general.keycardPinLength
             validator: StatusIntValidator { bottom: 0; top: 999999 }
             onPinInputChanged: {
                 if (pinInput.pinInput.length === pinInput.pinLen) { // we have the full length PIN now
