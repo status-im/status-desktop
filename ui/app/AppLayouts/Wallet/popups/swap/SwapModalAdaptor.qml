@@ -142,8 +142,8 @@ QObject {
                 const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
                 const totalMaxFeesInEth = AmountsArithmetic.div(
                                             AmountsArithmetic.fromString(totalMaxFees),
-                                            AmountsArithmetic.fromNumber(1, Constants.gweiExponent))
-                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenDecimals)).toString()
+                                            AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
+                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
 
                 root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
@@ -151,6 +151,7 @@ QObject {
                 root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
                 root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
+                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
             } else {
                 root.swapOutputData.hasError = true
             }
