@@ -12,6 +12,7 @@ KeycardAddKeyPairPage 1.0 KeycardAddKeyPairPage.qml
 KeycardCreatePinPage 1.0 KeycardCreatePinPage.qml
 KeycardEmptyPage 1.0 KeycardEmptyPage.qml
 KeycardEnterPinPage 1.0 KeycardEnterPinPage.qml
+KeycardEnterPukPage 1.0 KeycardEnterPukPage.qml
 KeycardIntroPage 1.0 KeycardIntroPage.qml
 KeycardLostPage 1.0 KeycardLostPage.qml
 KeycardNotEmptyPage 1.0 KeycardNotEmptyPage.qml
