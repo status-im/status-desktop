@@ -12,7 +12,7 @@ from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, YourEmoj
 with step('Open Generate new keys view'):
     def open_generate_new_keys_view():
         BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+        keys_screen = WelcomeToStatusView().wait_until_appears().open_create_your_profile_view()
         return keys_screen
 
 
@@ -31,7 +31,7 @@ with step('Finalize onboarding and open main screen'):
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.get_platform() == "Darwin":
-            BiometricsView().wait_until_appears().prefer_password()
+            BiometricsView().wait_until_appears().maybe_later()
         SplashScreen().wait_until_appears().wait_until_hidden()
         next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
         if configs.system.get_platform() == "Darwin":
