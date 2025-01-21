@@ -1,11 +1,16 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Popups 0.1
+
+import SortFilterProxyModel 0.2
 
 import shared.panels 1.0
 import utils 1.0
@@ -17,7 +22,7 @@ ColumnLayout {
     property var networksModule
     property var networkRPCChanged
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
-    signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
+    signal updateNetworkValues(int chainId, string newMainRpcInput, string newFailoverRpcUrl)
 
     enum EvaluationState {
         UnTouched,
@@ -33,6 +38,26 @@ ColumnLayout {
 
     QtObject {
         id: d
+
+        readonly property SortFilterProxyModel userRpcProvidersModel: SortFilterProxyModel {
+            sourceModel: root.network.rpcProviders
+            filters: ValueFilter { roleName: "providerType"; value: Constants.rpcProviderTypes.user }
+        }
+        readonly property int userRpcProvidersModelCount: d.userRpcProvidersModel.ModelCount.count ?? 0
+
+        property var mainRpcProvider
+        readonly property string mainRpcProviderUrl: !!d.mainRpcProvider ? d.mainRpcProvider.url : ""
+        property var fallbackRpcProvider
+        readonly property string fallbackRpcProviderUrl: !!d.fallbackRpcProvider ? d.fallbackRpcProvider.url : ""
+
+        function fetchProviders() {
+            mainRpcProvider = d.userRpcProvidersModelCount > 0 ? ModelUtils.get(d.userRpcProvidersModel, 0) : undefined
+            fallbackRpcProvider = d.userRpcProvidersModelCount > 1 ? ModelUtils.get(d.userRpcProvidersModel, 1) : undefined
+        }
+
+        onUserRpcProvidersModelCountChanged: d.fetchProviders()    
+        Component.onCompleted: d.fetchProviders()
+
         property int evaluationStatusMainRpc: EditNetworkForm.UnTouched
         property int evaluationStatusFallBackRpc: EditNetworkForm.UnTouched
         property var evaluateRpcEndPoint: Backpressure.debounce(root, 400, function (value, isMainUrl) {
@@ -46,13 +71,6 @@ ColumnLayout {
             root.evaluateRpcEndPoint(value, isMainUrl)
         })
 
-        function revertValues() {
-            if(!!network) {
-                mainRpcInput.text = d.mask(network.originalRpcURL)
-                failoverRpcUrlInput.text = d.mask(network.originalFallbackURL)
-            }
-        }
-
         function getUrlStatusText(status, text) {
             switch(status) {
             case EditNetworkForm.Pending:
@@ -64,7 +82,7 @@ ColumnLayout {
             case EditNetworkForm.Verified:
                 return qsTr("RPC successfully reached")
             case EditNetworkForm.SameAsOther:
-                return qsTr("Main and failover JSON RPC URLs are the same")
+                return qsTr("JSON RPC URLs are the same")
             case EditNetworkForm.NotSameChain:
                 return qsTr("Chain ID returned from JSON RPC doesn’t match %1").arg(network.chainName)
             case EditNetworkForm.RestartRequired:
@@ -99,13 +117,6 @@ ColumnLayout {
             }
         }
 
-        function mask(rpcUrl) {
-            // Mask the last part of the URL
-            return rpcUrl.replace(/(\/)([^\/]+)$/, (match, p1, p2) => {
-                return p1 + p2.replace(/./g, '*');
-            });
-        }
-
         function save() {
             if (d.evaluationStatusMainRpc == EditNetworkForm.UnTouched && d.evaluationStatusFallBackRpc == EditNetworkForm.UnTouched) {
                 return
@@ -113,18 +124,7 @@ ColumnLayout {
 
             let main = mainRpcInput.text
             let fallback = failoverRpcUrlInput.text
-            let isMainOriginal = false
-            let isFallbackOriginal = false
-            if (main === d.mask(network.originalRpcURL)) {
-                main = network.originalRpcURL
-                isMainOriginal = true
-            }
-
-            if (fallback === d.mask(network.originalFallbackURL)) {
-                fallback = network.originalFallbackURL
-                isFallbackOriginal = true
-            }
-            root.updateNetworkValues(network.chainId, main, fallback, isMainOriginal && isFallbackOriginal)
+            root.updateNetworkValues(network.chainId, main, fallback)
             root.networkRPCChanged[network.chainId] = true
         }
     }
@@ -188,37 +188,19 @@ ColumnLayout {
     Item {
         Layout.fillWidth: true
         Layout.preferredHeight: childrenRect.height
-        StatusBaseText {
-            id: requiredText
-            anchors.top: parent.top
-            anchors.topMargin: 4
-            anchors.right: parent.right
-            elide: Text.ElideRight
-            text: qsTr("Required (changes require restart)")
-            font.pixelSize: 12
-            color: Theme.palette.baseColor1
-        }
         StatusInput {
             id: mainRpcInput
             objectName: "mainRpcInputObject"
             input.edit.objectName: "editNetworkMainRpcInput"
             width: parent.width
-            label: qsTr("Main JSON RPC URL")
-            text: {
-                if (!network) {
-                    return ""
-                }
-                if (network.originalRpcURL === network.rpcURL) {
-                    return d.mask(network.rpcURL)
-                }
-                return network.rpcURL
-            }
+            label: qsTr("User JSON RPC URL #1")
+            text: d.mainRpcProviderUrl
             onTextChanged: {
                 if (text === "") {
                     d.evaluationStatusMainRpc = EditNetworkForm.Empty
                     return
                 } else {
-                    if ((d.mask(network.originalRpcURL) === text) || (network.rpcURL === text)) {
+                    if (d.mainRpcProviderUrl === text) {
                         d.evaluationStatusMainRpc = EditNetworkForm.UnTouched
                         if (root.networkRPCChanged[network.chainId]) {
                             d.evaluationStatusMainRpc = EditNetworkForm.RestartRequired
@@ -233,50 +215,27 @@ ColumnLayout {
             errorMessageCmp.visible: d.evaluationStatusMainRpc !== EditNetworkForm.UnTouched
 
             errorMessageCmp.color: d.getErrorMessageColor(d.evaluationStatusMainRpc)
-            errorMessageCmp.text: {
-                if (text === "") {
-                    return qsTr("Main JSON RPC URL is required")
-                }
-                return d.getUrlStatusText(d.evaluationStatusMainRpc, text)
-            }
+            errorMessageCmp.text: d.getUrlStatusText(d.evaluationStatusMainRpc, text)
         }
     }
 
     Item {
         Layout.fillWidth: true
         Layout.preferredHeight: childrenRect.height
-        StatusBaseText {
-            id: optionalText
-            anchors.top: parent.top
-            anchors.topMargin: 4
-            anchors.right: parent.right
-            elide: Text.ElideRight
-            text: qsTr("Optional (changes require restart)")
-            font.pixelSize: 12
-            color: Theme.palette.baseColor1
-        }
         StatusInput {
             id: failoverRpcUrlInput
             objectName: "failoverRpcUrlInputObject"
             input.edit.objectName: "editNetworkFailoverRpcUrlInput"
             width: parent.width
-            label: qsTr("Failover JSON RPC URL")
-            text: {
-                if (!network) {
-                    return ""
-                }
-                if (network.originalFallbackURL === network.fallbackURL) {
-                    return d.mask(network.fallbackURL)
-                }
-                return network.fallbackURL
-            }
+            label: qsTr("User JSON RPC URL #2")
+            text: d.fallbackRpcProviderUrl
             onTextChanged: {
                 if (text === "") {
                     d.evaluationStatusFallBackRpc = EditNetworkForm.Empty
                     return
                 }
 
-                if ((d.mask(network.originalFallbackURL) === text) || (network.fallbackURL === text)) {
+                if (d.fallbackRpcProviderUrl === text) {
                     d.evaluationStatusFallBackRpc = EditNetworkForm.UnTouched
                     if (root.networkRPCChanged[network.chainId]) {
                         d.evaluationStatusFallBackRpc = EditNetworkForm.RestartRequired
@@ -314,20 +273,6 @@ ColumnLayout {
 
     Row {
         Layout.alignment: Qt.AlignRight
-        spacing: 8
-        StatusButton {
-            objectName: "editNetworkRevertButton"
-            text: qsTr("Revert to default")
-            normalColor: "transparent"
-            enabled: (failoverRpcUrlInput.text !== d.mask(network.originalFallbackURL)) ||
-                     (mainRpcInput.text !== d.mask(network.originalRpcURL))
-            onClicked: {
-                d.revertValues()
-                root.networkRPCChanged[network.chainId] = true
-                Global.openPopup(confirmationDialogComponent)
-                d.evaluationStatusMainRpc = EditNetworkForm.RestartRequired
-            }
-        }
         StatusButton {
             objectName: "editNetworkSaveButton"
             text: qsTr("Save Changes")

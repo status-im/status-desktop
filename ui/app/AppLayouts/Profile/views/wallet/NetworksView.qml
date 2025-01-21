@@ -7,6 +7,7 @@ import shared.panels 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 import utils 1.0
@@ -20,8 +21,12 @@ Item {
     id: root
     signal goBack
 
-    property WalletStore walletStore
-    signal editNetwork(var network)
+    required property var flatNetworks
+    required property var combinedNetworks
+    required property bool areTestNetworksEnabled
+
+    signal editNetwork(var combinedNetwork)
+    signal toggleTestNetworksEnabled()
 
     Column {
         id: column
@@ -33,17 +38,24 @@ Item {
         Repeater {
             id: layer1List
             model: SortFilterProxyModel {
-                sourceModel: walletStore.combinedNetworks
+                sourceModel: root.combinedNetworks
                 filters: ValueFilter {
                     roleName: "layer"
                     value: 1
                 }
             }
             delegate: WalletNetworkDelegate {
+                readonly property var network: {
+                    let chainId = root.areTestNetworksEnabled ? model.testChainId : model.prodChainId
+                    return ModelUtils.getByKey(root.flatNetworks, "chainId", chainId)
+                }
+                
                 objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
-                network: areTestNetworksEnabled ? model.test: model.prod
-                areTestNetworksEnabled: walletStore.areTestNetworksEnabled
-                onClicked: editNetwork(walletStore.getNetworkData(model))
+                areTestNetworksEnabled: root.areTestNetworksEnabled
+                chainName: network.chainName
+                iconUrl: network.iconUrl
+                
+                onClicked: editNetwork(model)
             }
         }
 
@@ -62,17 +74,24 @@ Item {
         Repeater {
             id: layer2List
             model: SortFilterProxyModel {
-                sourceModel: walletStore.combinedNetworks
+                sourceModel: root.combinedNetworks
                 filters: ValueFilter {
                     roleName: "layer"
                     value: 2
                 }
             }
             delegate: WalletNetworkDelegate {
+                readonly property var network: {
+                    let chainId = root.areTestNetworksEnabled ? model.testChainId : model.prodChainId
+                    return ModelUtils.getByKey(root.flatNetworks, "chainId", chainId)
+                }
+                
                 objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
-                network: areTestNetworksEnabled ? model.test: model.prod
-                areTestNetworksEnabled: walletStore.areTestNetworksEnabled
-                onClicked: editNetwork(walletStore.getNetworkData(model))
+                areTestNetworksEnabled: root.areTestNetworksEnabled
+                chainName: !!network ? network.chainName : ""
+                iconUrl: !!network ? network.iconUrl : ""
+                
+                onClicked: editNetwork(model)
             }
         }
 
@@ -100,10 +119,10 @@ Item {
                 StatusSwitch {
                     id: testnetSwitch
                     objectName: "testnetModeSwitch"
-                    checked: walletStore.areTestNetworksEnabled
-                    onToggled: {
-                        checked = Qt.binding(() => walletStore.areTestNetworksEnabled)
-                        Global.openTestnetPopup()
+                    checked: root.areTestNetworksEnabled
+                    onToggled:{
+                        checked = Qt.binding(() => root.areTestNetworksEnabled)
+                        root.toggleTestNetworksEnabled()
                     }
                 }
             ]

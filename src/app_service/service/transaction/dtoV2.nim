@@ -11,7 +11,7 @@ import
   web3/ethtypes
 
 include  ../../common/json_utils
-import ../network/dto, ../token/dto
+import backend/network_types, ../token/dto
 
 type
   SuggestedLevelsForMaxFeesPerGasDto* = ref object

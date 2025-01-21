@@ -19,6 +19,7 @@ import app/core/signals/types
 import app/core/tasks/[qt, threadpool]
 import backend/accounts as status_go_accounts
 import backend/backend as backend
+import backend/network as status_go_network
 import backend/eth as status_go_eth
 import backend/transactions as status_go_transactions
 import constants as main_constants

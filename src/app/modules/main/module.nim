@@ -641,7 +641,7 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
 
   self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
     let args = NetworkEndpointUpdatedArgs(e)
-    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest, args.revertedToDefault)
+    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest)
 
   self.events.on(SIGNAL_KEYPAIR_DELETED) do(e: Args):
     let args = KeypairArgs(e)

@@ -15,13 +15,105 @@ SplitView {
     QtObject {
         id: d
 
+        readonly property var mainnetProviders: ListModel {
+            Component.onCompleted: append([
+                    {
+                        name: "Embedded Mainnet #1",
+                        url: "https://mainnet.infura.io/v3/",
+                        isEnabled: true,
+                        providerType: "embedded-proxy",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "Embedded Mainnet #2",
+                        url: "https://mainnet.alchemy.io/v3/",
+                        isEnabled: true,
+                        providerType: "embedded-direct",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "User Mainnet #1",
+                        url: "https://mainnet.mynode.io/1/",
+                        isEnabled: true,
+                        providerType: "user",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "User Mainnet #2",
+                        url: "https://mainnet.mynode.io/2/",
+                        isEnabled: false,
+                        providerType: "user",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    }
+                ]
+            )
+        }
+
+        readonly property var testnetProviders: ListModel {
+            Component.onCompleted: append([
+                    {
+                        name: "Embedded Sepolia #1",
+                        url: "https://sepolia.infura.io/v3/",
+                        isEnabled: true,
+                        providerType: "embedded-proxy",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "Embedded Sepolia #2",
+                        url: "https://sepolia.alchemy.io/v3/",
+                        isEnabled: true,
+                        providerType: "embedded-direct",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "User Sepolia #1",
+                        url: "https://sepolia.mynode.io/1/",
+                        isEnabled: false,
+                        providerType: "user",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    },
+                    {
+                        name: "User Sepolia #2",
+                        url: "https://sepolia.mynode.io/2/",
+                        isEnabled: true,
+                        providerType: "user",
+                        authType: "none",
+                        authLogin: "",
+                        authPassword: "",
+                        authToken: ""
+                    }
+                ]
+            )
+        }
+
         property var network: [{
                 prod: {
                     chainId: 1,
                     nativeCurrencyDecimals: 18,
                     layer: 1,
                     chainName: "Mainnet",
-                    rpcURL: "https://mainnet.infura.io/v3/",
+                    rpcProviders: d.mainnetProviders,
                     blockExplorerURL: "https://etherscan.io/",
                     iconURL: "network/Network=Ethereum",
                     nativeCurrencyName: "Ether",
@@ -36,8 +128,8 @@ SplitView {
                     chainId: 5,
                     nativeCurrencyDecimals: 18,
                     layer: 1,
-                    chainName: "Mainnet",
-                    rpcURL: "https://sepolia.infura.io/v3/",
+                    chainName: "Testnet",
+                    rpcProviders: d.testnetProviders,
                     blockExplorerURL: "https://sepolia.etherscan.io/",
                     iconURL: "network/Network=Ethereum",
                     nativeCurrencyName: "Ether",
@@ -47,7 +139,8 @@ SplitView {
                     chainColor: "#939BA1",
                     shortName: "eth",
                     relatedChainId: 1
-                }
+                },
+                layer: 1
             }]
 
 
@@ -75,12 +168,13 @@ SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        Item {
+        ScrollView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             EditNetworkView {
                 width: 560
-                combinedNetwork: d.network[0]
+                prodNetwork: d.network[0].prod
+                testNetwork: d.network[0].test
                 onEvaluateRpcEndPoint: networkModule.evaluateRpcEndPoint(url)
                 networksModule: networkModule
                 onUpdateNetworkValues: console.error(String("Updated network with chainId %1 with new main rpc url = %2 and faalback rpc =%3").arg(chainId).arg(newMainRpcInput).arg(newFailoverRpcUrl))

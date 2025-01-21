@@ -1462,4 +1462,16 @@ QtObject {
         Keypairs,
         WatchOnlyAccounts
     }
+
+    readonly property QtObject rpcProviderTypes: QtObject {
+        readonly property string embeddedProxy: "embedded-proxy"
+        readonly property string embeddedDirect: "embedded-direct"
+        readonly property string user: "user"
+    }
+
+    readonly property QtObject rpcProviderAuthTypes: QtObject {
+        readonly property string noAuth: "no-auth"
+        readonly property string basicAuth: "basic-auth"
+        readonly property string tokenAuth: "token-auth"
+    }
 }

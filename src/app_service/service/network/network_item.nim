@@ -1,6 +1,24 @@
 import NimQml, stew/shims/strformat
+import sequtils, sugar
 
-import ./dto
+import backend/network_types
+import ./rpc_provider_item
+
+export rpc_provider_item
+
+type
+  UxEnabledState* {.pure.} = enum
+    Enabled
+    AllEnabled
+    Disabled
+
+proc networkEnabledToUxEnabledState*(enabled: bool, allEnabled: bool): UxEnabledState =
+  return if allEnabled:
+      UxEnabledState.AllEnabled
+    elif enabled:
+      UxEnabledState.Enabled
+    else:
+      UxEnabledState.Disabled
 
 QtObject:
   type NetworkItem* = ref object of QObject
@@ -10,10 +28,7 @@ QtObject:
     iconUrl*: string
     shortName*: string
     chainColor*: string
-    rpcURL*: string
-    fallbackURL*: string
-    originalRpcURL*: string
-    originalFallbackURL*: string
+    rpcProviders*: seq[RpcProviderItem]
     blockExplorerURL*: string
     nativeCurrencyName*: string
     nativeCurrencySymbol*: string
@@ -30,10 +45,7 @@ QtObject:
     iconUrl: string,
     shortName: string,
     chainColor: string,
-    rpcURL: string,
-    fallbackURL: string,
-    originalRpcURL: string,
-    originalFallbackURL: string,
+    rpcProviders: seq[RpcProviderItem],
     blockExplorerURL: string,
     nativeCurrencyName: string,
     nativeCurrencySymbol: string,
@@ -50,10 +62,7 @@ QtObject:
       self.iconUrl = iconUrl
       self.shortName = shortName
       self.chainColor = chainColor
-      self.rpcURL = rpcURL
-      self.fallbackURL = fallbackURL
-      self.originalRpcURL = originalRpcURL
-      self.originalFallbackURL = originalFallbackURL
+      self.rpcProviders = rpcProviders
       self.blockExplorerURL = blockExplorerURL
       self.nativeCurrencyName = nativeCurrencyName
       self.nativeCurrencySymbol = nativeCurrencySymbol
@@ -66,12 +75,32 @@ QtObject:
   proc delete*(self: NetworkItem) =
       self.QObject.delete
 
-  proc networkDtoToItem*(network: NetworkDto): NetworkItem =
+  proc networkDtoToItem*(network: NetworkDto, allEnabled: bool): NetworkItem =
     new(result, delete)
+    let rpcProviders = network.rpcProviders.map(p => rpcProviderDtoToItem(p))
+    let enabledState = networkEnabledToUxEnabledState(network.isEnabled, allEnabled)
     result.setup(network.chainId, network.layer, network.chainName, network.iconUrl, network.shortName,
-      network.chainColor, network.rpcURL, network.fallbackURL, network.originalRpcURL, network.originalFallbackURL,
+      network.chainColor, rpcProviders,
       network.blockExplorerURL, network.nativeCurrencyName, network.nativeCurrencySymbol, network.nativeCurrencyDecimals,
-      network.isTest, network.enabled, network.enabledState, network.relatedChainId)
+      network.isTest, network.isEnabled, enabledState, network.relatedChainId)
+  
+  proc networkItemToDto*(network: NetworkItem): NetworkDto =
+    result = NetworkDto(
+      chainId: network.chainId,
+      nativeCurrencyDecimals: network.nativeCurrencyDecimals,
+      layer: network.layer,
+      chainName: network.chainName,
+      rpcProviders: network.rpcProviders.map(p => rpcProviderItemToDto(p)),
+      blockExplorerURL: network.blockExplorerURL,
+      iconUrl: network.iconUrl,
+      nativeCurrencyName: network.nativeCurrencyName,
+      nativeCurrencySymbol: network.nativeCurrencySymbol,
+      isTest: network.isTest,
+      isEnabled: network.isEnabled,
+      chainColor: network.chainColor,
+      shortName: network.shortName,
+      relatedChainId: network.relatedChainId
+    )
 
   proc `$`*(self: NetworkItem): string =
     result = fmt"""NetworkItem(
@@ -81,8 +110,7 @@ QtObject:
       iconUrl:{self.iconUrl},
       shortName: {self.shortName},
       chainColor: {self.chainColor},
-      rpcURL: {self.rpcURL},
-      fallbackURL: {self.fallbackURL},
+      rpcProviders: {self.rpcProviders},
       blockExplorerURL: {self.blockExplorerURL},
       nativeCurrencySymbol: {self.nativeCurrencySymbol},
       ]"""
@@ -117,25 +145,8 @@ QtObject:
   QtProperty[string] chainColor:
     read = chainColor
 
-  proc rpcURL*(self: NetworkItem): string {.slot.} =
-    return self.rpcURL
-  QtProperty[string] rpcURL:
-    read = rpcURL
-
-  proc fallbackURL*(self: NetworkItem): string {.slot.} =
-    return self.fallbackURL
-  QtProperty[string] fallbackURL:
-    read = fallbackURL
-
-  proc originalRpcURL*(self: NetworkItem): string {.slot.} =
-    return self.originalRpcURL
-  QtProperty[string] originalRpcURL:
-    read = originalRpcURL
-
-  proc originalFallbackURL*(self: NetworkItem): string {.slot.} =
-    return self.originalFallbackURL
-  QtProperty[string] originalFallbackURL:
-    read = originalFallbackURL
+  proc rpcProviders*(self: NetworkItem): seq[RpcProviderItem] =
+    return self.rpcProviders
 
   proc blockExplorerURL*(self: NetworkItem): string {.slot.} =
     return self.blockExplorerURL
@@ -168,7 +179,7 @@ QtObject:
     read = isEnabled
 
   proc getEnabledState*(self: NetworkItem): int {.slot.} =
-    return self.enabledState.int
+    return ord(self.enabledState)
   QtProperty[int] enabledState:
     read = getEnabledState
 

@@ -162,8 +162,8 @@ SettingsContentBase {
 
             if(currentIndex == root.editNetworksViewIndex) {
                 root.rootStore.backButtonName = root.networksSectionTitle
-                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.combinedNetwork.prod &&
-                                                        !!editNetwork.combinedNetwork.prod.chainName ? editNetwork.combinedNetwork.prod.chainName: "")
+                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.prodNetwork &&
+                                                        !!editNetwork.prodNetwork.chainName ? editNetwork.prodNetwork.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
                 root.titleRowLeftComponentLoader.sourceComponent = networkIcon
                 root.titleLayout.spacing = 12
@@ -251,15 +251,22 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.fillHeight: false
 
-            walletStore: root.walletStore
+            flatNetworks: root.walletStore.flatNetworks
+            combinedNetworks: root.walletStore.combinedNetworks
+            areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
 
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
             }
 
             onEditNetwork: {
-                editNetwork.combinedNetwork = network
+                editNetwork.prodNetwork = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", combinedNetwork.prodChainId)
+                editNetwork.testNetwork = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", combinedNetwork.testChainId)
                 stackContainer.currentIndex = editNetworksViewIndex
+            }
+
+            onToggleTestNetworksEnabled: {
+                Global.openTestnetPopup()
             }
         }
 
@@ -272,7 +279,7 @@ SettingsContentBase {
             areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
-                root.walletStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+                root.walletStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
             }
         }
 
@@ -409,7 +416,7 @@ SettingsContentBase {
             StatusRoundedImage {
                 width: 28
                 height: 28
-                image.source: Theme.svg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.iconUrl ? editNetwork.combinedNetwork.prod.iconUrl: "")
+                image.source: Theme.svg(!!editNetwork.prodNetwork && !!editNetwork.prodNetwork.iconUrl ? editNetwork.prodNetwork.iconUrl: "")
                 image.fillMode: Image.PreserveAspectCrop
             }
         }

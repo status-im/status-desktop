@@ -15,25 +15,6 @@ type
     decimals* {.serializedFieldName("decimals").}: int
     color* {.serializedFieldName("color").}: string
 
-  Network* = ref object of RootObj
-    chainId* {.serializedFieldName("chainId").}: int
-    nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
-    layer* {.serializedFieldName("layer").}: int
-    chainName* {.serializedFieldName("chainName").}: string
-    rpcURL* {.serializedFieldName("rpcUrl").}: string
-    originalRpcURL* {.serializedFieldName("originalRpcUrl").}: string
-    fallbackURL* {.serializedFieldName("fallbackUrl").}: string
-    originalFallbackURL* {.serializedFieldName("originalFallbackURL").}: string
-    blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
-    iconURL* {.serializedFieldName("iconUrl").}: string
-    nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
-    nativeCurrencySymbol* {.serializedFieldName("nativeCurrencySymbol").}: string
-    isTest* {.serializedFieldName("isTest").}: bool
-    enabled* {.serializedFieldName("enabled").}: bool
-    chainColor* {.serializedFieldName("chainColor").}: string
-    shortName* {.serializedFieldName("shortName").}: string
-    relatedChainID* {.serializedFieldName("relatedChainID").}: int
-
   ActivityCenterNotificationsRequest* = ref object of RootObj
     cursor* {.serializedFieldName("cursor").}: string
     limit* {.serializedFieldName("limit").}: int
@@ -53,18 +34,6 @@ type
 
 rpc(clientVersion, "web3"):
   discard
-
-rpc(getEthereumChains, "wallet"):
-  discard
-
-rpc(addEthereumChain, "wallet"):
-  network: Network
-
-rpc(deleteEthereumChain, "wallet"):
-  chainId: int
-
-rpc(fetchChainIDForURL, "wallet"):
-  url: string
 
 rpc(upsertSavedAddress, "wakuext"):
   savedAddress: SavedAddressDto

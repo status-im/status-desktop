@@ -140,38 +140,8 @@ QtObject {
         return networksModuleInst.fetchChainIdForUrl(url, isMainUrl)
     }
 
-    function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault) {
-        networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
-    }
-
-    function getNetworkData(combinedNetwork) {
-        return {
-            prod: {chainId: combinedNetwork.prod.chainId,
-                layer: combinedNetwork.prod.layer,
-                chainName: combinedNetwork.prod.chainName,
-                iconUrl: combinedNetwork.prod.iconUrl,
-                shortName: combinedNetwork.prod.shortName,
-                chainColor: combinedNetwork.prod.chainColor,
-                rpcURL: combinedNetwork.prod.rpcURL,
-                fallbackURL: combinedNetwork.prod.fallbackURL,
-                originalRpcURL: combinedNetwork.prod.originalRpcURL,
-                originalFallbackURL: combinedNetwork.prod.originalFallbackURL,
-                blockExplorerURL: combinedNetwork.prod.blockExplorerURL,
-                nativeCurrencySymbol: combinedNetwork.prod.nativeCurrencySymbol},
-            test: {chainId: combinedNetwork.test.chainId,
-                layer: combinedNetwork.test.layer,
-                chainName: combinedNetwork.test.chainName,
-                iconUrl: combinedNetwork.test.iconUrl,
-                shortName: combinedNetwork.test.shortName,
-                chainColor: combinedNetwork.test.chainColor,
-                rpcURL: combinedNetwork.test.rpcURL,
-                fallbackURL: combinedNetwork.test.fallbackURL,
-                originalRpcURL: combinedNetwork.test.originalRpcURL,
-                originalFallbackURL: combinedNetwork.test.originalFallbackURL,
-                blockExplorerURL: combinedNetwork.test.blockExplorerURL,
-                nativeCurrencySymbol: combinedNetwork.test.nativeCurrencySymbol},
-            layer: combinedNetwork.layer
-        }
+    function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl) {
+        networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
     }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
