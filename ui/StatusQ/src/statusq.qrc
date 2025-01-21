@@ -105,6 +105,7 @@
         <file>StatusQ/Controls/StatusCheckBox.qml</file>
         <file>StatusQ/Controls/StatusCircularProgressBar.qml</file>
         <file>StatusQ/Controls/StatusClearButton.qml</file>
+        <file>StatusQ/Controls/StatusColorAnimation.qml</file>
         <file>StatusQ/Controls/StatusColorRadioButton.qml</file>
         <file>StatusQ/Controls/StatusColorSelector.qml</file>
         <file>StatusQ/Controls/StatusColorSelectorGrid.qml</file>
