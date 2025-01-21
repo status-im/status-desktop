@@ -33,7 +33,7 @@ class SyncingSettingsView(QObject):
                 == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value), f"Sync a new device subtitle is incorrect"
 
     @allure.step('Setup syncing')
-    def set_up_syncing(self, password: str):
+    def open_sync_new_device_popup(self, password: str):
         self.click_setup_syncing()
         AuthenticatePopup().wait_until_appears().authenticate(password)
         return SyncNewDevicePopup().wait_until_appears()

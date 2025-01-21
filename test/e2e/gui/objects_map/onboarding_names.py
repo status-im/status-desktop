@@ -1,7 +1,53 @@
 from gui.objects_map.names import statusDesktop_mainWindow, statusDesktop_mainWindow_overlay
 
+# Welcome to status view
+startupOnboardingLayout = {"container": statusDesktop_mainWindow, "objectName": "startupOnboardingLayout", "type": "OnboardingLayout", "visible": True}
+startupWelcomePage = {"container": startupOnboardingLayout, "type": "WelcomePage", "unnamed": 1, "visible": True}
+startupNewsPage = {"container": startupOnboardingLayout, "id": "newsPage", "type": "ColumnLayout", "unnamed": 1, "visible": True}
+startupCreateProfileButton = {"container": startupOnboardingLayout, "objectName": "btnCreateProfile", "type": "StatusButton", "visible": True}
+startupLoginButton = {"container": startupOnboardingLayout, "objectName": "btnLogin", "type": "StatusButton", "visible": True}
+startupApprovalLinks = {"container": startupOnboardingLayout, "objectName": "approvalLinks", "type": "StatusBaseText", "visible": True}
+
+# Sign in view
+enterRecoveryPhraseButton = {"container": startupOnboardingLayout, "objectName": "btnWithSeedphrase", "type": "StatusButton", "visible": True}
+logInBySyncingButton = {"container": startupOnboardingLayout, "objectName": "btnBySyncing", "type": "ListItemButton", "visible": True}
+logInWithKeycardButton = {"container": startupOnboardingLayout, "objectName": "btnWithKeycard", "type": "ListItemButton", "visible": True}
+
+# Help us improve status popup
+onboardingLayout = {"container": statusDesktop_mainWindow, "objectName": "OnboardingLayout", "type": "ContentItem", "visible": True}
+helpUsImproveStatusPage = {"container": onboardingLayout, "type": "HelpUsImproveStatusPage", "unnamed": 1, "visible": True}
+shareUsageDataButton = {"container": helpUsImproveStatusPage, "objectName": "btnShare", "type": "StatusButton", "visible": True}
+notNowButton = {"container": statusDesktop_mainWindow, "objectName": "btnDontShare", "type": "StatusButton", "visible": True}
+
+# CreateYourProfileView
+onboardingFrame = {"container": onboardingLayout, "type": "OnboardingFrame", "unnamed": 1, "visible": True}
+buttonFrame = {"container": onboardingLayout, "id": "buttonFrame", "type": "OnboardingButtonFrame", "unnamed": 1, "visible": True}
+startFreshLetsGoButton = {"container": onboardingFrame, "objectName": "btnCreateWithPassword", "type": "StatusButton", "visible": True}
+useRecoveryPhraseButton = {"container": buttonFrame, "objectName": "btnCreateWithSeedPhrase", "type": "ListItemButton", "visible": True}
+useEmptyKeycardButton = {"container": statusDesktop_mainWindow, "objectName": "btnCreateWithEmptyKeycard", "type": "ListItemButton", "visible": True}
+
+# Log in by syncing checklist popup
+connectBothDevicesOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack1", "type": "StatusCheckBox", "visible": True}
+makeSureYouAreLoggedOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack2", "type": "StatusCheckBox", "visible": True}
+disableTheFirewallOption = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "ack3", "type": "StatusCheckBox", "visible": True}
+cancelButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusFlatButton", "unnamed": 1, "visible": True}
+continueButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "btnContinue", "type": "StatusButton", "visible": True}
+# ProfileSyncingView
+profileSyncedView = {"container": onboardingLayout, "type": "SyncProgressPage", "unnamed": 1, "visible": True}
+profileSyncedViewHeader = {"container": profileSyncedView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+# Onboarding import seed phrase view
+onboardingImportSeedPhraseView = {"container": onboardingLayout, "type": "SeedphrasePage", "unnamed": 1, "visible": True}
+tab12WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "12SeedButton", "type": "StatusSwitchTabButton"}
+tab18WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "18SeedButton", "type": "StatusSwitchTabButton"}
+tab24WordsButton = {"container": onboardingImportSeedPhraseView, "objectName": "24SeedButton", "type": "StatusSwitchTabButton"}
+seedPhraseInputField = {"container": onboardingImportSeedPhraseView, "objectName": "enterSeedPhraseInputField", "type": "TextEdit"}
+onboardingImportSeedPhraseContinueButton = {"container": onboardingImportSeedPhraseView, "objectName": "btnContinue", "type": "StatusButton", "visible": True}
+
 # Map for onboarding locators
 
+onboardingBasePage = {"container": statusDesktop_mainWindow, "objectName": "OnboardingBasePage", "type": "ContentItem", "visible": True}
+mainWindow_SyncCodeView = {"container": statusDesktop_mainWindow, "type": "SyncCodeView", "unnamed": 1, "visible": True}
 mainWindow_onboardingBackButton_StatusRoundButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingBackButton", "type": "StatusRoundButton", "visible": True}
 
 # Allow Notification View
@@ -42,7 +88,7 @@ mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_Se
                                   "visible": True}
 
 # SyncCode View
-mainWindow_SyncCodeView = {"container": statusDesktop_mainWindow, "type": "SyncCodeView", "unnamed": 1, "visible": True}
+logInBySyncingView = {"container": statusDesktop_mainWindow, "type": "LoginBySyncingPage", "unnamed": 1, "visible": True}
 mainWindow_switchTabBar_StatusSwitchTabBar_2 = {"container": statusDesktop_mainWindow, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
 switchTabBar_Enter_sync_code_StatusSwitchTabButton = {"checkable": True, "container": mainWindow_switchTabBar_StatusSwitchTabBar_2, "objectName": "secondTab_StatusSwitchTabButton", "type": "StatusSwitchTabButton", "visible": True}
 mainWindow_statusBaseInput_StatusBaseInput = {"container": statusDesktop_mainWindow, "id": "statusBaseInput", "type": "StatusBaseInput", "unnamed": 1, "visible": True}
@@ -85,9 +131,16 @@ mainWindow_userImageCopy_StatusSmartIdenticon = {"container": statusDesktop_main
 profileImageCropper = {"container": statusDesktop_mainWindow, "objectName": "imageCropWorkflow", "type": "ImageCropWorkflow", "visible": True}
 
 # Create Password View
+mainWindow_CreatePasswordView = {"container": onboardingLayout, "type": "CreatePasswordPage", "unnamed": 1, "visible": True}
+choosePasswordField = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+repeatPasswordField = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
+confirmPasswordButton = {"container": mainWindow_CreatePasswordView, "objectName": "btnConfirmPassword", "type": "StatusButton", "visible": True}
+
 mainWindow_CreatePasswordView = {"container": statusDesktop_mainWindow, "type": "CreatePasswordView", "unnamed": 1, "visible": True}
 mainWindow_passwordViewNewPassword = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
 mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
+
+
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
 mainWindow_RowLayout = {"container": statusDesktop_mainWindow, "type": "PassIncludesIndicator", "unnamed": 1, "visible": True}
@@ -118,3 +171,8 @@ mainWindowUsePasswordInsteadStatusBaseText = {"container": statusDesktop_mainWin
 mainWindow_TouchIDAuthView = {"container": statusDesktop_mainWindow, "type": "TouchIDAuthView", "unnamed": 1, "visible": True}
 mainWindow_touchIdYesUseTouchIDButton = {"container": statusDesktop_mainWindow, "objectName": "touchIdYesUseTouchIDButton", "type": "StatusButton", "visible": True}
 mainWindow_touchIdIPreferToUseMyPasswordText = {"container": statusDesktop_mainWindow, "objectName": "touchIdIPreferToUseMyPasswordText", "type": "StatusBaseText"}
+
+# Enable biometrics view
+enableBiometricsView = {"container": onboardingLayout, "type": "EnableBiometricsPage", "unnamed": 1, "visible": True}
+enableBiometricsButton = {"container": enableBiometricsView, "objectName": "btnEnableBiometrics", "type": "StatusButton", "visible": True}
+dontEnableBiometricsButton = {"container": enableBiometricsView, "objectName": "btnDontEnableBiometrics", "type": "StatusFlatButton", "visible": True}

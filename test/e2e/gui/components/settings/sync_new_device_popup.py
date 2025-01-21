@@ -15,7 +15,7 @@ class SyncNewDevicePopup(BasePopup):
         self._copy_button = Button(names.copy_SyncCodeStatusButton)
         self._done_button = Button(names.done_SyncCodeStatusButton)
         self._sync_code_field = TextEdit(names.syncCodeInput_StatusPasswordInput)
-        self._close_button = Button(names.close_StatusButton)
+        self._close_button = Button(names.close_SyncCodeStatusFlatRoundButton)
         self._error_message = QObject(names.errorView_SyncingErrorMessage)
 
     @property
