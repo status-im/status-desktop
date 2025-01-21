@@ -1,7 +1,6 @@
 import NimQml, strutils, uri, stew/shims/strformat, strutils, stint, httpclient
 import stew/byteutils
 import ./utils/qrcodegen
-import ./utils/time_utils
 
 # Services as instances shouldn't be used in this class, just some general/global procs
 import ../../app_service/common/conversion
@@ -142,9 +141,6 @@ QtObject:
     if value.startsWith("0x"):
       return value[2..^1]
     return value
-
-  proc addTimestampToURL*(self: Utils, url: string): string {.slot.} =
-    return time_utils.addTimestampToURL(url)
 
   proc isValidURL*(self: Utils, url: string): bool {.slot.} =
     var client = newHttpClient()

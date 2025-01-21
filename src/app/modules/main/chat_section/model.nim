@@ -466,9 +466,7 @@ QtObject:
       return
     self.items[index].name = name
 
-    var updatedIcon = singletonInstance.utils().addTimestampToURL(icon)
-
-    self.items[index].icon = updatedIcon
+    self.items[index].icon = icon
     self.items[index].trustStatus = trustStatus
     let modelIndex = self.createIndex(index, 0, nil)
     defer: modelIndex.delete

@@ -217,7 +217,7 @@ Pane {
                 Layout.alignment: Qt.AlignTop
                 objectName: "ProfileDialog_userImage"
                 name: d.mainDisplayName
-                image: Utils.addTimestampToURL(contactDetails.largeImage)
+                image: contactDetails.largeImage
                 colorId: contactDetails.colorId
                 colorHash: contactDetails.colorHash
 
