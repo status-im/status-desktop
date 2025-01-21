@@ -746,7 +746,7 @@ QtObject {
                 readonly property var estimatedTimeAggregator: FunctionAggregator {
                     model: !!handler.fetchedPathModel ?
                                handler.fetchedPathModel: null
-                    initialValue: Constants.TransactionEstimatedTime.Unknown
+                    initialValue: -1
                     roleName: "estimatedTime"
 
                     aggregateFunction: (aggr, value) => aggr < value? value : aggr
