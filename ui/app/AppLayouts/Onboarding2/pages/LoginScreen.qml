@@ -39,8 +39,9 @@ OnboardingPage {
     // "internal" onboarding signals, starting other flows
     signal onboardingCreateProfileFlowRequested()
     signal onboardingLoginFlowRequested()
-    signal unlockWithSeedphraseRequested()
-    signal unlockWithPukRequested()
+    signal unblockWithSeedphraseRequested()
+    signal unblockWithPukRequested()
+    signal keycardFactoryResetRequested()
     signal lostKeycard()
 
     QtObject {
@@ -176,7 +177,8 @@ OnboardingPage {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 64
                 model: root.loginAccountsModel
-                currentKeycardLocked: root.onboardingStore.keycardState === Onboarding.KeycardState.Locked
+                currentKeycardLocked: root.onboardingStore.keycardState === Onboarding.KeycardState.BlockedPIN ||
+                                      root.onboardingStore.keycardState === Onboarding.KeycardState.BlockedPUK
                 onSelectedProfileKeyIdChanged: {
                     d.resetBiometricsResult()
                     d.settings.lastKeyUid = selectedProfileKeyId
@@ -222,8 +224,10 @@ OnboardingPage {
                 keycardState: root.onboardingStore.keycardState
                 tryToSetPinFunction: root.onboardingStore.setPin
                 keycardRemainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
-                onUnlockWithSeedphraseRequested: root.unlockWithSeedphraseRequested()
-                onUnlockWithPukRequested: root.unlockWithPukRequested()
+                keycardRemainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
+                onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
+                onUnblockWithPukRequested: root.unblockWithPukRequested()
+                onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
                 onPinEditedManually: {
                     // reset state when typing the PIN manually; not to break the bindings inside the component
                     d.resetBiometricsResult()

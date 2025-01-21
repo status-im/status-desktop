@@ -24,6 +24,7 @@ QtObject {
     // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
+    readonly property int keycardRemainingPukAttempts: d.onboardingModuleInst.keycardRemainingPukAttempts
 
     function finishOnboardingFlow(flow: int, data: Object) { // -> bool
         return d.onboardingModuleInst.finishOnboardingFlow(flow, JSON.stringify(data))
@@ -31,6 +32,10 @@ QtObject {
 
     function setPin(pin: string) { // -> bool
         return d.onboardingModuleInst.setPin(pin)
+    }
+
+    function setPuk(puk: string) { // -> bool
+        return d.onboardingModuleInst.setPuk(puk)
     }
 
     readonly property int addKeyPairState: d.onboardingModuleInst.addKeyPairState // cf. enum Onboarding.AddKeyPairState

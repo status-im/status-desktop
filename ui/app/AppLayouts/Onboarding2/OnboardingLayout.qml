@@ -68,11 +68,15 @@ Page {
         property bool enableBiometrics
         property string seedphrase
 
+        // login screen state
+        property string selectedProfileKeyId
+
         function resetState() {
             d.password = ""
             d.keycardPin = ""
             d.enableBiometrics = false
             d.seedphrase = ""
+            d.selectedProfileKeyId = ""
         }
 
         readonly property Settings settings: Settings {
@@ -105,10 +109,6 @@ Page {
 
         objectName: "stack"
         anchors.fill: parent
-
-        readonly property bool backAvailable:
-            stack.currentItem ? (stack.currentItem.backAvailableHint ?? true)
-                              : false
     }
 
     // needs to be on top of the stack
@@ -157,7 +157,9 @@ Page {
         isSeedPhraseValid: root.onboardingStore.validMnemonic
         validateConnectionString: root.onboardingStore.validateLocalPairingConnectionString
         tryToSetPinFunction: root.onboardingStore.setPin
-        remainingAttempts: root.onboardingStore.keycardRemainingPinAttempts
+        tryToSetPukFunction: root.onboardingStore.setPuk
+        remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
+        remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
 
         onKeycardPinCreated: (pin) => {
             d.keycardPin = pin
@@ -180,13 +182,15 @@ Page {
         onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
         onSetPasswordRequested: (password) => d.password = password
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
+        onLinkActivated: (link) => Qt.openUrlExternally(link)
         onFinished: (flow) => d.finishFlow(flow)
-        onKeycardFactoryResetRequested: ; // TODO invoke external popup and finish the flow
+        onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
     }
 
     Component {
         id: loginScreenComponent
         LoginScreen {
+            id: loginScreen
             onboardingStore: root.onboardingStore
             loginAccountsModel: root.loginAccountsModel
             biometricsAvailable: root.biometricsAvailable
@@ -196,9 +200,36 @@ Page {
 
             onOnboardingCreateProfileFlowRequested: onboardingFlow.startCreateProfileFlow()
             onOnboardingLoginFlowRequested: onboardingFlow.startLoginFlow()
-            onUnlockWithSeedphraseRequested: console.warn("!!! FIXME onUnlockWithSeedphraseRequested")
-            onUnlockWithPukRequested: console.warn("!!! FIXME onUnlockWithPukRequested")
             onLostKeycard: onboardingFlow.startLostKeycardFlow()
+            onUnblockWithSeedphraseRequested: console.warn("!!! FIXME OnboardingLayout::onUnblockWithSeedphraseRequested")
+            onUnblockWithPukRequested: {
+                d.selectedProfileKeyId = selectedProfileKeyId
+                unblockWithPukFlow.init()
+            }
+            onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
+        }
+    }
+
+    UnblockWithPukFlow {
+        id: unblockWithPukFlow
+
+        stackView: stack
+        keycardState: root.onboardingStore.keycardState
+        tryToSetPukFunction: root.onboardingStore.setPuk
+        remainingAttempts: root.onboardingStore.keycardRemainingPukAttempts
+
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+        onReloadKeycardRequested: root.reloadKeycardRequested()
+        onKeycardPinCreated: (pin) => {
+            d.keycardPin = pin
+            root.onboardingStore.setPin(pin)
+        }
+        onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
+
+        onFinished: {
+            root.loginRequested(d.selectedProfileKeyId, Onboarding.LoginMethod.Keycard, {"pin": d.keycardPin})
+            d.selectedProfileKeyId = ""
         }
     }
 
@@ -207,10 +238,10 @@ Page {
         ignoreUnknownSignals: true
 
         function onOpenLink(link: string) {
-            Global.openLink(link)
+            Qt.openUrlExternally(link)
         }
         function onOpenLinkWithConfirmation(link: string, domain: string) {
-            Global.openLinkWithConfirmation(link, domain)
+            Qt.openUrlExternally(link)
         }
     }
 

@@ -15,6 +15,7 @@ Dialog {
 
     required property string password
     required property string pin
+    required property string selectedProfileIsKeycard
 
     // password signals
     signal accountLoginError(string error, bool wrongPassword)
@@ -76,7 +77,7 @@ Dialog {
             text: "Simulate correct fingerprint"
             onClicked: {
                 root.close()
-                root.obtainingPasswordSuccess(loginScreen.selectedProfileIsKeycard ? root.pin : root.password)
+                root.obtainingPasswordSuccess(root.selectedProfileIsKeycard ? root.pin : root.password)
             }
         }
         StatusButton {

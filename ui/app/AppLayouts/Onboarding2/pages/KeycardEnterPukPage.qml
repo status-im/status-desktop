@@ -5,6 +5,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
 
@@ -14,8 +15,10 @@ KeycardBasePage {
     id: root
 
     property var tryToSetPukFunction: (puk) => { console.error("tryToSetPukFunction: IMPLEMENT ME"); return false }
+    required property int remainingAttempts
 
     signal keycardPukEntered(string puk)
+    signal keycardFactoryResetRequested()
 
     image.source: Theme.png("onboarding/keycard/reading")
 
@@ -47,16 +50,52 @@ KeycardBasePage {
         StatusBaseText {
             id: errorText
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("The PUK is incorrect, try entering it again")
+            text: qsTr("%n attempt(s) remaining", "", root.remainingAttempts)
             font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
             visible: false
+        },
+        StatusButton {
+            id: btnFactoryReset
+            width: 320
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Theme.halfPadding
+            visible: false
+            text: qsTr("Factory reset Keycard")
+            onClicked: root.keycardFactoryResetRequested()
         }
     ]
 
     state: "entering"
 
     states: [
+        State {
+            name: "locked"
+            when: root.remainingAttempts <= 0
+            PropertyChanges {
+                target: root
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
+            }
+            PropertyChanges {
+                target: pukInput
+                enabled: false
+            }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/keycard/error")
+            }
+            PropertyChanges {
+                target: btnFactoryReset
+                visible: true
+            }
+            StateChangeScript {
+                script: {
+                    Backpressure.debounce(root, 100, function() {
+                        pukInput.clearPin()
+                    })()
+                }
+            }
+        },
         State {
             name: "incorrect"
             when: !!d.tempPuk && !d.pukValid

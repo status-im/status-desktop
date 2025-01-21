@@ -64,7 +64,8 @@ public:
         WrongKeycard,
         NotKeycard,
         MaxPairingSlotsReached,
-        Locked,
+        BlockedPIN, // PIN remaining attempts == 0
+        BlockedPUK, // PUK remaining attempts == 0
         // exit states
         NotEmpty,
         Empty

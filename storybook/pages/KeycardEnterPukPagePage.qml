@@ -11,15 +11,25 @@ Item {
     KeycardEnterPukPage {
         id: page
         anchors.fill: parent
+        remainingAttempts: 3
         tryToSetPukFunction: (puk) => {
                                  console.warn("!!! ATTEMPTED PUK:", puk)
-                                 return puk === root.existingPuk
+                                 const valid = puk === root.existingPuk
+                                 if (!valid)
+                                     remainingAttempts--
+                                 return valid
                              }
         onKeycardPukEntered: (puk) => {
                                  console.warn("!!! CORRECT PUK:", puk)
                                  console.warn("!!! RESETTING FLOW")
                                  state = "entering"
                              }
+        onKeycardFactoryResetRequested: {
+            console.warn("onKeycardFactoryResetRequested")
+            console.warn("!!! RESETTING FLOW")
+            state = "entering"
+            remainingAttempts = 3
+        }
     }
 
     Label {
@@ -31,8 +41,3 @@ Item {
 
 // category: Onboarding
 // status: good
-// https://www.figma.com/design/Lw4nPYQcZOPOwTgETiiIYo/Desktop-Onboarding-Redesign?node-id=1281-45942&node-type=frame&m=dev
-// https://www.figma.com/design/Lw4nPYQcZOPOwTgETiiIYo/Desktop-Onboarding-Redesign?node-id=1281-45950&node-type=frame&m=dev
-// https://www.figma.com/design/Lw4nPYQcZOPOwTgETiiIYo/Desktop-Onboarding-Redesign?node-id=1281-45959&node-type=frame&m=dev
-// https://www.figma.com/design/Lw4nPYQcZOPOwTgETiiIYo/Desktop-Onboarding-Redesign?node-id=1281-45966&node-type=frame&m=dev
-// https://www.figma.com/design/Lw4nPYQcZOPOwTgETiiIYo/Desktop-Onboarding-Redesign?node-id=1281-45996&node-type=frame&m=dev

@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import AppLayouts.Onboarding2.pages 1.0
 
@@ -18,6 +19,7 @@ Item {
                                  return valid
                              }
         remainingAttempts: 3
+        unblockWithPukAvailable: ctrlUnblockWithPUK.checked
         onKeycardPinEntered: (pin) => {
                                  console.warn("!!! PIN:", pin)
                                  console.warn("!!! RESETTING FLOW")
@@ -35,10 +37,21 @@ Item {
         }
     }
 
-    Label {
-        anchors.bottom: parent.bottom
+    RowLayout {
         anchors.right: parent.right
-        text: "Hint: %1".arg(root.existingPin)
+        anchors.bottom: parent.bottom
+
+        CheckBox {
+            id: ctrlUnblockWithPUK
+            text: "Unblock with PUK available"
+            checked: true
+        }
+
+        Item { Layout.fillWidth: true }
+
+        Label {
+            text: "Hint: %1".arg(root.existingPin)
+        }
     }
 }
 

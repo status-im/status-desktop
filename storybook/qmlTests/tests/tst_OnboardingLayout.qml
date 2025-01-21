@@ -1032,8 +1032,8 @@ Item {
         function test_loginScreen_launchesExternalFlow_data() {
             return [
               { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPageTitle: "Create profile" },
-              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested",  landingPageTitle: "Log in"},
-              // TODO cover also `signal unlockWithSeedphraseRequested()` and `signal lostKeycard()`
+              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPageTitle: "Log in" },
+              // TODO cover also `signal unblockWithSeedphraseRequested()` and `signal lostKeycard()`
             ]
         }
         function test_loginScreen_launchesExternalFlow(data) {

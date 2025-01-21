@@ -24,6 +24,9 @@ Item {
         id: introPage
         KeycardIntroPage {
             keycardState: ctrlKeycardState.currentValue
+            unblockWithPukAvailable: ctrlUnblockWithPUK.checked
+            unblockUsingSeedphraseAvailable: ctrlUnblockWithSeedphrase.checked
+            factoryResetAvailable: ctrlFactoryReset.checked
             displayPromoBanner: ctrlDisplayPromo.checked
             onEmptyKeycardDetected: console.warn("!!! EMPTY DETECTED")
             onNotEmptyKeycardDetected: console.warn("!!! NOT EMPTY DETECTED")
@@ -31,6 +34,8 @@ Item {
             onOpenLink: Qt.openUrlExternally(link)
             onOpenLinkWithConfirmation: Qt.openUrlExternally(link)
             onKeycardFactoryResetRequested: console.warn("!!! FACTORY RESET")
+            onUnblockWithSeedphraseRequested: console.warn("!!! UNBLOCK WITH SEEDPHRASE")
+            onUnblockWithPukRequested: console.warn("!!! UNBLOCK WITH PUK")
         }
     }
 
@@ -54,6 +59,26 @@ Item {
     RowLayout {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+
+        CheckBox {
+            id: ctrlUnblockWithPUK
+            text: "Unblock with PUK available"
+            checked: true
+        }
+
+        CheckBox {
+            id: ctrlUnblockWithSeedphrase
+            text: "Unblock with seedphrase available"
+            checked: true
+        }
+
+        CheckBox {
+            id: ctrlFactoryReset
+            text: "Factory reset available"
+            checked: true
+        }
+
+        Item { Layout.fillWidth: true }
 
         CheckBox {
             id: ctrlDisplayPromo
