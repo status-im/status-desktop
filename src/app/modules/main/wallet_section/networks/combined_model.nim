@@ -4,8 +4,8 @@ import ./io_interface
 
 type
   ModelRole* {.pure.} = enum
-    Prod = UserRole + 1,
-    Test
+    ProdChainId = UserRole + 1,
+    TestChainId
     Layer
 
 QtObject:
@@ -36,8 +36,8 @@ QtObject:
 
   method roleNames(self: CombinedModel): Table[int, string] =
     {
-      ModelRole.Prod.int:"prod",
-      ModelRole.Test.int:"test",
+      ModelRole.ProdChainId.int:"prodChainId",
+      ModelRole.TestChainId.int:"testChainId",
       ModelRole.Layer.int:"layer",
     }.toTable
 
@@ -52,10 +52,10 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Prod:
-      result = newQVariant(item.prod)
-    of ModelRole.Test:
-      result = newQVariant(item.test)
+    of ModelRole.ProdChainId:
+      result = newQVariant(item.prod.chainId)
+    of ModelRole.TestChainId:
+      result = newQVariant(item.test.chainId)
     of ModelRole.Layer:
       result = newQVariant(item.prod.layer)
 

@@ -58,8 +58,8 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
 
-proc updateNetworkEndPointValues*(self: Controller, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
-  self.networkService.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+proc updateNetworkEndPointValues*(self: Controller, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string) =
+  self.networkService.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
 
 proc fetchChainIdForUrl*(self: Controller, url: string, isMainUrl: bool) =
   self.walletAccountService.fetchChainIdForUrl(url, isMainUrl)

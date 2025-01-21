@@ -82,8 +82,8 @@ QtObject:
   proc getBlockExplorerTxURL*(self: View, chainId: int): string {.slot.} =
     return self.flatNetworks.getBlockExplorerTxURL(chainId)
 
-  proc updateNetworkEndPointValues*(self: View, chainId: int, testNetwork: bool, newMainRpcInput: string, newFailoverRpcUrl: string, revertToDefault: bool) {.slot.} =
-    self.delegate.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+  proc updateNetworkEndPointValues*(self: View, chainId: int, testNetwork: bool, newMainRpcInput: string, newFailoverRpcUrl: string) {.slot.} =
+    self.delegate.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
 
   proc fetchChainIdForUrl*(self: View, url: string, isMainUrl: bool) {.slot.} =
     self.delegate.fetchChainIdForUrl(url, isMainUrl)

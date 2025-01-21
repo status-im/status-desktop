@@ -4,9 +4,9 @@ import Tables, sequtils
 import
   web3/ethtypes
 
+import backend/network_types
 import backend/transactions
 import app_service/common/conversion as service_conversion
-import app_service/service/network/dto
 import app_service/service/token/dto
 import app/modules/shared_models/currency_amount
 

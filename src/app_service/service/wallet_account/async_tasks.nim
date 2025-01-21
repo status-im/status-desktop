@@ -168,7 +168,7 @@ type
 proc fetchChainIdForUrlTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchChainIdForUrlTaskArg](argEncoded)
   try:
-    let response = backend.fetchChainIDForURL(arg.url)
+    let response = status_go_network.fetchChainIDForURL(arg.url)
     arg.finish(%*{
       "success": true,
       "chainId": response.result.getInt,

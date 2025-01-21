@@ -10,13 +10,14 @@ import "../../views"
 ColumnLayout {
     id: root
 
-    property var networksModule
-    property var combinedNetwork
+    required property var networksModule
+    property var prodNetwork
+    property var testNetwork
     property var networkRPCChanged
     property bool areTestNetworksEnabled: false
 
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
-    signal updateNetworkValues(int chainId, bool testNetwork, string newMainRpcInput, string newFailoverRpcUrl, bool revertToDefault)
+    signal updateNetworkValues(int chainId, bool testNetwork, string newMainRpcInput, string newFailoverRpcUrl)
 
     onVisibleChanged: {
         if (visible)
@@ -48,22 +49,22 @@ ColumnLayout {
     Component {
         id: editLiveNetwork
         EditNetworkForm {
-            network: !!root.combinedNetwork ? root.combinedNetwork.prod: null
+            network: root.prodNetwork ?? null
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
-            onUpdateNetworkValues: root.updateNetworkValues(chainId, false, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+            onUpdateNetworkValues: root.updateNetworkValues(chainId, false, newMainRpcInput, newFailoverRpcUrl)
         }
     }
 
     Component {
         id: editTestNetwork
         EditNetworkForm {
-            network: !!root.combinedNetwork ? root.combinedNetwork.test: null
+            network: root.testNetwork ?? null
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
-            onUpdateNetworkValues: root.updateNetworkValues(chainId, true, newMainRpcInput, newFailoverRpcUrl, revertToDefault)
+            onUpdateNetworkValues: root.updateNetworkValues(chainId, true, newMainRpcInput, newFailoverRpcUrl)
         }
     }
 }

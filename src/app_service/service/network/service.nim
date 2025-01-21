@@ -1,13 +1,12 @@
 import json, json_serialization, chronicles, sugar, sequtils
 
 import ../../../app/core/eventemitter
-import ../../../backend/backend as backend
+import backend/network as backend
 import ../settings/service as settings_service
 import ./network_item, ./combined_network_item
 
-import dto, types
-
-export dto, types
+import types
+export types
 
 logScope:
   topics = "network-service"
@@ -19,7 +18,6 @@ const EXPLORER_ADDRESS_PATH* = "/address"
 type NetworkEndpointUpdatedArgs* = ref object of Args
   isTest*: bool
   networkName*: string
-  revertedToDefault*: bool
 
 type
   Service* = ref object of RootObj
@@ -42,17 +40,12 @@ proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
     raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
   let combinedNetworksDto = if response.result.isNil or response.result.kind == JNull: @[]
             else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
-  result = combinedNetworksDto.map(x => x.combinedNetworkDtoToCombinedItem())
-  self.combinedNetworks = result
-  let allTestEnabled = self.combinedNetworks.filter(n => n.test.isEnabled).len == self.combinedNetworks.len
-  let allProdEnabled = self.combinedNetworks.filter(n => n.prod.isEnabled).len == self.combinedNetworks.len
-  for n in self.combinedNetworks:
-    n.test.enabledState = networkEnabledToUxEnabledState(n.test.isEnabled, allTestEnabled)
-    n.prod.enabledState = networkEnabledToUxEnabledState(n.prod.isEnabled, allProdEnabled)
+  self.combinedNetworks = combinedNetworksDtoToCombinedItem(combinedNetworksDto)
   self.flatNetworks = @[]
   for network in self.combinedNetworks:
     self.flatNetworks.add(network.test)
     self.flatNetworks.add(network.prod)
+  return self.combinedNetworks
 
 proc init*(self: Service) =
   discard self.fetchNetworks()
@@ -83,25 +76,7 @@ proc getDisabledChainIdsForEnabledChainIds*(self: Service, enabledChainIds: seq[
       result.add(network.chainId)
 
 proc upsertNetwork*(self: Service, network: NetworkItem): bool =
-  let response = backend.addEthereumChain(backend.Network(
-    chainId: network.chainId,
-    nativeCurrencyDecimals: network.nativeCurrencyDecimals,
-    layer: network.layer,
-    chainName: network.chainName,
-    rpcURL: network.rpcURL,
-    originalRpcURL: network.originalRpcURL,
-    fallbackURL: network.fallbackURL,
-    originalFallbackURL: network.originalFallbackURL,
-    blockExplorerURL: network.blockExplorerURL,
-    iconURL: network.iconURL,
-    nativeCurrencyName: network.nativeCurrencyName,
-    nativeCurrencySymbol: network.nativeCurrencySymbol,
-    isTest: network.isTest,
-    enabled: network.isEnabled,
-    chainColor: network.chainColor,
-    shortName: network.shortName,
-    relatedChainID: network.relatedChainId
-  ))
+  let response = backend.addEthereumChain(networkItemToDto(network))
   return response.error == nil
 
 proc deleteNetwork*(self: Service, network: NetworkItem) =
@@ -126,11 +101,7 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
     let network = self.getNetworkByChainId(chainId)
 
     if not network.isNil:
-      if network.isEnabled == enabled:
-        continue
-
-      network.isEnabled = enabled
-      discard self.upsertNetwork(network)
+      discard backend.setChainEnabled(chainId, enabled)
   discard self.fetchNetworks()
 
 ## This procedure retuns the network to be used based on the app mode (testnet/mainnet).
@@ -154,15 +125,41 @@ proc getAppNetwork*(self: Service): NetworkItem =
     quit() # quit the app
   return network
 
-proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string, revertToDefault: bool) =
+proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool, newMainRpcInput, newFailoverRpcUrl: string) =
   let network = self.getNetworkByChainId(chainId, testNetwork)
 
   if not network.isNil:
-    if network.rpcURL != newMainRpcInput:
-      network.rpcURL = newMainRpcInput
-
-    if network.fallbackURL != newFailoverRpcUrl:
-      network.fallbackURL = newFailoverRpcUrl
-
-    if self.upsertNetwork(network):
-      self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName, revertedToDefault: revertToDefault))
+    var rpcProviders: seq[RpcProviderDto] = @[]
+    if newMainRpcInput != "":
+      rpcProviders.add(RpcProviderDto(
+        id: 1, 
+        chainId: chainId, 
+        name: "user-rpc-provider-1", 
+        url: newMainRpcInput, 
+        isRpsLimiterEnabled: false, 
+        providerType: RpcProviderType.User, 
+        isEnabled: true, 
+        authType: RpcProviderAuthType.NoAuth, 
+        authLogin: "", 
+        authPassword: "", 
+        authToken: ""
+      ))
+    if newFailoverRpcUrl != "":
+      rpcProviders.add(RpcProviderDto(
+        id: 2, 
+        chainId: chainId, 
+        name: "user-rpc-provider-2", 
+        url: newFailoverRpcUrl, 
+        isRpsLimiterEnabled: false, 
+        providerType: RpcProviderType.User, 
+        isEnabled: true, 
+        authType: RpcProviderAuthType.NoAuth, 
+        authLogin: "", 
+        authPassword: "", 
+        authToken: ""
+      ))
+    let response = backend.setChainUserRpcProviders(chainId, rpcProviders)
+    
+    if response.error == nil:
+      discard self.fetchNetworks()
+      self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName))

@@ -1,16 +1,17 @@
 import NimQml, Tables, strutils, sequtils, sugar
 
-import app_service/service/network/dto
+import ./rpc_providers_model
 import ./io_interface
 
 from app_service/service/network/service import EXPLORER_TX_PATH
+import app_service/service/network/network_item
 
 type
   ModelRole* {.pure.} = enum
     ChainId = UserRole + 1,
     Layer
     ChainName
-    RpcURL
+    RpcProviders
     BlockExplorerURL
     NativeCurrencyName
     NativeCurrencySymbol
@@ -21,20 +22,20 @@ type
     ChainColor
     ShortName
     EnabledState
-    FallbackURL
-    OriginalRpcURL
-    OriginalFallbackURL
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
       delegate: io_interface.NetworksDataSource
+      rpcProvidersPerNetwork: seq[RpcProvidersModel]
 
   proc delete(self: Model) =
+    self.rpcProvidersPerNetwork = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
+    self.rpcProvidersPerNetwork = @[]
 
   proc newModel*(delegate: io_interface.NetworksDataSource): Model =
     new(result, delete)
@@ -59,7 +60,7 @@ QtObject:
       ModelRole.NativeCurrencyDecimals.int:"nativeCurrencyDecimals",
       ModelRole.Layer.int:"layer",
       ModelRole.ChainName.int:"chainName",
-      ModelRole.RpcURL.int:"rpcURL",
+      ModelRole.RpcProviders.int: "rpcProviders",
       ModelRole.BlockExplorerURL.int:"blockExplorerURL",
       ModelRole.NativeCurrencyName.int:"nativeCurrencyName",
       ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
@@ -69,16 +70,14 @@ QtObject:
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
       ModelRole.EnabledState.int: "enabledState",
-      ModelRole.FallbackURL.int: "fallbackURL",
-      ModelRole.OriginalRpcURL.int: "originalRpcURL",
-      ModelRole.OriginalFallbackURL.int: "originalFallbackURL",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.rowCount()):
+    if (index.row < 0 or index.row >= self.rowCount()) or
+      index.row >= self.rpcProvidersPerNetwork.len:
       return
 
     let item = self.delegate.getFlatNetworksList()[index.row]
@@ -93,8 +92,8 @@ QtObject:
       result = newQVariant(item.layer)
     of ModelRole.ChainName:
       result = newQVariant(item.chainName)
-    of ModelRole.RpcURL:
-      result = newQVariant(item.rpcURL)
+    of ModelRole.RpcProviders:
+      result = newQVariant(self.rpcProvidersPerNetwork[index.row])
     of ModelRole.BlockExplorerURL:
       result = newQVariant(item.blockExplorerURL)
     of ModelRole.NativeCurrencyName:
@@ -113,15 +112,14 @@ QtObject:
       result = newQVariant(item.chainColor)
     of ModelRole.EnabledState:
       result = newQVariant(item.enabledState.int)
-    of ModelRole.FallbackURL:
-      result = newQVariant(item.fallbackURL)
-    of ModelRole.OriginalRpcURL:
-      result = newQVariant(item.originalRpcURL)
-    of ModelRole.OriginalFallbackURL:
-      result = newQVariant(item.originalFallbackURL)
 
   proc refreshModel*(self: Model) =
     self.beginResetModel()
+    let numberOfNetworks = self.delegate.getFlatNetworksList().len
+    let numberOfRpcProviderLists = self.rpcProvidersPerNetwork.len
+    if numberOfNetworks > numberOfRpcProviderLists:
+      for i in countup(0, numberOfNetworks - numberOfRpcProviderLists - 1):
+        self.rpcProvidersPerNetwork.add(newRpcProvidersModel(self.delegate, numberOfRpcProviderLists+i))
     self.endResetModel()
     self.countChanged()
 
