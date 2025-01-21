@@ -508,7 +508,7 @@ StatusDialog {
                         font.weight: Font.Medium
                         loading: root.swapAdaptor.swapProposalLoading
 
-                        AnimatedText {
+                        StatusColorAnimation {
                             id: animation
                             target: fees
                         }
