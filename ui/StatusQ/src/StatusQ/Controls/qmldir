@@ -21,6 +21,7 @@ StatusColorSelectorGrid 0.1 StatusColorSelectorGrid.qml
 StatusComboBox 0.1 StatusComboBox.qml
 StatusCommunityTag 0.1 StatusCommunityTag.qml
 StatusDropdown 0.1 StatusDropdown.qml
+StatusFeeOption 0.1 StatusFeeOption.qml
 StatusFlatButton 0.1 StatusFlatButton.qml
 StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
 StatusIconSwitch 0.1 StatusIconSwitch.qml
