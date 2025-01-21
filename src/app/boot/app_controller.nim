@@ -148,6 +148,13 @@ proc connect(self: AppController) =
       elif defined(production):
         setLogLevel(chronicles.LogLevel.INFO)
 
+# TODO remove these functions once we have only the new onboarding module
+proc shouldStartWithOnboardingScreen(self: AppController): bool =
+  return self.accountsService.openedAccounts().len == 0
+proc shouldUseTheNewOnboardingModule(self: AppController): bool =
+  # Only the onboarding for new users is implemented in the new module for now
+  return singletonInstance.featureFlags().getOnboardingV2Enabled() and self.shouldStartWithOnboardingScreen()
+
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.syncKeycardBasedOnAppWalletState = false
@@ -244,17 +251,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
   # Modules
-  result.startupModule = startup_module.newModule[AppController](
-    result,
-    statusFoundation.events,
-    result.keychainService,
-    result.accountsService,
-    result.generalService,
-    result.profileService,
-    result.keycardService,
-    result.devicesService
-  )
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+  if result.shouldUseTheNewOnboardingModule():
     result.onboardingModule = onboarding_module.newModule[AppController](
       result,
       statusFoundation.events,
@@ -262,6 +259,17 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
       result.accountsService,
       result.devicesService,
       result.keycardServiceV2,
+    )
+  else:
+    result.startupModule = startup_module.newModule[AppController](
+      result,
+      statusFoundation.events,
+      result.keychainService,
+      result.accountsService,
+      result.generalService,
+      result.profileService,
+      result.keycardService,
+      result.devicesService
     )
   result.mainModule = main_module.newModule[AppController](
     result,
@@ -405,8 +413,7 @@ proc checkForStoringPasswordToKeychain(self: AppController) =
   else:
     self.keychainService.storeData(account.keyUid, self.startupModule.getPin())
 
-proc startupDidLoad*(self: AppController) =
-  # TODO move these functions to onboardingDidLoad
+proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
@@ -415,17 +422,22 @@ proc startupDidLoad*(self: AppController) =
 
   # We need to init a language service once qml is loaded
   self.languageService.init()
-  # We need this to set app width/height appropriatelly on the app start.
-  self.startupModule.startUpUIRaised()
+  # We need this to set app width/height appropriately on the app start.
+  if not self.startupModule.isNil:
+    self.startupModule.startUpUIRaised()
+
+proc startupDidLoad*(self: AppController) =
+  self.initializeQmlContext()
 
 proc onboardingDidLoad*(self: AppController) =
   debug "NEW ONBOARDING LOADED"
-  # TODO when removing the old startup module, we should move the functions above here
+  self.initializeQmlContext()
 
 proc mainDidLoad*(self: AppController) =
-  self.applyNecessaryActionsAfterLoggingIn()
-  self.startupModule.moveToAppState()
-  self.checkForStoringPasswordToKeychain()
+  if not self.startupModule.isNil:
+    self.applyNecessaryActionsAfterLoggingIn()
+    self.startupModule.moveToAppState()
+    self.checkForStoringPasswordToKeychain()
 
 proc start*(self: AppController) =
   self.keycardService.init()
@@ -435,9 +447,10 @@ proc start*(self: AppController) =
   self.accountsService.init()
   self.devicesService.init()
 
-  self.startupModule.load()
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
+  if self.shouldUseTheNewOnboardingModule():
     self.onboardingModule.load()
+  else:
+    self.startupModule.load()
 
 proc load(self: AppController) =
   self.settingsService.init()

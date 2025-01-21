@@ -7,4 +7,5 @@ QtObject {
     property bool sendViaPersonalChatEnabled
     property bool paymentRequestEnabled
     property bool simpleSendEnabled
+    property bool onboardingV2Enabled
 }

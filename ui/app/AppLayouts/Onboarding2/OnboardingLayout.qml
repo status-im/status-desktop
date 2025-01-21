@@ -34,6 +34,12 @@ Page {
         onboardingFlow.init()
     }
 
+    function unload() {
+        stack.clear()
+        d.resetState()
+        d.settings.reset()
+    }
+
     QtObject {
         id: d
 

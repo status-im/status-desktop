@@ -14,7 +14,10 @@ import shared.popups 1.0
 import shared.stores 1.0
 
 import mainui 1.0
+import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
+import AppLayouts.Onboarding2 1.0 as Onboarding2
+import AppLayouts.Onboarding2.stores 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
@@ -23,6 +26,20 @@ StatusWindow {
     id: applicationWindow
 
     property bool appIsReady: false
+
+    readonly property AppStores.FeatureFlagsStore featureFlagsStore: AppStores.FeatureFlagsStore {
+        readonly property var featureFlags: typeof featureFlagsRootContextProperty !== undefined ? featureFlagsRootContextProperty : null
+
+        connectorEnabled: featureFlags ? featureFlags.connectorEnabled : false
+        dappsEnabled: featureFlags ? featureFlags.dappsEnabled : false
+        swapEnabled: featureFlags ? featureFlags.swapEnabled : false
+        sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
+        paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
+        simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
+        // TODO get rid of direct access when the new login is available
+        // We need this to make sure the module is loaded before we can use it
+        onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+    }
 
     property MetricsStore metricsStore: MetricsStore {}
     property UtilsStore utilsStore: UtilsStore {}
@@ -113,7 +130,7 @@ StatusWindow {
                 var c = Qt.createComponent("qrc:/imports/shared/panels/MockedKeycardLibControllerWindow.qml");
                 if (c.status === Component.Ready) {
                     d.mockedKeycardControllerWindow = c.createObject(applicationWindow, {
-                                                                         "relatedModule": startupOnboarding.visible?
+                                                                         "relatedModule": startupOnboardingLoader.item.visible?
                                                                                               startupModule :
                                                                                               mainModule
                                                                      })
@@ -160,9 +177,34 @@ StatusWindow {
         }
     }
 
+    function moveToAppMain() {
+        Global.appIsReady = true
+
+        loader.sourceComponent = app
+
+        if(localAccountSensitiveSettings.recentEmojis === "") {
+            localAccountSensitiveSettings.recentEmojis = [];
+        }
+        if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
+            localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
+        }
+        if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
+            localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
+        }
+        startupOnboardingLoader.item.unload()
+        startupOnboardingLoader.active = false
+        onboardingStoreLoader.active = false
+
+        Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
+
+        d.runMockedKeycardControllerWindow()
+    }
+
     //TODO remove direct backend access
     Connections {
-        target: startupModule
+        enabled: !featureFlagsStore.onboardingV2Enabled
+        target: !featureFlagsStore.onboardingV2Enabled ? startupModule : null
 
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
@@ -176,13 +218,13 @@ StatusWindow {
                 // we're here only in case of error when we're returning from the app loading state
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
-                startupOnboarding.visible = true
+                startupOnboardingLoader.item.visible = true
             }
             else if(state === Constants.appState.appLoading) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
-                startupOnboarding.visible = false
+                startupOnboardingLoader.item.visible = false
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
@@ -191,31 +233,12 @@ StatusWindow {
                 if (!appLoadingAnimation.runningProgressAnimation) {
                     mainModule.fakeLoadingScreenFinished()
                 }
-                Global.appIsReady = true
-
-                loader.sourceComponent = app
-
-                if(localAccountSensitiveSettings.recentEmojis === "") {
-                    localAccountSensitiveSettings.recentEmojis = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityWelcomeBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityWelcomeBanners = [];
-                }
-                if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
-                    localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
-                }
-                startupOnboarding.unload()
-                startupOnboarding.visible = false
-
-                Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
-                Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
-
-                d.runMockedKeycardControllerWindow()
+                moveToAppMain()
             } else if(state === Constants.appState.appEncryptionProcess) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = true
                 appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
-                startupOnboarding.visible = false
+                startupOnboardingLoader.item.visible = false
             }
         }
     }
@@ -277,7 +300,7 @@ StatusWindow {
     }
 
     function changeThemeFromOutside() {
-        Theme.changeTheme(startupOnboarding.visible ? Universal.System : localAppSettings.theme,
+        Theme.changeTheme(startupOnboardingLoader.item.visible ? Universal.System : localAppSettings.theme,
                           systemPalette.isCurrentSystemThemeDark())
     }
 
@@ -333,6 +356,7 @@ StatusWindow {
         id: app
         AppMain {
             utilsStore: applicationWindow.utilsStore
+            featureFlagsStore: applicationWindow.featureFlagsStore
 
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
@@ -367,12 +391,81 @@ StatusWindow {
         }
     }
 
-    OnboardingLayout {
-        id: startupOnboarding
-        objectName: "startupOnboardingLayout"
-        anchors.fill: parent
+    Component {
+        id: splashScreenV2
+        DidYouKnowSplashScreen {
+            readonly property string pageClassName: "Splash"
+            property bool runningProgressAnimation
+            NumberAnimation on progress {
+                from: 0.0
+                to: 1
+                // TODO find a way to unhardcode this
+                // Though there is no easy way to do it, because we do not get progress signals
+                duration: 3000
+                running: runningProgressAnimation
+            }
+        }
+    }
 
-        utilsStore: applicationWindow.utilsStore
+    Loader {
+        id: onboardingStoreLoader
+        active: featureFlagsStore.onboardingV2Enabled
+
+        sourceComponent: OnboardingStore {
+            onAppLoaded: moveToAppMain()
+        }
+    }
+
+    Loader {
+        id: startupOnboardingLoader
+        anchors.fill: parent
+        sourceComponent: {
+            if (featureFlagsStore.onboardingV2Enabled) {
+                // TODO select a new component when we have the new login screens (for old users)
+                return onboardingV2
+            }
+            return onboardingV1
+        }
+    }
+
+    Component {
+        id: onboardingV1
+
+        OnboardingLayout {
+            objectName: "startupOnboardingLayout"
+            anchors.fill: parent
+
+            utilsStore: applicationWindow.utilsStore
+        }
+    }
+
+    Component {
+        id: onboardingV2
+
+        Onboarding2.OnboardingLayout {
+            objectName: "startupOnboardingLayout"
+            anchors.fill: parent
+
+            networkChecksEnabled: true
+            biometricsAvailable: Qt.platform.os === Constants.mac
+
+            onboardingStore: onboardingStoreLoader.item
+
+            onFinished: (flow, data) => {
+                console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
+
+                let error = onboardingStoreLoader.item.finishOnboardingFlow(flow, data)
+
+                if (error != "") {
+                    console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
+                    // TODO show error
+                    return
+                }
+                console.warn("!!! Onboarding completed!")
+                stack.clear()
+                stack.push(splashScreenV2, { runningProgressAnimation: true })
+            }
+        }
     }
 
     Loader {

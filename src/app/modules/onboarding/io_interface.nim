@@ -1,10 +1,17 @@
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
+from app_service/service/settings/dto/settings import SettingsDto
+from app_service/service/accounts/dto/accounts import AccountDto
+from app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
+
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAppLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method load*(self: AccessInterface) {.base.} =
@@ -28,10 +35,16 @@ method validateLocalPairingConnectionString*(self: AccessInterface, connectionSt
 method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method finishOnboardingFlow*(self: AccessInterface, primaryFlowInt, secondaryFlowInt: int, dataJson: string): string {.base.} =
+method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c
     c.onboardingDidLoad()
+    c.appReady()
+    c.finishAppLoading()
+    c.userLoggedIn()
