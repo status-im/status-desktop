@@ -17,12 +17,13 @@ KeycardBasePage {
 
     property var tryToSetPinFunction: (pin) => { console.error("tryToSetPinFunction: IMPLEMENT ME"); return false }
     required property int remainingAttempts
-    property bool unlockUsingSeedphrase
+    property bool unblockWithPukAvailable
 
     signal keycardPinEntered(string pin)
-    signal reloadKeycardRequested()
-    signal unlockWithSeedphraseRequested()
-    signal keycardFactoryResetRequested()
+    signal reloadKeycardRequested
+    signal unblockWithSeedphraseRequested
+    signal unblockWithPukRequested
+    signal keycardFactoryResetRequested
 
     image.source: Theme.png("onboarding/keycard/reading")
 
@@ -56,28 +57,27 @@ KeycardBasePage {
             color: Theme.palette.dangerColor1
             visible: false
         },
-        StatusButton {
-            id: btnFactoryReset
-            width: 320
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: Theme.halfPadding
+        MaybeOutlineButton {
+            id: btnUnblockWithPuk
             visible: false
-            text: qsTr("Factory reset Keycard")
-            onClicked: root.keycardFactoryResetRequested()
-        },
-        StatusButton {
-            id: btnUnlockWithSeedphrase
-            visible: false
-            text: qsTr("Unlock with recovery phrase")
+            isOutline: false
+            text: qsTr("Unblock using PUK")
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: root.unlockWithSeedphraseRequested()
+            onClicked: root.unblockWithPukRequested()
         },
-        StatusButton {
+        MaybeOutlineButton {
+            id: btnUnblockWithSeedphrase
+            visible: false
+            isOutline: btnUnblockWithPuk.visible
+            text: qsTr("Unblock with recovery phrase")
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: root.unblockWithSeedphraseRequested()
+        },
+        MaybeOutlineButton {
             id: btnReload
-            width: 320
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
-            text: qsTr("I’ve inserted a different Keycard")
+            text: qsTr("I've inserted a different Keycard")
             normalColor: "transparent"
             borderWidth: 1
             borderColor: Theme.palette.baseColor2
@@ -89,11 +89,11 @@ KeycardBasePage {
 
     states: [
         State {
-            name: "locked"
+            name: "blocked"
             when: root.remainingAttempts <= 0
             PropertyChanges {
                 target: root
-                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
             }
             PropertyChanges {
                 target: pinInput
@@ -104,12 +104,12 @@ KeycardBasePage {
                 source: Theme.png("onboarding/keycard/error")
             }
             PropertyChanges {
-                target: btnFactoryReset
-                visible: !root.unlockUsingSeedphrase
+                target: btnUnblockWithSeedphrase
+                visible: true
             }
             PropertyChanges {
-                target: btnUnlockWithSeedphrase
-                visible: root.unlockUsingSeedphrase
+                target: btnUnblockWithPuk
+                visible: root.unblockWithPukAvailable
             }
             PropertyChanges {
                 target: btnReload

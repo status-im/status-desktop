@@ -61,6 +61,7 @@ SQUtils.QObject {
         KeycardIntroPage {
             keycardState: root.keycardState
             displayPromoBanner: root.displayKeycardPromoBanner
+            factoryResetAvailable: true
 
             onReloadKeycardRequested: {
                 root.reloadKeycardRequested()

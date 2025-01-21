@@ -17,10 +17,14 @@ KeycardBasePage {
 
     required property int keycardState // cf Onboarding.KeycardState
     property bool displayPromoBanner
-    property bool unlockUsingSeedphrase
+
+    property bool unblockWithPukAvailable
+    property bool unblockUsingSeedphraseAvailable
+    property bool factoryResetAvailable
 
     signal keycardFactoryResetRequested()
-    signal unlockWithSeedphraseRequested()
+    signal unblockWithSeedphraseRequested()
+    signal unblockWithPukRequested()
     signal reloadKeycardRequested()
     signal emptyKeycardDetected()
     signal notEmptyKeycardDetected()
@@ -81,18 +85,25 @@ KeycardBasePage {
 
     buttons: [
         MaybeOutlineButton {
+            id: btnUnblockWithPuk
+            visible: false
+            text: qsTr("Unblock using PUK")
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: root.unblockWithPukRequested()
+        },
+        MaybeOutlineButton {
+            id: btnUnblockWithSeedphrase
+            visible: false
+            text: qsTr("Unblock with recovery phrase")
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: root.unblockWithSeedphraseRequested()
+        },
+        MaybeOutlineButton {
             id: btnFactoryReset
             visible: false
             text: qsTr("Factory reset Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.keycardFactoryResetRequested()
-        },
-        MaybeOutlineButton {
-            id: btnUnlockWithSeedphrase
-            visible: false
-            text: qsTr("Unlock with recovery phrase")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: root.unlockWithSeedphraseRequested()
         },
         MaybeOutlineButton {
             id: btnReload
@@ -192,22 +203,47 @@ KeycardBasePage {
             }
         },
         State {
-            name: "locked"
-            when: root.keycardState === Onboarding.KeycardState.Locked
+            name: "blockedPin"
+            when: root.keycardState === Onboarding.KeycardState.BlockedPIN
             PropertyChanges {
                 target: root
-                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard locked") + "</font>"
-                subtitle: root.unlockUsingSeedphrase ? qsTr("The Keycard you have inserted is locked, you will need to unlock it using the recovery phrase or insert a different one")
-                                                     : qsTr("The Keycard you have inserted is locked, you will need to factory reset it or insert a different one")
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
+                subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it or insert a different one")
                 image.source: Theme.png("onboarding/keycard/error")
             }
             PropertyChanges {
-                target: btnFactoryReset
-                visible: !root.unlockUsingSeedphrase
+                target: btnUnblockWithPuk
+                visible: root.unblockWithPukAvailable
             }
             PropertyChanges {
-                target: btnUnlockWithSeedphrase
-                visible: root.unlockUsingSeedphrase
+                target: btnUnblockWithSeedphrase
+                visible: root.unblockUsingSeedphraseAvailable
+            }
+            PropertyChanges {
+                target: btnFactoryReset
+                visible: root.factoryResetAvailable
+            }
+            PropertyChanges {
+                target: btnReload
+                visible: true
+            }
+        },
+        State {
+            name: "blockedPuk"
+            when: root.keycardState === Onboarding.KeycardState.BlockedPUK
+            PropertyChanges {
+                target: root
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Keycard blocked") + "</font>"
+                subtitle: qsTr("The Keycard you have inserted is blocked, you will need to unblock it, factory reset or insert a different one")
+                image.source: Theme.png("onboarding/keycard/error")
+            }
+            PropertyChanges {
+                target: btnUnblockWithSeedphrase
+                visible: root.unblockUsingSeedphraseAvailable
+            }
+            PropertyChanges {
+                target: btnFactoryReset
+                visible: true
             }
             PropertyChanges {
                 target: btnReload

@@ -6,6 +6,9 @@ import StatusQ.Core.Theme 0.1
 StackView {
     id: root
 
+    readonly property bool backAvailable: currentItem ? (currentItem.backAvailableHint ?? true)
+                                                      : false
+
     QtObject {
         id: d
 

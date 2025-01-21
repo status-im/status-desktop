@@ -14,7 +14,8 @@ SQUtils.QObject {
 
     required property int keycardState
     required property var tryToSetPinFunction
-    required property int remainingAttempts
+    required property int remainingPinAttempts
+    required property int remainingPukAttempts
     required property var isSeedPhraseValid
 
     required property int keycardPinInfoPageDelay
@@ -26,6 +27,7 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
+    signal unblockWithPukRequested
     signal createProfileWithEmptyKeycardRequested
     signal finished
 
@@ -59,11 +61,13 @@ SQUtils.QObject {
         KeycardIntroPage {
             keycardState: root.keycardState
             displayPromoBanner: root.displayKeycardPromoBanner
-            unlockUsingSeedphrase: true
+            unblockUsingSeedphraseAvailable: true
+            unblockWithPukAvailable: root.remainingPukAttempts > 0 && (root.remainingPinAttempts === 1 || root.remainingPinAttempts === 2)
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onUnlockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
+            onUnblockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
+            onUnblockWithPukRequested: root.unblockWithPukRequested()
             onEmptyKeycardDetected: root.stackView.replace(keycardEmptyPage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardEnterPinPage)
         }
@@ -85,8 +89,8 @@ SQUtils.QObject {
 
         KeycardEnterPinPage {
             tryToSetPinFunction: root.tryToSetPinFunction
-            remainingAttempts: root.remainingAttempts
-            unlockUsingSeedphrase: true
+            remainingAttempts: root.remainingPinAttempts
+            unblockWithPukAvailable: root.remainingPukAttempts > 0
 
             onKeycardPinEntered: (pin) => {
                 Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
@@ -97,7 +101,7 @@ SQUtils.QObject {
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onUnlockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
+            onUnblockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
         }
     }
 
@@ -105,8 +109,8 @@ SQUtils.QObject {
         id: seedphrasePage
 
         SeedphrasePage {
-            title: qsTr("Unlock Keycard using the recovery phrase")
-            btnContinueText: qsTr("Unlock")
+            title: qsTr("Unblock Keycard using the recovery phrase")
+            btnContinueText: qsTr("Unblock Keycard")
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)

@@ -16,7 +16,8 @@ SQUtils.QObject {
     required property int addKeyPairState
     required property int syncState
     required property var seedWords
-    required property int remainingAttempts
+    required property int remainingPinAttempts
+    required property int remainingPukAttempts
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -29,6 +30,7 @@ SQUtils.QObject {
     required property var isSeedPhraseValid
     required property var validateConnectionString
     required property var tryToSetPinFunction
+    required property var tryToSetPukFunction
 
     signal keycardPinCreated(string pin)
     signal keycardPinEntered(string pin)
@@ -43,6 +45,8 @@ SQUtils.QObject {
 
     signal mnemonicWasShown()
     signal mnemonicRemovalRequested()
+
+    signal linkActivated(string link)
 
     signal finished(int flow)
 
@@ -250,7 +254,8 @@ SQUtils.QObject {
 
         stackView: root.stackView
         keycardState: root.keycardState
-        remainingAttempts: root.remainingAttempts
+        remainingPinAttempts: root.remainingPinAttempts
+        remainingPukAttempts: root.remainingPukAttempts
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         tryToSetPinFunction: root.tryToSetPinFunction
         isSeedPhraseValid: root.isSeedPhraseValid
@@ -262,6 +267,27 @@ SQUtils.QObject {
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
+        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onUnblockWithPukRequested: unblockWithPukFlow.init()
+
+        onFinished: {
+            d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+            d.pushOrSkipBiometricsPage()
+        }
+    }
+
+    UnblockWithPukFlow {
+        id: unblockWithPukFlow
+
+        stackView: root.stackView
+        keycardState: root.keycardState
+        tryToSetPukFunction: root.tryToSetPukFunction
+        remainingAttempts: root.remainingPukAttempts
+
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+        onReloadKeycardRequested: root.reloadKeycardRequested()
+        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
 
         onFinished: {
@@ -321,10 +347,11 @@ SQUtils.QObject {
             title: qsTr("Status Software Privacy Policy")
             content {
                 textFormat: Text.MarkdownText
-                text: SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/privacy.mdwn"))
             }
             okButtonText: qsTr("Done")
             destroyOnClose: true
+            onOpened: content.text = SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/privacy.mdwn"))
+            onLinkActivated: (link) => root.linkActivated(link)
         }
     }
 
@@ -335,10 +362,11 @@ SQUtils.QObject {
             title: qsTr("Status Software Terms of Use")
             content {
                 textFormat: Text.MarkdownText
-                text: SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/terms-of-use.mdwn"))
             }
             okButtonText: qsTr("Done")
             destroyOnClose: true
+            onOpened: content.text = SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/terms-of-use.mdwn"))
+            onLinkActivated: (link) => root.linkActivated(link)
         }
     }
 }

@@ -7,4 +7,5 @@ OnboardingFlow 1.0 OnboardingFlow.qml
 OnboardingLayout 1.0 OnboardingLayout.qml
 OnboardingStackView 1.0 OnboardingStackView.qml
 RecoveryPhraseCreateProfileFlow 1.0 RecoveryPhraseCreateProfileFlow.qml
+UnblockWithPukFlow 1.0 UnblockWithPukFlow.qml
 UseRecoveryPhraseFlow 1.0 UseRecoveryPhraseFlow.qml

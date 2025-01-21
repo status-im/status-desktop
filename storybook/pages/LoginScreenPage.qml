@@ -30,16 +30,29 @@ SplitView {
 
         // keycard
         property int keycardState: Onboarding.KeycardState.NoPCSCService
-        property int keycardRemainingPinAttempts: ctrlUnlockWithPuk.checked ? 1 : 5
+        property int keycardRemainingPinAttempts: 3
+        property int keycardRemainingPukAttempts: 3
 
         function setPin(pin: string) { // -> bool
             logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
             const valid = pin === ctrlPin.text
             if (!valid)
                 keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
-            if (keycardRemainingPinAttempts <= 0) { // SIMULATION: "lock" the keycard
-                keycardState = Onboarding.KeycardState.Locked
-                keycardRemainingPinAttempts = ctrlUnlockWithPuk.checked ? 1 : 5
+            if (keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
+                keycardState = Onboarding.KeycardState.BlockedPIN
+                keycardRemainingPinAttempts = 0
+            }
+            return valid
+        }
+
+        function setPuk(puk) { // -> bool
+            logs.logEvent("OnboardingStore.setPuk", ["puk"], arguments)
+            const valid = puk === ctrlPuk.text
+            if (!valid)
+                keycardRemainingPukAttempts--
+            if (keycardRemainingPukAttempts <= 0) { // SIMULATION: "block" the keycard
+                keycardState = Onboarding.KeycardState.BlockedPUK
+                keycardRemainingPukAttempts = 0
             }
             return valid
         }
@@ -72,9 +85,10 @@ SplitView {
                           }
         onOnboardingCreateProfileFlowRequested: logs.logEvent("onOnboardingCreateProfileFlowRequested")
         onOnboardingLoginFlowRequested: logs.logEvent("onOnboardingLoginFlowRequested")
-        onUnlockWithSeedphraseRequested: logs.logEvent("onUnlockWithSeedphraseRequested")
-        onUnlockWithPukRequested: logs.logEvent("onUnlockWithPukRequested")
+        onUnblockWithSeedphraseRequested: logs.logEvent("onUnblockWithSeedphraseRequested")
+        onUnblockWithPukRequested: logs.logEvent("onUnblockWithPukRequested")
         onLostKeycard: logs.logEvent("onLostKeycard")
+        onKeycardFactoryResetRequested: logs.logEvent("onKeycardFactoryResetRequested")
 
         // mocks
         QtObject {
@@ -90,6 +104,7 @@ SplitView {
         x: root.Window.width - width
         password: ctrlPassword.text
         pin: ctrlPin.text
+        selectedProfileIsKeycard: loginScreen.selectedProfileIsKeycard
         onAccountLoginError: (error, wrongPassword) => store.accountLoginError(error, wrongPassword)
         onObtainingPasswordSuccess: (password) => store.obtainingPasswordSuccess(password)
         onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => store.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
@@ -132,11 +147,6 @@ SplitView {
                     enabled: ctrlBiometrics.checked
                     checked: ctrlBiometrics.checked
                 }
-                Switch {
-                    id: ctrlUnlockWithPuk
-                    text: "Unlock with PUK available"
-                    checked: true
-                }
             }
 
             RowLayout {
@@ -148,6 +158,15 @@ SplitView {
                     id: ctrlPin
                     text: "111111"
                     inputMask: "999999"
+                    selectByMouse: true
+                }
+                Label {
+                    text: "PUK:"
+                }
+                TextField {
+                    id: ctrlPuk
+                    text: "111111111111"
+                    inputMask: "999999999999"
                     selectByMouse: true
                 }
                 Label {

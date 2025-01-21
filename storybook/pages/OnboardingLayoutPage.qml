@@ -32,6 +32,7 @@ SplitView {
         readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
         readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
         readonly property string pin: "111111"
+        readonly property string puk: "111111111111"
         readonly property string password: "somepassword"
 
         // TODO simulation
@@ -62,7 +63,8 @@ SplitView {
             property int addKeyPairState: Onboarding.AddKeyPairState.InProgress
             property int syncState: Onboarding.SyncState.InProgress
 
-            property int keycardRemainingPinAttempts: ctrlUnlockWithPuk.checked ? 1 : 5
+            property int keycardRemainingPinAttempts: 2
+            property int keycardRemainingPukAttempts: 3
 
             function setPin(pin: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
@@ -70,9 +72,21 @@ SplitView {
                 const valid = pin === mockDriver.pin
                 if (!valid)
                     keycardRemainingPinAttempts--
-                if (keycardRemainingPinAttempts <= 0) { // SIMULATION: "lock" the keycard
-                    keycardState = Onboarding.KeycardState.Locked
-                    keycardRemainingPinAttempts = ctrlUnlockWithPuk.checked ? 1 : 5
+                if (keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
+                    keycardState = Onboarding.KeycardState.BlockedPIN
+                    keycardRemainingPinAttempts = 0
+                }
+                return valid
+            }
+
+            function setPuk(puk) { // -> bool
+                logs.logEvent("OnboardingStore.setPuk", ["puk"], arguments)
+                const valid = puk === mockDriver.puk
+                if (!valid)
+                    keycardRemainingPukAttempts--
+                if (keycardRemainingPukAttempts <= 0) { // SIMULATION: "block" the keycard
+                    keycardState = Onboarding.KeycardState.BlockedPUK
+                    keycardRemainingPukAttempts = 0
                 }
                 return valid
             }
@@ -153,7 +167,11 @@ SplitView {
             }
         }
 
-        onReloadKeycardRequested: store.keycardState = Onboarding.KeycardState.NoPCSCService
+        onReloadKeycardRequested: {
+            store.keycardState = Onboarding.KeycardState.NoPCSCService
+            store.keycardRemainingPinAttempts = 2
+            store.keycardRemainingPukAttempts = 3
+        }
 
         // mocks
         QtObject {
@@ -229,11 +247,23 @@ SplitView {
 
             visible: onboarding.stack.currentItem instanceof KeycardEnterPinPage ||
                      onboarding.stack.currentItem instanceof KeycardCreatePinPage ||
-                     (onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard)
+                     (onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard && store.keycardState === Onboarding.KeycardState.NotEmpty)
 
             text: "Copy valid PIN (\"%1\")".arg(mockDriver.pin)
             focusPolicy: Qt.NoFocus
             onClicked: ClipboardUtils.setText(mockDriver.pin)
+        }
+
+        Button {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 10
+
+            visible: onboarding.stack.currentItem instanceof KeycardEnterPukPage
+
+            text: "Copy valid PUK (\"%1\")".arg(mockDriver.puk)
+            focusPolicy: Qt.NoFocus
+            onClicked: ClipboardUtils.setText(mockDriver.puk)
         }
 
         Button {
@@ -290,6 +320,7 @@ SplitView {
         x: root.Window.width - width
         password: mockDriver.password
         pin: mockDriver.pin
+        selectedProfileIsKeycard: onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard
         onAccountLoginError: (error, wrongPassword) => store.accountLoginError(error, wrongPassword)
         onObtainingPasswordSuccess: (password) => store.obtainingPasswordSuccess(password)
         onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => store.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
@@ -388,19 +419,15 @@ SplitView {
                 Switch {
                     id: ctrlTouchIdUser
                     text: "Touch ID login"
+                    visible: ctrlLoginScreen.checked
                     enabled: ctrlBiometrics.checked
                     checked: ctrlBiometrics.checked
-                }
-
-                Switch {
-                    id: ctrlUnlockWithPuk
-                    text: "Unlock with PUK available"
-                    checked: true
                 }
 
                 Text {
                     id: ctrlLoginResult
                     property string result: "🯄"
+                    visible: ctrlLoginScreen.checked
                     text: "Login result: %1".arg(result)
                 }
             }

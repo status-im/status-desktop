@@ -16,6 +16,7 @@ Control {
     required property int keycardState
     property var tryToSetPinFunction: (pin) => { console.error("LoginKeycardBox::tryToSetPinFunction: IMPLEMENT ME"); return false }
     required property int keycardRemainingPinAttempts
+    required property int keycardRemainingPukAttempts
 
     required property bool isBiometricsLogin
     required property bool biometricsSuccessful
@@ -24,9 +25,11 @@ Control {
 
     signal pinEditedManually()
 
+    signal unblockWithSeedphraseRequested()
+    signal unblockWithPukRequested()
+    signal keycardFactoryResetRequested()
+
     signal loginRequested(string pin)
-    signal unlockWithSeedphraseRequested()
-    signal unlockWithPukRequested()
 
     function clear() {
         d.wrongPin = false
@@ -76,17 +79,22 @@ Control {
             spacing: 12
             visible: false
             MaybeOutlineButton {
-                id: btnUnlockWithPuk
                 width: parent.width
-                visible: root.keycardRemainingPinAttempts === 1 || root.keycardRemainingPinAttempts === 2
-                text: qsTr("Unlock with PUK")
-                onClicked: root.unlockWithPukRequested()
+                visible: root.keycardState === Onboarding.KeycardState.BlockedPIN && root.keycardRemainingPukAttempts > 0
+                text: qsTr("Unblock with PUK")
+                onClicked: root.unblockWithPukRequested()
             }
             MaybeOutlineButton {
-                id: btnUnlockWithSeedphrase
                 width: parent.width
-                text: qsTr("Unlock with recovery phrase")
-                onClicked: root.unlockWithSeedphraseRequested()
+                visible: root.keycardState === Onboarding.KeycardState.BlockedPIN
+                text: qsTr("Unblock with recovery phrase")
+                onClicked: root.unblockWithSeedphraseRequested()
+            }
+            MaybeOutlineButton {
+                width: parent.width
+                visible: root.keycardState === Onboarding.KeycardState.BlockedPUK
+                text: qsTr("Factory reset Keycard")
+                onClicked: root.keycardFactoryResetRequested()
             }
         }
         StatusPinInput {
@@ -172,12 +180,13 @@ Control {
             }
         },
         State {
-            name: "locked"
-            when: root.keycardState === Onboarding.KeycardState.Locked
+            name: "blocked"
+            when: root.keycardState === Onboarding.KeycardState.BlockedPIN ||
+                  root.keycardState === Onboarding.KeycardState.BlockedPUK
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Keycard locked")
+                text: qsTr("Keycard blocked")
             }
             PropertyChanges {
                 target: lockedButtons
