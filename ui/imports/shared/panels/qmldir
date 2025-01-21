@@ -18,4 +18,3 @@ Separator 1.0 Separator.qml
 SequenceColumnLayout 1.0 SequenceColumnLayout.qml
 StatusAssetSelector 1.0 StatusAssetSelector.qml
 StyledText 1.0 StyledText.qml
-AnimatedText 1.0 AnimatedText.qml
