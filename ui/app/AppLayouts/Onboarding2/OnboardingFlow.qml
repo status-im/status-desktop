@@ -121,7 +121,7 @@ SQUtils.QObject {
             onCreateProfileWithPasswordRequested: createNewProfileFlow.init()
             onCreateProfileWithSeedphraseRequested: {
                 d.flow = Onboarding.SecondaryFlow.CreateProfileWithSeedphrase
-                useRecoveryPhraseFlow.init()
+                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.NewProfile)
             }
             onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
         }
@@ -138,7 +138,7 @@ SQUtils.QObject {
 
             onLoginWithSeedphraseRequested: {
                 d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
-                useRecoveryPhraseFlow.init()
+                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
             }
         }
     }
@@ -236,7 +236,7 @@ SQUtils.QObject {
 
         onLoginWithSeedphraseRequested: {
             d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
-            useRecoveryPhraseFlow.init()
+            useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
         }
 
         onFinished: {

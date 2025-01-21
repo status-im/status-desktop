@@ -5,13 +5,13 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Onboarding2.pages 1.0
 
-
 SQUtils.QObject {
     id: root
 
     enum Type {
         NewProfile,
-        KeycardRecovery
+        KeycardRecovery,
+        Login
     }
 
     required property StackView stackView
@@ -30,6 +30,8 @@ SQUtils.QObject {
             title = qsTr("Create profile using a recovery phrase")
         else if (type === UseRecoveryPhraseFlow.Type.KeycardRecovery)
             title = qsTr("Enter recovery phrase of lost Keycard")
+        else if (type === UseRecoveryPhraseFlow.Type.Login)
+            title = qsTr("Log in with your Status recovery phrase")
 
         root.stackView.push(seedphrasePage, { title })
     }
