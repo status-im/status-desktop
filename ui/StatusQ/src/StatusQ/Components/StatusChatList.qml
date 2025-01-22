@@ -170,7 +170,13 @@ Item {
                         objectName: model.name
                         Layout.fillWidth: true
                         height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
-                        visible: (!draggableItem.isCategory && model.categoryOpened)
+                        visible: !draggableItem.isCategory &&
+                            (
+                                model.active ||
+                                (!model.muted && model.hasUnreadMessages) || // Show channel if it has unread messages but not muted
+                                model.notificationsCount > 0 || // unless it's a notification (mentions, replies)
+                                model.categoryOpened
+                            )
                         originalOrder: model.position
                         chatId: model.itemId
                         categoryId: model.categoryId
