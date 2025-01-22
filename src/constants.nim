@@ -76,6 +76,8 @@ let
   SENTRY_DSN_STATUS_GO_DESKTOP* = BUILD_SENTRY_DSN_STATUS_DESKTOP
   API_LOGGING* = desktopConfig.apiLogging
   KEYCARD_LOGS_ENABLED* = if defined(production): false else: true
+  METRICS_ENABLED* = desktopConfig.metricsEnabled
+  METRICS_ADDRESS* = desktopConfig.metricsAddress
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
