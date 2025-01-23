@@ -78,10 +78,14 @@ SQUtils.QObject {
         id: createKeycardProfilePage
 
         CreateKeycardProfilePage {
-            onCreateKeycardProfileWithNewSeedphrase:
-                root.stackView.push(backupSeedIntroPage)
-            onCreateKeycardProfileWithExistingSeedphrase:
-                root.stackView.push(seedphrasePage)
+            onCreateKeycardProfileWithNewSeedphrase: {
+                d.fromBackupSeedphrase = true
+                root.stackView.push(keycardCreatePinPage)
+            }
+            onCreateKeycardProfileWithExistingSeedphrase: {
+                d.fromBackupSeedphrase = false
+                root.stackView.push(keycardCreatePinPage)
+            }
         }
     }
 
@@ -146,7 +150,8 @@ SQUtils.QObject {
         BackupSeedphraseOutro {
             onBackupSeedphraseRemovalConfirmed: {
                 root.mnemonicRemovalRequested()
-                root.stackView.push(keycardCreatePinPage)
+                root.keyPairTransferRequested()
+                root.stackView.push(addKeypairPage)
             }
         }
     }
@@ -160,10 +165,9 @@ SQUtils.QObject {
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(keycardCreatePinPage)
+                root.keyPairTransferRequested()
+                root.stackView.push(addKeypairPage)
             }
-
-            StackView.onActivated: d.fromBackupSeedphrase = true
         }
     }
 
@@ -174,8 +178,10 @@ SQUtils.QObject {
             onKeycardPinCreated: (pin) => {
                 Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
                     root.keycardPinCreated(pin)
-                    root.keyPairTransferRequested()
-                    root.stackView.push(addKeypairPage)
+                    if (d.fromBackupSeedphrase)
+                        root.stackView.push(backupSeedIntroPage)
+                    else
+                        root.stackView.push(seedphrasePage)
                 })()
             }
         }
