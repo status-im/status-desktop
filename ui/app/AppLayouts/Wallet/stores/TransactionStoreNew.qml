@@ -25,6 +25,14 @@ QtObject {
         _walletSectionSendInst.stopUpdatesForSuggestedRoute()
     }
 
+    function setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
+        _walletSectionSendInst.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+    }
+
+    function setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
+        _walletSectionSendInst.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+    }
+
     Component.onCompleted: {
         _walletSectionSendInst.suggestedRoutesReady.connect(suggestedRoutesReady)
         _walletSectionSendInst.transactionSent.connect(transactionSent)
