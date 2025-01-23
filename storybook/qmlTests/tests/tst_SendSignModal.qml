@@ -7,6 +7,7 @@ import Models 1.0
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import AppLayouts.Wallet.popups.simpleSend 1.0
 
@@ -43,6 +44,40 @@ Item {
             networkName: "Mainnet"
             networkIconPath: Theme.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
+
+            currentBaseFee: "8.2"
+            currentSuggestedMinPriorityFee: "0.06"
+            currentSuggestedMaxPriorityFee: "5.1"
+            currentGasAmount: "31500"
+            currentNonce: 21
+
+            normalPrice: "1.45 EUR"
+            normalBaseFee: "10000"
+            normalPriorityFee: "1000"
+            normalTime: "~60s"
+            fastPrice: "1.65 EUR"
+            fastBaseFee: "100000"
+            fastPriorityFee: "10000"
+            fastTime: "~40s"
+            urgentPrice: "1.85 EUR"
+            urgentBaseFee: "1000000"
+            urgentPriorityFee: "100000"
+            urgentTime: "~15s"
+
+            customBaseFee: "10000"
+            customPriorityFee: "1000"
+            customGasAmount: "35000"
+            customNonce: 22
+
+            selectedFeeMode: StatusFeeOption.Type.Normal
+
+            fnGetPriceInCurrencyForFee: function(feeInWei) {
+                return "0.25 USD"
+            }
+
+            fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                return 0
+            }
 
             fiatFees: "1.54 EUR"
             cryptoFees: "0.001 ETH"
@@ -422,7 +457,7 @@ Item {
             const delegate = findChild(accountBox, "recipientDelegate")
             verify(!!delegate)
 
-            compare(accountBox.caption, qsTr("From"))          
+            compare(accountBox.caption, qsTr("From"))
             compare(accountBox.address, controlUnderTest.accountAddress)
             compare(accountBox.name, controlUnderTest.accountName)
             compare(accountBox.emoji, controlUnderTest.accountEmoji)

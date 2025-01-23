@@ -7,6 +7,7 @@ import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
+import StatusQ.Controls 0.1
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups.simpleSend 1.0
@@ -470,7 +471,7 @@ QtObject {
                 }
                 if(isValidParameter(root.simpleSendParams.stickersPackId)) {
                     stickersPackId = root.simpleSendParams.stickersPackId
-                }                
+                }
                 if(isValidParameter(root.simpleSendParams.transferOwnership)) {
                     transferOwnership = root.simpleSendParams.transferOwnership
                 }
@@ -564,6 +565,8 @@ QtObject {
                 property string uuid
                 property var fetchedPathModel
 
+                signal refreshTxSettings()
+
                 readonly property string extraParamsJson: {
                     if (!!simpleSendModal.stickersPackId) {
                         return JSON.stringify({[Constants.suggestedRoutesExtraParamsProperties.packId]: simpleSendModal.stickersPackId})
@@ -611,6 +614,7 @@ QtObject {
                     simpleSendModal.routerErrorDetails = "%1 - %2".arg(errCode).arg(
                                 WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
                     fetchedPathModel = pathModel
+                    handler.refreshTxSettings()
                 }
 
                 function transactionSent(returnedUuid, chainId, approvalTx, txHash, error) {
@@ -817,18 +821,163 @@ QtObject {
                     networkIconPath: Theme.svg(signSendAdaptor.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: signSendAdaptor.selectedNetwork.blockExplorerURL
 
-                    readonly property var totalFeesEth: {
-                        let tatlFeeInWei = "0"
+                    selectedFeeMode: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                tatlFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
-                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee))
+                                return txPathUnderReviewEntry.item.approvalGasFeeMode
+                            }
+                            return txPathUnderReviewEntry.item.txGasFeeMode
+                        }
+                        return StatusFeeOption.Type.Normal
+                    }
+
+                    currentBaseFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.currentBaseFee : ""
+                    currentSuggestedMinPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedMinPriorityFee : ""
+                    currentSuggestedMaxPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedMaxPriorityFee : ""
+                    currentGasAmount: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.suggestedApprovalGasAmount
+                            }
+                            return txPathUnderReviewEntry.item.suggestedTxGasAmount
+                        }
+                        return ""
+                    }
+                    currentNonce: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.suggestedApprovalTxNonce
+                            }
+                            return txPathUnderReviewEntry.item.suggestedTxNonce
+                        }
+                        return 0
+                    }
+
+                    fnGetPriceInCurrencyForFee: function(feeInWei) {
+                        if (!feeInWei) {
+                            return ""
+                        }
+                        const feesEth = Utils.weiToEth(feeInWei)
+                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
+                        const ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
+                        return root.fnFormatCurrencyAmount(ethFiatValue*feesEth, root.currentCurrency).toString()
+                    }
+
+                    normalPrice: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                return fnGetPriceInCurrencyForFee(feeInWei)
+                            }
+                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                            return fnGetPriceInCurrencyForFee(feeInWei)
+                        }
+                        return ""
+                    }
+                    normalBaseFee: !!txPathUnderReviewEntry.item?
+                                       SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel)).toFixed()
+                                     : ""
+                    normalPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel : ""
+                    normalTime: "~60s" // TODO: update this when we figure out how to estimate time more granularly
+
+                    fastPrice: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                return fnGetPriceInCurrencyForFee(feeInWei)
+                            }
+                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                            return fnGetPriceInCurrencyForFee(feeInWei)
+                        }
+                        return ""
+                    }
+                    fastBaseFee: !!txPathUnderReviewEntry.item?
+                                       SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel)).toFixed()
+                                     : ""
+                    fastPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel : ""
+                    fastTime: "~40s" // TODO: update this when we figure out how to estimate time more granularly
+
+                    urgentPrice: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                return fnGetPriceInCurrencyForFee(feeInWei)
+                            }
+                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                            return fnGetPriceInCurrencyForFee(feeInWei)
+                        }
+                        return ""
+                    }
+                    urgentBaseFee: !!txPathUnderReviewEntry.item?
+                                       SQUtils.AmountsArithmetic.sub(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
+                                                                     SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel)).toFixed()
+                                     : ""
+                    urgentPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel : ""
+                    urgentTime: "~15s" // TODO: update this when we figure out how to estimate time more granularly
+
+                    customBaseFee: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.approvalBaseFee
+                            }
+                            return txPathUnderReviewEntry.item.txBaseFee
+                        }
+                        return ""
+                    }
+                    customPriorityFee: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.approvalPriorityFee
+                            }
+                            return txPathUnderReviewEntry.item.txPriorityFee
+                        }
+                        return ""
+                    }
+                    customGasAmount: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.approvalGasAmount
+                            }
+                            return txPathUnderReviewEntry.item.txGasAmount
+                        }
+                        return ""
+                    }
+                    customNonce: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return txPathUnderReviewEntry.item.approvalTxNonce
+                            }
+                            return txPathUnderReviewEntry.item.txNonce
+                        }
+                        return ""
+                    }
+
+                    readonly property var totalFeesEth: {
+                        let totalFeeInWei = "0"
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                totalFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee)).toFixed()
                             } else {
-                                tatlFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
-                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee))
+                                totalFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee)).toFixed()
                             }
                         }
-                        return SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(tatlFeeInWei), SQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenDecimals))
+                        return Utils.weiToEth(totalFeeInWei)
                     }
 
                     fiatFees: {
@@ -865,11 +1014,46 @@ QtObject {
 
                     fnGetOpenSeaExplorerUrl: root.fnGetOpenSeaUrl
 
+                    Component.onCompleted: {
+                        handler.refreshTxSettings.connect(refreshTxSettings)
+                    }
+
                     onOpened: handler.sendMetricsEvent("sign modal opened")
+
                     onRejected:{
                         handler.sendMetricsEvent("sign modal rejected")
                         handler.handleReject()
                     }
+
+                    onUpdateTxSettings: {
+                        let pathName = ""
+                        let chainId = 0
+                        if (!!txPathUnderReviewEntry.item) {
+                            pathName = txPathUnderReviewEntry.item.processorName
+                            chainId = txPathUnderReviewEntry.item.fromChain
+                        }
+
+                        if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+                            root.transactionStoreNew.setCustomTxDetails(customNonce,
+                                                                        customGasAmount,
+                                                                        maxFeesPerGas,
+                                                                        priorityFee,
+                                                                        handler.uuid,
+                                                                        pathName,
+                                                                        chainId,
+                                                                        handler.reviewApprovalForTxPathUnderReview,
+                                                                        "")
+                            return
+                        }
+
+                        root.transactionStoreNew.setFeeMode(selectedFeeMode,
+                                                            handler.uuid,
+                                                            pathName,
+                                                            chainId,
+                                                            handler.reviewApprovalForTxPathUnderReview,
+                                                            "")
+                    }
+
                     onAccepted: {
                         handler.sendMetricsEvent("sign modal accepted")
                         if (handler.reviewingLastTxPath) {
