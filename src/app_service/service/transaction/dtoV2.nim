@@ -16,8 +16,11 @@ import backend/network_types, ../token/dto
 type
   SuggestedLevelsForMaxFeesPerGasDto* = ref object
     low*: UInt256
+    lowPriority*: UInt256
     medium*: UInt256
+    mediumPriority*: UInt256
     high*: UInt256
+    highPriority*: UInt256
 
 type
   TransactionPathDtoV2* = ref object
@@ -36,9 +39,14 @@ type
     suggestedMinPriorityFee*: UInt256
     suggestedMaxPriorityFee*: UInt256
     currentBaseFee*: UInt256
+    suggestedTxNonce*: UInt256
+    suggestedTxGasAmount*: uint64
+    suggestedApprovalTxNonce*: UInt256
+    suggestedApprovalGasAmount*: uint64
     usedContractAddress*: string
 
     txNonce*: UInt256
+    txGasFeeMode*: int
     txMaxFeesPerGas*: UInt256
     txBaseFee*: UInt256
     txPriorityFee*: UInt256
@@ -54,6 +62,7 @@ type
     approvalAmountRequired*: UInt256
     approvalContractAddress*: string
     approvalTxNonce*: UInt256
+    approvalGasFeeMode*: int
     approvalMaxFeesPerGas*: UInt256
     approvalBaseFee*: UInt256
     approvalPriorityFee*: UInt256
@@ -70,10 +79,16 @@ proc toSuggestedLevelsForMaxFeesPerGasDto*(jsonObj: JsonNode): SuggestedLevelsFo
   var value: string
   if jsonObj.getProp("low", value):
     result.low = stint.fromHex(UInt256, $value)
+  if jsonObj.getProp("lowPriority", value):
+    result.lowPriority = stint.fromHex(UInt256, $value)
   if jsonObj.getProp("medium", value):
     result.medium = stint.fromHex(UInt256, $value)
+  if jsonObj.getProp("mediumPriority", value):
+    result.mediumPriority = stint.fromHex(UInt256, $value)
   if jsonObj.getProp("high", value):
     result.high = stint.fromHex(UInt256, $value)
+  if jsonObj.getProp("highPriority", value):
+    result.highPriority = stint.fromHex(UInt256, $value)
 
 proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result = TransactionPathDtoV2()
@@ -91,8 +106,13 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result.suggestedMinPriorityFee = stint.fromHex(UInt256, jsonObj{"SuggestedMinPriorityFee"}.getStr)
   result.suggestedMaxPriorityFee = stint.fromHex(UInt256, jsonObj{"SuggestedMaxPriorityFee"}.getStr)
   result.currentBaseFee = stint.fromHex(UInt256, jsonObj{"CurrentBaseFee"}.getStr)
+  result.suggestedTxNonce = stint.fromHex(UInt256, jsonObj{"SuggestedTxNonce"}.getStr)
+  discard jsonObj.getProp("SuggestedTxGasAmount", result.suggestedTxGasAmount)
+  result.suggestedApprovalTxNonce = stint.fromHex(UInt256, jsonObj{"SuggestedApprovalTxNonce"}.getStr)
+  discard jsonObj.getProp("SuggestedApprovalGasAmount", result.suggestedApprovalGasAmount)
   discard jsonObj.getProp("UsedContractAddress", result.usedContractAddress)
   result.txNonce = stint.fromHex(UInt256, jsonObj{"TxNonce"}.getStr)
+  discard jsonObj.getProp("TxGasFeeMode", result.txGasFeeMode)
   result.txMaxFeesPerGas = stint.fromHex(UInt256, jsonObj{"TxMaxFeesPerGas"}.getStr)
   result.txBaseFee = stint.fromHex(UInt256, jsonObj{"TxBaseFee"}.getStr)
   result.txPriorityFee = stint.fromHex(UInt256, jsonObj{"TxPriorityFee"}.getStr)
@@ -106,6 +126,7 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result.approvalAmountRequired = stint.fromHex(UInt256, jsonObj{"ApprovalAmountRequired"}.getStr)
   discard jsonObj.getProp("ApprovalContractAddress", result.approvalContractAddress)
   result.approvalTxNonce = stint.fromHex(UInt256, jsonObj{"ApprovalTxNonce"}.getStr)
+  discard jsonObj.getProp("ApprovalGasFeeMode", result.approvalGasFeeMode)
   result.approvalMaxFeesPerGas = stint.fromHex(UInt256, jsonObj{"ApprovalMaxFeesPerGas"}.getStr)
   result.approvalBaseFee = stint.fromHex(UInt256, jsonObj{"ApprovalBaseFee"}.getStr)
   result.approvalPriorityFee = stint.fromHex(UInt256, jsonObj{"ApprovalPriorityFee"}.getStr)
