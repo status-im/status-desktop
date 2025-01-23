@@ -13,15 +13,11 @@ QtObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
 
-        readonly property var conn: Connections {
-            target: d.onboardingModuleInst
-
-            Component.onCompleted: {
-                onboardingModuleInst.appLoaded.connect(root.appLoaded)
-                onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
-                onboardingModuleInst.obtainingPasswordSuccess.connect(root.obtainingPasswordSuccess)
-                onboardingModuleInst.obtainingPasswordError.connect(root.obtainingPasswordError)
-            }
+        Component.onCompleted: {
+            onboardingModuleInst.appLoaded.connect(root.appLoaded)
+            onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+            onboardingModuleInst.obtainingPasswordSuccess.connect(root.obtainingPasswordSuccess)
+            onboardingModuleInst.obtainingPasswordError.connect(root.obtainingPasswordError)
         }
     }
 
