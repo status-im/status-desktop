@@ -1,14 +1,17 @@
 import NimQml
 import io_interface
+from app_service/service/keycardV2/dto import KeycardEventDto
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      keycardEvent: KeycardEventDto
       syncState: int
-      keycardState: int
-      keycardRemainingPinAttempts: int
       addKeyPairState: int
+      pinSettingState: int
+      authorizationState: int
+      restoreKeysExportState: int
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -35,25 +38,49 @@ QtObject:
     self.syncState = syncState
     self.syncStateChanged()
 
+  proc pinSettingStateChanged*(self: View) {.signal.}
+  proc getPinSettingState*(self: View): int {.slot.} =
+    return self.pinSettingState
+  QtProperty[int] pinSettingState:
+    read = getPinSettingState
+    notify = pinSettingStateChanged
+  proc setPinSettingState*(self: View, pinSettingState: int) =
+    self.pinSettingState = pinSettingState
+    self.pinSettingStateChanged()
+
+  proc authorizationStateChanged*(self: View) {.signal.}
+  proc getAuthorizationState*(self: View): int {.slot.} =
+    return self.authorizationState
+  QtProperty[int] authorizationState:
+    read = getAuthorizationState
+    notify = authorizationStateChanged
+  proc setAuthorizationState*(self: View, authorizationState: int) =
+    self.authorizationState = authorizationState
+    self.authorizationStateChanged()
+
+  proc restoreKeysExportStateChanged*(self: View) {.signal.}
+  proc getRestoreKeysExportState*(self: View): int {.slot.} =
+    return self.restoreKeysExportState
+  QtProperty[int] restoreKeysExportState:
+    read = getRestoreKeysExportState
+    notify = restoreKeysExportStateChanged
+  proc setRestoreKeysExportState*(self: View, restoreKeysExportState: int) =
+    self.restoreKeysExportState = restoreKeysExportState
+    self.restoreKeysExportStateChanged()
+
   proc keycardStateChanged*(self: View) {.signal.}
   proc getKeycardState(self: View): int {.slot.} =
-    return self.keycardState
+    return self.keycardEvent.state.int
   QtProperty[int] keycardState:
     read = getKeycardState
     notify = keycardStateChanged
-  proc setKeycardState*(self: View, keycardState: int) =
-    self.keycardState = keycardState
-    self.keycardStateChanged()
 
   proc keycardRemainingPinAttemptsChanged*(self: View) {.signal.}
   proc getKeycardRemainingPinAttempts(self: View): int {.slot.} =
-    return self.keycardRemainingPinAttempts
+    return self.keycardEvent.keycardStatus.remainingAttemptsPIN
   QtProperty[int] keycardRemainingPinAttempts:
     read = getKeycardRemainingPinAttempts
     notify = keycardRemainingPinAttemptsChanged
-  proc setKeycardRemainingPinAttempts*(self: View, keycardRemainingPinAttempts: int) =
-    self.keycardRemainingPinAttempts = keycardRemainingPinAttempts
-    self.keycardRemainingPinAttemptsChanged()
 
   proc addKeyPairStateChanged*(self: View) {.signal.}
   proc getAddKeyPairState(self: View): int {.slot.} =
@@ -65,15 +92,24 @@ QtObject:
     self.addKeyPairState = addKeyPairState
     self.addKeyPairStateChanged()
 
+  proc setKeycardEvent*(self: View, keycardEvent: KeycardEventDto) =
+    self.keycardEvent = keycardEvent
+    self.keycardStateChanged()
+    self.keycardRemainingPinAttemptsChanged()
+
+  proc getKeycardEvent*(self: View): KeycardEventDto =
+    return self.keycardEvent
 
   ### slots ###
 
-  proc setPin(self: View, pin: string): bool {.slot.} =
-    return self.delegate.setPin(pin)
+  proc setPin(self: View, pin: string) {.slot.} =
+    self.delegate.initialize(pin)
 
-  # TODO find what does this do
-  # proc startKeypairTransfer(self: View) {.slot.} =
-  #   self.delegate.startKeypairTransfer()
+  proc authorize(self: View, pin: string) {.slot.} =
+    self.delegate.authorize(pin)
+
+  proc loadMnemonic(self: View, mnemonic: string) {.slot.} =
+    self.delegate.loadMnemonic(mnemonic)
 
   proc getPasswordStrengthScore(self: View, password: string, userName: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
@@ -90,9 +126,8 @@ QtObject:
   proc inputConnectionStringForBootstrapping(self: View, connectionString: string) {.slot.} =
     self.delegate.inputConnectionStringForBootstrapping(connectionString)
 
-  # TODO find what does this do
-  # proc mnemonicWasShown(self: View): string {.slot.} =
-  #   return self.delegate.getMnemonic()
+  proc exportRecoverKeys(self: View) {.slot.} =
+    self.delegate.exportRecoverKeys()
 
   proc finishOnboardingFlow(self: View, flowInt: int, dataJson: string): string {.slot.} =
     self.delegate.finishOnboardingFlow(flowInt, dataJson)

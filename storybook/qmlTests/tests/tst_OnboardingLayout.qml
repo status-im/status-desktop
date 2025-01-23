@@ -24,6 +24,9 @@ Item {
     QtObject {
         id: mockDriver
         property int keycardState // enum Onboarding.KeycardState
+        property int pinSettingState // enum Onboarding.ProgressState
+        property int authorizationState // enum Onboarding.ProgressState
+        property int restoreKeysExportState // enum Onboarding.ProgressState
         property bool biometricsAvailable
         property string existingPin
 
@@ -55,6 +58,9 @@ Item {
 
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
+                readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
+                readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
+                readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
                 property int keycardRemainingPinAttempts: 5
 
                 function setPin(pin: string) {
@@ -64,12 +70,17 @@ Item {
                     return valid
                 }
 
-                readonly property int addKeyPairState: Onboarding.AddKeyPairState.InProgress // enum Onboarding.AddKeyPairState
-                function startKeypairTransfer() {}
+                function authorize(pin: string) {}
+
+                readonly property int addKeyPairState: Onboarding.ProgressState.InProgress // enum Onboarding.ProgressState
 
                 // password
                 function getPasswordStrengthScore(password: string) {
                     return Math.min(password.length-1, 4)
+                }
+
+                function finishOnboardingFlow(flow: int, data: Object) { // -> bool
+                    return true
                 }
 
                 // seedphrase/mnemonic
@@ -77,12 +88,12 @@ Item {
                     return mnemonic === mockDriver.mnemonic
                 }
                 function getMnemonic() {
-                    return mockDriver.seedWords.join(" ")
+                    return JSON.stringify(mockDriver.seedWords)
                 }
-                function mnemonicWasShown() {}
-                function removeMnemonic() {}
+                function loadMnemonic(mnemonic) {}
+                function exportRecoverKeys() {}
 
-                readonly property int syncState: Onboarding.SyncState.InProgress // enum Onboarding.SyncState
+                readonly property int syncState: Onboarding.ProgressState.InProgress // enum Onboarding.ProgressState
                 function validateLocalPairingConnectionString(connectionString: string) {
                     return !Number.isNaN(parseInt(connectionString))
                 }
@@ -153,6 +164,9 @@ Item {
 
         function cleanup() {
             mockDriver.keycardState = -1
+            mockDriver.pinSettingState = 0
+            mockDriver.authorizationState = 0
+            mockDriver.restoreKeysExportState = 0
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
             dynamicSpy.cleanup()
@@ -179,13 +193,13 @@ Item {
         // common variant data for all flow related TDD tests
         function init_data() {
             return [ { tag: "shareUsageData+bioEnabled", shareBtnName: "btnShare", shareResult: true, biometrics: true, bioEnabled: true },
-                    { tag: "dontShareUsageData+bioEnabled", shareBtnName: "btnDontShare", shareResult: false, biometrics: true, bioEnabled: true },
+                   { tag: "dontShareUsageData+bioEnabled", shareBtnName: "btnDontShare", shareResult: false, biometrics: true, bioEnabled: true },
 
-                    { tag: "shareUsageData+bioDisabled", shareBtnName: "btnShare", shareResult: true, biometrics: true, bioEnabled: false },
-                    { tag: "dontShareUsageData+bioDisabled", shareBtnName: "btnDontShare", shareResult: false, biometrics: true, bioEnabled: false },
+                   { tag: "shareUsageData+bioDisabled", shareBtnName: "btnShare", shareResult: true, biometrics: true, bioEnabled: false },
+                   { tag: "dontShareUsageData+bioDisabled", shareBtnName: "btnDontShare", shareResult: false, biometrics: true, bioEnabled: false },
 
-                    { tag: "shareUsageData-bio", shareBtnName: "btnShare", shareResult: true, biometrics: false },
-                    { tag: "dontShareUsageData-bio", shareBtnName: "btnDontShare", shareResult: false, biometrics: false },
+                   { tag: "shareUsageData-bio", shareBtnName: "btnShare", shareResult: true, biometrics: false },
+                   { tag: "dontShareUsageData-bio", shareBtnName: "btnDontShare", shareResult: false, biometrics: false },
                     ]
         }
 
@@ -305,6 +319,7 @@ Item {
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, "")
         }
+
 
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
         function test_flow_createProfile_withSeedphrase(data) {
@@ -454,6 +469,9 @@ Item {
             keyClickSequence(newPin)
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
+            dynamicSpy.setup(page, "keycardAuthorized")
+            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 7: Backup your recovery phrase (intro)
             page = getCurrentPage(stack, BackupSeedphraseIntro)
@@ -520,8 +538,8 @@ Item {
 
             // PAGE 12: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
-            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
-            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
+            tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
+            page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, true)
@@ -546,7 +564,7 @@ Item {
             compare(resultData.password, "")
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, newPin)
-            compare(resultData.seedphrase, "")
+            compare(resultData.seedphrase, mockDriver.seedWords.join(","))
         }
 
         // FLOW: Create Profile -> Use an empty Keycard -> Use an existing recovery phrase (create profile with keycard + existing seedphrase)
@@ -600,6 +618,10 @@ Item {
             keyClickSequence(newPin)
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
+            dynamicSpy.setup(page, "keycardPinSuccessfullySet")
+            mockDriver.pinSettingState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
+
 
             // PAGE 7: Create profile on empty Keycard using a recovery phrase
             page = getCurrentPage(stack, SeedphrasePage)
@@ -613,11 +635,14 @@ Item {
             keySequence(StandardKey.Paste)
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
+            dynamicSpy.setup(page, "keycardAuthorized")
+            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 8: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
-            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
-            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
+            tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
+            page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
             const btnContinue2 = findChild(page, "btnContinue")
             verify(!!btnContinue2)
             compare(btnContinue2.enabled, true)
@@ -801,8 +826,8 @@ Item {
 
             // PAGE 5: Profile sync in progress
             page = getCurrentPage(stack, SyncProgressPage)
-            tryCompare(page, "syncState", Onboarding.SyncState.InProgress)
-            page.syncState = Onboarding.SyncState.Success // SIMULATION
+            tryCompare(page, "syncState", Onboarding.ProgressState.InProgress)
+            page.syncState = Onboarding.ProgressState.Success // SIMULATION
             const btnLogin2 = findChild(page, "btnLogin") // TODO test other flows/buttons here as well
             verify(!!btnLogin2)
             compare(btnLogin2.enabled, true)
@@ -868,10 +893,18 @@ Item {
 
             // PAGE 5: Enter Keycard PIN
             page = getCurrentPage(stack, KeycardEnterPinPage)
-            dynamicSpy.setup(page, "keycardPinEntered")
+            dynamicSpy.setup(page, "authorizationRequested")
             keyClickSequence(mockDriver.existingPin)
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], mockDriver.existingPin)
+
+            dynamicSpy.setup(page, "exportKeysRequested")
+            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
+
+            dynamicSpy.setup(page, "exportKeysDone")
+            mockDriver.restoreKeysExportState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Enable Biometrics
             if (data.biometrics) {
@@ -891,7 +924,7 @@ Item {
             verify(!!resultData)
             compare(resultData.password, "")
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
-            compare(resultData.keycardPin, mockDriver.existingPin)
+            compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, "")
         }
 
@@ -1206,11 +1239,14 @@ Item {
             keyClickSequence(newPin)
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
+            dynamicSpy.setup(page, "keycardAuthorized")
+            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
-            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
-            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
+            tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
+            page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)

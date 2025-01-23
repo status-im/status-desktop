@@ -268,7 +268,13 @@ QtObject:
           toTokenKey: watchTxResult["toTokenKey"].getStr,
           toAmount: watchTxResult["toAmount"].getStr,
         )
-        self.events.emit(parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr).event, ev)
+        var transactionType = PendingTransactionTypeDto.Unknown
+        try:
+          transactionType = parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr)
+        except:
+          discard
+        
+        self.events.emit(transactionType.event, ev)
         transactions.checkRecentHistory(@[chainId], @[address])
 
   proc watchTransaction*(

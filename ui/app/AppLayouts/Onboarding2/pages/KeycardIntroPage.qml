@@ -108,7 +108,7 @@ KeycardBasePage {
         MaybeOutlineButton {
             id: btnReload
             visible: false
-            text: qsTr("I’ve inserted a different Keycard")
+            text: qsTr("I've inserted a different Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.reloadKeycardRequested()
         }

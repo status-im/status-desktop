@@ -178,7 +178,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # Services
   result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool, result.keycardService)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService, statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -440,8 +440,10 @@ proc mainDidLoad*(self: AppController) =
     self.checkForStoringPasswordToKeychain()
 
 proc start*(self: AppController) =
+  if self.shouldUseTheNewOnboardingModule():
+    self.keycardServiceV2.init()
+
   self.keycardService.init()
-  self.keycardServiceV2.init()
   self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()
