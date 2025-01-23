@@ -446,6 +446,9 @@ StatusWindow {
             objectName: "startupOnboardingLayout"
             anchors.fill: parent
 
+            // TODO implement those two
+            loginAccountsModel: ListModel {}
+            isBiometricsLogin: false
             networkChecksEnabled: true
             biometricsAvailable: Qt.platform.os === Constants.mac
 
