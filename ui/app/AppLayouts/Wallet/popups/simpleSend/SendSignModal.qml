@@ -9,6 +9,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.popups 1.0
 
 import utils 1.0
@@ -80,6 +81,52 @@ SignTransactionModalBase {
 
     /** Input property holding function openSea explorer url for the collectible **/
     required property var fnGetOpenSeaExplorerUrl
+
+    /** Transaction settings related parameters **/
+    required property int selectedFeeMode
+
+    required property string currentBaseFee
+    required property string currentSuggestedMinPriorityFee
+    required property string currentSuggestedMaxPriorityFee
+    required property string currentGasAmount
+    required property int currentNonce
+
+    required property string normalPrice
+    required property string normalBaseFee
+    required property string normalPriorityFee
+    required property string normalTime
+
+    required property string fastPrice
+    required property string fastTime
+    required property string fastBaseFee
+    required property string fastPriorityFee
+
+    required property string urgentPrice
+    required property string urgentTime
+    required property string urgentBaseFee
+    required property string urgentPriorityFee
+
+    required property string customBaseFee
+    required property string customPriorityFee
+    required property string customGasAmount
+    required property int customNonce
+
+    /** required function which receives fee in wei and recalculate it currency selected currency and format to locale string **/
+    required property var fnGetPriceInCurrencyForFee
+
+    /** Signal to updated tx settings **/
+    signal updateTxSettings(int selectedFeeMode, string customNonce, string customGasAmount, string maxFeesPerGas, string priorityFee)
+
+    /** Recalculates all values currently displayed in the transaction settings panel **/
+    function refreshTxSettings() {
+        d.refreshTxSettings()
+    }
+
+    QtObject {
+        id: d
+
+        signal refreshTxSettings()
+    }
 
     title: qsTr("Sign Send")
     //: e.g. (Send) 100 DAI to batista.eth
@@ -173,7 +220,122 @@ SignTransactionModalBase {
                     loading: root.feesLoading
                 }
             }
+            StatusFlatButton {
+                tooltip.text: qsTr("Edit transaction settings")
+                icon.name: "settings-advance"
+                textColor: hovered? Theme.palette.directColor1 : Theme.palette.baseColor1
+                onClicked: {
+                    root.internalPopupActive = true
+                }
+            }
         }
+    }
+
+    property Component internalPopup: TransactionSettings {
+
+        fnGetPriceInCurrencyForFee: root.fnGetPriceInCurrencyForFee
+
+        selectedFeeMode: root.selectedFeeMode
+
+        currentBaseFee: root.currentBaseFee
+        currentSuggestedMinPriorityFee: root.currentSuggestedMinPriorityFee
+        currentSuggestedMaxPriorityFee: root.currentSuggestedMaxPriorityFee
+        currentGasAmount: root.currentGasAmount
+        currentNonce: root.currentNonce
+
+        normalPrice: root.normalPrice
+        normalTime: root.normalTime
+        fastPrice: root.fastPrice
+        fastTime: root.fastTime
+        urgentPrice: root.urgentPrice
+        urgentTime: root.urgentTime
+
+        function updateCustomFields() {
+            // by default custom follows normal fee option
+            if (selectedFeeMode !== StatusFeeOption.Type.Custom) {
+                customBaseFee = ""
+                customPriorityFee = ""
+                customGasAmount = ""
+                customNonce = ""
+                return
+            }
+
+            if (!customBaseFeeDirty) {
+                if (selectedFeeMode === root.selectedFeeMode) {
+                    customBaseFee = !!root.customBaseFee? Utils.weiToGWei(root.customBaseFee).toFixed() : "0"
+                } else {
+                    customBaseFee = Utils.weiToGWei(root.normalBaseFee).toFixed()
+                }
+                customBaseFeeDirty = false
+            }
+
+            if (!customPriorityFeeDirty) {
+                if (selectedFeeMode === root.selectedFeeMode) {
+                    customPriorityFee = !!root.customPriorityFee? Utils.weiToGWei(root.customPriorityFee).toFixed() : "0"
+                } else {
+                    customPriorityFee = Utils.weiToGWei(root.normalPriorityFee).toFixed()
+                }
+                customPriorityFeeDirty = false
+            }
+
+            if (!customGasAmountDirty) {
+                if (selectedFeeMode === root.selectedFeeMode) {
+                    customGasAmount = root.customGasAmount
+                } else {
+                    customGasAmount = root.currentGasAmount
+                }
+                customGasAmountDirty = false
+            }
+
+            if (!customNonceDirty) {
+                if (selectedFeeMode === root.selectedFeeMode) {
+                    customNonce = root.customNonce
+                } else {
+                    customNonce = root.currentNonce
+                }
+                customNonceDirty = false
+            }
+        }
+
+        Component.onCompleted: {
+            d.refreshTxSettings.connect(updateCustomFields)
+            if (root.selectedFeeMode === StatusFeeOption.Type.Custom) {
+                updateCustomFields()
+                recalculateCustomPrice()
+            }
+        }
+
+        onSelectedFeeModeChanged: {
+            updateCustomFields()
+        }
+
+        onCancelClicked: {
+            root.internalPopupActive = false
+        }
+
+        onConfirmClicked: {
+            let priorityFee = ""
+            let maxFeesPerGas = ""
+            if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+                if (!!customPriorityFee && !!customBaseFee) {
+                    const baseFeeWei = Utils.gweiToWei(customBaseFee)
+                    const priorityFeeWei = Utils.gweiToWei(customPriorityFee)
+
+                    priorityFee = priorityFeeWei.toFixed()
+                    maxFeesPerGas = SQUtils.AmountsArithmetic.sum(baseFeeWei, priorityFeeWei).toFixed()
+                }
+            }
+
+            root.updateTxSettings(selectedFeeMode, customNonce, customGasAmount, maxFeesPerGas, priorityFee)
+
+            root.internalPopupActive = false
+        }
+    }
+
+    internalPopupComponent: internalPopup
+
+    onCloseInternalPopup: {
+        root.internalPopupActive = false
     }
 
     // Send Asset
@@ -203,6 +365,7 @@ SignTransactionModalBase {
             }
         ]
         visible: !root.isCollectible
+        enabled: !root.internalPopupActive
     }
 
     // Send Collectible
@@ -229,6 +392,7 @@ SignTransactionModalBase {
             onOpenLink: (link) => root.openLinkWithConfirmation(link)
         }
         visible: root.isCollectible
+        enabled: !root.internalPopupActive
     }
 
     // From
@@ -268,6 +432,7 @@ SignTransactionModalBase {
                 onOpenLink: (link) => root.openLinkWithConfirmation(link)
             }
         ]
+        enabled: !root.internalPopupActive
     }
 
     // Network
