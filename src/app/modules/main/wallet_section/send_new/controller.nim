@@ -49,7 +49,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     let args = TransactionArgs(e)
-    var 
+    var
       txHash = ""
       isApprovalTx = false
     if not args.sentTransaction.isNil:
@@ -106,6 +106,15 @@ proc suggestedRoutes*(self: Controller,
 
 proc stopSuggestedRoutesAsyncCalculation*(self: Controller) =
   self.transactionService.stopSuggestedRoutesAsyncCalculation()
+
+proc setFeeMode*(self: Controller, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
+  isApprovalTx: bool, communityId: string): string =
+    return self.transactionService.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+
+proc setCustomTxDetails*(self: Controller, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string): string =
+    return self.transactionService.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid,
+    pathName, chainId, isApprovalTx, communityId)
 
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
