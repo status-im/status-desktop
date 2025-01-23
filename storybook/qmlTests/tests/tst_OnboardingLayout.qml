@@ -403,23 +403,10 @@ Item {
             compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 
-        function test_flow_createProfile_withKeycardAndNewSeedphrase_data() {
-            const commonData = init_data()
-            const flowData = []
-            for (let dataRow of commonData) {
-                let newRowEmptyPin = Object.create(dataRow)
-                Object.assign(newRowEmptyPin, { tag: dataRow.tag + "+emptyPin", pin: "" })
-                flowData.push(newRowEmptyPin)
-            }
-
-            return flowData
-        }
-
         // FLOW: Create Profile -> Use an empty Keycard -> Use a new recovery phrase (create profile with keycard + new seedphrase)
         function test_flow_createProfile_withKeycardAndNewSeedphrase(data) {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
-            mockDriver.existingPin = data.pin
 
             const stack = findChild(controlUnderTest, "stack")
             verify(!!stack)
@@ -457,13 +444,24 @@ Item {
             verify(!!btnCreateWithEmptySeedphrase)
             mouseClick(btnCreateWithEmptySeedphrase)
 
-            // PAGE 6: Backup your recovery phrase (intro)
+            // PAGE 6: Create new Keycard PIN
+            const newPin = "123321"
+            page = getCurrentPage(stack, KeycardCreatePinPage)
+            tryCompare(page, "state", "creating")
+            dynamicSpy.setup(page, "keycardPinCreated")
+            keyClickSequence(newPin)
+            tryCompare(page, "state", "repeating")
+            keyClickSequence(newPin)
+            tryCompare(dynamicSpy, "count", 1)
+            compare(dynamicSpy.signalArguments[0][0], newPin)
+
+            // PAGE 7: Backup your recovery phrase (intro)
             page = getCurrentPage(stack, BackupSeedphraseIntro)
             const btnBackupSeedphrase = findChild(page, "btnBackupSeedphrase")
             verify(!!btnBackupSeedphrase)
             mouseClick(btnBackupSeedphrase)
 
-            // PAGE 7: Backup your recovery phrase (ack checkboxes)
+            // PAGE 8: Backup your recovery phrase (ack checkboxes)
             page = getCurrentPage(stack, BackupSeedphraseAcks)
             let btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -476,7 +474,7 @@ Item {
             tryCompare(btnContinue, "enabled", true)
             mouseClick(btnContinue)
 
-            // PAGE 8: Backup your recovery phrase (seedphrase reveal) - step 1
+            // PAGE 9: Backup your recovery phrase (seedphrase reveal) - step 1
             page = getCurrentPage(stack, BackupSeedphraseReveal)
             const seedGrid = findChild(page, "seedGrid")
             verify(!!seedGrid)
@@ -491,7 +489,7 @@ Item {
             compare(btnConfirm.enabled, true)
             mouseClick(btnConfirm)
 
-            // PAGE 9: Backup your recovery phrase (seedphrase verification) - step 2
+            // PAGE 10: Backup your recovery phrase (seedphrase verification) - step 2
             page = getCurrentPage(stack, BackupSeedphraseVerify)
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -507,7 +505,7 @@ Item {
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 
-            // PAGE 10: Backup your recovery phrase (outro) - step 3
+            // PAGE 11: Backup your recovery phrase (outro) - step 3
             page = getCurrentPage(stack, BackupSeedphraseOutro)
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -519,27 +517,6 @@ Item {
             compare(cbAck.checked, true)
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
-
-            // PAGE 11a: Enter Keycard PIN
-            if (!!data.pin) {
-                page = getCurrentPage(stack, KeycardEnterPinPage)
-                dynamicSpy.setup(page, "keycardPinEntered")
-                keyClickSequence(data.pin)
-                tryCompare(dynamicSpy, "count", 1)
-                compare(dynamicSpy.signalArguments[0][0], data.pin)
-            }
-            // PAGE 11b: Create new Keycard PIN
-            else {
-                const newPin = "123321"
-                page = getCurrentPage(stack, KeycardCreatePinPage)
-                tryCompare(page, "state", "creating")
-                dynamicSpy.setup(page, "keycardPinCreated")
-                keyClickSequence(newPin)
-                tryCompare(page, "state", "repeating")
-                keyClickSequence(newPin)
-                tryCompare(dynamicSpy, "count", 1)
-                compare(dynamicSpy.signalArguments[0][0], newPin)
-            }
 
             // PAGE 12: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
@@ -568,19 +545,14 @@ Item {
             verify(!!resultData)
             compare(resultData.password, "")
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
-            compare(resultData.keycardPin, !!data.pin ? data.pin : "123321")
-            compare(resultData.seedphrase, "") // TODO check seed here as well?
-        }
-
-        function test_flow_createProfile_withKeycardAndExistingSeedphrase_data() {
-            return test_flow_createProfile_withKeycardAndNewSeedphrase_data()
+            compare(resultData.keycardPin, newPin)
+            compare(resultData.seedphrase, "")
         }
 
         // FLOW: Create Profile -> Use an empty Keycard -> Use an existing recovery phrase (create profile with keycard + existing seedphrase)
         function test_flow_createProfile_withKeycardAndExistingSeedphrase(data) {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
-            mockDriver.existingPin = data.pin
 
             const stack = findChild(controlUnderTest, "stack")
             verify(!!stack)
@@ -618,7 +590,18 @@ Item {
             verify(!!btnCreateWithExistingSeedphrase)
             mouseClick(btnCreateWithExistingSeedphrase)
 
-            // PAGE 6: Create profile on empty Keycard using a recovery phrase
+            // PAGE 6: Create new Keycard PIN
+            const newPin = "123321"
+            page = getCurrentPage(stack, KeycardCreatePinPage)
+            tryCompare(page, "state", "creating")
+            dynamicSpy.setup(page, "keycardPinCreated")
+            keyClickSequence(newPin)
+            tryCompare(page, "state", "repeating")
+            keyClickSequence(newPin)
+            tryCompare(dynamicSpy, "count", 1)
+            compare(dynamicSpy.signalArguments[0][0], newPin)
+
+            // PAGE 7: Create profile on empty Keycard using a recovery phrase
             page = getCurrentPage(stack, SeedphrasePage)
             const btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
@@ -630,27 +613,6 @@ Item {
             keySequence(StandardKey.Paste)
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
-
-            // PAGE 7a: Enter Keycard PIN
-            if (!!data.pin) {
-                page = getCurrentPage(stack, KeycardEnterPinPage)
-                dynamicSpy.setup(page, "keycardPinEntered")
-                keyClickSequence(data.pin)
-                tryCompare(dynamicSpy, "count", 1)
-                compare(dynamicSpy.signalArguments[0][0], data.pin)
-            }
-            // PAGE 7b: Create new Keycard PIN
-            else {
-                const newPin = "123321"
-                page = getCurrentPage(stack, KeycardCreatePinPage)
-                tryCompare(page, "state", "creating")
-                dynamicSpy.setup(page, "keycardPinCreated")
-                keyClickSequence(newPin)
-                tryCompare(page, "state", "repeating")
-                keyClickSequence(newPin)
-                tryCompare(dynamicSpy, "count", 1)
-                compare(dynamicSpy.signalArguments[0][0], newPin)
-            }
 
             // PAGE 8: Adding key pair to Keycard
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
@@ -679,7 +641,7 @@ Item {
             verify(!!resultData)
             compare(resultData.password, "")
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
-            compare(resultData.keycardPin, !!data.pin ? data.pin : "123321")
+            compare(resultData.keycardPin, newPin)
             compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 

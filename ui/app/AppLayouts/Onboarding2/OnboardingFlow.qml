@@ -197,8 +197,8 @@ SQUtils.QObject {
 
         onFinished: (fromBackupSeedphrase) => {
             d.flow = fromBackupSeedphrase
-                        ? Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
-                        : Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
+                        ? Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
+                        : Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
 
             d.pushOrSkipBiometricsPage()
         }
