@@ -74,7 +74,8 @@ QtObject:
   proc authenticateAndTransfer*(self: View, uuid: string, fromAddr: string, slippagePercentageString: string) {.slot.} =
     var slippagePercentage: float
     try:
-      slippagePercentage = slippagePercentageString.parseFloat()
+      if slippagePercentageString.len > 0:
+        slippagePercentage = slippagePercentageString.parseFloat()
     except:
       error "parsing slippage failed", slippage=slippagePercentageString
     self.delegate.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
@@ -90,3 +91,12 @@ QtObject:
   proc transactionSent*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
   proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
     self.transactionSent(uuid, chainId, approvalTx, txHash, error)
+
+  proc setFeeMode*(self: View, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
+    isApprovalTx: bool, communityId: string) {.slot.} =
+      self.delegate.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+
+  proc setCustomTxDetails*(self: View, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+    routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) {.slot.} =
+      self.delegate.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
+        chainId, isApprovalTx, communityId)

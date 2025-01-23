@@ -1725,6 +1725,9 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
   elif details.notificationType == NotificationType.CommunityMemberUnbanned:
     self.displayEphemeralWithActionNotification(title, "Visit community" , "communities", "", false, EphemeralNotificationType.Success.int, EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId)
 
+  else:
+    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
+
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
 
