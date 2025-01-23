@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 SQUtils.QObject {
     id: root
@@ -41,6 +42,7 @@ SQUtils.QObject {
 
         SeedphrasePage {
             isSeedPhraseValid: root.isSeedPhraseValid
+            authorizationState: Onboarding.ProgressState.Idle
 
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)

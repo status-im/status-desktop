@@ -93,6 +93,20 @@ Page {
 
             root.finished(flow, data)
         }
+
+        function loadMnemonic() {
+            root.onboardingStore.loadMnemonic(d.seedphrase)
+        }
+
+        function authorize(pin) {
+            if (!pin && !d.keycardPin) {
+                return
+            }
+            if (!pin) {
+                pin = d.keycardPin
+            }
+            root.onboardingStore.authorize(pin)
+        }
     }
 
     background: Rectangle {
@@ -142,10 +156,15 @@ Page {
         loginAccountsModel: root.loginAccountsModel
 
         keycardState: root.onboardingStore.keycardState
+        pinSettingState: root.onboardingStore.pinSettingState
+        authorizationState: root.onboardingStore.authorizationState
+        restoreKeysExportState: root.onboardingStore.restoreKeysExportState
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
 
-        seedWords: root.onboardingStore.getMnemonic().split(" ")
+        getSeedWords: function () {
+            return root.onboardingStore.getMnemonic().split(" ")
+        }
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
         isBiometricsLogin: root.isBiometricsLogin
@@ -168,16 +187,10 @@ Page {
             root.onboardingStore.setPin(pin)
         }
 
-        onKeycardPinEntered: (pin) => {
-            d.keycardPin = pin
-            root.onboardingStore.setPin(pin)
-        }
-
-        onKeyPairTransferRequested: root.onboardingStore.startKeypairTransfer()
+        onLoadMnemonicRequested: d.loadMnemonic()
+        onAuthorizationRequested: d.authorize(pin)
         onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
         onReloadKeycardRequested: root.reloadKeycardRequested()
-        onMnemonicWasShown: root.onboardingStore.mnemonicWasShown()
-        onMnemonicRemovalRequested: root.onboardingStore.removeMnemonic()
 
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
@@ -185,6 +198,7 @@ Page {
         onSetPasswordRequested: (password) => d.password = password
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
         onLinkActivated: (link) => Qt.openUrlExternally(link)
+        onExportKeysRequested: root.onboardingStore.exportRecoverKeys()
         onFinished: (flow) => d.finishFlow(flow)
         onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
     }

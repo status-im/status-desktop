@@ -95,7 +95,7 @@ proc toTransactionSignature(jsonObj: JsonNode): TransactionSignature =
   if v == 1:
     result.v = "01"
 
-proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
+proc toKeycardEvent*(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ResponseParamErrorKey, result.error)
   discard jsonObj.getProp(ResponseParamInstanceUID, result.instanceUID)
   discard jsonObj.getProp(ResponseParamFreeSlots, result.freePairingSlots)

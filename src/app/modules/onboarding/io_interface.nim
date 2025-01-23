@@ -3,6 +3,7 @@ type
 
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
+from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto
 from app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
 
 method delete*(self: AccessInterface) {.base.} =
@@ -17,7 +18,10 @@ method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, s
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setPin*(self: AccessInterface, pin: string): bool {.base.} =
+method initialize*(self: AccessInterface, pin: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method authorize*(self: AccessInterface, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getPasswordStrengthScore*(self: AccessInterface, password, userName: string): int {.base.} =
@@ -35,10 +39,37 @@ method validateLocalPairingConnectionString*(self: AccessInterface, connectionSt
 method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method loadMnemonic*(self: AccessInterface, dataJson: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardStateUpdated*(self: AccessInterface, keycardEvent: KeycardEventDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardSetPinFailure*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardAuthorizeFailure*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardLoadMnemonicFailure*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardLoadMnemonicSuccess*(self: AccessInterface, keyUID: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardExportKeysFailure*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardExportKeysSuccess*(self: AccessInterface, exportedKeys: KeycardExportedKeysDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method exportRecoverKeys*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

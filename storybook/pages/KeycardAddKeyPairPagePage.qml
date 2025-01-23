@@ -17,10 +17,10 @@ Item {
 
         onKeypairAddTryAgainRequested: {
             console.warn("!!! onKeypairAddTryAgainRequested")
-            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.AddKeyPairState.InProgress)
+            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.ProgressState.InProgress)
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.AddKeyPairState.Success)
+                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.ProgressState.Success)
             })()
         }
         onKeypairAddContinueRequested: console.warn("!!! onKeypairAddContinueRequested")
@@ -35,7 +35,7 @@ Item {
         width: 350
         textRole: "name"
         valueRole: "value"
-        model: Onboarding.getModelFromEnum("AddKeyPairState")
+        model: Onboarding.getModelFromEnum("ProgressState")
     }
 }
 

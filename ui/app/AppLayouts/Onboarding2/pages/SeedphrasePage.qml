@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Onboarding.enums 1.0
+
 import shared.panels 1.0
 
 OnboardingPage {
@@ -16,9 +18,12 @@ OnboardingPage {
     property string subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")
     property alias btnContinueText: btnContinue.text
 
+    required property int authorizationState
+
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
     signal seedphraseSubmitted(string seedphrase)
+    signal keycardAuthorized()
 
     contentItem: Item {
         ColumnLayout {
@@ -62,4 +67,30 @@ OnboardingPage {
             }
         }
     }
+
+    state: "creating"
+
+    states: [
+        State {
+            name: "creating"
+        },
+        State {
+            name: "authorized"
+            when: root.authorizationState === Onboarding.ProgressState.Success
+            StateChangeScript {
+                script: {
+                    root.keycardAuthorized()
+                }
+            }
+        },
+        State {
+            name: "loadingMnemonic"
+            when: root.authorizationState === Onboarding.ProgressState.InProgress
+
+            PropertyChanges {
+                target: btnContinue
+                loading: true
+            }
+        }
+    ]
 }

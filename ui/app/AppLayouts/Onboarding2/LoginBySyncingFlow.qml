@@ -39,7 +39,7 @@ SQUtils.QObject {
 
         SyncProgressPage {
             readonly property bool backAvailableHint:
-                root.syncState === Onboarding.SyncState.Failed
+                root.syncState === Onboarding.ProgressState.Failed
 
             syncState: root.syncState
 

@@ -7,6 +7,8 @@ Item {
 
     KeycardCreatePinPage {
         anchors.fill: parent
+        pinSettingState: 0
+        authorizationState: 0
         onKeycardPinCreated: (pin) => console.warn("!!! PIN CREATED:", pin)
     }
 }
