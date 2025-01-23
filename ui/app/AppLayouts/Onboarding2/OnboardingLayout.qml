@@ -22,7 +22,7 @@ Page {
     required property var loginAccountsModel
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
-    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
     signal biometricsRequested() // emitted when the user wants to try the biometrics prompt again
 
     property bool networkChecksEnabled: true
@@ -44,7 +44,7 @@ Page {
     function restartFlow() {
         unload()
 
-        if (loginAccountsModel.ModelCount.empty)
+        if (!loginAccountsModel || loginAccountsModel.ModelCount.empty)
             onboardingFlow.init()
         else
             stack.push(loginScreenComponent)
