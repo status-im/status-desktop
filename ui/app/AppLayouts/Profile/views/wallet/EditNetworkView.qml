@@ -13,6 +13,7 @@ ColumnLayout {
     required property var networksModule
     property var prodNetwork
     property var testNetwork
+    property var rpcProviders
     property var networkRPCChanged
     property bool areTestNetworksEnabled: false
 
@@ -50,6 +51,7 @@ ColumnLayout {
         id: editLiveNetwork
         EditNetworkForm {
             network: root.prodNetwork ?? null
+            rpcProviders: root.rpcProviders
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)
@@ -61,6 +63,7 @@ ColumnLayout {
         id: editTestNetwork
         EditNetworkForm {
             network: root.testNetwork ?? null
+            rpcProviders: root.rpcProviders
             networksModule: root.networksModule
             networkRPCChanged: root.networkRPCChanged
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url, isMainUrl)

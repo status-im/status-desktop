@@ -83,5 +83,6 @@ method chainIdFetchedForUrl*(self: Module, url: string, chainId: int, success: b
 method getNetworksDataSource*(self: Module): NetworksDataSource =
   return (
     getFlatNetworksList: proc(): var seq[NetworkItem] = self.controller.getFlatNetworks(),
-    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] = self.controller.getCombinedNetworks()
+    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] = self.controller.getCombinedNetworks(),
+    getRpcProvidersList: proc(): var seq[RpcProviderItem] = self.controller.getRpcProviders(),
   )

@@ -1,6 +1,6 @@
 import NimQml, sequtils, strutils
 
-import ./io_interface, ./model, ./combined_model
+import ./io_interface, ./model, ./combined_model, ./rpc_providers_model
 
 QtObject:
   type
@@ -8,6 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       flatNetworks: Model
       combinedNetworks: CombinedModel
+      rpcProvidersModel: RpcProvidersModel
       areTestNetworksEnabled: bool
       enabledChainIds: string
 
@@ -22,6 +23,7 @@ QtObject:
     result.delegate = delegate
     result.flatNetworks = newModel(delegate.getNetworksDataSource())
     result.combinedNetworks = newCombinedModel(delegate.getNetworksDataSource())
+    result.rpcProvidersModel = newRpcProvidersModel(delegate.getNetworksDataSource())
     result.enabledChainIds = ""
     result.setup()
 
@@ -55,6 +57,13 @@ QtObject:
     read = getCombinedNetworks
     notify = combinedNetworksChanged
 
+  proc rpcProvidersChanged*(self: View) {.signal.}
+  proc getRpcProviders(self: View): QVariant {.slot.} =
+    return newQVariant(self.rpcProvidersModel)
+  QtProperty[QVariant] rpcProviders:
+    read = getRpcProviders
+    notify = rpcProvidersChanged
+
   proc enabledChainIdsChanged*(self: View) {.signal.}
   proc getEnabledChainIds(self: View): QVariant {.slot.} =
     return newQVariant(self.enabledChainIds)
@@ -64,9 +73,12 @@ QtObject:
 
   proc refreshModel*(self: View) =
     self.flatNetworks.refreshModel()
+    self.rpcProvidersModel.refreshModel()
     self.combinedNetworks.modelUpdated()
     self.enabledChainIds = self.flatNetworks.getEnabledChainIds(self.areTestNetworksEnabled)
     self.flatNetworksChanged()
+    self.rpcProvidersChanged()
+    self.combinedNetworksChanged()
     self.enabledChainIdsChanged()
 
   proc load*(self: View) =

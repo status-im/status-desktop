@@ -49,6 +49,9 @@ proc getFlatNetworks*(self: Controller): var seq[NetworkItem] =
 proc getCombinedNetworks*(self: Controller): var seq[CombinedNetworkItem] =
   return self.networkService.getCombinedNetworks()
 
+proc getRpcProviders*(self: Controller): var seq[RpcProviderItem] =
+  return self.networkService.getRpcProviders()
+
 proc setNetworksState*(self: Controller, chainIds: seq[int], enabled: bool) =
   self.walletAccountService.setNetworksState(chainIds, enabled)
 

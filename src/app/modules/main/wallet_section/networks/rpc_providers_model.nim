@@ -2,7 +2,7 @@ import NimQml, Tables, strutils, sequtils
 
 import ./io_interface
 
-import app_service/service/network/network_item
+import app_service/service/network/rpc_provider_item
 
 type
   ModelRole {.pure.} = enum
@@ -21,7 +21,6 @@ type
 QtObject:
   type RpcProvidersModel* = ref object of QAbstractListModel
     delegate: io_interface.NetworksDataSource
-    index: int
 
   proc setup(self: RpcProvidersModel) =
     self.QAbstractListModel.setup
@@ -29,23 +28,13 @@ QtObject:
   proc delete(self: RpcProvidersModel) =
     self.QAbstractListModel.delete
 
-  proc newRpcProvidersModel*(delegate: io_interface.NetworksDataSource, index: int): RpcProvidersModel =
+  proc newRpcProvidersModel*(delegate: io_interface.NetworksDataSource): RpcProvidersModel =
     new(result, delete)
     result.setup
     result.delegate = delegate
-    result.index = index
 
   method rowCount(self: RpcProvidersModel, index: QModelIndex = nil): int =
-    if self.index < 0 or self.index >= self.delegate.getFlatNetworksList().len:
-      return 0
-    return self.delegate.getFlatNetworksList()[self.index].rpcProviders.len
-
-  proc countChanged(self: RpcProvidersModel) {.signal.}
-  proc getCount(self: RpcProvidersModel): int {.slot.} =
-    return self.rowCount()
-  QtProperty[int] count:
-    read = getCount
-    notify = countChanged
+    return self.delegate.getRpcProvidersList().len
 
   method roleNames(self: RpcProvidersModel): Table[int, string] =
     {
@@ -65,10 +54,10 @@ QtObject:
   method data(self: RpcProvidersModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
-    if self.index < 0 or self.index >= self.delegate.getFlatNetworksList().len or
-      index.row < 0 or index.row >= self.delegate.getFlatNetworksList()[self.index].rpcProviders.len:
+
+    if index.row < 0 or index.row >= self.delegate.getRpcProvidersList().len:
       return
-    let item = self.delegate.getFlatNetworksList()[self.index].rpcProviders[index.row]
+    let item = self.delegate.getRpcProvidersList()[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.ChainId:
@@ -93,3 +82,7 @@ QtObject:
         result = newQVariant(item.authPassword)
       of ModelRole.AuthToken:
         result = newQVariant(item.authToken)
+
+  proc refreshModel*(self: RpcProvidersModel) =
+    self.beginResetModel()
+    self.endResetModel()

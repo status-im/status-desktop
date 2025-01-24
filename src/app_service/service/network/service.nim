@@ -24,6 +24,7 @@ type
     events: EventEmitter
     combinedNetworks: seq[CombinedNetworkItem]
     flatNetworks: seq[NetworkItem]
+    rpcProviders: seq[RpcProviderItem]
     settingsService: settings_service.Service
 
 proc delete*(self: Service) =
@@ -34,7 +35,7 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.events = events
   result.settingsService = settingsService
 
-proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
+proc fetchNetworks*(self: Service) =
   let response = backend.getEthereumChains()
   if not response.error.isNil:
     raise newException(Exception, "Error getting combinedNetworks: " & response.error.message)
@@ -45,19 +46,25 @@ proc fetchNetworks*(self: Service): seq[CombinedNetworkItem]=
   for network in self.combinedNetworks:
     self.flatNetworks.add(network.test)
     self.flatNetworks.add(network.prod)
-  return self.combinedNetworks
+  self.rpcProviders = @[]
+  for network in self.flatNetworks:
+    for rpcProvider in network.rpcProviders:
+      self.rpcProviders.add(rpcProvider)
 
 proc init*(self: Service) =
-  discard self.fetchNetworks()
+  self.fetchNetworks()
 
 proc resetNetworks*(self: Service) =
-  discard self.fetchNetworks()
+  self.fetchNetworks()
 
 proc getCombinedNetworks*(self: Service): var seq[CombinedNetworkItem] =
   return self.combinedNetworks
 
 proc getFlatNetworks*(self: Service): var seq[NetworkItem] =
   return self.flatNetworks
+
+proc getRpcProviders*(self: Service): var seq[RpcProviderItem] =
+  return self.rpcProviders
 
 # passes networks based on users choice of test/mainnet
 proc getCurrentNetworks*(self: Service): seq[NetworkItem] =
@@ -85,8 +92,8 @@ proc deleteNetwork*(self: Service, network: NetworkItem) =
 proc getNetworkByChainId*(self: Service, chainId: int, testNetworksEnabled: bool): NetworkItem =
   var networks = self.combinedNetworks
   if self.combinedNetworks.len == 0:
-    networks = self.fetchNetworks()
-  for network in networks:
+    self.fetchNetworks()
+  for network in self.getCombinedNetworks():
     let net = if testNetworksEnabled: network.test
               else: network.prod
     if chainId == net.chainId:
@@ -102,7 +109,7 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
 
     if not network.isNil:
       discard backend.setChainEnabled(chainId, enabled)
-  discard self.fetchNetworks()
+  self.fetchNetworks()
 
 ## This procedure retuns the network to be used based on the app mode (testnet/mainnet).
 ## We don't need to check if retuned network is nil cause it should never be, but if somehow it is, the app will be closed.
@@ -161,5 +168,5 @@ proc updateNetworkEndPointValues*(self: Service, chainId: int, testNetwork: bool
     let response = backend.setChainUserRpcProviders(chainId, rpcProviders)
     
     if response.error == nil:
-      discard self.fetchNetworks()
+      self.fetchNetworks()
       self.events.emit(SIGNAL_NETWORK_ENDPOINT_UPDATED, NetworkEndpointUpdatedArgs(isTest: network.isTest, networkName: network.chainName))
