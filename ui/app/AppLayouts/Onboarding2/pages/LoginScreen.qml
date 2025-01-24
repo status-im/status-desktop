@@ -236,12 +236,12 @@ OnboardingPage {
 
             StatusButton {
                 Layout.alignment: Qt.AlignHCenter
+
+                isOutline: true
                 size: StatusBaseButton.Size.Small
                 visible: d.currentProfileIsKeycard
-                normalColor: "transparent"
-                borderWidth: 1
-                borderColor: Theme.palette.baseColor2
                 text: qsTr("Lost this Keycard?")
+
                 onClicked: root.lostKeycard()
             }
         }
