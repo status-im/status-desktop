@@ -59,6 +59,7 @@ SplitView {
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
+                        isOutline: ctrlIsOutline.checked
                     }
                 }
 
@@ -78,6 +79,7 @@ SplitView {
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
+                        isOutline: ctrlIsOutline.checked
                     }
                 }
 
@@ -98,6 +100,7 @@ SplitView {
                         enabled: ctrlEnabled.checked
                         interactive: ctrlInteractive.checked
                         textFillWidth: ctrlFillWidth.checked
+                        isOutline: ctrlIsOutline.checked
                     }
                 }
 
@@ -119,6 +122,7 @@ SplitView {
                         interactive: ctrlInteractive.checked
                         isRoundIcon: true
                         textFillWidth: ctrlFillWidth.checked
+                        isOutline: ctrlIsOutline.checked
                     }
                 }
 
@@ -270,6 +274,10 @@ SplitView {
                         id: ctrlType
                         model: ["Normal", "Danger", "Primary", "Warning", "Success"] // enum StatusBaseButton.Type.xxx
                     }
+                    CheckBox {
+                        id: ctrlIsOutline
+                        text: "isOutline"
+                    }
                 }
                 RowLayout {
                     Label { text: "Width:" }
@@ -310,5 +318,12 @@ SplitView {
 }
 
 // category: Controls
-
-// https://www.figma.com/file/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?type=design&node-id=1-12&t=UHegCbqAa5K7qUKd-0
+// status: good
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5905&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5906&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5612&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5613&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-4920&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-4921&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5328&m=dev
+// https://www.figma.com/design/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?node-id=1029-5329&m=dev

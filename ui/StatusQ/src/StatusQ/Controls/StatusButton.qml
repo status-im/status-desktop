@@ -4,6 +4,24 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusBaseButton {
+    id: root
+
+    property bool isOutline
+
+    states: [
+        State {
+            name: "outline"
+            when: root.isOutline && root.type !== StatusBaseButton.Type.Primary
+            PropertyChanges {
+                target: root
+                normalColor: "transparent"
+                disabledColor: "transparent"
+                borderWidth: 1
+                borderColor: Theme.palette.baseColor2
+            }
+        }
+    ]
+
     normalColor: {
         switch(type) {
         case StatusBaseButton.Type.Primary:

@@ -85,24 +85,25 @@ Button {
 
     font.family: Theme.baseFont.name
     font.weight: Font.Medium
-    font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13
+    font.pixelSize: size === StatusBaseButton.Size.Large ? Theme.primaryTextFontSize
+                                                         : Theme.additionalTextSize
 
     horizontalPadding: {
         if (d.iconOnly) {
-            return isRoundIcon ? 8 : spacing
+            return isRoundIcon ? Theme.halfPadding : spacing
         }
         if (root.icon.name) {
             switch (size) {
             case StatusBaseButton.Size.Tiny:
-                return 8
+                return Theme.halfPadding
             case StatusBaseButton.Size.Small:
-                return 16
+                return Theme.padding
             case StatusBaseButton.Size.Large:
             default:
                 return 18
             }
         }
-        return size === StatusBaseButton.Size.Large ? 24 : 12
+        return size === StatusBaseButton.Size.Large ? Theme.bigPadding : 12
     }
     verticalPadding: {
         if (d.iconOnly) {
@@ -112,7 +113,7 @@ Button {
         case StatusBaseButton.Size.Tiny:
             return 5
         case StatusBaseButton.Size.Small:
-            return 8
+            return Theme.halfPadding
         case StatusBaseButton.Size.Large:
         default:
             return 11
