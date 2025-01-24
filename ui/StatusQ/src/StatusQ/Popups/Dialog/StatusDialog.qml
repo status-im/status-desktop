@@ -14,7 +14,7 @@ Dialog {
 
     property string subtitle
     /*!
-       \qmlproperty destroyOnClose
+       \qmlproperty bool destroyOnClose
         This property decides whether the popup component should be destroyed when closed. Default value is false.
     */
     property bool destroyOnClose: false
@@ -24,11 +24,16 @@ Dialog {
     */
     property color backgroundColor: Theme.palette.statusModal.backgroundColor
     /*!
-       \qmlproperty closeHandler
+       \qmlproperty var closeHandler
         This property decides the action to be performed when the close button is clicked. It allows to define
         a custom function to be called when the popup is closed by the user.
     */
     property var closeHandler: root.close
+    /*!
+       \qmlproperty string okButtonText
+        This property decides what text to use for an "OK" button
+    */
+    property string okButtonText: qsTr("OK")
 
     anchors.centerIn: Overlay.overlay
 
@@ -111,7 +116,7 @@ Dialog {
                     if (root.standardButtons & Dialog.SaveAll) return qsTr("Save all")
                     if (root.standardButtons & Dialog.Retry) return qsTr("Retry")
                     if (root.standardButtons & Dialog.Ignore) return qsTr("Ignore")
-                    return qsTr("OK")
+                    return root.okButtonText
                 }
 
                 onClicked: root.accept()

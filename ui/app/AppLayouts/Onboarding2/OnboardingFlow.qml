@@ -271,6 +271,7 @@ SQUtils.QObject {
                 textFormat: Text.MarkdownText
                 text: SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/privacy.mdwn"))
             }
+            okButtonText: qsTr("Done")
             destroyOnClose: true
         }
     }
@@ -284,6 +285,7 @@ SQUtils.QObject {
                 textFormat: Text.MarkdownText
                 text: SQUtils.StringUtils.readTextFile(Qt.resolvedUrl("../../../imports/assets/docs/terms-of-use.mdwn"))
             }
+            okButtonText: qsTr("Done")
             destroyOnClose: true
         }
     }
