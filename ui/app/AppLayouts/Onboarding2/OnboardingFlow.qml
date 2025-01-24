@@ -58,6 +58,10 @@ SQUtils.QObject {
         root.stackView.push(loginPage)
     }
 
+    function startLostKeycardFlow() {
+        root.stackView.push(keycardLostPage)
+    }
+
     QtObject {
         id: d
 
@@ -135,6 +139,22 @@ SQUtils.QObject {
             onLoginWithSeedphraseRequested: {
                 d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
                 useRecoveryPhraseFlow.init()
+            }
+        }
+    }
+
+    Component {
+        id: keycardLostPage
+
+        KeycardLostPage {
+            onCreateReplacementKeycardRequested: {
+                d.flow = Onboarding.SecondaryFlow.LoginWithRestoredKeycard
+                keycardCreateReplacementFlow.init()
+            }
+
+            onUseProfileWithoutKeycardRequested: {
+                d.flow = Onboarding.SecondaryFlow.LoginWithLostKeycardSeedphrase
+                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.KeycardRecovery)
             }
         }
     }
@@ -248,6 +268,38 @@ SQUtils.QObject {
             d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
             d.pushOrSkipBiometricsPage()
         }
+    }
+
+    KeycardCreateReplacementFlow {
+        id: keycardCreateReplacementFlow
+
+        stackView: root.stackView
+
+        keycardState: root.keycardState
+        addKeyPairState: root.addKeyPairState
+
+        displayKeycardPromoBanner: root.displayKeycardPromoBanner
+        isSeedPhraseValid: root.isSeedPhraseValid
+
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+        onReloadKeycardRequested: root.reloadKeycardRequested()
+        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onKeyPairTransferRequested: root.keyPairTransferRequested()
+        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onLoginWithKeycardRequested: loginWithKeycardFlow.init()
+        onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
+
+        onCreateProfileWithoutKeycardRequested: {
+            const page = stackView.find(
+                           item => item instanceof HelpUsImproveStatusPage)
+
+            stackView.replace(page, createProfilePage, StackView.PopTransition)
+        }
+
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+
+        onFinished: d.pushOrSkipBiometricsPage()
     }
 
     Component {
