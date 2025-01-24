@@ -9,6 +9,11 @@ import AppLayouts.Onboarding2.pages 1.0
 SQUtils.QObject {
     id: root
 
+    enum Type {
+        NewProfile,
+        KeycardRecovery
+    }
+
     required property StackView stackView
 
     required property var passwordStrengthScoreFunction
@@ -18,15 +23,21 @@ SQUtils.QObject {
     signal setPasswordRequested(string password)
     signal finished
 
-    function init() {
-        root.stackView.push(seedphrasePage)
+    function init(type = UseRecoveryPhraseFlow.Type.NewProfile) {
+        let title = ""
+
+        if (type === UseRecoveryPhraseFlow.Type.NewProfile)
+            title = qsTr("Create profile using a recovery phrase")
+        else if (type === UseRecoveryPhraseFlow.Type.KeycardRecovery)
+            title = qsTr("Enter recovery phrase of lost Keycard")
+
+        root.stackView.push(seedphrasePage, { title })
     }
 
     Component {
         id: seedphrasePage
 
         SeedphrasePage {
-            title: qsTr("Create profile using a recovery phrase")
             isSeedPhraseValid: root.isSeedPhraseValid
 
             onSeedphraseSubmitted: (seedphrase) => {
