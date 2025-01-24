@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtTest 1.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import Models 1.0
 
@@ -254,6 +255,27 @@ Item {
             compare(buttonIcon.visible, false)
             compare(buttonText.visible, true)
             compare(buttonEmoji.visible, false)
+        }
+
+        function test_outlineButton_data() {
+            return [
+                { tag: "normal", type: StatusBaseButton.Type.Normal },
+                { tag: "danger", type: StatusBaseButton.Type.Danger },
+                { tag: "warning", type: StatusBaseButton.Type.Warning },
+                { tag: "success", type: StatusBaseButton.Type.Success },
+                { tag: "primary", type: StatusBaseButton.Type.Primary },
+            ]
+        }
+
+        function test_outlineButton(data) {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root, { text: "Hello", "icon.name": "gif", isOutline: true, type: data.type })
+            verify(!!controlUnderTest)
+
+            expectFail("primary", "Primary button can not be outline")
+            verify(Qt.colorEqual(controlUnderTest.normalColor, "transparent"))
+            verify(Qt.colorEqual(controlUnderTest.disabledColor, "transparent"))
+            compare(controlUnderTest.borderWidth, 1)
+            verify(Qt.colorEqual(controlUnderTest.borderColor, Theme.palette.baseColor2))
         }
     }
 }
