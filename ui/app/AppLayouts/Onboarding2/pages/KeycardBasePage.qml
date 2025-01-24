@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -14,11 +13,12 @@ OnboardingPage {
     property string subtitle
     property alias image: image
     property alias infoText: infoText
-    property alias buttons: buttonsWrapper.children
+    property alias buttons: buttonsColumn.children
 
     contentItem: Item {
         ColumnLayout {
             anchors.centerIn: parent
+
             width: Math.min(400, root.availableWidth)
             spacing: 20
 
@@ -63,10 +63,12 @@ OnboardingPage {
                 }
             }
             Column {
+                id: buttonsColumn
+
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: 4
-                id: buttonsWrapper
+
                 spacing: 12
             }
         }
