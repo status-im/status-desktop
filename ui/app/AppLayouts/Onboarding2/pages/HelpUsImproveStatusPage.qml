@@ -92,6 +92,7 @@ OnboardingPage {
             title: qsTr("Help us improve Status")
             width: 480
             standardButtons: Dialog.Ok
+            okButtonText: qsTr("Got it")
             padding: 20
             destroyOnClose: true
             contentItem: ColumnLayout {
