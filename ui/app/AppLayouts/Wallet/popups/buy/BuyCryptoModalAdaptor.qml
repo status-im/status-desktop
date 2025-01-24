@@ -32,7 +32,11 @@ QObject {
                                 root.selectedProviderSupportedAssetsArray.includes(addPerChain.chainId+addPerChain.address)
                             })
             }
-            expression: isSupportedByProvider(model.addressPerChain)
+            expression: {
+                root.selectedChainId //dependency
+                root.selectedProviderSupportedAssetsArray //dependency
+                isSupportedByProvider(model.addressPerChain)
+            }
             expectedRoles: ["addressPerChain"]
             enabled: !!root.selectedProviderSupportedAssetsArray && root.selectedProviderSupportedAssetsArray.length > 0 && root.selectedChainId !== -1
         }
