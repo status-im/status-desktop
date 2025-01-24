@@ -22,7 +22,10 @@ public:
 
         LoginWithSeedphrase,
         LoginWithSyncing,
-        LoginWithKeycard
+        LoginWithKeycard,
+
+        LoginWithLostKeycardSeedphrase,
+        LoginWithRestoredKeycard
     };
 
     enum class LoginMethod {

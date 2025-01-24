@@ -198,7 +198,7 @@ Page {
             onOnboardingLoginFlowRequested: onboardingFlow.startLoginFlow()
             onUnlockWithSeedphraseRequested: console.warn("!!! FIXME onUnlockWithSeedphraseRequested")
             onUnlockWithPukRequested: console.warn("!!! FIXME onUnlockWithPukRequested")
-            onLostKeycard: console.warn("!!! FIXME onLostKeycard flow")
+            onLostKeycard: onboardingFlow.startLostKeycardFlow()
         }
     }
 
