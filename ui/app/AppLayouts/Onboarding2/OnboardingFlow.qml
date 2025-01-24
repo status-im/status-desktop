@@ -195,8 +195,8 @@ SQUtils.QObject {
 
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
-        onFinished: (fromBackupSeedphrase) => {
-            d.flow = fromBackupSeedphrase
+        onFinished: (withNewSeedphrase) => {
+            d.flow = withNewSeedphrase
                         ? Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
                         : Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
 

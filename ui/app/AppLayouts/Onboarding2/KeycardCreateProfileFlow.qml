@@ -33,7 +33,7 @@ SQUtils.QObject {
 
     signal mnemonicWasShown()
     signal mnemonicRemovalRequested()
-    signal finished(bool fromBackupSeedphrase)
+    signal finished(bool withNewSeedphrase)
 
     function init() {
         root.stackView.push(d.initialComponent())
@@ -42,7 +42,7 @@ SQUtils.QObject {
     QtObject {
         id: d
 
-        property bool fromBackupSeedphrase
+        property bool withNewSeedphrase
 
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.Empty)
@@ -79,11 +79,11 @@ SQUtils.QObject {
 
         CreateKeycardProfilePage {
             onCreateKeycardProfileWithNewSeedphrase: {
-                d.fromBackupSeedphrase = true
+                d.withNewSeedphrase = true
                 root.stackView.push(keycardCreatePinPage)
             }
             onCreateKeycardProfileWithExistingSeedphrase: {
-                d.fromBackupSeedphrase = false
+                d.withNewSeedphrase = false
                 root.stackView.push(keycardCreatePinPage)
             }
         }
@@ -178,7 +178,7 @@ SQUtils.QObject {
             onKeycardPinCreated: (pin) => {
                 Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
                     root.keycardPinCreated(pin)
-                    if (d.fromBackupSeedphrase)
+                    if (d.withNewSeedphrase)
                         root.stackView.push(backupSeedIntroPage)
                     else
                         root.stackView.push(seedphrasePage)
@@ -195,7 +195,7 @@ SQUtils.QObject {
 
             addKeyPairState: root.addKeyPairState
 
-            onKeypairAddContinueRequested: root.finished(d.fromBackupSeedphrase)
+            onKeypairAddContinueRequested: root.finished(d.withNewSeedphrase)
 
             onKeypairAddTryAgainRequested: {
                 root.stackView.replace(addKeypairPage)
