@@ -27,6 +27,8 @@ QtObject {
         filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
     }
 
+    property var rpcProviders: networksModuleInst.rpcProviders
+
     property var selectedAccount
 
     property var networkRPCChanged: ({}) // add network id to the object if changed

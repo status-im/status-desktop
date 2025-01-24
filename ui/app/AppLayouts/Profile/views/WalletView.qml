@@ -276,6 +276,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             networksModule: root.walletStore.networksModuleInst
             networkRPCChanged: root.walletStore.networkRPCChanged
+            rpcProviders: root.walletStore.rpcProviders
             areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {

@@ -172,10 +172,11 @@ StatusComboBox {
 
     QtObject {
         id: d
-        readonly property bool allSelected: root.selection.length === root.flatNetworks.count
+        readonly property int networksCount: root.flatNetworks.ModelCount.count
+        readonly property bool allSelected: root.selection.length === networksCount
         readonly property bool noneSelected: root.selection.length === 0
         readonly property bool oneSelected: root.selection.length === 1
-        readonly property bool selectionUnavailable: root.flatNetworks.count <= 1 && d.oneSelected
+        readonly property bool selectionUnavailable: d.networksCount <= 1 && d.oneSelected
 
         readonly property ModelEntry singleSelectionItem: ModelEntry {
             sourceModel: d.oneSelected ? root.flatNetworks : null

@@ -1,6 +1,5 @@
 import NimQml, Tables, strutils, sequtils, sugar
 
-import ./rpc_providers_model
 import ./io_interface
 
 from app_service/service/network/service import EXPLORER_TX_PATH
@@ -11,7 +10,6 @@ type
     ChainId = UserRole + 1,
     Layer
     ChainName
-    RpcProviders
     BlockExplorerURL
     NativeCurrencyName
     NativeCurrencySymbol
@@ -27,29 +25,17 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       delegate: io_interface.NetworksDataSource
-      rpcProvidersPerNetwork: seq[RpcProvidersModel]
 
   proc delete(self: Model) =
-    self.rpcProvidersPerNetwork = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
-    self.rpcProvidersPerNetwork = @[]
 
   proc newModel*(delegate: io_interface.NetworksDataSource): Model =
     new(result, delete)
     result.setup
     result.delegate = delegate
-
-  proc countChanged(self: Model) {.signal.}
-
-  proc getCount(self: Model): int {.slot.} =
-    return self.delegate.getFlatNetworksList().len
-
-  QtProperty[int] count:
-    read = getCount
-    notify = countChanged
 
   method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.delegate.getFlatNetworksList().len
@@ -60,7 +46,6 @@ QtObject:
       ModelRole.NativeCurrencyDecimals.int:"nativeCurrencyDecimals",
       ModelRole.Layer.int:"layer",
       ModelRole.ChainName.int:"chainName",
-      ModelRole.RpcProviders.int: "rpcProviders",
       ModelRole.BlockExplorerURL.int:"blockExplorerURL",
       ModelRole.NativeCurrencyName.int:"nativeCurrencyName",
       ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
@@ -76,8 +61,7 @@ QtObject:
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.rowCount()) or
-      index.row >= self.rpcProvidersPerNetwork.len:
+    if (index.row < 0 or index.row >= self.rowCount()):
       return
 
     let item = self.delegate.getFlatNetworksList()[index.row]
@@ -92,8 +76,6 @@ QtObject:
       result = newQVariant(item.layer)
     of ModelRole.ChainName:
       result = newQVariant(item.chainName)
-    of ModelRole.RpcProviders:
-      result = newQVariant(self.rpcProvidersPerNetwork[index.row])
     of ModelRole.BlockExplorerURL:
       result = newQVariant(item.blockExplorerURL)
     of ModelRole.NativeCurrencyName:
@@ -115,13 +97,7 @@ QtObject:
 
   proc refreshModel*(self: Model) =
     self.beginResetModel()
-    let numberOfNetworks = self.delegate.getFlatNetworksList().len
-    let numberOfRpcProviderLists = self.rpcProvidersPerNetwork.len
-    if numberOfNetworks > numberOfRpcProviderLists:
-      for i in countup(0, numberOfNetworks - numberOfRpcProviderLists - 1):
-        self.rpcProvidersPerNetwork.add(newRpcProvidersModel(self.delegate, numberOfRpcProviderLists+i))
     self.endResetModel()
-    self.countChanged()
 
   proc getBlockExplorerTxURL*(self: Model, chainId: int): string =
     for item in self.delegate.getFlatNetworksList():

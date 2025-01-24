@@ -175,6 +175,7 @@ SplitView {
                 width: 560
                 prodNetwork: d.network[0].prod
                 testNetwork: d.network[0].test
+                rpcProviders: d.rpcProviders
                 onEvaluateRpcEndPoint: networkModule.evaluateRpcEndPoint(url)
                 networksModule: networkModule
                 onUpdateNetworkValues: console.error(String("Updated network with chainId %1 with new main rpc url = %2 and faalback rpc =%3").arg(chainId).arg(newMainRpcInput).arg(newFailoverRpcUrl))

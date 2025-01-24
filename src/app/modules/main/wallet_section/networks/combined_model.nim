@@ -24,13 +24,6 @@ QtObject:
     result.setup
     result.delegate = delegate
 
-  proc countChanged(self: CombinedModel) {.signal.}
-  proc getCount(self: CombinedModel): int {.slot.} =
-    return self.delegate.getCombinedNetworksList().len
-  QtProperty[int] count:
-    read = getCount
-    notify = countChanged
-
   method rowCount*(self: CombinedModel, index: QModelIndex = nil): int =
     return self.delegate.getCombinedNetworksList().len
 
@@ -62,4 +55,3 @@ QtObject:
   proc modelUpdated*(self: CombinedModel) =
     self.beginResetModel()
     self.endResetModel()
-    self.countChanged()

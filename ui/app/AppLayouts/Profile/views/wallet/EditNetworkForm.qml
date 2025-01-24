@@ -19,6 +19,7 @@ ColumnLayout {
     id: root
 
     property var network
+    property var rpcProviders
     property var networksModule
     property var networkRPCChanged
     signal evaluateRpcEndPoint(string url, bool isMainUrl)
@@ -40,8 +41,11 @@ ColumnLayout {
         id: d
 
         readonly property SortFilterProxyModel userRpcProvidersModel: SortFilterProxyModel {
-            sourceModel: root.network.rpcProviders
-            filters: ValueFilter { roleName: "providerType"; value: Constants.rpcProviderTypes.user }
+            sourceModel: root.rpcProviders
+            filters: [
+                ValueFilter { roleName: "chainId"; value: network.chainId },
+                ValueFilter { roleName: "providerType"; value: Constants.rpcProviderTypes.user }
+            ]
         }
         readonly property int userRpcProvidersModelCount: d.userRpcProvidersModel.ModelCount.count ?? 0
 

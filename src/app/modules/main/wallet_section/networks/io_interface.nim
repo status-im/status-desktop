@@ -4,7 +4,8 @@ import app_service/service/network/combined_network_item
 type
   NetworksDataSource* = tuple[
     getFlatNetworksList: proc(): var seq[NetworkItem],
-    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem]
+    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem],
+    getRpcProvidersList: proc(): var seq[RpcProviderItem]
   ]
 
 type
