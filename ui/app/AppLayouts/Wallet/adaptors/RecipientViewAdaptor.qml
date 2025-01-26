@@ -141,11 +141,11 @@ QObject {
                 markerRoleValue: concatModel.recentRecipientsModelKey
             }
         ]
-        expectedRoles: ["name", "address", "color", "colorId", "emoji", "ens", "cherrypicked"]
+        expectedRoles: ["name", "address", "color", "colorId", "emoji", "ens", "cherrypicked", "duplicate"]
         markerRoleName: "which_model"
     }
 
-    ObjectProxyModel {
+    SortFilterProxyModel {
         id: recentsModel
         objectName: "RecipientViewAdaptor_recentsModel"
 
@@ -157,8 +157,18 @@ QObject {
             return entry.txType === Constants.TransactionType.Receive ? entry.sender : entry.recipient
         }
 
-        sourceModel: SortFilterProxyModel {
-            id: recentRecipientsModelProxy
+        function refreshRecentsModelFlatList() {
+            let list = []
+            for (let i = 0 ; i < recentRecipientsExtractModel.count ; i++) {
+                const address = getAddressFromEntry(ModelUtils.get(recentRecipientsExtractModel, i, "activityEntry"))
+                if (!!address)
+                    list.push(address)
+            }
+            recentRecipientsAddressesFlatList = list
+        }
+
+        // NOTE Additional model is used to filter out duplicate entries later on
+        readonly property SortFilterProxyModel recentRecipientsExtractModel: SortFilterProxyModel {
             sourceModel: root.recentRecipientsModel
 
             filters: [
@@ -167,57 +177,76 @@ QObject {
                     expression: recentsModel.isValidEntry(model.activityEntry)
                 }
             ]
+            onRowsInserted: recentsModel.refreshRecentsModelFlatList()
+            onRowsRemoved: recentsModel.refreshRecentsModelFlatList()
+            onRowsMoved: recentsModel.refreshRecentsModelFlatList()
         }
 
-        delegate: QtObject {
-            id: recentsDelegate
+        property var recentRecipientsAddressesFlatList: []
+        Component.onCompleted: refreshRecentsModelFlatList()
 
-            readonly property string address: recentsModel.getAddressFromEntry(model.activityEntry)
-            readonly property string name: {
-                if (recentsAccountsModelEntry.available)
-                    return recentsAccountsModelEntry.item.name
-                if (recentsSavedAddressModelEntry.available)
-                    return recentsAccountsModelEntry.item.name
-                return ""
-            }
-            readonly property string color: {
-                if (recentsAccountsModelEntry.available)
-                    return recentsAccountsModelEntry.item.color
-                if (recentsSavedAddressModelEntry.available)
-                    return recentsSavedAddressModelEntry.item.color
-                return ""
-            }
-            readonly property string colorId: {
-                if (recentsAccountsModelEntry.available)
-                    return recentsAccountsModelEntry.item.colorId
-                if (recentsSavedAddressModelEntry.available)
-                    return recentsSavedAddressModelEntry.item.colorId
-                return ""
-            }
-            readonly property string emoji: {
-                if (recentsAccountsModelEntry.available)
-                    return recentsAccountsModelEntry.item.emoji
-                return ""
+        sourceModel: ObjectProxyModel {
+            sourceModel: recentsModel.recentRecipientsExtractModel
+
+            delegate: QtObject {
+                id: recentsDelegate
+
+                readonly property bool duplicate: recentsModel.recentRecipientsAddressesFlatList.indexOf(address) < model.index
+                readonly property string address: recentsModel.getAddressFromEntry(model.activityEntry)
+                readonly property string name: {
+                    if (recentsAccountsModelEntry.available)
+                        return recentsAccountsModelEntry.item.name
+                    if (recentsSavedAddressModelEntry.available)
+                        return recentsAccountsModelEntry.item.name
+                    return ""
+                }
+                readonly property string color: {
+                    if (recentsAccountsModelEntry.available)
+                        return recentsAccountsModelEntry.item.color
+                    if (recentsSavedAddressModelEntry.available)
+                        return recentsSavedAddressModelEntry.item.color
+                    return ""
+                }
+                readonly property string colorId: {
+                    if (recentsAccountsModelEntry.available)
+                        return recentsAccountsModelEntry.item.colorId
+                    if (recentsSavedAddressModelEntry.available)
+                        return recentsSavedAddressModelEntry.item.colorId
+                    return ""
+                }
+                readonly property string emoji: {
+                    if (recentsAccountsModelEntry.available)
+                        return recentsAccountsModelEntry.item.emoji
+                    return ""
+                }
+
+                // Only used internally for filtering out duplicates in search. Recents can have same entries as in saved addresses or accounts.
+                readonly property bool cherrypicked: recentsSavedAddressModelEntry.available || recentsAccountsModelEntry.available || duplicate
+
+                readonly property ModelEntry recentsSavedAddressModelEntry: ModelEntry {
+                    sourceModel: recentsDelegate.duplicate ? null : root.savedAddressesModel
+                    key: "address"
+                    value: recentsDelegate.address
+                }
+
+                readonly property ModelEntry recentsAccountsModelEntry: ModelEntry {
+                    sourceModel: recentsDelegate.duplicate ? null : root.accountsModel
+                    key: "address"
+                    value: recentsDelegate.address
+                }
             }
 
-            // Only used internally for filtering out duplicates in search. Recents can have same entries as in saved addresses or accounts.
-            readonly property bool cherrypicked: recentsSavedAddressModelEntry.available || recentsAccountsModelEntry.available
-
-            readonly property ModelEntry recentsSavedAddressModelEntry: ModelEntry {
-                sourceModel: root.savedAddressesModel
-                key: "address"
-                value: recentsDelegate.address
-            }
-
-            readonly property ModelEntry recentsAccountsModelEntry: ModelEntry {
-                sourceModel: root.accountsModel
-                key: "address"
-                value: recentsDelegate.address
-            }
+            expectedRoles: ["activityEntry"]
+            exposedRoles: ["name", "address", "color", "colorId", "emoji", "cherrypicked", "duplicate"]
         }
 
-        expectedRoles: ["activityEntry"]
-        exposedRoles: ["name", "address", "color", "colorId", "emoji", "cherrypicked"]
+        filters: [
+            ValueFilter {
+                // NOTE duplicate property was used instead of filter, becuase removal of row doesn't re-evaluate existing results
+                roleName: "duplicate"
+                value: false
+            }
+        ]
     }
 
     SortFilterProxyModel {

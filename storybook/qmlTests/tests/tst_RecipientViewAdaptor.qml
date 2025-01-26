@@ -241,7 +241,54 @@ Item {
             const model = findChild(adaptor, "RecipientViewAdaptor_recentsModel")
             verify(model)
 
-            compare(model.ModelCount.count, 3)
+            compare(adaptor.recentRecipientsModel.ModelCount.count, 4)
+            compare(model.ModelCount.count, 3, "Invalid entries are filtered out")
+            compare(ModelUtils.get(model, 0, "address"), "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
+            compare(ModelUtils.get(model, 1, "address"), "0xebfbfe4072ebb77e53aa9117c7300531d1511111")
+            compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")
+
+            const newEntry = {
+                activityEntry:
+                {
+                    sender: "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0",
+                    recipient: "0x4cEB1EeaC4f77cf55b67823Ba64Ba289Dbd901E1",
+                    timestamp: "1709832116",
+                    txType: 1,
+                }
+            }
+
+            adaptor.recentRecipientsModel.append(newEntry)
+
+            compare(adaptor.recentRecipientsModel.ModelCount.count, 5)
+            compare(model.ModelCount.count, 4)
+            compare(ModelUtils.get(model, 3, "address"), "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0")
+
+            adaptor.recentRecipientsModel.append(newEntry)
+            adaptor.recentRecipientsModel.append(newEntry)
+
+            compare(adaptor.recentRecipientsModel.ModelCount.count, 7)
+            compare(model.ModelCount.count, 4, "Same address should not be duplicated")
+            compare(ModelUtils.get(model, 0, "address"), "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
+            compare(ModelUtils.get(model, 1, "address"), "0xebfbfe4072ebb77e53aa9117c7300531d1511111")
+            compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")
+            compare(ModelUtils.get(model, 3, "address"), "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0")
+
+            compare(adaptor.recentRecipientsModel.get(4).activityEntry.sender, "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0")
+            adaptor.recentRecipientsModel.remove(4, 1) // Remove visible entry
+            compare(adaptor.recentRecipientsModel.ModelCount.count, 6)
+            // Binding needs to be re-evaluated
+            tryCompare(model.ModelCount, "count", 4)
+            compare(ModelUtils.get(model, 0, "address"), "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
+            compare(ModelUtils.get(model, 1, "address"), "0xebfbfe4072ebb77e53aa9117c7300531d1511111")
+            compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")
+            compare(ModelUtils.get(model, 3, "address"), "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0")
+
+            adaptor.recentRecipientsModel.move(4, 5, 1) // Exchange duplicate items
+            // Binding needs to be re-evaluated
+            tryCompare(model.ModelCount, "count", 4)
+
+            adaptor.recentRecipientsModel.remove(4, 2) // Remove all elements with "0xfE6ccBfEB6de7c2eab44f719C288641721c961D0"
+            tryCompare(model.ModelCount, "count", 3)
             compare(ModelUtils.get(model, 0, "address"), "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
             compare(ModelUtils.get(model, 1, "address"), "0xebfbfe4072ebb77e53aa9117c7300531d1511111")
             compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")

@@ -18,22 +18,6 @@ Item {
     QtObject {
         id: d
 
-        readonly property var resolvedEns: ListModel {
-            Component.onCompleted: append(data)
-
-            readonly property var data: [
-                {
-                    ens: "test.eth",
-                    address: "0x423681De5233C2F92a21436e09F2Ffc727E72644"
-                },
-                {
-                    ens: "1234.eth",
-                    address: "0xC5E457F6b85EaE1Fc807081Cc325E482268e4e40"
-                }
-
-            ]
-        }
-
         readonly property var savedAddressesModel:  ListModel {
             Component.onCompleted: append(data)
 
@@ -142,6 +126,22 @@ Item {
         readonly property ListModel recentsModel: ListModel {
 
             readonly property var data: [
+                { // Invalid entry
+                    activityEntry:
+                    {
+                        sender: "0x28F00D9d64bc7B41003F8217A74c66f76199E21D",
+                        recipient: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                        timestamp: "1715274859",
+                        txType: 3,
+                        amountCurrency: {
+                            objectName: "",
+                            amount: 1,
+                            symbol:"",
+                            displayDecimals: 0,
+                            stripTrailingZeroes: true
+                        }
+                    }
+                },
                 {
                     activityEntry:
                     {
@@ -175,6 +175,38 @@ Item {
                     }
                 },
                 {
+                    activityEntry:
+                    {
+                        sender: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
+                        recipient: "0x28F00D9d64bc7B41003F8217A74c66f76199E21D",
+                        timestamp: "1709832115",
+                        txType: 1,
+                        amountCurrency: {
+                            objectName: "",
+                            amount: 1,
+                            symbol:"",
+                            displayDecimals: 0,
+                            stripTrailingZeroes: true
+                        }
+                    }
+                },
+                { // Dupliacte entry. Shoould not be visible
+                    activityEntry:
+                    {
+                        sender: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
+                        recipient: "0x28F00D9d64bc7B41003F8217A74c66f76199E21D",
+                        timestamp: "1709832115",
+                        txType: 1,
+                        amountCurrency: {
+                            objectName: "",
+                            amount: 1,
+                            symbol:"",
+                            displayDecimals: 0,
+                            stripTrailingZeroes: true
+                        }
+                    }
+                },
+                { // Dupliacte entry. Shoould not be visible
                     activityEntry:
                     {
                         sender: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
