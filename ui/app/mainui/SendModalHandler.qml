@@ -523,6 +523,9 @@ QtObject {
                                                       selectedCollectible.tokenId)
                     }
                 }
+
+                handler.reviewNext()
+
                 Global.openPopup(sendSignModalCmp)
             }
 
@@ -530,10 +533,18 @@ QtObject {
                 root.launchBuyFlowRequested(selectedAccountAddress, selectedChainId, selectedTokenKey)
             }
 
+            ModelEntry {
+                id: txPathUnderReviewEntry
+                sourceModel: handler.fetchedPathModel
+                key: "index"
+                value: handler.indexOfTxPathUnderReview
+            }
+
             QtObject {
                 id: handler
                 property string uuid
                 property var fetchedPathModel
+
                 readonly property string extraParamsJson: {
                     if (!!simpleSendModal.stickersPackId) {
                         return JSON.stringify({[Constants.suggestedRoutesExtraParamsProperties.packId]: simpleSendModal.stickersPackId})
@@ -543,6 +554,23 @@ QtObject {
                                                   [Constants.suggestedRoutesExtraParamsProperties.publicKey]: simpleSendModal.publicKey})
                     }
                     return ""
+                }
+
+                property int indexOfTxPathUnderReview: -1
+                readonly property bool reviewingLastTxPath: !!handler.fetchedPathModel && handler.indexOfTxPathUnderReview === handler.fetchedPathModel.ModelCount.count - 1
+
+                property bool approvalForTxPathUnderReviewReviewed: false
+                readonly property bool reviewApprovalForTxPathUnderReview: !!txPathUnderReviewEntry.item
+                                                                           && txPathUnderReviewEntry.item.approvalRequired
+                                                                           && !handler.approvalForTxPathUnderReviewReviewed
+
+                function reviewNext() {
+                    if (!handler.reviewApprovalForTxPathUnderReview) {
+                        handler.indexOfTxPathUnderReview++
+                        handler.approvalForTxPathUnderReviewReviewed = false
+                    } else {
+                        handler.approvalForTxPathUnderReviewReviewed = true
+                    }
                 }
 
                 function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
@@ -662,8 +690,9 @@ QtObject {
                 }
 
                 function resetRouterValues() {
-                    uuid = ""
-                    fetchedPathModel = null
+                    handler.uuid = ""
+                    handler.fetchedPathModel = null
+                    handler.indexOfTxPathUnderReview = -1
                     simpleSendModal.estimatedCryptoFees = ""
                     simpleSendModal.estimatedFiatFees = ""
                     simpleSendModal.estimatedTime = ""
@@ -711,9 +740,37 @@ QtObject {
                     networkIconPath: Theme.svg(signSendAdaptor.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: signSendAdaptor.selectedNetwork.blockExplorerURL
 
-                    fiatFees: simpleSendModal.estimatedFiatFees
-                    cryptoFees: simpleSendModal.estimatedCryptoFees
-                    estimatedTime: simpleSendModal.estimatedTime
+                    readonly property var totalFeesEth: {
+                        let tatlFeeInWei = "0"
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                tatlFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee))
+                            } else {
+                                tatlFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
+                                                                             SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee))
+                            }
+                        }
+                        return SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(tatlFeeInWei), SQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenDecimals))
+                    }
+
+                    fiatFees: {
+                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
+                        const ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
+                        return root.fnFormatCurrencyAmount(ethFiatValue*totalFeesEth, root.currentCurrency).toString()
+                    }
+
+                    cryptoFees: root.fnFormatCurrencyAmount(totalFeesEth.toString(), Constants.ethToken)
+
+                    estimatedTime: {
+                        if (!!txPathUnderReviewEntry.item) {
+                            if (handler.reviewApprovalForTxPathUnderReview) {
+                                return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.approvalEstimatedTime)
+                            }
+                            return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.txEstimatedTime)
+                        }
+                        return Constants.TransactionEstimatedTime.Unknown
+                    }
 
                     loginType: root.loginType
 
@@ -732,7 +789,11 @@ QtObject {
                     fnGetOpenSeaExplorerUrl: root.fnGetOpenSeaUrl
 
                     onAccepted: {
-                        root.transactionStoreNew.authenticateAndTransfer(handler.uuid, simpleSendModal.selectedAccountAddress)
+                        if (handler.reviewingLastTxPath) {
+                            root.transactionStoreNew.authenticateAndTransfer(handler.uuid, simpleSendModal.selectedAccountAddress)
+                            return
+                        }
+                        handler.reviewNext()
                     }
                 }
             }

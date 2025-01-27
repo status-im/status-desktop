@@ -2,9 +2,12 @@ import NimQml, Tables, strutils, stew/shims/strformat
 
 import ./path_item
 
+export path_item
+
 type
   ModelRole {.pure.} = enum
-    ProcessorName = UserRole + 1,
+    Index = UserRole + 1,
+    ProcessorName,
     FromChain,
     ToChain,
     FromToken,
@@ -67,6 +70,7 @@ QtObject:
 
   method roleNames(self: PathModel): Table[int, string] =
     {
+      ModelRole.Index.int: "index",
       ModelRole.ProcessorName.int: "processorName",
       ModelRole.FromChain.int: "fromChain",
       ModelRole.ToChain.int: "toChain",
@@ -122,6 +126,8 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
+    of ModelRole.Index:
+      result = newQVariant(index.row)
     of ModelRole.ProcessorName:
       result = newQVariant(item.processorName)
     of ModelRole.FromChain:
