@@ -10,6 +10,8 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import shared.views 1.0
 
+import AppLayouts.Onboarding2.controls 1.0
+
 OnboardingPage {
     id: root
 
@@ -58,18 +60,10 @@ OnboardingPage {
         }
     }
 
-    StatusButton {
-        objectName: "infoButton"
-        width: 32
-        height: 32
-        icon.width: 20
-        icon.height: 20
-        icon.color: Theme.palette.directColor1
-        normalColor: Theme.palette.baseColor2
-        padding: 0
+    OnboardingInfoButton {
         anchors.right: parent.right
         anchors.top: parent.top
-        icon.name: "info"
+        objectName: "infoButton"
         onClicked: passwordDetailsPopup.createObject(root).open()
     }
 
@@ -78,6 +72,7 @@ OnboardingPage {
         StatusSimpleTextPopup {
             objectName: "passwordDetailsPopup"
             title: qsTr("Create profile password")
+            okButtonText: qsTr("Got it")
             width: 480
             destroyOnClose: true
             content.text: qsTr("Your Status keys are the foundation of your self-sovereign identity in Web3. You have complete control over these keys, which you can use to sign transactions, access your data, and interact with Web3 services.

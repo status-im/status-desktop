@@ -70,18 +70,10 @@ OnboardingPage {
         }
     }
 
-    StatusButton {
-        objectName: "infoButton"
-        width: 32
-        height: 32
-        icon.width: 20
-        icon.height: 20
-        icon.color: Theme.palette.directColor1
-        normalColor: Theme.palette.baseColor2
-        padding: 0
+    OnboardingInfoButton {
         anchors.right: parent.right
         anchors.top: parent.top
-        icon.name: "info"
+        objectName: "infoButton"
         onClicked: helpUsImproveDetails.createObject(root).open()
     }
 
@@ -105,6 +97,8 @@ OnboardingPage {
                 OnboardingFrame {
                     Layout.fillWidth: true
                     dropShadow: false
+                    padding: Theme.padding
+                    cornerRadius: Theme.radius
                     contentItem: ColumnLayout {
                         spacing: 12
                         BulletPoint {
