@@ -10,7 +10,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Backpressure 0.1
 
-import shared.popups.send.views 1.0
+import shared.popups.send.views 1.0 as SendViews
 import shared.controls 1.0
 
 import AppLayouts.Wallet.panels 1.0
@@ -94,6 +94,18 @@ StatusDialog {
     **/
     required property var networksModel
 
+    /**
+    Expected model structure (both models):
+    - addres: wallet unique address
+    - name: (optional) wallet name
+    - color: (optional) wallet icon color
+    - colorId: (optional) wallet icon color id
+    - emoji: (optional) wallet icon emoji
+    - ens: (optional) wallet ens address
+    **/
+    required property var recipientsModel
+    required property var recipientsFilterModel
+
     /** Input property holds currently selected Fiat currency **/
     required property string currentCurrency
     /** Input function to format currency amount to locale string **/
@@ -152,17 +164,19 @@ StatusDialog {
                                                      !amountToSend.markAsInvalid &&
                                                      amountToSend.valid
 
-    /** TODO: replace with new and improved recipient selector StatusDateRangePicker
-    TBD under https://github.com/status-im/status-desktop/issues/16916 **/
-    required property var savedAddressesModel
-    required property var recentRecipientsModel
-    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
     /** Input function to resolve Ens Name **/
     required property var fnResolveENS
     /** Output function to set resolved ens name values **/
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
     }
+
+    /** Input / Output property to set and expose currently selected recipient address **/
+    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
+    /** Output property to indicate currently selected recipient view tab **/
+    readonly property alias selectedRecipientType: recipientsPanel.selectedRecipientType
+    /** Output property to filter recipient model **/
+    readonly property alias recipientSearchPattern: recipientsPanel.searchPattern
 
     /** Output signal to request signing of the transaction **/
     signal reviewSendClicked()
@@ -448,7 +462,7 @@ StatusDialog {
                 }
 
                 // Amount to send entry
-                AmountToSend {
+                SendViews.AmountToSend {
                     id: amountToSend
 
                     Layout.fillWidth: true
@@ -505,8 +519,6 @@ StatusDialog {
                     }
                 }
 
-                /** TODO: replace with new and improved recipient selector TBD under
-                https://github.com/status-im/status-desktop/issues/16916 **/
                 ColumnLayout {
                     id: recipientsPanelLayout
 
@@ -527,9 +539,8 @@ StatusDialog {
 
                         interactive: root.interactive
 
-                        savedAddressesModel: root.savedAddressesModel
-                        myAccountsModel: root.accountsModel
-                        recentRecipientsModel: root.recentRecipientsModel
+                        recipientsModel: root.recipientsModel
+                        recipientsFilterModel: root.recipientsFilterModel
 
                         onResolveENS: root.fnResolveENS(ensName, uuid)
                     }

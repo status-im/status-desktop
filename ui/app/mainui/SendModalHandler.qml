@@ -424,8 +424,8 @@ QtObject {
             flatCollectiblesModel: handler.collectiblesSelectionAdaptor.filteredFlatModel
             collectiblesModel: handler.collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel
-            savedAddressesModel: root.savedAddressesModel
-            recentRecipientsModel: root.recentRecipientsModel
+            recipientsModel: handler.recipientViewAdaptor.recipientsModel
+            recipientsFilterModel: handler.recipientViewAdaptor.recipientsFilterModel
 
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
@@ -571,6 +571,16 @@ QtObject {
                         return
                     }
                     close()
+                }
+
+                readonly property var recipientViewAdaptor: RecipientViewAdaptor {
+                    savedAddressesModel: root.savedAddressesModel
+                    accountsModel: root.walletAccountsModel
+                    recentRecipientsModel: root.recentRecipientsModel
+
+                    selectedSenderAddress: simpleSendModal.selectedAccountAddress
+                    selectedRecipientType: simpleSendModal.selectedRecipientType
+                    searchPattern: simpleSendModal.recipientSearchPattern
                 }
 
                 readonly property var accountsSelectorAdaptor: WalletAccountsSelectorAdaptor {

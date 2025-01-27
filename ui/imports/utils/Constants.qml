@@ -1281,6 +1281,13 @@ QtObject {
         return ""
     }
 
+    enum RecipientAddressObjectType {
+        Address, // Just a string with the address information / default
+        Account, // Wallet account object
+        SavedAddress, // Saved addresses object
+        RecentsAddress // Recent addresses object got from transactions history
+    }
+
     // Message outgoing status
     readonly property QtObject messageOutgoingStatus: QtObject {
         readonly property string sending: "sending"
