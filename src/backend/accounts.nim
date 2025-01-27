@@ -268,6 +268,8 @@ proc openedAccounts*(path: string): RpcResponse[JsonNode] =
       "logDir": "", # Empty value defaults to `dataDir`
       "logLevel": status_const.getStatusGoLogLevel(),
       "apiLoggingEnabled": status_const.API_LOGGING,
+      "wakuMetricsEnabled": status_const.WAKU_METRICS_ENABLED,
+      "wakuMetricsPort": status_const.WAKU_METRICS_PORT
     }
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
