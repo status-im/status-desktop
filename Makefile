@@ -133,18 +133,9 @@ ifeq ($(QT_ARCH),arm64)
 else
 	BOTTLE_MACOS_VERSION := 'monterey'
 endif
-$(BOTTLES): | $(BOTTLES_DIR)
+$(BOTTLES):
 	echo -e "\033[92mFetching:\033[39m $(notdir $@) bottle arch $(QT_ARCH) $(BOTTLE_MACOS_VERSION)"
 	./scripts/fetch-brew-bottle.sh $(notdir $@) $(BOTTLE_MACOS_VERSION) $(HANDLE_OUTPUT)
-
-$(BOTTLES_DIR):
-	echo -e "\033[92mUpdating:\033[39m macOS Homebrew"
-	if [[ $$(stat -f %u /usr/local/var/homebrew) -ne "$${UID}" ]] && [[ $$(stat -f %u /opt/homebrew/bin/brew) -ne "$${UID}" ]]; then \
-		echo "Missing permissions to update Homebrew formulae!" >&2; \
-	else \
-		brew update >/dev/null; \
-		mkdir -p $(BOTTLES_DIR); \
-	fi
 
 bottles: $(BOTTLES)
 endif
@@ -252,7 +243,7 @@ endif
 
 ##
 ## Versioning
-## 
+##
 
 version:
 	@echo $(DESKTOP_VERSION)
