@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 /**
   Two-tabs panel holding searchable lists of assets (single level) and
@@ -62,7 +63,8 @@ Control {
                 objectName: "assetsTab"
 
                 text: qsTr("Assets")
-                width: implicitWidth
+                width: visible ? implicitWidth : 0
+                leftPadding: visible ? Theme.padding : 0
 
                 visible: !!root.assetsModel
             }

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Wallet.panels 1.0
 
@@ -67,7 +68,7 @@ Control {
         width: 448
 
         horizontalPadding: 0
-        bottomPadding: 0
+        bottomPadding: Theme.halfPadding / 2
 
         onClosed: tokenSelectorPanel.clear()
 
