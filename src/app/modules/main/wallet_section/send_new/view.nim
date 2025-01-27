@@ -6,6 +6,8 @@ import app_service/service/eth/utils as eth_utils
 import app_service/service/transaction/dto as transaction_dto
 from backend/eth import ExtraKeyPackId
 
+export path_model
+
 QtObject:
   type
     View* = ref object of QObject
@@ -24,6 +26,9 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc getPathModel*(self: View): PathModel {.inline.} =
+    return self.pathModel
 
   proc fetchSuggestedRoutes*(self: View,
     uuid: string,
@@ -75,8 +80,7 @@ QtObject:
     self.delegate.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
 
   proc suggestedRoutesReady*(self: View, uuid: string, pathModel: QVariant, errCode: string, errDescription: string) {.signal.}
-  proc setTransactionRoute*(self: View, uuid: string, paths: seq[PathItem], errCode: string, errDescription: string) =
-    self.pathModel.setItems(paths)
+  proc sendSuggestedRoutesReadySignal*(self: View, uuid: string, errCode: string, errDescription: string) =
     self.suggestedRoutesReady(uuid, newQVariant(self.pathModel), errCode, errDescription)
 
   proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}

@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, strutils, chronicles, stint
 
-import ./io_interface, ./view, ./controller, ./path_item
+import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
 import app/global/global_singleton
@@ -274,7 +274,8 @@ method transactionWasSent*(self: Module, uuid: string, chainId: int = 0, approva
 
 method suggestedRoutesReady*(self: Module, uuid: string, routes: seq[TransactionPathDtoV2], errCode: string, errDescription: string) =
   let paths = routes.map(x => self.convertTransactionPathDtoV2ToPathItem(x))
-  self.view.setTransactionRoute(uuid, paths, errCode, errDescription)
+  self.view.getPathModel().setItems(paths)
+  self.view.sendSuggestedRoutesReadySignal(uuid, errCode, errDescription)
 
 method suggestedRoutes*(self: Module,
   uuid: string,

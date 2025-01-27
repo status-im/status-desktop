@@ -885,6 +885,7 @@ QtObject {
     readonly property string networkRopsten: "Ropsten"
 
     readonly property string ethToken: "ETH"
+    readonly property int ethTokenDecimals: 18
 
     readonly property QtObject networkShortChainNames: QtObject {
         readonly property string mainnet: "eth"
