@@ -13,47 +13,6 @@ BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 # we don't want an error here, so we can handle things later, in the ".DEFAULT" target
 -include $(BUILD_SYSTEM_DIR)/makefiles/variables.mk
 
-EXCLUDED_NIM_PACKAGES :=	vendor/status-go/third_party/nwaku/vendor/nim-bearssl \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-bearssl \
-							vendor/status-go/third_party/nwaku/vendor/nim-chronicles \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-chronicles \
-							vendor/status-go/third_party/nwaku/vendor/nim-chronos \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-chronos \
-							vendor/status-go/third_party/nwaku/vendor/nim-confutils \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-confutils \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-eth \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-faststreams \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-http-utils \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-json-rpc \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-json-serialization \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-secp256k1 \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-serialization \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-stew \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-websock \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nim-zlib \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimbus-build-system/vendor/Nim \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimbus-build-system/vendor/nimble \
-							vendor/status-go/third_party/nwaku/vendor/nim-dnsdisc/vendor/nimcrypto \
-							vendor/status-go/third_party/nwaku/vendor/nim-eth \
-							vendor/status-go/third_party/nwaku/vendor/nim-faststreams \
-							vendor/status-go/third_party/nwaku/vendor/nim-http-utils \
-							vendor/status-go/third_party/nwaku/vendor/nim-json-rpc \
-							vendor/status-go/third_party/nwaku/vendor/nim-json-serialization \
-							vendor/status-go/third_party/nwaku/vendor/nim-libp2p \
-							vendor/status-go/third_party/nwaku/vendor/nim-metrics \
-							vendor/status-go/third_party/nwaku/vendor/nim-results \
-							vendor/status-go/third_party/nwaku/vendor/nim-secp256k1 \
-							vendor/status-go/third_party/nwaku/vendor/nim-serialization \
-							vendor/status-go/third_party/nwaku/vendor/nim-stew \
-							vendor/status-go/third_party/nwaku/vendor/nim-stint \
-							vendor/status-go/third_party/nwaku/vendor/nim-taskpools \
-							vendor/status-go/third_party/nwaku/vendor/nim-testutils \
-							vendor/status-go/third_party/nwaku/vendor/nim-unittest2 \
-							vendor/status-go/third_party/nwaku/vendor/nim-web3 \
-							vendor/status-go/third_party/nwaku/vendor/nim-websock \
-							vendor/status-go/third_party/nwaku/vendor/nim-zlib \
-							vendor/status-go/third_party/nwaku/vendor/nimbus-build-system/vendor/Nim \
-							vendor/status-go/third_party/nwaku/vendor/nimcrypto
 							
 .PHONY: \
 	all \
@@ -261,7 +220,7 @@ endif
 
 ifeq ($(USE_NWAKU), true)
 	STATUSGO_MAKE_PARAMS += USE_NWAKU=true
-	LIBWAKU := vendor/status-go/third_party/nwaku/build/libwaku.$(LIB_EXT)
+	LIBWAKU := vendor/status-go/vendor/github.com/waku-org/waku-go-bindings/third_party/nwaku/build/libwaku.$(LIB_EXT)
 	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
 	export LIBWAKU
 	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
