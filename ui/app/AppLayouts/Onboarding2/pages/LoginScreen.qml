@@ -235,6 +235,8 @@ OnboardingPage {
             Item { Layout.fillHeight: true }
 
             StatusButton {
+                objectName: "lostKeycardButon"
+
                 Layout.alignment: Qt.AlignHCenter
 
                 isOutline: true
