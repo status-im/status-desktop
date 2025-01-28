@@ -21,7 +21,7 @@ OnboardingPage {
     states: [
         State {
             name: "inprogress"
-            when: root.syncState === Onboarding.SyncState.InProgress
+            when: root.syncState === Onboarding.SyncState.InProgress || root.syncState === Onboarding.SyncState.Idle
             PropertyChanges {
                 target: root
                 title: qsTr("Profile sync in progress...")

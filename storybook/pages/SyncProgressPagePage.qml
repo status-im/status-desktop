@@ -12,13 +12,13 @@ Item {
     SyncProgressPage {
         id: progressPage
         anchors.fill: parent
-        syncState: Onboarding.SyncState.InProgress
+        syncState: ctrlState.currentValue
         onRestartSyncRequested: {
             console.warn("!!! RESTART SYNC REQUESTED")
-            syncState = Onboarding.SyncState.InProgress
+            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.SyncState.InProgress)
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                syncState = Onboarding.SyncState.Success
+                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.SyncState.Success)
             })()
         }
         onLoginToAppRequested: console.warn("!!! LOGIN TO APP REQUESTED")
@@ -30,8 +30,13 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         width: 300
-        model: ["Onboarding.SyncState.InProgress", "Onboarding.SyncState.Success", "Onboarding.SyncState.Failed"]
-        onCurrentIndexChanged: progressPage.syncState = currentIndex
+        textRole: "name"
+        valueRole: "value"
+        model: [
+            {name: "InProgress", value: Onboarding.SyncState.InProgress},
+            {name: "Success", value: Onboarding.SyncState.Success},
+            {name: "Failed", value: Onboarding.SyncState.Failed}
+        ]
     }
 }
 
