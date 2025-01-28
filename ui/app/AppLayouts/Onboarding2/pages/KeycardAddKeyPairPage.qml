@@ -159,19 +159,21 @@ OnboardingPage {
                 spacing: 12
                 visible: false
 
-                MaybeOutlineButton {
+                StatusButton {
                     width: parent.width
                     text: qsTr("Try again")
                     onClicked: root.keypairAddTryAgainRequested()
                 }
-                MaybeOutlineButton {
-                    text: qsTr("I’ve inserted a different Keycard")
+                StatusButton {
+                    text: qsTr("I've inserted a different Keycard")
                     width: parent.width
+                    isOutline: true
                     onClicked: root.reloadKeycardRequested()
                 }
-                MaybeOutlineButton {
+                StatusButton {
                     text: qsTr("Create profile without Keycard")
                     width: parent.width
+                    isOutline: true
                     onClicked: root.createProfilePageRequested()
                 }
             }

@@ -62,9 +62,7 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 320
                 text: qsTr("Not now")
-                normalColor: "transparent"
-                borderWidth: 1
-                borderColor: Theme.palette.baseColor2
+                isOutline: true
                 onClicked: root.shareUsageDataRequested(false)
             }
         }
