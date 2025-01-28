@@ -176,9 +176,7 @@ OnboardingPage {
                 id: loginWithSeedphraseButton
                 text: qsTr("Log in via recovery phrase")
                 visible: false
-                normalColor: "transparent"
-                borderWidth: 1
-                borderColor: Theme.palette.baseColor2
+                isOutline: true
                 onClicked: root.loginWithSeedphraseRequested()
             }
 
@@ -188,9 +186,7 @@ OnboardingPage {
                 id: loginAnywayButton
                 text: qsTr("Log in anyway")
                 visible: false
-                normalColor: "transparent"
-                borderWidth: 1
-                borderColor: Theme.palette.baseColor2
+                isOutline: true
                 onClicked: root.loginToAppRequested()
             }
         }

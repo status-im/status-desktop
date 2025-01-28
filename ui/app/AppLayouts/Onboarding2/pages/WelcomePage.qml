@@ -110,10 +110,8 @@ OnboardingPage {
                     objectName: "btnLogin"
                     Layout.fillWidth: true
                     text: qsTr("Log in")
+                    isOutline: true
                     onClicked: root.loginRequested()
-                    normalColor: "transparent"
-                    borderWidth: 1
-                    borderColor: Theme.palette.baseColor2
                 }
                 StatusBaseText {
                     objectName: "approvalLinks"
