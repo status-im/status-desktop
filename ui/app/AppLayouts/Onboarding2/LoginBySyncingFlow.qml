@@ -29,7 +29,7 @@ SQUtils.QObject {
 
             onSyncProceedWithConnectionString: {
                 root.syncProceedWithConnectionString(connectionString)
-                root.stackView.push(syncProgressPage, { connectionString })
+                root.stackView.push(syncProgressPage)
             }
         }
     }
@@ -38,17 +38,13 @@ SQUtils.QObject {
         id: syncProgressPage
 
         SyncProgressPage {
-            property string connectionString
             readonly property bool backAvailableHint:
-                root.syncState !== Onboarding.SyncState.InProgress
+                root.syncState === Onboarding.SyncState.Failed
 
             syncState: root.syncState
 
             onLoginToAppRequested: root.finished()
-            onRestartSyncRequested: {
-                root.syncProceedWithConnectionString(connectionString)
-                root.stackView.replace(syncProgressPage)
-            }
+            onRestartSyncRequested: root.stackView.pop()
 
             onLoginWithSeedphraseRequested: root.loginWithSeedphraseRequested()
         }

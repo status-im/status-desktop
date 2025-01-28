@@ -13,14 +13,14 @@ Item {
         id: progressPage
 
         anchors.fill: parent
-        addKeyPairState: Onboarding.AddKeyPairState.InProgress
+        addKeyPairState: ctrlState.currentValue
 
         onKeypairAddTryAgainRequested: {
             console.warn("!!! onKeypairAddTryAgainRequested")
-            addKeyPairState = Onboarding.AddKeyPairState.InProgress
+            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.AddKeyPairState.InProgress)
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                addKeyPairState = Onboarding.AddKeyPairState.Success
+                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.AddKeyPairState.Success)
             })()
         }
         onKeypairAddContinueRequested: console.warn("!!! onKeypairAddContinueRequested")
@@ -33,8 +33,13 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         width: 350
-        model: ["Onboarding.AddKeyPairState.InProgress", "Onboarding.AddKeyPairState.Success", "Onboarding.AddKeyPairState.Failed"]
-        onCurrentIndexChanged: progressPage.addKeyPairState = currentIndex
+        textRole: "name"
+        valueRole: "value"
+        model: [
+            {name: "InProgress", value: Onboarding.AddKeyPairState.InProgress},
+            {name: "Success", value: Onboarding.AddKeyPairState.Success},
+            {name: "Failed", value: Onboarding.AddKeyPairState.Failed}
+        ]
     }
 }
 
