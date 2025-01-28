@@ -1059,5 +1059,172 @@ Item {
 
             tryCompare(controlUnderTest.stack.currentItem, "title", data.landingPageTitle)
         }
+
+        function test_loginScreenLostKeycardSeedphraseLoginFlow() {
+            verify(!!controlUnderTest)
+            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.biometricsAvailable = false
+            controlUnderTest.restartFlow()
+
+            const stack = findChild(controlUnderTest, "stack")
+            verify(!!stack)
+
+            // PAGE 1: Login screen
+            let page = getCurrentPage(stack, LoginScreen)
+            const keyUid = "uid_4"
+
+            const userSelector = findChild(page, "loginUserSelector")
+            verify(!!userSelector)
+            userSelector.setSelection(keyUid)
+            tryCompare(userSelector, "selectedProfileKeyId", keyUid)
+            tryCompare(userSelector, "keycardCreatedAccount", true)
+
+            const lostKeycardButon = findChild(page, "lostKeycardButon")
+            verify(!!lostKeycardButon)
+            mouseClick(lostKeycardButon)
+
+            // PAGE 2: Keycard lost page
+            page = getCurrentPage(stack, KeycardLostPage)
+
+            const startUsingWithoutKeycardButton = findChild(page, "startUsingWithoutKeycardButton")
+            verify(!!startUsingWithoutKeycardButton)
+            mouseClick(startUsingWithoutKeycardButton)
+
+            // PAGE 3: Seedphrase
+            page = getCurrentPage(stack, SeedphrasePage)
+
+            const btnContinue = findChild(page, "btnContinue")
+            verify(!!btnContinue)
+            compare(btnContinue.enabled, false)
+
+            const firstInput = findChild(page, "enterSeedPhraseInputField1")
+            verify(!!firstInput)
+            tryCompare(firstInput, "activeFocus", true)
+            ClipboardUtils.setText(mockDriver.mnemonic)
+            keySequence(StandardKey.Paste)
+            compare(btnContinue.enabled, true)
+            mouseClick(btnContinue)
+
+            // PAGE 4: Create password
+            page = getCurrentPage(stack, CreatePasswordPage)
+
+            const btnConfirmPassword = findChild(page, "btnConfirmPassword")
+            verify(!!btnConfirmPassword)
+            compare(btnConfirmPassword.enabled, false)
+
+            const passwordViewNewPassword = findChild(page, "passwordViewNewPassword")
+            verify(!!passwordViewNewPassword)
+            mouseClick(passwordViewNewPassword)
+            compare(passwordViewNewPassword.activeFocus, true)
+            compare(passwordViewNewPassword.text, "")
+
+            keyClickSequence(mockDriver.dummyNewPassword)
+            compare(passwordViewNewPassword.text, mockDriver.dummyNewPassword)
+            compare(btnConfirmPassword.enabled, false)
+
+            const passwordViewNewPasswordConfirm = findChild(page, "passwordViewNewPasswordConfirm")
+            verify(!!passwordViewNewPasswordConfirm)
+            mouseClick(passwordViewNewPasswordConfirm)
+            compare(passwordViewNewPasswordConfirm.activeFocus, true)
+            compare(passwordViewNewPasswordConfirm.text, "")
+
+            keyClickSequence(mockDriver.dummyNewPassword)
+            compare(passwordViewNewPassword.text, mockDriver.dummyNewPassword)
+            compare(btnConfirmPassword.enabled, true)
+
+            mouseClick(btnConfirmPassword)
+
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithLostKeycardSeedphrase)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.password, mockDriver.dummyNewPassword)
+            compare(resultData.enableBiometrics, false)
+            compare(resultData.keycardPin, "")
+            compare(resultData.seedphrase, mockDriver.mnemonic)
+        }
+
+        function test_loginScreenLostKeycardCreateReplacementFlow() {
+            verify(!!controlUnderTest)
+            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.biometricsAvailable = false
+            controlUnderTest.restartFlow()
+
+            // PAGE 1: Login screen
+            const stack = findChild(controlUnderTest, "stack")
+            verify(!!stack)
+
+            let page = getCurrentPage(stack, LoginScreen)
+            const keyUid = "uid_4"
+
+            const userSelector = findChild(page, "loginUserSelector")
+            verify(!!userSelector)
+            userSelector.setSelection(keyUid)
+            tryCompare(userSelector, "selectedProfileKeyId", keyUid)
+            tryCompare(userSelector, "keycardCreatedAccount", true)
+
+            const lostKeycardButon = findChild(page, "lostKeycardButon")
+            verify(!!lostKeycardButon)
+            mouseClick(lostKeycardButon)
+
+            // PAGE 2: Keycard lost page
+            page = getCurrentPage(stack, KeycardLostPage)
+
+            const startUsingWithoutKeycardButton = findChild(page, "createReplacementButton")
+            verify(!!startUsingWithoutKeycardButton)
+            mouseClick(startUsingWithoutKeycardButton)
+
+            // PAGE 3: Keycard intro
+            page = getCurrentPage(stack, KeycardIntroPage)
+            dynamicSpy.setup(page, "emptyKeycardDetected")
+            mockDriver.keycardState = Onboarding.KeycardState.Empty // SIMULATION // TODO test other states here as well
+            tryCompare(dynamicSpy, "count", 1)
+            tryCompare(page, "state", "empty")
+
+            // PAGE 4: Seedphrase
+            page = getCurrentPage(stack, SeedphrasePage)
+            let btnContinue = findChild(page, "btnContinue")
+            verify(!!btnContinue)
+            compare(btnContinue.enabled, false)
+
+            const firstInput = findChild(page, "enterSeedPhraseInputField1")
+            verify(!!firstInput)
+            tryCompare(firstInput, "activeFocus", true)
+            ClipboardUtils.setText(mockDriver.mnemonic)
+            keySequence(StandardKey.Paste)
+            compare(btnContinue.enabled, true)
+            mouseClick(btnContinue)
+
+            // PAGE 5: Create new Keycard PIN
+            const newPin = "123321"
+            page = getCurrentPage(stack, KeycardCreatePinPage)
+            tryCompare(page, "state", "creating")
+            dynamicSpy.setup(page, "keycardPinCreated")
+            keyClickSequence(newPin)
+            tryCompare(page, "state", "repeating")
+            keyClickSequence(newPin)
+            tryCompare(dynamicSpy, "count", 1)
+            compare(dynamicSpy.signalArguments[0][0], newPin)
+
+            // PAGE 6: Adding key pair to Keycard
+            page = getCurrentPage(stack, KeycardAddKeyPairPage)
+            tryCompare(page, "addKeyPairState", Onboarding.AddKeyPairState.InProgress)
+            page.addKeyPairState = Onboarding.AddKeyPairState.Success // SIMULATION
+
+            btnContinue = findChild(page, "btnContinue")
+            verify(!!btnContinue)
+            compare(btnContinue.enabled, true)
+            mouseClick(btnContinue)
+
+            // FINISH
+            tryCompare(finishedSpy, "count", 1)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithRestoredKeycard)
+            const resultData = finishedSpy.signalArguments[0][1]
+            verify(!!resultData)
+            compare(resultData.enableBiometrics, false)
+            compare(resultData.keycardPin, newPin)
+            compare(resultData.seedphrase, mockDriver.mnemonic)
+        }
     }
 }
