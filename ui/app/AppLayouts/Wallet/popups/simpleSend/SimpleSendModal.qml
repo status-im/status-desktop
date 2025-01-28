@@ -118,7 +118,7 @@ StatusDialog {
     property bool displayOnlyAssets
 
     /** input property true if a community owner token is being transferred **/
-     property bool transferOwnership
+    property bool transferOwnership
 
     /** input property to decide if routes are being fetched **/
     property bool routesLoading
@@ -149,6 +149,13 @@ StatusDialog {
     e.g. 1000000000000000000 for 1 ETH **/
     property string selectedRawAmount
 
+    /** Input / Output property to set and expose currently selected recipient address **/
+    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
+    /** Output property to indicate currently selected recipient view tab **/
+    readonly property alias selectedRecipientType: recipientsPanel.selectedRecipientType
+    /** Output property to filter recipient model **/
+    readonly property alias recipientSearchPattern: recipientsPanel.searchPattern
+
     /** input property holds the publicKey of the user for registering an ENS name **/
     property string publicKey
     /** input property holds the selected ens name to be registered **/
@@ -171,13 +178,6 @@ StatusDialog {
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
     }
-
-    /** Input / Output property to set and expose currently selected recipient address **/
-    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
-    /** Output property to indicate currently selected recipient view tab **/
-    readonly property alias selectedRecipientType: recipientsPanel.selectedRecipientType
-    /** Output property to filter recipient model **/
-    readonly property alias recipientSearchPattern: recipientsPanel.searchPattern
 
     /** Output signal to request signing of the transaction **/
     signal reviewSendClicked()
@@ -381,6 +381,8 @@ StatusDialog {
         AccountSelectorHeader {
             id: accountSelector
 
+            objectName: "accountSelector"
+
             anchors.top: parent.top
             anchors.topMargin: -accountSelector.height - Theme.padding
             anchors.left: parent.left
@@ -412,6 +414,8 @@ StatusDialog {
             StickySendModalHeader {
                 id: stickySendModalHeader
 
+                objectName: "stickySendModalHeader"
+
                 width: parent.width
 
                 stickyHeaderVisible: d.stickyHeaderVisible
@@ -436,6 +440,8 @@ StatusDialog {
         StatusScrollView {
             id: scrollView
 
+            objectName: "scrollView"
+
             anchors.fill: parent
             contentWidth: availableWidth
 
@@ -457,6 +463,8 @@ StatusDialog {
                 // Header that scrolls
                 SendModalHeader {
                     id: sendModalHeader
+
+                    objectName: "sendModalHeader"
 
                     Layout.fillWidth: true
                     Layout.topMargin: 28
@@ -480,6 +488,8 @@ StatusDialog {
                 // Amount to send entry
                 SendViews.AmountToSend {
                     id: amountToSend
+
+                    objectName: "amountToSend"
 
                     Layout.fillWidth: true
 
@@ -550,7 +560,6 @@ StatusDialog {
                     }
                     Item {
                         Layout.alignment: Qt.AlignTop
-
                         Layout.fillWidth: true
                         Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
                         implicitHeight: recipientsPanel.height
@@ -569,6 +578,9 @@ StatusDialog {
 
                         RecipientSelectorPanel {
                             id: recipientsPanel
+
+                            objectName: "recipientsPanel"
+
                             anchors {
                                 top: parent.top
                                 left: parent.left
@@ -589,6 +601,8 @@ StatusDialog {
                 ColumnLayout {
                     id: feesLayout
 
+                    objectName: "feesLayout"
+
                     Layout.fillWidth: true
                     Layout.bottomMargin: Theme.xlPadding
 
@@ -599,6 +613,8 @@ StatusDialog {
                         text: qsTr("Fees")
                     }
                     SimpleTransactionsFees {
+                        objectName: "signTransactionFees"
+
                         Layout.fillWidth: true
 
                         cryptoFees: root.estimatedCryptoFees
@@ -612,7 +628,9 @@ StatusDialog {
         }
     }
 
-    footer: SendModalFooter {
+    footer: SendModalFooter {        
+        objectName: "sendModalFooter"
+
         width: root.width
 
         estimatedTime: root.estimatedTime

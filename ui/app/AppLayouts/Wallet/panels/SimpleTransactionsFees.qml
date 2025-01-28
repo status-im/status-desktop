@@ -31,6 +31,8 @@ Control {
     verticalPadding: 12
 
     background: Rectangle {
+        objectName: "background"
+
         color: Theme.palette.indirectColor1
         radius: Theme.radius
     }
@@ -39,7 +41,9 @@ Control {
         width: parent.width
         spacing: 12
 
-        StatusRoundIcon {
+        StatusRoundIcon {            
+            objectName: "gasIcon"
+
             Layout.alignment: Qt.AlignTop
 
             radius: 8
@@ -52,6 +56,8 @@ Control {
             spacing: 0
 
             StatusBaseText {
+                objectName: "infoText"
+
                 Layout.fillWidth: true
 
                 lineHeightMode: Text.FixedHeight
@@ -61,6 +67,8 @@ Control {
             }
             StatusTextWithLoadingState {
                 id: cryptoFeesText
+
+                objectName: "cryptoFeesText"
 
                 Layout.fillWidth: true
 
@@ -76,6 +84,8 @@ Control {
         }
         StatusTextWithLoadingState {
             id: fiatFeesText
+
+            objectName: "fiatFeesText"
 
             Layout.alignment: Qt.AlignRight
 
