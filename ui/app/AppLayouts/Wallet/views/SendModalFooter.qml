@@ -41,12 +41,16 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                objectName: "estTimeLabel"
+
                 font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est time")
             }
             StatusTextWithLoadingState {
                 id: estimatedTime
+
+                objectName: "estimatedTimeText"
 
                 font.weight: Font.Medium
                 customColor: !!root.estimatedTime ? Theme.palette.directColor1:
@@ -63,6 +67,8 @@ StatusDialogFooter {
             spacing: 0
 
             StatusBaseText {
+                objectName: "estFeesLabel"
+
                 font.weight: Font.Medium
                 color: Theme.palette.directColor5
                 text: qsTr("Est fees")
@@ -70,11 +76,14 @@ StatusDialogFooter {
             StatusTextWithLoadingState {
                 id: estimatedFees
 
+                objectName: "estimatedFeesText"
+
                 font.weight: Font.Medium
                 customColor: root.error ? Theme.palette.dangerColor1:
                                           !!root.estimatedFees ?
                                               Theme.palette.directColor1:
                                               Theme.palette.directColor5
+
                 loading: root.loading
 
                 text: !!root.estimatedFees ? root.estimatedFees:
