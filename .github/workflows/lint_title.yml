@@ -1,0 +1,31 @@
+name: Conventional Commits Validator
+
+on:
+  pull_request_target:
+
+jobs:
+  validate:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Conventional Commits format
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repo.name }}
+        run: |
+          title="${{ github.event.pull_request.title }}"
+
+          if [[ $title =~ ^(fix|feat|docs|style|refactor|perf|test|build|ci|chore|revert):(.*)$ ]]; then
+            echo "Pull request title is correctly formatted."
+          else
+            comment="Please ensure your pull request title follows the Conventional Commits standard. Example: 'type: brief description' where type is one of fix, feat, docs, 
+style, refactor, perf, test, build, ci, chore, or revert."
+            curl -s -X POST \
+              https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${PR_NUMBER}/comments \
+              -H 'Authorization: Bearer ${GITHUB_TOKEN}' \
+              -H 'Content-Type: application/json' \
+              -d '{"body":"'"${comment}"'"}'
+            echo "Comment added to pull request due to incorrect title format."
+          fi
