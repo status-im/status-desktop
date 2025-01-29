@@ -35,6 +35,49 @@ SplitView {
         readonly property var accountsModel: WalletAccountsModel {}
         readonly property var selectedAccount: selectedAccountEntry.item
 
+        readonly property var recipientModel: ListModel {
+            readonly property var data: [
+                {
+                    modelName: "Wallet A",
+                    name: "Hot wallet",
+                    emoji: "🚗",
+                    colorId: Constants.walletAccountColors.army,
+                    color: "#216266",
+                    ens: "",
+                    address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881",
+                },
+                {
+                    modelName: "Wallet B",
+                    name: "helloworld",
+                    emoji: "😋",
+                    colorId: Constants.walletAccountColors.primary,
+                    color: "#2A4AF5",
+                    ens: "",
+                    address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240",
+                },
+                {
+                    modelName: "ENS",
+                    name: "Family (ens)",
+                    emoji: "🎨",
+                    colorId: Constants.walletAccountColors.magenta,
+                    color: "#EC266C",
+                    ens: "bation.eth",
+                    address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882",
+                },
+                {
+                    modelName: "Address",
+                    name: "",
+                    emoji: "",
+                    colorId: "",
+                    color: "",
+                    ens: "",
+                    address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8883",
+                },
+            ]
+            Component.onCompleted: append(data)
+        }
+        readonly property var selectedRecipient: selectedRecipientEntry.item
+
         readonly property var networksModel: NetworksModel.flatNetworks
         readonly property var selectedNetwork: selectedNetworkEntry.item
     }
@@ -44,6 +87,13 @@ SplitView {
         sourceModel: priv.accountsModel
         key: "address"
         value: ctrlAccount.currentValue
+    }
+
+    ModelEntry {
+        id: selectedRecipientEntry
+        sourceModel: priv.recipientModel
+        key: "address"
+        value: ctrlRecipient.currentValue
     }
 
     ModelEntry {
@@ -87,7 +137,11 @@ SplitView {
                     accountEmoji: priv.selectedAccount.emoji
                     accountColor: Utils.getColorForId(priv.selectedAccount.colorId)
 
-                    recipientAddress: ctrlRecipient.text
+                    recipientAddress: priv.selectedRecipient.address
+                    recipientName: priv.selectedRecipient.name
+                    recipientEns: priv.selectedRecipient.ens
+                    recipientEmoji: priv.selectedRecipient.emoji
+                    recipientWalletColor: Utils.getColorForId(priv.selectedRecipient.colorId)
 
                     networkShortName: priv.selectedNetwork.shortName
                     networkName: priv.selectedNetwork.chainName
@@ -189,11 +243,15 @@ SplitView {
                 currentIndex: 0
             }
 
-            TextField {
-                Layout.fillWidth: true
+            Text {
+                text: "Selected Recipient"
+            }
+            ComboBox {
                 id: ctrlRecipient
-                text: "0xA858DDc0445d8131daC4d1DE01f834ffcbA52Ef1"
-                placeholderText: "Selected recipient"
+                textRole: "modelName"
+                valueRole: "address"
+                model: priv.recipientModel
+                currentIndex: 0
             }
 
             Text {

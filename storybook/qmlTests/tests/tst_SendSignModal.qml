@@ -34,6 +34,10 @@ Item {
             accountColor: Utils.getColorForId(Constants.walletAccountColors.primary)
 
             recipientAddress: "0xA858DDc0445d8131daC4d1DE01f834ffcbA52Ef1"
+            recipientName: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882"
+            recipientEmoji: "😋"
+            recipientEns: ""
+            recipientWalletColor: Utils.getColorForId(Constants.walletAccountColors.secondary)
 
             networkShortName: Constants.networkShortChainNames.mainnet
             networkName: "Mainnet"
@@ -340,11 +344,30 @@ Item {
             const recipientBox = findChild(controlUnderTest.contentItem, "recipientBox")
             verify(!!recipientBox)
 
+            const delegate = findChild(recipientBox, "recipientDelegate")
+            verify(!!delegate)
+
             compare(recipientBox.caption, qsTr("To"))
-            compare(recipientBox.primaryText, controlUnderTest.recipientAddress)
-            compare(recipientBox.asset.name, "address")
-            verify(!recipientBox.asset.isLetterIdenticon)
-            verify(!recipientBox.asset.isImage)
+            compare(recipientBox.address, controlUnderTest.recipientAddress)
+            compare(recipientBox.name, controlUnderTest.recipientName)
+            compare(recipientBox.ens, controlUnderTest.recipientEns)
+            compare(recipientBox.emoji, controlUnderTest.recipientEmoji)
+            compare(recipientBox.walletColor, controlUnderTest.recipientWalletColor)
+
+            compare(delegate.title, controlUnderTest.recipientName)
+            compare(delegate.subTitle, SQUtils.Utils.elideText(controlUnderTest.recipientAddress, 6, 4))
+            compare(delegate.asset.color, controlUnderTest.recipientWalletColor)
+            compare(delegate.asset.emoji, controlUnderTest.recipientEmoji)
+
+            controlUnderTest.recipientEns = "1234.eth"
+            compare(delegate.title, controlUnderTest.recipientName)
+            compare(delegate.subTitle, "1234.eth")
+
+            controlUnderTest.recipientEns = ""
+            controlUnderTest.recipientName = ""
+
+            compare(delegate.title, SQUtils.Utils.elideText(controlUnderTest.recipientAddress, 6, 4))
+            compare(delegate.subTitle, "")
         }
 
         function test_recpientContextMenu() {
@@ -396,11 +419,19 @@ Item {
             const accountBox = findChild(controlUnderTest.contentItem, "accountBox")
             verify(!!accountBox)
 
-            compare(accountBox.caption, qsTr("From"))
-            compare(accountBox.primaryText, controlUnderTest.accountName)
-            compare(accountBox.secondaryText, SQUtils.Utils.elideAndFormatWalletAddress(controlUnderTest.accountAddress))
-            compare(accountBox.asset.emoji, controlUnderTest.accountEmoji)
-            compare(accountBox.asset.color, controlUnderTest.accountColor)
+            const delegate = findChild(accountBox, "recipientDelegate")
+            verify(!!delegate)
+
+            compare(accountBox.caption, qsTr("From"))          
+            compare(accountBox.address, controlUnderTest.accountAddress)
+            compare(accountBox.name, controlUnderTest.accountName)
+            compare(accountBox.emoji, controlUnderTest.accountEmoji)
+            compare(accountBox.walletColor, controlUnderTest.accountColor)
+
+            compare(delegate.title, controlUnderTest.accountName)
+            compare(delegate.subTitle, SQUtils.Utils.elideText(controlUnderTest.accountAddress, 6, 4))
+            compare(delegate.asset.color, controlUnderTest.accountColor)
+            compare(delegate.asset.emoji, controlUnderTest.accountEmoji)
         }
 
         function test_networkInfo() {

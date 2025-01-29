@@ -18,6 +18,8 @@ QObject {
     required property string tokenKey
     /** amount selected in send modal for sending **/
     required property string selectedAmountInBaseUnit
+    /** recipient address selected in send modal for sending **/
+    required property string selectedRecipientAddress
     /**
       Expected model structure:
 
@@ -44,6 +46,18 @@ QObject {
     **/
     required property var tokenBySymbolModel
 
+    /**
+      Expected model structure:
+
+        address               [string] - address of recipient
+        name                  [string] - name of recipient
+        ens                   [string] - ens of recipient
+        emoji                 [string] - emoji of recipient wallet
+        color                 [string] - color of recipient wallet
+        colorId               [string] - colorId of recipient wallet
+    **/
+    required property var recipientModel
+
     /** output property of the account selected **/
     readonly property var selectedAccount: selectedAccountEntry.item
     /** output property of the network selected **/
@@ -66,6 +80,29 @@ QObject {
     readonly property string selectedAssetContractAddress: selectedAssetContractEntry.available &&
                                                            !!selectedAssetContractEntry.item ?
                                                                selectedAssetContractEntry.item.address: ""
+
+    /** output property of the selected recipient address **/
+    readonly property string recipientAddress: selectedRecipientEntry.available ? selectedRecipientEntry.item.address : selectedRecipientAddress
+    /** output property of the selected recipient name **/
+    readonly property string recipientName: selectedRecipientEntry.available ? selectedRecipientEntry.item.name : ""
+    /** output property of the selected recipient ens **/
+    readonly property string recipientEns: selectedRecipientEntry.available ? selectedRecipientEntry.item.ens : ""
+    /** output property of the selected recipient emoji **/
+    readonly property string recipientEmoji: selectedRecipientEntry.available ? selectedRecipientEntry.item.emoji : ""
+    /** output property of the selected recipient color **/
+    readonly property string recipientWalletColor: {
+        if (!selectedRecipientEntry.available)
+            return ""
+        const color = selectedRecipientEntry.item.color
+        if (!!color) {
+            return color
+        }
+        const colorId = selectedRecipientEntry.item.colorId
+        if (!!colorId) {
+            return Utils.getColorForId(colorId)
+        }
+        return ""
+    }
 
     ModelEntry {
         id: selectedAccountEntry
@@ -95,5 +132,12 @@ QObject {
                          selectedAssetEntry.item.addressPerChain: null
         value: root.chainId
         key: "chainId"
+    }
+
+    ModelEntry {
+        id: selectedRecipientEntry
+        sourceModel: root.recipientModel
+        key: "address"
+        value: root.selectedRecipientAddress
     }
 }
