@@ -355,7 +355,9 @@ SQUtils.QObject {
         }
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
 
-        onFinished: {
+        onFinished: (success) => {
+            if (!success)
+               return
             if (root.loginScreen) {
                 root.loginRequested(root.loginScreen.selectedProfileKeyId,
                                     Onboarding.LoginMethod.Keycard, { pin })
