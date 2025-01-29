@@ -456,7 +456,7 @@ export STATUSGO_LIBDIR
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
-	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/bash \
+	$(MAKE) -C vendor/status-go statusgo-shared-library \
 		SENTRY_CONTEXT_NAME="status-desktop" \
 		SENTRY_CONTEXT_VERSION="$(DESKTOP_VERSION)" \
 		$(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
@@ -582,6 +582,7 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
+		--passL:"-L$(STATUSGO)" \
 		--passL:"-lstatus" \
 		--passL:"-L$(STATUSQ_INSTALL_PATH)/StatusQ" \
 		--passL:"-lStatusQ" \
@@ -863,7 +864,7 @@ run-macos: nim_status_client
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
-	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
+	DYLD_LIBRARY_PATH="$(STATUSGO_LIBDIR)" ./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
