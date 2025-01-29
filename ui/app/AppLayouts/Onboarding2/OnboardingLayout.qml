@@ -44,11 +44,7 @@ Page {
 
     function restartFlow() {
         unload()
-
-        if (!loginAccountsModel || loginAccountsModel.ModelCount.empty)
-            onboardingFlow.init()
-        else
-            stack.push(loginScreenComponent)
+        onboardingFlow.init()
     }
 
     function unload() {
@@ -143,6 +139,8 @@ Page {
 
         stackView: stack
 
+        loginAccountsModel: root.loginAccountsModel
+
         keycardState: root.onboardingStore.keycardState
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
@@ -150,6 +148,7 @@ Page {
         seedWords: root.onboardingStore.getMnemonic().split(" ")
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
+        isBiometricsLogin: root.isBiometricsLogin
         biometricsAvailable: root.biometricsAvailable
         networkChecksEnabled: root.networkChecksEnabled
 
@@ -160,6 +159,9 @@ Page {
         tryToSetPukFunction: root.onboardingStore.setPuk
         remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
+
+        onBiometricsRequested: root.biometricsRequested()
+        onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
         onKeycardPinCreated: (pin) => {
             d.keycardPin = pin
@@ -187,52 +189,6 @@ Page {
         onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
     }
 
-    Component {
-        id: loginScreenComponent
-        LoginScreen {
-            id: loginScreen
-            onboardingStore: root.onboardingStore
-            loginAccountsModel: root.loginAccountsModel
-            biometricsAvailable: root.biometricsAvailable
-            isBiometricsLogin: root.isBiometricsLogin
-            onBiometricsRequested: root.biometricsRequested()
-            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
-
-            onOnboardingCreateProfileFlowRequested: onboardingFlow.startCreateProfileFlow()
-            onOnboardingLoginFlowRequested: onboardingFlow.startLoginFlow()
-            onLostKeycard: onboardingFlow.startLostKeycardFlow()
-            onUnblockWithSeedphraseRequested: console.warn("!!! FIXME OnboardingLayout::onUnblockWithSeedphraseRequested")
-            onUnblockWithPukRequested: {
-                d.selectedProfileKeyId = selectedProfileKeyId
-                unblockWithPukFlow.init()
-            }
-            onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
-        }
-    }
-
-    UnblockWithPukFlow {
-        id: unblockWithPukFlow
-
-        stackView: stack
-        keycardState: root.onboardingStore.keycardState
-        tryToSetPukFunction: root.onboardingStore.setPuk
-        remainingAttempts: root.onboardingStore.keycardRemainingPukAttempts
-
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-
-        onReloadKeycardRequested: root.reloadKeycardRequested()
-        onKeycardPinCreated: (pin) => {
-            d.keycardPin = pin
-            root.onboardingStore.setPin(pin)
-        }
-        onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
-
-        onFinished: {
-            root.loginRequested(d.selectedProfileKeyId, Onboarding.LoginMethod.Keycard, {"pin": d.keycardPin})
-            d.selectedProfileKeyId = ""
-        }
-    }
-
     Connections {
         target: stack.currentItem
         ignoreUnknownSignals: true
@@ -242,6 +198,57 @@ Page {
         }
         function onOpenLinkWithConfirmation(link: string, domain: string) {
             Qt.openUrlExternally(link)
+        }
+    }
+
+    Connections {
+        target: root.onboardingStore
+
+        // (password) login
+        function onAccountLoginError(error: string, wrongPassword: bool) {
+            const loginScreen = onboardingFlow.loginScreen
+
+            if (!error || !loginScreen || loginScreen.currentProfileIsKeycard)
+                return
+
+            let validationError
+            let detailedError
+
+            // SQLITE_NOTADB: "file is not a database"
+            if (error.includes("file is not a database") || wrongPassword) {
+                validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
+                detailedError = ""
+            } else {
+                validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
+                detailedError = error
+            }
+
+            loginScreen.setError(validationError, detailedError)
+        }
+
+        // biometrics
+        function onObtainingPasswordError(errorDescription: string, errorType: string, wrongFingerprint: bool) {
+            const loginScreen = onboardingFlow.loginScreen
+
+            if (!loginScreen || errorType === Constants.keychain.errorType.authentication) {
+                // We are notifying user only about keychain errors.
+                return
+            }
+
+            const error = wrongFingerprint
+                        ? qsTr("Fingerprint not recognised. Try entering password instead.")
+                        : errorDescription
+
+            loginScreen.setObtainingPasswordError(error, wrongFingerprint)
+        }
+
+        function onObtainingPasswordSuccess(password: string) {
+            const loginScreen = onboardingFlow.loginScreen
+
+            if (!loginScreen || !root.isBiometricsLogin)
+                return
+
+            loginScreen.setObtainingPasswordSuccess(password)
         }
     }
 

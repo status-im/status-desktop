@@ -972,7 +972,7 @@ QtObject {
         let typeName = item.toString()
 
         if (typeName.startsWith("QQuick"))
-            typeName = name.substring(6)
+            typeName = typeName.substring(6)
 
         const underscoreIndex = typeName.indexOf("_")
 

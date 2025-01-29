@@ -2,20 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import QtQml.Models 2.15
-
-import StatusQ 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core.Theme 0.1
 
 import Models 1.0
 import Storybook 1.0
 
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2.pages 1.0
-import AppLayouts.Onboarding2.stores 1.0
 
 import utils 1.0
 
@@ -25,8 +17,8 @@ SplitView {
 
     Logs { id: logs }
 
-    OnboardingStore {
-        id: store
+    QtObject {
+        id: driver
 
         // keycard
         property int keycardState: Onboarding.KeycardState.NoPCSCService
@@ -34,7 +26,7 @@ SplitView {
         property int keycardRemainingPukAttempts: 3
 
         function setPin(pin: string) { // -> bool
-            logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
+            logs.logEvent("setPin", ["pin"], arguments)
             const valid = pin === ctrlPin.text
             if (!valid)
                 keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
@@ -46,7 +38,7 @@ SplitView {
         }
 
         function setPuk(puk) { // -> bool
-            logs.logEvent("OnboardingStore.setPuk", ["puk"], arguments)
+            logs.logEvent("setPuk", ["puk"], arguments)
             const valid = puk === ctrlPuk.text
             if (!valid)
                 keycardRemainingPukAttempts--
@@ -71,7 +63,13 @@ SplitView {
         SplitView.fillHeight: true
 
         loginAccountsModel: LoginAccountsModel {}
-        onboardingStore: store
+
+        keycardState: driver.keycardState
+
+        tryToSetPinFunction: (pin) => driver.setPin(pin)
+        keycardRemainingPinAttempts: driver.keycardRemainingPinAttempts
+        keycardRemainingPukAttempts: driver.keycardRemainingPukAttempts
+
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
         onBiometricsRequested: biometricsPopup.open()
@@ -80,7 +78,7 @@ SplitView {
 
                               // SIMULATION: emit an error in case of wrong password
                               if (method === Onboarding.LoginMethod.Password && data.password !== ctrlPassword.text) {
-                                  onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5)
+                                  driver.accountLoginError("The impossible has happened", Math.random() < 0.5)
                               }
                           }
         onOnboardingCreateProfileFlowRequested: logs.logEvent("onOnboardingCreateProfileFlowRequested")
@@ -105,9 +103,9 @@ SplitView {
         password: ctrlPassword.text
         pin: ctrlPin.text
         selectedProfileIsKeycard: loginScreen.selectedProfileIsKeycard
-        onAccountLoginError: (error, wrongPassword) => store.accountLoginError(error, wrongPassword)
-        onObtainingPasswordSuccess: (password) => store.obtainingPasswordSuccess(password)
-        onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => store.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
+        onAccountLoginError: (error, wrongPassword) => driver.accountLoginError(error, wrongPassword)
+        onObtainingPasswordSuccess: (password) => driver.obtainingPasswordSuccess(password)
+        onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => driver.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
     }
 
     LogsAndControlsPanel {
@@ -179,8 +177,8 @@ SplitView {
                     textRole: "name"
                     valueRole: "value"
                     model: Onboarding.getModelFromEnum("KeycardState")
-                    onActivated: store.keycardState = currentValue
-                    Component.onCompleted: currentIndex = Qt.binding(() => indexOfValue(store.keycardState))
+                    onActivated: driver.keycardState = currentValue
+                    Component.onCompleted: currentIndex = Qt.binding(() => indexOfValue(driver.keycardState))
                 }
             }
         }

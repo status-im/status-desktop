@@ -18,7 +18,11 @@ import utils 1.0
 OnboardingPage {
     id: root
 
-    required property OnboardingStore onboardingStore
+    required property int keycardState
+
+    required property var tryToSetPinFunction
+    required property int keycardRemainingPinAttempts
+    required property int keycardRemainingPukAttempts
 
     // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
     required property var loginAccountsModel
@@ -66,14 +70,14 @@ OnboardingPage {
             if (password.length === 0)
                 return
 
-            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Password, {"password": password})
+            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Password, { password })
         }
 
         function doKeycardLogin(pin: string) {
             if (pin.length === 0)
                 return
 
-            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Keycard, {"pin": pin})
+            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Keycard, { pin })
         }
     }
 
@@ -83,62 +87,38 @@ OnboardingPage {
             passwordBox.forceActiveFocus()
     }
 
-    Connections {
-        target: root.onboardingStore
+    function setObtainingPasswordError(error: string, wrongFingerprint: bool) {
+        d.biometricsSuccessful = false
+        d.biometricsFailed = wrongFingerprint
 
-        // (password) login
-        function onAccountLoginError(error: string, wrongPassword: bool) {
-            if (error) {
-                if (!d.currentProfileIsKeycard) { // PIN validation done separately
-                    // SQLITE_NOTADB: "file is not a database"
-                    if (error.includes("file is not a database") || wrongPassword) {
-                        passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
-                        passwordBox.detailedError = ""
-                    } else {
-                        passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
-                        passwordBox.detailedError = error
-                    }
-
-                    passwordBox.clear()
-                    passwordBox.forceActiveFocus()
-                }
-            }
+        if (d.currentProfileIsKeycard) {
+            keycardBox.clear()
+        } else {
+            passwordBox.validationError = error
+            passwordBox.clear()
+            passwordBox.forceActiveFocus()
         }
+    }
 
-        // biometrics
-        function onObtainingPasswordError(errorDescription: string, errorType: string, wrongFingerprint: bool) {
-            if (errorType === Constants.keychain.errorType.authentication) {
-                // We are notifying user only about keychain errors.
-                return
-            }
+    function setObtainingPasswordSuccess(password: string) {
+        if (!root.isBiometricsLogin)
+            return
 
-            d.biometricsSuccessful = false
-            d.biometricsFailed = wrongFingerprint
+        d.biometricsSuccessful = true
+        d.biometricsFailed = false
 
-            if (d.currentProfileIsKeycard) {
-                keycardBox.clear()
-            } else {
-                passwordBox.validationError = wrongFingerprint ? qsTr("Fingerprint not recognised. Try entering password instead.")
-                                                               : errorDescription
-                passwordBox.clear()
-                passwordBox.forceActiveFocus()
-            }
+        if (d.currentProfileIsKeycard) {
+            keycardBox.setPin(password) // automatic login, emits loginRequested() already
+        } else {
+            passwordBox.validationError = ""
+            passwordBox.password = password
+            d.doPasswordLogin(password)
         }
-        function onObtainingPasswordSuccess(password: string) {
-            if (!root.isBiometricsLogin)
-                return
+    }
 
-            d.biometricsSuccessful = true
-            d.biometricsFailed = false
-
-            if (d.currentProfileIsKeycard) {
-                keycardBox.setPin(password) // automatic login, emits loginRequested() already
-            } else {
-                passwordBox.validationError = ""
-                passwordBox.password = password
-                d.doPasswordLogin(password)
-            }
-        }
+    function setError(error: string, detailedError: string) {
+        passwordBox.validationError = error
+        passwordBox.detailedError = detailedError
     }
 
     padding: 40
@@ -177,8 +157,8 @@ OnboardingPage {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 64
                 model: root.loginAccountsModel
-                currentKeycardLocked: root.onboardingStore.keycardState === Onboarding.KeycardState.BlockedPIN ||
-                                      root.onboardingStore.keycardState === Onboarding.KeycardState.BlockedPUK
+                currentKeycardLocked: root.keycardState === Onboarding.KeycardState.BlockedPIN ||
+                                      root.keycardState === Onboarding.KeycardState.BlockedPUK
                 onSelectedProfileKeyIdChanged: {
                     d.resetBiometricsResult()
                     d.settings.lastKeyUid = selectedProfileKeyId
@@ -221,10 +201,10 @@ OnboardingPage {
                 isBiometricsLogin: root.biometricsAvailable && root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
-                keycardState: root.onboardingStore.keycardState
-                tryToSetPinFunction: root.onboardingStore.setPin
-                keycardRemainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
-                keycardRemainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
+                keycardState: root.keycardState
+                tryToSetPinFunction: root.tryToSetPinFunction
+                keycardRemainingPinAttempts: root.keycardRemainingPinAttempts
+                keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
                 onUnblockWithPukRequested: root.unblockWithPukRequested()
                 onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
