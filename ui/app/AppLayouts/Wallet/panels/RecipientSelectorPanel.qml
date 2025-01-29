@@ -34,7 +34,7 @@ Rectangle {
     readonly property string searchPattern: recipientInputLoader.searchPattern
 
     /** Currently selected recipient tab  **/
-    readonly property int selectedRecipientType: Constants.RecipientAddressObjectType.RecentsAddress
+    property int selectedRecipientType: Constants.RecipientAddressObjectType.RecentsAddress
     /** Selected recipient address. It is input and output property **/
     property alias selectedRecipientAddress: recipientInputLoader.selectedRecipientAddress
 

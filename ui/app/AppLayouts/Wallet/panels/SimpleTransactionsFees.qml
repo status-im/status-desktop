@@ -23,6 +23,7 @@ Control {
         id: d
 
         readonly property string loadingText: "XXXXXXXXXX"
+        readonly property string emptyText: "--"
     }
 
     implicitHeight: 64
@@ -41,7 +42,7 @@ Control {
         width: parent.width
         spacing: 12
 
-        StatusRoundIcon {            
+        StatusRoundIcon {
             objectName: "gasIcon"
 
             Layout.alignment: Qt.AlignTop
@@ -72,14 +73,19 @@ Control {
 
                 Layout.fillWidth: true
 
-                loading: root.loading || !root.cryptoFees
-                customColor: root.error ? Theme.palette.dangerColor1:
-                                          Theme.palette.baseColor1
+                loading: root.loading
+                customColor: {
+                    if(!!root.cryptoFees && root.error) {
+                        return  Theme.palette.dangerColor1
+                    }
+                    return Theme.palette.baseColor1
+                }
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 22
 
                 text: !!root.cryptoFees ? root.cryptoFees:
-                                          d.loadingText
+                                          root.loading ? d.loadingText:
+                                                         d.emptyText
             }
         }
         StatusTextWithLoadingState {
@@ -89,14 +95,19 @@ Control {
 
             Layout.alignment: Qt.AlignRight
 
-            loading: root.loading || !root.fiatFees
-            customColor: root.error ? Theme.palette.dangerColor1:
-                                      Theme.palette.baseColor1
+            loading: root.loading
+            customColor: {
+                if(!!root.cryptoFees && root.error) {
+                    return  Theme.palette.dangerColor1
+                }
+                return Theme.palette.baseColor1
+            }
             lineHeightMode: Text.FixedHeight
             lineHeight: 22
 
             text: !!root.fiatFees ? root.fiatFees:
-                                   d.loadingText
+                                    root.loading ? d.loadingText:
+                                                   d.emptyText
         }
     }
 }

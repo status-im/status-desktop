@@ -20,8 +20,8 @@ SplitView {
             anchors.centerIn: parent
             width: 400
 
-            cryptoFees: qsTr("0.0007 ETH")
-            fiatFees: qsTr("1.45 EUR")
+            cryptoFees: cryptoFees.text
+            fiatFees: fiatFees.text
             loading: loadingCheckbox.checked
             error: errorCheckbox.checked
         }
@@ -38,10 +38,17 @@ SplitView {
                 id: loadingCheckbox
                 text: "loading"
             }
-
             CheckBox {
                 id: errorCheckbox
                 text: "error"
+            }
+            TextField {
+                id: cryptoFees
+                text: "0.0007 ETH"
+            }
+            TextField {
+                id: fiatFees
+                text:"1.45 EUR"
             }
         }
     }

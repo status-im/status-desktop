@@ -79,12 +79,16 @@ StatusDialogFooter {
                 objectName: "estimatedFeesText"
 
                 font.weight: Font.Medium
-                customColor: root.error ? Theme.palette.dangerColor1:
-                                          !!root.estimatedFees ?
-                                              Theme.palette.directColor1:
-                                              Theme.palette.directColor5
-
-                onCustomColorChanged: console.error("onCustomColorChanged >>>>> ",customColor)
+                customColor: {
+                    if(!!root.estimatedFees) {
+                        if(root.error) {
+                            return Theme.palette.dangerColor1
+                        } else {
+                            return Theme.palette.directColor1
+                        }
+                    }
+                    return Theme.palette.directColor5
+                }
                 loading: root.loading
 
                 text: !!root.estimatedFees ? root.estimatedFees:

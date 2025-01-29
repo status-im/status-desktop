@@ -159,7 +159,7 @@ Item {
 
             compare(estFeesLabel.text, qsTr("Est fees"))
             compare(estimatedFeesText.text, "--")
-            tryCompare(estimatedFeesText, "customColor", Theme.palette.dangerColor1)
+            tryCompare(estimatedFeesText, "customColor", Theme.palette.directColor5)
             verify(!estimatedFeesText.loading)
 
             compare(transactionModalFooterButton.text, qsTr("Review Send"))
@@ -169,6 +169,23 @@ Item {
 
             controlUnderTest.errorTags = errorTagsModel
             compare(controlUnderTest.errorTags, errorTagsModel)
+
+            // error and values are set
+            controlUnderTest.error = true
+            controlUnderTest.estimatedTime = "~60s"
+            controlUnderTest.estimatedFees = "1.45 EUR"
+
+            compare(estTimeLabel.text, qsTr("Est time"))
+            compare(estimatedTimeText.text, "~60s")
+            compare(estimatedTimeText.customColor, Theme.palette.directColor1)
+            verify(!estimatedTimeText.loading)
+
+            compare(estFeesLabel.text, qsTr("Est fees"))
+            compare(estimatedFeesText.text, "1.45 EUR")
+            tryCompare(estimatedFeesText, "customColor", Theme.palette.dangerColor1)
+            verify(!estimatedFeesText.loading)
+
+            verify(!transactionModalFooterButton.enabled)
         }
     }
 }
