@@ -40,6 +40,8 @@ StatusDialog {
 
     signal remotelyDestructClicked(var walletsAndAmounts, string accountAddress)
     signal enableNetwork
+    signal calculateFees()
+    signal stopUpdatingFees()
 
     QtObject {
         id: d
@@ -101,8 +103,24 @@ StatusDialog {
             onSelfDestructRemoved: d.clearTokensToDestruct(walletAddress)
         }
 
+        StatusSwitch {
+            id: showFees
+            enabled: d.tokenCount > 0
+            text: qsTr("Show fees (will be enabled once the form is filled)")
+
+            onCheckedChanged: {
+                if(checked) {
+                    root.calculateFees()
+                    return
+                }
+                root.stopUpdatingFees()
+            }
+        }
+
         FeesBox {
             id: feesBox
+
+            visible: showFees.checked
 
             Layout.fillWidth: true
             Layout.bottomMargin: networkWarningPanel.visible ? 0 : 16
@@ -152,12 +170,13 @@ StatusDialog {
             StatusFlatButton {
                 text: qsTr("Cancel")
                 onClicked: {
+                    root.stopUpdatingFees()
                     root.close()
                 }
             }
             StatusButton {
-                enabled: d.tokenCount > 0
                 text: qsTr("Remotely destruct %n token(s)", "", d.tokenCount)
+                enabled: showFees.checked
                 type: StatusBaseButton.Type.Danger
 
                 onClicked: {

@@ -215,7 +215,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
   result.rampService = ramp_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
+    result.currencyService, result.networkService, result.settingsService, result.tokenService)
   result.profileService = profile_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
@@ -244,7 +245,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.transactionService, result.tokenService, result.settingsService, result.walletAccountService,
+    result.networkService, result.transactionService, result.tokenService, result.settingsService, result.walletAccountService,
     result.activityCenterService, result.communityService, result.currencyService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
   result.networkConnectionService = network_connection_service.newService(statusFoundation.events,

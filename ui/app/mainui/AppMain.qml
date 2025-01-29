@@ -80,7 +80,9 @@ Item {
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {}
-    property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {}
+    property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {
+        currencyStore: appMain.currencyStore
+    }
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     readonly property WalletStores.TokensStore tokensStore: WalletStores.RootStore.tokensStore
     readonly property WalletStores.WalletAssetsStore walletAssetsStore: WalletStores.RootStore.walletAssetsStore
@@ -279,6 +281,23 @@ Item {
                                         username: string,
                                         publicKey: string,
                                         packId: string,
+                                        communityId: string,
+                                        communityName: string,
+                                        communityInvolvedTokens: int,
+                                        communityTotalAmount: string,
+                                        communityAmount1: string,
+                                        communityAmountInfinite1: bool,
+                                        communityAssetName1: string,
+                                        communityAssetDecimals1: int,
+                                        communityAmount2: string,
+                                        communityAmountInfinite2: bool,
+                                        communityAssetName2: string,
+                                        communityAssetDecimals2: int,
+                                        communityInvolvedAddress: string,
+                                        communityNubmerOfInvolvedAddresses: int,
+                                        communityOwnerTokenName: string,
+                                        communityMasterTokenName: string,
+                                        communityDeployedTokenName: string,
                                         status: string,
                                         error: string) {
 
@@ -301,6 +320,9 @@ Item {
             let assetName = qsTr("unknown")
             let ensName = d.ensName(username)
             let stickersPackName = qsTr("unknown")
+
+            let sentCommunityAmount1 = ""
+            let sentCommunityAmount2 = ""
 
             if (!!txHash) {
                 toastLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(fromChainId)).arg(txHash)
@@ -342,6 +364,16 @@ Item {
                         stickersPackName = entry.name
                     }
                 }
+            }
+
+            if (!!communityAmount1) {
+                let bigIntCommunityAmount1 = SQUtils.AmountsArithmetic.fromString(communityAmount1)
+                sentCommunityAmount1 = SQUtils.AmountsArithmetic.toNumber(bigIntCommunityAmount1, communityAssetDecimals1)
+            }
+
+            if (!!communityAmount2) {
+                let bigIntCommunityAmount2 = SQUtils.AmountsArithmetic.fromString(communityAmount2)
+                sentCommunityAmount2 = SQUtils.AmountsArithmetic.toNumber(bigIntCommunityAmount2, communityAssetDecimals2)
             }
 
             switch(status) {
@@ -390,6 +422,60 @@ Item {
                     if (approvalTx) {
                         toastTitle = qsTr("Setting spending cap: %1 in %2 for %3").arg(sentAmount).arg(sender).arg(txRecipient)
                     }
+                    break
+                }
+                case Constants.SendType.CommunityDeployAssets: {
+                    if (communityAmountInfinite1) {
+                        toastTitle = qsTr("Minting infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Minting %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    if (communityAmountInfinite1) {
+                        toastTitle = qsTr("Minting infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Minting %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Minting %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityMintTokens: {
+                    if (!sentCommunityAmount2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdropping %1x %2 to %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdropping %1x %2 to %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else if(communityInvolvedTokens === 2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdropping %1x %2 and %3x %4 to %5 using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdropping %1x %2 and %3x %4 to %5 addresses using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else {
+                        toastTitle = qsTr("Airdropping %1 tokens to %2 using %3").arg(communityInvolvedTokens).arg(communityInvolvedAddress).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityRemoteBurn: {
+                    if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                        toastTitle = qsTr("Destroying %1x %2 at %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Destroying %1x %2 at %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityBurn: {
+                    toastTitle = qsTr("Burning %1x %2 for %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunitySetSignerPubKey: {
+                    toastTitle = qsTr("Finalizing ownership for %1 using %2").arg(communityName).arg(sender)
                     break
                 }
                 case Constants.SendType.Approve: {
@@ -456,6 +542,60 @@ Item {
                     }
                     break
                 }
+                case Constants.SendType.CommunityDeployAssets: {
+                    if (communityAmountInfinite1){
+                        toastTitle = qsTr("Minted infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Minted %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    if (communityAmountInfinite1){
+                        toastTitle = qsTr("Minted infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Minted %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Minted %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityMintTokens: {
+                    if (!sentCommunityAmount2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdropped %1x %2 to %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdropped %1x %2 to %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else if(communityInvolvedTokens === 2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdropped %1x %2 and %3x %4 to %5 using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdropped %1x %2 and %3x %4 to %5 addresses using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else {
+                        toastTitle = qsTr("Airdropped %1 tokens to %2 using %3").arg(communityInvolvedTokens).arg(communityInvolvedAddress).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityRemoteBurn: {
+                    if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                        toastTitle = qsTr("Destroyed %1x %2 at %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Destroyed %1x %2 at %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityBurn: {
+                    toastTitle = qsTr("Burned %1x %2 for %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunitySetSignerPubKey: {
+                    toastTitle = qsTr("Finalized ownership for %1 using %2").arg(communityName).arg(sender)
+                    break
+                }
                 case Constants.SendType.Approve: {
                     console.warn("tx type approve not yet identified as a stand alone path")
                     break
@@ -514,6 +654,60 @@ Item {
                     }
                     break
                 }
+                case Constants.SendType.CommunityDeployAssets: {
+                    if (communityAmountInfinite1){
+                        toastTitle = qsTr("Mint failed: infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Mint failed: %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployCollectibles: {
+                    if (communityAmountInfinite1){
+                        toastTitle = qsTr("Mint failed: infinite %1 tokens for %2 using %3").arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Mint failed: %1 %2 tokens for %3 using %4").arg(sentCommunityAmount1).arg(communityDeployedTokenName).arg(communityName).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityDeployOwnerToken: {
+                    toastTitle = qsTr("Mint failed: %1 and %2 tokens for %3 using %4").arg(communityOwnerTokenName).arg(communityMasterTokenName).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunityMintTokens: {
+                    if (!sentCommunityAmount2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdrop failed: %1x %2 to %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdrop failed: %1x %2 to %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else if(communityInvolvedTokens === 2) {
+                        if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                            toastTitle = qsTr("Airdrop failed: %1x %2 and %3x %4 to %5 using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityInvolvedAddress).arg(sender)
+                        } else {
+                            toastTitle = qsTr("Airdrop failed: %1x %2 and %3x %4 to %5 addresses using %6").arg(sentCommunityAmount1).arg(communityAssetName1).arg(sentCommunityAmount2).arg(communityAssetName2).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                        }
+                    } else {
+                        toastTitle = qsTr("Airdrop failed: %1 tokens to %2 using %3").arg(communityInvolvedTokens).arg(communityInvolvedAddress).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityRemoteBurn: {
+                    if (communityNubmerOfInvolvedAddresses === 1 && !!communityInvolvedAddress) {
+                        toastTitle = qsTr("Destruction failed: %1x %2 at %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityInvolvedAddress).arg(sender)
+                    } else {
+                        toastTitle = qsTr("Destruction failed: %1x %2 at %3 addresses using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityNubmerOfInvolvedAddresses).arg(sender)
+                    }
+                    break
+                }
+                case Constants.SendType.CommunityBurn: {
+                    toastTitle = qsTr("Burn failed: %1x %2 for %3 using %4").arg(sentCommunityAmount1).arg(communityAssetName1).arg(communityName).arg(sender)
+                    break
+                }
+                case Constants.SendType.CommunitySetSignerPubKey: {
+                    toastTitle = qsTr("Finalize ownership failed: %1 using %2").arg(communityName).arg(sender)
+                    break
+                }
                 case Constants.SendType.Approve: {
                     console.warn("tx type approve not yet identified as a stand alone path")
                     break
@@ -525,8 +719,16 @@ Item {
                 break
             }
             default:
-                console.warn("not supported status")
-                return
+                if (!error) {
+                    console.warn("not supported status")
+                    return
+                } else {
+                    const err1 = "cannot_resolve_community" // move to Constants
+                    if (error === err1) {
+                        Global.displayToastMessage(qsTr("Unknown error resolving community"), "", "", false, Constants.ephemeralNotificationType.normal, "")
+                        return
+                    }
+                }
             }
 
             Global.displayToastMessage(toastTitle, toastSubtitle, toastIcon, toastLoading, toastType, toastLink)

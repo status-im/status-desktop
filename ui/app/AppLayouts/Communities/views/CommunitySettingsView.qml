@@ -92,7 +92,10 @@ StatusSectionLayout {
         d.goTo(section, subSection)
     }
 
-    onBackButtonClicked: stackLayout.children[d.currentIndex].item.navigateBack()
+    onBackButtonClicked: {
+        root.rootStore.communityTokensStore.stopUpdatesForSuggestedRoute()
+        stackLayout.children[d.currentIndex].item.navigateBack()
+    }
 
     leftPanel: Item {
         anchors.fill: parent
@@ -179,6 +182,7 @@ StatusSectionLayout {
         currentIndex: d.currentIndex
 
         onCurrentIndexChanged: {
+            root.rootStore.communityTokensStore.stopUpdatesForSuggestedRoute()
             children[currentIndex].active = true
         }
 
@@ -368,6 +372,7 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: true
 
             sourceComponent: MintTokensSettingsPanel {
+                id: mintTokensSettingsPanel
                 enabledChainIds: root.enabledChainIds
 
                 readonly property CommunityTokensStore communityTokensStore:
@@ -397,49 +402,75 @@ StatusSectionLayout {
                 accounts: root.walletAccountsModel
                 referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
 
-                onRegisterDeployFeesSubscriber: d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
+                onStopUpdatingFees: {
+                    communityTokensStore.stopUpdatesForSuggestedRoute()
+                }
 
-                onRegisterSelfDestructFeesSubscriber: d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
+                onRegisterDeployFeesSubscriber: {
+                    d.feesBroker.registerDeployFeesSubscriber(feeSubscriber)
+                }
 
-                onRegisterBurnTokenFeesSubscriber: d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
+                onRegisterSelfDestructFeesSubscriber: {
+                    d.feesBroker.registerSelfDestructFeesSubscriber(feeSubscriber)
+                }
 
-                onStartTokenHoldersManagement: communityTokensStore.startTokenHoldersManagement(root.community.id, chainId, address)
+                onRegisterBurnTokenFeesSubscriber: {
+                    d.feesBroker.registerBurnFeesSubscriber(feeSubscriber)
+                }
 
-                onStopTokenHoldersManagement: communityTokensStore.stopTokenHoldersManagement()
+                onStartTokenHoldersManagement: {
+                    communityTokensStore.startTokenHoldersManagement(root.community.id, chainId, address)
+                }
+
+                onStopTokenHoldersManagement: {
+                    communityTokensStore.stopTokenHoldersManagement()
+                }
 
                 onEnableNetwork: root.enableNetwork(chainId)
 
-                onMintCollectible:
-                    communityTokensStore.deployCollectible(
-                        root.community.id, collectibleItem)
+                onMintCollectible: {
+                    communityTokensStore.authenticateAndTransfer()
+                }
 
-                onMintAsset:
-                    communityTokensStore.deployAsset(root.community.id, assetItem)
+                onMintAsset: {
 
-                onMintOwnerToken:
-                    communityTokensStore.deployOwnerToken(
-                        root.community.id, ownerToken, tMasterToken)
+                    communityTokensStore.authenticateAndTransfer()
+                }
 
-                onRemotelyDestructCollectibles:
-                    communityTokensStore.remoteSelfDestructCollectibles(
-                        root.community.id, walletsAndAmounts, tokenKey, accountAddress)
+                onMintOwnerToken: {
+                    communityTokensStore.authenticateAndTransfer()
+                }
 
-                onRemotelyDestructAndBan:
+                onRemotelyDestructCollectibles: {
+                    communityTokensStore.authenticateAndTransfer()
+                }
+
+                onRemotelyDestructAndBan: {
+
                     communityTokensStore.remotelyDestructAndBan(
                         root.community.id, contactId, tokenKey, accountAddress)
+                }
 
-                onRemotelyDestructAndKick:
+                onRemotelyDestructAndKick: {
+
                     communityTokensStore.remotelyDestructAndKick(
                         root.community.id, contactId, tokenKey, accountAddress)
+                }
 
-                onBurnToken:
-                    communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
+                onBurnToken: {
 
-                onDeleteToken:
+                    communityTokensStore.authenticateAndTransfer()
+                }
+
+                onDeleteToken: {
+
                     communityTokensStore.deleteToken(root.community.id, tokenKey)
+                }
 
-                onRefreshToken:
+                onRefreshToken: {
+
                     communityTokensStore.refreshToken(tokenKey)
+                }
 
                 onAirdropToken: {
                     root.goTo(Constants.CommunitySettingsSections.Airdrops)
@@ -451,8 +482,13 @@ StatusSectionLayout {
                     airdropPanelLoader.item.addAddresses(addresses)
                 }
 
-                onKickUserRequested: root.rootStore.removeUserFromCommunity(contactId)
-                onBanUserRequested: root.rootStore.banUserFromCommunity(contactId)
+                onKickUserRequested: {
+                    root.rootStore.removeUserFromCommunity(contactId)
+                }
+
+                onBanUserRequested: {
+                    root.rootStore.banUserFromCommunity(contactId)
+                }
             }
         }
 
@@ -545,35 +581,31 @@ StatusSectionLayout {
                     ]
                 }
 
-                Connections {
-                    target: root.rootStore.communityTokensStore
 
-                    function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
-                        if (root.community.id !== communityId) {
-                            return
-                        }
 
-                        if (status == Constants.ContractTransactionStatus.InProgress) {
-                            airdropsSettingsPanel.navigateBack()
-                        }
-                    }
-                }
 
                 membersModel: root.joinedMembers
                 enabledChainIds: root.enabledChainIds
                 onEnableNetwork: root.enableNetwork(chainId)
 
                 accountsModel: root.walletAccountsModel
-                onAirdropClicked: communityTokensStore.airdrop(
-                                    root.community.id, airdropTokens, addresses,
-                                    feeAccountAddress)
+                onAirdropClicked: {
+                    communityTokensStore.authenticateAndTransfer()
+                }
 
                 onNavigateToMintTokenSettings: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
                     mintPanelLoader.item.openNewTokenForm(isAssetType)
                 }
 
-                onRegisterAirdropFeeSubscriber: d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
+                onStopUpdatingFees: {
+                    communityTokensStore.stopUpdatesForSuggestedRoute()
+                }
+
+                onRegisterAirdropFeeSubscriber: {
+                    d.feesBroker.registerAirdropFeesSubscriber(feeSubscriber)
+                }
+
             }
         }
     }
@@ -706,159 +738,6 @@ StatusSectionLayout {
     }
 
 
-    Connections {
-        target: rootStore.communityTokensStore
-
-        function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            let title = ""
-            let loading = false
-            let type = Constants.ephemeralNotificationType.normal
-
-            switch (status) {
-            case Constants.ContractTransactionStatus.InProgress:
-                title = qsTr("Remotely destroying tokens...")
-                loading = true
-                break
-            case Constants.ContractTransactionStatus.Completed:
-                title = qsTr("%1 tokens destroyed").arg(tokenName)
-                type = Constants.ephemeralNotificationType.success
-                break
-            case Constants.ContractTransactionStatus.Failed:
-                title = qsTr("%1 tokens destruction failed").arg(tokenName)
-                break
-            default:
-                console.warn("Unknown destruction state: "+status)
-                return
-            }
-
-            Global.displayToastMessage(title, qsTr("View on etherscan"), "",
-                                       loading, type, url)
-        }
-
-        function onAirdropStateChanged(communityId, tokenName, chainName,
-                                       status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            let title = ""
-            let loading = false
-            let type = Constants.ephemeralNotificationType.normal
-
-            switch (status) {
-            case Constants.ContractTransactionStatus.InProgress:
-                title = qsTr("Airdrop on %1 in progress...").arg(chainName)
-                loading = true
-                break
-            case Constants.ContractTransactionStatus.Completed:
-                title = qsTr("Airdrop on %1 in complete").arg(chainName)
-                type = Constants.ephemeralNotificationType.success
-                break
-            case Constants.ContractTransactionStatus.Failed:
-                title = qsTr("Airdrop on %1 failed").arg(chainName)
-                break
-            default:
-                console.warn("Unknown airdrop state: "+status)
-                return
-            }
-
-            Global.displayToastMessage(title, qsTr("View on etherscan"), "",
-                                       loading, type, url)
-        }
-
-        function onBurnStateChanged(communityId, tokenName, status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            let title = ""
-            let loading = false
-            let type = Constants.ephemeralNotificationType.normal
-
-            switch (status) {
-            case Constants.ContractTransactionStatus.InProgress:
-                title = qsTr("%1 being burned...").arg(tokenName)
-                loading = true
-                break
-            case Constants.ContractTransactionStatus.Completed:
-                title = qsTr("%1 burning is complete").arg(tokenName)
-                type = Constants.ephemeralNotificationType.success
-                break
-            case Constants.ContractTransactionStatus.Failed:
-                title = qsTr("%1 burning is failed").arg(tokenName)
-                break
-            default:
-                console.warn("Unknown burning state: "+status)
-                return
-            }
-
-            Global.displayToastMessage(title, qsTr("View on etherscan"), "",
-                                       loading, type, url)
-        }
-
-        function onDeploymentStateChanged(communityId, status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            let title = ""
-            let loading = false
-            let type = Constants.ephemeralNotificationType.normal
-
-            switch (status) {
-            case Constants.ContractTransactionStatus.InProgress:
-                title = qsTr("Token is being minted...")
-                loading = true
-                break
-            case Constants.ContractTransactionStatus.Completed:
-                title = qsTr("Token minting finished")
-                type = Constants.ephemeralNotificationType.success
-                break
-            case Constants.ContractTransactionStatus.Failed:
-                title = qsTr("Token minting failed")
-                break
-            default:
-                console.warn("Unknown deploy state: "+status)
-                return
-            }
-
-            Global.displayToastMessage(title, url === "" ? qsTr("Something went wrong") : qsTr("View on etherscan"), "",
-                                       loading, type, url)
-        }
-
-        function onOwnerTokenDeploymentStateChanged(communityId, status, url) {
-            if (root.community.id !== communityId)
-                return
-
-            if (status === Constants.ContractTransactionStatus.Completed)
-            {
-                let title1 = qsTr("%1 Owner and TokenMaster tokens minting complete").arg(community.name)
-                let title2 = qsTr("%1 Owner token airdropped to you").arg(community.name)
-                let title3 = qsTr("%1 Owner and TokenMaster permissions created").arg(community.name)
-                let type = Constants.ephemeralNotificationType.normal
-
-                Global.displayToastMessage(title1, url, "", true, type, url)
-                Global.displayToastMessage(title2, url, "", true, type, url)
-                Global.displayToastMessage(title3, url, "", true, type, url)
-            } else if (status === Constants.ContractTransactionStatus.Failed) {
-                let title = qsTr("%1 Owner and TokenMaster tokens minting failed").arg(community.name)
-                let type = Constants.ephemeralNotificationType.normal
-                Global.displayToastMessage(title, url, "", true, type, url)
-            }
-        }
-
-        function onOwnerTokenDeploymentStarted(communityId, url) {
-            if (root.community.id !== communityId)
-                return
-
-            let title1 = qsTr("%1 Owner and TokenMaster tokens are being minted...").arg(community.name)
-            let title2 = qsTr("Airdropping %1 Owner token to you...").arg(community.name)
-            let type = Constants.ephemeralNotificationType.normal
-
-            Global.displayToastMessage(title1, url, "", true, type, url)
-            Global.displayToastMessage(title2, url, "", true, type, url)
-        }
-    }
 
     Connections {
         target: root.chatCommunitySectionModule

@@ -351,13 +351,13 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
     self.delegate.onMyRequestAdded();
 
-  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STORED) do(e: Args):
     let args = CommunityTokenDeploymentArgs(e)
-    self.delegate.onCommunityTokenDeploymentStarted(args.communityToken)
+    self.delegate.onCommunityTokenDeploymentStored(args.communityToken, args.error)
 
-  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
+  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STORED) do(e: Args):
     let args = OwnerTokenDeploymentArgs(e)
-    self.delegate.onOwnerTokensDeploymentStarted(args.ownerToken, args.masterToken)
+    self.delegate.onOwnerTokensDeploymentStored(args.ownerToken, args.masterToken, args.error)
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)

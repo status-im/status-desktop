@@ -3,6 +3,9 @@ import QtQuick 2.15
 import shared.stores 1.0
 
 import StatusQ.Core.Utils 0.1
+import AppLayouts.Wallet 1.0
+
+import utils 1.0
 
 QtObject {
     id: root
@@ -51,7 +54,10 @@ QtObject {
                 chainId: subscriber.chainId,
                 accountAddress: subscriber.accountAddress,
                 tokenType: subscriber.tokenType,
-                isOwnerDeployment: subscriber.isOwnerDeployment
+                isOwnerDeployment: subscriber.isOwnerDeployment,
+                ownerToken: subscriber.ownerToken,
+                masterToken: subscriber.masterToken,
+                token: subscriber.token
             })
 
             isReady: !!subscriber.chainId && 
@@ -101,13 +107,15 @@ QtObject {
         component SetSignerFeeSubscription: Subscription {
             required property SetSignerFeesSubscriber subscriber
             readonly property var requestArgs: ({
+                communityId: subscriber.communityId,
                 type: TransactionFeesBroker.FeeType.SetSigner,
                 chainId: subscriber.chainId,
                 contractAddress: subscriber.contractAddress,
                 accountAddress: subscriber.accountAddress
             })
-            isReady: !!subscriber.chainId &&
-                     !!subscriber.contractAddress &&
+            isReady: !!subscriber.communityId &&
+                    !!subscriber.chainId &&
+                    !!subscriber.contractAddress &&
                     !!subscriber.accountAddress &&
                     subscriber.enabled
 
@@ -121,83 +129,141 @@ QtObject {
         readonly property Component burnFeeSubscriptionComponent: BurnTokenFeeSubscription {}
         readonly property Component setSignerFeeSubscriptionComponent: SetSignerFeeSubscription {}
 
-        readonly property SubscriptionBroker feesBroker: SubscriptionBroker {
+        readonly property SubscriptionBrokerCommunities feesBroker: SubscriptionBrokerCommunities {
             id: feesBroker
 
-            onRequest: internal.computeFee(topic)
+            onRequest: internal.computeFee(subscriptionId, topic)
         }
 
         property Connections communityTokensStoreConnections: Connections {
-            target: communityTokensStore
+            target: root.communityTokensStore.communityTokensModuleInst
 
-            function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
+            function onSuggestedRoutesReady(uuid, ethCurrency, fiatCurrency, costPerPath, errCode, errDescription) {
+                let err = ""
+                if(!!errCode || !!errDescription) {
+                    err = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
+                }
+
+                let jsonFees = [{
+                                    ethFee: {},
+                                    fiatFee: {},
+                                    contractUniqueKey: ""
+                                }]
+
+                if (!err && !!costPerPath) {
+                    try {
+                        jsonFees = JSON.parse(costPerPath)
+                    }
+                    catch (e) {
+                        console.info("parsing fees issue: ", e.message)
+                    }
+                }
+
+                d.feesBroker.response(uuid, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, fees: jsonFees, error: err })
             }
 
-            function onAirdropFeeUpdated(response) {
-                d.feesBroker.response(response.requestId, response)
-            }
 
-            function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
 
-            function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
 
-            function onSetSignerFeeUpdated(ethCurrency, fiatCurrency, errorCode, responseId) {
-                d.feesBroker.response(responseId, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode })
-            }
         }
 
-        function computeFee(topic) {
+        function computeFee(subscriptionId, topic) {
             const args = JSON.parse(topic)
             switch (args.type) {
                 case TransactionFeesBroker.FeeType.Airdrop:
-                    computeAirdropFee(args, topic)
+                    computeAirdropFee(subscriptionId, args)
                     break
                 case TransactionFeesBroker.FeeType.Deploy:
-                    computeDeployFee(args, topic)
+                    computeDeployFee(subscriptionId, args)
                     break
                 case TransactionFeesBroker.FeeType.SelfDestruct:
-                    computeSelfDestructFee(args, topic)
+                    computeSelfDestructFee(subscriptionId, args)
                     break
                 case TransactionFeesBroker.FeeType.Burn:
-                    computeBurnFee(args, topic)
+                    computeBurnFee(subscriptionId, args)
                     break
                 case TransactionFeesBroker.FeeType.SetSigner:
-                    computeSetSignerFee(args, topic)
+                    computeSetSignerFee(subscriptionId, args)
                     break
                 default:
                     console.error("Unknown fee type: " + args.type)
             }
         }
 
-        function computeAirdropFee(args, topic) {            
+        function computeAirdropFee(subscriptionId, args) {
             communityTokensStore.computeAirdropFee(
+                        subscriptionId,
                         args.communityId,
                         args.contractKeysAndAmounts,
                         args.addressesToAirdrop,
-                        args.feeAccountAddress,
-                        topic)
+                        args.feeAccountAddress)
         }
 
-        function computeDeployFee(args, topic) {
-            communityTokensStore.computeDeployFee(args.communityId, args.chainId, args.accountAddress, args.tokenType, args.isOwnerDeployment, topic)
+        function computeDeployFee(subscriptionId, args) {
+            if (args.isOwnerDeployment) {
+                communityTokensStore.computeDeployTokenOwnerFee(
+                            subscriptionId,
+                            args.communityId,
+                            args.ownerToken.chainId,
+                            args.ownerToken.accountAddress,
+                            args.ownerToken.name,
+                            args.ownerToken.symbol,
+                            args.ownerToken.description,
+                            args.ownerToken.artworkSource,
+                            args.ownerToken.artworkCropRect,
+                            args.masterToken.name,
+                            args.masterToken.symbol,
+                            args.masterToken.description)
+                return
+            }
+
+            if (args.tokenType === Constants.TokenType.ERC721) {
+                communityTokensStore.computeDeployCollectiblesFee(
+                            subscriptionId,
+                            args.communityId,
+                            args.token.key,
+                            args.token.chainId,
+                            args.token.accountAddress,
+                            args.token.name,
+                            args.token.symbol,
+                            args.token.description,
+                            args.token.supply,
+                            args.token.infiniteSupply,
+                            args.token.transferable,
+                            args.token.remotelyDestruct,
+                            args.token.artworkSource,
+                            args.token.artworkCropRect)
+                return
+
+            }
+
+            communityTokensStore.computeDeployAssetsFee(
+                        subscriptionId,
+                        args.communityId,
+                        args.token.key,
+                        args.token.chainId,
+                        args.token.accountAddress,
+                        args.token.name,
+                        args.token.symbol,
+                        args.token.description,
+                        args.token.supply,
+                        args.token.infiniteSupply,
+                        args.token.decimals,
+                        args.token.artworkSource,
+                        args.token.artworkCropRect)
         }
 
-        function computeSelfDestructFee(args, topic) {
-            communityTokensStore.computeSelfDestructFee(args.walletsAndAmounts, args.tokenKey, args.accountAddress, topic)
+        function computeSelfDestructFee(subscriptionId, args) {
+            communityTokensStore.computeSelfDestructFee(subscriptionId, args.walletsAndAmounts, args.tokenKey, args.accountAddress)
         }
 
-        function computeBurnFee(args, topic) {
+        function computeBurnFee(subscriptionId, args) {
             console.assert(typeof args.amount === "string")
-            communityTokensStore.computeBurnFee(args.tokenKey, args.amount, args.accountAddress, topic)
+            communityTokensStore.computeBurnFee(subscriptionId, args.tokenKey, args.amount, args.accountAddress)
         }
 
-        function computeSetSignerFee(args, topic) {
-            communityTokensStore.computeSetSignerFee(args.chainId, args.contractAddress, args.accountAddress, topic)
+        function computeSetSignerFee(subscriptionId, args) {
+            communityTokensStore.computeSetSignerFee(subscriptionId, args.communityId, args.chainId, args.contractAddress, args.accountAddress)
         }
     }
 

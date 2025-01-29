@@ -77,6 +77,11 @@ proc getCurrentNetworksChainIds*(self: Service): seq[int] =
 proc getEnabledChainIds*(self: Service): seq[int] =
   return self.getCurrentNetworks().filter(n => n.isEnabled).map(n => n.chainId)
 
+proc getDisabledChainIdsForEnabledChainIds*(self: Service, enabledChainIds: seq[int]): seq[int] =
+  for network in self.getCurrentNetworks():
+    if not enabledChainIds.contains(network.chainId):
+      result.add(network.chainId)
+
 proc upsertNetwork*(self: Service, network: NetworkItem): bool =
   let response = backend.addEthereumChain(backend.Network(
     chainId: network.chainId,

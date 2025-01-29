@@ -112,7 +112,6 @@ SQUtils.QObject {
                     return
                 subscriber.setEstimatedTime(response.estimatedTime)
             }
-            notificationInterval: root.interval
         }
     }
 
@@ -132,7 +131,6 @@ SQUtils.QObject {
                     return
                 subscriber.setGas(response.gasEstimate)
             }
-            notificationInterval: root.interval
         }
     }
 

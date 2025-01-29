@@ -63,9 +63,6 @@ proc init*(self: Controller) =
       if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
     )
 
-  self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e:Args):
-    let args = OwnerTokenSentArgs(e)
-    self.delegate.transactionWasSent(args.uuid, args.chainId, approvalTx = false, args.txHash, error = "")
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)

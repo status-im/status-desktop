@@ -47,6 +47,9 @@ QtObject:
       weiValue = fromHex(Stuint[256], weiValue).toString()
     return conversion.wei2Eth(weiValue, decimals)
 
+  proc hexToDec*(self: Utils, hexValue: string): string  {.slot.} =
+    return fromHex(Stuint[256], hexValue).toString()
+
   proc hex2Ascii*(self: Utils, value: string): string {.slot.} =
     result = string.fromBytes(hexToSeqByte(value))
 

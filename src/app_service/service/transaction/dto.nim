@@ -4,11 +4,13 @@ import Tables, sequtils
 import
   web3/ethtypes
 
-include  ../../common/json_utils
-import ../network/dto, ../token/dto
-import ../../common/conversion as service_conversion
+import backend/transactions
+import app_service/common/conversion as service_conversion
+import app_service/service/network/dto
+import app_service/service/token/dto
+import app/modules/shared_models/currency_amount
 
-import ../../../backend/transactions
+include  app_service/common/json_utils
 
 type
   SendType* {.pure.} = enum
@@ -21,6 +23,13 @@ type
     ERC721Transfer
     ERC1155Transfer
     Swap
+    CommunityBurn
+    CommunityDeployAssets
+    CommunityDeployCollectibles
+    CommunityDeployOwnerToken
+    CommunityMintTokens
+    CommunityRemoteBurn
+    CommunitySetSignerPubKey
     Approve
 
 type
@@ -354,6 +363,19 @@ type
     gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
+
+type
+  CostPerPath* = object
+    contractUniqueKey*: string
+    costEthCurrency*: CurrencyAmount
+    costFiatCurrency*: CurrencyAmount
+
+proc `%`*(self: CostPerPath): JsonNode =
+  result = %* {
+    "ethFee": if self.costEthCurrency == nil: newCurrencyAmount().toJsonNode() else: self.costEthCurrency.toJsonNode(),
+    "fiatFee": if self.costFiatCurrency == nil: newCurrencyAmount().toJsonNode() else: self.costFiatCurrency.toJsonNode(),
+    "contractUniqueKey": self.contractUniqueKey,
+  }
 
 proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
   let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)

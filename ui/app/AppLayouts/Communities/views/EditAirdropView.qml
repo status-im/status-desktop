@@ -60,12 +60,16 @@ StatusScrollView {
     // Bool property indicating whether the fees are shown
     readonly property bool showingFees: d.showFees
 
+    signal calculateFees()
+    signal stopUpdatingFees()
+
     onFeesPerSelectedContractChanged: {
         feesModel.clear()
         
         let feeSource = feesPerSelectedContract
-        if(!feeSource || feeSource.length === 0) // if no fees are available, show the placeholder text based on selection
+        if(!feeSource || feeSource.length === 0) { // if no fees are available, show the placeholder text based on selection
             feeSource = ModelUtils.modelToArray(root.selectedHoldingsModel, ["contractUniqueKey"])
+        }
 
         feeSource.forEach(entry => {
             feesModel.append({
@@ -254,6 +258,7 @@ StatusScrollView {
 
         AirdropTokensSelector {
             id: tokensSelector
+            enabled: !showFees.checked
 
             property int editedIndex: -1
 
@@ -406,6 +411,7 @@ StatusScrollView {
 
         AirdropRecipientsSelector {
             id: airdropRecipientsSelector
+            enabled: !showFees.checked
 
             addressesModel: addresses
 
@@ -557,8 +563,25 @@ StatusScrollView {
 
         SequenceColumnLayout.Separator {}
 
+        StatusSwitch {
+            id: showFees
+            enabled: root.isFullyFilled
+            text: qsTr("Show fees (will be enabled once the form is filled)")
+
+            onCheckedChanged: {
+                if(checked) {
+                    root.calculateFees()
+                    return
+                }
+                root.stopUpdatingFees()
+            }
+        }
+
+        SequenceColumnLayout.Separator {}
+
         FeesBox {
             id: feesBox
+            visible: showFees.checked
             Layout.fillWidth: true
 
             model: feesModel

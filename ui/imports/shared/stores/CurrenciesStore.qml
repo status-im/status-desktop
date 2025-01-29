@@ -76,4 +76,29 @@ QtObject {
     function getCurrentCurrencyAmount(amount) {
         return getCurrencyAmount(amount, currentCurrency)
     }
+
+    function hexToDec(hex) {
+        return globalUtils.hexToDec(hex)
+    }
+
+    function hexToEth(value) {
+        return hexToEthDenomination(value, "eth")
+    }
+
+    function hexToEthDenomination(value, ethUnit) {
+        let BigOps = SQUtils.AmountsArithmetic
+        if (ethUnit !== "qwei" && ethUnit !== "eth") {
+            console.warn("unsuported conversion")
+            return BigOps.fromNumber(0)
+        }
+        let unitMapping = {
+            "gwei": 9,
+            "eth": 18
+        }
+        let decValue = hexToDec(value)
+        if (!!decValue) {
+            return BigOps.div(BigOps.fromNumber(decValue), BigOps.fromNumber(1, unitMapping[ethUnit]))
+        }
+        return BigOps.fromNumber(0)
+    }
 }

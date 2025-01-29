@@ -55,7 +55,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
     let args = TransactionArgs(e)
-    var 
+    var
       txHash = ""
       isApprovalTx = false
     if not args.sentTransaction.isNil:
@@ -69,9 +69,6 @@ proc init*(self: Controller) =
       if not args.sendDetails.errorResponse.isNil: args.sendDetails.errorResponse.details else: ""
     )
 
-  self.events.on(SIGNAL_OWNER_TOKEN_SENT) do(e:Args):
-    let args = OwnerTokenSentArgs(e)
-    self.delegate.transactionWasSent(args.uuid, args.chainId, approvalTx = false, args.txHash, error = "")
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -81,6 +78,14 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     let args = SuggestedRoutesArgs(e)
+    if args.sendType == SendType.CommunityBurn or
+      args.sendType == SendType.CommunityDeployAssets or
+      args.sendType == SendType.CommunityDeployCollectibles or
+      args.sendType == SendType.CommunityDeployOwnerToken or
+      args.sendType == SendType.CommunityMintTokens or
+      args.sendType == SendType.CommunityRemoteBurn or
+      args.sendType == SendType.CommunitySetSignerPubKey:
+        return
     self.delegate.suggestedRoutesReady(args.uuid, args.suggestedRoutes, args.errCode, args.errDescription)
 
   self.events.on(SIGNAL_SIGN_ROUTER_TRANSACTIONS) do(e:Args):

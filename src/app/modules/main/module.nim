@@ -103,6 +103,7 @@ type
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
+    communityTokensService: community_tokens_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
     stickersModule: stickers_module.AccessInterface
@@ -211,6 +212,7 @@ proc newModule*[T](
   result.savedAddressService = savedAddressService
   result.keychainService = keychainService
   result.stickersService = stickersService
+  result.communityTokensService = communityTokensService
 
   # Submodules
   result.chatSectionModules = initOrderedTable[string, chat_section_module.AccessInterface]()
@@ -454,6 +456,28 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       error = ""
       txHash = ""
       isApprovalTx = false
+      #community specific details
+      # main community details
+      communityId = ""
+      communityName = ""
+      communityInvolvedTokens = 0
+      communityTotalAmount = ""
+      # community token 1 details
+      communityAmount1 = ""
+      communityAmountInfinite1 = false
+      communityAssetName1 = ""
+      communityAssetDecimals1 = 0
+      # community token 2 details
+      communityAmount2 = ""
+      communityAmountInfinite2 = false
+      communityAssetName2 = ""
+      communityAssetDecimals2 = 0
+      # other community details
+      communityInvolvedAddress = ""
+      communityNubmerOfInvolvedAddresses = 0
+      communityOwnerTokenName = ""
+      communityMasterTokenName = ""
+      communityDeployedTokenName = ""
 
     if not sendDetails.errorResponse.isNil:
       error = sendDetails.errorResponse.details
@@ -503,6 +527,64 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       if not accDto.isNil:
         txToName = accDto.name
 
+    # check for community details
+    if not sendDetails.communityParams.isNil:
+      let getTokenContractAddressAtIndex = proc(transferDetails: seq[TansferDetails], index: int): string =
+        if transferDetails.len == 0 or index >= transferDetails.len:
+          return ""
+        return transferDetails[index].tokenContractAddress
+
+      let getCommunityAmount = proc(transferDetails: seq[TansferDetails]): string =
+        var total: UInt256 = stint.u256(0)
+        for td in transferDetails:
+          total += td.amount
+        return total.toString(10)
+
+      communityId = sendDetails.communityParams.communityId
+      let item = self.view.model().getItemById(communityId)
+      if item.id == "":
+        error = "cannot_resolve_community"
+      else:
+        communityName = item.name
+
+      communityInvolvedTokens = sendDetails.communityParams.transferDetails.len
+      communityTotalAmount = getCommunityAmount(sendDetails.communityParams.transferDetails)
+
+      for i in 0 ..< sendDetails.communityParams.transferDetails.len:
+        let tokenContractAddress = getTokenContractAddressAtIndex(sendDetails.communityParams.transferDetails, i)
+        if tokenContractAddress.len == 0:
+          error = "cannot_resolve_token_contract_address"
+        else:
+          let communityToken = self.communityTokensService.getCommunityTokenFromCache(fromChain, tokenContractAddress)
+          if communityToken.name.len == 0:
+            error = "cannot_resolve_community_token"
+          else:
+            if i == 0:
+              communityAssetName1 = communityToken.name
+              communityAssetDecimals1 = communityToken.decimals
+              communityAmount1 = sendDetails.communityParams.transferDetails[i].amount.toString(10)
+            elif i == 1:
+              communityAssetName2 = communityToken.name
+              communityAssetDecimals2 = communityToken.decimals
+              communityAmount2 = sendDetails.communityParams.transferDetails[i].amount.toString(10)
+
+      if txType == SendType.CommunityDeployOwnerToken:
+        communityOwnerTokenName = sendDetails.communityParams.ownerTokenParameters.name
+        communityMasterTokenName = sendDetails.communityParams.masterTokenParameters.name
+
+      if txType == SendType.CommunityDeployAssets or
+        txType == SendType.CommunityDeployCollectibles:
+          communityDeployedTokenName = sendDetails.communityParams.deploymentParameters.name
+          communityAmountInfinite1 = sendDetails.communityParams.deploymentParameters.infiniteSupply
+          if not communityAmountInfinite1:
+            communityAmount1 = sendDetails.communityParams.deploymentParameters.supply.toString(10)
+
+      if txType == SendType.CommunityRemoteBurn or
+        txType == SendType.CommunityBurn:
+        communityNubmerOfInvolvedAddresses = sendDetails.communityParams.walletAddresses.len
+        if communityNubmerOfInvolvedAddresses == 1: # set address only if all tokens are from the same address
+          communityInvolvedAddress = sendDetails.communityParams.walletAddresses[0]
+
     self.view.showTransactionToast(
       sendDetails.uuid,
       sendDetails.sendType,
@@ -523,6 +605,23 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       sendDetails.username,
       sendDetails.publicKey,
       sendDetails.packId,
+      communityId,
+      communityName,
+      communityInvolvedTokens,
+      communityTotalAmount,
+      communityAmount1,
+      communityAmountInfinite1,
+      communityAssetName1,
+      communityAssetDecimals1,
+      communityAmount2,
+      communityAmountInfinite2,
+      communityAssetName2,
+      communityAssetDecimals2,
+      communityInvolvedAddress,
+      communityNubmerOfInvolvedAddresses,
+      communityOwnerTokenName,
+      communityMasterTokenName,
+      communityDeployedTokenName,
       status,
       error,
     )
@@ -1348,16 +1447,26 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
-method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: CommunityTokenDto) =
+method onCommunityTokenDeploymentStored*[T](self: Module[T], communityToken: CommunityTokenDto, error: string) =
+  if error != "":
+    error "Cannot update section model, due to error storing community token: ", error
+    return
   let item = self.view.model().getItemById(communityToken.communityId)
-  if item.id != "":
-    item.appendCommunityToken(self.createTokenItem(communityToken))
+  if item.id == "":
+    error "Cannot update section model, due to missing community with id: ", communityId=communityToken.communityId
+    return
+  item.appendCommunityToken(self.createTokenItem(communityToken))
 
-method onOwnerTokensDeploymentStarted*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) =
+method onOwnerTokensDeploymentStored*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto, error: string) =
+  if error != "":
+    error "Cannot update section model, due to error storing owner tokens: ", error
+    return
   let item = self.view.model().getItemById(ownerToken.communityId)
-  if item.id != "":
-    item.appendCommunityToken(self.createTokenItem(ownerToken))
-    item.appendCommunityToken(self.createTokenItem(masterToken))
+  if item.id == "":
+    error "Cannot update section model, due to missing community with id: ", communityId=ownerToken.communityId
+    return
+  item.appendCommunityToken(self.createTokenItem(ownerToken))
+  item.appendCommunityToken(self.createTokenItem(masterToken))
 
 method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId: int, address: string) =
   let item = self.view.model().getItemById(communityId)

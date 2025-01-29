@@ -35,10 +35,14 @@ StatusDialog {
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
 
+    readonly property alias selectedAccountAddress: d.accountAddress
+
     signal finaliseOwnershipClicked
     signal rejectClicked
     signal visitCommunityClicked
     signal openControlNodeDocClicked(string link)
+    signal calculateFees()
+    signal stopUpdatingFees()
 
     QtObject {
         id: d
@@ -47,6 +51,7 @@ StatusDialog {
         readonly property int init: 0
         readonly property int finalise: 1
 
+        property bool feesActive: false
         property bool ackCheck: false
 
         // Fees related props:
@@ -107,7 +112,7 @@ StatusDialog {
                     PropertyChanges {
                         target: acceptBtn
                         text: qsTr("Make this device the control node and update smart contract")
-                        enabled: d.ackCheck && !root.isFeeLoading && root.feeErrorText === ""
+                        enabled: d.feesActive && !root.isFeeLoading && root.feeErrorText === ""
 
                         onClicked: root.finaliseOwnershipClicked()
                     }
@@ -142,6 +147,7 @@ StatusDialog {
                 text: qsTr("I don't want to be the owner")
 
                 onClicked: {
+                    root.stopUpdatingFees()
                     root.rejectClicked()
                     close()
                 }
@@ -292,8 +298,24 @@ StatusDialog {
                 text: qsTr("This transaction updates the %1 Community smart contract, making you the %1 Community owner.").arg(root.communityName)
             }
 
+            StatusSwitch {
+                id: showFees
+                enabled: d.ackCheck
+                text: qsTr("Show fees (will be enabled once acknowledge confirmed)")
+
+                onCheckedChanged: {
+                    d.feesActive = checked
+                    if(checked) {
+                        root.calculateFees()
+                        return
+                    }
+                    root.stopUpdatingFees()
+                }
+            }
+
             FeesBox {
                 id: feesBox
+                visible: showFees.checked
                 Layout.fillWidth: true
 
                 implicitWidth: 0
@@ -324,6 +346,7 @@ StatusDialog {
             }
 
             StatusCheckBox {
+                enabled: !showFees.checked
                 Layout.topMargin: -Theme.halfPadding
                 Layout.fillWidth: true
 
