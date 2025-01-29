@@ -1101,6 +1101,11 @@ QtObject {
                 readonly property var ownerTokenDetails: root.communityTokensStore.ownerTokenDetails
                 readonly property var communityData : root.communitiesStore.getCommunityDetailsAsJson(communityId)
 
+                readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
+                    communityTokensStore: root.communityTokensStore
+                    active: finalisePopup.contentItem.Window.window.active
+                }
+
                 Component.onCompleted: root.communityTokensStore.asyncGetOwnerTokenDetails(communityId)
 
                 communityName: communityData.name
@@ -1124,19 +1129,25 @@ QtObject {
                 onVisitCommunityClicked: communitiesStore.navigateToCommunity(finalisePopup.communityId)
                 onOpenControlNodeDocClicked: Global.openLink(link)
 
+                onCalculateFees: {
+                    feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
+                }
+
+                onStopUpdatingFees: {
+                    communityTokensStore.stopUpdatesForSuggestedRoute()
+                }
+
+                onClosed: {
+                    communityTokensStore.stopUpdatesForSuggestedRoute()
+                }
+
                 SetSignerFeesSubscriber {
                     id: feeSubscriber
-
-                    readonly property TransactionFeesBroker feesBroker: TransactionFeesBroker {
-                        communityTokensStore: root.communityTokensStore
-                        active: finalisePopup.contentItem.Window.window.active
-                    }
-
+                    communityId: finalisePopup.communityId
                     chainId: finalisePopup.ownerTokenDetails.chainId
                     contractAddress: finalisePopup.ownerTokenDetails.contractAddress
-                    accountAddress: finalisePopup.ownerTokenDetails.accountAddress
+                    accountAddress: finalisePopup.selectedAccountAddress
                     enabled: finalisePopup.visible || signPopup.visible
-                    Component.onCompleted: feesBroker.registerSetSignerFeesSubscriber(feeSubscriber)
                 }
 
                 SignTransactionsPopup {
@@ -1155,7 +1166,7 @@ QtObject {
 
                     onSignTransactionClicked: {
                         finalisePopup.close()
-                        root.communityTokensStore.updateSmartContract(finalisePopup.communityId, finalisePopup.ownerTokenDetails.chainId, finalisePopup.ownerTokenDetails.contractAddress, finalisePopup.ownerTokenDetails.accountAddress)
+                        root.communityTokensStore.authenticateAndTransfer()
                     }
                 }
 

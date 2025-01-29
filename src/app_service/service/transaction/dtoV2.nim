@@ -32,9 +32,11 @@ type
     amountOut*: UInt256
 
     suggestedLevelsForMaxFeesPerGas*: SuggestedLevelsForMaxFeesPerGasDto
+    maxFeesPerGas*: UInt256
     suggestedMinPriorityFee*: UInt256
     suggestedMaxPriorityFee*: UInt256
     currentBaseFee*: UInt256
+    usedContractAddress*: string
 
     txNonce*: UInt256
     txMaxFeesPerGas*: UInt256
@@ -85,9 +87,11 @@ proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   discard jsonObj.getProp("AmountInLocked", result.amountInLocked)
   result.amountOut = stint.fromHex(UInt256, jsonObj{"AmountOut"}.getStr)
   result.suggestedLevelsForMaxFeesPerGas = jsonObj["SuggestedLevelsForMaxFeesPerGas"].toSuggestedLevelsForMaxFeesPerGasDto()
+  result.maxFeesPerGas = stint.fromHex(UInt256, jsonObj{"MaxFeesPerGas"}.getStr)
   result.suggestedMinPriorityFee = stint.fromHex(UInt256, jsonObj{"SuggestedMinPriorityFee"}.getStr)
   result.suggestedMaxPriorityFee = stint.fromHex(UInt256, jsonObj{"SuggestedMaxPriorityFee"}.getStr)
   result.currentBaseFee = stint.fromHex(UInt256, jsonObj{"CurrentBaseFee"}.getStr)
+  discard jsonObj.getProp("UsedContractAddress", result.usedContractAddress)
   result.txNonce = stint.fromHex(UInt256, jsonObj{"TxNonce"}.getStr)
   result.txMaxFeesPerGas = stint.fromHex(UInt256, jsonObj{"TxMaxFeesPerGas"}.getStr)
   result.txBaseFee = stint.fromHex(UInt256, jsonObj{"TxBaseFee"}.getStr)

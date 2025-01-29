@@ -6,7 +6,7 @@ import app_service/service/transaction/dto as transaction_dto
 
 import app_service/common/utils as common_utils
 import app_service/service/eth/utils as eth_utils
-from backend/eth import ExtraKeyPackId
+from backend/wallet import ExtraKeyPackId
 
 QtObject:
   type

@@ -193,9 +193,11 @@ StatusScrollView {
                             color: Theme.palette.baseColor1
                         }
                     ]
-                    onClicked: root.itemClicked(model.contractUniqueKey,
+                    onClicked: {
+                        root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,
                                                 model.accountName, model.address)
+                    }
                 }
             }
 
@@ -256,9 +258,11 @@ StatusScrollView {
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
                     communityId: ""
-                    onClicked: root.itemClicked(model.contractUniqueKey,
+                    onClicked: {
+                        root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,
                                                 model.accountName, model.address)
+                    }
                 }
             }
 

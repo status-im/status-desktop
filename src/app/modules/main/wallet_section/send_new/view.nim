@@ -4,7 +4,7 @@ import ./io_interface, ./path_model, ./path_item
 import app_service/common/utils as common_utils
 import app_service/service/eth/utils as eth_utils
 import app_service/service/transaction/dto as transaction_dto
-from backend/eth import ExtraKeyPackId
+from backend/wallet import ExtraKeyPackId
 
 export path_model
 

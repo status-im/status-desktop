@@ -14,4 +14,8 @@ SingleFeeSubscriber {
     required property bool isOwnerDeployment
     required property string accountAddress
     required property bool enabled
+
+    property var ownerToken
+    property var masterToken
+    property var token
 }

@@ -8,6 +8,7 @@ import QtQuick 2.15
 SingleFeeSubscriber {
     id: root
 
+    required property string communityId
     required property int chainId
     required property string contractAddress
     required property string accountAddress

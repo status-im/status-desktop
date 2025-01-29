@@ -43,6 +43,8 @@ StatusDialog {
     signal burnClicked(string burnAmount, string accountAddress)
     signal cancelClicked
     signal enableNetwork
+    signal calculateFees()
+    signal stopUpdatingFees()
 
     QtObject {
         id: d
@@ -105,6 +107,7 @@ StatusDialog {
         }
 
         Item {
+            enabled: !showFees.checked
             Layout.bottomMargin: 12
             Layout.leftMargin: -Theme.halfPadding
             Layout.fillWidth: true
@@ -169,8 +172,23 @@ StatusDialog {
             Layout.fillWidth: true
         }
 
+        StatusSwitch {
+            id: showFees
+            enabled: d.isFormValid
+            text: qsTr("Show fees (will be enabled once the form is filled)")
+
+            onCheckedChanged: {
+                if(checked) {
+                    root.calculateFees()
+                    return
+                }
+                root.stopUpdatingFees()
+            }
+        }
+
         FeesBox {
             id: feesBox
+            visible: showFees.checked
             Layout.fillWidth: true
 
             placeholderText: qsTr("Choose number of tokens to burn to see gas fees")
@@ -235,13 +253,14 @@ StatusDialog {
                 normalColor: "transparent"
 
                 onClicked: {
+                    root.stopUpdatingFees()
                     root.cancelClicked()
                     close()
                 }
             }
 
             StatusButton {
-                enabled: d.isFormValid && !d.isFeeError && !root.isFeeLoading
+                enabled: showFees.checked && !d.isFeeError && !root.isFeeLoading
                          && root.feeText !== ""
                 text: qsTr("Burn tokens")
                 type: StatusBaseButton.Type.Danger

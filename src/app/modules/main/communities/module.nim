@@ -128,7 +128,8 @@ proc newModule*(
     walletAccountService,
     keycardService,
   )
-  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService, communityService)
+  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, walletAccountService,
+  communityTokensService, transactionService, networksService, communityService, keycardService)
   result.moduleLoaded = false
   result.events = events
   result.curatedCommunitiesLoaded = false
@@ -955,7 +956,7 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
 
     if not aCriteriaChanged:
       continue
-      
+
     let updatedTokenPermissionItem = initTokenPermissionItem(
         tokenPermissionItem.id,
         tokenPermissionItem.`type`,

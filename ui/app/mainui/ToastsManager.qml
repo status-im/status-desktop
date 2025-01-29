@@ -61,38 +61,6 @@ QtObject {
                                                  communityId)
         }
 
-        function onSetSignerStateChanged(communityId, communityName, status, url) {
-            if (status === Constants.ContractTransactionStatus.Completed) {
-                Global.displayToastMessage(qsTr("%1 smart contract amended").arg(communityName),
-                                           root.viewOptimismExplorerText,
-                                           root.checkmarkCircleAssetName,
-                                           false,
-                                           Constants.ephemeralNotificationType.success,
-                                           url)
-                Global.displayToastWithActionMessage(qsTr("Your device is now the control node for %1. You now have full Community admin rights.").arg(communityName),
-                                                     qsTr("%1 Community admin").arg(communityName),
-                                                     root.checkmarkCircleAssetName,
-                                                     "",
-                                                     false,
-                                                     Constants.ephemeralNotificationType.success,
-                                                     ToastsManager.ActionType.NavigateToCommunityAdmin,
-                                                     communityId)
-            } else if (status === Constants.ContractTransactionStatus.Failed) {
-                Global.displayToastMessage(qsTr("%1 smart contract update failed").arg(communityName),
-                                           root.viewOptimismExplorerText,
-                                           root.warningAssetName,
-                                           false,
-                                           Constants.ephemeralNotificationType.danger,
-                                           url)
-            } else if (status ===  Constants.ContractTransactionStatus.InProgress) {
-                Global.displayToastMessage(qsTr("Updating %1 smart contract").arg(communityName),
-                                           root.viewOptimismExplorerText,
-                                           "",
-                                           true,
-                                           Constants.ephemeralNotificationType.normal,
-                                           url)
-            }
-        }
 
         function onCommunityOwnershipDeclined(communityName) {
             Global.displayToastWithActionMessage(qsTr("You declined ownership of %1.").arg(communityName),
@@ -105,22 +73,6 @@ QtObject {
                                                  "")
         }
 
-        // Ownership Sender:
-        function onSendOwnerTokenStateChanged(tokenName, status, url) {
-            if (status === Constants.ContractTransactionStatus.InProgress) {
-                Global.displayToastMessage(qsTr("Sending %1 token").arg(tokenName),
-                                           root.viewOptimismExplorerText,
-                                           "",
-                                           true,
-                                           Constants.ephemeralNotificationType.normal, url)
-            } else if (status ===  Constants.ContractTransactionStatus.Completed) {
-                Global.displayToastMessage(qsTr("%1 token sent").arg(tokenName),
-                                           root.viewOptimismExplorerText,
-                                           root.checkmarkCircleAssetName,
-                                           false,
-                                           Constants.ephemeralNotificationType.success, url)
-            }
-        }
 
         function onOwnershipLost(communityId, communityName) {
             Global.displayToastMessage(qsTr("Your device is no longer the control node for %1.
