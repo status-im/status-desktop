@@ -35,11 +35,7 @@ Item {
         width: 350
         textRole: "name"
         valueRole: "value"
-        model: [
-            {name: "InProgress", value: Onboarding.AddKeyPairState.InProgress},
-            {name: "Success", value: Onboarding.AddKeyPairState.Success},
-            {name: "Failed", value: Onboarding.AddKeyPairState.Failed}
-        ]
+        model: Onboarding.getModelFromEnum("AddKeyPairState")
     }
 }
 

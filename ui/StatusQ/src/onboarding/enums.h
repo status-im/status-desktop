@@ -1,10 +1,32 @@
+#include <QDebug>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMetaEnum>
 #include <QObject>
 
-class OnboardingEnums
+class OnboardingEnums: public QObject
 {
-    Q_GADGET
+    Q_OBJECT
     Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+
 public:
+    Q_INVOKABLE QJsonArray getModelFromEnum(const QString &name) const {
+        if (name.isEmpty())
+            return {};
+
+        QMetaEnum e = staticMetaObject.enumerator(staticMetaObject.indexOfEnumerator(name.toLatin1().constData()));
+        if (!e.isValid())
+            return {};
+
+        QJsonArray result;
+        for (int i = 0; i < e.keyCount(); ++i) {
+            result.append(
+                {{{QStringLiteral("name"), e.key(i)}, {QStringLiteral("value"), e.value(i)}}});
+        }
+
+        return result;
+    }
+
     enum class PrimaryFlow {
         Unknown,
         CreateProfile,

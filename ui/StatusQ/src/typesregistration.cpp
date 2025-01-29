@@ -105,8 +105,10 @@ void registerStatusQTypes() {
         });
 
     // onboarding
-    qmlRegisterUncreatableType<OnboardingEnums>("AppLayouts.Onboarding.enums", 1, 0,
-                                                "Onboarding", "This is an enum type, cannot be created directly.");
+    qmlRegisterSingletonType<OnboardingEnums>("AppLayouts.Onboarding.enums", 1, 0,
+                                              "Onboarding", [](QQmlEngine*, QJSEngine*) {
+                                                  return new OnboardingEnums;
+                                              });
 
     QZXing::registerQMLTypes();
     qqsfpm::registerTypes();

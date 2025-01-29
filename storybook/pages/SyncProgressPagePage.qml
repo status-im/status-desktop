@@ -32,11 +32,7 @@ Item {
         width: 300
         textRole: "name"
         valueRole: "value"
-        model: [
-            {name: "InProgress", value: Onboarding.SyncState.InProgress},
-            {name: "Success", value: Onboarding.SyncState.Success},
-            {name: "Failed", value: Onboarding.SyncState.Failed}
-        ]
+        model: Onboarding.getModelFromEnum("SyncState")
     }
 }
 
