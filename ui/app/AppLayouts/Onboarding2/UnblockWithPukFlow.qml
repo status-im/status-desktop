@@ -23,7 +23,7 @@ SQUtils.QObject {
     signal keycardPinCreated(string pin)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
-    signal finished
+    signal finished(bool success)
 
     function init() {
         root.stackView.push(d.initialComponent())
@@ -47,7 +47,7 @@ SQUtils.QObject {
 
         function finishWithFactoryReset() {
             root.keycardFactoryResetRequested()
-            root.finished()
+            root.finished(false)
         }
     }
 
@@ -101,7 +101,7 @@ SQUtils.QObject {
                 StatusButton {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: qsTr("Continue")
-                    onClicked: root.finished()
+                    onClicked: root.finished(true)
                 }
             ]
         }
