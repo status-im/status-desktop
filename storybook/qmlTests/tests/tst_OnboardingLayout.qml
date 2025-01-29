@@ -172,6 +172,11 @@ Item {
             verify(!!stack)
             tryCompare(stack, "busy", false) // wait for page transitions to stop
 
+            if (stack.currentItem instanceof Loader) {
+                verify(stack.currentItem.item instanceof pageClass)
+                return stack.currentItem.item
+            }
+
             verify(stack.currentItem instanceof pageClass)
             return stack.currentItem
         }

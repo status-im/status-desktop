@@ -3,11 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 
-import StatusQ 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import Qt.labs.settings 1.0
 
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0
@@ -379,9 +375,11 @@ SplitView {
                     const stack = onboarding.stack
                     let content = `Stack (${stack.depth}):`
 
-                    for (let i = 0; i < stack.depth; i++)
-                        content += " " + InspectionUtils.baseName(
-                                    stack.get(i, StackView.ForceLoad))
+                    for (let i = 0; i < stack.depth; i++) {
+                        const stackEntry = stack.get(i, StackView.ForceLoad)
+                        content += " " + InspectionUtils.baseName(stackEntry instanceof Loader
+                                                                  ? stackEntry.item : stackEntry)
+                    }
 
                     return content
                 }
@@ -525,6 +523,12 @@ SplitView {
                 Layout.fillHeight: true
             }
         }
+    }
+
+    Settings {
+        property alias useBiometrics: ctrlBiometrics.checked
+        property alias showLoginScreen: ctrlLoginScreen.checked
+        property alias useTouchId: ctrlTouchIdUser.checked
     }
 }
 

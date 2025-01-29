@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQml 2.15
 
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -12,12 +14,16 @@ SQUtils.QObject {
 
     required property StackView stackView
 
+    required property var loginAccountsModel
+
     required property int keycardState
     required property int addKeyPairState
     required property int syncState
     required property var seedWords
     required property int remainingPinAttempts
     required property int remainingPukAttempts
+
+    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -32,6 +38,8 @@ SQUtils.QObject {
     required property var tryToSetPinFunction
     required property var tryToSetPukFunction
 
+    signal biometricsRequested
+    signal loginRequested(string keyUid, int method, var data)
     signal keycardPinCreated(string pin)
     signal keycardPinEntered(string pin)
     signal enableBiometricsRequested(bool enable)
@@ -51,25 +59,16 @@ SQUtils.QObject {
     signal finished(int flow)
 
     function init() {
-        root.stackView.push(welcomePage)
+        root.stackView.push(entryPage)
     }
 
-    function startCreateProfileFlow() {
-        root.stackView.push(createProfilePage)
-    }
-
-    function startLoginFlow() {
-        root.stackView.push(loginPage)
-    }
-
-    function startLostKeycardFlow() {
-        root.stackView.push(keycardLostPage)
-    }
+    readonly property LoginScreen loginScreen: d.loginScreen
 
     QtObject {
         id: d
 
         property int flow
+        property LoginScreen loginScreen: null
 
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
@@ -85,6 +84,15 @@ SQUtils.QObject {
 
         function openTermsOfUsePopup() {
             termsOfUsePopup.createObject(root.stackView).open()
+        }
+    }
+
+    Component {
+        id: entryPage
+
+        Loader {
+            sourceComponent: loginAccountsModel.ModelCount.empty ? welcomePage
+                                                                 : loginScreenComponent
         }
     }
 
@@ -109,6 +117,39 @@ SQUtils.QObject {
         }
     }
 
+    Component {
+        id: loginScreenComponent
+
+        LoginScreen {
+            id: loginScreen
+
+            keycardState: root.keycardState
+            tryToSetPinFunction: root.tryToSetPinFunction
+
+            keycardRemainingPinAttempts: root.remainingPinAttempts
+            keycardRemainingPukAttempts: root.remainingPukAttempts
+
+            loginAccountsModel: root.loginAccountsModel
+            biometricsAvailable: root.biometricsAvailable
+            isBiometricsLogin: root.isBiometricsLogin
+            onBiometricsRequested: root.biometricsRequested()
+            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
+
+            onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
+            onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
+            onLostKeycard: root.stackView.push(keycardLostPage)
+            onUnblockWithSeedphraseRequested: console.warn("!!! FIXME OnboardingLayout::onUnblockWithSeedphraseRequested")
+            onUnblockWithPukRequested: unblockWithPukFlow.init()
+            onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
+
+            Binding {
+                target: d
+                restoreMode: Binding.RestoreValue
+                property: "loginScreen"
+                value: loginScreen
+            }
+        }
+    }
 
     Component {
         id: helpUsImproveStatusPage
@@ -279,6 +320,8 @@ SQUtils.QObject {
     UnblockWithPukFlow {
         id: unblockWithPukFlow
 
+        property string pin
+
         stackView: root.stackView
         keycardState: root.keycardState
         tryToSetPukFunction: root.tryToSetPukFunction
@@ -287,12 +330,20 @@ SQUtils.QObject {
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onKeycardPinCreated: (pin) => {
+            unblockWithPukFlow.pin = pin
+            root.keycardPinCreated(pin)
+        }
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
 
         onFinished: {
-            d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
-            d.pushOrSkipBiometricsPage()
+            if (root.loginScreen) {
+                root.loginRequested(root.loginScreen.selectedProfileKeyId,
+                                    Onboarding.LoginMethod.Keycard, { pin })
+            } else {
+                d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+                d.pushOrSkipBiometricsPage()
+            }
         }
     }
 
