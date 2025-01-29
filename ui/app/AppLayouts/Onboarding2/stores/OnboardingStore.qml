@@ -8,6 +8,7 @@ QtObject {
     id: root
 
     signal appLoaded
+
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
@@ -17,6 +18,8 @@ QtObject {
             d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
         }
     }
+
+    readonly property var loginAccountsModel: d.onboardingModuleInst.loginAccountsModel
 
     // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
@@ -28,6 +31,10 @@ QtObject {
 
     function finishOnboardingFlow(flow: int, data: Object) { // -> bool
         return d.onboardingModuleInst.finishOnboardingFlow(flow, JSON.stringify(data))
+    }
+
+    function loginRequested(keyUid: string, method: int, data: Object) { // -> void
+        d.onboardingModuleInst.loginRequested(keyUid, method, JSON.stringify(data))
     }
 
     function setPin(pin: string) {

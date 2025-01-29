@@ -33,7 +33,7 @@ public:
         Login
     };
 
-    enum class SecondaryFlow {
+    enum class OnboardingFlow {
         Unknown,
 
         CreateProfileWithPassword,
@@ -50,6 +50,7 @@ public:
     };
 
     enum class LoginMethod {
+        Unknown,
         Password,
         Keycard,
     };
@@ -82,7 +83,7 @@ public:
 
 private:
     Q_ENUM(PrimaryFlow)
-    Q_ENUM(SecondaryFlow)
+    Q_ENUM(OnboardingFlow)
     Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
     Q_ENUM(ProgressState)
