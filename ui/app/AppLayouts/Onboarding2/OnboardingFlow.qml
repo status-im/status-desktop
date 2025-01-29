@@ -125,7 +125,7 @@ SQUtils.QObject {
         CreateProfilePage {
             onCreateProfileWithPasswordRequested: createNewProfileFlow.init()
             onCreateProfileWithSeedphraseRequested: {
-                d.flow = Onboarding.SecondaryFlow.CreateProfileWithSeedphrase
+                d.flow = Onboarding.OnboardingFlow.CreateProfileWithSeedphrase
                 useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.NewProfile)
             }
             onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
@@ -142,7 +142,7 @@ SQUtils.QObject {
             onLoginWithKeycardRequested: loginWithKeycardFlow.init()
 
             onLoginWithSeedphraseRequested: {
-                d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
+                d.flow = Onboarding.OnboardingFlow.LoginWithSeedphrase
                 useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
             }
         }
@@ -153,12 +153,12 @@ SQUtils.QObject {
 
         KeycardLostPage {
             onCreateReplacementKeycardRequested: {
-                d.flow = Onboarding.SecondaryFlow.LoginWithRestoredKeycard
+                d.flow = Onboarding.OnboardingFlow.LoginWithRestoredKeycard
                 keycardCreateReplacementFlow.init()
             }
 
             onUseProfileWithoutKeycardRequested: {
-                d.flow = Onboarding.SecondaryFlow.LoginWithLostKeycardSeedphrase
+                d.flow = Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase
                 useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.KeycardRecovery)
             }
         }
@@ -172,7 +172,7 @@ SQUtils.QObject {
 
         onFinished: (password) => {
             root.setPasswordRequested(password)
-            d.flow = Onboarding.SecondaryFlow.CreateProfileWithPassword
+            d.flow = Onboarding.OnboardingFlow.CreateProfileWithPassword
             d.pushOrSkipBiometricsPage()
         }
     }
@@ -222,8 +222,8 @@ SQUtils.QObject {
 
         onFinished: (withNewSeedphrase) => {
             d.flow = withNewSeedphrase
-                        ? Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase
-                        : Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase
+                        ? Onboarding.OnboardingFlow.CreateProfileWithKeycardNewSeedphrase
+                        : Onboarding.OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase
 
             d.pushOrSkipBiometricsPage()
         }
@@ -240,12 +240,12 @@ SQUtils.QObject {
                                            root.syncProceedWithConnectionString(connectionString)
 
         onLoginWithSeedphraseRequested: {
-            d.flow = Onboarding.SecondaryFlow.LoginWithSeedphrase
+            d.flow = Onboarding.OnboardingFlow.LoginWithSeedphrase
             useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
         }
 
         onFinished: {
-            d.flow = Onboarding.SecondaryFlow.LoginWithSyncing
+            d.flow = Onboarding.OnboardingFlow.LoginWithSyncing
             d.pushOrSkipBiometricsPage()
         }
     }
@@ -274,7 +274,7 @@ SQUtils.QObject {
         onUnblockWithPukRequested: unblockWithPukFlow.init()
 
         onFinished: {
-            d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+            d.flow = Onboarding.OnboardingFlow.LoginWithKeycard
             d.pushOrSkipBiometricsPage()
         }
     }
@@ -294,7 +294,7 @@ SQUtils.QObject {
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
 
         onFinished: {
-            d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+            d.flow = Onboarding.OnboardingFlow.LoginWithKeycard
             d.pushOrSkipBiometricsPage()
         }
     }

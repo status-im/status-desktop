@@ -31,8 +31,10 @@ const SIGNAL_KEYCARD_SET_PIN_FAILURE* = "keycardSetPinFailure"
 const SIGNAL_KEYCARD_AUTHORIZE_FAILURE* = "keycardAuthorizeFailure"
 const SIGNAL_KEYCARD_LOAD_MNEMONIC_FAILURE* = "keycardLoadMnemonicFailure"
 const SIGNAL_KEYCARD_LOAD_MNEMONIC_SUCCESS* = "keycardLoadMnemonicSuccess"
-const SIGNAL_KEYCARD_EXPORT_KEYS_FAILURE* = "keycardExportKeysFailure"
-const SIGNAL_KEYCARD_EXPORT_KEYS_SUCCESS* = "keycardExportKeysSuccess"
+const SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_FAILURE* = "keycardExportRestoreKeysFailure"
+const SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_SUCCESS* = "keycardExportRestoreKeysSuccess"
+const SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_FAILURE* = "keycardExportLoginKeysFailure"
+const SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_SUCCESS* = "keycardExportLoginKeysSuccess"
 
 type
   KeycardEventArg* = ref object of Args
@@ -157,10 +159,9 @@ QtObject:
 
       let rpcResponseObj = responseObj["response"].getStr().parseJson()
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
-        raise newException(RpcException, "Error authorizing: " & error.message)
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
     except Exception as e:
-      error "error set pin: ", msg = e.msg
+      error "error during authorize: ", msg = e.msg
       self.events.emit(SIGNAL_KEYCARD_AUTHORIZE_FAILURE, KeycardErrorArg(error: e.msg))
 
   proc receiveKeycardSignalV2(self: Service, signal: string) {.slot.} =
@@ -231,9 +232,37 @@ QtObject:
         raise newException(RpcException, "Error authorizing: " & error.message)
 
       let keys = rpcResponseObj["result"]["keys"].toKeycardExportedKeysDto()
-      self.events.emit(SIGNAL_KEYCARD_EXPORT_KEYS_SUCCESS, KeycardExportedKeysArg(exportedKeys: keys))
+      self.events.emit(SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_SUCCESS, KeycardExportedKeysArg(exportedKeys: keys))
     except Exception as e:
       error "error exporting recover keys", msg = e.msg
-      self.events.emit(SIGNAL_KEYCARD_EXPORT_KEYS_FAILURE, KeycardErrorArg(error: e.msg))
+      self.events.emit(SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_FAILURE, KeycardErrorArg(error: e.msg))
+
+  proc asyncExportLoginKeys*(self: Service) =
+    self.rpcCounter += 1
+    let arg = AsyncExportLoginKeysArg(
+      tptr: asyncExportLoginKeysTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onAsyncExportLoginKeys",
+      rpcCounter: self.rpcCounter,
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncExportLoginKeys*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+
+      if responseObj{"error"}.kind != JNull and responseObj{"error"}.getStr != "":
+        raise newException(CatchableError, responseObj{"error"}.getStr)
+
+      let rpcResponseObj = responseObj["response"].getStr().parseJson()
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+        raise newException(RpcException, "Error authorizing: " & error.message)
+
+      let keys = rpcResponseObj["result"]["keys"].toKeycardExportedKeysDto()
+      self.events.emit(SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_SUCCESS, KeycardExportedKeysArg(exportedKeys: keys))
+    except Exception as e:
+      error "error exporting login keys", msg = e.msg
+      self.events.emit(SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_FAILURE, KeycardErrorArg(error: e.msg))
 
     

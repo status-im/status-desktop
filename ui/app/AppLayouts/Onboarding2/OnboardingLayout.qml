@@ -33,7 +33,7 @@ Page {
 
     signal shareUsageDataRequested(bool enabled)
 
-    // flow: Onboarding.SecondaryFlow
+    // flow: Onboarding.OnboardingFlow
     signal finished(int flow, var data)
 
     // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;

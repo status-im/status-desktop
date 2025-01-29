@@ -73,3 +73,10 @@ proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   if(jsonObj.getProp("images", obj) and obj.kind == JArray):
     for imgObj in obj:
       result.images.add(toImage(imgObj))
+
+proc extractImages*(account: AccountDto, thumbnailImage: var string, largeImage: var string) =
+  for img in account.images:
+    if(img.imgType == "thumbnail"):
+      thumbnailImage = img.uri
+    elif(img.imgType == "large"):
+      largeImage = img.uri

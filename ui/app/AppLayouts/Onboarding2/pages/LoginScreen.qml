@@ -89,9 +89,16 @@ OnboardingPage {
         // (password) login
         function onAccountLoginError(error: string, wrongPassword: bool) {
             if (error) {
-                if (!d.currentProfileIsKeycard) { // PIN validation done separately
-                    // SQLITE_NOTADB: "file is not a database"
-                    if (error.includes("file is not a database") || wrongPassword) {
+                if (d.currentProfileIsKeycard) {
+                    // Login with keycard
+                    if (wrongPassword) {
+                        keycardBox.onWrongPin()
+                    } else {
+                        keycardBox.loginError = error
+                    }
+                } else {
+                    // Login with password
+                    if (wrongPassword) {
                         passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
                         passwordBox.detailedError = ""
                     } else {
@@ -222,7 +229,6 @@ OnboardingPage {
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.onboardingStore.keycardState
-                tryToSetPinFunction: root.onboardingStore.setPin
                 keycardRemainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
                 keycardRemainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
