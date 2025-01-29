@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core.Theme 0.1
+
 import shared.stores 1.0
 import shared.views 1.0
 
