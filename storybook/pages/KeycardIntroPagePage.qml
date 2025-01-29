@@ -70,20 +70,9 @@ Item {
 
             focusPolicy: Qt.NoFocus
             Layout.preferredWidth: 250
-            textRole: "text"
+            textRole: "name"
             valueRole: "value"
-            model: [
-                { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
-                { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
-                { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
-                { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
-                { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
-                { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
-                { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
-                { value: Onboarding.KeycardState.Locked, text: "Locked" },
-                { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
-                { value: Onboarding.KeycardState.Empty, text: "Empty" }
-            ]
+            model: Onboarding.getModelFromEnum("KeycardState")
         }
         ToolButton {
             text: ">"

@@ -419,21 +419,10 @@ SplitView {
                     }
 
                     Repeater {
-                        model: [
-                            { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
-                            { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
-                            { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
-                            { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
-                            { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
-                            { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
-                            { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
-                            { value: Onboarding.KeycardState.Locked, text: "Locked" },
-                            { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
-                            { value: Onboarding.KeycardState.Empty, text: "Empty" }
-                        ]
+                        model: Onboarding.getModelFromEnum("KeycardState")
 
                         RoundButton {
-                            text: modelData.text
+                            text: modelData.name
                             checkable: true
                             checked: store.keycardState === modelData.value
 
@@ -461,14 +450,10 @@ SplitView {
                     }
 
                     Repeater {
-                        model: [
-                            { value: Onboarding.AddKeyPairState.InProgress, text: "InProgress" },
-                            { value: Onboarding.AddKeyPairState.Success, text: "Success" },
-                            { value: Onboarding.AddKeyPairState.Failed, text: "Failed" }
-                        ]
+                        model: Onboarding.getModelFromEnum("AddKeyPairState")
 
                         RoundButton {
-                            text: modelData.text
+                            text: modelData.name
                             checkable: true
                             checked: store.addKeyPairState === modelData.value
 
@@ -494,14 +479,10 @@ SplitView {
                     }
 
                     Repeater {
-                        model: [
-                            { value: Onboarding.SyncState.InProgress, text: "InProgress" },
-                            { value: Onboarding.SyncState.Success, text: "Success" },
-                            { value: Onboarding.SyncState.Failed, text: "Failed" }
-                        ]
+                        model: Onboarding.getModelFromEnum("SyncState")
 
                         RoundButton {
-                            text: modelData.text
+                            text: modelData.name
                             checkable: true
                             checked: store.syncState === modelData.value
 
