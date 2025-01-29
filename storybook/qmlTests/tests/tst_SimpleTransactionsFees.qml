@@ -42,11 +42,11 @@ Item {
             compare(background.color, Theme.palette.indirectColor1)
             compare(gasIcon.asset.name, "gas")
             compare(infoText.text, qsTr("Est Mainnet transaction fee"))
-            compare(cryptoFeesText.text, "XXXXXXXXXX")
-            verify(cryptoFeesText.loading)
+            compare(cryptoFeesText.text, "--")
+            verify(!cryptoFeesText.loading)
             compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
-            compare(fiatFeesText.text, "XXXXXXXXXX")
-            verify(fiatFeesText.loading)
+            compare(fiatFeesText.text, "--")
+            verify(!fiatFeesText.loading)
             compare(fiatFeesText.customColor, Theme.palette.baseColor1)
         }
 
@@ -142,6 +142,20 @@ Item {
             compare(fiatFeesText.text, "1.45 EUR")
             verify(!fiatFeesText.loading)
             compare(fiatFeesText.customColor, Theme.palette.dangerColor1)
+
+            controlUnderTest.error = true
+            controlUnderTest.cryptoFees = ""
+            controlUnderTest.fiatFees = ""
+
+            compare(background.color, Theme.palette.indirectColor1)
+            compare(gasIcon.asset.name, "gas")
+            compare(infoText.text, qsTr("Est Mainnet transaction fee"))
+            compare(cryptoFeesText.text,"--")
+            verify(!cryptoFeesText.loading)
+            compare(cryptoFeesText.customColor, Theme.palette.baseColor1)
+            compare(fiatFeesText.text, "--")
+            verify(!fiatFeesText.loading)
+            compare(fiatFeesText.customColor, Theme.palette.baseColor1)
         }
     }
 }

@@ -102,6 +102,8 @@ Control {
             color: Theme.palette.dangerColor1
             font.pixelSize: Theme.additionalTextSize
             elide: Text.ElideRight
+            maximumLineCount: 3
+            wrapMode: Text.Wrap
 
             visible: root.expandable ? expandButton.checked : !!text
         }
