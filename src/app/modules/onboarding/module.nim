@@ -1,4 +1,4 @@
-import NimQml, chronicles, json
+import NimQml, chronicles, json, strutils
 import logging
 
 import io_interface
@@ -14,12 +14,14 @@ from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
 
+import ../startup/models/login_account_item as login_acc_item
+
 export io_interface
 
 logScope:
   topics = "onboarding-module"
 
-type SecondaryFlow* {.pure} = enum
+type OnboardingFlow* {.pure} = enum
   Unknown = 0,
   CreateProfileWithPassword,
   CreateProfileWithSeedphrase,
@@ -28,13 +30,17 @@ type SecondaryFlow* {.pure} = enum
   LoginWithSeedphrase,
   LoginWithSyncing,
   LoginWithKeycard,
-  ActualLogin, # TODO get the real name and value for this when it's implemented on the front-end
+
+type LoginMethod* {.pure} = enum
+  Unknown = 0,
+  Password,
+  Keycard,
 
 type ProgressState* {.pure.} = enum
   Idle,
   InProgress,
   Success,
-  Failed
+  Failed,
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -43,7 +49,8 @@ type
     viewVariant: QVariant
     controller: Controller
     localPairingStatus: LocalPairingStatus
-    currentFlow: SecondaryFlow
+    loginFlow: LoginMethod
+    onboardingFlow: OnboardingFlow
     exportedKeys: KeycardExportedKeysDto
 
 proc newModule*[T](
@@ -58,6 +65,8 @@ proc newModule*[T](
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
+  result.onboardingFlow = OnboardingFlow.Unknown
+  result.loginFlow = LoginMethod.Unknown
   result.controller = controller.newController(
     result,
     events,
@@ -87,6 +96,20 @@ method onAppLoaded*[T](self: Module[T]) =
 method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("onboardingModule", self.viewVariant)
   self.controller.init()
+
+  let openedAccounts = self.controller.getOpenedAccounts()
+  if openedAccounts.len > 0:
+    var items: seq[login_acc_item.Item]
+    for i in 0..<openedAccounts.len:
+      let acc = openedAccounts[i]
+      var thumbnailImage: string
+      var largeImage: string
+      acc.extractImages(thumbnailImage, largeImage)
+      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash,
+        acc.colorId, acc.keycardPairing))
+
+    self.view.setLoginAccountsModelItems(items)
+
   self.delegate.onboardingDidLoad()
 
 method initialize*[T](self: Module[T], pin: string) =
@@ -118,7 +141,7 @@ method loadMnemonic*[T](self: Module[T], mnemonic: string) =
 
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
   try:
-    self.currentFlow = SecondaryFlow(flowInt)
+    self.onboardingFlow = OnboardingFlow(flowInt)
 
     let data = parseJson(dataJson)
     let password = data["password"].str
@@ -126,18 +149,18 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
 
     var err = ""
 
-    case self.currentFlow:
+    case self.onboardingFlow:
       # CREATE PROFILE FLOWS
-      of SecondaryFlow.CreateProfileWithPassword:
+      of OnboardingFlow.CreateProfileWithPassword:
         err = self.controller.createAccountAndLogin(password)
-      of SecondaryFlow.CreateProfileWithSeedphrase:
+      of OnboardingFlow.CreateProfileWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
           seedPhrase,
           recoverAccount = false,
           keycardInstanceUID = "",
         )
-      of SecondaryFlow.CreateProfileWithKeycardNewSeedphrase:
+      of OnboardingFlow.CreateProfileWithKeycardNewSeedphrase:
         # New user with a seedphrase we showed them
         let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
@@ -146,7 +169,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = false,
           keycardInstanceUID = keycardEvent.keycardInfo.instanceUID,
         )
-      of SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase:
+      of OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase:
         # New user who entered their own seed phrase
         let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
@@ -157,21 +180,21 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         )
       
       # LOGIN FLOWS
-      of SecondaryFlow.LoginWithSeedphrase:
+      of OnboardingFlow.LoginWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
           seedPhrase,
           recoverAccount = true,
           keycardInstanceUID = "",
         )        
-      of SecondaryFlow.LoginWithSyncing:
+      of OnboardingFlow.LoginWithSyncing:
         # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
         self.controller.loginLocalPairingAccount(
           self.localPairingStatus.account,
           self.localPairingStatus.password,
           self.localPairingStatus.chatKey,
         )
-      of SecondaryFlow.LoginWithKeycard:
+      of OnboardingFlow.LoginWithKeycard:
         err = self.controller.restoreKeycardAccountAndLogin(
           self.view.getKeycardEvent().keycardInfo.keyUID,
           self.view.getKeycardEvent().keycardInfo.instanceUID,
@@ -179,31 +202,56 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
           )
       else:
-        raise newException(ValueError, "Unknown flow: " & $self.currentFlow)
+        raise newException(ValueError, "Unknown flow: " & $self.onboardingFlow)
 
     return err
   except Exception as e:
     error "Error finishing Onboarding Flow", msg = e.msg
     return e.msg
 
+method loginRequested*[T](self: Module[T], keyUid: string, loginFlow: int, dataJson: string) =
+  try:
+    self.loginFlow = LoginMethod(loginFlow)
+
+    let data = parseJson(dataJson)
+    let account = self.controller.getAccountByKeyUid(keyUid)
+
+    case self.loginFlow:
+      of LoginMethod.Password:
+        self.controller.login(account, data["password"].str)
+      of LoginMethod.Keycard:
+        self.authorize(data["pin"].str)
+        # We will continue the flow when the card is authorized in onKeycardStateUpdated
+      else:
+        raise newException(ValueError, "Unknown flow: " & $self.onboardingFlow)
+
+  except Exception as e:
+    error "Error finishing Login Flow", msg = e.msg
+    self.view.accountLoginError(e.msg, wrongPassword = false)
+
 proc finishAppLoading2[T](self: Module[T]) =
   self.delegate.appReady()
 
-  # TODO get the flow to send the right metric
   var eventType = "user-logged-in"
-  if self.currentFlow != SecondaryFlow.ActualLogin:
+  if self.loginFlow == LoginMethod.Unknown:
     eventType = "onboarding-completed"
   singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
-    $(%*{"flowType": repr(self.currentFlow)}))
+    $(%*{"flowType": repr(self.onboardingFlow)}))
 
   self.controller.stopKeycardService()
 
   self.delegate.finishAppLoading()
-  
+
+method onAccountLoginError*[T](self: Module[T], error: string) =
+  # SQLITE_NOTADB: "file is not a database"
+  var wrongPassword = false
+  if error.contains("file is not a database"):
+    wrongPassword = true
+  self.view.accountLoginError(error, wrongPassword)
+
 method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
   if error.len != 0:
-    # TODO: Handle error
-    echo "ERROR from onNodeLogin: ", error
+    self.onAccountLoginError(error)
     return
 
   self.controller.setLoggedInAccount(account)
@@ -221,6 +269,11 @@ method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatu
 method onKeycardStateUpdated*[T](self: Module[T], keycardEvent: KeycardEventDto) =
   self.view.setKeycardEvent(keycardEvent)
 
+  if keycardEvent.state == KeycardState.Authorized and self.loginFlow == LoginMethod.Keycard:
+    # After authorizing, we export the keys
+    self.controller.exportLoginKeysFromKeycard()
+    # We will login once we have the keys in onKeycardExportLoginKeysSuccess
+
   if keycardEvent.state == KeycardState.NotEmpty and self.view.getPinSettingState() == ProgressState.InProgress.int:
     # We just finished setting the pin
     self.view.setPinSettingState(ProgressState.Success.int)
@@ -235,18 +288,38 @@ method onKeycardSetPinFailure*[T](self: Module[T], error: string) =
 method onKeycardAuthorizeFailure*[T](self: Module[T], error: string) =
   self.view.setAuthorizationState(ProgressState.Failed.int)
 
+  if self.loginFlow == LoginMethod.Keycard:
+    # We were trying to login and the authorization failed
+    var wrongPassword = false
+    if error.contains("wrong pin"):
+      wrongPassword = true
+    self.view.accountLoginError(error, wrongPassword)
+
 method onKeycardLoadMnemonicFailure*[T](self: Module[T], error: string) =
   self.view.setAddKeyPairState(ProgressState.Failed.int)
 
 method onKeycardLoadMnemonicSuccess*[T](self: Module[T], keyUID: string) =
   self.view.setAddKeyPairState(ProgressState.Success.int)
 
-method onKeycardExportKeysFailure*[T](self: Module[T], error: string) =
+method onKeycardExportRestoreKeysFailure*[T](self: Module[T], error: string) =
   self.view.setRestoreKeysExportState(ProgressState.Failed.int)
 
-method onKeycardExportKeysSuccess*[T](self: Module[T], exportedKeys: KeycardExportedKeysDto) =
+method onKeycardExportRestoreKeysSuccess*[T](self: Module[T], exportedKeys: KeycardExportedKeysDto) =
   self.exportedKeys = exportedKeys
   self.view.setRestoreKeysExportState(ProgressState.Success.int)
+
+method onKeycardExportLoginKeysFailure*[T](self: Module[T], error: string) =
+  self.view.accountLoginError(error, wrongPassword = false)
+
+method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: KeycardExportedKeysDto) =
+  # We got the keys, now we can login. If everything goes well, we will finish the app loading
+  self.controller.login(
+    self.controller.getAccountByKeyUid(self.view.getKeycardEvent.keycardInfo.keyUID),
+    password = "",
+    keycard = true,
+    publicEncryptionKey = exportedKeys.encryptionKey.publicKey,
+    privateWhisperKey = exportedKeys.whisperKey.privateKey,
+  )
 
 method exportRecoverKeys*[T](self: Module[T]) =
   self.view.setRestoreKeysExportState(ProgressState.InProgress.int)

@@ -62,6 +62,7 @@ Item {
                 readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
                 property int keycardRemainingPinAttempts: 5
+                property int keycardRemainingPukAttempts: 5
 
                 function setPin(pin: string) {
                     const valid = pin === mockDriver.existingPin
@@ -311,7 +312,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithPassword)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.CreateProfileWithPassword)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, mockDriver.dummyNewPassword)
@@ -409,7 +410,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.CreateProfileWithSeedphrase)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, mockDriver.dummyNewPassword)
@@ -558,7 +559,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardNewSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.CreateProfileWithKeycardNewSeedphrase)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, "")
@@ -661,7 +662,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.CreateProfileWithKeycardExistingSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, "")
@@ -754,7 +755,7 @@ Item {
             }
 
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithSeedphrase)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, mockDriver.dummyNewPassword)
@@ -846,7 +847,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithSyncing)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithSyncing)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, "")
@@ -919,7 +920,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithKeycard)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithKeycard)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, "")
@@ -1012,6 +1013,7 @@ Item {
                 compare(resultData.password, data.password)
 
                 // verify validation & pass error
+                console.log("---- passwords:", data.password, mockDriver.dummyNewPassword)
                 tryCompare(passwordInput, "hasError", data.password !== mockDriver.dummyNewPassword)
             } else if (!!data.pin) { // keycard profile
                 mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // happy path; keycard ready
@@ -1048,7 +1050,7 @@ Item {
                 } else { // manual PIN
                     keyClickSequence(data.pin)
                     if (data.pin !== mockDriver.existingPin) {
-                        expectFail(data.tag, "Wrong PIN entered, expected to fail to login")
+                        // Everything will still be called as with a good pin, the wrong pin return is async
                     }
                 }
 
@@ -1169,7 +1171,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithLostKeycardSeedphrase)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.password, mockDriver.dummyNewPassword)
@@ -1255,7 +1257,7 @@ Item {
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
-            compare(finishedSpy.signalArguments[0][0], Onboarding.SecondaryFlow.LoginWithRestoredKeycard)
+            compare(finishedSpy.signalArguments[0][0], Onboarding.OnboardingFlow.LoginWithRestoredKeycard)
             const resultData = finishedSpy.signalArguments[0][1]
             verify(!!resultData)
             compare(resultData.enableBiometrics, false)

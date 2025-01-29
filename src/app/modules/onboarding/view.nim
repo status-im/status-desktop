@@ -2,6 +2,10 @@ import NimQml
 import io_interface
 from app_service/service/keycardV2/dto import KeycardEventDto
 
+# TODO move these files to this module when we remove the old onboarding
+import ../startup/models/login_account_model as login_acc_model
+import ../startup/models/login_account_item as login_acc_item
+
 QtObject:
   type
     View* = ref object of QObject
@@ -12,19 +16,25 @@ QtObject:
       pinSettingState: int
       authorizationState: int
       restoreKeysExportState: int
+      loginAccountsModel: login_acc_model.Model
+      loginAccountsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
+    self.loginAccountsModel.delete
+    self.loginAccountsModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-
+    result.loginAccountsModel = login_acc_model.newModel()
+    result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
 
   ### QtSignals ###
 
   proc appLoaded*(self: View) {.signal.}
+  proc accountLoginError*(self: View, error: string, wrongPassword: bool) {.signal.}
 
   ### QtProperties ###
 
@@ -100,6 +110,16 @@ QtObject:
   proc getKeycardEvent*(self: View): KeycardEventDto =
     return self.keycardEvent
 
+  proc loginAccountsModelChanged*(self: View) {.signal.}
+  proc getLoginAccountsModel(self: View): QVariant {.slot.} =
+    return self.loginAccountsModelVariant
+  proc setLoginAccountsModelItems*(self: View, accounts: seq[login_acc_item.Item]) =
+    self.loginAccountsModel.setItems(accounts)
+    self.loginAccountsModelChanged()
+  QtProperty[QVariant] loginAccountsModel:
+    read = getLoginAccountsModel
+    notify = loginAccountsModelChanged
+
   ### slots ###
 
   proc setPin(self: View, pin: string) {.slot.} =
@@ -131,3 +151,6 @@ QtObject:
 
   proc finishOnboardingFlow(self: View, flowInt: int, dataJson: string): string {.slot.} =
     self.delegate.finishOnboardingFlow(flowInt, dataJson)
+
+  proc loginRequested(self: View, keyUid: string, loginFlow: int, dataJson: string): string {.slot.} =
+    self.delegate.loginRequested(keyUid, loginFlow, dataJson)

@@ -69,3 +69,20 @@ proc asyncExportRecoverKeysTask(argEncoded: string) {.gcsafe, nimcall.} =
     arg.finish(%* {
       "error": e.msg,
     })
+
+type
+  AsyncExportLoginKeysArg = ref object of QObjectTaskArg
+    rpcCounter: int
+
+proc asyncExportLoginKeysTask(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncExportLoginKeysArg](argEncoded)
+  try:
+    let response = callRPC(arg.rpcCounter, "ExportLoginKeys")
+    arg.finish(%*{
+      "response": response,
+      "error": ""
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })

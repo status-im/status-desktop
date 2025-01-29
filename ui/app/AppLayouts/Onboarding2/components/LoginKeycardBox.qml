@@ -14,9 +14,9 @@ Control {
     id: root
 
     required property int keycardState
-    property var tryToSetPinFunction: (pin) => { console.error("LoginKeycardBox::tryToSetPinFunction: IMPLEMENT ME"); return false }
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
+    property string loginError
 
     required property bool isBiometricsLogin
     required property bool biometricsSuccessful
@@ -33,6 +33,12 @@ Control {
 
     function clear() {
         d.wrongPin = false
+        pinInputField.statesInitialization()
+        pinInputField.forceFocus()
+    }
+
+    function onWrongPin() {
+        d.wrongPin = true
         pinInputField.statesInitialization()
         pinInputField.forceFocus()
     }
@@ -106,14 +112,7 @@ Control {
 
             onPinInputChanged: {
                 if (pinInput.length === 6) {
-                    if (root.tryToSetPinFunction(pinInput)) {
-                        root.loginRequested(pinInput)
-                        d.wrongPin = false
-                    } else {
-                        d.wrongPin = true
-                        pinInputField.statesInitialization()
-                        pinInputField.forceFocus()
-                    }
+                    root.loginRequested(pinInput)
                 }
             }
             onPinEditedManually: {
@@ -157,7 +156,7 @@ Control {
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Oops this isn’t a Keycard.<br>Remove card and insert a Keycard.")
+                text: qsTr("Oops this isn't a Keycard.<br>Remove card and insert a Keycard.")
             }
         },
         State {
@@ -210,6 +209,16 @@ Control {
                 target: infoText
                 color: Theme.palette.dangerColor1
                 text: qsTr("PIN incorrect. %n attempt(s) remaining.", "", root.keycardRemainingPinAttempts)
+            }
+        },
+        State {
+            // TODO this is a deadend. We should never end up here, but I still don't know what it should look like
+            name: "errorDuringLogin"
+            when: !!root.loginError
+            PropertyChanges {
+                target: infoText
+                color: Theme.palette.dangerColor1
+                text: qsTr("Error during login: %1").arg(root.loginError)
             }
         },
         // exit states

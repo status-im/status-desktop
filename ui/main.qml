@@ -193,7 +193,6 @@ StatusWindow {
         }
         startupOnboardingLoader.item.unload()
         startupOnboardingLoader.active = false
-        onboardingStoreLoader.active = false
 
         Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
@@ -408,15 +407,6 @@ StatusWindow {
     }
 
     Loader {
-        id: onboardingStoreLoader
-        active: featureFlagsStore.onboardingV2Enabled
-
-        sourceComponent: OnboardingStore {
-            onAppLoaded: moveToAppMain()
-        }
-    }
-
-    Loader {
         id: startupOnboardingLoader
         anchors.fill: parent
         sourceComponent: {
@@ -443,30 +433,33 @@ StatusWindow {
         id: onboardingV2
 
         Onboarding2.OnboardingLayout {
+            id: onboardingLayout
             objectName: "startupOnboardingLayout"
             anchors.fill: parent
 
             // TODO implement those two
-            loginAccountsModel: ListModel {}
+            loginAccountsModel: onboardingStore.loginAccountsModel
             isBiometricsLogin: false
             networkChecksEnabled: true
             biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: onboardingStoreLoader.item
+            onboardingStore: onboardingStore
 
             onFinished: (flow, data) => {
-                console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
-
-                let error = onboardingStoreLoader.item.finishOnboardingFlow(flow, data)
+                let error = onboardingStore.finishOnboardingFlow(flow, data)
 
                 if (error != "") {
+                    // We should never be here since everything should be validated already
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
-                    // TODO show error
                     return
                 }
-                console.warn("!!! Onboarding completed!")
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
+            }
+
+            onLoginRequested: function (keyUid, method, data) {
+                stack.push(splashScreenV2, { runningProgressAnimation: true })
+                onboardingStore.loginRequested(keyUid, method, data)
             }
 
             onShareUsageDataRequested: {
@@ -476,6 +469,14 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
+        
+            OnboardingStore {
+                id: onboardingStore
+                onAppLoaded: moveToAppMain()
+                onAccountLoginError: function (error, wrongPassword) {
+                    onboardingLayout.stack.pop()
+                }
+            }
         }
     }
 

@@ -123,6 +123,9 @@ QtObject:
       error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
 
   proc openedAccounts*(self: Service): seq[AccountDto] =
+    if self.accounts.len > 0:
+      return self.accounts
+
     try:
       let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
@@ -135,6 +138,11 @@ QtObject:
 
   proc openedAccountsContainsKeyUid*(self: Service, keyUid: string): bool =
     return (keyUID in self.openedAccounts().mapIt(it.keyUid))
+
+  proc getAccountByKeyUid*(self: Service, keyUid: string): AccountDto =
+    for account in self.openedAccounts():
+      if account.keyUid == keyUid:
+        return account
 
   # FIXME: remove this method, settings should be processed in status-go
   # https://github.com/status-im/status-go/issues/5359

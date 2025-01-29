@@ -148,12 +148,9 @@ proc connect(self: AppController) =
       elif defined(production):
         setLogLevel(chronicles.LogLevel.INFO)
 
-# TODO remove these functions once we have only the new onboarding module
-proc shouldStartWithOnboardingScreen(self: AppController): bool =
-  return self.accountsService.openedAccounts().len == 0
+# TODO remove this function once we have only the new onboarding module
 proc shouldUseTheNewOnboardingModule(self: AppController): bool =
-  # Only the onboarding for new users is implemented in the new module for now
-  return singletonInstance.featureFlags().getOnboardingV2Enabled() and self.shouldStartWithOnboardingScreen()
+  return singletonInstance.featureFlags().getOnboardingV2Enabled()
 
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
