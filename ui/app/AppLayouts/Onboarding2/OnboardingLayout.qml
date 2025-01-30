@@ -185,7 +185,7 @@ Page {
         onAuthorizationRequested: d.authorize(pin)
         onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
         onReloadKeycardRequested: root.reloadKeycardRequested()
-
+        onPerformKeycardFactoryResetRequested: root.onboardingStore.startKeycardFactoryReset()
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
         onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
@@ -194,7 +194,6 @@ Page {
         onLinkActivated: (link) => Qt.openUrlExternally(link)
         onExportKeysRequested: root.onboardingStore.exportRecoverKeys()
         onFinished: (flow) => d.finishFlow(flow)
-        onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
     }
 
     Connections {

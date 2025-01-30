@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 
+import StatusQ.Core.Backpressure 0.1
+
 import Qt.labs.settings 1.0
 
 import StatusQ 0.1
@@ -65,7 +67,7 @@ SplitView {
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
-            property int keycardRemainingPinAttempts: 2
+            property int keycardRemainingPinAttempts: 3
             property int keycardRemainingPukAttempts: 3
 
             function setPin(pin: string) { // -> bool
@@ -81,7 +83,7 @@ SplitView {
                 return valid
             }
 
-            function setPuk(puk) { // -> bool
+            function setPuk(puk: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPuk", ["puk"], arguments)
                 const valid = puk === mockDriver.puk
                 if (!valid)
@@ -105,6 +107,15 @@ SplitView {
                 logs.logEvent("OnboardingStore.exportRecoverKeys")
             }
 
+            function startKeycardFactoryReset() {
+                logs.logEvent("OnboardingStore.startKeycardFactoryReset")
+                console.warn("!!! SIMULATION: KEYCARD FACTORY RESET")
+                keycardState = Onboarding.KeycardState.FactoryResetting // SIMULATION: factory reset
+                Backpressure.debounce(root, 2000, () => {
+                    keycardState = Onboarding.KeycardState.Empty
+                })()
+            }
+
             // password
             function getPasswordStrengthScore(password: string) { // -> int
                 logs.logEvent("OnboardingStore.getPasswordStrengthScore", ["password"], arguments)
@@ -120,10 +131,6 @@ SplitView {
             function getMnemonic() { // -> string
                 logs.logEvent("OnboardingStore.getMnemonic()")
                 return JSON.stringify(mockDriver.seedWords)
-            }
-
-            function mnemonicWasShown() { // -> void
-                logs.logEvent("OnboardingStore.mnemonicWasShown()")
             }
 
             function validateLocalPairingConnectionString(connectionString: string) { // -> bool
@@ -349,24 +356,11 @@ SplitView {
         }
     }
 
-    Connections {
-        target: Global
-
-        function onOpenLink(link: string) {
-            console.warn("Opening link in an external web browser:", link)
-            Qt.openUrlExternally(link)
-        }
-        function onOpenLinkWithConfirmation(link: string, domain: string) {
-            console.warn("Opening link in an external web browser:", link, domain)
-            Qt.openUrlExternally(link)
-        }
-    }
-
     LogsAndControlsPanel {
         id: logsAndControlsPanel
 
-        SplitView.minimumHeight: 250
-        SplitView.preferredHeight: 250
+        SplitView.minimumHeight: 300
+        SplitView.preferredHeight: 300
 
         logsView.logText: logs.logText
 
@@ -527,7 +521,7 @@ SplitView {
                 ToolSeparator {}
 
                 Label {
-                    text: "Pin Setting state:"
+                    text: "PIN Setting state:"
                 }
 
                 Flow {

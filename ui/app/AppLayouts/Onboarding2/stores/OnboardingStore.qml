@@ -57,6 +57,10 @@ QtObject {
         d.onboardingModuleInst.exportRecoverKeys()
     }
 
+    function startKeycardFactoryReset() {
+        d.onboardingModuleInst.startKeycardFactoryReset()
+    }
+
     // password
     signal accountLoginError(string error, bool wrongPassword)
 

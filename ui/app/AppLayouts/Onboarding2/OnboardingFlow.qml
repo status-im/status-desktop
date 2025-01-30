@@ -50,10 +50,11 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
     signal setPasswordRequested(string password)
     signal reloadKeycardRequested
-    signal keycardFactoryResetRequested
     signal exportKeysRequested
     signal loadMnemonicRequested
     signal authorizationRequested(string pin)
+
+    signal performKeycardFactoryResetRequested
 
     signal linkActivated(string link)
 
@@ -70,6 +71,8 @@ SQUtils.QObject {
 
         property int flow
         property LoginScreen loginScreen: null
+
+        property bool seenUsageDataPrompt
 
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
@@ -102,12 +105,17 @@ SQUtils.QObject {
 
         WelcomePage {
             function pushWithProxy(component) {
-                const page = root.stackView.push(helpUsImproveStatusPage)
-
-                page.shareUsageDataRequested.connect(enabled => {
-                    root.shareUsageDataRequested(enabled)
+                if (d.seenUsageDataPrompt) { // don't ask for "Share usage data" a second time (e.g. after a factory reset)
                     root.stackView.push(component)
-                })
+                } else {
+                    const page = root.stackView.push(helpUsImproveStatusPage)
+
+                    page.shareUsageDataRequested.connect(enabled => {
+                        root.shareUsageDataRequested(enabled)
+                        root.stackView.push(component)
+                        d.seenUsageDataPrompt = true
+                    })
+                }
             }
 
             onCreateProfileRequested: pushWithProxy(createProfilePage)
@@ -141,7 +149,6 @@ SQUtils.QObject {
             onLostKeycard: root.stackView.push(keycardLostPage)
             onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
             onUnblockWithPukRequested: unblockWithPukFlow.init()
-            onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
 
             Binding {
                 target: d
@@ -245,7 +252,7 @@ SQUtils.QObject {
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
-        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
         onLoadMnemonicRequested: root.loadMnemonicRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
@@ -309,8 +316,9 @@ SQUtils.QObject {
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
-        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
         onExportKeysRequested: root.exportKeysRequested()
+        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
+        onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
         onUnblockWithPukRequested: unblockWithPukFlow.init()
 
         onFinished: {
@@ -358,7 +366,7 @@ SQUtils.QObject {
             unblockWithPukFlow.pin = pin
             root.keycardPinCreated(pin)
         }
-        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
 
         onFinished: (success) => {
             if (!success)
@@ -389,7 +397,7 @@ SQUtils.QObject {
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
-        onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init(true)
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
@@ -405,6 +413,17 @@ SQUtils.QObject {
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
         onFinished: d.pushOrSkipBiometricsPage()
+    }
+
+    KeycardFactoryResetFlow {
+        id: keycardFactoryResetFlow
+        stackView: root.stackView
+        keycardState: root.keycardState
+        onPerformKeycardFactoryResetRequested: root.performKeycardFactoryResetRequested()
+        onFinished: {
+            stackView.clear()
+            root.init()
+        }
     }
 
     Component {
