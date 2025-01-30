@@ -87,7 +87,7 @@ pipeline {
 
     stage('status-go') {
       steps {
-        sh 'make status-go'
+        sh 'make status-go V=1'
       }
     }
 
