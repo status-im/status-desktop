@@ -168,6 +168,10 @@ add_library(StatusQ SHARED
 
         # onboarding
         src/onboarding/enums.h
+
+        # keychain
+        include/StatusQ/keychain.h
+        src/keychain.cpp
         )
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)
@@ -175,8 +179,11 @@ target_compile_features(StatusQ PRIVATE cxx_std_17)
 if (APPLE)
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
+    find_library(Security Security)
+    find_library(LocalAuthentication LocalAuthentication)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
     target_sources(StatusQ PRIVATE src/statuswindow_osx.mm)
+    target_sources(StatusQ PRIVATE src/keychain.mm)
 else ()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
 endif ()
