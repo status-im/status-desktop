@@ -5,6 +5,8 @@ import QtQuick.Window 2.15
 
 import Qt.labs.settings 1.0
 
+import StatusQ 0.1
+
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0
 import AppLayouts.Onboarding2.pages 1.0

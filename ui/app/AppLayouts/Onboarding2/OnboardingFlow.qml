@@ -138,7 +138,7 @@ SQUtils.QObject {
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
             onLostKeycard: root.stackView.push(keycardLostPage)
-            onUnblockWithSeedphraseRequested: console.warn("!!! FIXME OnboardingLayout::onUnblockWithSeedphraseRequested")
+            onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
             onUnblockWithPukRequested: unblockWithPukFlow.init()
             onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
 
@@ -299,21 +299,40 @@ SQUtils.QObject {
         remainingPukAttempts: root.remainingPukAttempts
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         tryToSetPinFunction: root.tryToSetPinFunction
-        isSeedPhraseValid: root.isSeedPhraseValid
-
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onKeycardPinEntered: (pin) => root.keycardPinEntered(pin)
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
+        onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
         onUnblockWithPukRequested: unblockWithPukFlow.init()
 
         onFinished: {
             d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
             d.pushOrSkipBiometricsPage()
+        }
+    }
+
+    UnblockWithSeedphraseFlow {
+        id: unblockWithSeedphraseFlow
+
+        stackView: root.stackView
+
+        isSeedPhraseValid: root.isSeedPhraseValid
+        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+        onKeycardPinCreated: (pin) => {
+            root.keycardPinCreated(pin)
+
+            if (root.loginScreen) {
+                root.loginRequested(root.loginScreen.selectedProfileKeyId,
+                                    Onboarding.LoginMethod.Keycard, { pin })
+            } else {
+                d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+                d.pushOrSkipBiometricsPage()
+            }
         }
     }
 

@@ -16,17 +16,15 @@ SQUtils.QObject {
     required property var tryToSetPinFunction
     required property int remainingPinAttempts
     required property int remainingPukAttempts
-    required property var isSeedPhraseValid
 
     required property int keycardPinInfoPageDelay
 
     property bool displayKeycardPromoBanner
 
     signal keycardPinEntered(string pin)
-    signal keycardPinCreated(string pin)
-    signal seedphraseSubmitted(string seedphrase)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
+    signal unblockWithSeedphraseRequested
     signal unblockWithPukRequested
     signal createProfileWithEmptyKeycardRequested
     signal finished
@@ -66,7 +64,7 @@ SQUtils.QObject {
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onUnblockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
+            onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
             onUnblockWithPukRequested: root.unblockWithPukRequested()
             onEmptyKeycardDetected: root.stackView.replace(keycardEmptyPage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardEnterPinPage)
@@ -101,34 +99,7 @@ SQUtils.QObject {
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onUnblockWithSeedphraseRequested: root.stackView.push(seedphrasePage)
-        }
-    }
-
-    Component {
-        id: seedphrasePage
-
-        SeedphrasePage {
-            title: qsTr("Unblock Keycard using the recovery phrase")
-            btnContinueText: qsTr("Unblock Keycard")
-            isSeedPhraseValid: root.isSeedPhraseValid
-            onSeedphraseSubmitted: (seedphrase) => {
-                root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(keycardCreatePinPage)
-            }
-        }
-    }
-
-    Component {
-        id: keycardCreatePinPage
-
-        KeycardCreatePinPage {
-            onKeycardPinCreated: (pin) => {
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
-                    root.finished()
-                })()
-            }
+            onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
         }
     }
 }
