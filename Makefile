@@ -7,6 +7,10 @@
 
 SHELL := bash # the shell used internally by Make
 
+export GOROOT=/usr/local/go
+export PATH := $(GOROOT)/bin:$(PATH)
+export GOTOOLCHAIN=local
+
 # used inside the included makefiles
 BUILD_SYSTEM_DIR := vendor/nimbus-build-system
 
@@ -437,6 +441,8 @@ export STATUSGO_LIBDIR
 
 $(STATUSGO): | deps status-go-deps
 	echo -e $(BUILD_MSG) "status-go"
+	$(info Using Go: $(shell which go))
+	$(info Go version: $(shell go version))
 	# FIXME: Nix shell usage breaks builds due to Glibc mismatch.
 	$(MAKE) -C vendor/status-go statusgo-shared-library SHELL=/bin/sh \
 		SENTRY_CONTEXT_NAME="status-desktop" \
