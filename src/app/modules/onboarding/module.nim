@@ -138,7 +138,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           seedPhrase,
           recoverAccount = true,
           keycardInstanceUID = "",
-        )        
+        )
       of SecondaryFlow.LoginWithSyncing:
         # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
         self.controller.loginLocalPairingAccount(
@@ -169,13 +169,17 @@ proc finishAppLoading2[T](self: Module[T]) =
 
   self.delegate.finishAppLoading()
   
-method onNodeLogin*[T](self: Module[T], error: string, account: AccountDto, settings: SettingsDto) =
-  if error.len != 0:
-    # TODO: Handle error
-    echo "ERROR from onNodeLogin: ", error
+method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settings: SettingsDto) =
+  if err.len != 0:
+    error "error from onNodeLogin", err
     return
 
   self.controller.setLoggedInAccount(account)
+
+  let err2 = self.delegate.userLoggedIn()
+  if err2.len != 0:
+    error "error from userLoggedIn", err2
+    return
 
   if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and self.localPairingStatus.installation.id != "":
     # We tried to login by pairing, so finilize the process

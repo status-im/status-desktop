@@ -455,16 +455,13 @@ StatusWindow {
             onboardingStore: onboardingStoreLoader.item
 
             onFinished: (flow, data) => {
-                console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
-
                 let error = onboardingStoreLoader.item.finishOnboardingFlow(flow, data)
 
                 if (error != "") {
-                    console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
-                    // TODO show error
+                    // We should never end up here since we do all validations in the onboarding flow
+                    console.error("onbaording finished with error", error)
                     return
                 }
-                console.warn("!!! Onboarding completed!")
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
             }
