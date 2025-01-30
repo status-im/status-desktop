@@ -96,6 +96,7 @@ SQUtils.QObject {
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
             keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+            pinCorrectText: qsTr("PIN correct. Exporting keys.")
 
             onExportKeysRequested: root.exportKeysRequested()
             onExportKeysDone: root.finished()

@@ -21,6 +21,7 @@ KeycardBasePage {
     required property int remainingAttempts
     required property bool unblockWithPukAvailable
     required property int keycardPinInfoPageDelay
+    property string pinCorrectText: qsTr("PIN correct")
 
     signal keycardPinEntered(string pin)
     signal reloadKeycardRequested
@@ -157,6 +158,10 @@ KeycardBasePage {
                     })()
                 }
             }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/keycard/error")
+            }
         },
         State {
             name: "error"
@@ -167,6 +172,10 @@ KeycardBasePage {
             }
             PropertyChanges {
                 target: errorExportingText
+                visible: true
+            }
+            PropertyChanges {
+                target: btnReload
                 visible: true
             }
         },
@@ -197,6 +206,10 @@ KeycardBasePage {
                 target: pinInput
                 enabled: false
             }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/keycard/success")
+            }
             StateChangeScript {
                 script: {
                     Backpressure.debounce(root, keycardPinInfoPageDelay, function() {
@@ -210,7 +223,7 @@ KeycardBasePage {
             when: root.authorizationState === Onboarding.ProgressState.Success
             PropertyChanges {
                 target: root
-                title: qsTr("PIN correct. Exporting keys.")
+                title: root.pinCorrectText
             }
             PropertyChanges {
                 target: pinInput

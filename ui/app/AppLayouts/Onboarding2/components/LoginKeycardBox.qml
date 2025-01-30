@@ -27,7 +27,6 @@ Control {
 
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
-    signal keycardFactoryResetRequested()
 
     signal loginRequested(string pin)
 
@@ -92,15 +91,9 @@ Control {
             }
             MaybeOutlineButton {
                 width: parent.width
-                visible: root.keycardState === Onboarding.KeycardState.BlockedPIN
+                visible: root.keycardState === Onboarding.KeycardState.BlockedPIN || root.keycardState === Onboarding.KeycardState.BlockedPUK
                 text: qsTr("Unblock with recovery phrase")
                 onClicked: root.unblockWithSeedphraseRequested()
-            }
-            MaybeOutlineButton {
-                width: parent.width
-                visible: root.keycardState === Onboarding.KeycardState.BlockedPUK
-                text: qsTr("Factory reset Keycard")
-                onClicked: root.keycardFactoryResetRequested()
             }
         }
         StatusPinInput {

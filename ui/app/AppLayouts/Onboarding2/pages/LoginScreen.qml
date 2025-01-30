@@ -45,7 +45,6 @@ OnboardingPage {
     signal onboardingLoginFlowRequested()
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
-    signal keycardFactoryResetRequested()
     signal lostKeycard()
 
     QtObject {
@@ -235,7 +234,6 @@ OnboardingPage {
                 keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
                 onUnblockWithPukRequested: root.unblockWithPukRequested()
-                onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
                 onPinEditedManually: {
                     // reset state when typing the PIN manually; not to break the bindings inside the component
                     d.resetBiometricsResult()
