@@ -66,6 +66,7 @@ public:
         MaxPairingSlotsReached,
         BlockedPIN, // PIN remaining attempts == 0
         BlockedPUK, // PUK remaining attempts == 0
+        FactoryResetting,
         // exit states
         NotEmpty,
         Empty

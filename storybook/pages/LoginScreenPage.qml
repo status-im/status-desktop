@@ -41,7 +41,7 @@ SplitView {
             logs.logEvent("setPuk", ["puk"], arguments)
             const valid = puk === ctrlPuk.text
             if (!valid)
-                keycardRemainingPukAttempts--
+                keycardRemainingPukAttempts-- // SIMULATION: decrease the remaining PUK attempts
             if (keycardRemainingPukAttempts <= 0) { // SIMULATION: "block" the keycard
                 keycardState = Onboarding.KeycardState.BlockedPUK
                 keycardRemainingPukAttempts = 0
@@ -86,7 +86,6 @@ SplitView {
         onUnblockWithSeedphraseRequested: logs.logEvent("onUnblockWithSeedphraseRequested")
         onUnblockWithPukRequested: logs.logEvent("onUnblockWithPukRequested")
         onLostKeycard: logs.logEvent("onLostKeycard")
-        onKeycardFactoryResetRequested: logs.logEvent("onKeycardFactoryResetRequested")
 
         // mocks
         QtObject {

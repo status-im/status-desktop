@@ -178,6 +178,7 @@ Page {
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onMnemonicWasShown: root.onboardingStore.mnemonicWasShown()
         onMnemonicRemovalRequested: root.onboardingStore.removeMnemonic()
+        onPerformKeycardFactoryResetRequested: root.onboardingStore.startKeycardFactoryReset()
 
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
@@ -186,7 +187,6 @@ Page {
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
         onLinkActivated: (link) => Qt.openUrlExternally(link)
         onFinished: (flow) => d.finishFlow(flow)
-        onKeycardFactoryResetRequested: console.warn("!!! FIXME OnboardingLayout::onKeycardFactoryResetRequested")
     }
 
     Connections {
