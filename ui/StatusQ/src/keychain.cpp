@@ -54,18 +54,18 @@ void Keychain::setLoading(bool loading)
 }
 
 #ifndef Q_OS_MACOS
-bool saveCredential(const QString &account, const QString &password) {
+bool Keychain::saveCredential(const QString &account, const QString &password) {
     Q_UNUSED(account);
     Q_UNUSED(password);
     return false;
 }
 
-bool deleteCredential(const QString &account) {
+bool Keychain::deleteCredential(const QString &account) {
     Q_UNUSED(account);
     return false;
 }
 
-QString getCredential(const QString &account) {
+QString Keychain::getCredential(const QString &account) {
     Q_UNUSED(account);
     return {};
 }
