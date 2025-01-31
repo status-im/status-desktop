@@ -1,12 +1,12 @@
 #include "StatusQ/keychain.h"
 
-Keychain::Keychain(QObject *parent) : QObject(parent) {
+#include <QDebug>
 
+Keychain::Keychain(QObject *parent) : QObject(parent)
+{
 }
 
-Keychain::~Keychain() {
-
-}
+Keychain::~Keychain() = default;
 
 QString Keychain::service() const
 {
@@ -15,9 +15,8 @@ QString Keychain::service() const
 
 void Keychain::setService(const QString &service)
 {
-    if (m_service == service) {
+    if (m_service == service)
         return;
-    }
 
     m_service = service;
     emit serviceChanged();
@@ -30,9 +29,8 @@ QString Keychain::reason() const
 
 void Keychain::setReason(const QString &reason)
 {
-    if (m_reason == reason) {
+    if (m_reason == reason)
         return;
-    }
 
     m_reason = reason;
     emit reasonChanged();
@@ -45,28 +43,35 @@ bool Keychain::loading() const
 
 void Keychain::setLoading(bool loading)
 {
-    if (m_loading == loading) {
+    if (m_loading == loading)
         return;
-    }
 
     m_loading = loading;
     emit loadingChanged();
 }
 
 #ifndef Q_OS_MACOS
-bool Keychain::saveCredential(const QString &account, const QString &password) {
+
+void Keychain::requestSaveCredential(const QString &account, const QString &password)
+{
+    qWarning() << "Keychain::requestSaveCredential is intended to be called only on MacOS.";
+
     Q_UNUSED(account);
     Q_UNUSED(password);
-    return false;
 }
 
-bool Keychain::deleteCredential(const QString &account) {
+void Keychain::requestDeleteCredential(const QString &account)
+{
+    qWarning() << "Keychain::requestDeleteCredential is intended to be called only on MacOS.";
+
     Q_UNUSED(account);
-    return false;
 }
 
-QString Keychain::getCredential(const QString &account) {
+void Keychain::requestGetCredential(const QString &account)
+{
+    qWarning() << "Keychain::requestGetCredential is intended to be called only on MacOS.";
+
     Q_UNUSED(account);
-    return {};
 }
+
 #endif

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 
 class Keychain : public QObject {
@@ -20,11 +21,15 @@ public:
 
     bool loading() const;
 
-    Q_INVOKABLE bool saveCredential(const QString &account, const QString &password);
-    Q_INVOKABLE bool deleteCredential(const QString &account);
-    Q_INVOKABLE QString getCredential(const QString &account);
+    Q_INVOKABLE void requestSaveCredential(const QString &account, const QString &password);
+    Q_INVOKABLE void requestDeleteCredential(const QString &account);
+    Q_INVOKABLE void requestGetCredential(const QString &account);
 
 signals:
+    void saveCredentialRequestCompleted(bool success);
+    void deleteCredentialRequestCompleted(bool success);
+    void getCredentialRequestCompleted(const QString& password);
+
     void serviceChanged();
     void reasonChanged();
     void loadingChanged();
@@ -32,6 +37,6 @@ signals:
 private:
     QString m_service;
     QString m_reason;
-    bool m_loading;
+    bool m_loading = false;
     void setLoading(bool loading);
 };
