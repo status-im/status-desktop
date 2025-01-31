@@ -22,6 +22,8 @@ Control {
 
     readonly property bool isTokenSelected: tokenSelectorButton.selected
 
+    property bool showSectionName: true
+
     signal assetSelected(string key)
     signal collectionSelected(string key)
     signal collectibleSelected(string key)
@@ -49,7 +51,7 @@ Control {
     QObject {
         id: d
 
-        readonly property int maxPopupHeight: 330
+        readonly property int maxPopupHeight: 455
     }
 
     contentItem: TokenSelectorButton {
@@ -99,6 +101,8 @@ Control {
                     tokenSelectorButton.selected = true
                     dropdown.close()
                 }
+
+                showSectionName: root.showSectionName
 
                 onAssetSelected: {
                     const entry = ModelUtils.getByKey(assetsModel, "tokensKey", key)

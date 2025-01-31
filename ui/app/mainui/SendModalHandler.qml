@@ -629,6 +629,7 @@ QtObject {
 
                     currentCurrency: root.currentCurrency
                     showCommunityAssets: root.showCommunityAssetsInSend
+                    showZeroBalanceForDefaultTokens: true
 
                     accountAddress: simpleSendModal.selectedAccountAddress
                     enabledChainIds: [simpleSendModal.selectedChainId]
