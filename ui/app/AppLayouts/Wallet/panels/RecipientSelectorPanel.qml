@@ -33,8 +33,11 @@ Rectangle {
     /** Search pattern in recipient view input **/
     readonly property string searchPattern: recipientInputLoader.searchPattern
 
+    /** Currently viewed tab is empty **/
+    readonly property bool emptyListVisible: emptyListText.visible && !selectedRecipientAddress
+
     /** Currently selected recipient tab  **/
-    readonly property int selectedRecipientType: Constants.RecipientAddressObjectType.RecentsAddress
+    readonly property alias selectedRecipientType: d.selectedRecipientType
     /** Selected recipient address. It is input and output property **/
     property alias selectedRecipientAddress: recipientInputLoader.selectedRecipientAddress
 
@@ -62,6 +65,7 @@ Rectangle {
 
         readonly property bool searchInProgress: !!root.searchPattern && root.recipientsFilterModel.ModelCount.count > 0
         property int highlightedIndex: 0
+        property int selectedRecipientType: Constants.RecipientAddressObjectType.RecentsAddress
 
         function handleKeyPressOnSearch(event) {
             if (!event || !d.searchInProgress || highlightedIndex === -1)
@@ -144,19 +148,19 @@ Rectangle {
                 width: implicitWidth
                 objectName: "recentAddressesTab"
                 text: qsTr("Recent")
-                onClicked: root.selectedRecipientType = Constants.RecipientAddressObjectType.RecentsAddress
+                onClicked: d.selectedRecipientType = Constants.RecipientAddressObjectType.RecentsAddress
             }
             StatusTabButton {
                 width: implicitWidth
                 objectName: "savedAddressesTab"
                 text: qsTr("Saved")
-                onClicked: root.selectedRecipientType = Constants.RecipientAddressObjectType.SavedAddress
+                onClicked: d.selectedRecipientType = Constants.RecipientAddressObjectType.SavedAddress
             }
             StatusTabButton {
                 width: implicitWidth
                 objectName: "myAccountsTab"
                 text: qsTr("My Accounts")
-                onClicked: root.selectedRecipientType = Constants.RecipientAddressObjectType.Account
+                onClicked: d.selectedRecipientType = Constants.RecipientAddressObjectType.Account
             }
 
             visible: !root.selectedRecipientAddress && !d.searchInProgress
