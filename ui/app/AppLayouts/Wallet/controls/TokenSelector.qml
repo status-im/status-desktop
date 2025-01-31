@@ -55,6 +55,8 @@ Control {
     contentItem: TokenSelectorButton {
         id: tokenSelectorButton
 
+        objectName: "tokenSelectorButton"
+
         forceHovered: dropdown.opened
 
         onClicked: dropdown.opened ? dropdown.close() : dropdown.open()
@@ -62,6 +64,8 @@ Control {
 
     StatusDropdown {
         id: dropdown
+
+        objectName: "dropdown"
 
         y: parent.height + 4
         width: 448

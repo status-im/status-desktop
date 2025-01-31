@@ -92,6 +92,8 @@ RowLayout {
     StatusBaseText {
         id: sendModalTitleText
 
+        objectName: "sendModalTitleText"
+
         Layout.preferredWidth: contentWidth
 
         lineHeightMode: Text.FixedHeight
@@ -104,6 +106,8 @@ RowLayout {
 
     TokenSelector {
         id: tokenSelector
+
+        objectName: "tokenSelector"
 
         Layout.fillWidth: true
         Layout.maximumWidth: implicitWidth
@@ -140,6 +144,8 @@ RowLayout {
 
     NetworkFilter {
         id: networkFilter
+
+        objectName: "networkFilter"
 
         Layout.alignment: Qt.AlignTop
 
