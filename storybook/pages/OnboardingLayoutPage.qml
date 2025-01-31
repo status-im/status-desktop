@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
 
+import StatusQ.Core.Backpressure 0.1
+
 import Qt.labs.settings 1.0
 
 import StatusQ 0.1
@@ -92,6 +94,15 @@ SplitView {
             function startKeypairTransfer() { // -> void
                 logs.logEvent("OnboardingStore.startKeypairTransfer")
                 addKeyPairState = Onboarding.AddKeyPairState.InProgress
+            }
+
+            function startKeycardFactoryReset() {
+                logs.logEvent("OnboardingStore.startKeycardFactoryReset")
+                console.warn("!!! SIMULATION: KEYCARD FACTORY RESET")
+                keycardState = Onboarding.KeycardState.FactoryResetting // SIMULATION: factory reset
+                Backpressure.debounce(root, 3000, () => {
+                    keycardState = Onboarding.KeycardState.Empty
+                })()
             }
 
             // password

@@ -18,6 +18,7 @@ KeycardBasePage {
     property var tryToSetPinFunction: (pin) => { console.error("tryToSetPinFunction: IMPLEMENT ME"); return false }
     required property int remainingAttempts
     property bool unblockWithPukAvailable
+    property string pinCorrectText: qsTr("PIN correct")
 
     signal keycardPinEntered(string pin)
     signal reloadKeycardRequested
@@ -134,17 +135,25 @@ KeycardBasePage {
                 target: errorText
                 visible: true
             }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/keycard/error")
+            }
         },
         State {
             name: "success"
             when: d.pinValid
             PropertyChanges {
                 target: root
-                title: qsTr("PIN correct")
+                title: root.pinCorrectText
             }
             PropertyChanges {
                 target: pinInput
                 enabled: false
+            }
+            PropertyChanges {
+                target: image
+                source: Theme.png("onboarding/keycard/success")
             }
             StateChangeScript {
                 script: root.keycardPinEntered(pinInput.pinInput)
