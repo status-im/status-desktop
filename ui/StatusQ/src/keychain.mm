@@ -2,17 +2,21 @@
 
 #include <QEventLoop>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
 
 #include <Security/Security.h>
 #include <Foundation/Foundation.h>
 #include <LocalAuthentication/LocalAuthentication.h>
 
-LAContext* authenticate(QString& reason) {
+const static auto authPolicy = LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
+
+LAContext *authenticate(QString& reason) {
     auto *context = [[LAContext alloc] init];
     NSError *authError = nil;
 
     // Check if Biometrics Authentication is available
-    if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometricsOrWatch error:&authError]) {
+    if (![context canEvaluatePolicy:authPolicy error:&authError]) {
         qWarning() << "biometric authentication not available:"
                    << QString::fromNSString(authError.localizedDescription);
         return nil;
@@ -24,7 +28,7 @@ LAContext* authenticate(QString& reason) {
     __block BOOL success = NO;
 
     // Prompt for biometrics authentication
-    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometricsOrWatch
+    [context evaluatePolicy:authPolicy
             localizedReason:reason.toNSString()
                       reply:^(BOOL authSuccess, NSError *error) {
                           success = authSuccess;
@@ -45,9 +49,48 @@ LAContext* authenticate(QString& reason) {
     return context;
 }
 
+void Keychain::requestSaveCredential(const QString &account, const QString &password) {
+    if (m_future.isRunning()) {
+        return;
+    }
+
+    m_future = QtConcurrent::run([this, account, password](){
+        setLoading(true);
+        auto ok = saveCredential(account, password);
+        emit saveCredentialFinished(ok);
+        setLoading(false);
+    });
+}
+
+void Keychain::requestDeleteCredential(const QString &account) {
+    if (m_future.isRunning()) {
+        return;
+    }
+
+    m_future = QtConcurrent::run([this, account](){
+        setLoading(true);
+        auto ok = deleteCredential(account);
+        emit deleteCredentialFinished(ok);
+        setLoading(false);
+    });
+}
+
+void Keychain::requestGetCredential(const QString &account)
+{
+    if (m_future.isRunning()) {
+        return;
+    }
+
+    m_future = QtConcurrent::run([this, account](){
+        setLoading(true);
+        auto credential = getCredential(account);
+        emit getCredentialFinished(true, credential);
+        setLoading(false);
+    });
+}
+
 
 bool Keychain::saveCredential(const QString &account, const QString &password) {
-    setLoading(true);
     LAContext *context = authenticate(m_reason);
     setLoading(false);
 
@@ -73,7 +116,7 @@ bool Keychain::saveCredential(const QString &account, const QString &password) {
                             (__bridge id)kSecAttrService: m_service.toNSString(),
                             (__bridge id)kSecAttrAccount: account.toNSString(),
                             (__bridge id)kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
-                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
+//                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
                             (__bridge id)kSecUseAuthenticationContext: context,
                             };
 
@@ -90,9 +133,17 @@ bool Keychain::saveCredential(const QString &account, const QString &password) {
 }
 
 bool Keychain::deleteCredential(const QString &account) {
+    LAContext *context = authenticate(m_reason);
+
+    if (!context) {
+        return {};
+    }
+
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
                             (__bridge id)kSecAttrService: m_service.toNSString(),
-                            (__bridge id)kSecAttrAccount: account.toNSString()};
+                            (__bridge id)kSecAttrAccount: account.toNSString(),
+                            (__bridge id)kSecUseAuthenticationContext: context,
+    };
     auto status = SecItemDelete((__bridge CFDictionaryRef)query);
     if (status == errSecSuccess) {
         return true;
@@ -104,17 +155,18 @@ bool Keychain::deleteCredential(const QString &account) {
 
 
 QString Keychain::getCredential(const QString &account) {
-    //    LAContext *context = this->m_authenticate();
+    LAContext *context = authenticate(m_reason);
 
-    //    if (!context) {
-    //        return {};
-    //    }
+    if (!context) {
+        return {};
+    }
 
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
                             (__bridge id)kSecAttrService: m_service.toNSString(),
                             (__bridge id)kSecAttrAccount: account.toNSString(),
                             (__bridge id)kSecReturnData: @YES,
-                            //                            (__bridge id)kSecUseAuthenticationContext: context
+                            (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
+                            (__bridge id)kSecUseAuthenticationContext: context,
     };
 
     CFDataRef data = NULL;
