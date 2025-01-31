@@ -12,7 +12,7 @@ KeycardBasePage {
     signal useProfileWithoutKeycardRequested()
 
     title: qsTr("Lost Keycard")
-    subtitle: qsTr("Sorry you’ve lost your Keycard")
+    subtitle: qsTr("Sorry you've lost your Keycard")
     image.source: Theme.png("onboarding/keycard/empty")
 
     buttons: [

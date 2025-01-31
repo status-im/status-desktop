@@ -127,7 +127,7 @@ QtObject:
     self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
     self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent))
 
-  proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
+  proc receiveKeycardSignal*(self: Service, signal: string) {.slot.} =
     self.busy = false
     self.processSignal(signal)
     if self.waitingFlows.len > 0:

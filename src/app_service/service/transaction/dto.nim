@@ -34,6 +34,7 @@ type
 
 type
   PendingTransactionTypeDto* {.pure.} = enum
+    Unknown = "Unknown"
     RegisterENS = "RegisterENS",
     SetPubKey = "SetPubKey",
     ReleaseENS = "ReleaseENS",
@@ -81,15 +82,15 @@ type
     symbol*: string
 
 proc getTotalFees(tip: string, baseFee: string, gasUsed: string, maxFee: string): string =
-    var maxFees = stint.fromHex(Uint256, maxFee)
-    var totalGasUsed = stint.fromHex(Uint256, tip) + stint.fromHex(Uint256, baseFee)
-    if totalGasUsed >  maxFees:
-      totalGasUsed = maxFees
-    var totalGasUsedInHex = (totalGasUsed * stint.fromHex(Uint256, gasUsed)).toHex
-    return totalGasUsedInHex
+  var maxFees = stint.fromHex(Uint256, maxFee)
+  var totalGasUsed = stint.fromHex(Uint256, tip) + stint.fromHex(Uint256, baseFee)
+  if totalGasUsed >  maxFees:
+    totalGasUsed = maxFees
+  var totalGasUsedInHex = (totalGasUsed * stint.fromHex(Uint256, gasUsed)).toHex
+  return totalGasUsedInHex
 
 proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
-    return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
+  return (stint.fromHex(Uint256, maxFee) * stint.fromHex(Uint256, gasLimit)).toHex
 
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()

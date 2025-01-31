@@ -8,6 +8,7 @@ import ./dto/login_request
 import ./dto/restore_account_request
 
 from ../keycard/service import KeycardEvent, KeyDetails
+from ../keycardV2/dto import KeycardExportedKeysDto, KeyDetailsV2
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
 import ../../../backend/privacy as status_privacy
@@ -240,6 +241,7 @@ QtObject:
 
     self.restoreAccountAndLogin(request)
 
+  # TODO remove this function when the old keycard service is removed
   proc restoreKeycardAccountAndLogin*(self: Service,
     keycardData: KeycardEvent,
     recoverAccount: bool,
@@ -267,6 +269,40 @@ QtObject:
       createAccountRequest: buildCreateAccountRequest("", displayName, imagePath, imageCropRectangle),
     )
     request.createAccountRequest.keycardInstanceUID = keycardData.instanceUid
+
+    return self.restoreAccountAndLogin(request)
+
+  proc restoreKeycardAccountAndLoginV2*(self: Service,
+    keyUid: string,
+    instanceUid: string,
+    keycardKeys: KeycardExportedKeysDto,
+    recoverAccount: bool,
+    ): string =
+
+    let keycard = KeycardData(
+      keyUid: keyUid,
+      address: keycardKeys.masterKey.address,
+      whisperPrivateKey: keycardKeys.whisperKey.privateKey,
+      whisperPublicKey: keycardKeys.whisperKey.publicKey,
+      whisperAddress: keycardKeys.whisperKey.address,
+      walletPublicKey: keycardKeys.walletKey.publicKey,
+      walletAddress: keycardKeys.walletKey.address,
+      walletRootAddress: keycardKeys.walletRootKey.address,
+      eip1581Address: keycardKeys.eip1581Key.address,
+      encryptionPublicKey: keycardKeys.encryptionKey.publicKey,
+    )
+
+    var request = RestoreAccountRequest(
+      keycard: keycard,
+      fetchBackup: recoverAccount,
+      createAccountRequest: buildCreateAccountRequest(
+        password = "",
+        displayName = "",
+        imagePath = "",
+        imageCropRectangle = ImageCropRectangle()
+      ),
+    )
+    request.createAccountRequest.keycardInstanceUID = instanceUid
 
     return self.restoreAccountAndLogin(request)
 

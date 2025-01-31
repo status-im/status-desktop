@@ -77,7 +77,7 @@ OnboardingPage {
                         StatusButton {
                             objectName: "btnCreateWithEmptySeedphrase"
                             Layout.fillWidth: true
-                            text: qsTr("Let’s go!")
+                            text: qsTr("Let's go!")
                             font.pixelSize: Theme.additionalTextSize
                             onClicked: root.createKeycardProfileWithNewSeedphrase()
                         }

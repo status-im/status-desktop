@@ -9,28 +9,33 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 import utils 1.0
 
 KeycardBasePage {
     id: root
 
-    property var tryToSetPinFunction: (pin) => { console.error("tryToSetPinFunction: IMPLEMENT ME"); return false }
+    required property int authorizationState
+    required property int restoreKeysExportState
     required property int remainingAttempts
     property bool unblockWithPukAvailable
+    property int keycardPinInfoPageDelay
 
     signal keycardPinEntered(string pin)
     signal reloadKeycardRequested
     signal unblockWithSeedphraseRequested
     signal unblockWithPukRequested
     signal keycardFactoryResetRequested
+    signal authorizationRequested(string pin)
+    signal exportKeysRequested()
+    signal exportKeysDone()
 
     image.source: Theme.png("onboarding/keycard/reading")
 
     QtObject {
         id: d
         property string tempPin
-        property bool pinValid
     }
 
     buttons: [
@@ -42,10 +47,7 @@ KeycardBasePage {
             onPinInputChanged: {
                 if (pinInput.pinInput.length === pinInput.pinLen) { // we have the full length PIN now
                     d.tempPin = pinInput.pinInput
-                    d.pinValid = root.tryToSetPinFunction(d.tempPin)
-                    if (!d.pinValid) {
-                        pinInput.statesInitialization()
-                    }
+                    root.authorizationRequested(d.tempPin)
                 }
             }
         },
@@ -55,6 +57,20 @@ KeycardBasePage {
             text: qsTr("%n attempt(s) remaining", "", root.remainingAttempts)
             font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
+            visible: false
+        },
+        StatusBaseText {
+            id: errorExportingText
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Error exporting the keys, please try again")
+            font.pixelSize: Theme.tertiaryTextFontSize
+            color: Theme.palette.dangerColor1
+            visible: false
+        },
+        StatusLoadingIndicator {
+            id: loadingIndicator
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Theme.halfPadding
             visible: false
         },
         MaybeOutlineButton {
@@ -125,7 +141,7 @@ KeycardBasePage {
         },
         State {
             name: "incorrect"
-            when: !!d.tempPin && !d.pinValid
+            when: root.authorizationState === Onboarding.ProgressState.Failed
             PropertyChanges {
                 target: root
                 title: qsTr("PIN incorrect")
@@ -134,20 +150,82 @@ KeycardBasePage {
                 target: errorText
                 visible: true
             }
+            StateChangeScript {
+                script: {
+                    Backpressure.debounce(root, 100, function() {
+                        pinInput.clearPin()
+                    })()
+                }
+            }
         },
         State {
-            name: "success"
-            when: d.pinValid
+            name: "error"
+            when: root.restoreKeysExportState === Onboarding.ProgressState.Failed
             PropertyChanges {
                 target: root
-                title: qsTr("PIN correct")
+                title: qsTr("Keys export failed")
+            }
+            PropertyChanges {
+                target: errorExportingText
+                visible: true
+            }
+        },
+        State {
+            name: "authorizing"
+            when: root.authorizationState === Onboarding.ProgressState.InProgress
+            PropertyChanges {
+                target: root
+                title: qsTr("Authorizing")
+            }
+            PropertyChanges {
+                target: pinInput
+                enabled: false
+            }
+            PropertyChanges {
+                target: loadingIndicator
+                visible: true
+            }
+        },
+        State {
+            name: "exportSuccess"
+            when: root.restoreKeysExportState === Onboarding.ProgressState.Success
+            PropertyChanges {
+                target: root
+                title: qsTr("Keys exported successfully")
             }
             PropertyChanges {
                 target: pinInput
                 enabled: false
             }
             StateChangeScript {
-                script: root.keycardPinEntered(pinInput.pinInput)
+                script: {
+                    Backpressure.debounce(root, keycardPinInfoPageDelay, function() {
+                        root.exportKeysDone()
+                    })()
+                }
+            }
+        },
+        State {
+            name: "pinSuccess"
+            when: root.authorizationState === Onboarding.ProgressState.Success
+            PropertyChanges {
+                target: root
+                title: qsTr("PIN correct. Exporting keys.")
+            }
+            PropertyChanges {
+                target: pinInput
+                enabled: false
+            }
+            PropertyChanges {
+                target: loadingIndicator
+                visible: true
+            }
+            StateChangeScript {
+                script: {
+                    Backpressure.debounce(root, keycardPinInfoPageDelay, function() {
+                        root.exportKeysRequested()
+                    })()
+                }
             }
         },
         State {
@@ -161,7 +239,6 @@ KeycardBasePage {
                     pinInput.statesInitialization()
                     pinInput.forceFocus()
                     d.tempPin = ""
-                    d.pinValid = false
                 }
             }
         }

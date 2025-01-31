@@ -13,26 +13,27 @@ SQUtils.QObject {
     required property StackView stackView
 
     required property int keycardState
+    required property int pinSettingState
+    required property int authorizationState
     required property int addKeyPairState
     required property int keycardPinInfoPageDelay
 
-    required property var seedWords
+    required property var getSeedWords
     required property var isSeedPhraseValid
 
     property bool displayKeycardPromoBanner
 
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
-    signal keyPairTransferRequested
+    signal loadMnemonicRequested
     signal keycardPinCreated(string pin)
     signal seedphraseSubmitted(string seedphrase)
 
     signal keypairAddTryAgainRequested
     signal reloadKeycardRequested
     signal createProfileWithoutKeycardRequested
+    signal authorizationRequested
 
-    signal mnemonicWasShown()
-    signal mnemonicRemovalRequested()
     signal finished(bool withNewSeedphrase)
 
     function init() {
@@ -43,6 +44,7 @@ SQUtils.QObject {
         id: d
 
         property bool withNewSeedphrase
+        property var seedWords
 
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.Empty)
@@ -124,9 +126,17 @@ SQUtils.QObject {
     Component {
         id: backupSeedRevealPage
         BackupSeedphraseReveal {
-            seedWords: root.seedWords
+            Component.onCompleted: {
+                try {
+                    const seedwords = root.getSeedWords()
+                    d.seedWords = JSON.parse(seedwords)
+                    root.seedphraseSubmitted(d.seedWords)
+                } catch (e) {
+                    console.error('Failed to get seedwords', e)
+                }
+            }
+            seedWords: d.seedWords
 
-            onMnemonicWasShown: root.mnemonicWasShown()
             onBackupSeedphraseConfirmed: root.stackView.push(backupSeedVerifyPage)
         }
     }
@@ -135,9 +145,9 @@ SQUtils.QObject {
         id: backupSeedVerifyPage
         BackupSeedphraseVerify {
             seedWordsToVerify: {
-                const randomIndexes = SQUtils.Utils.nSamples(4, root.seedWords.length)
+                const randomIndexes = SQUtils.Utils.nSamples(4, d.seedWords.length)
                 return randomIndexes.map(i => ({ seedWordNumber: i+1,
-                                                 seedWord: root.seedWords[i]
+                                                 seedWord: d.seedWords[i]
                                                }))
             }
 
@@ -150,8 +160,7 @@ SQUtils.QObject {
 
         BackupSeedphraseOutro {
             onBackupSeedphraseRemovalConfirmed: {
-                root.mnemonicRemovalRequested()
-                root.keyPairTransferRequested()
+                root.loadMnemonicRequested()
                 root.stackView.push(addKeypairPage)
             }
         }
@@ -161,13 +170,20 @@ SQUtils.QObject {
         id: seedphrasePage
 
         SeedphrasePage {
+            id: seedphrasePage
             title: qsTr("Create profile on empty Keycard using a recovery phrase")
 
+            authorizationState: root.authorizationState
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.keyPairTransferRequested()
-                root.stackView.push(addKeypairPage)
+                root.authorizationRequested()
+            }
+            onKeycardAuthorized: {
+                if (!d.withNewSeedphrase) {
+                    root.loadMnemonicRequested()
+                    root.stackView.push(addKeypairPage)
+                }
             }
         }
     }
@@ -176,14 +192,26 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinPage {
+            id: createPinPage
+
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+            pinSettingState: root.pinSettingState
+            authorizationState: root.authorizationState
             onKeycardPinCreated: (pin) => {
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
-                    if (d.withNewSeedphrase)
-                        root.stackView.push(backupSeedIntroPage)
-                    else
-                        root.stackView.push(seedphrasePage)
-                })()
+                root.keycardPinCreated(pin)
+            }
+            onKeycardPinSuccessfullySet: {
+                if (d.withNewSeedphrase) {
+                    // Need to authorize before getting a seedphrase
+                    root.authorizationRequested()
+                } else {
+                    root.stackView.push(seedphrasePage)
+                }
+            }
+            onKeycardAuthorized: {
+                if (d.withNewSeedphrase) {
+                    root.stackView.push(backupSeedIntroPage)
+                }
             }
         }
     }
