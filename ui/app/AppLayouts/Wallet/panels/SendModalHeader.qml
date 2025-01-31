@@ -113,6 +113,7 @@ RowLayout {
                   TokenSelectorButton.Size.Normal
 
         enabled: root.interactive
+        showSectionName: false
 
         assetsModel: root.assetsModel
         collectiblesModel: root.displayOnlyAssets ? null: root.collectiblesModel

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -35,6 +36,8 @@ Control {
     // Index of the current tab, indexes ​​correspond to the Tabs enum values.
     property alias currentTab: tabBar.currentIndex
 
+    property bool showSectionName: true
+
     signal assetSelected(string key)
     signal collectionSelected(string key)
     signal collectibleSelected(string key)
@@ -47,6 +50,7 @@ Control {
     }
 
     contentItem: ColumnLayout {
+        spacing: 0
         StatusTabBar {
             id: tabBar
 
@@ -79,6 +83,11 @@ Control {
             }
         }
 
+        StatusDialogDivider {
+            Layout.topMargin: -9
+            Layout.fillWidth: true
+        }
+
         SearchableAssetsPanel {
             id: searchableAssetsPanel
 
@@ -88,6 +97,7 @@ Control {
             Layout.fillHeight: true
 
             highlightedKey: root.highlightedKey
+            showSectionName: root.showSectionName
 
             onSelected: root.assetSelected(key)
         }

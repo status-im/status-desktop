@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.views 1.0
@@ -33,6 +34,7 @@ Control {
     property alias model: sfpm.sourceModel
     property string highlightedKey
     property string nonInteractiveKey
+    property bool showSectionName: true
 
     signal selected(string key)
 
@@ -63,13 +65,23 @@ Control {
     contentItem: ColumnLayout {
         spacing: 0
 
+        StatusBaseText {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 4
+            text: qsTr("Your assets will appear here")
+            color: Theme.palette.baseColor1
+            visible: !listView.count && !searchBox.text
+        }
+
         TokenSearchBox {
             id: searchBox
 
             objectName: "searchBox"
 
             Layout.fillWidth: true
-            placeholderText: qsTr("Search assets")
+            placeholderText: qsTr("Search for token or enter token address")
+
+            visible: listView.count || !!searchBox.text
 
             Keys.forwardTo: [listView]
         }
@@ -100,6 +112,7 @@ Control {
             section.delegate: TokenSelectorSectionDelegate {
                 width: ListView.view.width
                 text: section
+                height: root.showSectionName ? implicitHeight : 0
             }
 
             delegate: TokenSelectorAssetDelegate {
