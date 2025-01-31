@@ -15,6 +15,18 @@ SplitView {
         id: keychain
         service: "StatusStorybook"
         reason: qsTr("<reason here>")
+
+        onSaveCredentialFinished: (ok) => {
+                                      logs.logEvent("SaveCredentialsFinsihed", ["ok"], [ok])
+                                  }
+
+        onDeleteCredentialFinished: (ok) => {
+                                        logs.logEvent("DeleteCredentialFinsihed", ["ok"], [ok])
+                                    }
+
+        onGetCredentialFinished: (ok, password) => {
+                                     logs.logEvent("GetCredentialFinished", ["ok", "password"], [ok, password])
+                                 }
     }
 
     LogsView {
@@ -54,24 +66,15 @@ SplitView {
             RowLayout {
                 Button {
                     text: "Save"
-                    onClicked: {
-                        const ok = keychain.saveCredential(accountInput.text, passwordInput.text)
-                        logs.logEvent(`SaveCredentials: ${ok}`)
-                    }
+                    onClicked: keychain.requestSaveCredential(accountInput.text, passwordInput.text)
                 }
                 Button {
                     text: "Delete"
-                    onClicked: {
-                        const ok = keychain.deleteCredential(accountInput.text)
-                        logs.logEvent(`DeleteCredential: ${ok}`)
-                    }
+                    onClicked: keychain.requestDeleteCredential(accountInput.text)
                 }
                 Button {
                     text: "Get"
-                    onClicked: {
-                        const password = keychain.getCredential(accountInput.text)
-                        logs.logEvent(`GetCredential: "${password}"`)
-                    }
+                    onClicked: keychain.requestGetCredential(accountInput.text)
                 }
                 BusyIndicator {
                     Layout.preferredHeight: 40
