@@ -9,6 +9,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.popups 1.0
 
 import utils 1.0
@@ -166,7 +167,27 @@ SignTransactionModalBase {
                     loading: root.feesLoading
                 }
             }
+            StatusFlatButton {
+                tooltip.text: qsTr("Edit transaction settings")
+                icon.name: "settings-advance"
+                textColor: hovered? Theme.palette.directColor1 : Theme.palette.baseColor1
+                onClicked: {
+                    root.internalPopupActive = true
+                }
+            }
         }
+    }
+
+    property Component internalPopup: TransactionSettings {
+
+        onCancelClicked: {
+            root.internalPopupActive = false
+        }
+    }
+    internalPopupComponent: internalPopup
+
+    onCloseInternalPopup: {
+        root.internalPopupActive = false
     }
 
     // Send Asset
@@ -196,6 +217,7 @@ SignTransactionModalBase {
             }
         ]
         visible: !root.isCollectible
+        enabled: !root.internalPopupActive
     }
 
     // Send Collectible
@@ -222,6 +244,7 @@ SignTransactionModalBase {
             onOpenLink: (link) => root.openLinkWithConfirmation(link)
         }
         visible: root.isCollectible
+        enabled: !root.internalPopupActive
     }
 
     // From
@@ -263,6 +286,7 @@ SignTransactionModalBase {
                 onOpenLink: (link) => root.openLinkWithConfirmation(link)
             }
         ]
+        enabled: !root.internalPopupActive
     }
 
     // Network

@@ -2,6 +2,36 @@ import QtQuick 2.15
 
 import StatusQ.Core.Theme 0.1
 
+/*!
+    \qmltype StatusColorAnimation
+    \inherits SequentialAnimation
+    \inqmlmodule StatusQ.Controls
+    \since StatusQ.Controls 0.1
+    \brief Animates target property (that shold be a color property) from/to color to target component within set duration.
+
+   Example of how to use it:
+
+   \qml
+        StatusBaseText {
+            id: animatedText
+
+            onTextChanged: {
+                if (text === "") {
+                    return
+                }
+                animate.restart()
+            }
+
+            StatusColorAnimation {
+                id: animate
+                target: animatedText
+            }
+        }
+   \endqml
+
+   For a list of components available see StatusQ.
+ */
+
 SequentialAnimation {
     id: root
 
