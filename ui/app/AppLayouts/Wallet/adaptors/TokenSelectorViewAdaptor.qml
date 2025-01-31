@@ -49,6 +49,8 @@ QObject {
     property var enabledChainIds: []
     property string accountAddress
     property bool showCommunityAssets
+    // Incase of SendModal we show SNT, ETH and DAI with 0 balance
+    property bool showZeroBalanceForDefaultTokens: false
 
     // output model
     readonly property SortFilterProxyModel outputAssetsModel: SortFilterProxyModel {
@@ -111,7 +113,7 @@ QObject {
         id: tokensWithBalance
         filters: [
             ValueFilter {
-                roleName: "currencyBalance"
+                roleName: "balancesModelCount"
                 value: 0
                 inverted: true
             }
@@ -154,6 +156,7 @@ QObject {
                                     : ""
 
                 readonly property var balances: this
+                readonly property int balancesModelCount: delegateRoot.ModelCount.count
 
                 sourceModel: joinModel
 
@@ -185,6 +188,7 @@ QObject {
                         roleName: "balance"
                         value: "0"
                         inverted: true
+                        enabled: !root.showZeroBalanceForDefaultTokens
                     },
                     RegExpFilter {
                         roleName: "account"
@@ -219,7 +223,7 @@ QObject {
                 }
             }
 
-            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString"]
+            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
             expectedRoles: [ "tokensKey", "communityId", "balances", "decimals", "marketDetails"]
         }
     }
