@@ -706,11 +706,13 @@ QtObject {
                 id: signSendAdaptor
                 accountKey: simpleSendModal.selectedAccountAddress
                 accountsModel: root.walletAccountsModel
+                recipientModel: handler.recipientViewAdaptor.recipientsModel
                 chainId: simpleSendModal.selectedChainId
                 networksModel: root.flatNetworksModel
                 tokenKey: simpleSendModal.selectedTokenKey
                 tokenBySymbolModel: root.plainTokensBySymbolModel
                 selectedAmountInBaseUnit: simpleSendModal.selectedRawAmount
+                selectedRecipientAddress: simpleSendModal.selectedRecipientAddress
             }
 
             Component {
@@ -733,7 +735,11 @@ QtObject {
                     accountEmoji: signSendAdaptor.selectedAccount.emoji
                     accountColor: Utils.getColorForId(signSendAdaptor.selectedAccount.colorId)
 
-                    recipientAddress: simpleSendModal.selectedRecipientAddress
+                    recipientAddress: signSendAdaptor.recipientAddress
+                    recipientName: signSendAdaptor.recipientName
+                    recipientEns: signSendAdaptor.recipientEns
+                    recipientEmoji: signSendAdaptor.recipientEmoji
+                    recipientWalletColor: signSendAdaptor.recipientWalletColor
 
                     networkShortName: signSendAdaptor.selectedNetwork.shortName
                     networkName: signSendAdaptor.selectedNetwork.chainName
