@@ -48,7 +48,6 @@ def test_sync_device_during_onboarding(multiple_instances):
         with step('Open sync code form in second instance'):
             aut_two.attach()
             main_window.prepare()
-            BeforeStartedPopUp().get_started()
             welcome_screen = WelcomeToStatusView().wait_until_appears()
             sync_view = welcome_screen.sync_existing_user().open_sync_code_view()
 

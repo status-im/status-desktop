@@ -10,7 +10,7 @@ from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_se
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 
 from gui.main_window import LeftPanel
-from gui.screens.onboarding import LoginView
+from gui.screens.onboarding import ReturningLoginView
 
 
 
@@ -43,7 +43,7 @@ def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
 
     with step('Restart application and try re-importing seed phrase again'):
         aut.restart()
-        enter_seed_view = LoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
+        enter_seed_view = ReturningLoginView().add_existing_status_user().open_keys_view().open_enter_seed_phrase_view()
         enter_seed_view.input_seed_phrase(seed_phrase.split(), autocomplete=False)
         confirm_import = enter_seed_view.click_import_seed_phrase_button()
 

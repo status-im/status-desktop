@@ -13,7 +13,7 @@ import driver
 from constants import ColorCodes
 from driver.objects_access import walk_children
 from gui.components.onboarding.keys_already_exist_popup import KeysAlreadyExistPopup
-from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
+from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup, HelpUsImproveStatusView
 from gui.components.os.open_file_dialogs import OpenFileDialog
 from gui.components.picture_edit_popup import PictureEditPopup
 from gui.components.splash_screen import SplashScreen
@@ -44,23 +44,44 @@ class AllowNotificationsView(QObject):
 class WelcomeToStatusView(QObject):
 
     def __init__(self):
-        super(WelcomeToStatusView, self).__init__(onboarding_names.mainWindow_WelcomeView)
-        self._i_am_new_to_status_button = Button(onboarding_names.mainWindow_I_am_new_to_Status_StatusBaseText)
-        self._i_already_use_status_button = Button(onboarding_names.mainWindow_I_already_use_Status_StatusFlatButton)
+        super().__init__(onboarding_names.startupOnboardingLayout)
+        self.create_profile_button = Button(onboarding_names.startupCreateProfileButton)
+        self.log_in_button = Button(onboarding_names.startupLoginButton)
+        self.approval_links = QObject(onboarding_names.startupApprovalLinks)
 
-    @allure.step('Open Keys view')
-    def get_keys(self) -> 'KeysView':
-        self._i_am_new_to_status_button.click()
-        time.sleep(1)
-        ShareUsageDataPopup().skip()
-        return KeysView().wait_until_appears()
+    @allure.step('Open Create your profile view')
+    def open_create_your_profile_view(self) -> 'CreateYourProfileView':
+        self.create_profile_button.click()
+        HelpUsImproveStatusView().not_now_button.click()
+        return CreateYourProfileView().wait_until_appears()
 
     @allure.step('Open Sign by syncing form')
-    def sync_existing_user(self) -> 'SignBySyncingView':
-        self._i_already_use_status_button.click()
-        time.sleep(1)
-        ShareUsageDataPopup().skip()
-        return SignBySyncingView().wait_until_appears()
+    def sync_existing_user(self) -> 'LogInBySyncingView':
+        self.log_in_button.click()
+        HelpUsImproveStatusView().wait_until_appears().not_now_button.click()
+        OnboardingLogIn().wait_until_appears().log_in_by_syncing_button.click()
+        #LogInBySyncingChecklist().wait_until_appears().complete()
+        return LogInBySyncingView().wait_until_appears()
+
+
+class CreateYourProfileView(WelcomeToStatusView):
+    def __init__(self):
+        super().__init__()
+        self.lets_go_button = Button(onboarding_names.startFreshLetsGoButton)
+        self.use_a_recovery_phrase_button = Button(onboarding_names.useRecoveryPhraseButton)
+        self.use_an_empty_keycard_button = Button(onboarding_names.useEmptyKeycardButton)
+
+    def open_password_view(self):
+        self.lets_go_button.click()
+        return CreatePasswordView()
+
+
+class OnboardingLogIn(WelcomeToStatusView):
+    def __init__(self):
+        super().__init__()
+        self.enter_recovery_phrase_button = Button(onboarding_names.enterRecoveryPhraseButton)
+        self.log_in_by_syncing_button = Button(onboarding_names.logInBySyncingButton)
+        self.log_in_with_keycard_button = Button(onboarding_names.logInWithKeycardButton)
 
 
 class OnboardingView(QObject):
@@ -123,10 +144,10 @@ class ImportSeedPhraseView(OnboardingView):
         return KeysView().wait_until_appears()
 
 
-class SignBySyncingView(OnboardingView):
+class LogInBySyncingView(OnboardingView):
 
     def __init__(self):
-        super(SignBySyncingView, self).__init__(onboarding_names.mainWindow_KeysMainView)
+        super(LogInBySyncingView, self).__init__(onboarding_names.mainWindow_KeysMainView)
         self._scan_or_enter_sync_code_button = Button(onboarding_names.keysMainView_PrimaryAction_Button)
         self._i_dont_have_other_device_button = Button(
             onboarding_names.mainWindow_iDontHaveOtherDeviceButton_StatusBaseText)
@@ -444,8 +465,11 @@ class CreatePasswordView(OnboardingView):
 
     def __init__(self):
         super(CreatePasswordView, self).__init__(onboarding_names.mainWindow_CreatePasswordView)
-        self._new_password_text_field = TextEdit(onboarding_names.mainWindow_passwordViewNewPassword)
-        self._confirm_password_text_field = TextEdit(onboarding_names.mainWindow_passwordViewNewPasswordConfirm)
+        self.choose_password_field = TextEdit(onboarding_names.choosePasswordField)
+        self.repeat_password_field = TextEdit(onboarding_names.repeatPasswordField)
+        self.confirm_password_button = Button(onboarding_names.confirmPasswordButton)
+
+        # TODO: revisit and remove if obsolete
         self._create_button = Button(onboarding_names.mainWindow_Create_password_StatusButton)
         self._password_view_object = QObject(onboarding_names.mainWindow_view_PasswordView)
         self._strength_indicator = QObject(
@@ -454,6 +478,24 @@ class CreatePasswordView(OnboardingView):
         self.password_component_indicator = QObject(onboarding_names.mainWindow_ComponentIndicator)
         self._show_icon = QObject(onboarding_names.mainWindow_show_icon_StatusIcon)
         self._hide_icon = QObject(onboarding_names.mainWindow_hide_icon_StatusIcon)
+
+    @allure.step('Set password and open Confirmation password view')
+    def create_password(self, value: str) -> 'SplashScreen':
+        self.set_password_in_first_field(value)
+        self.set_password_in_confirmation_field(value)
+        self.confirm_password_button.click()
+        if configs.system.get_platform() == "Darwin":
+            assert BiometricsView().wait_until_appears().yes_use_biometrics_button.is_visible, f"Use biometrics button is not found"
+            BiometricsView().wait_until_appears().maybe_later()
+        return SplashScreen()
+
+    @allure.step('Fill in choose password field')
+    def set_password_in_first_field(self, value: str):
+        self.choose_password_field.text = value
+
+    @allure.step('Set password in confirmation field')
+    def set_password_in_confirmation_field(self, value: str):
+        self.repeat_password_field.text = value
 
     @allure.step('Get password content from first field')
     def get_password_from_first_field(self) -> str:
@@ -504,21 +546,6 @@ class CreatePasswordView(OnboardingView):
     def click_hide_icon(self, index):
         hide_icons = driver.findAllObjects(self._hide_icon.real_name)
         driver.mouseClick(hide_icons[index])
-
-    @allure.step('Set password in first field')
-    def set_password_in_first_field(self, value: str):
-        self._new_password_text_field.text = value
-
-    @allure.step('Set password in confirmation field')
-    def set_password_in_confirmation_field(self, value: str):
-        self._confirm_password_text_field.text = value
-
-    @allure.step('Set password and open Confirmation password view')
-    def create_password(self, value: str) -> 'ConfirmPasswordView':
-        self.set_password_in_first_field(value)
-        self.set_password_in_confirmation_field(value)
-        self.click_create_password()
-        return ConfirmPasswordView().wait_until_appears()
 
     def click_create_password(self):
         self._create_button.click()
@@ -579,24 +606,20 @@ class ConfirmPasswordView(OnboardingView):
 class BiometricsView(OnboardingView):
 
     def __init__(self):
-        super(BiometricsView, self).__init__(onboarding_names.mainWindow_TouchIDAuthView)
-        self._yes_use_touch_id_button = Button(onboarding_names.mainWindow_touchIdYesUseTouchIDButton)
-        self._prefer_password_button = Button(onboarding_names.mainWindow_touchIdIPreferToUseMyPasswordText)
+        super(BiometricsView, self).__init__(onboarding_names.enableBiometricsView)
+        self.yes_use_biometrics_button = Button(onboarding_names.enableBiometricsButton)
+        self.maybe_later_button = Button(onboarding_names.dontEnableBiometricsButton)
 
-    @allure.step('Select prefer password')
-    def prefer_password(self):
-        self._prefer_password_button.click()
+    @allure.step('Select maybe later option')
+    def maybe_later(self):
+        self.maybe_later_button.click()
         self.wait_until_hidden()
 
-    @allure.step('Verify TouchID button')
-    def is_touch_id_button_visible(self):
-        return self._yes_use_touch_id_button.is_visible
 
-
-class LoginView(QObject):
+class ReturningLoginView(QObject):
 
     def __init__(self):
-        super(LoginView, self).__init__(onboarding_names.mainWindow_LoginView)
+        super(ReturningLoginView, self).__init__(onboarding_names.mainWindow_LoginView)
         self._password_text_edit = TextEdit(onboarding_names.loginView_passwordInput)
         self._arrow_right_button = Button(onboarding_names.loginView_submitBtn)
         self._current_user_name_label = TextLabel(onboarding_names.loginView_currentUserNameLabel)
@@ -629,7 +652,7 @@ class LoginView(QObject):
     def add_existing_status_user(self):
         self._current_user_name_label.click()
         self._add_existing_user_item.click()
-        return SignBySyncingView().wait_until_appears()
+        return LogInBySyncingView().wait_until_appears()
 
     @allure.step('Select user')
     def select_user_name(self, user_name, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
