@@ -57,6 +57,7 @@ SettingsContentBase {
 
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
+            networksView.overrideInitialTabIndex(editNetwork.network.isTest ? networksView.testnetTabIndex : networksView.mainnetTabIndex)
             stackContainer.currentIndex = root.networksViewIndex
         }
         else {
@@ -158,12 +159,14 @@ SettingsContentBase {
             if(currentIndex == root.networksViewIndex) {
                 root.rootStore.backButtonName = root.walletSectionTitle
                 root.sectionTitle = root.networksSectionTitle
+
+                root.titleRowComponentLoader.sourceComponent = toggleTestnetModeSwitchComponent
             }
 
             if(currentIndex == root.editNetworksViewIndex) {
                 root.rootStore.backButtonName = root.networksSectionTitle
-                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.prodNetwork &&
-                                                        !!editNetwork.prodNetwork.chainName ? editNetwork.prodNetwork.chainName: "")
+                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.network &&
+                                                        !!editNetwork.network.chainName ? editNetwork.network.chainName: "")
                 root.titleRowLeftComponentLoader.visible = true
                 root.titleRowLeftComponentLoader.sourceComponent = networkIcon
                 root.titleLayout.spacing = 12
@@ -252,7 +255,6 @@ SettingsContentBase {
             Layout.fillHeight: false
 
             flatNetworks: root.walletStore.flatNetworks
-            combinedNetworks: root.walletStore.combinedNetworks
             areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
 
             onGoBack: {
@@ -260,13 +262,12 @@ SettingsContentBase {
             }
 
             onEditNetwork: {
-                editNetwork.prodNetwork = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", combinedNetwork.prodChainId)
-                editNetwork.testNetwork = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", combinedNetwork.testChainId)
+                editNetwork.network = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", chainId)
                 stackContainer.currentIndex = editNetworksViewIndex
             }
 
-            onToggleTestNetworksEnabled: {
-                Global.openTestnetPopup()
+            onSetNetworkActive: {
+                root.walletStore.setNetworkActive(chainId, active)
             }
         }
 
@@ -401,6 +402,22 @@ SettingsContentBase {
         }
 
         Component {
+            id: toggleTestnetModeSwitchComponent
+
+            StatusSwitch {
+                id: testnetSwitch
+                objectName: "testnetModeSwitch"
+                text: qsTr("Testnet mode")
+                leftSide: false
+                checked: root.walletStore.areTestNetworksEnabled
+                onToggled:{
+                    checked = Qt.binding(() => root.walletStore.areTestNetworksEnabled)
+                    Global.openTestnetPopup()
+                }
+            }
+        }
+
+        Component {
             id: addNewSavedAddressButtonComponent
 
             StatusButton {
@@ -417,7 +434,7 @@ SettingsContentBase {
             StatusRoundedImage {
                 width: 28
                 height: 28
-                image.source: Theme.svg(!!editNetwork.prodNetwork && !!editNetwork.prodNetwork.iconUrl ? editNetwork.prodNetwork.iconUrl: "")
+                image.source: Theme.svg(!!editNetwork.network && !!editNetwork.network.iconUrl ? editNetwork.network.iconUrl: "")
                 image.fillMode: Image.PreserveAspectCrop
             }
         }

@@ -6,7 +6,7 @@ import backend/network_types
 
 export response_type, network_types
 
-rpc(getEthereumChains, "wallet"):
+rpc(getFlatEthereumChains, "wallet"):
   discard
 
 rpc(addEthereumChain, "wallet"):
@@ -14,6 +14,10 @@ rpc(addEthereumChain, "wallet"):
 
 rpc(deleteEthereumChain, "wallet"):
   chainId: int
+
+rpc(setChainActive, "wallet"):
+  chainId: int
+  active: bool
 
 rpc(fetchChainIDForURL, "wallet"):
   url: string

@@ -6,20 +6,6 @@ import ./rpc_provider_item
 
 export rpc_provider_item
 
-type
-  UxEnabledState* {.pure.} = enum
-    Enabled
-    AllEnabled
-    Disabled
-
-proc networkEnabledToUxEnabledState*(enabled: bool, allEnabled: bool): UxEnabledState =
-  return if allEnabled:
-      UxEnabledState.AllEnabled
-    elif enabled:
-      UxEnabledState.Enabled
-    else:
-      UxEnabledState.Disabled
-
 QtObject:
   type NetworkItem* = ref object of QObject
     chainId*: int
@@ -35,8 +21,9 @@ QtObject:
     nativeCurrencyDecimals*: int
     isTest*: bool
     isEnabled*: bool
-    enabledState*: UxEnabledState
     relatedChainId*: int
+    isActive*: bool
+    isDeactivatable*: bool
 
   proc setup*(self: NetworkItem,
     chainId: int,
@@ -52,8 +39,9 @@ QtObject:
     nativeCurrencyDecimals: int,
     isTest: bool,
     isEnabled: bool,
-    enabledState: UxEnabledState,
-    relatedChainId: int
+    relatedChainId: int,
+    isActive: bool,
+    isDeactivatable: bool
     ) =
       self.QObject.setup
       self.chainId = chainId
@@ -69,21 +57,21 @@ QtObject:
       self.nativeCurrencyDecimals = nativeCurrencyDecimals
       self.isTest = isTest
       self.isEnabled = isEnabled
-      self.enabledState = enabledState
       self.relatedChainId = relatedChainId
+      self.isActive = isActive
+      self.isDeactivatable = isDeactivatable
 
   proc delete*(self: NetworkItem) =
       self.QObject.delete
 
-  proc networkDtoToItem*(network: NetworkDto, allEnabled: bool): NetworkItem =
+  proc networkDtoToItem*(network: NetworkDto): NetworkItem =
     new(result, delete)
     let rpcProviders = network.rpcProviders.map(p => rpcProviderDtoToItem(p))
-    let enabledState = networkEnabledToUxEnabledState(network.isEnabled, allEnabled)
     result.setup(network.chainId, network.layer, network.chainName, network.iconUrl, network.shortName,
       network.chainColor, rpcProviders,
       network.blockExplorerURL, network.nativeCurrencyName, network.nativeCurrencySymbol, network.nativeCurrencyDecimals,
-      network.isTest, network.isEnabled, enabledState, network.relatedChainId)
-  
+      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable)
+
   proc networkItemToDto*(network: NetworkItem): NetworkDto =
     result = NetworkDto(
       chainId: network.chainId,
@@ -99,7 +87,9 @@ QtObject:
       isEnabled: network.isEnabled,
       chainColor: network.chainColor,
       shortName: network.shortName,
-      relatedChainId: network.relatedChainId
+      relatedChainId: network.relatedChainId,
+      isActive: network.isActive,
+      isDeactivatable: network.isDeactivatable
     )
 
   proc `$`*(self: NetworkItem): string =
@@ -113,6 +103,13 @@ QtObject:
       rpcProviders: {self.rpcProviders},
       blockExplorerURL: {self.blockExplorerURL},
       nativeCurrencySymbol: {self.nativeCurrencySymbol},
+      nativeCurrencyName: {self.nativeCurrencyName},
+      nativeCurrencyDecimals: {self.nativeCurrencyDecimals},
+      isTest: {self.isTest},
+      isEnabled: {self.isEnabled},
+      relatedChainId: {self.relatedChainId},
+      isActive: {self.isActive},
+      isDeactivatable: {self.isDeactivatable}
       ]"""
 
   proc chainId*(self: NetworkItem): int {.slot.} =
@@ -178,12 +175,12 @@ QtObject:
   QtProperty[bool] isEnabled:
     read = isEnabled
 
-  proc getEnabledState*(self: NetworkItem): int {.slot.} =
-    return ord(self.enabledState)
-  QtProperty[int] enabledState:
-    read = getEnabledState
-
   proc relatedChainId*(self: NetworkItem): int {.slot.} =
     return self.relatedChainId
   QtProperty[int] relatedChainId:
     read = relatedChainId
+  
+  proc isActive*(self: NetworkItem): bool {.slot.} =
+    return self.isActive
+  QtProperty[bool] isActive:
+    read = isActive

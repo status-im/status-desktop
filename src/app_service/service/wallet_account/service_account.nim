@@ -537,6 +537,14 @@ proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
   self.networkService.setNetworksState(chainIds, enabled)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
+proc setNetworkActive*(self: Service, chainId: int, active: bool) =
+  self.networkService.setNetworkActive(chainId, active)
+  # TODO: This should be some common response to network changes
+  let addresses = self.getWalletAddresses()
+  self.buildAllTokens(addresses, store = true)
+  self.checkRecentHistory(addresses)
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
+
 proc toggleTestNetworksEnabled*(self: Service) =
   discard self.settingsService.toggleTestNetworksEnabled()
   let addresses = self.getWalletAddresses()
