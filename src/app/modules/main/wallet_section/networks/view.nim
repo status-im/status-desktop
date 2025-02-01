@@ -1,13 +1,12 @@
 import NimQml, sequtils, strutils
 
-import ./io_interface, ./model, ./combined_model, ./rpc_providers_model
+import ./io_interface, ./model, ./rpc_providers_model
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       flatNetworks: Model
-      combinedNetworks: CombinedModel
       rpcProvidersModel: RpcProvidersModel
       areTestNetworksEnabled: bool
       enabledChainIds: string
@@ -22,7 +21,6 @@ QtObject:
     new(result, delete)
     result.delegate = delegate
     result.flatNetworks = newModel(delegate.getNetworksDataSource())
-    result.combinedNetworks = newCombinedModel(delegate.getNetworksDataSource())
     result.rpcProvidersModel = newRpcProvidersModel(delegate.getNetworksDataSource())
     result.enabledChainIds = ""
     result.setup()
@@ -50,13 +48,6 @@ QtObject:
     read = getFlatNetworks
     notify = flatNetworksChanged
 
-  proc combinedNetworksChanged*(self: View) {.signal.}
-  proc getCombinedNetworks(self: View): QVariant {.slot.} =
-    return newQVariant(self.combinedNetworks)
-  QtProperty[QVariant] combinedNetworks:
-    read = getCombinedNetworks
-    notify = combinedNetworksChanged
-
   proc rpcProvidersChanged*(self: View) {.signal.}
   proc getRpcProviders(self: View): QVariant {.slot.} =
     return newQVariant(self.rpcProvidersModel)
@@ -74,25 +65,29 @@ QtObject:
   proc refreshModel*(self: View) =
     self.flatNetworks.refreshModel()
     self.rpcProvidersModel.refreshModel()
-    self.combinedNetworks.modelUpdated()
     self.enabledChainIds = self.flatNetworks.getEnabledChainIds(self.areTestNetworksEnabled)
     self.flatNetworksChanged()
     self.rpcProvidersChanged()
-    self.combinedNetworksChanged()
     self.enabledChainIdsChanged()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  # Used for balances/collectibles/activity filters
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =
     let (chainIds, enable) = self.flatNetworks.networksToChangeStateOnUserActionFor(chainId, self.areTestNetworksEnabled)
     self.delegate.setNetworksState(chainIds, enable)
 
+  # Used for balances/collectibles/activity filters
   proc enableNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.setNetworksState(@[chainId], enable = true)
 
   proc getBlockExplorerTxURL*(self: View, chainId: int): string {.slot.} =
     return self.flatNetworks.getBlockExplorerTxURL(chainId)
+
+  # Used for enabling/disabling network across the whole app
+  proc setNetworkActive*(self: View, chainId: int, active: bool) {.slot.} =
+    self.delegate.setNetworkActive(chainId, active)
 
   proc updateNetworkEndPointValues*(self: View, chainId: int, testNetwork: bool, newMainRpcInput: string, newFailoverRpcUrl: string) {.slot.} =
     self.delegate.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
