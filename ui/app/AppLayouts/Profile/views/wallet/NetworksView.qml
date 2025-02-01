@@ -1,8 +1,12 @@
+import QtQml 2.15
 import QtQuick 2.15
 
 import shared.status 1.0
 import shared.popups 1.0
 import shared.panels 1.0
+
+
+import AppLayouts.Profile.popups.networkSettings 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -10,6 +14,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
+
 import utils 1.0
 
 import SortFilterProxyModel 0.2
@@ -21,12 +26,69 @@ Item {
     id: root
     signal goBack
 
+    readonly property int mainnetTabIndex: 0
+    readonly property int testnetTabIndex: 1
+
     required property var flatNetworks
-    required property var combinedNetworks
     required property bool areTestNetworksEnabled
 
-    signal editNetwork(var combinedNetwork)
-    signal toggleTestNetworksEnabled()
+    signal editNetwork(int chainId)
+    signal setNetworkActive(int chainId, bool active)
+
+    function overrideInitialTabIndex(index) {
+        d.overrideInitialTabIndex = index
+    }
+
+    onAreTestNetworksEnabledChanged: d.checkTestModeTab()
+
+    QtObject {
+        id: d
+
+        Component.onCompleted: d.checkTestModeTab()
+
+        property int overrideInitialTabIndex: -1
+
+        function checkTestModeTab() {
+            if (d.overrideInitialTabIndex >= 0) {
+                testModeViewTabBar.currentIndex = d.overrideInitialTabIndex
+                d.overrideInitialTabIndex = -1
+                return
+            }
+            testModeViewTabBar.currentIndex = root.areTestNetworksEnabled ? root.testnetTabIndex : root.mainnetTabIndex
+        }
+
+        property var currentTestModeNetworks: SortFilterProxyModel {
+            sourceModel: root.flatNetworks
+            filters: ValueFilter {
+                roleName: "isTest"
+                value: testModeViewTabBar.currentIndex == root.testnetTabIndex
+            }
+            sorters: [
+                RoleSorter {
+                    roleName: "isActive"
+                    sortOrder: Qt.DescendingOrder
+                },
+                RoleSorter {
+                    roleName: "layer"
+                    sortOrder: Qt.AscendingOrder
+                },
+                RoleSorter {
+                    roleName: "chainName"
+                    sortOrder: Qt.AscendingOrder
+                }
+            ]
+        }
+
+        property var currentActiveNetworks: SortFilterProxyModel {
+            sourceModel: d.currentTestModeNetworks
+            filters: ValueFilter {
+                roleName: "isActive"
+                value: true
+            }
+        }
+
+        readonly property int currentActiveNetworksCount: d.currentActiveNetworks.ModelCount.count
+    }
 
     Column {
         id: column
@@ -35,97 +97,84 @@ Item {
         width: parent.width
         spacing: 0
 
-        Repeater {
-            id: layer1List
-            model: SortFilterProxyModel {
-                sourceModel: root.combinedNetworks
-                filters: ValueFilter {
-                    roleName: "layer"
-                    value: 1
-                }
+        StatusTabBar {
+            id: testModeViewTabBar
+            objectName: "testModeViewTabBar"
+            StatusTabButton {
+                text: qsTr("Mainnet")
+                objectName: "testModeViewMainButton"
+                width: implicitWidth
             }
-            delegate: WalletNetworkDelegate {
-                readonly property var network: {
-                    let chainId = root.areTestNetworksEnabled ? model.testChainId : model.prodChainId
-                    return ModelUtils.getByKey(root.flatNetworks, "chainId", chainId)
-                }
-                
-                objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
-                areTestNetworksEnabled: root.areTestNetworksEnabled
-                chainName: network.chainName
-                iconUrl: network.iconUrl
-                
-                onClicked: editNetwork(model)
+            StatusTabButton {
+                text: qsTr("Testnet")
+                objectName: "testModeViewTestButton"
+                width: implicitWidth
             }
-        }
-
-        Separator {
-            height: Theme.padding
-        }
-
-        StatusSectionHeadline {
-            leftPadding: Theme.padding
-            rightPadding: Theme.padding
-            text: qsTr("Layer 2")
-            topPadding: Theme.smallPadding
-            bottomPadding: Theme.smallPadding
         }
 
         Repeater {
-            id: layer2List
+            id: networkList
             model: SortFilterProxyModel {
-                sourceModel: root.combinedNetworks
+                sourceModel: root.flatNetworks
                 filters: ValueFilter {
-                    roleName: "layer"
-                    value: 2
+                    roleName: "isTest"
+                    value: testModeViewTabBar.currentIndex == root.testnetTabIndex
                 }
-            }
-            delegate: WalletNetworkDelegate {
-                readonly property var network: {
-                    let chainId = root.areTestNetworksEnabled ? model.testChainId : model.prodChainId
-                    return ModelUtils.getByKey(root.flatNetworks, "chainId", chainId)
-                }
-                
-                objectName: "walletNetworkDelegate_" + network.chainName + '_' + network.chainId
-                areTestNetworksEnabled: root.areTestNetworksEnabled
-                chainName: !!network ? network.chainName : ""
-                iconUrl: !!network ? network.iconUrl : ""
-                
-                onClicked: editNetwork(model)
-            }
-        }
-
-        Separator {
-            height: Theme.padding
-        }
-
-        StatusSectionHeadline {
-            leftPadding: Theme.padding
-            rightPadding: Theme.padding
-            text: qsTr("Advanced")
-            topPadding: Theme.smallPadding
-            bottomPadding: Theme.smallPadding
-        }
-
-        StatusListItem {
-            width: parent.width
-            asset.name: "settings"
-            asset.color: Theme.palette.warningColor1
-            asset.bgColor: Theme.palette.warningColor3
-            title: qsTr("Testnet mode")
-            subTitle: qsTr("Switch entire Status app to testnet only mode")
-            onClicked: testnetSwitch.onToggled()
-            components: [
-                StatusSwitch {
-                    id: testnetSwitch
-                    objectName: "testnetModeSwitch"
-                    checked: root.areTestNetworksEnabled
-                    onToggled:{
-                        checked = Qt.binding(() => root.areTestNetworksEnabled)
-                        root.toggleTestNetworksEnabled()
+                sorters: [
+                    RoleSorter {
+                        roleName: "isActive"
+                        sortOrder: Qt.DescendingOrder
+                    },
+                    RoleSorter {
+                        roleName: "layer"
+                        sortOrder: Qt.AscendingOrder
+                    },
+                    RoleSorter {
+                        roleName: "chainName"
+                        sortOrder: Qt.AscendingOrder
                     }
+                ]
+            }
+            delegate: WalletNetworkDelegate {
+                objectName: "walletNetworkDelegate_" + model.chainName + '_' + model.chainId
+                chainName: model.chainName
+                iconUrl: model.iconUrl
+                isActive: model.isActive
+                isDeactivatable: model.isDeactivatable
+                
+                onSetNetworkActive: {
+                    if (!active) {
+                        // Launch confirmation popup
+                        Global.openPopup(deactivateNetworkPopupComponent, {chainId: model.chainId, iconUrl: model.iconUrl, chainName: model.chainName})
+                        return
+                    }
+                    if (d.currentActiveNetworksCount >= Constants.maxActiveNetworks && active) {
+                        Global.openPopup(activeNetworkLimitPopupComponent)
+                        return
+                    }
+                    // Set network active
+                    root.setNetworkActive(model.chainId, active)
                 }
-            ]
+
+                onEditNetwork: root.editNetwork(model.chainId)
+            }
+        }
+    }
+
+    Component {
+        id: deactivateNetworkPopupComponent
+        DeactivateNetworkPopup {
+            width: 556
+            onAccepted: {
+                root.setNetworkActive(chainId, false)
+            }
+        }
+    }
+
+    Component {
+        id: activeNetworkLimitPopupComponent
+        ActiveNetworkLimitPopup {
+            width: 521
         }
     }
 }

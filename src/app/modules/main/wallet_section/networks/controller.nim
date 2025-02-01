@@ -3,7 +3,6 @@ import app_service/service/network/service as network_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/settings/service as settings_service
 import app_service/service/network/network_item
-import app_service/service/network/combined_network_item
 import ./io_interface
 
 
@@ -46,11 +45,11 @@ proc init*(self: Controller) =
 proc getFlatNetworks*(self: Controller): var seq[NetworkItem] =
   return self.networkService.getFlatNetworks()
 
-proc getCombinedNetworks*(self: Controller): var seq[CombinedNetworkItem] =
-  return self.networkService.getCombinedNetworks()
-
 proc getRpcProviders*(self: Controller): var seq[RpcProviderItem] =
   return self.networkService.getRpcProviders()
+
+proc setNetworkActive*(self: Controller, chainId: int, active: bool) =
+  self.walletAccountService.setNetworkActive(chainId, active)
 
 proc setNetworksState*(self: Controller, chainIds: seq[int], enabled: bool) =
   self.walletAccountService.setNetworksState(chainIds, enabled)
