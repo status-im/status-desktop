@@ -19,7 +19,10 @@ QtObject {
 
     readonly property SortFilterProxyModel filteredflatNetworks: SortFilterProxyModel {
                                                           sourceModel: networksModule.flatNetworks
-                                                          filters: ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled }
+                                                          filters: [
+                                                            ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled },
+                                                            ValueFilter { roleName: "isActive"; value: true }
+                                                          ]
                                                       }
 
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
