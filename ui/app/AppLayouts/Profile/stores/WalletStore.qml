@@ -24,7 +24,10 @@ QtObject {
     property var flatNetworks: networksModuleInst.flatNetworks
     property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+        filters: [
+            ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled },
+            ValueFilter { roleName: "isActive"; value: true }
+        ]
     }
 
     property var rpcProviders: networksModuleInst.rpcProviders
@@ -144,6 +147,10 @@ QtObject {
 
     function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl) {
         networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+    }
+
+    function setNetworkActive(chainId, active) {
+        networksModuleInst.setNetworkActive(chainId, active)
     }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {

@@ -38,7 +38,10 @@ QObject {
 
     readonly property SortFilterProxyModel filteredFlatNetworksModel: SortFilterProxyModel {
         sourceModel: root.swapStore.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
+        filters: [
+            ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled },
+            ValueFilter { roleName: "isActive"; value: true }
+        ]
     }
 
     readonly property string errorMessage: d.errorMessage

@@ -4,30 +4,25 @@ import QtQuick.Layouts 1.14
 
 import AppLayouts.Profile.views.wallet 1.0
 
-import Storybook 1.0
+import StatusQ 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 
 import Models 1.0
 
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import Storybook 1.0
 
 import utils 1.0
 
 SplitView {
     Logs { id: logs }
 
-
     QtObject {
         id: d
 
-        property var timer: Timer {
-            interval: 1000
-            onTriggered: {
-                let state  = checkbox.checked ? EditNetworkForm.Verified: EditNetworkForm.InvalidURL
-                networkModule.urlVerified(networkModule.url, state)
-            }
-        }
+        property var networksModel: NetworksModel.flatNetworks
     }
 
     property var networkModule: QtObject {
@@ -48,13 +43,20 @@ SplitView {
         ScrollView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
-            EditNetworkView {
+
+            NetworksView {
                 width: 560
-                network: ModelUtils.get(NetworksModel.flatNetworks, 0)
-                rpcProviders: d.rpcProviders
-                onEvaluateRpcEndPoint: networkModule.evaluateRpcEndPoint(url)
-                networksModule: networkModule
-                onUpdateNetworkValues: console.error(String("Updated network with chainId %1 with new main rpc url = %2 and faalback rpc =%3").arg(chainId).arg(newMainRpcInput).arg(newFailoverRpcUrl))
+                flatNetworks: d.networksModel
+                areTestNetworksEnabled: testModeCheckBox.checked
+
+                onEditNetwork: {
+                    console.log("Edit network", chainId)
+                }
+                onSetNetworkActive: {
+                    console.log("Set network active test networks", chainId, active)
+                    const index = ModelUtils.indexOf(d.networksModel, "chainId", chainId)
+                    d.networksModel.setProperty(index, "isActive", active)
+                }
             }
         }
 
@@ -65,11 +67,20 @@ SplitView {
             SplitView.preferredHeight: childrenRect.height
 
             logsView.logText: logs.logText
+        }
+    }
+
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
+
+        ColumnLayout {
+            spacing: 16
 
             CheckBox {
-                id: checkbox
-                text: "valid url"
-                checked: true
+                id: testModeCheckBox
+                text: "Testnet mode"
+                checked: false
             }
         }
     }

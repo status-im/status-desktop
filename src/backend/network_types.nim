@@ -56,6 +56,8 @@ type NetworkDto* = ref object of RootObj
   chainColor* {.serializedFieldName("chainColor").}: string
   shortName* {.serializedFieldName("shortName").}: string
   relatedChainID* {.serializedFieldName("relatedChainID").}: int
+  isActive* {.serializedFieldName("isActive").}: bool
+  isDeactivatable* {.serializedFieldName("isDeactivatable").}: bool
 
 proc `$`*(self: NetworkDto): string =
   return fmt"""NetworkDto(
@@ -73,21 +75,10 @@ proc `$`*(self: NetworkDto): string =
     isEnabled:{self.isEnabled},
     chainColor:{self.chainColor},
     shortName:{self.shortName},
-    relatedChainId:{self.relatedChainId}
+    relatedChainId:{self.relatedChainId},
+    isActive:{self.isActive},
+    isDeactivatable:{self.isDeactivatable}
   )"""
 
 proc `%`*(t: NetworkDto): JsonNode {.inline.} =
-  result = parseJson(t.toJson)
-
-type CombinedNetworkDto* = ref object of RootObj
-  prod* {.serializedFieldName("Prod").}: NetworkDto
-  test* {.serializedFieldName("Test").}: NetworkDto
-
-proc `$`*(self: CombinedNetworkDto): string =
-  return fmt"""CombinedNetworkDto(
-    prod:{$self.prod},
-    test:{$self.test},
-  )"""
-
-proc `%`*(t: CombinedNetworkDto): JsonNode {.inline.} =
   result = parseJson(t.toJson)

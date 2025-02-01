@@ -166,7 +166,10 @@ QtObject {
     readonly property var flatNetworks: networksModule.flatNetworks
     readonly property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
         sourceModel: root.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
+        filters: [
+            ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled },
+            ValueFilter { roleName: "isActive"; value: true }
+        ]
     }
 
     onFlatNetworksChanged: {
