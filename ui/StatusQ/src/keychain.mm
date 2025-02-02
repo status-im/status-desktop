@@ -83,9 +83,9 @@ void Keychain::requestGetCredential(const QString &account)
 
     m_future = QtConcurrent::run([this, account](){
         setLoading(true);
-        auto credential = getCredential(account);
-        emit getCredentialFinished(true, credential);
-        emit getCredentialRequestCompleted(true, credential);
+        QString credential;
+        auto ok = getCredential(account, &credential);
+        emit getCredentialRequestCompleted(ok, credential);
         setLoading(false);
     });
 }
@@ -117,7 +117,7 @@ bool Keychain::saveCredential(const QString &account, const QString &password) {
                             (__bridge id)kSecAttrService: m_service.toNSString(),
                             (__bridge id)kSecAttrAccount: account.toNSString(),
                             (__bridge id)kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
-//                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
+                            //                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
                             (__bridge id)kSecUseAuthenticationContext: context,
                             };
 
@@ -144,7 +144,7 @@ bool Keychain::deleteCredential(const QString &account) {
                             (__bridge id)kSecAttrService: m_service.toNSString(),
                             (__bridge id)kSecAttrAccount: account.toNSString(),
                             (__bridge id)kSecUseAuthenticationContext: context,
-    };
+                            };
     auto status = SecItemDelete((__bridge CFDictionaryRef)query);
     if (status == errSecSuccess) {
         return true;
@@ -155,11 +155,11 @@ bool Keychain::deleteCredential(const QString &account) {
 }
 
 
-QString Keychain::getCredential(const QString &account) {
+bool Keychain::getCredential(const QString &account, QString* out) {
     LAContext *context = authenticate(m_reason);
 
     if (!context) {
-        return {};
+        return false;
     }
 
     NSDictionary *query = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
@@ -168,16 +168,22 @@ QString Keychain::getCredential(const QString &account) {
                             (__bridge id)kSecReturnData: @YES,
                             (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
                             (__bridge id)kSecUseAuthenticationContext: context,
-    };
+                            };
 
     CFDataRef data = NULL;
     __block QString result;
 
     auto status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&data);
-    if (status == errSecSuccess) {
-        auto dataString = [[NSString alloc] initWithData:(__bridge NSData *)data encoding:NSUTF8StringEncoding];
-        result = QString::fromNSString(dataString);
-    }
+    if (status != errSecSuccess)
+        return false;
 
-    return result;
+
+    auto dataString = [[NSString alloc] initWithData:(__bridge NSData *)data encoding:NSUTF8StringEncoding];
+    result = QString::fromNSString(dataString);
+
+
+    if (out != nullptr)
+        *out = result;
+
+    return true;
 }
