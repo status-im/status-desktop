@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 
@@ -335,9 +336,31 @@ StatusDialog {
     }
 
     width: 556
+    height: {
+        if (!selectedRecipientAddress)
+            return root.contentItem.Window.height - topMargin - margins
+        let contentHeight = Math.max(sendModalHeader.height +
+                                     amountToSend.height +
+                                     recipientsPanelLayout.height +
+                                     feesLayout.height +
+                                     scrollViewLayout.spacing*3 +
+                                     28,
+                                     scrollView.implicitHeight) + footer.height
+
+        if (!!footer.errorTags && !feesLayout.visible) {
+            // Utilize empty space when fees are not visible and error is shown
+            contentHeight -= feesLayout.height
+        }
+        return contentHeight
+    }
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
+
+    Behavior on height {
+        enabled: !!root.selectedRecipientAddress
+        NumberAnimation { duration: 100; easing: Easing.OutCurve }
+    }
 
     background: StatusDialogBackground {
         color: Theme.palette.baseColor3
@@ -353,13 +376,6 @@ StatusDialog {
         anchors.top: parent.top
 
         implicitWidth: parent.width
-        implicitHeight: Math.max(sendModalHeader.height +
-                                 amountToSend.height +
-                                 recipientsPanelLayout.height +
-                                 feesLayout.height +
-                                 scrollViewLayout.spacing*3 +
-                                 28,
-                                 scrollView.implicitHeight)
 
         // Floating account Selector
         AccountSelectorHeader {
@@ -523,26 +539,49 @@ StatusDialog {
                     id: recipientsPanelLayout
 
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
 
                     spacing: Theme.halfPadding
 
                     StatusBaseText {
                         elide: Text.ElideRight
                         text: qsTr("To")
+                        Layout.alignment: Qt.AlignTop
                     }
-                    RecipientSelectorPanel {
-                        id: recipientsPanel
+                    Item {
+                        Layout.alignment: Qt.AlignTop
 
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
                         Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
+                        implicitHeight: recipientsPanel.height
 
-                        interactive: root.interactive
+                        Rectangle {
+                            anchors {
+                                top: recipientsPanel.top
+                                left: recipientsPanel.left
+                                right: recipientsPanel.right
+                            }
+                            // Imitate recipient background and overflow the rectangle under footer
+                            height: recipientsPanel.emptyListVisible ? sendModalcontentItem.height : 0
+                            color: recipientsPanel.color
+                            radius: recipientsPanel.radius
+                        }
 
-                        recipientsModel: root.recipientsModel
-                        recipientsFilterModel: root.recipientsFilterModel
+                        RecipientSelectorPanel {
+                            id: recipientsPanel
+                            anchors {
+                                top: parent.top
+                                left: parent.left
+                                right: parent.right
+                            }
 
-                        onResolveENS: root.fnResolveENS(ensName, uuid)
+                            interactive: root.interactive
+
+                            recipientsModel: root.recipientsModel
+                            recipientsFilterModel: root.recipientsFilterModel
+
+                            onResolveENS: root.fnResolveENS(ensName, uuid)
+                        }
                     }
                 }
 
