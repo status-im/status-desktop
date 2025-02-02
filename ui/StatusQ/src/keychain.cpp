@@ -70,6 +70,6 @@ void Keychain::requestGetCredential(const QString& account)
 {
     Q_UNUSED(account);
     qWarning() << "Keychain::requestGetCredential is intended to be called only on MacOS.";
-    emit getCredentialRequestCompleted(false, "");
+    emit getCredentialRequestCompleted(Keychain::NotSupported, "");
 }
 #endif

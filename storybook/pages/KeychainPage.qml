@@ -93,7 +93,11 @@ Page {
                     loading = false
 
                     if (keychain.operation === "get") {
-                        keychain.getCredentialRequestCompleted(true, store[key])
+                        const value = store[key]
+                        let rc = Keychain.Success
+                        if (value === undefined)
+                            rc = Keychain.NotFound
+                        keychain.getCredentialRequestCompleted(rc, value)
                     } else if (keychain.operation === "save") {
                         store[key] = value
                         keychain.saveCredentialRequestCompleted(true)
@@ -107,7 +111,7 @@ Page {
                     loading = false
 
                     if (keychain.operation === "get") {
-                        keychain.getCredentialRequestCompleted(false, "")
+                        keychain.getCredentialRequestCompleted(Keychain.GenericError, "")
                     } else if (keychain.operation === "save") {
                         keychain.saveCredentialRequestCompleted(false)
                     } else if (keychain.operation === "delete") {
@@ -205,11 +209,11 @@ Page {
         }
 
         function onDeleteCredentialRequestCompleted(success) {
-            logs.logEvent("DeleteCredential", ["success"], success)
+            logs.logEvent("DeleteCredential", ["success"], [success])
         }
 
-        function onGetCredentialRequestCompleted(success, password) {
-            logs.logEvent("GetCredential", ["success", "password"], [success, password])
+        function onGetCredentialRequestCompleted(status, password) {
+            logs.logEvent("GetCredential", ["status", "password"], [status, password])
             passwordInput.text = password
         }
     }

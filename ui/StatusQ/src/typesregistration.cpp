@@ -81,6 +81,7 @@ void registerStatusQTypes() {
     qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
     qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
     qmlRegisterType<Keychain>("StatusQ", 0, 1, "Keychain");
+    qRegisterMetaType<Keychain::Status>();
 
     qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
                                            "ModelCount", "This is attached type, cannot be created directly.");

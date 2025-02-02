@@ -11,6 +11,18 @@
 
 const static auto authPolicy = LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
 
+static Keychain::Status convertStatus(OSStatus status)
+{
+    switch (status) {
+    case errSecSuccess:
+        return Keychain::Success;
+    case errSecItemNotFound:
+        return Keychain::NotFound;
+    default:
+        return Keychain::GenericError;
+    }
+}
+
 LAContext *authenticate(QString &reason)
 {
     auto *context = [[LAContext alloc] init];
@@ -87,8 +99,8 @@ void Keychain::requestGetCredential(const QString &account)
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);
         QString credential;
-        auto ok = getCredential(account, &credential);
-        emit getCredentialRequestCompleted(ok, credential);
+        auto rc = getCredential(account, &credential);
+        emit getCredentialRequestCompleted(rc, credential);
         setLoading(false);
     });
 }
@@ -161,12 +173,12 @@ bool Keychain::deleteCredential(const QString &account)
     return false;
 }
 
-bool Keychain::getCredential(const QString &account, QString *out)
+Keychain::Status Keychain::getCredential(const QString &account, QString *out)
 {
     LAContext *context = authenticate(m_reason);
 
     if (!context) {
-        return false;
+        return Keychain::GenericError;
     }
 
     NSDictionary *query = @{
@@ -179,18 +191,14 @@ bool Keychain::getCredential(const QString &account, QString *out)
     };
 
     CFDataRef data = NULL;
-    __block QString result;
 
-    auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, (CFTypeRef *) &data);
-    if (status != errSecSuccess)
-        return false;
+    const auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, (CFTypeRef *) &data);
 
-    auto dataString = [[NSString alloc] initWithData:(__bridge NSData *) data
-                                            encoding:NSUTF8StringEncoding];
-    result = QString::fromNSString(dataString);
+    if (out != nullptr) {
+        auto dataString = [[NSString alloc] initWithData:(__bridge NSData *) data
+                                                encoding:NSUTF8StringEncoding];
+        *out = QString::fromNSString(dataString);
+    }
 
-    if (out != nullptr)
-        *out = result;
-
-    return true;
+    return convertStatus(status);
 }

@@ -14,6 +14,15 @@ public:
     explicit Keychain(QObject *parent = nullptr);
     ~Keychain();
 
+    enum Status {
+        Success = 0,
+        NotSupported,
+        GenericError,
+        NotFound,
+    };
+
+    Q_ENUM(Status)
+
     QString service() const;
     void setService(const QString &service);
 
@@ -28,12 +37,12 @@ public:
 
     bool saveCredential(const QString &account, const QString &password);
     bool deleteCredential(const QString &account);
-    bool getCredential(const QString &account, QString *out);
+    Status getCredential(const QString &account, QString *out);
 
 signals:
     void saveCredentialRequestCompleted(bool success);
     void deleteCredentialRequestCompleted(bool success);
-    void getCredentialRequestCompleted(bool success, const QString& password);
+    void getCredentialRequestCompleted(Status success, const QString &password);
 
     void serviceChanged();
     void reasonChanged();
