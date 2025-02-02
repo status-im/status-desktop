@@ -3,10 +3,11 @@
 #include <QDebug>
 
 Keychain::Keychain(QObject *parent) : QObject(parent)
-{
-}
+{}
 
+#ifndef Q_OS_MACOS
 Keychain::~Keychain() = default;
+#endif
 
 QString Keychain::service() const
 {

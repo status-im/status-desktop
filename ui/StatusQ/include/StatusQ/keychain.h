@@ -3,6 +3,12 @@
 #include <QObject>
 #include <QFuture>
 
+#ifdef __OBJC__
+#include <LocalAuthentication/LAContext.h>
+#else
+class LAContext;
+#endif
+
 class Keychain : public QObject {
     Q_OBJECT
 
@@ -36,9 +42,7 @@ public:
     Q_INVOKABLE void requestSaveCredential(const QString &account, const QString &password);
     Q_INVOKABLE void requestDeleteCredential(const QString &account);
     Q_INVOKABLE void requestGetCredential(const QString &account);
-
-    // TODO:
-    // cancelActiveRequest();
+    Q_INVOKABLE void cancelActiveRequest();
 
     Status saveCredential(const QString &account, const QString &password);
     Status deleteCredential(const QString &account);
@@ -60,4 +64,5 @@ private:
     void setLoading(bool loading);
 
     QFuture<void> m_future;
+    LAContext *m_activeAuthContext;
 };

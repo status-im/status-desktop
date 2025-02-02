@@ -22,12 +22,6 @@ Page {
                          ? nativeKeychainComponent : mockedKeychainComponent
     }
 
-    Binding {
-        target: root.Window.window.contentItem
-        property: "enabled"
-        value: !loader.item.loading
-    }
-
     BiometricsPopup {
         id: biometricsPopup
 
@@ -37,7 +31,6 @@ Page {
         pin: ""
         selectedProfileIsKeycard: ""
     }
-
 
     Component {
         id: nativeKeychainComponent
@@ -192,6 +185,12 @@ Page {
                 text: "Get"
                 onClicked: {
                     loader.item.requestGetCredential(accountInput.text)
+                }
+            }
+            Button {
+                text: "Cancel"
+                onClicked: {
+                    loader.item.cancelActiveRequest()
                 }
             }
             BusyIndicator {

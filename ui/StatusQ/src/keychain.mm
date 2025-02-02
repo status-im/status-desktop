@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QEventLoop>
 #include <QFuture>
+#include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
 
 #include <Foundation/Foundation.h>
@@ -39,10 +40,23 @@ Keychain::Status convertError(NSError *error)
     }
 }
 
+Keychain::~Keychain()
+{
+    QFutureWatcher<void> watcher;
+    cancelActiveRequest();
+    watcher.setFuture(m_future);
+    watcher.waitForFinished();
+}
+
 Keychain::Status authenticate(QString &reason, LAContext **context)
 {
     if (context == nullptr)
         return Keychain::StatusGenericError;
+
+    if (*context != nullptr) {
+        qWarning() << "another local authentication request in progress";
+        return Keychain::StatusGenericError;
+    }
 
     *context = [[LAContext alloc] init];
     NSError *authError = nil;
@@ -123,10 +137,29 @@ void Keychain::requestGetCredential(const QString &account)
     });
 }
 
+void Keychain::cancelActiveRequest()
+{
+    if (m_activeAuthContext != nullptr)
+        [m_activeAuthContext invalidate];
+}
+
+// ContextCleaner takes a pointer to LAContext* and nullifies it on destruction
+class ContextCleaner
+{
+public:
+    explicit ContextCleaner(LAContext **context)
+        : m_context(context)
+    {}
+    ~ContextCleaner() { *m_context = nullptr; };
+
+private:
+    LAContext **m_context;
+};
+
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
-    LAContext *context;
-    const auto authStatus = authenticate(m_reason, &context);
+    ContextCleaner guard(&m_activeAuthContext);
+    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
         return authStatus;
@@ -153,7 +186,7 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
         //                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
-        (__bridge id) kSecUseAuthenticationContext: context,
+        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
 
     SecItemDelete((__bridge CFDictionaryRef) query);                  // Ensure old item is removed
@@ -169,8 +202,8 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
 
 Keychain::Status Keychain::deleteCredential(const QString &account)
 {
-    LAContext *context;
-    const auto authStatus = authenticate(m_reason, &context);
+    ContextCleaner guard(&m_activeAuthContext);
+    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
         return authStatus;
@@ -180,7 +213,7 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
         (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
         (__bridge id) kSecAttrService: m_service.toNSString(),
         (__bridge id) kSecAttrAccount: account.toNSString(),
-        (__bridge id) kSecUseAuthenticationContext: context,
+        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
     if (status != errSecSuccess) {
@@ -192,8 +225,8 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
 
 Keychain::Status Keychain::getCredential(const QString &account, QString *out)
 {
-    LAContext *context;
-    const auto authStatus = authenticate(m_reason, &context);
+    ContextCleaner guard(&m_activeAuthContext);
+    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
         return authStatus;
@@ -205,7 +238,7 @@ Keychain::Status Keychain::getCredential(const QString &account, QString *out)
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecReturnData: @YES,
         (__bridge id) kSecMatchLimit: (__bridge id) kSecMatchLimitOne,
-        (__bridge id) kSecUseAuthenticationContext: context,
+        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
 
     CFDataRef data = NULL;
