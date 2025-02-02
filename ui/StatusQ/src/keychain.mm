@@ -57,7 +57,7 @@ void Keychain::requestSaveCredential(const QString &account, const QString &pass
     m_future = QtConcurrent::run([this, account, password](){
         setLoading(true);
         auto ok = saveCredential(account, password);
-        emit saveCredentialFinished(ok);
+        emit saveCredentialRequestCompleted(ok);
         setLoading(false);
     });
 }
@@ -70,7 +70,7 @@ void Keychain::requestDeleteCredential(const QString &account) {
     m_future = QtConcurrent::run([this, account](){
         setLoading(true);
         auto ok = deleteCredential(account);
-        emit deleteCredentialFinished(ok);
+        emit deleteCredentialRequestCompleted(ok);
         setLoading(false);
     });
 }
@@ -85,6 +85,7 @@ void Keychain::requestGetCredential(const QString &account)
         setLoading(true);
         auto credential = getCredential(account);
         emit getCredentialFinished(true, credential);
+        emit getCredentialRequestCompleted(true, credential);
         setLoading(false);
     });
 }
