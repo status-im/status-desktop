@@ -36,6 +36,7 @@ status-desktop.log
 nim_status_client.log
 *.csv
 .flatpak-builder
+/ui/StatusQ/sandbox/android/.gradle/
 
 # Squish test ================================================================
 
