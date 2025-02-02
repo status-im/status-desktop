@@ -57,20 +57,25 @@ void Keychain::requestSaveCredential(const QString& account, const QString& pass
     Q_UNUSED(account);
     Q_UNUSED(password);
     qWarning() << "Keychain::requestSaveCredential is intended to be called only on MacOS.";
-    emit saveCredentialRequestCompleted(false);
+    emit saveCredentialRequestCompleted(Keychain::StatusNotSupported);
 }
 
 void Keychain::requestDeleteCredential(const QString& account)
 {
     Q_UNUSED(account);
     qWarning() << "Keychain::requestDeleteCredential is intended to be called only on MacOS.";
-    emit deleteCredentialRequestCompleted(false);
+    emit deleteCredentialRequestCompleted(Keychain::StatusNotSupported);
 }
 
 void Keychain::requestGetCredential(const QString& account)
 {
     Q_UNUSED(account);
     qWarning() << "Keychain::requestGetCredential is intended to be called only on MacOS.";
-    emit getCredentialRequestCompleted(Keychain::NotSupported, "");
+    emit getCredentialRequestCompleted(Keychain::StatusNotSupported, "");
+}
+
+void Keychain::cancelActiveRequest()
+{
+    qWarning() << "Keychain::cancelActiveRequest is intended to be called only on MacOS.";
 }
 #endif
