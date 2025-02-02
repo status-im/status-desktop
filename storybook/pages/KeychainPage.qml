@@ -94,9 +94,9 @@ Page {
 
                     if (keychain.operation === "get") {
                         const value = store[key]
-                        let rc = Keychain.Success
+                        let rc = Keychain.StatusSuccess
                         if (value === undefined)
-                            rc = Keychain.NotFound
+                            rc = Keychain.StatusNotFound
                         keychain.getCredentialRequestCompleted(rc, value)
                     } else if (keychain.operation === "save") {
                         store[key] = value
@@ -111,7 +111,7 @@ Page {
                     loading = false
 
                     if (keychain.operation === "get") {
-                        keychain.getCredentialRequestCompleted(Keychain.GenericError, "")
+                        keychain.getCredentialRequestCompleted(Keychain.StatusGenericError, "")
                     } else if (keychain.operation === "save") {
                         keychain.saveCredentialRequestCompleted(false)
                     } else if (keychain.operation === "delete") {

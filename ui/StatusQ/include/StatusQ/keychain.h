@@ -15,10 +15,12 @@ public:
     ~Keychain();
 
     enum Status {
-        Success = 0,
-        NotSupported,
-        GenericError,
-        NotFound,
+        StatusSuccess = 0,
+        StatusNotSupported,
+        StatusGenericError,
+        StatusUnavailable,
+        StatusCancelled,
+        StatusNotFound,
     };
 
     Q_ENUM(Status)
@@ -35,14 +37,17 @@ public:
     Q_INVOKABLE void requestDeleteCredential(const QString &account);
     Q_INVOKABLE void requestGetCredential(const QString &account);
 
-    bool saveCredential(const QString &account, const QString &password);
-    bool deleteCredential(const QString &account);
+    // TODO:
+    // cancelActiveRequest();
+
+    Status saveCredential(const QString &account, const QString &password);
+    Status deleteCredential(const QString &account);
     Status getCredential(const QString &account, QString *out);
 
 signals:
-    void saveCredentialRequestCompleted(bool success);
-    void deleteCredentialRequestCompleted(bool success);
-    void getCredentialRequestCompleted(Status success, const QString &password);
+    void saveCredentialRequestCompleted(Keychain::Status success);
+    void deleteCredentialRequestCompleted(Keychain::Status success);
+    void getCredentialRequestCompleted(Keychain::Status success, const QString &password);
 
     void serviceChanged();
     void reasonChanged();

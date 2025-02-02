@@ -15,24 +15,43 @@ static Keychain::Status convertStatus(OSStatus status)
 {
     switch (status) {
     case errSecSuccess:
-        return Keychain::Success;
+        return Keychain::StatusSuccess;
     case errSecItemNotFound:
-        return Keychain::NotFound;
+        return Keychain::StatusNotFound;
+    case errSecCSCancelled:
+        return Keychain::StatusCancelled;
     default:
-        return Keychain::GenericError;
+        return Keychain::StatusGenericError;
     }
 }
 
-LAContext *authenticate(QString &reason)
+Keychain::Status convertError(NSError *error)
 {
-    auto *context = [[LAContext alloc] init];
+    switch (error.code) {
+    case errSecSuccess:
+        return Keychain::StatusSuccess;
+    case LAErrorSystemCancel:
+    case LAErrorUserCancel:
+    case LAErrorAppCancel:
+        return Keychain::StatusCancelled;
+    default:
+        return Keychain::StatusGenericError;
+    }
+}
+
+Keychain::Status authenticate(QString &reason, LAContext **context)
+{
+    if (context == nullptr)
+        return Keychain::StatusGenericError;
+
+    *context = [[LAContext alloc] init];
     NSError *authError = nil;
 
     // Check if Biometrics Authentication is available
-    if (![context canEvaluatePolicy:authPolicy error:&authError]) {
+    if (![*context canEvaluatePolicy:authPolicy error:&authError]) {
         qWarning() << "biometric authentication not available:"
                    << QString::fromNSString(authError.localizedDescription);
-        return nil;
+        return convertError(authError);
     }
 
     QEventLoop loop;
@@ -41,13 +60,13 @@ LAContext *authenticate(QString &reason)
     __block BOOL success = NO;
 
     // Prompt for biometrics authentication
-    [context evaluatePolicy:authPolicy
-            localizedReason:reason.toNSString()
-                      reply:^(BOOL authSuccess, NSError *error) {
-                          success = authSuccess;
-                          callbackError = error ? [error copy] : nil;
-                          loopPtr->quit();
-                      }];
+    [*context evaluatePolicy:authPolicy
+             localizedReason:reason.toNSString()
+                       reply:^(BOOL authSuccess, NSError *error) {
+                           success = authSuccess;
+                           callbackError = error ? [error copy] : nil;
+                           loopPtr->quit();
+                       }];
 
     // Wait for biometrics authentication finished
     loop.exec();
@@ -55,11 +74,10 @@ LAContext *authenticate(QString &reason)
     if (!success && callbackError) {
         qWarning() << "authentication failed:"
                    << QString::fromNSString(callbackError.localizedDescription);
-        return nil;
+        return convertError(callbackError);
     }
 
-    // Return authentication context
-    return context;
+    return Keychain::StatusSuccess;
 }
 
 void Keychain::requestSaveCredential(const QString &account, const QString &password)
@@ -70,8 +88,8 @@ void Keychain::requestSaveCredential(const QString &account, const QString &pass
 
     m_future = QtConcurrent::run([this, account, password]() {
         setLoading(true);
-        auto ok = saveCredential(account, password);
-        emit saveCredentialRequestCompleted(ok);
+        const auto status = saveCredential(account, password);
+        emit saveCredentialRequestCompleted(status);
         setLoading(false);
     });
 }
@@ -84,8 +102,8 @@ void Keychain::requestDeleteCredential(const QString &account)
 
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);
-        auto ok = deleteCredential(account);
-        emit deleteCredentialRequestCompleted(ok);
+        const auto status = deleteCredential(account);
+        emit deleteCredentialRequestCompleted(status);
         setLoading(false);
     });
 }
@@ -99,19 +117,19 @@ void Keychain::requestGetCredential(const QString &account)
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);
         QString credential;
-        auto rc = getCredential(account, &credential);
-        emit getCredentialRequestCompleted(rc, credential);
+        const auto status = getCredential(account, &credential);
+        emit getCredentialRequestCompleted(status, credential);
         setLoading(false);
     });
 }
 
-bool Keychain::saveCredential(const QString &account, const QString &password)
+Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
-    LAContext *context = authenticate(m_reason);
-    setLoading(false);
+    LAContext *context;
+    const auto authStatus = authenticate(m_reason, &context);
 
-    if (!context) {
-        return {};
+    if (authStatus != StatusSuccess) {
+        return authStatus;
     }
 
     CFErrorRef error = NULL;
@@ -126,7 +144,7 @@ bool Keychain::saveCredential(const QString &account, const QString &password)
                    << QString::fromNSString(
                           (__bridge_transfer NSString *) CFErrorCopyDescription(error));
         CFRelease(error);
-        return false;
+        return StatusGenericError;
     }
 
     NSDictionary *query = @{
@@ -142,20 +160,20 @@ bool Keychain::saveCredential(const QString &account, const QString &password)
     auto status = SecItemAdd((__bridge CFDictionaryRef) query, NULL); // Add item
 
     CFRelease(accessControl);
-    if (status == errSecSuccess) {
-        return true;
+    if (status != errSecSuccess) {
+        qWarning() << "failed to save credential to keychain:" << status;
     }
 
-    qWarning() << "failed to save credential to keychain:" << status;
-    return false;
+    return convertStatus(status);
 }
 
-bool Keychain::deleteCredential(const QString &account)
+Keychain::Status Keychain::deleteCredential(const QString &account)
 {
-    LAContext *context = authenticate(m_reason);
+    LAContext *context;
+    const auto authStatus = authenticate(m_reason, &context);
 
-    if (!context) {
-        return {};
+    if (authStatus != StatusSuccess) {
+        return authStatus;
     }
 
     NSDictionary *query = @{
@@ -164,21 +182,21 @@ bool Keychain::deleteCredential(const QString &account)
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecUseAuthenticationContext: context,
     };
-    auto status = SecItemDelete((__bridge CFDictionaryRef) query);
-    if (status == errSecSuccess) {
-        return true;
+    const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
+    if (status != errSecSuccess) {
+        qWarning() << "failed to delete credential from keychain:" << status;
     }
 
-    qWarning() << "failed to delete credential from keychain:" << status;
-    return false;
+    return convertStatus(status);
 }
 
 Keychain::Status Keychain::getCredential(const QString &account, QString *out)
 {
-    LAContext *context = authenticate(m_reason);
+    LAContext *context;
+    const auto authStatus = authenticate(m_reason, &context);
 
-    if (!context) {
-        return Keychain::GenericError;
+    if (authStatus != StatusSuccess) {
+        return authStatus;
     }
 
     NSDictionary *query = @{
