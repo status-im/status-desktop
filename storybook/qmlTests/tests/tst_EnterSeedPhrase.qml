@@ -183,7 +183,12 @@ Item {
             ClipboardUtils.setText(expectedSeedPhrase.join(" "))
 
             // Trigger the paste action
-            keyClick("v", Qt.ControlModifier)
+            keySequence(StandardKey.Paste)
+
+            // verify the last field has focus (https://github.com/status-im/status-desktop/issues/17105; issue 18)
+            const lastInputField = findChild(itemUnderTest, "enterSeedPhraseInputField12")
+            verify(!!lastInputField)
+            tryCompare(lastInputField, "activeFocus", true)
 
             verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
 

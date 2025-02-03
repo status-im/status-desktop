@@ -131,6 +131,12 @@ ColumnLayout {
                                      const pos = item.mnemonicIndex
                                      item.setWord(words[pos - 1])
                                  }
+
+                                 // position on the last field
+                                 const lastItem = grid.itemAtIndex(grid.count - 1)
+                                 if (!!lastItem)
+                                     lastItem.textEdit.input.edit.forceActiveFocus()
+
                                  d.checkMnemonicLength()
                              }, timeout)
             return true
