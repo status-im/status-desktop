@@ -162,9 +162,7 @@ Page {
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
 
-        getSeedWords: function () {
-            return root.onboardingStore.getMnemonic().split(" ")
-        }
+        getSeedWords: root.onboardingStore.getMnemonic
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
         isBiometricsLogin: root.isBiometricsLogin

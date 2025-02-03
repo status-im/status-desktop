@@ -14,10 +14,7 @@ QtObject {
 
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
-            // TODO implement the following signals
-            // d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
-            // d.onboardingModuleInst.obtainingPasswordSuccess.connect(root.obtainingPasswordSuccess)
-            // d.onboardingModuleInst.obtainingPasswordError.connect(root.obtainingPasswordError)
+            d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
         }
     }
 

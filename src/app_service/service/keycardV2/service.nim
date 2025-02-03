@@ -9,12 +9,12 @@ import ../../../constants as status_const
 import ./dto
 
 proc callRPC*(rpcCounter: int, methodName: string, params: JsonNode = %*{}): string  =
-    var request = %*{
+    let request = %*{
       "id": rpcCounter,
       "method": "keycard." & methodName,
       "params": %*[ params ],
     }
-    var response = keycard_go.keycardCallRPC($request)
+    let response = keycard_go.keycardCallRPC($request)
     return response
 
 include ../../common/mnemonics
