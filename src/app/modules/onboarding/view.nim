@@ -83,6 +83,13 @@ QtObject:
     read = getKeycardRemainingPinAttempts
     notify = keycardRemainingPinAttemptsChanged
 
+  proc keycardRemainingPukAttemptsChanged*(self: View) {.signal.}
+  proc getKeycardRemainingPukAttempts(self: View): int {.slot.} =
+    return self.keycardEvent.keycardStatus.remainingAttemptsPUK
+  QtProperty[int] keycardRemainingPukAttempts:
+    read = getKeycardRemainingPukAttempts
+    notify = keycardRemainingPukAttemptsChanged
+
   proc addKeyPairStateChanged*(self: View) {.signal.}
   proc getAddKeyPairState(self: View): int {.slot.} =
     return self.addKeyPairState
@@ -97,6 +104,7 @@ QtObject:
     self.keycardEvent = keycardEvent
     self.keycardStateChanged()
     self.keycardRemainingPinAttemptsChanged()
+    self.keycardRemainingPukAttemptsChanged()
 
   proc getKeycardEvent*(self: View): KeycardEventDto =
     return self.keycardEvent
