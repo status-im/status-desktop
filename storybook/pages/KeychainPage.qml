@@ -79,36 +79,65 @@ Page {
                 biometricsPopup.open()
             }
 
+            function cancelActiveRequest() {
+                loading = true
+                biometricsPopup.cancel()
+            }
+
             readonly property Connections connections: Connections {
                 target: biometricsPopup
 
                 function onObtainingPasswordSuccess(password) {
-                    loading = false
+                    keychain.loading = false
 
-                    if (keychain.operation === "get") {
-                        const value = store[key]
+                    switch (keychain.operation) {
+                    case "get":
+                        const value = keychain.store[keychain.key]
                         let rc = Keychain.StatusSuccess
                         if (value === undefined)
                             rc = Keychain.StatusNotFound
                         keychain.getCredentialRequestCompleted(rc, value)
-                    } else if (keychain.operation === "save") {
-                        store[key] = value
-                        keychain.saveCredentialRequestCompleted(true)
-                    } else if (keychain.operation === "delete") {
-                        delete store[key]
-                        keychain.deleteCredentialRequestCompleted(true)
+                        break
+                    case "save":
+                        keychain.store[keychain.key] = keychain.value
+                        keychain.saveCredentialRequestCompleted(Keychain.StatusSuccess)
+                        break;
+                    case "delete":
+                        delete keychain.store[keychain.key]
+                        keychain.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
+                        break;
                     }
                 }
 
                 function onObtainingPasswordError() {
+                    keychain.loading = false
+
+                    switch (keychain.operation) {
+                    case "get":
+                        keychain.getCredentialRequestCompleted(Keychain.StatusGenericError, "")
+                        break;
+                    case "save":
+                        keychain.saveCredentialRequestCompleted(Keychain.StatusGenericError)
+                        break;
+                    case "delete":
+                        keychain.deleteCredentialRequestCompleted(Keychain.StatusGenericError)
+                        break;
+                    }
+                }
+
+                function onCancelled() {
                     loading = false
 
-                    if (keychain.operation === "get") {
-                        keychain.getCredentialRequestCompleted(Keychain.StatusGenericError, "")
-                    } else if (keychain.operation === "save") {
-                        keychain.saveCredentialRequestCompleted(false)
-                    } else if (keychain.operation === "delete") {
-                        keychain.deleteCredentialRequestCompleted(false)
+                    switch (keychain.operation) {
+                    case "get":
+                        keychain.getCredentialRequestCompleted(Keychain.StatusCancelled, "")
+                        break;
+                    case "save":
+                        keychain.saveCredentialRequestCompleted(Keychain.StatusCancelled)
+                        break;
+                    case "delete":
+                        keychain.deleteCredentialRequestCompleted(Keychain.StatusCancelled)
+                        break;
                     }
                 }
             }
@@ -203,12 +232,12 @@ Page {
     Connections {
         target: loader.item
 
-        function onSaveCredentialRequestCompleted(success) {
-            logs.logEvent("SaveCredentials", ["success"], [success])
+        function onSaveCredentialRequestCompleted(status) {
+            logs.logEvent("SaveCredentials", ["status"], [status])
         }
 
-        function onDeleteCredentialRequestCompleted(success) {
-            logs.logEvent("DeleteCredential", ["success"], [success])
+        function onDeleteCredentialRequestCompleted(status) {
+            logs.logEvent("DeleteCredential", ["status"], [status])
         }
 
         function onGetCredentialRequestCompleted(status, password) {

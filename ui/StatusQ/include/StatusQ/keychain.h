@@ -45,9 +45,9 @@ public:
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:
-    void saveCredentialRequestCompleted(Keychain::Status success);
-    void deleteCredentialRequestCompleted(Keychain::Status success);
-    void getCredentialRequestCompleted(Keychain::Status success, const QString &password);
+    void saveCredentialRequestCompleted(Keychain::Status status);
+    void deleteCredentialRequestCompleted(Keychain::Status status);
+    void getCredentialRequestCompleted(Keychain::Status status, const QString &password);
 
     void serviceChanged();
     void reasonChanged();
