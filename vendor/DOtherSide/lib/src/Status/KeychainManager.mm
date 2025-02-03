@@ -44,6 +44,7 @@ void KeychainManager::readDataAsyncMacOs(const QString& key)
     auto readAction = [this, key](){
         m_keychain->readItem(key);
     };
+
     process(readAction);
 }
 
@@ -61,7 +62,7 @@ void KeychainManager::deleteDataAsyncMacOs(const QString& key)
     auto deleteAction = [this, key](){
         m_keychain->deleteItem(key);
     };
-    
+
     process(deleteAction);
 }
 
