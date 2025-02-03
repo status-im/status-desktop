@@ -94,29 +94,47 @@ Control {
         NumberAnimation { duration: 350 }
     }
 
-    background: Rectangle {
-        color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3: Theme.palette.transparent
-        radius: 8
+    background: Item {
 
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 0
-            verticalOffset: 2
-            samples: 37
-            color: Theme.palette.dropShadow
+        ShaderEffectSource {
+            id: backgroundSource
+            sourceItem: root.Window ? root.Window.contentItem : null
+            anchors.fill: parent
+            live: true
         }
 
-        // cover for the bottom rounded corners
+        FastBlur {
+            anchors.fill: parent
+            source: backgroundSource
+            radius: 32
+        }
+
         Rectangle {
-            width: parent.width
-            height: parent.radius
-            anchors.bottom: parent.bottom
-            color: parent.color
-        }
+            anchors.fill: parent
+            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3: Theme.palette.transparent
+            radius: 8
+            opacity: 0.9
 
-        StatusDialogDivider {
-            anchors.bottom: parent.bottom
-            width: parent.width
+            layer.enabled: true
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: 2
+                samples: 37
+                color: Theme.palette.dropShadow
+            }
+
+            // cover for the bottom rounded corners
+            Rectangle {
+                width: parent.width
+                height: parent.radius
+                anchors.bottom: parent.bottom
+                color: parent.color
+            }
+
+            StatusDialogDivider {
+                anchors.bottom: parent.bottom
+                width: parent.width
+            }
         }
     }
 
