@@ -302,7 +302,6 @@ SQUtils.QObject {
         remainingPukAttempts: root.remainingPukAttempts
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         onAuthorizationRequested: root.authorizationRequested(pin)
-        isSeedPhraseValid: root.isSeedPhraseValid
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
