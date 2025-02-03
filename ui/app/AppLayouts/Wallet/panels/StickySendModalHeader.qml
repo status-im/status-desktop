@@ -60,6 +60,9 @@ Control {
     /** input property to show only ERC20 assets and no collectibles **/
     property bool displayOnlyAssets
 
+    /** input property to blur the background of the header **/
+    property var blurSource: null
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -94,29 +97,56 @@ Control {
         NumberAnimation { duration: 350 }
     }
 
-    background: Rectangle {
-        color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3: Theme.palette.transparent
-        radius: 8
+    background: Item {
 
-        layer.enabled: true
-        layer.effect: DropShadow {
-            horizontalOffset: 0
-            verticalOffset: 2
-            samples: 37
-            color: Theme.palette.dropShadow
-        }
-
-        // cover for the bottom rounded corners
         Rectangle {
-            width: parent.width
-            height: parent.radius
-            anchors.bottom: parent.bottom
-            color: parent.color
+            anchors.fill: parent
+            color: foregroundRect.color
+            visible: !!root.blurSource
+            radius: 8
+
+            layer.enabled: !!root.blurSource
+            layer.effect: FastBlur {
+                radius: 36
+            }
+
+            ShaderEffectSource {
+                sourceItem: root.blurSource
+                anchors.fill: parent
+                anchors.leftMargin: Theme.xlPadding
+                anchors.rightMargin: -Theme.xlPadding
+                sourceRect: Qt.rect(0, 0, width, height)
+                live: true
+            }
         }
 
-        StatusDialogDivider {
-            anchors.bottom: parent.bottom
-            width: parent.width
+        Rectangle {
+            id: foregroundRect
+            anchors.fill: parent
+            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3 : Theme.palette.transparent
+            radius: 8
+            opacity: 0.85
+
+            layer.enabled: true
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: 2
+                samples: 37
+                color: Theme.palette.dropShadow
+            }
+
+            // cover for the bottom rounded corners
+            Rectangle {
+                width: parent.width
+                height: parent.radius
+                anchors.bottom: parent.bottom
+                color: parent.color
+            }
+
+            StatusDialogDivider {
+                anchors.bottom: parent.bottom
+                width: parent.width
+            }
         }
     }
 
