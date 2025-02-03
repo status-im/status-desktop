@@ -280,8 +280,6 @@ ColumnLayout {
                 grid.currentIndex = index
             }
             onKeyPressed: {
-                grid.currentIndex = index
-
                 if (event.key === Qt.Key_Backtab) {
                     for (let i = 0; i < grid.count; i++) {
                         if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {
