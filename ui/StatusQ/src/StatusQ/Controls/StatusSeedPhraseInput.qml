@@ -155,7 +155,7 @@ Item {
             for (var i = 0; i < inputList.count; i++) {
                 const word = inputList.get(i).seedWord
                 if (word.startsWith(textToCheck)) {
-                    filteredList.insert(filteredList.count, {"seedWord": word})
+                    filteredList.append({"seedWord": word})
                 }
             }
 
