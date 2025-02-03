@@ -21,6 +21,7 @@ type StateString* = enum
   Ready = "ready"
   Authorized = "authorized"
 
+# NOTE: Keep in sync with KeycardState in ui/StatusQ/src/onboarding/enums.h
 type KeycardState* = enum
   UnknownReaderState = -1,
   NoPCSCService,
@@ -32,6 +33,7 @@ type KeycardState* = enum
   MaxPairingSlotsReached,
   BlockedPIN,
   BlockedPUK,
+  FactoryResetting,
   NotEmpty,
   Empty,
   Authorized
@@ -98,7 +100,7 @@ proc fromStringStateToInt*(state: StateString): KeycardState =
   of StateString.BlockedPUK:
     result = KeycardState.BlockedPUK # TODO do we need a new state for the PUK lock or we don't use PUK anymore?
   of StateString.FactoryResetting:
-    result = KeycardState.NotEmpty # TODO create a new UI state
+    result = KeycardState.FactoryResetting
   of StateString.Ready:
     result = KeycardState.NotEmpty
   of StateString.Authorized:

@@ -54,6 +54,7 @@ public:
         Keycard,
     };
 
+    // NOTE: Keep in sync with KeycardState in src/app_service/service/keycardV2/dto.nim
     enum class KeycardState {
         NoPCSCService,
         PluginReader,
@@ -65,6 +66,7 @@ public:
         MaxPairingSlotsReached,
         BlockedPIN, // PIN remaining attempts == 0
         BlockedPUK, // PUK remaining attempts == 0
+        FactoryResetting,
         // exit states
         NotEmpty,
         Empty,
