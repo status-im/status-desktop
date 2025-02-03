@@ -454,5 +454,50 @@ Item {
             verify(itemUnderTest.seedPhraseUpdatedSpy.count >= expectedSeedPhrase.length, "seedPhraseUpdate signal was not emitted")
             verify(itemUnderTest.submitSpy.count === 1, "submitSeedPhrase signal was emitted")
         }
+
+        function test_doubleClickWordAndDelete_data() {
+            return [
+              { tag: "Delete", key: Qt.Key_Delete, resultText: "" },
+              { tag: "Backspace", key: Qt.Key_Backspace, resultText: "" },
+              { tag: "x", key: Qt.Key_X, resultText: "x" }, // overwrite the text with "x"
+            ]
+        }
+
+        // regression test for: https://github.com/status-im/status-desktop/issues/17105 (issue 20)
+        function test_doubleClickWordAndDelete(data) {
+            //generate a seed phrase
+            const expectedSeedPhrase = ["abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse", "access", "asphalt"]
+            const baseDictionary = [...expectedSeedPhrase, "cow", "catalog", "catch", "category", "cattle"]
+
+            let isSeedPhraseValidCalled = false
+            itemUnderTest.isSeedPhraseValid = (seedPhrase) => {
+                verify(seedPhrase === expectedSeedPhrase.join(" "), "Seed phrase is not valid")
+                isSeedPhraseValidCalled = true
+                return true
+            }
+
+            itemUnderTest.dictionary.append(baseDictionary.map((word) => ({seedWord: word})))
+
+            // Type the seed phrase. No space is needed between words
+            const str = expectedSeedPhrase.join("")
+            for (let i = 0; i < str.length; i++) {
+                keyPress(str.charAt(i))
+            }
+
+            verify(isSeedPhraseValidCalled, "isSeedPhraseValid was not called")
+
+            // move to the first field, double click to select the whole text there
+            const firstInputField = findChild(itemUnderTest, "enterSeedPhraseInputField1")
+            verify(!!firstInputField)
+            mouseClick(firstInputField)
+            mouseDoubleClickSequence(firstInputField)
+            tryCompare(firstInputField, "activeFocus", true)
+            tryCompare(firstInputField, "selectedText", expectedSeedPhrase[0])
+
+            // try to delete or overwrite the selected text
+            keyPress(data.key)
+            tryCompare(firstInputField, "text", data.resultText)
+            tryCompare(firstInputField, "selectedText", "")
+        }
     }
 }
