@@ -41,27 +41,28 @@ QString KeychainManager::readDataSyncMacOs(const QString& key) const
 
 void KeychainManager::readDataAsyncMacOs(const QString& key)
 {
-    // auto readAction = [this, key](){
+    auto readAction = [this, key](){
         m_keychain->readItem(key);
-    // };
-    // process(readAction);
+    };
+    process(readAction);
 }
 
 void KeychainManager::storeDataAsyncMacOs(const QString& key, const QString& data)
 {
-    // auto writeAction = [this, key, data](){
+    auto writeAction = [this, key, data](){
         m_keychain->writeItem(key, data);
-    // };
+    };
 
-    // process(writeAction);
+    process(writeAction);
 }
 
 void KeychainManager::deleteDataAsyncMacOs(const QString& key)
 {
-    // auto deleteAction = [this, key](){
+    auto deleteAction = [this, key](){
         m_keychain->deleteItem(key);
-    // };
-    // process(deleteAction);
+    };
+    
+    process(deleteAction);
 }
 
 void KeychainManager::process(const std::function<void()> action)

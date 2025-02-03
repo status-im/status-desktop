@@ -44,10 +44,6 @@ public:
     Q_INVOKABLE void requestGetCredential(const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
 
-    Status saveCredential(const QString &account, const QString &password);
-    Status deleteCredential(const QString &account);
-    Status getCredential(const QString &account, QString *out);
-
 signals:
     void saveCredentialRequestCompleted(Keychain::Status success);
     void deleteCredentialRequestCompleted(Keychain::Status success);
@@ -65,4 +61,10 @@ private:
 
     QFuture<void> m_future;
     LAContext *m_activeAuthContext;
+
+#ifdef Q_OS_MACOS
+    Status saveCredential(const QString &account, const QString &password);
+    Status deleteCredential(const QString &account);
+    Status getCredential(const QString &account, QString *out);
+#endif
 };

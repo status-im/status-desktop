@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QEventLoop>
 #include <QFuture>
-#include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
 
 #include <Foundation/Foundation.h>
@@ -49,10 +48,8 @@ Keychain::Status convertError(NSError *error)
 
 Keychain::~Keychain()
 {
-    QFutureWatcher<void> watcher;
     cancelActiveRequest();
-    watcher.setFuture(m_future);
-    watcher.waitForFinished();
+    m_future.waitForFinished();
 }
 
 Keychain::Status authenticate(QString &reason, LAContext **context)
@@ -150,22 +147,9 @@ void Keychain::cancelActiveRequest()
         [m_activeAuthContext invalidate];
 }
 
-// ContextCleaner takes a pointer to LAContext* and nullifies it on destruction
-class ContextCleaner
-{
-public:
-    explicit ContextCleaner(LAContext **context)
-        : m_context(context)
-    {}
-    ~ContextCleaner() { *m_context = nullptr; };
-
-private:
-    LAContext **m_context;
-};
-
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
-    ContextCleaner guard(&m_activeAuthContext);
+    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
     const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
@@ -209,7 +193,7 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
 
 Keychain::Status Keychain::deleteCredential(const QString &account)
 {
-    ContextCleaner guard(&m_activeAuthContext);
+    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
     const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
@@ -232,7 +216,7 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
 
 Keychain::Status Keychain::getCredential(const QString &account, QString *out)
 {
-    ContextCleaner guard(&m_activeAuthContext);
+    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
     const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
