@@ -62,6 +62,7 @@ Item {
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
                 property int keycardRemainingPinAttempts: 5
                 property int keycardRemainingPukAttempts: 5
+                property var loginAccountsModel: emptyModel
 
                 function setPin(pin: string) {
                     const valid = pin === mockDriver.existingPin
@@ -105,8 +106,6 @@ Item {
                 // biometrics signals
                 signal obtainingPasswordSuccess(string password)
                 signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
-
-                loginAccountsModel: emptyModel
             }
             onLoginRequested: (keyUid, method, data) => {
                 // SIMULATION: emit an error in case of wrong password
@@ -952,7 +951,7 @@ Item {
         }
         function test_loginScreen(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
             controlUnderTest.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
             controlUnderTest.restartFlow()
 
@@ -1079,7 +1078,7 @@ Item {
         }
         function test_loginScreen_launchesExternalFlow(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
             controlUnderTest.restartFlow()
 
             const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
@@ -1103,7 +1102,7 @@ Item {
 
         function test_loginScreenLostKeycardSeedphraseLoginFlow() {
             verify(!!controlUnderTest)
-            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
             controlUnderTest.biometricsAvailable = false
             controlUnderTest.restartFlow()
 
@@ -1188,7 +1187,7 @@ Item {
 
         function test_loginScreenLostKeycardCreateReplacementFlow() {
             verify(!!controlUnderTest)
-            controlUnderTest.loginAccountsModel = loginAccountsModel
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
             controlUnderTest.biometricsAvailable = false
             controlUnderTest.restartFlow()
 

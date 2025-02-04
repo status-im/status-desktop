@@ -231,7 +231,6 @@ OnboardingPage {
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.keycardState
-                tryToSetPinFunction: root.tryToSetPinFunction
                 keycardRemainingPinAttempts: root.keycardRemainingPinAttempts
                 keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
