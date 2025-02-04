@@ -70,6 +70,8 @@ pipeline {
     PYTHONPATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/lib/python:${PYTHONPATH}"
     LD_LIBRARY_PATH = "${SQUISH_DIR}/lib:${SQUISH_DIR}/python3/lib:${LD_LIBRARY_PATH}"
 
+    FLAG_ONBOARDING_V2_ENABLED = "true"
+
     /* To stop e2e tests using port 8545 */
     STATUS_RUNTIME_HTTP_API = 'False'
     STATUS_RUNTIME_WS_API = 'False'
