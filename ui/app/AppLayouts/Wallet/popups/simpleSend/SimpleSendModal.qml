@@ -417,6 +417,7 @@ StatusDialog {
                 objectName: "stickySendModalHeader"
 
                 width: parent.width
+                blurSource: scrollView.contentItem
 
                 stickyHeaderVisible: d.stickyHeaderVisible
 

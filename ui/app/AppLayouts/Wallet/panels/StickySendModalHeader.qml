@@ -60,6 +60,9 @@ Control {
     /** input property to show only ERC20 assets and no collectibles **/
     property bool displayOnlyAssets
 
+    /** input property to blur the background of the header **/
+    property var blurSource: null
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -96,24 +99,33 @@ Control {
 
     background: Item {
 
-        ShaderEffectSource {
-            id: backgroundSource
-            sourceItem: root.Window ? root.Window.contentItem : null
+        Rectangle {
             anchors.fill: parent
-            live: true
-        }
+            color: foregroundRect.color
+            visible: !!root.blurSource
+            radius: 8
 
-        FastBlur {
-            anchors.fill: parent
-            source: backgroundSource
-            radius: 32
+            layer.enabled: !!root.blurSource
+            layer.effect: FastBlur {
+                radius: 36
+            }
+
+            ShaderEffectSource {
+                sourceItem: root.blurSource
+                anchors.fill: parent
+                anchors.leftMargin: Theme.xlPadding
+                anchors.rightMargin: -Theme.xlPadding
+                sourceRect: Qt.rect(0, 0, width, height)
+                live: true
+            }
         }
 
         Rectangle {
+            id: foregroundRect
             anchors.fill: parent
-            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3: Theme.palette.transparent
+            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3 : Theme.palette.transparent
             radius: 8
-            opacity: 0.9
+            opacity: 0.85
 
             layer.enabled: true
             layer.effect: DropShadow {
