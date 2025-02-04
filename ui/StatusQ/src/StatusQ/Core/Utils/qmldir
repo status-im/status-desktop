@@ -20,6 +20,7 @@ SubscriptionBrokerCommunities 0.1 SubscriptionBrokerCommunities.qml
 XSS 1.0 xss.js
 singleton AmountsArithmetic 0.1 AmountsArithmetic.qml
 singleton Emoji 0.1 Emoji.qml
+singleton KeychainUtils 0.1 KeychainUtils.qml
 singleton ModelUtils 0.1 ModelUtils.qml
 singleton OperatorsUtils 0.1 OperatorsUtils.qml
 singleton StringUtils 0.1 StringUtils.qml

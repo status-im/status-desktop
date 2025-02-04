@@ -22,6 +22,7 @@ import Models 1.0
 
 SplitView {
     id: root
+
     orientation: Qt.Vertical
 
     Logs { id: logs }
@@ -55,6 +56,15 @@ SplitView {
 
         SplitView.fillWidth: true
         SplitView.fillHeight: true
+
+        readonly property Item currentPage: {
+            if (stack.currentItem instanceof Loader)
+                return stack.currentItem.item
+
+            return stack.currentItem
+        }
+
+        onCurrentPageChanged: console.log("CP:", currentPage)
 
         onboardingStore: OnboardingStore {
             id: store
@@ -144,15 +154,12 @@ SplitView {
 
             // password signals
             signal accountLoginError(string error, bool wrongPassword)
-
-            // biometrics signals
-            signal obtainingPasswordSuccess(string password)
-            signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
         }
 
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
-        onBiometricsRequested: biometricsPopup.open()
+
+        fetchSecretViaBiometrics: biometricsPopup.getHandlerFunction()
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
@@ -197,8 +204,8 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof CreatePasswordPage ||
-                     (onboarding.stack.currentItem instanceof LoginScreen && !onboarding.stack.currentItem.selectedProfileIsKeycard)
+            visible: onboarding.currentPage instanceof CreatePasswordPage ||
+                     (onboarding.currentPage instanceof LoginScreen && !onboarding.currentPage.selectedProfileIsKeycard)
 
             onClicked: {
                 const currentItem = onboarding.stack.currentItem
@@ -234,12 +241,12 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof SeedphrasePage
+            visible: onboarding.currentPage instanceof SeedphrasePage
 
             onClicked: {
                 for (let i = 1;; i++) {
                     const input = StorybookUtils.findChild(
-                                    onboarding.stack.currentItem,
+                                    onboarding.currentPage,
                                     `enterSeedPhraseInputField${i}`)
 
                     if (input === null)
@@ -255,9 +262,9 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof KeycardEnterPinPage ||
-                     onboarding.stack.currentItem instanceof KeycardCreatePinPage ||
-                     (onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard && store.keycardState === Onboarding.KeycardState.NotEmpty)
+            visible: onboarding.currentPage instanceof KeycardEnterPinPage ||
+                     onboarding.currentPage instanceof KeycardCreatePinPage ||
+                     (onboarding.currentPage instanceof LoginScreen && onboarding.currentPage.selectedProfileIsKeycard && store.keycardState === Onboarding.KeycardState.NotEmpty)
 
             text: "Copy valid PIN (\"%1\")".arg(mockDriver.pin)
             focusPolicy: Qt.NoFocus
@@ -269,7 +276,7 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof KeycardEnterPukPage
+            visible: onboarding.currentPage instanceof KeycardEnterPukPage
 
             text: "Copy valid PUK (\"%1\")".arg(mockDriver.puk)
             focusPolicy: Qt.NoFocus
@@ -281,14 +288,14 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof BackupSeedphraseVerify
+            visible: onboarding.currentPage instanceof BackupSeedphraseVerify
 
             text: "Paste seed phrase verification"
             focusPolicy: Qt.NoFocus
             onClicked: {
                 for (let i = 0;; i++) {
                     const input = StorybookUtils.findChild(
-                                    onboarding.stack.currentItem,
+                                    onboarding.currentPage,
                                     `seedInput_${i}`)
 
                     if (input === null)
@@ -305,14 +312,14 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: onboarding.stack.currentItem instanceof BackupSeedphraseAcks
+            visible: onboarding.currentPage instanceof BackupSeedphraseAcks
 
             text: "Paste seed phrase verification"
             focusPolicy: Qt.NoFocus
             onClicked: {
                 for (let i = 1;; i++) {
                     const checkBox = StorybookUtils.findChild(
-                                       onboarding.stack.currentItem,
+                                       onboarding.currentPage,
                                        `ack${i}`)
 
                     if (checkBox === null)
@@ -326,14 +333,14 @@ SplitView {
 
     BiometricsPopup {
         id: biometricsPopup
-        visible: onboarding.stack.currentItem instanceof LoginScreen && ctrlBiometrics.checked && ctrlTouchIdUser.checked
+
         x: root.Window.width - width
+
         password: mockDriver.password
         pin: mockDriver.pin
-        selectedProfileIsKeycard: onboarding.stack.currentItem instanceof LoginScreen && onboarding.stack.currentItem.selectedProfileIsKeycard
-        onAccountLoginError: (error, wrongPassword) => store.accountLoginError(error, wrongPassword)
-        onObtainingPasswordSuccess: (password) => store.obtainingPasswordSuccess(password)
-        onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => store.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
+
+        selectedProfileIsKeycard: onboarding.currentPage instanceof LoginScreen
+                                  && onboarding.currentPage.selectedProfileIsKeycard
     }
 
     Component {

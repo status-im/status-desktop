@@ -15,19 +15,21 @@ Dialog {
 
     required property string password
     required property string pin
-    required property string selectedProfileIsKeycard
-
-    // password signals
-    signal accountLoginError(string error, bool wrongPassword)
+    required property bool selectedProfileIsKeycard
 
     // biometrics signals
     signal obtainingPasswordSuccess(string password)
-    signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
     signal cancelled()
 
     function cancel() {
         close()
         cancelled()
+    }
+
+    function getHandlerFunction() {
+        return (profileId, callback) => {
+            connector.createObject(this, { callback })
+        }
     }
 
     width: 300
@@ -74,6 +76,28 @@ Dialog {
                 root.close()
                 root.obtainingPasswordSuccess(root.selectedProfileIsKeycard ? root.pin : root.password)
             }
+        }
+    }
+
+    Component {
+        id: connector
+
+        Connections {
+            target: root
+
+            property var callback
+
+            function onObtainingPasswordSuccess(password) {
+                callback(false, "", password)
+                destroy()
+            }
+
+            function onCancelled() {
+                callback(true, "", "")
+                destroy()
+            }
+
+            Component.onCompleted: root.open()
         }
     }
 }
