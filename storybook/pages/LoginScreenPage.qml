@@ -51,10 +51,6 @@ SplitView {
 
         // password signals
         signal accountLoginError(string error, bool wrongPassword)
-
-        // biometrics signals
-        signal obtainingPasswordSuccess(string password)
-        signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
     }
 
     LoginScreen {
@@ -72,7 +68,9 @@ SplitView {
 
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+
         onBiometricsRequested: biometricsPopup.open()
+
         onLoginRequested: (keyUid, method, data) => {
                               logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
@@ -92,19 +90,17 @@ SplitView {
             id: localAccountSettings
             readonly property string storeToKeychainValue: ctrlTouchIdUser.checked ? Constants.keychain.storedValue.store : ""
         }
-        onSelectedProfileKeyIdChanged: biometricsPopup.visible = Qt.binding(() => ctrlBiometrics.checked && ctrlTouchIdUser.checked)
     }
 
     BiometricsPopup {
         id: biometricsPopup
-        visible: ctrlBiometrics.checked && ctrlTouchIdUser.checked
+
         x: root.Window.width - width
-        password: ctrlPassword.text
-        pin: ctrlPin.text
-        selectedProfileIsKeycard: loginScreen.selectedProfileIsKeycard
-        onAccountLoginError: (error, wrongPassword) => driver.accountLoginError(error, wrongPassword)
-        onObtainingPasswordSuccess: (password) => driver.obtainingPasswordSuccess(password)
-        onObtainingPasswordError: (errorDescription, errorType, wrongFingerprint) => driver.obtainingPasswordError(errorDescription, errorType, wrongFingerprint)
+
+        onObtainingPasswordSuccess: {
+            loginScreen.setBiometricResponse(loginScreen.selectedProfileIsKeycard
+                                             ? ctrlPin.text : ctrlPassword.text)
+        }
     }
 
     LogsAndControlsPanel {

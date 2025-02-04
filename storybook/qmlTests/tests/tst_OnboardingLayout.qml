@@ -102,11 +102,8 @@ Item {
 
                 // password signals
                 signal accountLoginError(string error, bool wrongPassword)
-
-                // biometrics signals
-                signal obtainingPasswordSuccess(string password)
-                signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
             }
+
             onLoginRequested: (keyUid, method, data) => {
                 // SIMULATION: emit an error in case of wrong password
                 if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) {
@@ -979,8 +976,8 @@ Item {
                 tryCompare(passwordInput, "activeFocus", true)
                 if (data.biometrics) { // biometrics + password
                     if (data.password === mockDriver.dummyNewPassword) { // expecting correct fingerprint
-                        // simulate the external biometrics signal
-                        controlUnderTest.onboardingStore.obtainingPasswordSuccess(data.password)
+                        // simulate the external biometrics response
+                        controlUnderTest.setBiometricResponse(data.password)
 
                         tryCompare(passwordBox, "biometricsSuccessful", true)
                         tryCompare(passwordBox, "biometricsFailed", false)
@@ -988,19 +985,19 @@ Item {
 
                         // this fills the password and submits it, emits the loginRequested() signal below
                         tryCompare(passwordInput, "text", data.password)
-                    } else { // expecting wrong fingerprint
-                        // simulate the external biometrics signal
-                        controlUnderTest.onboardingStore.obtainingPasswordError("ERROR", Constants.keychain.errorType.keychain, true)
+                    } else { // expecting failed fetching credentials via biometrics
+                        // simulate the external biometrics response
+                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
 
                         tryCompare(passwordBox, "biometricsSuccessful", false)
                         tryCompare(passwordBox, "biometricsFailed", true)
-                        tryCompare(passwordBox, "validationError", "Fingerprint not recognised. Try entering password instead.")
+                        tryCompare(passwordBox, "validationError", "ERROR")
 
                         // this fails and switches to the password method; so just verify we have an error and can enter the pass manually
                         tryCompare(passwordInput, "hasError", true)
                         tryCompare(passwordInput, "activeFocus", true)
                         tryCompare(passwordInput, "text", "")
-                        expectFail(data.tag, "Wrong fingerprint, expected to fail to login")
+                        expectFail(data.tag, "Biometrics failed, expected to fail to login")
                     }
                 } else { // manual password
                     keyClickSequence(data.password)
@@ -1032,25 +1029,24 @@ Item {
 
                 if (data.biometrics) { // biometrics + PIN
                     if (data.pin === mockDriver.existingPin) { // expecting correct fingerprint
-                        // simulate the external biometrics signal
-                        controlUnderTest.onboardingStore.obtainingPasswordSuccess(data.pin)
+                        // simulate the external biometrics response
+                        controlUnderTest.setBiometricResponse(data.pin)
 
                         tryCompare(keycardBox, "biometricsSuccessful", true)
                         tryCompare(keycardBox, "biometricsFailed", false)
 
                         // this fills the password and submits it, emits the loginRequested() signal below
                         tryCompare(pinInput, "pinInput", data.pin)
-                    } else { // expecting wrong fingerprint
-                        // simulate the external biometrics signal
-                        controlUnderTest.onboardingStore.obtainingPasswordError("Fingerprint not recognized",
-                                                                                Constants.keychain.errorType.keychain, true)
+                    } else { // expecting failed fetching credentials via biometrics
+                        // simulate the external biometrics response
+                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
 
                         tryCompare(keycardBox, "biometricsSuccessful", false)
                         tryCompare(keycardBox, "biometricsFailed", true)
 
                         // this fails and lets the user enter the PIN manually; so just verify we have an error and empty PIN
                         tryCompare(pinInput, "pinInput", "")
-                        expectFail(data.tag, "Wrong fingerprint, expected to fail to login")
+                        expectFail(data.tag, "Biometrics failed, expected to fail to login")
                     }
                 } else { // manual PIN
                     keyClickSequence(data.pin)

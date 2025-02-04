@@ -13,7 +13,6 @@ class Keychain : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QString service READ service WRITE setService NOTIFY serviceChanged)
-    Q_PROPERTY(QString reason READ reason WRITE setReason NOTIFY reasonChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
 
 public:
@@ -34,14 +33,11 @@ public:
     QString service() const;
     void setService(const QString &service);
 
-    QString reason() const;
-    void setReason(const QString& reason);
-
     bool loading() const;
 
-    Q_INVOKABLE void requestSaveCredential(const QString &account, const QString &password);
-    Q_INVOKABLE void requestDeleteCredential(const QString &account);
-    Q_INVOKABLE void requestGetCredential(const QString &account);
+    Q_INVOKABLE void requestSaveCredential(const QString &reason, const QString &account, const QString &password);
+    Q_INVOKABLE void requestDeleteCredential(const QString &reason, const QString &account);
+    Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:

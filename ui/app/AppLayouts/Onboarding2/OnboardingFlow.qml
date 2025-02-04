@@ -41,7 +41,7 @@ SQUtils.QObject {
     required property var tryToSetPinFunction
     required property var tryToSetPukFunction
 
-    signal biometricsRequested
+    signal biometricsRequested(string profileId)
     signal loginRequested(string keyUid, int method, var data)
     signal keycardPinCreated(string pin)
     signal enableBiometricsRequested(bool enable)
@@ -62,6 +62,16 @@ SQUtils.QObject {
 
     function init() {
         root.stackView.push(entryPage)
+    }
+
+    function setBiometricResponse(secret: string, error = "",
+                                  detailedError = "",
+                                  wrongFingerprint = false) {
+        if (!loginScreen)
+            return
+
+        loginScreen.setBiometricResponse(secret, error, detailedError,
+                                         wrongFingerprint)
     }
 
     readonly property LoginScreen loginScreen: d.loginScreen
@@ -141,9 +151,9 @@ SQUtils.QObject {
             loginAccountsModel: root.loginAccountsModel
             biometricsAvailable: root.biometricsAvailable
             isBiometricsLogin: root.isBiometricsLogin
-            onBiometricsRequested: root.biometricsRequested()
-            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
+            onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
+            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
             onLostKeycard: root.stackView.push(keycardLostPage)

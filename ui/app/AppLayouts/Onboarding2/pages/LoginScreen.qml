@@ -33,8 +33,42 @@ OnboardingPage {
     readonly property string selectedProfileKeyId: loginUserSelector.selectedProfileKeyId
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
 
-    // emitted when the user wants to try the biometrics prompt again
-    signal biometricsRequested()
+    signal biometricsRequested(string profileId)
+
+    function setBiometricResponse(secret: string, error = "",
+                                  detailedError = "",
+                                  wrongFingerprint = false) {
+        if (!root.isBiometricsLogin)
+            return
+
+        passwordBox.validationError = error
+        passwordBox.detailedError = detailedError
+
+        const hasError = error || detailedError
+
+        d.biometricsSuccessful = !hasError
+        d.biometricsFailed = wrongFingerprint
+
+        if (hasError) {
+            if (d.currentProfileIsKeycard) {
+                keycardBox.clear()
+            } else {
+                passwordBox.validationError = error
+                passwordBox.clear()
+                passwordBox.forceActiveFocus()
+            }
+
+            return
+        }
+
+        if (d.currentProfileIsKeycard) {
+            keycardBox.setPin(secret) // automatic login, emits loginRequested() already
+        } else {
+            passwordBox.validationError = ""
+            passwordBox.password = secret
+            d.doPasswordLogin(secret)
+        }
+    }
 
     // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;
     //    "data:var": contains "password" or "pin"
@@ -80,44 +114,18 @@ OnboardingPage {
         }
     }
 
+    onKeycardStateChanged: {
+        if (!biometricsAvailable || !isBiometricsLogin || !d.currentProfileIsKeycard
+                || root.keycardState !== Onboarding.KeycardState.NotEmpty)
+            return
+
+        root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+    }
+
     Component.onCompleted: {
         loginUserSelector.setSelection(d.settings.lastKeyUid)
         if (!d.currentProfileIsKeycard)
             passwordBox.forceActiveFocus()
-    }
-
-    function setObtainingPasswordError(error: string, wrongFingerprint: bool) {
-        d.biometricsSuccessful = false
-        d.biometricsFailed = wrongFingerprint
-
-        if (d.currentProfileIsKeycard) {
-            keycardBox.clear()
-        } else {
-            passwordBox.validationError = error
-            passwordBox.clear()
-            passwordBox.forceActiveFocus()
-        }
-    }
-
-    function setObtainingPasswordSuccess(password: string) {
-        if (!root.isBiometricsLogin)
-            return
-
-        d.biometricsSuccessful = true
-        d.biometricsFailed = false
-
-        if (d.currentProfileIsKeycard) {
-            keycardBox.setPin(password) // automatic login, emits loginRequested() already
-        } else {
-            passwordBox.validationError = ""
-            passwordBox.password = password
-            d.doPasswordLogin(password)
-        }
-    }
-
-    function setError(error: string, detailedError: string) {
-        passwordBox.validationError = error
-        passwordBox.detailedError = detailedError
     }
 
     // (password) login
@@ -181,12 +189,14 @@ OnboardingPage {
             LoginUserSelector {
                 id: loginUserSelector
                 objectName: "loginUserSelector"
+
                 Layout.topMargin: 20
                 Layout.fillWidth: true
                 Layout.preferredHeight: 64
                 model: root.loginAccountsModel
                 currentKeycardLocked: root.keycardState === Onboarding.KeycardState.BlockedPIN ||
                                       root.keycardState === Onboarding.KeycardState.BlockedPUK
+
                 onSelectedProfileKeyIdChanged: {
                     d.resetBiometricsResult()
                     d.settings.lastKeyUid = selectedProfileKeyId
@@ -198,6 +208,14 @@ OnboardingPage {
                        passwordBox.clear()
                        passwordBox.forceActiveFocus()
                     }
+
+                    if (!biometricsAvailable || !isBiometricsLogin)
+                        return
+
+                    if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
+                        return
+
+                    root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 }
                 onOnboardingCreateProfileFlowRequested: root.onboardingCreateProfileFlowRequested()
                 onOnboardingLoginFlowRequested: root.onboardingLoginFlowRequested()
@@ -217,7 +235,7 @@ OnboardingPage {
                     validationError = ""
                     d.resetBiometricsResult()
                 }
-                onBiometricsRequested: root.biometricsRequested()
+                onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (password) => d.doPasswordLogin(password)
             }
 
@@ -238,7 +256,7 @@ OnboardingPage {
                     // reset state when typing the PIN manually; not to break the bindings inside the component
                     d.resetBiometricsResult()
                 }
-                onBiometricsRequested: root.biometricsRequested()
+                onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (pin) => d.doKeycardLogin(pin)
             }
 

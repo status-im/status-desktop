@@ -29,10 +29,6 @@ Keychain {
 
             parent: root.parent
             x: parent.width - width
-
-            password: ""
-            pin: ""
-            selectedProfileIsKeycard: false
         }
     }
 
