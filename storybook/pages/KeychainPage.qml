@@ -29,118 +29,22 @@ Page {
 
         password: ""
         pin: ""
-        selectedProfileIsKeycard: ""
+        selectedProfileIsKeycard: false
     }
 
     Component {
         id: nativeKeychainComponent
 
         Keychain {
-            id: keychain
             service: "StatusStorybook"
-            reason: "<reason here>"
         }
     }
 
     Component {
         id: mockedKeychainComponent
 
-        Keychain {
-            id: keychain
-            service: "StatusStorybook"
-            reason: "<reason here>"
-
-            property bool loading: false
-            property var store: ({})
-
-            property string key
-            property string value
-            property string operation // save, delete, get
-
-            function requestSaveCredential(account, password) {
-                loading = true
-                key = account
-                value = password
-                operation = "save"
-                biometricsPopup.open()
-            }
-
-            function requestDeleteCredential(account) {
-                loading = true
-                key = account
-                operation = "delete"
-                biometricsPopup.open()
-            }
-
-            function requestGetCredential(account) {
-                loading = true
-                key = account
-                operation = "get"
-                biometricsPopup.open()
-            }
-
-            function cancelActiveRequest() {
-                loading = true
-                biometricsPopup.cancel()
-            }
-
-            readonly property Connections connections: Connections {
-                target: biometricsPopup
-
-                function onObtainingPasswordSuccess(password) {
-                    keychain.loading = false
-
-                    switch (keychain.operation) {
-                    case "get":
-                        const value = keychain.store[keychain.key]
-                        let rc = Keychain.StatusSuccess
-                        if (value === undefined)
-                            rc = Keychain.StatusNotFound
-                        keychain.getCredentialRequestCompleted(rc, value)
-                        break
-                    case "save":
-                        keychain.store[keychain.key] = keychain.value
-                        keychain.saveCredentialRequestCompleted(Keychain.StatusSuccess)
-                        break;
-                    case "delete":
-                        delete keychain.store[keychain.key]
-                        keychain.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
-                        break;
-                    }
-                }
-
-                function onObtainingPasswordError() {
-                    keychain.loading = false
-
-                    switch (keychain.operation) {
-                    case "get":
-                        keychain.getCredentialRequestCompleted(Keychain.StatusGenericError, "")
-                        break;
-                    case "save":
-                        keychain.saveCredentialRequestCompleted(Keychain.StatusGenericError)
-                        break;
-                    case "delete":
-                        keychain.deleteCredentialRequestCompleted(Keychain.StatusGenericError)
-                        break;
-                    }
-                }
-
-                function onCancelled() {
-                    loading = false
-
-                    switch (keychain.operation) {
-                    case "get":
-                        keychain.getCredentialRequestCompleted(Keychain.StatusCancelled, "")
-                        break;
-                    case "save":
-                        keychain.saveCredentialRequestCompleted(Keychain.StatusCancelled)
-                        break;
-                    case "delete":
-                        keychain.deleteCredentialRequestCompleted(Keychain.StatusCancelled)
-                        break;
-                    }
-                }
-            }
+        KeychainMock {
+            parent: root
         }
     }
 
@@ -201,19 +105,22 @@ Page {
             Button {
                 text: "Save"
                 onClicked: {
-                    loader.item.requestSaveCredential(accountInput.text, passwordInput.text)
+                    loader.item.requestSaveCredential("Save reason",
+                                                      accountInput.text, passwordInput.text)
                 }
             }
             Button {
                 text: "Delete"
                 onClicked: {
-                    loader.item.requestDeleteCredential(accountInput.text)
+                    loader.item.requestDeleteCredential("Delete reason",
+                                                        accountInput.text)
                 }
             }
             Button {
                 text: "Get"
                 onClicked: {
-                    loader.item.requestGetCredential(accountInput.text)
+                    loader.item.requestGetCredential("Get reason",
+                                                     accountInput.text)
                 }
             }
             Button {
@@ -233,15 +140,15 @@ Page {
         target: loader.item
 
         function onSaveCredentialRequestCompleted(status) {
-            logs.logEvent("SaveCredentials", ["status"], [status])
+            logs.logEvent("SaveCredentials", ["status"], arguments)
         }
 
         function onDeleteCredentialRequestCompleted(status) {
-            logs.logEvent("DeleteCredential", ["status"], [status])
+            logs.logEvent("DeleteCredential", ["status"], arguments)
         }
 
         function onGetCredentialRequestCompleted(status, password) {
-            logs.logEvent("GetCredential", ["status", "password"], [status, password])
+            logs.logEvent("GetCredential", ["status", "password"], arguments)
             passwordInput.text = password
         }
     }

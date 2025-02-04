@@ -19,20 +19,6 @@ void Keychain::setService(const QString &service)
     emit serviceChanged();
 }
 
-QString Keychain::reason() const
-{
-    return m_reason;
-}
-
-void Keychain::setReason(const QString &reason)
-{
-    if (m_reason == reason)
-        return;
-
-    m_reason = reason;
-    emit reasonChanged();
-}
-
 bool Keychain::loading() const
 {
     return m_loading;
