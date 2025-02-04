@@ -22,16 +22,6 @@ Page {
                          ? nativeKeychainComponent : mockedKeychainComponent
     }
 
-    BiometricsPopup {
-        id: biometricsPopup
-
-        x: root.Window.width - width
-
-        password: ""
-        pin: ""
-        selectedProfileIsKeycard: false
-    }
-
     Component {
         id: nativeKeychainComponent
 

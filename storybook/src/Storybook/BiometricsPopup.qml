@@ -13,17 +13,9 @@ import utils 1.0
 Dialog {
     id: root
 
-    required property string password
-    required property string pin
-    required property string selectedProfileIsKeycard
-
-    // password signals
-    signal accountLoginError(string error, bool wrongPassword)
-
     // biometrics signals
-    signal obtainingPasswordSuccess(string password)
-    signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
-    signal cancelled()
+    signal obtainingPasswordSuccess
+    signal cancelled
 
     function cancel() {
         close()
@@ -72,7 +64,7 @@ Dialog {
             text: "Simulate correct fingerprint"
             onClicked: {
                 root.close()
-                root.obtainingPasswordSuccess(root.selectedProfileIsKeycard ? root.pin : root.password)
+                root.obtainingPasswordSuccess()
             }
         }
     }
