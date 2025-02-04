@@ -37,7 +37,7 @@ Control {
         pinInputField.forceFocus()
     }
 
-    function onWrongPin() {
+    function markAsWrongPin() {
         d.wrongPin = true
         pinInputField.statesInitialization()
         pinInputField.forceFocus()

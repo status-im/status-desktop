@@ -140,9 +140,9 @@ SplitView {
             // biometrics signals
             signal obtainingPasswordSuccess(string password)
             signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
-        }
 
-        loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
+            loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
+        }
 
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store

@@ -53,7 +53,6 @@ Item {
             biometricsAvailable: mockDriver.biometricsAvailable
             keycardPinInfoPageDelay: 0
 
-            loginAccountsModel: emptyModel
             isBiometricsLogin: biometricsAvailable
 
             onboardingStore: OnboardingStore {
@@ -106,6 +105,8 @@ Item {
                 // biometrics signals
                 signal obtainingPasswordSuccess(string password)
                 signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
+
+                loginAccountsModel: emptyModel
             }
             onLoginRequested: (keyUid, method, data) => {
                 // SIMULATION: emit an error in case of wrong password

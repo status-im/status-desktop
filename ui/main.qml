@@ -437,8 +437,6 @@ StatusWindow {
             objectName: "startupOnboardingLayout"
             anchors.fill: parent
 
-            // TODO implement those two
-            loginAccountsModel: onboardingStore.loginAccountsModel
             isBiometricsLogin: false
             networkChecksEnabled: true
             biometricsAvailable: Qt.platform.os === Constants.mac
@@ -446,7 +444,7 @@ StatusWindow {
             onboardingStore: onboardingStore
 
             onFinished: (flow, data) => {
-                let error = onboardingStore.finishOnboardingFlow(flow, data)
+                const error = onboardingStore.finishOnboardingFlow(flow, data)
 
                 if (error != "") {
                     // We should never be here since everything should be validated already
