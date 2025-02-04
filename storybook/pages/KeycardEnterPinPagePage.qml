@@ -16,6 +16,7 @@ Item {
 
         remainingAttempts: 3
         unblockWithPukAvailable: ctrlUnblockWithPUK.checked
+        keycardPinInfoPageDelay: 1000
         authorizationState: Onboarding.ProgressState.Idle
         restoreKeysExportState: Onboarding.ProgressState.Idle
         onAuthorizationRequested: (pin) => {

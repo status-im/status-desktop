@@ -249,7 +249,7 @@ SQUtils.QObject {
         onLoadMnemonicRequested: root.loadMnemonicRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        // onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
+        onKeypairAddTryAgainRequested: root.loadMnemonicRequested()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
 
         onCreateProfileWithoutKeycardRequested: {
@@ -391,7 +391,7 @@ SQUtils.QObject {
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
-        // onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
+        onKeypairAddTryAgainRequested: root.loadMnemonicRequested()
 
         onCreateProfileWithoutKeycardRequested: {
             const page = stackView.find(

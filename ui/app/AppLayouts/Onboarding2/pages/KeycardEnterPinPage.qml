@@ -19,8 +19,8 @@ KeycardBasePage {
     required property int authorizationState
     required property int restoreKeysExportState
     required property int remainingAttempts
-    property bool unblockWithPukAvailable
-    property int keycardPinInfoPageDelay
+    required property bool unblockWithPukAvailable
+    required property int keycardPinInfoPageDelay
 
     signal keycardPinEntered(string pin)
     signal reloadKeycardRequested

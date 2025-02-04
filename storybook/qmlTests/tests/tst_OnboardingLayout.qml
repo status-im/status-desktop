@@ -164,9 +164,9 @@ Item {
 
         function cleanup() {
             mockDriver.keycardState = -1
-            mockDriver.pinSettingState = 0
-            mockDriver.authorizationState = 0
-            mockDriver.restoreKeysExportState = 0
+            mockDriver.pinSettingState = Onboarding.ProgressState.Idle
+            mockDriver.authorizationState = Onboarding.ProgressState.Idle
+            mockDriver.restoreKeysExportState = Onboarding.ProgressState.Idle
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
             dynamicSpy.cleanup()
