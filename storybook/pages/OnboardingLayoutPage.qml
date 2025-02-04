@@ -63,6 +63,7 @@ SplitView {
             property int authorizationState: Onboarding.ProgressState.Idle
             property int restoreKeysExportState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
+            property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
             property int keycardRemainingPinAttempts: 2
             property int keycardRemainingPukAttempts: 3
@@ -141,8 +142,6 @@ SplitView {
             signal obtainingPasswordSuccess(string password)
             signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
         }
-
-        loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store

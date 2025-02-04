@@ -45,6 +45,9 @@ method loadMnemonic*(self: AccessInterface, dataJson: string) {.base.} =
 method finishOnboardingFlow*(self: AccessInterface, flowInt: int, dataJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method loginRequested*(self: AccessInterface, keyUid: string, loginFlow: int, dataJson: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -63,10 +66,19 @@ method onKeycardLoadMnemonicFailure*(self: AccessInterface, error: string) {.bas
 method onKeycardLoadMnemonicSuccess*(self: AccessInterface, keyUID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardExportKeysFailure*(self: AccessInterface, error: string) {.base.} =
+method onKeycardExportRestoreKeysFailure*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardExportKeysSuccess*(self: AccessInterface, exportedKeys: KeycardExportedKeysDto) {.base.} =
+method onKeycardExportRestoreKeysSuccess*(self: AccessInterface, exportedKeys: KeycardExportedKeysDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardExportLoginKeysFailure*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeycardExportLoginKeysSuccess*(self: AccessInterface, exportedKeys: KeycardExportedKeysDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAccountLoginError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method exportRecoverKeys*(self: AccessInterface) {.base.} =

@@ -121,6 +121,35 @@ OnboardingPage {
         passwordBox.detailedError = detailedError
     }
 
+    // (password) login
+    function setAccountLoginError(error: string, wrongPassword: bool) {
+        if (!error) {
+            return
+        }
+
+        if (d.currentProfileIsKeycard) {
+            // Login with keycard
+            if (wrongPassword) {
+                keycardBox.markAsWrongPin()
+            } else {
+                keycardBox.loginError = error
+            }
+            return
+        }
+
+        // Login with password
+        if (wrongPassword) {
+            passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
+            passwordBox.detailedError = ""
+        } else {
+            passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
+            passwordBox.detailedError = error
+        }
+
+        passwordBox.clear()
+        passwordBox.forceActiveFocus()
+    }
+
     padding: 40
 
     contentItem: Item {
@@ -202,7 +231,6 @@ OnboardingPage {
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.keycardState
-                tryToSetPinFunction: root.tryToSetPinFunction
                 keycardRemainingPinAttempts: root.keycardRemainingPinAttempts
                 keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()

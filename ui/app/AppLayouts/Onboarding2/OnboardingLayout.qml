@@ -17,10 +17,6 @@ Page {
 
     required property OnboardingStore onboardingStore
 
-    // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
-    // NB: this also decides whether we show the Login screen (if not empty), or the Onboarding
-    required property var loginAccountsModel
-
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
     property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
     signal biometricsRequested() // emitted when the user wants to try the biometrics prompt again
@@ -33,7 +29,7 @@ Page {
 
     signal shareUsageDataRequested(bool enabled)
 
-    // flow: Onboarding.SecondaryFlow
+    // flow: Onboarding.OnboardingFlow
     signal finished(int flow, var data)
 
     // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;
@@ -153,7 +149,7 @@ Page {
 
         stackView: stack
 
-        loginAccountsModel: root.loginAccountsModel
+        loginAccountsModel: root.onboardingStore.loginAccountsModel
 
         keycardState: root.onboardingStore.keycardState
         pinSettingState: root.onboardingStore.pinSettingState
@@ -220,22 +216,10 @@ Page {
         function onAccountLoginError(error: string, wrongPassword: bool) {
             const loginScreen = onboardingFlow.loginScreen
 
-            if (!error || !loginScreen || loginScreen.currentProfileIsKeycard)
+            if (!loginScreen)
                 return
 
-            let validationError
-            let detailedError
-
-            // SQLITE_NOTADB: "file is not a database"
-            if (error.includes("file is not a database") || wrongPassword) {
-                validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
-                detailedError = ""
-            } else {
-                validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
-                detailedError = error
-            }
-
-            loginScreen.setError(validationError, detailedError)
+            loginScreen.setAccountLoginError(error, wrongPassword)
         }
 
         // biometrics
