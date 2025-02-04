@@ -98,6 +98,7 @@ add_library(StatusQ SHARED
         include/StatusQ/functionaggregator.h
         include/StatusQ/genericvalidator.h
         include/StatusQ/groupingmodel.h
+        include/StatusQ/keychain.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelcount.h
         include/StatusQ/modelentry.h
@@ -134,6 +135,7 @@ add_library(StatusQ SHARED
         src/functionaggregator.cpp
         src/genericvalidator.cpp
         src/groupingmodel.cpp
+        src/keychain.cpp
         src/leftjoinmodel.cpp
         src/modelcount.cpp
         src/modelentry.cpp
@@ -175,10 +177,18 @@ target_compile_features(StatusQ PRIVATE cxx_std_17)
 if (APPLE)
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
-    target_sources(StatusQ PRIVATE src/statuswindow_osx.mm)
+    find_library(Security Security)
+    find_library(LocalAuthentication LocalAuthentication)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation} ${Security} ${LocalAuthentication})
+    target_sources(StatusQ PRIVATE
+        src/statuswindow_osx.mm
+        src/keychain_osx.mm
+    )
 else ()
-    target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
+    target_sources(StatusQ PRIVATE
+        src/statuswindow_other.cpp
+        src/keychain_other.cpp
+    )
 endif ()
 
 target_link_libraries(StatusQ PRIVATE

@@ -23,6 +23,12 @@ Dialog {
     // biometrics signals
     signal obtainingPasswordSuccess(string password)
     signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
+    signal cancelled()
+
+    function cancel() {
+        close()
+        cancelled()
+    }
 
     width: 300
     margins: 40
@@ -51,21 +57,10 @@ Dialog {
         }
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            type: StatusBaseButton.Type.Primary
-            focusPolicy: Qt.NoFocus
-            text: "Use password..."
-            onClicked: {
-                root.close()
-                root.obtainingPasswordError("Password required instead of touch ID.", Constants.keychain.errorType.keychain, false)
-            }
-        }
-        StatusButton {
-            Layout.alignment: Qt.AlignHCenter
             focusPolicy: Qt.NoFocus
             text: "Cancel"
             onClicked: {
-                root.close()
-                root.obtainingPasswordError("Touch ID canceled, try entering password instead.", Constants.keychain.errorType.keychain, false)
+                root.cancel()
             }
         }
         Item { Layout.preferredHeight: 20 }
@@ -78,17 +73,6 @@ Dialog {
             onClicked: {
                 root.close()
                 root.obtainingPasswordSuccess(root.selectedProfileIsKeycard ? root.pin : root.password)
-            }
-        }
-        StatusButton {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            type: StatusBaseButton.Type.Danger
-            focusPolicy: Qt.NoFocus
-            text: "Simulate wrong fingerprint"
-            onClicked: {
-                root.close()
-                root.obtainingPasswordError("Wrong fingerprint provided.", Constants.keychain.errorType.keychain, true)
             }
         }
     }

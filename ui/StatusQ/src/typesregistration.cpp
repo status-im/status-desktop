@@ -11,6 +11,7 @@
 #include "StatusQ/functionaggregator.h"
 #include "StatusQ/genericvalidator.h"
 #include "StatusQ/groupingmodel.h"
+#include "StatusQ/keychain.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelcount.h"
 #include "StatusQ/modelentry.h"
@@ -79,6 +80,8 @@ void registerStatusQTypes() {
 
     qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
     qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
+    qmlRegisterType<Keychain>("StatusQ", 0, 1, "Keychain");
+    qRegisterMetaType<Keychain::Status>();
 
     qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
                                            "ModelCount", "This is attached type, cannot be created directly.");
