@@ -251,7 +251,7 @@ method onAccountLoginError*[T](self: Module[T], error: string) =
   
 method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settings: SettingsDto) =
   if err.len != 0:
-    self.onAccountLoginError(error)
+    self.onAccountLoginError(err)
     return
 
   self.controller.setLoggedInAccount(account)
