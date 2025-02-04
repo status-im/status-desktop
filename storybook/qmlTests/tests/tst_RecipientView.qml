@@ -69,6 +69,7 @@ Item {
             compare(view.model.ModelCount.count, 0)
             compare(view.searchPattern, "")
             compare(view.selectedRecipientAddress, "")
+            verify(view.interactive)
             compare(view.item.objectName, "RecipientView_SendRecipientInput")
         }
 
@@ -139,17 +140,26 @@ Item {
         }
 
         function test_prefillSelectedRecipientAddress() {
-            const view = createTemporaryObject(testComponent, root)
+            const view = createTemporaryObject(testComponent, root, { selectedRecipientAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240" })
             verify(view)
-
-            compare(view.selectedRecipientAddress, "")
-            compare(view.item.objectName, "RecipientView_SendRecipientInput")
-
-            view.selectedRecipientAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
 
             compare(view.selectedRecipientAddress, "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
             compare(view.item.objectName, "RecipientView_RecipientViewDelegate")
             compare(view.item.address, "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
+        }
+
+        function test_interactive() {
+            const view = createTemporaryObject(testComponent, root, { selectedRecipientAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0Fd864dd", interactive: false })
+            verify(view)
+
+            const clearButton = findChild(view, "RecipientView_clearButton")
+            verify(clearButton)
+
+            verify(!view.interactive)
+            verify(!clearButton.visible)
+
+            view.interactive = true
+            verify(clearButton.visible)
         }
     }
 }

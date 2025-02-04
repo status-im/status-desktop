@@ -157,7 +157,7 @@ RowLayout {
         multiSelection: false
         showSelectionIndicator: false
         showTitle: false
-        selectionAllowed: root.interactive
+        interactive: root.interactive
 
         Binding on selection {
             value: [root.selectedChainId]

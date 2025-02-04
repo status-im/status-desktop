@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtTest 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 
@@ -868,10 +869,10 @@ Item {
             verify(!!recipientsPanel)
 
             verify(!stickyHeaderTokenSelector.enabled)
-            verify(!stickyHeaderNetworkFilter.selectionAllowed)
+            verify(!stickyHeaderNetworkFilter.interactive)
 
             verify(!tokenSelector.enabled)
-            verify(!networkFilter.selectionAllowed)
+            verify(!networkFilter.interactive)
 
             verify(!amountToSend.interactive)
 

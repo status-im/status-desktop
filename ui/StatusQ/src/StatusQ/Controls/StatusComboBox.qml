@@ -23,6 +23,8 @@ Item {
     readonly property alias currentValue: comboBox.currentValue
     readonly property alias currentText: comboBox.currentText
 
+    /** Property disable combobox same as enabled, but doesn't change opacity of whole StatusComboBox  **/
+    property bool interactive: true
     property alias label: labelItem.text
     property alias validationError: validationErrorItem.text
     property bool forceError: false
@@ -100,7 +102,7 @@ Item {
             Layout.fillHeight: true
             Layout.topMargin: labelItem.visible ? 7 : 0
 
-            enabled: root.enabled
+            enabled: root.enabled && root.interactive
 
             font.family: Theme.baseFont.name
             font.pixelSize: root.size === StatusComboBox.Size.Large ? Theme.secondaryTextFontSize : 13
