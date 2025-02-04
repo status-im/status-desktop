@@ -17,7 +17,7 @@ import utils 1.0
 KeycardBasePage {
     id: root
 
-    required property int keycardPinInfoPageDelay
+    property int keycardPinInfoPageDelay: 1000
     required property int pinSettingState
     required property int authorizationState
 

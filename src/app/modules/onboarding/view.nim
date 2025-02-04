@@ -25,7 +25,7 @@ QtObject:
   ### QtSignals ###
 
   proc appLoaded*(self: View) {.signal.}
-  proc accountLoginError*(self: View) {.signal.}
+  proc accountLoginError*(self: View, error: string, wrongPassword: bool) {.signal.}
 
   ### QtProperties ###
 

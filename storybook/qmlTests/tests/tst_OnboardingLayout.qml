@@ -1209,9 +1209,9 @@ Item {
             // PAGE 2: Keycard lost page
             page = getCurrentPage(stack, KeycardLostPage)
 
-            const startUsingWithoutKeycardButton = findChild(page, "createReplacementButton")
-            verify(!!startUsingWithoutKeycardButton)
-            mouseClick(startUsingWithoutKeycardButton)
+            const createReplacementButton = findChild(page, "createReplacementButton")
+            verify(!!createReplacementButton)
+            mouseClick(createReplacementButton)
 
             // PAGE 3: Keycard intro
             page = getCurrentPage(stack, KeycardIntroPage)
