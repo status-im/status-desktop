@@ -5,7 +5,8 @@ FROM ubuntu:20.04 AS qt-install
 
 ARG QT_VERSION
 
-RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends sudo python3 python3-pip \
+RUN apt update && apt full-upgrade -y \
+ && apt install -y --no-install-recommends sudo python3 python3-pip python3-dev build-essential \
  && apt-get -qq clean
 
 RUN chmod -R 777 /opt
