@@ -15,7 +15,6 @@ OnboardingPage {
 
     required property var seedWords
 
-    signal mnemonicWasShown()
     signal backupSeedphraseConfirmed()
 
     QtObject {
@@ -103,7 +102,6 @@ OnboardingPage {
                     visible: !d.seedphraseRevealed
                     onClicked: {
                         d.seedphraseRevealed = true
-                        root.mnemonicWasShown()
                     }
                 }
             }

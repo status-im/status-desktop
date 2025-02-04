@@ -58,8 +58,11 @@ SplitView {
             id: store
 
             property int keycardState: Onboarding.KeycardState.NoPCSCService
-            property int addKeyPairState: Onboarding.AddKeyPairState.InProgress
-            property int syncState: Onboarding.SyncState.InProgress
+            property int addKeyPairState: Onboarding.ProgressState.Idle
+            property int pinSettingState: Onboarding.ProgressState.Idle
+            property int authorizationState: Onboarding.ProgressState.Idle
+            property int restoreKeysExportState: Onboarding.ProgressState.Idle
+            property int syncState: Onboarding.ProgressState.Idle
 
             property int keycardRemainingPinAttempts: 2
             property int keycardRemainingPukAttempts: 3
@@ -89,9 +92,16 @@ SplitView {
                 return valid
             }
 
-            function startKeypairTransfer() { // -> void
-                logs.logEvent("OnboardingStore.startKeypairTransfer")
-                addKeyPairState = Onboarding.AddKeyPairState.InProgress
+            function authorize(pin: string) {
+                logs.logEvent("OnboardingStore.authorize", ["pin"], arguments)
+            }
+
+            function loadMnemonic(mnemonic) { // -> void
+                logs.logEvent("OnboardingStore.loadMnemonic", ["mnemonic"], arguments)
+            }
+
+            function exportRecoverKeys() { // -> void
+                logs.logEvent("OnboardingStore.exportRecoverKeys")
             }
 
             // password
@@ -108,15 +118,11 @@ SplitView {
 
             function getMnemonic() { // -> string
                 logs.logEvent("OnboardingStore.getMnemonic()")
-                return mockDriver.seedWords.join(" ")
+                return JSON.stringify(mockDriver.seedWords)
             }
 
             function mnemonicWasShown() { // -> void
                 logs.logEvent("OnboardingStore.mnemonicWasShown()")
-            }
-
-            function removeMnemonic() { // -> void
-                logs.logEvent("OnboardingStore.removeMnemonic()")
             }
 
             function validateLocalPairingConnectionString(connectionString: string) { // -> bool
@@ -477,7 +483,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("AddKeyPairState")
+                        model: Onboarding.getModelFromEnum("ProgressState")
 
                         RoundButton {
                             text: modelData.name
@@ -498,7 +504,6 @@ SplitView {
                 }
 
                 Flow {
-                    Layout.fillWidth: true
                     spacing: 2
 
                     ButtonGroup {
@@ -506,7 +511,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("SyncState")
+                        model: Onboarding.getModelFromEnum("ProgressState")
 
                         RoundButton {
                             text: modelData.name
@@ -516,6 +521,90 @@ SplitView {
                             ButtonGroup.group: syncStateButtonGroup
 
                             onClicked: store.syncState = modelData.value
+                        }
+                    }
+                }
+
+                ToolSeparator {}
+
+                Label {
+                    text: "Pin Setting state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: pinSettingStateButtonGroup
+                    }
+
+                    Repeater {
+                        model: Onboarding.getModelFromEnum("ProgressState")
+
+                        RoundButton {
+                            text: modelData.name
+                            checkable: true
+                            checked: store.pinSettingState === modelData.value
+
+                            ButtonGroup.group: pinSettingStateButtonGroup
+
+                            onClicked: store.pinSettingState = modelData.value
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                Label {
+                    text: "Authorization state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: authorizationStateButtonGroup
+                    }
+
+                    Repeater {
+                        model: Onboarding.getModelFromEnum("ProgressState")
+
+                        RoundButton {
+                            text: modelData.name
+                            checkable: true
+                            checked: store.authorizationState === modelData.value
+
+                            ButtonGroup.group: authorizationStateButtonGroup
+
+                            onClicked: store.authorizationState = modelData.value
+                        }
+                    }
+                }
+
+                ToolSeparator {}
+
+                Label {
+                    text: "Restore Keys Export state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: restoreKeysExportStateButtonGroup
+                    }
+
+                    Repeater {
+                        model: Onboarding.getModelFromEnum("ProgressState")
+
+                        RoundButton {
+                            text: modelData.name
+                            checkable: true
+                            checked: store.restoreKeysExportState === modelData.value
+
+                            ButtonGroup.group: restoreKeysExportStateButtonGroup
+
+                            onClicked: store.restoreKeysExportState = modelData.value
                         }
                     }
                 }

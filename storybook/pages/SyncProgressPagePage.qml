@@ -15,10 +15,10 @@ Item {
         syncState: ctrlState.currentValue
         onRestartSyncRequested: {
             console.warn("!!! RESTART SYNC REQUESTED")
-            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.SyncState.InProgress)
+            ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.ProgressState.InProgress)
             Backpressure.debounce(root, 2000, function() {
                 console.warn("!!! SIMULATION: SUCCESS")
-                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.SyncState.Success)
+                ctrlState.currentIndex = ctrlState.indexOfValue(Onboarding.ProgressState.Success)
             })()
         }
         onLoginToAppRequested: console.warn("!!! LOGIN TO APP REQUESTED")
@@ -32,7 +32,7 @@ Item {
         width: 300
         textRole: "name"
         valueRole: "value"
-        model: Onboarding.getModelFromEnum("SyncState")
+        model: Onboarding.getModelFromEnum("ProgressState")
     }
 }
 

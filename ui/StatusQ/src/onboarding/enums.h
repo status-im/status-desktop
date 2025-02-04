@@ -38,7 +38,6 @@ public:
 
         CreateProfileWithPassword,
         CreateProfileWithSeedphrase,
-        CreateProfileWithKeycard,
         CreateProfileWithKeycardNewSeedphrase,
         CreateProfileWithKeycardExistingSeedphrase,
 
@@ -55,6 +54,7 @@ public:
         Keycard,
     };
 
+    // NOTE: Keep in sync with KeycardState in src/app_service/service/keycardV2/dto.nim
     enum class KeycardState {
         NoPCSCService,
         PluginReader,
@@ -66,22 +66,18 @@ public:
         MaxPairingSlotsReached,
         BlockedPIN, // PIN remaining attempts == 0
         BlockedPUK, // PUK remaining attempts == 0
+        FactoryResetting,
         // exit states
         NotEmpty,
-        Empty
+        Empty,
+        Authorized
     };
 
-    enum class AddKeyPairState {
+    enum class ProgressState {
+        Idle,
         InProgress,
         Success,
         Failed
-    };
-
-    enum class SyncState {
-        Idle,
-        InProgress,
-        Failed,
-        Success
     };
 
 private:
@@ -89,6 +85,5 @@ private:
     Q_ENUM(SecondaryFlow)
     Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
-    Q_ENUM(AddKeyPairState)
-    Q_ENUM(SyncState)
+    Q_ENUM(ProgressState)
 };

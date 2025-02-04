@@ -7,15 +7,23 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 import utils 1.0
 
 KeycardBasePage {
     id: root
 
+    property int keycardPinInfoPageDelay: 1000
+    required property int pinSettingState
+    required property int authorizationState
+
     signal keycardPinCreated(string pin)
+    signal keycardPinSuccessfullySet()
+    signal keycardAuthorized()
 
     image.source: Theme.png("onboarding/keycard/reading")
 
@@ -53,9 +61,15 @@ KeycardBasePage {
         StatusBaseText {
             id: errorText
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("PINs don’t match")
+            text: qsTr("PINs don't match")
             font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
+            visible: false
+        },
+        StatusLoadingIndicator {
+            id: loadingIndicator
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: Theme.halfPadding
             visible: false
         }
     ]
@@ -84,12 +98,24 @@ KeycardBasePage {
             }
         },
         State {
-            name: "success"
-            extend: "repeating"
-            when: !!d.pin && !!d.pin2 && d.pin === d.pin2
+            name: "error"
+            when: root.pinSettingState === Onboarding.ProgressState.Failed || root.authorizationState === Onboarding.ProgressState.Failed
+            PropertyChanges {
+                target: errorText
+                visible: true
+                text: qsTr("Error setting pin")
+            }
             PropertyChanges {
                 target: root
-                title: qsTr("Keycard PIN set")
+                image.source: Theme.png("onboarding/keycard/error")
+            }
+        },
+        State {
+            name: "authorized"
+            when: root.authorizationState === Onboarding.ProgressState.Success
+            PropertyChanges {
+                target: root
+                title: qsTr("PIN set")
             }
             PropertyChanges {
                 target: pinInput
@@ -101,8 +127,59 @@ KeycardBasePage {
             }
             StateChangeScript {
                 script: {
-                    pinInput.setPin(d.pin)
-                    root.keycardPinCreated(d.pin)
+                    Backpressure.debounce(root, keycardPinInfoPageDelay, function() {
+                        root.keycardAuthorized()
+                    })()
+                }
+            }
+        },
+        State {
+            name: "success"
+            when: root.pinSettingState === Onboarding.ProgressState.Success
+            PropertyChanges {
+                target: root
+                title: qsTr("PIN set")
+            }
+            PropertyChanges {
+                target: pinInput
+                enabled: false
+            }
+            PropertyChanges {
+                target: root
+                image.source: Theme.png("onboarding/keycard/success")
+            }
+            StateChangeScript {
+                script: {
+                    root.keycardPinSuccessfullySet()
+                }
+            }
+        },
+        State {
+            name: "settingPin"
+            extend: "repeating"
+            when: !!d.pin && !!d.pin2 && d.pin === d.pin2 && (root.pinSettingState === Onboarding.ProgressState.Idle || root.pinSettingState === Onboarding.ProgressState.InProgress)
+            PropertyChanges {
+                target: root
+                title: qsTr("Setting Keycard PIN")
+            }
+            PropertyChanges {
+                target: pinInput
+                enabled: false
+            }
+            PropertyChanges {
+                target: loadingIndicator
+                visible: true
+            }
+            PropertyChanges {
+                target: root
+                image.source: Theme.png("onboarding/keycard/success")
+            }
+            StateChangeScript {
+                script: {
+                    Backpressure.debounce(root, keycardPinInfoPageDelay, function() {
+                        pinInput.setPin(d.pin)
+                        root.keycardPinCreated(d.pin)
+                    })()
                 }
             }
         },

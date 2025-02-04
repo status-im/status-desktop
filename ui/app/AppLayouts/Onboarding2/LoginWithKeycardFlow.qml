@@ -13,7 +13,8 @@ SQUtils.QObject {
     required property StackView stackView
 
     required property int keycardState
-    required property var tryToSetPinFunction
+    required property int authorizationState
+    required property int restoreKeysExportState
     required property int remainingPinAttempts
     required property int remainingPukAttempts
 
@@ -21,12 +22,15 @@ SQUtils.QObject {
 
     property bool displayKeycardPromoBanner
 
-    signal keycardPinEntered(string pin)
+    signal keycardPinCreated(string pin)
+    signal seedphraseSubmitted(string seedphrase)
+    signal authorizationRequested(string pin)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
     signal unblockWithSeedphraseRequested
     signal unblockWithPukRequested
     signal createProfileWithEmptyKeycardRequested
+    signal exportKeysRequested
     signal finished
 
     function init() {
@@ -86,20 +90,50 @@ SQUtils.QObject {
         id: keycardEnterPinPage
 
         KeycardEnterPinPage {
-            tryToSetPinFunction: root.tryToSetPinFunction
+            authorizationState: root.authorizationState
+            restoreKeysExportState: root.restoreKeysExportState
+            onAuthorizationRequested: root.authorizationRequested(pin)
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-            onKeycardPinEntered: (pin) => {
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinEntered(pin)
-                    root.finished()
-                })()
-            }
+            onExportKeysRequested: root.exportKeysRequested()
+            onExportKeysDone: root.finished()
 
             onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
+        }
+    }
+
+    Component {
+        id: seedphrasePage
+
+        SeedphrasePage {
+            title: qsTr("Unblock Keycard using the recovery phrase")
+            btnContinueText: qsTr("Unblock Keycard")
+            authorizationState: root.authorizationState
+            isSeedPhraseValid: root.isSeedPhraseValid
+            onSeedphraseSubmitted: (seedphrase) => {
+                root.seedphraseSubmitted(seedphrase)
+                root.stackView.push(keycardCreatePinPage)
+            }
+        }
+    }
+
+    Component {
+        id: keycardCreatePinPage
+
+        KeycardCreatePinPage {
+            id: createPinPage
+
+            onKeycardPinCreated: (pin) => {
+                createPinPage.loading = true
+                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
+                    root.keycardPinCreated(pin)
+                    root.finished()
+                })()
+            }
         }
     }
 }

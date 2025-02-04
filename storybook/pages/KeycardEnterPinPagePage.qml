@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 Item {
     id: root
@@ -12,15 +13,13 @@ Item {
     KeycardEnterPinPage {
         id: page
         anchors.fill: parent
-        tryToSetPinFunction: (pin) => {
-                                 const valid = pin === root.existingPin
-                                 if (!valid)
-                                     remainingAttempts--
-                                 return valid
-                             }
+
         remainingAttempts: 3
         unblockWithPukAvailable: ctrlUnblockWithPUK.checked
-        onKeycardPinEntered: (pin) => {
+        keycardPinInfoPageDelay: 1000
+        authorizationState: Onboarding.ProgressState.Idle
+        restoreKeysExportState: Onboarding.ProgressState.Idle
+        onAuthorizationRequested: (pin) => {
                                  console.warn("!!! PIN:", pin)
                                  console.warn("!!! RESETTING FLOW")
                                  state = "entering"

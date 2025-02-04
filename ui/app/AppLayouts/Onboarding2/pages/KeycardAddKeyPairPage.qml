@@ -13,7 +13,7 @@ import AppLayouts.Onboarding.enums 1.0
 OnboardingPage {
     id: root
 
-    required property int addKeyPairState // Onboarding.AddKeyPairState.xxx
+    required property int addKeyPairState // Onboarding.ProgressState.xxx
 
     signal keypairAddContinueRequested()
     signal keypairAddTryAgainRequested()
@@ -23,7 +23,7 @@ OnboardingPage {
     states: [
         State {
             name: "inprogress"
-            when: root.addKeyPairState === Onboarding.AddKeyPairState.InProgress
+            when: root.addKeyPairState === Onboarding.ProgressState.InProgress
             PropertyChanges {
                 target: root
                 title: qsTr("Adding key pair to Keycard")
@@ -44,7 +44,7 @@ OnboardingPage {
         },
         State {
             name: "success"
-            when: root.addKeyPairState === Onboarding.AddKeyPairState.Success
+            when: root.addKeyPairState === Onboarding.ProgressState.Success
             PropertyChanges {
                 target: root
                 title: qsTr("Key pair added to Keycard")
@@ -68,7 +68,7 @@ OnboardingPage {
         },
         State {
             name: "failed"
-            when: root.addKeyPairState === Onboarding.AddKeyPairState.Failed
+            when: root.addKeyPairState === Onboarding.ProgressState.Failed
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Failed to add key pair to Keycard") + "</font>"

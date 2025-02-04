@@ -1,12 +1,15 @@
 import QtQuick 2.15
 
 import AppLayouts.Onboarding2.pages 1.0
+import AppLayouts.Onboarding.enums 1.0
 
 Item {
     id: root
 
     KeycardCreatePinPage {
         anchors.fill: parent
+        pinSettingState: Onboarding.ProgressState.Idle
+        authorizationState: Onboarding.ProgressState.Idle
         onKeycardPinCreated: (pin) => console.warn("!!! PIN CREATED:", pin)
     }
 }

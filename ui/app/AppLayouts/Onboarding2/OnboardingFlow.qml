@@ -17,9 +17,12 @@ SQUtils.QObject {
     required property var loginAccountsModel
 
     required property int keycardState
+    required property int pinSettingState
+    required property int authorizationState
+    required property int restoreKeysExportState
     required property int addKeyPairState
     required property int syncState
-    required property var seedWords
+    required property var getSeedWords
     required property int remainingPinAttempts
     required property int remainingPukAttempts
 
@@ -41,7 +44,6 @@ SQUtils.QObject {
     signal biometricsRequested
     signal loginRequested(string keyUid, int method, var data)
     signal keycardPinCreated(string pin)
-    signal keycardPinEntered(string pin)
     signal enableBiometricsRequested(bool enable)
     signal shareUsageDataRequested(bool enabled)
     signal syncProceedWithConnectionString(string connectionString)
@@ -49,10 +51,9 @@ SQUtils.QObject {
     signal setPasswordRequested(string password)
     signal reloadKeycardRequested
     signal keycardFactoryResetRequested
-    signal keyPairTransferRequested
-
-    signal mnemonicWasShown()
-    signal mnemonicRemovalRequested()
+    signal exportKeysRequested
+    signal loadMnemonicRequested
+    signal authorizationRequested(string pin)
 
     signal linkActivated(string link)
 
@@ -234,8 +235,10 @@ SQUtils.QObject {
 
         stackView: root.stackView
         keycardState: root.keycardState
+        pinSettingState: root.pinSettingState
+        authorizationState: root.authorizationState
         addKeyPairState: root.addKeyPairState
-        seedWords: root.seedWords
+        getSeedWords: root.getSeedWords
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         isSeedPhraseValid: root.isSeedPhraseValid
 
@@ -243,10 +246,11 @@ SQUtils.QObject {
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-        onKeyPairTransferRequested: root.keyPairTransferRequested()
+        onLoadMnemonicRequested: root.loadMnemonicRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
+        onKeypairAddTryAgainRequested: root.loadMnemonicRequested()
+        onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
 
         onCreateProfileWithoutKeycardRequested: {
             const page = stackView.find(
@@ -254,9 +258,6 @@ SQUtils.QObject {
 
             stackView.replace(page, createProfilePage, StackView.PopTransition)
         }
-
-        onMnemonicWasShown: root.mnemonicWasShown()
-        onMnemonicRemovalRequested: root.mnemonicRemovalRequested()
 
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
@@ -295,17 +296,21 @@ SQUtils.QObject {
 
         stackView: root.stackView
         keycardState: root.keycardState
+        authorizationState: root.authorizationState
+        restoreKeysExportState: root.restoreKeysExportState
         remainingPinAttempts: root.remainingPinAttempts
         remainingPukAttempts: root.remainingPukAttempts
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
-        tryToSetPinFunction: root.tryToSetPinFunction
+        onAuthorizationRequested: root.authorizationRequested(pin)
+
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onKeycardPinEntered: (pin) => root.keycardPinEntered(pin)
+        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-        onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
+        onExportKeysRequested: root.exportKeysRequested()
         onUnblockWithPukRequested: unblockWithPukFlow.init()
 
         onFinished: {
@@ -372,6 +377,8 @@ SQUtils.QObject {
         stackView: root.stackView
 
         keycardState: root.keycardState
+        pinSettingState: root.pinSettingState
+        authorizationState: root.authorizationState
         addKeyPairState: root.addKeyPairState
 
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
@@ -381,10 +388,10 @@ SQUtils.QObject {
 
         onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-        onKeyPairTransferRequested: root.keyPairTransferRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        onKeypairAddTryAgainRequested: root.keyPairTransferRequested() // FIXME?
+        onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
+        onKeypairAddTryAgainRequested: root.loadMnemonicRequested()
 
         onCreateProfileWithoutKeycardRequested: {
             const page = stackView.find(
