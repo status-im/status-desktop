@@ -1,0 +1,7 @@
+[submodule "vendors/status-desktop"]
+	path = vendors/status-desktop
+	url = https://github.com/alexjba/status-desktop.git
+	branch = origin/chore/build-apple
+[submodule "vendors/OpenSSL-for-iPhone"]
+	path = vendors/OpenSSL-for-iPhone
+	url = https://github.com/x2on/OpenSSL-for-iPhone.git
