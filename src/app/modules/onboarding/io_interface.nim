@@ -89,5 +89,6 @@ type
   DelegateInterface* = concept c
     c.onboardingDidLoad()
     c.appReady()
+    c.userLoggedIn()
     c.finishAppLoading()
     c.userLoggedIn()
