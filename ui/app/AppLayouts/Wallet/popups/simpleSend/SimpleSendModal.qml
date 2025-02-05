@@ -637,6 +637,9 @@ StatusDialog {
         estimatedTime: root.estimatedTime
         estimatedFees: root.estimatedFiatFees
 
+        blurSource: scrollView.contentItem
+        blurSourceRect: Qt.rect(0, scrollView.height, width, height)
+
         error: d.errNotEnoughGas
         errorTags: amountToSend.markAsInvalid ||
                    !!root.routerErrorCode ||

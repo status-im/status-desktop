@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 import QtGraphicalEffects 1.15
@@ -6,42 +7,49 @@ import QtGraphicalEffects 1.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Rectangle {
+Control {
     id: root
 
     property ObjectModel leftButtons
     property ObjectModel rightButtons
     property ObjectModel errorTags
-    property int spacing: 5
+    property color color: Theme.palette.statusModal.backgroundColor
     property bool dropShadowEnabled
 
-    color: Theme.palette.statusModal.backgroundColor
-    radius: 8
+    spacing: 5
+    padding: 16
+    implicitHeight: layout.implicitHeight + padding * 2
+    implicitWidth: layout.implicitWidth + padding * 2
 
-    implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
-    implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
+    background: Rectangle {
+        color: root.color
+        radius: 8
 
-    // cover for the top rounded corners
-    Rectangle {
-        width: parent.width
-        height: parent.radius
-        anchors.top: parent.top
-        color: parent.color
-    }
-
-    StatusDialogDivider {
-        anchors.top: parent.top
-        width: parent.width
-        visible: !root.dropShadowEnabled
-    }
-
-    ColumnLayout {
-        id: layout
-
-        anchors {
-            fill: parent
-            margins: 16
+        layer.enabled: root.dropShadowEnabled
+        layer.effect: DropShadow {
+            horizontalOffset: 0
+            verticalOffset: -2
+            samples: 37
+            color: Theme.palette.dropShadow
         }
+
+        // cover for the top rounded corners
+        Rectangle {
+            width: parent.width
+            height: parent.radius
+            anchors.top: parent.top
+            color: parent.color
+        }
+
+        StatusDialogDivider {
+            anchors.top: parent.top
+            width: parent.width
+            visible: !root.dropShadowEnabled
+        }
+    }
+
+    contentItem: ColumnLayout {
+        id: layout
 
         spacing: 8
 
@@ -90,13 +98,5 @@ Rectangle {
                 }
             }
         }
-    }
-
-    layer.enabled: root.dropShadowEnabled
-    layer.effect: DropShadow {
-        horizontalOffset: 0
-        verticalOffset: -2
-        samples: 37
-        color: Theme.palette.dropShadow
     }
 }
