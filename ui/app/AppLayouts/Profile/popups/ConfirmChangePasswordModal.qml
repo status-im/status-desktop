@@ -48,7 +48,6 @@ StatusDialog {
     }
 
     width: 480
-    height: 546
     closePolicy: d.passwordChanged || d.dbEncryptionInProgress
                      ? Popup.NoAutoClose
                      : Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -161,12 +160,11 @@ StatusDialog {
     }
 
     footer: StatusDialogFooter {
-        id: footer
         leftButtons: ObjectModel {
             StatusFlatButton {
                 text: qsTr("Cancel")
                 visible: !d.dbEncryptionInProgress && !d.passwordChanged
-                onClicked: { root.close(); }
+                onClicked: root.close()
             }
         }
         rightButtons: ObjectModel {

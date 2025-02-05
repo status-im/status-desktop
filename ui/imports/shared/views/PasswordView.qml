@@ -13,7 +13,10 @@ import StatusQ.Popups 0.1
 ColumnLayout {
     id: root
 
-    readonly property bool ready: newPswInput.text.length >= Constants.minPasswordLength && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
+    readonly property bool ready: !d.isTooShort && // min length OK
+                                  !d.isTooLong && // max length OK
+                                  newPswInput.text === confirmPswInput.text && // passwords matching
+                                  errorTxt.text === "" // no errors
 
     property bool createNewPsw: true
     property string title: createNewPsw ? qsTr("Create a password") : qsTr("Change your password")
@@ -27,7 +30,7 @@ ColumnLayout {
         return qsTr("Change password used to unlock Status on this device & sign transactions.")
     }
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
-    property string strengthenText: qsTr("Minimum %n character(s). To strengthen your password consider including:", "", Constants.minPasswordLength)
+    property string strengthenText: qsTr("Minimum %n character(s)", "", Constants.minPasswordLength)
     property bool highSizeIntro: false
 
     property int contentAlignment: Qt.AlignHCenter
@@ -51,7 +54,6 @@ ColumnLayout {
         currentPswInput.text = ""
         confirmPswInput.text = ""
         errorTxt.text = ""
-        strengthInditactor.strength = StatusPasswordStrengthIndicator.Strength.None
 
         // Update focus:
         if(root.createNewPsw)
@@ -92,11 +94,11 @@ ColumnLayout {
 
         function validateCharacterSet(text) {
             if(!(d.validatorRegexp).test(text)) {
-                errorTxt.text = d.validatorErrMessage
+                if (!!text)
+                    errorTxt.text = d.validatorErrMessage
                 return false
             }
-            if(text.length > Constants.maxPasswordLength) {
-                errorTxt.text = d.passTooLongErrMessage
+            if(isTooLong) {
                 return false
             }
 
@@ -128,10 +130,6 @@ ColumnLayout {
             // * Common password
             else if(isCommonPassword())
                 errorTxt.text = qsTr("Common password, shouldn't be used")
-
-            // * Password too short
-            else if(isTooShort())
-                errorTxt.text = qsTr("Minimum %n character(s)", "", Constants.minPasswordLength)
         }
 
         function isInPwndDatabase() {
@@ -144,11 +142,12 @@ ColumnLayout {
             return false
         }
 
-        function isTooShort() { return newPswInput.text.length < Constants.minPasswordLength }
+        readonly property bool isTooShort: newPswInput.text.length < Constants.minPasswordLength
+        readonly property bool isTooLong: newPswInput.text.length > Constants.maxPasswordLength
     }
 
     implicitWidth: 460
-    spacing: Theme.bigPadding
+    spacing: Theme.padding
     z: root.zFront
 
     StatusBaseText {
@@ -164,13 +163,12 @@ ColumnLayout {
         id: introColumn
 
         Layout.fillWidth: true
+        Layout.topMargin: -6
         Layout.alignment: root.contentAlignment
         spacing: 4
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.alignment: root.contentAlignment
-
             text: root.introText
             horizontalAlignment: root.contentAlignment
             font.pixelSize: root.highSizeIntro ? Theme.primaryTextFontSize : Theme.tertiaryTextFontSize
@@ -180,8 +178,6 @@ ColumnLayout {
 
         StatusBaseText {
             Layout.fillWidth: true
-            Layout.alignment: root.contentAlignment
-
             text: root.recoverText
             horizontalAlignment: root.contentAlignment
             font.pixelSize: root.highSizeIntro ? Theme.primaryTextFontSize : Theme.tertiaryTextFontSize
@@ -238,8 +234,22 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: root.contentAlignment
 
-        StatusBaseText {
-            text: qsTr("Choose password")
+        RowLayout {
+            StatusBaseText {
+                text: qsTr("Choose password")
+            }
+            Item { Layout.fillWidth: true }
+            StatusBaseText {
+                text: {
+                    if (d.isTooLong)
+                        return d.passTooLongErrMessage
+                    if (d.isTooShort)
+                        return root.strengthenText
+                    return "✓ " + root.strengthenText
+                }
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: d.isTooLong ? Theme.palette.dangerColor1 : d.isTooShort ? Theme.palette.baseColor1 : Theme.palette.successColor1
+            }
         }
 
         StatusPasswordInput {
@@ -253,12 +263,11 @@ ColumnLayout {
             placeholderText: qsTr("Type password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Theme.padding / 2
+            hasError: d.isTooLong
 
             onTextChanged: {
                 // Update password checkers
                 errorTxt.text = ""
-                // Update strength indicator:
-                strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
 
                 if(!d.validateCharacterSet(text)) return
 
@@ -285,8 +294,23 @@ ColumnLayout {
     }
 
     ColumnLayout {
-        StatusBaseText {
-            text: qsTr("Repeat password")
+        Layout.fillWidth: true
+        Layout.alignment: root.contentAlignment
+        Layout.topMargin: Theme.padding
+
+        RowLayout {
+            StatusBaseText {
+                text: qsTr("Repeat password")
+            }
+            Item { Layout.fillWidth: true }
+            StatusBaseText {
+                text: "✓ " + qsTr("Passwords match")
+                visible: !!newPswInput.text && !!confirmPswInput.text && // passwords non empty
+                         newPswInput.text === confirmPswInput.text && // passwords match
+                         !d.isTooShort && !d.isTooLong // first password w/o errors
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: Theme.palette.successColor1
+            }
         }
 
         StatusPasswordInput {
@@ -342,9 +366,10 @@ ColumnLayout {
     }
 
     StatusPasswordStrengthIndicator {
-        id: strengthInditactor
         Layout.fillWidth: true
-        value: Math.min(Constants.minPasswordLength, newPswInput.text.length)
+        Layout.topMargin: Theme.bigPadding
+        value: newPswInput.text.length
+        strength: d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
         from: 0
         to: Constants.minPasswordLength
     }
@@ -377,7 +402,9 @@ ColumnLayout {
 
     StatusBaseText {
         id: errorTxt
-        Layout.alignment: root.contentAlignment
+        Layout.fillWidth: true
+        elide: Text.ElideRight
+        horizontalAlignment: root.contentAlignment
         font.pixelSize: Theme.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
     }

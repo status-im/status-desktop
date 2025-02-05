@@ -53,7 +53,7 @@ StatusProgressBar {
        \li StatusPasswordStrengthIndicator.Strength.Great
        \endlist
     */
-    property int strength
+    required property int strength
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelVeryWeak
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.VeryWeak.
@@ -89,39 +89,32 @@ StatusProgressBar {
         Great // 5
     }
 
-    onValueChanged: if(value === 0) control.strength = StatusPasswordStrengthIndicator.Strength.None
-
     // Behavior:
     states: [
         // Strength states definition:
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.None
-            PropertyChanges { target: control; text: ""}
+            PropertyChanges { target: control; text: "" }
         },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.VeryWeak
-            PropertyChanges { target: control; fillColor : Theme.palette.dangerColor1}
-            PropertyChanges { target: control; text: labelVeryWeak}
+            PropertyChanges { target: control; fillColor: Theme.palette.dangerColor1; text: labelVeryWeak }
         },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.Weak
-            PropertyChanges { target: control; fillColor : Theme.palette.pinColor1}
-            PropertyChanges { target: control; text: labelWeak}
+            PropertyChanges { target: control; fillColor: Theme.palette.pinColor1; text: labelWeak }
         },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.SoSo
-            PropertyChanges { target: control; fillColor : Theme.palette.miscColor7}
-            PropertyChanges { target: control; text: labelSoso}
+            PropertyChanges { target: control; fillColor: Theme.palette.miscColor7; text: labelSoso }
         },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.Good
-            PropertyChanges { target: control; fillColor : Theme.palette.miscColor12}
-            PropertyChanges { target: control; text: labelGood}
+            PropertyChanges { target: control; fillColor: Theme.palette.miscColor12; text: labelGood }
         },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.Great
-            PropertyChanges { target: control; fillColor : Theme.palette.successColor1}
-            PropertyChanges { target: control; text: labelGreat}
+            PropertyChanges { target: control; fillColor: Theme.palette.successColor1; text: labelGreat}
         }
     ]
 }
