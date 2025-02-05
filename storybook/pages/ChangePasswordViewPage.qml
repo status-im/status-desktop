@@ -30,7 +30,7 @@ SplitView {
             contentWidth: 560
             sectionTitle: "Password"
 
-            passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length, 4)
+            passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length-1, 4)
 
             privacyStore: PrivacyStore {
                  property QtObject privacyModule: QtObject {
@@ -57,6 +57,10 @@ SplitView {
                         privacyModule.storeToKeychainSuccess()
                     }
                  }
+
+                 function changePassword(from, to) {
+                     privacyModule.passwordChanged(ctrlChangePassSuccess.checked, ctrlChangePassSuccess.checked ? "" : "Err changing password")
+                 }
             }
 
             property QtObject localAccountSettings: QtObject {
@@ -79,10 +83,15 @@ SplitView {
                 text: "Generate key chain error"
                 checked: false
             }
+            Switch {
+                id: ctrlChangePassSuccess
+                text: "Password change will succeed"
+                checked: true
+            }
         }
     }
 }
 
 // category: Views
-
+// status: good
 // https://www.figma.com/file/d0G7m8X6ELjQlFOEKQpn1g/Profile-WIP?type=design&node-id=11-115317&mode=design&t=mBpxe2bJKzpseHGN-0

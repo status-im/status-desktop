@@ -138,13 +138,8 @@ SettingsContentBase {
             title: qsTr("Change your password")
             titleSize: 17
             contentAlignment: Qt.AlignLeft
-
             highSizeIntro: true
-
             passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
-            onReadyChanged: {
-                submitBtn.enabled = ready
-            }
 
             onReturnPressed: {
                 if (ready) {
@@ -167,7 +162,6 @@ SettingsContentBase {
             }
             Item { Layout.fillWidth: true }
             StatusButton {
-                id: submitBtn
                 Layout.alignment: Qt.AlignRight
                 objectName: "changePasswordModalSubmitButton"
                 text: qsTr("Change password")
