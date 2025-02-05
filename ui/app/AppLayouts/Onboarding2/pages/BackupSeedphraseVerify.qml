@@ -64,8 +64,6 @@ OnboardingPage {
                     id: seedRepeater
                     model: root.seedWordsToVerify
                     delegate: RowLayout {
-                        id: seedWordDelegate
-
                         required property var modelData
                         required property int index
 
@@ -79,6 +77,7 @@ OnboardingPage {
                         StatusBaseText {
                             Layout.preferredWidth: 20
                             text: modelData.seedWordNumber
+                            horizontalAlignment: Text.AlignHCenter
                         }
                         SeedphraseVerifyInput {
                             readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx into the seedWords
@@ -97,6 +96,26 @@ OnboardingPage {
                                         nextItem.input.forceActiveFocus()
                                     }
                                 }
+                            }
+                        }
+                        StatusIcon {
+                            id: statusIcon
+                            width: 20
+                            height: 20
+                            icon: seedInput.text === "" ? "help" : seedInput.valid ? "checkmark-circle" : "warning"
+                            color: seedInput.text === "" ? Theme.palette.baseColor1 : seedInput.valid ? Theme.palette.successColor1
+                                                                                                      : Theme.palette.dangerColor1
+
+                            HoverHandler {
+                                id: hhandler
+                                cursorShape: hovered ? Qt.PointingHandCursor : undefined
+                            }
+                            TapHandler {
+                                onSingleTapped: seedInput.forceActiveFocus()
+                            }
+                            StatusToolTip {
+                                text: seedInput.text === "" ? qsTr("Empty") : seedInput.valid ? qsTr("Correct word") : qsTr("Wrong word")
+                                visible: hhandler.hovered && statusIcon.visible
                             }
                         }
                     }
