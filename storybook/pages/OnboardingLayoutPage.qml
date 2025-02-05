@@ -158,6 +158,7 @@ SplitView {
         isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
 
         onBiometricsRequested: (profileId) => biometricsPopup.open()
+        onDismissBiometricsRequested: biometricsPopup.close()
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))

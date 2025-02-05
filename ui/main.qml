@@ -420,7 +420,7 @@ StatusWindow {
     }
 
     Keychain {
-        service: Qt.application.name
+        service: "StatusDesktop"
 
         id: keychain
     }
@@ -445,7 +445,9 @@ StatusWindow {
 
             anchors.fill: parent
 
-            isBiometricsLogin: false
+            // FIXME, https://github.com/status-im/status-desktop/issues/17240
+            isBiometricsLogin: Qt.platform.os === Constants.mac
+
             networkChecksEnabled: true
             biometricsAvailable: Qt.platform.os === Constants.mac
 
@@ -459,6 +461,11 @@ StatusWindow {
                 const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
 
                 keychain.requestGetCredential(reason, profileId)
+            }
+
+            onDismissBiometricsRequested: {
+                if (keychain.loading)
+                    keychain.cancelActiveRequest()
             }
 
             onFinished: (flow, data) => {
