@@ -49,6 +49,7 @@ QRCODEGEN_LIB := $(LIB_PATH)/libqrcodegen.a
 PCRE_LIB := $(LIB_PATH)/libpcre.a
 QZXING_LIB := $(LIB_PATH)/libqzxing.a
 NIM_STATUS_CLIENT_LIB := $(LIB_PATH)/libnim_status_client.a
+STATUS_DESKTOP_RCC := $(STATUS_DESKTOP)/ui/resources.qrc
 
 # default rule
 default: makedir all
