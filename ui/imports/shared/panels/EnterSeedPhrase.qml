@@ -131,6 +131,12 @@ ColumnLayout {
                                      const pos = item.mnemonicIndex
                                      item.setWord(words[pos - 1])
                                  }
+
+                                 // position on the last field
+                                 const lastItem = grid.itemAtIndex(grid.count - 1)
+                                 if (!!lastItem)
+                                     lastItem.textEdit.input.edit.forceActiveFocus()
+
                                  d.checkMnemonicLength()
                              }, timeout)
             return true
@@ -274,8 +280,6 @@ ColumnLayout {
                 grid.currentIndex = index
             }
             onKeyPressed: {
-                grid.currentIndex = index
-
                 if (event.key === Qt.Key_Backtab) {
                     for (let i = 0; i < grid.count; i++) {
                         if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {

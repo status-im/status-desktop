@@ -2,7 +2,7 @@ CreateNewProfileFlow 1.0 CreateNewProfileFlow.qml
 KeycardCreateProfileFlow 1.0 KeycardCreateProfileFlow.qml
 KeycardCreateReplacementFlow 1.0 KeycardCreateReplacementFlow.qml
 KeycardFactoryResetFlow 1.0 KeycardFactoryResetFlow.qml
-LoginByKeycardFlow 1.0 LoginByKeycardFlow.qml
+LoginWithKeycardFlow 1.0 LoginWithKeycardFlow.qml
 LoginBySyncingFlow 1.0 LoginBySyncingFlow.qml
 OnboardingFlow 1.0 OnboardingFlow.qml
 OnboardingLayout 1.0 OnboardingLayout.qml
