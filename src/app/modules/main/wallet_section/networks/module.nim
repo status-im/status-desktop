@@ -7,7 +7,6 @@ import app_service/service/network/service as network_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/settings/service as settings_service
 import app_service/service/network/network_item
-import app_service/service/network/combined_network_item
 
 export io_interface
 
@@ -66,6 +65,10 @@ method toggleTestNetworksEnabled*(self: Module) =
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
 
+method setNetworkActive*(self: Module, chainId: int, active: bool) =
+  self.controller.setNetworkActive(chainId, active)
+  self.refreshNetworks()
+
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
 
@@ -83,6 +86,5 @@ method chainIdFetchedForUrl*(self: Module, url: string, chainId: int, success: b
 method getNetworksDataSource*(self: Module): NetworksDataSource =
   return (
     getFlatNetworksList: proc(): var seq[NetworkItem] = self.controller.getFlatNetworks(),
-    getCombinedNetworksList: proc(): var seq[CombinedNetworkItem] = self.controller.getCombinedNetworks(),
     getRpcProvidersList: proc(): var seq[RpcProviderItem] = self.controller.getRpcProviders(),
   )
