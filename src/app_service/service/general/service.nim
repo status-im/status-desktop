@@ -6,7 +6,12 @@ import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../constants as app_constants
 
+from app_service/service/activity_center/service import SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED, ActivityCenterNotificationsArgs
+from app_service/service/activity_center/dto/notification import parseActivityCenterNotifications
+
 import ../accounts/dto/accounts
+
+include async_tasks
 
 const TimerIntervalInMilliseconds = 1000 # 1 second
 
@@ -37,7 +42,12 @@ QtObject:
       createDir(app_constants.ROOTKEYSTOREDIR)
 
   proc startMessenger*(self: Service) =
-    discard status_general.startMessenger()
+    let response = status_general.startMessenger()
+    if response.result.contains("activityCenterNotifications"):
+      let notifications = JsonNode(%{"notifications": response.result["activityCenterNotifications"]})
+      let activityCenterNotificationsTuple = parseActivityCenterNotifications(notifications)
+      self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
 
   proc logout*(self: Service) =
     discard status_general.logout()
@@ -87,13 +97,28 @@ QtObject:
     else:
       self.runTimer()
 
-  proc fetchWakuMessages*(self: Service) =
+  proc asyncFetchWakuBackupMessages*(self: Service) =
+    let arg = AsyncFetchBackupWakuMessagesTaskArg(
+      tptr: asyncFetchWakuBackupMessagesTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onFetchWakuBackupMessagesDone",
+    )
+    self.threadpool.start(arg)
+
+  proc onFetchWakuBackupMessagesDone(self: Service, response: string) {.slot.} =
     try:
-      let response = status_mailservers.requestAllHistoricMessagesWithRetries(forceFetchingBackup = true)
-      if(not response.error.isNil):
-        error "could not set display name"
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      if rpcResponseObj["response"]["result"].contains("activityCenterNotifications"):
+        let notifications = JsonNode(%{"notifications": rpcResponseObj["response"]["result"]["activityCenterNotifications"]})
+        let activityCenterNotificationsTuple = parseActivityCenterNotifications(notifications)
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
     except Exception as e:
-      error "error: ", procName="fetchWakuMessages", errName = e.name, errDesription = e.msg
+      error "error:", procName="asyncFetchWakuBackupMessages", errName = e.name, errDesription = e.msg
 
   proc backupData*(self: Service): int64 =
     try:

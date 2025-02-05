@@ -42,7 +42,11 @@ QtObject {
         CommunityBanned = 21,
         CommunityUnbanned = 22,
         NewInstallationReceived = 23,
-        NewInstallationCreated = 24
+        NewInstallationCreated = 24,
+        BackupSyncingFetching = 25,
+        BackupSyncingSuccess = 26,
+        BackupSyncingPartialFailure = 27,
+        BackupSyncingFailure = 28
     }
 
     enum ActivityCenterReadType {
@@ -122,5 +126,9 @@ QtObject {
 
     function enableInstallationAndSync(installationId) {
         root.activityCenterModuleInst.enableInstallationAndSync(installationId)
+    }
+
+    function tryFetchingAgain() {
+        root.activityCenterModuleInst.tryFetchingAgain()
     }
 }
