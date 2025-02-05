@@ -21,6 +21,7 @@ import AppLayouts.Onboarding2.stores 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 StatusWindow {
     id: applicationWindow
@@ -418,6 +419,12 @@ StatusWindow {
         }
     }
 
+    Keychain {
+        service: Qt.application.name
+
+        id: keychain
+    }
+
     Component {
         id: onboardingV1
 
@@ -443,6 +450,15 @@ StatusWindow {
 
             onboardingStore: onboardingStore
 
+            fetchSecretViaBiometrics: function (profileId, callback) {
+                const isKeycardProfile = SQUtils.ModelUtils.getByKey(
+                                           onboardingStore.loginAccountsModel, "keyUid",
+                                           profileId, "keycardCreatedAccount")
+
+                const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
+                SQUtils.KeychainUtils.getSecret(keychain, reason, profileId, callback)
+            }
+
             onFinished: (flow, data) => {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
@@ -467,7 +483,7 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
-        
+
             OnboardingStore {
                 id: onboardingStore
                 onAppLoaded: moveToAppMain()

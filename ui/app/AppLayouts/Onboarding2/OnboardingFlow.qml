@@ -28,6 +28,13 @@ SQUtils.QObject {
 
     required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
+    /*
+        \qmlproperty var OnboardingFlow::fetchSecretViaBiometrics
+
+        See LoginScreen::fetchSecretViaBiometrics for details
+    */
+    property var fetchSecretViaBiometrics
+
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
     required property bool networkChecksEnabled
@@ -41,7 +48,6 @@ SQUtils.QObject {
     required property var tryToSetPinFunction
     required property var tryToSetPukFunction
 
-    signal biometricsRequested
     signal loginRequested(string keyUid, int method, var data)
     signal keycardPinCreated(string pin)
     signal enableBiometricsRequested(bool enable)
@@ -141,9 +147,9 @@ SQUtils.QObject {
             loginAccountsModel: root.loginAccountsModel
             biometricsAvailable: root.biometricsAvailable
             isBiometricsLogin: root.isBiometricsLogin
-            onBiometricsRequested: root.biometricsRequested()
-            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
+            fetchSecretViaBiometrics: root.fetchSecretViaBiometrics
 
+            onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
             onLostKeycard: root.stackView.push(keycardLostPage)

@@ -91,11 +91,13 @@ Keychain::Status authenticate(QString &reason, LAContext **context)
     return Keychain::StatusSuccess;
 }
 
-void Keychain::requestSaveCredential(const QString &account, const QString &password)
+void Keychain::requestSaveCredential(const QString &reason, const QString &account, const QString &password)
 {
     if (m_future.isRunning()) {
         return;
     }
+
+    m_reason = reason;
 
     m_future = QtConcurrent::run([this, account, password]() {
         setLoading(true);
@@ -105,11 +107,13 @@ void Keychain::requestSaveCredential(const QString &account, const QString &pass
     });
 }
 
-void Keychain::requestDeleteCredential(const QString &account)
+void Keychain::requestDeleteCredential(const QString &reason, const QString &account)
 {
     if (m_future.isRunning()) {
         return;
     }
+
+    m_reason = reason;
 
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);
@@ -119,11 +123,13 @@ void Keychain::requestDeleteCredential(const QString &account)
     });
 }
 
-void Keychain::requestGetCredential(const QString &account)
+void Keychain::requestGetCredential(const QString &reason, const QString &account)
 {
     if (m_future.isRunning()) {
         return;
     }
+
+    m_reason = reason;
 
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);

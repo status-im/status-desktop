@@ -18,8 +18,15 @@ Page {
     required property OnboardingStore onboardingStore
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
+
     property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
-    signal biometricsRequested() // emitted when the user wants to try the biometrics prompt again
+
+    /*
+        \qmlproperty var OnboardingLayout::fetchSecretViaBiometrics
+
+        See LoginScreen::fetchSecretViaBiometrics for details
+    */
+    property alias fetchSecretViaBiometrics: onboardingFlow.fetchSecretViaBiometrics
 
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
@@ -173,7 +180,6 @@ Page {
         remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
 
-        onBiometricsRequested: root.biometricsRequested()
         onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
         onKeycardPinCreated: (pin) => {
@@ -219,31 +225,6 @@ Page {
                 return
 
             loginScreen.setAccountLoginError(error, wrongPassword)
-        }
-
-        // biometrics
-        function onObtainingPasswordError(errorDescription: string, errorType: string, wrongFingerprint: bool) {
-            const loginScreen = onboardingFlow.loginScreen
-
-            if (!loginScreen || errorType === Constants.keychain.errorType.authentication) {
-                // We are notifying user only about keychain errors.
-                return
-            }
-
-            const error = wrongFingerprint
-                        ? qsTr("Fingerprint not recognised. Try entering password instead.")
-                        : errorDescription
-
-            loginScreen.setObtainingPasswordError(error, wrongFingerprint)
-        }
-
-        function onObtainingPasswordSuccess(password: string) {
-            const loginScreen = onboardingFlow.loginScreen
-
-            if (!loginScreen || !root.isBiometricsLogin)
-                return
-
-            loginScreen.setObtainingPasswordSuccess(password)
         }
     }
 

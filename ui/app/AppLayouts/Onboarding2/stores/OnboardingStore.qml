@@ -68,10 +68,6 @@ QtObject {
         return d.onboardingModuleInst.getPasswordStrengthScore(password, "") // The second argument is username
     }
 
-    // biometrics
-    signal obtainingPasswordSuccess(string password)
-    signal obtainingPasswordError(string errorDescription, string errorType /* Constants.keychain.errorType.* */, bool wrongFingerprint)
-
     // seedphrase/mnemonic
     function validMnemonic(mnemonic: string) { // -> bool
         return d.onboardingModuleInst.validMnemonic(mnemonic)
