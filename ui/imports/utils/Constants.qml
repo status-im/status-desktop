@@ -1418,10 +1418,10 @@ QtObject {
     }
 
     readonly property QtObject swap: QtObject {
-        /* We should be very careful here, this is the token key for Status network token currently,
+        /* We should be very careful here, this is the token key for USDT and WETH respectively,
         but in case the logic for keys changes in the backend, it should be updated here as well */
-        readonly property string testStatusTokenKey: "STT"
-        readonly property string mainnetStatusTokenKey: "SNT"
+        readonly property string usdtTokenKey: "USDT"
+        readonly property string wethTokenKey: "WETH"
         /* TODO: https://github.com/status-im/status-desktop/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */

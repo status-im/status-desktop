@@ -231,6 +231,7 @@ Control {
                 objectName: "amountToSend_textField"
 
                 Layout.preferredHeight: 44
+                Layout.maximumWidth: root.width
                 padding: 0
                 leftPadding: 0
                 background: null
@@ -258,12 +259,29 @@ Control {
                 validator: AmountValidator {
                     id: validator
 
+                    maxIntegralDigits: 100
                     maxDigits: d.getMaxDigitsAllowed()
                     maxDecimalDigits: d.fiatMode ? root.fiatDecimalPlaces
                                                  : root.multiplierIndex
                     locale: root.locale.name
                 }
                 visible: !root.mainInputLoading
+
+                // handle TextField scroll and click to change cursor position
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: textField.focus
+                    onClicked: {
+                        textField.cursorPosition = textField.positionAt(mouseX,mouseY)
+                        textField.forceActiveFocus()
+                    }
+                    onWheel: {
+                        if(wheel.angleDelta.y>0)
+                            textField.cursorPosition -= 1
+                        if(wheel.angleDelta.y<0)
+                            textField.cursorPosition += 1
+                    }
+                }
             }
             LoadingComponent {
                 objectName: "topAmountToSendInputLoadingComponent"
@@ -300,6 +318,7 @@ Control {
 
                 objectName: "bottomItemText"
 
+                Layout.fillWidth: true
                 Layout.preferredWidth: contentWidth
 
                 text: {
@@ -362,7 +381,7 @@ Control {
                 icon: "swap"
                 rotation: 90
                 color: Theme.palette.directColor5
-                visible: hoverHandler.hovered
+                visible: hoverHandler.hovered && root.fiatInputInteractive
             }
             Item { Layout.fillWidth: true }
             Loader {

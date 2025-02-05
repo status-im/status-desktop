@@ -98,8 +98,8 @@ Item {
             // exceeding maxium allowed integral part
             amountToSend.setValue("1234567890000")
             compare(textField.text, "1234567890000")
-            compare(amountToSend.amount, "0")
-            compare(amountToSend.valid, false)
+            compare(amountToSend.amount, "1234567890000000")
+            verify(amountToSend.valid)
         }
 
         function test_settingValueInFiatMode() {
@@ -133,8 +133,8 @@ Item {
             // exceeding maxium allowed integral part
             amountToSend.setValue("1234567890000")
             compare(textField.text, "1234567890000.00")
-            compare(amountToSend.amount, "0")
-            compare(amountToSend.valid, false)
+            compare(amountToSend.amount, "2469135780000000")
+            compare(amountToSend.valid, true)
         }
 
         function test_switchingMode() {

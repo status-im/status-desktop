@@ -201,7 +201,7 @@ StatusDialog {
                                             root.swapInputParamsForm.selectedNetworkChainId, "address")
                                     if(!fromTokenAddressOnSelectedChain) {
                                         // reset from token as it doesnt exist on selected network
-                                        root.swapInputParamsForm.resetFromTokenValues()
+                                        root.swapInputParamsForm.resetFromTokenValues(false)
                                     }
                                 }
                                 if(!!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.addressPerChain) {
@@ -242,6 +242,8 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
+
+                    cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
@@ -403,7 +405,7 @@ StatusDialog {
                         id: fees
                         objectName: "maxFeesValue"
                         text: {
-                            if(root.swapAdaptor.swapProposalLoading) {
+                            if(fees.loading) {
                                 return Constants.dummyText
                             }
 
@@ -418,6 +420,7 @@ StatusDialog {
 
                         onTextChanged: {
                             if (text === "" || text === "--" || text === Constants.dummyText) {
+                                animation.stop()
                                 return
                             }
                             animation.restart()

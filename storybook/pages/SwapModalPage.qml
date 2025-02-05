@@ -41,7 +41,6 @@ SplitView {
 
         function resetValues() {
             accountComboBox.currentIndex = 0
-            fromTokenComboBox.currentIndex = 0
             swapInput.text = ""
             fetchSuggestedRoutesSpy.clear()
             authenticateAndTransferSpy.clear()
@@ -145,7 +144,8 @@ SplitView {
                 }
             }
             swapFormData: SwapInputParamsForm {
-                defaultToTokenKey: Constants.swap.testStatusTokenKey
+                defaultFromTokenKey: Constants.swap.usdtTokenKey
+                defaultToTokenKey: Constants.swap.wethTokenKey
                 onSelectedAccountAddressChanged: {
                     if (selectedAccountAddress !== accountComboBox.currentValue)
                         accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
@@ -174,21 +174,6 @@ SplitView {
                     target: swapInputParamsForm
                     property: "toTokenKey"
                     value: toTokenComboBox.currentValue ?? ""
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "selectedNetworkChainId"
-                    value: networksComboBox.currentValue ?? -1
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "selectedAccountAddress"
-                    value: accountComboBox.currentValue ?? ""
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "fromTokenAmount"
-                    value: swapInput.text
                 }
                 Binding {
                     target: swapInputParamsForm
@@ -263,6 +248,7 @@ SplitView {
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
+                currentIndex: d.tokenBySymbolModel.count - 1
             }
 
             StatusInput {
@@ -275,12 +261,12 @@ SplitView {
             StatusBaseText {
                 text: "To Token"
             }
-            ComboBox {
+                ComboBox {
                 id: toTokenComboBox
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
-                currentIndex: 1
+                currentIndex: d.tokenBySymbolModel.count - 2
             }
 
             Button {
