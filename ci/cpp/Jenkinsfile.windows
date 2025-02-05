@@ -67,7 +67,7 @@ pipeline {
       parallel {
         stage('Upload') {
           steps { script {
-            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_ZIP)
+            exe_url = s5cmd.upload(env.STATUS_CLIENT_ZIP)
             env.PKG_URL = exe_url
             jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
           } }
