@@ -277,9 +277,7 @@ Item {
             verify(!maxTagButton.text.endsWith("ETH"))
         }
 
-        // FIXME: This should be enabled after #15709 is resolved
         function test_clickingMaxButton() {
-            skip("maxTabButton is disabled")
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
@@ -357,8 +355,7 @@ Item {
 
                 waitForRendering(controlUnderTest)
                 verify(maxTagButton.visible)
-                // FIXME: maxTagButton should be enabled after #15709 is resolved
-                verify(!maxTagButton.enabled)
+                verify(maxTagButton.enabled)
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
                 tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
 
@@ -370,10 +367,8 @@ Item {
                     tryCompare(amountToSendInput, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValue.toString())
                     tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
                     verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
-                    const marketPrice = amountToSendInput.price
-                    compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
-                                maxTagButton.maxSafeValue * marketPrice,
-                                d.adaptor.currencyStore.currentCurrency))
+                    compare(bottomItemText.text,  d.adaptor.currencyStore.formatCurrencyAmount(
+                                maxTagButton.maxSafeValue * amountToSendInput.price, d.adaptor.currencyStore.currentCurrency))
                 }
                 amountToSendInput.clear()
             }

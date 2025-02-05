@@ -11,14 +11,16 @@ QtObject {
 
     property string selectedAccountAddress: ""
     property int selectedNetworkChainId: -1
-    property string fromTokensKey: ""
+    property string fromTokensKey: root.defaultFromTokenKey
     property string fromTokenAmount: ""
     property string toTokenKey: root.defaultToTokenKey
     property string toTokenAmount: ""
     property double selectedSlippage: 0.5
 
-    // default token key
+    // default to token key
     property string defaultToTokenKey: ""
+    // default from token key
+    property string defaultFromTokenKey: ""
     // 15 seconds
     property int autoRefreshTime: 15000
 
@@ -37,8 +39,12 @@ QtObject {
         root.resetToTokenValues()
     }
 
-    function resetFromTokenValues() {
-        fromTokensKey = ""
+    function resetFromTokenValues(keepDefault = true) {
+        if(keepDefault) {
+            fromTokensKey = root.defaultFromTokenKey
+        } else {
+            fromTokensKey = ""
+        }
         fromTokenAmount = ""
     }
 
