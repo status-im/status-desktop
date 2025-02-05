@@ -17,7 +17,7 @@ from constants.onboarding import OnboardingMessages
 from driver.aut import AUT
 from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
-from gui.screens.onboarding import BiometricsView, LoginView, \
+from gui.screens.onboarding import OnboardingBiometricsView, ReturningLoginView, \
     YourEmojihashAndIdenticonRingView
 
 pytestmark = marks
@@ -41,7 +41,7 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
         confirm_password_view = create_password_view.create_password(user_one.password)
         confirm_password_view.confirm_password(user_one.password)
         if configs.system.get_platform() == "Darwin":
-            BiometricsView().wait_until_appears().prefer_password()
+            OnboardingBiometricsView().wait_until_appears().maybe_later()
         SplashScreen().wait_until_appears().wait_until_hidden()
         next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
         if configs.system.get_platform() == "Darwin":
@@ -59,7 +59,7 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
 
     with step('Restart application and input wrong password'):
         aut.restart()
-        login_view = LoginView()
+        login_view = ReturningLoginView()
         login_view.log_in(UserAccount(
             name=user_one.name,
             password=random_password_string()
