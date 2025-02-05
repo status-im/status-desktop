@@ -42,6 +42,7 @@ SQUtils.QObject {
     required property var tryToSetPukFunction
 
     signal biometricsRequested(string profileId)
+    signal dismissBiometricsRequested
     signal loginRequested(string keyUid, int method, var data)
     signal keycardPinCreated(string pin)
     signal enableBiometricsRequested(bool enable)
@@ -153,12 +154,20 @@ SQUtils.QObject {
             isBiometricsLogin: root.isBiometricsLogin
 
             onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
+            onDismissBiometricsRequested: root.dismissBiometricsRequested()
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
             onLostKeycard: root.stackView.push(keycardLostPage)
             onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
             onUnblockWithPukRequested: unblockWithPukFlow.init()
+
+            onVisibleChanged: {
+                if (!visible)
+                    root.dismissBiometricsRequested()
+            }
+
+            Component.onDestruction: root.dismissBiometricsRequested()
 
             Binding {
                 target: d

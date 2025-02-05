@@ -34,6 +34,7 @@ OnboardingPage {
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
 
     signal biometricsRequested(string profileId)
+    signal dismissBiometricsRequested
 
     function setBiometricResponse(secret: string, error = "",
                                   detailedError = "",
@@ -198,6 +199,8 @@ OnboardingPage {
                                       root.keycardState === Onboarding.KeycardState.BlockedPUK
 
                 onSelectedProfileKeyIdChanged: {
+                    root.dismissBiometricsRequested()
+
                     d.resetBiometricsResult()
                     d.settings.lastKeyUid = selectedProfileKeyId
 

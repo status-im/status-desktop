@@ -33,6 +33,7 @@ Page {
     signal finished(int flow, var data)
 
     signal biometricsRequested(string profileId)
+    signal dismissBiometricsRequested
 
     // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;
     //    "data:var": contains "password" or "pin"
@@ -183,6 +184,7 @@ Page {
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
 
         onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
+        onDismissBiometricsRequested: root.dismissBiometricsRequested()
         onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
         onKeycardPinCreated: (pin) => {
