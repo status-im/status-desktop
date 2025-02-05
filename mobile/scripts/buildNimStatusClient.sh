@@ -1,5 +1,5 @@
 #!/bin/sh
-make deps-common -j10 V=3 2>&1
+make deps-common -j10 2>&1
 
 ARCH=${ARCH:="amd64"}
 DESKTOP_VERSION=${shell ./scripts/version.sh}
