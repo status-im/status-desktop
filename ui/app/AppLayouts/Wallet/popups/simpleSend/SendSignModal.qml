@@ -32,9 +32,16 @@ SignTransactionModalBase {
     /** Input property holding selected account color **/
     required property color accountColor
 
-    /** TODO: Use new recipients appraoch from
-    https://github.com/status-im/status-desktop/issues/16916 **/
+    /** Input property holding recipient account address **/
     required property string recipientAddress
+    /** Input property holding recipient account name **/
+    required property string recipientName
+    /** Input property holding recipient account emoji **/
+    required property string recipientEmoji
+    /** Input property holding recipient account color **/
+    required property color recipientWalletColor
+    /** Input property holding recipient account ens **/
+    required property string recipientEns
 
     /** Input property holding selected network short name **/
     required property string networkShortName
@@ -225,31 +232,29 @@ SignTransactionModalBase {
     }
 
     // From
-    SignInfoBox {
+    SignAccountInfoBox {
+        objectName: "accountBox"
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.bigPadding
-        objectName: "accountBox"
         caption: qsTr("From")
-        primaryText: root.accountName
-        secondaryText: SQUtils.Utils.elideAndFormatWalletAddress(root.accountAddress)
-        asset.name: "filled-account"
-        asset.emoji: root.accountEmoji
-        asset.color: root.accountColor
-        asset.isLetterIdenticon: !!root.accountEmoji
+        name: root.accountName
+        address: root.accountAddress
+        emoji: root.accountEmoji
+        walletColor: root.accountColor
     }
 
-    /** TODO: Use new recipients appraoch from
-    https://github.com/status-im/status-desktop/issues/16916 **/
     // To
-    SignInfoBox {
+    SignAccountInfoBox {
+        objectName: "recipientBox"
         Layout.fillWidth: true
         Layout.bottomMargin: Theme.bigPadding
-        objectName: "recipientBox"
         caption: qsTr("To")
-        primaryText: root.recipientAddress
-        asset.name: "address"
-        asset.isLetterIdenticon: false
-        asset.isImage: false
+
+        address: root.recipientAddress
+        name: root.recipientName
+        emoji: root.recipientEmoji
+        walletColor: root.recipientWalletColor
+        ens: root.recipientEns
         highlighted: recipientInfoButtonWithMenu.hovered
         components: [
             RecipientInfoButtonWithMenu {

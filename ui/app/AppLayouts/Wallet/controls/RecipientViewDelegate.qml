@@ -11,6 +11,7 @@ StatusListItem {
     id: root
 
     property bool useAddressAsLetterIdenticon: false
+    property bool elideAddressInTitle: false
 
     property string name
     property string address
@@ -42,7 +43,7 @@ StatusListItem {
     objectName: root.name
 
     implicitHeight: 64
-    title: !!root.name ? root.name : d.getSubtitle(false)
+    title: !!root.name ? root.name : d.getSubtitle(root.elideAddressInTitle)
     rightPadding: Theme.halfPadding
     subTitle: !!root.name ? d.getSubtitle(true) : ""
 
@@ -71,7 +72,7 @@ StatusListItem {
     asset.charactersLen: 2
     asset.isLetterIdenticon: true
     asset.useAcronymForLetterIdenticon: statusListItemIcon.name !== root.address
-    asset.letterIdenticonBgWithAlpha: true
+    asset.letterIdenticonBgWithAlpha: !root.emoji
     asset.bgColor: Theme.palette.indirectColor1
     asset.width: 40
     asset.height: 40
