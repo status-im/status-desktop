@@ -119,7 +119,9 @@ ENV HOME="/home/jenkins"
 ENV PATH="${HOME}/go/bin:${PATH}"
 
 # Nix for jenkins user to build status-go.
-RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon
+RUN curl -s https://nixos.org/releases/nix/nix-2.24.11/install | sh -s -- --no-daemon
+# for nix-shell to work
+ENV PATH="/home/jenkins/.nix-profile/bin:${PATH}"
 
 LABEL maintainer="jakub@status.im"
 LABEL source="https://github.com/status-im/status-desktop"
