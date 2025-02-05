@@ -5,7 +5,7 @@ library 'status-jenkins-lib@v1.9.16'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
-  agent { label 'windows && x86_64 && qt-5.15.2 && go-1.21' }
+  agent { label 'windows && x86_64 && qt-5.15.2 && go-1.22' }
 
   parameters {
     booleanParam(
@@ -110,12 +110,12 @@ pipeline {
       parallel {
         stage('Upload 7Z') {
           steps { script {
-            zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
+            zip_url = s5cmd.upload(env.STATUS_CLIENT_7Z)
           } }
         }
         stage('Upload EXE') {
           steps { script {
-            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
+            exe_url = s5cmd.upload(env.STATUS_CLIENT_EXE)
           } }
         }
       }
