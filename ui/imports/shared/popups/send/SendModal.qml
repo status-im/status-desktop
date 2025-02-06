@@ -524,6 +524,8 @@ StatusDialog {
                     AmountToSend {
                         id: amountToSend
 
+                        Layout.fillWidth: true
+
                         caption: d.isBridgeTx ? qsTr("Amount to bridge")
                                               : qsTr("Amount to send")
                         interactive: popup.interactive
@@ -591,8 +593,9 @@ StatusDialog {
 
                     AmountToReceive {
                         id: amountToReceive
+
+                        Layout.preferredWidth: implicitWidth
                         Layout.alignment: Qt.AlignRight
-                        Layout.fillWidth:true
                         visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                  popup.bestRoutes.count > 0 && amountToSend.ready
                         isLoading: popup.isLoading

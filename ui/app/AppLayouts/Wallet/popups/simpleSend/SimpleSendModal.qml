@@ -496,7 +496,6 @@ StatusDialog {
 
                     interactive: root.interactive
                     dividerVisible: true
-                    progressivePixelReduction: false
                     bottomTextLoading: root.routesLoading
 
                     /** TODO: connect to max safe value for eth.

@@ -1238,15 +1238,15 @@ Item {
             txRoutes.uuid = root.swapAdaptor.uuid
             root.swapStore.suggestedRoutesReady(txRoutes, "", "")
 
-            let totalMaxFees = (Math.ceil(txRoutes.gasFees.baseFee) + Math.ceil(txRoutes.gasFees.maxPriorityFeePerGas)) * txRoutes.gasAmount
-            let amountToReserve = SQUtils.AmountsArithmetic.times(
-                    SQUtils.AmountsArithmetic.div(
-                        SQUtils.AmountsArithmetic.fromString(totalMaxFees),
-                        SQUtils.AmountsArithmetic.fromNumber(1, 9)),
-                    SQUtils.AmountsArithmetic.fromExponent(18)).toString()
-            compare(root.swapAdaptor.swapOutputData.maxFeesToReserveRaw, amountToReserve)
+            let bestPath = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+            const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
+            const totalMaxFeesInEth = SQUtils.AmountsArithmetic.div(
+                                        SQUtils.AmountsArithmetic.fromString(totalMaxFees),
+                                        SQUtils.AmountsArithmetic.fromNumber(1, 9))
+            const amountToReserve = SQUtils.AmountsArithmetic.times(totalMaxFeesInEth, SQUtils.AmountsArithmetic.fromExponent(18)).toString()
 
-            maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol, reserveForFees)
+            compare(root.swapAdaptor.swapOutputData.maxFeesToReserveRaw, amountToReserve)
+            maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol, amountToReserve)
             truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
             compare(maxTagButton.text,
                     qsTr("Max. %1").arg(
@@ -1873,12 +1873,16 @@ Item {
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
+            const amountToSend_textField = findChild(controlUnderTest, "amountToSend_textField")
+            verify(!!amountToSend_textField)
+
             amountToSendInput.locale = data.locale
 
             // Launch popup
             launchAndVerfyModal()
             mouseClick(amountToSendInput)
             waitForRendering(amountToSendInput)
+            amountToSend_textField.cursorPosition = amountToSendInput.text.length
 
             let amountToTestInLocale = data.input.replace('.', amountToSendInput.locale.decimalPoint)
             for(let i =0; i< data.input.length; i++) {

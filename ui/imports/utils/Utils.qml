@@ -428,17 +428,6 @@ QtObject {
         }
     }
 
-    function getFontSizeBasedOnLetterCount(text) {
-        if(text.length >= 12)
-            return 18
-        if(text.length >= 10)
-            return 24
-        if(text.length > 6)
-            return 28
-        else
-            return 34
-    }
-
     function appTranslation(key) {
         switch(key) {
         case Constants.appTranslatableConstants.loginAccountsListAddNewUser:

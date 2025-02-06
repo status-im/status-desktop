@@ -51,8 +51,9 @@ QtObject {
 
         let estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
         if(!!cryptoFeesToReserve) {
-            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(18)
-            estFee = StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(18)
+            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenDecimals)
+            estFee = StatusQUtils.AmountsArithmetic.div(
+                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenDecimals)
         }
 
         const result = value - estFee

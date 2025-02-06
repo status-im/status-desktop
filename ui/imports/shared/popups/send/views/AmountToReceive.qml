@@ -51,7 +51,7 @@ ColumnLayout {
             id: amountToReceiveText
             Layout.alignment: Qt.AlignVCenter
             text: isLoading ? "..." : inputIsFiat ? d.fiatValue : d.cryptoValue
-            font.pixelSize: Utils.getFontSizeBasedOnLetterCount(text)
+            font.pixelSize: 34
             color: Theme.palette.directColor1
         }
     }
