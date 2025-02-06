@@ -36,6 +36,7 @@ Rectangle {
     property Component tagsDelegate
     property var inlineTagModel: []
     property Component inlineTagDelegate
+    property bool forceDefaultCursor: false
     property bool loading: false
     property bool loadingSubTitle: loading
     property bool errorMode: false
@@ -155,7 +156,7 @@ Rectangle {
 
         objectName: root.objectName + "_sensor"
         anchors.fill: parent
-        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: !root.forceDefaultCursor && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton
         hoverEnabled: true
 
@@ -254,7 +255,7 @@ Rectangle {
                     id: statusListItemTitleMouseArea
                     anchors.fill: parent
                     enabled: root.enabled
-                    cursorShape: sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    cursorShape: !root.forceDefaultCursor && sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
                     propagateComposedEvents: root.propagateTitleClicks
                     onClicked: {

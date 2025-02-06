@@ -166,5 +166,28 @@ Item {
             compare(delegate.subTitle, "0xC5E4…4e40")
             compare(delegate.asset.color, Theme.palette.directColor1)
         }
+
+        function test_elideAddressInTitle() {
+            const delegate = createTemporaryObject(testComponent, root, {
+                                                       address: "0xC5E457F6b85EaE1Fc807081Cc325E482268e4e40",
+                                                       name: "Adam"
+                                                   })
+            verify(delegate)
+            verify(!delegate.elideAddressInTitle, "Default is disabled")
+
+            compare(delegate.title, "Adam")
+            compare(delegate.subTitle, "0xC5E4…4e40")
+
+            delegate.elideAddressInTitle = true
+
+            compare(delegate.title, "Adam", "Elide property doesn't affect title until it is an address")
+            compare(delegate.subTitle, "0xC5E4…4e40")
+
+            delegate.name = ""
+            compare(delegate.title, "0xC5E4…4e40")
+            delegate.elideAddressInTitle = false
+            compare(delegate.title, "0xC5E457F6b85EaE1Fc807081Cc325E482268e4e40")
+
+        }
     }
 }

@@ -161,7 +161,7 @@ Loader {
             anchors.leftMargin: Theme.halfPadding / 2
             anchors.rightMargin: Theme.halfPadding / 2
 
-            sensor.cursorShape: Qt.ArrowCursor
+            forceDefaultCursor: true
             statusListItemSubTitle.customColor: Theme.palette.baseColor1
             // Disable highlight
             color: "transparent"
