@@ -24,11 +24,6 @@ Item {
                                  console.warn("!!! RESETTING FLOW")
                                  state = "entering"
                              }
-        onReloadKeycardRequested: {
-            console.warn("!!! RELOAD KEYCARD")
-            remainingAttempts--
-            state = "entering"
-        }
         onKeycardFactoryResetRequested: {
             console.warn("!!! FACTORY RESET KEYCARD")
             remainingAttempts = 3

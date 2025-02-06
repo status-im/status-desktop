@@ -39,8 +39,6 @@ Page {
     //    "data:var": contains "password" or "pin"
     signal loginRequested(string keyUid, int method, var data)
 
-    signal reloadKeycardRequested()
-
     function restartFlow() {
         unload()
         onboardingFlow.init()
@@ -196,7 +194,6 @@ Page {
         onLoadMnemonicRequested: d.loadMnemonic()
         onAuthorizationRequested: d.authorize(pin)
         onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
-        onReloadKeycardRequested: root.reloadKeycardRequested()
         onPerformKeycardFactoryResetRequested: root.onboardingStore.startKeycardFactoryReset()
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)

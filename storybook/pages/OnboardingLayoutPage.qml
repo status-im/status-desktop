@@ -35,12 +35,19 @@ SplitView {
         readonly property string pin: "111111"
         readonly property string puk: "111111111111"
         readonly property string password: "somepassword"
+    }
 
-        // TODO simulation
-        function restart() {
-            // add keypair state
-            // sync state
-        }
+    function restart() {
+        store.keycardState = Onboarding.KeycardState.NoPCSCService
+        store.addKeyPairState = Onboarding.ProgressState.Idle
+        store.pinSettingState = Onboarding.ProgressState.Idle
+        store.authorizationState = Onboarding.ProgressState.Idle
+        store.restoreKeysExportState = Onboarding.ProgressState.Idle
+        store.syncState = Onboarding.ProgressState.Idle
+        store.keycardRemainingPinAttempts = 3
+        store.keycardRemainingPukAttempts = 5
+
+        onboarding.restartFlow()
     }
 
     LoginAccountsModel {
@@ -76,7 +83,7 @@ SplitView {
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
             property int keycardRemainingPinAttempts: 3
-            property int keycardRemainingPukAttempts: 3
+            property int keycardRemainingPukAttempts: 5
 
             function setPin(pin: string) { // -> bool
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
@@ -181,12 +188,6 @@ SplitView {
             } else {
                 ctrlLoginResult.result = "<font color='green'>✔</font>"
             }
-        }
-
-        onReloadKeycardRequested: {
-            store.keycardState = Onboarding.KeycardState.NoPCSCService
-            store.keycardRemainingPinAttempts = 2
-            store.keycardRemainingPukAttempts = 3
         }
 
         // mocks
@@ -357,7 +358,7 @@ SplitView {
                 onStopped: {
                     console.warn("!!! SPLASH SCREEN DONE")
                     console.warn("!!! RESTARTING FLOW")
-                    onboarding.restartFlow()
+                    root.restart()
                 }
             }
         }
@@ -404,7 +405,7 @@ SplitView {
                 Button {
                     text: "Restart"
                     focusPolicy: Qt.NoFocus
-                    onClicked: onboarding.restartFlow()
+                    onClicked: root.restart()
                 }
 
                 Switch {
@@ -419,7 +420,7 @@ SplitView {
                     id: ctrlLoginScreen
                     text: "Show login screen"
                     checkable: true
-                    onToggled: onboarding.restartFlow()
+                    onToggled: root.restart()
                 }
 
                 Switch {

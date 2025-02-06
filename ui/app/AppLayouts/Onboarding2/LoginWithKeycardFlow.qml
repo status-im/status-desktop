@@ -25,7 +25,6 @@ SQUtils.QObject {
     signal keycardPinCreated(string pin)
     signal seedphraseSubmitted(string seedphrase)
     signal authorizationRequested(string pin)
-    signal reloadKeycardRequested
     signal keycardFactoryResetRequested
     signal unblockWithSeedphraseRequested
     signal unblockWithPukRequested
@@ -49,12 +48,6 @@ SQUtils.QObject {
 
             return keycardIntroPage
         }
-
-        function reload() {
-            root.reloadKeycardRequested()
-            root.stackView.replace(d.initialComponent(),
-                                   StackView.PopTransition)
-        }
     }
 
     Component {
@@ -66,7 +59,6 @@ SQUtils.QObject {
             unblockUsingSeedphraseAvailable: true
             unblockWithPukAvailable: root.remainingPukAttempts > 0 && (root.remainingPinAttempts === 1 || root.remainingPinAttempts === 2)
 
-            onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
             onUnblockWithPukRequested: root.unblockWithPukRequested()
@@ -79,10 +71,7 @@ SQUtils.QObject {
         id: keycardEmptyPage
 
         KeycardEmptyPage {
-            onCreateProfileWithEmptyKeycardRequested:
-                root.createProfileWithEmptyKeycardRequested()
-
-            onReloadKeycardRequested: d.reload()
+            onCreateProfileWithEmptyKeycardRequested: root.createProfileWithEmptyKeycardRequested()
         }
     }
 
@@ -101,7 +90,6 @@ SQUtils.QObject {
             onExportKeysRequested: root.exportKeysRequested()
             onExportKeysDone: root.finished()
 
-            onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
         }

@@ -25,7 +25,6 @@ KeycardBasePage {
     signal keycardFactoryResetRequested()
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
-    signal reloadKeycardRequested()
     signal emptyKeycardDetected()
     signal notEmptyKeycardDetected()
 
@@ -104,13 +103,6 @@ KeycardBasePage {
             text: qsTr("Factory reset Keycard")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.keycardFactoryResetRequested()
-        },
-        MaybeOutlineButton {
-            id: btnReload
-            visible: false
-            text: qsTr("I've inserted a different Keycard")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: root.reloadKeycardRequested()
         }
     ]
 
@@ -163,11 +155,6 @@ KeycardBasePage {
                 subtitle: qsTr("Remove card and insert a Keycard")
                 image.source: Theme.png("onboarding/keycard/invalid")
             }
-            PropertyChanges {
-                target: btnReload
-                visible: true
-                text: qsTr("I’ve inserted a Keycard")
-            }
         },
         State {
             name: "noService"
@@ -177,11 +164,6 @@ KeycardBasePage {
                 title: qsTr("Smartcard reader service unavailable")
                 subtitle: qsTr("The Smartcard reader service (PCSC service), required for using Keycard, is not currently working. Ensure PCSC is installed and running and try again.")
                 image.source: Theme.png("onboarding/keycard/error")
-            }
-            PropertyChanges {
-                target: btnReload
-                visible: true
-                text: qsTr("Retry")
             }
         },
         State {
@@ -195,10 +177,6 @@ KeycardBasePage {
             }
             PropertyChanges {
                 target: btnFactoryReset
-                visible: true
-            }
-            PropertyChanges {
-                target: btnReload
                 visible: true
             }
         },
@@ -223,10 +201,6 @@ KeycardBasePage {
                 target: btnFactoryReset
                 visible: root.factoryResetAvailable
             }
-            PropertyChanges {
-                target: btnReload
-                visible: true
-            }
         },
         State {
             name: "blockedPuk"
@@ -243,10 +217,6 @@ KeycardBasePage {
             }
             PropertyChanges {
                 target: btnFactoryReset
-                visible: true
-            }
-            PropertyChanges {
-                target: btnReload
                 visible: true
             }
         },

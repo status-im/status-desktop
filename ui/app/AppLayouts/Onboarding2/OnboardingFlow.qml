@@ -50,7 +50,6 @@ SQUtils.QObject {
     signal syncProceedWithConnectionString(string connectionString)
     signal seedphraseSubmitted(string seedphrase)
     signal setPasswordRequested(string password)
-    signal reloadKeycardRequested
     signal exportKeysRequested
     signal loadMnemonicRequested
     signal authorizationRequested(string pin)
@@ -270,7 +269,6 @@ SQUtils.QObject {
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
         onLoadMnemonicRequested: root.loadMnemonicRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
@@ -333,7 +331,6 @@ SQUtils.QObject {
 
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-        onReloadKeycardRequested: root.reloadKeycardRequested()
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
         onExportKeysRequested: root.exportKeysRequested()
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
@@ -380,7 +377,6 @@ SQUtils.QObject {
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardPinCreated: (pin) => {
             unblockWithPukFlow.pin = pin
             root.keycardPinCreated(pin)
@@ -415,7 +411,6 @@ SQUtils.QObject {
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onReloadKeycardRequested: root.reloadKeycardRequested()
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init(true)
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
