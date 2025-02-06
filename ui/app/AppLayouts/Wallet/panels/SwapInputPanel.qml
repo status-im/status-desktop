@@ -98,7 +98,6 @@ Control {
     QtObject {
         id: d
 
-        // FIXME use ModelEntry
         readonly property var selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"

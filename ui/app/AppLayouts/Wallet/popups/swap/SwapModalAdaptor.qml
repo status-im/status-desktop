@@ -146,8 +146,8 @@ QObject {
                 const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
                 const totalMaxFeesInEth = AmountsArithmetic.div(
                                             AmountsArithmetic.fromString(totalMaxFees),
-                                            AmountsArithmetic.fromNumber(1, 9))
-                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(18)).toString()
+                                            AmountsArithmetic.fromNumber(1, Constants.gweiExponent))
+                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenDecimals)).toString()
 
                 root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""

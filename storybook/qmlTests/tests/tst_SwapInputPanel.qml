@@ -412,7 +412,7 @@ Item {
                 mouseClick(holdingSelector)
                 waitForRendering(holdingSelector)
 
-                const delToTest = assetSelectorList.itemAtIndex(i)
+                const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
                 if(delToTest.interactive) {
                     mouseClick(delToTest)

@@ -4,7 +4,6 @@ GasValidator 1.0 GasValidator.qml
 ClearButton 1.0 ClearButton.qml
 SavedAddressListItem 1.0 SavedAddressListItem.qml
 SearchBoxWithRightIcon 1.0 SearchBoxWithRightIcon.qml
-AmountInputWithCursor 1.0 AmountInputWithCursor.qml
 BalanceExceeded 1.0 BalanceExceeded.qml
 HeaderTitleText 1.0 HeaderTitleText.qml
 SendRecipientInput 1.0 SendRecipientInput.qml

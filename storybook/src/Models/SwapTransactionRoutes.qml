@@ -15,6 +15,16 @@ QtObject {
                                       totalTokenFees:0.0,
                                       totalTime:0
                                   },
+                                  gasFees:{
+                                      gasPrice:0.061734012,
+                                      baseFee:0.055187939,
+                                      maxPriorityFeePerGas:0.001,
+                                      maxFeePerGasL:0.059980417,
+                                      maxFeePerGasM:0.060071775,
+                                      maxFeePerGasH:0.110375878,
+                                      l1GasFee:318800.0,
+                                      eip1559Enabled:true
+                                  },
                                   amountToReceive:"0",
                                   toNetworksModel:[],
                                   error:""
@@ -28,6 +38,16 @@ QtObject {
                                                 totalTokenFees:-0.004508663259772343,
                                                 totalTime:2
                                             },
+                                            gasFees:{
+                                                gasPrice:0.061734012,
+                                                baseFee:0.055187939,
+                                                maxPriorityFeePerGas:0.001,
+                                                maxFeePerGasL:0.059980417,
+                                                maxFeePerGasM:0.060071775,
+                                                maxFeePerGasH:0.110375878,
+                                                l1GasFee:318800.0,
+                                                eip1559Enabled:true
+                                            },
                                             amountToReceive: "379295138519599728000",
                                             toNetworksModel: root.toModel
                                         })
@@ -38,6 +58,16 @@ QtObject {
                                                      totalFeesInEth:0.0005032000000000001,
                                                      totalTokenFees:-0.004508663259772343,
                                                      totalTime:2
+                                                 },
+                                                 gasFees:{
+                                                     gasPrice:0.061734012,
+                                                     baseFee:0.055187939,
+                                                     maxPriorityFeePerGas:0.001,
+                                                     maxFeePerGasL:0.059980417,
+                                                     maxFeePerGasM:0.060071775,
+                                                     maxFeePerGasH:0.110375878,
+                                                     l1GasFee:318800.0,
+                                                     eip1559Enabled:true
                                                  },
                                                  amountToReceive: "379295138519599728000",
                                                  toNetworksModel: root.toModel
