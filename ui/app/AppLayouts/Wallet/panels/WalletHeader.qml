@@ -41,6 +41,7 @@ Item {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    signal manageNetworksRequested()
 
     implicitHeight: 88
 
@@ -177,11 +178,14 @@ Item {
             // network filter
             NetworkFilter {
                 id: networkFilter
+                showTitle: false
+                showManageNetworksButton: true
 
                 Layout.alignment: Qt.AlignTop
 
                 flatNetworks: root.walletStore.filteredFlatModel
                 onToggleNetwork: root.walletStore.toggleNetwork(chainId)
+                onManageNetworksClicked: root.manageNetworksRequested()
                 showNewChainIcon: true
                 showNotificationIcon: {
                     const newChains = Constants.chains.newChains

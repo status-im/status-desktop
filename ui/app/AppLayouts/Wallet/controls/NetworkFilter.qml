@@ -30,15 +30,16 @@ StatusComboBox {
 
     property bool multiSelection: true
     property bool showSelectionIndicator: true
-    property bool showAllSelectedText: true
     property bool showTitle: true
     property bool selectionAllowed: true
+    property bool showManageNetworksButton: false
     property var selection: []
 
     property bool showNewChainIcon: false
     property bool showNotificationIcon: false
 
     signal toggleNetwork(int chainId, int index)
+    signal manageNetworksClicked()
 
     onSelectionChanged: {
         if (root.selection !== networkSelectorView.selection) {
@@ -103,7 +104,7 @@ StatusComboBox {
         Row {
             id: row
             spacing: -4
-            visible: (!d.allSelected || !root.showAllSelectedText) && chainRepeater.count > 0
+            visible: chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
                 model: SortFilterProxyModel {
@@ -174,6 +175,7 @@ StatusComboBox {
         selectionAllowed: root.selectionAllowed
         multiSelection: root.multiSelection
         showSelectionIndicator: root.showSelectionIndicator
+        showManageNetworksButton: root.showManageNetworksButton
         selection: root.selection
         showNewChainIcon: root.showNewChainIcon
 
@@ -184,6 +186,11 @@ StatusComboBox {
         }
 
         onToggleNetwork: root.toggleNetwork(chainId, index)
+
+        onManageNetworksClicked: {
+            control.popup.close()
+            root.manageNetworksClicked()
+        }
     }
 
     Connections {
@@ -198,7 +205,6 @@ StatusComboBox {
     QtObject {
         id: d
         readonly property int networksCount: root.flatNetworks.ModelCount.count
-        readonly property bool allSelected: root.selection.length === networksCount
         readonly property bool noneSelected: root.selection.length === 0
         readonly property bool oneSelected: root.selection.length === 1
         readonly property bool selectionUnavailable: d.networksCount <= 1 && d.oneSelected
@@ -220,9 +226,6 @@ StatusComboBox {
             if (root.multiSelection) {
                 if (d.noneSelected) {
                     return  qsTr("Select networks")
-                }
-                if (d.allSelected && root.showAllSelectedText) {
-                    return qsTr("All networks")
                 }
             }
 
