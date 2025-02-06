@@ -49,6 +49,8 @@ Item {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    
+    signal manageNetworksRequested()
 
     // TODO: remove tokenType parameter from signals below
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
@@ -272,6 +274,8 @@ Item {
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
             onSendTokenRequested: root.sendTokenRequested(senderAddress, tokenId, tokenType)
+
+            onManageNetworksRequested: root.manageNetworksRequested()
         }
     }
 

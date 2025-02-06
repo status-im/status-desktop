@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
@@ -30,39 +31,61 @@ SplitView {
 
             anchors.fill: parent
 
-            // Leave some space so that the popup will be opened without accounting for Layer 
-            ColumnLayout {
-                Layout.maximumHeight: 50
-            }
+            RowLayout {
+                Layout.fillWidth: true
 
-            NetworkFilter {
-                id: networkFilter
+                // Dummy item to make space for popup
+                Item {
+                    id: popupPlaceholder
 
-                Layout.alignment: Qt.AlignHCenter
+                    Layout.preferredWidth: networkSelectPopup.implicitWidth
+                    Layout.preferredHeight: networkSelectPopup.implicitHeight
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
 
-                flatNetworks: availableNetworks
-                multiSelection: multiSelectionCheckbox.checked
-            }
+                    NetworkSelectPopup {
+                        id: networkSelectPopup
+                        flatNetworks: d.activeNetworks
+                        multiSelection: multiSelectionCheckbox.checked
+                        showManageNetworksButton: showManageNetworksButtonCheckbox.checked
+                        closePolicy: Popup.NoAutoClose
+                        visible: true
+                        Binding on selection {
+                            value: d.selection
+                        }
+                        onToggleNetwork: d.toggleNetworkEnabled(chainId)
+                    }
+                }
 
-            // Dummy item to make space for popup
-            Item {
-                id: popupPlaceholder
+                // Filler
+                ColumnLayout {
+                    Layout.preferredHeight: 100
+                    Layout.maximumHeight: 100
+                }
 
-                Layout.preferredWidth: networkSelectPopup.implicitWidth
-                Layout.preferredHeight: networkSelectPopup.implicitHeight
+                Item {
+                    id: filterPlaceholder
 
-                NetworkSelectPopup {
-                    id: networkSelectPopup
-                    flatNetworks: availableNetworks
-                    multiSelection: multiSelectionCheckbox.checked
-                    closePolicy: Popup.NoAutoClose
-                    visible: true
+                    Layout.preferredWidth: networkFilter.implicitWidth
+                    Layout.preferredHeight: networkFilter.implicitHeight
+                    Layout.alignment: Qt.AlignRight | Qt.AlignTop
+                    
+                    NetworkFilter {
+                        id: networkFilter
+
+                        flatNetworks: d.activeNetworks
+                        multiSelection: multiSelectionCheckbox.checked
+                        showManageNetworksButton: showManageNetworksButtonCheckbox.checked
+                        Binding on selection {
+                            value: d.selection
+                        }
+                        onToggleNetwork: d.toggleNetworkEnabled(chainId)
+                    }
                 }
             }
 
             ColumnLayout {
-                Layout.preferredHeight: 30
-                Layout.maximumHeight: 30
+                Layout.preferredHeight: 100
+                Layout.maximumHeight: 100
             }
 
             RowLayout {
@@ -77,7 +100,7 @@ SplitView {
 
                 ModelEntry {
                     id: selectedEntry
-                    sourceModel: availableNetworks
+                    sourceModel: d.activeNetworks
                     key: "chainId"
                 }
             }
@@ -97,7 +120,7 @@ SplitView {
                     active: false
 
                     sourceComponent: NetworkSelectPopup {
-                        flatNetworks: availableNetworks
+                        flatNetworks: d.activeNetworks
                         selection: selectedEntry.available ? [selectedEntry.value] : []
                         onClosed: selectPopupLoader.active = false
 
@@ -117,7 +140,7 @@ SplitView {
         }
     }
     Pane {
-        SplitView.minimumWidth: 300
+        SplitView.minimumWidth: 400
         SplitView.fillWidth: true
         SplitView.minimumHeight: 300
 
@@ -130,7 +153,7 @@ SplitView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                model: availableNetworks
+                model: d.availableNetworks
 
                 delegate: ItemDelegate {
                     required property var model
@@ -144,28 +167,26 @@ SplitView {
                         id: delegateRowLayout
                         anchors.fill: parent
 
-                        Column {
+                        ColumnLayout {
                             Layout.margins: 5
 
                             spacing: 3
 
                             Label { text: model.chainName }
 
-                            Row {
+                            RowLayout {
                                 spacing: 5
                                 Label { text: `<b>${model.shortName}</b>` }
                                 Label { text: `ID <b>${model.chainId}</b>` }
                                 CheckBox {
-                                    checkState: networkSelectPopup.selection.includes(model.chainId) ? Qt.Checked : Qt.Unchecked
-                                    onToggled: {
-                                        let currentSelection = networkSelectPopup.selection
-                                        if (checkState === Qt.Checked && !currentSelection.includes(model.chainId)) {
-                                            currentSelection.push(model.chainId)
-                                        } else {
-                                            currentSelection = currentSelection.filter(id => id !== model.chainId)
-                                        }
-                                        networkSelectPopup.selection = [...currentSelection]
-                                    }
+                                    text: "Enabled"
+                                    checkState: model.isEnabled ? Qt.Checked : Qt.Unchecked
+                                    onToggled: d.setIsEnabled(model.chainId, checkState === Qt.Checked)
+                                }
+                                CheckBox {
+                                    text: "Active"
+                                    checkState: model.isActive ? Qt.Checked : Qt.Unchecked
+                                    onToggled: d.setIsActive(model.chainId, checkState === Qt.Checked)
                                 }
                             }
                         }
@@ -180,6 +201,16 @@ SplitView {
                 text: "Multi Selection"
                 checked: true
             }
+
+            CheckBox {
+                id: showManageNetworksButtonCheckbox
+
+                Layout.margins: 5
+
+                text: "Show 'Manage networks' button"
+                checked: true
+            }
+
 
             CheckBox {
                 id: testModeCheckbox
@@ -201,12 +232,55 @@ SplitView {
         }
     }
 
-    SortFilterProxyModel {
-        id: availableNetworks
+    QtObject {
+        id: d
 
-        sourceModel: NetworksModel.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: testModeCheckbox.checked; }
+        function toggleNetworkEnabled(chainId) {
+            let isEnabled = ModelUtils.getByKey(NetworksModel.flatNetworks, "chainId", chainId, "isEnabled")
+            d.setIsEnabled(chainId, !isEnabled)
+        }
+        function setIsEnabled(chainId, value) {
+            let index = ModelUtils.indexOf(NetworksModel.flatNetworks, "chainId", chainId)
+            NetworksModel.flatNetworks.setProperty(index, "isEnabled", value)
+        }
+        function setIsActive(chainId, value) {
+            let index = ModelUtils.indexOf(NetworksModel.flatNetworks, "chainId", chainId)
+            NetworksModel.flatNetworks.setProperty(index, "isActive", value)
+        }
+
+        readonly property var availableNetworks: SortFilterProxyModel {
+            sourceModel: NetworksModel.flatNetworks
+            filters: [
+                ValueFilter { roleName: "isTest"; value: testModeCheckbox.checked; }
+            ]
+        }
+
+        readonly property var activeNetworks: SortFilterProxyModel {
+            sourceModel: d.availableNetworks
+            filters: [
+                ValueFilter { roleName: "isActive"; value: true; }
+            ]
+        }
+
+        readonly property var enabledNetworks: SortFilterProxyModel {
+            sourceModel: d.activeNetworks
+            filters: [
+                ValueFilter { roleName: "isEnabled"; value: true; }
+            ]
+        }
+
+        readonly property var chainIdsAggregator: FunctionAggregator {
+            model: d.enabledNetworks
+            initialValue: []
+            roleName: "chainId"
+
+            aggregateFunction: (aggr, value) => [...aggr, value]
+        }
+
+        readonly property var selection: d.chainIdsAggregator.value
     }
+
+
 }
 
 // category: Popups

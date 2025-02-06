@@ -1,9 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import SortFilterProxyModel 0.2
@@ -21,9 +23,11 @@ Popup {
     property bool showSelectionIndicator: true
     property bool selectionAllowed: true
     property bool multiSelection: false
+    property bool showManageNetworksButton: false
     property var selection: []
 
     signal toggleNetwork(int chainId, int index)
+    signal manageNetworksClicked()
 
     onSelectionChanged: {
         if (root.selection !== scrollView.selection) {
@@ -51,25 +55,44 @@ Popup {
         }
     }
 
-    contentItem: NetworkSelectorView {
-        id: scrollView
+    contentItem: ColumnLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 4
 
-        model: root.flatNetworks
-        interactive: root.selectionAllowed
-        multiSelection: root.multiSelection
-        showIndicator: root.showSelectionIndicator
-        selection: root.selection
+        NetworkSelectorView {
+            id: scrollView
+            Layout.fillWidth: true
 
-        onSelectionChanged: {
-            if (root.selection !== scrollView.selection) {
-                root.selection = scrollView.selection
+            model: root.flatNetworks
+            interactive: root.selectionAllowed
+            multiSelection: root.multiSelection
+            showIndicator: root.showSelectionIndicator
+            selection: root.selection
+
+            onSelectionChanged: {
+                if (root.selection !== scrollView.selection) {
+                    root.selection = scrollView.selection
+                }
+            }
+
+            onToggleNetwork: {
+                if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
+                    root.close()
+                root.toggleNetwork(chainId, index)
             }
         }
 
-        onToggleNetwork: {
-            if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
-                root.close()
-            root.toggleNetwork(chainId, index)
+        StatusButton {
+            id: manageNetworksButton
+            visible: root.showManageNetworksButton
+            Layout.fillWidth: true
+            Layout.margins: 4
+
+            icon.name: "settings"
+            text: qsTr("Manage networks")
+            isOutline: true
+            onClicked: root.manageNetworksClicked()
         }
     }
 }
