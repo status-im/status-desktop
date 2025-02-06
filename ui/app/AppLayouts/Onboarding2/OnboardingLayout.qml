@@ -106,6 +106,7 @@ Page {
 
         function authorize(pin) {
             if (!pin && !d.keycardPin) {
+                console.warn("OnboardingLayout: authorize pin not provided")
                 return
             }
             if (!pin) {

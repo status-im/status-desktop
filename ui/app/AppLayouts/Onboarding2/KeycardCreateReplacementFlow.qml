@@ -25,10 +25,10 @@ SQUtils.QObject {
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
     signal keycardPinCreated(string pin)
-    signal authorizationRequested
+    signal authorizationRequested()
     signal seedphraseSubmitted(string seedphrase)
 
-    signal keypairAddTryAgainRequested
+    signal loadMnemonicRequested
     signal reloadKeycardRequested
     signal createProfileWithoutKeycardRequested
 
@@ -109,9 +109,12 @@ SQUtils.QObject {
             authorizationState: root.authorizationState
             onKeycardPinCreated: (pin) => {
                     root.keycardPinCreated(pin)
-                    root.authorizationRequested()
+            }
+            onKeycardPinSuccessfullySet: {
+                root.authorizationRequested()
             }
             onKeycardAuthorized: {
+                root.loadMnemonicRequested()
                 root.stackView.push(addKeypairPage)
             }
         }
@@ -129,7 +132,7 @@ SQUtils.QObject {
 
             onKeypairAddTryAgainRequested: {
                 root.stackView.replace(addKeypairPage)
-                root.keypairAddTryAgainRequested()
+                root.loadMnemonicRequested()
             }
 
             onReloadKeycardRequested: {
