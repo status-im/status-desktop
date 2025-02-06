@@ -75,7 +75,7 @@ StatusListView {
         height: 48
         width: ListView.view.width
         title: model.chainName
-        iconUrl: model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)
+        iconUrl: Theme.svg(model.iconUrl)
         showIndicator: root.showIndicator
         multiSelection: root.multiSelection
         interactive: root.interactive
@@ -96,27 +96,6 @@ StatusListView {
 
         Binding on checkState {
             value: inSelection ? (d.allSelected && root.interactive ? Qt.PartiallyChecked  : Qt.Checked) : Qt.Unchecked
-        }
-    }
-
-    section {
-        property: "layer"
-        delegate: Loader {
-            required property int section
-            width: parent.width
-            height: active ? 44 : 0
-            active: section === 2
-            sourceComponent: layer2text
-
-            Component {
-                id: layer2text
-                StatusBaseText {
-                    color: Theme.palette.baseColor1
-                    text: qsTr("Layer 2")
-                    leftPadding: 16
-                    topPadding: 14
-                }
-            }
         }
     }
 
