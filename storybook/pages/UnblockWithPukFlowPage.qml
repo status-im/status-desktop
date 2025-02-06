@@ -86,7 +86,6 @@ SplitView {
                                  logs.logEvent("keycardPinCreated", ["pin"], arguments)
                                  console.warn("!!! PIN CREATED:", pin)
                              }
-        onReloadKeycardRequested: mockDriver.keycardState = Onboarding.KeycardState.NoPCSCService
         onKeycardFactoryResetRequested: {
             logs.logEvent("keycardFactoryResetRequested", ["pin"], arguments)
             console.warn("!!! FACTORY RESET REQUESTED")

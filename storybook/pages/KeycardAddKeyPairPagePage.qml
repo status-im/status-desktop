@@ -24,7 +24,6 @@ Item {
             })()
         }
         onKeypairAddContinueRequested: console.warn("!!! onKeypairAddContinueRequested")
-        onReloadKeycardRequested: console.warn("!!! onReloadKeycardRequested")
         onCreateProfilePageRequested: console.warn("!!! onCreateProfilePageRequested")
     }
 

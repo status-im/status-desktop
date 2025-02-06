@@ -21,7 +21,6 @@ SQUtils.QObject {
     required property int keycardPinInfoPageDelay
 
     signal keycardPinCreated(string pin)
-    signal reloadKeycardRequested
     signal keycardFactoryResetRequested
     signal finished(bool success)
 
@@ -40,11 +39,6 @@ SQUtils.QObject {
             return keycardIntroPage
         }
 
-        function reload() {
-            root.reloadKeycardRequested()
-            root.stackView.replace(d.initialComponent(), StackView.PopTransition)
-        }
-
         function finishWithFactoryReset() {
             root.keycardFactoryResetRequested()
             root.finished(false)
@@ -59,7 +53,6 @@ SQUtils.QObject {
             unblockWithPukAvailable: root.remainingAttempts > 0
             unblockUsingSeedphraseAvailable: true
             factoryResetAvailable: !unblockWithPukAvailable
-            onReloadKeycardRequested: d.reload()
             onKeycardFactoryResetRequested: d.finishWithFactoryReset()
             onEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)

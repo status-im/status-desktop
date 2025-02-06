@@ -24,7 +24,6 @@ KeycardBasePage {
     property string pinCorrectText: qsTr("PIN correct")
 
     signal keycardPinEntered(string pin)
-    signal reloadKeycardRequested
     signal unblockWithSeedphraseRequested
     signal unblockWithPukRequested
     signal keycardFactoryResetRequested
@@ -89,16 +88,6 @@ KeycardBasePage {
             text: qsTr("Unblock with recovery phrase")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: root.unblockWithSeedphraseRequested()
-        },
-        MaybeOutlineButton {
-            id: btnReload
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: false
-            text: qsTr("I've inserted a different Keycard")
-            normalColor: "transparent"
-            borderWidth: 1
-            borderColor: Theme.palette.baseColor2
-            onClicked: root.reloadKeycardRequested()
         }
     ]
 
@@ -127,10 +116,6 @@ KeycardBasePage {
             PropertyChanges {
                 target: btnUnblockWithPuk
                 visible: root.unblockWithPukAvailable
-            }
-            PropertyChanges {
-                target: btnReload
-                visible: true
             }
             StateChangeScript {
                 script: {
@@ -172,10 +157,6 @@ KeycardBasePage {
             }
             PropertyChanges {
                 target: errorExportingText
-                visible: true
-            }
-            PropertyChanges {
-                target: btnReload
                 visible: true
             }
         },

@@ -29,7 +29,6 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
 
     signal loadMnemonicRequested
-    signal reloadKeycardRequested
     signal createProfileWithoutKeycardRequested
 
     signal finished
@@ -59,12 +58,6 @@ SQUtils.QObject {
             keycardState: root.keycardState
             displayPromoBanner: root.displayKeycardPromoBanner
 
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-                root.stackView.replace(d.initialComponent(),
-                                       StackView.PopTransition)
-            }
-
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onEmptyKeycardDetected: root.stackView.replace(seedphrasePage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardNotEmptyPage)
@@ -75,12 +68,6 @@ SQUtils.QObject {
         id: keycardNotEmptyPage
 
         KeycardNotEmptyPage {
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-                root.stackView.replace(d.initialComponent(),
-                                       StackView.PopTransition)
-            }
-
             onLoginWithThisKeycardRequested: root.loginWithKeycardRequested()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
         }
@@ -133,16 +120,6 @@ SQUtils.QObject {
             onKeypairAddTryAgainRequested: {
                 root.stackView.replace(addKeypairPage)
                 root.loadMnemonicRequested()
-            }
-
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-
-                const page = root.stackView.find(
-                               item => item instanceof CreateKeycardProfilePage)
-
-                root.stackView.replace(page, d.initialComponent(),
-                                       StackView.PopTransition)
             }
 
             onCreateProfilePageRequested: root.createProfileWithoutKeycardRequested()

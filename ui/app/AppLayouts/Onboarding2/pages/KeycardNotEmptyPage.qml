@@ -7,7 +7,6 @@ import AppLayouts.Onboarding2.controls 1.0
 KeycardBasePage {
     id: root
 
-    signal reloadKeycardRequested()
     signal loginWithThisKeycardRequested()
     signal keycardFactoryResetRequested()
 
@@ -16,11 +15,6 @@ KeycardBasePage {
     image.source: Theme.png("onboarding/keycard/error")
 
     buttons: [
-        MaybeOutlineButton {
-            text: qsTr("I’ve inserted a different Keycard")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: root.reloadKeycardRequested()
-        },
         MaybeOutlineButton {
             text: qsTr("Log in with this Keycard")
             anchors.horizontalCenter: parent.horizontalCenter

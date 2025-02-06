@@ -30,7 +30,6 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
 
     signal keypairAddTryAgainRequested
-    signal reloadKeycardRequested
     signal createProfileWithoutKeycardRequested
     signal authorizationRequested
 
@@ -65,12 +64,6 @@ SQUtils.QObject {
             displayPromoBanner: root.displayKeycardPromoBanner
             factoryResetAvailable: true
 
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-                root.stackView.replace(d.initialComponent(),
-                                       StackView.PopTransition)
-            }
-
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onEmptyKeycardDetected: root.stackView.replace(createKeycardProfilePage)
             onNotEmptyKeycardDetected: root.stackView.replace(keycardNotEmptyPage)
@@ -96,12 +89,6 @@ SQUtils.QObject {
         id: keycardNotEmptyPage
 
         KeycardNotEmptyPage {
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-                root.stackView.replace(d.initialComponent(),
-                                       StackView.PopTransition)
-            }
-
             onLoginWithThisKeycardRequested: root.loginWithKeycardRequested()
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
         }
@@ -229,16 +216,6 @@ SQUtils.QObject {
             onKeypairAddTryAgainRequested: {
                 root.stackView.replace(addKeypairPage)
                 root.keypairAddTryAgainRequested()
-            }
-
-            onReloadKeycardRequested: {
-                root.reloadKeycardRequested()
-
-                const page = root.stackView.find(
-                               item => item instanceof CreateKeycardProfilePage)
-
-                root.stackView.replace(page, d.initialComponent(),
-                                       StackView.PopTransition)
             }
 
             onCreateProfilePageRequested: root.createProfileWithoutKeycardRequested()

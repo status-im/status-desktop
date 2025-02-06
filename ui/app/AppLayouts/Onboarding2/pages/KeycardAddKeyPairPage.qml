@@ -17,7 +17,6 @@ OnboardingPage {
 
     signal keypairAddContinueRequested()
     signal keypairAddTryAgainRequested()
-    signal reloadKeycardRequested()
     signal createProfilePageRequested()
 
     states: [
@@ -163,12 +162,6 @@ OnboardingPage {
                     width: parent.width
                     text: qsTr("Try again")
                     onClicked: root.keypairAddTryAgainRequested()
-                }
-                StatusButton {
-                    text: qsTr("I've inserted a different Keycard")
-                    width: parent.width
-                    isOutline: true
-                    onClicked: root.reloadKeycardRequested()
                 }
                 StatusButton {
                     text: qsTr("Create profile without Keycard")

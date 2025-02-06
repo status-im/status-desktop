@@ -30,7 +30,6 @@ Item {
             displayPromoBanner: ctrlDisplayPromo.checked
             onEmptyKeycardDetected: console.warn("!!! EMPTY DETECTED")
             onNotEmptyKeycardDetected: console.warn("!!! NOT EMPTY DETECTED")
-            onReloadKeycardRequested: console.warn("!!! RELOAD REQUESTED")
             onOpenLink: Qt.openUrlExternally(link)
             onOpenLinkWithConfirmation: Qt.openUrlExternally(link)
             onKeycardFactoryResetRequested: console.warn("!!! FACTORY RESET")
@@ -43,14 +42,12 @@ Item {
         id: emptyPage
         KeycardEmptyPage {
             onCreateProfileWithEmptyKeycardRequested: console.warn("!!! CREATE NEW PROFILE")
-            onReloadKeycardRequested: console.warn("!!! RELOAD REQUESTED")
         }
     }
 
     Component {
         id: notEmptyPage
         KeycardNotEmptyPage {
-            onReloadKeycardRequested: console.warn("!!! RELOAD REQUESTED")
             onLoginWithThisKeycardRequested: console.warn("!!! LOGIN REQUESTED")
             onKeycardFactoryResetRequested: console.warn("!!! FACTORY RESET")
         }
