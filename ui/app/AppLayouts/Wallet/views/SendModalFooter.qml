@@ -1,6 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import QtQml.Models 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -19,6 +21,11 @@ StatusDialogFooter {
     /** property to set error state **/
     property bool error
 
+    /** input property to blur the background of the footer **/
+    property var blurSource: null
+    /** input property to source size of the blur soruce **/
+    property rect blurSourceRect: Qt.rect(0, 0, 0, 0)
+
     // Signal to propogate Send clicked
     signal reviewSendClicked()
 
@@ -31,6 +38,58 @@ StatusDialogFooter {
 
         readonly property string emptyText: "--"
         readonly property string loadingText: "XXXXXXXXXX"
+    }
+
+    background: Item {
+        Rectangle {
+            anchors.fill: parent
+            color: root.color
+            visible: !!root.blurSource
+            radius: 8
+
+            layer.enabled: !!root.blurSource
+            layer.effect: FastBlur {
+                radius: 36
+            }
+
+            ShaderEffectSource {
+                sourceItem: root.blurSource
+                anchors.fill: parent
+                anchors.leftMargin: Theme.xlPadding
+                anchors.rightMargin: -Theme.xlPadding
+                sourceRect: root.blurSourceRect
+                live: true
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: root.color
+            radius: 8
+            opacity: !!root.blurSource ? 0.85 : 1.0
+
+            layer.enabled: root.dropShadowEnabled
+            layer.effect: DropShadow {
+                horizontalOffset: 0
+                verticalOffset: -2
+                samples: 37
+                color: Theme.palette.dropShadow
+            }
+
+            // cover for the top rounded corners
+            Rectangle {
+                width: parent.width
+                height: parent.radius
+                anchors.top: parent.top
+                color: parent.color
+            }
+
+            StatusDialogDivider {
+                anchors.top: parent.top
+                width: parent.width
+                visible: !root.dropShadowEnabled
+            }
+        }
     }
 
     leftButtons: ObjectModel {
