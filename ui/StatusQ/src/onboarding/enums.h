@@ -33,6 +33,7 @@ public:
         Login
     };
 
+    // NOTE: Keep in sync with OnboardingFlow in src/app/modules/onboarding/module.nim
     enum class OnboardingFlow {
         Unknown,
 
