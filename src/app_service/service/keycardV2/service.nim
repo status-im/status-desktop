@@ -80,14 +80,11 @@ QtObject:
   proc initializeRPC(self: Service) {.slot.} =
     var response = keycard_go.keycardInitializeRPC()
 
-  proc callRPC(self: Service, methodName: string, params: JsonNode = %*{}): string  =
-    return callRPC(methodName, params)
-
   proc start*(self: Service, storageDir: string) =
-    discard self.callRPC("Start", %*{"storageFilePath": storageDir})
+    discard callRPC("Start", %*{"storageFilePath": storageDir})
 
   proc stop*(self: Service) =
-    discard self.callRPC("Stop")
+    discard callRPC("Stop")
   
   proc buildSeedPhrasesFromIndexes*(seedPhraseIndexes: JsonNode): seq[string] =
     var seedPhrase: seq[string]
@@ -97,7 +94,7 @@ QtObject:
 
   proc generateMnemonic*(self: Service, length: int): string =
     try:
-      let response = self.callRPC("GenerateMnemonic", %*{"length": length})
+      let response = callRPC("GenerateMnemonic", %*{"length": length})
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
           let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
