@@ -308,7 +308,8 @@ QtObject {
         let params = {}
         if (root.simpleSendEnabled) {
             params = {
-                selectedRecipientAddress: recipientAddress
+                selectedRecipientAddress: recipientAddress,
+                openReason: "send to recipient"
             }
         } else {
             params = {
@@ -367,7 +368,7 @@ QtObject {
                 selectedAccountAddress: senderAddress,
                 selectedTokenKey: tokenId,
                 selectedRawAmount: selectedRawAmount,
-                selectedChainId: selectedChainId
+                selectedChainId: selectedChainId,
             }
         } else {
             params = {
@@ -388,7 +389,8 @@ QtObject {
                 selectedRawAmount: rawAmount,
                 selectedChainId: chainId,
                 selectedRecipientAddress: recipientAddress,
-                interactive: false
+                interactive: false,
+                openReason: "token payment request"
             }
         } else {
             params = {
@@ -432,46 +434,59 @@ QtObject {
             fnResolveENS: root.fnResolveENS
 
             onOpened: {
-                if(root.simpleSendParams.interactive !== undefined) {
+                if(isValidParameter(root.simpleSendParams.interactive)) {
                     interactive = root.simpleSendParams.interactive
                 }
-                if(root.simpleSendParams.displayOnlyAssets !== undefined) {
+                if(isValidParameter(root.simpleSendParams.displayOnlyAssets)) {
                     displayOnlyAssets = root.simpleSendParams.displayOnlyAssets
                 }
-                if(root.simpleSendParams.sendType !== undefined) {
+                if(isValidParameter(root.simpleSendParams.sendType)) {
                     sendType = root.simpleSendParams.sendType
                 }
-                if(root.simpleSendParams.selectedAccountAddress !== undefined &&
+                if(isValidParameter(root.simpleSendParams.selectedAccountAddress) &&
                         !!root.simpleSendParams.selectedAccountAddress) {
                     selectedAccountAddress = root.simpleSendParams.selectedAccountAddress
                 }
-                if(root.simpleSendParams.selectedTokenKey !== undefined) {
+                if(isValidParameter(root.simpleSendParams.selectedTokenKey)) {
                     selectedTokenKey = root.simpleSendParams.selectedTokenKey
                 }
-                if(root.simpleSendParams.selectedChainId !== undefined) {
+                if(isValidParameter(root.simpleSendParams.selectedChainId)) {
                     selectedChainId = root.simpleSendParams.selectedChainId
                 }
-                if(root.simpleSendParams.selectedRawAmount !== undefined) {
+                if(isValidParameter(root.simpleSendParams.selectedRawAmount)) {
                     selectedRawAmount = root.simpleSendParams.selectedRawAmount
                 }
-                if(root.simpleSendParams.selectedRecipientAddress !== undefined) {
+                if(isValidParameter(root.simpleSendParams.selectedRecipientAddress)) {
                     selectedRecipientAddress = root.simpleSendParams.selectedRecipientAddress
                 }
-                if(root.simpleSendParams.publicKey !== undefined) {
+                if(isValidParameter(root.simpleSendParams.publicKey)) {
                     publicKey = root.simpleSendParams.publicKey
                 }
-                if(root.simpleSendParams.ensName !== undefined) {
+                if(isValidParameter(root.simpleSendParams.ensName)) {
                     ensName = root.simpleSendParams.ensName
                 }
-                if(root.simpleSendParams.stickersPackId !== undefined) {
+                if(isValidParameter(root.simpleSendParams.stickersPackId)) {
                     stickersPackId = root.simpleSendParams.stickersPackId
                 }                
-                if(root.simpleSendParams.transferOwnership !== undefined) {
+                if(isValidParameter(root.simpleSendParams.transferOwnership)) {
                     transferOwnership = root.simpleSendParams.transferOwnership
                 }
+                let metricsData = ""
+                if(isValidParameter(root.simpleSendParams.openReason)) {
+                    metricsData = root.simpleSendParams.openReason
+                } else {
+                    metricsData = handler.getSendTypeString()
+                }
+
+                handler.sendMetricsEvent("popup opened", metricsData)
+            }
+
+            function isValidParameter(param) {
+                return param !== undefined && param !== null
             }
 
             onClosed: {
+                handler.sendMetricsEvent("popup closed", "")
                 destroy()
                 root.transactionStoreNew.stopUpdatesForSuggestedRoute()
             }
@@ -511,6 +526,7 @@ QtObject {
             }
 
             onReviewSendClicked: {
+                handler.sendMetricsEvent("review send clicked", handler.getSendTypeString())
                 if(sendType === Constants.SendType.ERC1155Transfer ||
                         sendType === Constants.SendType.ERC721Transfer) {
                     const selectedCollectible =
@@ -596,9 +612,52 @@ QtObject {
                             return
                         }
                         simpleSendModal.routerError = error
+                        sendMetricsEvent("transaction error")
                         return
                     }
-                    close()
+                    sendMetricsEvent("transaction successful")
+                    simpleSendModal.close()
+                }
+
+                function sendMetricsEvent(eventName, data = "") {
+                    Global.addCentralizedMetricIfEnabled("send", {subEvent: eventName, data: data})
+                }
+
+                function getSendTypeString() {
+                    switch(simpleSendModal.sendType) {
+                        case Constants.SendType.Transfer:
+                            return "Transfer"
+                        case Constants.SendType.ENSRegister:
+                            return "ENS Register"
+                        case Constants.SendType.ENSRelease:
+                            return "ENS Release"
+                        case Constants.SendType.ENSSetPubKey:
+                            return "ENS Set Public Key"
+                        case Constants.SendType.StickersBuy:
+                            return "Stickers Buy"
+                        case Constants.SendType.ERC721Transfer:
+                            return "ERC721 Transfer"
+                        case Constants.SendType.ERC1155Transfer:
+                            return "ERC1155 Transfer"
+                        case Constants.SendType.CommunityBurn:
+                            return "Community Burn"
+                        case Constants.SendType.CommunityDeployAssets:
+                            return "Community Deploy Assets"
+                        case Constants.SendType.CommunityDeployCollectibles:
+                            return "Community Deploy Collectibles"
+                        case Constants.SendType.CommunityDeployOwnerToken:
+                            return "Community Deploy Owner Token"
+                        case Constants.SendType.CommunityMintTokens:
+                            return "Community Mint Tokens"
+                        case Constants.SendType.CommunityRemoteBurn:
+                            return "Community Remote Burn"
+                        case Constants.SendType.CommunitySetSignerPubKey:
+                            return "Community Set Signer Public Key"
+                        case Constants.SendType.Approve:
+                            return "Approve"
+                        default:
+                            return ""
+                    }
                 }
 
                 readonly property var recipientViewAdaptor: RecipientViewAdaptor {
@@ -789,7 +848,10 @@ QtObject {
 
                     fnGetOpenSeaExplorerUrl: root.fnGetOpenSeaUrl
 
+                    onOpened: handler.sendMetricsEvent("sign modal opened")
+                    onRejected: handler.sendMetricsEvent("sign modal rejected")
                     onAccepted: {
+                        handler.sendMetricsEvent("sign modal accepted")
                         if (handler.reviewingLastTxPath) {
                             root.transactionStoreNew.authenticateAndTransfer(handler.uuid, simpleSendModal.selectedAccountAddress)
                             return
