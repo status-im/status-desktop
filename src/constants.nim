@@ -60,6 +60,10 @@ let
   STATUS_PROXY_STAGE_NAME_RESOLVED* = desktopConfig.statusProxyStageName
   STATUS_PROXY_USER_RESOLVED* = desktopConfig.statusProxyUser
   STATUS_PROXY_PASSWORD_RESOLVED* = desktopConfig.statusProxyPassword
+  ETH_RPC_PROXY_USER_RESOLVED* = desktopConfig.ethRpcProxyUser
+  ETH_RPC_PROXY_PASSWORD_RESOLVED* = desktopConfig.ethRpcProxyPassword
+  ETH_RPC_PROXY_URL_RESOLVED* = desktopConfig.ethRpcProxyUrl
+
   WALLET_CONNECT_PROJECT_ID* = BUILD_WALLET_CONNECT_PROJECT_ID
   MIXPANEL_APP_ID* = desktopConfig.mixpanelAppId
   MIXPANEL_TOKEN* = desktopConfig.mixpanelToken
