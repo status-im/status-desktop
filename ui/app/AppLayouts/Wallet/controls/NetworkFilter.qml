@@ -101,7 +101,7 @@ StatusComboBox {
 
                     width: 24
                     height: 24
-                    image.source: model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)
+                    image.source: Theme.svg(model.iconUrl)
                     z: index + 1
 
                     image.layer.enabled: index < chainRepeater.count - 1 && row.spacing < 0
@@ -186,9 +186,7 @@ StatusComboBox {
             value: root.selection[0] ?? -1
         }
 
-        readonly property string singleSelectionIconUrl: singleSelectionItem.item.iconUrl ? (singleSelectionItem.item.isTest ? singleSelectionItem.item.iconUrl + "-test"
-                                                                                                                             : singleSelectionItem.item.iconUrl)
-                                                                                          : ""
+        readonly property string singleSelectionIconUrl: singleSelectionItem.item.iconUrl ?? ""
         readonly property string singleCelectionChainName: singleSelectionItem.item.chainName ?? ""
 
         readonly property string titleText: {
