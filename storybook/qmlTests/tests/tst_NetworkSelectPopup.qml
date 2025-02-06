@@ -10,7 +10,7 @@ import Models 1.0
 Item {
     id: root
     width: 600
-    height: 400
+    height: 600
 
     Component {
         id: componentUnderTest
@@ -69,7 +69,7 @@ Item {
             // multi selection - select using the view
             const thirdDelegate = findChild(controlUnderTest.contentItem, "networkSelectorDelegate_" + controlUnderTest.flatNetworks.get(2).chainName)
             mouseClick(thirdDelegate)
-            compare(controlUnderTest.selection, [controlUnderTest.flatNetworks.get(0).chainId, controlUnderTest.flatNetworks.get(1).chainId, controlUnderTest.flatNetworks.get(2).chainId])
+            compare(controlUnderTest.selection.sort(), [controlUnderTest.flatNetworks.get(0).chainId, controlUnderTest.flatNetworks.get(1).chainId, controlUnderTest.flatNetworks.get(2).chainId].sort())
             compare(selectionChangedSpy.count, 4)
         }
 

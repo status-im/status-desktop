@@ -34,6 +34,7 @@ FocusScope {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    signal manageNetworksRequested()
 
     ColumnLayout {
         anchors.fill: parent
@@ -53,6 +54,7 @@ FocusScope {
             onDappListRequested: root.dappListRequested()
             onDappConnectRequested: root.dappConnectRequested()
             onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
+            onManageNetworksRequested: root.manageNetworksRequested()
         }
 
         Item {

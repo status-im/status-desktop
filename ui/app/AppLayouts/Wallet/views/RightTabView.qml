@@ -40,6 +40,11 @@ RightTabBaseView {
     signal launchSwapModal(string tokensKey)
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
 
+    onManageNetworksRequested: {
+        Global.changeAppSectionBySectionType(Constants.appSection.profile,
+                                             Constants.settingsSubsection.wallet,
+                                             Constants.walletSettingsSubsection.manageNetworks)
+    }
 
     function resetView() {
         resetStack()

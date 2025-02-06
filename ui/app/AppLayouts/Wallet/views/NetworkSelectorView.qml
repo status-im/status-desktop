@@ -39,26 +39,10 @@ StatusListView {
     
     objectName: "networkSelectorList"
     
-    onSelectionChanged: {
-        if (!root.multiSelection && selection.length > 1) {
-            console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the first inserted item.")
-            selection = [selection[0]]
-        }
-    }
+    onSelectionChanged:  d.reprocessSelection()
+    onMultiSelectionChanged: d.reprocessSelection()
+    Component.onCompleted: d.reprocessSelection()
 
-    onMultiSelectionChanged: {
-        if (root.multiSelection) return;
-
-        // When changing the multi-selection mode, we need to ensure that the selection is valid
-        if (root.selection.length > 1) {
-            root.selection = [root.selection[0]]
-        }
-
-        // Single selection defaults to first item if no selection is made
-        if (root.selection.length === 0 && root.count > 0) {
-            root.selection = [ModelUtils.get(root.model, 0).chainId]
-        }
-    }
     implicitWidth: 300
     implicitHeight: contentHeight
 
@@ -101,7 +85,9 @@ StatusListView {
 
     QtObject {
         id: d
-        readonly property bool allSelected: root.selection.length === root.count
+        readonly property int networksCount: root.model.ModelCount.count
+        onNetworksCountChanged: d.reprocessSelection()
+        readonly property bool allSelected: root.selection.length === networksCount
 
         function onToggled(initialState, chainId) {  
             let selection = root.selection
@@ -116,12 +102,27 @@ StatusListView {
 
             root.selection = [...selection]
         }
-    }
 
-    Component.onCompleted: {
-        if(root.selection.length === 0 && !root.multiSelection && root.count > 0) {
-            const firstChain = ModelUtils.get(root.model, 0).chainId
-            root.selection = [firstChain]
+        function reprocessSelection() {
+            let selection = root.selection
+
+            if (d.networksCount === 0) {
+                selection = []
+            } else {
+                if (!root.multiSelection) {
+                    // One and only one chain must be selected
+                    if (selection.length === 0) {
+                        selection = [ModelUtils.get(root.model, 0, "chainId")]
+                    } else if (selection.length > 1) {
+                        console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the first inserted item.")
+                        selection = [selection[0]]
+                    }
+                }
+            }
+
+            if (root.selection.sort().join(',') !== selection.sort().join(',')) {
+                root.selection = [...selection]
+            }
         }
     }
 }
