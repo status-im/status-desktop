@@ -103,11 +103,10 @@ QtObject:
           let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
           raise newException(RpcException, "Error loading mnemonic: " & error.message)
 
-      let words = buildSeedPhrasesFromIndexes(rpcResponseObj["result"]["indexes"])
-      var jArray = newJArray()
-      for item in words:
-        jArray.add(%item)
-      return $jArray
+      let indexes = rpcResponseObj["result"]["indexes"]
+      let words = buildSeedPhrasesFromIndexes(indexes)
+      let mnemonic = words.join(" ")
+      return mnemonic
     except Exception as e:
       error "error generating mnemonic", err=e.msg
 

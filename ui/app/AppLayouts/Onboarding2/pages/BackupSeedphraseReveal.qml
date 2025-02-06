@@ -10,16 +10,19 @@ import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2.components 1.0
 
+import utils 1.0
+
 OnboardingPage {
     id: root
 
-    required property var seedWords
+    required property string mnemonic
 
     signal backupSeedphraseConfirmed()
 
     QtObject {
         id: d
         property bool seedphraseRevealed
+        property var mnemonicWords: Utils.parseMnemonicWords(root.mnemonic)
     }
 
     contentItem: Item {
@@ -58,7 +61,7 @@ OnboardingPage {
                     rowSpacing: columnSpacing
 
                     Repeater {
-                        model: root.seedWords
+                        model: d.mnemonicWords
                         delegate: Frame {
                             Layout.fillWidth: true
                             Layout.fillHeight: true

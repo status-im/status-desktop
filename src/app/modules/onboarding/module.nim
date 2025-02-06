@@ -132,7 +132,7 @@ method getPasswordStrengthScore*[T](self: Module[T], password, userName: string)
 method validMnemonic*[T](self: Module[T], mnemonic: string): bool =
   self.controller.validMnemonic(mnemonic)
 
-method getMnemonic*[T](self: Module[T]): string =
+method generateMnemonic*[T](self: Module[T]): string =
   return self.controller.generateMnemonic(SupportedMnemonicLength12)
 
 method validateLocalPairingConnectionString*[T](self: Module[T], connectionString: string): bool =

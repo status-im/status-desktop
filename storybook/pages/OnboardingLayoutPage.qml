@@ -30,8 +30,7 @@ SplitView {
     QtObject {
         id: mockDriver
 
-        readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
-        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+        readonly property string mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
         readonly property string pin: "111111"
         readonly property string puk: "111111111111"
         readonly property string password: "somepassword"
@@ -136,9 +135,9 @@ SplitView {
                 return mnemonic === mockDriver.mnemonic
             }
 
-            function getMnemonic() { // -> string
-                logs.logEvent("OnboardingStore.getMnemonic()")
-                return JSON.stringify(mockDriver.seedWords)
+            function generateMnemonic() { // -> string
+                logs.logEvent("OnboardingStore.generateMnemonic()")
+                return mockDriver.mnemonic
             }
 
             function validateLocalPairingConnectionString(connectionString: string) { // -> bool
@@ -292,6 +291,8 @@ SplitView {
             text: "Paste seed phrase verification"
             focusPolicy: Qt.NoFocus
             onClicked: {
+                const words = Utils.parseMnemonicWords(mockDriver.mnemonic)
+
                 for (let i = 0;; i++) {
                     const input = StorybookUtils.findChild(
                                     onboarding.currentPage,
@@ -301,7 +302,7 @@ SplitView {
                         break
 
                     const index = input.seedWordIndex
-                    input.text = mockDriver.seedWords[index]
+                    input.text = words[index]
                 }
             }
         }

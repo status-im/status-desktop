@@ -30,7 +30,7 @@ method getPasswordStrengthScore*(self: AccessInterface, password, userName: stri
 method validMnemonic*(self: AccessInterface, mnemonic: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMnemonic*(self: AccessInterface): string {.base.} =
+method generateMnemonic*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method validateLocalPairingConnectionString*(self: AccessInterface, connectionString: string): bool {.base.} =

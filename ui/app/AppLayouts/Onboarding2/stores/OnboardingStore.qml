@@ -72,8 +72,8 @@ QtObject {
     function validMnemonic(mnemonic: string) { // -> bool
         return d.onboardingModuleInst.validMnemonic(mnemonic)
     }
-    function getMnemonic() { // -> string
-        return d.onboardingModuleInst.getMnemonic()
+    function generateMnemonic() { // -> string as per BIP-39 (space-separated list of words)
+        return d.onboardingModuleInst.generateMnemonic()
     }
 
     // sync

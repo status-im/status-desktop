@@ -145,8 +145,8 @@ QtObject:
   proc validMnemonic(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
 
-  proc getMnemonic(self: View): string {.slot.} =
-    return self.delegate.getMnemonic()
+  proc generateMnemonic(self: View): string {.slot.} =
+    return self.delegate.generateMnemonic()
 
   proc validateLocalPairingConnectionString(self: View, connectionString: string): bool {.slot.} =
     return self.delegate.validateLocalPairingConnectionString(connectionString)

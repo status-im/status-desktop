@@ -18,7 +18,7 @@ Item {
 
     QtObject {
         id: d
-        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+        readonly property string mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
         readonly property int numWordsToVerify: 4
     }
 
@@ -53,7 +53,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         text: !!stack.currentItem && stack.currentItem instanceof BackupSeedphraseVerify ?
-                  "Hint: %1".arg(stack.currentItem.seedWordsToVerify.map((entry) => entry.seedWord))
+                  "Hint: %1".arg(stack.currentItem.verificationWordsMap.map((entry) => entry.seedWord))
                 : ""
     }
 
@@ -101,7 +101,7 @@ Item {
     Component {
         id: backupSeedRevealPage
         BackupSeedphraseReveal {
-            seedWords: d.seedWords
+            mnemonic: d.mnemonic
             onBackupSeedphraseConfirmed: console.warn("!!! SEED CONFIRMED")
         }
     }
@@ -109,14 +109,8 @@ Item {
     Component {
         id: backupSeedVerifyPage
         BackupSeedphraseVerify {
-            seedWordsToVerify: {
-                let result = []
-                const randomIndexes = SQUtils.Utils.nSamples(d.numWordsToVerify, d.seedWords.length)
-                for (const i of randomIndexes) {
-                    result.push({seedWordNumber: i+1, seedWord: d.seedWords[i]})
-                }
-                return result
-            }
+            mnemonic: d.mnemonic
+            countToVerify: d.numWordsToVerify
             onBackupSeedphraseVerified: console.warn("!!! ALL VERIFIED")
         }
     }

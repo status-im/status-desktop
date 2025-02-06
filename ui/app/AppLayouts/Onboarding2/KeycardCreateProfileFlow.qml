@@ -7,6 +7,8 @@ import StatusQ.Core.Backpressure 0.1
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import utils 1.0
+
 SQUtils.QObject {
     id: root
 
@@ -18,7 +20,7 @@ SQUtils.QObject {
     required property int addKeyPairState
     required property int keycardPinInfoPageDelay
 
-    required property var getSeedWords
+    required property var generateMnemonic
     required property var isSeedPhraseValid
 
     property bool displayKeycardPromoBanner
@@ -44,7 +46,7 @@ SQUtils.QObject {
         id: d
 
         property bool withNewSeedphrase
-        property var seedWords
+        property var mnemonic
 
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.Empty)
@@ -128,14 +130,13 @@ SQUtils.QObject {
         BackupSeedphraseReveal {
             Component.onCompleted: {
                 try {
-                    const seedwords = root.getSeedWords()
-                    d.seedWords = JSON.parse(seedwords)
-                    root.seedphraseSubmitted(d.seedWords)
+                    d.mnemonic = root.generateMnemonic()
+                    root.seedphraseSubmitted(d.mnemonic)
                 } catch (e) {
-                    console.error('Failed to get seedwords', e)
+                    console.error('failed to generate mnemonic', e)
                 }
             }
-            seedWords: d.seedWords
+            mnemonic: d.mnemonic
 
             onBackupSeedphraseConfirmed: root.stackView.push(backupSeedVerifyPage)
         }
@@ -144,13 +145,8 @@ SQUtils.QObject {
     Component {
         id: backupSeedVerifyPage
         BackupSeedphraseVerify {
-            seedWordsToVerify: {
-                const randomIndexes = SQUtils.Utils.nSamples(4, d.seedWords.length)
-                return randomIndexes.map(i => ({ seedWordNumber: i+1,
-                                                 seedWord: d.seedWords[i]
-                                               }))
-            }
-
+            mnemonic: d.mnemonic
+            countToVerify: 4
             onBackupSeedphraseVerified: root.stackView.push(backupSeedOutroPage)
         }
     }

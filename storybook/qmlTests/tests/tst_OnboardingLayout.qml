@@ -30,8 +30,7 @@ Item {
         property bool biometricsAvailable
         property string existingPin
 
-        readonly property string mnemonic: "dog dog dog dog dog dog dog dog dog dog dog dog"
-        readonly property var seedWords: ["apple", "banana", "cat", "cow", "catalog", "catch", "category", "cattle", "dog", "elephant", "fish", "grape"]
+        readonly property string mnemonic: "apple banana cat cow catalog catch category cattle dog elephant fish grape"
         readonly property string dummyNewPassword: "0123456789"
     }
 
@@ -88,8 +87,8 @@ Item {
                 function validMnemonic(mnemonic: string) {
                     return mnemonic === mockDriver.mnemonic
                 }
-                function getMnemonic() {
-                    return JSON.stringify(mockDriver.seedWords)
+                function generateMnemonic() {
+                    return mockDriver.mnemonic
                 }
                 function loadMnemonic(mnemonic) {}
                 function exportRecoverKeys() {}
@@ -515,12 +514,12 @@ Item {
             btnContinue = findChild(page, "btnContinue")
             verify(!!btnContinue)
             compare(btnContinue.enabled, false)
-            const seedWords = page.seedWordsToVerify.map((entry) => entry.seedWord)
-            for (let i = 0; i < 4; i++) {
+            const mnemonicWords = page.verificationWordsMap.map((entry) => entry.seedWord)
+            for (let i = 0; i < page.countToVerify; i++) {
                 const seedInput = findChild(page, "seedInput_%1".arg(i))
                 verify(!!seedInput)
                 mouseClick(seedInput)
-                keyClickSequence(seedWords[i])
+                keyClickSequence(mnemonicWords[i])
                 keyClick(Qt.Key_Tab)
             }
             compare(btnContinue.enabled, true)
@@ -567,7 +566,7 @@ Item {
             compare(resultData.password, "")
             compare(resultData.enableBiometrics, data.biometrics && data.bioEnabled)
             compare(resultData.keycardPin, newPin)
-            compare(resultData.seedphrase, mockDriver.seedWords.join(","))
+            compare(resultData.seedphrase, mockDriver.mnemonic)
         }
 
         // FLOW: Create Profile -> Use an empty Keycard -> Use an existing recovery phrase (create profile with keycard + existing seedphrase)
