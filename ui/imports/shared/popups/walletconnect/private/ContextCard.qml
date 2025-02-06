@@ -82,7 +82,6 @@ Rectangle {
                 flatNetworks: root.chainsModel
                 showTitle: true
                 multiSelection: root.multipleChainSelection
-                showAllSelectedText: false
                 selectionAllowed: false
 
                 // disable interactions w/o looking disabled

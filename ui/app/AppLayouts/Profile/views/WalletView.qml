@@ -119,6 +119,8 @@ SettingsContentBase {
                                                          root.settingsSubSubsection === Constants.walletSettingsSubsection.manageHidden ||
                                                          root.settingsSubSubsection === Constants.walletSettingsSubsection.manageAdvanced
 
+        readonly property bool isManageNetworksSubsection: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageNetworks
+
         readonly property var walletSettings: Settings {
             category: "walletSettings-" + root.myPublicKey
         }
@@ -140,6 +142,12 @@ SettingsContentBase {
         Binding on currentIndex {
             value: root.manageTokensViewIndex
             when: priv.isManageTokensSubsection
+            restoreMode: Binding.RestoreNone
+        }
+
+        Binding on currentIndex {
+            value: root.networksViewIndex
+            when: root.settingsSubSubsection === Constants.walletSettingsSubsection.manageNetworks
             restoreMode: Binding.RestoreNone
         }
 
