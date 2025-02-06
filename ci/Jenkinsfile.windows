@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@cf858297d06f0426488f592320aecd44e07fa07b'
+library 'status-jenkins-lib@add-eth-rpc-proxy-credentials'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
