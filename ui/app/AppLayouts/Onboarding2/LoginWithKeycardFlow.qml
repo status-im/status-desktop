@@ -22,8 +22,6 @@ SQUtils.QObject {
 
     property bool displayKeycardPromoBanner
 
-    signal keycardPinCreated(string pin)
-    signal seedphraseSubmitted(string seedphrase)
     signal authorizationRequested(string pin)
     signal keycardFactoryResetRequested
     signal unblockWithSeedphraseRequested
@@ -126,37 +124,6 @@ SQUtils.QObject {
                     Backpressure.debounce(page, root.keycardPinInfoPageDelay,
                                           root.finished)()
                 }
-            }
-        }
-    }
-
-    Component {
-        id: seedphrasePage
-
-        SeedphrasePage {
-            title: qsTr("Unblock Keycard using the recovery phrase")
-            btnContinueText: qsTr("Unblock Keycard")
-            authorizationState: root.authorizationState
-            isSeedPhraseValid: root.isSeedPhraseValid
-            onSeedphraseSubmitted: (seedphrase) => {
-                root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(keycardCreatePinPage)
-            }
-        }
-    }
-
-    Component {
-        id: keycardCreatePinPage
-
-        KeycardCreatePinPage {
-            id: createPinPage
-
-            onKeycardPinCreated: (pin) => {
-                createPinPage.loading = true
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
-                    root.finished()
-                })()
             }
         }
     }

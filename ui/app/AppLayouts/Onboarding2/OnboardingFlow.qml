@@ -329,8 +329,6 @@ SQUtils.QObject {
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
         onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
         onExportKeysRequested: root.exportKeysRequested()
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
