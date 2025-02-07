@@ -82,7 +82,7 @@ SQUtils.QObject {
             }
             onCreateKeycardProfileWithExistingSeedphrase: {
                 d.withNewSeedphrase = false
-                root.stackView.push(keycardCreatePinPage)
+                root.stackView.push(seedphrasePage)
             }
         }
     }
@@ -153,20 +153,13 @@ SQUtils.QObject {
         id: seedphrasePage
 
         SeedphrasePage {
-            id: seedphrasePage
             title: qsTr("Create profile on empty Keycard using a recovery phrase")
 
             authorizationState: root.authorizationState
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.authorizationRequested()
-            }
-            onKeycardAuthorized: {
-                if (!d.withNewSeedphrase) {
-                    root.loadMnemonicRequested()
-                    root.stackView.push(addKeypairPage)
-                }
+                root.stackView.push(keycardCreatePinPage)
             }
         }
     }
@@ -175,8 +168,6 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinPage {
-            id: createPinPage
-
             keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
             pinSettingState: root.pinSettingState
             authorizationState: root.authorizationState
@@ -187,13 +178,14 @@ SQUtils.QObject {
                 if (d.withNewSeedphrase) {
                     // Need to authorize before getting a seedphrase
                     root.authorizationRequested()
-                } else {
-                    root.stackView.push(seedphrasePage)
                 }
             }
             onKeycardAuthorized: {
                 if (d.withNewSeedphrase) {
                     root.stackView.push(backupSeedIntroPage)
+                } else {
+                    root.loadMnemonicRequested()
+                    root.stackView.push(addKeypairPage)
                 }
             }
         }

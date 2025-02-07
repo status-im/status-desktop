@@ -95,7 +95,7 @@ SQUtils.QObject {
             pinSettingState: root.pinSettingState
             authorizationState: root.authorizationState
             onKeycardPinCreated: (pin) => {
-                    root.keycardPinCreated(pin)
+                root.keycardPinCreated(pin)
             }
             onKeycardPinSuccessfullySet: {
                 root.authorizationRequested()
