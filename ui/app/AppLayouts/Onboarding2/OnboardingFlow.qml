@@ -22,7 +22,7 @@ SQUtils.QObject {
     required property int restoreKeysExportState
     required property int addKeyPairState
     required property int syncState
-    required property var getSeedWords
+    required property var generateMnemonic
     required property int remainingPinAttempts
     required property int remainingPukAttempts
 
@@ -263,7 +263,7 @@ SQUtils.QObject {
         pinSettingState: root.pinSettingState
         authorizationState: root.authorizationState
         addKeyPairState: root.addKeyPairState
-        getSeedWords: root.getSeedWords
+        generateMnemonic: root.generateMnemonic
         displayKeycardPromoBanner: root.displayKeycardPromoBanner
         isSeedPhraseValid: root.isSeedPhraseValid
 

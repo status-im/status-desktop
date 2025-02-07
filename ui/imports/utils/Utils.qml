@@ -96,6 +96,13 @@ QtObject {
         return seedPhraseValidWordCount(value);
     }
 
+    function splitWords(mnemonic) {
+        const trimmed = mnemonic.trim()
+        if (trimmed === "")
+            return []
+        return trimmed.replace(/  +/g, " ").split(" ")
+    }
+
     function compactAddress(addr, numberOfChars) {
         if(addr.length <= 5 + (numberOfChars * 2)){  //   5 represents these chars 0x...
             return addr;
@@ -186,9 +193,7 @@ QtObject {
     }
 
     function countWords(text) {
-        if (text.trim() === "")
-            return 0;
-        return text.trim().replace(/  +/g, " ").split(" ").length;
+        return splitWords(text).length
     }
 
     function seedPhraseValidWordCount(text) {

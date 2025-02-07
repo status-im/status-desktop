@@ -167,7 +167,7 @@ Page {
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
 
-        getSeedWords: root.onboardingStore.getMnemonic
+        generateMnemonic: root.onboardingStore.generateMnemonic
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
         isBiometricsLogin: root.isBiometricsLogin

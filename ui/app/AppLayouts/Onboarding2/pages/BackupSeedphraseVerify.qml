@@ -11,19 +11,30 @@ import StatusQ.Core.Theme 0.1
 import AppLayouts.Onboarding2.components 1.0
 
 import shared.stores 1.0
+import utils 1.0
 
 import SortFilterProxyModel 0.2
 
 OnboardingPage {
     id: root
 
-    required property var seedWordsToVerify // [{seedWordNumber:int, seedWord:string}, ...]
+    required property string mnemonic
+    required property int countToVerify
+    readonly property var verificationWordsMap: d.verificationWordsMap
 
     signal backupSeedphraseVerified()
 
     QtObject {
         id: d
         readonly property var seedSuggestions: BIP39_en {} // [{seedWord:string}, ...]
+        readonly property var verificationWordsMap: { // [{wordNumber:int, word:string}, ...]
+            const words = Utils.splitWords(root.mnemonic)
+            const randomIndexes = SQUtils.Utils.nSamples(root.countToVerify, words.length)
+            return randomIndexes.map(i => ({
+                                               seedWordNumber: i+1,
+                                               seedWord: words[i]
+                                           }))
+        }
     }
 
     contentItem: Item {
@@ -62,7 +73,7 @@ OnboardingPage {
                     }
 
                     id: seedRepeater
-                    model: root.seedWordsToVerify
+                    model: d.verificationWordsMap
                     delegate: RowLayout {
                         required property var modelData
                         required property int index
@@ -80,7 +91,7 @@ OnboardingPage {
                             horizontalAlignment: Text.AlignHCenter
                         }
                         SeedphraseVerifyInput {
-                            readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx into the seedWords
+                            readonly property int seedWordIndex: modelData.seedWordNumber - 1 // 0 based idx in the mnemonic
                             objectName: "seedInput_%1".arg(index)
                             Layout.fillWidth: true
                             id: seedInput
