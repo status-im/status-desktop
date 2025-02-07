@@ -620,7 +620,20 @@ Item {
             verify(!!btnCreateWithExistingSeedphrase)
             mouseClick(btnCreateWithExistingSeedphrase)
 
-            // PAGE 6: Create new Keycard PIN
+            // PAGE 6: Create profile on empty Keycard using a recovery phrase
+            page = getCurrentPage(stack, SeedphrasePage)
+            const btnContinue = findChild(page, "btnContinue")
+            verify(!!btnContinue)
+            compare(btnContinue.enabled, false)
+            const firstInput = findChild(page, "enterSeedPhraseInputField1")
+            verify(!!firstInput)
+            tryCompare(firstInput, "activeFocus", true)
+            ClipboardUtils.setText(mockDriver.mnemonic)
+            keySequence(StandardKey.Paste)
+            compare(btnContinue.enabled, true)
+            mouseClick(btnContinue)
+
+            // PAGE 7: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
             tryCompare(page, "state", "creating")
@@ -633,20 +646,6 @@ Item {
             dynamicSpy.setup(page, "keycardPinSuccessfullySet")
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
             tryCompare(dynamicSpy, "count", 1)
-
-
-            // PAGE 7: Create profile on empty Keycard using a recovery phrase
-            page = getCurrentPage(stack, SeedphrasePage)
-            const btnContinue = findChild(page, "btnContinue")
-            verify(!!btnContinue)
-            compare(btnContinue.enabled, false)
-            const firstInput = findChild(page, "enterSeedPhraseInputField1")
-            verify(!!firstInput)
-            tryCompare(firstInput, "activeFocus", true)
-            ClipboardUtils.setText(mockDriver.mnemonic)
-            keySequence(StandardKey.Paste)
-            compare(btnContinue.enabled, true)
-            mouseClick(btnContinue)
             dynamicSpy.setup(page, "keycardAuthorized")
             mockDriver.authorizationState = Onboarding.ProgressState.Success
             tryCompare(dynamicSpy, "count", 1)

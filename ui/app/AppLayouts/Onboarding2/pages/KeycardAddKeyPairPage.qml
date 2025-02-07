@@ -22,7 +22,8 @@ OnboardingPage {
     states: [
         State {
             name: "inprogress"
-            when: root.addKeyPairState === Onboarding.ProgressState.InProgress
+            when: root.addKeyPairState === Onboarding.ProgressState.InProgress ||
+                  root.addKeyPairState === Onboarding.ProgressState.Idle
             PropertyChanges {
                 target: root
                 title: qsTr("Adding key pair to Keycard")

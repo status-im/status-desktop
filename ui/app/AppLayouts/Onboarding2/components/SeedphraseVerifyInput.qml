@@ -18,7 +18,7 @@ StatusTextField {
     placeholderText: qsTr("Enter word")
 
     leftPadding: Theme.padding
-    rightPadding: Theme.padding + rightIcon.width + d.contentSpacing
+    rightPadding: Theme.padding + clearIcon.width + d.contentSpacing
     topPadding: Theme.smallPadding
     bottomPadding: Theme.smallPadding
 
