@@ -291,7 +291,7 @@ SplitView {
             text: "Paste seed phrase verification"
             focusPolicy: Qt.NoFocus
             onClicked: {
-                const words = Utils.parseMnemonicWords(mockDriver.mnemonic)
+                const words = Utils.splitWords(mockDriver.mnemonic)
 
                 for (let i = 0;; i++) {
                     const input = StorybookUtils.findChild(

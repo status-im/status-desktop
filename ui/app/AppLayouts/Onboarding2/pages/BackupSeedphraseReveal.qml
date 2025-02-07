@@ -22,7 +22,7 @@ OnboardingPage {
     QtObject {
         id: d
         property bool seedphraseRevealed
-        property var mnemonicWords: Utils.parseMnemonicWords(root.mnemonic)
+        readonly property var mnemonicWords: Utils.splitWords(root.mnemonic)
     }
 
     contentItem: Item {

@@ -96,7 +96,7 @@ QtObject {
         return seedPhraseValidWordCount(value);
     }
 
-    function parseMnemonicWords(mnemonic) {
+    function splitWords(mnemonic) {
         const trimmed = mnemonic.trim()
         if (trimmed === "")
             return []
@@ -193,7 +193,7 @@ QtObject {
     }
 
     function countWords(text) {
-        return parseMnemonicWords(text).length
+        return splitWords(text).length
     }
 
     function seedPhraseValidWordCount(text) {
