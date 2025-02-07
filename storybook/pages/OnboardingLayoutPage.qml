@@ -382,6 +382,10 @@ SplitView {
 
                 text: {
                     const stack = onboarding.stack
+
+                    // trigger change when only curret item changes on replace
+                    stack.currentItem
+
                     let content = `Stack (${stack.depth}):`
 
                     for (let i = 0; i < stack.depth; i++) {

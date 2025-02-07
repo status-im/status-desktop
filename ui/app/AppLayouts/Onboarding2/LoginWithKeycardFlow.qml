@@ -79,19 +79,54 @@ SQUtils.QObject {
         id: keycardEnterPinPage
 
         KeycardEnterPinPage {
+            id: page
+
             authorizationState: root.authorizationState
-            restoreKeysExportState: root.restoreKeysExportState
-            onAuthorizationRequested: root.authorizationRequested(pin)
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
-            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-            pinCorrectText: qsTr("PIN correct. Exporting keys.")
 
-            onExportKeysRequested: root.exportKeysRequested()
-            onExportKeysDone: root.finished()
-
+            onAuthorizationRequested: root.authorizationRequested(pin)
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
+
+            Connections {
+                target: root
+                enabled: page.visible
+
+                function onAuthorizationStateChanged() {
+                    if (root.authorizationState !== Onboarding.ProgressState.Success)
+                        return
+
+                    const doNext = () => {
+                        root.exportKeysRequested()
+                        root.stackView.replace(keycardExtractingKeysPage)
+                    }
+
+                    Backpressure.debounce(page, root.keycardPinInfoPageDelay,
+                                          doNext)()
+                }
+            }
+        }
+    }
+
+    Component {
+        id: keycardExtractingKeysPage
+
+        KeycardExtractingKeysPage {
+            id: page
+
+            Connections {
+                target: root
+                enabled: page.visible
+
+                function onRestoreKeysExportStateChanged() {
+                    if (root.restoreKeysExportState !== Onboarding.ProgressState.Success)
+                        return
+
+                    Backpressure.debounce(page, root.keycardPinInfoPageDelay,
+                                          root.finished)()
+                }
+            }
         }
     }
 
