@@ -23,6 +23,9 @@ QtObject {
         readonly property int arbitrumSepoliaChainId: 421614
         readonly property int baseChainId: 8453
         readonly property int baseSepoliaChainId: 84532
+
+        // Used for new chain advertisment
+        readonly property var newChains: [baseChainId]
     }
 
     readonly property QtObject startupFlow: QtObject {

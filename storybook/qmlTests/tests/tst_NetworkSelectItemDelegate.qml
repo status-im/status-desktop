@@ -258,5 +258,28 @@ Item {
             controlUnderTest.checkState = Qt.Unchecked
             compare(controlUnderTest.checkState, Qt.Unchecked)
         }
+
+        function test_newIcon() {
+            verify(!!controlUnderTest)
+            verify(!controlUnderTest.showNewIcon)
+            verify(!controlUnderTest.statusListItemTitleIcons.active)
+
+            controlUnderTest.showNewIcon = true
+
+            verify(controlUnderTest.showNewIcon)
+            verify(controlUnderTest.statusListItemTitleIcons.active)
+
+            const newIcon = findChild(controlUnderTest, "networkSelectionNewIcon_Ethereum")
+            verify(newIcon)
+
+            const tooltip = findChild(newIcon, "tooltip")
+            verify(tooltip)
+
+            verify(tooltip.text.indexOf("Ethereum") >= 0)
+
+            controlUnderTest.title = "Base"
+            verify(tooltip.text.indexOf("Ethereum") === -1)
+            verify(tooltip.text.indexOf("Base") >= 0)
+        }
     }
 }

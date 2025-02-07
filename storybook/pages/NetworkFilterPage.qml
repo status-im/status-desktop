@@ -41,6 +41,8 @@ SplitView {
                 showTitle: ctrlShowTitle.checked
                 selectionAllowed: selectionAllowedCheckBox.checked
                 showSelectionIndicator: (ctrlShowCheckBoxes.checked && multiSelection) || (ctrlShowRadioButtons.checked && !multiSelection)
+                showNewChainIcon: newChainsNotificationCheckbox.checked
+                showNotificationIcon: showNotificationIconCheckbox.checked
             }
         }
 
@@ -97,6 +99,18 @@ SplitView {
             CheckBox {
                 id: selectionAllowedCheckBox
                 text: "Selection allowed"
+                checked: true
+            }
+
+            CheckBox {
+                id: newChainsNotificationCheckbox
+                text: "Show new chain icon"
+                checked: true
+            }
+
+            CheckBox {
+                id: showNotificationIconCheckbox
+                text: "Show notification icon"
                 checked: true
             }
 

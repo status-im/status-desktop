@@ -193,14 +193,6 @@ Rectangle {
         Item {
             id: statusListItemTitleArea
 
-            function getStatusListItemTitleAnchorsRight() {
-                let isIconsRowVisible = false
-                if(titleIconsRow.item) {
-                    isIconsRowVisible = true//titleIconsRow.item.visible
-                }
-                return !root.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
-            }
-
             anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
             anchors.leftMargin: iconOrImage.active ? 16 : loadingIndicator.active ? 6 : root.leftPadding
