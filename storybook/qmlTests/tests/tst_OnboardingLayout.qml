@@ -70,7 +70,15 @@ Item {
                     return valid
                 }
 
-                function authorize(pin: string) {}
+                function authorize(pin: string) {
+                    authorizeCalled(pin)
+                }
+                function loadMnemonic(mnemonic) {
+                    loadMnemonicCalled()
+                }
+                function exportRecoverKeys() {
+                    exportRecoverKeysCalled()
+                }
 
                 readonly property int addKeyPairState: Onboarding.ProgressState.InProgress // enum Onboarding.ProgressState
 
@@ -90,8 +98,6 @@ Item {
                 function generateMnemonic() {
                     return mockDriver.mnemonic
                 }
-                function loadMnemonic(mnemonic) {}
-                function exportRecoverKeys() {}
 
                 readonly property int syncState: Onboarding.ProgressState.InProgress // enum Onboarding.ProgressState
                 function validateLocalPairingConnectionString(connectionString: string) {
@@ -101,6 +107,10 @@ Item {
 
                 // password signals
                 signal accountLoginError(string error, bool wrongPassword)
+
+                signal authorizeCalled(string pin)
+                signal loadMnemonicCalled
+                signal exportRecoverKeysCalled
             }
 
             onLoginRequested: (keyUid, method, data) => {
@@ -895,21 +905,24 @@ Item {
 
             // PAGE 5: Enter Keycard PIN
             page = getCurrentPage(stack, KeycardEnterPinPage)
-            dynamicSpy.setup(page, "authorizationRequested")
+            dynamicSpy.setup(controlUnderTest.onboardingStore, "authorizeCalled")
             keyClickSequence(mockDriver.existingPin)
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], mockDriver.existingPin)
 
-            dynamicSpy.setup(page, "exportKeysRequested")
+            dynamicSpy.setup(controlUnderTest.onboardingStore, "exportRecoverKeysCalled")
             mockDriver.authorizationState = Onboarding.ProgressState.Success
             tryCompare(dynamicSpy, "count", 1)
 
-            dynamicSpy.setup(page, "exportKeysDone")
+            // PAGE 6: Extracting keys from Keycard
+            page = getCurrentPage(stack, KeycardExtractingKeysPage)
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
 
-            // PAGE 6: Enable Biometrics
+            // PAGE 7: Enable Biometrics
             if (data.biometrics) {
+                dynamicSpy.setup(stack, "currentItemChanged")
+                tryCompare(dynamicSpy, "count", 1)
+
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")

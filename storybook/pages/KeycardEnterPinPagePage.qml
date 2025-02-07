@@ -14,26 +14,30 @@ Item {
         id: page
         anchors.fill: parent
 
-        remainingAttempts: 3
+        authorizationState: authorizationProgressSelector.value
+        remainingAttempts: remainingAttemptsSpinBox.value
+
         unblockWithPukAvailable: ctrlUnblockWithPUK.checked
-        keycardPinInfoPageDelay: 1000
-        authorizationState: Onboarding.ProgressState.Idle
-        restoreKeysExportState: Onboarding.ProgressState.Idle
+
         onAuthorizationRequested: (pin) => {
-                                 console.warn("!!! PIN:", pin)
-                                 console.warn("!!! RESETTING FLOW")
-                                 state = "entering"
-                             }
-        onKeycardFactoryResetRequested: {
-            console.warn("!!! FACTORY RESET KEYCARD")
-            remainingAttempts = 3
-            state = "entering"
+            console.log("authorization requested:", pin)
         }
+
+        onUnblockWithSeedphraseRequested: console.log("unblock with seed phrase requested")
+        onUnblockWithPukRequested: console.log("unblock with puk requested")
+        onKeycardFactoryResetRequested: console.log("factory reset requested")
     }
 
-    RowLayout {
-        anchors.right: parent.right
+    ColumnLayout {
+        anchors.left: parent.left
         anchors.bottom: parent.bottom
+        anchors.margins: 15
+
+        spacing: 15
+
+        Label {
+            text: "Hint: %1".arg(root.existingPin)
+        }
 
         CheckBox {
             id: ctrlUnblockWithPUK
@@ -41,10 +45,25 @@ Item {
             checked: true
         }
 
-        Item { Layout.fillWidth: true }
+        RowLayout {
+            Label {
+                text: "Remaining attempts: "
+            }
 
-        Label {
-            text: "Hint: %1".arg(root.existingPin)
+            SpinBox {
+                id: remainingAttemptsSpinBox
+
+                from: 0
+                to: 3
+                value: 3
+            }
+        }
+
+        ProgressSelector {
+            id: authorizationProgressSelector
+
+            label: "Authorization progress"
+
         }
     }
 }
