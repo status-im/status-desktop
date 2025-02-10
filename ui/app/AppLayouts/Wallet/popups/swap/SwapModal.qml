@@ -176,7 +176,7 @@ StatusDialog {
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                         text: qsTr("On:")
                         color: Theme.palette.baseColor1
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         lineHeight: 38
                         lineHeightMode: Text.FixedHeight
                         verticalAlignment: Text.AlignVCenter
@@ -314,6 +314,86 @@ StatusDialog {
                         root.swapInputParamsForm.toTokenAmount = tempPayAmount
                         payPanel.forceActiveFocus()
                     }
+                }
+            }
+
+            RowLayout {
+                id: approximationRow
+                property bool inversedOrder: false
+                readonly property SwapInputPanel leftPanel: inversedOrder ? receivePanel : payPanel
+                readonly property SwapInputPanel rightPanel: inversedOrder ? payPanel : receivePanel 
+
+                readonly property string lhsSymbol: leftPanel.tokenKey ?? ""
+                readonly property double lhsAmount: leftPanel.value
+                readonly property string rhsSymbol: rightPanel.tokenKey ?? ""
+                readonly property double rhsAmount: rightPanel.value
+                readonly property int rhsDecimals: rightPanel.rawValueMultiplierIndex
+                readonly property bool amountLoading: receivePanel.mainInputLoading || payPanel.mainInputLoading
+
+                readonly property string quote: !!lhsAmount && !!rhsAmount ? SQUtils.AmountsArithmetic.div(
+                                                    SQUtils.AmountsArithmetic.fromNumber(rhsAmount),
+                                                    SQUtils.AmountsArithmetic.fromNumber(lhsAmount)).toFixed(rhsDecimals) : 1
+                readonly property string price: root.swapAdaptor.currencyStore.getFiatValue(1, lhsSymbol)
+
+                function formatCurrency(amount, symbol) {
+                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(amount, symbol,
+                                                                            { roundingMode: LocaleUtils.RoundingMode.Down, stripTrailingZeroes: true })
+                }
+
+                visible: root.swapAdaptor.validSwapProposalReceived || root.swapAdaptor.swapProposalLoading
+                spacing: 0
+
+                onVisibleChanged: inversedOrder = false // restore to default
+                onAmountLoadingChanged: inversedOrder = false // restore to default
+
+                StatusBaseText {
+                    objectName: "quoteApproximationLeft"
+                    text: "%1 ≈ ".arg(approximationRow.formatCurrency(1, approximationRow.lhsSymbol))
+
+                    color: Theme.palette.directColor4
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                }
+
+                StatusTextWithLoadingState {
+                    Layout.preferredWidth: loading ? 40 : implicitWidth
+                    objectName: "quoteApproximationRight"
+                    text: "%1 ".arg(approximationRow.formatCurrency(approximationRow.quote, approximationRow.rhsSymbol))
+
+                    customColor: Theme.palette.directColor4
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                    loading: approximationRow.amountLoading
+                }
+
+                StatusBaseText {
+                    id: quoteApproximation
+                    objectName: "quoteApproximationPrice"
+                    text: "(%1)".arg(approximationRow.formatCurrency(
+                                            approximationRow.price,
+                                            root.swapAdaptor.currencyStore.currentCurrency
+                                            ))
+
+                    color: Theme.palette.directColor5
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                    visible: !approximationRow.amountLoading
+                }
+
+                StatusFlatButton {
+                    objectName: "invertQuoteApproximation"
+                    icon.name: "swap"
+                    size: StatusBaseButton.Size.XSmall
+                    onClicked: approximationRow.inversedOrder = !approximationRow.inversedOrder
+                    hoverColor: "transparent"
+                    textColor: hovered ? Theme.palette.directColor4 : Theme.palette.directColor5
+                    visible: !approximationRow.amountLoading
                 }
             }
 
