@@ -291,8 +291,8 @@ ColumnLayout {
 
     WalletAddressMenu {
         id: addressMenu
+        flatNetworks: root.walletStore.filteredFlatModel
         selectedAccount: root.account
-        areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         onCopyToClipboard: ClipboardUtils.setText(address)
     }
 
