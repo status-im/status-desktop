@@ -113,7 +113,7 @@ SplitView {
                 logs.logEvent("OnboardingStore.authorize", ["pin"], arguments)
             }
 
-            function loadMnemonic(mnemonic) { // -> void
+            function loadMnemonic(mnemonic: string) { // -> void
                 logs.logEvent("OnboardingStore.loadMnemonic", ["mnemonic"], arguments)
             }
 
@@ -243,6 +243,8 @@ SplitView {
             visible: onboarding.currentPage instanceof SeedphrasePage
 
             onClicked: {
+                const words = Utils.splitWords(mockDriver.mnemonic)
+
                 for (let i = 1;; i++) {
                     const input = StorybookUtils.findChild(
                                     onboarding.currentPage,
@@ -251,7 +253,7 @@ SplitView {
                     if (input === null)
                         break
 
-                    input.text = "dog"
+                    input.text = words[i - 1]
                 }
             }
         }
