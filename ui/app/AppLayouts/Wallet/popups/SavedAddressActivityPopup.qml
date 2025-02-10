@@ -158,8 +158,6 @@ StatusModal {
                     statusListItemTitle.font.pixelSize: 22
                     statusListItemTitle.font.bold: Font.Bold
 
-                    areTestNetworksEnabled: WalletStore.RootStore.areTestNetworksEnabled
-
                     onAboutToOpenPopup: {
                         root.close()
                     }
