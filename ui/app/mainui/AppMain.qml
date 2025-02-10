@@ -1929,7 +1929,6 @@ Item {
                             networkConnectionStore: appMain.networkConnectionStore
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
-                            hideSignPhraseModal: userAgreementLoader.active
                             dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
                             dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
@@ -2605,15 +2604,6 @@ Item {
             colorHash: appMain.profileStore.colorHash
             onClosed: appMainLocalSettings.introduceYourselfPopupSeen = true
             onAccepted: Global.changeAppSectionBySectionType(Constants.appSection.profile)
-        }
-    }
-
-    Loader {
-        id: userAgreementLoader
-        active: production && !localAppSettings.testEnvironment
-        sourceComponent: UserAgreementPopup {
-            visible: appMain.visible
-            onClosed: userAgreementLoader.active = false
         }
     }
 
