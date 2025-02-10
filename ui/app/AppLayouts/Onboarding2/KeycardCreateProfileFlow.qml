@@ -31,8 +31,6 @@ SQUtils.QObject {
     signal keycardPinCreated(string pin)
     signal seedphraseSubmitted(string seedphrase)
 
-    signal keypairAddTryAgainRequested
-    signal createProfileWithoutKeycardRequested
     signal authorizationRequested
 
     signal finished(bool withNewSeedphrase)
@@ -194,19 +192,12 @@ SQUtils.QObject {
     Component {
         id: addKeypairPage
 
-        KeycardAddKeyPairPage {
+        KeycardAddKeyPairDelayedPage {
             readonly property bool backAvailableHint: false
 
             addKeyPairState: root.addKeyPairState
 
-            onKeypairAddContinueRequested: root.finished(d.withNewSeedphrase)
-
-            onKeypairAddTryAgainRequested: {
-                root.stackView.replace(addKeypairPage)
-                root.keypairAddTryAgainRequested()
-            }
-
-            onCreateProfilePageRequested: root.createProfileWithoutKeycardRequested()
+            onFinished: root.finished(d.withNewSeedphrase)
         }
     }
 }

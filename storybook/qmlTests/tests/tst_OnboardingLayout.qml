@@ -73,7 +73,7 @@ Item {
                 function authorize(pin: string) {
                     authorizeCalled(pin)
                 }
-                function loadMnemonic(mnemonic) {
+                function loadMnemonic(mnemonic: string) {
                     loadMnemonicCalled()
                 }
                 function exportRecoverKeys() {
@@ -552,13 +552,12 @@ Item {
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
-            btnContinue = findChild(page, "btnContinue")
-            verify(!!btnContinue)
-            compare(btnContinue.enabled, true)
-            mouseClick(btnContinue)
 
             // PAGE 13: Enable Biometrics
             if (data.biometrics) {
+                dynamicSpy.setup(stack, "currentItemChanged")
+                tryCompare(dynamicSpy, "count", 1)
+
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
@@ -654,13 +653,12 @@ Item {
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
-            const btnContinue2 = findChild(page, "btnContinue")
-            verify(!!btnContinue2)
-            compare(btnContinue2.enabled, true)
-            mouseClick(btnContinue2)
 
             // PAGE 9: Enable Biometrics
             if (controlUnderTest.biometricsAvailable) {
+                dynamicSpy.setup(stack, "currentItemChanged")
+                tryCompare(dynamicSpy, "count", 1)
+
                 page = getCurrentPage(stack, EnableBiometricsPage)
 
                 const enableBioButton = findChild(controlUnderTest, data.bioEnabled ? "btnEnableBiometrics" : "btnDontEnableBiometrics")
@@ -1261,11 +1259,6 @@ Item {
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
-
-            btnContinue = findChild(page, "btnContinue")
-            verify(!!btnContinue)
-            compare(btnContinue.enabled, true)
-            mouseClick(btnContinue)
 
             // FINISH
             tryCompare(finishedSpy, "count", 1)
