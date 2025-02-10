@@ -1,4 +1,5 @@
 #!/bin/sh
+set -ef pipefail
 
 # Parse arguments
 for ARGUMENT in "$@"

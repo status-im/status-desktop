@@ -1,9 +1,13 @@
 #!/bin/sh
-make deps-common -j10 2>&1
+set -ef pipefail
+
+make deps-common -j10 
 
 ARCH=${ARCH:="amd64"}
-DESKTOP_VERSION=${shell ./scripts/version.sh}
-STATUSGO_VERSION=${shell cd vendor/status-go; make version}
+DESKTOP_VERSION=$(eval ./scripts/version.sh)
+STATUSGO_VERSION=$(eval cd vendor/status-go; make version)
+
+echo $DESKTOP_VERSION $STATUSGO_VERSION
 
 if [ "$ARCH" == "x86_64" ]; then
     CARCH="amd64"
@@ -26,4 +30,4 @@ echo "Building status-client for $ARCH using compiler: $CC"
     --clang.exe=$CC \
     --clang.linkerexe=$CC \
     --dynlibOverrideAll \
-    src/nim_status_client.nim 2>&1
+    src/nim_status_client.nim 
