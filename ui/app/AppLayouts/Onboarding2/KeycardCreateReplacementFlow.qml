@@ -110,19 +110,12 @@ SQUtils.QObject {
     Component {
         id: addKeypairPage
 
-        KeycardAddKeyPairPage {
+        KeycardAddKeyPairDelayedPage {
             readonly property bool backAvailableHint: false
 
             addKeyPairState: root.addKeyPairState
 
-            onKeypairAddContinueRequested: root.finished()
-
-            onKeypairAddTryAgainRequested: {
-                root.stackView.replace(addKeypairPage)
-                root.loadMnemonicRequested()
-            }
-
-            onCreateProfilePageRequested: root.createProfileWithoutKeycardRequested()
+            onFinished: root.finished()
         }
     }
 }

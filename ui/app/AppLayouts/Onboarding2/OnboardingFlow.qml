@@ -273,16 +273,7 @@ SQUtils.QObject {
         onLoadMnemonicRequested: root.loadMnemonicRequested()
         onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        onKeypairAddTryAgainRequested: root.loadMnemonicRequested()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
-
-        onCreateProfileWithoutKeycardRequested: {
-            const page = stackView.find(
-                           item => item instanceof HelpUsImproveStatusPage)
-
-            stackView.replace(page, createProfilePage, StackView.PopTransition)
-        }
-
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
         onFinished: (withNewSeedphrase) => {

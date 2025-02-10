@@ -8,6 +8,7 @@ CreatePasswordPage 1.0 CreatePasswordPage.qml
 CreateProfilePage 1.0 CreateProfilePage.qml
 EnableBiometricsPage 1.0 EnableBiometricsPage.qml
 HelpUsImproveStatusPage 1.0 HelpUsImproveStatusPage.qml
+KeycardAddKeyPairDelayedPage 1.0 KeycardAddKeyPairDelayedPage.qml
 KeycardAddKeyPairPage 1.0 KeycardAddKeyPairPage.qml
 KeycardBasePage 1.0 KeycardBasePage.qml
 KeycardCreatePinPage 1.0 KeycardCreatePinPage.qml
