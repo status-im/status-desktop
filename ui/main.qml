@@ -198,13 +198,13 @@ StatusWindow {
         Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
-        d.runMockedKeycardControllerWindow()
+        d.runMockedKeycardControllerWindow() // FIXME this is run twice with onboardingV1
     }
 
     //TODO remove direct backend access
     Connections {
         enabled: !featureFlagsStore.onboardingV2Enabled
-        target: !featureFlagsStore.onboardingV2Enabled ? startupModule : null
+        target: !featureFlagsStore.onboardingV2Enabled && typeof startupModule !== "undefined" ? startupModule : null
 
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
