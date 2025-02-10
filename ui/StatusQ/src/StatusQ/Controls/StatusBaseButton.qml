@@ -11,6 +11,7 @@ Button {
     id: root
 
     enum Size {
+        XSmall,
         Tiny,
         Small,
         Large
@@ -72,6 +73,8 @@ Button {
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
         readonly property int iconSize: {
             switch(root.size) {
+            case StatusBaseButton.Size.XSmall:
+                return 13
             case StatusBaseButton.Size.Tiny:
                 return 16
             case StatusBaseButton.Size.Small:
@@ -94,6 +97,8 @@ Button {
         }
         if (root.icon.name) {
             switch (size) {
+            case StatusBaseButton.Size.XSmall:
+                return 6
             case StatusBaseButton.Size.Tiny:
                 return Theme.halfPadding
             case StatusBaseButton.Size.Small:
@@ -110,6 +115,8 @@ Button {
             return isRoundIcon ? 8 : spacing
         }
         switch (size) {
+        case StatusBaseButton.Size.XSmall:
+            return 3
         case StatusBaseButton.Size.Tiny:
             return 5
         case StatusBaseButton.Size.Small:
