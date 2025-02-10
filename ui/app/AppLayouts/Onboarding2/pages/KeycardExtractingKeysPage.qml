@@ -74,33 +74,4 @@ OnboardingPage {
             }
         }
     }
-
-    Component {
-        id: loadingIndicator
-        Rectangle {
-            color: Theme.palette.baseColor2
-            radius: width/2
-            StatusDotsLoadingIndicator {
-                anchors.centerIn: parent
-            }
-        }
-    }
-
-    Component {
-        id: successIcon
-        StatusRoundIcon {
-            asset.name: "check-circle"
-            asset.color: Theme.palette.successColor1
-            asset.bgColor: Theme.palette.successColor2
-        }
-    }
-
-    Component {
-        id: failedIcon
-        StatusRoundIcon {
-            asset.name: "close-circle"
-            asset.color: Theme.palette.dangerColor1
-            asset.bgColor: Theme.palette.dangerColor3
-        }
-    }
 }

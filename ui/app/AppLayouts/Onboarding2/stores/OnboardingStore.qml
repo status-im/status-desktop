@@ -50,7 +50,7 @@ QtObject {
     }
 
     readonly property int addKeyPairState: d.onboardingModuleInst.addKeyPairState // cf. enum Onboarding.ProgressState
-    function loadMnemonic(mnemonic) { // -> void
+    function loadMnemonic(mnemonic: string) { // -> void
         d.onboardingModuleInst.loadMnemonic(mnemonic)
     }
     function exportRecoverKeys() { // -> void
