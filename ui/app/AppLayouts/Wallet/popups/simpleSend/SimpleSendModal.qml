@@ -218,7 +218,7 @@ StatusDialog {
             if(selectedAssetEntry.available && !!selectedAssetEntry.item) {
                 d.setTokenOnBothHeaders(selectedAssetEntry.item.symbol,
                                         Constants.tokenIcon(selectedAssetEntry.item.symbol),
-                                        selectedAssetEntry.item.key)
+                                        selectedAssetEntry.item.tokensKey)
             }
         }
 
@@ -321,17 +321,19 @@ StatusDialog {
         function setSelectedCollectible(key) {
             const tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
             if(tokenType === Constants.TokenType.ERC1155) {
-               root.sendType =  Constants.SendType.ERC1155Transfer
+                root.sendType =  Constants.SendType.ERC1155Transfer
             } else if(tokenType === Constants.TokenType.ERC721) {
-               root.sendType =  Constants.SendType.ERC721Transfer
+                root.sendType =  Constants.SendType.ERC721Transfer
             }
             root.selectedRawAmount = "1"
             root.selectedTokenKey = key
+            amountToSend.forceActiveFocus()
         }
 
         function setSelectedAsset(key) {
-               root.sendType = Constants.SendType.Transfer
-               root.selectedTokenKey = key
+            root.sendType = Constants.SendType.Transfer
+            root.selectedTokenKey = key
+            amountToSend.forceActiveFocus()
         }
     }
 
