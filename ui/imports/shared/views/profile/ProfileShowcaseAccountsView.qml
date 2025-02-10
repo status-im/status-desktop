@@ -9,6 +9,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
 
 import shared.controls.delegates 1.0
+import shared.popups 1.0
 import utils 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -148,14 +149,12 @@ Item {
                     Global.openAddEditSavedAddressesPopup({ addAddress: true,  address: contextMenu.accountAddress })
                 }
             }
-
-            StatusAction {
-                text: qsTr("View on Etherscan")
-                icon.name: "link"
-                onTriggered: {
-                    let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet,
-                                            root.walletStore.areTestNetworksEnabled,
-                                            contextMenu.accountAddress);
+            
+            BlockchainExplorersMenu {
+                id: blockchainExplorersMenu
+                flatNetworks: root.walletStore.filteredFlatModel
+                onNetworkClicked: {
+                    let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, contextMenu.accountAddress);
                     Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
                 }
             }

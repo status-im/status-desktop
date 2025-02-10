@@ -149,7 +149,6 @@ ColumnLayout {
             ens: model.ens
             colorId: model.colorId
             networkConnectionStore: root.networkConnectionStore
-            areTestNetworksEnabled: RootStore.areTestNetworksEnabled
             onOpenSendModal: root.sendToAddressRequested(recipient)
 
             states: [
