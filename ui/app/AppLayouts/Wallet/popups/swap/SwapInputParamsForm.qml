@@ -2,6 +2,8 @@ import QtQml 2.15
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import utils 1.0
+
 /* This is used so that there is an easy way to fill in the data
 needed to launch the Swap Modal with pre-filled requisites. */
 QtObject {
@@ -18,9 +20,9 @@ QtObject {
     property double selectedSlippage: 0.5
 
     // default to token key
-    property string defaultToTokenKey: ""
+    property string defaultToTokenKey: Constants.swap.wethTokenKey
     // default from token key
-    property string defaultFromTokenKey: ""
+    property string defaultFromTokenKey: Constants.swap.usdtTokenKey
     // 15 seconds
     property int autoRefreshTime: 15000
 

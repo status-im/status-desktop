@@ -329,6 +329,7 @@ QtObject {
         readonly property int node: 4
         readonly property int communitiesPortal: 5
         readonly property int loadingSection: 6
+        readonly property int swap: 7
     }
 
     readonly property QtObject appViewStackIndex: QtObject {

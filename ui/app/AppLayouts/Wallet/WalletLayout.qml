@@ -260,8 +260,6 @@ Item {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
-                d.swapFormData.defaultFromTokenKey = Constants.swap.usdtTokenKey
-                d.swapFormData.defaultToTokenKey = Constants.swap.wethTokenKey
                 Global.openSwapModalRequested(d.swapFormData, (popup) => {
                     popup.Component.destruction.connect(() => {
                         d.swapFormData.resetFormData()
@@ -387,8 +385,6 @@ Item {
                                           walletStore.currentViewedHoldingType)
             }
             onLaunchSwapModal: {
-                d.swapFormData.defaultFromTokenKey = Constants.swap.usdtTokenKey
-                d.swapFormData.defaultToTokenKey = Constants.swap.wethTokenKey
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
                 d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {

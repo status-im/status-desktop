@@ -796,6 +796,27 @@ method load*[T](
   if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
 
+  # Swap Section
+  let swapSectionItem = initItem(
+    conf.SWAP_SECTION_ID,
+    SectionType.Swap,
+    conf.SWAP_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.SWAP_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = WALLET_ENABLED,
+  )
+  self.view.model().addItem(swapSectionItem)
+  if activeSectionId == swapSectionItem.id:
+    activeSection = swapSectionItem
+
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.gifsModule.load()

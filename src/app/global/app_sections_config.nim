@@ -20,3 +20,7 @@ const NODEMANAGEMENT_SECTION_ICON* = "node"
 const SETTINGS_SECTION_ID* = "profileSettings"
 const SETTINGS_SECTION_NAME* = "Settings"
 const SETTINGS_SECTION_ICON* = "settings"
+
+const SWAP_SECTION_ID* = "swap"
+const SWAP_SECTION_NAME* = "Swap"
+const SWAP_SECTION_ICON* = "swap"

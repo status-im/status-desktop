@@ -63,10 +63,7 @@ Item {
         swapOutputData: SwapOutputData{}
     }
 
-    property SwapInputParamsForm swapFormData: SwapInputParamsForm {
-        defaultFromTokenKey: Constants.swap.usdtTokenKey
-        defaultToTokenKey: Constants.swap.wethTokenKey
-    }
+    property SwapInputParamsForm swapFormData: SwapInputParamsForm {}
 
     Component {
         id: componentUnderTest

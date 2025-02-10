@@ -144,8 +144,6 @@ SplitView {
                 }
             }
             swapFormData: SwapInputParamsForm {
-                defaultFromTokenKey: Constants.swap.usdtTokenKey
-                defaultToTokenKey: Constants.swap.wethTokenKey
                 onSelectedAccountAddressChanged: {
                     if (selectedAccountAddress !== accountComboBox.currentValue)
                         accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)

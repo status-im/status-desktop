@@ -47,6 +47,7 @@ import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
+import AppLayouts.Wallet.popups.swap 1.0
 
 import mainui.adaptors 1.0
 import mainui.activitycenter.stores 1.0
@@ -801,6 +802,19 @@ Item {
 
         // TODO: Remove this and adapt new mechanism to launch BuyModal as done for SendModal
         property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {}
+
+        property SwapInputParamsForm swapFormData: SwapInputParamsForm {}
+
+        function launchSwap() {
+            swapFormData.selectedAccountAddress =
+                    SQUtils.ModelUtils.get(WalletStores.RootStore.nonWatchAccounts, 0, "address")
+            swapFormData.selectedNetworkChainId =
+                    SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "layer", 1, "chainId")
+            Global.openSwapModalRequested(swapFormData, (popup) => {
+                                              popup.Component.destruction.connect(() => {
+                                                                                      d.swapFormData.resetFormData()
+                                                                                  })})
+        }
     }
 
     Settings {
@@ -1144,6 +1158,10 @@ Item {
                         }
                         ValueFilter {
                             roleName: "sectionType"
+                            value: Constants.appSection.swap
+                        }
+                        ValueFilter {
+                            roleName: "sectionType"
                             value: Constants.appSection.chat
                         }
                     },
@@ -1393,7 +1411,12 @@ Item {
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                     badge.border.width: 2
                     onClicked: {
-                        changeAppSectionBySectionId(model.id)
+                        if(model.sectionType === Constants.appSection.swap) {
+                            d.launchSwap()
+                        }
+                        else {
+                            changeAppSectionBySectionId(model.id)
+                        }
                     }
                 }
             }
