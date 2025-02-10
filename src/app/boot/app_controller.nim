@@ -130,6 +130,8 @@ proc applyKeycardReplacementAfterLogin*(self: AppController)
 proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string)
 proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController)
 
+proc createStartupModule(self: AppController, statusFoundation: StatusFoundation): startup_module.Module[AppController]
+
 # Main Module Delegate Interface
 proc mainDidLoad*(self: AppController)
 #################################################
@@ -259,16 +261,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
       result.keycardServiceV2,
     )
   else:
-    result.startupModule = startup_module.newModule[AppController](
-      result,
-      statusFoundation.events,
-      result.keychainService,
-      result.accountsService,
-      result.generalService,
-      result.profileService,
-      result.keycardService,
-      result.devicesService
-    )
+    result.startupModule = result.createStartupModule(statusFoundation)
   result.mainModule = main_module.newModule[AppController](
     result,
     statusFoundation.events,
@@ -370,6 +363,19 @@ proc delete*(self: AppController) =
   self.networkConnectionService.delete
   self.metricsService.delete
 
+# TODO: This function can be removed whe nwe completely switch to the new onboarding module
+proc createStartupModule(self: AppController, statusFoundation: StatusFoundation): startup_module.Module[AppController] =
+  return startup_module.newModule[AppController](
+    self,
+    statusFoundation.events,
+    self.keychainService,
+    self.accountsService,
+    self.generalService,
+    self.profileService,
+    self.keycardService,
+    self.devicesService
+  )
+
 proc disconnectKeychain(self: AppController) =
   for id in self.keychainConnectionIds:
     self.statusFoundation.events.disconnect(id)
@@ -435,6 +441,7 @@ proc switchToOldOnboarding*(self: AppController) =
   if not self.shouldUseTheNewOnboardingModule():
     return
   self.keycardService.resetAPI()
+  self.startupModule = self.createStartupModule(self.statusFoundation)
   self.keycardService.init()
 
 proc mainDidLoad*(self: AppController) =
