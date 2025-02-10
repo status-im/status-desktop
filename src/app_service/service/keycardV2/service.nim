@@ -8,7 +8,10 @@ import ../../../backend/response_type
 import ../../../constants as status_const
 import ./dto
 
-proc callRPC*(rpcCounter: int, methodName: string, params: JsonNode = %*{}): string  =
+var rpcCounter: int = 0
+
+proc callRPC*(methodName: string, params: JsonNode = %*{}): string  =
+    rpcCounter += 1
     let request = %*{
       "id": rpcCounter,
       "method": "keycard." & methodName,
@@ -53,7 +56,6 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    rpcCounter: int
     oldKeyCardService: old_keycard_service.Service
 
   proc delete*(self: Service) =
@@ -64,7 +66,6 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.rpcCounter = 0
     result.oldKeyCardService = oldKeyCardService
 
   proc initializeRPC(self: Service)
@@ -79,15 +80,11 @@ QtObject:
   proc initializeRPC(self: Service) {.slot.} =
     var response = keycard_go.keycardInitializeRPC()
 
-  proc callRPC(self: Service, methodName: string, params: JsonNode = %*{}): string  =
-    self.rpcCounter += 1
-    return callRPC(self.rpcCounter, methodName, params)
-
   proc start*(self: Service, storageDir: string) =
-    discard self.callRPC("Start", %*{"storageFilePath": storageDir})
+    discard callRPC("Start", %*{"storageFilePath": storageDir})
 
   proc stop*(self: Service) =
-    discard self.callRPC("Stop")
+    discard callRPC("Stop")
   
   proc buildSeedPhrasesFromIndexes*(seedPhraseIndexes: JsonNode): seq[string] =
     var seedPhrase: seq[string]
@@ -97,7 +94,7 @@ QtObject:
 
   proc generateMnemonic*(self: Service, length: int): string =
     try:
-      let response = self.callRPC("GenerateMnemonic", %*{"length": length})
+      let response = callRPC("GenerateMnemonic", %*{"length": length})
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
           let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
@@ -111,13 +108,11 @@ QtObject:
       error "error generating mnemonic", err=e.msg
 
   proc loadMnemonic*(self: Service, mnemonic: string) =
-    self.rpcCounter += 1
     let arg = AsyncLoadMnemonicArg(
       tptr: asyncLoadMnemonicTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncLoadMnemonicResponse",
       mnemonic: mnemonic,
-      rpcCounter: self.rpcCounter,
     )
     self.threadpool.start(arg)
     
@@ -139,13 +134,11 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_LOAD_MNEMONIC_FAILURE, KeycardErrorArg(error: e.msg))
 
   proc asyncAuthorize*(self: Service, pin: string) =
-    self.rpcCounter += 1
     let arg = AsyncAuthorizeArg(
       tptr: asyncAuthorizeTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncAuthorizeResponse",
       pin: pin,
-      rpcCounter: self.rpcCounter,
     )
     self.threadpool.start(arg)
 
@@ -177,14 +170,12 @@ QtObject:
       error "error receiving a keycard signal", err=e.msg, data = signal
 
   proc initialize*(self: Service, pin: string, puk: string) =
-    self.rpcCounter += 1
     let arg = AsyncInitializeTaskArg(
       tptr: asyncInitializeTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncInitializeResponse",
       pin: pin,
       puk: puk,
-      rpcCounter: self.rpcCounter,
     )
     self.threadpool.start(arg)
 
@@ -209,12 +200,10 @@ QtObject:
       result = result & $rand(0 .. 9)
 
   proc asyncExportRecoverKeys*(self: Service) =
-    self.rpcCounter += 1
     let arg = AsyncExportRecoverKeysArg(
       tptr: asyncExportRecoverKeysTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncExportRecoverKeys",
-      rpcCounter: self.rpcCounter,
     )
     self.threadpool.start(arg)
 
@@ -237,12 +226,10 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_FAILURE, KeycardErrorArg(error: e.msg))
 
   proc asyncExportLoginKeys*(self: Service) =
-    self.rpcCounter += 1
     let arg = AsyncExportLoginKeysArg(
       tptr: asyncExportLoginKeysTask,
       vptr: cast[uint](self.vptr),
       slot: "onAsyncExportLoginKeys",
-      rpcCounter: self.rpcCounter,
     )
     self.threadpool.start(arg)
 
