@@ -384,7 +384,7 @@ StatusWindow {
             if (!active) {
                 // animation is finished, app main will be shown
                 // open metrics popup only if it has not been seen
-                if(!localAppSettings.metricsPopupSeen) {
+                if(!localAppSettings.metricsPopupSeen && !featureFlagsStore.onboardingV2Enabled) {
                     openMetricsEnablePopup(Constants.metricsEnablePlacement.startApp, null)
                 }
             }
