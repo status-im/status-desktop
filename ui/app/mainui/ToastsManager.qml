@@ -37,7 +37,6 @@ QtObject {
     required property ProfileStore profileStore
 
     // Utils:
-    readonly property string viewOptimismExplorerText: qsTr("View on Optimism Explorer")
     readonly property string checkmarkCircleAssetName: "checkmark-circle"
     readonly property string crownOffAssetName: "crown-off"
     readonly property string warningAssetName: "warning"
