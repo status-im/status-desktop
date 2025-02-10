@@ -8,6 +8,12 @@ IOS_TARGET?=12
 #Architectures: arm64, arm, x86_64. x86_64 is default for simulator
 ARCH?=x86_64
 
+export CC
+export CXX
+export SDK
+export IOS_TARGET
+export ARCH
+
 # path macros
 BIN_PATH := bin
 LIB_PATH := lib
@@ -27,7 +33,7 @@ project_name := IOS-build
 # compile macros
 TARGET_NAME := IOS-build.app
 
-TARGET := $(BIN_PATH)/$(TARGET_NAME)
+TARGET := $(BIN_PATH)/Applications/$(TARGET_NAME)
 
 # src files & obj files
 STATUS_DESKTOP_NIM_FILES := $(shell find -E $(STATUS_DESKTOP)/src -type f -iregex '.*\.(nim|nims)$$')
@@ -56,12 +62,12 @@ default: makedir all
 
 $(STATUS_GO_LIB): $(STATUS_GO_FILES)
 	echo "Building status-go"
-	@cd $(STATUS_GO) && CC=$(CC) ARCH=$(ARCH) $(CWD)/scripts/buildStatusGo.sh
+	@cd $(STATUS_GO) && $(CWD)/scripts/buildStatusGo.sh
 	cp $(STATUS_GO)/build/bin/libstatus.a $(STATUS_GO_LIB)
 
 $(STATUS_Q_LIB): $(STATUS_Q_FILES)
 	echo "Building StatusQ"
-	@cd $(STATUSQ) && CC=$(CC) CXX=$(CC) ARCH=$(ARCH) $(CWD)/scripts/buildStatusQ.sh
+	@cd $(STATUSQ) && $(CWD)/scripts/buildStatusQ.sh
 	cp $(STATUSQ)/build/lib/Release/libStatusQ.a $(STATUS_Q_LIB)
 
 $(QZXING_LIB): $(STATUS_Q_LIB)
@@ -70,28 +76,30 @@ $(QZXING_LIB): $(STATUS_Q_LIB)
 
 $(DOTHERSIDE_LIB): $(DOTHERSIDE_FILES)
 	echo "Building DOtherSide"
-	@cd $(DOTHERSIDE) && CC=$(CC) CXX=$(CC) ARCH=$(ARCH) $(CWD)/scripts/buildDOtherSide.sh
+	@cd $(DOTHERSIDE) && $(CWD)/scripts/buildDOtherSide.sh
 	cp $(DOTHERSIDE)/build/lib/Release-$(SDK)/libDOtherSideStatic.a $(DOTHERSIDE_LIB)
 
+$(OPENSSL_LIB): LIBEXT = $(shell if [ $(SDK) = "iphonesimulator" ]; then echo "-Sim"; else echo ""; fi)
 $(OPENSSL_LIB): $(OPENSSL_FILES)
 	echo "Building OpenSSL"
-	@cd $(OPENSSL) && ARCH=$(ARCH) IOS_TARGET=$(IOS_TARGET) $(CWD)/scripts/buildOpenSSL.sh
-	cp $(OPENSSL)/lib/libcrypto-IOS-Sim.a $(LIB_PATH)/libcrypto.a
-	cp $(OPENSSL)/lib/libssl-IOS-Sim.a $(LIB_PATH)/libssl.a
+	@cd $(OPENSSL) && CC=clang CXX=clang++ $(CWD)/scripts/buildOpenSSL.sh
+	
+	cp $(OPENSSL)/lib/libcrypto-IOS$(LIBEXT).a $(LIB_PATH)/libcrypto.a
+	cp $(OPENSSL)/lib/libssl-IOS$(LIBEXT).a $(LIB_PATH)/libssl.a
 
 $(QRCODEGEN_LIB): $(QRCODEGEN_FILES)
 	echo "Building QR-Code-generator"
-	@cd $(QRCODEGEN) && CC=$(CC) ARCH=$(ARCH) $(CWD)/scripts/buildQRCodeGen.sh
+	@cd $(QRCODEGEN) && $(CWD)/scripts/buildQRCodeGen.sh
 	cp $(QRCODEGEN)/libqrcodegen.a $(QRCODEGEN_LIB)
 
 $(PCRE_LIB): $(PCRE_FILES)
 	echo "Building PCRE"
-	@cd $(PCRE) && ARCH=$(ARCH) $(CWD)/scripts/buildPCRE.sh
+	@cd $(PCRE) && $(CWD)/scripts/buildPCRE.sh
 	cp $(PCRE)/build/Release-$(SDK)/libpcre.a $(PCRE_LIB)
 
 $(NIM_STATUS_CLIENT_LIB): $(STATUS_DESKTOP_NIM_FILES)
 	echo "Building Status Desktop Lib"
-	@cd $(STATUS_DESKTOP) && CC=$(CC) ARCH=$(ARCH) $(CWD)/scripts/buildNimStatusClient.sh
+	@cd $(STATUS_DESKTOP) && $(CWD)/scripts/buildNimStatusClient.sh
 	cp $(STATUS_DESKTOP)/bin/libnim_status_client.a $(NIM_STATUS_CLIENT_LIB)
 
 $(STATUS_DESKTOP_RCC): $(STATUS_DESKTOP_UI_FILES)
@@ -120,4 +128,4 @@ clean:
 .PHONY: run
 run: makedir $(TARGET)
 	@echo "Running"
-	$(CWD)/scripts/run.sh
+	@$(CWD)/scripts/run.sh

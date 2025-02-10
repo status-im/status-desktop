@@ -1,4 +1,5 @@
 #!/bin/sh
+set -ef pipefail
 
 ARCH=${ARCH:="x86_64"}
 SDK=${SDK:="iphonesimulator"}
@@ -14,4 +15,4 @@ TARGET=$TARGET"-cross-$ARCH"
 
 echo "Building OpenSSL for $TARGET with SDK version $IOS_TARGET"
 
-./build-libssl.sh --targets=$TARGET --ios-min-sdk=$IOS_TARGET 2>&1
+./build-libssl.sh --targets=$TARGET --ios-min-sdk=$IOS_TARGET 

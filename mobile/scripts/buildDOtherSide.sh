@@ -1,4 +1,5 @@
 #!/bin/sh
+set -ef pipefail
 
 #Make sure CC is properly set
 #CC=clangwrap.sh
@@ -7,9 +8,7 @@
 echo "Building with qt $QTDIR"
 
 ARCH=${ARCH:="x86_64"}
-
-export CC=$CC
-export CXX=$CXX
+SDK=${SDK:="iphonesimulator"}
 
 echo "Building StatusQ for $ARCH using compiler: $CC"
 
@@ -19,7 +18,7 @@ cmake -S ./ -B build \
     -DCMAKE_OSX_ARCHITECTURES:STRING=$ARCH \
     -DCMAKE_FIND_ROOT_PATH:STRING=$QTDIR \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_OSX_SYSROOT=iphonesimulator \
+    -DCMAKE_OSX_SYSROOT=$SDK \
     -DCMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET=12.0 \
     -DENABLE_DOCS:BOOL=OFF \
     -DENABLE_DYNAMIC_LIBS:BOOL=OFF \
