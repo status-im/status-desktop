@@ -35,6 +35,8 @@ Control {
     contentItem: TokenSelectorButton {
         id: button
 
+        objectName: "tokenSelectorButton"
+
         forceHovered: dropdown.opened
         text: qsTr("Select asset")
 
@@ -43,6 +45,8 @@ Control {
 
     StatusDropdown {
         id: dropdown
+
+        objectName: "dropdown"
 
         y: root.height + 4
         x: root.width - width

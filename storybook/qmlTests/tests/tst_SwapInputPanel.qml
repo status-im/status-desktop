@@ -382,10 +382,10 @@ Item {
             verify(!!maxTagButton)
             verify(!maxTagButton.visible)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
-            verify(!!holdingSelector)
+            const tokenSelectorButton = findChild(controlUnderTest, "tokenSelectorButton")
+            verify(!!tokenSelectorButton)
 
-            const assetSelectorList = findChild(holdingSelector, "assetsListView")
+            const assetSelectorList = findChild(controlUnderTest, "assetsListView")
             verify(!!assetSelectorList)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
@@ -396,6 +396,9 @@ Item {
 
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
+
+            const dropdown = findChild(controlUnderTest, "dropdown")
+            verify(!!dropdown)
 
             mouseClick(amountToSend_textField)
             // enter 5.42 as entered amount
@@ -409,8 +412,9 @@ Item {
 
             for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
                 const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
-                mouseClick(holdingSelector)
-                waitForRendering(holdingSelector)
+                mouseClick(tokenSelectorButton)
+                waitForRendering(assetSelectorList)
+                verify(dropdown.open)
 
                 const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)

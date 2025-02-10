@@ -197,7 +197,7 @@ QObject {
                     if (recentsAccountsModelEntry.available)
                         return recentsAccountsModelEntry.item.name
                     if (recentsSavedAddressModelEntry.available)
-                        return recentsAccountsModelEntry.item.name
+                        return recentsSavedAddressModelEntry.item.name
                     return ""
                 }
                 readonly property string color: {
