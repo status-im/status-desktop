@@ -664,7 +664,7 @@ StatusDialog {
             errorDetails: !d.errNotEnoughGas ?
                               root.routerErrorDetails: ""
             buttonText: qsTr("Add ETH")
-            expandable: !d.errNotEnoughGas ||
+            expandable: !d.errNotEnoughGas &&
                         !(!root.routerErrorCode &&
                           !!root.routerError)
             onButtonClicked: root.launchBuyFlow()
