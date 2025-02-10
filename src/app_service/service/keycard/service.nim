@@ -498,3 +498,6 @@ QtObject:
       return
     self.registeredCallback = p
     self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)
+
+  proc resetAPI*(self: Service) =
+    keycard_go.ResetAPI()
