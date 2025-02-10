@@ -391,17 +391,17 @@ StatusWindow {
         }
     }
 
+    // FIXME remove and just use one splash screen with unified onboarding
     Component {
         id: splashScreenV2
         DidYouKnowSplashScreen {
             readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
+            messagesEnabled: true
             NumberAnimation on progress {
                 from: 0.0
                 to: 1
-                // TODO find a way to unhardcode this
-                // Though there is no easy way to do it, because we do not get progress signals
-                duration: 3000
+                duration: !!localAppSettings && localAppSettings.fakeLoadingScreenEnabled ? 30000 : 3000
                 running: runningProgressAnimation
             }
         }
@@ -412,7 +412,6 @@ StatusWindow {
         anchors.fill: parent
         sourceComponent: {
             if (featureFlagsStore.onboardingV2Enabled) {
-                // TODO select a new component when we have the new login screens (for old users)
                 return onboardingV2
             }
             return onboardingV1
@@ -495,7 +494,11 @@ StatusWindow {
 
             OnboardingStore {
                 id: onboardingStore
-                onAppLoaded: moveToAppMain()
+                onAppLoaded: {
+                    applicationWindow.appIsReady = true
+                    applicationWindow.storeAppState()
+                    moveToAppMain()
+                }
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.stack.pop()
                 }

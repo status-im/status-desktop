@@ -18,8 +18,8 @@ Item {
         Image {
             objectName: "loadingAnimation"
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 270
-            Layout.preferredHeight: 260
+            Layout.preferredWidth: 320
+            Layout.preferredHeight: 320
             source: Theme.png("status-preparing")
         }
         StatusBaseText {
