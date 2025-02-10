@@ -31,8 +31,6 @@ KeycardBasePage {
     }
 
     StateGroup {
-        //state: "entering"
-
         states: [
             State {
                 name: "entering"
