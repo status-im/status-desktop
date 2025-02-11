@@ -434,7 +434,6 @@ proc startupDidLoad*(self: AppController) =
   self.initializeQmlContext()
 
 proc onboardingDidLoad*(self: AppController) =
-  debug "NEW ONBOARDING LOADED"
   self.initializeQmlContext()
 
 proc switchToOldOnboarding*(self: AppController) =
