@@ -136,7 +136,6 @@ Loader {
             width: parent.width
             height: visible ? implicitHeight: 0
 
-            interactive: root.interactive
             checkMarkVisible: !d.isBeingEvaluated && d.isValidAddress
             loading: d.isBeingEvaluated
             input.edit.textFormat: Text.AutoText
@@ -184,7 +183,9 @@ Loader {
 
             components: [
                 StatusClearButton {
+                    objectName: "RecipientView_clearButton"
                     anchors.verticalCenter: parent.verticalCenter
+                    visible: root.interactive
                     onClicked: d.clearValues()
                 }
             ]

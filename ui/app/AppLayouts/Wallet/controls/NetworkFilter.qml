@@ -55,12 +55,14 @@ StatusComboBox {
 
     control.background: SQP.StatusComboboxBackground {
         height: 38
+        opacity: root.interactive ? 1 : 0.5
         active: root.control.down || root.control.hovered
     }
 
     control.indicator: SQP.StatusComboboxIndicator {
         x: root.control.mirrored ? root.control.horizontalPadding : root.width - width - root.control.horizontalPadding
         y: root.control.topPadding + (root.control.availableHeight - height) / 2
+        opacity: root.interactive ? 1 : 0.5
         visible: !d.selectionUnavailable && root.selectionAllowed
     }
 
