@@ -159,7 +159,6 @@ QtObject:
   proc receiveKeycardSignalV2(self: Service, signal: string) {.slot.} =
     try:
       # Since only one service can register to signals, we pass the signal to the old service too
-      self.oldKeyCardService.receiveKeycardSignal(signal)
       var jsonSignal = signal.parseJson
 
       if jsonSignal["type"].getStr == "status-changed":

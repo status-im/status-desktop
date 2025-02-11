@@ -6,7 +6,7 @@ import app/core/main
 import constants as main_constants
 import statusq_bridge
 
-import app/global/[global_singleton, feature_flags]
+import app/global/global_singleton
 import app/global/local_app_settings
 import app/boot/app_controller
 
@@ -21,6 +21,7 @@ logScope:
 
 var signalsManagerQObjPointer: pointer
 var keycardServiceQObjPointer: pointer
+var keycardServiceV2QObjPointer: pointer
 
 proc isExperimental(): string =
   result = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
@@ -76,15 +77,12 @@ proc setupRemoteSignalsHandling() =
       signal_handler(signalsManagerQObjPointer, p0, "receiveSignal")
   status_go.setSignalEventCallback(callbackStatusGo)
 
-  var callbackKeycardGo: keycard_go.KeycardSignalCallback
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
-    callbackKeycardGo = proc(p0: cstring) {.cdecl.} =
-      if keycardServiceQObjPointer != nil:
-        signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignalV2")
-  else:
-    callbackKeycardGo = proc(p0: cstring) {.cdecl.} =
-      if keycardServiceQObjPointer != nil:
-        signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
+  var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(p0: cstring) {.cdecl.} =
+    if keycardServiceV2QObjPointer != nil:
+      signal_handler(keycardServiceV2QObjPointer, p0, "receiveKeycardSignalV2")
+    if keycardServiceQObjPointer != nil:
+      signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
+
   keycard_go.setSignalEventCallback(callbackKeycardGo)
 
 proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
@@ -227,6 +225,7 @@ proc mainProc() =
     info "shutting down..."
     signalsManagerQObjPointer = nil
     keycardServiceQObjPointer = nil
+    keycardServiceV2QObjPointer = nil
     isProductionQVariant.delete()
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
@@ -245,10 +244,9 @@ proc mainProc() =
   # We need these global variables in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
   signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
-  if singletonInstance.featureFlags().getOnboardingV2Enabled():
-    keycardServiceQObjPointer = cast[pointer](appController.keycardServiceV2.vptr)
-  else:
-    keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
+  keycardServiceV2QObjPointer = cast[pointer](appController.keycardServiceV2.vptr)
+  keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
+
   setupRemoteSignalsHandling()
 
   info "app info", version=APP_VERSION, commit=GIT_COMMIT, currentDateTime=now()

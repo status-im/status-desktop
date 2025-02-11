@@ -431,17 +431,26 @@ proc onboardingDidLoad*(self: AppController) =
   debug "NEW ONBOARDING LOADED"
   self.initializeQmlContext()
 
+proc switchToOldOnboarding*(self: AppController) =
+  if not self.shouldUseTheNewOnboardingModule():
+    return
+  self.keycardService.resetAPI()
+  self.keycardService.init()
+
 proc mainDidLoad*(self: AppController) =
   if not self.startupModule.isNil:
     self.applyNecessaryActionsAfterLoggingIn()
     self.startupModule.moveToAppState()
     self.checkForStoringPasswordToKeychain()
 
+  if not self.onboardingModule.isNil:
+    self.switchToOldOnboarding()
 proc start*(self: AppController) =
   if self.shouldUseTheNewOnboardingModule():
     self.keycardServiceV2.init()
+  else:
+    self.keycardService.init()
 
-  self.keycardService.init()
   self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()
