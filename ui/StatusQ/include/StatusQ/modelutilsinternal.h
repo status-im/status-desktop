@@ -32,8 +32,9 @@ public:
                                     const QString& filterRoleName,
                                     const QVariant& filterValue) const;
 
-    Q_INVOKABLE int indexOf(QAbstractItemModel* model, const QString& roleName,
-                            const QVariant& value);
+    Q_INVOKABLE int indexOf(QAbstractItemModel *model,
+                            const QString &roleName,
+                            const QVariant &value) const;
 
     Q_INVOKABLE QPersistentModelIndex persistentIndex(QAbstractItemModel* model,
                                                       int index);
