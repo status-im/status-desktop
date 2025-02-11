@@ -1,8 +1,10 @@
 import QtQuick 2.15
 import QtQml 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
+import StatusQ 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
@@ -24,6 +26,7 @@ StatusListItem {
     property bool showIndicator: true
     property bool multiSelection: false
     property bool interactive: true
+    property bool showNewTag: false
 
     // output signal
     // Emitted when the checkbox is clicked
@@ -39,6 +42,8 @@ StatusListItem {
     onClicked: {
         d.toggled()
     }
+
+    statusListItemTitleIcons.sourceComponent: root.showNewTag ? newTagComponent : undefined
 
     leftPadding: 16
     rightPadding: 16
@@ -94,6 +99,19 @@ StatusListItem {
 
             onClicked: {
                 d.toggled()
+            }
+        }
+    }
+
+    Component {
+        id: newTagComponent
+        RowLayout {
+            spacing: 0
+            Column {
+                width: 8
+            }
+            StatusNewTag {
+                tooltipText: qsTr("%1 chain integrated. You can now view and swap %1 assets, as well as interact with %1 dApps.").arg(root.title)
             }
         }
     }

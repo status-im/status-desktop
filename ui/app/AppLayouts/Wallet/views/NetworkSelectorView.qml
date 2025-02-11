@@ -26,6 +26,7 @@ StatusListView {
     property bool showIndicator: true
     property bool multiSelection: false
     property bool interactive: true
+    property bool showNewTag: true
 
     /**
         The list selected of chain ids
@@ -62,6 +63,7 @@ StatusListView {
         showIndicator: root.showIndicator
         multiSelection: root.multiSelection
         interactive: root.interactive
+        showNewTag: root.showNewTag && model.isNew
 
         checkState: inSelection ? (d.allSelected && root.interactive ? Qt.PartiallyChecked  : Qt.Checked) : Qt.Unchecked
         nextCheckState: checkState

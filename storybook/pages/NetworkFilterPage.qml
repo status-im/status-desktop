@@ -51,6 +51,8 @@ SplitView {
                 multiSelection: multiSelectionCheckBox.checked
                 showTitle: ctrlShowTitle.checked
                 showManageNetworksButton: ctrlShowManageNetworksButton.checked
+                showNewTag: ctrlShowNewTagButton.checked
+                showNewDecorator: ctrlShowNewDecoratorButton.checked
                 selectionAllowed: selectionAllowedCheckBox.checked
                 showSelectionIndicator: (ctrlShowCheckBoxes.checked && multiSelection) || (ctrlShowRadioButtons.checked && !multiSelection)
             }
@@ -102,6 +104,18 @@ SplitView {
             CheckBox {
                 id: ctrlShowManageNetworksButton
                 text: "Show 'Manage networks' button"
+                checked: true
+            }
+
+            CheckBox {
+                id: ctrlShowNewTagButton
+                text: "Show 'NEW' tag"
+                checked: true
+            }
+
+            CheckBox {
+                id: ctrlShowNewDecoratorButton
+                text: "Show 'New' decorator"
                 checked: true
             }
 

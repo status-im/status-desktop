@@ -21,6 +21,7 @@ type
     ShortName
     IsActive
     IsDeactivatable
+    IsNew
 
 QtObject:
   type
@@ -56,7 +57,8 @@ QtObject:
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
       ModelRole.IsActive.int: "isActive",
-      ModelRole.IsDeactivatable.int: "isDeactivatable"
+      ModelRole.IsDeactivatable.int: "isDeactivatable",
+      ModelRole.IsNew.int: "isNew"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -98,6 +100,8 @@ QtObject:
       result = newQVariant(item.isActive)
     of ModelRole.IsDeactivatable:
       result = newQVariant(item.isDeactivatable)
+    of ModelRole.IsNew:
+      result = newQVariant(item.isNew)
 
   proc refreshModel*(self: Model) =
     self.beginResetModel()

@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
+import Qt.labs.settings 1.1
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -44,6 +45,11 @@ Item {
     signal manageNetworksRequested()
 
     implicitHeight: 88
+
+    Settings {
+        id: walletHeaderLocalSettings
+        property bool networksFilterOpened: false
+    }
 
     GridLayout {
         width: parent.width
@@ -180,12 +186,15 @@ Item {
                 id: networkFilter
                 showTitle: false
                 showManageNetworksButton: true
+                showNewTag: true
+                showNewDecorator: !walletHeaderLocalSettings.networksFilterOpened
 
                 Layout.alignment: Qt.AlignTop
 
                 flatNetworks: root.walletStore.filteredFlatModel
                 onToggleNetwork: root.walletStore.toggleNetwork(chainId)
                 onManageNetworksClicked: root.manageNetworksRequested()
+                onPopupOpened: walletHeaderLocalSettings.networksFilterOpened = true
 
                 Binding on selection {
                     value: chainIdsAggregator.value

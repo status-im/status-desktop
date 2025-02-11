@@ -33,15 +33,27 @@ StatusComboBox {
     property bool showTitle: true
     property bool selectionAllowed: true
     property bool showManageNetworksButton: false
+    property bool showNewTag: false
+    property bool showNewDecorator: false
     property var selection: []
 
     signal toggleNetwork(int chainId, int index)
     signal manageNetworksClicked()
+    signal popupOpened()
 
     onSelectionChanged: {
         if (root.selection !== networkSelectorView.selection) {
             networkSelectorView.selection = root.selection
         }
+    }
+
+    StatusNewDecorator {
+        id: newDecorator
+        anchors.verticalCenter: parent.top
+        anchors.verticalCenterOffset: 3
+        anchors.horizontalCenter: parent.right
+        anchors.horizontalCenterOffset: -3
+        visible: root.showNewDecorator
     }
 
     control.padding: 12
@@ -154,6 +166,7 @@ StatusComboBox {
         multiSelection: root.multiSelection
         showSelectionIndicator: root.showSelectionIndicator
         showManageNetworksButton: root.showManageNetworksButton
+        showNewTag: root.showNewTag
         selection: root.selection
 
         onSelectionChanged: {
@@ -168,6 +181,8 @@ StatusComboBox {
             control.popup.close()
             root.manageNetworksClicked()
         }
+
+        onOpened: root.popupOpened()
     }
 
     Connections {

@@ -420,6 +420,7 @@ QtObject {
                 isEnabled: true,
                 isActive: true,
                 isDeactivatable: false,
+                isNew: false,
             },
             {
                 chainId: sepMainnetChainId,
@@ -438,6 +439,7 @@ QtObject {
                 isEnabled: false,
                 isActive: true,
                 isDeactivatable: false,
+                isNew: false,
             },
             {
                 chainId: optChainId,
@@ -456,6 +458,7 @@ QtObject {
                 isEnabled: true,
                 isActive: false,
                 isDeactivatable: true,
+                isNew: false,
             },
             {
                 chainId: sepOptChainId,
@@ -474,6 +477,7 @@ QtObject {
                 isEnabled: true,
                 isActive: true,
                 isDeactivatable: true,
+                isNew: false,
             },
             {
                 chainId: arbChainId,
@@ -492,6 +496,7 @@ QtObject {
                 isEnabled: false,
                 isActive: true,
                 isDeactivatable: true,
+                isNew: false,
             },
             {
                 chainId: sepArbChainId,
@@ -510,6 +515,7 @@ QtObject {
                 isEnabled: false,
                 isActive: true,
                 isDeactivatable: true,
+                isNew: false,
             },
             {
                 chainId: baseChainId,
@@ -528,6 +534,7 @@ QtObject {
                 isEnabled: false,
                 isActive: false,
                 isDeactivatable: true,
+                isNew: true,
             },
             {
                 chainId: sepBaseChainId,
@@ -546,6 +553,7 @@ QtObject {
                 isEnabled: false,
                 isActive: true,
                 isDeactivatable: true,
+                isNew: true,
             }]
         )
     }

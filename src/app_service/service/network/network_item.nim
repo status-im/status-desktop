@@ -2,7 +2,7 @@ import NimQml, stew/shims/strformat
 import sequtils, sugar
 
 import backend/network_types
-import ./rpc_provider_item
+import ./rpc_provider_item, ./types
 
 export rpc_provider_item
 
@@ -24,6 +24,7 @@ QtObject:
     relatedChainId*: int
     isActive*: bool
     isDeactivatable*: bool
+    isNew*: bool
 
   proc setup*(self: NetworkItem,
     chainId: int,
@@ -41,7 +42,8 @@ QtObject:
     isEnabled: bool,
     relatedChainId: int,
     isActive: bool,
-    isDeactivatable: bool
+    isDeactivatable: bool,
+    isNew: bool
     ) =
       self.QObject.setup
       self.chainId = chainId
@@ -60,6 +62,7 @@ QtObject:
       self.relatedChainId = relatedChainId
       self.isActive = isActive
       self.isDeactivatable = isDeactivatable
+      self.isNew = isNew
 
   proc delete*(self: NetworkItem) =
       self.QObject.delete
@@ -67,10 +70,12 @@ QtObject:
   proc networkDtoToItem*(network: NetworkDto): NetworkItem =
     new(result, delete)
     let rpcProviders = network.rpcProviders.map(p => rpcProviderDtoToItem(p))
+    # We construct the isNew value client-side, at least for now
+    let isNew = network.chainId == Base or network.chainId == BaseSepolia
     result.setup(network.chainId, network.layer, network.chainName, network.iconUrl, network.shortName,
       network.chainColor, rpcProviders,
       network.blockExplorerURL, network.nativeCurrencyName, network.nativeCurrencySymbol, network.nativeCurrencyDecimals,
-      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable)
+      network.isTest, network.isEnabled, network.relatedChainId, network.isActive, network.isDeactivatable, isNew)
 
   proc networkItemToDto*(network: NetworkItem): NetworkDto =
     result = NetworkDto(
@@ -109,7 +114,8 @@ QtObject:
       isEnabled: {self.isEnabled},
       relatedChainId: {self.relatedChainId},
       isActive: {self.isActive},
-      isDeactivatable: {self.isDeactivatable}
+      isDeactivatable: {self.isDeactivatable},
+      isNew: {self.isNew}
       ]"""
 
   proc chainId*(self: NetworkItem): int {.slot.} =
@@ -184,3 +190,8 @@ QtObject:
     return self.isActive
   QtProperty[bool] isActive:
     read = isActive
+
+  proc isNew*(self: NetworkItem): bool {.slot.} =
+    return self.isNew
+  QtProperty[bool] isNew:
+    read = isNew

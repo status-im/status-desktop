@@ -48,6 +48,8 @@
         <file>StatusQ/Components/StatusMessageSenderDetails.qml</file>
         <file>StatusQ/Components/StatusNavigationListItem.qml</file>
         <file>StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
+        <file>StatusQ/Components/StatusNewDecorator.qml</file>
+        <file>StatusQ/Components/StatusNewTag.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
         <file>StatusQ/Components/StatusPageIndicator.qml</file>
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
@@ -69,6 +71,7 @@
         <file>StatusQ/Components/private/LoadingDotItem.qml</file>
         <file>StatusQ/Components/private/StatusComboboxBackground.qml</file>
         <file>StatusQ/Components/private/StatusComboboxIndicator.qml</file>
+        <file>StatusQ/Components/private/StatusGradient.qml</file>
         <file>StatusQ/Components/private/chart/ChartCanvas.qml</file>
         <file>StatusQ/Components/private/chart/Library/Animator.qml</file>
         <file>StatusQ/Components/private/chart/Library/Chart.bundle.js</file>

@@ -24,6 +24,7 @@ Popup {
     property bool selectionAllowed: true
     property bool multiSelection: false
     property bool showManageNetworksButton: false
+    property bool showNewTag: false
     property var selection: []
 
     signal toggleNetwork(int chainId, int index)
@@ -68,6 +69,7 @@ Popup {
             interactive: root.selectionAllowed
             multiSelection: root.multiSelection
             showIndicator: root.showSelectionIndicator
+            showNewTag: root.showNewTag
             selection: root.selection
 
             onSelectionChanged: {
