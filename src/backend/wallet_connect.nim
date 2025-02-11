@@ -1,4 +1,4 @@
-import options, logging
+import options, chronicles
 import json, json_serialization
 import core, response_type
 
@@ -24,7 +24,7 @@ proc addSession*(sessionJson: string): bool =
     let rpcRes = addWalletConnectSession(sessionJson)
     return isSuccessResponse(rpcRes)
   except Exception as e:
-    error "AddWalletConnectSession failed: ", "msg", e.msg
+    error "AddWalletConnectSession failed: ", msg = e.msg
     return false
 
 proc disconnectSession*(topic: string): bool =
@@ -32,7 +32,7 @@ proc disconnectSession*(topic: string): bool =
     let rpcRes = disconnectWalletConnectSession(topic)
     return isSuccessResponse(rpcRes)
   except Exception as e:
-    error "wallet_disconnectWalletConnectSession failed: ", "msg", e.msg
+    error "wallet_disconnectWalletConnectSession failed: ", msg = e.msg
     return false
 
 # returns nil if error
@@ -48,12 +48,12 @@ proc getActiveSessions*(validAtTimestamp: int64): JsonNode =
       return newJArray()
 
     if rpcRes.result.kind != JArray:
-      error "Unexpected result kind: ", rpcRes.result.kind
+      error "Unexpected result kind: ", kind = rpcRes.result.kind
       return nil
 
     return rpcRes.result
   except Exception as e:
-    error "GetWalletConnectActiveSessions failed: ", "msg", e.msg
+    error "GetWalletConnectActiveSessions failed: ", msg = e.msg
     return nil
 
 proc getDapps*(validAtEpoch: int64, testChains: bool): string =
@@ -68,5 +68,5 @@ proc getDapps*(validAtEpoch: int64, testChains: bool): string =
     let jsonArray = $rpcRes.result
     return if jsonArray != "null": jsonArray else: "[]"
   except Exception as e:
-    error "GetWalletConnectDapps failed: ", "msg", e.msg
+    error "GetWalletConnectDapps failed: ", msg = e.msg
     return ""

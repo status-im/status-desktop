@@ -1,5 +1,5 @@
 import NimQml, std/json, sequtils, sugar, strutils
-import stint, logging, Tables
+import stint, chronicles, Tables
 
 import app/modules/shared_models/collectibles_entry
 import app/modules/shared_models/collectibles_model
@@ -144,9 +144,9 @@ QtObject:
         self.model.setIsFetching(false)
         self.model.setIsError(true)
         self.fetchFromStart = true
-        error "error fetching collectibles entries: ", response.error
+        error "error fetching collectibles entries: ", error = response.error
     except Exception as e:
-      error "error fetching collectibles entries: ", e.msg
+      error "error fetching collectibles entries: ", error = e.msg
       self.model.setIsFetching(false)
       self.model.setIsError(true)
       self.fetchFromStart = true
@@ -175,7 +175,7 @@ QtObject:
     let isError = res.errorCode != backend_collectibles.ErrorCodeSuccess
 
     if isError:
-      error "error fetching collectibles entries: ", res.errorCode
+      error "error fetching collectibles entries: ", code = res.errorCode
       self.model.setIsError(true)
       self.model.setIsFetching(false)
       return
@@ -194,7 +194,7 @@ QtObject:
           self.model.updateItems(self.tempItems)
           self.tempItems = @[]
     except Exception as e:
-      error "Error converting activity entries: ", e.msg
+      error "Error converting activity entries: ", error = e.msg
 
     self.model.setIsFetching(false)
     self.setOwnershipStatus(res.ownershipStatus)

@@ -1,4 +1,4 @@
-import Tables, json, stint, json_serialization, stew/shims/strformat, logging
+import Tables, json, stint, json_serialization, stew/shims/strformat, chronicles
 
 import ./core as core
 
@@ -100,7 +100,7 @@ proc buildTransactionsFromRoute*(resultOut: var JsonNode, uuid: string, slippage
     let response = core.callPrivateRPC("wallet_buildTransactionsFromRoute", payload)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error building transactions", err = e.msg
     return e.msg
 
 proc sendRouterTransactionsWithSignatures*(resultOut: var JsonNode, uuid: string, signatures: TransactionsSignatures): string =
@@ -116,5 +116,5 @@ proc sendRouterTransactionsWithSignatures*(resultOut: var JsonNode, uuid: string
     let response = core.callPrivateRPC("wallet_sendRouterTransactionsWithSignatures", payload)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error sending transactions", err = e.msg
     return e.msg
