@@ -11,7 +11,6 @@ from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
@@ -190,8 +189,6 @@ class MainWindow(Window):
         if configs.system.get_platform() == "Darwin":
             AllowNotificationsView().start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-            BetaConsentPopup().confirm()
         assert SigningPhrasePopup().ok_got_it_button.is_visible
         SigningPhrasePopup().confirm_phrase()
         return self
@@ -201,8 +198,6 @@ class MainWindow(Window):
         share_updates_popup = ShareUsageDataPopup()
         LoginView().log_in(user_account)
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-            BetaConsentPopup().confirm()
         if SigningPhrasePopup().is_visible:
             SigningPhrasePopup().confirm_phrase()
         if share_updates_popup.is_visible:

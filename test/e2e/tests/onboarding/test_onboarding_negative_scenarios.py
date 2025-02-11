@@ -15,7 +15,6 @@ from constants import UserAccount, RandomUser
 from scripts.utils.generators import random_password_string
 from constants.onboarding import OnboardingMessages
 from driver.aut import AUT
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import BiometricsView, LoginView, \
     YourEmojihashAndIdenticonRingView
@@ -47,8 +46,6 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-            BetaConsentPopup().confirm()
         if SigningPhrasePopup().is_visible:
             SigningPhrasePopup().confirm_phrase()
 

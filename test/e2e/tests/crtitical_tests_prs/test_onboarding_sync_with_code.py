@@ -9,7 +9,6 @@ import configs.testpath
 import driver
 from constants import UserAccount, RandomUser
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
 from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, SyncDeviceFoundView, \
@@ -77,8 +76,6 @@ def test_sync_device_during_onboarding(multiple_instances):
             if configs.system.get_platform() == "Darwin":
                 AllowNotificationsView().start_using_status()
             SplashScreen().wait_until_appears().wait_until_hidden()
-            if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-                BetaConsentPopup().confirm()
             assert SigningPhrasePopup().ok_got_it_button.is_visible
             SigningPhrasePopup().confirm_phrase()
 

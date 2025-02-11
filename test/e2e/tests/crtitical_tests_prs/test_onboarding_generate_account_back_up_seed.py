@@ -11,7 +11,6 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 
 import configs.timeouts
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.onboarding.beta_consent_popup import BetaConsentPopup
 from gui.components.picture_edit_popup import shift_image, PictureEditPopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, \
@@ -88,8 +87,6 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        if not configs.system.TEST_MODE and not configs._local.DEV_BUILD:
-            BetaConsentPopup().confirm()
         assert SigningPhrasePopup().ok_got_it_button.is_visible
         SigningPhrasePopup().confirm_phrase()
 
