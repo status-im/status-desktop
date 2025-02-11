@@ -39,6 +39,7 @@ import app_service/service/metrics/service as metrics_service
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/modules/startup/module as startup_module
 import app/modules/onboarding/module as onboarding_module
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
 import app/modules/main/module as main_module
 import app/core/notifications/notifications_manager
 import app/global/[global_singleton, feature_flags]
@@ -117,6 +118,7 @@ proc load(self: AppController)
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController)
 proc buildAndRegisterUserProfile(self: AppController)
 proc applyNecessaryActionsAfterLoggingIn(self: AppController)
+proc runPostOnboardingTasks(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
@@ -452,6 +454,7 @@ proc mainDidLoad*(self: AppController) =
 
   if not self.onboardingModule.isNil:
     self.switchToOldOnboarding()
+    self.runPostOnboardingTasks()
 proc start*(self: AppController) =
   if self.shouldUseTheNewOnboardingModule():
     self.keycardServiceV2.init()
@@ -608,6 +611,17 @@ proc doKeycardReplacement(self: AppController) =
   let accountsPathsToStore = keypair.accounts.filter(acc => not acc.isChat).map(acc => acc.path)
   self.keycardService.startStoreMetadataFlow(keypair.name, self.startupModule.getPin(), accountsPathsToStore)
   info "keycard replacement fully done"
+
+proc runPostOnboardingTasks(self: AppController) =
+    debug "running post-onboarding tasks"
+
+    let tasks = self.onboardingModule.getPostOnboardingTasks()
+    for task in tasks:
+      case task.kind:
+      of kPostOnboardingTaskKeycardReplacement:
+        KeycardReplacementTask(task).run(self.walletAccountService, self.keycardServiceV2)
+      else:
+        error "unknown post onboarding task"
 
 proc applyNecessaryActionsAfterLoggingIn(self: AppController) =
   if self.applyKeycardReplacement:

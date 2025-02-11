@@ -13,6 +13,7 @@ import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
 
 import ../startup/models/login_account_item as login_acc_item
 
@@ -58,6 +59,7 @@ type
     loginFlow: LoginMethod
     onboardingFlow: OnboardingFlow
     exportedKeys: KeycardExportedKeysDto
+    postOnboardingTasks: seq[PostOnboardingTask]
 
 proc newModule*[T](
     delegate: T,
@@ -73,6 +75,7 @@ proc newModule*[T](
   result.viewVariant = newQVariant(result.view)
   result.onboardingFlow = OnboardingFlow.Unknown
   result.loginFlow = LoginMethod.Unknown
+  result.postOnboardingTasks = newSeq[PostOnboardingTask]()
   result.controller = controller.newController(
     result,
     events,
@@ -146,6 +149,9 @@ method loadMnemonic*[T](self: Module[T], mnemonic: string) =
   self.controller.loadMnemonic(mnemonic)
 
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
+  debug "finishOnboardingFlow", flowInt, dataJson
+  self.postOnboardingTasks = newSeq[PostOnboardingTask]()
+
   try:
     self.onboardingFlow = OnboardingFlow(flowInt)
 
@@ -323,9 +329,11 @@ method onKeycardExportLoginKeysFailure*[T](self: Module[T], error: string) =
   self.view.accountLoginError(error, wrongPassword = false)
 
 method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: KeycardExportedKeysDto) =
+  let keycardInfo = self.view.getKeycardEvent().keycardInfo
   # We got the keys, now we can login. If everything goes well, we will finish the app loading
+  let accountDto = self.controller.getAccountByKeyUid(keycardInfo.keyUID)
   self.controller.login(
-    self.controller.getAccountByKeyUid(self.view.getKeycardEvent.keycardInfo.keyUID),
+    accountDto,
     password = "",
     keycard = true,
     publicEncryptionKey = exportedKeys.encryptionKey.publicKey,
@@ -335,5 +343,8 @@ method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: Keycar
 method exportRecoverKeys*[T](self: Module[T]) =
   self.view.setRestoreKeysExportState(ProgressState.InProgress.int)
   self.controller.exportRecoverKeysFromKeycard()
+
+method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
+  return self.postOnboardingTasks
 
 {.pop.}
