@@ -38,7 +38,6 @@ SQUtils.QObject {
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
     required property var validateConnectionString
-    required property var tryToSetPinFunction
     required property var tryToSetPukFunction
 
     signal biometricsRequested(string profileId)
@@ -143,8 +142,6 @@ SQUtils.QObject {
             id: loginScreen
 
             keycardState: root.keycardState
-            tryToSetPinFunction: root.tryToSetPinFunction
-
             keycardRemainingPinAttempts: root.remainingPinAttempts
             keycardRemainingPukAttempts: root.remainingPukAttempts
 

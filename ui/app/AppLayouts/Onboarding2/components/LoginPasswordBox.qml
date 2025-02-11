@@ -6,9 +6,7 @@ import QtQml.Models 2.15
 import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
@@ -26,6 +24,8 @@ Control {
 
     property alias password: txtPassword.text
     signal passwordEditedManually()
+
+    signal detailedErrorPopupRequested()
 
     signal biometricsRequested()
     signal loginRequested(string password)
@@ -71,7 +71,7 @@ Control {
                 if (link.startsWith("#password"))
                   forgottenPassInstructionsPopupComp.createObject(root).open()
                 else
-                  detailedErrorPopupComp.createObject(root).open()
+                  root.detailedErrorPopupRequested()
             }
         }
         StatusButton {
@@ -167,36 +167,6 @@ Control {
                             wrapMode: Text.Wrap
                             text: qsTr("Enter a new password and you’re all set! You will be able to use your new password")
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    Component {
-        id: detailedErrorPopupComp
-        StatusSimpleTextPopup {
-            objectName: "passwordDetailsPopup"
-            title: qsTr("Login failed")
-            width: 480
-            destroyOnClose: true
-            content.color: Theme.palette.dangerColor1
-            content.text: root.detailedError
-            footer: StatusDialogFooter {
-                spacing: Theme.padding
-                rightButtons: ObjectModel {
-                    StatusFlatButton {
-                        icon.name: "copy"
-                        text: qsTr("Copy error message")
-                        onClicked: {
-                            icon.name = "tiny/checkmark"
-                            ClipboardUtils.setText(root.detailedError)
-                            Backpressure.debounce(this, 1500, () => icon.name = "copy")()
-                        }
-                    }
-                    StatusButton {
-                        text: qsTr("Close")
-                        onClicked: close()
                     }
                 }
             }

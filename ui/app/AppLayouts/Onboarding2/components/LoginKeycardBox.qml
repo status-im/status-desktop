@@ -25,6 +25,8 @@ Control {
 
     signal pinEditedManually()
 
+    signal detailedErrorPopupRequested()
+
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
 
@@ -77,6 +79,11 @@ Control {
             horizontalAlignment: Qt.AlignHCenter
             elide: Text.ElideRight
             color: Theme.palette.baseColor1
+            linkColor: hoveredLink ? Theme.palette.hoverColor(color) : color
+            HoverHandler {
+                cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+            }
+            onLinkActivated: root.detailedErrorPopupRequested()
         }
         Column {
             id: lockedButtons
@@ -191,7 +198,7 @@ Control {
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("The inserted Keycard is empty.<br>Remove card and insert the correct one.")
+                text: qsTr("The inserted Keycard is empty.<br>Insert the correct Keycard for this profile.")
             }
         },
         State {
@@ -205,13 +212,12 @@ Control {
             }
         },
         State {
-            // TODO this is a deadend. We should never end up here, but I still don't know what it should look like
             name: "errorDuringLogin"
             when: !!root.loginError
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Error during login: %1").arg(root.loginError)
+                text: qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
             }
         },
         // exit states

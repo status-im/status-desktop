@@ -84,7 +84,7 @@ SplitView {
             property int keycardRemainingPinAttempts: 3
             property int keycardRemainingPukAttempts: 5
 
-            function setPin(pin: string) { // -> bool
+            function setPin(pin: string) {
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
                 ctrlLoginResult.result = "🯄"
                 const valid = pin === mockDriver.pin
@@ -94,7 +94,6 @@ SplitView {
                     keycardState = Onboarding.KeycardState.BlockedPIN
                     keycardRemainingPinAttempts = 0
                 }
-                return valid
             }
 
             function setPuk(puk: string) { // -> bool
@@ -111,6 +110,10 @@ SplitView {
 
             function authorize(pin: string) {
                 logs.logEvent("OnboardingStore.authorize", ["pin"], arguments)
+                if (pin === mockDriver.pin)
+                    authorizationState = Onboarding.ProgressState.Success
+                else
+                    authorizationState = Onboarding.ProgressState.Failed
             }
 
             function loadMnemonic(mnemonic: string) { // -> void
@@ -161,7 +164,7 @@ SplitView {
         }
 
         biometricsAvailable: ctrlBiometrics.checked
-        isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+        isBiometricsLogin: ctrlTouchIdUser.checked
 
         onBiometricsRequested: (profileId) => biometricsPopup.open()
         onDismissBiometricsRequested: biometricsPopup.close()
@@ -173,26 +176,26 @@ SplitView {
             console.warn("!!! SIMULATION: SHOWING SPLASH")
             stack.clear()
             stack.push(splashScreen, { runningProgressAnimation: true })
-
-            store.keycardState = Onboarding.KeycardState.NoPCSCService
         }
 
         onLoginRequested: (keyUid, method, data) => {
             logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
-            // SIMULATION: emit an error in case of wrong password
+            // SIMULATION: emit an error in case of wrong password or PIN
             if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.password) {
-                onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5)
+                onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5) // randomly fail between a wrong pass and some other error
+                ctrlLoginResult.result = "<font color='red'>⛔</font>"
+            } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.pin) {
+                onboardingStore.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
+                if (onboardingStore.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
+                    onboardingStore.keycardState = Onboarding.KeycardState.BlockedPIN
+                    onboardingStore.keycardRemainingPinAttempts = 0
+                }
+                onboardingStore.accountLoginError("", true)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else {
                 ctrlLoginResult.result = "<font color='green'>✔</font>"
             }
-        }
-
-        // mocks
-        QtObject {
-            id: localAccountSettings
-            readonly property string storeToKeychainValue: ctrlTouchIdUser.checked ? Constants.keychain.storedValue.store : ""
         }
 
         Button {

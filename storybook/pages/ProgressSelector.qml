@@ -40,6 +40,7 @@ Control {
                 model: Onboarding.getModelFromEnum("ProgressState")
 
                 RoundButton {
+                    focusPolicy: Qt.NoFocus
                     text: modelData.name
                     checkable: true
                     checked: root.value === modelData.value
