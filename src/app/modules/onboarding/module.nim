@@ -170,7 +170,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         # New user with a seedphrase we showed them
         let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
-          password = "", # For keycard it will be substituted with`encryption.publicKey` in status-go
+          password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           seedPhrase,
           recoverAccount = false,
           keycardInstanceUID = keycardEvent.keycardInfo.instanceUID,
@@ -179,7 +179,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         # New user who entered their own seed phrase
         let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
-          password = "", # For keycard it will be substituted with`encryption.publicKey` in status-go
+          password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
           seedPhrase,
           recoverAccount = false,
           keycardInstanceUID = keycardEvent.keycardInfo.instanceUID,
@@ -208,7 +208,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
           )
       else:
-        raise newException(ValueError, "Unknown flow: " & $self.onboardingFlow)
+        raise newException(ValueError, "Unknown onboarding flow: " & $self.onboardingFlow)
 
     return err
   except Exception as e:
@@ -229,7 +229,7 @@ method loginRequested*[T](self: Module[T], keyUid: string, loginFlow: int, dataJ
         self.authorize(data["pin"].str)
         # We will continue the flow when the card is authorized in onKeycardStateUpdated
       else:
-        raise newException(ValueError, "Unknown flow: " & $self.onboardingFlow)
+        raise newException(ValueError, "Unknown login flow: " & $self.loginFlow)
 
   except Exception as e:
     error "Error finishing Login Flow", msg = e.msg
