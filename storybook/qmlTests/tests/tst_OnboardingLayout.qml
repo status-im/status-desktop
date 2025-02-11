@@ -59,7 +59,7 @@ Item {
                 readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
                 readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
-                property int keycardRemainingPinAttempts: 5
+                property int keycardRemainingPinAttempts: 3
                 property int keycardRemainingPukAttempts: 5
                 property var loginAccountsModel: emptyModel
 
@@ -67,14 +67,13 @@ Item {
                     const valid = pin === mockDriver.existingPin
                     if (!valid)
                         keycardRemainingPinAttempts--
-                    return valid
                 }
 
                 function authorize(pin: string) {
                     authorizeCalled(pin)
                 }
                 function loadMnemonic(mnemonic: string) {
-                    loadMnemonicCalled()
+                    loadMnemonicCalled(mnemonic)
                 }
                 function exportRecoverKeys() {
                     exportRecoverKeysCalled()
@@ -109,14 +108,15 @@ Item {
                 signal accountLoginError(string error, bool wrongPassword)
 
                 signal authorizeCalled(string pin)
-                signal loadMnemonicCalled
+                signal loadMnemonicCalled(string mnemonic)
                 signal exportRecoverKeysCalled
             }
 
             onLoginRequested: (keyUid, method, data) => {
-                // SIMULATION: emit an error in case of wrong password
-                if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) {
-                    onboardingStore.accountLoginError("An error ocurred, wrong password?", Math.random() < 0.5)
+                // SIMULATION: emit an error in case of wrong password/PIN
+                if ((method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) ||
+                    (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.existingPin) ){
+                    onboardingStore.accountLoginError("", true)
                 }
             }
         }
@@ -1024,7 +1024,6 @@ Item {
                 compare(resultData.password, data.password)
 
                 // verify validation & pass error
-                console.log("---- passwords:", data.password, mockDriver.dummyNewPassword)
                 tryCompare(passwordInput, "hasError", data.password !== mockDriver.dummyNewPassword)
             } else if (!!data.pin) { // keycard profile
                 mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // happy path; keycard ready
@@ -1078,7 +1077,7 @@ Item {
             return [
               { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPageTitle: "Create profile" },
               { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPageTitle: "Log in" },
-              // TODO cover also `signal unblockWithSeedphraseRequested()` and `signal lostKeycard()`
+              // TODO cover also `signal unblockWithSeedphraseRequested()`
             ]
         }
         function test_loginScreen_launchesExternalFlow(data) {

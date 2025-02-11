@@ -177,7 +177,6 @@ Page {
         passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore
         isSeedPhraseValid: root.onboardingStore.validMnemonic
         validateConnectionString: root.onboardingStore.validateLocalPairingConnectionString
-        tryToSetPinFunction: root.onboardingStore.setPin
         tryToSetPukFunction: root.onboardingStore.setPuk
         remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts

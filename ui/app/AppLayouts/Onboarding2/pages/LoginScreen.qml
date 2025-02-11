@@ -2,11 +2,16 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
+import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2.stores 1.0
@@ -20,7 +25,6 @@ OnboardingPage {
 
     required property int keycardState
 
-    required property var tryToSetPinFunction
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
 
@@ -42,9 +46,6 @@ OnboardingPage {
         if (!root.isBiometricsLogin)
             return
 
-        passwordBox.validationError = error
-        passwordBox.detailedError = detailedError
-
         const hasError = error || detailedError
 
         d.biometricsSuccessful = !hasError
@@ -55,6 +56,7 @@ OnboardingPage {
                 keycardBox.clear()
             } else {
                 passwordBox.validationError = error
+                passwordBox.detailedError = detailedError
                 passwordBox.clear()
                 passwordBox.forceActiveFocus()
             }
@@ -129,33 +131,31 @@ OnboardingPage {
             passwordBox.forceActiveFocus()
     }
 
-    // (password) login
+    // login errors reporting
     function setAccountLoginError(error: string, wrongPassword: bool) {
-        if (!error) {
+        if (!error && !wrongPassword) {
             return
         }
 
-        if (d.currentProfileIsKeycard) {
-            // Login with keycard
+        if (d.currentProfileIsKeycard) { // Login with keycard
             if (wrongPassword) {
+                keycardBox.loginError = ""
                 keycardBox.markAsWrongPin()
             } else {
                 keycardBox.loginError = error
             }
-            return
-        }
+        } else { // Login with password
+            if (wrongPassword) {
+                passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
+                passwordBox.detailedError = ""
+            } else {
+                passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
+                passwordBox.detailedError = error
+            }
 
-        // Login with password
-        if (wrongPassword) {
-            passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
-            passwordBox.detailedError = ""
-        } else {
-            passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
-            passwordBox.detailedError = error
+            passwordBox.clear()
+            passwordBox.forceActiveFocus()
         }
-
-        passwordBox.clear()
-        passwordBox.forceActiveFocus()
     }
 
     padding: 40
@@ -205,7 +205,8 @@ OnboardingPage {
                     d.settings.lastKeyUid = selectedProfileKeyId
 
                     if (d.currentProfileIsKeycard) {
-                       keycardBox.clear()
+                        keycardBox.loginError = ""
+                        keycardBox.clear()
                     } else {
                        passwordBox.validationError = ""
                        passwordBox.clear()
@@ -238,6 +239,7 @@ OnboardingPage {
                     validationError = ""
                     d.resetBiometricsResult()
                 }
+                onDetailedErrorPopupRequested: detailedErrorPopupComp.createObject(root, {detailedError}).open()
                 onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (password) => d.doPasswordLogin(password)
             }
@@ -257,8 +259,10 @@ OnboardingPage {
                 onUnblockWithPukRequested: root.unblockWithPukRequested()
                 onPinEditedManually: {
                     // reset state when typing the PIN manually; not to break the bindings inside the component
+                    loginError = ""
                     d.resetBiometricsResult()
                 }
+                onDetailedErrorPopupRequested: detailedErrorPopupComp.createObject(root, {detailedError: loginError}).open()
                 onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (pin) => d.doKeycardLogin(pin)
             }
@@ -276,6 +280,37 @@ OnboardingPage {
                 text: qsTr("Lost this Keycard?")
 
                 onClicked: root.lostKeycard()
+            }
+        }
+    }
+
+    Component {
+        id: detailedErrorPopupComp
+        StatusSimpleTextPopup {
+            property string detailedError
+
+            title: qsTr("Login failed")
+            width: 480
+            destroyOnClose: true
+            content.color: Theme.palette.dangerColor1
+            content.text: detailedError
+            footer: StatusDialogFooter {
+                spacing: Theme.padding
+                rightButtons: ObjectModel {
+                    StatusFlatButton {
+                        icon.name: "copy"
+                        text: qsTr("Copy error message")
+                        onClicked: {
+                            icon.name = "tiny/checkmark"
+                            ClipboardUtils.setText(detailedError)
+                            Backpressure.debounce(this, 1500, () => icon.name = "copy")()
+                        }
+                    }
+                    StatusButton {
+                        text: qsTr("Close")
+                        onClicked: close()
+                    }
+                }
             }
         }
     }
