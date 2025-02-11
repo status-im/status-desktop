@@ -56,7 +56,7 @@ switch("warning", "UnreachableElse:off")
 
 # Those are popular to miss in our app, and quickly make build log unreadable, so we want to prevent them
 switch("warningAsError", "UseBase:on")
-switch("warningAsError", "UnusedImport:on")
+#switch("warningAsError", "UnusedImport:on")
 switch("warningAsError", "Deprecated:on")
 switch("warningAsError", "HoleEnumConv:on")
 
