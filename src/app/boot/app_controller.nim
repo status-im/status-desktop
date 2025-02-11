@@ -363,7 +363,7 @@ proc delete*(self: AppController) =
   self.networkConnectionService.delete
   self.metricsService.delete
 
-# TODO: This function can be removed whe nwe completely switch to the new onboarding module
+# TODO: This function can be removed when we completely switch to the new onboarding module
 proc createStartupModule(self: AppController, statusFoundation: StatusFoundation): startup_module.Module[AppController] =
   return startup_module.newModule[AppController](
     self,
