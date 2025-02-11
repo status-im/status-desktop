@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core.Utils 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -24,7 +25,11 @@ Control {
     signal onboardingLoginFlowRequested()
 
     function setSelection(keyUid: string) {
-        currentEntry.value = keyUid === "" ? (proxyModel.get(0, "keyUid") ?? "") : keyUid
+        let selection = keyUid
+        if (!ModelUtils.contains(root.model, "keyUid", selection)) // get first item if not existing (or empty)
+            selection = ModelUtils.get(root.model, 0, "keyUid")
+
+        currentEntry.value = selection
     }
 
     QtObject {
