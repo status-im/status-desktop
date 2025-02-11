@@ -9,7 +9,7 @@ void Keychain::requestSaveCredential(const QString &reason, const QString &accou
 
     qWarning() << "Keychain::requestSaveCredential is intended to be called only on MacOS.";
 
-    emit this->saveCredentialRequestCompleted(Keychain::StatusNotSupported);
+    emit saveCredentialRequestCompleted(Keychain::StatusNotSupported);
 }
 
 void Keychain::requestDeleteCredential(const QString &reason, const QString &account)
@@ -27,7 +27,7 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
 
     qWarning() << "Keychain::requestGetCredential is intended to be called only on MacOS.";
 
-    emit getCredentialRequestCompleted(Keychain::StatusNotSupported, "");
+    emit getCredentialRequestCompleted(Keychain::StatusNotSupported, {});
 }
 
 void Keychain::cancelActiveRequest()

@@ -17,7 +17,7 @@ class Keychain : public QObject {
 
 public:
     explicit Keychain(QObject *parent = nullptr);
-    ~Keychain();
+    ~Keychain() override;
 
     enum Status {
         StatusSuccess = 0,
