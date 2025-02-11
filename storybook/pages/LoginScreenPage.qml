@@ -66,7 +66,9 @@ SplitView {
         onOnboardingLoginFlowRequested: logs.logEvent("onOnboardingLoginFlowRequested")
         onUnblockWithSeedphraseRequested: logs.logEvent("onUnblockWithSeedphraseRequested")
         onUnblockWithPukRequested: logs.logEvent("onUnblockWithPukRequested")
-        onLostKeycard: logs.logEvent("onLostKeycard")
+        onLostKeycard: (keyUid) =>{
+                           logs.logEvent("onLostKeycard", ["keyUid"], arguments)
+                       }
     }
 
     BiometricsPopup {

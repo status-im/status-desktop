@@ -67,6 +67,7 @@ Page {
         property string keycardPin
         property bool enableBiometrics
         property string seedphrase
+        property string keyUid // Used in LoginWithLostKeycardSeedphrase
 
         // login screen state
         property string selectedProfileKeyId
@@ -76,6 +77,7 @@ Page {
             d.keycardPin = ""
             d.enableBiometrics = false
             d.seedphrase = ""
+            d.keyUid = ""
             d.selectedProfileKeyId = ""
         }
 
@@ -92,6 +94,7 @@ Page {
                 password: d.password,
                 keycardPin: d.keycardPin,
                 seedphrase: d.seedphrase,
+                keyUid: d.keyUid,
                 enableBiometrics: d.enableBiometrics
             }
 
@@ -197,6 +200,7 @@ Page {
         onSyncProceedWithConnectionString: (connectionString) =>
             root.onboardingStore.inputConnectionStringForBootstrapping(connectionString)
         onSeedphraseSubmitted: (seedphrase) => d.seedphrase = seedphrase
+        onKeyUidSubmitted: (keyUid) => d.keyUid = keyUid
         onSetPasswordRequested: (password) => d.password = password
         onEnableBiometricsRequested: (enabled) => d.enableBiometrics = enabled
         onLinkActivated: (link) => Qt.openUrlExternally(link)
