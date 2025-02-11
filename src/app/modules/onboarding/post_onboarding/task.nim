@@ -15,7 +15,6 @@ type PostOnboardingTask* = ref object of RootObj
 
 # NOTE: In theory we could define a `run` {.base.} method here.
 # But for now there are not many task kinds, and they require different arguments.
-# proc run*(self: KeycardReplacementTask)
 
 proc kind*(self: PostOnboardingTask): PostOnboardingTaskKind =
   return self.kind
