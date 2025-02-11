@@ -474,18 +474,16 @@ Item {
             // PAGE 6: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardAuthorized")
+            mockDriver.pinSettingState = Onboarding.ProgressState.Success
             mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 7: Backup your recovery phrase (intro)
+            dynamicSpy.setup(stack, "currentItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, BackupSeedphraseIntro)
             const btnBackupSeedphrase = findChild(page, "btnBackupSeedphrase")
             verify(!!btnBackupSeedphrase)
@@ -635,21 +633,15 @@ Item {
             // PAGE 7: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
-            tryCompare(dynamicSpy, "count", 1)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardPinSuccessfullySet")
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
-            dynamicSpy.setup(page, "keycardAuthorized")
             mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 8: Adding key pair to Keycard
+            dynamicSpy.setup(stack, "currentItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
@@ -1244,18 +1236,16 @@ Item {
             // PAGE 5: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardAuthorized")
+            mockDriver.pinSettingState = Onboarding.ProgressState.Success
             mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Adding key pair to Keycard
+            dynamicSpy.setup(stack, "currentItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION

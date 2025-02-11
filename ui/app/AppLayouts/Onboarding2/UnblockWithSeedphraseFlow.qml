@@ -18,7 +18,7 @@ SQUtils.QObject {
     required property int keycardPinInfoPageDelay
 
     signal seedphraseSubmitted(string seedphrase)
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
 
     function init() {
         root.stackView.push(seedphrasePage)
@@ -31,6 +31,7 @@ SQUtils.QObject {
             title: qsTr("Unblock Keycard using the recovery phrase")
             btnContinueText: qsTr("Unblock Keycard")
             isSeedPhraseValid: root.isSeedPhraseValid
+
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
                 root.stackView.push(keycardCreatePinPage)
@@ -42,9 +43,9 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinPage {
-            onKeycardPinCreated: (pin) => {
+            onSetPinRequested: (pin) => {
                 Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
+                    root.setPinRequested(pin)
                 })()
             }
         }

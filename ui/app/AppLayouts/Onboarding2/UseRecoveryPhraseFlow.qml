@@ -42,7 +42,6 @@ SQUtils.QObject {
 
         SeedphrasePage {
             isSeedPhraseValid: root.isSeedPhraseValid
-            authorizationState: Onboarding.ProgressState.Idle
 
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)

@@ -44,7 +44,7 @@ SQUtils.QObject {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal loginRequested(string keyUid, int method, var data)
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal enableBiometricsRequested(bool enable)
     signal shareUsageDataRequested(bool enabled)
     signal syncProceedWithConnectionString(string connectionString)
@@ -271,7 +271,7 @@ SQUtils.QObject {
 
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
         onLoadMnemonicRequested: root.loadMnemonicRequested()
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onSetPinRequested: (pin) => root.setPinRequested(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
@@ -341,8 +341,8 @@ SQUtils.QObject {
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-        onKeycardPinCreated: (pin) => {
-            root.keycardPinCreated(pin)
+        onSetPinRequested: (pin) => {
+            root.setPinRequested(pin)
 
             if (root.loginScreen) {
                 root.loginRequested(root.loginScreen.selectedProfileKeyId,
@@ -366,9 +366,9 @@ SQUtils.QObject {
 
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
-        onKeycardPinCreated: (pin) => {
+        onSetPinRequested: (pin) => {
             unblockWithPukFlow.pin = pin
-            root.keycardPinCreated(pin)
+            root.setPinRequested(pin)
         }
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
 
@@ -401,7 +401,7 @@ SQUtils.QObject {
         keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onKeycardFactoryResetRequested: keycardFactoryResetFlow.init(true)
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
+        onSetPinRequested: (pin) => root.setPinRequested(pin)
         onLoginWithKeycardRequested: loginWithKeycardFlow.init()
         onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
         onLoadMnemonicRequested: root.loadMnemonicRequested()

@@ -82,7 +82,7 @@ SplitView {
         tryToSetPukFunction: mockDriver.setPuk
         remainingAttempts: mockDriver.keycardRemainingPukAttempts
         keycardPinInfoPageDelay: 1000
-        onKeycardPinCreated: (pin) => {
+        onSetPinRequested: (pin) => {
                                  logs.logEvent("keycardPinCreated", ["pin"], arguments)
                                  console.warn("!!! PIN CREATED:", pin)
                              }

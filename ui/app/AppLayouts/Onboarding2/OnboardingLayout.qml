@@ -186,7 +186,7 @@ Page {
         onDismissBiometricsRequested: root.dismissBiometricsRequested()
         onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
-        onKeycardPinCreated: (pin) => {
+        onSetPinRequested: (pin) => {
             d.keycardPin = pin
             root.onboardingStore.setPin(pin)
         }
