@@ -175,6 +175,8 @@ ifneq ($(detected_OS),Windows)
  else
   QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
  endif
+ export PKG_CONFIG_PATH := "$(QT5_PCFILEDIR)"
+
  # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
  ifeq ($(detected_OS),Darwin)
   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
