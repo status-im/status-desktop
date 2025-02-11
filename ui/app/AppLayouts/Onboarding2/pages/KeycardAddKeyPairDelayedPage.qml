@@ -12,7 +12,7 @@ import AppLayouts.Onboarding.enums 1.0
 KeycardAddKeyPairPage {
     id: root
 
-    property int addKeyPairState
+    required property int addKeyPairState
 
     inProgress: d.addKeyPairState !== Onboarding.ProgressState.Success
 

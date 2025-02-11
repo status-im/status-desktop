@@ -28,7 +28,7 @@ SQUtils.QObject {
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
     signal loadMnemonicRequested
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal seedphraseSubmitted(string seedphrase)
 
     signal authorizationRequested
@@ -153,7 +153,6 @@ SQUtils.QObject {
         SeedphrasePage {
             title: qsTr("Create profile on empty Keycard using a recovery phrase")
 
-            authorizationState: root.authorizationState
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
@@ -165,20 +164,14 @@ SQUtils.QObject {
     Component {
         id: keycardCreatePinPage
 
-        KeycardCreatePinPage {
-            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+        KeycardCreatePinDelayedPage {
             pinSettingState: root.pinSettingState
             authorizationState: root.authorizationState
-            onKeycardPinCreated: (pin) => {
-                root.keycardPinCreated(pin)
-            }
-            onKeycardPinSuccessfullySet: {
-                if (d.withNewSeedphrase) {
-                    // Need to authorize before getting a seedphrase
-                    root.authorizationRequested()
-                }
-            }
-            onKeycardAuthorized: {
+
+            onSetPinRequested: (pin) => root.setPinRequested(pin)
+            onAuthorizationRequested: root.authorizationRequested()
+
+            onFinished: {
                 if (d.withNewSeedphrase) {
                     root.stackView.push(backupSeedIntroPage)
                 } else {

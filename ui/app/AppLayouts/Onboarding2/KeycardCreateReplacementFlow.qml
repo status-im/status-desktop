@@ -24,7 +24,7 @@ SQUtils.QObject {
 
     signal loginWithKeycardRequested
     signal keycardFactoryResetRequested
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal authorizationRequested()
     signal seedphraseSubmitted(string seedphrase)
 
@@ -79,7 +79,6 @@ SQUtils.QObject {
         SeedphrasePage {
             title: qsTr("Enter recovery phrase of lost Keycard")
 
-            authorizationState: root.authorizationState
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
@@ -91,16 +90,14 @@ SQUtils.QObject {
     Component {
         id: keycardCreatePinPage
 
-        KeycardCreatePinPage {
-            pinSettingState: root.pinSettingState
+        KeycardCreatePinDelayedPage {
             authorizationState: root.authorizationState
-            onKeycardPinCreated: (pin) => {
-                root.keycardPinCreated(pin)
-            }
-            onKeycardPinSuccessfullySet: {
-                root.authorizationRequested()
-            }
-            onKeycardAuthorized: {
+            pinSettingState: root.pinSettingState
+
+            onSetPinRequested: (pin) => root.setPinRequested(pin)
+            onAuthorizationRequested: root.authorizationRequested()
+
+            onFinished: {
                 root.loadMnemonicRequested()
                 root.stackView.push(addKeypairPage)
             }

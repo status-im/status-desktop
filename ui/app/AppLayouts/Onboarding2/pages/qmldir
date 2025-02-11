@@ -11,6 +11,7 @@ HelpUsImproveStatusPage 1.0 HelpUsImproveStatusPage.qml
 KeycardAddKeyPairDelayedPage 1.0 KeycardAddKeyPairDelayedPage.qml
 KeycardAddKeyPairPage 1.0 KeycardAddKeyPairPage.qml
 KeycardBasePage 1.0 KeycardBasePage.qml
+KeycardCreatePinDelayedPage 1.0 KeycardCreatePinDelayedPage.qml
 KeycardCreatePinPage 1.0 KeycardCreatePinPage.qml
 KeycardEmptyPage 1.0 KeycardEmptyPage.qml
 KeycardEnterPinPage 1.0 KeycardEnterPinPage.qml

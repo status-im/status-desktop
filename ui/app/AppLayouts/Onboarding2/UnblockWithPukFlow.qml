@@ -20,7 +20,7 @@ SQUtils.QObject {
 
     required property int keycardPinInfoPageDelay
 
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal keycardFactoryResetRequested
     signal finished(bool success)
 
@@ -75,9 +75,9 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinPage {
-            onKeycardPinCreated: (pin) => {
+            onSetPinRequested: (pin) => {
                 Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
+                    root.setPinRequested(pin)
                     root.stackView.replace(keycardUnblockedPage, {title: qsTr("Unblock successful")})
                 })()
             }
