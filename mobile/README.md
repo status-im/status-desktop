@@ -19,6 +19,9 @@
 ```
   git submodule update --init --recursive
 ```
+- Xcode
+- Ipad pro simulator
+
 
 #### Running the app
 ```
