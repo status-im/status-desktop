@@ -1,5 +1,5 @@
 type PostOnboardingTaskKind* = enum
-  # NOTE: Call from Login apge when the keycard was lost and is being replaced.
+  # NOTE: Call from Login page when the keycard was lost and is being replaced.
   kPostOnboardingTaskKeycardReplacement = 0
 
   # NOTE: This syncs the list of wallets between the app and the keycard.
