@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
+import Qt.labs.settings 1.0  // Import required for Settings
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -315,7 +316,7 @@ StatusDialog {
         function setRawValue() {
             if (!selectedRawAmount) return
 
-            const amountChanged = amountToSend.amount !== root.selectedRawAmount || amountToSend.empty
+            const amountChanged = (amountToSend.amount !== root.selectedRawAmount) || amountToSend.empty
             const validSelection = (selectedAssetEntryValid && amountToSend.multiplierIndex !== 0) || selectedCollectibleEntryValid
 
             if (amountChanged && validSelection) {
@@ -339,6 +340,10 @@ StatusDialog {
             root.sendType = Constants.SendType.Transfer
             root.selectedTokenKey = key
             amountToSend.forceActiveFocus()
+        }
+
+        readonly property var lastTabSettings: Settings {
+            property alias lastSelectedTab: sendModalHeader.tokenSelectorTab
         }
     }
 
@@ -431,6 +436,7 @@ StatusDialog {
 
                 interactive: root.interactive && !root.transferOwnership
                 displayOnlyAssets: root.displayOnlyAssets
+                tokenSelectorTab: d.lastTabSettings.lastSelectedTab
 
                 networksModel: root.networksModel
                 assetsModel: root.assetsModel
