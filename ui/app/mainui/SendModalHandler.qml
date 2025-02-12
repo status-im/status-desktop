@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import Qt.labs.settings 1.0  // Import required for Settings
 
 import SortFilterProxyModel 0.2
 
@@ -417,6 +418,10 @@ QtObject {
         }
     }
 
+    readonly property var lastTabSettings: Settings {
+        property int lastSelectedTab: 0
+    }
+
     readonly property Component simpleSendModalComponent: Component {
         SimpleSendModal {
             id: simpleSendModal
@@ -432,6 +437,9 @@ QtObject {
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
+
+            tokenSelectorTab: lastTabSettings.lastSelectedTab
+            onTokenSelectorTabChanged: lastTabSettings.lastSelectedTab = tokenSelectorTab
 
             onOpened: {
                 if(isValidParameter(root.simpleSendParams.interactive)) {

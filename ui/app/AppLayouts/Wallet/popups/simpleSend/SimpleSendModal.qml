@@ -117,6 +117,9 @@ StatusDialog {
     /** input property to show only ERC20 assets and no collectibles **/
     property bool displayOnlyAssets
 
+    /** property exposing the currently selected token selector tab **/
+    property alias tokenSelectorTab: sendModalHeader.tokenSelectorTab
+
     /** input property true if a community owner token is being transferred **/
     property bool transferOwnership
 
@@ -429,6 +432,7 @@ StatusDialog {
 
                 interactive: root.interactive && !root.transferOwnership
                 displayOnlyAssets: root.displayOnlyAssets
+                tokenSelectorTab: root.tokenSelectorTab
 
                 networksModel: root.networksModel
                 assetsModel: root.assetsModel
