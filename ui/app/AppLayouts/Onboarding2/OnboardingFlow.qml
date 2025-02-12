@@ -155,8 +155,8 @@ SQUtils.QObject {
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
-            onLostKeycard: (keyUid) => {
-                               root.keyUidSubmitted(keyUid)
+            onLostKeycardFlowRequested: () => {
+                               root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
                                root.stackView.push(keycardLostPage)
                            }
 

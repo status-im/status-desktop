@@ -66,8 +66,8 @@ SplitView {
         onOnboardingLoginFlowRequested: logs.logEvent("onOnboardingLoginFlowRequested")
         onUnblockWithSeedphraseRequested: logs.logEvent("onUnblockWithSeedphraseRequested")
         onUnblockWithPukRequested: logs.logEvent("onUnblockWithPukRequested")
-        onLostKeycard: (keyUid) =>{
-                           logs.logEvent("onLostKeycard", ["keyUid"], arguments)
+        onLostKeycardFlowRequested: () => {
+                           logs.logEvent("onLostKeycardFlowRequested")
                        }
     }
 

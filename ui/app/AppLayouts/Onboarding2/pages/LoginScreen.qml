@@ -82,7 +82,7 @@ OnboardingPage {
     signal onboardingLoginFlowRequested()
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
-    signal lostKeycard(string keyUid)
+    signal lostKeycardFlowRequested()
 
     QtObject {
         id: d
@@ -279,7 +279,7 @@ OnboardingPage {
                 visible: d.currentProfileIsKeycard
                 text: qsTr("Lost this Keycard?")
 
-                onClicked: root.lostKeycard(d.settings.lastKeyUid)
+                onClicked: root.lostKeycardFlowRequested()
             }
         }
     }
