@@ -31,6 +31,8 @@ StatusDialog {
     required property SwapModalAdaptor swapAdaptor
     required property int loginType
 
+    signal addMetricsEvent(string subEvent)
+
     objectName: "swapModal"
 
     implicitWidth: 556
@@ -79,10 +81,6 @@ StatusDialog {
         }
 
         readonly property var selectedAccount: selectedAccountEntry.item
-
-        function addMetricsEvent(subEventName) {
-            Global.addCentralizedMetricIfEnabled("swap", {subEvent: subEventName})
-        }
     }
 
     ModelEntry {
@@ -122,11 +120,11 @@ StatusDialog {
 
     onOpened: {
         payPanel.forceActiveFocus()
-        d.addMetricsEvent("popup opened")
+        root.addMetricsEvent("popup opened")
     }
     onClosed: {
         root.swapAdaptor.stopUpdatesForSuggestedRoute()
-        d.addMetricsEvent("popup closed")
+        root.addMetricsEvent("popup closed")
     }
 
     header: Item {
@@ -473,7 +471,7 @@ StatusDialog {
                                  !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
-                            d.addMetricsEvent("next button pressed")
+                            root.addMetricsEvent("next button pressed")
                             if (root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful)
                                 Global.openPopup(swapApproveModalComponent)
                             else
@@ -526,9 +524,9 @@ StatusDialog {
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
-            onRejected: d.addMetricsEvent("rejected approve")
+            onRejected: root.addMetricsEvent("rejected approve")
             onAccepted: {
-                d.addMetricsEvent("send approve tx")
+                root.addMetricsEvent("send approve tx")
                 root.swapAdaptor.sendApproveTx()
             }
         }
@@ -581,9 +579,9 @@ StatusDialog {
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
-            onRejected: d.addMetricsEvent("rejected sign")
+            onRejected: root.addMetricsEvent("rejected sign")
             onAccepted: {
-                d.addMetricsEvent("send swap tx")
+                root.addMetricsEvent("send swap tx")
                 root.swapAdaptor.sendSwapTx()
                 root.close()
             }

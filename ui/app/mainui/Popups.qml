@@ -19,7 +19,6 @@ import AppLayouts.Profile.popups 1.0
 import AppLayouts.Profile.stores 1.0 as ProfileStores
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.helpers 1.0
-import AppLayouts.Wallet.popups.swap 1.0
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.adaptors 1.0
@@ -107,7 +106,6 @@ QtObject {
         Global.openConfirmHideAssetPopup.connect(openConfirmHideAssetPopup)
         Global.openConfirmHideCollectiblePopup.connect(openConfirmHideCollectiblePopup)
         Global.openCommunityMemberMessagesPopupRequested.connect(openCommunityMemberMessagesPopup)
-        Global.openSwapModalRequested.connect(openSwapModal)
         Global.openBuyCryptoModalRequested.connect(openBuyCryptoModal)
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
         Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
@@ -404,10 +402,6 @@ QtObject {
             memberPubKey: memberPubKey,
             displayName: displayName
         })
-    }
-
-    function openSwapModal(parameters, callback) {
-        openPopup(swapModal, {swapInputParamsForm: parameters}, callback)
     }
 
     function openBuyCryptoModal(parameters) {
@@ -1265,23 +1259,6 @@ QtObject {
                 sharedRootStore: root.sharedRootStore
                 utilsStore: root.utilsStore
                 onClosed: destroy()
-            }
-        },
-        Component {
-            id: swapModal
-            SwapModal {
-                swapAdaptor: SwapModalAdaptor {
-                    swapStore: WalletStores.SwapStore {}
-                    walletAssetsStore: root.walletAssetsStore
-                    currencyStore: root.currencyStore
-                    swapFormData: swapInputParamsForm
-                    swapOutputData: SwapOutputData{}
-                }
-                loginType: root.rootStore.loginType
-                onClosed: {
-                    destroy()
-                    swapInputParamsForm.resetFormData()
-                }
             }
         },
         Component {
