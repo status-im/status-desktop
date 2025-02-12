@@ -531,7 +531,7 @@ Item {
                                     }
                                 }
                                 delegate: InformationTag {
-                                    asset.name: Theme.svg("tiny/" + model.iconUrl)
+                                    asset.name: Theme.svg(model.iconUrl)
                                     asset.isImage: true
                                     tagPrimaryLabel.text: model.chainName
                                     tagSecondaryLabel.text: SQUtils.Utils.elideAndFormatWalletAddress(model.address)
