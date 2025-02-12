@@ -305,7 +305,7 @@ Item {
 
                 const balance = delegateUnderTest.model.accountBalance.balance
 
-                compare(inlineTagDelegate_0.asset.name, Theme.svg("tiny/%1".arg(delegateUnderTest.model.accountBalance.iconUrl)))
+                compare(inlineTagDelegate_0.asset.name, Theme.svg(delegateUnderTest.model.accountBalance.iconUrl))
                 compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), delegateUnderTest.model.accountBalance.chainColor.toString().toUpperCase())
                 compare(inlineTagDelegate_0.titleText.color, balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1)
 
@@ -461,7 +461,7 @@ Item {
                     const inlineTagDelegate_0 = findChild(accountDelegateUnderTest, "inlineTagDelegate_0")
                     verify(!!inlineTagDelegate_0)
 
-                    compare(inlineTagDelegate_0.asset.name, Theme.svg("tiny/%1".arg(networkModelItem.iconUrl)))
+                    compare(inlineTagDelegate_0.asset.name, Theme.svg(networkModelItem.iconUrl))
                     compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), networkModelItem.chainColor.toString().toUpperCase())
 
                     let balancesModel = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel, "tokensKey", root.swapFormData.fromTokensKey).balances
