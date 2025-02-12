@@ -91,12 +91,14 @@ Control {
             spacing: 12
             visible: false
             MaybeOutlineButton {
+                objectName: "btnUnblockWithPUK"
                 width: parent.width
                 visible: root.keycardState === Onboarding.KeycardState.BlockedPIN && root.keycardRemainingPukAttempts > 0
                 text: qsTr("Unblock with PUK")
                 onClicked: root.unblockWithPukRequested()
             }
             MaybeOutlineButton {
+                objectName: "btnUnblockWithSeedphrase"
                 width: parent.width
                 visible: root.keycardState === Onboarding.KeycardState.BlockedPIN || root.keycardState === Onboarding.KeycardState.BlockedPUK
                 text: qsTr("Unblock with recovery phrase")
