@@ -63,7 +63,6 @@ Item {
             id: authorizationProgressSelector
 
             label: "Authorization progress"
-
         }
     }
 }
