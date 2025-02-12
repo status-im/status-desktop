@@ -79,9 +79,9 @@ SplitView {
         id: flow
         stackView: stackView
         keycardState: mockDriver.keycardState
+        pinSettingState: pinSettingStateSelector.value
         tryToSetPukFunction: mockDriver.setPuk
         remainingAttempts: mockDriver.keycardRemainingPukAttempts
-        keycardPinInfoPageDelay: 1000
         onSetPinRequested: (pin) => {
                                  logs.logEvent("keycardPinCreated", ["pin"], arguments)
                                  console.warn("!!! PIN CREATED:", pin)
@@ -175,22 +175,10 @@ SplitView {
                     }
 
                     Repeater {
-                        model: [
-                            { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
-                            { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
-                            { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
-                            { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
-                            { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
-                            { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
-                            { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
-                            { value: Onboarding.KeycardState.BlockedPIN, text: "BlockedPIN" },
-                            { value: Onboarding.KeycardState.BlockedPUK, text: "BlockedPUK" },
-                            { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
-                            { value: Onboarding.KeycardState.Empty, text: "Empty" }
-                        ]
+                        model: Onboarding.getModelFromEnum("KeycardState")
 
                         RoundButton {
-                            text: modelData.text
+                            text: modelData.name
                             checkable: true
                             checked: flow.keycardState === modelData.value
 
@@ -200,6 +188,12 @@ SplitView {
                         }
                     }
                 }
+            }
+
+            ProgressSelector {
+                id: pinSettingStateSelector
+
+                label: "Pin setting progress"
             }
         }
     }

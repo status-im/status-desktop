@@ -1,10 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
@@ -15,10 +12,11 @@ SQUtils.QObject {
     required property StackView stackView
 
     required property var isSeedPhraseValid
-    required property int keycardPinInfoPageDelay
+    required property int pinSettingState
 
     signal seedphraseSubmitted(string seedphrase)
     signal setPinRequested(string pin)
+    signal finished
 
     function init() {
         root.stackView.push(seedphrasePage)
@@ -42,12 +40,12 @@ SQUtils.QObject {
     Component {
         id: keycardCreatePinPage
 
-        KeycardCreatePinPage {
-            onSetPinRequested: (pin) => {
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.setPinRequested(pin)
-                })()
-            }
+        KeycardCreatePinDelayedPage {
+            pinSettingState: root.pinSettingState
+            authorizationState: Onboarding.ProgressState.Success // authorization not needed
+
+            onSetPinRequested: root.setPinRequested(pin)
+            onFinished: root.finished()
         }
     }
 }

@@ -40,6 +40,8 @@ SQUtils.QObject {
     required property var validateConnectionString
     required property var tryToSetPukFunction
 
+    readonly property LoginScreen loginScreen: d.loginScreen
+
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal loginRequested(string keyUid, int method, var data)
@@ -53,7 +55,6 @@ SQUtils.QObject {
     signal exportKeysRequested
     signal loadMnemonicRequested
     signal authorizationRequested(string pin)
-
     signal performKeycardFactoryResetRequested
 
     signal linkActivated(string link)
@@ -73,8 +74,6 @@ SQUtils.QObject {
         loginScreen.setBiometricResponse(secret, error, detailedError,
                                          wrongFingerprint)
     }
-
-    readonly property LoginScreen loginScreen: d.loginScreen
 
     QtObject {
         id: d
@@ -99,6 +98,49 @@ SQUtils.QObject {
         function openTermsOfUsePopup() {
             termsOfUsePopup.createObject(root.stackView).open()
         }
+
+        function openKeycardErrorPageIfStateFailed(state) {
+            if (state !== Onboarding.ProgressState.Failed)
+                return
+
+            // find index of first page in the flow
+            let idx = 0
+            const entryItem = stackView.find((item, index) => {
+                idx = index
+                // Loader is the type of first page (wrapping welcome page or login screen)
+                return item instanceof Loader
+            })
+
+            // when the initial page is not found, bacause e.g. the flow is not initialized
+            // or the stack was cleared
+            if (!entryItem)
+                return
+
+            // replace the second page in the flow
+            stackView.replace(stackView.get(idx + 1), errorPage)
+        }
+    }
+
+    Connections {
+        enabled: !(root.stackView.currentItem instanceof Loader) &&
+                 !(root.stackView.currentItem instanceof KeycardErrorPage) &&
+                 !(root.stackView.currentItem instanceof EnableBiometricsPage)
+
+        function onPinSettingStateChanged() {
+            d.openKeycardErrorPageIfStateFailed(pinSettingState)
+        }
+
+        function onAuthorizationStateChanged() {
+            d.openKeycardErrorPageIfStateFailed(authorizationState)
+        }
+
+        function onRestoreKeysExportStateChanged() {
+            d.openKeycardErrorPageIfStateFailed(restoreKeysExportState)
+        }
+
+        function onAddKeyPairStateChanged() {
+            d.openKeycardErrorPageIfStateFailed(addKeyPairState)
+        }
     }
 
     Component {
@@ -107,6 +149,17 @@ SQUtils.QObject {
         Loader {
             sourceComponent: loginAccountsModel.ModelCount.empty ? welcomePage
                                                                  : loginScreenComponent
+        }
+    }
+
+    Component {
+        id: errorPage
+
+        KeycardErrorPage {
+            readonly property bool backAvailableHint: false
+
+            onTryAgainRequested: root.stackView.pop()
+            onFactoryResetRequested: keycardFactoryResetFlow.init()
         }
     }
 
@@ -337,15 +390,21 @@ SQUtils.QObject {
     UnblockWithSeedphraseFlow {
         id: unblockWithSeedphraseFlow
 
+        property string pin
+
         stackView: root.stackView
 
         isSeedPhraseValid: root.isSeedPhraseValid
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+        pinSettingState: root.pinSettingState
 
         onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-        onSetPinRequested: (pin) => {
-            root.setPinRequested(pin)
 
+        onSetPinRequested: (pin) => {
+            unblockWithSeedphraseFlow.pin = pin
+            root.setPinRequested(pin)
+        }
+
+        onFinished: {
             if (root.loginScreen) {
                 root.loginRequested(root.loginScreen.selectedProfileKeyId,
                                     Onboarding.LoginMethod.Keycard, { pin })
@@ -363,10 +422,9 @@ SQUtils.QObject {
 
         stackView: root.stackView
         keycardState: root.keycardState
+        pinSettingState: root.pinSettingState
         tryToSetPukFunction: root.tryToSetPukFunction
         remainingAttempts: root.remainingPukAttempts
-
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
         onSetPinRequested: (pin) => {
             unblockWithPukFlow.pin = pin
@@ -422,8 +480,10 @@ SQUtils.QObject {
 
     KeycardFactoryResetFlow {
         id: keycardFactoryResetFlow
+
         stackView: root.stackView
         keycardState: root.keycardState
+
         onPerformKeycardFactoryResetRequested: root.performKeycardFactoryResetRequested()
         onFinished: {
             stackView.clear()
