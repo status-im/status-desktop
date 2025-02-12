@@ -35,6 +35,7 @@ Item {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     required property TransactionStore transactionStore
+    required property SharedStores.NetworksStore networksStore
 
     property var emojiPopup: null
     property SharedStores.NetworkConnectionStore networkConnectionStore
@@ -197,7 +198,7 @@ Item {
             const walletStore = RootStore
 
             d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
-            d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+            d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
             if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                 d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
             }
@@ -224,6 +225,7 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
 
             networkFilter.visible: false
             headerButton.text: qsTr("Add new address")
@@ -245,6 +247,7 @@ Item {
             contactsStore: root.contactsStore
             communitiesStore: root.communitiesStore
             networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
 
             swapEnabled: root.swapEnabled
             dAppsEnabled: root.dAppsEnabled
@@ -260,7 +263,7 @@ Item {
                                                               })
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
-                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
                 Global.openSwapModalRequested(d.swapFormData, (popup) => {
                     popup.Component.destruction.connect(() => {
@@ -390,7 +393,7 @@ Item {
             }
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
-                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }

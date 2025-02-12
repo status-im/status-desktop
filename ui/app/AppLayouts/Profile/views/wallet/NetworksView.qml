@@ -63,20 +63,6 @@ Item {
                 roleName: "isTest"
                 value: testModeViewTabBar.currentIndex == root.testnetTabIndex
             }
-            sorters: [
-                RoleSorter {
-                    roleName: "isActive"
-                    sortOrder: Qt.DescendingOrder
-                },
-                RoleSorter {
-                    roleName: "layer"
-                    sortOrder: Qt.AscendingOrder
-                },
-                RoleSorter {
-                    roleName: "chainName"
-                    sortOrder: Qt.AscendingOrder
-                }
-            ]
         }
 
         property var currentActiveNetworks: SortFilterProxyModel {
@@ -114,27 +100,7 @@ Item {
 
         Repeater {
             id: networkList
-            model: SortFilterProxyModel {
-                sourceModel: root.flatNetworks
-                filters: ValueFilter {
-                    roleName: "isTest"
-                    value: testModeViewTabBar.currentIndex == root.testnetTabIndex
-                }
-                sorters: [
-                    RoleSorter {
-                        roleName: "isActive"
-                        sortOrder: Qt.DescendingOrder
-                    },
-                    RoleSorter {
-                        roleName: "layer"
-                        sortOrder: Qt.AscendingOrder
-                    },
-                    RoleSorter {
-                        roleName: "chainName"
-                        sortOrder: Qt.AscendingOrder
-                    }
-                ]
-            }
+            model: d.currentTestModeNetworks
             delegate: WalletNetworkDelegate {
                 objectName: "walletNetworkDelegate_" + model.chainName + '_' + model.chainId
                 chainName: model.chainName

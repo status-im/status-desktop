@@ -15,6 +15,9 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 QtObject {
     id: root
 
+    // Required until tokensStore, walletAssetsStore and currentActivityFiltersStore are reworked
+    required property SharedStores.NetworksStore networksStore
+
     property bool showSavedAddresses: false
     property string selectedAddress: ""
     readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
@@ -23,7 +26,9 @@ QtObject {
     property bool addingSavedAddress: false
     property bool deletingSavedAddress: false
 
-    readonly property TokensStore tokensStore: TokensStore {}
+    readonly property TokensStore tokensStore: TokensStore {
+        networksStore: root.networksStore
+    }
     readonly property WalletAssetsStore walletAssetsStore: WalletAssetsStore {
         walletTokensStore: tokensStore
     }
@@ -36,9 +41,6 @@ QtObject {
 
     readonly property var transactionActivityStatus: walletSectionInst.activityController.status
 
-    /* This property holds networks currently selected in the Wallet Main layout  */
-    readonly property var networkFilters: networksModule.enabledChainIds
-    readonly property var networkFiltersArray: networkFilters.split(":").filter(Boolean).map(Number)
 
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
@@ -60,7 +62,7 @@ QtObject {
         filters: [
             ValueFilter {
                 roleName: "isTest"
-                value: networksModule.areTestNetworksEnabled
+                value: root.networksStore.areTestNetworksEnabled
             }
         ]
     }
@@ -140,15 +142,6 @@ QtObject {
             tokensList: walletAssetsStore.groupedAccountAssetsModel
         }
 
-        property var chainColors: ({})
-
-        function initChainColors(model) {
-            for (let i = 0; i < model.count; i++) {
-                const item = SQUtils.ModelUtils.get(model, i)
-                chainColors[item.shortName] = item.chainColor
-            }
-        }
-
         readonly property Connections walletSectionConnections: Connections {
             target: root.walletSectionInst
             function onWalletAccountRemoved(address) {
@@ -161,19 +154,6 @@ QtObject {
                 }
             }
         }
-    }
-
-    readonly property var flatNetworks: networksModule.flatNetworks
-    readonly property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
-        sourceModel: root.flatNetworks
-        filters: [
-            ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled },
-            ValueFilter { roleName: "isActive"; value: true }
-        ]
-    }
-
-    onFlatNetworksChanged: {
-        d.initChainColors(flatNetworks)
     }
 
     function resetCurrentViewedHolding(type) {
@@ -366,14 +346,6 @@ QtObject {
 
     function remainingCapacityForSavedAddresses() {
         return walletSectionSavedAddresses.remainingCapacityForSavedAddresses()
-    }
-
-    function toggleNetwork(chainId) {
-        networksModule.toggleNetwork(chainId)
-    }
-
-    function enableNetwork(chainId) {
-        networksModule.enableNetwork(chainId)
     }
 
     function runAddAccountPopup() {

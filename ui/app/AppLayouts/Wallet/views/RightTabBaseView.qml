@@ -18,6 +18,7 @@ FocusScope {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
+    required property NetworksStore networksStore
 
     property bool swapEnabled
     property bool dAppsEnabled
@@ -45,6 +46,7 @@ FocusScope {
             Layout.fillWidth: true
             overview: WalletStores.RootStore.overview
             walletStore: WalletStores.RootStore
+            networksStore: root.networksStore
             networkConnectionStore: root.networkConnectionStore
             loginType: root.store.loginType
             dAppsEnabled: root.dAppsEnabled

@@ -10,9 +10,8 @@ import StatusQ.Popups 0.1
 
 import shared.controls.delegates 1.0
 import shared.popups 1.0
+import shared.stores 1.0
 import utils 1.0
-
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 Item {
     id: root
@@ -20,7 +19,7 @@ Item {
     required property string mainDisplayName
     required property bool sendToAccountEnabled
     required property var accountsModel
-    required property WalletStores.RootStore walletStore
+    required property NetworksStore networksStore
 
     property alias cellWidth: accountsView.cellWidth
     property alias cellHeight: accountsView.cellHeight
@@ -152,7 +151,7 @@ Item {
             
             BlockchainExplorersMenu {
                 id: blockchainExplorersMenu
-                flatNetworks: root.walletStore.filteredFlatModel
+                flatNetworks: root.networksStore.activeNetworks
                 onNetworkClicked: {
                     let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, contextMenu.accountAddress);
                     Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));

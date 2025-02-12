@@ -33,6 +33,7 @@ QObject {
     required property BrowserConnectStore bcStore
     required property DAppsStore store
     required property var walletRootStore
+    required property NetworksStore networksStore
     // // Array[chainId] of the networks that are down
     required property var blockchainNetworksDown
 
@@ -47,7 +48,7 @@ QObject {
     /// Model containing the valid accounts a dApp can interact with
     readonly property var validAccounts: root.walletRootStore.nonWatchAccounts
     /// Model containing the networks a dApp can interact with
-    readonly property var flatNetworks: root.walletRootStore.filteredFlatModel
+    readonly property var flatNetworks: root.networksStore.activeNetworks
     /// Service can interact with the current address selection
     /// Default value: true
     readonly property bool serviceAvailableToCurrentAddress: !root.walletRootStore.selectedAddress ||

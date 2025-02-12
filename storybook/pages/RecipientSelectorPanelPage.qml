@@ -21,13 +21,6 @@ import SortFilterProxyModel 0.2
 SplitView {
     id: root
 
-    readonly property var chainColors: ({
-            eth: "#627EEA",
-            oeth: "#E90101",
-            arb1: "#939ba1"
-        }
-    )
-
     ListModel {
         id: savedAddressesModel
 

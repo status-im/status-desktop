@@ -5,8 +5,12 @@ import StatusQ 0.1
 
 import utils 1.0
 
+import shared.stores 1.0 as SharedStores
+
 QtObject {
     id: root
+
+    required property SharedStores.NetworksStore networksStore
 
     /* PRIVATE: Modules used to get data from backend */
     readonly property var _allTokensModule: !!walletSectionAllTokens ? walletSectionAllTokens : null
@@ -48,7 +52,7 @@ QtObject {
     /* PRIVATE: This model just combines tokens and network information in one */
     readonly property LeftJoinModel _joinFlatTokensModel : LeftJoinModel {
         leftModel: root.flatTokensModel
-        rightModel: root._networksModule.flatNetworks
+        rightModel: root.networksStore.allNetworks
 
         joinRole: "chainId"
     }

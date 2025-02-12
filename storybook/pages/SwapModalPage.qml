@@ -78,8 +78,6 @@ SplitView {
             signal transactionSendingComplete(var txHash, var status)
 
             readonly property var accounts: WalletAccountsModel {}
-            readonly property var flatNetworks: NetworksModel.flatNetworks
-            readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
 
             function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
                                           disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
@@ -142,6 +140,9 @@ SplitView {
                         options = {noSymbol: true}
                     return formatCurrencyAmount(parseFloat(number), symbol, options)
                 }
+            }
+            networksStore: SharedStores.NetworksStore {
+                readonly property var activeNetworks: NetworksModel.flatNetworks
             }
             swapFormData: SwapInputParamsForm {
                 onSelectedAccountAddressChanged: {

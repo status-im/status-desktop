@@ -13,6 +13,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import SortFilterProxyModel 0.2
 
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -34,6 +35,7 @@ Control {
     property var globalCollectiblesModel
 
     property WalletStores.RootStore walletStore
+    required property SharedStores.NetworksStore networksStore
 
     required property string mainDisplayName
     required property bool readOnly
@@ -150,7 +152,7 @@ Control {
             mainDisplayName: d.displayNameVerySmallEmoji
             sendToAccountEnabled: root.sendToAccountEnabled
             accountsModel: accountsProxyModel
-            walletStore: root.walletStore
+            networksStore: root.networksStore
 
             cellWidth: d.delegateWidthM
             cellHeight: d.delegateHeightM
@@ -169,6 +171,7 @@ Control {
             mainDisplayName: d.displayNameVerySmallEmoji
             collectiblesModel: collectiblesProxyModel
             walletStore: root.walletStore
+            networksStore: root.networksStore
 
             onCloseRequested: root.closeRequested()
             onVisitCommunity: {

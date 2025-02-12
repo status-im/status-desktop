@@ -12,33 +12,12 @@ QtObject {
 
     property var walletModule
     property var accountsModule: root.walletModule.accountsModule
-    property var networksModuleInst: networksModule
     property var collectibles: _jointCollectiblesBySymbolModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
-    readonly property bool areTestNetworksEnabled: networksModuleInst.areTestNetworksEnabled
-
-    readonly property var combinedNetworks: networksModuleInst.combinedNetworks
-
-    property var flatNetworks: networksModuleInst.flatNetworks
-    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
-        sourceModel: root.flatNetworks
-        filters: [
-            ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled },
-            ValueFilter { roleName: "isActive"; value: true }
-        ]
-    }
-
-    property var rpcProviders: networksModuleInst.rpcProviders
-
     property var selectedAccount
 
-    property var networkRPCChanged: ({}) // add network id to the object if changed
-
-    function toggleTestNetworksEnabled(){
-        networksModuleInst.toggleTestNetworksEnabled()
-    }
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
     property var accounts: Global.appIsReady? accountsModule.accounts : null
@@ -141,17 +120,6 @@ QtObject {
         root.walletModule.runKeypairImportPopup(keyUid, mode)
     }
 
-    function evaluateRpcEndPoint(url, isMainUrl) {
-        return networksModuleInst.fetchChainIdForUrl(url, isMainUrl)
-    }
-
-    function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl) {
-        networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
-    }
-
-    function setNetworkActive(chainId, active) {
-        networksModuleInst.setNetworkActive(chainId, active)
-    }
 
     function updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance) {
         accountsModule.updateWatchAccountHiddenFromTotalBalance(address, hideFromTotalBalance)
