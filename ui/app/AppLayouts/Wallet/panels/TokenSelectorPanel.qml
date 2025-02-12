@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.settings 1.0  // Import required for Settings
 
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
@@ -49,6 +50,11 @@ Control {
         searchableCollectiblesPanel.clearSearch()
     }
 
+    Settings {
+        id: lastTabSettings
+        readonly property int lastSelectedTab: tabBar.currentIndex
+    }
+
     contentItem: ColumnLayout {
         spacing: 0
         StatusTabBar {
@@ -61,7 +67,7 @@ Control {
 
             currentIndex: !!root.collectiblesModel && !root.assetsModel
                           ? TokenSelectorPanel.Tabs.Collectibles
-                          : TokenSelectorPanel.Tabs.Assets
+                          : lastTabSettings.lastSelectedTab
 
             StatusTabButton {
                 objectName: "assetsTab"

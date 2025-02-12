@@ -780,7 +780,6 @@ QtObject {
                 SendSignModal {
                     closePolicy: Popup.CloseOnEscape
                     destroyOnClose: true
-                    onClosed: root.fnResetDetailedCollectible()
                     // Unused
                     formatBigNumber: function(number, symbol, noSymbolOption) {}
 
