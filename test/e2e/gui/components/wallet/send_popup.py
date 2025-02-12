@@ -19,6 +19,11 @@ class SendPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
+        # new single chain send modal
+        self.send_modal_header = QObject(names.sendModalHeader)
+        self.send_modal_recipient_panel = QObject(names.sendModalRecipientPanel)
+
+        # old send modal
         self._tokens_list = QObject(names.statusListView)
         self._tab_item_template = QObject(names.tab_Status_template)
         self._search_field = TextEdit(names.search_TextEdit)
@@ -38,7 +43,7 @@ class SendPopup(BasePopup):
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._ens_address_text_edit.wait_until_appears(timeout_msec)
+        self.send_modal_header.wait_until_appears()
         return self
 
     @allure.step('Get current text in account selector')
