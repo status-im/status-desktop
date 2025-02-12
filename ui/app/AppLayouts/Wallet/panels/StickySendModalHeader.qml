@@ -63,6 +63,9 @@ Control {
     /** input property to blur the background of the header **/
     property var blurSource: null
 
+    /** property exposing the currently selected token selector tab **/
+    property alias tokenSelectorTab: sendModalHeader.tokenSelectorTab
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
