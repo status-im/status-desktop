@@ -156,8 +156,9 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
 
     let data = parseJson(dataJson)
     let password = data["password"].str
-    let seedPhrase = data["seedphrase"].str
+    let mnemonic = data["seedphrase"].str
     let pin = data["keycardPin"].str
+    let keyUid = data["keyUid"].str
     let keycardInfo = self.view.getKeycardEvent().keycardInfo
 
     var err = ""
@@ -169,7 +170,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
       of OnboardingFlow.CreateProfileWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
           keycardInstanceUID = "",
         )
@@ -177,7 +178,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         # New user with a seedphrase we showed them
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
@@ -185,7 +186,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         # New user who entered their own seed phrase
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
@@ -194,7 +195,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
       of OnboardingFlow.LoginWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
-          seedPhrase,
+          mnemonic,
           recoverAccount = true,
           keycardInstanceUID = "",
         )        
@@ -273,6 +274,7 @@ method onAccountLoginError*[T](self: Module[T], error: string) =
   var wrongPassword = false
   if error.contains("file is not a database"):
     wrongPassword = true
+  warn "failed to login", wrongPassword, error
   self.view.accountLoginError(error, wrongPassword)
   
 method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settings: SettingsDto) =
