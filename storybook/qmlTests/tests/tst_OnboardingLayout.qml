@@ -958,9 +958,8 @@ Item {
         function test_loginScreen(data) {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
-            controlUnderTest.restartFlow()
 
+            mockDriver.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
             mockDriver.existingPin = "111111" // let this be the correct PIN
 
             const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
@@ -1075,15 +1074,13 @@ Item {
 
         function test_loginScreen_launchesExternalFlow_data() {
             return [
-              { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPageTitle: "Create profile" },
-              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPageTitle: "Log in" },
-              // TODO cover also `signal unblockWithSeedphraseRequested()`
+              { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPage: CreateProfilePage },
+              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPage: NewAccountLoginPage },
             ]
         }
         function test_loginScreen_launchesExternalFlow(data) {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.restartFlow()
 
             const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
 
@@ -1101,14 +1098,15 @@ Item {
             mouseClick(menuDelegate)
             tryCompare(dynamicSpy, "count", 1)
 
-            tryCompare(controlUnderTest.stack.currentItem, "title", data.landingPageTitle)
+            tryVerify(() => {
+                          const currentPage = controlUnderTest.stack.currentItem
+                          return !!currentPage && currentPage instanceof data.landingPage
+                      })
         }
 
         function test_loginScreenLostKeycardSeedphraseLoginFlow() {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = false
-            controlUnderTest.restartFlow()
 
             const stack = findChild(controlUnderTest, "stack")
             verify(!!stack)
@@ -1192,8 +1190,6 @@ Item {
         function test_loginScreenLostKeycardCreateReplacementFlow() {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = false
-            controlUnderTest.restartFlow()
 
             // PAGE 1: Login screen
             const stack = findChild(controlUnderTest, "stack")
@@ -1267,6 +1263,47 @@ Item {
             compare(resultData.enableBiometrics, false)
             compare(resultData.keycardPin, newPin)
             compare(resultData.seedphrase, mockDriver.mnemonic)
+        }
+
+        function test_loginScreen_unblockFlows_data() {
+            return [
+              { tag: "Unblock with PUK", keyUid: "uid_4", btnName: "btnUnblockWithPUK", landingPage: KeycardEnterPukPage },
+              { tag: "Unblock with recovery phrase", keyUid: "uid_4", btnName: "btnUnblockWithSeedphrase", landingPage: SeedphrasePage },
+            ]
+        }
+
+        function test_loginScreen_unblockFlows(data) {
+            verify(!!controlUnderTest)
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
+            mockDriver.keycardState = Onboarding.KeycardState.BlockedPIN
+
+            const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
+
+            const loginUserSelector = findChild(page, "loginUserSelector")
+            verify(!!loginUserSelector)
+            loginUserSelector.setSelection(data.keyUid)
+
+            tryCompare(page, "selectedProfileKeyId", data.keyUid)
+            tryCompare(page, "selectedProfileIsKeycard", true)
+
+            const keycardBox = findChild(page, "keycardBox")
+            verify(!!keycardBox)
+            tryCompare(keycardBox, "visible", true)
+            tryCompare(keycardBox, "state", "blocked")
+
+            waitForRendering(page)
+
+            const button = findChild(keycardBox, data.btnName)
+            verify(!!button)
+            tryCompare(button, "visible", true)
+            mouseClick(button)
+
+            tryVerify(() => {
+                const currentPage = controlUnderTest.stack.currentItem
+                return !!currentPage && currentPage instanceof data.landingPage
+            })
+
+            // TODO extend the check with trying to complete the flows
         }
     }
 }
