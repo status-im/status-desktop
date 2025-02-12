@@ -85,6 +85,9 @@ method onAccountLoginError*(self: AccessInterface, error: string) {.base.} =
 method exportRecoverKeys*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method startKeycardFactoryReset*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getPostOnboardingTasks*(self: AccessInterface): seq[PostOnboardingTask] {.base.} =
   raise newException(ValueError, "No implementation available")
 

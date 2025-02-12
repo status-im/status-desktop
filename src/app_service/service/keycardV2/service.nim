@@ -250,4 +250,20 @@ QtObject:
       error "error exporting login keys", msg = e.msg
       self.events.emit(SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_FAILURE, KeycardErrorArg(error: e.msg))
 
-    
+  proc asyncFactoryReset*(self: Service) =
+    let arg = AsyncFactoryResetArg(
+      tptr: asyncFactoryResetTask,
+      vptr: cast[uint](self.vptr),
+      slot: "onAsyncFactoryReset",
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncFactoryReset*(self: Service) =
+    try:
+      let response = callRPC("FactoryReset")
+      let rpcResponseObj = response.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+        raise newException(RpcException, "Error factory reset: " & error.message)
+    except Exception as e:
+      error "error factory reset", err=e.msg

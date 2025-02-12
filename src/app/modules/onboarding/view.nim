@@ -162,3 +162,6 @@ QtObject:
 
   proc loginRequested(self: View, keyUid: string, loginFlow: int, dataJson: string): string {.slot.} =
     self.delegate.loginRequested(keyUid, loginFlow, dataJson)
+
+  proc startKeycardFactoryReset(self: View) {.slot.} =
+    self.delegate.startKeycardFactoryReset()
