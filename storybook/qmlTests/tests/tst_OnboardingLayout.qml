@@ -1177,6 +1177,7 @@ Item {
             compare(resultData.enableBiometrics, false)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, mockDriver.mnemonic)
+            compare(resultData.keyUid, keyUid)
         }
 
         function test_loginScreenLostKeycardCreateReplacementFlow() {

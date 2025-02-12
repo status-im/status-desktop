@@ -48,6 +48,7 @@ SQUtils.QObject {
     signal shareUsageDataRequested(bool enabled)
     signal syncProceedWithConnectionString(string connectionString)
     signal seedphraseSubmitted(string seedphrase)
+    signal keyUidSubmitted(string keyUid)
     signal setPasswordRequested(string password)
     signal exportKeysRequested
     signal loadMnemonicRequested
@@ -154,7 +155,11 @@ SQUtils.QObject {
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
-            onLostKeycard: root.stackView.push(keycardLostPage)
+            onLostKeycardFlowRequested: () => {
+                               root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
+                               root.stackView.push(keycardLostPage)
+                           }
+
             onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
             onUnblockWithPukRequested: unblockWithPukFlow.init()
 
