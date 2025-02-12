@@ -514,6 +514,10 @@ send_StatusFlatButton = {"checkable": False, "container": statusDesktop_mainWind
 o_SearchBoxWithRightIcon = {"container": statusDesktop_mainWindow_overlay, "type": "SearchBoxWithRightIcon", "unnamed": 1, "visible": True}
 search_TextEdit = {"container": o_SearchBoxWithRightIcon, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 
+# new Send modal (single chain)
+sendModalHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "sendModalHeader", "type": "SendModalHeader", "visible": True}
+sendModalRecipientPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "recipientsPanel", "type": "RecipientSelectorPanel", "visible": True}
+
 # Assets Context Menu popup
 send_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "sendMenuItem", "type": "StatusMenuItem", "visible": True}
 receive_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "receiveMenuItem", "type": "StatusMenuItem", "visible": True}
