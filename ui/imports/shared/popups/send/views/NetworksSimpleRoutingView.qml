@@ -126,7 +126,7 @@ RowLayout {
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
             asset.height: 32
-            asset.name: Theme.svg("tiny/" + model.iconUrl)
+            asset.name: Theme.svg(model.iconUrl)
             asset.isImage: true
             color: "transparent"
         }
@@ -148,7 +148,7 @@ RowLayout {
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32
-                asset.name: Theme.svg("tiny/" + iconUrl)
+                asset.name: Theme.svg(iconUrl)
                 asset.isImage: true
                 border.color: gasRectangle.checked ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
                 color: {

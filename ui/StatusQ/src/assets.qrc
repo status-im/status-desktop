@@ -9143,13 +9143,6 @@
         <file>assets/img/icons/profile/sync.svg</file>
         <file>assets/img/icons/protocol/Protocol=Hop.svg</file>
         <file>assets/img/icons/protocol/Protocol=Uniswap.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Arbitrum.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Base.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Custom.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Ethereum.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Hermez.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Optimism.svg</file>
-        <file>assets/img/icons/tiny/network/Network=Testnet.svg</file>
         <file>assets/img/icons/transaction/confirmed.svg</file>
         <file>assets/img/icons/transaction/failed.svg</file>
         <file>assets/img/icons/transaction/finished.svg</file>
