@@ -23,6 +23,7 @@ SplitView {
         sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
         communityTokensStore: SharedStores.CommunityTokensStore {}
+        networksStore: SharedStores.NetworksStore {}
     }
 
     SyncingView {

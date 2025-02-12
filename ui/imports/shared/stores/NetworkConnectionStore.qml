@@ -1,14 +1,20 @@
 import QtQuick 2.13
 
-import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 
+import shared.stores 1.0 as SharedStores
+
 import utils 1.0
+
+import SortFilterProxyModel 0.2
 
 QtObject {
     id: root
+
+    required property SharedStores.NetworksStore networksStore
 
     readonly property var networkConnectionModuleInst: networkConnectionModule
 
@@ -17,16 +23,10 @@ QtObject {
     readonly property bool balanceCache: walletSectionAssets.hasBalanceCache
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
 
-    readonly property SortFilterProxyModel filteredflatNetworks: SortFilterProxyModel {
-                                                          sourceModel: networksModule.flatNetworks
-                                                          filters: [
-                                                            ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled },
-                                                            ValueFilter { roleName: "isActive"; value: true }
-                                                          ]
-                                                      }
-
-    readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
-    readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length < filteredflatNetworks.count
+    readonly property int activeNetworksCount: root.networksStore.activeNetworks.ModelCount.count
+    readonly property var allBlockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
+    readonly property var blockchainNetworksDown: root.allBlockchainNetworksDown.filter(chainId => ModelUtils.contains(root.networksStore.activeNetworks, "chainId", chainId))
+    readonly property bool atleastOneBlockchainNetworkAvailable: root.blockchainNetworksDown.length < root.activeNetworksCount
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
@@ -65,7 +65,7 @@ QtObject {
     readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(appNetworkName)
     readonly property bool stickersNetworkAvailable: !blockchainNetworksDown.includes(mainModule.appNetworkId.toString())
     readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg(appNetworkName)
-    readonly property string appNetworkName: ModelUtils.getByKey(networksModule.flatNetworks, "chainId", mainModule.appNetworkId, "chainName")
+    readonly property string appNetworkName: ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", mainModule.appNetworkId, "chainName")
 
     // DEPRECATED, use getBlockchainNetworkDownText instead
     function getBlockchainNetworkDownTextForToken(balances) {
@@ -122,7 +122,7 @@ QtObject {
         let jointChainIdString = ""
         for (const chain of chainIdsDown) {
             jointChainIdString = (!!jointChainIdString) ? jointChainIdString + " & " : jointChainIdString
-            jointChainIdString += ModelUtils.getByKey(networksModule.flatNetworks, "chainId", parseInt(chain), "chainName")
+            jointChainIdString += ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", parseInt(chain), "chainName")
         }
         return jointChainIdString
     }

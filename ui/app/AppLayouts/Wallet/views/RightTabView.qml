@@ -211,7 +211,7 @@ RightTabBaseView {
                             id: assetsViewAdaptor
 
                             accounts: RootStore.addressFilters
-                            chains: RootStore.networkFiltersArray
+                            chains: root.networksStore.networkFiltersArray
 
                             marketValueThreshold:
                                 RootStore.tokensStore.displayAssetsBelowBalance
@@ -398,7 +398,7 @@ RightTabBaseView {
 
                         ownedAccountsModel: RootStore.nonWatchAccounts
                         controller: RootStore.collectiblesStore.collectiblesController
-                        networkFilters: RootStore.networkFilters
+                        networkFilters: root.networksStore.networkFilters
                         addressFilters: RootStore.addressFilters
                         sendEnabled: root.networkConnectionStore.sendBuyBridgeEnabled && !RootStore.overview.isWatchOnlyAccount && RootStore.overview.canSend
                         filterVisible: filterButton.checked
@@ -451,6 +451,7 @@ RightTabBaseView {
                         walletRootStore: RootStore
                         communitiesStore: root.communitiesStore
                         currencyStore: root.sharedRootStore.currencyStore
+                        networksStore: root.networksStore
                         showAllAccounts: RootStore.showAllAccounts
                         filterVisible: false  // TODO #16761: Re-enable filter for activity when implemented
                         bannerComponent: buyReceiveBannerComponent
@@ -470,6 +471,7 @@ RightTabBaseView {
             rootStore: root.sharedRootStore
             walletRootStore: RootStore
             communitiesStore: root.communitiesStore
+            networksStore: root.networksStore
 
             onVisibleChanged: {
                 if (!visible) {
@@ -484,10 +486,10 @@ RightTabBaseView {
             visible: (stack.currentIndex === 2)
 
             tokensStore: RootStore.tokensStore
-            allNetworksModel: RootStore.filteredFlatModel
+            allNetworksModel: root.networksStore.activeNetworks
             address: RootStore.overview.mixedcaseAddress
             currencyStore: RootStore.currencyStore
-            networkFilters: RootStore.networkFilters
+            networkFilters: root.networksStore.networkFilters
 
             networkConnectionStore: root.networkConnectionStore
 

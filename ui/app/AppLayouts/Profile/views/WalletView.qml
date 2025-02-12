@@ -43,6 +43,7 @@ SettingsContentBase {
     property SharedStores.NetworkConnectionStore networkConnectionStore
     required property WalletAssetsStore assetsStore
     required property CollectiblesStore collectiblesStore
+    required property SharedStores.NetworksStore networksStore
 
     readonly property int mainViewIndex: 0
     readonly property int networksViewIndex: 1
@@ -262,20 +263,20 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.fillHeight: false
 
-            flatNetworks: root.walletStore.flatNetworks
-            areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
+            flatNetworks: root.networksStore.allNetworks
+            areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
 
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
             }
 
             onEditNetwork: {
-                editNetwork.network = ModelUtils.getByKey(root.walletStore.flatNetworks, "chainId", chainId)
+                editNetwork.network = ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", chainId)
                 stackContainer.currentIndex = editNetworksViewIndex
             }
 
             onSetNetworkActive: {
-                root.walletStore.setNetworkActive(chainId, active)
+                root.networksStore.setNetworkActive(chainId, active)
             }
         }
 
@@ -283,13 +284,13 @@ SettingsContentBase {
             id: editNetwork
             Layout.fillHeight: true
             Layout.fillWidth: true
-            networksModule: root.walletStore.networksModuleInst
-            networkRPCChanged: root.walletStore.networkRPCChanged
-            rpcProviders: root.walletStore.rpcProviders
-            areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
-            onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url, isMainUrl)
+            networksModule: root.networksStore.networksModuleInst
+            networkRPCChanged: root.networksStore.networkRPCChanged
+            rpcProviders: root.networksStore.rpcProviders
+            areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
+            onEvaluateRpcEndPoint: root.networksStore.evaluateRpcEndPoint(url, isMainUrl)
             onUpdateNetworkValues: {
-                root.walletStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+                root.networksStore.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
             }
         }
 
@@ -310,6 +311,7 @@ SettingsContentBase {
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
             userProfilePublicKey: walletStore.userProfilePublicKey
+            activeNetworks: root.networksStore.activeNetworks
             onGoBack: stackContainer.currentIndex = mainViewIndex
             onVisibleChanged: {
                 if (!visible && !!root.walletStore) {
@@ -387,6 +389,7 @@ SettingsContentBase {
             id: savedAddressesView
             contactsStore: root.rootStore.contactsStore
             networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
 
             onSendToAddressRequested: {
                 Global.sendToRecipientRequested(address)
@@ -417,9 +420,9 @@ SettingsContentBase {
                 objectName: "testnetModeSwitch"
                 text: qsTr("Testnet mode")
                 leftSide: false
-                checked: root.walletStore.areTestNetworksEnabled
+                checked: root.networksStore.areTestNetworksEnabled
                 onToggled:{
-                    checked = Qt.binding(() => root.walletStore.areTestNetworksEnabled)
+                    checked = Qt.binding(() => root.networksStore.areTestNetworksEnabled)
                     Global.openTestnetPopup()
                 }
             }

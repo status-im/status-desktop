@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import utils 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0 as SharedSendStores
 
 import StatusQ.Controls 0.1
@@ -18,6 +19,7 @@ RowLayout {
     id: root
 
     property SharedSendStores.TransactionStore store
+    required property SharedStores.NetworksStore networksStore
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
@@ -82,7 +84,7 @@ RowLayout {
                 id: toNetworksListLeftJoinModel
 
                 leftModel: root.suggestedToNetworksList
-                rightModel: root.store.flatNetworksModel
+                rightModel: root.networksStore.allNetworks
                 joinRole: "chainId"
             }
 

@@ -8,6 +8,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import Models 1.0
 import utils 1.0
 
+import shared.stores 1.0
+
 import AppLayouts.Wallet.popups.simpleSend 1.0
 
 Item {
@@ -368,55 +370,10 @@ Item {
                 ]
                 Component.onCompleted: append(data)
             }
-            networksModel: ListModel {
-                readonly property var data: [
-                    {
 
-                        "layer":1,
-                        "isRouteEnabled":true,
-                        "chainId":1,
-                        "chainName":"Mainnet",
-                        "blockExplorerURL":"https://etherscan.io/",
-                        "iconUrl":"network/Network=Ethereum",
-                        "chainColor":"#627EEA",
-                        "shortName":"eth",
-                        "nativeCurrencyName":"Ether",
-                        "nativeCurrencySymbol":"ETH",
-                        "nativeCurrencyDecimals":18,
-                        "isTest":false
-                    },
-                    {
-                        "layer":2,
-                        "isRouteEnabled":true,
-                        "chainId":10,
-                        "chainName":"Optimism",
-                        "blockExplorerURL":"https://optimistic.etherscan.io",
-                        "iconUrl":"network/Network=Optimism",
-                        "chainColor":"#E90101",
-                        "shortName":"oeth",
-                        "nativeCurrencyName":"Ether",
-                        "nativeCurrencySymbol":"ETH",
-                        "nativeCurrencyDecimals":18,
-                        "isTest":false
-                    },
-                    {
-                        "layer":2,
-                        "isRouteEnabled":true,
-                        "chainId":42161,
-                        "chainName":"Arbitrum",
-                        "blockExplorerURL":"https://arbiscan.io/",
-                        "iconUrl":"network/Network=Arbitrum",
-                        "chainColor":"#51D0F0",
-                        "shortName":"arb1",
-                        "nativeCurrencyName":"Ether",
-                        "nativeCurrencySymbol":"ETH",
-                        "nativeCurrencyDecimals":18,
-                        "isTest":false
-                    }
+            readonly property NetworksStore networksStore: NetworksStore{}
+            networksModel: networksStore.activeNetworks
 
-                ]
-                Component.onCompleted: append(data)
-            }
             recipientsModel: ListModel {
                 Component.onCompleted: {
                     for (let i = 0; i < 10; i++) {
@@ -494,6 +451,8 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.open()
             verify(controlUnderTest.opened)
+
+            waitForRendering(controlUnderTest.contentItem)
 
             // Default account item from model at 0th position
             const defaultAccountItem = SQUtils.ModelUtils.get(controlUnderTest.accountsModel, 0)
@@ -920,6 +879,8 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.open()
             verify(controlUnderTest.opened)
+
+            waitForRendering(controlUnderTest.contentItem)
 
             const sendModalHeader = findChild(controlUnderTest, "sendModalHeader")
             verify(!!sendModalHeader)

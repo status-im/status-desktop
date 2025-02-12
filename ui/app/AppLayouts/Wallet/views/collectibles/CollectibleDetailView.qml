@@ -28,6 +28,7 @@ Item {
     required property SharedStores.RootStore rootStore
     required property RootStore walletRootStore
     required property CommunitiesStore communitiesStore
+    required property SharedStores.NetworksStore networksStore
 
     required property var collectible
     property var activityModel
@@ -291,7 +292,7 @@ Item {
                             width: ListView.view.width
                             modelData: model.activityEntry
                             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-                            flatNetworks: root.rootStore.flatNetworks
+                            flatNetworks: root.networksStore.allNetworks
                             currenciesStore: root.rootStore.currencyStore
                             walletRootStore: root.walletRootStore
                             showAllAccounts: root.walletRootStore.showAllAccounts

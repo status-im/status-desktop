@@ -25,6 +25,7 @@ import "../controls"
 Item {
     id: root
 
+    required property SharedStores.NetworksStore networksStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property WalletStores.RootStore walletStore
 
@@ -183,8 +184,8 @@ Item {
 
                 Layout.alignment: Qt.AlignTop
 
-                flatNetworks: root.walletStore.filteredFlatModel
-                onToggleNetwork: root.walletStore.toggleNetwork(chainId)
+                flatNetworks: root.networksStore.activeNetworks
+                onToggleNetwork: root.networksStore.toggleNetworkEnabled(chainId)
                 onManageNetworksClicked: root.manageNetworksRequested()
                 showNewChainIcon: true
                 showNotificationIcon: {
@@ -214,7 +215,7 @@ Item {
                     id: chainIdsAggregator
 
                     readonly property SortFilterProxyModel enabledNetworksModel: SortFilterProxyModel{
-                        sourceModel: walletStore.filteredFlatModel
+                        sourceModel: root.networksStore.activeNetworks
                         filters: ValueFilter {
                             roleName: "isEnabled"
                             value: true

@@ -17,6 +17,7 @@ StatusDialog {
     property alias contactsStore: profileView.contactsStore
     property alias walletStore: profileView.walletStore
     property alias utilsStore: profileView.utilsStore
+    property alias networksStore: profileView.networksStore
 
     property alias sendToAccountEnabled: profileView.sendToAccountEnabled
 

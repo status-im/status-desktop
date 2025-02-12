@@ -37,7 +37,6 @@ Item {
             currentCurrency: currencyStore.currentCurrency
             walletAccountsModel: WalletAccountsModel{}
             networksModel: NetworksModel.flatNetworks
-            areTestNetworksEnabled: true
             plainTokensBySymbolModel: assetsStore.walletTokensStore.plainTokensBySymbolModel
             groupedAccountAssetsModel: assetsStore.groupedAccountAssetsModel
             buyCryptoInputParamsForm: BuyCryptoParamsForm {

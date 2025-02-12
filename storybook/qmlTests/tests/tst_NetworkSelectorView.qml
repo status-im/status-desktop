@@ -7,19 +7,20 @@ import AppLayouts.Wallet.views 1.0
 
 import utils 1.0
 
-import Models 1.0
-
+import shared.stores 1.0
 
 Item {
     id: root
     width: 600
     height: 400
 
+    readonly property var networksStore: NetworksStore{}
+
     Component {
         id: componentUnderTest
         NetworkSelectorView {
             anchors.centerIn: parent
-            model: NetworksModel.flatNetworks
+            model: root.networksStore.allNetworks
         }
     }
 
@@ -54,6 +55,8 @@ Item {
         }
 
         function test_defaultConfiguration() {
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
             // Default configuration:
             // - model is not empty
             // - showIndicator is true

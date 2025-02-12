@@ -31,8 +31,6 @@ Item {
         signal transactionSendingComplete(var txHash,  var status)
 
         readonly property var accounts: WalletAccountsModel {}
-        readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property bool areTestNetworksEnabled: true
         function getWei2Eth(wei, decimals) {
             return wei/(10**decimals)
         }
@@ -61,6 +59,9 @@ Item {
         swapStore: root.swapStore
         swapFormData: root.swapFormData
         swapOutputData: SwapOutputData{}
+        networksStore: NetworksStore {
+            areTestNetworksEnabled: true
+        }
     }
 
     property SwapInputParamsForm swapFormData: SwapInputParamsForm {}

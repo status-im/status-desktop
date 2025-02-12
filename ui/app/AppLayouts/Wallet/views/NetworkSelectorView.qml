@@ -38,11 +38,6 @@ StatusListView {
     signal toggleNetwork(int chainId, int index)
     
     objectName: "networkSelectorList"
-    
-    onSelectionChanged:  d.reprocessSelection()
-    onMultiSelectionChanged: d.reprocessSelection()
-    Component.onCompleted: d.reprocessSelection()
-
     implicitWidth: 300
     implicitHeight: contentHeight
 
@@ -86,8 +81,14 @@ StatusListView {
     QtObject {
         id: d
         readonly property int networksCount: root.model.ModelCount.count
-        onNetworksCountChanged: d.reprocessSelection()
-        readonly property bool allSelected: root.selection.length === networksCount
+        // Handle multiple property changes from single changed signal
+        property var combinedPropertyChangedHandler: [
+            root.selection,
+            root.multiSelection,
+            d.networksCount]
+        onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => d.reprocessSelection())
+
+        readonly property bool allSelected: root.selection.length === d.networksCount
 
         function onToggled(initialState, chainId) {  
             let selection = root.selection
@@ -120,8 +121,8 @@ StatusListView {
                 }
             }
 
-            if (root.selection.sort().join(',') !== selection.sort().join(',')) {
-                root.selection = [...selection]
+            if (root.selection !== selection) {
+                root.selection = selection
             }
         }
     }

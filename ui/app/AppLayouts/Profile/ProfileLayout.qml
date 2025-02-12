@@ -52,6 +52,7 @@ StatusSectionLayout {
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -182,6 +183,7 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 communitiesStore: root.communitiesStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.profile)
@@ -303,6 +305,7 @@ StatusSectionLayout {
                 networkConnectionStore: root.networkConnectionStore
                 assetsStore: root.walletAssetsStore
                 collectiblesStore: root.collectiblesStore
+                networksStore: root.networksStore
 
                 myPublicKey: root.store.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency

@@ -1,0 +1,82 @@
+import QtQuick 2.13
+
+import SortFilterProxyModel 0.2
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
+
+import utils 1.0
+
+QtObject {
+    id: root
+
+    property var networksModuleInst: networksModule
+
+    readonly property bool areTestNetworksEnabled: networksModuleInst.areTestNetworksEnabled
+
+    // Full list of networks.
+    // All list representations should have L1 at the top, then grouped Active and Inactive
+    // chains, sorted by chainName.
+    // For use when extracting properties from a given network or in the network settings screen.
+    readonly property SortFilterProxyModel allNetworks: SortFilterProxyModel {
+        sourceModel: networksModuleInst.flatNetworks
+        sorters: [
+            RoleSorter {
+                roleName: "layer"
+                sortOrder: Qt.AscendingOrder
+            },
+            RoleSorter {
+                roleName: "isActive"
+                sortOrder: Qt.DescendingOrder
+            },
+            RoleSorter {
+                roleName: "chainName"
+                sortOrder: Qt.AscendingOrder
+            }
+        ]
+    }
+
+    // Networks that are currently active (that is, individually active and matching
+    // the current mainnet/testnet mode).
+    // For use when presenting a list of networks to the user anywhere other than the
+    // networks settings screen.
+    readonly property SortFilterProxyModel activeNetworks: SortFilterProxyModel {
+        sourceModel: root.allNetworks
+        filters: [
+            ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled },
+            ValueFilter { roleName: "isActive"; value: true }
+        ]
+    }
+
+    /* This property holds networks currently selected in the Wallet Main layout  */
+    readonly property var networkFilters: networksModuleInst.enabledChainIds
+    readonly property var networkFiltersArray: root.networkFilters.split(":").filter(Boolean).map(Number)
+
+    readonly property var rpcProviders: networksModuleInst.rpcProviders
+
+    property var networkRPCChanged: ({}) // add network id to the object if changed
+
+    function toggleTestNetworksEnabled(){
+        networksModuleInst.toggleTestNetworksEnabled()
+    }
+
+    function evaluateRpcEndPoint(url, isMainUrl) {
+        return networksModuleInst.fetchChainIdForUrl(url, isMainUrl)
+    }
+
+    function updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl) {
+        networksModuleInst.updateNetworkEndPointValues(chainId, testNetwork, newMainRpcInput, newFailoverRpcUrl)
+    }
+
+    function setNetworkActive(chainId, active) {
+        networksModuleInst.setNetworkActive(chainId, active)
+    }
+
+    function toggleNetworkEnabled(chainId) {
+        networksModuleInst.toggleNetwork(chainId)
+    }
+
+    function enableNetwork(chainId) {
+        networksModuleInst.enableNetwork(chainId)
+    }
+}
