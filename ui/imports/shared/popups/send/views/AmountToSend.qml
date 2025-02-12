@@ -139,8 +139,8 @@ Control {
         property bool fiatMode: false
 
         readonly property string inputDelocalized:
-            root.valid && textField.length !== 0
-                ? textField.text.replace(root.decimalPoint, ".") : "0"
+            textField.length !== 0
+            ? textField.text.replace(root.decimalPoint, ".") : "0"
 
         function removeDecimalTrailingZeros(num) {
             if (!num.includes("."))
