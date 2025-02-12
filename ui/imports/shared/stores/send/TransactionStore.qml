@@ -17,13 +17,13 @@ QtObject {
     property CurrenciesStore currencyStore
     property WalletAssetsStore walletAssetStore
     property TokensStore tokensStore
+    required property NetworksStore networksStore
 
     property var mainModuleInst: mainModule
     property var walletSectionSendInst: walletSectionSend
 
     readonly property var accounts: walletSectionAccounts.accounts
 
-    property var flatNetworksModel: networksModule.flatNetworks
     readonly property var fromNetworksRouteModel: walletSectionSendInst.fromNetworksRouteModel
     readonly property var toNetworksRouteModel: walletSectionSendInst.toNetworksRouteModel
     readonly property string selectedReceiverAccountAddress: walletSectionSendInst.selectedReceiveAccountAddress
@@ -127,7 +127,7 @@ QtObject {
     }
 
     function getNetworkName(chainId) {
-        return ModelUtils.getByKey(root.flatNetworksModel, "chainId", chainId, "chainName")
+        return ModelUtils.getByKey(root.networksStore.allNetworks, "chainId", chainId, "chainName")
     }
 
     function updateRoutePreferredChains(chainIds) {

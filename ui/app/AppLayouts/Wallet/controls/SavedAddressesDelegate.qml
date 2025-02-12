@@ -24,6 +24,7 @@ StatusListItem {
     id: root
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
+    property var activeNetworks
     property string name
     property string address
     property string ens
@@ -209,7 +210,7 @@ StatusListItem {
 
         BlockchainExplorersMenu {
             id: blockchainExplorersMenu
-            flatNetworks: root.networkConnectionStore.filteredflatNetworks
+            flatNetworks: root.activeNetworks
             onNetworkClicked: {
                 let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, d.visibleAddress ? d.visibleAddress : root.ens);
                 Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));

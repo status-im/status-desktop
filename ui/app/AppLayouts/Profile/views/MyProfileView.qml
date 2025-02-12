@@ -34,6 +34,7 @@ SettingsContentBase {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     property SharedStores.UtilsStore utilsStore
+    required property SharedStores.NetworksStore networksStore
 
     property bool sendToAccountEnabled: false
 
@@ -415,6 +416,7 @@ SettingsContentBase {
                 contactsStore: root.contactsStore
                 walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
 
@@ -438,6 +440,7 @@ SettingsContentBase {
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
                 sendToAccountEnabled: root.sendToAccountEnabled
 
                 showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel
