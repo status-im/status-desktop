@@ -99,7 +99,7 @@ SQUtils.QObject {
             termsOfUsePopup.createObject(root.stackView).open()
         }
 
-        function openKeycardErrorPageIfStateFailed(state) {
+        function handleKeycardFailedState(state) {
             if (state !== Onboarding.ProgressState.Failed)
                 return
 
@@ -127,19 +127,24 @@ SQUtils.QObject {
                  !(root.stackView.currentItem instanceof EnableBiometricsPage)
 
         function onPinSettingStateChanged() {
-            d.openKeycardErrorPageIfStateFailed(pinSettingState)
+            d.handleKeycardFailedState(pinSettingState)
         }
 
         function onAuthorizationStateChanged() {
-            d.openKeycardErrorPageIfStateFailed(authorizationState)
+            // workaround for entering pin because currently there is not possible
+            // to distinguish invalid pin and failed pin entering operation
+            if (root.stackView.currentItem instanceof KeycardEnterPinPage)
+                return
+
+            d.handleKeycardFailedState(authorizationState)
         }
 
         function onRestoreKeysExportStateChanged() {
-            d.openKeycardErrorPageIfStateFailed(restoreKeysExportState)
+            d.handleKeycardFailedState(restoreKeysExportState)
         }
 
         function onAddKeyPairStateChanged() {
-            d.openKeycardErrorPageIfStateFailed(addKeyPairState)
+            d.handleKeycardFailedState(addKeyPairState)
         }
     }
 
