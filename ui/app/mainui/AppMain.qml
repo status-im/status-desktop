@@ -842,6 +842,15 @@ Item {
         onTransferOwnershipRequested: sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
+    SwapModalHandler {
+        id: swapModalHandler
+
+        popupParent: appMain
+        walletAssetsStore: appMain.walletAssetsStore
+        currencyStore: appMain.currencyStore
+        rootStore: appMain.rootStore
+    }
+
     SendModalHandler {
         id: sendModalHandler
 
