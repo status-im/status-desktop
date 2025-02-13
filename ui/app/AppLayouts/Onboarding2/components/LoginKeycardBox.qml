@@ -128,8 +128,7 @@ Control {
         // normal/intro states
         State {
             name: "plugin"
-            when: root.keycardState === Onboarding.KeycardState.PluginReader ||
-                  root.keycardState === -1
+            when: root.keycardState === Onboarding.KeycardState.PluginReader
             PropertyChanges {
                 target: infoText
                 text: qsTr("Plug in Keycard reader...")
@@ -163,21 +162,22 @@ Control {
         },
         State {
             name: "wrongKeycard"
-            when: root.keycardState === Onboarding.KeycardState.WrongKeycard ||
-                  root.keycardState === Onboarding.KeycardState.MaxPairingSlotsReached
+            when: root.keycardState === Onboarding.KeycardState.WrongKeycard
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Wrong Keycard for this profile inserted.<br>Remove card and insert the correct one.")
+                text: qsTr("Wrong Keycard for this profile inserted")
             }
         },
         State {
-            name: "noService"
-            when: root.keycardState === Onboarding.KeycardState.NoPCSCService
+            name: "genericError"
+            when: root.keycardState === -1 ||
+                  root.keycardState === Onboarding.KeycardState.NoPCSCService ||
+                  root.keycardState === Onboarding.KeycardState.MaxPairingSlotsReached // TODO add a generic/fallback keycard error here too
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Smartcard reader service unavailable")
+                text: qsTr("Issue detecting Keycard.<br>Remove and re-insert reader and Keycard.")
             }
         },
         State {
