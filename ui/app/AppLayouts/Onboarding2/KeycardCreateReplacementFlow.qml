@@ -91,6 +91,7 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinDelayedPage {
+            readonly property bool backAvailableHint: !(success || pinSettingInProgress)
             authorizationState: root.authorizationState
             pinSettingState: root.pinSettingState
 

@@ -1,10 +1,8 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -31,12 +29,13 @@ Item {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
-        enabled: stack.depth > 1 && !stack.busy
+        enabled: backButton.visible
         cursorShape: undefined // fall thru
         onClicked: stack.pop()
     }
 
     StatusBackButton {
+        id: backButton
         width: 44
         height: 44
         anchors.left: parent.left
