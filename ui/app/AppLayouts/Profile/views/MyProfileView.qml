@@ -132,7 +132,7 @@ SettingsContentBase {
             colorHash: root.profileStore.colorHash
             onlineStatus: root.profileStore.currentUserStatus
             isCurrentUser: true
-            displayName: descriptionPanel.displayName.text
+            displayName: descriptionPanel.displayName.text || root.profileStore.name
             bio: descriptionPanel.bio.text
             largeImage: profileHeader.previewIcon
         }
@@ -301,9 +301,9 @@ SettingsContentBase {
 
                 displayName.focus: !isEnsName
                 displayName.input.edit.readOnly: isEnsName
-                displayName.text: profileStore.name
+                displayName.text: profileStore.displayName
                 displayName.validationMode: StatusInput.ValidationMode.Always
-                displayName.validators: isEnsName ? [] : displayNameValidators.validators
+                displayName.validators: isEnsName || (profileStore.displayName === displayName.text) ? [] : displayNameValidators.validators
                 bio.text: profileStore.bio
 
                 DisplayNameValidators {
