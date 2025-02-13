@@ -118,7 +118,7 @@ SignTransactionModalBase {
                         maxFeesAnimation.restart()
                     }
 
-                    AnimatedText {
+                    StatusColorAnimation {
                         id: maxFeesAnimation
                         target: maxFees
                         targetProperty: "customColor"
@@ -148,7 +148,7 @@ SignTransactionModalBase {
                         estimatedTimeAnimation.restart()
                     }
 
-                    AnimatedText {
+                    StatusColorAnimation {
                         id: estimatedTimeAnimation
                         target: estimatedTime
                         targetProperty: "customColor"
@@ -224,7 +224,7 @@ SignTransactionModalBase {
                         fiatFeesAnimation.restart()
                     }
 
-                    AnimatedText {
+                    StatusColorAnimation {
                         id: fiatFeesAnimation
                         target: fiatFees
                         targetProperty: "customColor"
@@ -250,7 +250,7 @@ SignTransactionModalBase {
                         cryptoFeesAnimation.restart()
                     }
 
-                    AnimatedText {
+                    StatusColorAnimation {
                         id: cryptoFeesAnimation
                         target: cryptoFees
                         fromColor: cryptoFees.customColor

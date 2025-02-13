@@ -281,6 +281,7 @@
         <file>assets/img/icons/security.svg</file>
         <file>assets/img/icons/seed-phrase.svg</file>
         <file>assets/img/icons/send.svg</file>
+        <file>assets/img/icons/settings-advance.svg</file>
         <file>assets/img/icons/settings-advanced.svg</file>
         <file>assets/img/icons/settings.svg</file>
         <file>assets/img/icons/share-android.svg</file>
@@ -8996,9 +8997,13 @@
         <file>assets/png/traffic_lights/maximize_pressed.png</file>
         <file>assets/png/traffic_lights/minimise.png</file>
         <file>assets/png/traffic_lights/minimise_pressed.png</file>
-        <file>assets/png/wallet/wallet-green.png</file>
+        <file>assets/png/wallet/car.png</file>
+        <file>assets/png/wallet/clock.png</file>
         <file>assets/png/wallet/flying-coin.png</file>
+        <file>assets/png/wallet/handwrite.png</file>
         <file>assets/png/wallet/network-notification-dot.png</file>
+        <file>assets/png/wallet/rocket.png</file>
+        <file>assets/png/wallet/wallet-green.png</file>
         <file>assets/png/appearance-dark.png</file>
         <file>assets/png/appearance-light.png</file>
         <file>assets/png/appearance-system.png</file>

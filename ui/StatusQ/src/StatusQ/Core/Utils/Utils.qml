@@ -4,6 +4,8 @@ import QtQuick 2.15
 import StatusQ.Core.Theme 0.1
 import "./xss.js" as XSS
 
+import utils 1.0
+
 QtObject {
     id: root
 
@@ -299,5 +301,25 @@ QtObject {
             set.add(~~(Math.random() * totalCount))
         }
         return [...set].sort((a, b) => a - b)
+    }
+
+    function weiToEth(value) {
+        return AmountsArithmetic.div(AmountsArithmetic.fromString(value),
+                                      AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
+    }
+
+    function ethToWei(value) {
+        return AmountsArithmetic.times(AmountsArithmetic.fromString(value),
+                                       AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
+    }
+
+    function weiToGWei(value) {
+        return AmountsArithmetic.div(AmountsArithmetic.fromString(value),
+                                      AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
+    }
+
+    function gweiToWei(value) {
+        return AmountsArithmetic.times(AmountsArithmetic.fromString(value),
+                                       AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
     }
 }
