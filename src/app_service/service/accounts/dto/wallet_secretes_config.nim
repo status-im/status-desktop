@@ -21,6 +21,9 @@ type
     statusProxyMarketPassword*: string
     statusProxyBlockchainUser*: string
     statusProxyBlockchainPassword*: string
+    ethRpcProxyUser*: string
+    ethRpcProxyPassword*: string
+    ethRpcProxyUrl*: string
 
 proc toJson*(self: WalletSecretsConfig): JsonNode =
   return %* {
@@ -43,4 +46,7 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "statusProxyMarketPassword": self.statusProxyMarketPassword,
     "statusProxyBlockchainUser": self.statusProxyBlockchainUser,
     "statusProxyBlockchainPassword": self.statusProxyBlockchainPassword,
+    "ethRpcProxyUser": self.ethRpcProxyUser,
+    "ethRpcProxyPassword": self.ethRpcProxyPassword,
+    "ethRpcProxyUrl": self.ethRpcProxyUrl,
   }
