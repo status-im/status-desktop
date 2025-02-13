@@ -589,6 +589,14 @@ QtObject {
                     }
                 }
 
+                function handleReject() {
+                    if (handler.approvalForTxPathUnderReviewReviewed) {
+                        handler.approvalForTxPathUnderReviewReviewed = false
+                    } else {
+                        handler.indexOfTxPathUnderReview--
+                    }
+                }
+
                 function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
                     simpleSendModal.routesLoading = false
                     if(returnedUuid !== handler.uuid) {
@@ -608,6 +616,7 @@ QtObject {
                         return
                     }
                     if (!!error) {
+                        handleReject()
                         if (error.includes(Constants.walletSection.authenticationCanceled)) {
                             return
                         }
@@ -855,7 +864,10 @@ QtObject {
                     fnGetOpenSeaExplorerUrl: root.fnGetOpenSeaUrl
 
                     onOpened: handler.sendMetricsEvent("sign modal opened")
-                    onRejected: handler.sendMetricsEvent("sign modal rejected")
+                    onRejected:{
+                        handler.sendMetricsEvent("sign modal rejected")
+                        handler.handleReject()
+                    }
                     onAccepted: {
                         handler.sendMetricsEvent("sign modal accepted")
                         if (handler.reviewingLastTxPath) {
