@@ -135,11 +135,12 @@ Page {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         cursorShape: undefined // don't override the cursor coming from the stack
-        enabled: stack.depth > 1 && !stack.busy
+        enabled: backButton.visible
         onClicked: stack.pop()
     }
 
     StatusBackButton {
+        id: backButton
         width: 44
         height: 44
         anchors.left: parent.left
