@@ -22,8 +22,8 @@ SplitView {
 
         // keycard
         property int keycardState: Onboarding.KeycardState.NoPCSCService
-        property int keycardRemainingPinAttempts: 3
-        property int keycardRemainingPukAttempts: 5
+        property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
+        property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
     }
 
     LoginScreen {

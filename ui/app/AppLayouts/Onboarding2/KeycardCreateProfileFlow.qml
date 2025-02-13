@@ -43,7 +43,7 @@ SQUtils.QObject {
         id: d
 
         property bool withNewSeedphrase
-        property var mnemonic
+        property string mnemonic
 
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.Empty)
@@ -113,17 +113,13 @@ SQUtils.QObject {
     Component {
         id: backupSeedRevealPage
         BackupSeedphraseReveal {
-            Component.onCompleted: {
-                try {
-                    d.mnemonic = root.generateMnemonic()
-                    root.seedphraseSubmitted(d.mnemonic)
-                } catch (e) {
-                    console.error('failed to generate mnemonic', e)
-                }
-            }
+            Component.onCompleted: d.mnemonic = root.generateMnemonic()
             mnemonic: d.mnemonic
 
-            onBackupSeedphraseConfirmed: root.stackView.push(backupSeedVerifyPage)
+            onBackupSeedphraseConfirmed: {
+                root.seedphraseSubmitted(d.mnemonic)
+                root.stackView.push(backupSeedVerifyPage)
+            }
         }
     }
 
@@ -165,6 +161,8 @@ SQUtils.QObject {
         id: keycardCreatePinPage
 
         KeycardCreatePinDelayedPage {
+            readonly property bool backAvailableHint: !success && !pinSettingInProgress
+
             pinSettingState: root.pinSettingState
             authorizationState: root.authorizationState
 
@@ -173,7 +171,7 @@ SQUtils.QObject {
 
             onFinished: {
                 if (d.withNewSeedphrase) {
-                    root.stackView.push(backupSeedIntroPage)
+                    root.stackView.replace(backupSeedIntroPage)
                 } else {
                     root.loadMnemonicRequested()
                     root.stackView.push(addKeypairPage)

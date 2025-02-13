@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 
 import AppLayouts.Onboarding2.pages 1.0
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -11,7 +13,7 @@ Item {
     KeycardEnterPukPage {
         id: page
         anchors.fill: parent
-        remainingAttempts: 3
+        remainingAttempts: Constants.onboarding.defaultPukAttempts
         tryToSetPukFunction: (puk) => {
                                  console.warn("!!! ATTEMPTED PUK:", puk)
                                  const valid = puk === root.existingPuk
@@ -28,7 +30,7 @@ Item {
             console.warn("onKeycardFactoryResetRequested")
             console.warn("!!! RESETTING FLOW")
             state = "entering"
-            remainingAttempts = 3
+            remainingAttempts = Constants.onboarding.defaultPukAttempts
         }
     }
 

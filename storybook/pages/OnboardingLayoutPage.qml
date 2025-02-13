@@ -43,8 +43,8 @@ SplitView {
         store.authorizationState = Onboarding.ProgressState.Idle
         store.restoreKeysExportState = Onboarding.ProgressState.Idle
         store.syncState = Onboarding.ProgressState.Idle
-        store.keycardRemainingPinAttempts = 3
-        store.keycardRemainingPukAttempts = 5
+        store.keycardRemainingPinAttempts = Constants.onboarding.defaultPinAttempts
+        store.keycardRemainingPukAttempts = Constants.onboarding.defaultPukAttempts
 
         onboarding.restartFlow()
     }
@@ -81,8 +81,8 @@ SplitView {
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
-            property int keycardRemainingPinAttempts: 3
-            property int keycardRemainingPukAttempts: 5
+            property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
+            property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 
             function setPin(pin: string) {
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)

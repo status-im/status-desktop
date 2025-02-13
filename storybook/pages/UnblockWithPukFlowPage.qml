@@ -83,16 +83,16 @@ SplitView {
         tryToSetPukFunction: mockDriver.setPuk
         remainingAttempts: mockDriver.keycardRemainingPukAttempts
         onSetPinRequested: (pin) => {
-                                 logs.logEvent("keycardPinCreated", ["pin"], arguments)
-                                 console.warn("!!! PIN CREATED:", pin)
-                             }
+            logs.logEvent("setPinRequested", ["pin"], arguments)
+            console.warn("!!! SET PIN REQUESTED:", pin)
+        }
         onKeycardFactoryResetRequested: {
             logs.logEvent("keycardFactoryResetRequested", ["pin"], arguments)
             console.warn("!!! FACTORY RESET REQUESTED")
         }
-        onFinished: {
-            console.warn("!!! UNLOCK WITH PUK FINISHED")
-            logs.logEvent("finished")
+        onFinished: (success) => {
+            console.warn("!!! UNLOCK WITH PUK FINISHED:", success)
+            logs.logEvent("finished", ["success"], arguments)
             console.warn("!!! RESTARTING FLOW")
 
             stackView.clear()
@@ -106,11 +106,11 @@ SplitView {
 
         function reset() {
             keycardState = Onboarding.KeycardState.NoPCSCService
-            keycardRemainingPukAttempts = 3
+            keycardRemainingPukAttempts = Constants.onboarding.defaultPukAttempts
         }
 
         property int keycardState: Onboarding.KeycardState.NoPCSCService
-        property int keycardRemainingPukAttempts: 3
+        property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 
         function setPuk(puk) { // -> bool
             logs.logEvent("setPuk", ["puk"], arguments)

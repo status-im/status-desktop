@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.15
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -54,8 +56,8 @@ Item {
                 id: remainingAttemptsSpinBox
 
                 from: 0
-                to: 3
-                value: 3
+                to: Constants.onboarding.defaultPinAttempts
+                value: Constants.onboarding.defaultPinAttempts
             }
         }
 

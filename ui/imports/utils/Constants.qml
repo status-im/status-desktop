@@ -418,6 +418,9 @@ QtObject {
                 readonly property string watchOnlyAccounts: "watchOnlyAccounts"
             }
         }
+
+        readonly property int defaultPinAttempts: 3
+        readonly property int defaultPukAttempts: 5
     }
 
     readonly property QtObject onlineStatus: QtObject{
