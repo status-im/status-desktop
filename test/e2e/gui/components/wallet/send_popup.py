@@ -5,7 +5,7 @@ import typing
 
 import configs.timeouts
 import driver
-from driver.objects_access import wait_for_template, walk_children
+from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
 from gui.components.wallet.token_selector_popup import TokenSelectorPopup
 from gui.elements.button import Button

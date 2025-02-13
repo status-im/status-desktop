@@ -1,9 +1,6 @@
 import time
 import typing
 
-import allure
-
-import configs.timeouts
 import driver
 from driver.objects_access import walk_children
 from gui.components.settings.block_user_popup import BlockUserPopup
@@ -14,7 +11,6 @@ from gui.components.settings.verify_identity_popup import VerifyIdentityPopup
 
 from gui.elements.button import Button
 from gui.elements.list import List
-from gui.objects_map import settings_names
 from gui.screens.messages import MessagesScreen
 from scripts.tools.image import Image
 from gui.screens.settings import *
@@ -28,11 +24,6 @@ class MessagingSettingsView(QObject):
         self._always_ask_button = Button(settings_names.always_ask_radioButton_StatusRadioButton)
         self._always_show_button = Button(settings_names.always_show_radioButton_StatusRadioButton)
         self._never_ask_button = Button(settings_names.never_show_radioButton_StatusRadioButton)
-
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._contacts_button.wait_until_appears(timeout_msec)
-        return self
 
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
@@ -184,14 +175,13 @@ class ContactsSettingsView(QObject):
     def find_contact_in_list(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
         started_at = time.monotonic()
-        request = None
-        while request is None:
+        while time.monotonic() - started_at < timeout_sec:
             requests = self.contact_items
             for _request in requests:
                 if _request.contact == contact:
-                    request = _request
-            assert time.monotonic() - started_at < timeout_sec, f'Contact: {contact} not found in {requests}'
-        return request
+                    return _request
+
+        raise TimeoutError(f'Timed out after {timeout_sec} seconds: Contact request "{contact}" not found.')
 
     @allure.step('Accept contact request')
     def accept_contact_request(self, contact: str,

@@ -1,5 +1,3 @@
-import time
-
 import configs.timeouts
 from constants.wallet import *
 from gui.screens.settings_keycard import KeycardSettingsView

@@ -10,7 +10,6 @@ import configs
 import constants
 import driver
 from constants import UserAccount, RandomCommunity
-from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
 from helpers.SettingsHelper import enable_community_creation
