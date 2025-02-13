@@ -3,7 +3,6 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import AppLayouts.Onboarding2.pages 1.0
-import AppLayouts.Onboarding.enums 1.0
 
 import utils 1.0
 
@@ -16,7 +15,8 @@ Item {
         id: page
         anchors.fill: parent
 
-        authorizationState: authorizationProgressSelector.value
+        state: KeycardEnterPinPage.State.Idle
+
         remainingAttempts: remainingAttemptsSpinBox.value
 
         unblockWithPukAvailable: ctrlUnblockWithPUK.checked
@@ -61,10 +61,34 @@ Item {
             }
         }
 
-        ProgressSelector {
-            id: authorizationProgressSelector
+        RowLayout {
+            id: statesRow
 
-            label: "Authorization progress"
+            ButtonGroup {
+                buttons: statesRow.children
+            }
+
+            Button {
+                checkable: true
+                checked: true
+                text: "Idle"
+                onClicked: page.state = KeycardEnterPinPage.State.Idle
+            }
+            Button {
+                checkable: true
+                text: "InProgress"
+                onClicked: page.state = KeycardEnterPinPage.State.InProgress
+            }
+            Button {
+                checkable: true
+                text: "Success"
+                onClicked: page.state = KeycardEnterPinPage.State.Success
+            }
+            Button {
+                checkable: true
+                text: "WrongPin"
+                onClicked: page.state = KeycardEnterPinPage.State.WrongPin
+            }
         }
     }
 }
