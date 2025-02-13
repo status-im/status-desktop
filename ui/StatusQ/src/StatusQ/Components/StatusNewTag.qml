@@ -17,7 +17,7 @@ Rectangle {
     implicitHeight: 20
     radius: height / 2
 
-    StatusGradient {
+    StatusNewItemGradient {
         anchors.fill: parent
         source: root
     }
