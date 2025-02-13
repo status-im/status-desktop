@@ -18,8 +18,6 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
-        bgWidth: width
-        bgHeight: height
         bgRadius: bgWidth / 2
     }
 
@@ -55,7 +53,6 @@ Loader {
                 objectName: "statusRoundImage"
                 width: parent.width
                 height: parent.height
-                radius: asset.bgRadius
                 image.source: root.asset.isImage ? root.asset.name : ""
                 showLoadingIndicator: true
                 border.width: root.asset.imgIsIdenticon ? 1 : 0
