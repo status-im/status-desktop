@@ -59,8 +59,8 @@ Item {
                 readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
                 readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
-                property int keycardRemainingPinAttempts: 3
-                property int keycardRemainingPukAttempts: 5
+                property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
+                property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
                 property var loginAccountsModel: emptyModel
 
                 function setPin(pin: string) {
