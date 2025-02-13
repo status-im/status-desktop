@@ -59,6 +59,14 @@ SplitView {
                 }
             }
 
+            CheckBox {
+                text: "showNewIcon"
+                checked: delegate.showNewIcon
+                onCheckedChanged: {
+                    delegate.showNewIcon = checked
+                }
+            }
+
             Label {
                 text: "title"
             }

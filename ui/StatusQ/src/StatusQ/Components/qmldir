@@ -7,6 +7,7 @@ StatusAddressPanel 0.1 StatusAddressPanel.qml
 StatusAnimatedImage 0.1 StatusAnimatedImage.qml
 StatusBadge 0.1 StatusBadge.qml
 StatusBetaTag 0.1 StatusBetaTag.qml
+StatusNewTag 0.1 StatusNewTag.qml
 StatusCard 0.1 StatusCard.qml
 StatusChartPanel 0.1 StatusChartPanel.qml
 StatusChatInfoToolBar 0.1 StatusChatInfoToolBar.qml

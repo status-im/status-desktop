@@ -23,6 +23,8 @@ Popup {
     property bool multiSelection: false
     property var selection: []
 
+    property bool showNewChainIcon: false
+
     signal toggleNetwork(int chainId, int index)
 
     onSelectionChanged: {
@@ -59,6 +61,7 @@ Popup {
         multiSelection: root.multiSelection
         showIndicator: root.showSelectionIndicator
         selection: root.selection
+        showNewChainIcon: root.showNewChainIcon
 
         onSelectionChanged: {
             if (root.selection !== scrollView.selection) {

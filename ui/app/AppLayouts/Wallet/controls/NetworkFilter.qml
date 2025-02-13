@@ -35,6 +35,9 @@ StatusComboBox {
     property bool selectionAllowed: true
     property var selection: []
 
+    property bool showNewChainIcon: false
+    property bool showNotificationIcon: false
+
     signal toggleNetwork(int chainId, int index)
 
     onSelectionChanged: {
@@ -57,6 +60,25 @@ StatusComboBox {
         height: 38
         opacity: root.interactive ? 1 : 0.5
         active: root.control.down || root.control.hovered
+
+        Loader {
+            active: root.showNotificationIcon
+            anchors.verticalCenter: parent.top
+            anchors.verticalCenterOffset: 2
+            anchors.horizontalCenterOffset: -2
+            anchors.horizontalCenter: parent.right
+            sourceComponent: StatusRoundIcon {
+                objectName: "notificationIcon"
+                asset.width: 10
+                asset.height: 10
+                asset.bgWidth: 15
+                asset.bgColor: Theme.palette.background
+                asset.bgHeight: 15
+                asset.isImage: true
+                asset.name: Theme.png("wallet/network-notification-dot")
+                asset.color: Theme.palette.transparent
+            }
+        }
     }
 
     control.indicator: SQP.StatusComboboxIndicator {
@@ -153,6 +175,7 @@ StatusComboBox {
         multiSelection: root.multiSelection
         showSelectionIndicator: root.showSelectionIndicator
         selection: root.selection
+        showNewChainIcon: root.showNewChainIcon
 
         onSelectionChanged: {
             if (root.selection !== networkSelectorView.selection) {

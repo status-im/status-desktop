@@ -27,6 +27,8 @@ const DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED = false
 const LAS_KEY_REFRESH_TOKEN_ENABLED = "global/refresh_token_enabled"
 const LAS_KEY_METRICS_POPUP_SEEN = "global/metrics_popup_seen"
 const DEFAULT_LAS_KEY_METRICS_POPUP_SEEN = false
+const LS_KEY_SEEN_NETWORK_CHAINS = "global/seenNetworkChains"
+const DEFAULT_SEEN_NETWORK_CHAINS = "[]"
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
@@ -244,3 +246,23 @@ QtObject:
     read = getMetricsPopupSeen
     write = setMetricsPopupSeen
     notify = refreshMetricsPopupSeen
+
+  proc seenNetworkChainsChanged*(self: LocalAppSettings) {.signal.}
+
+  proc getSeenNetworkChains*(self: LocalAppSettings): string {.slot.} =
+    if self.settings.isNil:
+      return DEFAULT_SEEN_NETWORK_CHAINS
+
+    return self.settings.value(LS_KEY_SEEN_NETWORK_CHAINS, newQVariant(DEFAULT_SEEN_NETWORK_CHAINS)).stringVal
+
+  proc setSeenNetworkChains*(self: LocalAppSettings, value: string) {.slot.} =
+    if self.settings.isNil or self.getSeenNetworkChains() == value:
+      return
+
+    self.settings.setValue(LS_KEY_SEEN_NETWORK_CHAINS, newQVariant(value))
+    self.seenNetworkChainsChanged()
+
+  QtProperty[string] seenNetworkChains:
+    read = getSeenNetworkChains
+    write = setSeenNetworkChains
+    notify = seenNetworkChainsChanged
