@@ -117,6 +117,9 @@ StatusDialog {
     /** input property to show only ERC20 assets and no collectibles **/
     property bool displayOnlyAssets
 
+    /** property exposing the currently selected token selector tab **/
+    property alias tokenSelectorTab: sendModalHeader.tokenSelectorTab
+
     /** input property true if a community owner token is being transferred **/
     property bool transferOwnership
 
@@ -313,7 +316,12 @@ StatusDialog {
         readonly property bool errNotEnoughGas: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
 
         function setRawValue() {
-            if(!!selectedRawAmount && (amountToSend.amount !== root.selectedRawAmount || amountToSend.empty)) {
+            if (!selectedRawAmount) return
+
+            const amountChanged = amountToSend.amount !== root.selectedRawAmount || amountToSend.empty
+            const validSelection = (selectedAssetEntryValid && amountToSend.multiplierIndex !== 0) || selectedCollectibleEntryValid
+
+            if (amountChanged && validSelection) {
                 amountToSend.setRawValue(root.selectedRawAmount)
             }
         }
@@ -341,8 +349,9 @@ StatusDialog {
     height: {
         if (!selectedRecipientAddress)
             return root.contentItem.Window.height - topMargin - margins
+        const amountToSendHeight = amountToSend.visible ? amountToSend.height : 0
         let contentHeight = Math.max(sendModalHeader.height +
-                                     amountToSend.height +
+                                     amountToSendHeight +
                                      recipientsPanelLayout.height +
                                      feesLayout.height +
                                      scrollViewLayout.spacing*3 +
@@ -425,6 +434,7 @@ StatusDialog {
 
                 interactive: root.interactive && !root.transferOwnership
                 displayOnlyAssets: root.displayOnlyAssets
+                tokenSelectorTab: root.tokenSelectorTab
 
                 networksModel: root.networksModel
                 assetsModel: root.assetsModel
@@ -513,6 +523,9 @@ StatusDialog {
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
                                          d.selectedAssetEntry.item.decimals : 0
+                    /** this is needed because in some cases the multiplier index is set after
+                    rawAmount and this leads to incorrect parsing of amount **/
+                    onMultiplierIndexChanged: d.setRawValue()
                     formatFiat: amount => root.fnFormatCurrencyAmount(
                                     amount, root.currentCurrency)
                     formatBalance: amount => root.fnFormatCurrencyAmount(
