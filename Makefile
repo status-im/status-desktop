@@ -636,6 +636,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	echo -e $(BUILD_MSG) "AppImage"
 
 	linuxdeployqt $(APP_DIR)/nim-status.desktop \
+		-no-strip \
 		-no-copy-copyright-files \
 		-qmldir=ui -qmlimport=$(QT5_QMLDIR) \
 		-bundle-non-qt-libs \
