@@ -11,12 +11,6 @@ QtObject {
     property var communityTokensModuleInst: communityTokensModule ?? null
     property var mainModuleInst: mainModule ?? null
 
-    // Network selection properties:
-    property var flatNetworks: networksModule.flatNetworks
-    property SortFilterProxyModel filteredFlatModel: SortFilterProxyModel {
-        sourceModel: root.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: networksModule.areTestNetworksEnabled }
-    }
 
     // set by asyncGetOwnerTokenDetails
     readonly property var ownerTokenDetails: {

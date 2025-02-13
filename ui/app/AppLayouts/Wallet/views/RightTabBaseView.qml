@@ -18,6 +18,7 @@ FocusScope {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     property NetworkConnectionStore networkConnectionStore
+    required property NetworksStore networksStore
 
     property bool swapEnabled
     property bool dAppsEnabled
@@ -34,6 +35,7 @@ FocusScope {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    signal manageNetworksRequested()
 
     ColumnLayout {
         anchors.fill: parent
@@ -44,6 +46,7 @@ FocusScope {
             Layout.fillWidth: true
             overview: WalletStores.RootStore.overview
             walletStore: WalletStores.RootStore
+            networksStore: root.networksStore
             networkConnectionStore: root.networkConnectionStore
             loginType: root.store.loginType
             dAppsEnabled: root.dAppsEnabled
@@ -53,6 +56,7 @@ FocusScope {
             onDappListRequested: root.dappListRequested()
             onDappConnectRequested: root.dappConnectRequested()
             onDappDisconnectRequested: (dappUrl) =>root.dappDisconnectRequested(dappUrl)
+            onManageNetworksRequested: root.manageNetworksRequested()
         }
 
         Item {

@@ -22,6 +22,7 @@ ColumnLayout {
 
     property ProfileStores.ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
+    property SharedStores.NetworksStore networksStore
 
     signal sendToAddressRequested(string address)
 
@@ -149,7 +150,7 @@ ColumnLayout {
             ens: model.ens
             colorId: model.colorId
             networkConnectionStore: root.networkConnectionStore
-            areTestNetworksEnabled: RootStore.areTestNetworksEnabled
+            activeNetworks: root.networksStore.activeNetworks
             onOpenSendModal: root.sendToAddressRequested(recipient)
 
             states: [

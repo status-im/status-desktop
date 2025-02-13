@@ -25,6 +25,7 @@ StatusModal {
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property ProfileStores.ContactsStore contactsStore
+    required property SharedStores.NetworksStore networksStore
 
     signal sendToAddressRequested(string address)
 
@@ -149,6 +150,7 @@ StatusModal {
                     bgColor: Theme.palette.statusListItem.backgroundColor
 
                     networkConnectionStore: root.networkConnectionStore
+                    activeNetworks: root.networksStore.activeNetworks
 
                     name: d.name
                     address: d.address
@@ -157,8 +159,6 @@ StatusModal {
 
                     statusListItemTitle.font.pixelSize: 22
                     statusListItemTitle.font.bold: Font.Bold
-
-                    areTestNetworksEnabled: WalletStore.RootStore.areTestNetworksEnabled
 
                     onAboutToOpenPopup: {
                         root.close()
@@ -270,6 +270,7 @@ StatusModal {
                            mixedcaseAddress: d.address
                        })
             walletRootStore: WalletStore.RootStore
+            networksStore: root.networksStore
         }
     }
 }

@@ -12,12 +12,14 @@ ColumnLayout {
 
     property ContactsStore contactsStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
+    required property SharedStores.NetworksStore networksStore
 
     signal sendToAddressRequested(string address)
 
     SavedAddresses {
         contactsStore: root.contactsStore
         networkConnectionStore: root.networkConnectionStore
+        networksStore: root.networksStore
 
         onSendToAddressRequested: root.sendToAddressRequested(address)
     }

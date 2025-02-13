@@ -9,8 +9,6 @@ QtObject {
     /* TODO: all of these should come from their respective stores once the stores are reworked and
        streamlined. This store should contain only swap specific properties/methods if any */
     readonly property var accounts: walletSectionAccounts.accounts
-    readonly property var flatNetworks: networksModule.flatNetworks
-    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
 
     /* TODO: Send module should be reworked into a lighter, generic, "stateless" module.
        Remove these and use the new TransactorStore in SwapModalAdaptor when that happens. */

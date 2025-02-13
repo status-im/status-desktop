@@ -101,6 +101,14 @@ SplitView {
                                                    isAllAccounts: true,
                                                    colorIds: "purple;pink;magenta"
                                                })
+        property NetworksStore networksStore: NetworksStore {
+            property var allNetworks: NetworksModel.flatNetworks
+            property var activeNetworks: allNetworks
+            property bool areTestNetworksEnabled: false
+            function toggleNetwork(chainId) {
+                print ("toggleNetwork called with chainId: " + chainId)
+            }
+        }
     }
 
     // mainModuleInst mock
@@ -143,6 +151,7 @@ SplitView {
                     networkConnectionStore: connectionStore
                     overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
                     walletStore: walletStore
+                    networksStore: d.networksStore
                     width: parent.width
                 }
             }

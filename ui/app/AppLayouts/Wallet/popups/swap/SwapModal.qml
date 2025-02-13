@@ -67,10 +67,7 @@ StatusDialog {
             accounts: root.swapAdaptor.swapStore.accounts
             assetsModel: root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel
             tokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-            filteredFlatNetworksModel: SortFilterProxyModel {
-                sourceModel: root.swapAdaptor.swapStore.flatNetworks
-                filters: ValueFilter { roleName: "isTest"; value: root.swapAdaptor.swapStore.areTestNetworksEnabled }
-            }
+            filteredFlatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
 
             selectedTokenKey: root.swapInputParamsForm.fromTokensKey
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
@@ -188,7 +185,7 @@ StatusDialog {
                         multiSelection: false
                         showSelectionIndicator: false
                         showTitle: false
-                        flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
+                        flatNetworks: root.swapAdaptor.networksStore.activeNetworks
                         selection: [root.swapInputParamsForm.selectedNetworkChainId]
                         onSelectionChanged: {
                             if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
@@ -234,7 +231,7 @@ StatusDialog {
                     }
 
                     currencyStore: root.swapAdaptor.currencyStore
-                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
@@ -275,7 +272,7 @@ StatusDialog {
                     }
 
                     currencyStore: root.swapAdaptor.currencyStore
-                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 

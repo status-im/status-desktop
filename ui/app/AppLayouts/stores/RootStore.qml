@@ -162,8 +162,6 @@ QtObject {
 
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
-    property var flatNetworks: networksModule.flatNetworks
-
     readonly property QtObject _d: QtObject {
         id: d
 

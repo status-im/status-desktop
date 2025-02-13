@@ -1479,4 +1479,6 @@ QtObject {
         readonly property string basicAuth: "basic-auth"
         readonly property string tokenAuth: "token-auth"
     }
+
+    readonly property int maxActiveNetworks: 5
 }

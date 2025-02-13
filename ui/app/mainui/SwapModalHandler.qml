@@ -16,6 +16,7 @@ QtObject {
     required property CurrenciesStore currencyStore
     required property AppLayoutStores.RootStore rootStore
     required property WalletStores.WalletAssetsStore walletAssetsStore
+    required property NetworksStore networksStore
 
     Component.onCompleted: {
         // TODO update opening logic to be similar to send
@@ -63,6 +64,7 @@ QtObject {
                 swapStore: d.swapStore
                 walletAssetsStore: root.walletAssetsStore
                 currencyStore: root.currencyStore
+                networksStore: root.networksStore
                 swapFormData: d.swapInputParams
                 swapOutputData: SwapOutputData{}
 

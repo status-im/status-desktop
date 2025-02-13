@@ -32,8 +32,6 @@ Item {
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
-                readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: true
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
@@ -44,6 +42,9 @@ Item {
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
+            networksStore: NetworksStore {
+                readonly property var activeNetworks: NetworksModel.flatNetworks
+            }
             swapFormData: SwapInputParamsForm {
                 selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             }
