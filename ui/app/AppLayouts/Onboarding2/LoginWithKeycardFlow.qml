@@ -79,7 +79,20 @@ SQUtils.QObject {
         KeycardEnterPinPage {
             id: page
 
-            authorizationState: root.authorizationState
+            state: {
+                switch (root.authorizationState) {
+                case Onboarding.ProgressState.Success:
+                    return KeycardEnterPinPage.State.Success
+                case Onboarding.ProgressState.InProgress:
+                    return KeycardEnterPinPage.State.InProgress
+                // workaround by mapping all failures as wrong pin (#17289)
+                case Onboarding.ProgressState.Failed:
+                    return KeycardEnterPinPage.State.WrongPin
+                }
+
+                return KeycardEnterPinPage.State.Idle
+            }
+
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
 

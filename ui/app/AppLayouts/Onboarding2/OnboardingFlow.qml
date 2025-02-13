@@ -132,7 +132,7 @@ SQUtils.QObject {
 
         function onAuthorizationStateChanged() {
             // workaround for entering pin because currently there is not possible
-            // to distinguish invalid pin and failed pin entering operation
+            // to distinguish invalid pin and failed pin entering operation (#17289)
             if (root.stackView.currentItem instanceof KeycardEnterPinPage)
                 return
 

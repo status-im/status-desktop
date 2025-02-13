@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -9,14 +8,21 @@ import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2.controls 1.0
-import AppLayouts.Onboarding.enums 1.0
 
 import utils 1.0
 
 KeycardBasePage {
     id: root
 
-    required property int authorizationState
+    enum State {
+        Idle,
+        InProgress,
+        Success,
+        WrongPin
+    }
+
+    required property int state
+
     required property int remainingAttempts
     required property bool unblockWithPukAvailable
 
@@ -25,17 +31,12 @@ KeycardBasePage {
     signal unblockWithPukRequested
     signal keycardFactoryResetRequested
 
-    QtObject {
-        id: d
-        property string tempPin
-    }
-
     StateGroup {
+        id: states
         states: [
-            State {
-                name: "entering"
-                when: root.authorizationState === Onboarding.ProgressState.Idle
-                      && root.remainingAttempts > 0
+            State { // entering
+                when: root.state === KeycardEnterPinPage.State.Idle &&
+                      root.remainingAttempts > 0
 
                 PropertyChanges {
                     target: root
@@ -53,9 +54,8 @@ KeycardBasePage {
                     source: Theme.png("onboarding/keycard/reading")
                 }
             },
-            State {
-                name: "incorrect"
-                when: root.authorizationState === Onboarding.ProgressState.Failed
+            State { // entering, wrong pin
+                when: root.state === KeycardEnterPinPage.State.WrongPin
                       && root.remainingAttempts > 0
 
                 PropertyChanges {
@@ -78,10 +78,9 @@ KeycardBasePage {
                     source: Theme.png("onboarding/keycard/error")
                 }
             },
-            State {
-                name: "authorizing"
-                when: root.authorizationState === Onboarding.ProgressState.InProgress
-                      && root.remainingAttempts > 0
+            State { // in progress
+                when: root.state === KeycardEnterPinPage.State.InProgress &&
+                      root.remainingAttempts > 0
 
                 PropertyChanges {
                     target: root
@@ -101,9 +100,8 @@ KeycardBasePage {
                     source: Theme.png("onboarding/keycard/reading")
                 }
             },
-            State {
-                name: "pinSuccess"
-                when: root.authorizationState === Onboarding.ProgressState.Success
+            State { // success
+                when: root.state === KeycardEnterPinPage.State.Success
                       && root.remainingAttempts > 0
 
                 PropertyChanges {
@@ -120,8 +118,7 @@ KeycardBasePage {
                     source: Theme.png("onboarding/keycard/success")
                 }
             },
-            State {
-                name: "blocked"
+            State { // blocked
                 when: root.remainingAttempts <= 0
 
                 PropertyChanges {
@@ -165,8 +162,9 @@ KeycardBasePage {
             pinLen: Constants.keycard.general.keycardPinLength
             validator: StatusIntValidator { bottom: 0; top: 999999 }
             onPinInputChanged: {
-                if (pinInput.pinInput.length === pinInput.pinLen)
+                if (pinInput.pinInput.length === pinInput.pinLen) {
                     root.authorizationRequested(pinInput.pinInput)
+                }
             }
         },
         StatusBaseText {
@@ -174,15 +172,6 @@ KeycardBasePage {
 
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("%n attempt(s) remaining", "", root.remainingAttempts)
-            font.pixelSize: Theme.tertiaryTextFontSize
-            color: Theme.palette.dangerColor1
-            visible: false
-        },
-        StatusBaseText {
-            id: errorExportingText
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Error exporting the keys, please try again")
             font.pixelSize: Theme.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
             visible: false
