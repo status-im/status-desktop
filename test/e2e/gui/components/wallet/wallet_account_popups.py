@@ -322,7 +322,7 @@ class AddNewAccountPopup(BasePopup):
 class GeneratedAddressesList(QObject):
 
     def __init__(self):
-        super().__init__(names.basePopup)
+        super().__init__(names.basePopupItem)
         self._address_list_item = QObject(names.addAccountPopup_GeneratedAddress)
         self._paginator_page = QObject(names.page_StatusBaseButton)
 

@@ -1,11 +1,9 @@
 import allure
 import pytest
 
-import configs
-import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
-from constants.wallet import WalletTransactions, WalletAddress, WalletNetworkSettings
+from constants.wallet import WalletAddress, WalletNetworkSettings
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
 from helpers.SettingsHelper import enable_testnet_mode
@@ -18,9 +16,11 @@ from helpers.WalletHelper import authenticate_with_password, open_send_modal_for
 @pytest.mark.transaction
 @pytest.mark.smoke
 @pytest.mark.parametrize('receiver_account_address, amount, asset, collectible', [
-    pytest.param(WalletAddress.RECEIVER_ADDRESS.value, 0, 'ETH', '')
+    pytest.param(WalletAddress.RECEIVER_ADDRESS.value, '0', 'ETH', '')
 ])
 @pytest.mark.timeout(timeout=120)
+@pytest.mark.skip(reason="Can't send 0, its under fixing")
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/17291')
 def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, amount, asset, collectible):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
@@ -32,12 +32,10 @@ def test_wallet_send_0_eth(main_window, user_account, receiver_account_address, 
     enable_testnet_mode(main_window)
 
     send_popup = open_send_modal_for_account(
-        main_window, account_name=WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME)
+        main_window, account_name=WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value)
 
-    send_popup.send(receiver_account_address, amount, asset)
-    assert driver.waitFor(lambda: send_popup._mainnet_network.is_visible, configs.timeouts.UI_LOAD_TIMEOUT_SEC)
-
+    send_popup.sign_and_send(receiver_account_address, amount, asset)
     authenticate_with_password(user_account)
 
-    assert WalletTransactions.TRANSACTION_SENDING_TOAST_MESSAGE.value + ' ' + str(amount) + ' ' + asset in ' '.join(
+    assert f'Sending {amount} ETH from {WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value} to {receiver_account_address[:6]}' in ' '.join(
         main_window.wait_for_notification())

@@ -38,6 +38,7 @@ class MintOwnerTokensElements(Enum):
     TOAST_AIRDROPPING_TOKEN_1 = 'Airdropping '
     TOAST_AIRDROPPING_TOKEN_2 = ' Owner token to you...'
     TOAST_TOKENS_BEING_MINTED = ' Owner and TokenMaster tokens are being minted...'
+    TOAST_MINTING_TOKENS = 'Minting'
 
 
 class AirdropsElements(Enum):

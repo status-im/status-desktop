@@ -221,12 +221,14 @@ class MainWindow(Window):
         return app_screen
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> list[str]:
-        started_at = time.monotonic()
-        while True:
+    def wait_for_notification(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:
+        start_time = time.monotonic()
+
+        while time.monotonic() - start_time < timeout_sec:
             try:
                 return ToastMessage().get_toast_messages()
             except LookupError as err:
-                LOG.info(err)
-                if time.monotonic() - started_at > timeout_msec:
-                    raise LookupError(f'Notifications are not found')
+                LOG.info(f"Notification not found: {err}")
+                time.sleep(0.1)  # Small delay to prevent CPU overuse
+
+        raise LookupError("Notifications were not found within the timeout period.")
