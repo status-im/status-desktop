@@ -1,5 +1,5 @@
 import NimQml, chronicles, json, strutils
-import logging
+import chronicles
 
 import io_interface
 import view, controller
