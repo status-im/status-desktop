@@ -1988,5 +1988,104 @@ Item {
 
             closeAndVerfyModal()
         }
+
+        function test_exchange_rate() {
+            // Asset chosen but no pay value set state -------------------------------------------------------------------------------
+            root.swapFormData.fromTokenAmount = "1"
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.toTokenKey = ""
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const quoteItem = findChild(controlUnderTest, "quoteApproximationRight")
+            verify(!!quoteItem)
+
+            const sellItem = findChild(controlUnderTest, "quoteApproximationLeft")
+            verify(!!sellItem)
+
+            const priceItem = findChild(controlUnderTest, "quoteApproximationPrice")
+            verify(!!priceItem)
+
+            const invertQuoteApproximation = findChild(controlUnderTest, "invertQuoteApproximation")
+            verify(!!invertQuoteApproximation)
+
+            verify(!sellItem.visible)
+            verify(!quoteItem.visible)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.toTokenKey = "STT"
+
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(sellItem, "visible", true)
+            compare(sellItem.text, "1 ETH ≈ ")
+            verify(quoteItem.visible)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            // emit routes ready
+            let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "1000000000000000000" // "1" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryVerify( () => quoteItem.visible)
+            verify(!quoteItem.loading)
+            verify(priceItem.visible)
+            verify(invertQuoteApproximation.visible)
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "1 STT ")
+            verify(priceItem.text.startsWith("(1 ")) //Hardcoded to crypto amount input - 1 in our case
+
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.fromTokenAmount = "2"
+
+            // Back to loading states
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(quoteItem, "visible", true)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            // emit routes ready
+            txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "4000000000000000000" // "4" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "2 STT ")
+            verify(priceItem.text.startsWith("(1 ")) //Hardcoded to crypto amount input - 1 in our case
+            verify(invertQuoteApproximation.visible)
+
+            mouseClick(invertQuoteApproximation)
+            tryCompare(sellItem, "text", "1 STT ≈ ")
+            tryCompare(quoteItem, "text", "0.5 ETH ")
+
+            // resetting to default
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.fromTokenAmount = "1"
+
+            // Back to loading states
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(quoteItem, "visible", true)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+
+            // emit routes ready
+            txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "1000000000000000000" // "1" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "1 STT ")
+        }
     }
 }
