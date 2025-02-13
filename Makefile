@@ -572,7 +572,6 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSG
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
-		--passL:"-L$(STATUSGO)" \
 		--passL:"-lstatus" \
 		--passL:"-L$(STATUSQ_INSTALL_PATH)/StatusQ" \
 		--passL:"-lStatusQ" \
