@@ -279,7 +279,8 @@ StatusDialog {
         })
 
         readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1000, function() {
-            if(amountToSend.amount !== "0" && amountToSend.amount !== root.selectedRawAmount)
+            if(!(amountToSend.amount === "0" && amountToSend.empty)
+                    && amountToSend.amount !== root.selectedRawAmount)
                 root.selectedRawAmount = amountToSend.amount
         })
 
@@ -522,6 +523,12 @@ StatusDialog {
                     onVisibleChanged: if(visible) forceActiveFocus()
 
                     onAmountChanged: d.debounceSetSelectedAmount()
+                    onTextChanged: {
+                        // Only needed to assign value when amount in entered first time
+                        if(!root.selectedRawAmount) {
+                            d.debounceSetSelectedAmount()
+                        }
+                    }
 
                     bottomRightComponent: MaxSendButton {
                         id: maxButton
