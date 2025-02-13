@@ -13,6 +13,8 @@ KeycardBasePage {
 
     property bool success
 
+    readonly property bool pinSettingInProgress: d.state === "settingInProgress"
+
     signal setPinRequested(string pin)
 
     image.source: Theme.png("onboarding/keycard/reading")
@@ -129,10 +131,6 @@ KeycardBasePage {
                 PropertyChanges {
                     target: loadingIndicator
                     visible: true
-                }
-                PropertyChanges {
-                    target: root
-                    image.source: Theme.png("onboarding/keycard/success")
                 }
                 StateChangeScript {
                     script: {
