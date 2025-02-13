@@ -34,7 +34,6 @@ type OnboardingFlow* {.pure} = enum
   LoginWithSeedphrase,
   LoginWithSyncing,
   LoginWithKeycard,
-
   LoginWithLostKeycardSeedphrase,
   LoginWithRestoredKeycard
 
@@ -157,7 +156,10 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
 
     let data = parseJson(dataJson)
     let password = data["password"].str
-    let seedPhrase = data["seedphrase"].str
+    let mnemonic = data["seedphrase"].str
+    let pin = data["keycardPin"].str
+    let keyUid = data["keyUid"].str
+    let keycardInfo = self.view.getKeycardEvent().keycardInfo
 
     var err = ""
 
@@ -168,34 +170,32 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
       of OnboardingFlow.CreateProfileWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
           keycardInstanceUID = "",
         )
       of OnboardingFlow.CreateProfileWithKeycardNewSeedphrase:
         # New user with a seedphrase we showed them
-        let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
-          keycardInstanceUID = keycardEvent.keycardInfo.instanceUID,
+          keycardInstanceUID = keycardInfo.instanceUID,
         )
       of OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase:
         # New user who entered their own seed phrase
-        let keycardEvent = self.view.getKeycardEvent()
         err = self.controller.restoreAccountAndLogin(
           password = "", # For keycard it will be substituted with `encryption.publicKey` in status-go
-          seedPhrase,
+          mnemonic,
           recoverAccount = false,
-          keycardInstanceUID = keycardEvent.keycardInfo.instanceUID,
+          keycardInstanceUID = keycardInfo.instanceUID,
         )
       
       # LOGIN FLOWS
       of OnboardingFlow.LoginWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
           password,
-          seedPhrase,
+          mnemonic,
           recoverAccount = true,
           keycardInstanceUID = "",
         )        
@@ -208,11 +208,26 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         )
       of OnboardingFlow.LoginWithKeycard:
         err = self.controller.restoreKeycardAccountAndLogin(
-          self.view.getKeycardEvent().keycardInfo.keyUID,
-          self.view.getKeycardEvent().keycardInfo.instanceUID,
+          keycardInfo.keyUID,
+          keycardInfo.instanceUID,
           self.exportedKeys,
           recoverAccount = true
-          )
+        )
+      of OnboardingFlow.LoginWithLostKeycardSeedphrase:
+        # TODO: 
+        # 1. Call LoginAccount with `mnemonic` set
+        # 2. Schedule `convertToRegularAccount` for post-onboarding
+        error "LoginWithLostKeycardSeedphrase not implemented"
+      of OnboardingFlow.LoginWithRestoredKeycard:
+        self.postOnboardingTasks.add(newKeycardReplacementTask(
+          keycardInfo.keyUID,
+          keycardInfo.instanceUID,
+        ))
+        self.loginRequested(
+          keycardInfo.keyUID,
+          LoginMethod.Keycard.int,
+          $ %*{ "pin": pin },
+        )
       else:
         raise newException(ValueError, "Unknown onboarding flow: " & $self.onboardingFlow)
 
@@ -259,6 +274,7 @@ method onAccountLoginError*[T](self: Module[T], error: string) =
   var wrongPassword = false
   if error.contains("file is not a database"):
     wrongPassword = true
+  warn "failed to login", wrongPassword, error
   self.view.accountLoginError(error, wrongPassword)
   
 method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settings: SettingsDto) =
