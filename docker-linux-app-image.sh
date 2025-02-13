@@ -7,6 +7,8 @@ cd ~/status-desktop
 git clean -dfx && rm -rf vendor/* && git checkout vendor/DOtherSide && make -j4 V=1 update
 make V=1 pkg
 
+make V=1 pkg USE_NWAKU=true
+
 # Make AppImage build accessible to the docker host
 cd - && cp -R ~/status-desktop/pkg .
 chmod -R 775 ./pkg
