@@ -93,7 +93,7 @@
 [submodule "vendor/status-go"]
 	path = vendor/status-go
 	url = https://github.com/status-im/status-go
-	branch = feat-integrating-waku-go-bindings-2
+	branch = feat-integrating-waku-go-bindings-3
 [submodule "vendor/nim-status-go"]
 	path = vendor/nim-status-go
 	url = https://github.com/status-im/nim-status-go.git
