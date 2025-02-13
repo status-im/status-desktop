@@ -6,7 +6,7 @@ statusDesktop_mainWindow = {"name": "mainWindow", "type": "StatusWindow"}
 mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1, "visible": True}
 statusDesktop_mainWindow_overlay_popup2 = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2, "type": "PopupItem", "unnamed": 1, "visible": True}
-basePopup = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
+basePopupItem = {"container": statusDesktop_mainWindow_overlay, "type": "PopupItem", "unnamed": 1, "visible": True}
 scrollView_StatusScrollView = {"container": statusDesktop_mainWindow_overlay, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 splashScreen = {"container": statusDesktop_mainWindow, "objectName": "splashScreen", "type": "DidYouKnowSplashScreen"}
 mainWindow_LoadingAnimation = {"container": statusDesktop_mainWindow, "objectName": "loadingAnimation", "type": "LoadingAnimation", "visible": True}
@@ -517,6 +517,24 @@ search_TextEdit = {"container": o_SearchBoxWithRightIcon, "id": "edit", "type": 
 # new Send modal (single chain)
 sendModalHeader = {"container": statusDesktop_mainWindow_overlay, "objectName": "sendModalHeader", "type": "SendModalHeader", "visible": True}
 sendModalRecipientPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "recipientsPanel", "type": "RecipientSelectorPanel", "visible": True}
+sendModalTokenSelector = {"container": sendModalHeader, "objectName": "tokenSelectorButton", "type": "TokenSelectorButton", "visible": True}
+sendModalAmountField = {"container": statusDesktop_mainWindow_overlay, "objectName": "amountToSend_textField", "type": "StatusTextField", "visible": True}
+sendModalRecipientField = {"container": statusDesktop_mainWindow_overlay, "type": "TextEdit", "unnamed": 1, "visible": True}
+sendModalSendTransactionFees = {"container": statusDesktop_mainWindow_overlay, "objectName": "signTransactionFees", "type": "SimpleTransactionsFees", "visible": True}
+sendModalReviewSendButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "transactionModalFooterButton", "type": "StatusButton", "visible": True}
+
+# Sign Send modal
+signSendModalDialogHeader = {"container": statusDesktop_mainWindow_overlay, "type": "StatusDialogHeader", "unnamed": 1, "visible": True}
+signSendModalTitle = {"container": signSendModalDialogHeader, "id": "headline", "type": "StatusTitleSubtitle", "unnamed": 1, "visible": True}
+signSendModalContentLayout = {"container": statusDesktop_mainWindow_overlay, "id": "contentsLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
+signSendModalCollectibleBox = {"container": signSendModalContentLayout, "objectName": "sendCollectibleBox", "type": "ColumnLayout", "visible": False}
+signSendModalAssetBox = {"container": signSendModalContentLayout, "objectName": "sendAssetBox", "type": "SignInfoBox", "visible": True}
+signSendModalRecipientBox = {"container": signSendModalContentLayout, "objectName": "recipientBox", "type": "SignAccountInfoBox", "visible": True}
+signSendModalNetworkBox = {"container": signSendModalContentLayout, "objectName": "networkBox", "type": "SignInfoBox", "visible": True}
+signSendModalFeesBox = {"container": signSendModalContentLayout, "objectName": "feesBox", "type": "SignInfoBox", "visible": True}
+signSendModalSenderBox = {"container": signSendModalContentLayout, "objectName": "accountBox", "type": "SignAccountInfoBox", "visible": True}
+signSendModalSignButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signButton", "type": "StatusButton", "visible": True}
+signSendModalRejectButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "rejectButton", "type": "StatusFlatButton", "visible": True}
 
 # Assets Context Menu popup
 send_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "sendMenuItem", "type": "StatusMenuItem", "visible": True}

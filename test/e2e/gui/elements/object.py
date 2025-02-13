@@ -178,14 +178,19 @@ class QObject:
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        assert driver.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
+        condition = driver.waitFor(lambda: self.is_visible, timeout_msec)
+        if not condition:
+            raise TimeoutError(f'Object {self} is not visible within {timeout_msec} ms')
         LOG.info('%s: is visible', self)
         return self
 
     @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        assert driver.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
+        condition = driver.waitFor(lambda: not self.is_visible, timeout_msec)
+        if not condition:
+            raise TimeoutError(f'Timeout reached: Object {self} is not hidden within {timeout_msec} ms')
         LOG.info('%s: is hidden', self)
+        return self
 
     @classmethod
     def wait_for(cls, condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> bool:

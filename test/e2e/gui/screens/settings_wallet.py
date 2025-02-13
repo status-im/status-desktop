@@ -12,7 +12,7 @@ from constants.wallet import WalletNetworkSettings, WalletNetworkDefaultValues
 from driver import objects_access
 from driver.objects_access import walk_children
 from gui.components.settings.rename_keypair_popup import RenameKeypairPopup
-from gui.components.wallet.RPCChangeRestartPopup import RPCChangeRestartPopup
+from gui.components.wallet.rpc_change_restart_popup import RPCChangeRestartPopup
 from gui.components.wallet.add_saved_address_popup import AddressPopup
 from gui.components.wallet.popup_delete_account_from_settings import RemoveAccountConfirmationSettings
 from gui.components.wallet.testnet_mode_popup import TestnetModePopup
