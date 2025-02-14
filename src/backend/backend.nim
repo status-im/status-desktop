@@ -114,6 +114,11 @@ rpc(getTransactionEstimatedTime, "wallet"):
   chainId: int
   maxFeePerGas: string
 
+rpc(getTransactionEstimatedTimeV2, "wallet"):
+  chainId: int
+  maxFeePerGas: string
+  maxPriorityFeePerGas: string
+
 rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]

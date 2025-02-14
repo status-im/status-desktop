@@ -851,6 +851,14 @@ QtObject {
                         return root.fnFormatCurrencyAmount(ethFiatValue*feesEth, root.currentCurrency).toString()
                     }
 
+                    fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                        if (!txPathUnderReviewEntry.item) {
+                            return ""
+                        }
+                        const chainId = txPathUnderReviewEntry.item.fromChain
+                        return root.transactionStoreNew.getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei)
+                    }
+
                     normalPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
@@ -871,7 +879,7 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel)).toFixed()
                                      : ""
                     normalPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasLowLevel : ""
-                    normalTime: "~60s" // TODO: update this when we figure out how to estimate time more granularly
+                    normalTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeLowLevel : ""
 
                     fastPrice: {
                         if (!!txPathUnderReviewEntry.item) {
@@ -893,7 +901,7 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel)).toFixed()
                                      : ""
                     fastPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasMediumLevel : ""
-                    fastTime: "~40s" // TODO: update this when we figure out how to estimate time more granularly
+                    fastTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeMediumLevel : ""
 
                     urgentPrice: {
                         if (!!txPathUnderReviewEntry.item) {
@@ -915,7 +923,7 @@ QtObject {
                                                                      SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel)).toFixed()
                                      : ""
                     urgentPriorityFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedPriorityFeePerGasHighLevel : ""
-                    urgentTime: "~15s" // TODO: update this when we figure out how to estimate time more granularly
+                    urgentTime: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.suggestedEstimatedTimeHighLevel : ""
 
                     customBaseFee: {
                         if (!!txPathUnderReviewEntry.item) {

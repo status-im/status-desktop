@@ -113,6 +113,8 @@ SignTransactionModalBase {
 
     /** required function which receives fee in wei and recalculate it currency selected currency and format to locale string **/
     required property var fnGetPriceInCurrencyForFee
+    /** required function which receives base fee and priority fee in wei and returns estimated time in seconds **/
+    required property var fnGetEstimatedTime
 
     /** Signal to updated tx settings **/
     signal updateTxSettings(int selectedFeeMode, string customNonce, string customGasAmount, string maxFeesPerGas, string priorityFee)
@@ -234,6 +236,7 @@ SignTransactionModalBase {
     property Component internalPopup: TransactionSettings {
 
         fnGetPriceInCurrencyForFee: root.fnGetPriceInCurrencyForFee
+        fnGetEstimatedTime: root.fnGetEstimatedTime
 
         selectedFeeMode: root.selectedFeeMode
 
@@ -244,11 +247,11 @@ SignTransactionModalBase {
         currentNonce: root.currentNonce
 
         normalPrice: root.normalPrice
-        normalTime: root.normalTime
+        normalTime: qsTr("~%1").arg(root.normalTime)
         fastPrice: root.fastPrice
-        fastTime: root.fastTime
+        fastTime: qsTr("~%1").arg(root.fastTime)
         urgentPrice: root.urgentPrice
-        urgentTime: root.urgentTime
+        urgentTime: qsTr("~%1").arg(root.urgentTime)
 
         function updateCustomFields() {
             // by default custom follows normal fee option

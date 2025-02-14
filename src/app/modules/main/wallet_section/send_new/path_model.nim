@@ -17,10 +17,13 @@ type
     AmountOut,
     SuggestedMaxFeesPerGasLowLevel,
     SuggestedPriorityFeePerGasLowLevel,
+    SuggestedEstimatedTimeLowLevel,
     SuggestedMaxFeesPerGasMediumLevel,
     SuggestedPriorityFeePerGasMediumLevel,
+    SuggestedEstimatedTimeMediumLevel,
     SuggestedMaxFeesPerGasHighLevel,
     SuggestedPriorityFeePerGasHighLevel,
+    SuggestedEstimatedTimeHighLevel,
     SuggestedMinPriorityFee,
     SuggestedMaxPriorityFee,
     CurrentBaseFee,
@@ -90,10 +93,13 @@ QtObject:
       ModelRole.AmountOut.int: "amountOut",
       ModelRole.SuggestedMaxFeesPerGasLowLevel.int: "suggestedMaxFeesPerGasLowLevel",
       ModelRole.SuggestedPriorityFeePerGasLowLevel.int: "suggestedPriorityFeePerGasLowLevel",
+      ModelRole.SuggestedEstimatedTimeLowLevel.int: "suggestedEstimatedTimeLowLevel",
       ModelRole.SuggestedMaxFeesPerGasMediumLevel.int: "suggestedMaxFeesPerGasMediumLevel",
       ModelRole.SuggestedPriorityFeePerGasMediumLevel.int: "suggestedPriorityFeePerGasMediumLevel",
+      ModelRole.SuggestedEstimatedTimeMediumLevel.int: "suggestedEstimatedTimeMediumLevel",
       ModelRole.SuggestedMaxFeesPerGasHighLevel.int: "suggestedMaxFeesPerGasHighLevel",
       ModelRole.SuggestedPriorityFeePerGasHighLevel.int: "suggestedPriorityFeePerGasHighLevel",
+      ModelRole.SuggestedEstimatedTimeHighLevel.int: "suggestedEstimatedTimeHighLevel",
       ModelRole.SuggestedMinPriorityFee.int: "suggestedMinPriorityFee",
       ModelRole.SuggestedMaxPriorityFee.int: "suggestedMaxPriorityFee",
       ModelRole.CurrentBaseFee.int: "currentBaseFee",
@@ -166,14 +172,20 @@ QtObject:
       result = newQVariant(item.suggestedMaxFeesPerGasLowLevel)
     of ModelRole.SuggestedPriorityFeePerGasLowLevel:
       result = newQVariant(item.suggestedPriorityFeePerGasLowLevel)
+    of ModelRole.SuggestedEstimatedTimeLowLevel:
+      result = newQVariant(item.suggestedEstimatedTimeLowLevel)
     of ModelRole.SuggestedMaxFeesPerGasMediumLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasMediumLevel)
     of ModelRole.SuggestedPriorityFeePerGasMediumLevel:
       result = newQVariant(item.suggestedPriorityFeePerGasMediumLevel)
+    of ModelRole.SuggestedEstimatedTimeMediumLevel:
+      result = newQVariant(item.suggestedEstimatedTimeMediumLevel)
     of ModelRole.SuggestedMaxFeesPerGasHighLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasHighLevel)
     of ModelRole.SuggestedPriorityFeePerGasHighLevel:
       result = newQVariant(item.suggestedPriorityFeePerGasHighLevel)
+    of ModelRole.SuggestedEstimatedTimeHighLevel:
+      result = newQVariant(item.suggestedEstimatedTimeHighLevel)
     of ModelRole.SuggestedMinPriorityFee:
       result = newQVariant(item.suggestedMinPriorityFee)
     of ModelRole.SuggestedMaxPriorityFee:

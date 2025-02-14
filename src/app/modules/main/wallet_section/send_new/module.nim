@@ -118,10 +118,13 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     amountOut = $txPath.amountOut,
     suggestedMaxFeesPerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.low,
     suggestedPriorityFeePerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.lowPriority,
+    suggestedEstimatedTimeLowLevel = txPath.suggestedLevelsForMaxFeesPerGas.lowEstimatedTime,
     suggestedMaxFeesPerGasMediumLevel = $txPath.suggestedLevelsForMaxFeesPerGas.medium,
     suggestedPriorityFeePerGasMediumLevel = $txPath.suggestedLevelsForMaxFeesPerGas.mediumPriority,
+    suggestedEstimatedTimeMediumLevel = txPath.suggestedLevelsForMaxFeesPerGas.mediumEstimatedTime,
     suggestedMaxFeesPerGasHighLevel = $txPath.suggestedLevelsForMaxFeesPerGas.high,
     suggestedPriorityFeePerGasHighLevel = $txPath.suggestedLevelsForMaxFeesPerGas.highPriority,
+    suggestedEstimatedTimeHighLevel = txPath.suggestedLevelsForMaxFeesPerGas.highEstimatedTime,
     suggestedMinPriorityFee = $txPath.suggestedMinPriorityFee,
     suggestedMaxPriorityFee = $txPath.suggestedMaxPriorityFee,
     currentBaseFee = $txPath.currentBaseFee,
@@ -342,3 +345,6 @@ method setCustomTxDetails*(self: Module, nonce: int, gasAmount: int, maxFeesPerG
     # TODO: translate this, or find a better way to display error at this step (maybe within the popup)
     var data = NotificationArgs(title: "Setting custom fee", message: err)
     self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
+
+method getEstimatedTime*(self: Module, chainId: int, maxFeesPerGas: string, priorityFee: string): int =
+  return self.controller.getEstimatedTime(chainId, maxFeesPerGas, priorityFee)
