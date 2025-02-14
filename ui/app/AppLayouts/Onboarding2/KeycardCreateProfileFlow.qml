@@ -1,18 +1,11 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
-
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-import utils 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
-
-    required property StackView stackView
 
     required property int keycardState
     required property int pinSettingState
@@ -32,12 +25,9 @@ SQUtils.QObject {
     signal seedphraseSubmitted(string seedphrase)
 
     signal authorizationRequested
-
     signal finished(bool withNewSeedphrase)
 
-    function init() {
-        root.stackView.push(d.initialComponent())
-    }
+    initialItem: d.initialComponent()
 
     QtObject {
         id: d
@@ -65,8 +55,8 @@ SQUtils.QObject {
             factoryResetAvailable: true
 
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onEmptyKeycardDetected: root.stackView.replace(createKeycardProfilePage)
-            onNotEmptyKeycardDetected: root.stackView.replace(keycardNotEmptyPage)
+            onEmptyKeycardDetected: root.replace(createKeycardProfilePage)
+            onNotEmptyKeycardDetected: root.replace(keycardNotEmptyPage)
         }
     }
 
@@ -76,11 +66,11 @@ SQUtils.QObject {
         CreateKeycardProfilePage {
             onCreateKeycardProfileWithNewSeedphrase: {
                 d.withNewSeedphrase = true
-                root.stackView.push(keycardCreatePinPage)
+                root.push(keycardCreatePinPage)
             }
             onCreateKeycardProfileWithExistingSeedphrase: {
                 d.withNewSeedphrase = false
-                root.stackView.push(seedphrasePage)
+                root.push(seedphrasePage)
             }
         }
     }
@@ -98,7 +88,7 @@ SQUtils.QObject {
         id: backupSeedIntroPage
 
         BackupSeedphraseIntro {
-            onBackupSeedphraseRequested: root.stackView.push(backupSeedAcksPage)
+            onBackupSeedphraseRequested: root.push(backupSeedAcksPage)
         }
     }
 
@@ -106,7 +96,7 @@ SQUtils.QObject {
         id: backupSeedAcksPage
 
         BackupSeedphraseAcks {
-            onBackupSeedphraseContinue: root.stackView.push(backupSeedRevealPage)
+            onBackupSeedphraseContinue: root.push(backupSeedRevealPage)
         }
     }
 
@@ -118,7 +108,7 @@ SQUtils.QObject {
 
             onBackupSeedphraseConfirmed: {
                 root.seedphraseSubmitted(d.mnemonic)
-                root.stackView.push(backupSeedVerifyPage)
+                root.push(backupSeedVerifyPage)
             }
         }
     }
@@ -128,7 +118,7 @@ SQUtils.QObject {
         BackupSeedphraseVerify {
             mnemonic: d.mnemonic
             countToVerify: 4
-            onBackupSeedphraseVerified: root.stackView.push(backupSeedOutroPage)
+            onBackupSeedphraseVerified: root.push(backupSeedOutroPage)
         }
     }
 
@@ -138,7 +128,7 @@ SQUtils.QObject {
         BackupSeedphraseOutro {
             onBackupSeedphraseRemovalConfirmed: {
                 root.loadMnemonicRequested()
-                root.stackView.push(addKeypairPage)
+                root.push(addKeypairPage)
             }
         }
     }
@@ -152,7 +142,7 @@ SQUtils.QObject {
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(keycardCreatePinPage)
+                root.push(keycardCreatePinPage)
             }
         }
     }
@@ -171,10 +161,10 @@ SQUtils.QObject {
 
             onFinished: {
                 if (d.withNewSeedphrase) {
-                    root.stackView.replace(backupSeedIntroPage)
+                    root.replace(backupSeedIntroPage)
                 } else {
                     root.loadMnemonicRequested()
-                    root.stackView.push(addKeypairPage)
+                    root.push(addKeypairPage)
                 }
             }
         }

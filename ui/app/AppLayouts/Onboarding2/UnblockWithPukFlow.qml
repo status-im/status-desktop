@@ -1,17 +1,13 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
-
-    required property StackView stackView
 
     required property int keycardState
     required property int pinSettingState
@@ -22,8 +18,11 @@ SQUtils.QObject {
     signal keycardFactoryResetRequested
     signal finished(bool success)
 
-    function init() {
-        root.stackView.push(d.initialComponent())
+    initialItem: d.initialComponent()
+
+    function reset() {
+        clear()
+        push(d.initialComponent())
     }
 
     QtObject {
@@ -53,9 +52,9 @@ SQUtils.QObject {
             unblockUsingSeedphraseAvailable: true
             factoryResetAvailable: !unblockWithPukAvailable
             onKeycardFactoryResetRequested: d.finishWithFactoryReset()
-            onEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)
-            onNotEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)
-            onUnblockWithPukRequested: root.stackView.push(keycardEnterPukPage)
+            onEmptyKeycardDetected: root.replace(keycardUnblockedPage)
+            onNotEmptyKeycardDetected: root.replace(keycardUnblockedPage)
+            onUnblockWithPukRequested: root.push(keycardEnterPukPage)
         }
     }
 
@@ -65,7 +64,7 @@ SQUtils.QObject {
         KeycardEnterPukPage {
             tryToSetPukFunction: root.tryToSetPukFunction
             remainingAttempts: root.remainingAttempts
-            onKeycardPukEntered: (puk) => root.stackView.replace(keycardCreatePinPage)
+            onKeycardPukEntered: (puk) => root.replace(keycardCreatePinPage)
             onKeycardFactoryResetRequested: d.finishWithFactoryReset()
         }
     }
@@ -78,8 +77,8 @@ SQUtils.QObject {
             authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
 
             onSetPinRequested: root.setPinRequested(pin)
-            onFinished: root.stackView.replace(keycardUnblockedPage,
-                                               { title: qsTr("Unblock successful") })
+            onFinished: root.replace(keycardUnblockedPage,
+                                     { title: qsTr("Unblock successful") })
         }
     }
 

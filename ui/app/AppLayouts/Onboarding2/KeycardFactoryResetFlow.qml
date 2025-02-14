@@ -1,41 +1,25 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
 
-    required property StackView stackView
     required property int keycardState
+    property bool fromLoginScreen
 
     signal performKeycardFactoryResetRequested
 
     signal finished
 
-    function init(fromLoginScreen = false) {
-        d.fromLoginScreen = fromLoginScreen
-        root.stackView.push(d.initialComponent())
-    }
-
-    QtObject {
-        id: d
-
-        property bool fromLoginScreen
-
-        function initialComponent() {
-            if (root.keycardState === Onboarding.KeycardState.FactoryResetting)
-                return keycardResetPageComponent
-            return keycardResetAcks
-        }
-    }
+    initialItem: root.keycardState === Onboarding.KeycardState.FactoryResetting
+                 ? keycardResetPageComponent : keycardResetAcks
 
     Component {
         id: keycardResetAcks
@@ -64,7 +48,7 @@ SQUtils.QObject {
                     enabled: ack.checked
                     onClicked: {
                         root.performKeycardFactoryResetRequested()
-                        root.stackView.replace(null, keycardResetPageComponent)
+                        root.replace(null, keycardResetPageComponent)
                     }
                 }
             ]
@@ -99,7 +83,8 @@ SQUtils.QObject {
                     visible: !keycardResetPage.resetting
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: 320
-                    text: d.fromLoginScreen ? qsTr("Back to Login screen") : qsTr("Log in or Create profile")
+                    text: root.fromLoginScreen ? qsTr("Back to Login screen")
+                                               : qsTr("Log in or Create profile")
                     onClicked: root.finished()
                 }
             ]

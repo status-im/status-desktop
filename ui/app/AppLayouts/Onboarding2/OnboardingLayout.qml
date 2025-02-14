@@ -24,8 +24,8 @@ Page {
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
-    readonly property alias stack: stack
-    readonly property string currentPageName: stack.currentItem ? Utils.objectTypeName(stack.currentItem) : ""
+    readonly property alias stack: onboardingFlow
+    readonly property string currentPageName: stack.topLevelItem ? Utils.objectTypeName(stack.topLevelItem) : ""
 
     signal shareUsageDataRequested(bool enabled)
 
@@ -41,11 +41,11 @@ Page {
 
     function restartFlow() {
         unload()
-        onboardingFlow.init()
+        onboardingFlow.restart()
     }
 
     function unload() {
-        stack.clear()
+        onboardingFlow.clear()
         d.resetState()
     }
 
@@ -121,46 +121,10 @@ Page {
         color: Theme.palette.background
     }
 
-    // page stack
-    OnboardingStackView {
-        id: stack
-
-        objectName: "stack"
-        anchors.fill: parent
-    }
-
-    // needs to be on top of the stack
-    // we're here only to provide the Back button feature
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.BackButton
-        cursorShape: undefined // don't override the cursor coming from the stack
-        enabled: backButton.visible
-        onClicked: stack.pop()
-    }
-
-    StatusBackButton {
-        id: backButton
-        width: 44
-        height: 44
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.margins: Theme.padding
-
-        opacity: stack.depth > 1 && !stack.busy && stack.backAvailable ? 1 : 0
-        visible: opacity > 0
-
-        Behavior on opacity {
-            NumberAnimation { duration: 100 }
-        }
-
-        onClicked: stack.pop()
-    }
-
     OnboardingFlow {
         id: onboardingFlow
 
-        stackView: stack
+        anchors.fill: parent
 
         loginAccountsModel: root.onboardingStore.loginAccountsModel
 
@@ -209,8 +173,38 @@ Page {
         onFinished: (flow) => d.finishFlow(flow)
     }
 
+    // needs to be on top of the stack
+    // we're here only to provide the Back button feature
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.BackButton
+        cursorShape: undefined // don't override the cursor coming from the stack
+        enabled: backButton.visible
+        onClicked: onboardingFlow.popTopLevelItem()
+    }
+
+    StatusBackButton {
+        id: backButton
+
+        width: 44
+        height: 44
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.margins: Theme.padding
+
+        opacity: onboardingFlow.depth > 1 && !onboardingFlow.topLevelStack.busy &&
+                 onboardingFlow.backAvailable ? 1 : 0
+        visible: opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: 100 }
+        }
+
+        onClicked: onboardingFlow.popTopLevelItem()
+    }
+
     Connections {
-        target: stack.currentItem
+        target: onboardingFlow.topLevelItem
         ignoreUnknownSignals: true
 
         function onOpenLink(link: string) {
