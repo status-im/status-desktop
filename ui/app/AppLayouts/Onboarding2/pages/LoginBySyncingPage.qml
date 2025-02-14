@@ -17,7 +17,7 @@ OnboardingPage {
 
     signal syncProceedWithConnectionString(string connectionString)
 
-    title: qsTr("Log in by syncing")
+    title: qsTr("Pair devices to sync")
 
     contentItem: Item {
         ColumnLayout {
@@ -35,7 +35,7 @@ OnboardingPage {
             }
             StatusBaseText {
                 Layout.fillWidth: true
-                Layout.topMargin: -12
+                Layout.topMargin: -Theme.bigPadding
                 text: qsTr("If you have Status on another device")
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
@@ -47,7 +47,6 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 validateConnectionString: root.validateConnectionString
 
-                secondTabName: qsTr("Enter code")
                 showBetaTag: false
 
                 onDisplayInstructions: instructionsPopup.createObject(root).open()

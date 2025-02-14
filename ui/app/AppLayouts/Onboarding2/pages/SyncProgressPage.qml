@@ -73,7 +73,7 @@ OnboardingPage {
             when: root.syncState === Onboarding.ProgressState.Failed
             PropertyChanges {
                 target: root
-                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Profile syncing failed") + "</font>"
+                title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Failed to pair devices") + "</font>"
             }
             PropertyChanges {
                 target: subtitle
@@ -165,7 +165,7 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: 240
                 id: tryAgainButton
-                text: qsTr("Try to sync again")
+                text: qsTr("Try to pair again")
                 visible: false
                 onClicked: root.restartSyncRequested()
             }
