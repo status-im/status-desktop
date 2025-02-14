@@ -52,6 +52,10 @@ SplitView {
                     return "0.25 USD"
                 }
 
+                fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                    return 0
+                }
+
                 onConfirmClicked: {
                     logs.logEvent("confirm clicked...")
                     logs.logEvent(`selected fee mode: ${txSettings.selectedFeeMode}`)
