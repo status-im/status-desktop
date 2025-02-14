@@ -64,10 +64,10 @@ SplitView {
         SplitView.fillHeight: true
 
         readonly property Item currentPage: {
-            if (stack.currentItem instanceof Loader)
-                return stack.currentItem.item
+            if (stack.topLevelItem instanceof Loader)
+                return stack.topLevelItem.item
 
-            return stack.currentItem
+            return stack.topLevelItem
         }
 
         onboardingStore: OnboardingStore {
@@ -386,21 +386,29 @@ SplitView {
             TextField {
                 Layout.fillWidth: true
 
+                function stackToText(stack) {
+                    let content = ""
+
+                    for (let i = 0; i < stack.depth; i++) {
+                        const stackEntry = stack.get(i, StackView.ForceLoad)
+
+                        if (stackEntry instanceof StackView)
+                            content += " [" + InspectionUtils.baseName(stackEntry) + ": " + stackToText(stackEntry) + "]"
+                        else
+                            content += " " + InspectionUtils.baseName(stackEntry instanceof Loader
+                                                                    ? stackEntry.item : stackEntry)
+                    }
+
+                    return content
+                }
+
                 text: {
                     const stack = onboarding.stack
 
                     // trigger change when only curret item changes on replace
-                    stack.currentItem
+                    stack.topLevelItem
 
-                    let content = `Stack (${stack.depth}):`
-
-                    for (let i = 0; i < stack.depth; i++) {
-                        const stackEntry = stack.get(i, StackView.ForceLoad)
-                        content += " " + InspectionUtils.baseName(stackEntry instanceof Loader
-                                                                  ? stackEntry.item : stackEntry)
-                    }
-
-                    return content
+                    return `Stack (${stack.totalDepth}): ${stackToText(stack)}`
                 }
 
                 background: null

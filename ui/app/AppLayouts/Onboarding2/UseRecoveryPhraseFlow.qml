@@ -1,12 +1,9 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
-
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
 
     enum Type {
@@ -15,7 +12,8 @@ SQUtils.QObject {
         Login
     }
 
-    required property StackView stackView
+    // https://bugreports.qt.io/browse/QTBUG-84269, required can be restored on Qt6
+    /*required*/ property int type
 
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
@@ -24,34 +22,31 @@ SQUtils.QObject {
     signal setPasswordRequested(string password)
     signal finished
 
-    function init(type = UseRecoveryPhraseFlow.Type.NewProfile) {
-        let title = ""
+    initialItem: SeedphrasePage {
+        isSeedPhraseValid: root.isSeedPhraseValid
 
-        if (type === UseRecoveryPhraseFlow.Type.NewProfile)
-            title = qsTr("Create profile using a recovery phrase")
-        else if (type === UseRecoveryPhraseFlow.Type.KeycardRecovery)
-            title = qsTr("Enter recovery phrase of lost Keycard")
-        else if (type === UseRecoveryPhraseFlow.Type.Login)
-            title = qsTr("Log in with your Status recovery phrase")
-
-        root.stackView.push(seedphrasePage, { title })
-    }
-
-    Component {
-        id: seedphrasePage
-
-        SeedphrasePage {
-            isSeedPhraseValid: root.isSeedPhraseValid
-
-            onSeedphraseSubmitted: (seedphrase) => {
-                root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(createPasswordPage)
+        title: {
+            switch (root.type) {
+            case UseRecoveryPhraseFlow.Type.NewProfile:
+                return qsTr("Create profile using a recovery phrase")
+            case UseRecoveryPhraseFlow.Type.KeycardRecovery:
+                return qsTr("Enter recovery phrase of lost Keycard")
+            case UseRecoveryPhraseFlow.Type.Login:
+                return qsTr("Log in with your Status recovery phrase")
             }
+
+            return ""
+        }
+
+        onSeedphraseSubmitted: (seedphrase) => {
+            root.seedphraseSubmitted(seedphrase)
+            root.push(createPasswordPage)
         }
     }
 
     Component {
         id: createPasswordPage
+
         CreatePasswordPage {
             passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 

@@ -10,7 +10,7 @@ import QtQuick.Controls 2.15
     a convenient way.
 */
 StackView {
-    // this stack of nested one if currentItem is RecursiveStackView, recusively
+    // this stack or nested one if currentItem is RecursiveStackView, recusively
     readonly property RecursiveStackView topLevelStack: {
         if (currentItem instanceof RecursiveStackView)
             return currentItem.topLevelStack
@@ -18,11 +18,11 @@ StackView {
         return this
     }
 
-    // busy flag of this stack of nested one if currentItem is
+    // busy flag of this stack or nested one if currentItem is
     // RecursiveStackView, recusively
     readonly property bool topLevelStackBusy: topLevelStack.busy
 
-    // currentItem of this stack of the nested stack if currentItem is
+    // currentItem of this stack or the nested stack if currentItem is
     // RecursiveStackView, recursively
     readonly property Item topLevelItem: {
         if (currentItem instanceof RecursiveStackView)
@@ -31,7 +31,7 @@ StackView {
         return currentItem
     }
 
-    // total depth taking into account depth of nested stacks
+    // total depth, taking into account depth of nested stacks
     readonly property int totalDepth: {
         if (currentItem instanceof RecursiveStackView)
             return depth - 1 + currentItem.depth

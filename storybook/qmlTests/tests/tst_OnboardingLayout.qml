@@ -156,17 +156,25 @@ Item {
         name: "OnboardingLayout"
         when: windowShown
 
-        function init() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root)
-
-            // disable animated transitions to speed-up tests
-            const stack = findChild(controlUnderTest, "stack")
+        function disableTransitions(stack) {
             stack.pushEnter = null
             stack.pushExit = null
             stack.popEnter = null
             stack.popExit = null
             stack.replaceEnter = null
             stack.replaceExit = null
+        }
+
+        function init() {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root)
+
+            // disable animated transitions to speed-up tests
+            const stack = controlUnderTest.stack
+
+            disableTransitions(stack)
+            stack.topLevelStackChanged.connect(() => {
+                disableTransitions(stack.topLevelStack)
+            })
         }
 
         function cleanup() {
@@ -191,15 +199,15 @@ Item {
             if (!stack || !pageClass)
                 fail("getCurrentPage: expected param 'stack' or 'pageClass' empty")
             verify(!!stack)
-            tryCompare(stack, "busy", false) // wait for page transitions to stop
+            tryCompare(stack, "topLevelStackBusy", false) // wait for page transitions to stop
 
-            if (stack.currentItem instanceof Loader) {
-                verify(stack.currentItem.item instanceof pageClass)
-                return stack.currentItem.item
+            if (stack.topLevelItem instanceof Loader) {
+                verify(stack.topLevelItem.item instanceof pageClass)
+                return stack.topLevelItem.item
             }
 
-            verify(stack.currentItem instanceof pageClass)
-            return stack.currentItem
+            verify(stack.topLevelItem instanceof pageClass)
+            return stack.topLevelItem
         }
 
         // common variant data for all flow related TDD tests
@@ -226,7 +234,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -338,7 +346,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -435,7 +443,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -482,7 +490,7 @@ Item {
             mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 7: Backup your recovery phrase (intro)
-            dynamicSpy.setup(stack, "currentItemChanged")
+            dynamicSpy.setup(stack, "topLevelItemChanged")
             tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, BackupSeedphraseIntro)
             const btnBackupSeedphrase = findChild(page, "btnBackupSeedphrase")
@@ -553,7 +561,7 @@ Item {
 
             // PAGE 13: Enable Biometrics
             if (data.biometrics) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -581,7 +589,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -640,7 +648,7 @@ Item {
             mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 8: Adding key pair to Keycard
-            dynamicSpy.setup(stack, "currentItemChanged")
+            dynamicSpy.setup(stack, "topLevelItemChanged")
             tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
@@ -648,7 +656,7 @@ Item {
 
             // PAGE 9: Enable Biometrics
             if (controlUnderTest.biometricsAvailable) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -676,7 +684,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -769,7 +777,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -862,7 +870,7 @@ Item {
             controlUnderTest.biometricsAvailable = data.biometrics
             mockDriver.existingPin = "123456"
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -909,7 +917,7 @@ Item {
 
             // PAGE 7: Enable Biometrics
             if (data.biometrics) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -1100,7 +1108,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Login screen
@@ -1185,7 +1193,7 @@ Item {
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
 
             // PAGE 1: Login screen
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             let page = getCurrentPage(stack, LoginScreen)
@@ -1240,7 +1248,7 @@ Item {
             mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 6: Adding key pair to Keycard
-            dynamicSpy.setup(stack, "currentItemChanged")
+            dynamicSpy.setup(stack, "topLevelItemChanged")
             tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
@@ -1290,7 +1298,7 @@ Item {
             mouseClick(button)
 
             tryVerify(() => {
-                const currentPage = controlUnderTest.stack.currentItem
+                const currentPage = controlUnderTest.stack.topLevelItem
                 return !!currentPage && currentPage instanceof data.landingPage
             })
 

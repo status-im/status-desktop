@@ -1,16 +1,10 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
-
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
-
-    required property StackView stackView
 
     required property int keycardState
     required property int addKeyPairState
@@ -33,22 +27,14 @@ SQUtils.QObject {
 
     signal finished
 
-    function init() {
-        root.stackView.push(d.initialComponent())
-    }
+    initialItem: {
+        if (root.keycardState === Onboarding.KeycardState.Empty)
+            return seedphrasePage
 
-    QtObject {
-        id: d
+        if (root.keycardState === Onboarding.KeycardState.NotEmpty)
+            return keycardNotEmptyPage
 
-        function initialComponent() {
-            if (root.keycardState === Onboarding.KeycardState.Empty)
-                return seedphrasePage
-
-            if (root.keycardState === Onboarding.KeycardState.NotEmpty)
-                return keycardNotEmptyPage
-
-            return keycardIntroPage
-        }
+        return keycardIntroPage
     }
 
     Component {
@@ -59,8 +45,8 @@ SQUtils.QObject {
             displayPromoBanner: root.displayKeycardPromoBanner
 
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
-            onEmptyKeycardDetected: root.stackView.replace(seedphrasePage)
-            onNotEmptyKeycardDetected: root.stackView.replace(keycardNotEmptyPage)
+            onEmptyKeycardDetected: root.replace(seedphrasePage)
+            onNotEmptyKeycardDetected: root.replace(keycardNotEmptyPage)
         }
     }
 
@@ -82,7 +68,7 @@ SQUtils.QObject {
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.stackView.push(keycardCreatePinPage)
+                root.push(keycardCreatePinPage)
             }
         }
     }
@@ -101,7 +87,7 @@ SQUtils.QObject {
 
             onFinished: {
                 root.loadMnemonicRequested()
-                root.stackView.push(addKeypairPage)
+                root.push(addKeypairPage)
             }
         }
     }
