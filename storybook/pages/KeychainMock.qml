@@ -55,6 +55,12 @@ Keychain {
         biometricsPopup.open()
     }
 
+    function requestHasCredential(account) {
+        const status = d.store[account] === undefined ? Keychain.StatusNotFound
+                                                      : Keychain.StatusSuccess
+        root.hasCredentialRequestCompleted(status)
+    }
+
     function cancelActiveRequest() {
         if (!d.loading)
             return

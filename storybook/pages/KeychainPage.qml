@@ -114,6 +114,12 @@ Page {
                 }
             }
             Button {
+                text: "Has"
+                onClicked: {
+                    loader.item.requestHasCredential(accountInput.text)
+                }
+            }
+            Button {
                 text: "Cancel"
                 onClicked: {
                     loader.item.cancelActiveRequest()
@@ -140,6 +146,10 @@ Page {
         function onGetCredentialRequestCompleted(status, password) {
             logs.logEvent("GetCredential", ["status", "password"], arguments)
             passwordInput.text = password
+        }
+
+        function onHasCredentialRequestCompleted(status) {
+            logs.logEvent("HasCredential", ["status"], arguments)
         }
     }
 }

@@ -140,6 +140,20 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
     });
 }
 
+void Keychain::requestHasCredential(const QString &account)
+{
+    if (m_future.isRunning()) {
+        return;
+    }
+
+    m_future = QtConcurrent::run([this, account]() {
+        setLoading(true);
+        const auto status = hasCredential(account);
+        emit hasCredentialRequestCompleted(status);
+        setLoading(false);
+    });
+}
+
 void Keychain::cancelActiveRequest()
 {
     if (m_activeAuthContext != nullptr)
@@ -241,5 +255,20 @@ Keychain::Status Keychain::getCredential(const QString &account, QString *out)
         *out = QString::fromNSString(dataString);
     }
 
+    return convertStatus(status);
+}
+
+Keychain::Status Keychain::hasCredential(const QString &account)
+{
+    NSDictionary *query = @{
+        (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
+        (__bridge id) kSecAttrService: m_service.toNSString(),
+        (__bridge id) kSecAttrAccount: account.toNSString(),
+        (__bridge id) kSecReturnData: @NO,
+        (__bridge id) kSecReturnAttributes: @YES,
+        (__bridge id) kSecMatchLimit: (__bridge id) kSecMatchLimitOne,
+    };
+
+    const auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, nil);
     return convertStatus(status);
 }

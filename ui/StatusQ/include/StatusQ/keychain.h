@@ -38,12 +38,14 @@ public:
     Q_INVOKABLE void requestSaveCredential(const QString &reason, const QString &account, const QString &password);
     Q_INVOKABLE void requestDeleteCredential(const QString &reason, const QString &account);
     Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
+    Q_INVOKABLE void requestHasCredential(const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:
     void saveCredentialRequestCompleted(Keychain::Status status);
     void deleteCredentialRequestCompleted(Keychain::Status status);
     void getCredentialRequestCompleted(Keychain::Status status, const QString &password);
+    void hasCredentialRequestCompleted(Keychain::Status status);
 
     void serviceChanged();
     void reasonChanged();
@@ -62,5 +64,6 @@ private:
     Status saveCredential(const QString &account, const QString &password);
     Status deleteCredential(const QString &account);
     Status getCredential(const QString &account, QString *out);
+    Status hasCredential(const QString &account);
 #endif
 };

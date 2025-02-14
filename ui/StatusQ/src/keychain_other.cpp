@@ -30,6 +30,15 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
     emit getCredentialRequestCompleted(Keychain::StatusNotSupported, {});
 }
 
+void Keychain::requestHasCredential(const QString &reason, const QString &account)
+{
+    Q_UNUSED(account);
+
+    qWarning() << "Keychain::requestHasCredential is intended to be called only on MacOS.";
+
+    emit hasCredentialRequestCompleted(Keychain::StatusNotSupported, {});
+}
+
 void Keychain::cancelActiveRequest()
 {
     qWarning() << "Keychain::cancelActiveRequest is intended to be called only on MacOS.";
