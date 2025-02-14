@@ -33,6 +33,10 @@ QtObject {
         _walletSectionSendInst.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
     }
 
+    function getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei) {
+        return _walletSectionSendInst.getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei)
+    }
+
     Component.onCompleted: {
         _walletSectionSendInst.suggestedRoutesReady.connect(suggestedRoutesReady)
         _walletSectionSendInst.transactionSent.connect(transactionSent)
