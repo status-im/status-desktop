@@ -116,6 +116,9 @@ proc setCustomTxDetails*(self: Controller, nonce: int, gasAmount: int, maxFeesPe
     return self.transactionService.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid,
     pathName, chainId, isApprovalTx, communityId)
 
+proc getEstimatedTime*(self: Controller, chainId: int, maxFeesPerGas: string, priorityFee: string): int =
+    self.transactionService.getEstimatedTimeV2(chainId, maxFeesPerGas, priorityFee)
+
 proc getCurrentNetworks*(self: Controller): seq[NetworkItem] =
   return self.networkService.getCurrentNetworks()
 
