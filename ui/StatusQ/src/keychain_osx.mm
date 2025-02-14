@@ -162,13 +162,6 @@ void Keychain::cancelActiveRequest()
 
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
-    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
-
-    if (authStatus != StatusSuccess) {
-        return authStatus;
-    }
-
     CFErrorRef error = NULL;
     auto flags = kSecAccessControlBiometryCurrentSet | kSecAccessControlOr | kSecAccessControlWatch;
     auto accessControl = SecAccessControlCreateWithFlags(NULL,
@@ -190,7 +183,6 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
         //                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
-        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
 
     SecItemDelete((__bridge CFDictionaryRef) query);                  // Ensure old item is removed
@@ -206,18 +198,10 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
 
 Keychain::Status Keychain::deleteCredential(const QString &account)
 {
-    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
-
-    if (authStatus != StatusSuccess) {
-        return authStatus;
-    }
-
     NSDictionary *query = @{
         (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
         (__bridge id) kSecAttrService: m_service.toNSString(),
         (__bridge id) kSecAttrAccount: account.toNSString(),
-        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
     if (status != errSecSuccess) {

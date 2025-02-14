@@ -21,7 +21,6 @@ Keychain {
         property bool loading: false
         property string key
         property string value
-        property string operation // save, delete, get
         property var store: ({})
 
         BiometricsPopup {
@@ -34,24 +33,18 @@ Keychain {
 
     // shadowing Keychain's functions
     function requestSaveCredential(reason, account, password) {
-        d.loading = true
-        d.key = account
-        d.value = password
-        d.operation = "save"
-        biometricsPopup.open()
+        d.store[account] = password
+        root.saveCredentialRequestCompleted(Keychain.StatusSuccess)
     }
 
     function requestDeleteCredential(reason, account) {
-        d.loading = true
-        d.key = account
-        d.operation = "delete"
-        biometricsPopup.open()
+        delete d.store[account]
+        root.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
     }
 
     function requestGetCredential(reason, account) {
         d.loading = true
         d.key = account
-        d.operation = "get"
         biometricsPopup.open()
     }
 
@@ -75,39 +68,18 @@ Keychain {
         function onObtainingPasswordSuccess(password) {
             d.loading = false
 
-            switch (d.operation) {
-            case "get":
-                const value = d.store[d.key]
-                let rc = Keychain.StatusSuccess
-                if (value === undefined)
-                    rc = Keychain.StatusNotFound
-                root.getCredentialRequestCompleted(rc, value)
-                break
-            case "save":
-                d.store[d.key] = d.value
-                root.saveCredentialRequestCompleted(Keychain.StatusSuccess)
-                break;
-            case "delete":
-                delete d.store[d.key]
-                root.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
-                break;
-            }
+            const value = d.store[d.key]
+            const status = (value === undefined) ? Keychain.StatusNotFound
+                                                 : Keychain.StatusSuccess
+
+            console.log(JSON.stringify(d.store))
+
+            root.getCredentialRequestCompleted(status, value)
         }
 
         function onCancelled() {
             d.loading = false
-
-            switch (d.operation) {
-            case "get":
-                root.getCredentialRequestCompleted(Keychain.StatusCancelled, "")
-                break;
-            case "save":
-                root.saveCredentialRequestCompleted(Keychain.StatusCancelled)
-                break;
-            case "delete":
-                root.deleteCredentialRequestCompleted(Keychain.StatusCancelled)
-                break;
-            }
+            root.getCredentialRequestCompleted(Keychain.StatusCancelled, "")
         }
     }
 }
