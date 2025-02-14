@@ -17,10 +17,13 @@ type
   SuggestedLevelsForMaxFeesPerGasDto* = ref object
     low*: UInt256
     lowPriority*: UInt256
+    lowEstimatedTime*: int
     medium*: UInt256
     mediumPriority*: UInt256
+    mediumEstimatedTime*: int
     high*: UInt256
     highPriority*: UInt256
+    highEstimatedTime*: int
 
 type
   TransactionPathDtoV2* = ref object
@@ -81,14 +84,17 @@ proc toSuggestedLevelsForMaxFeesPerGasDto*(jsonObj: JsonNode): SuggestedLevelsFo
     result.low = stint.fromHex(UInt256, $value)
   if jsonObj.getProp("lowPriority", value):
     result.lowPriority = stint.fromHex(UInt256, $value)
+  discard jsonObj.getProp("lowEstimatedTime", result.lowEstimatedTime)
   if jsonObj.getProp("medium", value):
     result.medium = stint.fromHex(UInt256, $value)
   if jsonObj.getProp("mediumPriority", value):
     result.mediumPriority = stint.fromHex(UInt256, $value)
+  discard jsonObj.getProp("mediumEstimatedTime", result.mediumEstimatedTime)
   if jsonObj.getProp("high", value):
     result.high = stint.fromHex(UInt256, $value)
   if jsonObj.getProp("highPriority", value):
     result.highPriority = stint.fromHex(UInt256, $value)
+  discard jsonObj.getProp("highEstimatedTime", result.highEstimatedTime)
 
 proc toTransactionPathDtoV2*(jsonObj: JsonNode): TransactionPathDtoV2 =
   result = TransactionPathDtoV2()

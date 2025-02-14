@@ -14,10 +14,13 @@ QtObject:
     amountOut: string
     suggestedMaxFeesPerGasLowLevel: string
     suggestedPriorityFeePerGasLowLevel: string
+    suggestedEstimatedTimeLowLevel: int
     suggestedMaxFeesPerGasMediumLevel: string
     suggestedPriorityFeePerGasMediumLevel: string
+    suggestedEstimatedTimeMediumLevel: int
     suggestedMaxFeesPerGasHighLevel: string
     suggestedPriorityFeePerGasHighLevel: string
+    suggestedEstimatedTimeHighLevel: int
     suggestedMinPriorityFee: string
     suggestedMaxPriorityFee: string
     currentBaseFee: string
@@ -61,10 +64,13 @@ QtObject:
     amountOut: string,
     suggestedMaxFeesPerGasLowLevel: string,
     suggestedPriorityFeePerGasLowLevel: string,
+    suggestedEstimatedTimeLowLevel: int,
     suggestedMaxFeesPerGasMediumLevel: string,
     suggestedPriorityFeePerGasMediumLevel: string,
+    suggestedEstimatedTimeMediumLevel: int,
     suggestedMaxFeesPerGasHighLevel: string,
     suggestedPriorityFeePerGasHighLevel: string,
+    suggestedEstimatedTimeHighLevel: int,
     suggestedMinPriorityFee: string,
     suggestedMaxPriorityFee: string,
     currentBaseFee: string,
@@ -108,10 +114,13 @@ QtObject:
     self.amountOut = amountOut
     self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
     self.suggestedPriorityFeePerGasLowLevel = suggestedPriorityFeePerGasLowLevel
+    self.suggestedEstimatedTimeLowLevel = suggestedEstimatedTimeLowLevel
     self.suggestedMaxFeesPerGasMediumLevel = suggestedMaxFeesPerGasMediumLevel
     self.suggestedPriorityFeePerGasMediumLevel = suggestedPriorityFeePerGasMediumLevel
+    self.suggestedEstimatedTimeMediumLevel = suggestedEstimatedTimeMediumLevel
     self.suggestedMaxFeesPerGasHighLevel = suggestedMaxFeesPerGasHighLevel
     self.suggestedPriorityFeePerGasHighLevel = suggestedPriorityFeePerGasHighLevel
+    self.suggestedEstimatedTimeHighLevel = suggestedEstimatedTimeHighLevel
     self.suggestedMinPriorityFee = suggestedMinPriorityFee
     self.suggestedMaxPriorityFee = suggestedMaxPriorityFee
     self.currentBaseFee = currentBaseFee
@@ -158,10 +167,13 @@ QtObject:
     amountOut: string,
     suggestedMaxFeesPerGasLowLevel: string,
     suggestedPriorityFeePerGasLowLevel: string,
+    suggestedEstimatedTimeLowLevel: int,
     suggestedMaxFeesPerGasMediumLevel: string,
     suggestedPriorityFeePerGasMediumLevel: string,
+    suggestedEstimatedTimeMediumLevel: int,
     suggestedMaxFeesPerGasHighLevel: string,
     suggestedPriorityFeePerGasHighLevel: string,
+    suggestedEstimatedTimeHighLevel: int,
     suggestedMinPriorityFee: string,
     suggestedMaxPriorityFee: string,
     currentBaseFee: string,
@@ -195,14 +207,54 @@ QtObject:
     approvalL1Fee: string
   ): PathItem =
     new(result, delete)
-    result.setup(processorName, fromChain, toChain, fromToken, toToken, amountIn, amountInLocked, amountOut,
-      suggestedMaxFeesPerGasLowLevel, suggestedPriorityFeePerGasLowLevel, suggestedMaxFeesPerGasMediumLevel,
-      suggestedPriorityFeePerGasMediumLevel, suggestedMaxFeesPerGasHighLevel, suggestedPriorityFeePerGasHighLevel,
-      suggestedMinPriorityFee, suggestedMaxPriorityFee, currentBaseFee, suggestedTxNonce, suggestedTxGasAmount,
-      suggestedApprovalTxNonce, suggestedApprovalGasAmount, txNonce, txGasFeeMode, txMaxFeesPerGas, txBaseFee,
-      txPriorityFee, txGasAmount, txBonderFees, txTokenFees, txEstimatedTime, txFee, txL1Fee, txTotalFee,
-      approvalRequired, approvalAmountRequired, approvalContractAddress, approvalTxNonce, approvalGasFeeMode,
-      approvalMaxFeesPerGas, approvalBaseFee, approvalPriorityFee, approvalGasAmount, approvalEstimatedTime, approvalFee,
+    result.setup(
+      processorName,
+      fromChain,
+      toChain,
+      fromToken,
+      toToken,
+      amountIn,
+      amountInLocked,
+      amountOut,
+      suggestedMaxFeesPerGasLowLevel,
+      suggestedPriorityFeePerGasLowLevel,
+      suggestedEstimatedTimeLowLevel,
+      suggestedMaxFeesPerGasMediumLevel,
+      suggestedPriorityFeePerGasMediumLevel,
+      suggestedEstimatedTimeMediumLevel,
+      suggestedMaxFeesPerGasHighLevel,
+      suggestedPriorityFeePerGasHighLevel,
+      suggestedEstimatedTimeHighLevel,
+      suggestedMinPriorityFee,
+      suggestedMaxPriorityFee,
+      currentBaseFee,
+      suggestedTxNonce,
+      suggestedTxGasAmount,
+      suggestedApprovalTxNonce,
+      suggestedApprovalGasAmount,
+      txNonce,
+      txGasFeeMode,
+      txMaxFeesPerGas,
+      txBaseFee,
+      txPriorityFee,
+      txGasAmount,
+      txBonderFees,
+      txTokenFees,
+      txEstimatedTime,
+      txFee,
+      txL1Fee,
+      txTotalFee,
+      approvalRequired,
+      approvalAmountRequired,
+      approvalContractAddress,
+      approvalTxNonce,
+      approvalGasFeeMode,
+      approvalMaxFeesPerGas,
+      approvalBaseFee,
+      approvalPriorityFee,
+      approvalGasAmount,
+      approvalEstimatedTime,
+      approvalFee,
       approvalL1Fee)
 
   proc `$`*(self: PathItem): string =
@@ -217,10 +269,13 @@ QtObject:
     result &= "\namountOut: " & $self.amountOut
     result &= "\nsuggestedMaxFeesPerGasLowLevel: " & $self.suggestedMaxFeesPerGasLowLevel
     result &= "\nsuggestedPriorityFeePerGasLowLevel: " & $self.suggestedPriorityFeePerGasLowLevel
+    result &= "\nsuggestedEstimatedTimeLowLevel: " & $self.suggestedEstimatedTimeLowLevel
     result &= "\nsuggestedMaxFeesPerGasMediumLevel: " & $self.suggestedMaxFeesPerGasMediumLevel
     result &= "\nsuggestedPriorityFeePerGasMediumLevel: " & $self.suggestedPriorityFeePerGasMediumLevel
+    result &= "\nsuggestedEstimatedTimeMediumLevel: " & $self.suggestedEstimatedTimeMediumLevel
     result &= "\nsuggestedMaxFeesPerGasHighLevel: " & $self.suggestedMaxFeesPerGasHighLevel
     result &= "\nsuggestedPriorityFeePerGasHighLevel: " & $self.suggestedPriorityFeePerGasHighLevel
+    result &= "\nsuggestedEstimatedTimeHighLevel: " & $self.suggestedEstimatedTimeHighLevel
     result &= "\nsuggestedMinPriorityFee: " & $self.suggestedMinPriorityFee
     result &= "\nsuggestedMaxPriorityFee: " & $self.suggestedMaxPriorityFee
     result &= "\ncurrentBaseFee: " & $self.currentBaseFee
@@ -284,17 +339,26 @@ QtObject:
   proc suggestedPriorityFeePerGasLowLevel*(self: PathItem): string =
     return self.suggestedPriorityFeePerGasLowLevel
 
+  proc suggestedEstimatedTimeLowLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeLowLevel
+
   proc suggestedMaxFeesPerGasMediumLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasMediumLevel
 
   proc suggestedPriorityFeePerGasMediumLevel*(self: PathItem): string =
     return self.suggestedPriorityFeePerGasMediumLevel
 
+  proc suggestedEstimatedTimeMediumLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeMediumLevel
+
   proc suggestedMaxFeesPerGasHighLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasHighLevel
 
   proc suggestedPriorityFeePerGasHighLevel*(self: PathItem): string =
     return self.suggestedPriorityFeePerGasHighLevel
+
+  proc suggestedEstimatedTimeHighLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeHighLevel
 
   proc suggestedMinPriorityFee*(self: PathItem): string =
     return self.suggestedMinPriorityFee

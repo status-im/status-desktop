@@ -8,6 +8,8 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 
+import AppLayouts.Wallet 1.0
+
 import shared.controls 1.0
 import shared.popups 1.0
 import utils 1.0
@@ -42,6 +44,7 @@ Rectangle {
     required property int selectedFeeMode
 
     required property var fnGetPriceInCurrencyForFee
+    required property var fnGetEstimatedTime
 
     signal confirmClicked()
     signal cancelClicked()
@@ -106,7 +109,9 @@ Rectangle {
             const priorityFeeWei = Utils.gweiToWei(customPriorityFeeInput.text)
             const totalFee = SQUtils.AmountsArithmetic.sum(baseFeeWei, priorityFeeWei)
             const feeInWei = SQUtils.AmountsArithmetic.times(totalFee, SQUtils.AmountsArithmetic.fromString(customGasAmountInput.text)).toFixed()
+            const estimatedTime = root.fnGetEstimatedTime(totalFee.toFixed(), priorityFeeWei.toFixed())
             optionCustom.subText = root.fnGetPriceInCurrencyForFee(feeInWei)
+            optionCustom.additionalText = WalletUtils.formatEstimatedTime(estimatedTime)
         }
     }
 
@@ -174,7 +179,7 @@ Rectangle {
                     type: StatusFeeOption.Type.Normal
                     selected: root.selectedFeeMode === StatusFeeOption.Type.Normal
                     showSubText: true
-//                    showAdditionalText: true // TODO: temoporary disabled until we figure out how to estimate time more granularly
+                    showAdditionalText: true
 
                     onClicked: root.selectedFeeMode = StatusFeeOption.Type.Normal
                 }
@@ -184,7 +189,7 @@ Rectangle {
                     type: StatusFeeOption.Type.Fast
                     selected: root.selectedFeeMode === StatusFeeOption.Type.Fast
                     showSubText: true
-//                    showAdditionalText: true // TODO: temoporary disabled until we figure out how to estimate time more granularly
+                    showAdditionalText: true
 
                     onClicked: root.selectedFeeMode = StatusFeeOption.Type.Fast
                 }
@@ -194,7 +199,7 @@ Rectangle {
                     type: StatusFeeOption.Type.Urgent
                     selected: root.selectedFeeMode === StatusFeeOption.Type.Urgent
                     showSubText: true
-//                    showAdditionalText: true // TODO: temoporary disabled until we figure out how to estimate time more granularly
+                    showAdditionalText: true
 
                     onClicked: root.selectedFeeMode = StatusFeeOption.Type.Urgent
                 }
@@ -204,7 +209,7 @@ Rectangle {
                     type: StatusFeeOption.Type.Custom
                     selected: root.selectedFeeMode === StatusFeeOption.Type.Custom
                     showSubText: !!selected
-//                    showAdditionalText: !!selected // TODO: temoporary disabled until we figure out how to estimate time more granularly
+                    showAdditionalText: !!selected
                     unselectedText: "Set your own fees & nonce"
 
                     onClicked: root.selectedFeeMode = StatusFeeOption.Type.Custom

@@ -100,3 +100,6 @@ QtObject:
     routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) {.slot.} =
       self.delegate.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
         chainId, isApprovalTx, communityId)
+
+  proc getEstimatedTime*(self: View, chainId: int, maxFeesPerGas: string, priorityFee: string): int {.slot.} =
+    return self.delegate.getEstimatedTime(chainId, maxFeesPerGas, priorityFee)

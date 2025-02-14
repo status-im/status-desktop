@@ -11,6 +11,7 @@ import StatusQ.Components 0.1
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet 1.0
 
 import utils 1.0
 
@@ -113,6 +114,8 @@ SignTransactionModalBase {
 
     /** required function which receives fee in wei and recalculate it currency selected currency and format to locale string **/
     required property var fnGetPriceInCurrencyForFee
+    /** required function which receives base fee and priority fee in wei and returns estimated time in seconds **/
+    required property var fnGetEstimatedTime
 
     /** Signal to updated tx settings **/
     signal updateTxSettings(int selectedFeeMode, string customNonce, string customGasAmount, string maxFeesPerGas, string priorityFee)
@@ -234,6 +237,7 @@ SignTransactionModalBase {
     property Component internalPopup: TransactionSettings {
 
         fnGetPriceInCurrencyForFee: root.fnGetPriceInCurrencyForFee
+        fnGetEstimatedTime: root.fnGetEstimatedTime
 
         selectedFeeMode: root.selectedFeeMode
 
@@ -244,11 +248,11 @@ SignTransactionModalBase {
         currentNonce: root.currentNonce
 
         normalPrice: root.normalPrice
-        normalTime: root.normalTime
+        normalTime: WalletUtils.formatEstimatedTime(root.normalTime)
         fastPrice: root.fastPrice
-        fastTime: root.fastTime
+        fastTime: WalletUtils.formatEstimatedTime(root.fastTime)
         urgentPrice: root.urgentPrice
-        urgentTime: root.urgentTime
+        urgentTime: WalletUtils.formatEstimatedTime(root.urgentTime)
 
         function updateCustomFields() {
             // by default custom follows normal fee option

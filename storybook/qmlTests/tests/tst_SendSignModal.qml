@@ -75,6 +75,10 @@ Item {
                 return "0.25 USD"
             }
 
+            fnGetEstimatedTime: function(feeInWei) {
+                return 0
+            }
+
             fiatFees: "1.54 EUR"
             cryptoFees: "0.001 ETH"
             estimatedTime: qsTr("> 5 minutes")

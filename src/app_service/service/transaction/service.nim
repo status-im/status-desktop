@@ -519,6 +519,18 @@ QtObject:
       error "Error estimating transaction time", message = e.msg
       return EstimatedTime.Unknown
 
+  proc getEstimatedTimeV2*(self: Service, chainId: int, maxFeePerGas: string, priorityFee: string): int =
+    try:
+      let
+        bigMaxFeePerGas = common_utils.stringToUint256(maxFeePerGas)
+        bigPriorityFee = common_utils.stringToUint256(priorityFee)
+        maxFeePerGasHex = "0x" & eth_utils.stripLeadingZeros(bigMaxFeePerGas.toHex)
+        priorityFeeHex = "0x" & eth_utils.stripLeadingZeros(bigPriorityFee.toHex)
+      return backend.getTransactionEstimatedTimeV2(chainId, maxFeePerGasHex, priorityFeeHex).result.getInt
+    except Exception as e:
+      error "Error estimating transaction time", message = e.msg
+      return 0
+
   proc getLatestBlockNumber*(self: Service, chainId: int): string =
     try:
       let response = eth.getBlockByNumber(chainId, "latest")

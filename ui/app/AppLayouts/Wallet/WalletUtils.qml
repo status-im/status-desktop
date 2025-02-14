@@ -77,6 +77,13 @@ QtObject {
         }
     }
 
+    function formatEstimatedTime(estimatedTime) {
+        if (estimatedTime == 0 || estimatedTime >= 60) {
+            return qsTr(">60s")
+        }
+        return qsTr("~%1").arg(estimatedTime)
+    }
+
     function getRouterErrorBasedOnCode(code) {
         if (code === "") {
             return ""
