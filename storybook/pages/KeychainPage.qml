@@ -95,15 +95,13 @@ Page {
             Button {
                 text: "Save"
                 onClicked: {
-                    loader.item.requestSaveCredential("Save reason",
-                                                      accountInput.text, passwordInput.text)
+                    loader.item.requestSaveCredential(accountInput.text, passwordInput.text)
                 }
             }
             Button {
                 text: "Delete"
                 onClicked: {
-                    loader.item.requestDeleteCredential("Delete reason",
-                                                        accountInput.text)
+                    loader.item.requestDeleteCredential(accountInput.text)
                 }
             }
             Button {

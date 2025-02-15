@@ -35,8 +35,8 @@ public:
 
     bool loading() const;
 
-    Q_INVOKABLE void requestSaveCredential(const QString &reason, const QString &account, const QString &password);
-    Q_INVOKABLE void requestDeleteCredential(const QString &reason, const QString &account);
+    Q_INVOKABLE void requestSaveCredential(const QString &account, const QString &password);
+    Q_INVOKABLE void requestDeleteCredential(const QString &account);
     Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE void requestHasCredential(const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
@@ -53,7 +53,6 @@ signals:
 
 private:
     QString m_service;
-    QString m_reason;
     bool m_loading = false;
     void setLoading(bool loading);
 
@@ -63,7 +62,7 @@ private:
 #ifdef Q_OS_MACOS
     Status saveCredential(const QString &account, const QString &password);
     Status deleteCredential(const QString &account);
-    Status getCredential(const QString &account, QString *out);
+    Status getCredential(const QString &reason, const QString &account, QString *out);
     Status hasCredential(const QString &account);
 #endif
 };

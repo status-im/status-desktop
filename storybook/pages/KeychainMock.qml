@@ -32,12 +32,12 @@ Keychain {
     }
 
     // shadowing Keychain's functions
-    function requestSaveCredential(reason, account, password) {
+    function requestSaveCredential(account, password) {
         d.store[account] = password
         root.saveCredentialRequestCompleted(Keychain.StatusSuccess)
     }
 
-    function requestDeleteCredential(reason, account) {
+    function requestDeleteCredential(account) {
         delete d.store[account]
         root.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
     }
@@ -71,8 +71,6 @@ Keychain {
             const value = d.store[d.key]
             const status = (value === undefined) ? Keychain.StatusNotFound
                                                  : Keychain.StatusSuccess
-
-            console.log(JSON.stringify(d.store))
 
             root.getCredentialRequestCompleted(status, value)
         }

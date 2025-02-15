@@ -45,7 +45,7 @@ Keychain::~Keychain()
     m_future.waitForFinished();
 }
 
-Keychain::Status authenticate(QString &reason, LAContext **context)
+Keychain::Status authenticate(const QString &reason, LAContext **context)
 {
     if (context == nullptr)
         return Keychain::StatusGenericError;
@@ -91,13 +91,11 @@ Keychain::Status authenticate(QString &reason, LAContext **context)
     return Keychain::StatusSuccess;
 }
 
-void Keychain::requestSaveCredential(const QString &reason, const QString &account, const QString &password)
+void Keychain::requestSaveCredential(const QString &account, const QString &password)
 {
     if (m_future.isRunning()) {
         return;
     }
-
-    m_reason = reason;
 
     m_future = QtConcurrent::run([this, account, password]() {
         setLoading(true);
@@ -107,13 +105,11 @@ void Keychain::requestSaveCredential(const QString &reason, const QString &accou
     });
 }
 
-void Keychain::requestDeleteCredential(const QString &reason, const QString &account)
+void Keychain::requestDeleteCredential(const QString &account)
 {
     if (m_future.isRunning()) {
         return;
     }
-
-    m_reason = reason;
 
     m_future = QtConcurrent::run([this, account]() {
         setLoading(true);
@@ -129,12 +125,10 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
         return;
     }
 
-    m_reason = reason;
-
-    m_future = QtConcurrent::run([this, account]() {
+    m_future = QtConcurrent::run([this, reason, account]() {
         setLoading(true);
         QString credential;
-        const auto status = getCredential(account, &credential);
+        const auto status = getCredential(reason, account, &credential);
         emit getCredentialRequestCompleted(status, credential);
         setLoading(false);
     });
@@ -211,10 +205,10 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
     return convertStatus(status);
 }
 
-Keychain::Status Keychain::getCredential(const QString &account, QString *out)
+Keychain::Status Keychain::getCredential(const QString &reason, const QString &account, QString *out)
 {
     QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
+    const auto authStatus = authenticate(reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
         return authStatus;
