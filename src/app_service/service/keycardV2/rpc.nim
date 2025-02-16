@@ -1,4 +1,4 @@
-import json, chronicles
+import json
 import keycard_go
 
 var rpcCounter: int = 0
@@ -11,5 +11,4 @@ proc callRPC*(methodName: string, params: JsonNode = %*{}): string  =
       "params": %*[ params ],
     }
     let responseString = keycard_go.keycardCallRPC($request)
-    # debug "keycard RPC", request = $request, response = responseString
     return responseString
