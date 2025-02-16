@@ -8,18 +8,6 @@ import ../../../backend/response_type
 import ../../../constants as status_const
 import ./dto
 
-var rpcCounter: int = 0
-
-proc callRPC*(methodName: string, params: JsonNode = %*{}): string  =
-    rpcCounter += 1
-    let request = %*{
-      "id": rpcCounter,
-      "method": "keycard." & methodName,
-      "params": %*[ params ],
-    }
-    let response = keycard_go.keycardCallRPC($request)
-    return response
-
 include ../../common/mnemonics
 include async_tasks
 
