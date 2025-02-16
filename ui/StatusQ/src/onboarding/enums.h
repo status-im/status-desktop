@@ -82,10 +82,19 @@ public:
         Failed
     };
 
+    enum class AuthorizationState {
+        Idle,
+        InProgress,
+        Authorized,
+        WrongPin,
+        Error,
+    };
+
 private:
     Q_ENUM(PrimaryFlow)
     Q_ENUM(OnboardingFlow)
     Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
     Q_ENUM(ProgressState)
+    Q_ENUM(AuthorizationState)
 };

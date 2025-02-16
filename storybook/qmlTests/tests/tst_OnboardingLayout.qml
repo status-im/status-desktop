@@ -25,7 +25,7 @@ Item {
         id: mockDriver
         property int keycardState // enum Onboarding.KeycardState
         property int pinSettingState // enum Onboarding.ProgressState
-        property int authorizationState // enum Onboarding.ProgressState
+        property int authorizationState // enum Onboarding.AuthorizationState
         property int restoreKeysExportState // enum Onboarding.ProgressState
         property bool biometricsAvailable
         property string existingPin
@@ -57,7 +57,7 @@ Item {
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
                 readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
-                readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
+                readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.AuthorizationState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
                 property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
                 property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
@@ -172,7 +172,7 @@ Item {
         function cleanup() {
             mockDriver.keycardState = -1
             mockDriver.pinSettingState = Onboarding.ProgressState.Idle
-            mockDriver.authorizationState = Onboarding.ProgressState.Idle
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Idle
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Idle
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
@@ -479,7 +479,7 @@ Item {
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 7: Backup your recovery phrase (intro)
             dynamicSpy.setup(stack, "currentItemChanged")
@@ -637,7 +637,7 @@ Item {
             keyClickSequence(newPin + newPin) // set and repeat
             compare(dynamicSpy.signalArguments[0][0], newPin)
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
 
             // PAGE 8: Adding key pair to Keycard
             dynamicSpy.setup(stack, "currentItemChanged")
@@ -900,7 +900,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], mockDriver.existingPin)
 
             dynamicSpy.setup(controlUnderTest.onboardingStore, "exportRecoverKeysCalled")
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
             tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Extracting keys from Keycard
@@ -1237,7 +1237,7 @@ Item {
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
 
             // PAGE 6: Adding key pair to Keycard
             dynamicSpy.setup(stack, "currentItemChanged")

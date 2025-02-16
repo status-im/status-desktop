@@ -40,7 +40,7 @@ SplitView {
         store.keycardState = Onboarding.KeycardState.NoPCSCService
         store.addKeyPairState = Onboarding.ProgressState.Idle
         store.pinSettingState = Onboarding.ProgressState.Idle
-        store.authorizationState = Onboarding.ProgressState.Idle
+        store.authorizationState = Onboarding.AuthorizationState.Idle
         store.restoreKeysExportState = Onboarding.ProgressState.Idle
         store.syncState = Onboarding.ProgressState.Idle
         store.keycardRemainingPinAttempts = Constants.onboarding.defaultPinAttempts
@@ -76,7 +76,7 @@ SplitView {
             property int keycardState: Onboarding.KeycardState.NoPCSCService
             property int addKeyPairState: Onboarding.ProgressState.Idle
             property int pinSettingState: Onboarding.ProgressState.Idle
-            property int authorizationState: Onboarding.ProgressState.Idle
+            property int authorizationState: Onboarding.AuthorizationState.Idle
             property int restoreKeysExportState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
@@ -111,9 +111,9 @@ SplitView {
             function authorize(pin: string) {
                 logs.logEvent("OnboardingStore.authorize", ["pin"], arguments)
                 if (pin === mockDriver.pin)
-                    authorizationState = Onboarding.ProgressState.Success
+                    authorizationState = Onboarding.AuthorizationState.Authorized
                 else
-                    authorizationState = Onboarding.ProgressState.Failed
+                    authorizationState = Onboarding.AuthorizationState.WrongPin
             }
 
             function loadMnemonic(mnemonic: string) { // -> void
@@ -578,7 +578,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("ProgressState")
+                        model: Onboarding.getModelFromEnum("AuthorizationState")
 
                         RoundButton {
                             text: modelData.name
