@@ -292,13 +292,14 @@ method onKeycardStateUpdated*[T](self: Module[T], keycardEvent: KeycardEventDto)
 method onKeycardSetPinFailure*[T](self: Module[T], error: string) =
   self.view.setPinSettingState(ProgressState.Failed.int)
 
-method onKeycardAuthorizeFailure*[T](self: Module[T], error: string, authorized: bool) =
+method onKeycardAuthorizeFinished*[T](self: Module[T], error: string, authorized: bool) =
   if error != "":
     self.view.setAuthorizationState(AuthorizationState.Error)
   elif not authorized:
     self.view.setAuthorizationState(AuthorizationState.WrongPIN)
   else:
     self.view.setAuthorizationState(AuthorizationState.Authorized)
+    return
 
   if self.loginFlow == LoginMethod.Keycard:
     # We were trying to login and the authorization failed

@@ -72,9 +72,9 @@ proc init*(self: Controller) =
     self.delegate.onKeycardSetPinFailure(args.error)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_AUTHORIZE_FAILURE) do(e: Args):
+  handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_AUTHORIZE_FINISHED) do(e: Args):
     let args = KeycardAuthorizeEvent(e)
-    self.delegate.onKeycardAuthorizeFailure(args.error, args.authorized)
+    self.delegate.onKeycardAuthorizeFinished(args.error, args.authorized)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_LOAD_MNEMONIC_FAILURE) do(e: Args):

@@ -58,7 +58,7 @@ method onKeycardStateUpdated*(self: AccessInterface, keycardEvent: KeycardEventD
 method onKeycardSetPinFailure*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardAuthorizeFailure*(self: AccessInterface, error: string, authorized: bool) {.base.} =
+method onKeycardAuthorizeFinished*(self: AccessInterface, error: string, authorized: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardLoadMnemonicFailure*(self: AccessInterface, error: string) {.base.} =

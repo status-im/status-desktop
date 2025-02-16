@@ -637,7 +637,7 @@ Item {
             keyClickSequence(newPin + newPin) // set and repeat
             compare(dynamicSpy.signalArguments[0][0], newPin)
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 8: Adding key pair to Keycard
             dynamicSpy.setup(stack, "currentItemChanged")
@@ -900,7 +900,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], mockDriver.existingPin)
 
             dynamicSpy.setup(controlUnderTest.onboardingStore, "exportRecoverKeysCalled")
-            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
             tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Extracting keys from Keycard
@@ -1237,7 +1237,7 @@ Item {
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            mockDriver.authorizationState = Onboarding.ProgressState.Authorized
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 6: Adding key pair to Keycard
             dynamicSpy.setup(stack, "currentItemChanged")

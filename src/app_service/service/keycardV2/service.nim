@@ -19,7 +19,7 @@ const PUKLengthForStatusApp* = 12
 
 const SIGNAL_KEYCARD_STATE_UPDATED* = "keycardStateUpdated"
 const SIGNAL_KEYCARD_SET_PIN_FAILURE* = "keycardSetPinFailure"
-const SIGNAL_KEYCARD_AUTHORIZE_FAILURE* = "keycardAuthorizeFailure"
+const SIGNAL_KEYCARD_AUTHORIZE_FINISHED* = "keycardAuthorizeFinished"
 const SIGNAL_KEYCARD_LOAD_MNEMONIC_FAILURE* = "keycardLoadMnemonicFailure"
 const SIGNAL_KEYCARD_LOAD_MNEMONIC_SUCCESS* = "keycardLoadMnemonicSuccess"
 const SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_FAILURE* = "keycardExportRestoreKeysFailure"
@@ -33,6 +33,10 @@ type
 
   KeycardErrorArg* = ref object of Args
     error*: string
+
+  KeycardAuthorizeEvent* = ref object of Args
+    error*: string
+    authorized*: bool
 
   KeycardKeyUIDArg* = ref object of Args
     keyUID*: string
@@ -140,9 +144,16 @@ QtObject:
       let rpcResponseObj = responseObj["response"].getStr().parseJson()
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         raise newException(RpcException, rpcResponseObj["error"].getStr)
+      let resultObj = rpcResponseObj{"result"}
+      let event = KeycardAuthorizeEvent(
+        error: "",
+        authorized: resultObj{"authorized"}.getBool(),
+      )
+      self.events.emit(SIGNAL_KEYCARD_AUTHORIZE_FINISHED, event)
     except Exception as e:
       error "error during authorize: ", msg = e.msg
-      self.events.emit(SIGNAL_KEYCARD_AUTHORIZE_FAILURE, KeycardErrorArg(error: e.msg))
+      let event = KeycardAuthorizeEvent(error: e.msg, authorized: false)
+      self.events.emit(SIGNAL_KEYCARD_AUTHORIZE_FINISHED, event)
 
   proc receiveKeycardSignalV2(self: Service, signal: string) {.slot.} =
     try:
