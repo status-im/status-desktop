@@ -43,68 +43,57 @@ class LeftPanel(QObject):
     @allure.step('Choose back up seed phrase in settings')
     @handle_settings_opening(BackUpYourSeedPhrasePopUp, '18-MenuItem')
     def open_back_up_seed_phrase(self, click_attempts: int = 2) -> 'BackUpYourSeedPhrasePopUp':
-        assert BackUpYourSeedPhrasePopUp().wait_until_appears(), 'Back up your seed phrase modal was not opened'
-        return BackUpYourSeedPhrasePopUp()
+        return BackUpYourSeedPhrasePopUp().wait_until_appears()
 
     @allure.step('Open wallet settings')
     @handle_settings_opening(WalletSettingsView, '5-MenuItem')
     def open_wallet_settings(self, click_attempts: int = 2) -> 'WalletSettingsView':
-        assert WalletSettingsView().wait_until_appears(), 'Wallet view was not opened'
-        return WalletSettingsView()
+        return WalletSettingsView().wait_until_appears()
 
     @allure.step('Open messaging settings')
     @handle_settings_opening(MessagingSettingsView, '4-MenuItem')
     def open_messaging_settings(self, click_attempts: int = 2) -> 'MessagingSettingsView':
-        assert MessagingSettingsView().wait_until_appears(), 'Messaging settings view was not opened'
-        return MessagingSettingsView()
+        return MessagingSettingsView().wait_until_appears()
 
     @allure.step('Open communities settings')
     @handle_settings_opening(CommunitiesSettingsView, '12-MenuItem')
     def open_communities_settings(self, attempts: int = 2) -> 'CommunitiesSettingsView':
-        assert CommunitiesSettingsView().wait_until_appears(), 'Community settings view was not opened'
-        return CommunitiesSettingsView()
+        return CommunitiesSettingsView().wait_until_appears()
 
     @allure.step('Open profile settings')
     @handle_settings_opening(ProfileSettingsView, '0-MenuItem')
     def open_profile_settings(self, click_attempts: int = 2) -> 'ProfileSettingsView':
-        assert ProfileSettingsView().wait_until_appears(), 'Profile settings view was not opened'
-        return ProfileSettingsView()
+        return ProfileSettingsView().wait_until_appears()
 
     @allure.step('Open password settings')
     @handle_settings_opening(ChangePasswordView, '1-MenuItem')
     def open_password_settings(self, click_attempts: int = 2) -> 'ChangePasswordView':
-        assert ChangePasswordView().wait_until_appears(), 'Password settings view was not opened'
-        return ChangePasswordView()
+        return ChangePasswordView().wait_until_appears()
 
     @allure.step('Open syncing settings')
     @handle_settings_opening(SyncingSettingsView, '9-MenuItem')
     def open_syncing_settings(self, click_attempts: int = 2) -> 'SyncingSettingsView':
-        assert SyncingSettingsView().wait_until_appears(), 'Syncing settings view was not opened'
-        return SyncingSettingsView()
+        return SyncingSettingsView().wait_until_appears()
 
     @allure.step('Choose sign out and quit in settings')
     @handle_settings_opening(SignOutPopup, '17-MenuItem')
     def open_sign_out_and_quit(self, click_attempts: int = 2) -> 'SignOutPopup':
-        assert SignOutPopup().wait_until_appears(), 'Sign out modal was not opened'
-        return SignOutPopup()
+        return SignOutPopup().wait_until_appears()
 
     @allure.step('Open keycard settings')
     @handle_settings_opening(KeycardSettingsView, '13-MenuItem')
     def open_keycard_settings(self, click_attempts: int = 2) -> 'KeycardSettingsView':
-        assert KeycardSettingsView().wait_until_appears(), f'Keycard settings view was not opened'
-        return KeycardSettingsView()
+        return KeycardSettingsView().wait_until_appears()
 
     @allure.step('Open ENS usernames settings')
     @handle_settings_opening(ENSSettingsView, '3-MenuItem')
     def open_ens_usernames_settings(self, click_attempts: int = 2) -> 'ENSSettingsView':
-        assert ENSSettingsView().wait_until_appears(), 'ENS settings view was not opened'
-        return ENSSettingsView()
+        return ENSSettingsView().wait_until_appears()
 
     @allure.step('Open advanced settings')
     @handle_settings_opening(AdvancedSettingsView, '10-MenuItem')
     def open_advanced_settings(self, click_attempts: int = 2) -> 'AdvancedSettingsView':
-        assert AdvancedSettingsView().wait_until_appears(), 'Advanced settings view was not opened'
-        return AdvancedSettingsView()
+        return AdvancedSettingsView().wait_until_appears()
 
 
 class SettingsScreen(QObject):

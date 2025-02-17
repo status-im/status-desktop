@@ -20,12 +20,14 @@ def get_context(aut_id: str):
             return context
     except RuntimeError as error:
         LOG.error('AUT %s context has not been found', aut_id)
-        raise error
+        raise RuntimeError(f'No application context was found, {error}')
 
 
 @allure.step('Detaching')
 def detach():
     for ctx in driver.applicationContextList():
         ctx.detach()
-        assert squish.waitFor(lambda: not ctx.isRunning, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
+        if squish.waitFor(lambda: ctx.isRunning, configs.timeouts.APP_LOAD_TIMEOUT_MSEC):
+            LOG.error('Context %s is still running after the timeout', ctx)
+            raise TimeoutError(f'Context {ctx} is still running after {configs.timeouts.APP_LOAD_TIMEOUT_MSEC} ms')
     LOG.info('All AUTs detached')

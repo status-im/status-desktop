@@ -48,27 +48,34 @@ class AUT:
 
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type:
-            try:
-                self.attach()
-                driver.waitForObjectExists(statusDesktop_mainWindow).setVisible(True)
+            self.attach()
+            self._capture_screenshot()
+        self.stop()
+
+    def _capture_screenshot(self):
+        try:
+            main_window = driver.waitForObjectExists(statusDesktop_mainWindow, 500).setVisible(True)
+            if main_window:
                 configs.testpath.TEST.mkdir(parents=True, exist_ok=True)
                 screenshot = configs.testpath.TEST / f'{self.aut_id}.png'
 
-                rect = driver.object.globalBounds(driver.waitForObject(statusDesktop_mainWindow))
+                rect = driver.object.globalBounds(main_window)
                 img = ImageGrab.grab(
                     bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
-                    xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None)
+                    xdisplay=configs.system.DISPLAY if get_platform() == "Linux" else None
+                )
                 view = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
                 cv2.imwrite(str(screenshot), view)
 
                 allure.attach(
                     name=f'Screenshot on fail: {self.aut_id}',
                     body=screenshot.read_bytes(),
-                    attachment_type=allure.attachment_type.PNG)
-            except Exception as err:
-                LOG.error(err)
-
-        self.stop()
+                    attachment_type=allure.attachment_type.PNG
+                )
+            else:
+                LOG.info(f'Window not found; skipping screenshot')
+        except Exception as err:
+            LOG.info(f"Failed to capture screenshot: {err}")
 
     def detach_context(self):
         if self.ctx is None:
@@ -121,8 +128,8 @@ class AUT:
     def stop(self):
         LOG.info('Stopping AUT: %s', self.path)
         self.detach_context()
+        time.sleep(1)  # FIXME: Implement waiting for process to actually exit.
         local_system.kill_process(self.pid)
-        time.sleep(1) # FIXME: Implement waiting for process to actually exit.
 
     @allure.step("Start and attach AUT")
     def launch(self) -> 'AUT':
