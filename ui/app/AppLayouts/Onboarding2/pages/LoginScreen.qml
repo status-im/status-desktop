@@ -137,6 +137,10 @@ OnboardingPage {
             return
         }
 
+        // reset the biometrics status in case of error
+        d.biometricsFailed = false
+        d.biometricsSuccessful = false
+
         if (d.currentProfileIsKeycard) { // Login with keycard
             if (wrongPassword) {
                 keycardBox.loginError = ""
