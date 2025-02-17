@@ -83,3 +83,19 @@ proc asyncExportLoginKeysTask(argEncoded: string) {.gcsafe, nimcall.} =
     arg.finish(%* {
       "error": e.msg,
     })
+
+type
+  AsyncFactoryResetArg = ref object of QObjectTaskArg
+
+proc asyncFactoryResetTask(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncFactoryResetArg](argEncoded)
+  try:
+    let response = callRPC("FactoryReset")
+    arg.finish(%*{
+      "response": response,
+      "error": ""
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })

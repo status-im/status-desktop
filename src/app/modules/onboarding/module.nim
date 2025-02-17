@@ -334,6 +334,9 @@ method exportRecoverKeys*[T](self: Module[T]) =
   self.view.setRestoreKeysExportState(ProgressState.InProgress.int)
   self.controller.exportRecoverKeysFromKeycard()
 
+method startKeycardFactoryReset*[T](self: Module[T]) =
+  self.controller.startKeycardFactoryReset()
+
 method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
   return self.postOnboardingTasks
 

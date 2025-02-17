@@ -227,3 +227,6 @@ proc login*(
     chatPrivateKey,
     mnemonic,
   )
+
+proc startKeycardFactoryReset*(self: Controller) =
+  self.keycardServiceV2.asyncFactoryReset()
