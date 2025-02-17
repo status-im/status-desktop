@@ -7,6 +7,7 @@ import pyperclip
 import configs
 import constants
 import driver
+from constants import WalletAccount
 from driver.objects_access import walk_children
 from gui.components.context_menu import ContextMenu
 from gui.components.wallet.add_saved_address_popup import AddressPopup, EditSavedAddressPopup
@@ -47,26 +48,24 @@ class LeftPanel(QObject):
 
     @property
     @allure.step('Get all accounts from list')
-    def accounts(self) -> typing.List[constants.WalletAccount]:
+    def accounts(self) -> typing.List[WalletAccount]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
         time.sleep(1)  # to give a chance for the left panel to refresh
         raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
-        if len(raw_data) > 0:
-            try:
-                for account_item in raw_data:
-                    name = str(account_item.title)
-                    color = str(account_item.asset.color.name).lower()
-                    emoji = ''
-                    for child in walk_children(account_item):
-                        if hasattr(child, 'emojiId'):
-                            emoji = str(child.emojiId)
-                            break
-                    accounts.append(constants.WalletAccount(name, color, emoji.split('-')[0]))
-                return accounts
-            except LookupError as err:
-                raise err
+        if raw_data:
+            for account_item in raw_data:
+                name = str(account_item.title)
+                color = str(account_item.asset.color.name).lower()
+                emoji = ''
+                for child in walk_children(account_item):
+                    if hasattr(child, 'emojiId'):
+                        emoji = str(child.emojiId)
+                        break
+                accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
+            return accounts
+        raise LookupError('Accounts were not found')
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):
@@ -113,7 +112,7 @@ class LeftPanel(QObject):
     def open_edit_account_popup_from_context_menu(self, account_name: str) -> AccountPopup:
         context_menu = self._open_context_menu_for_account(account_name)
         context_menu.edit_from_context.click()
-        return AccountPopup().verify_edit_account_popup_present()
+        return AccountPopup().wait_until_appears().verify_edit_account_popup_present()
 
     @allure.step('Open account popup')
     def open_add_account_popup(self, attempt: int = 2):
