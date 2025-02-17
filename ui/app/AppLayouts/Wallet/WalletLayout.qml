@@ -207,7 +207,7 @@ Item {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
         onAcceptClicked: { RootStore.setHideSignPhraseModal(true); }
-        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal
+        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal && root.appMainVisible
     }
 
     SeedPhraseBackupWarning {
