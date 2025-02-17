@@ -7,6 +7,7 @@ QtObject:
   type WalletAccountItem* = ref object of QObject
     name: string
     address: string
+    mixedcaseAddress: string
     colorId: string
     emoji: string
     walletType: string
@@ -21,6 +22,7 @@ QtObject:
   proc setup*(self: WalletAccountItem,
     name: string = "",
     address: string = "",
+    mixedcaseAddress: string = "",
     colorId: string = "",
     emoji: string = "",
     walletType: string = "",
@@ -35,6 +37,7 @@ QtObject:
       self.QObject.setup
       self.name = name
       self.address = address
+      self.mixedcaseAddress = mixedcaseAddress
       self.colorId = colorId
       self.emoji = emoji
       self.walletType = walletType
@@ -52,6 +55,7 @@ QtObject:
   proc newWalletAccountItem*(
     name: string = "",
     address: string = "",
+    mixedcaseAddress: string = "",
     colorId: string = "",
     emoji: string = "",
     walletType: string = "",
@@ -81,6 +85,7 @@ QtObject:
     result = fmt"""WalletAccountItem(
       name: {self.name},
       address: {self.address},
+      mixedcaseAddress: {self.mixedcaseAddress},
       colorId: {self.colorId},
       emoji: {self.emoji},
       walletType: {self.walletType},
@@ -112,6 +117,14 @@ QtObject:
   QtProperty[string] address:
     read = address
     notify = addressChanged
+
+  proc mixedcaseAddressChanged*(self: WalletAccountItem) {.signal.}
+  proc mixedcaseAddress*(self: WalletAccountItem): string {.slot.} =
+    return self.mixedcaseAddress
+
+  QtProperty[string] mixedcaseAddress:
+    read = mixedcaseAddress
+    notify = mixedcaseAddressChanged
 
   proc colorIdChanged*(self: WalletAccountItem) {.signal.}
   proc colorId*(self: WalletAccountItem): string {.slot.} =

@@ -15,6 +15,7 @@ QtObject:
   proc setup*(self: Item,
     name: string,
     address: string,
+    mixedcaseAddress: string,
     path: string,
     colorId: string,
     walletType: string,
@@ -33,6 +34,7 @@ QtObject:
     self.QObject.setup
     self.WalletAccountItem.setup(name,
       address,
+      mixedcaseAddress,
       colorId,
       emoji,
       walletType,
@@ -55,6 +57,7 @@ QtObject:
   proc newItem*(
     name: string = "",
     address: string = "",
+    mixedcaseAddress: string = "",
     path: string = "",
     colorId: string = "",
     walletType: string = "",
@@ -73,6 +76,7 @@ QtObject:
     new(result, delete)
     result.setup(name,
       address,
+      mixedcaseAddress,
       path,
       colorId,
       walletType,

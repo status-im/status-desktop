@@ -69,7 +69,7 @@ Rectangle {
             address: {
                 if (!account)
                     return ""
-                return account.address
+                return account.mixedcaseAddress
             }
             name: account ? account.name : ""
             walletType: account ? account.walletType : ""
