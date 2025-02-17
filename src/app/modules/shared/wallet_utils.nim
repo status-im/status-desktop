@@ -19,6 +19,7 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
   return newWalletAccountItem(
     w.name,
     w.address,
+    w.mixedcaseAddress,
     w.colorId,
     w.emoji,
     w.walletType,
@@ -37,6 +38,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, isKeycardAccount: b
   return wallet_accounts_item.newItem(
     w.name,
     w.address,
+    w.mixedcaseAddress,
     w.path,
     w.colorId,
     w.walletType,
