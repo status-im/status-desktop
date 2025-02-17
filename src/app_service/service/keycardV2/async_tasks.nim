@@ -1,3 +1,5 @@
+import ./rpc
+
 type
   AsyncInitializeTaskArg = ref object of QObjectTaskArg
     pin: string

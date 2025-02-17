@@ -1,7 +1,7 @@
 import NimQml, chronicles, json, strutils
 import logging
 
-import io_interface
+import io_interface, states
 import view, controller
 
 import app/global/global_singleton
@@ -17,36 +17,10 @@ import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
 
 import ../startup/models/login_account_item as login_acc_item
 
-export io_interface
+export io_interface, states
 
 logScope:
   topics = "onboarding-module"
-
-# NOTE: Keep in sync with OnboardingFlow in ui/StatusQ/src/onboarding/enums.h
-type OnboardingFlow* {.pure} = enum
-  Unknown = 0,
-
-  CreateProfileWithPassword,
-  CreateProfileWithSeedphrase,
-  CreateProfileWithKeycardNewSeedphrase,
-  CreateProfileWithKeycardExistingSeedphrase,
-  
-  LoginWithSeedphrase,
-  LoginWithSyncing,
-  LoginWithKeycard,
-  LoginWithLostKeycardSeedphrase,
-  LoginWithRestoredKeycard
-
-type LoginMethod* {.pure} = enum
-  Unknown = 0,
-  Password,
-  Keycard,
-
-type ProgressState* {.pure.} = enum
-  Idle,
-  InProgress,
-  Success,
-  Failed,
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
