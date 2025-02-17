@@ -139,7 +139,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             main_screen.prepare()
             chat1 = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat1.open_banned_community(community.name, 0)
-            toast_messages = main_screen.wait_for_notification(timeout_msec=10000)
+            toast_messages = main_screen.wait_for_notification()
             assert len(toast_messages) == 1, \
                 f"Multiple toast messages appeared"
             message = toast_messages[0]
