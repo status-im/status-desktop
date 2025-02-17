@@ -108,6 +108,9 @@ StatusDialog {
     required property var recipientsModel
     required property var recipientsFilterModel
 
+    /** Maximum number of tab elements from all tabs in tab bar **/
+    property alias highestTabElementCount: recipientsPanel.highestTabElementCount
+
     /** Input property holds currently selected Fiat currency **/
     required property string currentCurrency
     /** Input function to format currency amount to locale string **/
@@ -346,35 +349,40 @@ StatusDialog {
         readonly property var lastTabSettings: Settings {
             property alias lastSelectedTab: sendModalHeader.tokenSelectorTab
         }
+
+        readonly property Timer enableAnimationTimer: Timer {
+            interval: 100
+            onTriggered: modalHeightBehavior.enabled = true
+        }
     }
 
     width: 556
     height: {
-        if (!selectedRecipientAddress)
-            return root.contentItem.Window.height - topMargin - margins
-        const amountToSendHeight = amountToSend.visible ? amountToSend.height : 0
+        const maxHeight = root.contentItem.Window.height - topMargin - margins
+        const feesHeight = (amountToSend.visible && !!selectedRecipientAddress) || feesLayout.visible ? feesLayout.height + Theme.xlPadding : 0
+        const recipientPanelHeight = recipientLabel.height + recipientsPanelLayout.spacing + Math.max(recipientsPanel.visualHeight)
         let contentHeight = Math.max(sendModalHeader.height +
-                                     amountToSendHeight +
-                                     recipientsPanelLayout.height +
-                                     feesLayout.height +
-                                     scrollViewLayout.spacing*3 +
-                                     28,
-                                     scrollView.implicitHeight) + footer.height
-
-        if (!!footer.errorTags && !feesLayout.visible) {
-            // Utilize empty space when fees are not visible and error is shown
-            contentHeight -= feesLayout.height
-        }
-        return contentHeight
+                                     (amountToSend.visible ? amountToSend.height : 0) +
+                                     recipientPanelHeight +
+                                     feesHeight +
+                                     bottomSpacer.height +
+                                     scrollViewLayout.spacing * 4,
+                                     scrollView.implicitHeight,
+                                     430) +
+                                     footer.height
+        return Math.min(maxHeight, contentHeight)
     }
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
 
     Behavior on height {
-        enabled: !!root.selectedRecipientAddress
+        id: modalHeightBehavior
+        enabled: false
         NumberAnimation { duration: 100; easing: Easing.OutCurve }
     }
+
+    onOpened: d.enableAnimationTimer.start()
 
     background: StatusDialogBackground {
         color: Theme.palette.baseColor3
@@ -578,6 +586,7 @@ StatusDialog {
                     spacing: Theme.halfPadding
 
                     StatusBaseText {
+                        id: recipientLabel
                         elide: Text.ElideRight
                         text: qsTr("To")
                         Layout.alignment: Qt.AlignTop
@@ -585,7 +594,6 @@ StatusDialog {
                     Item {
                         Layout.alignment: Qt.AlignTop
                         Layout.fillWidth: true
-                        Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
                         implicitHeight: recipientsPanel.height
 
                         Rectangle {
@@ -595,7 +603,7 @@ StatusDialog {
                                 right: recipientsPanel.right
                             }
                             // Imitate recipient background and overflow the rectangle under footer
-                            height: recipientsPanel.emptyListVisible ? sendModalcontentItem.height : 0
+                            height: recipientsPanel.visualHeight
                             color: recipientsPanel.color
                             radius: recipientsPanel.radius
                         }
@@ -628,7 +636,6 @@ StatusDialog {
                     objectName: "feesLayout"
 
                     Layout.fillWidth: true
-                    Layout.bottomMargin: Theme.xlPadding
 
                     spacing: Theme.halfPadding
 
@@ -647,6 +654,12 @@ StatusDialog {
                         error: d.errNotEnoughGas
                     }
                     visible: root.allValuesFilledCorrectly
+                }
+
+                Item {
+                    id: bottomSpacer
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: (scrollView.contentHeight < scrollView.height + Theme.padding) ? 0 : Theme.xlPadding
                 }
             }
         }

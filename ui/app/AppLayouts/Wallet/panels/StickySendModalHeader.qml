@@ -104,6 +104,8 @@ Control {
 
         Rectangle {
             anchors.fill: parent
+            anchors.leftMargin: radius
+            anchors.rightMargin: radius
             color: foregroundRect.color
             visible: !!root.blurSource
             radius: 8
@@ -116,8 +118,8 @@ Control {
             ShaderEffectSource {
                 sourceItem: root.blurSource
                 anchors.fill: parent
-                anchors.leftMargin: Theme.xlPadding
-                anchors.rightMargin: -Theme.xlPadding
+                anchors.leftMargin: Theme.xlPadding - parent.radius
+                anchors.rightMargin: -Theme.xlPadding - parent.radius
                 sourceRect: Qt.rect(0, 0, width, height)
                 live: true
             }
@@ -126,24 +128,16 @@ Control {
         Rectangle {
             id: foregroundRect
             anchors.fill: parent
-            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3 : Theme.palette.transparent
+            color: root.implicitHeight > d.bottomMargin ? Theme.palette.alphaColor(Theme.palette.baseColor3, 0.85) : Theme.palette.transparent
             radius: 8
-            opacity: 0.85
 
             layer.enabled: true
             layer.effect: DropShadow {
                 horizontalOffset: 0
-                verticalOffset: 2
+                verticalOffset: 3
                 samples: 37
+                spread: 0.5
                 color: Theme.palette.dropShadow
-            }
-
-            // cover for the bottom rounded corners
-            Rectangle {
-                width: parent.width
-                height: parent.radius
-                anchors.bottom: parent.bottom
-                color: parent.color
             }
 
             StatusDialogDivider {
