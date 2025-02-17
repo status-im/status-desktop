@@ -493,7 +493,7 @@ class CreatePasswordView(OnboardingView):
     @property
     @allure.step('Get password error message')
     def password_error_message(self) -> str:
-        return self._password_view_object.object.errorMsgText
+        return self._password_view_object.object.strengthenText
 
     @allure.step('Click show icon by index')
     def click_show_icon(self, index):

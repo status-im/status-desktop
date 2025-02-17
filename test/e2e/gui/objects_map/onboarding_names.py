@@ -92,7 +92,7 @@ mainWindow_Create_password_StatusButton = {"checkable": False, "container": main
 mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
 mainWindow_RowLayout = {"container": statusDesktop_mainWindow, "type": "PassIncludesIndicator", "unnamed": 1, "visible": True}
 mainWindow_ComponentIndicator = {"container": statusDesktop_mainWindow, "type": "PasswordComponentIndicator", "unnamed": 1, "visible": True}
-mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": statusDesktop_mainWindow, "id": "strengthInditactor", "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
+mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": mainWindow_CreatePasswordView, "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
 mainWindow_show_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "show-icon", "type": "StatusIcon", "visible": True}
 mainWindow_hide_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "hide-icon", "type": "StatusIcon", "visible": True}
 
