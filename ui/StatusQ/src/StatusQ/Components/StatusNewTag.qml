@@ -4,9 +4,10 @@ import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components.private 0.1
 import StatusQ.Controls 0.1
 
-Item {
+Rectangle {
     id: root
 
     property alias text: contentText.text
@@ -14,33 +15,11 @@ Item {
 
     implicitWidth: Math.max(36, contentText.paintedWidth + Theme.padding)
     implicitHeight: 20
+    radius: height / 2
 
-    Rectangle {
-        width: parent.width
-        height: parent.height
-        anchors.centerIn: parent
-        radius: height / 2
-
-        layer.enabled: true
-        layer.effect: LinearGradient {
-            cached: true
-            start: Qt.point(0, 1.227 * height)
-            end: Qt.point(0.9 * width, 0)
-            gradient: Gradient {
-                GradientStop {
-                    position: 0.0
-                    color: "#2A799B"
-                }
-                GradientStop {
-                    position: 0.0817
-                    color: "#F6B03C"
-                }
-                GradientStop {
-                    position: 1.000
-                    color: "#FF33A3"
-                }
-            }
-        }
+    StatusNewItemGradient {
+        anchors.fill: parent
+        source: root
     }
 
     StatusBaseText {

@@ -27,7 +27,7 @@ SplitView {
 
         SplitView.fillHeight: true
 
-        RowLayout {
+        ColumnLayout {
             Label {
                 text: "Tooltip:"
             }

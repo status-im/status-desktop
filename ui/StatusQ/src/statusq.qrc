@@ -258,5 +258,6 @@
         <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
         <file>StatusQ/Validators/AmountValidator.qml</file>
         <file>StatusQ/Validators/qmldir</file>
+        <file>StatusQ/Components/private/StatusNewItemGradient.qml</file>
     </qresource>
 </RCC>

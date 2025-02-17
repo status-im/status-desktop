@@ -75,7 +75,7 @@ StatusComboBox {
                 asset.bgColor: Theme.palette.background
                 asset.bgHeight: 15
                 asset.isImage: true
-                asset.name: Theme.png("wallet/network-notification-dot")
+                asset.name: Theme.png("status-gradient-dot")
                 asset.color: Theme.palette.transparent
             }
         }
