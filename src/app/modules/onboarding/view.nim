@@ -1,5 +1,5 @@
 import NimQml
-import io_interface
+import io_interface, states
 from app_service/service/keycardV2/dto import KeycardEventDto
 
 # TODO move these files to this module when we remove the old onboarding
@@ -14,7 +14,7 @@ QtObject:
       syncState: int
       addKeyPairState: int
       pinSettingState: int
-      authorizationState: int
+      authorizationState: AuthorizationState
       restoreKeysExportState: int
       loginAccountsModel: login_acc_model.Model
       loginAccountsModelVariant: QVariant
@@ -60,11 +60,11 @@ QtObject:
 
   proc authorizationStateChanged*(self: View) {.signal.}
   proc getAuthorizationState*(self: View): int {.slot.} =
-    return self.authorizationState
+    return self.authorizationState.int
   QtProperty[int] authorizationState:
     read = getAuthorizationState
     notify = authorizationStateChanged
-  proc setAuthorizationState*(self: View, authorizationState: int) =
+  proc setAuthorizationState*(self: View, authorizationState: AuthorizationState) =
     self.authorizationState = authorizationState
     self.authorizationStateChanged()
 

@@ -24,8 +24,8 @@ QtObject {
     // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
     readonly property int pinSettingState: d.onboardingModuleInst.pinSettingState // cf. enum Onboarding.ProgressState
-    readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.ProgressState
-    readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.ProgressState
+    readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.AuthorizationState
+    readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.AuthorizationState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
     readonly property int keycardRemainingPukAttempts: d.onboardingModuleInst.keycardRemainingPukAttempts
 

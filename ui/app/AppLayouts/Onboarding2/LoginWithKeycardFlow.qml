@@ -81,12 +81,11 @@ SQUtils.QObject {
 
             state: {
                 switch (root.authorizationState) {
-                case Onboarding.ProgressState.Success:
+                case Onboarding.AuthorizationState.Authorized:
                     return KeycardEnterPinPage.State.Success
-                case Onboarding.ProgressState.InProgress:
+                case Onboarding.AuthorizationState.InProgress:
                     return KeycardEnterPinPage.State.InProgress
-                // workaround by mapping all failures as wrong pin (#17289)
-                case Onboarding.ProgressState.Failed:
+                case Onboarding.AuthorizationState.WrongPin:
                     return KeycardEnterPinPage.State.WrongPin
                 }
 
@@ -105,7 +104,7 @@ SQUtils.QObject {
                 enabled: page.visible
 
                 function onAuthorizationStateChanged() {
-                    if (root.authorizationState !== Onboarding.ProgressState.Success)
+                    if (root.authorizationState !== Onboarding.AuthorizationState.Authorized)
                         return
 
                     const doNext = () => {

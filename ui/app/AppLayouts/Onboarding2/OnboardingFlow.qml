@@ -99,10 +99,17 @@ SQUtils.QObject {
             termsOfUsePopup.createObject(root.stackView).open()
         }
 
-        function handleKeycardFailedState(state) {
-            if (state !== Onboarding.ProgressState.Failed)
-                return
+        function handleKeycardProgressFailedState(state) {
+            if (state === Onboarding.ProgressState.Failed)
+                handleKeycardFailedState()
+        }
 
+        function handleKeycardAuthorizationErrorState(state) {
+            if (state === Onboarding.AuthorizationState.Error)
+                handleKeycardFailedState()
+        }
+
+        function handleKeycardFailedState() {
             // find index of first page in the flow
             let idx = 0
             const entryItem = stackView.find((item, index) => {
@@ -111,7 +118,7 @@ SQUtils.QObject {
                 return item instanceof Loader
             })
 
-            // when the initial page is not found, bacause e.g. the flow is not initialized
+            // when the initial page is not found, because e.g. the flow is not initialized
             // or the stack was cleared
             if (!entryItem)
                 return
@@ -127,24 +134,19 @@ SQUtils.QObject {
                  !(root.stackView.currentItem instanceof EnableBiometricsPage)
 
         function onPinSettingStateChanged() {
-            d.handleKeycardFailedState(pinSettingState)
+            d.handleKeycardProgressFailedState(pinSettingState)
         }
 
         function onAuthorizationStateChanged() {
-            // workaround for entering pin because currently there is not possible
-            // to distinguish invalid pin and failed pin entering operation (#17289)
-            if (root.stackView.currentItem instanceof KeycardEnterPinPage)
-                return
-
-            d.handleKeycardFailedState(authorizationState)
+            d.handleKeycardAuthorizationErrorState(authorizationState)
         }
 
         function onRestoreKeysExportStateChanged() {
-            d.handleKeycardFailedState(restoreKeysExportState)
+            d.handleKeycardProgressFailedState(restoreKeysExportState)
         }
 
         function onAddKeyPairStateChanged() {
-            d.handleKeycardFailedState(addKeyPairState)
+            d.handleKeycardProgressFailedState(addKeyPairState)
         }
     }
 

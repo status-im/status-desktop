@@ -42,7 +42,7 @@ SQUtils.QObject {
 
         KeycardCreatePinDelayedPage {
             pinSettingState: root.pinSettingState
-            authorizationState: Onboarding.ProgressState.Success // authorization not needed
+            authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
 
             onSetPinRequested: root.setPinRequested(pin)
             onFinished: root.finished()

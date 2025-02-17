@@ -99,7 +99,7 @@ method initialize*[T](self: Module[T], pin: string) =
   self.controller.initialize(pin)
 
 method authorize*[T](self: Module[T], pin: string) =
-  self.view.setAuthorizationState(ProgressState.InProgress.int)
+  self.view.setAuthorizationState(AuthorizationState.InProgress)
   self.controller.authorize(pin)
 
 method getPasswordStrengthScore*[T](self: Module[T], password, userName: string): int =
@@ -287,20 +287,23 @@ method onKeycardStateUpdated*[T](self: Module[T], keycardEvent: KeycardEventDto)
 
   if keycardEvent.state == KeycardState.Authorized and self.view.getAuthorizationState() == ProgressState.InProgress.int:
     # We just finished authorizing
-    self.view.setAuthorizationState(ProgressState.Success.int)
+    self.view.setAuthorizationState(AuthorizationState.Authorized)
 
 method onKeycardSetPinFailure*[T](self: Module[T], error: string) =
   self.view.setPinSettingState(ProgressState.Failed.int)
 
-method onKeycardAuthorizeFailure*[T](self: Module[T], error: string) =
-  self.view.setAuthorizationState(ProgressState.Failed.int)
+method onKeycardAuthorizeFinished*[T](self: Module[T], error: string, authorized: bool) =
+  if error != "":
+    self.view.setAuthorizationState(AuthorizationState.Error)
+  elif not authorized:
+    self.view.setAuthorizationState(AuthorizationState.WrongPIN)
+  else:
+    self.view.setAuthorizationState(AuthorizationState.Authorized)
+    return
 
   if self.loginFlow == LoginMethod.Keycard:
     # We were trying to login and the authorization failed
-    var wrongPassword = false
-    if error.contains("wrong pin"):
-      wrongPassword = true
-    self.view.accountLoginError(error, wrongPassword)
+    self.view.accountLoginError(error, not authorized)
 
 method onKeycardLoadMnemonicFailure*[T](self: Module[T], error: string) =
   self.view.setAddKeyPairState(ProgressState.Failed.int)
