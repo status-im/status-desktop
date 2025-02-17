@@ -32,14 +32,14 @@ Keychain {
     }
 
     // shadowing Keychain's functions
-    function requestSaveCredential(account, password) {
+    function saveCredential(account, password) {
         d.store[account] = password
-        root.saveCredentialRequestCompleted(Keychain.StatusSuccess)
+        return Keychain.StatusSuccess
     }
 
-    function requestDeleteCredential(account) {
+    function deleteCredential(account) {
         delete d.store[account]
-        root.deleteCredentialRequestCompleted(Keychain.StatusSuccess)
+        return Keychain.StatusSuccess
     }
 
     function requestGetCredential(reason, account) {
@@ -48,10 +48,9 @@ Keychain {
         biometricsPopup.open()
     }
 
-    function requestHasCredential(account) {
-        const status = d.store[account] === undefined ? Keychain.StatusNotFound
-                                                      : Keychain.StatusSuccess
-        root.hasCredentialRequestCompleted(status)
+    function hasCredential(account) {
+        return d.store[account] === undefined ? Keychain.StatusNotFound
+                                              : Keychain.StatusSuccess
     }
 
     function cancelActiveRequest() {

@@ -91,34 +91,6 @@ Keychain::Status authenticate(const QString &reason, LAContext **context)
     return Keychain::StatusSuccess;
 }
 
-void Keychain::requestSaveCredential(const QString &account, const QString &password)
-{
-    if (m_future.isRunning()) {
-        return;
-    }
-
-    m_future = QtConcurrent::run([this, account, password]() {
-        setLoading(true);
-        const auto status = saveCredential(account, password);
-        emit saveCredentialRequestCompleted(status);
-        setLoading(false);
-    });
-}
-
-void Keychain::requestDeleteCredential(const QString &account)
-{
-    if (m_future.isRunning()) {
-        return;
-    }
-
-    m_future = QtConcurrent::run([this, account]() {
-        setLoading(true);
-        const auto status = deleteCredential(account);
-        emit deleteCredentialRequestCompleted(status);
-        setLoading(false);
-    });
-}
-
 void Keychain::requestGetCredential(const QString &reason, const QString &account)
 {
     if (m_future.isRunning()) {
@@ -130,20 +102,6 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
         QString credential;
         const auto status = getCredential(reason, account, &credential);
         emit getCredentialRequestCompleted(status, credential);
-        setLoading(false);
-    });
-}
-
-void Keychain::requestHasCredential(const QString &account)
-{
-    if (m_future.isRunning()) {
-        return;
-    }
-
-    m_future = QtConcurrent::run([this, account]() {
-        setLoading(true);
-        const auto status = hasCredential(account);
-        emit hasCredentialRequestCompleted(status);
         setLoading(false);
     });
 }
