@@ -48,7 +48,7 @@ StatusListItem {
                 StatusSwitch {
                     id: isActiveSwitch
                     objectName: "isActiveSwitch_" + chainName
-                    enabled: root.isActive && root.isDeactivatable
+                    enabled: !root.isActive || root.isDeactivatable
                     checked: root.isActive
                     onToggled:{
                         checked = Qt.binding(() => root.isActive)

@@ -86,7 +86,7 @@ StatusListView {
             root.selection,
             root.multiSelection,
             d.networksCount]
-        onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => d.reprocessSelection())
+        onCombinedPropertyChangedHandlerChanged: d.reprocessSelection()
 
         readonly property bool allSelected: root.selection.length === d.networksCount
 
