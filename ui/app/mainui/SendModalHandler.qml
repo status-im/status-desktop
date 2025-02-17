@@ -432,6 +432,7 @@ QtObject {
             recipientsModel: handler.recipientViewAdaptor.recipientsModel
             recipientsFilterModel: handler.recipientViewAdaptor.recipientsFilterModel
 
+            highestTabElementCount: handler.recipientViewAdaptor.highestTabElementCount
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS

@@ -52,19 +52,26 @@ SplitView {
         }
 
         readonly property var savedAddressesModel: ListModel {
-            Component.onCompleted: {
-                for (let i = 0; i < 10; i++)
-                    append({
+            function populateModel(count) {
+                if (count <= 0)
+                    return
+
+                let data = []
+                for (let i = 0; i < count - 1; i++)
+                    data.push({
                                name: "some saved addr name " + i,
                                ens: "",
                                address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
                            })
-                append({
+                data.push({
                            name: "some saved ENS name ",
                            ens: "me@status.eth",
                            address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4",
                        })
+                append(data)
             }
+
+            Component.onCompleted: populateModel(savedAddressesCount.value)
         }
 
         property var setFees: Backpressure.debounce(root, 1500, function () {
@@ -132,6 +139,8 @@ SplitView {
 
         recipientsModel: recipientViewAdaptor.recipientsModel
         recipientsFilterModel: recipientViewAdaptor.recipientsFilterModel
+
+        highestTabElementCount: recipientViewAdaptor.highestTabElementCount
 
         currentCurrency: "USD"
         fnFormatCurrencyAmount: d.formatCurrencyAmount
@@ -730,6 +739,21 @@ SplitView {
                 Button {
                     text: "update in modal"
                     onClicked: simpleSend.selectedRecipientAddress = recipientInput.text
+                }
+            }
+
+            Text {
+                text: "Number of saved wallet accounts"
+            }
+            SpinBox {
+                id: savedAddressesCount
+                editable: true
+                from: 0
+                to: 100
+                value: 10
+                onValueModified: {
+                    d.savedAddressesModel.clear()
+                    d.savedAddressesModel.populateModel(value)
                 }
             }
 
