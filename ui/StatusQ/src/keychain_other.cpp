@@ -30,7 +30,7 @@ void Keychain::requestGetCredential(const QString &reason, const QString &accoun
     emit getCredentialRequestCompleted(Keychain::StatusNotSupported, {});
 }
 
-Keychain::Status Keychain::hasCredential(const QString &account)
+Keychain::Status Keychain::hasCredential(const QString &account) const
 {
     Q_UNUSED(account);
 

@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE Status saveCredential(const QString &account, const QString &password);
     Q_INVOKABLE Status deleteCredential(const QString &account);
     Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
-    Q_INVOKABLE Status hasCredential(const QString &account);
+    Q_INVOKABLE Status hasCredential(const QString &account) const;
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:

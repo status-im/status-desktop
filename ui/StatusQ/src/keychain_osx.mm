@@ -194,7 +194,7 @@ Keychain::Status Keychain::getCredential(const QString &reason, const QString &a
     return convertStatus(status);
 }
 
-Keychain::Status Keychain::hasCredential(const QString &account)
+Keychain::Status Keychain::hasCredential(const QString &account) const
 {
     NSDictionary *query = @{
         (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
