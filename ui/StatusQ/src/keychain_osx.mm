@@ -45,7 +45,7 @@ Keychain::~Keychain()
     m_future.waitForFinished();
 }
 
-Keychain::Status authenticate(QString &reason, LAContext **context)
+Keychain::Status authenticate(const QString &reason, LAContext **context)
 {
     if (context == nullptr)
         return Keychain::StatusGenericError;
@@ -91,50 +91,16 @@ Keychain::Status authenticate(QString &reason, LAContext **context)
     return Keychain::StatusSuccess;
 }
 
-void Keychain::requestSaveCredential(const QString &reason, const QString &account, const QString &password)
-{
-    if (m_future.isRunning()) {
-        return;
-    }
-
-    m_reason = reason;
-
-    m_future = QtConcurrent::run([this, account, password]() {
-        setLoading(true);
-        const auto status = saveCredential(account, password);
-        emit saveCredentialRequestCompleted(status);
-        setLoading(false);
-    });
-}
-
-void Keychain::requestDeleteCredential(const QString &reason, const QString &account)
-{
-    if (m_future.isRunning()) {
-        return;
-    }
-
-    m_reason = reason;
-
-    m_future = QtConcurrent::run([this, account]() {
-        setLoading(true);
-        const auto status = deleteCredential(account);
-        emit deleteCredentialRequestCompleted(status);
-        setLoading(false);
-    });
-}
-
 void Keychain::requestGetCredential(const QString &reason, const QString &account)
 {
     if (m_future.isRunning()) {
         return;
     }
 
-    m_reason = reason;
-
-    m_future = QtConcurrent::run([this, account]() {
+    m_future = QtConcurrent::run([this, reason, account]() {
         setLoading(true);
         QString credential;
-        const auto status = getCredential(account, &credential);
+        const auto status = getCredential(reason, account, &credential);
         emit getCredentialRequestCompleted(status, credential);
         setLoading(false);
     });
@@ -148,13 +114,6 @@ void Keychain::cancelActiveRequest()
 
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
-    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
-
-    if (authStatus != StatusSuccess) {
-        return authStatus;
-    }
-
     CFErrorRef error = NULL;
     auto flags = kSecAccessControlBiometryCurrentSet | kSecAccessControlOr | kSecAccessControlWatch;
     auto accessControl = SecAccessControlCreateWithFlags(NULL,
@@ -176,7 +135,6 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
         (__bridge id) kSecAttrAccount: account.toNSString(),
         (__bridge id) kSecValueData: [password.toNSString() dataUsingEncoding:NSUTF8StringEncoding],
         //                            (__bridge id)kSecAttrAccessControl: (__bridge id)accessControl,
-        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
 
     SecItemDelete((__bridge CFDictionaryRef) query);                  // Ensure old item is removed
@@ -192,18 +150,10 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
 
 Keychain::Status Keychain::deleteCredential(const QString &account)
 {
-    QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
-
-    if (authStatus != StatusSuccess) {
-        return authStatus;
-    }
-
     NSDictionary *query = @{
         (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
         (__bridge id) kSecAttrService: m_service.toNSString(),
         (__bridge id) kSecAttrAccount: account.toNSString(),
-        (__bridge id) kSecUseAuthenticationContext: m_activeAuthContext,
     };
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
     if (status != errSecSuccess) {
@@ -213,10 +163,10 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
     return convertStatus(status);
 }
 
-Keychain::Status Keychain::getCredential(const QString &account, QString *out)
+Keychain::Status Keychain::getCredential(const QString &reason, const QString &account, QString *out)
 {
     QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
-    const auto authStatus = authenticate(m_reason, &m_activeAuthContext);
+    const auto authStatus = authenticate(reason, &m_activeAuthContext);
 
     if (authStatus != StatusSuccess) {
         return authStatus;
@@ -241,5 +191,20 @@ Keychain::Status Keychain::getCredential(const QString &account, QString *out)
         *out = QString::fromNSString(dataString);
     }
 
+    return convertStatus(status);
+}
+
+Keychain::Status Keychain::hasCredential(const QString &account) const
+{
+    NSDictionary *query = @{
+        (__bridge id) kSecClass: (__bridge id) kSecClassGenericPassword,
+        (__bridge id) kSecAttrService: m_service.toNSString(),
+        (__bridge id) kSecAttrAccount: account.toNSString(),
+        (__bridge id) kSecReturnData: @NO,
+        (__bridge id) kSecReturnAttributes: @YES,
+        (__bridge id) kSecMatchLimit: (__bridge id) kSecMatchLimitOne,
+    };
+
+    const auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, nil);
     return convertStatus(status);
 }
