@@ -1038,6 +1038,13 @@ QtObject {
         Unknown
     }
 
+    enum FeePriorityModeType {
+        Normal,
+        Fast,
+        Urgent,
+        Custom
+    }
+
     enum ErrorType {
         SendAmountExceedsBalance,
         NoRoute,

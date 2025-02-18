@@ -592,6 +592,14 @@ QtObject {
                     }
                 }
 
+                function handleReject() {
+                    if (handler.approvalForTxPathUnderReviewReviewed) {
+                        handler.approvalForTxPathUnderReviewReviewed = false
+                    } else {
+                        handler.indexOfTxPathUnderReview--
+                    }
+                }
+
                 function routesFetched(returnedUuid, pathModel, errCode, errDescription) {
                     simpleSendModal.routesLoading = false
                     if(returnedUuid !== handler.uuid) {
@@ -612,6 +620,7 @@ QtObject {
                         return
                     }
                     if (!!error) {
+                        handler.handleReject()
                         if (error.includes(Constants.walletSection.authenticationCanceled)) {
                             return
                         }
@@ -737,13 +746,13 @@ QtObject {
                 readonly property var estimatedTimeAggregator: FunctionAggregator {
                     model: !!handler.fetchedPathModel ?
                                handler.fetchedPathModel: null
-                    initialValue: Constants.TransactionEstimatedTime.Unknown
+                    initialValue: 0
                     roleName: "estimatedTime"
 
                     aggregateFunction: (aggr, value) => aggr < value? value : aggr
 
                     onValueChanged: {
-                        simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
+                        simpleSendModal.estimatedTime = qsTr("~%1s").arg(value)
                     }
                 }
 
@@ -816,7 +825,7 @@ QtObject {
                             }
                             return txPathUnderReviewEntry.item.txGasFeeMode
                         }
-                        return StatusFeeOption.Type.Normal
+                        return Constants.FeePriorityModeType.Normal
                     }
 
                     currentBaseFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.currentBaseFee : ""
@@ -987,11 +996,11 @@ QtObject {
                     estimatedTime: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.approvalEstimatedTime)
+                                return qsTr("~%1s").arg(txPathUnderReviewEntry.item.approvalEstimatedTime)
                             }
-                            return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.txEstimatedTime)
+                            return qsTr("~%1s").arg(txPathUnderReviewEntry.item.txEstimatedTime)
                         }
-                        return Constants.TransactionEstimatedTime.Unknown
+                        return ""
                     }
 
                     loginType: root.loginType
@@ -1024,7 +1033,7 @@ QtObject {
                             chainId = txPathUnderReviewEntry.item.fromChain
                         }
 
-                        if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+                        if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                             root.transactionStoreNew.setCustomTxDetails(customNonce,
                                                                         customGasAmount,
                                                                         maxFeesPerGas,
@@ -1045,7 +1054,10 @@ QtObject {
                                                             "")
                     }
 
-                    onRejected: handler.sendMetricsEvent("sign modal rejected")
+                    onRejected: {
+                        handler.sendMetricsEvent("sign modal rejected")
+                        handler.handleReject()
+                    }
 
                     onAccepted: {
                         handler.sendMetricsEvent("sign modal accepted")

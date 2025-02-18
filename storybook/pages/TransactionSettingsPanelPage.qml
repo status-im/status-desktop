@@ -46,16 +46,20 @@ SplitView {
                 customGasAmount: "35000"
                 customNonce: "22"
 
-                selectedFeeMode: StatusFeeOption.Type.Normal
+                selectedFeeMode: Constants.FeePriorityModeType.Normal
 
                 fnGetPriceInCurrencyForFee: function(feeInWei) {
                     return "0.25 USD"
                 }
 
+                fnGetEstimatedTime: function() {
+                    return ""
+                }
+
                 onConfirmClicked: {
                     logs.logEvent("confirm clicked...")
                     logs.logEvent(`selected fee mode: ${txSettings.selectedFeeMode}`)
-                    if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+                    if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                         logs.logEvent(`selected customBaseFee...${txSettings.customBaseFee}`)
                         logs.logEvent(`selected customPriorityFee...${txSettings.customPriorityFee}`)
                         logs.logEvent(`selected customGasAmount...${txSettings.customGasAmount}`)
