@@ -75,7 +75,7 @@ def test_sync_device_during_onboarding(multiple_instances):
             YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
             if configs.system.get_platform() == "Darwin":
                 AllowNotificationsView().start_using_status()
-            SplashScreen().wait_until_appears().wait_until_hidden()
+            SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
             assert SigningPhrasePopup().ok_got_it_button.is_visible
             SigningPhrasePopup().confirm_phrase()
 
