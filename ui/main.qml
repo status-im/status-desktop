@@ -420,7 +420,7 @@ StatusWindow {
     Keychain {
         service: "StatusDesktop"
 
-        id: keychain
+        id: appKeychain
     }
 
     Component {
@@ -444,21 +444,42 @@ StatusWindow {
             anchors.fill: parent
 
             networkChecksEnabled: true
+
+            // TODO: cover case when biometrics is globally disabled on mac
             biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: onboardingStore
-            keychain: keychain
+            onboardingStore: OnboardingStore {
+                id: onboardingStore
+
+                onAppLoaded: {
+                    applicationWindow.appIsReady = true
+                    applicationWindow.storeAppState()
+                    moveToAppMain()
+                }
+                onAccountLoginError: function (error, wrongPassword) {
+                    onboardingLayout.stack.pop()
+                }
+            }
+
+            keychain: appKeychain
 
             onFinished: (flow, data) => {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
-                if (error != "") {
+                if (error !== "") {
                     // We should never be here since everything should be validated already
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
+
+                if (!data.enableBiometrics)
+                    return
+
+                onboardingStore.appLoaded.connect((keyUid) => {
+                    appKeychain.saveCredential(keyUid, data.password || data.pin)
+                })
             }
 
             onLoginRequested: function (keyUid, method, data) {
@@ -473,19 +494,6 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
-
-            OnboardingStore {
-                id: onboardingStore
-
-                onAppLoaded: {
-                    applicationWindow.appIsReady = true
-                    applicationWindow.storeAppState()
-                    moveToAppMain()
-                }
-                onAccountLoginError: function (error, wrongPassword) {
-                    onboardingLayout.stack.pop()
-                }
-            }
         }
     }
 
