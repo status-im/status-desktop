@@ -168,11 +168,9 @@ SplitView {
             signal accountLoginError(string error, bool wrongPassword)
         }
 
-        biometricsAvailable: ctrlBiometrics.checked
-        isBiometricsLogin: ctrlTouchIdUser.checked
+        keychain: keychain
 
-        onBiometricsRequested: (profileId) => biometricsPopup.open()
-        onDismissBiometricsRequested: biometricsPopup.close()
+        biometricsAvailable: ctrlBiometrics.checked
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
@@ -342,16 +340,22 @@ SplitView {
         }
     }
 
-    BiometricsPopup {
-        id: biometricsPopup
+    KeychainMock {
+        id: keychain
 
-        x: root.Window.width - width
+        parent: root
 
-        onObtainingPasswordSuccess: {
+        readonly property alias touchIdChecked: ctrlTouchIdUser.checked
+        onTouchIdCheckedChanged: onboarding.keychainChanged()
+
+        function hasCredential(account) {
             const isKeycard = onboarding.currentPage instanceof LoginScreen
                             && onboarding.currentPage.selectedProfileIsKeycard
 
-            onboarding.setBiometricResponse(isKeycard ? mockDriver.pin : mockDriver.password)
+            keychain.saveCredential(account, isKeycard ? mockDriver.pin : mockDriver.password)
+
+            return touchIdChecked ? Keychain.StatusSuccess
+                                  : Keychain.StatusNotFound
         }
     }
 
