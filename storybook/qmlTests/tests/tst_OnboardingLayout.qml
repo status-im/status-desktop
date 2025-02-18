@@ -52,7 +52,12 @@ Item {
             biometricsAvailable: mockDriver.biometricsAvailable
             keycardPinInfoPageDelay: 0
 
-            isBiometricsLogin: biometricsAvailable
+            keychain: Keychain {
+                function hasCredential(account) {
+                    return mockDriver.biometricsAvailable ? Keychain.StatusSuccess
+                                                          : Keychain.StatusNotFound
+                }
+            }
 
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
@@ -985,7 +990,8 @@ Item {
                 if (data.biometrics) { // biometrics + password
                     if (data.password === mockDriver.dummyNewPassword) { // expecting correct fingerprint
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse(data.password)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusSuccess, data.password)
 
                         tryCompare(passwordBox, "biometricsSuccessful", true)
                         tryCompare(passwordBox, "biometricsFailed", false)
@@ -995,11 +1001,12 @@ Item {
                         tryCompare(passwordInput, "text", data.password)
                     } else { // expecting failed fetching credentials via biometrics
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusGenericError, "")
 
                         tryCompare(passwordBox, "biometricsSuccessful", false)
                         tryCompare(passwordBox, "biometricsFailed", true)
-                        tryCompare(passwordBox, "validationError", "ERROR")
+                        tryCompare(passwordBox, "validationError", "Fetching credentials failed.")
 
                         // this fails and switches to the password method; so just verify we have an error and can enter the pass manually
                         tryCompare(passwordInput, "hasError", true)
@@ -1037,7 +1044,8 @@ Item {
                 if (data.biometrics) { // biometrics + PIN
                     if (data.pin === mockDriver.existingPin) { // expecting correct fingerprint
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse(data.pin)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusSuccess, data.pin)
 
                         tryCompare(keycardBox, "biometricsSuccessful", true)
                         tryCompare(keycardBox, "biometricsFailed", false)
@@ -1046,7 +1054,8 @@ Item {
                         tryCompare(pinInput, "pinInput", data.pin)
                     } else { // expecting failed fetching credentials via biometrics
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusGenericError, "")
 
                         tryCompare(keycardBox, "biometricsSuccessful", false)
                         tryCompare(keycardBox, "biometricsFailed", true)
