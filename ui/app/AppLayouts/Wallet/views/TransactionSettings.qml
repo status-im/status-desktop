@@ -14,6 +14,8 @@ import shared.controls 1.0
 import shared.popups 1.0
 import utils 1.0
 
+import AppLayouts.Wallet 1.0
+
 Rectangle {
     id: root
 
@@ -72,7 +74,7 @@ Rectangle {
     QtObject {
         id: d
 
-        readonly property bool customMode: root.selectedFeeMode === StatusFeeOption.Type.Custom
+        readonly property bool customMode: root.selectedFeeMode === Constants.FeePriorityModeType.Custom
 
         function showAlert(title, text, note, url) {
             infoBox.title = title
@@ -176,43 +178,51 @@ Rectangle {
 
                 StatusFeeOption {
                     id: optionNormal
-                    type: StatusFeeOption.Type.Normal
-                    selected: root.selectedFeeMode === StatusFeeOption.Type.Normal
+                    type: Constants.FeePriorityModeType.Normal
+                    mainText: WalletUtils.getFeeTextForFeeMode(type)
+                    icon: WalletUtils.getIconForFeeMode(type)
+                    selected: root.selectedFeeMode === Constants.FeePriorityModeType.Normal
                     showSubText: true
                     showAdditionalText: true
 
-                    onClicked: root.selectedFeeMode = StatusFeeOption.Type.Normal
+                    onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Normal
                 }
 
                 StatusFeeOption {
                     id: optionFast
-                    type: StatusFeeOption.Type.Fast
-                    selected: root.selectedFeeMode === StatusFeeOption.Type.Fast
+                    type: Constants.FeePriorityModeType.Fast
+                    mainText: WalletUtils.getFeeTextForFeeMode(type)
+                    icon: WalletUtils.getIconForFeeMode(type)
+                    selected: root.selectedFeeMode === Constants.FeePriorityModeType.Fast
                     showSubText: true
                     showAdditionalText: true
 
-                    onClicked: root.selectedFeeMode = StatusFeeOption.Type.Fast
+                    onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Fast
                 }
 
                 StatusFeeOption {
                     id: optionUrgent
-                    type: StatusFeeOption.Type.Urgent
-                    selected: root.selectedFeeMode === StatusFeeOption.Type.Urgent
+                    type: Constants.FeePriorityModeType.Urgent
+                    mainText: WalletUtils.getFeeTextForFeeMode(type)
+                    icon: WalletUtils.getIconForFeeMode(type)
+                    selected: root.selectedFeeMode === Constants.FeePriorityModeType.Urgent
                     showSubText: true
                     showAdditionalText: true
 
-                    onClicked: root.selectedFeeMode = StatusFeeOption.Type.Urgent
+                    onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Urgent
                 }
 
                 StatusFeeOption {
                     id: optionCustom
-                    type: StatusFeeOption.Type.Custom
-                    selected: root.selectedFeeMode === StatusFeeOption.Type.Custom
+                    type: Constants.FeePriorityModeType.Custom
+                    mainText: WalletUtils.getFeeTextForFeeMode(type)
+                    icon: WalletUtils.getIconForFeeMode(type)
+                    selected: root.selectedFeeMode === Constants.FeePriorityModeType.Custom
                     showSubText: !!selected
                     showAdditionalText: !!selected
                     unselectedText: qsTr("Set your own fees & nonce")
 
-                    onClicked: root.selectedFeeMode = StatusFeeOption.Type.Custom
+                    onClicked: root.selectedFeeMode = Constants.FeePriorityModeType.Custom
                 }
             }
 

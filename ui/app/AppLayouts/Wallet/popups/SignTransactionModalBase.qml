@@ -78,7 +78,7 @@ StatusDialog {
                 id: closeButton
                 visible: root.hasExpiryDate && countdownPill.isExpired
                 text: root.closeButtonText
-                onClicked: root.close()
+                onClicked: root.closeHandler()
             }
         }
     }
@@ -120,7 +120,7 @@ StatusDialog {
         headline.title: root.title
         headline.subtitle: root.subtitle
         actions.closeButton.visible: root.headerActionsCloseButtonVisible
-        actions.closeButton.onClicked: root.close()
+        actions.closeButton.onClicked: root.closeHandler()
 
         leftComponent: root.headerIconComponent
 

@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.panels 1.0
 import AppLayouts.Wallet.views 1.0
 import AppLayouts.Wallet.popups 1.0
@@ -95,15 +96,15 @@ SignTransactionModalBase {
     required property string normalPrice
     required property string normalBaseFee
     required property string normalPriorityFee
-    required property string normalTime
+    required property int normalTime
 
     required property string fastPrice
-    required property string fastTime
+    required property int fastTime
     required property string fastBaseFee
     required property string fastPriorityFee
 
     required property string urgentPrice
-    required property string urgentTime
+    required property int urgentTime
     required property string urgentBaseFee
     required property string urgentPriorityFee
 
@@ -199,10 +200,20 @@ SignTransactionModalBase {
             spacing: Theme.bigPadding
             ColumnLayout {
                 spacing: 2
-                StatusBaseText {
-                    text: qsTr("Est time")
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: Theme.additionalTextSize
+                RowLayout {
+                    StatusBaseText {
+                        objectName: "footerEstTimeLabel"
+                        text: WalletUtils.getFeeTextForFeeMode(root.selectedFeeMode)
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: Theme.additionalTextSize
+                    }
+                    StatusImage {
+                        objectName: "footerEstTimeIcon"
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.preferredWidth: 22
+                        Layout.preferredHeight: 22
+                        source: WalletUtils.getIconForFeeMode(root.selectedFeeMode)
+                    }
                 }
                 StatusTextWithLoadingState {
                     objectName: "footerEstTimeText"
@@ -213,6 +224,7 @@ SignTransactionModalBase {
             ColumnLayout {
                 spacing: 2
                 StatusBaseText {
+                    objectName: "footerFiatFeesLabel"
                     text: qsTr("Max fees")
                     color: Theme.palette.baseColor1
                     font.pixelSize: Theme.additionalTextSize
@@ -224,9 +236,12 @@ SignTransactionModalBase {
                 }
             }
             StatusFlatButton {
+                Layout.preferredWidth: 44
+                Layout.preferredHeight: 44
                 tooltip.text: qsTr("Edit transaction settings")
                 icon.name: "settings-advance"
                 textColor: hovered? Theme.palette.directColor1 : Theme.palette.baseColor1
+                size: StatusBaseButton.Size.Small
                 onClicked: {
                     root.internalPopupActive = true
                 }
@@ -256,7 +271,7 @@ SignTransactionModalBase {
 
         function updateCustomFields() {
             // by default custom follows normal fee option
-            if (selectedFeeMode !== StatusFeeOption.Type.Custom) {
+            if (selectedFeeMode !== Constants.FeePriorityModeType.Custom) {
                 customBaseFee = ""
                 customPriorityFee = ""
                 customGasAmount = ""
@@ -303,7 +318,7 @@ SignTransactionModalBase {
 
         Component.onCompleted: {
             d.refreshTxSettings.connect(updateCustomFields)
-            if (root.selectedFeeMode === StatusFeeOption.Type.Custom) {
+            if (root.selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                 updateCustomFields()
                 recalculateCustomPrice()
             }
@@ -320,7 +335,7 @@ SignTransactionModalBase {
         onConfirmClicked: {
             let priorityFee = ""
             let maxFeesPerGas = ""
-            if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+            if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                 if (!!customPriorityFee && !!customBaseFee) {
                     const baseFeeWei = Utils.gweiToWei(customBaseFee)
                     const priorityFeeWei = Utils.gweiToWei(customPriorityFee)

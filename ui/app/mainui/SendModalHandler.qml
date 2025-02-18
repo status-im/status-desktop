@@ -756,7 +756,7 @@ QtObject {
                     aggregateFunction: (aggr, value) => aggr < value? value : aggr
 
                     onValueChanged: {
-                        simpleSendModal.estimatedTime = WalletUtils.getLabelForEstimatedTxTime(value)
+                        simpleSendModal.estimatedTime = WalletUtils.formatEstimatedTime(value)
                     }
                 }
 
@@ -829,7 +829,7 @@ QtObject {
                             }
                             return txPathUnderReviewEntry.item.txGasFeeMode
                         }
-                        return StatusFeeOption.Type.Normal
+                        return Constants.FeePriorityModeType.Normal
                     }
 
                     currentBaseFee: !!txPathUnderReviewEntry.item? txPathUnderReviewEntry.item.currentBaseFee : ""
@@ -1000,11 +1000,11 @@ QtObject {
                     estimatedTime: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.approvalEstimatedTime)
+                                return WalletUtils.formatEstimatedTime(txPathUnderReviewEntry.item.approvalEstimatedTime)
                             }
-                            return WalletUtils.getLabelForEstimatedTxTime(txPathUnderReviewEntry.item.txEstimatedTime)
+                            return WalletUtils.formatEstimatedTime(txPathUnderReviewEntry.item.txEstimatedTime)
                         }
-                        return Constants.TransactionEstimatedTime.Unknown
+                        return ""
                     }
 
                     loginType: root.loginType
@@ -1028,10 +1028,9 @@ QtObject {
                     }
 
                     onOpened: handler.sendMetricsEvent("sign modal opened")
-
-                    onRejected:{
-                        handler.sendMetricsEvent("sign modal rejected")
+                    closeHandler: function() {
                         handler.handleReject()
+                        close()
                     }
 
                     onUpdateTxSettings: {
@@ -1042,7 +1041,7 @@ QtObject {
                             chainId = txPathUnderReviewEntry.item.fromChain
                         }
 
-                        if (selectedFeeMode === StatusFeeOption.Type.Custom) {
+                        if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                             root.transactionStoreNew.setCustomTxDetails(customNonce,
                                                                         customGasAmount,
                                                                         maxFeesPerGas,
@@ -1061,6 +1060,11 @@ QtObject {
                                                             chainId,
                                                             handler.reviewApprovalForTxPathUnderReview,
                                                             "")
+                    }
+
+                    onRejected: {
+                        handler.sendMetricsEvent("sign modal rejected")
+                        handler.handleReject()
                     }
 
                     onAccepted: {
