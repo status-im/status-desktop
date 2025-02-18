@@ -78,7 +78,10 @@ QtObject {
     }
 
     function formatEstimatedTime(estimatedTime) {
-        if (estimatedTime == 0 || estimatedTime >= 60) {
+        if (estimatedTime === 0 ) {
+            return qsTr("Unknown")
+        }
+        if (estimatedTime >= 60) {
             return qsTr(">60s")
         }
         return qsTr("~%1").arg(estimatedTime)
@@ -330,6 +333,34 @@ QtObject {
             return qsTr("no positive balance for your account across chains")
         default:
             return ""
+        }
+    }
+
+    function getFeeTextForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return qsTr("Fast")
+        case Constants.FeePriorityModeType.Urgent:
+            return qsTr("Urgent")
+        case Constants.FeePriorityModeType.Custom:
+            return qsTr("Custom")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return qsTr("Normal")
+        }
+    }
+
+    function getIconForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return Theme.png("wallet/car")
+        case Constants.FeePriorityModeType.Urgent:
+            return Theme.png("wallet/rocket")
+        case Constants.FeePriorityModeType.Custom:
+            return Theme.png("wallet/handwrite")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return Theme.png("wallet/clock")
         }
     }
 }

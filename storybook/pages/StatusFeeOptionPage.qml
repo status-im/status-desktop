@@ -7,6 +7,9 @@ import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 
+import AppLayouts.Wallet 1.0
+import utils 1.0
+
 SplitView {
     orientation: Qt.Horizontal
 
@@ -23,6 +26,9 @@ SplitView {
         StatusFeeOption {
             id: feeOption
             anchors.centerIn: parent
+            type: feeModeCombobox.currentValue
+            mainText: WalletUtils.getFeeTextForFeeMode(type)
+            icon: WalletUtils.getIconForFeeMode(type)
 
             onClicked: {
                 console.warn("control clicked...")
@@ -41,19 +47,16 @@ SplitView {
             anchors.fill: parent
 
             ComboBox {
+                id: feeModeCombobox
                 model: [
-                    {testCase: StatusFeeOption.Type.Normal, name: "Normal"},
-                    {testCase: StatusFeeOption.Type.Fast, name: "Fast"},
-                    {testCase: StatusFeeOption.Type.Urgent, name: "Urgent"},
-                    {testCase: StatusFeeOption.Type.Custom, name: "Custom"}
+                    {testCase: Constants.FeePriorityModeType.Normal, name: "Normal"},
+                    {testCase: Constants.FeePriorityModeType.Fast, name: "Fast"},
+                    {testCase: Constants.FeePriorityModeType.Urgent, name: "Urgent"},
+                    {testCase: Constants.FeePriorityModeType.Custom, name: "Custom"}
                 ]
 
                 textRole: "name"
                 valueRole: "testCase"
-                onCurrentValueChanged: {
-                    console.warn("valueRole: ", currentValue)
-                    feeOption.type = currentValue
-                }
             }
 
             RowLayout {
