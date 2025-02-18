@@ -405,7 +405,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+                height: !!item ? item.height : 0
                 sourceComponent: Component {
                     WelcomeBannerPanel {
                         activeCommunity: communityData
@@ -421,7 +421,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+                height: !!item ? item.height : 0
                 sourceComponent: Component {
                     ChannelsAndCategoriesBannerPanel {
                         id: channelsAndCategoriesBanner
