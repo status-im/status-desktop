@@ -12,7 +12,7 @@ import AppLayouts.Onboarding.enums 1.0
 OnboardingPage {
     id: root
 
-    required property int syncState // Onboarding.ProgressState.xxx
+    required property int syncState // Onboarding.LocalPairingState.xxx
 
     signal loginToAppRequested()
     signal restartSyncRequested()
@@ -21,7 +21,7 @@ OnboardingPage {
     states: [
         State {
             name: "inprogress"
-            when: root.syncState === Onboarding.ProgressState.InProgress || root.syncState === Onboarding.ProgressState.Idle
+            when: root.syncState === Onboarding.LocalPairingState.Transferring || root.syncState === Onboarding.LocalPairingState.Idle
             PropertyChanges {
                 target: root
                 title: qsTr("Profile sync in progress...")
@@ -46,7 +46,7 @@ OnboardingPage {
         },
         State {
             name: "success"
-            when: root.syncState === Onboarding.ProgressState.Success
+            when: root.syncState === Onboarding.LocalPairingState.Finished
             PropertyChanges {
                 target: root
                 title: qsTr("Profile synced")
@@ -70,7 +70,7 @@ OnboardingPage {
         },
         State {
             name: "failed"
-            when: root.syncState === Onboarding.ProgressState.Failed
+            when: root.syncState === Onboarding.LocalPairingState.Error
             PropertyChanges {
                 target: root
                 title: "<font color='%1'>".arg(Theme.palette.dangerColor1) + qsTr("Failed to pair devices") + "</font>"

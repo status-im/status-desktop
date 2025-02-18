@@ -274,7 +274,7 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
   self.localPairingStatus = status
-  self.view.setSyncState(status.state.int)
+  self.view.setSyncState(status.state)
 
 method onKeycardStateUpdated*[T](self: Module[T], keycardEvent: KeycardEventDto) =
   self.view.setKeycardEvent(keycardEvent)
