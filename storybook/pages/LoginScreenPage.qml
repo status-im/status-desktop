@@ -38,7 +38,6 @@ SplitView {
         keycardRemainingPinAttempts: driver.keycardRemainingPinAttempts
         keycardRemainingPukAttempts: driver.keycardRemainingPukAttempts
 
-        biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: ctrlTouchIdUser.checked
 
         onBiometricsRequested: biometricsPopup.open()
@@ -134,15 +133,8 @@ SplitView {
                     selectByMouse: true
                 }
                 Switch {
-                    id: ctrlBiometrics
-                    text: "Biometrics available"
-                    checked: true
-                }
-                Switch {
                     id: ctrlTouchIdUser
                     text: "Touch ID login"
-                    visible: ctrlBiometrics.checked
-                    checked: ctrlBiometrics.checked
                 }
             }
 
