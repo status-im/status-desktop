@@ -9,6 +9,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.popups.simpleSend 1.0
 
 import utils 1.0
@@ -54,22 +55,22 @@ Item {
             normalPrice: "1.45 EUR"
             normalBaseFee: "10000"
             normalPriorityFee: "1000"
-            normalTime: "~60s"
+            normalTime: 60
             fastPrice: "1.65 EUR"
             fastBaseFee: "100000"
             fastPriorityFee: "10000"
-            fastTime: "~40s"
+            fastTime: 40
             urgentPrice: "1.85 EUR"
             urgentBaseFee: "1000000"
             urgentPriorityFee: "100000"
-            urgentTime: "~15s"
+            urgentTime: 15
 
             customBaseFee: "10000"
             customPriorityFee: "1000"
             customGasAmount: "35000"
             customNonce: 22
 
-            selectedFeeMode: StatusFeeOption.Type.Normal
+            selectedFeeMode: Constants.FeePriorityModeType.Normal
 
             fnGetPriceInCurrencyForFee: function(feeInWei) {
                 return "0.25 USD"
@@ -562,9 +563,21 @@ Item {
             verify(!!fiatFeesText)
             compare(fiatFeesText.text, controlUnderTest.fiatFees)
 
+            const footerFiatFeesLabel = findChild(controlUnderTest.footer, "footerFiatFeesLabel")
+            verify(!!footerFiatFeesLabel)
+            compare(footerFiatFeesLabel.text, "Max fees")
+
             const footerEstTimeText = findChild(controlUnderTest.footer, "footerEstTimeText")
             verify(!!footerEstTimeText)
             compare(footerEstTimeText.text, controlUnderTest.estimatedTime)
+
+            const footerEstTimeLabel = findChild(controlUnderTest.footer, "footerEstTimeLabel")
+            verify(!!footerEstTimeLabel)
+            compare(footerEstTimeLabel.text, WalletUtils.getFeeTextForFeeMode(controlUnderTest.selectedFeeMode))
+
+            const footerEstTimeIcon = findChild(controlUnderTest.footer, "footerEstTimeIcon")
+            verify(!!footerEstTimeIcon)
+            compare(footerEstTimeIcon.source, WalletUtils.getIconForFeeMode(controlUnderTest.selectedFeeMode))
         }
 
         function test_signButton() {
