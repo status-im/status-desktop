@@ -146,8 +146,7 @@ QtObject:
     return DISPLAY_MOCKED_KEYCARD_WINDOW
 
   proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
-  proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
+  proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} = false
 
   proc setFakeLoadingScreenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
     self.settings.setValue(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(enabled))
