@@ -10,16 +10,17 @@ import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding2.stores 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import StatusQ.Core.Utils 0.1 as SQUtils
+
 import utils 1.0
 
 Page {
     id: root
 
     required property OnboardingStore onboardingStore
+    required property Keychain keychain
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
-
-    property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
@@ -31,9 +32,6 @@ Page {
 
     // flow: Onboarding.OnboardingFlow
     signal finished(int flow, var data)
-
-    signal biometricsRequested(string profileId)
-    signal dismissBiometricsRequested
 
     // -> "keyUid:string": User ID to login; "method:int": password or keycard (cf Onboarding.LoginMethod.*) enum;
     //    "data:var": contains "password" or "pin"
@@ -57,13 +55,6 @@ Page {
         if (!onboardingFlow.loginScreen) {
             restartFlow()
         }
-    }
-
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
-        onboardingFlow.setBiometricResponse(secret, error, detailedError,
-                                            wrongFingerprint)
     }
 
     QtObject {
@@ -137,7 +128,6 @@ Page {
         anchors.fill: parent
 
         loginAccountsModel: root.onboardingStore.loginAccountsModel
-
         keycardState: root.onboardingStore.keycardState
         pinSettingState: root.onboardingStore.pinSettingState
         authorizationState: root.onboardingStore.authorizationState
@@ -145,13 +135,13 @@ Page {
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
 
-        generateMnemonic: root.onboardingStore.generateMnemonic
-
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
-        isBiometricsLogin: root.isBiometricsLogin
+
         biometricsAvailable: root.biometricsAvailable
         networkChecksEnabled: root.networkChecksEnabled
 
+        generateMnemonic: root.onboardingStore.generateMnemonic
+        isBiometricsLogin: (account) => keychain.hasCredential(account) === Keychain.StatusSuccess
         passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore
         isSeedPhraseValid: root.onboardingStore.validMnemonic
         isSeedPhraseDuplicate: root.onboardingStore.isMnemonicDuplicate
@@ -160,8 +150,6 @@ Page {
         remainingPinAttempts: root.onboardingStore.keycardRemainingPinAttempts
         remainingPukAttempts: root.onboardingStore.keycardRemainingPukAttempts
 
-        onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
-        onDismissBiometricsRequested: root.dismissBiometricsRequested()
         onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
 
         onSetPinRequested: (pin) => {
@@ -182,6 +170,21 @@ Page {
         onLinkActivated: (link) => Qt.openUrlExternally(link)
         onExportKeysRequested: root.onboardingStore.exportRecoverKeys()
         onFinished: (flow) => d.finishFlow(flow)
+
+        onBiometricsRequested: (profileId) => {
+            const isKeycardProfile = SQUtils.ModelUtils.getByKey(
+                                       onboardingStore.loginAccountsModel, "keyUid",
+                                       profileId, "keycardCreatedAccount")
+
+            const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
+
+            root.keychain.requestGetCredential(reason, profileId)
+        }
+
+        onDismissBiometricsRequested: {
+            if (root.keychain.loading)
+                root.keychain.cancelActiveRequest()
+        }
     }
 
     // needs to be on top of the stack
@@ -237,6 +240,21 @@ Page {
                 return
 
             loginScreen.setAccountLoginError(error, wrongPassword)
+        }
+    }
+
+    Connections {
+        target: root.keychain
+
+        function onGetCredentialRequestCompleted(status, secret) {
+            if (status === Keychain.StatusSuccess)
+                onboardingFlow.setBiometricResponse(secret)
+            else if (status === Keychain.StatusNotFound)
+                onboardingFlow.setBiometricResponse(
+                            "", qsTr("Credentials not found."))
+            else if (status !== Keychain.StatusCancelled)
+                onboardingFlow.setBiometricResponse(
+                            "", qsTr("Fetching credentials failed."))
         }
     }
 
