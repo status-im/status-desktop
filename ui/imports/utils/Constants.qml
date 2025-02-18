@@ -1473,6 +1473,7 @@ QtObject {
 
     readonly property QtObject rpcProviderTypes: QtObject {
         readonly property string embeddedProxy: "embedded-proxy"
+        readonly property string embeddedEthRpcProxy: "embedded-eth-rpc-proxy"
         readonly property string embeddedDirect: "embedded-direct"
         readonly property string user: "user"
     }

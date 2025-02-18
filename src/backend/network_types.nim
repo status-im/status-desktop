@@ -2,6 +2,7 @@ import json, json_serialization, stew/shims/strformat
 
 type RpcProviderType* {.pure.} = enum
   EmbeddedProxy = "embedded-proxy"
+  EmbeddedEthRpcProxy = "embedded-eth-rpc-proxy"
   EmbeddedDirect = "embedded-direct"
   User = "user"
 
