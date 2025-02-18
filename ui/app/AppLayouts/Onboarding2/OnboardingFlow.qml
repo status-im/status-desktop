@@ -31,7 +31,7 @@ OnboardingStackView {
 
     // functions
     required property var generateMnemonic
-    required property var isBiometricsLogin
+    required property var isBiometricsLogin // (string account) => bool
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
     required property var isSeedPhraseDuplicate
@@ -191,7 +191,8 @@ OnboardingStackView {
             keycardRemainingPukAttempts: root.remainingPukAttempts
 
             loginAccountsModel: root.loginAccountsModel
-            isBiometricsLogin: root.isBiometricsLogin(loginScreen.selectedProfileKeyId)
+            isBiometricsLogin: root.biometricsAvailable &&
+                               root.isBiometricsLogin(loginScreen.selectedProfileKeyId)
 
             onBiometricsRequested: (profileId) => {
                 if (visible)

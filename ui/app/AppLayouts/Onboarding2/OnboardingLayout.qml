@@ -20,9 +20,9 @@ Page {
     required property OnboardingStore onboardingStore
     required property Keychain keychain
 
-    property bool biometricsAvailable: Qt.platform.os === Constants.mac
-
+    property bool biometricsAvailable
     property bool networkChecksEnabled: true
+
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
     readonly property alias stack: onboardingFlow // TODO remove external stack access
