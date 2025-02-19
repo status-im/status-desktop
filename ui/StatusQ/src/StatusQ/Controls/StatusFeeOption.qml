@@ -40,30 +40,11 @@ import StatusQ.Core.Theme 0.1
 Control {
     id: root
 
-    enum Type {
-        Normal,
-        Fast,
-        Urgent,
-        Custom
-    }
-
-    property int type: StatusFeeOption.Type.Normal
+    required property int type
 
     property bool selected: false
 
-    property string mainText: {
-        switch(type) {
-        case StatusFeeOption.Type.Fast:
-            return qsTr("Fast")
-        case StatusFeeOption.Type.Urgent:
-            return qsTr("Urgent")
-        case StatusFeeOption.Type.Custom:
-            return qsTr("Custom")
-        case StatusFeeOption.Type.Normal:
-        default:
-            return qsTr("Normal")
-        }
-    }
+    required property string mainText
 
     property string subText
     property bool showSubText
@@ -73,19 +54,7 @@ Control {
 
     property string unselectedText
 
-    property string icon: {
-        switch(type) {
-        case StatusFeeOption.Type.Fast:
-            return Theme.png("wallet/car")
-        case StatusFeeOption.Type.Urgent:
-            return Theme.png("wallet/rocket")
-        case StatusFeeOption.Type.Custom:
-            return Theme.png("wallet/handwrite")
-        case StatusFeeOption.Type.Normal:
-        default:
-            return Theme.png("wallet/clock")
-        }
-    }
+    required property string icon
 
     signal clicked()
 

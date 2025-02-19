@@ -325,4 +325,32 @@ QtObject {
             return ""
         }
     }
+
+    function getFeeTextForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return qsTr("Fast")
+        case Constants.FeePriorityModeType.Urgent:
+            return qsTr("Urgent")
+        case Constants.FeePriorityModeType.Custom:
+            return qsTr("Custom")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return qsTr("Normal")
+        }
+    }
+
+    function getIconForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return Theme.png("wallet/car")
+        case Constants.FeePriorityModeType.Urgent:
+            return Theme.png("wallet/rocket")
+        case Constants.FeePriorityModeType.Custom:
+            return Theme.png("wallet/handwrite")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return Theme.png("wallet/clock")
+        }
+    }
 }

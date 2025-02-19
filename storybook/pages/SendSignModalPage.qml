@@ -150,7 +150,7 @@ SplitView {
 
                     fiatFees: formatBigNumber(42.542567, "EUR")
                     cryptoFees: formatBigNumber(0.06, "ETH")
-                    estimatedTime: qsTr("> 5 minutes")
+                    estimatedTime: qsTr("~60s")
 
                     isCollectibleLoading: isCollectibleLoadingCheckbox.checked
                     isCollectible: isCollectibleCheckbox.checked
@@ -179,6 +179,41 @@ SplitView {
 
                     fnGetOpenSeaExplorerUrl: function(networkShortName) {
                         return "%1/assets/%2".arg(Constants.openseaExplorerLinks.mainnetLink).arg(Constants.openseaExplorerLinks.ethereum)
+                    }
+
+                    selectedFeeMode: Constants.FeePriorityModeType.Normal
+
+                    currentBaseFee: "8.2"
+                    currentSuggestedMinPriorityFee: "0.06"
+                    currentSuggestedMaxPriorityFee: "5.1"
+                    currentGasAmount: "31500"
+                    currentNonce: 21
+
+                    normalPrice: "1.45 EUR"
+                    normalTime: "~60s"
+                    normalBaseFee:  ""
+                    normalPriorityFee: ""
+
+                    fastPrice: "1.65 EUR"
+                    fastTime: "~40s"
+                    fastBaseFee:  ""
+                    fastPriorityFee: ""
+
+                    urgentPrice: "1.85 EUR"
+                    urgentTime: "~15s"
+                    urgentBaseFee:  ""
+                    urgentPriorityFee: ""
+
+                    customBaseFee: "6.6"
+                    customPriorityFee: "7.7"
+                    customGasAmount: "35000"
+                    customNonce: 22
+
+                    fnGetPriceInCurrencyForFee: function() {
+                        return ""
+                    }
+                    fnGetEstimatedTime: function() {
+                        return ""
                     }
 
                     onAccepted: logs.logEvent("accepted")
