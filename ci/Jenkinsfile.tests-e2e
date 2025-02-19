@@ -158,7 +158,7 @@ pipeline {
           $class:            'Xvfb',
           autoDisplayName:   true,
           parallelBuild:     true,
-          screen:            '1600x1200x16',
+          screen:            '1200x700x24',
         ]) {
           sh 'fluxbox &'
           withCredentials([
