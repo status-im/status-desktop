@@ -34,10 +34,11 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.events = events
   result.settingsService = settingsService
 
-proc fetchNetworks*(self: Service) =
+proc fetchNetworks(self: Service) =
   let response = backend.getFlatEthereumChains()
   if not response.error.isNil:
-    raise newException(Exception, "Error getting networks: " & response.error.message)
+    let errDescription = response.error.message
+    error "error getting networks: ", errDescription
   let networksDto = if response.result.isNil or response.result.kind == JNull: @[]
             else: Json.decode($response.result, seq[NetworkDto], allowUnknownFields = true)
   self.flatNetworks = networksDto.map(n => networkDtoToItem(n))
