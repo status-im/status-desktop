@@ -16,7 +16,7 @@ QML_IMPORT_PATH += $$PWD/../vendors/status-desktop/ui/imports \
                    $$PWD/../vendors/status-desktop/ui/StatusQ/src
 
 android {
-    message("cofiguring for android??")
+    message("cofiguring for android $${QT_ARCH}")
     include($$ANDROID_SDK_ROOT/android_openssl/openssl.pri)
 
     LIBS += -L$$PWD/../lib/android -lnim_status_client
