@@ -246,7 +246,7 @@ SplitView {
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
-                currentIndex: d.tokenBySymbolModel.count - 1
+                currentIndex: 4
             }
 
             StatusInput {
@@ -264,7 +264,7 @@ SplitView {
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
-                currentIndex: d.tokenBySymbolModel.count - 2
+                currentIndex: 0
             }
 
             Button {
