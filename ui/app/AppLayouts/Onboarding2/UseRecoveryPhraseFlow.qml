@@ -15,8 +15,10 @@ OnboardingStackView {
     // https://bugreports.qt.io/browse/QTBUG-84269, required can be restored on Qt6
     /*required*/ property int type
 
-    required property var passwordStrengthScoreFunction
-    required property var isSeedPhraseValid
+    // functions
+    required property var passwordStrengthScoreFunction // (string) => int
+    required property var isSeedPhraseValid // (string) => bool
+    required property var isSeedPhraseDuplicate // (string) => bool
 
     signal seedphraseSubmitted(string seedphrase)
     signal setPasswordRequested(string password)
@@ -36,6 +38,21 @@ OnboardingStackView {
             }
 
             return ""
+        }
+
+        onSeedphraseUpdated: (valid, seedphrase) => {
+            if (root.type === UseRecoveryPhraseFlow.Type.KeycardRecovery) {
+                if (!valid)
+                    setWrongSeedPhraseMessage(qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
+                else
+                    setWrongSeedPhraseMessage("")
+            } else {  // different error messages when trying to import a duplicate seedphrase
+                if (valid && root.isSeedPhraseDuplicate(seedphrase)) {
+                    setWrongSeedPhraseMessage(qsTr("The entered recovery phrase is already added"))
+                } else if (valid) {
+                    setWrongSeedPhraseMessage("")
+                }
+            }
         }
 
         onSeedphraseSubmitted: (seedphrase) => {

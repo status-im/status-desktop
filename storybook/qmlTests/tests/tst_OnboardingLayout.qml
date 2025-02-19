@@ -91,10 +91,15 @@ Item {
                 }
 
                 // seedphrase/mnemonic
-                function validMnemonic(mnemonic: string) {
+                function validMnemonic(mnemonic: string) { // -> bool
                     return mnemonic === mockDriver.mnemonic
                 }
-                function generateMnemonic() {
+
+                function isMnemonicDuplicate(mnemonic: string) { // -> bool
+                    return false
+                }
+
+                function generateMnemonic() { // -> string
                     return mockDriver.mnemonic
                 }
 

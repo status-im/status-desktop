@@ -124,9 +124,11 @@ proc getPasswordStrengthScore*(self: Controller, password, userName: string): in
 
 proc validMnemonic*(self: Controller, mnemonic: string): bool =
   let (_, err) = self.accountsService.validateMnemonic(mnemonic)
-  if err.len == 0:
-    return true
-  return false
+  return err.len == 0
+
+proc isMnemonicDuplicate*(self: Controller, mnemonic: string): bool =
+  let (keyUID, err) = self.accountsService.validateMnemonic(mnemonic)
+  return self.accountsService.openedAccountsContainsKeyUid(keyUID)
 
 proc loadMnemonic*(self: Controller, mnemonic: string) =
   self.keycardServiceV2.loadMnemonic(mnemonic)

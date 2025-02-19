@@ -108,6 +108,9 @@ method getPasswordStrengthScore*[T](self: Module[T], password, userName: string)
 method validMnemonic*[T](self: Module[T], mnemonic: string): bool =
   self.controller.validMnemonic(mnemonic)
 
+method isMnemonicDuplicate*[T](self: Module[T], mnemonic: string): bool =
+  self.controller.isMnemonicDuplicate(mnemonic)
+
 method generateMnemonic*[T](self: Module[T]): string =
   return self.controller.generateMnemonic(SupportedMnemonicLength12)
 

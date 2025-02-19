@@ -21,6 +21,11 @@ OnboardingPage {
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
     signal seedphraseSubmitted(string seedphrase)
+    signal seedphraseUpdated(bool valid, string seedphrase)
+
+    function setWrongSeedPhraseMessage(err: string) {
+        seedPanel.setWrongSeedPhraseMessage(err)
+    }
 
     contentItem: Item {
         ColumnLayout {
@@ -51,6 +56,7 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 isSeedPhraseValid: root.isSeedPhraseValid
                 onSubmitSeedPhrase: root.seedphraseSubmitted(getSeedPhraseAsString())
+                onSeedPhraseUpdated: (valid, seedphrase) => root.seedphraseUpdated(valid, seedphrase)
             }
 
             StatusButton {
