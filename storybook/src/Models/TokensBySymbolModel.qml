@@ -104,7 +104,7 @@ ListModel {
             marketDetailsLoading: false
         },
         {
-            key: "aave",
+            key: "AAVE",
             name: "Aave",
             symbol: "AAVE",
             image: "https://cryptologos.cc/logos/aave-aave-logo.png",
@@ -133,7 +133,7 @@ ListModel {
             marketDetailsLoading: false
         },
         {
-            key: "usdc",
+            key: "USDC",
             name: "USDC",
             symbol: "USDC",
             image: "",
@@ -162,7 +162,7 @@ ListModel {
 
         },
         {
-            key: "hst",
+            key: "HST",
             name: "Decision Token",
             symbol: "HST",
             image: "",
