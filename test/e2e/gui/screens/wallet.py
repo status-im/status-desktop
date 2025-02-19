@@ -1,3 +1,4 @@
+import logging
 import time
 import typing
 
@@ -24,6 +25,8 @@ from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
 from gui.objects_map import wallet_names, settings_names, names
 
+LOG = logging.getLogger(__name__)
+
 
 class WalletScreen(QObject):
 
@@ -48,24 +51,36 @@ class LeftPanel(QObject):
 
     @property
     @allure.step('Get all accounts from list')
-    def accounts(self) -> typing.List[WalletAccount]:
+    def accounts(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> typing.List[WalletAccount]:
+        start_time = time.monotonic()
+
+        while time.monotonic() - start_time < timeout_sec:
+            try:
+                return self.get_list_of_accounts()
+            except LookupError as err:
+                LOG.info(f'accounts are not found: {err}')
+                time.sleep(0.1)
+
+        raise LookupError("Notifications were not found within the timeout period.")
+
+    def get_list_of_accounts(self):
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
-        time.sleep(1)  # to give a chance for the left panel to refresh
-        raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
         accounts = []
-        if raw_data:
-            for account_item in raw_data:
-                name = str(account_item.title)
-                color = str(account_item.asset.color.name).lower()
-                emoji = ''
-                for child in walk_children(account_item):
-                    if hasattr(child, 'emojiId'):
-                        emoji = str(child.emojiId)
-                        break
-                accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
-            return accounts
-        raise LookupError('Accounts were not found')
+        raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
+
+        for account_item in raw_data:
+            name = str(account_item.title)
+            color = str(account_item.asset.color.name).lower()
+            emoji = ''
+            for child in walk_children(account_item):
+                if hasattr(child, 'emojiId'):
+                    emoji = str(child.emojiId)
+                    break
+            accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
+            if not accounts:
+                raise LookupError('Toast message not found')
+        return accounts
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):
