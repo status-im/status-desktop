@@ -1,5 +1,3 @@
-import time
-
 import allure
 import pytest
 from allure_commons._allure import step
