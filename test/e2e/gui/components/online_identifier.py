@@ -1,10 +1,7 @@
-import time
-
 import allure
 import pyperclip
 
 import configs
-import constants
 import driver
 from gui.components.profile_popup import ProfilePopup
 from gui.elements.button import Button

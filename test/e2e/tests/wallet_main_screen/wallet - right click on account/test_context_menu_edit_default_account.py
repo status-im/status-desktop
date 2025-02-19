@@ -1,5 +1,3 @@
-import time
-
 import allure
 import pytest
 from allure_commons._allure import step
@@ -8,9 +6,6 @@ import driver
 from constants.wallet import WalletNetworkSettings
 from scripts.utils.generators import random_wallet_acc_keypair_name
 from tests.wallet_main_screen import marks
-
-import constants
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks

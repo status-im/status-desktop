@@ -5,8 +5,6 @@
 1. **MacOS**: https://www.notion.so/Mac-arch-x64-and-Intel-50ea48dae1d4481b882afdbfad38e95a
 2. **Linux**: https://www.notion.so/Linux-21f7abd2bb684a0fb10057848760a889
 3. **Windows**: https://www.notion.so/Windows-fbccd2b09b784b32ba4174233d83878d
- 
-**NOTE:** when MacOS and Linux are proven to be working, Windows guide could be outdated (no one yet set up Windows)
 
 ## Which build to use
 
@@ -45,7 +43,7 @@ expected to fail in report with a reference to the ticket. At the same time, if 
 it will be shown as XPASS (unexpectedly passing) in report, which will indicate the initial bug is gone
 - `skip`, used to just skip tests for various reasons, normally with a ticket linked
 - `flaky`, used to mark the tests that are normally passing but sometimes fail. If such test passes, then
-if will be shown as passed in report normally. If the test fails, then the total run wont be failed, but 
+if will be shown as passed in report normally. If the test fails, then the total run won't be failed, but 
 the corresponding test will be marked as `xfail` in the report. It is done for a few tests that are not super
 stable yet, but passes most of the time. This mark should be used with caution and in case of real need only.
 - `timeout(timeout=180, method="thread")`, to catch excessively long test durations like deadlocked or hanging tests.

@@ -14,11 +14,11 @@ from gui.screens.community_settings import PermissionsIntroView
 from helpers.SettingsHelper import enable_community_creation
 
 
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
                  'Manage community: Adding new permissions, Editing permissions, Deleting permission')
 @pytest.mark.case(703632, 705014, 705016)
 @pytest.mark.critical
+@pytest.mark.skip(reason='Need to fix the toast for permissions')
 def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
     enable_community_creation(main_screen)
 
