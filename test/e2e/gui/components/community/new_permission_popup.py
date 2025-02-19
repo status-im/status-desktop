@@ -1,8 +1,4 @@
 import allure
-
-import configs
-import driver
-from driver.objects_access import walk_children
 from gui.elements.button import Button
 from gui.elements.check_box import CheckBox
 from gui.elements.object import QObject

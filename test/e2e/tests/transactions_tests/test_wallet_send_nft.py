@@ -1,6 +1,5 @@
 import allure
 import pytest
-import driver
 from configs import WALLET_SEED
 from constants import ReturningUser
 from constants.wallet import WalletTransactions, WalletNetworkSettings

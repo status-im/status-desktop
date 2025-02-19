@@ -8,11 +8,10 @@ from gui.components.signing_phrase_popup import SigningPhrasePopup
 import configs.testpath
 import driver
 from constants import UserAccount, RandomUser
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, SyncResultView, SyncDeviceFoundView, \
-    YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import OnboardingWelcomeToStatusView, SyncResultView, OnboardingProfileSyncedView, \
+    OnboardingBiometricsView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703592', 'Sync device during onboarding')
@@ -33,10 +32,9 @@ def test_sync_device_during_onboarding(multiple_instances):
             sync_settings_view.is_instructions_subtitle_present()
             if configs.DEV_BUILD:
                 sync_settings_view.is_backup_button_present()
-            setup_syncing = main_window.left_panel.open_settings().left_panel.open_syncing_settings().set_up_syncing(
+            setup_syncing = main_window.left_panel.open_settings().left_panel.open_syncing_settings().open_sync_new_device_popup(
                 user.password)
             sync_code = setup_syncing.syncing_code
-            setup_syncing.done()
             main_window.hide()
 
         with step('Verify syncing code is correct'):
@@ -47,39 +45,42 @@ def test_sync_device_during_onboarding(multiple_instances):
         with step('Open sync code form in second instance'):
             aut_two.attach()
             main_window.prepare()
-            BeforeStartedPopUp().get_started()
-            welcome_screen = WelcomeToStatusView().wait_until_appears()
-            sync_view = welcome_screen.sync_existing_user().open_sync_code_view()
+            welcome_screen = OnboardingWelcomeToStatusView().wait_until_appears()
+            sync_view = welcome_screen.sync_existing_user()
 
         with step('Paste sync code on second instance and wait until device is synced'):
             sync_start = sync_view.open_enter_sync_code_form()
             pyperclip.copy(sync_code)
             sync_start.click_paste_button()
             sync_start.continue_button.click()
-            sync_device_found = SyncDeviceFoundView()
-            assert driver.waitFor(
-                lambda: 'Device found!' in sync_device_found.device_found_notifications, 15000)
-            try:
-                assert driver.waitForObjectExists(SyncResultView().real_name, 15000), \
-                    f'Sync result view is not shown within 15 seconds'
-            except (Exception, AssertionError) as ex:
-                raise ex
-            sync_result = SyncResultView()
-            assert driver.waitFor(
-                lambda: 'Device synced!' in sync_result.device_synced_notifications, 23000)
-            assert user.name in sync_device_found.device_found_notifications
+            profile_syncing_view = OnboardingProfileSyncedView().wait_until_appears()
+            assert 'Profile sync in progress' in \
+                   str(profile_syncing_view.profile_synced_view_header.wait_until_appears().object.text), \
+                f'Profile sync process did not start'
+            assert profile_syncing_view.log_in_button.wait_until_appears(timeout_msec=15000), \
+                f'Log in button is not shown within 15 seconds'
+            assert 'Profile synced' in str(profile_syncing_view.profile_synced_view_header.wait_until_appears().object.text), \
+                f'Device is not synced'
 
         with step('Sign in to synced account'):
-            sync_result.sign_in()
-            SplashScreen().wait_until_hidden()
-            YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
+            profile_syncing_view.log_in_button.click()
             if configs.system.get_platform() == "Darwin":
-                AllowNotificationsView().start_using_status()
-            SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
-            assert SigningPhrasePopup().ok_got_it_button.is_visible
-            SigningPhrasePopup().confirm_phrase()
+                OnboardingBiometricsView().maybe_later()
+            splash_screen = SplashScreen()
+            splash_screen.wait_until_hidden()
+            signing_phrase = SigningPhrasePopup().wait_until_appears()
+            signing_phrase.confirm_phrase()
 
         with step('Verify user details are the same with user in first instance'):
             online_identifier = main_window.left_panel.open_online_identifier()
             assert online_identifier.get_user_name == user.name, \
                 f'Name in online identifier and display name do not match'
+            main_window.hide()
+
+        with step('Check the first instance'):
+            aut_one.attach()
+            main_window.prepare()
+            sync_device_found = SyncResultView()
+            assert driver.waitFor(
+                lambda: 'Device synced!' in sync_device_found.device_synced_notifications, 23000)
+            assert user.name in sync_device_found.device_synced_notifications

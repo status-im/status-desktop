@@ -29,11 +29,6 @@ class MessagingSettingsView(QObject):
         self._always_show_button = Button(settings_names.always_show_radioButton_StatusRadioButton)
         self._never_ask_button = Button(settings_names.never_show_radioButton_StatusRadioButton)
 
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._contacts_button.wait_until_appears(timeout_msec)
-        return self
-
     @allure.step('Open contacts settings')
     def open_contacts_settings(self) -> 'ContactsSettingsView':
         self._contacts_button.click()
