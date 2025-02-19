@@ -6,7 +6,6 @@ import allure
 
 import configs
 import driver
-from driver import isFrozen
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -22,10 +21,9 @@ class QObject:
     @allure.step('Get object {0}')
     def object(self):
         try:
-            obj = driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        except LookupError:
-            raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC}")
-        return obj
+            return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        except LookupError as e:
+            raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC} ms") from e
 
     def set_text_property(self, text):
         self.object.forceActiveFocus()
@@ -94,8 +92,8 @@ class QObject:
     @allure.step('Get visible {0}')
     def is_visible(self) -> bool:
         try:
-            return driver.waitForObject(self.real_name, 0).visible
-        except (AttributeError, LookupError, RuntimeError):
+            return driver.waitForObject(self.real_name, 200).visible
+        except (LookupError, RuntimeError, AttributeError):
             return False
 
     @property

@@ -55,6 +55,7 @@ def test_add_generated_account_restart_add_again(
 
     with step('Restart application'):
         aut.restart()
+        main_screen.prepare()
         main_screen.authorize_user(user_account)
 
     with step('Add second generated wallet account'):
