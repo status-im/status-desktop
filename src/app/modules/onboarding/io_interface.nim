@@ -31,6 +31,9 @@ method getPasswordStrengthScore*(self: AccessInterface, password, userName: stri
 method validMnemonic*(self: AccessInterface, mnemonic: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isMnemonicDuplicate*(self: AccessInterface, mnemonic: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method generateMnemonic*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

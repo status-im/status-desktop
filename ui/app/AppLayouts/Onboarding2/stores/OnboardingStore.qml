@@ -72,6 +72,9 @@ QtObject {
     function validMnemonic(mnemonic: string) { // -> bool
         return d.onboardingModuleInst.validMnemonic(mnemonic)
     }
+    function isMnemonicDuplicate(mnemonic: string) { // -> bool
+        return d.onboardingModuleInst.isMnemonicDuplicate(mnemonic)
+    }
     function generateMnemonic() { // -> string as per BIP-39 (space-separated list of words)
         return d.onboardingModuleInst.generateMnemonic()
     }

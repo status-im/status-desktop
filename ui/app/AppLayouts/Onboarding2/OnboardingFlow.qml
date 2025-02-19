@@ -35,6 +35,7 @@ OnboardingStackView {
     // functions
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
+    required property var isSeedPhraseDuplicate
     required property var validateConnectionString
     required property var tryToSetPukFunction
 
@@ -298,6 +299,7 @@ OnboardingStackView {
 
         UseRecoveryPhraseFlow {
             isSeedPhraseValid: root.isSeedPhraseValid
+            isSeedPhraseDuplicate: root.isSeedPhraseDuplicate
             passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
             onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)

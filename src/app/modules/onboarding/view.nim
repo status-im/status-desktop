@@ -145,6 +145,9 @@ QtObject:
   proc validMnemonic(self: View, mnemonic: string): bool {.slot.} =
     return self.delegate.validMnemonic(mnemonic)
 
+  proc isMnemonicDuplicate(self: View, mnemonic: string): bool {.slot.} =
+    return self.delegate.isMnemonicDuplicate(mnemonic)
+
   proc generateMnemonic(self: View): string {.slot.} =
     return self.delegate.generateMnemonic()
 

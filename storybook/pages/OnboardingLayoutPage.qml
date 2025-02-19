@@ -145,6 +145,11 @@ SplitView {
                 return mnemonic === mockDriver.mnemonic
             }
 
+            function isMnemonicDuplicate(mnemonic: string) { // -> bool
+                logs.logEvent("OnboardingStore.isMnemonicDuplicate", ["mnemonic"], arguments)
+                return false
+            }
+
             function generateMnemonic() { // -> string
                 logs.logEvent("OnboardingStore.generateMnemonic()")
                 return mockDriver.mnemonic
