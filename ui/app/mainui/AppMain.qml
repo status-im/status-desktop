@@ -1493,7 +1493,7 @@ Item {
                     buttonText: qsTr("Turn off")
                     type: ModuleWarning.Warning
                     iconName: "warning"
-                    active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                    active: appMain.networksStore.areTestNetworksEnabled
                     delay: false
                     onClicked: Global.openTestnetPopup()
                     closeBtnVisible: false
@@ -2099,7 +2099,7 @@ Item {
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
+                                                           (production && appMain.networksStore.areTestNetworksEnabled)
                                 sharedRootStore: appMain.sharedRootStore
                                 utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
