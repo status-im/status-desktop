@@ -78,7 +78,7 @@ Fix: In the simulator app choose `Device -> Erase all content and settings`
   pip3 install aqtinstall
   aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}
   ### OR if it fails for arm64
-  arch -x86_64 aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}/5.15.2/ios
+  arch -x86_64 aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}/5.15.2/android
 
   export QTDIR=${QT_INSTALL_DIR}/5.15.2/android
 ```
