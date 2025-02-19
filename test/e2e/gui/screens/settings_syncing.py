@@ -6,7 +6,7 @@ from gui.components.settings.sync_new_device_popup import SyncNewDevicePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
 from gui.elements.text_label import TextLabel
-from gui.objects_map import settings_names, settings_names
+from gui.objects_map import settings_names
 
 
 class SyncingSettingsView(QObject):
@@ -33,7 +33,7 @@ class SyncingSettingsView(QObject):
                 == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value), f"Sync a new device subtitle is incorrect"
 
     @allure.step('Setup syncing')
-    def set_up_syncing(self, password: str):
+    def open_sync_new_device_popup(self, password: str):
         self.click_setup_syncing()
         AuthenticatePopup().wait_until_appears().authenticate(password)
         return SyncNewDevicePopup().wait_until_appears()

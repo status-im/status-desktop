@@ -1,6 +1,5 @@
 import random
 import string
-import time
 
 import allure
 import pytest
@@ -11,7 +10,6 @@ from constants import RandomWalletAccount
 from helpers.WalletHelper import authenticate_with_password
 from constants.wallet import WalletAccountPopup
 
-import constants
 from gui.main_window import MainWindow
 
 

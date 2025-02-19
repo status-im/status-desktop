@@ -4,12 +4,10 @@ import os
 import pytest
 import logging
 import constants
-from configs import get_platform
 from constants.user import *
 from driver.aut import AUT
 from gui.main_window import MainWindow
 from scripts.utils import system_path
-from scripts.utils.local_system import get_pid_by_process_name, kill_process
 from scripts.utils.system_path import SystemPath
 
 LOG = logging.getLogger(__name__)

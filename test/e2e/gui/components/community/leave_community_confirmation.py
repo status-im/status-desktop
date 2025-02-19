@@ -1,5 +1,3 @@
-import allure
-
 from gui.components.base_popup import BasePopup
 from gui.elements.button import Button
 from gui.objects_map import communities_names
