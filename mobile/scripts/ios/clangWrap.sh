@@ -1,8 +1,8 @@
 #!/bin/sh
 
 SDK=${SDK:="iphonesimulator"}
-SDK_PATH=${SDK_PATH:=`xcrun --sdk $SDK --show-sdk-path`}
-CLANG=${CLANG:=`xcrun --sdk $SDK --find clang`}
+XCODE_SDK_PATH=$(xcrun --sdk $SDK --show-sdk-path)
+CLANG=$(xcrun --sdk $SDK --find clang)
 IOS_TARGET=${IOS_TARGET:=12}
 ARCH=${ARCH:="amd64"}
 
@@ -34,6 +34,6 @@ elif [ "$SDK" = "macosx" ]; then
    fi
 fi
 
-echo $TARGET $EXTRA_ARGS $SDK_PATH
+echo $TARGET $EXTRA_ARGS $XCODE_SDK_PATH
 
-exec $CLANG -target $TARGET $EXTRA_ARGS -isysroot $SDK_PATH -v "$@"
+exec $CLANG -target $TARGET $EXTRA_ARGS -isysroot $XCODE_SDK_PATH "$@"

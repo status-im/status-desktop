@@ -1,8 +1,13 @@
 #!/bin/sh
 set -ef pipefail
+set -o xtrace
 
-ARCH=${ARCH:=amd64}
+QRCODEGEN=${QRCODEGEN:="../vendors/status-desktop/vendor/QRCodeGen/c"}
+LIB_DIR=${LIB_DIR}
 
 echo "Building QRCodeGen for $ARCH using compiler: $CC"
+make -C $QRCODEGEN clean
+make -C $QRCODEGEN -j$(nproc)
 
-ARCH=$ARCH CC=$CC make -j10 
+mkdir -p $LIB_DIR
+cp $QRCODEGEN/libqrcodegen.a $LIB_DIR/libqrcodegen.a

@@ -1,28 +1,45 @@
 #!/bin/sh
 set -ef pipefail
 
-#Make sure CC is properly set
-#CC=clangwrap.sh
-#CXX=clangwrap.sh
+DOTHERSIDE=${DOTHERSIDE:="../vendors/status-desktop/vendor/DOtherSide"}
+LIB_DIR=${LIB_DIR}
 
-echo "Building with qt $QTDIR"
+BASEDIR=$(dirname "$0")
 
-ARCH=${ARCH:="x86_64"}
-SDK=${SDK:="iphonesimulator"}
+# Load common config variables
+. $BASEDIR/commonCmakeConfig.sh
+BUILD_DIR=$DOTHERSIDE/build/$OS
 
-echo "Building StatusQ for $ARCH using compiler: $CC"
+if [ "$STATIC_LIB" = "ON" ]; then
+    ENABLE_DYNAMIC_LIBS=OFF
+    ENABLE_STATIC_LIBS=ON
+    LIB_EXT=.a
+    DOTHERSIDE_LIB_NAME=libDOtherSideStatic$LIB_EXT
 
-cmake -S ./ -B build \
-    -DCMAKE_GENERATOR:STRING=Xcode \
-    -DCMAKE_SYSTEM_NAME:STRING=iOS \
-    -DCMAKE_OSX_ARCHITECTURES:STRING=$ARCH \
-    -DCMAKE_FIND_ROOT_PATH:STRING=$QTDIR \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_OSX_SYSROOT=$SDK \
-    -DCMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+else
+    LIB_SUFFIX=""
+    if [ "$OS" = "android" ]; then
+        LIB_SUFFIX=_$ANDROID_ABI
+        LIB_EXT=".so"
+    fi
+    ENABLE_DYNAMIC_LIBS=ON
+    ENABLE_STATIC_LIBS=OFF
+    LIB_EXT=.so
+    DOTHERSIDE_LIB_NAME=libDOtherSide$LIB_SUFFIX$LIB_EXT
+fi
+
+echo "Building DOtherSide for $ARCH using compiler: $CC"
+
+cmake -S $DOTHERSIDE -B $BUILD_DIR \
+    $COMMON_CMAKE_CONFIG \
     -DENABLE_DOCS:BOOL=OFF \
-    -DENABLE_DYNAMIC_LIBS:BOOL=OFF \
-    -DENABLE_STATIC_LIBS:BOOL=ON \
-    -DENABLE_TESTS:BOOL=OFF 2>&1
+    -DENABLE_DYNAMIC_LIBS:BOOL=$ENABLE_DYNAMIC_LIBS \
+    -DENABLE_STATIC_LIBS:BOOL=$ENABLE_STATIC_LIBS \
+    -DENABLE_TESTS:BOOL=OFF
 
-cmake --build build --target DOtherSideStatic --config Release --parallel 10 2>&1
+make -C $BUILD_DIR -j $(nproc)
+
+DOTHERSIDE_LIB=$(find $BUILD_DIR -name $DOTHERSIDE_LIB_NAME)
+
+mkdir -p $LIB_DIR
+cp $DOTHERSIDE_LIB $LIB_DIR/libDOtherSide$LIB_SUFFIX$LIB_EXT
