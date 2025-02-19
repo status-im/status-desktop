@@ -34,6 +34,7 @@ ColumnLayout {
     property WalletStores.RootStore walletRootStore
     property CommunitiesStore communitiesStore
     property CurrenciesStore currencyStore
+    required property NetworksStore networksStore
     property bool showAllAccounts: false
     property bool displayValues: true
     property bool filterVisible
@@ -366,7 +367,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 modelData: transactionDelegate.model.activityEntry
                 timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-                flatNetworks: root.walletRootStore.flatNetworks
+                flatNetworks: root.networksStore.allNetworks
                 currenciesStore: root.currencyStore
                 walletRootStore: root.walletRootStore
                 showAllAccounts: root.showAllAccounts
@@ -429,7 +430,7 @@ ColumnLayout {
                 TransactionDelegate {
                     Layout.fillWidth: true
 
-                    flatNetworks: root.walletRootStore.flatNetworks
+                    flatNetworks: root.networksStore.allNetworks
                     currenciesStore: root.currencyStore
                     walletRootStore: root.walletRootStore
                     loading: true

@@ -43,6 +43,7 @@ QtObject {
     required property RootStore sharedRootStore
     required property AppLayoutStores.RootStore rootStore
     required property CommunityTokensStore communityTokensStore
+    required property NetworksStore networksStore
 
     property UtilsStore utilsStore
     property CommunitiesStore communitiesStore
@@ -569,6 +570,7 @@ QtObject {
                 contactsStore: rootStore.profileSectionStore.contactsStore
                 walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
 
@@ -936,20 +938,20 @@ QtObject {
             id: testnetModal
             AlertPopup {
                 width: 521
-                readonly property string mainTitle: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled ? qsTr("Turn off testnet mode") : qsTr("Turn on testnet mode")
+                readonly property string mainTitle: root.networksStore.areTestNetworksEnabled ? qsTr("Turn off testnet mode") : qsTr("Turn on testnet mode")
                 title: mainTitle
                 alertLabel.textFormat: Text.RichText
-                alertText: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled ?
+                alertText: root.networksStore.areTestNetworksEnabled ?
                                qsTr("Are you sure you want to turn off %1? All future transactions will be performed on live networks with real funds").arg("<html><span style='font-weight: 500;'>testnet mode</span></html>") :
                                qsTr("Are you sure you want to turn on %1? In this mode, all blockchain data displayed will come from testnets and all blockchain interactions will be with testnets. Testnet mode switches the entire app to using testnets only. Please switch this mode on only if you know exactly why you need to use it.").arg("<html><span style='font-weight: 500;'>testnet mode</span></html>")
                 acceptBtnText: mainTitle
-                acceptBtnType: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Warning
+                acceptBtnType: root.networksStore.areTestNetworksEnabled ? StatusBaseButton.Type.Normal : StatusBaseButton.Type.Warning
                 asset.name: "settings"
                 asset.color: Theme.palette.warningColor1
                 asset.bgColor: Theme.palette.warningColor3
                 onAcceptClicked: {
-                    root.rootStore.profileSectionStore.walletStore.toggleTestNetworksEnabled()
-                    Global.displayToastMessage(root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled ? qsTr("Testnet mode turned on") : qsTr("Testnet mode turned off") , "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                    root.networksStore.toggleTestNetworksEnabled()
+                    Global.displayToastMessage(root.networksStore.areTestNetworksEnabled ? qsTr("Testnet mode turned on") : qsTr("Testnet mode turned off") , "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
                 }
                 onCancelClicked: close()
             }
@@ -1270,8 +1272,7 @@ QtObject {
                 walletAccountsModel: root.rootStore.accounts
                 plainTokensBySymbolModel: root.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
                 groupedAccountAssetsModel: root.walletAssetsStore.groupedAccountAssetsModel
-                networksModel: root.rootStore.profileSectionStore.walletStore.flatNetworks
-                areTestNetworksEnabled: root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                networksModel: root.networksStore.activeNetworks
                 Component.onCompleted: {
                     fetchProviders.connect(root.buyCryptoStore.fetchProviders)
                     fetchProviderUrl.connect(root.buyCryptoStore.fetchProviderUrl)
@@ -1310,7 +1311,7 @@ QtObject {
                 id: paymentRequestModal
                 readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
                     assetsModel: null
-                    flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                    flatNetworksModel: root.networksStore.activeNetworks
                     currentCurrency: root.currencyStore.currentCurrency
                     plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
                     enabledChainIds: [paymentRequestModal.selectedNetworkChainId]
@@ -1319,7 +1320,7 @@ QtObject {
                 property var callback: null
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
-                flatNetworksModel: WalletStores.RootStore.filteredFlatModel
+                flatNetworksModel: root.networksStore.activeNetworks
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 assetsModel: tokenAdaptor.outputAssetsModel
 

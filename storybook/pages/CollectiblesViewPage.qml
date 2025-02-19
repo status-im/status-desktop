@@ -57,6 +57,7 @@ SplitView {
         walletCollectiblesStore: CollectiblesStore {
             collectiblesController: collectiblesView.controller
         }
+        networksStore: SharedStores.NetworksStore {}
     }
 
     QtObject {

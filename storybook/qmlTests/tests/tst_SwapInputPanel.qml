@@ -32,8 +32,6 @@ Item {
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
-                readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: true
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
@@ -44,6 +42,7 @@ Item {
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
+            networksStore: NetworksStore {}
             swapFormData: SwapInputParamsForm {
                 selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             }
@@ -53,7 +52,7 @@ Item {
         readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
             assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
             plainTokensBySymbolModel: plainTokensModel
-            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            flatNetworksModel: d.adaptor.networksStore.activeNetworks
             currentCurrency: d.adaptor.currencyStore.currentCurrency
 
             accountAddress: d.adaptor.swapFormData.selectedAccountAddress
@@ -67,7 +66,7 @@ Item {
             anchors.centerIn: parent
 
             currencyStore: d.adaptor.currencyStore
-            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            flatNetworksModel: d.adaptor.networksStore.activeNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
             plainTokensBySymbolModel: plainTokensModel
             selectedAccountAddress: d.adaptor.swapFormData.selectedAccountAddress
@@ -327,6 +326,7 @@ Item {
         function test_max_button_when_different_tokens_clicked() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
 
             const maxTagButton = findChild(controlUnderTest, "maxTagButton")
             verify(!!maxTagButton)

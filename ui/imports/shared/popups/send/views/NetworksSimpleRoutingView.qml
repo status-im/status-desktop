@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import utils 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0 as SharedSendStores
 
 import StatusQ.Controls 0.1
@@ -18,6 +19,7 @@ RowLayout {
     id: root
 
     property SharedSendStores.TransactionStore store
+    required property SharedStores.NetworksStore networksStore
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
@@ -82,7 +84,7 @@ RowLayout {
                 id: toNetworksListLeftJoinModel
 
                 leftModel: root.suggestedToNetworksList
-                rightModel: root.store.flatNetworksModel
+                rightModel: root.networksStore.allNetworks
                 joinRole: "chainId"
             }
 
@@ -124,7 +126,7 @@ RowLayout {
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
             asset.height: 32
-            asset.name: Theme.svg("tiny/" + model.iconUrl)
+            asset.name: Theme.svg(model.iconUrl)
             asset.isImage: true
             color: "transparent"
         }
@@ -146,7 +148,7 @@ RowLayout {
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32
-                asset.name: Theme.svg("tiny/" + iconUrl)
+                asset.name: Theme.svg(iconUrl)
                 asset.isImage: true
                 border.color: gasRectangle.checked ? Theme.palette.primaryColor1 : Theme.palette.primaryColor2
                 color: {

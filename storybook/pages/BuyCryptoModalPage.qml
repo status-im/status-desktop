@@ -97,7 +97,6 @@ SplitView {
             isBuyProvidersModelLoading: d.buyCryptoStore.areProvidersLoading
             walletAccountsModel: WalletAccountsModel{}
             networksModel: NetworksModel.flatNetworks
-            areTestNetworksEnabled: true
             currentCurrency: d.currencyStore.currentCurrency
             plainTokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
             groupedAccountAssetsModel: d.assetsStore.groupedAccountAssetsModel

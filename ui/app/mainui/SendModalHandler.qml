@@ -14,6 +14,7 @@ import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Wallet 1.0
 
 import shared.popups.send 1.0
+import shared.stores 1.0 as SharedStores
 import shared.stores.send 1.0
 
 import utils 1.0
@@ -26,6 +27,7 @@ QtObject {
     required property TransactionStore transactionStore
     required property WalletStores.CollectiblesStore walletCollectiblesStore
     required property WalletStores.TransactionStoreNew transactionStoreNew
+    required property SharedStores.NetworksStore networksStore
 
     /** for ens flows **/
     required property string myPublicKey
@@ -410,6 +412,7 @@ QtObject {
 
             store: root.transactionStore
             collectiblesStore: root.walletCollectiblesStore
+            networksStore: root.networksStore
 
             showCustomRoutingMode: !production
 

@@ -25,6 +25,7 @@ import "../controls"
 Item {
     id: root
 
+    required property SharedStores.NetworksStore networksStore
     property SharedStores.NetworkConnectionStore networkConnectionStore
     property WalletStores.RootStore walletStore
 
@@ -41,6 +42,7 @@ Item {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    signal manageNetworksRequested()
 
     implicitHeight: 88
 
@@ -177,11 +179,14 @@ Item {
             // network filter
             NetworkFilter {
                 id: networkFilter
+                showTitle: false
+                showManageNetworksButton: true
 
                 Layout.alignment: Qt.AlignTop
 
-                flatNetworks: root.walletStore.filteredFlatModel
-                onToggleNetwork: root.walletStore.toggleNetwork(chainId)
+                flatNetworks: root.networksStore.activeNetworks
+                onToggleNetwork: root.networksStore.toggleNetworkEnabled(chainId)
+                onManageNetworksClicked: root.manageNetworksRequested()
                 showNewChainIcon: true
                 showNotificationIcon: {
                     const newChains = Constants.chains.newChains
@@ -210,7 +215,7 @@ Item {
                     id: chainIdsAggregator
 
                     readonly property SortFilterProxyModel enabledNetworksModel: SortFilterProxyModel{
-                        sourceModel: walletStore.filteredFlatModel
+                        sourceModel: root.networksStore.activeNetworks
                         filters: ValueFilter {
                             roleName: "isEnabled"
                             value: true

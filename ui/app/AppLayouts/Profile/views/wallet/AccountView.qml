@@ -38,6 +38,7 @@ ColumnLayout {
     property ProfileStores.WalletStore walletStore
     property var emojiPopup
     property string userProfilePublicKey
+    required property var activeNetworks
 
     QtObject {
         id: d
@@ -291,8 +292,8 @@ ColumnLayout {
 
     WalletAddressMenu {
         id: addressMenu
+        flatNetworks: root.activeNetworks
         selectedAccount: root.account
-        areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
         onCopyToClipboard: ClipboardUtils.setText(address)
     }
 

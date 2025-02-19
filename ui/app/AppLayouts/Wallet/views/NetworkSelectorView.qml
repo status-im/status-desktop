@@ -38,27 +38,6 @@ StatusListView {
     signal toggleNetwork(int chainId, int index)
     
     objectName: "networkSelectorList"
-    
-    onSelectionChanged: {
-        if (!root.multiSelection && selection.length > 1) {
-            console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the first inserted item.")
-            selection = [selection[0]]
-        }
-    }
-
-    onMultiSelectionChanged: {
-        if (root.multiSelection) return;
-
-        // When changing the multi-selection mode, we need to ensure that the selection is valid
-        if (root.selection.length > 1) {
-            root.selection = [root.selection[0]]
-        }
-
-        // Single selection defaults to first item if no selection is made
-        if (root.selection.length === 0 && root.count > 0) {
-            root.selection = [ModelUtils.get(root.model, 0).chainId]
-        }
-    }
     implicitWidth: 300
     implicitHeight: contentHeight
 
@@ -75,7 +54,7 @@ StatusListView {
         height: 48
         width: ListView.view.width
         title: model.chainName
-        iconUrl: model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)
+        iconUrl: Theme.svg(model.iconUrl)
         showIndicator: root.showIndicator
         multiSelection: root.multiSelection
         interactive: root.interactive
@@ -99,30 +78,17 @@ StatusListView {
         }
     }
 
-    section {
-        property: "layer"
-        delegate: Loader {
-            required property int section
-            width: parent.width
-            height: active ? 44 : 0
-            active: section === 2
-            sourceComponent: layer2text
-
-            Component {
-                id: layer2text
-                StatusBaseText {
-                    color: Theme.palette.baseColor1
-                    text: qsTr("Layer 2")
-                    leftPadding: 16
-                    topPadding: 14
-                }
-            }
-        }
-    }
-
     QtObject {
         id: d
-        readonly property bool allSelected: root.selection.length === root.count
+        readonly property int networksCount: root.model.ModelCount.count
+        // Handle multiple property changes from single changed signal
+        property var combinedPropertyChangedHandler: [
+            root.selection,
+            root.multiSelection,
+            d.networksCount]
+        onCombinedPropertyChangedHandlerChanged: d.reprocessSelection()
+
+        readonly property bool allSelected: root.selection.length === d.networksCount
 
         function onToggled(initialState, chainId) {  
             let selection = root.selection
@@ -137,12 +103,27 @@ StatusListView {
 
             root.selection = [...selection]
         }
-    }
 
-    Component.onCompleted: {
-        if(root.selection.length === 0 && !root.multiSelection && root.count > 0) {
-            const firstChain = ModelUtils.get(root.model, 0).chainId
-            root.selection = [firstChain]
+        function reprocessSelection() {
+            let selection = root.selection
+
+            if (d.networksCount === 0) {
+                selection = []
+            } else {
+                if (!root.multiSelection) {
+                    // One and only one chain must be selected
+                    if (selection.length === 0) {
+                        selection = [ModelUtils.get(root.model, 0, "chainId")]
+                    } else if (selection.length > 1) {
+                        console.warn("Warning: Multi-selection is disabled, but multiple items are selected. Automatically selecting the first inserted item.")
+                        selection = [selection[0]]
+                    }
+                }
+            }
+
+            if (root.selection !== selection) {
+                root.selection = selection
+            }
         }
     }
 }

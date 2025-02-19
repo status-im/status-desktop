@@ -60,6 +60,7 @@ StatusDialog {
 
     required property TransactionStore store
     property WalletStores.CollectiblesStore collectiblesStore
+    required property NetworksStore networksStore
 
     property var bestRoutes
     property bool isLoading: false
@@ -203,13 +204,13 @@ StatusDialog {
     LeftJoinModel {
         id: fromNetworksRouteModel
         leftModel: popup.store.fromNetworksRouteModel
-        rightModel: popup.store.flatNetworksModel
+        rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
     LeftJoinModel {
         id: toNetworksRouteModel
         leftModel: popup.store.toNetworksRouteModel
-        rightModel: popup.store.flatNetworksModel
+        rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
 
@@ -425,7 +426,7 @@ StatusDialog {
                                              popup.store.walletAssetStore.bridgeableGroupedAccountAssetsModel :
                                              popup.store.walletAssetStore.groupedAccountAssetsModel
 
-                            flatNetworksModel: popup.store.flatNetworksModel
+                            flatNetworksModel: popup.networksStore.activeNetworks
                             currentCurrency: popup.store.currencyStore.currentCurrency
                             accountAddress: popup.selectedAccount.address
                             showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
@@ -439,10 +440,7 @@ StatusDialog {
                             sourceComponent: CollectiblesSelectionAdaptor {
                                 accountKey: popup.selectedAccount.address
 
-                                networksModel: SortFilterProxyModel {
-                                    sourceModel: popup.store.flatNetworksModel
-                                    filters: ValueFilter { roleName: "isTest"; value: popup.store.areTestNetworksEnabled }
-                                }
+                                networksModel: popup.networksStore.activeNetworks
                                 collectiblesModel: SortFilterProxyModel {
                                     sourceModel: collectiblesStore ? collectiblesStore.jointCollectiblesBySymbolModel : null
                                     filters: ValueFilter {
@@ -711,6 +709,7 @@ StatusDialog {
                 width: scrollView.availableWidth
 
                 store: popup.store
+                networksStore: popup.networksStore
                 interactive: popup.interactive
                 selectedRecipient: popup.preSelectedRecipient
                 ensAddressOrEmpty: recipientInputLoader.ready ? recipientInputLoader.resolvedENSAddress : ""

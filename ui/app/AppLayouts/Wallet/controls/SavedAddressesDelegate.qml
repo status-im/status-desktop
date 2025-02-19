@@ -8,9 +8,11 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
 
 import shared.controls 1.0
+import shared.popups 1.0
 import shared.stores 1.0 as SharedStores
 
 import "../popups"
@@ -22,11 +24,11 @@ StatusListItem {
     id: root
 
     property SharedStores.NetworkConnectionStore networkConnectionStore
+    property var activeNetworks
     property string name
     property string address
     property string ens
     property string colorId
-    property bool areTestNetworksEnabled: false
 
     property int usage: SavedAddressesDelegate.Usage.Delegate
     property bool showButtons: sensor.containsMouse
@@ -125,7 +127,6 @@ StatusListItem {
 
         readonly property int maxHeight: 341
         height: implicitHeight > maxHeight ? maxHeight : implicitHeight
-        contentWidth: 216
 
         function openMenu(parent, x, y, model) {
             menu.name = model.name;
@@ -207,12 +208,12 @@ StatusListItem {
 
         StatusMenuSeparator {}
 
-        StatusAction {
-            text: qsTr("View on Etherscan")
-            icon.name: "link"
-            onTriggered: {
-                let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, d.visibleAddress ? d.visibleAddress : root.ens)
-                Global.openLink(link)
+        BlockchainExplorersMenu {
+            id: blockchainExplorersMenu
+            flatNetworks: root.activeNetworks
+            onNetworkClicked: {
+                let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, d.visibleAddress ? d.visibleAddress : root.ens);
+                Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
             }
         }
 

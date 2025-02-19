@@ -104,6 +104,10 @@ SplitView {
         tokensStore.getDisplayAssetsBelowBalanceThresholdDisplayAmount: () => Number(balanceThresholdValue.text)
     }
 
+    NetworksStore {
+        id: networksStore
+    }
+
     QtObject {
         id: dummyEventData
 
@@ -205,6 +209,7 @@ SplitView {
                 closePolicy: Popup.NoAutoClose
                 onlyAssets: loader.onlyAssets
                 store: txStore
+                networksStore: networksStore
                 preSelectedAccountAddress: loader.preSelectedAccount.address
                 preDefinedAmountToSend: loader.preDefinedAmountToSend
                 preSelectedRecipient: loader.preSelectedRecipient

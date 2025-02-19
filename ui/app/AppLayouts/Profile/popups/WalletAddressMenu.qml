@@ -1,7 +1,9 @@
 import QtQuick 2.15
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
 
+import shared.popups 1.0
 import utils 1.0
 
 import AppLayouts.Wallet.popups 1.0
@@ -27,7 +29,7 @@ StatusMenu {
                                        emoji: "",
                                        colorId: "",
                                    })
-    property bool areTestNetworksEnabled: false
+    property var flatNetworks
 
     signal copyToClipboard(string address)
 
@@ -37,12 +39,12 @@ StatusMenu {
         root.popup(delegate, x, y)
     }
 
-    StatusAction {
-        text: qsTr("View on Etherscan")
-        icon.name: "link"
-        onTriggered: {
-            let link = Utils.getUrlForAddressOnNetwork(Constants.networkShortChainNames.mainnet, root.areTestNetworksEnabled, root.selectedAccount.address?? "")
-            Global.openLink(link)
+    BlockchainExplorersMenu {
+        id: blockchainExplorersMenu
+        flatNetworks: root.flatNetworks
+        onNetworkClicked: {
+            let link = Utils.getUrlForAddressOnNetwork(shortname, isTestnet, root.selectedAccount.address ?? "");
+            Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
         }
     }
 

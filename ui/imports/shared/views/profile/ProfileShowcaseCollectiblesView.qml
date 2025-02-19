@@ -12,6 +12,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Popups 0.1
 
 import shared.controls 1.0
+import shared.stores 1.0 as SharedStores
 import utils 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
@@ -22,6 +23,7 @@ Item {
     required property string mainDisplayName
     required property var collectiblesModel
     required property WalletStores.RootStore walletStore
+    required property SharedStores.NetworksStore networksStore
 
     property alias cellWidth: collectiblesView.cellWidth
     property alias cellHeight: collectiblesView.cellHeight
@@ -52,7 +54,7 @@ Item {
         delegate: Item {
             id: delegateItem
             function getCollectibleURL() {
-                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.walletStore.filteredFlatModel, "chainId", model.chainId, "shortName")
+                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "chainId", model.chainId, "shortName")
                 return root.walletStore.getOpenSeaCollectibleUrl(networkShortName, model.contractAddress, model.tokenId)
             }
             function openCollectibleURL() {
@@ -61,7 +63,7 @@ Item {
             }
 
             function openCollectionURL() {
-                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.walletStore.filteredFlatModel, "chainId", model.chainId, "shortName")
+                const networkShortName = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "chainId", model.chainId, "shortName")
                 let link = root.walletStore.getOpenSeaCollectionUrl(networkShortName, model.contractAddress)
                 Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
             }

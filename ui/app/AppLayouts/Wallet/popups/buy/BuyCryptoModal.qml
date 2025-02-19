@@ -31,7 +31,6 @@ StatusStackModal {
     required property var groupedAccountAssetsModel
     required property var walletAccountsModel
     required property var networksModel
-    required property bool areTestNetworksEnabled
     required property string currentCurrency
 
     signal fetchProviders()
@@ -126,7 +125,6 @@ StatusStackModal {
 
         readonly property var buyCryptoAdaptor: BuyCryptoModalAdaptor {
             networksModel: root.networksModel
-            areTestNetworksEnabled: root.areTestNetworksEnabled
             processedTokenSelectorAssetsModel: d.tokenSelectorViewAdaptor.outputAssetsModel
             selectedProviderSupportedAssetsArray: {
                 if (!!d.selectedProviderEntry.item && !!d.selectedProviderEntry.item.supportedAssets)
@@ -185,7 +183,7 @@ StatusStackModal {
             selectedProvider: d.selectedProviderEntry.item
             selectedTokenKey: root.buyCryptoInputParamsForm.selectedTokenKey
             selectedNetworkChainId: root.buyCryptoInputParamsForm.selectedNetworkChainId
-            filteredFlatNetworksModel: d.buyCryptoAdaptor.filteredFlatNetworksModel
+            filteredFlatNetworksModel: d.buyCryptoAdaptor.networksModel
             onNetworkSelected: {
                 if (root.buyCryptoInputParamsForm.selectedNetworkChainId !== chainId) {
                     root.buyCryptoInputParamsForm.selectedNetworkChainId = chainId
