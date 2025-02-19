@@ -8,6 +8,9 @@ SDK=${SDK:=iphonesimulator}
 JAVA_HOME=${JAVA_HOME}
 BIN_DIR=${BIN_DIR:="$CWD/../bin"}
 BUILD_DIR=${BUILD_DIR:="$CWD/../build"}
+ANDROID_ABI=${ANDROID_ABI:="arm64-v8a"}
+
+echo "Building wrapperApp for $OS, $ANDROID_ABI"
 
 mkdir -p $BUILD_DIR
 cd $BUILD_DIR
@@ -21,8 +24,7 @@ if [ "$OS" = "android" ]; then
         exit 1
     fi
 
-    qmake $CWD/../wrapperApp/IOS-build.pro CONFIG+=debug CONFIG+=device -spec android-clang ANDROID_ABIS="arm64-v8a"
-
+    qmake $CWD/../wrapperApp/IOS-build.pro CONFIG+=debug CONFIG+=device -spec android-clang ANDROID_ABIS="$ANDROID_ABI"
 
     # Build the app
     make  -j$(nproc) apk
