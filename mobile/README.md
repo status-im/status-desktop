@@ -82,7 +82,7 @@ Fix: In the simulator app choose `Device -> Erase all content and settings`
 
   export QTDIR=${QT_INSTALL_DIR}/5.15.2/android
 ```
-- Python
+
 - Clone submodules
 ```
   git submodule update --init --recursive
