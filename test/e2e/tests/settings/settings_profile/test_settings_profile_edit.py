@@ -2,7 +2,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from constants import UserAccount, RandomUser
+from constants import UserAccount
 from scripts.utils.generators import random_name_string
 from . import marks
 
@@ -47,6 +47,7 @@ def test_set_name_bio_social_links(main_screen: MainWindow, aut: AUT, user_accou
 
     with step('Restart application'):
         aut.restart()
+        main_screen.prepare()
         main_screen.authorize_user(user_account=UserAccount(name=new_user_name, password=user_account.password))
 
     with step('Open profile settings and check new name, bio and links'):

@@ -4,7 +4,6 @@ import configs
 import driver
 
 from gui.components.authenticate_popup import AuthenticatePopup
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 
 with step('Authenticate user action with password'):
     def authenticate_with_password(user_account):

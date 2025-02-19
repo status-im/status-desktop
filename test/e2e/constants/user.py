@@ -1,11 +1,8 @@
-import random
-import string
 from collections import namedtuple
 from dataclasses import dataclass, field
 from typing import Optional
 
 import configs
-from constants import ColorCodes
 from scripts.tools.image import Image
 from scripts.utils.generators import random_name_string, random_password_string, random_community_name, \
     random_community_description, random_community_introduction, random_community_leave_message, random_community_tags, \
