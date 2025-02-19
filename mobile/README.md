@@ -1,4 +1,4 @@
-# IOS-build
+# IOS
 
 ### Running the app
 
@@ -28,7 +28,7 @@
   make run
 ```
 
-### Issues
+### Possible issues
 
 ```
 scripts/clangWrap.sh
@@ -67,3 +67,50 @@ Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=4):
 ```
 
 Fix: In the simulator app choose `Device -> Erase all content and settings`
+
+# Android
+
+#### Prerequisites:
+- Make sure status-desktop can be built
+- Qt 5.15.2 for Android
+```
+  pip3 install -U pip
+  pip3 install aqtinstall
+  aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}
+  ### OR if it fails for arm64
+  arch -x86_64 aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}/5.15.2/ios
+
+  export QTDIR=${QT_INSTALL_DIR}/5.15.2/android
+```
+- Python
+- Clone submodules
+```
+  git submodule update --init --recursive
+```
+
+
+
+Android sdk
+Android NDK 21.3.6528147
+Android emulator
+Android cmd line tools
+Note: These prerequisites can be installed with AndroidStudio
+
+JDK 11
+
+#### Running the app
+```
+  export ANDROID_NDK_HOME=<your ndk path>
+  export SDK_PATH=<your sdk path>
+  export JAVA_HOME=<your java path>/libexec/openjdk.jdk/Contents/Home
+  make run
+```
+
+### Known issues
+
+PNG files won't be rendered on macos emulator. This can be fixed by setting the software rendered for qt.
+Add `setenv("QT_QUICK_BACKEND", "software", 1);` in main.cpp
+
+
+
+
