@@ -90,6 +90,14 @@ public:
         Error,
     };
 
+    // Keep in sync with LocalPairingState in src/app_service/service/devices/dto/local_pairing_status.nim
+    enum class LocalPairingState {
+        Idle,
+        Transferring,
+        Error,
+        Finished,
+    };
+
 private:
     Q_ENUM(PrimaryFlow)
     Q_ENUM(OnboardingFlow)
@@ -97,4 +105,5 @@ private:
     Q_ENUM(KeycardState)
     Q_ENUM(ProgressState)
     Q_ENUM(AuthorizationState)
+    Q_ENUM(LocalPairingState)
 };

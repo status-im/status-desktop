@@ -1,6 +1,7 @@
 import NimQml
 import io_interface, states
 from app_service/service/keycardV2/dto import KeycardEventDto
+from app_service/service/devices/dto/local_pairing_status import LocalPairingState
 
 # TODO move these files to this module when we remove the old onboarding
 import ../startup/models/login_account_model as login_acc_model
@@ -11,7 +12,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       keycardEvent: KeycardEventDto
-      syncState: int
+      syncState: LocalPairingState
       addKeyPairState: int
       pinSettingState: int
       authorizationState: AuthorizationState
@@ -40,11 +41,11 @@ QtObject:
 
   proc syncStateChanged*(self: View) {.signal.}
   proc getSyncState(self: View): int {.slot.} =
-    return self.syncState
+    return self.syncState.int
   QtProperty[int] syncState:
     read = getSyncState
     notify = syncStateChanged
-  proc setSyncState*(self: View, syncState: int) =
+  proc setSyncState*(self: View, syncState: LocalPairingState) =
     self.syncState = syncState
     self.syncStateChanged()
 

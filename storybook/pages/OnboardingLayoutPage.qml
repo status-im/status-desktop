@@ -535,7 +535,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("ProgressState")
+                        model: Onboarding.getModelFromEnum("LocalPairingState")
 
                         RoundButton {
                             text: modelData.name
