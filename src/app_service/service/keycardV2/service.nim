@@ -80,8 +80,7 @@ QtObject:
     debug "initializeRPC response", response
 
   proc start*(self: Service, storageDir: string) =
-    let response = callRPC("Start", %*{"storageFilePath": storageDir})
-    debug "callRPC response", response
+    discard callRPC("Start", %*{"storageFilePath": storageDir})
 
   proc stop*(self: Service) =
     discard callRPC("Stop")

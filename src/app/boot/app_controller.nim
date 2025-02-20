@@ -460,6 +460,7 @@ proc start*(self: AppController) =
   else:
     self.keycardService.init()
 
+  debug "keycardService initialized"
   self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()

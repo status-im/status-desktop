@@ -11,4 +11,5 @@ proc callRPC*(methodName: string, params: JsonNode = %*{}): string  =
       "params": %*[ params ],
     }
     let responseString = keycard_go.keycardCallRPC($request)
+    debug "callRPC", request, responseString
     return responseString
