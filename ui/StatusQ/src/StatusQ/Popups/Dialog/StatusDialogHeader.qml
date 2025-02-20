@@ -14,6 +14,13 @@ Rectangle {
 
     property alias leftComponent: leftComponentLoader.sourceComponent
 
+    property bool internalPopupActive
+    property color internalOverlayColor
+    property int popupFullHeight
+    property Component internalPopupComponent
+
+    signal closeInternalPopup()
+
     color: Theme.palette.statusModal.backgroundColor
     radius: 8
 
@@ -72,5 +79,30 @@ Rectangle {
         verticalOffset: 2
         samples: 37
         color: Theme.palette.dropShadow
+    }
+
+    Rectangle {
+        id: internalOverlay
+        anchors.fill: parent
+        anchors.bottomMargin: -1 * root.popupFullHeight + root.height
+        visible: root.internalPopupActive
+        radius: root.radius
+        color: root.internalOverlayColor
+
+        MouseArea {
+            anchors.fill: parent
+            anchors.bottomMargin: popupLoader.height
+            onClicked: {
+                root.closeInternalPopup()
+            }
+        }
+    }
+
+    Loader {
+        id: popupLoader
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: internalOverlay.anchors.bottomMargin
+        active: root.internalPopupActive
+        sourceComponent: root.internalPopupComponent
     }
 }

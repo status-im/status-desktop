@@ -16,12 +16,23 @@ type
     AmountInLocked,
     AmountOut,
     SuggestedMaxFeesPerGasLowLevel,
+    SuggestedPriorityFeePerGasLowLevel,
+    SuggestedEstimatedTimeLowLevel,
     SuggestedMaxFeesPerGasMediumLevel,
+    SuggestedPriorityFeePerGasMediumLevel,
+    SuggestedEstimatedTimeMediumLevel,
     SuggestedMaxFeesPerGasHighLevel,
+    SuggestedPriorityFeePerGasHighLevel,
+    SuggestedEstimatedTimeHighLevel,
     SuggestedMinPriorityFee,
     SuggestedMaxPriorityFee,
     CurrentBaseFee,
+    SuggestedTxNonce,
+    SuggestedTxGasAmount,
+    SuggestedApprovalTxNonce,
+    SuggestedApprovalGasAmount,
     TxNonce,
+    TxGasFeeMode,
     TxMaxFeesPerGas,
     TxBaseFee,
     TxPriorityFee,
@@ -36,6 +47,7 @@ type
     ApprovalAmountRequired,
     ApprovalContractAddress,
     ApprovalTxNonce,
+    ApprovalGasFeeMode,
     ApprovalMaxFeesPerGas,
     ApprovalBaseFee,
     ApprovalPriorityFee,
@@ -80,12 +92,23 @@ QtObject:
       ModelRole.AmountInLocked.int: "amountInLocked",
       ModelRole.AmountOut.int: "amountOut",
       ModelRole.SuggestedMaxFeesPerGasLowLevel.int: "suggestedMaxFeesPerGasLowLevel",
+      ModelRole.SuggestedPriorityFeePerGasLowLevel.int: "suggestedPriorityFeePerGasLowLevel",
+      ModelRole.SuggestedEstimatedTimeLowLevel.int: "suggestedEstimatedTimeLowLevel",
       ModelRole.SuggestedMaxFeesPerGasMediumLevel.int: "suggestedMaxFeesPerGasMediumLevel",
+      ModelRole.SuggestedPriorityFeePerGasMediumLevel.int: "suggestedPriorityFeePerGasMediumLevel",
+      ModelRole.SuggestedEstimatedTimeMediumLevel.int: "suggestedEstimatedTimeMediumLevel",
       ModelRole.SuggestedMaxFeesPerGasHighLevel.int: "suggestedMaxFeesPerGasHighLevel",
+      ModelRole.SuggestedPriorityFeePerGasHighLevel.int: "suggestedPriorityFeePerGasHighLevel",
+      ModelRole.SuggestedEstimatedTimeHighLevel.int: "suggestedEstimatedTimeHighLevel",
       ModelRole.SuggestedMinPriorityFee.int: "suggestedMinPriorityFee",
       ModelRole.SuggestedMaxPriorityFee.int: "suggestedMaxPriorityFee",
       ModelRole.CurrentBaseFee.int: "currentBaseFee",
+      ModelRole.SuggestedTxNonce.int: "suggestedTxNonce",
+      ModelRole.SuggestedTxGasAmount.int: "suggestedTxGasAmount",
+      ModelRole.SuggestedApprovalTxNonce.int: "suggestedApprovalTxNonce",
+      ModelRole.SuggestedApprovalGasAmount.int: "suggestedApprovalGasAmount",
       ModelRole.TxNonce.int: "txNonce",
+      ModelRole.TxGasFeeMode.int: "txGasFeeMode",
       ModelRole.TxMaxFeesPerGas.int: "txMaxFeesPerGas",
       ModelRole.TxBaseFee.int: "txBaseFee",
       ModelRole.TxPriorityFee.int: "txPriorityFee",
@@ -100,6 +123,7 @@ QtObject:
       ModelRole.ApprovalAmountRequired.int: "approvalAmountRequired",
       ModelRole.ApprovalContractAddress.int: "approvalContractAddress",
       ModelRole.ApprovalTxNonce.int: "approvalTxNonce",
+      ModelRole.ApprovalGasFeeMode.int: "approvalGasFeeMode",
       ModelRole.ApprovalMaxFeesPerGas.int: "approvalMaxFeesPerGas",
       ModelRole.ApprovalBaseFee.int: "approvalBaseFee",
       ModelRole.ApprovalPriorityFee.int: "approvalPriorityFee",
@@ -146,18 +170,40 @@ QtObject:
       result = newQVariant(item.amountOut)
     of ModelRole.SuggestedMaxFeesPerGasLowLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasLowLevel)
+    of ModelRole.SuggestedPriorityFeePerGasLowLevel:
+      result = newQVariant(item.suggestedPriorityFeePerGasLowLevel)
+    of ModelRole.SuggestedEstimatedTimeLowLevel:
+      result = newQVariant(item.suggestedEstimatedTimeLowLevel)
     of ModelRole.SuggestedMaxFeesPerGasMediumLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasMediumLevel)
+    of ModelRole.SuggestedPriorityFeePerGasMediumLevel:
+      result = newQVariant(item.suggestedPriorityFeePerGasMediumLevel)
+    of ModelRole.SuggestedEstimatedTimeMediumLevel:
+      result = newQVariant(item.suggestedEstimatedTimeMediumLevel)
     of ModelRole.SuggestedMaxFeesPerGasHighLevel:
       result = newQVariant(item.suggestedMaxFeesPerGasHighLevel)
+    of ModelRole.SuggestedPriorityFeePerGasHighLevel:
+      result = newQVariant(item.suggestedPriorityFeePerGasHighLevel)
+    of ModelRole.SuggestedEstimatedTimeHighLevel:
+      result = newQVariant(item.suggestedEstimatedTimeHighLevel)
     of ModelRole.SuggestedMinPriorityFee:
       result = newQVariant(item.suggestedMinPriorityFee)
     of ModelRole.SuggestedMaxPriorityFee:
       result = newQVariant(item.suggestedMaxPriorityFee)
     of ModelRole.CurrentBaseFee:
       result = newQVariant(item.currentBaseFee)
+    of ModelRole.SuggestedTxNonce:
+      result = newQVariant(item.suggestedTxNonce)
+    of ModelRole.SuggestedTxGasAmount:
+      result = newQVariant(item.suggestedTxGasAmount)
+    of ModelRole.SuggestedApprovalTxNonce:
+      result = newQVariant(item.suggestedApprovalTxNonce)
+    of ModelRole.SuggestedApprovalGasAmount:
+      result = newQVariant(item.suggestedApprovalGasAmount)
     of ModelRole.TxNonce:
       result = newQVariant(item.txNonce)
+    of ModelRole.TxGasFeeMode:
+      result = newQVariant(item.txGasFeeMode)
     of ModelRole.TxMaxFeesPerGas:
       result = newQVariant(item.txMaxFeesPerGas)
     of ModelRole.TxBaseFee:
@@ -186,6 +232,8 @@ QtObject:
       result = newQVariant(item.approvalContractAddress)
     of ModelRole.ApprovalTxNonce:
       result = newQVariant(item.approvalTxNonce)
+    of ModelRole.ApprovalGasFeeMode:
+      result = newQVariant(item.approvalGasFeeMode)
     of ModelRole.ApprovalMaxFeesPerGas:
       result = newQVariant(item.approvalMaxFeesPerGas)
     of ModelRole.ApprovalBaseFee:
