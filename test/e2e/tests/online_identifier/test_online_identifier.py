@@ -1,14 +1,11 @@
-import time
-
 import allure
 import pytest
 from allure import step
 
 import configs
-import driver
-from constants import UserAccount, ColorCodes, RandomUser
+from constants import UserAccount, RandomUser
 from gui.screens.messages import ToolBar
-from scripts.utils.generators import random_name_string, random_password_string
+from scripts.utils.generators import random_name_string
 from gui.components.changes_detected_popup import ChangesDetectedToastMessage
 from gui.main_window import MainWindow
 from . import marks

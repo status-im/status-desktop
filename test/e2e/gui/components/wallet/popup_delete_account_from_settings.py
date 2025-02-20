@@ -1,13 +1,9 @@
-import allure
-
-import configs
 from gui.components.base_popup import BasePopup
-from gui.elements.button import Button
-from gui.elements.check_box import CheckBox
-from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 from gui.screens.settings_wallet import *
-from gui.elements.object import QObject
+from gui.elements.button import Button
+from gui.elements.text_label import TextLabel
+from gui.elements.check_box import CheckBox
 
 
 class RemoveAccountConfirmationSettings(BasePopup):

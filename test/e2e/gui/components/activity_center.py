@@ -81,14 +81,12 @@ class ActivityCenter(BasePopup):
     def find_contact_request_in_list(
             self, contact: str, timeout_sec: int = configs.timeouts.MESSAGING_TIMEOUT_SEC):
         started_at = time.monotonic()
-        request = None
-        while request is None:
+        while time.monotonic() - started_at < timeout_sec:
             requests = self.contact_items
             for _request in requests:
                 if _request.contact_request == contact:
-                    request = _request
-            assert time.monotonic() - started_at < timeout_sec, f'Contact: {contact} not found in {requests}'
-        return request
+                    return _request
+        raise TimeoutError(f'Timed out after {timeout_sec} seconds: Contact request "{contact}" not found.')
 
     @allure.step('Accept contact request')
     def accept_contact_request(self, request):

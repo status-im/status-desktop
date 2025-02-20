@@ -1,6 +1,6 @@
 import allure
 
-from gui.components.community.community_category_popup import CategoryPopup, EditCategoryPopup
+from gui.components.community.community_category_popup import EditCategoryPopup
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.community.leave_community_confirmation import LeaveCommunityConfirmationPopup
 from gui.components.delete_popup import DeleteCategoryPopup
