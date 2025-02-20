@@ -24,7 +24,7 @@ Page {
     property bool networkChecksEnabled: true
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
-    readonly property alias stack: onboardingFlow
+    readonly property alias stack: onboardingFlow // TODO remove external stack access
     readonly property string currentPageName: stack.topLevelItem ? Utils.objectTypeName(stack.topLevelItem) : ""
 
     signal shareUsageDataRequested(bool enabled)
@@ -47,6 +47,16 @@ Page {
     function unload() {
         onboardingFlow.clear()
         d.resetState()
+    }
+
+    // clear the stack down to the LoginScreen, or recreate it
+    // the purpose is to return from main/splash screen in case of a late stage error
+    // and use the below error handler (onAccountLoginError)
+    function unwindToLoginScreen() {
+        onboardingFlow.pop(null, StackView.PopTransition)
+        if (!onboardingFlow.loginScreen) {
+            restartFlow()
+        }
     }
 
     function setBiometricResponse(secret: string, error = "",
@@ -216,10 +226,10 @@ Page {
         }
     }
 
+    // error handler for the LoginScreen
     Connections {
         target: root.onboardingStore
 
-        // (password) login
         function onAccountLoginError(error: string, wrongPassword: bool) {
             const loginScreen = onboardingFlow.loginScreen
 
