@@ -317,6 +317,10 @@ Item {
             color: "lightgray"
         }
 
+        Label {
+            text: "Highest tab element count: " + adaptor.highestTabElementCount
+        }
+
         RowLayout {
             ColumnLayout {
                 Layout.fillWidth: true
