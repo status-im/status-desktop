@@ -1,8 +1,6 @@
 import json, strutils
 include ../../common/json_utils
 
-
-
 type StateString* = enum
   UnknownReaderState = "unknown"
   NoPCSC = "no-pcsc"
@@ -51,10 +49,21 @@ type KeycardStatusDto* = object
   keyInitialized*: bool
   path*: string
 
+type
+  WalletAccountDto* = object
+    path*: string
+    address*: string
+    publicKey*: string
+
+  CardMetadataDto* = object
+    name*: string
+    walletAccounts*: seq[WalletAccountDto]
+
 type KeycardEventDto* = object
   state*: KeycardState
   keycardInfo*: KeycardInfoDto
   keycardStatus*: KeycardStatusDto
+  metadata*: CardMetadataDto
 
 type
   KeyDetailsV2* = object
@@ -126,6 +135,19 @@ proc toKeycardStatusDto*(jsonObj: JsonNode): KeycardStatusDto =
   discard jsonObj.getProp("keyInitialized", result.keyInitialized)
   discard jsonObj.getProp("path", result.path)
 
+proc toWalletAccountDto(jsonObj: JsonNode): WalletAccountDto =
+  discard jsonObj.getProp("path", result.path)
+  discard jsonObj.getProp("address", result.address)
+  if jsonObj.getProp("publicKey", result.publicKey):
+    result.publicKey = "0x" & result.publicKey
+
+proc toCardMetadataDto*(jsonObj: JsonNode): CardMetadataDto =
+  discard jsonObj.getProp("name", result.name)
+  var accountsArr: JsonNode
+  if jsonObj.getProp("wallets", accountsArr) and accountsArr.kind == JArray:
+    for acc in accountsArr:
+      result.walletAccounts.add(acc.toWalletAccountDto())
+
 proc toKeycardEventDto*(jsonObj: JsonNode): KeycardEventDto =
   result = KeycardEventDto()
 
@@ -134,13 +156,15 @@ proc toKeycardEventDto*(jsonObj: JsonNode): KeycardEventDto =
   except:
     result.state = KeycardState.UnknownReaderState
 
-  var keycardInfoObj: JsonNode
-  if jsonObj.getProp("keycardInfo", keycardInfoObj):
-    result.keycardInfo = keycardInfoObj.toKeycardInfoDto
+  var obj: JsonNode
+  if jsonObj.getProp("keycardInfo", obj):
+    result.keycardInfo = obj.toKeycardInfoDto
 
-  var keycardStatusObj: JsonNode
-  if jsonObj.getProp("keycardStatus", keycardStatusObj):
-    result.keycardStatus = keycardStatusObj.toKeycardStatusDto
+  if jsonObj.getProp("keycardStatus", obj):
+    result.keycardStatus = obj.toKeycardStatusDto
+
+  if jsonObj.getProp("metadata", obj):
+    result.metadata = obj.toCardMetadataDto
 
 proc toKeyDetails(jsonObj: JsonNode): KeyDetailsV2 =
   discard jsonObj.getProp("address", result.address)
