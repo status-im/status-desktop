@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, sugar, options, strutils
+import NimQml, chronicles, std/json, sequtils, sugar, options, strutils
 import tables, stint, sets
 
 import model
@@ -94,7 +94,7 @@ QtObject:
     defer: self.status.setErrorCode(res.errorCode.int)
 
     if res.errorCode != ErrorCodeSuccess:
-      error "error fetching activity entries: ", res.errorCode
+      error "error fetching activity entries: ",code = res.errorCode
       return
 
     let entries = self.backendToPresentation(res.activities)
@@ -124,7 +124,7 @@ QtObject:
     if self.eventsHandler.hasSessionId():
       let res = backend_activity.stopActivityFilterSession(self.sessionId())
       if res.error != nil:
-        error "error stopping the previous session of activity fitlering: ", res.error
+        error "error stopping the previous session of activity fitlering: ", error = res.error
       self.eventsHandler.clearSessionId()
 
     # start a new filter session
@@ -149,7 +149,7 @@ QtObject:
     let response = backend_activity.resetActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
-      error "error fetching activity entries from start: ", response.error
+      error "error fetching activity entries from start: ", error = response.error
       return
 
   proc loadMoreItems(self: Controller) {.slot.} =
@@ -158,7 +158,7 @@ QtObject:
     let response = backend_activity.getMoreForActivityFilterSession(self.sessionId(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
-      error "error fetching more activity entries: ", response.error
+      error "error fetching more activity entries: ", error = response.error
       return
 
   proc updateCollectiblesModel*(self: Controller) {.slot.} =
@@ -166,7 +166,7 @@ QtObject:
     let res = backend_activity.getActivityCollectiblesAsync(self.sessionId(), self.chainIds, self.addresses, 0, FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingCollectibles(false)
-      error "error fetching collectibles: ", res.error
+      error "error fetching collectibles: ", error = res.error
       return
 
   proc loadMoreCollectibles*(self: Controller) {.slot.} =
@@ -174,7 +174,7 @@ QtObject:
     let res = backend_activity.getActivityCollectiblesAsync(self.sessionId(), self.chainIds, self.addresses, self.collectiblesModel.getCount(), FETCH_COLLECTIBLES_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingCollectibles(false)
-      error "error fetching collectibles: ", res.error
+      error "error fetching collectibles: ", error = res.error
       return
       
   proc resetFilter*(self: Controller) {.slot.} =
@@ -203,7 +203,7 @@ QtObject:
     let resJson = backend_activity.getOldestActivityTimestampAsync(self.sessionId(), self.addresses)
     if resJson.error != nil:
       self.status.setLoadingStartTimestamp(false)
-      error "error requesting oldest activity timestamp: ", resJson.error
+      error "error requesting oldest activity timestamp: ", error = resJson.error
       return
 
   proc checkAllSavedAddresses(self: Controller) =
@@ -270,7 +270,7 @@ QtObject:
       let res = fromJson(jsonObj, backend_activity.GetRecipientsResponse)
 
       if res.errorCode != ErrorCodeSuccess:
-        error "error fetching recipients: ", res.errorCode
+        error "error fetching recipients: ", code = res.errorCode
         return
 
       self.recipientsModel.addAddresses(res.addresses, res.offset, res.hasMore)
@@ -281,7 +281,7 @@ QtObject:
       let res = fromJson(jsonObj, backend_activity.GetOldestTimestampResponse)
 
       if res.errorCode != ErrorCodeSuccess:
-        error "error fetching start timestamp: ", res.errorCode
+        error "error fetching start timestamp: ", code = res.errorCode
         return
 
       self.status.setStartTimestamp(res.timestamp)
@@ -292,14 +292,14 @@ QtObject:
       let res = fromJson(jsonObj, backend_activity.GetCollectiblesResponse)
 
       if res.errorCode != ErrorCodeSuccess:
-        error "error fetching collectibles: ", res.errorCode
+        error "error fetching collectibles: ", code = res.errorCode
         return
 
       try:
         let items = res.collectibles.map(header => collectibleToItem(header))
         self.collectiblesModel.setItems(items, res.offset, res.hasMore)
       except Exception as e:
-        error "Error converting activity entries: ", e.msg
+        error "Error converting activity entries: ", code = e.msg
     )
 
   proc newController*(currencyService: currency_service.Service,
@@ -464,7 +464,7 @@ QtObject:
     let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil or res.result.kind != JBool:
       self.status.setLoadingRecipients(false)
-      error "error fetching recipients: ", res.error, "; kind ", res.result.kind
+      error "error fetching recipients: ", error = res.error, kind = res.result.kind
       return
 
     # If the request was enqueued and already waiting for a response, we don't need to do anything
@@ -477,7 +477,7 @@ QtObject:
     let res = backend_activity.getRecipientsAsync(self.sessionId(), self.chainIds, self.addresses, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingRecipients(false)
-      error "error fetching more recipient entries: ", res.error
+      error "error fetching more recipient entries: ", error = res.error
       return
 
     # If the request was enqueued and waiting for an answer, we don't need to do anything
