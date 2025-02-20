@@ -6,8 +6,10 @@ import view, controller
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app_service/common/utils
 import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/devices/service as devices_service
 import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
@@ -39,6 +41,7 @@ proc newModule*[T](
     events: EventEmitter,
     generalService: general_service.Service,
     accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
     devicesService: devices_service.Service,
     keycardServiceV2: keycard_serviceV2.Service,
   ): Module[T] =
@@ -54,6 +57,7 @@ proc newModule*[T](
     events,
     generalService,
     accountsService,
+    walletAccountService,
     devicesService,
     keycardServiceV2,
   )
@@ -167,7 +171,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = false,
           keycardInstanceUID = keycardInfo.instanceUID,
         )
-      
+
       # LOGIN FLOWS
       of OnboardingFlow.LoginWithSeedphrase:
         err = self.controller.restoreAccountAndLogin(
@@ -175,7 +179,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           mnemonic,
           recoverAccount = true,
           keycardInstanceUID = "",
-        )        
+        )
       of OnboardingFlow.LoginWithSyncing:
         # The pairing was already done directly through inputConnectionStringForBootstrapping, we can login
         self.controller.loginLocalPairingAccount(
@@ -191,7 +195,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
-        # TODO: 
+        # TODO:
         # 1. Call LoginAccount with `mnemonic` set
         # 2. Schedule `convertToRegularAccount` for post-onboarding
         error "LoginWithLostKeycardSeedphrase not implemented"
@@ -233,6 +237,37 @@ method loginRequested*[T](self: Module[T], keyUid: string, loginFlow: int, dataJ
     error "Error finishing Login Flow", msg = e.msg
     self.view.accountLoginError(e.msg, wrongPassword = false)
 
+proc syncAppAndKeycardState[T](self: Module[T]) =
+  let kcEvent = self.view.getKeycardEvent()
+  if kcEvent.keycardInfo.keyUID == "":
+    return
+  let keypair = self.controller.getKeypairByKeyUidFromDb(kcEvent.keycardInfo.keyUID)
+  if keypair.isNil:
+    return
+  var
+    pathsToStore: seq[string]
+    addressesToStore: seq[string]
+  for acc in keypair.accounts:
+    if acc.isChat:
+      continue
+    if utils.isPathOutOfTheDefaultStatusDerivationTree(acc.path):
+      return
+    pathsToStore.add(acc.path)
+    addressesToStore.add(acc.address)
+  var kcName = kcEvent.metadata.name
+  if kcName.len == 0:
+    kcName = singletonInstance.userProfile.getName()
+  if kcName.len == 0:
+    kcName = "Status Keycard"
+  self.controller.storeMetadata(kcName, pathsToStore)
+
+  var kcDto = KeycardDto(keycardUid: kcEvent.keycardInfo.instanceUID,
+    keycardName: kcName,
+    keycardLocked: false,
+    accountsAddresses: addressesToStore,
+    keyUid: kcEvent.keycardInfo.keyUID)
+  self.controller.addKeycardOrAccounts(kcDto, accountsComingFromKeycard = true)
+
 proc finishAppLoading2[T](self: Module[T]) =
   self.delegate.appReady()
 
@@ -241,6 +276,8 @@ proc finishAppLoading2[T](self: Module[T]) =
     eventType = "onboarding-completed"
   singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
     $(%*{"flowType": repr(self.onboardingFlow)}))
+
+  self.syncAppAndKeycardState()
 
   self.controller.stopKeycardService()
 
@@ -253,7 +290,7 @@ method onAccountLoginError*[T](self: Module[T], error: string) =
     wrongPassword = true
   warn "failed to login", wrongPassword, error
   self.view.accountLoginError(error, wrongPassword)
-  
+
 method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settings: SettingsDto) =
   if err.len != 0:
     self.onAccountLoginError(err)
@@ -269,7 +306,7 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
   if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and self.localPairingStatus.installation.id != "":
     # We tried to login by pairing, so finilize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
-  
+
   self.finishAppLoading2()
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =

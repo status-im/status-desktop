@@ -179,7 +179,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   # Services
   result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
-  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool, result.keycardService)
+  result.keycardServiceV2 = keycard_serviceV2.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService, statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -259,6 +259,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
       statusFoundation.events,
       result.generalService,
       result.accountsService,
+      result.walletAccountService,
       result.devicesService,
       result.keycardServiceV2,
     )

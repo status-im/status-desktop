@@ -7,6 +7,7 @@ import app/core/signals/types
 import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/dto/image_crop_rectangle
+import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/devices/service as devices_service
 import app_service/service/keycardV2/service as keycard_serviceV2
 import app_service/common/utils
@@ -22,6 +23,7 @@ type
     connectionIds: seq[UUID]
     generalService: general_service.Service
     accountsService: accounts_service.Service
+    walletAccountService: wallet_account_service.Service
     devicesService: devices_service.Service
     keycardServiceV2: keycard_serviceV2.Service
 
@@ -30,6 +32,7 @@ proc newController*(
     events: EventEmitter,
     generalService: general_service.Service,
     accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service,
     devicesService: devices_service.Service,
     keycardServiceV2: keycard_serviceV2.Service,
   ):
@@ -39,6 +42,7 @@ proc newController*(
   result.events = events
   result.generalService = generalService
   result.accountsService = accountsService
+  result.walletAccountService = walletAccountService
   result.devicesService = devicesService
   result.keycardServiceV2 = keycardServiceV2
 
@@ -113,8 +117,8 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
 proc initialize*(self: Controller, pin: string) =
-  let puk = self.keycardServiceV2.generateRandomPUK()
-  self.keycardServiceV2.initialize(pin, puk)
+  let puk = keycard_serviceV2.generateRandomPUK()
+  self.keycardServiceV2.asyncInitialize(pin, puk)
 
 proc authorize*(self: Controller, pin: string) =
   self.keycardServiceV2.asyncAuthorize(pin)
@@ -131,10 +135,7 @@ proc isMnemonicDuplicate*(self: Controller, mnemonic: string): bool =
   return self.accountsService.openedAccountsContainsKeyUid(keyUID)
 
 proc loadMnemonic*(self: Controller, mnemonic: string) =
-  self.keycardServiceV2.loadMnemonic(mnemonic)
-
-proc generateRandomPUK*(self: Controller): string =
-  return self.keycardServiceV2.generateRandomPUK()
+  self.keycardServiceV2.asyncLoadMnemonic(mnemonic)
 
 proc validateLocalPairingConnectionString*(self: Controller, connectionString: string): bool =
   let err = self.devicesService.validateConnectionString(connectionString)
@@ -185,7 +186,7 @@ proc finishPairingThroughSeedPhraseProcess*(self: Controller, installationId: st
   self.devicesService.finishPairingThroughSeedPhraseProcess(installationId)
 
 proc stopKeycardService*(self: Controller) =
-  self.keycardServiceV2.stop()
+  self.keycardServiceV2.asyncStop()
 
 proc generateMnemonic*(self: Controller, length: int): string =
   return self.keycardServiceV2.generateMnemonic(length)
@@ -215,14 +216,11 @@ proc login*(
   var passwordHash, chatPrivateKey = ""
 
   if not keycard:
-    passwordHash = hashPassword(password) 
+    passwordHash = hashPassword(password)
   else:
     passwordHash = publicEncryptionKey
     chatPrivateKey = privateWhisperKey
 
-  # if keycard and keycardReplacement:
-  #   self.delegate.applyKeycardReplacementAfterLogin()
-      
   self.accountsService.login(
     account,
     passwordHash,
@@ -230,5 +228,17 @@ proc login*(
     mnemonic,
   )
 
+proc getKeypairByKeyUidFromDb*(self: Controller, keyUid: string): wallet_account_service.KeypairDto =
+  return self.walletAccountService.getKeypairByKeyUidFromDb(keyUid)
+
+proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, accountsComingFromKeycard: bool = false) =
+  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, accountsComingFromKeycard)
+
+proc getMetadata*(self: Controller): keycard_serviceV2.CardMetadataDto =
+  return self.keycardServiceV2.getMetadata()
+
 proc startKeycardFactoryReset*(self: Controller) =
   self.keycardServiceV2.asyncFactoryReset()
+
+proc storeMetadata*(self: Controller, name: string, paths: seq[string]) =
+  self.keycardServiceV2.asyncStoreMetadata(name, paths)
