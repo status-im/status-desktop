@@ -264,12 +264,14 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
   let err2 = self.delegate.userLoggedIn()
   if err2.len != 0:
     error "error from userLoggedIn", err2
+    self.onAccountLoginError(err2)
     return
 
   if self.localPairingStatus != nil and self.localPairingStatus.installation != nil and self.localPairingStatus.installation.id != "":
     # We tried to login by pairing, so finilize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
   
+  self.view.accountLoginSuccess()
   self.finishAppLoading2()
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =

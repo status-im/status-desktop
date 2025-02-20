@@ -198,7 +198,7 @@ StatusWindow {
         Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
-        d.runMockedKeycardControllerWindow() // FIXME this is run twice with onboardingV1
+        d.runMockedKeycardControllerWindow()
     }
 
     //TODO remove direct backend access
@@ -395,6 +395,7 @@ StatusWindow {
     Component {
         id: splashScreenV2
         DidYouKnowSplashScreen {
+            readonly property bool backAvailableHint: false
             readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
             messagesEnabled: true
@@ -475,12 +476,10 @@ StatusWindow {
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
-                stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
             }
 
             onLoginRequested: function (keyUid, method, data) {
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
                 onboardingStore.loginRequested(keyUid, method, data)
             }
 
@@ -499,8 +498,11 @@ StatusWindow {
                     applicationWindow.storeAppState()
                     moveToAppMain()
                 }
+                onAccountLoginSuccess: {
+                    stack.push(splashScreenV2, { runningProgressAnimation: true })
+                }
                 onAccountLoginError: function (error, wrongPassword) {
-                    onboardingLayout.stack.pop()
+                    onboardingLayout.unwindToLoginScreen() // error handled internally
                 }
             }
 

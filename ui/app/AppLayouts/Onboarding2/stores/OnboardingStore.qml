@@ -9,6 +9,9 @@ QtObject {
 
     signal appLoaded
 
+    signal accountLoginSuccess()
+    signal accountLoginError(string error, bool wrongPassword)
+
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
         readonly property var onboardingModuleInst: onboardingModule
@@ -16,6 +19,7 @@ QtObject {
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
             d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+            d.onboardingModuleInst.accountLoginSuccess.connect(root.accountLoginSuccess)
         }
     }
 
@@ -62,8 +66,6 @@ QtObject {
     }
 
     // password
-    signal accountLoginError(string error, bool wrongPassword)
-
     function getPasswordStrengthScore(password: string) { // -> int
         return d.onboardingModuleInst.getPasswordStrengthScore(password, "") // The second argument is username
     }

@@ -164,8 +164,18 @@ SplitView {
                 logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
 
-            // password signals
+            // login result signals
             signal accountLoginError(string error, bool wrongPassword)
+            onAccountLoginError: function (error, wrongPassword) {
+                ctrlLoginResult.result = "<font color='red'>⛔</font>"
+                onboarding.unwindToLoginScreen()
+            }
+
+            signal accountLoginSuccess()
+            onAccountLoginSuccess: {
+                ctrlLoginResult.result = "<font color='green'>✔</font>"
+                onboarding.stack.push(splashScreen, { runningProgressAnimation: true })
+            }
         }
 
         biometricsAvailable: ctrlBiometrics.checked
@@ -179,7 +189,6 @@ SplitView {
             logs.logEvent("onFinished", ["flow", "data"], arguments)
 
             console.warn("!!! SIMULATION: SHOWING SPLASH")
-            stack.clear()
             stack.push(splashScreen, { runningProgressAnimation: true })
         }
 
@@ -188,7 +197,7 @@ SplitView {
 
             // SIMULATION: emit an error in case of wrong password or PIN
             if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.password) {
-                onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5) // randomly fail between a wrong pass and some other error
+                onboardingStore.accountLoginError("", true)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.pin) {
                 onboardingStore.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
@@ -199,7 +208,7 @@ SplitView {
                 onboardingStore.accountLoginError("", true)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else {
-                ctrlLoginResult.result = "<font color='green'>✔</font>"
+                onboardingStore.accountLoginSuccess()
             }
         }
 
@@ -359,6 +368,7 @@ SplitView {
         id: splashScreen
 
         DidYouKnowSplashScreen {
+            readonly property bool backAvailableHint: false
             property bool runningProgressAnimation
 
             NumberAnimation on progress {
@@ -459,6 +469,18 @@ SplitView {
                     property string result: "🯄"
                     visible: ctrlLoginScreen.checked
                     text: "Login result: %1".arg(result)
+                }
+
+                Button {
+                    text: "Unwind"
+                    visible: ctrlLoginScreen.checked && onboarding.stack.depth > 1 && !(onboarding.currentPage instanceof DidYouKnowSplashScreen)
+                    onClicked: onboarding.unwindToLoginScreen()
+                }
+
+                Button {
+                    text: "Simulate login error"
+                    visible: ctrlLoginScreen.checked && onboarding.currentPage instanceof DidYouKnowSplashScreen
+                    onClicked: onboarding.onboardingStore.accountLoginError("SIMULATION: Something bad happened", false)
                 }
             }
 
