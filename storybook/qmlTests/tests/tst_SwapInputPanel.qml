@@ -410,11 +410,16 @@ Item {
             const numberTested = 5.42
             tryCompare(amountToSendInput, "text", "5.42")
 
+            waitForRendering(assetSelectorList)
+
             for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
-                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
                 mouseClick(tokenSelectorButton)
+                waitForRendering(dropdown.contentItem)
                 waitForRendering(assetSelectorList)
                 verify(dropdown.open)
+
+                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                verify(!!modelItemToTest)
 
                 const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
