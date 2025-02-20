@@ -164,13 +164,17 @@ SplitView {
                 logs.logEvent("OnboardingStore.inputConnectionStringForBootstrapping", ["connectionString"], arguments)
             }
 
-            // password signals
+            // login result signals
             signal accountLoginError(string error, bool wrongPassword)
-
-            // (test) error handler
             onAccountLoginError: function (error, wrongPassword) {
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
                 onboarding.unwindToLoginScreen()
+            }
+
+            signal accountLoginSuccess()
+            onAccountLoginSuccess: {
+                ctrlLoginResult.result = "<font color='green'>✔</font>"
+                onboarding.stack.push(splashScreen, { runningProgressAnimation: true })
             }
         }
 
@@ -204,8 +208,7 @@ SplitView {
                 onboardingStore.accountLoginError("", true)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else {
-                ctrlLoginResult.result = "<font color='green'>✔</font>"
-                stack.push(splashScreen, { runningProgressAnimation: true })
+                onboardingStore.accountLoginSuccess()
             }
         }
 

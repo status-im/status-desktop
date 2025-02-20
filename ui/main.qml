@@ -480,7 +480,6 @@ StatusWindow {
             }
 
             onLoginRequested: function (keyUid, method, data) {
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
                 onboardingStore.loginRequested(keyUid, method, data)
             }
 
@@ -498,6 +497,9 @@ StatusWindow {
                     applicationWindow.appIsReady = true
                     applicationWindow.storeAppState()
                     moveToAppMain()
+                }
+                onAccountLoginSuccess: {
+                    stack.push(splashScreenV2, { runningProgressAnimation: true })
                 }
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.unwindToLoginScreen() // error handled internally
