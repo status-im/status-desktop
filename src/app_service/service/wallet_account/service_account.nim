@@ -55,6 +55,10 @@ proc getKeypairByKeyUid*(self: Service, keyUid: string): KeypairDto =
     return
   return self.keypairs[keyUid]
 
+# This one should be used in a very rare cases, when we need to get keypair from db before service is initialized
+proc getKeypairByKeyUidFromDb*(self: Service, keyUid: string): KeypairDto =
+  return getKeypairByKeyUidFromDb(keyUid)
+
 proc getKeypairByAccountAddress*(self: Service, address: string): KeypairDto =
   for _, kp in self.keypairs:
     for acc in kp.accounts:
