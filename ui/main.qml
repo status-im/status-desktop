@@ -21,7 +21,6 @@ import AppLayouts.Onboarding2.stores 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 StatusWindow {
     id: applicationWindow
@@ -421,7 +420,7 @@ StatusWindow {
     Keychain {
         service: "StatusDesktop"
 
-        id: keychain
+        id: appKeychain
     }
 
     Component {
@@ -444,39 +443,43 @@ StatusWindow {
 
             anchors.fill: parent
 
-            // FIXME, https://github.com/status-im/status-desktop/issues/17240
-            isBiometricsLogin: Qt.platform.os === Constants.mac
-
             networkChecksEnabled: true
+
+            // TODO: cover case when biometrics is globally disabled on mac
             biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: onboardingStore
+            onboardingStore: OnboardingStore {
+                id: onboardingStore
 
-            onBiometricsRequested: (profileId) => {
-                const isKeycardProfile = SQUtils.ModelUtils.getByKey(
-                                           onboardingStore.loginAccountsModel, "keyUid",
-                                           profileId, "keycardCreatedAccount")
-
-                const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
-
-                keychain.requestGetCredential(reason, profileId)
+                onAppLoaded: {
+                    applicationWindow.appIsReady = true
+                    applicationWindow.storeAppState()
+                    moveToAppMain()
+                }
+                onAccountLoginError: function (error, wrongPassword) {
+                    onboardingLayout.stack.pop()
+                }
             }
 
-            onDismissBiometricsRequested: {
-                if (keychain.loading)
-                    keychain.cancelActiveRequest()
-            }
+            keychain: appKeychain
 
             onFinished: (flow, data) => {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
-                if (error != "") {
+                if (error !== "") {
                     // We should never be here since everything should be validated already
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
+
+                if (!data.enableBiometrics)
+                    return
+
+                onboardingStore.appLoaded.connect((keyUid) => {
+                    appKeychain.saveCredential(keyUid, data.password || data.pin)
+                })
             }
 
             onLoginRequested: function (keyUid, method, data) {
@@ -491,31 +494,6 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
-
-            OnboardingStore {
-                id: onboardingStore
-                onAppLoaded: {
-                    applicationWindow.appIsReady = true
-                    applicationWindow.storeAppState()
-                    moveToAppMain()
-                }
-                onAccountLoginError: function (error, wrongPassword) {
-                    onboardingLayout.stack.pop()
-                }
-            }
-
-            Connections {
-                target: keychain
-
-                function onGetCredentialRequestCompleted(status, password) {
-                    if (status === Keychain.StatusSuccess)
-                        onboardingLayout.setBiometricResponse(password)
-                    else if (status !== Keychain.StatusCancelled)
-                        onboardingLayout.setBiometricResponse(
-                                    "", qsTr("Fetching credentials failed."))
-
-                }
-            }
         }
     }
 

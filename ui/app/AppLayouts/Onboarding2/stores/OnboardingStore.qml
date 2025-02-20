@@ -7,7 +7,7 @@ import AppLayouts.Onboarding.enums 1.0
 QtObject {
     id: root
 
-    signal appLoaded
+    signal appLoaded(string keyUid)
 
     readonly property QtObject d: StatusQUtils.QObject {
         id: d

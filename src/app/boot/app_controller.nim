@@ -543,7 +543,8 @@ proc finishAppLoading*(self: AppController) =
     self.startupModule = nil
 
   if not self.onboardingModule.isNil:
-    self.onboardingModule.onAppLoaded()
+    let account = self.accountsService.getLoggedInAccount()
+    self.onboardingModule.onAppLoaded(account.keyUid)
     self.onboardingModule = nil
 
   self.mainModule.checkAndPerformProfileMigrationIfNeeded()
