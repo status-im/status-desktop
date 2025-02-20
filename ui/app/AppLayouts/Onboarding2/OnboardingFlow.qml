@@ -200,10 +200,10 @@ OnboardingStackView {
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.push(createProfilePage)
             onOnboardingLoginFlowRequested: root.push(loginPage)
-            onLostKeycardFlowRequested: () => {
-                               root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
-                               root.push(keycardLostPage)
-                           }
+            onLostKeycardFlowRequested: {
+                root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
+                root.push(keycardLostPage)
+            }
 
             onUnblockWithSeedphraseRequested: root.push(unblockWithSeedphraseFlow)
             onUnblockWithPukRequested: root.push(unblockWithPukFlow)
