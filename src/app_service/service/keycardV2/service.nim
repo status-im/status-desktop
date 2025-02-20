@@ -70,10 +70,12 @@ QtObject:
     discard
 
   proc initializeRPC(self: Service) {.slot.} =
-    var response = keycard_go.keycardInitializeRPC()
+    let response = keycard_go.keycardInitializeRPC()
+    debug "initializeRPC response", response
 
   proc start*(self: Service, storageDir: string) =
-    discard callRPC("Start", %*{"storageFilePath": storageDir})
+    let response = callRPC("Start", %*{"storageFilePath": storageDir})
+    debug "callRPC response", response
 
   proc stop*(self: Service) =
     discard callRPC("Stop")
