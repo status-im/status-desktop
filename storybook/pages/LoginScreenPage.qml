@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
+import QtQuick.Extras 1.4
 
 import Models 1.0
 import Storybook 1.0
@@ -24,6 +25,9 @@ SplitView {
         property int keycardState: Onboarding.KeycardState.NoPCSCService
         property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
         property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
+
+        // result
+        property int loginResult: Onboarding.ProgressState.Idle // NB abusing the tristate enum here a bit :)
     }
 
     LoginScreen {
@@ -45,30 +49,36 @@ SplitView {
         onDismissBiometricsRequested: biometricsPopup.close()
 
         onLoginRequested: (keyUid, method, data) => {
+                              driver.loginResult = Onboarding.ProgressState.InProgress
                               logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
                               // SIMULATION: emit an error in case of wrong password/PIN
                               if (method === Onboarding.LoginMethod.Password && data.password !== ctrlPassword.text) {
+                                  driver.loginResult = Onboarding.ProgressState.Failed
                                   setAccountLoginError("", true)
                               } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== ctrlPin.text) {
+                                  driver.loginResult = Onboarding.ProgressState.Failed
                                   driver.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
                                   if (driver.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
                                       driver.keycardState = Onboarding.KeycardState.BlockedPIN
                                       driver.keycardRemainingPinAttempts = 0
                                   }
                                   setAccountLoginError("", true)
+                              } else {
+                                  driver.loginResult = Onboarding.ProgressState.Success
                               }
                           }
 
-        onSelectedProfileKeyIdChanged: driver.keycardState = Onboarding.KeycardState.NoPCSCService
+        onSelectedProfileKeyIdChanged: {
+            driver.keycardState = Onboarding.KeycardState.NoPCSCService
+            driver.loginResult = Onboarding.ProgressState.Idle
+        }
 
         onOnboardingCreateProfileFlowRequested: logs.logEvent("onOnboardingCreateProfileFlowRequested")
         onOnboardingLoginFlowRequested: logs.logEvent("onOnboardingLoginFlowRequested")
         onUnblockWithSeedphraseRequested: logs.logEvent("onUnblockWithSeedphraseRequested")
         onUnblockWithPukRequested: logs.logEvent("onUnblockWithPukRequested")
-        onLostKeycardFlowRequested: () => {
-                           logs.logEvent("onLostKeycardFlowRequested")
-                       }
+        onLostKeycardFlowRequested: logs.logEvent("onLostKeycardFlowRequested")
     }
 
     BiometricsPopup {
@@ -97,11 +107,17 @@ SplitView {
                 Label {
                     text: "Selected profile ID: %1".arg(loginScreen.selectedProfileKeyId || "N/A")
                 }
+                StatusIndicator {
+                    color: driver.loginResult === Onboarding.ProgressState.Success ? "green" : "red"
+                    active: driver.loginResult === Onboarding.ProgressState.Success || driver.loginResult === Onboarding.ProgressState.Failed
+                }
                 ToolSeparator {}
                 Button {
                     focusPolicy: Qt.NoFocus
                     text: loginScreen.selectedProfileIsKeycard ? "Simulate wrong PIN" : "Simulate wrong password"
                     onClicked: {
+                        driver.loginResult = Onboarding.ProgressState.Failed
+
                         if (loginScreen.selectedProfileIsKeycard) {
                             driver.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
                             if (driver.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
@@ -117,7 +133,10 @@ SplitView {
                 Button {
                     focusPolicy: Qt.NoFocus
                     text: "Simulate other login error"
-                    onClicked: loginScreen.setAccountLoginError("The impossible error has just happened", false)
+                    onClicked: {
+                        driver.loginResult = Onboarding.ProgressState.Failed
+                        loginScreen.setAccountLoginError("The impossible error has just happened", false)
+                    }
                     enabled: loginScreen.selectedProfileIsKeycard ? driver.keycardState === Onboarding.KeycardState.NotEmpty : true
                 }
             }
