@@ -39,9 +39,7 @@ StatusInput {
         StatusButton {
             objectName: "pasteButton"
             font.weight: Font.Normal
-            borderColor: Theme.palette.primaryColor1
-            borderWidth: 1
-            size: StatusBaseButton.Size.Tiny
+            size: StatusBaseButton.Size.Small
             text: qsTr("Paste")
             visible: root.input.edit.length === 0 && root.input.edit.canPaste
             focusPolicy: Qt.NoFocus

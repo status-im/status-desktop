@@ -60,22 +60,18 @@ QObject {
     /** Currently selected sender address **/
     property string selectedSenderAddress
 
+    /** Maximum number of tab elements from all tabs in tab bar **/
+    readonly property int highestTabElementCount: Math.max(accountsModelProxyModel.ModelCount.count, root.savedAddressesModel.ModelCount.count, recentsModel.ModelCount.count)
+
     readonly property SortFilterProxyModel recipientsModel: SortFilterProxyModel {
         objectName: "RecipientViewAdaptor_recipientsModel"
 
         sourceModel: concatModel
 
-        function isSameModelType(recipientType, whichModel) {
-            switch(recipientType) {
-                case Constants.RecipientAddressObjectType.RecentsAddress:
-                    return whichModel === concatModel.recentRecipientsModelKey
-                case Constants.RecipientAddressObjectType.SavedAddress:
-                    return whichModel === concatModel.savedAddressesModelKey
-                case Constants.RecipientAddressObjectType.Account:
-                    return whichModel === concatModel.accountsModelKey
-                default:
-                    return true
-            }
+        function isSameModelType(selectedType, recipientType) {
+            if (!selectedType || selectedType === Constants.RecipientAddressObjectType.Address)
+                return true
+            return selectedType === Number(recipientType)
         }
 
         filters: [
@@ -123,22 +119,19 @@ QObject {
     ConcatModel {
         id: concatModel
         objectName: "RecipientViewAdaptor_concatModel"
-        readonly property string accountsModelKey: "accounts_model"
-        readonly property string savedAddressesModelKey: "saved_addresses_model"
-        readonly property string recentRecipientsModelKey: "recents_model"
 
         sources: [
             SourceModel {
                 model: accountsModelProxyModel
-                markerRoleValue: concatModel.accountsModelKey
+                markerRoleValue: Constants.RecipientAddressObjectType.Account
             },
             SourceModel {
                 model: root.savedAddressesModel
-                markerRoleValue: concatModel.savedAddressesModelKey
+                markerRoleValue: Constants.RecipientAddressObjectType.SavedAddress
             },
             SourceModel {
                 model: recentsModel
-                markerRoleValue: concatModel.recentRecipientsModelKey
+                markerRoleValue: Constants.RecipientAddressObjectType.RecentsAddress
             }
         ]
         expectedRoles: ["name", "address", "color", "colorId", "emoji", "ens", "cherrypicked", "duplicate"]

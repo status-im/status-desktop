@@ -43,6 +43,8 @@ StatusDialogFooter {
     background: Item {
         Rectangle {
             anchors.fill: parent
+            anchors.leftMargin: radius
+            anchors.rightMargin: radius
             color: root.color
             visible: !!root.blurSource
             radius: 8
@@ -55,33 +57,44 @@ StatusDialogFooter {
             ShaderEffectSource {
                 sourceItem: root.blurSource
                 anchors.fill: parent
-                anchors.leftMargin: Theme.xlPadding
-                anchors.rightMargin: -Theme.xlPadding
+                anchors.leftMargin: Theme.xlPadding - parent.radius
+                anchors.rightMargin: -Theme.xlPadding - parent.radius
                 sourceRect: root.blurSourceRect
                 live: true
             }
         }
 
-        Rectangle {
+        Item {
             anchors.fill: parent
-            color: root.color
-            radius: 8
-            opacity: !!root.blurSource ? 0.85 : 1.0
+            Rectangle {
+                anchors.fill: parent
+                color: !!root.blurSource ? Theme.palette.alphaColor(root.color, 0.85) : root.color
+                radius: 8
+
+                // cover for the bottom rounded corners
+                Rectangle {
+                    width: parent.radius
+                    height: parent.radius
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    color: parent.color
+                }
+                // cover for the bottom rounded corners
+                Rectangle {
+                    width: parent.radius
+                    height: parent.radius
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    color: parent.color
+                }
+            }
 
             layer.enabled: root.dropShadowEnabled
             layer.effect: DropShadow {
                 horizontalOffset: 0
-                verticalOffset: -2
-                samples: 37
-                color: Theme.palette.dropShadow
-            }
-
-            // cover for the top rounded corners
-            Rectangle {
-                width: parent.width
-                height: parent.radius
-                anchors.top: parent.top
-                color: parent.color
+                verticalOffset: -3
+                samples: 24
+                color: Theme.palette.alphaColor(Theme.palette.dropShadow, 0.06)
             }
 
             StatusDialogDivider {
@@ -156,6 +169,7 @@ StatusDialogFooter {
             objectName: "transactionModalFooterButton"
 
             Layout.rightMargin: Theme.padding
+            Layout.maximumHeight: implicitHeight
 
             disabledColor: Theme.palette.directColor8
             enabled: !!root.estimatedTime &&
