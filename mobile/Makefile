@@ -9,7 +9,7 @@ endif
 
 $(info Configuring build system)
 -include $(ROOT_DIR)/scripts/EnvVariables.mk
-
+  
 # path macros
 BIN_PATH := $(ROOT_DIR)bin/$(OS)
 LIB_PATH := $(ROOT_DIR)lib/$(OS)
@@ -35,23 +35,23 @@ TARGET_NAME := IOS-build.$(shell if [ $(OS) = "ios" ]; then echo "app"; else ech
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
 
 # src files & obj files
-STATUS_DESKTOP_NIM_FILES := $(shell find -E $(STATUS_DESKTOP)/src -type f -iregex '.*\.(nim|nims)$$')
-STATUS_DESKTOP_UI_FILES := $(shell find -E $(STATUS_DESKTOP)/ui -type f -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc' -not -path $(STATUS_DESKTOP)/ui/StatusQ)
-STATUS_Q_FILES := $(shell find $(STATUSQ) -type f -iregex '.*\.(cpp|h)$$' -not -name '*.qrc' -not -name '*.qml')
-STATUS_Q_UI_FILES := $(shell find -E $(STATUSQ) -type f -iregex '.*\.(qml|qrc)$$')
+STATUS_DESKTOP_NIM_FILES := $(shell find $(STATUS_DESKTOP)/src -type f \( -iname '*.nim' -o -iname '*.nims' \))
+STATUS_DESKTOP_UI_FILES := $(shell find $(STATUS_DESKTOP)/ui -type f \( -iname 'qmldir' -o -iname '*.qml' -o -iname '*.qrc' \) -not -iname 'resources.qrc' -not -path '$(STATUS_DESKTOP)/ui/StatusQ/*')
+STATUS_Q_FILES := $(shell find $(STATUSQ) -type f \( -iname '*.cpp' -o -iname '*.h' \) -not -iname '*.qrc' -not -iname '*.qml')
+STATUS_Q_UI_FILES := $(shell find $(STATUSQ) -type f \( -iname '*.qml' -o -iname '*.qrc' \))
 STATUS_GO_FILES := $(shell find $(STATUS_GO) -type f)
 STATUS_GO_SCRIPT := $(SCRIPTS_PATH)/buildStatusGo.sh
-DOTHERSIDE_FILES := $(shell find $(DOTHERSIDE) -type f -iregex '.*\.(cpp|h)$$')
+DOTHERSIDE_FILES := $(shell find $(DOTHERSIDE) -type f \( -iname '*.cpp' -o -iname '*.h' \))
 OPENSSL_FILES := $(shell find $(OPENSSL)/OpenSSL-for-iOS -type f)
-QRCODEGEN_FILES := $(shell find $(QRCODEGEN) -type f -iregex '.*\.(c|h)$$')
-PCRE_FILES := $(shell find $(PCRE) -type f)
-WRAPPER_APP_FILES := $(shell find $(WRAPPER_APP) -type f)
+QRCODEGEN_FILES := $(shell find $(QRCODEGEN) -type f \( -iname '*.c' -o -iname '*.h' \))
+PCRE_FILES := $(eval $(call findFiles,$(PCRE)))
+WRAPPER_APP_FILES := $(eval $(call findFiles,$(WRAPPER_APP)))
 
 # script files
 STATUS_Q_SCRIPT := $(SCRIPTS_PATH)/buildStatusQ.sh
 STATUS_GO_SCRIPT := $(SCRIPTS_PATH)/buildStatusGo.sh
 DOTHERSIDE_SCRIPT := $(SCRIPTS_PATH)/buildDOtherSide.sh
-OPENSSL_SCRIPT := $(SCRIPTS_PATH)/buildOpenSSL.sh
+OPENSSL_SCRIPT := $(SCRIPTS_PATH)/$(OS)/buildOpenSSL.sh
 QRCODEGEN_SCRIPT := $(SCRIPTS_PATH)/buildQRCodeGen.sh
 PCRE_SCRIPT := $(SCRIPTS_PATH)/buildPCRE.sh
 NIM_STATUS_CLIENT_SCRIPT := $(SCRIPTS_PATH)/buildNimStatusClient.sh
@@ -107,8 +107,8 @@ $(OPENSSL_LIB): $(OPENSSL_FILES)
 else
 $(OPENSSL_LIB):
 	@echo "Copy OpenSSL"
-	@cp $(SDK_PATH)/android_openssl/ssl_1.1/$(ANDROID_ABI)/libcrypto_1_1.so $(LIB_PATH)/libcrypto_1_1.so
-	@cp $(SDK_PATH)/android_openssl/ssl_1.1/$(ANDROID_ABI)/libssl_1_1.so $(LIB_PATH)/libssl_1_1.so
+	@cp $(ROOT_DIR)/vendors/android_openssl/ssl_1.1/$(ANDROID_ABI)/libcrypto_1_1.so $(LIB_PATH)/libcrypto_1_1.so
+	@cp $(ROOT_DIR)/vendors/android_openssl/ssl_1.1/$(ANDROID_ABI)/libssl_1_1.so $(LIB_PATH)/libssl_1_1.so
 	@echo "OpenSSL copied"
 endif
 

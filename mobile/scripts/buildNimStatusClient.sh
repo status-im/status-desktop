@@ -10,11 +10,9 @@ OS=${OS:="android"}
 HOST_ENV=${HOST_ENV}
 
 DESKTOP_VERSION=$(eval cd $STATUS_DESKTOP && ./scripts/version.sh)
-STATUSGO_VERSION=$(eval cd $STATUS_DESKTOP/vendor/status-go; make version)
+STATUSGO_VERSION=$(eval cd $STATUS_DESKTOP/vendor/status-go && make version --no-print-directory)
 
-echo $DESKTOP_VERSION $STATUSGO_VERSION
-
-if [ "$ARCH" == "x86_64" ]; then
+if [ "$ARCH" = "x86_64" ]; then
     CARCH="amd64"
 else
     CARCH="$ARCH"
@@ -25,16 +23,7 @@ if [ "$OS" = "ios" ]; then
     LIB_EXT=".a"
 else
     PLATFORM_SPECIFIC="--app:lib --os:android -d:android -d:androidNDK -d:danger"
-    PLATFORM_SPECIFIC+=" --passL:"-L$LIB_DIR" \
-                        --passL:"-lstatus" \
-                        --passL:"-lStatusQ_$ANDROID_ABI" \
-                        --passL:"-lDOtherSide_$ANDROID_ABI" \
-                        --passL:"-lqrcodegen" \
-                        --passL:"-lqzxing" \
-                        --passL:"-lpcre" \
-                        --passL:"-lssl_1_1" \
-                        --passL:"-lcrypto_1_1" \
-                        -d:taskpool "
+    PLATFORM_SPECIFIC="$PLATFORM_SPECIFIC --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ_$ANDROID_ABI" --passL="-lDOtherSide_$ANDROID_ABI" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lpcre" --passL="-lssl_1_1" --passL="-lcrypto_1_1" -d:taskpool"
 
     LIB_EXT=".so"
 fi
@@ -46,8 +35,7 @@ cd $STATUS_DESKTOP
 
 # run make deps-common with sytem environment variables found in $HOST_ENV, not with the one from shell configured for android
 # build nim compiler with host env
-# build nim compiler with host env
-env -i $HOST_ENV make deps-common -j$(nproc)
+env -i HOME="$HOME" bash -l -c 'make deps-common -j$(nproc)'
 
 # build status-client
 ./vendor/nimbus-build-system/scripts/env.sh nim c $PLATFORM_SPECIFIC -d:release --outdir:./bin -d:DESKTOP_VERSION=$DESKTOP_VERSION -d:STATUSGO_VERSION=$STATUSGO_VERSION -d:GIT_COMMIT="`git log --pretty=format:'%h' -n 1`" -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \

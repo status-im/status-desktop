@@ -77,8 +77,6 @@ Fix: In the simulator app choose `Device -> Erase all content and settings`
   pip3 install -U pip
   pip3 install aqtinstall
   aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}
-  ### OR if it fails for arm64
-  arch -x86_64 aqt install-qt mac android 5.15.2 -O ${QT_INSTALL_DIR}/5.15.2/android
 
   export QTDIR=${QT_INSTALL_DIR}/5.15.2/android
 ```
@@ -88,21 +86,36 @@ Fix: In the simulator app choose `Device -> Erase all content and settings`
   git submodule update --init --recursive
 ```
 
+- JDK 11
+- Android sdk
+- Android NDK 21.3.6528147
+- Android emulator
+- Android cmd line tools
+- Available AVD image
 
-
-Android sdk
-Android NDK 21.3.6528147
-Android emulator
-Android cmd line tools
 Note: These prerequisites can be installed with AndroidStudio
 
-JDK 11
+Or by using the command line tools
+```
+sudo apt install openjdk-11-jdk
+sudo apt install google-android-cmdline-tools-13.0-installer
+sdkmanager --update
+sdkmanager "build-tools;35.0.1" "emulator" "platform-tools" "platforms;android-33" "ndk;21.3.6528147"
+
+# create a new AVD image. Using the template with id 70
+avdmanager create avd -n "Test_avd_x64" -k "system-images;android-Baklava;google_apis_playstore;x86_64" -d 70
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export ANDROID_HOME=usr/lib/android-sdk
+export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:/usr/lib/android-sdk/platform-tools:$PATH"
+export ANDROID_NDK_HOME=/usr/lib/android-sdk/ndk/21.3.6528147 
+export SDK_PATH="$ANDROID_HOME"
+# default architecture is arm64-v8a
+export ARCH=<android target>
+```
 
 #### Running the app
 ```
-  export ANDROID_NDK_HOME=<your ndk path>
-  export SDK_PATH=<your sdk path>
-  export JAVA_HOME=<your java path>/libexec/openjdk.jdk/Contents/Home
   make run
 ```
 
@@ -111,6 +124,5 @@ JDK 11
 PNG files won't be rendered on macos emulator. This can be fixed by setting the software rendered for qt.
 Add `setenv("QT_QUICK_BACKEND", "software", 1);` in main.cpp
 
-
-
-
+gradle is crashing sometimes: Make sure there's enough RAM. Sometimes a restart is needed
+the compiler is sometimes crashing while compiling statusQ: Make sure at least 10GB free RAM is available

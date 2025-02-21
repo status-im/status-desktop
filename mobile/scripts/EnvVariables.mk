@@ -1,18 +1,23 @@
 #OS: ios, android
 OS:=$(shell qmake -query QMAKE_XSPEC | rev | cut -d '-' -f 2 | rev)
 HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
+#Architectures: arm64, arm, x86_64. x86_64 is default for simulator
+ARCH?=$(shell uname -m)
 
 ifeq ($(OS), ios)
 # iOS
 #SDKs: iphonesimulator, iphoneos
 IPHONE_SDK?=iphonesimulator
 IOS_TARGET?=12
-#Architectures: arm64, arm, x86_64. x86_64 is default for simulator
-ARCH?=x86_64
+
+ifeq ($(IPHONE_SDK), iphoneos)
+	ARCH=arm64
+else
+	ARCH=x86_64
+endif
 else ifeq ($(OS), android)
 
 # Android
-ARCH?=arm64
 ANDROID_API?=28
 SDK_PATH?=
 ANDROID_NDK_HOME?=
