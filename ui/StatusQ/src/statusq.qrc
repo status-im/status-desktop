@@ -93,6 +93,7 @@
         <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Controls/StatusActivityCenterButton.qml</file>
         <file>StatusQ/Controls/StatusAmountInput.qml</file>
+        <file>StatusQ/Controls/StatusAnimatedText.qml</file>
         <file>StatusQ/Controls/StatusBackButton.qml</file>
         <file>StatusQ/Controls/StatusBanner.qml</file>
         <file>StatusQ/Controls/StatusBaseButton.qml</file>
