@@ -53,7 +53,7 @@ Page {
     // the purpose is to return from main/splash screen in case of a late stage error
     // and use the below error handler (onAccountLoginError)
     function unwindToLoginScreen() {
-        onboardingFlow.pop(null, StackView.PopTransition)
+        onboardingFlow.pop(null, StackView.Immediate)
         if (!onboardingFlow.loginScreen) {
             restartFlow()
         }
