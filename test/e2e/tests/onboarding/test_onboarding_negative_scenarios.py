@@ -41,11 +41,11 @@ def test_login_with_wrong_password(aut: AUT, main_window, error: str):
         confirm_password_view.confirm_password(user_one.password)
         if configs.system.get_platform() == "Darwin":
             BiometricsView().wait_until_appears().prefer_password()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         if SigningPhrasePopup().is_visible:
             SigningPhrasePopup().confirm_phrase()
 

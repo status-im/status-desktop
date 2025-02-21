@@ -74,7 +74,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
         if configs.system.get_platform() == "Darwin":
             assert BiometricsView().is_touch_id_button_visible(), f"TouchID button is not found"
             BiometricsView().wait_until_appears().prefer_password()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
 
     with step('Verify emojihash and identicon ring profile screen appeared and capture the details'):
         emoji_hash_identicon_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present()
@@ -86,7 +86,7 @@ def test_generate_account_back_up_seed_sign_out(aut, main_window, user_account,
         next_view = emoji_hash_identicon_view.next()
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         assert SigningPhrasePopup().ok_got_it_button.is_visible
         SigningPhrasePopup().confirm_phrase()
 
