@@ -4,3 +4,6 @@
 [submodule "vendors/status-desktop"]
 	path = vendors/status-desktop
 	url = https://github.com/alexjba/status-desktop
+[submodule "vendors/android_openssl"]
+	path = vendors/android_openssl
+	url = https://github.com/KDAB/android_openssl.git

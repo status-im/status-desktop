@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <QDir>
 
 extern "C" {
     void NimMain();
-    void mainProc();
 }
 
 int main(int argc, char* argv[])
 {
+    Q_INIT_RESOURCE(resources);
     NimMain();
-    mainProc();
     return 0;
 }
