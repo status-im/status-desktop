@@ -459,6 +459,10 @@ StatusWindow {
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.stack.pop()
                 }
+                onSaveBiometricsRequested: (keyUid, credential) => {
+                    console.log("<<< saving to keychain")
+                    appKeychain.saveCredential(keyUid, credential)
+                }
             }
 
             keychain: appKeychain
@@ -474,12 +478,12 @@ StatusWindow {
                 stack.clear()
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
 
-                if (!data.enableBiometrics)
-                    return
+                // if (!data.enableBiometrics)
+                //     return
 
-                onboardingStore.appLoaded.connect((keyUid) => {
-                    appKeychain.saveCredential(keyUid, data.password || data.pin)
-                })
+                // onboardingStore.appLoaded.connect((keyUid) => {
+                //     appKeychain.saveCredential(keyUid, data.password || data.pin)
+                // })
             }
 
             onLoginRequested: function (keyUid, method, data) {

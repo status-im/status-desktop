@@ -36,6 +36,7 @@ QtObject:
 
   proc appLoaded*(self: View, keyUid: string) {.signal.}
   proc accountLoginError*(self: View, error: string, wrongPassword: bool) {.signal.}
+  proc saveBiometricsRequested*(self: View, keyUid: string, credential: string) {.signal.}
 
   ### QtProperties ###
 
@@ -128,6 +129,9 @@ QtObject:
   QtProperty[QVariant] loginAccountsModel:
     read = getLoginAccountsModel
     notify = loginAccountsModelChanged
+
+  proc requestSaveBiometrics*(self: View, keyUid: string, credential: string) =
+    self.saveBiometricsRequested(keyUid, credential)
 
   ### slots ###
 

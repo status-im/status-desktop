@@ -13,7 +13,7 @@ import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
-import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task, save_biometrics_task]
 
 import ../startup/models/login_account_item as login_acc_item
 
@@ -137,8 +137,13 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
     let pin = data["keycardPin"].str
     let keyUid = data["keyUid"].str
     let keycardInfo = self.view.getKeycardEvent().keycardInfo
+    let saveBiometrics = data["enableBiometrics"].getBool
 
     var err = ""
+
+    if saveBiometrics:
+      let credential = if pin.len > 0: pin else: password
+      self.postOnboardingTasks.add(newSaveBiometricsTask(credential))
 
     case self.onboardingFlow:
       # CREATE PROFILE FLOWS
@@ -345,5 +350,8 @@ method startKeycardFactoryReset*[T](self: Module[T]) =
 
 method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
   return self.postOnboardingTasks
+
+method requestSaveBiometrics*[T](self: Module[T], keyUid: string, credential: string) =
+  self.view.requestSaveBiometrics(keyUid, credential)
 
 {.pop.}
