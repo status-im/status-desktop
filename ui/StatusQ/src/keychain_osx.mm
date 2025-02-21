@@ -9,7 +9,7 @@
 #include <LocalAuthentication/LocalAuthentication.h>
 #include <Security/Security.h>
 
-const static auto authPolicy = LAPolicyDeviceOwnerAuthentication;
+const static auto authPolicy = LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
 
 static Keychain::Status convertStatus(OSStatus status)
 {
@@ -39,10 +39,21 @@ Keychain::Status convertError(NSError *error)
     }
 }
 
+Keychain::Keychain(QObject *parent)
+    : QObject(parent)
+{
+    reevaluateAvailability();
+}
+
 Keychain::~Keychain()
 {
     cancelActiveRequest();
     m_future.waitForFinished();
+}
+
+bool Keychain::available() const
+{
+    return m_available;
 }
 
 Keychain::Status authenticate(const QString &reason, LAContext **context)
@@ -56,14 +67,6 @@ Keychain::Status authenticate(const QString &reason, LAContext **context)
     }
 
     *context = [[LAContext alloc] init];
-    NSError *authError = nil;
-
-    // Check if Biometrics Authentication is available
-    if (![*context canEvaluatePolicy:authPolicy error:&authError]) {
-        qWarning() << "biometric authentication not available:"
-                   << QString::fromNSString(authError.localizedDescription);
-        return convertError(authError);
-    }
 
     QEventLoop loop;
     auto loopPtr = &loop;
@@ -165,6 +168,10 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
 
 Keychain::Status Keychain::getCredential(const QString &reason, const QString &account, QString *out)
 {
+    if (!m_available) {
+        return StatusUnavailable;
+    }
+
     QScopedValueRollback<LAContext *> roolback(m_activeAuthContext, nullptr);
     const auto authStatus = authenticate(reason, &m_activeAuthContext);
 
@@ -192,6 +199,19 @@ Keychain::Status Keychain::getCredential(const QString &reason, const QString &a
     }
 
     return convertStatus(status);
+}
+
+void Keychain::reevaluateAvailability()
+{
+    auto context = [[LAContext alloc] init];
+    NSError *authError = nil;
+
+    m_available = [context canEvaluatePolicy:authPolicy error:&authError];
+
+    if (!m_available) {
+        const auto description = QString::fromNSString(authError.localizedDescription);
+        qDebug() << "Keychain is not available" << description;
+    }
 }
 
 Keychain::Status Keychain::hasCredential(const QString &account) const
