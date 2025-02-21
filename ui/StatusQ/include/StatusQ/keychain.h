@@ -14,6 +14,7 @@ class Keychain : public QObject {
 
     Q_PROPERTY(QString service READ service WRITE setService NOTIFY serviceChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
+    Q_PROPERTY(bool available READ available CONSTANT)
 
 public:
     explicit Keychain(QObject *parent = nullptr);
@@ -33,6 +34,8 @@ public:
     QString service() const;
     void setService(const QString &service);
 
+    bool available() const;
+
     bool loading() const;
 
     Q_INVOKABLE Status saveCredential(const QString &account, const QString &password);
@@ -51,6 +54,7 @@ signals:
 private:
     QString m_service;
     bool m_loading = false;
+    bool m_available = false;
     void setLoading(bool loading);
 
     QFuture<void> m_future;
@@ -58,5 +62,6 @@ private:
 
 #ifdef Q_OS_MACOS
     Status getCredential(const QString &reason, const QString &account, QString *out);
+    void reevaluateAvailability();
 #endif
 };
