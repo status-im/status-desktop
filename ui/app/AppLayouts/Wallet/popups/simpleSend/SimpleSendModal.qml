@@ -354,30 +354,32 @@ StatusDialog {
             interval: 100
             onTriggered: modalHeightBehavior.enabled = true
         }
+
+        readonly property bool calculatedHeight: {
+            const maxHeight = root.contentItem.Window.height - root.topMargin - root.margins
+            const minHeight = 430
+
+            const feesHeight = (amountToSend.visible && !!root.selectedRecipientAddress) || feesLayout.visible ? feesLayout.height + Theme.xlPadding : 0
+            const recipientPanelHeight = recipientLabel.height +
+                                       recipientsPanelLayout.spacing +
+                                       recipientsPanel.visualHeight +
+                                       scrollViewLayout.spacing +
+                                       (!root.selectedRecipientAddress ? Theme.bigPadding : 0)
+            const amountToSendHeight = (amountToSend.visible ? amountToSend.height + scrollViewLayout.spacing : 0)
+
+            const calculateContentHeight = sendModalHeader.height +
+                                         amountToSendHeight +
+                                         recipientPanelHeight +
+                                         feesHeight +
+                                         bottomSpacer.height +
+                                         scrollViewLayout.spacing * 2
+            const contentHeight = Math.max(calculateContentHeight, minHeight) + root.footer.height
+            return Math.min(maxHeight, contentHeight)
+        }
     }
 
     width: 556
-    height: {
-        const maxHeight = root.contentItem.Window.height - topMargin - margins
-        const minHeight = 430
-
-        const feesHeight = (amountToSend.visible && !!selectedRecipientAddress) || feesLayout.visible ? feesLayout.height + Theme.xlPadding : 0
-        const recipientPanelHeight = recipientLabel.height +
-                                   recipientsPanelLayout.spacing +
-                                   recipientsPanel.visualHeight +
-                                   scrollViewLayout.spacing +
-                                   (!selectedRecipientAddress ? Theme.bigPadding : 0)
-        const amountToSendHeight = (amountToSend.visible ? amountToSend.height + scrollViewLayout.spacing : 0)
-
-        const calculateContentHeight = sendModalHeader.height +
-                                     amountToSendHeight +
-                                     recipientPanelHeight +
-                                     feesHeight +
-                                     bottomSpacer.height +
-                                     scrollViewLayout.spacing * 2
-        const contentHeight = Math.max(calculateContentHeight, minHeight) + footer.height
-        return Math.min(maxHeight, contentHeight)
-    }
+    height: d.calculatedHeight
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
