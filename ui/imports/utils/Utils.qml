@@ -980,4 +980,24 @@ QtObject {
 
         return typeName
     }
+
+    function weiToEth(value) {
+        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
+                                      StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
+    }
+
+    function ethToWei(value) {
+        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
+    }
+
+    function weiToGWei(value) {
+        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
+                                      StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
+    }
+
+    function gweiToWei(value) {
+        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
+    }
 }
