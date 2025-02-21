@@ -186,6 +186,9 @@ proc finishPairingThroughSeedPhraseProcess*(self: Controller, installationId: st
   self.devicesService.finishPairingThroughSeedPhraseProcess(installationId)
 
 proc stopKeycardService*(self: Controller) =
+  self.keycardServiceV2.stop()
+
+proc stopKeycardServiceAsync*(self: Controller) =
   self.keycardServiceV2.asyncStop()
 
 proc generateMnemonic*(self: Controller, length: int): string =
@@ -241,4 +244,7 @@ proc startKeycardFactoryReset*(self: Controller) =
   self.keycardServiceV2.asyncFactoryReset()
 
 proc storeMetadata*(self: Controller, name: string, paths: seq[string]) =
+  self.keycardServiceV2.storeMetadata(name, paths)
+
+proc storeMetadataAsync*(self: Controller, name: string, paths: seq[string]) =
   self.keycardServiceV2.asyncStoreMetadata(name, paths)

@@ -130,6 +130,16 @@ QtObject:
       debug "keycard stopped"
     )
 
+  proc stop*(self: Service) =
+    try:
+      let response = callRPC($KeycardAction.Stop)
+      let rpcResponseObj = response.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+          let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+          raise newException(RpcException, error.message)
+    except Exception as e:
+      error "error stop", err=e.msg
+
   proc generateMnemonic*(self: Service, length: int): string =
     try:
       let response = callRPC($KeycardAction.GenerateMnemonic, %*{"length": length})
@@ -232,3 +242,13 @@ QtObject:
         return
       debug "metadata stored"
     )
+
+  proc storeMetadata*(self: Service, name: string, paths: seq[string]) =
+    try:
+      let response = callRPC($KeycardAction.StoreMetadata, %*{"name": name, "paths": paths})
+      let rpcResponseObj = response.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+          let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+          raise newException(RpcException, error.message)
+    except Exception as e:
+      error "error storing metadata", err=e.msg
