@@ -76,8 +76,8 @@ QObject {
 
         filters: [
             FastExpressionFilter {
-                expectedRoles: ["recipient_type"]
-                expression: root.recipientsModel.isSameModelType(root.selectedRecipientType, model.recipient_type)
+                expectedRoles: ["which_model"]
+                expression: root.recipientsModel.isSameModelType(root.selectedRecipientType, model.which_model)
             }
         ]
     }
@@ -135,7 +135,7 @@ QObject {
             }
         ]
         expectedRoles: ["name", "address", "color", "colorId", "emoji", "ens", "cherrypicked", "duplicate"]
-        markerRoleName: "recipient_type"
+        markerRoleName: "which_model"
     }
 
     SortFilterProxyModel {
