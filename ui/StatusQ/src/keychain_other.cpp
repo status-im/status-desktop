@@ -6,7 +6,7 @@ Keychain::~Keychain() = default;
 
 bool Keychain::available() const
 {
-    return false
+    return false;
 }
 
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
