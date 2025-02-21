@@ -31,7 +31,9 @@ let
   ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore")
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
-  KEYCARDPAIRINGDATAFILE* = joinPath(baseDir, "data", "keycard", "pairings.json")
+  KEYCARD_DATA_DIR* = joinPath(baseDir, "data", "keycard")
+  KEYCARD_LOG_FILE_PATH* = joinPath(KEYCARD_DATA_DIR, "keycard.log")
+  KEYCARDPAIRINGDATAFILE* = joinPath(KEYCARD_DATA_DIR, "pairings.json")
 
   # runtime variables
   TEST_MODE_ENABLED* = desktopConfig.testMode
@@ -73,6 +75,7 @@ let
   SENTRY_DSN_STATUS_GO* = BUILD_SENTRY_DSN_STATUS_GO
   SENTRY_DSN_STATUS_GO_DESKTOP* = BUILD_SENTRY_DSN_STATUS_DESKTOP
   API_LOGGING* = desktopConfig.apiLogging
+  KEYCARD_LOGS_ENABLED* = if defined(production): false else: true
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
