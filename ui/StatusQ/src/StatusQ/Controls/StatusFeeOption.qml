@@ -95,34 +95,16 @@ Control {
     horizontalPadding: 8
     verticalPadding: 8
 
-    component AnimatedText: StatusBaseText {
-        id: animatedText
+    property Component subTextComponent: StatusAnimatedText {
         verticalAlignment: Qt.AlignVCenter
-        font: root.font
-        wrapMode: Text.WordWrap
-        elide: Text.ElideRight
-
-        onTextChanged: {
-            if (text === "") {
-                return
-            }
-            animate.restart()
-        }
-
-
-        StatusColorAnimation {
-            id: animate
-            target: animatedText
-            fromColor: animatedText.color
-        }
-    }
-
-    property Component subTextComponent: AnimatedText {
         text: root.subText
+        font: root.font
     }
 
-    property Component additionalTextComponent: AnimatedText {
+    property Component additionalTextComponent: StatusAnimatedText {
+        verticalAlignment: Qt.AlignVCenter
         text: root.additionalText
+        font: root.font
         color: Theme.palette.baseColor1
     }
 
