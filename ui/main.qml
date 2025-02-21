@@ -225,8 +225,7 @@ StatusWindow {
                 appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
                 startupOnboardingLoader.item.visible = false
-            }
-            else if(state === Constants.appState.main) {
+            } else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
@@ -405,6 +404,11 @@ StatusWindow {
                 duration: !!localAppSettings && localAppSettings.fakeLoadingScreenEnabled ? 30000 : 3000
                 running: runningProgressAnimation
             }
+            onProgressChanged: {
+                if (progress === 1) {
+                    mainModule.fakeLoadingScreenFinished()
+                }
+            }
         }
     }
 
@@ -480,7 +484,7 @@ StatusWindow {
             }
 
             onLoginRequested: function (keyUid, method, data) {
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
+                stack.push(splashScreenV2, { runningProgressAnimation: true }, StackView.Immediate) // we unwind on error
                 onboardingStore.loginRequested(keyUid, method, data)
             }
 
