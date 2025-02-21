@@ -12,6 +12,8 @@ Keychain {
 
     service: "StatusStorybookMocked"
 
+    required property bool available
+
     // shadowing Keychain's "loading" property
     readonly property alias loading: d.loading
 
@@ -43,6 +45,10 @@ Keychain {
     }
 
     function requestGetCredential(reason, account) {
+        if (!root.available) {
+            root.getCredentialRequestCompleted(Keychain.StatusUnavailable, "")
+            return
+        }
         d.loading = true
         d.key = account
         biometricsPopup.open()

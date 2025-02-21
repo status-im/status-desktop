@@ -1,6 +1,13 @@
 #include "StatusQ/keychain.h"
 
+Keychain::Keychain(QObject *parent) : QObject(parent) {}
+
 Keychain::~Keychain() = default;
+
+bool Keychain::available() const
+{
+    return false;
+}
 
 Keychain::Status Keychain::saveCredential(const QString &account, const QString &password)
 {
