@@ -9,7 +9,14 @@
 #include <LocalAuthentication/LocalAuthentication.h>
 #include <Security/Security.h>
 
-const static auto authPolicy = LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
+const static auto authPolicy =
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 150000
+    LAPolicyDeviceOwnerAuthenticationWithBiometricsOrCompanion;
+#elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101202
+    LAPolicyDeviceOwnerAuthenticationWithBiometrics;
+#else
+    LAPolicyDeviceOwnerAuthentication;
+#endif
 
 static Keychain::Status convertStatus(OSStatus status)
 {
