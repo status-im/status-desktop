@@ -122,11 +122,8 @@ method tryRemoveFromKeyChain*(self: Module) =
   self.controller.removeFromKeychain(myKeyUid)
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
-  self.keychainActivityReason = KeychainActivityReason.StoreTo
-  if pin.len > 0:
-    self.controller.storeToKeychain(pin)
-  else:
-    self.controller.storeToKeychain(password)
+  let credential = if pin.len > 0: pin else: password
+  self.view.requestSaveBiometrics(keyUid, credential)
 
 method backupData*(self: Module): int64 =
   return self.controller.backupData()

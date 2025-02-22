@@ -53,6 +53,7 @@ StatusSectionLayout {
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
     required property SharedStores.NetworksStore networksStore
+    required property Keychain keychain
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -228,6 +229,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 privacyStore: root.store.privacyStore
+                keychain: root.keychain
                 passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.password)

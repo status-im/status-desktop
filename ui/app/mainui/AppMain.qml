@@ -104,6 +104,7 @@ Item {
     required property AppStores.FeatureFlagsStore featureFlagsStore
     // TODO: Only until the  old send modal transaction store can be replaced with this one
     readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
+    required property Keychain keychain
 
     required property bool isCentralizedMetricsEnabled
 
@@ -2015,6 +2016,7 @@ Item {
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             settingsSubSubsection: profileLoader.settingsSubSubsection
                             networksStore: appMain.networksStore
+                            keychain: appMain.keychain
 
                             mutualContactsModel: contactsModelAdaptor.mutualContacts
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
