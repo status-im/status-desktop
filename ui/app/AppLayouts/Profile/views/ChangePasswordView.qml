@@ -9,6 +9,7 @@ import shared.stores 1.0
 import shared.views 1.0
 import utils 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -23,33 +24,43 @@ SettingsContentBase {
     id: root
 
     property PrivacyStore privacyStore
+    required property Keychain keychain
 
-    readonly property bool biometricsEnabled: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
+    QtObject {
+        id: d
+
+        property int reevaluateTrigger
+        function reevaluateHasCredential() {
+            reevaluateTrigger++
+        }
+
+        readonly property bool biometricsEnabled: {
+            reevaluateTrigger // Reference for binding
+            return keychain.hasCredential(privacyStore.keyUid) === Keychain.StatusSuccess
+        }
+    }
 
     readonly property Item biometricsPopup: titleRowComponentLoader.item
     readonly property Connections privacyStoreConnections: Connections {
-        target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
+        target: root.privacyStore.privacyModule
 
-        function onStoreToKeychainError(errorDescription: string) {
-            biometricsPopup.popupItem.close();
-            if (biometricsPopup.switchItem.requestForEnabling) {
-                Global.displayToastMessage(qsTr("Failed to enable biometric login and transaction authentication for this device"),
-                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
-            } else {
-                Global.displayToastMessage(qsTr("Failed to disable biometric login and transaction authentication for this device"),
-                errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
-            }
-        }
+        function onSaveBiometricsRequested(keyUid, credential) {
+            biometricsPopup.popupItem.close()
+            const status = keychain.saveCredential(keyUid, credential)
 
-        function onStoreToKeychainSuccess() {
-            biometricsPopup.popupItem.close();
-            if (biometricsPopup.switchItem.requestForEnabling) {
-                Global.displayToastMessage(qsTr("Biometric login and transaction authentication enabled for this device"),
-                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
-            } else {
-                Global.displayToastMessage(qsTr("Biometric login and transaction authentication disabled for this device"),
-                "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+            switch (status) {
+            case Keychain.StatusSuccess:
+                Global.displayToastMessage(
+                            qsTr("Biometric login and transaction authentication enabled for this device"),
+                            "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                break
+            default:
+                Global.displayToastMessage(
+                            qsTr("Failed to enable biometric login and transaction authentication for this device"),
+                            "", "warning", false, Constants.ephemeralNotificationType.danger, "")
             }
+
+            d.reevaluateHasCredential()
         }
     }
 
@@ -72,9 +83,9 @@ SettingsContentBase {
             text: qsTr("Enable biometrics")
             textColor: Theme.palette.baseColor1
 
-            property bool requestForEnabling: false
+            visible: root.keychain.available
 
-            checked: root.biometricsEnabled
+            checked: root.keychain.available && d.biometricsEnabled
             onReleased: {
                 enableBiometricsPopup.open();
             }
@@ -109,19 +120,30 @@ SettingsContentBase {
                     StatusButton {
                         text: biometricsSwitch.checked ? qsTr("Yes, enable biometrics") : qsTr("Yes, disable biometrics")
                         onClicked: {
-                            if (biometricsSwitch.checked && !biometricsSwitch.biometricsEnabled) {
-                                biometricsSwitch.requestForEnabling = true;
-                                root.privacyStore.tryStoreToKeyChain();
-                            } else if (!biometricsSwitch.checked) {
-                                biometricsSwitch.requestForEnabling = false;
-                                root.privacyStore.tryRemoveFromKeyChain();
+                            if (biometricsSwitch.checked) {
+                                root.privacyStore.tryStoreToKeyChain()
+                                return
                             }
+
+                            biometricsPopup.popupItem.close()
+                            const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
+
+                            switch (status) {
+                            case Keychain.StatusSuccess:
+                                Global.displayToastMessage(
+                                            qsTr("Biometric login and transaction authentication disabled for this device"),
+                                            "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
+                                break
+                            default:
+                                Global.displayToastMessage(
+                                            qsTr("Failed to disable biometric login and transaction authentication for this device"),
+                                            errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
+                            }
+
+                            d.reevaluateHasCredential()
                         }
                     }
                 }
-            }
-            onClosed: {
-                biometricsSwitch.checked = Qt.binding(() => { return root.biometricsEnabled });
             }
         }
     }
