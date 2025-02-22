@@ -100,14 +100,14 @@ SettingsContentBase {
             width: 480
             title: biometricsSwitch.checked ? qsTr("Enable biometrics") : qsTr("Disable biometrics")
 
-                StatusBaseText {
-                    anchors.fill: parent
-                    anchors.margins: Theme.padding
-                    verticalAlignment: Text.AlignVCenter
-                    wrapMode: Text.WordWrap
-                    text: biometricsSwitch.checked ? qsTr("Do you want to enable biometrics for login and transaction authentication?") :
-                                                     qsTr("Are you sure you want to disable biometrics for login and transaction authentication?")
-                }
+            StatusBaseText {
+                anchors.fill: parent
+                anchors.margins: Theme.padding
+                verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.WordWrap
+                text: biometricsSwitch.checked ? qsTr("Do you want to enable biometrics for login and transaction authentication?") :
+                                                 qsTr("Are you sure you want to disable biometrics for login and transaction authentication?")
+            }
 
             footer: StatusDialogFooter {
                 rightButtons: ObjectModel {
@@ -125,7 +125,6 @@ SettingsContentBase {
                                 return
                             }
 
-                            biometricsPopup.popupItem.close()
                             const status = root.keychain.deleteCredential(root.privacyStore.keyUid)
 
                             switch (status) {
@@ -140,10 +139,15 @@ SettingsContentBase {
                                             errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
                             }
 
-                            d.reevaluateHasCredential()
+                            enableBiometricsPopup.close()
                         }
                     }
                 }
+            }
+
+            onClosed: {
+                biometricsSwitch.checked = Qt.binding(() => { return d.biometricsEnabled });
+                d.reevaluateHasCredential()
             }
         }
     }
