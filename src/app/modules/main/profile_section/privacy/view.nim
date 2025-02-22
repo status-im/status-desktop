@@ -92,6 +92,10 @@ QtObject:
 
   proc tryRemoveFromKeyChain*(self: View) {.slot.} =
     self.delegate.tryRemoveFromKeyChain()
+
+  proc saveBiometricsRequested*(self: View, keyUid: string, credential: string) {.signal.}
+  proc requestSaveBiometrics*(self: View, keyUid: string, credential: string) =
+    self.saveBiometricsRequested(keyUid, credential)
     
   proc backupData*(self: View): int {.slot.} =
     return self.delegate.backupData().int
