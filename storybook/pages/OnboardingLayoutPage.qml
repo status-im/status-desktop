@@ -176,8 +176,6 @@ SplitView {
 
         keychain: keychain
 
-        biometricsAvailable: ctrlBiometrics.checked
-
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
@@ -350,6 +348,7 @@ SplitView {
         id: keychain
 
         parent: root
+        available: ctrlBiometrics.checked
 
         readonly property alias touchIdChecked: ctrlTouchIdUser.checked
         onTouchIdCheckedChanged: onboarding.keychainChanged()
