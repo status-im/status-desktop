@@ -491,7 +491,7 @@ StatusWindow {
                     return
 
                 onboardingStore.appLoaded.connect((keyUid) => {
-                    appKeychain.saveCredential(keyUid, data.password || data.pin)
+                    appKeychain.saveCredential(keyUid, data.password || data.keycardPin)
                 })
             }
 
