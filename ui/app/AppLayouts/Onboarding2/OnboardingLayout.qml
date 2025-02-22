@@ -20,7 +20,6 @@ Page {
     required property OnboardingStore onboardingStore
     required property Keychain keychain
 
-    property bool biometricsAvailable
     property bool networkChecksEnabled: true
 
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
@@ -137,11 +136,11 @@ Page {
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
 
-        biometricsAvailable: root.biometricsAvailable
+        biometricsAvailable: root.keychain.available
         networkChecksEnabled: root.networkChecksEnabled
 
         generateMnemonic: root.onboardingStore.generateMnemonic
-        isBiometricsLogin: (account) => keychain.hasCredential(account) === Keychain.StatusSuccess
+        isBiometricsLogin: (account) => root.keychain.hasCredential(account) === Keychain.StatusSuccess
         passwordStrengthScoreFunction: root.onboardingStore.getPasswordStrengthScore
         isSeedPhraseValid: root.onboardingStore.validMnemonic
         isSeedPhraseDuplicate: root.onboardingStore.isMnemonicDuplicate

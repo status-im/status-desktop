@@ -452,9 +452,6 @@ StatusWindow {
 
             networkChecksEnabled: true
 
-            // TODO: cover case when biometrics is globally disabled on mac
-            biometricsAvailable: Qt.platform.os === Constants.mac
-
             onboardingStore: OnboardingStore {
                 id: onboardingStore
 
