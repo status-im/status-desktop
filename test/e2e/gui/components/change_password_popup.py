@@ -1,5 +1,3 @@
-import allure
-
 import driver
 from constants.settings import PasswordView
 from gui.components.base_popup import BasePopup

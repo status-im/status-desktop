@@ -66,7 +66,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             aut_two.attach()
             main_window.prepare()
             activity_center = ToolBar().open_activity_center()
-            request = activity_center.find_contact_request_in_list(user_one.name, timeout)
+            request = activity_center.find_contact_request_in_list(user_one.name)
             activity_center.click_activity_center_button(
                 'Contact requests').accept_contact_request(request)
             main_window.left_panel.click()

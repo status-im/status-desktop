@@ -2,9 +2,6 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from configs import testpath
-from gui.components.signing_phrase_popup import SigningPhrasePopup
-
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/edit/739265',
                  'Default account values in send, receive, bridge popups')

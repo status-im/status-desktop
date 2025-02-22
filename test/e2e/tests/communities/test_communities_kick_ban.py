@@ -7,9 +7,7 @@ from allure_commons._allure import step
 import driver
 from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
 from constants.community import ToastMessages
-from driver.objects_access import walk_children
 from gui.screens.community import Members
-from gui.screens.messages import MessagesScreen
 from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
 import configs.testpath
