@@ -184,11 +184,11 @@ class MainWindow(Window):
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.get_platform() == "Darwin":
             BiometricsView().wait_until_appears().prefer_password()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
         if configs.system.get_platform() == "Darwin":
             AllowNotificationsView().start_using_status()
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         assert SigningPhrasePopup().ok_got_it_button.is_visible
         SigningPhrasePopup().confirm_phrase()
         return self
@@ -197,7 +197,7 @@ class MainWindow(Window):
     def log_in(self, user_account: UserAccount):
         share_updates_popup = ShareUsageDataPopup()
         LoginView().log_in(user_account)
-        SplashScreen().wait_until_appears().wait_until_hidden(timeout_msec=90000)
+        SplashScreen().wait_until_appears().wait_until_hidden()
         if SigningPhrasePopup().is_visible:
             SigningPhrasePopup().confirm_phrase()
         if share_updates_popup.is_visible:
