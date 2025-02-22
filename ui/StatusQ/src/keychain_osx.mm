@@ -161,8 +161,8 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
     auto status = SecItemAdd((__bridge CFDictionaryRef) query, NULL); // Add item
 
     CFRelease(accessControl);
-    if (status != errSecSuccess) {
-        qWarning() << "failed to save credential to keychain:" << status;
+    if (status == errSecSuccess) {
+        emit credentialSaved(account);
     }
 
     return convertStatus(status);
@@ -176,8 +176,8 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
         (__bridge id) kSecAttrAccount: account.toNSString(),
     };
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
-    if (status != errSecSuccess) {
-        qWarning() << "failed to delete credential from keychain:" << status;
+    if (status == errSecSuccess) {
+        emit credentialDeleted(account);
     }
 
     return convertStatus(status);
