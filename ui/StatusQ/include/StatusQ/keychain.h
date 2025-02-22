@@ -52,6 +52,9 @@ signals:
     void loadingChanged();
     void availableChanged();
 
+    void credentialSaved(const QString& account);
+    void credentialDeleted(const QString& account);
+
 private:
     QString m_service;
     bool m_loading = false;
