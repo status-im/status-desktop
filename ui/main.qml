@@ -359,6 +359,8 @@ StatusWindow {
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
+
+            keychain: appKeychain
         }
     }
 
