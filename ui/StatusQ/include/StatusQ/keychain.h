@@ -14,7 +14,7 @@ class Keychain : public QObject {
 
     Q_PROPERTY(QString service READ service WRITE setService NOTIFY serviceChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
-    Q_PROPERTY(bool available READ available CONSTANT)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
 
 public:
     explicit Keychain(QObject *parent = nullptr);
@@ -50,6 +50,7 @@ signals:
     void serviceChanged();
     void reasonChanged();
     void loadingChanged();
+    void availableChanged();
 
 private:
     QString m_service;
