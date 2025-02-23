@@ -355,7 +355,7 @@ StatusDialog {
             onTriggered: modalHeightBehavior.enabled = true
         }
 
-        readonly property bool calculatedHeight: {
+        readonly property int calculatedHeight: {
             const maxHeight = root.contentItem.Window.height - root.topMargin - root.margins
             const minHeight = 430
 

@@ -142,10 +142,6 @@ SplitView {
 
         highestTabElementCount: recipientViewAdaptor.highestTabElementCount
 
-        selectedRecipientAddress: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4"
-        selectedTokenKey: "SNT"
-        // selectedRawAmount: "10000000"
-
         currentCurrency: "USD"
         fnFormatCurrencyAmount: d.formatCurrencyAmount
 
