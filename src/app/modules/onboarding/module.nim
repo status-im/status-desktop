@@ -195,10 +195,15 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
-        # TODO:
-        # 1. Call LoginAccount with `mnemonic` set
-        # 2. Schedule `convertToRegularAccount` for post-onboarding
-        error "LoginWithLostKeycardSeedphrase not implemented"
+        # TODO: 
+        # 1. Schedule `convertToRegularAccount` for post-onboarding
+
+        # 2. Call LoginAccount with `mnemonic` set
+        self.loginRequested(
+          keyUid = keyUid,
+          LoginMethod.Mnemonic.int,
+          $ %*{ "mnemonic": mnemonic },
+        )
       of OnboardingFlow.LoginWithRestoredKeycard:
         self.postOnboardingTasks.add(newKeycardReplacementTask(
           keycardInfo.keyUID,
@@ -230,6 +235,8 @@ method loginRequested*[T](self: Module[T], keyUid: string, loginFlow: int, dataJ
       of LoginMethod.Keycard:
         self.authorize(data["pin"].str)
         # We will continue the flow when the card is authorized in onKeycardStateUpdated
+      of LoginMethod.Mnemonic:
+        self.controller.login(account, password = "", mnemonic = data["mnemonic"].str)
       else:
         raise newException(ValueError, "Unknown login flow: " & $self.loginFlow)
 
