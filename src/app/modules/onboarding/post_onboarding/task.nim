@@ -10,11 +10,22 @@ type PostOnboardingTaskKind* = enum
   #       Comparing to the `KeycardReplacementTask` which is used when the keycard is lost and a new one is being used. Theoretically the old keycard can still be found and used. # WARNING: But is this secure?
   kPostOnboardingUpdateKeycardUid = 2 # Onboarding V1 name: changedKeycardUids
 
+
+  kConvertKeycardAccountToRegular = 3
+
+type ExecutionMoment* = enum
+  PostLogin = 0
+  PostOnboarding = 1
+
 type PostOnboardingTask* = ref object of RootObj
   kind*: PostOnboardingTaskKind
+  moment*: ExecutionMoment
 
 # NOTE: In theory we could define a `run` {.base.} method here.
 # But for now there are not many task kinds, and they require different arguments.
 
 proc kind*(self: PostOnboardingTask): PostOnboardingTaskKind =
   return self.kind
+
+proc moment*(self: PostOnboardingTask): ExecutionMoment =
+  return self.moment
