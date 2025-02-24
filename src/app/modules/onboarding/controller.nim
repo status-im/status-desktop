@@ -116,6 +116,19 @@ proc init*(self: Controller) =
     self.delegate.onAccountLoginError(args.error)
   self.connectionIds.add(handlerId)
 
+  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionStarted.event) do(e: Args):
+    self.delegate.onReencryptionProcessStarted()
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionFinished.event) do(e: Args):
+    self.delegate.onReencryptionProcessFinished()
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
+    let args = ResultArgs(e)
+    self.delegate.onKeycardAccountConverted(args.success)
+  self.connectionIds.add(handlerId)
+
 proc initialize*(self: Controller, pin: string) =
   let puk = keycard_serviceV2.generateRandomPUK()
   self.keycardServiceV2.asyncInitialize(pin, puk)

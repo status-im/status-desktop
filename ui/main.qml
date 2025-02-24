@@ -16,8 +16,10 @@ import shared.stores 1.0
 import mainui 1.0
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
+import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0 as Onboarding2
 import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding2.pages 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
@@ -372,9 +374,13 @@ StatusWindow {
         active: false
         sourceComponent: DidYouKnowSplashScreen {
             objectName: "splashScreen"
-            NumberAnimation on progress { from: 0.0; to: 1; duration: 30000; running: runningProgressAnimation }
-            onProgressChanged: {
-                if (progress === 1) {
+
+            NumberAnimation on progress {
+                from: 0.0
+                to: 1
+                duration: 30000
+                running: runningProgressAnimation
+                onFinished: {
                     appLoadingAnimation.active = false
                     mainModule.fakeLoadingScreenFinished()
                 }
@@ -485,6 +491,12 @@ StatusWindow {
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
+
+                if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                    stack.push(convertingKeycardAccountPage)
+                    return
+                }
+
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
 
                 if (!data.enableBiometrics)
@@ -507,6 +519,17 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
+
+            Component {
+                id: convertingKeycardAccountPage
+
+                ConvertKeycardAccountPage {
+                    convertKeycardAccountState: onboardingStore.convertKeycardAccountState
+                    onQuitRequested: {
+                        Qt.quit()
+                    }
+                }
+            }
         }
     }
 

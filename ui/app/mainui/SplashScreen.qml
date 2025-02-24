@@ -6,11 +6,15 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
+import shared 1.0
 
 Item {
+    id: root
+
     property alias text: loadingText.text
     property alias secondaryText: secondaryText.text
     property alias progress: progressBar.value
+    property bool infiniteLoading: false
 
     ColumnLayout {
         anchors.centerIn: parent
@@ -45,7 +49,14 @@ Item {
             Layout.preferredHeight: 4
             Layout.bottomMargin: 100
             fillColor: Theme.palette.primaryColor1
-            opacity: progress > 0 ? 1 : 0
+            visible: !root.infiniteLoading
+        }
+        LoadingAnimation {
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+            Layout.preferredHeight: 25
+            Layout.preferredWidth: 25
+            Layout.bottomMargin: 100
+            visible: root.infiniteLoading
         }
     }
 }

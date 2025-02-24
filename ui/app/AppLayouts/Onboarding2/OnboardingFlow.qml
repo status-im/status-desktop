@@ -9,6 +9,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import mainui 1.0
+
 OnboardingStackView {
     id: root
 
@@ -20,6 +22,8 @@ OnboardingStackView {
     required property int restoreKeysExportState
     required property int addKeyPairState
     required property int syncState
+    required property bool reencryptingDatabase
+    required property var generateMnemonic
     required property int remainingPinAttempts
     required property int remainingPukAttempts
 
@@ -126,6 +130,18 @@ OnboardingStackView {
 
         function onAddKeyPairStateChanged() {
             d.handleKeycardProgressFailedState(addKeyPairState)
+        }
+    }
+
+    Connections {
+        target: root
+
+        function onReencryptingDatabaseChanged() {
+            if (root.reencryptingDatabase) {
+                root.push(reencryptingDatabaseScreen, StackView.Immediate)
+            } else {
+                root.pop(StackView.Immediate)
+            }
         }
     }
 
@@ -532,4 +548,16 @@ OnboardingStackView {
             onLinkActivated: (link) => root.linkActivated(link)
         }
     }
+
+    Component {
+        id: reencryptingDatabaseScreen
+
+        SplashScreen {
+            anchors.centerIn: parent
+            text: qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.")
+            secondaryText: qsTr("This process is a one time thing and is necessary for the proper functioning of the application.")
+            infiniteLoading: true
+        }
+    }
+
 }

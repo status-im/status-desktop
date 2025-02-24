@@ -133,6 +133,7 @@ Page {
         restoreKeysExportState: root.onboardingStore.restoreKeysExportState
         syncState: root.onboardingStore.syncState
         addKeyPairState: root.onboardingStore.addKeyPairState
+        reencryptingDatabase: root.onboardingStore.reencryptingDatabase
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
 

@@ -26,6 +26,7 @@ QtObject {
     readonly property int pinSettingState: d.onboardingModuleInst.pinSettingState // cf. enum Onboarding.ProgressState
     readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.AuthorizationState
     readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.AuthorizationState
+    readonly property int convertKeycardAccountState: d.onboardingModuleInst.convertKeycardAccountState // cf. enum Onboarding.ProgressState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
     readonly property int keycardRemainingPukAttempts: d.onboardingModuleInst.keycardRemainingPukAttempts
 
@@ -87,4 +88,7 @@ QtObject {
     function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
         d.onboardingModuleInst.inputConnectionStringForBootstrapping(connectionString)
     }
+
+    // reencryption
+    readonly property bool reencryptingDatabase: d.onboardingModuleInst.reencryptingDatabase
 }

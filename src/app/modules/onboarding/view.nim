@@ -19,6 +19,8 @@ QtObject:
       restoreKeysExportState: int
       loginAccountsModel: login_acc_model.Model
       loginAccountsModelVariant: QVariant
+      convertKeycardAccountState: ProgressState
+      reencryptingDatabase: bool
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -31,6 +33,7 @@ QtObject:
     result.delegate = delegate
     result.loginAccountsModel = login_acc_model.newModel()
     result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
+    result.reencryptingDatabase = false
 
   ### QtSignals ###
 
@@ -128,6 +131,30 @@ QtObject:
   QtProperty[QVariant] loginAccountsModel:
     read = getLoginAccountsModel
     notify = loginAccountsModelChanged
+
+  proc convertKeycardAccountStateChanged*(self: View) {.signal.}
+  proc getConvertKeycardAccountState(self: View): int {.slot.} =
+    return self.convertKeycardAccountState.int
+  proc setConvertKeycardAccountState*(self: View, value: ProgressState) =
+    if self.convertKeycardAccountState == value:
+      return
+    self.convertKeycardAccountState = value
+    self.convertKeycardAccountStateChanged()
+  QtProperty[int] convertKeycardAccountState:
+    read = getConvertKeycardAccountState
+    notify = convertKeycardAccountStateChanged
+
+  proc reencryptingDatabaseChanged*(self: View) {.signal.}
+  proc getReencryptingDatabase(self: View): bool {.slot.} =
+    return self.reencryptingDatabase
+  proc setReencryptingDatabase*(self: View, value: bool) =
+    if self.reencryptingDatabase == value:
+      return
+    self.reencryptingDatabase = value
+    self.reencryptingDatabaseChanged()
+  QtProperty[bool] reencryptingDatabase:
+    read = getReencryptingDatabase
+    notify = reencryptingDatabaseChanged
 
   ### slots ###
 
