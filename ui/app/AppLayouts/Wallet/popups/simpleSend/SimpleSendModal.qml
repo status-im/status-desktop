@@ -195,10 +195,10 @@ StatusDialog {
 
         readonly property real scrollViewContentY: scrollView.flickable.contentY
         onScrollViewContentYChanged: {
-            const buffer = sendModalHeader.height + scrollViewLayout.spacing
+            const buffer = sendModalHeader.height + scrollViewLayout.spacing * 2
             if (scrollViewContentY > buffer) {
                 d.stickyHeaderVisible = true
-            } else if (scrollViewContentY === 0) {
+            } else if (scrollViewContentY < buffer) {
                 d.stickyHeaderVisible = false
             }
         }
