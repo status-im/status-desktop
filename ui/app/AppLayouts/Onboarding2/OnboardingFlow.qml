@@ -195,7 +195,10 @@ OnboardingStackView {
             biometricsAvailable: root.biometricsAvailable
             isBiometricsLogin: root.isBiometricsLogin
 
-            onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
+            onBiometricsRequested: (profileId) => {
+                if (visible)
+                    root.biometricsRequested(profileId)
+            }
             onDismissBiometricsRequested: root.dismissBiometricsRequested()
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
             onOnboardingCreateProfileFlowRequested: root.push(createProfilePage)
