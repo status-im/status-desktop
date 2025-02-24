@@ -2,13 +2,13 @@
 
 #include <QIdentityProxyModel>
 #include <QPointer>
+#include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlPropertyMap>
 #include <QSet>
 
 #include "modelsyncedcontainer.h"
 
-class QQmlComponent;
 class QQmlEngine;
 
 class ObjectProxyModel : public QIdentityProxyModel

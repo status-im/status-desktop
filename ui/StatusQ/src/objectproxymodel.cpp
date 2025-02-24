@@ -1,7 +1,6 @@
 #include "StatusQ/objectproxymodel.h"
 
 #include <QDebug>
-#include <QQmlComponent>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQmlProperty>
