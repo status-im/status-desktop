@@ -123,4 +123,4 @@
 [submodule "vendor/nim-miqt-poc"]
 	path = vendor/nim-miqt-poc
 	url = https://github.com/arnetheduck/nim-miqt-poc
-	branch = status-desktop
+	branch = qt-5.15-status-desktop
