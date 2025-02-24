@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QEventLoop>
 #include <QFuture>
+#include <QGuiApplication>
 #include <QtConcurrent/QtConcurrent>
 
 #include <Foundation/Foundation.h>
@@ -50,6 +51,15 @@ Keychain::Keychain(QObject *parent)
     : QObject(parent)
 {
     reevaluateAvailability();
+
+    connect(qApp,
+            &QGuiApplication::applicationStateChanged,
+            this,
+            [this](Qt::ApplicationState state) {
+                if (state == Qt::ApplicationActive) {
+                    reevaluateAvailability();
+                }
+            });
 }
 
 Keychain::~Keychain()
@@ -151,8 +161,8 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
     auto status = SecItemAdd((__bridge CFDictionaryRef) query, NULL); // Add item
 
     CFRelease(accessControl);
-    if (status != errSecSuccess) {
-        qWarning() << "failed to save credential to keychain:" << status;
+    if (status == errSecSuccess) {
+        emit credentialSaved(account);
     }
 
     return convertStatus(status);
@@ -166,8 +176,8 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
         (__bridge id) kSecAttrAccount: account.toNSString(),
     };
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
-    if (status != errSecSuccess) {
-        qWarning() << "failed to delete credential from keychain:" << status;
+    if (status == errSecSuccess) {
+        emit credentialDeleted(account);
     }
 
     return convertStatus(status);
@@ -213,12 +223,17 @@ void Keychain::reevaluateAvailability()
     auto context = [[LAContext alloc] init];
     NSError *authError = nil;
 
-    m_available = [context canEvaluatePolicy:authPolicy error:&authError];
+    const auto available = [context canEvaluatePolicy:authPolicy error:&authError];
 
-    if (!m_available) {
-        const auto description = QString::fromNSString(authError.localizedDescription);
-        qDebug() << "Keychain is not available" << description;
+    // Later this description can be used if needed:
+    // const auto description = QString::fromNSString(authError.localizedDescription);
+
+    if (m_available == available) {
+        return;
     }
+
+    m_available = available;
+    emit availableChanged();
 }
 
 Keychain::Status Keychain::hasCredential(const QString &account) const

@@ -10,7 +10,7 @@ import app/modules/onboarding/post_onboarding/task
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onAppLoaded*(self: AccessInterface) {.base.} =
+method onAppLoaded*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
