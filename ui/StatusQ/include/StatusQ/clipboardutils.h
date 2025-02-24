@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QImage>
 
+#include <QUrl>
+
 class QJSEngine;
 class QQmlEngine;
 
