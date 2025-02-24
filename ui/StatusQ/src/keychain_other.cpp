@@ -1,5 +1,7 @@
 #include "StatusQ/keychain.h"
 
+#include <QDebug>
+
 Keychain::Keychain(QObject *parent) : QObject(parent) {}
 
 Keychain::~Keychain() = default;
