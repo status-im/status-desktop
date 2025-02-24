@@ -1,15 +1,18 @@
 project(Sandbox)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(
-        Qt5
+        Qt${QT_VERSION_MAJOR}
         COMPONENTS Core Quick QuickControls2
         REQUIRED)
+
+if (${QT_VERSION_MAJOR} EQUAL 6)
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
 
 file(GLOB_RECURSE QML_FILES "../*.qml" "../qmldir")
 file(GLOB_RECURSE JS_FILES "../*.js")
 
-qt5_add_big_resources(STATUSQ_SANDBOX_QRC qml.qrc)
+qt_add_big_resources(STATUSQ_SANDBOX_QRC qml.qrc)
 
 add_executable(${PROJECT_NAME}
         sandboxapp.h
@@ -26,8 +29,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        Qt5::Core
-        Qt5::Quick
-        Qt5::QuickControls2
+        Qt::Core
+        Qt::Quick
+        Qt::QuickControls2
+        $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::Core5Compat>
         StatusQ
         )

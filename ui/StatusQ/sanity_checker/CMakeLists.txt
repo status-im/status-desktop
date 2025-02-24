@@ -1,6 +1,6 @@
 project(SanityChecker)
 
-find_package(Qt5
+find_package(Qt${QT_VERSION_MAJOR}
         COMPONENTS Core Quick
         REQUIRED)
 
@@ -9,8 +9,8 @@ add_executable(${PROJECT_NAME}
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        Qt5::Core
-        Qt5::Quick
+        Qt::Core
+        Qt::Quick
         StatusQ)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
