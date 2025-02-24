@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, strutils, options
+import NimQml, chronicles, std/json, sequtils, strutils, options
 import tables
 
 import app/core/eventemitter
@@ -43,7 +43,7 @@ QtObject:
       responseJson = parseJson(data.message)
 
       if responseJson.kind != JObject:
-        error "unexpected json type", responseJson.kind
+        error "unexpected json type", kind = responseJson.kind
         return
       let callback = self.eventHandlers[data.eventType]
       callback(responseJson)
