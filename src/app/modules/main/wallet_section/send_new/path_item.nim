@@ -13,12 +13,23 @@ QtObject:
     amountInLocked: bool
     amountOut: string
     suggestedMaxFeesPerGasLowLevel: string
+    suggestedPriorityFeePerGasLowLevel: string
+    suggestedEstimatedTimeLowLevel: int
     suggestedMaxFeesPerGasMediumLevel: string
+    suggestedPriorityFeePerGasMediumLevel: string
+    suggestedEstimatedTimeMediumLevel: int
     suggestedMaxFeesPerGasHighLevel: string
+    suggestedPriorityFeePerGasHighLevel: string
+    suggestedEstimatedTimeHighLevel: int
     suggestedMinPriorityFee: string
     suggestedMaxPriorityFee: string
     currentBaseFee: string
+    suggestedTxNonce: string
+    suggestedTxGasAmount: string
+    suggestedApprovalTxNonce: string
+    suggestedApprovalGasAmount: string
     txNonce: string
+    txGasFeeMode: int
     txMaxFeesPerGas: string
     txBaseFee: string
     txPriorityFee: string
@@ -33,6 +44,7 @@ QtObject:
     approvalAmountRequired : string
     approvalContractAddress: string
     approvalTxNonce: string
+    approvalGasFeeMode: int
     approvalMaxFeesPerGas: string
     approvalBaseFee: string
     approvalPriorityFee: string
@@ -51,12 +63,23 @@ QtObject:
     amountInLocked: bool,
     amountOut: string,
     suggestedMaxFeesPerGasLowLevel: string,
+    suggestedPriorityFeePerGasLowLevel: string,
+    suggestedEstimatedTimeLowLevel: int,
     suggestedMaxFeesPerGasMediumLevel: string,
+    suggestedPriorityFeePerGasMediumLevel: string,
+    suggestedEstimatedTimeMediumLevel: int,
     suggestedMaxFeesPerGasHighLevel: string,
+    suggestedPriorityFeePerGasHighLevel: string,
+    suggestedEstimatedTimeHighLevel: int,
     suggestedMinPriorityFee: string,
     suggestedMaxPriorityFee: string,
     currentBaseFee: string,
+    suggestedTxNonce: string,
+    suggestedTxGasAmount: string,
+    suggestedApprovalTxNonce: string,
+    suggestedApprovalGasAmount: string,
     txNonce: string,
+    txGasFeeMode: int,
     txMaxFeesPerGas: string,
     txBaseFee: string,
     txPriorityFee: string,
@@ -71,6 +94,7 @@ QtObject:
     approvalAmountRequired: string,
     approvalContractAddress: string,
     approvalTxNonce: string,
+    approvalGasFeeMode: int,
     approvalMaxFeesPerGas: string,
     approvalBaseFee: string,
     approvalPriorityFee: string,
@@ -89,12 +113,23 @@ QtObject:
     self.amountInLocked = amountInLocked
     self.amountOut = amountOut
     self.suggestedMaxFeesPerGasLowLevel = suggestedMaxFeesPerGasLowLevel
+    self.suggestedPriorityFeePerGasLowLevel = suggestedPriorityFeePerGasLowLevel
+    self.suggestedEstimatedTimeLowLevel = suggestedEstimatedTimeLowLevel
     self.suggestedMaxFeesPerGasMediumLevel = suggestedMaxFeesPerGasMediumLevel
+    self.suggestedPriorityFeePerGasMediumLevel = suggestedPriorityFeePerGasMediumLevel
+    self.suggestedEstimatedTimeMediumLevel = suggestedEstimatedTimeMediumLevel
     self.suggestedMaxFeesPerGasHighLevel = suggestedMaxFeesPerGasHighLevel
+    self.suggestedPriorityFeePerGasHighLevel = suggestedPriorityFeePerGasHighLevel
+    self.suggestedEstimatedTimeHighLevel = suggestedEstimatedTimeHighLevel
     self.suggestedMinPriorityFee = suggestedMinPriorityFee
     self.suggestedMaxPriorityFee = suggestedMaxPriorityFee
     self.currentBaseFee = currentBaseFee
+    self.suggestedTxNonce = suggestedTxNonce
+    self.suggestedTxGasAmount = suggestedTxGasAmount
+    self.suggestedApprovalTxNonce = suggestedApprovalTxNonce
+    self.suggestedApprovalGasAmount = suggestedApprovalGasAmount
     self.txNonce = txNonce
+    self.txGasFeeMode = txGasFeeMode
     self.txMaxFeesPerGas = txMaxFeesPerGas
     self.txBaseFee = txBaseFee
     self.txPriorityFee = txPriorityFee
@@ -109,6 +144,7 @@ QtObject:
     self.approvalAmountRequired = approvalAmountRequired
     self.approvalContractAddress = approvalContractAddress
     self.approvalTxNonce = approvalTxNonce
+    self.approvalGasFeeMode = approvalGasFeeMode
     self.approvalMaxFeesPerGas = approvalMaxFeesPerGas
     self.approvalBaseFee = approvalBaseFee
     self.approvalPriorityFee = approvalPriorityFee
@@ -130,12 +166,23 @@ QtObject:
     amountInLocked: bool,
     amountOut: string,
     suggestedMaxFeesPerGasLowLevel: string,
+    suggestedPriorityFeePerGasLowLevel: string,
+    suggestedEstimatedTimeLowLevel: int,
     suggestedMaxFeesPerGasMediumLevel: string,
+    suggestedPriorityFeePerGasMediumLevel: string,
+    suggestedEstimatedTimeMediumLevel: int,
     suggestedMaxFeesPerGasHighLevel: string,
+    suggestedPriorityFeePerGasHighLevel: string,
+    suggestedEstimatedTimeHighLevel: int,
     suggestedMinPriorityFee: string,
     suggestedMaxPriorityFee: string,
     currentBaseFee: string,
+    suggestedTxNonce: string,
+    suggestedTxGasAmount: string,
+    suggestedApprovalTxNonce: string,
+    suggestedApprovalGasAmount: string,
     txNonce: string,
+    txGasFeeMode: int,
     txMaxFeesPerGas: string,
     txBaseFee: string,
     txPriorityFee: string,
@@ -150,6 +197,7 @@ QtObject:
     approvalAmountRequired: string,
     approvalContractAddress: string,
     approvalTxNonce: string,
+    approvalGasFeeMode: int,
     approvalMaxFeesPerGas: string,
     approvalBaseFee: string,
     approvalPriorityFee: string,
@@ -159,12 +207,55 @@ QtObject:
     approvalL1Fee: string
   ): PathItem =
     new(result, delete)
-    result.setup(processorName, fromChain, toChain, fromToken, toToken, amountIn, amountInLocked, amountOut,
-      suggestedMaxFeesPerGasLowLevel, suggestedMaxFeesPerGasMediumLevel, suggestedMaxFeesPerGasHighLevel,
-      suggestedMinPriorityFee, suggestedMaxPriorityFee, currentBaseFee, txNonce, txMaxFeesPerGas, txBaseFee,
-      txPriorityFee, txGasAmount, txBonderFees, txTokenFees, txEstimatedTime, txFee, txL1Fee, txTotalFee,
-      approvalRequired, approvalAmountRequired, approvalContractAddress, approvalTxNonce, approvalMaxFeesPerGas,
-      approvalBaseFee, approvalPriorityFee, approvalGasAmount, approvalEstimatedTime, approvalFee, approvalL1Fee)
+    result.setup(
+      processorName,
+      fromChain,
+      toChain,
+      fromToken,
+      toToken,
+      amountIn,
+      amountInLocked,
+      amountOut,
+      suggestedMaxFeesPerGasLowLevel,
+      suggestedPriorityFeePerGasLowLevel,
+      suggestedEstimatedTimeLowLevel,
+      suggestedMaxFeesPerGasMediumLevel,
+      suggestedPriorityFeePerGasMediumLevel,
+      suggestedEstimatedTimeMediumLevel,
+      suggestedMaxFeesPerGasHighLevel,
+      suggestedPriorityFeePerGasHighLevel,
+      suggestedEstimatedTimeHighLevel,
+      suggestedMinPriorityFee,
+      suggestedMaxPriorityFee,
+      currentBaseFee,
+      suggestedTxNonce,
+      suggestedTxGasAmount,
+      suggestedApprovalTxNonce,
+      suggestedApprovalGasAmount,
+      txNonce,
+      txGasFeeMode,
+      txMaxFeesPerGas,
+      txBaseFee,
+      txPriorityFee,
+      txGasAmount,
+      txBonderFees,
+      txTokenFees,
+      txEstimatedTime,
+      txFee,
+      txL1Fee,
+      txTotalFee,
+      approvalRequired,
+      approvalAmountRequired,
+      approvalContractAddress,
+      approvalTxNonce,
+      approvalGasFeeMode,
+      approvalMaxFeesPerGas,
+      approvalBaseFee,
+      approvalPriorityFee,
+      approvalGasAmount,
+      approvalEstimatedTime,
+      approvalFee,
+      approvalL1Fee)
 
   proc `$`*(self: PathItem): string =
     result = "PathItem("
@@ -177,12 +268,23 @@ QtObject:
     result &= "\namountInLocked: " & $self.amountInLocked
     result &= "\namountOut: " & $self.amountOut
     result &= "\nsuggestedMaxFeesPerGasLowLevel: " & $self.suggestedMaxFeesPerGasLowLevel
+    result &= "\nsuggestedPriorityFeePerGasLowLevel: " & $self.suggestedPriorityFeePerGasLowLevel
+    result &= "\nsuggestedEstimatedTimeLowLevel: " & $self.suggestedEstimatedTimeLowLevel
     result &= "\nsuggestedMaxFeesPerGasMediumLevel: " & $self.suggestedMaxFeesPerGasMediumLevel
+    result &= "\nsuggestedPriorityFeePerGasMediumLevel: " & $self.suggestedPriorityFeePerGasMediumLevel
+    result &= "\nsuggestedEstimatedTimeMediumLevel: " & $self.suggestedEstimatedTimeMediumLevel
     result &= "\nsuggestedMaxFeesPerGasHighLevel: " & $self.suggestedMaxFeesPerGasHighLevel
+    result &= "\nsuggestedPriorityFeePerGasHighLevel: " & $self.suggestedPriorityFeePerGasHighLevel
+    result &= "\nsuggestedEstimatedTimeHighLevel: " & $self.suggestedEstimatedTimeHighLevel
     result &= "\nsuggestedMinPriorityFee: " & $self.suggestedMinPriorityFee
     result &= "\nsuggestedMaxPriorityFee: " & $self.suggestedMaxPriorityFee
     result &= "\ncurrentBaseFee: " & $self.currentBaseFee
+    result &= "\nsuggestedTxNonce: " & $self.suggestedTxNonce
+    result &= "\nsuggestedTxGasAmount: " & $self.suggestedTxGasAmount
+    result &= "\nsuggestedApprovalTxNonce: " & $self.suggestedApprovalTxNonce
+    result &= "\nsuggestedApprovalGasAmount: " & $self.suggestedApprovalGasAmount
     result &= "\ntxNonce: " & $self.txNonce
+    result &= "\ntxGasFeeMode: " & $self.txGasFeeMode
     result &= "\ntxMaxFeesPerGas: " & $self.txMaxFeesPerGas
     result &= "\ntxBaseFee: " & $self.txBaseFee
     result &= "\ntxPriorityFee: " & $self.txPriorityFee
@@ -197,6 +299,7 @@ QtObject:
     result &= "\napprovalAmountRequired: " & $self.approvalAmountRequired
     result &= "\napprovalContractAddress: " & $self.approvalContractAddress
     result &= "\napprovalTxNonce: " & $self.approvalTxNonce
+    result &= "\napprovalGasFeeMode: " & $self.approvalGasFeeMode
     result &= "\napprovalMaxFeesPerGas: " & $self.approvalMaxFeesPerGas
     result &= "\napprovalBaseFee: " & $self.approvalBaseFee
     result &= "\napprovalPriorityFee: " & $self.approvalPriorityFee
@@ -233,11 +336,29 @@ QtObject:
   proc suggestedMaxFeesPerGasLowLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasLowLevel
 
+  proc suggestedPriorityFeePerGasLowLevel*(self: PathItem): string =
+    return self.suggestedPriorityFeePerGasLowLevel
+
+  proc suggestedEstimatedTimeLowLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeLowLevel
+
   proc suggestedMaxFeesPerGasMediumLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasMediumLevel
 
+  proc suggestedPriorityFeePerGasMediumLevel*(self: PathItem): string =
+    return self.suggestedPriorityFeePerGasMediumLevel
+
+  proc suggestedEstimatedTimeMediumLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeMediumLevel
+
   proc suggestedMaxFeesPerGasHighLevel*(self: PathItem): string =
     return self.suggestedMaxFeesPerGasHighLevel
+
+  proc suggestedPriorityFeePerGasHighLevel*(self: PathItem): string =
+    return self.suggestedPriorityFeePerGasHighLevel
+
+  proc suggestedEstimatedTimeHighLevel*(self: PathItem): int =
+    return self.suggestedEstimatedTimeHighLevel
 
   proc suggestedMinPriorityFee*(self: PathItem): string =
     return self.suggestedMinPriorityFee
@@ -248,8 +369,23 @@ QtObject:
   proc currentBaseFee*(self: PathItem): string =
     return self.currentBaseFee
 
+  proc suggestedTxNonce*(self: PathItem): string =
+    return self.suggestedTxNonce
+
+  proc suggestedTxGasAmount*(self: PathItem): string =
+    return self.suggestedTxGasAmount
+
+  proc suggestedApprovalTxNonce*(self: PathItem): string =
+    return self.suggestedApprovalTxNonce
+
+  proc suggestedApprovalGasAmount*(self: PathItem): string =
+    return self.suggestedApprovalGasAmount
+
   proc txNonce*(self: PathItem): string =
     return self.txNonce
+
+  proc txGasFeeMode*(self: PathItem): int =
+    return self.txGasFeeMode
 
   proc txMaxFeesPerGas*(self: PathItem): string =
     return self.txMaxFeesPerGas
@@ -292,6 +428,9 @@ QtObject:
 
   proc approvalTxNonce*(self: PathItem): string =
     return self.approvalTxNonce
+
+  proc approvalGasFeeMode*(self: PathItem): int =
+    return self.approvalGasFeeMode
 
   proc approvalMaxFeesPerGas*(self: PathItem): string =
     return self.approvalMaxFeesPerGas

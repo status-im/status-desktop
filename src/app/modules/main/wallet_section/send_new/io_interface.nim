@@ -44,6 +44,17 @@ method onUserAuthenticated*(self: AccessInterface, password: string, pin: string
 method suggestedRoutesReady*(self: AccessInterface, uuid: string, routes: seq[TransactionPathDtoV2], errCode: string, errDescription: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setFeeMode*(self: AccessInterface, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
+  isApprovalTx: bool, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCustomTxDetails*(self: AccessInterface, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getEstimatedTime*(self: AccessInterface, chainId: int, maxFeesPerGas: string, priorityFee: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method transactionWasSent*(self: AccessInterface, uuid: string, chainId: int = 0, approvalTx: bool = false, txHash: string = "", error: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 

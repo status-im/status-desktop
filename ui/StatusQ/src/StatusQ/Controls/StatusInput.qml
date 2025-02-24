@@ -97,6 +97,42 @@ Item {
     */
     property alias errorMessageCmp: errorMessage
     /*!
+       \qmlproperty bottomLabelMessageLeftCmp
+        This property represents the bottomLabelMessageLeft shown on statusInput on the left of the input component.
+        By default this component is hidden and doesn't have any text set, once the text is set it will become visible.
+        Regardless of the set text and visibility bottomLabelMessageLeftCmp will be visible only if there is no error
+        meaning no errorMessageCmp visible.
+
+        Examples of usage
+
+        \qml
+            StatusInput {
+                bottomLabelMessageLeftCmp.text: "some text"
+                bottomLabelMessageLeftCmp.font.pixelSize: 15
+                bottomLabelMessageLeftCmp.font.weight: Font.Medium
+            }
+        \endqml
+    */
+    property alias bottomLabelMessageLeftCmp: bottomLabelMessageLeft
+    /*!
+       \qmlproperty bottomLabelMessageCmp
+        This property represents the bottomLabelMessageRight shown on statusInput on the right of the input component.
+        By default this component is hidden and doesn't have any text set, once the text is set it will become visible.
+        Regardless of the set text and visibility bottomLabelMessageRightCmp will be visible only if there is no error
+        meaning no errorMessageCmp visible.
+
+        Examples of usage
+
+        \qml
+            StatusInput {
+                bottomLabelMessageRightCmp.text: "some text"
+                bottomLabelMessageRightCmp.font.pixelSize: 15
+                bottomLabelMessageRightCmp.font.weight: Font.Medium
+            }
+        \endqml
+    */
+    property alias bottomLabelMessageRightCmp: bottomLabelMessageRight
+    /*!
         \qmlproperty int StatusInput::labelPadding
         This property sets the padding of the label text.
     */
@@ -111,6 +147,21 @@ Item {
         This property sets the secondary label text.
     */
     property string secondaryLabel: ""
+    /*!
+        \qmlproperty string StatusInput::labelIcon
+        This property sets the icon displayd on the right of the label.
+    */
+    property string labelIcon: ""
+    /*!
+        \qmlproperty string StatusInput::labelIconColor
+        This property sets the color of the label icon.
+    */
+    property string labelIconColor: Theme.palette.baseColor1
+    /*!
+        \qmlproperty string StatusInput::labelIconClickable
+        This property sets if the label icon is clickable or not, if clickable labelIconClicked signal will be emitted.
+    */
+    property bool labelIconClickable: false
     /*!
         \qmlproperty int StatusInput::charLimit
         This property sets the character limit of the text input.
@@ -205,6 +256,11 @@ Item {
         This signal is emitted when the icon is clicked.
     */
     signal iconClicked()
+    /*!
+        \qmlsignal
+        This signal is emitted when the label icon is clicked.
+    */
+    signal labelIconClicked()
     /*!
         \qmlsignal
         This signal is emitted when a hard key is pressed passing as parameter the keyboard event.
@@ -428,6 +484,23 @@ Item {
                 color: Theme.palette.baseColor1
             }
 
+            StatusIcon {
+                id: labelIcon
+                visible: !!root.labelIcon
+                width: 16
+                height: 16
+                icon: root.labelIcon
+                color: root.labelIconColor
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: root.labelIconClickable
+                    hoverEnabled: root.labelIconClickable
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: root.labelIconClicked()
+                }
+            }
+
             Item {
                 Layout.fillWidth: true
             }
@@ -467,24 +540,47 @@ Item {
             }
         }
 
-        StatusBaseText {
-            id: errorMessage
-            visible: {
-                if (!text)
-                    return false;
-
-                if ((root.validationMode === StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
-                    root.validationMode === StatusInput.ValidationMode.Always)
-                    return !statusBaseInput.valid;
-
-                return false;
-            }
-            font.pixelSize: 12
-            color: Theme.palette.dangerColor1
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignRight
+        RowLayout {
+            id: bottomRow
             Layout.topMargin: 8
             Layout.fillWidth: true
+            Layout.preferredHeight: Math.max(bottomLabelMessageLeft.height, errorMessage.height, bottomLabelMessageLeft.height)
+
+            StatusBaseText {
+                id: bottomLabelMessageLeft
+                Layout.fillWidth: true
+                visible: !errorMessage.visible && !!text
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideMiddle
+            }
+
+            StatusBaseText {
+                id: errorMessage
+                Layout.fillWidth: true
+                visible: {
+                    if (!text)
+                        return false;
+
+                    if ((root.validationMode === StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
+                            root.validationMode === StatusInput.ValidationMode.Always)
+                        return !statusBaseInput.valid;
+
+                    return false;
+                }
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: Theme.palette.dangerColor1
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignRight
+            }            
+
+            StatusBaseText {
+                id: bottomLabelMessageRight
+                visible: !errorMessage.visible && !!text
+                horizontalAlignment: Text.AlignRight
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideMiddle
+            }
         }
     }
 }
