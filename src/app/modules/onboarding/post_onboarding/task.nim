@@ -13,11 +13,19 @@ type PostOnboardingTaskKind* = enum
 
   kConvertKeycardAccountToRegular = 3
 
+type ExecutionMoment* = enum
+  PostLogin = 0
+  PostOnboarding = 1
+
 type PostOnboardingTask* = ref object of RootObj
   kind*: PostOnboardingTaskKind
+  moment*: ExecutionMoment
 
 # NOTE: In theory we could define a `run` {.base.} method here.
 # But for now there are not many task kinds, and they require different arguments.
 
 proc kind*(self: PostOnboardingTask): PostOnboardingTaskKind =
   return self.kind
+
+proc moment*(self: PostOnboardingTask): ExecutionMoment =
+  return self.moment

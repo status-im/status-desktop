@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils
+import NimQml, chronicles, json, strutils, sequtils
 import logging
 
 import io_interface, states
@@ -15,7 +15,7 @@ import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
-import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account]
 
 import ../startup/models/login_account_item as login_acc_item
 
@@ -35,6 +35,8 @@ type
     onboardingFlow: OnboardingFlow
     exportedKeys: KeycardExportedKeysDto
     postOnboardingTasks: seq[PostOnboardingTask]
+    accountsService: accounts_service.Service
+    generalService: general_service.Service
 
 proc newModule*[T](
     delegate: T,
@@ -52,6 +54,8 @@ proc newModule*[T](
   result.onboardingFlow = OnboardingFlow.Unknown
   result.loginFlow = LoginMethod.Unknown
   result.postOnboardingTasks = newSeq[PostOnboardingTask]()
+  result.accountsService = accountsService
+  result.generalService = generalService
   result.controller = controller.newController(
     result,
     events,
@@ -63,6 +67,8 @@ proc newModule*[T](
   )
 
 {.push warning[Deprecated]: off.}
+
+method getPostLoginTasks*[T](self: Module[T]): seq[PostOnboardingTask]
 
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -195,10 +201,14 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
-        # TODO: 
         # 1. Schedule `convertToRegularAccount` for post-onboarding
-
-        # 2. Call LoginAccount with `mnemonic` set
+        self.postOnboardingTasks.add(newKeycardConvertAccountTask(
+          mnemonic,
+          password,
+        ))
+        # 2. Set InProgress state
+        self.view.setConvertKeycardAccountState(ProgressState.InProgress)
+        # 3. Call LoginAccount with `mnemonic` set
         self.loginRequested(
           keyUid = keyUid,
           LoginMethod.Mnemonic.int,
@@ -315,6 +325,23 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
     # We tried to login by pairing, so finilize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
 
+  let tasks = self.getPostLoginTasks()
+  for task in tasks:
+    case task.kind:
+    of kConvertKeycardAccountToRegular:
+      KeycardConvertAccountTask(task).run(self.accountsService)
+    else:
+      error "unknown post login task"
+
+  # When converting account to regular, we should not finishAppLoading.
+  # The task will convert the account, re-encrypt the database with new passwrd and
+  # eventuall logout. The user will need to login with a new password.
+  for i in 0..<self.postOnboardingTasks.len:
+    let task = self.postOnboardingTasks[i]
+    if task.kind == kConvertKeycardAccountToRegular:
+      debug "skippiig finishAppLoading2"
+      return
+
   self.finishAppLoading2()
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
@@ -381,6 +408,17 @@ method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: Keycar
     privateWhisperKey = exportedKeys.whisperKey.privateKey,
   )
 
+method onReencryptionProcessStarted*[T](self: Module[T]) =
+  self.view.setReencryptingDatabase(true)
+
+method onReencryptionProcessFinished*[T](self: Module[T]) =
+  self.view.setReencryptingDatabase(false)
+
+method onKeycardAccountConverted*[T](self: Module[T], success: bool) =
+  let state = if success: ProgressState.Success else: ProgressState.Failed
+  self.view.setConvertKeycardAccountState(state)
+  self.generalService.logout()
+
 method exportRecoverKeys*[T](self: Module[T]) =
   self.view.setRestoreKeysExportState(ProgressState.InProgress.int)
   self.controller.exportRecoverKeysFromKeycard()
@@ -389,6 +427,9 @@ method startKeycardFactoryReset*[T](self: Module[T]) =
   self.controller.startKeycardFactoryReset()
 
 method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
-  return self.postOnboardingTasks
+  return self.postOnboardingTasks.filterIt(it.moment == ExecutionMoment.PostOnboarding)
+
+method getPostLoginTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
+  return self.postOnboardingTasks.filterIt(it.moment == ExecutionMoment.PostLogin)
 
 {.pop.}
