@@ -73,6 +73,8 @@ let
   SENTRY_DSN_STATUS_GO* = BUILD_SENTRY_DSN_STATUS_GO
   SENTRY_DSN_STATUS_GO_DESKTOP* = BUILD_SENTRY_DSN_STATUS_DESKTOP
   API_LOGGING* = desktopConfig.apiLogging
+  METRICS_ENABLED* = desktopConfig.metricsEnabled
+  METRICS_ADDRESS* = desktopConfig.metricsAddress
 
 proc hasLogLevelOption*(): bool =
   for p in cliParams:
