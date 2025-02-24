@@ -414,7 +414,6 @@ Item {
                 height: visible ? contentHeight : 0
                 elide: Text.ElideRight
                 text: root.label
-                font.pixelSize: 15
                 color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
             }
 
@@ -423,7 +422,6 @@ Item {
                 visible: !!root.secondaryLabel
                 elide: Text.ElideRight
                 text: root.secondaryLabel
-                font.pixelSize: 15
                 height: visible ? contentHeight : 0
                 color: Theme.palette.baseColor1
             }
@@ -448,8 +446,8 @@ Item {
 
             objectName: "statusBaseInput"
 
-            implicitWidth: parent.width
-            implicitHeight: internal.inputHeight
+            Layout.fillWidth: true
+            Layout.preferredHeight: internal.inputHeight
             Layout.alignment: Qt.AlignTop
             Layout.topMargin: (topRow.height > 0) ? labelPadding : 0
             maximumLength: root.charLimit
