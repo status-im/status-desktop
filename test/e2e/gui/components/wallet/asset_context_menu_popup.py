@@ -1,9 +1,7 @@
-import time
+
 
 import allure
 
-import configs
-import driver
 from gui.components.base_popup import BasePopup
 from gui.components.wallet.send_popup import SendPopup
 from gui.elements.object import QObject

@@ -1,17 +1,13 @@
-import time
-
 import allure
 import pytest
 from allure_commons._allure import step
 
-import configs.system
 import driver
 from gui.components.changes_detected_popup import CustomSortOrderChangesDetectedToastMessage
 from gui.screens.wallet import WalletAccountView
 from gui.screens.settings_wallet import ManageTokensSettingsView
 from tests.wallet_main_screen import marks
 
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 
 pytestmark = marks
