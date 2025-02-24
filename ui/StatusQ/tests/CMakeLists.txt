@@ -1,10 +1,15 @@
-cmake_minimum_required(VERSION 3.5)
-
 project(TestStatusQ LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS QuickTest Qml Quick WebEngine REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+        QuickTest Qml Quick REQUIRED)
+
+if (${QT_VERSION_MAJOR} EQUAL 6)
+    find_package(Qt6 COMPONENTS WebEngineQuick REQUIRED)
+else()
+    find_package(Qt5 COMPONENTS WebEngine REQUIRED)
+endif()
 
 ##############
 # Test Library
@@ -27,7 +32,7 @@ add_library(StatusQTestLib
     src/TestHelpers/testmodel.h
 )
 
-target_link_libraries(StatusQTestLib PUBLIC Qt5::Core Qt5::Quick Qt5::Test StatusQ)
+target_link_libraries(StatusQTestLib PUBLIC Qt::Core Qt::Quick Qt::Test StatusQ)
 target_include_directories(StatusQTestLib PUBLIC src)
 
 enable_testing()
@@ -44,8 +49,10 @@ target_compile_definitions(QmlTests PRIVATE
     # no need to copy around qml test files for shadow builds - just set the respective define
     QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
-target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml Qt5::Quick
-    Qt5::WebEngine StatusQ StatusQTestLib
+target_link_libraries(QmlTests PRIVATE Qt::QuickTest Qt::Qml Qt::Quick
+    $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::WebEngineQuick>
+    $<$<EQUAL:${QT_VERSION_MAJOR},5>:Qt::WebEngine>
+    StatusQ StatusQTestLib
 )
 add_test(NAME QmlTests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMAND QmlTests -input "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -112,7 +119,7 @@ target_link_libraries(SnapshotObjectTest PRIVATE StatusQ StatusQTestLib)
 add_test(NAME SnapshotObjectTest COMMAND SnapshotObjectTest)
 
 add_executable(GroupingModelTest tst_GroupingModel.cpp)
-target_link_libraries(GroupingModelTest PRIVATE Qt5::Qml StatusQ StatusQTestLib)
+target_link_libraries(GroupingModelTest PRIVATE Qt::Qml StatusQ StatusQTestLib)
 add_test(NAME GroupingModelTest COMMAND GroupingModelTest)
 
 add_executable(ModelCountTest tst_ModelCount.cpp)

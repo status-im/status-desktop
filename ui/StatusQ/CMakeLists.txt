@@ -26,11 +26,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_package(Qt5 COMPONENTS
+find_package(Qt6 COMPONENTS Core QUIET)
+if (Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+else()
+    set(QT_VERSION_MAJOR 5)
+endif()
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
         Core Qml Gui Quick QuickControls2 REQUIRED)
 
+if (${QT_VERSION_MAJOR} EQUAL 6)
+    find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+endif()
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    find_package(Qt5 COMPONENTS QuickTest REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest REQUIRED)
 endif()
 
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
@@ -80,7 +91,7 @@ if (NOT PROJECT_IS_TOP_LEVEL)
 endif ()
 
 if (${STATUSQ_SHADOW_BUILD})
-    qt5_add_big_resources(STATUSQ_QRC_COMPILED
+    qt_add_big_resources(STATUSQ_QRC_COMPILED
             src/statusq.qrc
             src/assets.qrc)
 endif()
@@ -192,18 +203,19 @@ else ()
 endif ()
 
 target_link_libraries(StatusQ PRIVATE
-        Qt5::Core
-        Qt5::Qml
-        Qt5::Gui
-        Qt5::Quick
-        Qt5::QuickControls2
+        Qt::Core
+        Qt::Qml
+        Qt::Gui
+        Qt::Quick
+        Qt::QuickControls2
+        $<$<EQUAL:${QT_VERSION_MAJOR},6>:Qt::Core5Compat>
         SortFilterProxyModel
         qzxing
         )
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_link_libraries(StatusQ PRIVATE
-            Qt5::QuickTest
+            Qt::QuickTest
             )
 endif()
 
