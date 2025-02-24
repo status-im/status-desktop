@@ -113,7 +113,11 @@ QtObject:
       error "error receiving a keycard signal", err=e.msg, data = signal
 
   proc asyncStart(self: Service, storageDir: string) =
-    let params = %*{"storageFilePath": storageDir}
+    let params = %*{
+      "storageFilePath": storageDir,
+      "logEnabled": KEYCARD_LOGS_ENABLED,
+      "logFilePath": KEYCARD_LOG_FILE_PATH,
+    }
     self.asyncCallRPC(KeycardAction.Start, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
         error "error starting keycard", err=err
