@@ -1,11 +1,11 @@
 #pragma once
 
+#include <QFlags>
 #include <QQmlParserStatus>
+#include <QQuickTextDocument>
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
-#include <QFlags>
 
-class QQuickTextDocument;
 class QTextCharFormat;
 
 class StatusSyntaxHighlighter : public QSyntaxHighlighter, public QQmlParserStatus
