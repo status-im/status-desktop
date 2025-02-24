@@ -49,10 +49,10 @@ Item {
             anchors.fill: parent
 
             networkChecksEnabled: false
-            biometricsAvailable: mockDriver.biometricsAvailable
             keycardPinInfoPageDelay: 0
 
             keychain: Keychain {
+                readonly property bool available: mockDriver.biometricsAvailable
                 function hasCredential(account) {
                     return mockDriver.biometricsAvailable ? Keychain.StatusSuccess
                                                           : Keychain.StatusNotFound
@@ -242,7 +242,7 @@ Item {
         // FLOW: Create Profile -> Start fresh (create profile with new password)
         function test_flow_createProfile_withPassword(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -354,7 +354,7 @@ Item {
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
         function test_flow_createProfile_withSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -451,7 +451,7 @@ Item {
         // FLOW: Create Profile -> Use an empty Keycard -> Use a new recovery phrase (create profile with keycard + new seedphrase)
         function test_flow_createProfile_withKeycardAndNewSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -597,7 +597,7 @@ Item {
         // FLOW: Create Profile -> Use an empty Keycard -> Use an existing recovery phrase (create profile with keycard + existing seedphrase)
         function test_flow_createProfile_withKeycardAndExistingSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -665,7 +665,7 @@ Item {
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
             // PAGE 9: Enable Biometrics
-            if (controlUnderTest.biometricsAvailable) {
+            if (mockDriver.biometricsAvailable) {
                 dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
@@ -692,7 +692,7 @@ Item {
         // FLOW: Log in -> Log in with recovery phrase
         function test_flow_login_withSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -785,7 +785,7 @@ Item {
         // FLOW: Log in -> Log in by syncing
         function test_flow_login_bySyncing(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
             const stack = controlUnderTest.stack
             verify(!!stack)
@@ -877,7 +877,7 @@ Item {
         // FLOW: Log in -> Log in with Keycard
         function test_flow_login_withKeycard(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
             mockDriver.existingPin = "123456"
 
             const stack = controlUnderTest.stack
