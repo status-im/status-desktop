@@ -1,7 +1,11 @@
 #include <QtQuickTest/quicktest.h>
 #include <QQmlEngine>
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QtWebEngine>
+#else
+#include <QtWebEngineQuick>
+#endif
 
 #include <TestHelpers/MonitorQtOutput.h>
 #include <TestHelpers/modelaccessobserverproxy.h>
@@ -12,7 +16,11 @@ class RunBeforeQApplicationIsInitialized {
 public:
     RunBeforeQApplicationIsInitialized()
     {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QtWebEngine::initialize();
+#else
+        QtWebEngineQuick::initialize();
+#endif
     }
 };
 
