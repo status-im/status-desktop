@@ -802,4 +802,7 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
 method remainingAccountCapacity*[T](self: Module[T]): int =
   return self.controller.remainingAccountCapacity()
 
+method keycardPinChanged*[T](self: Module[T], pin: string) =
+  self.view.keycardPinChanged(pin)
+
 {.pop.}

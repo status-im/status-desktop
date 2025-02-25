@@ -242,5 +242,8 @@ method onTokensRebuilt*(self: AccessInterface, accountAddresses: seq[string], ac
 method remainingAccountCapacity*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method keycardPinChanged*(self: AccessInterface, pin: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   DelegateInterface* = concept c

@@ -56,6 +56,8 @@ QtObject:
     signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
     signalConnect(result.currentState, "tertiaryActionClicked()", result, "onTertiaryActionClicked()", 2)
 
+  proc keycardPinChanged*(self: View, pin: string) {.signal.}
+
   proc returnToFlowChanged*(self: View) {.signal.}
   proc getReturnToFlowStr(self: View): string {.slot.} =
     return $self.returnToFlow
