@@ -44,6 +44,14 @@ Keychain::Status Keychain::hasCredential(const QString &account) const
     return Keychain::StatusNotSupported;
 }
 
+Keychain::Status Keychain::updateCredential(const QString &account, const QString &password)
+{
+    Q_UNUSED(account);
+    Q_UNUSED(password);
+
+    return Keychain::StatusNotSupported;
+}
+
 void Keychain::cancelActiveRequest()
 {
     qWarning() << "Keychain::cancelActiveRequest is intended to be called only on MacOS.";

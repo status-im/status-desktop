@@ -250,3 +250,18 @@ Keychain::Status Keychain::hasCredential(const QString &account) const
     const auto status = SecItemCopyMatching((__bridge CFDictionaryRef) query, nil);
     return convertStatus(status);
 }
+
+Keychain::Status Keychain::updateCredential(const QString &account, const QString &password)
+{
+    const auto status = hasCredential(account);
+
+    if (status == Status::StatusNotFound) {
+        return Status::StatusSuccess;
+    }
+
+    if (status != Status::StatusSuccess) {
+        return status;
+    }
+
+    return saveCredential(account, password);
+}

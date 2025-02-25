@@ -207,6 +207,8 @@ SettingsContentBase {
                 function onPasswordChanged(success: bool, errorMsg: string) {
                     if (success) {
                         confirmPasswordChangePopup.passwordSuccessfulyChanged()
+                        keychain.updateCredential(privacyStore.keyUid,
+                                                  choosePasswordForm.newPswText)
                         return
                     }
 

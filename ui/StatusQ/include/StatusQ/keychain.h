@@ -40,8 +40,15 @@ public:
 
     Q_INVOKABLE Status saveCredential(const QString &account, const QString &password);
     Q_INVOKABLE Status deleteCredential(const QString &account);
-    Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE Status hasCredential(const QString &account) const;
+
+    // updateCredential calls saveCredential(account, password) if this accounts already exists in Keychain
+    // This wrapper can be used when password changes.
+    // Returns StatusSuccess if the account is not found in Keychain,
+    // otherwise returns the actual error of hasCredential or result of saveCredential.
+    Q_INVOKABLE Status updateCredential(const QString &account, const QString &password);
+
+    Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:
