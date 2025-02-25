@@ -27,6 +27,7 @@ public:
         StatusUnavailable,
         StatusCancelled,
         StatusNotFound,
+        StatusFallbackSelected,
     };
 
     Q_ENUM(Status)

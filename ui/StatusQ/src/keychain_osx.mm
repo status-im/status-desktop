@@ -42,6 +42,8 @@ Keychain::Status convertError(NSError *error)
     case LAErrorUserCancel:
     case LAErrorAppCancel:
         return Keychain::StatusCancelled;
+    case LAErrorUserFallback:
+        return Keychain::StatusFallbackSelected;
     default:
         return Keychain::StatusGenericError;
     }

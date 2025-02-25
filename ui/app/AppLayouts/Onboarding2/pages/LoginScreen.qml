@@ -40,23 +40,21 @@ OnboardingPage {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
             return
 
-        const hasError = error || detailedError
+        const hasError = !!error
 
-        d.biometricsSuccessful = !hasError
-        d.biometricsFailed = hasError || wrongFingerprint
+        d.biometricsSuccessful = secret !== ""
+        d.biometricsFailed = hasError
 
         if (hasError) {
             if (d.currentProfileIsKeycard) {
                 keycardBox.clear()
             } else {
                 passwordBox.validationError = error
-                passwordBox.detailedError = detailedError
+                passwordBox.detailedError = ""
                 passwordBox.clear()
                 passwordBox.forceActiveFocus()
             }

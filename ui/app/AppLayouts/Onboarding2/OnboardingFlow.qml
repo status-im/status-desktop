@@ -63,14 +63,11 @@ OnboardingStackView {
         replace(null, initialComponent)
     }
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!loginScreen)
             return
 
-        loginScreen.setBiometricResponse(secret, error, detailedError,
-                                         wrongFingerprint)
+        loginScreen.setBiometricResponse(secret, error)
     }
 
     QtObject {

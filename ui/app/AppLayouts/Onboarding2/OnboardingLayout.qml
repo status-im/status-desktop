@@ -249,11 +249,11 @@ Page {
             if (status === Keychain.StatusSuccess)
                 onboardingFlow.setBiometricResponse(secret)
             else if (status === Keychain.StatusNotFound)
-                onboardingFlow.setBiometricResponse(
-                            "", qsTr("Credentials not found."))
+                onboardingFlow.setBiometricResponse("", qsTr("Credentials not found."))
+            else if (status === Keychain.StatusFallbackSelected)
+                onboardingFlow.setBiometricResponse("", "")
             else if (status !== Keychain.StatusCancelled)
-                onboardingFlow.setBiometricResponse(
-                            "", qsTr("Fetching credentials failed."))
+                onboardingFlow.setBiometricResponse("", qsTr("Fetching credentials failed."))
         }
     }
 
