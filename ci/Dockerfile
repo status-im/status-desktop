@@ -22,6 +22,7 @@ FROM ubuntu:20.04
 
 ARG LINUXDEPLOYQT_VERSION=20230423-8428c59
 ARG QT_VERSION
+ARG PCSCLITE_VERSION=2.2.3
 
 # Adapted from a12e/docker-qt by Aurélien Brooke
 
@@ -45,16 +46,39 @@ RUN apt update -yq && apt install -yq software-properties-common \
     git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
-    libncurses5-dev libncursesw5-dev libpcsclite-dev  libpcre3-dev libnss3 \
+    libncurses5-dev libncursesw5-dev libpcre3-dev libnss3 \
     gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
     gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-alsa libpulse-mainloop-glib0 \
     gstreamer1.0-pulseaudio libgstreamer-plugins-base1.0-0 \
     libxext6 libxrender1 libxkbcommon-dev libxkbcommon-x11-dev libxcomposite1 libxtst6 \
     libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
     libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
+    autoconf automake libtool gcc \
  &&  update-alternatives \
     --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
     --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
+ && apt-get -qq clean
+
+# To fix: https://github.com/status-im/status-desktop/issues/16768
+# https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential debhelper dpkg-dev libudev-dev libusb-1.0-0-dev pkg-config flex libsystemd-dev check git wget \
+    meson ninja-build libglib2.0-dev libexpat1-dev python3-pip \
+ && cd /tmp \
+ && wget https://pcsclite.apdu.fr/files/pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
+ && tar -xJf pcsc-lite-${PCSCLITE_VERSION}.tar.xz \
+ && cd pcsc-lite-${PCSCLITE_VERSION} \
+ && meson setup builddir \
+  -Dpolkit=false \
+  -Dsystemd=false \
+  -Dserial=false \
+  -Dipcdir=/tmp/pcscd/run \
+ && cd builddir \
+ && ninja \
+ && ninja install \
+ && ldconfig \
+ && cd / \
+ && rm -rf /tmp/pcsc-lite* \
  && apt-get -qq clean
 
 # Install linuxdeployqt
