@@ -19,6 +19,8 @@ when defined(windows):
 logScope:
   topics = "status-app"
 
+const fleetJson = staticRead("../fleets.json")
+
 var signalsManagerQObjPointer: pointer
 var keycardServiceQObjPointer: pointer
 var keycardServiceV2QObjPointer: pointer
@@ -28,9 +30,6 @@ proc isExperimental(): string =
 
 proc determineResourcePath(): string =
   result = if defined(windows) and defined(production): "/../resources/resources.rcc" else: "/../resources.rcc"
-
-proc determineFleetsPath(): string =
-  result = if defined(windows) and defined(production): "/../resources/fleets.json" else: "/../fleets.json"
 
 proc determineOpenUri(): string =
   if OPENURI.len > 0:
@@ -158,12 +157,10 @@ proc mainProc() =
 
   let isExperimental = isExperimental()
   let resourcesPath = determineResourcePath()
-  let fleetsPath = determineFleetsPath()
   let openUri = determineOpenUri()
   let statusAppIconPath = determineStatusAppIconPath()
 
-  let fleetConfig = readFile(joinPath(getAppDir(), fleetsPath))
-  let statusFoundation = newStatusFoundation(fleetConfig)
+  let statusFoundation = newStatusFoundation(fleetJson)
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
   # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
   initializeWebView()
