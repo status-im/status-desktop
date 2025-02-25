@@ -648,6 +648,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 		-bundle-non-qt-libs \
 		-exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0 \
 		-verbose=1 \
+		-executable=$(APP_DIR)/usr/bin/pcscd \
 		-executable=$(APP_DIR)/usr/libexec/QtWebEngineProcess
 
 	scripts/fix_app_dir.sh
