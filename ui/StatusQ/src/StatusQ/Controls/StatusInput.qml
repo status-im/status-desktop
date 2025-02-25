@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
@@ -28,7 +29,7 @@ import StatusQ.Core.Utils 0.1
 
    For a list of components available see StatusQ.
 */
-Item {
+Control {
     id: root
 
     /*!
@@ -73,7 +74,8 @@ Item {
         \qmlproperty alias StatusInput::font
         This property holds a reference to the TextEdit's font property.
     */
-    property alias font: statusBaseInput.font
+    font.pixelSize: Theme.primaryTextFontSize
+    font.family: Theme.baseFont.name
     /*!
         \qmlproperty alias StatusInput::multiline
         This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
@@ -177,26 +179,6 @@ Item {
         This property sets the error message text.
     */
     property string errorMessage: ""
-    /*!
-        \qmlproperty alias StatusInput::leftPadding
-        This property sets the leftComponentLoader's left padding.
-    */
-    property alias leftPadding: statusBaseInput.leftPadding
-    /*!
-        \qmlproperty alias StatusInput::rightPadding
-        This property sets the right padding.
-    */
-    property alias rightPadding: statusBaseInput.rightPadding
-    /*!
-        \qmlproperty alias StatusInput::topPadding
-        This property sets the top padding.
-    */
-    property alias topPadding: statusBaseInput.topPadding
-    /*!
-        \qmlproperty alias StatusInput::bottomPadding
-        This property sets the bottom padding.
-    */
-    property alias bottomPadding: statusBaseInput.bottomPadding
     /*!
         \qmlproperty real StatusInput::minimumHeight
         This property sets the minimum height. Default value is 44px.
@@ -435,7 +417,6 @@ Item {
     }
 
     implicitWidth: 448
-    implicitHeight: inputLayout.implicitHeight
 
     Component.onCompleted: {
         validate()
@@ -454,9 +435,8 @@ Item {
             statusBaseInput.forceActiveFocus()
     }
 
-    ColumnLayout {
+    contentItem: ColumnLayout {
         id: inputLayout
-        anchors.fill: parent
         spacing: 0
 
         RowLayout {
@@ -467,10 +447,8 @@ Item {
             StatusBaseText {
                 id: label
                 visible: !!text
-                height: visible ? contentHeight : 0
                 elide: Text.ElideRight
                 text: root.label
-                font.pixelSize: 15
                 color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
             }
 
@@ -479,8 +457,6 @@ Item {
                 visible: !!root.secondaryLabel
                 elide: Text.ElideRight
                 text: root.secondaryLabel
-                font.pixelSize: 15
-                height: visible ? contentHeight : 0
                 color: Theme.palette.baseColor1
             }
 
@@ -508,10 +484,9 @@ Item {
             StatusBaseText {
                 id: charLimitLabelItem
                 Layout.alignment: Qt.AlignVCenter
-                height: visible ? contentHeight : 0
                 visible: root.charLimit > 0 || !!root.charLimitLabel
                 text: root.charLimitLabel ? root.charLimitLabel : "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
             }
         }
@@ -521,11 +496,13 @@ Item {
 
             objectName: "statusBaseInput"
 
-            implicitWidth: parent.width
-            implicitHeight: internal.inputHeight
+            Layout.fillWidth: true
+            Layout.preferredHeight: internal.inputHeight
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
             Layout.topMargin: (topRow.height > 0) ? labelPadding : 0
             maximumLength: root.charLimit
+            font: root.font
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
             onIconClicked: root.iconClicked()
@@ -542,7 +519,7 @@ Item {
 
         RowLayout {
             id: bottomRow
-            Layout.topMargin: 8
+            Layout.topMargin: Theme.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: Math.max(bottomLabelMessageLeft.height, errorMessage.height, bottomLabelMessageLeft.height)
 
