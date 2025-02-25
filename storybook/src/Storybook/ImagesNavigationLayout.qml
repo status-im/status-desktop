@@ -8,9 +8,9 @@ ColumnLayout {
     property alias count: indicator.count
     property alias currentIndex: indicator.currentIndex
 
-    signal up
-    signal left
-    signal right
+    signal moveUp
+    signal moveLeft
+    signal moveRight
 
     RowLayout {
         Layout.alignment: Qt.AlignHCenter
