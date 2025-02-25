@@ -75,9 +75,9 @@ ApplicationWindow {
                 count: imagesSwipeView.count
                 currentIndex: imagesSwipeView.currentIndex
 
-                onUp: topSwipeView.decrementCurrentIndex()
-                onLeft: imagesSwipeView.decrementCurrentIndex()
-                onRight: imagesSwipeView.incrementCurrentIndex()
+                onMoveUp: topSwipeView.decrementCurrentIndex()
+                onMoveLeft: imagesSwipeView.decrementCurrentIndex()
+                onMoveRight: imagesSwipeView.incrementCurrentIndex()
             }
         }
     }
