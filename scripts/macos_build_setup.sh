@@ -20,9 +20,9 @@ function install_build_dependencies {
 
 function install_qt {
   echo "Install QT"
-  brew install python@3.10
-  pip3 install -U pip
-  pip3 install aqtinstall
+  
+  brew install aqtinstall
+  brew link aqtinstall
   aqt install-qt mac desktop ${QT_VERSION} clang_64 -m qtwebengine -O ${QT_INSTALL_DIR}
 }
 
