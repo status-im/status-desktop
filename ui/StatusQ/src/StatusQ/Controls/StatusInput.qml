@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -414,9 +415,16 @@ Control {
         readonly property int inputHeight: statusBaseInput.multiline || (root.minimumHeight > 0) || (root.maximumHeight > 0)?
                                   Math.min(Math.max(statusBaseInput.topPadding + statusBaseInput.bottomPadding, 44,
                                                     root.minimumHeight), root.maximumHeight) : 44
+        readonly property real noPadding: -0.1
     }
 
     implicitWidth: 448
+
+    // to distinguish from the builtin 0; has no real effect otherwise
+    leftPadding: internal.noPadding
+    rightPadding: internal.noPadding
+    topPadding: internal.noPadding
+    bottomPadding: internal.noPadding
 
     Component.onCompleted: {
         validate()
@@ -436,7 +444,6 @@ Control {
     }
 
     contentItem: ColumnLayout {
-        id: inputLayout
         spacing: 0
 
         RowLayout {
@@ -500,7 +507,8 @@ Control {
             Layout.preferredHeight: internal.inputHeight
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
-            Layout.topMargin: (topRow.height > 0) ? labelPadding : 0
+            Layout.topMargin: topRow.height > 0 ? labelPadding : 0
+            Layout.bottomMargin: bottomRow.height > 0 ? labelPadding : 0
             maximumLength: root.charLimit
             font: root.font
             onTextChanged: root.validate()
@@ -515,13 +523,33 @@ Control {
             onEditingFinished: {
                 root.editingFinished()
             }
+
+            // use the default padding values from StatusBaseInput, but forward any explicitly set values from outside
+            Binding on topPadding {
+                value: root.topPadding
+                when: root.topPadding !== internal.noPadding && root.topPadding !== statusBaseInput.topPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on bottomPadding {
+                value: root.bottomPadding
+                when: root.bottomPadding !== internal.noPadding && root.bottomPadding !== statusBaseInput.bottomPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on leftPadding {
+                value: root.leftPadding
+                when: root.leftPadding !== internal.noPadding && root.leftPadding !== statusBaseInput.leftPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on rightPadding {
+                value: root.rightPadding
+                when: root.rightPadding !== internal.noPadding && root.rightPadding !== statusBaseInput.rightPadding
+                restoreMode: Binding.RestoreBinding
+            }
         }
 
         RowLayout {
             id: bottomRow
-            Layout.topMargin: Theme.halfPadding
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.max(bottomLabelMessageLeft.height, errorMessage.height, bottomLabelMessageLeft.height)
 
             StatusBaseText {
                 id: bottomLabelMessageLeft

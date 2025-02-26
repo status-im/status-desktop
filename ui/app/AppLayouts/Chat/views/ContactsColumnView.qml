@@ -96,11 +96,9 @@ Item {
             Layout.fillWidth: true
             Layout.leftMargin: Theme.padding
             Layout.rightMargin: Theme.padding
-            Layout.preferredHeight: 36
-            maximumHeight: 36
-            leftPadding: 10
-            topPadding: 4
-            bottomPadding: 4
+            Layout.preferredHeight: 40
+            input.topPadding: 4
+            input.bottomPadding: 4
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
