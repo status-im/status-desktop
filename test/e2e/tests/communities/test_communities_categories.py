@@ -50,6 +50,7 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow)
 @pytest.mark.case(704622)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])
+@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/17395')
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
     enable_community_creation(main_screen)
 
