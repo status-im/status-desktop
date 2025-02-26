@@ -479,6 +479,12 @@ StatusWindow {
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.unwindToLoginScreen() // error handled internally
                 }
+                // onSaveBiometricsRequested: (account, credential) => {
+                //     appKeychain.saveCredential(account, credential)
+                // }
+                // onDeleteBiometricsRequested: (account) => {
+                //     appKeychain.deleteCredential(account)
+                // }
             }
 
             keychain: appKeychain
@@ -492,19 +498,15 @@ StatusWindow {
                     return
                 }
 
+                // We use a custom handler for LoginWithLostKeycardSeedphrase flow.
+                // At the moment of implementation, this was the simplest move to make it work in the given code.
+                // Ideally, ConvertKeycardAccountPage should be created inside the OnboardingLayout and not here,
+                // but this would require more changes and eventually give more inconsistencies.
                 if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
                     stack.push(convertingKeycardAccountPage)
-                    return
+                } else {
+                    stack.push(splashScreenV2, {runningProgressAnimation: true})
                 }
-
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
-
-                if (!data.enableBiometrics)
-                    return
-
-                onboardingStore.appLoaded.connect((keyUid) => {
-                    appKeychain.saveCredential(keyUid, data.password || data.keycardPin)
-                })
             }
 
             onLoginRequested: function (keyUid, method, data) {
