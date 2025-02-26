@@ -94,10 +94,13 @@ method startKeycardFactoryReset*(self: AccessInterface) {.base.} =
 method getPostOnboardingTasks*(self: AccessInterface): seq[PostOnboardingTask] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getPostLoginTasks*(self: AccessInterface): seq[PostOnboardingTask] {.base.} =
+method onKeycardAccountConverted* (self: AccessInterface, success: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardAccountConverted* (self: AccessInterface, success: bool) {.base.} =
+method requestSaveBiometrics*(self: AccessInterface, account: string, credential: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestDeleteBiometrics*(self: AccessInterface, account: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

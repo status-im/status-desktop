@@ -8,6 +8,8 @@ QtObject {
     id: root
 
     signal appLoaded(string keyUid)
+    signal saveBiometricsRequested(string keyUid, string credential)
+    signal deleteBiometricsRequested(string keyUid)
 
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
@@ -16,6 +18,8 @@ QtObject {
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
             d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+            d.onboardingModuleInst.saveBiometricsRequested.connect(root.saveBiometricsRequested)
+            d.onboardingModuleInst.deleteBiometricsRequested.connect(root.deleteBiometricsRequested)
         }
     }
 

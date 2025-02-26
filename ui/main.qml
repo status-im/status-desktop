@@ -479,12 +479,12 @@ StatusWindow {
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.unwindToLoginScreen() // error handled internally
                 }
-                // onSaveBiometricsRequested: (account, credential) => {
-                //     appKeychain.saveCredential(account, credential)
-                // }
-                // onDeleteBiometricsRequested: (account) => {
-                //     appKeychain.deleteCredential(account)
-                // }
+                onSaveBiometricsRequested: (account, credential) => {
+                    appKeychain.saveCredential(account, credential)
+                }
+                onDeleteBiometricsRequested: (account) => {
+                    appKeychain.deleteCredential(account)
+                }
             }
 
             keychain: appKeychain

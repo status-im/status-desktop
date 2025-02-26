@@ -37,6 +37,8 @@ QtObject:
 
   proc appLoaded*(self: View, keyUid: string) {.signal.}
   proc accountLoginError*(self: View, error: string, wrongPassword: bool) {.signal.}
+  proc saveBiometricsRequested*(self: View, account: string, credential: string) {.signal.}
+  proc deleteBiometricsRequested*(self: View, account: string) {.signal.}
 
   ### QtProperties ###
 
@@ -141,6 +143,12 @@ QtObject:
   QtProperty[int] convertKeycardAccountState:
     read = getConvertKeycardAccountState
     notify = convertKeycardAccountStateChanged
+
+  proc requestSaveBiometrics*(self: View, account: string, credential: string) =
+    self.saveBiometricsRequested(account, credential)
+
+  proc requestDeleteBiometrics*(self: View, account: string) =
+    self.deleteBiometricsRequested(account)
 
   ### slots ###
 
