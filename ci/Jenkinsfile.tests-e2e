@@ -251,9 +251,6 @@ def formatMap(Map data=[:]) {
 }
 
 def getDefaultBuildSource() {
-  if (JOB_NAME ==~ 'status-desktop/qa-automation/prs/.*') {
-    return 'status-desktop/nightly'
-  }
   return ''
 }
 
