@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import QtMultimedia 5.15
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1

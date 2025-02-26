@@ -1,5 +1,5 @@
 import QtQuick 2.13
-import QtGraphicalEffects 1.13
+import QtGraphicalEffects 1.15
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1

@@ -7,7 +7,7 @@ import QtQml 2.14
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
-import QtGraphicalEffects 1.14
+import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
