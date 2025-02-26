@@ -20,10 +20,19 @@ function install_build_dependencies {
 
 function install_qt {
   echo "Install QT"
+
+  echo "activating virtual env"
+  python3 -m venv /tmp/qt_install_env
+  source /tmp/qt_install_env/bin/activate
+
   brew install python@3.10
   pip3 install -U pip
   pip3 install aqtinstall
   aqt install-qt mac desktop ${QT_VERSION} clang_64 -m qtwebengine -O ${QT_INSTALL_DIR}
+
+  deactivate
+  rm -rf /tmp/qt_install_env
+  echo "clean up of virtual env"
 }
 
 function get_go_arch {
