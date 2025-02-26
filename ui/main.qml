@@ -21,7 +21,6 @@ import AppLayouts.Onboarding2.stores 1.0
 
 import StatusQ 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 StatusWindow {
     id: applicationWindow
@@ -360,6 +359,8 @@ StatusWindow {
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
+
+            keychain: appKeychain
         }
     }
 
@@ -426,7 +427,17 @@ StatusWindow {
     Keychain {
         service: "StatusDesktop"
 
-        id: keychain
+        id: appKeychain
+
+        // These signal handlers keep the compatibility with the old keychain approach,
+        // which is used by `keycard_popup` (any auth inside the app) and the old onboarding.
+        // NOTE: this hack won't work if changes are made with another Keychain instance.
+        onCredentialSaved: (account) => {
+                               localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
+                           }
+        onCredentialDeleted: (account) => {
+                                 localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never
+                             }
     }
 
     Component {
@@ -449,38 +460,39 @@ StatusWindow {
 
             anchors.fill: parent
 
-            // FIXME, https://github.com/status-im/status-desktop/issues/17240
-            isBiometricsLogin: Qt.platform.os === Constants.mac
-
             networkChecksEnabled: true
-            biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: onboardingStore
+            onboardingStore: OnboardingStore {
+                id: onboardingStore
 
-            onBiometricsRequested: (profileId) => {
-                const isKeycardProfile = SQUtils.ModelUtils.getByKey(
-                                           onboardingStore.loginAccountsModel, "keyUid",
-                                           profileId, "keycardCreatedAccount")
-
-                const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
-
-                keychain.requestGetCredential(reason, profileId)
+                onAppLoaded: {
+                    applicationWindow.appIsReady = true
+                    applicationWindow.storeAppState()
+                    moveToAppMain()
+                }
+                onAccountLoginError: function (error, wrongPassword) {
+                    onboardingLayout.unwindToLoginScreen() // error handled internally
+                }
             }
 
-            onDismissBiometricsRequested: {
-                if (keychain.loading)
-                    keychain.cancelActiveRequest()
-            }
+            keychain: appKeychain
 
             onFinished: (flow, data) => {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
-                if (error != "") {
+                if (error !== "") {
                     // We should never be here since everything should be validated already
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
                 stack.push(splashScreenV2, { runningProgressAnimation: true })
+
+                if (!data.enableBiometrics)
+                    return
+
+                onboardingStore.appLoaded.connect((keyUid) => {
+                    appKeychain.saveCredential(keyUid, data.password || data.keycardPin)
+                })
             }
 
             onLoginRequested: function (keyUid, method, data) {
@@ -495,31 +507,6 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
-
-            OnboardingStore {
-                id: onboardingStore
-                onAppLoaded: {
-                    applicationWindow.appIsReady = true
-                    applicationWindow.storeAppState()
-                    moveToAppMain()
-                }
-                onAccountLoginError: function (error, wrongPassword) {
-                    onboardingLayout.unwindToLoginScreen() // error handled internally
-                }
-            }
-
-            Connections {
-                target: keychain
-
-                function onGetCredentialRequestCompleted(status, password) {
-                    if (status === Keychain.StatusSuccess)
-                        onboardingLayout.setBiometricResponse(password)
-                    else if (status !== Keychain.StatusCancelled)
-                        onboardingLayout.setBiometricResponse(
-                                    "", qsTr("Fetching credentials failed."))
-
-                }
-            }
         }
     }
 

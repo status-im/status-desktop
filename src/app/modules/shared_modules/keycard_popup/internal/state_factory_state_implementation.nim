@@ -448,6 +448,7 @@ proc ensureReaderAndCardPresenceAndResolveNextState*(state: State, keycardFlowTy
         if keycardEvent.error == ErrorNoData:
           return createState(StateType.KeycardEmptyMetadata, state.flowType, nil)
       if keycardEvent.error.len == 0:
+        controller.keycardPinChanged(controller.getPin())
         return createState(StateType.ChangingKeycardPinSuccess, state.flowType, nil)
       ## in all other cases if we fall through here, we assume it's changing pin failor, but that we not interfare with
       ## `nil` for `ensureState` we just do this `if` cause we can get here only from `ChangingKeycardPin` state.

@@ -20,11 +20,8 @@ OnboardingStackView {
     required property int restoreKeysExportState
     required property int addKeyPairState
     required property int syncState
-    required property var generateMnemonic
     required property int remainingPinAttempts
     required property int remainingPukAttempts
-
-    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -33,6 +30,8 @@ OnboardingStackView {
     property int keycardPinInfoPageDelay: 2000
 
     // functions
+    required property var generateMnemonic
+    required property var isBiometricsLogin // (string account) => bool
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
     required property var isSeedPhraseDuplicate
@@ -64,14 +63,11 @@ OnboardingStackView {
         replace(null, initialComponent)
     }
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!loginScreen)
             return
 
-        loginScreen.setBiometricResponse(secret, error, detailedError,
-                                         wrongFingerprint)
+        loginScreen.setBiometricResponse(secret, error)
     }
 
     QtObject {
@@ -192,8 +188,8 @@ OnboardingStackView {
             keycardRemainingPukAttempts: root.remainingPukAttempts
 
             loginAccountsModel: root.loginAccountsModel
-            biometricsAvailable: root.biometricsAvailable
-            isBiometricsLogin: root.isBiometricsLogin
+            isBiometricsLogin: root.biometricsAvailable &&
+                               root.isBiometricsLogin(loginScreen.selectedProfileKeyId)
 
             onBiometricsRequested: (profileId) => {
                 if (visible)

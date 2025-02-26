@@ -69,8 +69,8 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method onAppLoaded*[T](self: Module[T]) =
-  self.view.appLoaded()
+method onAppLoaded*[T](self: Module[T], keyUid: string) =
+  self.view.appLoaded(keyUid)
   singletonInstance.engine.setRootContextProperty("onboardingModule", newQVariant())
   self.view.delete
   self.view = nil

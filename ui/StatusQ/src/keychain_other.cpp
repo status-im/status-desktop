@@ -43,7 +43,13 @@ Keychain::Status Keychain::hasCredential(const QString &account) const
 {
     Q_UNUSED(account);
 
-    qWarning() << "Keychain::hasCredential is intended to be called only on MacOS.";
+    return Keychain::StatusNotSupported;
+}
+
+Keychain::Status Keychain::updateCredential(const QString &account, const QString &password)
+{
+    Q_UNUSED(account);
+    Q_UNUSED(password);
 
     return Keychain::StatusNotSupported;
 }

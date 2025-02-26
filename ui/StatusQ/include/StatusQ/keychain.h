@@ -14,7 +14,7 @@ class Keychain : public QObject {
 
     Q_PROPERTY(QString service READ service WRITE setService NOTIFY serviceChanged)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
-    Q_PROPERTY(bool available READ available CONSTANT)
+    Q_PROPERTY(bool available READ available NOTIFY availableChanged)
 
 public:
     explicit Keychain(QObject *parent = nullptr);
@@ -27,6 +27,7 @@ public:
         StatusUnavailable,
         StatusCancelled,
         StatusNotFound,
+        StatusFallbackSelected,
     };
 
     Q_ENUM(Status)
@@ -40,8 +41,15 @@ public:
 
     Q_INVOKABLE Status saveCredential(const QString &account, const QString &password);
     Q_INVOKABLE Status deleteCredential(const QString &account);
-    Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE Status hasCredential(const QString &account) const;
+
+    // updateCredential calls saveCredential(account, password) if this accounts already exists in Keychain
+    // This wrapper can be used when password changes.
+    // Returns StatusSuccess if the account is not found in Keychain,
+    // otherwise returns the actual error of hasCredential or result of saveCredential.
+    Q_INVOKABLE Status updateCredential(const QString &account, const QString &password);
+
+    Q_INVOKABLE void requestGetCredential(const QString &reason, const QString &account);
     Q_INVOKABLE void cancelActiveRequest();
 
 signals:
@@ -50,6 +58,10 @@ signals:
     void serviceChanged();
     void reasonChanged();
     void loadingChanged();
+    void availableChanged();
+
+    void credentialSaved(const QString& account);
+    void credentialDeleted(const QString& account);
 
 private:
     QString m_service;

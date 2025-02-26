@@ -8,6 +8,7 @@ QtObject {
 
     // Module Properties
     property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
+    readonly property string keyUid: userProfile.keyUid
 
     function changePassword(password, newPassword) {
         root.privacyModule.changePassword(password, newPassword)

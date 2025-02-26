@@ -9,9 +9,12 @@ import AppLayouts.Profile.views 1.0
 
 import utils 1.0
 
+import StatusQ 0.1
 import Storybook 1.0
 
 SplitView {
+    id: root
+
     orientation: Qt.Vertical
 
     Logs { id: logs }
@@ -33,39 +36,47 @@ SplitView {
             passwordStrengthScoreFunction: (newPass) => Math.min(newPass.length-1, 4)
 
             privacyStore: PrivacyStore {
-                 property QtObject privacyModule: QtObject {
+                property QtObject privacyModule: QtObject {
                     signal passwordChanged(success: bool, errorMsg: string)
-                    signal storeToKeychainError(errorDescription: string)
-                    signal storeToKeychainSuccess()
-                 }
+                    signal saveBiometricsRequested(string keyUid, string credential)
+                }
 
-                 function tryStoreToKeyChain(errorDescription) {
-                    if (generateMacKeyChainStoreError.checked) {
-                        privacyModule.storeToKeychainError(errorDescription)
-                    } else {
-                        passwordView.localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
-                        privacyModule.storeToKeychainSuccess()
-                        privacyModule.passwordChanged(true, "")
-                    }
-                 }
+                readonly property string keyUid: keyUidInput.text
 
-                 function tryRemoveFromKeyChain() {
-                    if (generateMacKeyChainStoreError.checked) {
-                        privacyModule.storeToKeychainError("Error removing from keychain")
-                    } else {
-                        passwordView.localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.notNow
-                        privacyModule.storeToKeychainSuccess()
-                    }
-                 }
+                function tryStoreToKeyChain(errorDescription) {
+                    privacyModule.saveBiometricsRequested(keyUid, passwordInput.text)
+                }
 
-                 function changePassword(from, to) {
-                     privacyModule.passwordChanged(ctrlChangePassSuccess.checked, ctrlChangePassSuccess.checked ? "" : "Err changing password")
-                 }
+                function changePassword(from, to) {
+                    privacyModule.passwordChanged(ctrlChangePassSuccess.checked, ctrlChangePassSuccess.checked ? "" : "Err changing password")
+                }
             }
 
-            property QtObject localAccountSettings: QtObject {
-                property string storeToKeychainValue: Constants.keychain.storedValue.notNow
-            }
+            keychain: loader.item
+        }
+    }
+
+    Loader {
+        id: loader
+
+        sourceComponent: useMockedKeychainCheckBox.checked ? mockedKeychainComponent
+                                                           : nativeKeychainComponent
+    }
+
+    Component {
+        id: nativeKeychainComponent
+
+        Keychain {
+            service: "StatusStorybook"
+        }
+    }
+
+    Component {
+        id: mockedKeychainComponent
+
+        KeychainMock {
+            parent: root
+            available: keychainAvailableCheckBox.checked
         }
     }
 
@@ -77,16 +88,43 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        RowLayout {
-            Switch {
-                id: generateMacKeyChainStoreError
-                text: "Generate key chain error"
-                checked: false
+        ColumnLayout {
+            RowLayout {
+                Switch {
+                    id: ctrlChangePassSuccess
+                    text: "Password change will succeed"
+                    checked: true
+                }
             }
-            Switch {
-                id: ctrlChangePassSuccess
-                text: "Password change will succeed"
-                checked: true
+
+            RowLayout {
+                Switch {
+                    id: useMockedKeychainCheckBox
+                    text: "Use Keychain mock"
+                    checked: Qt.platform.os !== "osx"
+                }
+                Switch {
+                    id: keychainAvailableCheckBox
+                    text: "Keychain available (mocked only)"
+                    enabled: useMockedKeychainCheckBox.checked
+                }
+            }
+
+            RowLayout {
+                Text {
+                    text: "KeyUID: "
+                }
+                TextField {
+                    id: keyUidInput
+                    text: "0x42"
+                }
+                Text {
+                    text: "Password: "
+                }
+                TextField {
+                    id: passwordInput
+                    text: "123456"
+                }
             }
         }
     }

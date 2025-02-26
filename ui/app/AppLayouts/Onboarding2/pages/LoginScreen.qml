@@ -31,8 +31,8 @@ OnboardingPage {
     // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
     required property var loginAccountsModel
 
-    property bool biometricsAvailable: Qt.platform.os === Constants.mac
-    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    // allows to set if currently selected account can be logged in using biometrics
+    property bool isBiometricsLogin
 
     readonly property string selectedProfileKeyId: loginUserSelector.selectedProfileKeyId
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
@@ -40,23 +40,21 @@ OnboardingPage {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
             return
 
-        const hasError = error || detailedError
+        const hasError = !!error
 
-        d.biometricsSuccessful = !hasError
-        d.biometricsFailed = wrongFingerprint
+        d.biometricsSuccessful = secret !== ""
+        d.biometricsFailed = hasError
 
         if (hasError) {
             if (d.currentProfileIsKeycard) {
                 keycardBox.clear()
             } else {
                 passwordBox.validationError = error
-                passwordBox.detailedError = detailedError
+                passwordBox.detailedError = ""
                 passwordBox.clear()
                 passwordBox.forceActiveFocus()
             }
@@ -118,11 +116,13 @@ OnboardingPage {
     }
 
     onKeycardStateChanged: {
-        if (!biometricsAvailable || !isBiometricsLogin || !d.currentProfileIsKeycard
+        Qt.callLater(() => {
+            if (!isBiometricsLogin || !d.currentProfileIsKeycard
                 || root.keycardState !== Onboarding.KeycardState.NotEmpty)
-            return
+                return
 
-        root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+            root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+        })
     }
 
     Component.onCompleted: {
@@ -217,13 +217,15 @@ OnboardingPage {
                        passwordBox.forceActiveFocus()
                     }
 
-                    if (!biometricsAvailable || !isBiometricsLogin)
-                        return
+                    Qt.callLater(() => {
+                        if (!isBiometricsLogin)
+                            return
 
-                    if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
-                        return
+                        if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
+                            return
 
-                    root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+                        root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+                    })
                 }
                 onOnboardingCreateProfileFlowRequested: root.onboardingCreateProfileFlowRequested()
                 onOnboardingLoginFlowRequested: root.onboardingLoginFlowRequested()
@@ -235,7 +237,7 @@ OnboardingPage {
                 objectName: "passwordBox"
                 visible: !d.currentProfileIsKeycard
                 enabled: !!loginUserSelector.selectedProfileKeyId
-                isBiometricsLogin: root.biometricsAvailable && root.isBiometricsLogin
+                isBiometricsLogin: root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 onPasswordEditedManually: {
@@ -253,7 +255,7 @@ OnboardingPage {
                 id: keycardBox
                 objectName: "keycardBox"
                 visible: d.currentProfileIsKeycard
-                isBiometricsLogin: root.biometricsAvailable && root.isBiometricsLogin
+                isBiometricsLogin: root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.keycardState
