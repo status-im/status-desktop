@@ -54,6 +54,7 @@ public:
         Unknown,
         Password,
         Keycard,
+        Mnemonic,
     };
 
     // NOTE: Keep in sync with KeycardState in src/app_service/service/keycardV2/dto.nim
