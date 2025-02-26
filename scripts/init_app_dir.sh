@@ -27,7 +27,7 @@ cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"
 cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
 
 echo "Bundling pcsc-lite 2.2.3..."
-cp -L /usr/local/lib/libpcsclite.so* "${APP_DIR}/usr/lib/"
+cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"
 chmod 755 "${APP_DIR}/usr/lib/libpcsclite.so"*
 
 cat > "${APP_DIR}/etc/reader.conf.d/000-bundled-pcsc.conf" << EOF
