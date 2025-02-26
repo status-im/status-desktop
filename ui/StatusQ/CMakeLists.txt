@@ -174,7 +174,7 @@ add_library(StatusQ SHARED
 
 target_compile_features(StatusQ PRIVATE cxx_std_17)
 
-if (APPLE)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)
     find_library(Security Security)

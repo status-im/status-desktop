@@ -5,12 +5,13 @@ else:
 
 --threads:on
 --opt:speed # -O3
---debugger:native # passes "-g" to the C compiler
 --define:ssl # needed by the stdlib to enable SSL procedures
 
-if defined(macosx):
+if hostOS == "macosx":
+  echo "Building for macOS"
   --dynlibOverrideAll # don't use dlopen()
   --tlsEmulation:off
+  --debugger:native # passes "-g" to the C compiler
   switch("passL", "-lstdc++")
   # DYLD_LIBRARY_PATH doesn't always work when running/packaging so set rpath
   # note: macdeployqt rewrites rpath appropriately when building the .app bundle
@@ -26,17 +27,25 @@ if defined(macosx):
   switch("passL", "-Wl,-no_compact_unwind")
   # set the minimum supported macOS version to 12.0
   switch("passC", "-mmacosx-version-min=12.0")
-elif defined(windows):
+elif hostOS == "windows":
+  echo "Building for Windows"
   --app:gui
   --tlsEmulation:off
+  --debugger:native # passes "-g" to the C compiler
   switch("passL", "-Wl,-as-needed")
-else:
+elif hostOS == "linux":
+  echo "Building for Linux"
   --dynlibOverrideAll # don't use dlopen()
+    # don't link libraries we're not actually using
+  switch("passL", "-Wl,-as-needed")
   # dynamically link these libs, since we're opting out of dlopen()
   switch("passL", "-l:libcrypto.so.1.1")
   switch("passL", "-l:libssl.so.1.1")
-  # don't link libraries we're not actually using
+  --debugger:native # passes "-g" to the C compiler
+else:
+  echo "Building for OS: " & hostOS
   switch("passL", "-Wl,-as-needed")
+  --dynlibOverrideAll # don't use dlopen()
 
 --define:chronicles_line_numbers # useful when debugging=
 switch("define", "chronicles_timestamps=RfcUtcTime")
