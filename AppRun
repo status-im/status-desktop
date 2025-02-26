@@ -10,9 +10,64 @@ export QT_QPA_PLATFORM="xcb"
 # TODO: Remove once qt 5.15.2 support is dropped
 # Fixing bug: https://bugs.launchpad.net/ubuntu/+source/glibc/+bug/1944468
 export QTWEBENGINE_CHROMIUM_FLAGS="${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
+
 # Set up pcsc-lite environment
 export PCSC_DRIVERS_DIR="${APPDIR}/usr/lib/pcsc/drivers"
 export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
+
+# Set up pscsd
+if [ -f "${APPDIR}/usr/sbin/pcscd" ]; then
+  if ! pgrep -x pcscd > /dev/null; then
+    PCSCD_TEMP_DIR=$(mktemp -d /tmp/pcscd.XXXXXX)
+
+    mkdir -p "${PCSCD_TEMP_DIR}/run/pcscd"
+
+    export PCSCLITE_CSOCK_NAME="${PCSCD_TEMP_DIR}/run/pcscd/pcscd.comm"
+
+    echo "Starting pcscd daemon with custom socket at ${PCSCLITE_CSOCK_NAME}..."
+
+    # Use socat to redirect the socket to our custom location
+    if command -v socat >/dev/null 2>&1; then
+      # Start pcscd with standard options
+      cd "${PCSCD_TEMP_DIR}"
+      "${APPDIR}/usr/sbin/pcscd" --foreground &
+      PCSCD_PID=$!
+
+      # Give pcscd time to start
+      sleep 2
+
+      # Use socat to redirect socket if needed
+      if [ -S "/var/run/pcscd/pcscd.comm" ]; then
+        socat UNIX-LISTEN:"${PCSCLITE_CSOCK_NAME}",fork UNIX-CONNECT:"/var/run/pcscd/pcscd.comm" &
+        SOCAT_PID=$!
+      elif [ -S "/run/pcscd/pcscd.comm" ]; then
+        socat UNIX-LISTEN:"${PCSCLITE_CSOCK_NAME}",fork UNIX-CONNECT:"/run/pcscd/pcscd.comm" &
+        SOCAT_PID=$!
+      fi
+    else
+      echo "Warning: socat not found, trying direct pcscd launch"
+      cd "${PCSCD_TEMP_DIR}"
+      "${APPDIR}/usr/sbin/pcscd" --foreground &
+      PCSCD_PID=$!
+      sleep 2
+    fi
+
+    cleanup_pcscd() {
+      if [ -n "$SOCAT_PID" ]; then
+        kill $SOCAT_PID 2>/dev/null || true
+      fi
+      if [ -n "$PCSCD_PID" ]; then
+        echo "Stopping pcscd daemon..."
+        kill $PCSCD_PID 2>/dev/null || true
+        rm -rf "${PCSCD_TEMP_DIR}" 2>/dev/null || true
+      fi
+    }
+
+    trap cleanup_pcscd EXIT
+  else
+    echo "pcscd is already running on the system, using system daemon"
+  fi
+fi
 
 DEFAULT_LANG=en_US.UTF-8
 if [[ "$LANG" == "C.UTF-8" ]]
