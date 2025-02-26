@@ -3,8 +3,12 @@ set -eo pipefail
 
 GO_VERSION="1.22.10"
 GO_INSTALL_DIR="/usr/local/go"
-QT_VERSION="5.15.2"
-QT_INSTALL_DIR="/usr/local/qt"
+QT_VERSION="5.15.16_1"
+# https://github.com/Homebrew/homebrew-core/commit/2c1970eb750f254ecac6640e7e816fd77a5e065e
+QT_BREW_FORMULA_COMMIT_SHA="2c1970eb750f254ecac6640e7e816fd77a5e065e"
+QT_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${QT_BREW_FORMULA_COMMIT_SHA}/Formula/q/qt%405.rb"
+BREW_PREFIX=$(brew --prefix)
+QT_INSTALL_DIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
 
 function check_version {
   if [[ "$(uname -s)" != "Darwin" ]]; then
@@ -19,11 +23,13 @@ function install_build_dependencies {
 }
 
 function install_qt {
-  echo "Install QT"
-  brew install python@3.10
-  pip3 install -U pip
-  pip3 install aqtinstall
-  aqt install-qt mac desktop ${QT_VERSION} clang_64 -m qtwebengine -O ${QT_INSTALL_DIR}
+  echo "Installing QT ${QT_VERSION}"
+
+  echo "Detected Homebrew prefix: ${BREW_PREFIX}"
+  echo "Qt will be installed to: ${QT_INSTALL_DIR}"
+
+  curl -o qt@5.rb "${QT_FORMULA_URL}"
+  brew install ./qt@5.rb
 }
 
 function get_go_arch {
@@ -63,7 +69,7 @@ SUCCESS!
 
 Before you attempt to build status-dektop you'll need a few environment variables set:
 
-export QTDIR=${QT_INSTALL_DIR}/${QT_VERSION}/clang_64
+export QTDIR=${QT_INSTALL_DIR}
 export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
 "
   echo $msg
