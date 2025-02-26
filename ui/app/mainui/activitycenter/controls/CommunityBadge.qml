@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.13
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
