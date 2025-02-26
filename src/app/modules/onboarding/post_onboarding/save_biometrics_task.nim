@@ -16,7 +16,7 @@ proc newSaveBiometricsTask*(credential: string): SaveBiometricsTask =
     )
 
 proc run*(self: SaveBiometricsTask, accountsService: accounts_service.Service, onboardingModule: AccessInterface) =
-  debug "running post-onbaording SaveBiometricsTask"
+  debug "running post-onboarding SaveBiometricsTask"
 
   let keyUid = accountsService.getLoggedInAccount().keyUid
   onboardingModule.requestSaveBiometrics(keyUid, self.credential)

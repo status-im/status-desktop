@@ -172,7 +172,7 @@ SplitView {
             // (test) error handler
             onAccountLoginError: function (error, wrongPassword) {
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
-                onboarding.unwindToLoginScreen()
+                onboarding.restartFlow()
             }
         }
 

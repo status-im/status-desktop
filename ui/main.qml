@@ -13,7 +13,6 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
 
-import mainui 1.0
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
 import AppLayouts.Onboarding.enums 1.0
@@ -528,7 +527,7 @@ StatusWindow {
                 ConvertKeycardAccountPage {
                     convertKeycardAccountState: onboardingStore.convertKeycardAccountState
                     onRestartRequested: {
-                        Qt.quit()
+                        SystemUtils.restartApplication()
                     }
                     onBackToLoginRequested: {
                         onboardingLayout.unwindToLoginScreen()

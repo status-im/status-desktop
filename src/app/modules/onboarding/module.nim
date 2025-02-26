@@ -426,10 +426,10 @@ method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
   return self.postOnboardingTasks
 
 method requestSaveBiometrics*[T](self: Module[T], account: string, credential: string) =
-  self.view.requestSaveBiometrics(account, credential)
+  self.view.saveBiometricsRequested(account, credential)
 
 method requestDeleteBiometrics*[T](self: Module[T], account: string) =
-  self.view.requestDeleteBiometrics(account)
+  self.view.deleteBiometricsRequested(account)
 
 proc runPostLoginTasks*[T](self: Module[T]) =
   let tasks = self.postLoginTasks

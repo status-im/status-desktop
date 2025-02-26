@@ -144,12 +144,6 @@ QtObject:
     read = getConvertKeycardAccountState
     notify = convertKeycardAccountStateChanged
 
-  proc requestSaveBiometrics*(self: View, account: string, credential: string) =
-    self.saveBiometricsRequested(account, credential)
-
-  proc requestDeleteBiometrics*(self: View, account: string) =
-    self.deleteBiometricsRequested(account)
-
   ### slots ###
 
   proc setPin(self: View, pin: string) {.slot.} =
