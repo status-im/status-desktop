@@ -525,8 +525,11 @@ StatusWindow {
 
                 ConvertKeycardAccountPage {
                     convertKeycardAccountState: onboardingStore.convertKeycardAccountState
-                    onQuitRequested: {
+                    onRestartRequested: {
                         Qt.quit()
+                    }
+                    onBackToLoginRequested: {
+                        onboardingLayout.unwindToLoginScreen()
                     }
                 }
             }

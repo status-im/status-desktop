@@ -397,10 +397,12 @@ SplitView {
 
         ConvertKeycardAccountPage {
             convertKeycardAccountState: store.convertKeycardAccountState
-            onQuitRequested: {
-                Qt.quit()
+            onRestartRequested: {
+                logs.logEvent("restartRequested")
+                onboarding.unwindToLoginScreen()
             }
-            onTryAgainRequested: {
+            onBackToLoginRequested: {
+                logs.logEvent("backToLoginRequested")
                 onboarding.unwindToLoginScreen()
             }
         }

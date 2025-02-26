@@ -1,18 +1,49 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import Qt.labs.settings 1.0
+
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
+import Storybook 1.0
+
 Item {
     id: root
 
-    ConvertKeycardAccountPage {
-        id: progressPage
+    Logs {
+        id: logs
+    }
+
+    SplitView {
         anchors.fill: parent
-        convertKeycardAccountState: ctrlState.currentValue
+        orientation: Qt.Vertical
+
+        ConvertKeycardAccountPage {
+            id: progressPage
+
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
+
+            convertKeycardAccountState: ctrlState.currentValue
+            onRestartRequested: {
+                logs.logEvent("restartRequested")
+            }
+            onBackToLoginRequested: {
+                logs.logEvent("backToLoginRequested")
+            }
+        }
+
+        LogsAndControlsPanel {
+            id: logsAndControlsPanel
+
+            SplitView.minimumHeight: 100
+            SplitView.preferredHeight: 200
+
+            logsView.logText: logs.logText
+        }
     }
 
     ComboBox {
@@ -23,6 +54,10 @@ Item {
         textRole: "name"
         valueRole: "value"
         model: Onboarding.getModelFromEnum("ProgressState")
+    }
+
+    Settings {
+        property alias convertKeycardAccountPageState: ctrlState.currentIndex
     }
 }
 

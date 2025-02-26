@@ -4,17 +4,18 @@ import QtQuick.Layouts 1.15
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import AppLayouts.Onboarding.enums 1.0
-import AppLayouts.Onboarding2.controls 1.0
 
 OnboardingPage {
     id: root
 
+    readonly property bool backAvailableHint: false
     required property int convertKeycardAccountState
 
-    signal quitRequested()
-    signal tryAgainRequested()
+    signal restartRequested()
+    signal backToLoginRequested()
 
     StateGroup {
         states: [
@@ -23,7 +24,7 @@ OnboardingPage {
 
                 PropertyChanges {
                     target: root
-                    title: qsTr("Converting Keycard Account")
+                    title: qsTr("Re-encrypting your profile data")
                 }
                 PropertyChanges {
                     target: iconLoader
@@ -31,7 +32,11 @@ OnboardingPage {
                 }
                 PropertyChanges {
                     target: subtitle
-                    text: qsTr("in progress")
+                    text: qsTr("Your data must be re-encrypted with your new password which may take some time.")
+                }
+                PropertyChanges {
+                    target: warningText
+                    visible: true
                 }
                 PropertyChanges {
                     target: btnQuit
@@ -47,7 +52,7 @@ OnboardingPage {
 
                 PropertyChanges {
                     target: root
-                    title: qsTr("Keycard account converted")
+                    title: qsTr("Re-encryption complete")
                 }
                 PropertyChanges {
                     target: iconLoader
@@ -55,7 +60,11 @@ OnboardingPage {
                 }
                 PropertyChanges {
                     target: subtitle
-                    text: qsTr("<done>")
+                    text: qsTr("Your data was successfully re-encrypted with your new password. You can now restart Status and log in to your profile using the password you just created.")
+                }
+                PropertyChanges {
+                    target: warningText
+                    visible: false
                 }
                 PropertyChanges {
                     target: btnQuit
@@ -71,7 +80,7 @@ OnboardingPage {
 
                 PropertyChanges {
                     target: root
-                    title: qsTr("Failed to convert keycard account")
+                    title: qsTr("Re-encryption failed")
                 }
                 PropertyChanges {
                     target: iconLoader
@@ -79,7 +88,11 @@ OnboardingPage {
                 }
                 PropertyChanges {
                     target: subtitle
-                    text: qsTr("<details>")
+                    text: qsTr("Your data must be re-encrypted with your new password which may take some time.")
+                }
+                PropertyChanges {
+                    target: warningText
+                    visible: true
                 }
                 PropertyChanges {
                     target: btnQuit
@@ -97,9 +110,9 @@ OnboardingPage {
         ColumnLayout {
             anchors.left: parent.left
             anchors.right: parent.right
-
             anchors.verticalCenter: parent.verticalCenter
-            spacing: Theme.halfPadding
+
+            spacing: Theme.bigPadding
 
             Loader {
                 Layout.preferredWidth: 40
@@ -124,48 +137,47 @@ OnboardingPage {
                 text: root.title
                 horizontalAlignment: Text.AlignHCenter
             }
+
             StatusBaseText {
                 id: subtitle
                 Layout.fillWidth: true
+                Layout.maximumWidth: 388
+                Layout.alignment: Qt.AlignCenter
                 color: Theme.palette.baseColor1
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
                 visible: !!text
             }
 
-            Rectangle {
-                id: image
-
-                color: "red"
-                implicitWidth: 231
-                implicitHeight: 231
-                radius: Math.max(width, height) / 2
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: Math.min(231, parent.width)
-                Layout.preferredHeight: Layout.preferredWidth
-                Layout.topMargin: Theme.bigPadding
-                Layout.bottomMargin: Theme.bigPadding + 100
+            StatusBaseText {
+                id: warningText
+                Layout.fillWidth: true
+                Layout.maximumWidth: 388
+                Layout.alignment: Qt.AlignCenter
+                color: Theme.palette.dangerColor1
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
+                text: qsTr("Do not quit Status or turn off your device. Doing so will lead to loss of profile and inability to restart the app.")
             }
 
-            MaybeOutlineButton {
+            StatusButton {
                 id: btnQuit
 
                 visible: false
                 isOutline: false
-                text: qsTr("Quit and login with new password")
+                text: qsTr("Restart Status and log in with new password")
                 Layout.alignment: Qt.AlignHCenter
-                onClicked: root.quitRequested()
+                onClicked: root.restartRequested()
             }
 
-            MaybeOutlineButton {
+            StatusButton {
                 id: btnTryAgain
 
                 visible: false
                 isOutline: false
-                text: qsTr("Try again")
+                text: qsTr("Back to login")
                 Layout.alignment: Qt.AlignHCenter
-                onClicked: root.tryAgainRequested()
+                onClicked: root.backToLoginRequested()
             }
         }
     }
