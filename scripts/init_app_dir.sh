@@ -9,7 +9,9 @@ mkdir -p \
   "${APP_DIR}/usr/lib" \
   "${APP_DIR}/usr/qml" \
   "${APP_DIR}/usr/i18n" \
-  "${APP_DIR}/usr/plugins/platforminputcontexts"
+  "${APP_DIR}/usr/plugins/platforminputcontexts" \
+  "${APP_DIR}/etc/reader.conf.d" \
+  "${APP_DIR}/usr/lib/pcsc/drivers"
 
 cp bin/nim_status_client "${APP_DIR}/usr/bin"
 cp bin/StatusQ/* "${APP_DIR}/usr/lib"
@@ -22,6 +24,15 @@ cp vendor/status-go/build/bin/libstatus.so "${APP_DIR}/usr/lib/"
 cp vendor/status-go/build/bin/libstatus.so.0 "${APP_DIR}/usr/lib/"
 cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"
 cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
+
+echo "Bundling pcsc-lite 2.2.3..."
+cp -L /usr/local/lib/libpcsclite.so* "${APP_DIR}/usr/lib/"
+chmod 755 "${APP_DIR}/usr/lib/libpcsclite.so"*
+
+cat > "${APP_DIR}/etc/reader.conf.d/000-bundled-pcsc.conf" << EOF
+# Use bundled pcsc-lite drivers
+PCSC_DRIVERS_DIR=\$APPDIR/usr/lib/pcsc/drivers
+EOF
 
 # Copy dependencies, which linuxdeployqt can't manage from nix store or system (FHS)
 if [[ -z "${IN_NIX_SHELL}" ]]; then

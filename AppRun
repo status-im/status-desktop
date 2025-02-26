@@ -10,6 +10,9 @@ export QT_QPA_PLATFORM="xcb"
 # TODO: Remove once qt 5.15.2 support is dropped
 # Fixing bug: https://bugs.launchpad.net/ubuntu/+source/glibc/+bug/1944468
 export QTWEBENGINE_CHROMIUM_FLAGS="${QTWEBENGINE_CHROMIUM_FLAGS} --disable-seccomp-filter-sandbox"
+# Set up pcsc-lite environment
+export PCSC_DRIVERS_DIR="${APPDIR}/usr/lib/pcsc/drivers"
+export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
 
 DEFAULT_LANG=en_US.UTF-8
 if [[ "$LANG" == "C.UTF-8" ]]
