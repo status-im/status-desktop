@@ -29,6 +29,7 @@ cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
 echo "Bundling pcsc-lite 2.2.3..."
 cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"
 cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite_real.so* "${APP_DIR}/usr/lib/"
+cp -L /usr/local/lib/x86_64-linux-gnu/pkgconfig/libpcsclite.pc "${APP_DIR}/usr/lib/"
 chmod 755 "${APP_DIR}/usr/lib/libpcsclite.so"*
 chmod 755 "${APP_DIR}/usr/lib/libpcsclite_real.so"*
 
