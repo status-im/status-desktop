@@ -517,7 +517,11 @@ StatusWindow {
                     Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})
                 }
             }
-            onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
+            onCurrentPageNameChanged: {
+                if (currentPageName !== "") {
+                    Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
+                }
+            }
 
             Component {
                 id: convertingKeycardAccountPage
