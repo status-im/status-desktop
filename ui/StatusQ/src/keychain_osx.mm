@@ -86,7 +86,7 @@ Keychain::Status authenticate(const QString &reason, LAContext **context)
     }
 
     *context = [[LAContext alloc] init];
-    (*context).localizedFallbackTitle = QObject::tr("Use Status password...").toNSString();
+    (*context).localizedFallbackTitle = QObject::tr("Use Status profile password").toNSString();
 
     QEventLoop loop;
     auto loopPtr = &loop;
