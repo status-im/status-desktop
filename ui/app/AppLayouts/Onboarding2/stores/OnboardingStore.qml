@@ -88,7 +88,4 @@ QtObject {
     function inputConnectionStringForBootstrapping(connectionString: string) { // -> void
         d.onboardingModuleInst.inputConnectionStringForBootstrapping(connectionString)
     }
-
-    // reencryption
-    readonly property bool reencryptingDatabase: d.onboardingModuleInst.reencryptingDatabase
 }

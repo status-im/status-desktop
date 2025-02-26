@@ -97,12 +97,6 @@ method getPostOnboardingTasks*(self: AccessInterface): seq[PostOnboardingTask] {
 method getPostLoginTasks*(self: AccessInterface): seq[PostOnboardingTask] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onReencryptionProcessStarted*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onReencryptionProcessFinished*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onKeycardAccountConverted* (self: AccessInterface, success: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

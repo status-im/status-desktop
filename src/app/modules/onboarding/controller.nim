@@ -117,11 +117,11 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.DBReEncryptionStarted.event) do(e: Args):
-    self.delegate.onReencryptionProcessStarted()
+    debug "reencryption process started"
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.DBReEncryptionFinished.event) do(e: Args):
-    self.delegate.onReencryptionProcessFinished()
+    debug "reencryption process finished"
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):

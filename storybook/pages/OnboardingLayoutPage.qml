@@ -82,7 +82,6 @@ SplitView {
             property int convertKeycardAccountState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
-            readonly property bool reencryptingDatabase: ctrlReencryptingDatabase.checked
 
             property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
             property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
@@ -484,12 +483,6 @@ SplitView {
                     visible: ctrlLoginScreen.checked
                     enabled: ctrlBiometrics.checked
                     checked: ctrlBiometrics.checked
-                }
-
-                Switch {
-                    id: ctrlReencryptingDatabase
-                    text: "Reencrypting database"
-                    visible: ctrlLoginScreen.checked
                 }
 
                 Text {

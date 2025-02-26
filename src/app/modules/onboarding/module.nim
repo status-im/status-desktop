@@ -339,7 +339,6 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
   for i in 0..<self.postOnboardingTasks.len:
     let task = self.postOnboardingTasks[i]
     if task.kind == kConvertKeycardAccountToRegular:
-      debug "skippiig finishAppLoading2"
       return
 
   self.finishAppLoading2()
@@ -407,12 +406,6 @@ method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: Keycar
     publicEncryptionKey = exportedKeys.encryptionKey.publicKey,
     privateWhisperKey = exportedKeys.whisperKey.privateKey,
   )
-
-method onReencryptionProcessStarted*[T](self: Module[T]) =
-  self.view.setReencryptingDatabase(true)
-
-method onReencryptionProcessFinished*[T](self: Module[T]) =
-  self.view.setReencryptingDatabase(false)
 
 method onKeycardAccountConverted*[T](self: Module[T], success: bool) =
   let state = if success: ProgressState.Success else: ProgressState.Failed
