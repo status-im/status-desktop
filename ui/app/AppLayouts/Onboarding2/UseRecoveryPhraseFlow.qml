@@ -24,40 +24,52 @@ OnboardingStackView {
     signal setPasswordRequested(string password)
     signal finished
 
-    initialItem: SeedphrasePage {
-        isSeedPhraseValid: root.isSeedPhraseValid
+    initialItem: type === UseRecoveryPhraseFlow.Type.KeycardRecovery ? conversionAckPage : seedPhrasePage
 
-        title: {
-            switch (root.type) {
-            case UseRecoveryPhraseFlow.Type.NewProfile:
-                return qsTr("Create profile using a recovery phrase")
-            case UseRecoveryPhraseFlow.Type.KeycardRecovery:
-                return qsTr("Enter recovery phrase of lost Keycard")
-            case UseRecoveryPhraseFlow.Type.Login:
-                return qsTr("Log in with your Status recovery phrase")
+    Component {
+        id: conversionAckPage
+        ConvertKeycardAccountAcksPage {
+            onContinueRequested: root.push(seedPhrasePage)
+        }
+    }
+
+    Component {
+        id: seedPhrasePage
+        SeedphrasePage {
+            isSeedPhraseValid: root.isSeedPhraseValid
+
+            title: {
+                switch (root.type) {
+                case UseRecoveryPhraseFlow.Type.NewProfile:
+                    return qsTr("Create profile using a recovery phrase")
+                case UseRecoveryPhraseFlow.Type.KeycardRecovery:
+                    return qsTr("Enter recovery phrase of lost Keycard")
+                case UseRecoveryPhraseFlow.Type.Login:
+                    return qsTr("Log in with your Status recovery phrase")
+                }
+
+                return ""
             }
 
-            return ""
-        }
-
-        onSeedphraseUpdated: (valid, seedphrase) => {
-            if (root.type === UseRecoveryPhraseFlow.Type.KeycardRecovery) {
-                if (!valid)
-                    setWrongSeedPhraseMessage(qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
-                else
-                    setWrongSeedPhraseMessage("")
-            } else {  // different error messages when trying to import a duplicate seedphrase
-                if (valid && root.isSeedPhraseDuplicate(seedphrase)) {
-                    setWrongSeedPhraseMessage(qsTr("The entered recovery phrase is already added"))
-                } else if (valid) {
-                    setWrongSeedPhraseMessage("")
+            onSeedphraseUpdated: function(valid, seedphrase) {
+                if (root.type === UseRecoveryPhraseFlow.Type.KeycardRecovery) {
+                    if (!valid)
+                        setWrongSeedPhraseMessage(qsTr("Recovery phrase doesn’t match the profile of an existing Keycard user on this device"))
+                    else
+                        setWrongSeedPhraseMessage("")
+                } else {  // different error messages when trying to import a duplicate seedphrase
+                    if (valid && root.isSeedPhraseDuplicate(seedphrase)) {
+                        setWrongSeedPhraseMessage(qsTr("The entered recovery phrase is already added"))
+                    } else if (valid) {
+                        setWrongSeedPhraseMessage("")
+                    }
                 }
             }
-        }
 
-        onSeedphraseSubmitted: (seedphrase) => {
-            root.seedphraseSubmitted(seedphrase)
-            root.push(createPasswordPage)
+            onSeedphraseSubmitted: function(seedphrase) {
+                root.seedphraseSubmitted(seedphrase)
+                root.push(createPasswordPage)
+            }
         }
     }
 
