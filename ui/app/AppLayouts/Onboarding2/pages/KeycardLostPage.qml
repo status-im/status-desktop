@@ -18,14 +18,12 @@ KeycardBasePage {
     buttons: [
         StatusButton {
             objectName: "createReplacementButton"
-            width: 486
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Create replacement Keycard using the same recovery phrase")
             onClicked: root.createReplacementKeycardRequested()
         },
         StatusButton {
             objectName: "startUsingWithoutKeycardButton"
-            width: 486
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Start using this profile without Keycard")
             onClicked: root.useProfileWithoutKeycardRequested()
