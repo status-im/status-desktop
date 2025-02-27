@@ -98,6 +98,7 @@ StatusListView {
                 title: {
                     // Similar to Constants.getSupportedTokenSourceImage
                     if (delegate.name === Constants.supportedTokenSources.uniswap ||
+                            delegate.name === Constants.supportedTokenSources.aave ||
                             delegate.name === Constants.supportedTokenSources.status)
                         return delegate.name;
 
