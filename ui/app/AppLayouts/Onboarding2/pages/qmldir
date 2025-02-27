@@ -4,6 +4,7 @@ BackupSeedphraseOutro 1.0 BackupSeedphraseOutro.qml
 BackupSeedphraseReveal 1.0 BackupSeedphraseReveal.qml
 BackupSeedphraseVerify 1.0 BackupSeedphraseVerify.qml
 ConvertKeycardAccountPage 1.0 ConvertKeycardAccountPage.qml
+ConvertKeycardAccountAcksPage 1.0 ConvertKeycardAccountAcksPage.qml
 CreateKeycardProfilePage 1.0 CreateKeycardProfilePage.qml
 CreatePasswordPage 1.0 CreatePasswordPage.qml
 CreateProfilePage 1.0 CreateProfilePage.qml
