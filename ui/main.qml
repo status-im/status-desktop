@@ -13,6 +13,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.stores 1.0
 
+import mainui 1.0
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
 import AppLayouts.Onboarding.enums 1.0
@@ -21,6 +22,7 @@ import AppLayouts.Onboarding2.stores 1.0
 import AppLayouts.Onboarding2.pages 1.0
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusWindow {
