@@ -373,13 +373,9 @@ StatusWindow {
         active: false
         sourceComponent: DidYouKnowSplashScreen {
             objectName: "splashScreen"
-
-            NumberAnimation on progress {
-                from: 0.0
-                to: 1
-                duration: 30000
-                running: runningProgressAnimation
-                onFinished: {
+            NumberAnimation on progress { from: 0.0; to: 1; duration: 30000; running: runningProgressAnimation }
+            onProgressChanged: {
+                if (progress === 1) {
                     appLoadingAnimation.active = false
                     mainModule.fakeLoadingScreenFinished()
                 }
