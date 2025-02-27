@@ -784,6 +784,7 @@ QtObject {
 
     readonly property QtObject supportedTokenSources: QtObject {
         readonly property string uniswap: "Uniswap Labs Default Token List"
+        readonly property string aave: "Aave Token List"
         readonly property string status: "Status Token List"
         readonly property string custom: "custom"
     }
@@ -1303,6 +1304,9 @@ QtObject {
     function getSupportedTokenSourceImage(name, useDefault=true) {
         if (name === supportedTokenSources.uniswap)
             return Theme.png("tokens/UNI")
+
+        if (name === supportedTokenSources.aave)
+            return Theme.png("tokens/AAVE")
 
         if (name === supportedTokenSources.status)
             return Theme.png("tokens/SNT")

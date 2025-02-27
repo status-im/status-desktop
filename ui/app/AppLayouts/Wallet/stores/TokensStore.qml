@@ -40,6 +40,10 @@ QtObject {
             }
             ValueFilter {
                 roleName: "name"
+                value: Constants.supportedTokenSources.aave
+            }
+            ValueFilter {
+                roleName: "name"
                 value: Constants.supportedTokenSources.status
             }
         }
