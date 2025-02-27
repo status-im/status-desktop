@@ -1118,6 +1118,10 @@ Item {
                       })
         }
 
+        function test_loginScreenLostKeycardSeedphraseLoginFlow_data() {
+            return [{ tag: "lost keycard: start using without keycard" }] // dummy to skip global data, and run just once
+        }
+
         function test_loginScreenLostKeycardSeedphraseLoginFlow() {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
@@ -1146,7 +1150,14 @@ Item {
             verify(!!startUsingWithoutKeycardButton)
             mouseClick(startUsingWithoutKeycardButton)
 
-            // PAGE 3: Seedphrase
+            // PAGE 3: Conversion acks page
+            page = getCurrentPage(stack, ConvertKeycardAccountAcksPage)
+
+            const continueButton = findChild(page, "continueButton")
+            verify(!!continueButton)
+            mouseClick(continueButton)
+
+            // PAGE 4: Seedphrase
             page = getCurrentPage(stack, SeedphrasePage)
 
             const btnContinue = findChild(page, "btnContinue")
@@ -1161,7 +1172,7 @@ Item {
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 
-            // PAGE 4: Create password
+            // PAGE 5: Create password
             page = getCurrentPage(stack, CreatePasswordPage)
 
             const btnConfirmPassword = findChild(page, "btnConfirmPassword")
@@ -1200,6 +1211,10 @@ Item {
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, mockDriver.mnemonic)
             compare(resultData.keyUid, keyUid)
+        }
+
+        function test_loginScreenLostKeycardCreateReplacementFlow_data() {
+            return [{ tag: "lost keycard: create replacement keycard" }] // dummy to skip global data, and run just once
         }
 
         function test_loginScreenLostKeycardCreateReplacementFlow() {
