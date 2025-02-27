@@ -160,7 +160,7 @@ Rectangle {
         ColumnLayout {
             Layout.margins: 20
 
-            spacing: 16
+            spacing: Theme.padding
 
             StatusBaseText {
                 Layout.preferredWidth: parent.width
@@ -210,7 +210,7 @@ Rectangle {
                     selected: root.selectedFeeMode === StatusFeeOption.Type.Custom
                     showSubText: !!selected
                     showAdditionalText: !!selected
-                    unselectedText: "Set your own fees & nonce"
+                    unselectedText: qsTr("Set your own fees & nonce")
 
                     onClicked: root.selectedFeeMode = StatusFeeOption.Type.Custom
                 }
@@ -242,7 +242,7 @@ Rectangle {
 
                         readonly property bool displayLowBaseFeeWarning: {
                             if (!customBaseFeeInput.text) {
-                                return
+                                return false
                             }
                             const weiCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const decreasedCurrentValue = SQUtils.AmountsArithmetic.times(weiCurrentValue, SQUtils.AmountsArithmetic.fromString("0.9")) // up to -10% is acceptable
@@ -252,7 +252,7 @@ Rectangle {
 
                         readonly property bool displayHighBaseFeeWarning: {
                             if (!customBaseFeeInput.text) {
-                                return
+                                return false
                             }
                             const weiCurrentValue = SQUtils.AmountsArithmetic.fromString(root.currentBaseFee)
                             const increasedCurrentValue = SQUtils.AmountsArithmetic.times(weiCurrentValue, SQUtils.AmountsArithmetic.fromString("1.2")) // up to 20% higher value is acceptable
@@ -401,7 +401,7 @@ Rectangle {
                                                               : qsTr("Current: %1").arg(root.currentGasAmount)
                         rightPadding: leftPadding
                         input.rightComponent: StatusBaseText {
-                            text: "UNITS"
+                            text: qsTr("UNITS")
                             color: Theme.palette.baseColor1
                         }
 
