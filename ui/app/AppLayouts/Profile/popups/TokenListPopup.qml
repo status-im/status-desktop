@@ -19,6 +19,7 @@ StatusDialog {
     required property string sourceImage
     required property string sourceUrl
     required property string sourceVersion
+    required property double updatedAt
     required property int tokensCount
     required property var tokensListModel // Expected roles: name, symbol, image, chainName, explorerUrl, isTest
 
@@ -56,7 +57,18 @@ StatusDialog {
 
             CustomHeaderDelegate {}
         }
-        delegate: CustomDelegate {}
+        delegate: CustomDelegate {
+            width: contentItem.width
+            height: 64
+
+            name: model.name
+            image: model.image
+            chainName: model.chainName
+            symbol: model.symbol
+            address: model.address
+            explorerUrl: model.explorerUrl
+            isTest: model.isTest
+        }
         /* This onCompleted has been added here because without it all
         the items in the list get initialised before the popup is launched
         creating a delay */
@@ -143,7 +155,7 @@ StatusDialog {
 
         CustomTextBlock {
             title: qsTr("Version")
-            text: root.sourceVersion
+            text: qsTr("%1 - last updated %2").arg(root.sourceVersion).arg(LocaleUtils.getTimeDifference(new Date(root.updatedAt * 1000), new Date()))
         }
     }
 
@@ -187,10 +199,19 @@ StatusDialog {
     }
 
     component CustomDelegate: Rectangle {
-        width: contentItem.width
+        id: customDelegate
+        implicitWidth: 156
         height: 64
         color: (sensor.containsMouse || externalLinkBtn.hovered) ? Theme.palette.baseColor2 : "transparent"
         radius: 8
+
+        property string name
+        property string image
+        property string chainName
+        property string symbol
+        property string address
+        property string explorerUrl
+        property bool isTest
 
         MouseArea {
             id: sensor
@@ -211,7 +232,7 @@ StatusDialog {
 
                 StatusSmartIdenticon {
                     asset.isImage: true
-                    asset.name: model.image
+                    asset.name: customDelegate.image
                 }
 
                 ColumnLayout {
@@ -223,14 +244,14 @@ StatusDialog {
                     StatusBaseText {
                         Layout.fillWidth: true
 
-                        text: model.name
+                        text: customDelegate.name
                         elide: Text.ElideMiddle
                     }
 
                     StatusBaseText {
                         Layout.fillWidth: true
 
-                        text: model.chainName + (model.isTest? " " + qsTr("(Test)") : "")
+                        text: customDelegate.chainName + (customDelegate.isTest? " " + qsTr("(Test)") : "")
                         elide: Text.ElideMiddle
                         color: Theme.palette.baseColor1
                     }
@@ -242,7 +263,7 @@ StatusDialog {
                 Layout.preferredWidth: d.symbolColumnWidth - Layout.leftMargin
                 Layout.alignment: Qt.AlignLeft
 
-                text: model.symbol
+                text: customDelegate.symbol
             }
 
             StatusBaseText {
@@ -250,7 +271,7 @@ StatusDialog {
                 Layout.preferredWidth: d.addressColumnWidth - Layout.leftMargin
                 Layout.alignment: Qt.AlignLeft
 
-                text: model.address
+                text: customDelegate.address
                 elide: Text.ElideMiddle
             }
 
@@ -260,7 +281,7 @@ StatusDialog {
                 Layout.leftMargin: Theme.padding
                 Layout.rightMargin: Theme.bigPadding
 
-                link: model.explorerUrl
+                link: customDelegate.explorerUrl
             }
         }
     }

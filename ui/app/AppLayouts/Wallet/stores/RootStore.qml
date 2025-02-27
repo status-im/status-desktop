@@ -15,9 +15,6 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 QtObject {
     id: root
 
-    // Required until tokensStore, walletAssetsStore and currentActivityFiltersStore are reworked
-    required property SharedStores.NetworksStore networksStore
-
     property bool showSavedAddresses: false
     property string selectedAddress: ""
     readonly property bool showAllAccounts: !root.showSavedAddresses && !root.selectedAddress
@@ -25,6 +22,8 @@ QtObject {
     property var lastCreatedSavedAddress
     property bool addingSavedAddress: false
     property bool deletingSavedAddress: false
+
+    readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
 
     readonly property TokensStore tokensStore: TokensStore {
         networksStore: root.networksStore
