@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils
+import NimQml, chronicles, json, strutils, sequtils
 import logging
 
 import io_interface, states
@@ -15,7 +15,7 @@ import app_service/service/keycardV2/service as keycard_serviceV2
 from app_service/service/settings/dto/settings import SettingsDto
 from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
-import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task]
 
 import ../startup/models/login_account_item as login_acc_item
 
@@ -35,6 +35,9 @@ type
     onboardingFlow: OnboardingFlow
     exportedKeys: KeycardExportedKeysDto
     postOnboardingTasks: seq[PostOnboardingTask]
+    postLoginTasks: seq[PostOnboardingTask]
+    accountsService: accounts_service.Service
+    generalService: general_service.Service
 
 proc newModule*[T](
     delegate: T,
@@ -52,6 +55,9 @@ proc newModule*[T](
   result.onboardingFlow = OnboardingFlow.Unknown
   result.loginFlow = LoginMethod.Unknown
   result.postOnboardingTasks = newSeq[PostOnboardingTask]()
+  result.postLoginTasks = newSeq[PostOnboardingTask]()
+  result.accountsService = accountsService
+  result.generalService = generalService
   result.controller = controller.newController(
     result,
     events,
@@ -131,6 +137,7 @@ method loadMnemonic*[T](self: Module[T], mnemonic: string) =
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
   debug "finishOnboardingFlow", flowInt, dataJson
   self.postOnboardingTasks = newSeq[PostOnboardingTask]()
+  self.postLoginTasks = newSeq[PostOnboardingTask]()
 
   try:
     self.onboardingFlow = OnboardingFlow(flowInt)
@@ -141,6 +148,7 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
     let pin = data["keycardPin"].str
     let keyUid = data["keyUid"].str
     let keycardInfo = self.view.getKeycardEvent().keycardInfo
+    let saveBiometrics = data["enableBiometrics"].getBool
 
     var err = ""
 
@@ -195,10 +203,20 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
           recoverAccount = true
         )
       of OnboardingFlow.LoginWithLostKeycardSeedphrase:
-        # TODO:
-        # 1. Call LoginAccount with `mnemonic` set
-        # 2. Schedule `convertToRegularAccount` for post-onboarding
-        error "LoginWithLostKeycardSeedphrase not implemented"
+        # 1. Schedule `convertToRegularAccount` for post-onboarding
+        self.postLoginTasks.add(newKeycardConvertAccountTask(
+          keyUid,
+          mnemonic,
+          password,
+        ))
+        # 2. Set InProgress state
+        self.view.setConvertKeycardAccountState(ProgressState.InProgress)
+        # 3. Call LoginAccount with `mnemonic` set
+        self.loginRequested(
+          keyUid = keyUid,
+          LoginMethod.Mnemonic.int,
+          $ %*{ "mnemonic": mnemonic },
+        )
       of OnboardingFlow.LoginWithRestoredKeycard:
         self.postOnboardingTasks.add(newKeycardReplacementTask(
           keycardInfo.keyUID,
@@ -211,6 +229,11 @@ method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string)
         )
       else:
         raise newException(ValueError, "Unknown onboarding flow: " & $self.onboardingFlow)
+
+    # SaveBiometrics task should be scheduled after any other tasks
+    if saveBiometrics:
+      let credential = if pin.len > 0: pin else: password
+      self.postLoginTasks.add(newSaveBiometricsTask(credential))
 
     return err
   except Exception as e:
@@ -230,6 +253,8 @@ method loginRequested*[T](self: Module[T], keyUid: string, loginFlow: int, dataJ
       of LoginMethod.Keycard:
         self.authorize(data["pin"].str)
         # We will continue the flow when the card is authorized in onKeycardStateUpdated
+      of LoginMethod.Mnemonic:
+        self.controller.login(account, password = "", mnemonic = data["mnemonic"].str)
       else:
         raise newException(ValueError, "Unknown login flow: " & $self.loginFlow)
 
@@ -308,6 +333,17 @@ method onNodeLogin*[T](self: Module[T], err: string, account: AccountDto, settin
     # We tried to login by pairing, so finilize the process
     self.controller.finishPairingThroughSeedPhraseProcess(self.localPairingStatus.installation.id)
 
+  # Run any available post-login tasks
+  self.runPostLoginTasks()
+
+  # When converting account to regular, we should not finishAppLoading.
+  # The task will convert the account, re-encrypt the database with new password and
+  # eventually logout. The user will need to login with a new password.
+  for i in 0..<self.postLoginTasks.len:
+    let task = self.postLoginTasks[i]
+    if task.kind == kConvertKeycardAccountToRegular:
+      return
+
   self.finishAppLoading2()
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
@@ -374,6 +410,11 @@ method onKeycardExportLoginKeysSuccess*[T](self: Module[T], exportedKeys: Keycar
     privateWhisperKey = exportedKeys.whisperKey.privateKey,
   )
 
+method onKeycardAccountConverted*[T](self: Module[T], success: bool) =
+  let state = if success: ProgressState.Success else: ProgressState.Failed
+  self.view.setConvertKeycardAccountState(state)
+  self.generalService.logout()
+
 method exportRecoverKeys*[T](self: Module[T]) =
   self.view.setRestoreKeysExportState(ProgressState.InProgress.int)
   self.controller.exportRecoverKeysFromKeycard()
@@ -383,5 +424,22 @@ method startKeycardFactoryReset*[T](self: Module[T]) =
 
 method getPostOnboardingTasks*[T](self: Module[T]): seq[PostOnboardingTask] =
   return self.postOnboardingTasks
+
+method requestSaveBiometrics*[T](self: Module[T], account: string, credential: string) =
+  self.view.saveBiometricsRequested(account, credential)
+
+method requestDeleteBiometrics*[T](self: Module[T], account: string) =
+  self.view.deleteBiometricsRequested(account)
+
+proc runPostLoginTasks*[T](self: Module[T]) =
+  let tasks = self.postLoginTasks
+  for task in tasks:
+    case task.kind:
+    of kConvertKeycardAccountToRegular:
+      KeycardConvertAccountTask(task).run(self.accountsService, self)
+    of kPostOnboardingTaskSaveBiometrics:
+      SaveBiometricsTask(task).run(self.accountsService, self)
+    else:
+      error "unknown post login task"
 
 {.pop.}

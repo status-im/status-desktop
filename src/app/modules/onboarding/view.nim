@@ -19,6 +19,7 @@ QtObject:
       restoreKeysExportState: int
       loginAccountsModel: login_acc_model.Model
       loginAccountsModelVariant: QVariant
+      convertKeycardAccountState: ProgressState
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -36,6 +37,8 @@ QtObject:
 
   proc appLoaded*(self: View, keyUid: string) {.signal.}
   proc accountLoginError*(self: View, error: string, wrongPassword: bool) {.signal.}
+  proc saveBiometricsRequested*(self: View, account: string, credential: string) {.signal.}
+  proc deleteBiometricsRequested*(self: View, account: string) {.signal.}
 
   ### QtProperties ###
 
@@ -128,6 +131,18 @@ QtObject:
   QtProperty[QVariant] loginAccountsModel:
     read = getLoginAccountsModel
     notify = loginAccountsModelChanged
+
+  proc convertKeycardAccountStateChanged*(self: View) {.signal.}
+  proc getConvertKeycardAccountState(self: View): int {.slot.} =
+    return self.convertKeycardAccountState.int
+  proc setConvertKeycardAccountState*(self: View, value: ProgressState) =
+    if self.convertKeycardAccountState == value:
+      return
+    self.convertKeycardAccountState = value
+    self.convertKeycardAccountStateChanged()
+  QtProperty[int] convertKeycardAccountState:
+    read = getConvertKeycardAccountState
+    notify = convertKeycardAccountStateChanged
 
   ### slots ###
 

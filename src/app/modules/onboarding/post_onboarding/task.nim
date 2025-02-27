@@ -10,6 +10,12 @@ type PostOnboardingTaskKind* = enum
   #       Comparing to the `KeycardReplacementTask` which is used when the keycard is lost and a new one is being used. Theoretically the old keycard can still be found and used. # WARNING: But is this secure?
   kPostOnboardingUpdateKeycardUid = 2 # Onboarding V1 name: changedKeycardUids
 
+  # This task is scheduled if the user agreed to use biometrics.
+  kPostOnboardingTaskSaveBiometrics = 3
+
+  # This task is scheduled in LoginWithLostKeycardSeedphrase to convert the keycard account to a regular account.
+  kConvertKeycardAccountToRegular = 4
+
 type PostOnboardingTask* = ref object of RootObj
   kind*: PostOnboardingTaskKind
 

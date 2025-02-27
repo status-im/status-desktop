@@ -8,6 +8,8 @@ QtObject {
     id: root
 
     signal appLoaded(string keyUid)
+    signal saveBiometricsRequested(string keyUid, string credential)
+    signal deleteBiometricsRequested(string keyUid)
 
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
@@ -16,6 +18,8 @@ QtObject {
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
             d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+            d.onboardingModuleInst.saveBiometricsRequested.connect(root.saveBiometricsRequested)
+            d.onboardingModuleInst.deleteBiometricsRequested.connect(root.deleteBiometricsRequested)
         }
     }
 
@@ -26,6 +30,7 @@ QtObject {
     readonly property int pinSettingState: d.onboardingModuleInst.pinSettingState // cf. enum Onboarding.ProgressState
     readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.AuthorizationState
     readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.AuthorizationState
+    readonly property int convertKeycardAccountState: d.onboardingModuleInst.convertKeycardAccountState // cf. enum Onboarding.ProgressState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
     readonly property int keycardRemainingPukAttempts: d.onboardingModuleInst.keycardRemainingPukAttempts
 

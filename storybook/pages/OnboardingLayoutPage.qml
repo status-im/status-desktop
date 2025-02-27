@@ -42,6 +42,7 @@ SplitView {
         store.pinSettingState = Onboarding.ProgressState.Idle
         store.authorizationState = Onboarding.AuthorizationState.Idle
         store.restoreKeysExportState = Onboarding.ProgressState.Idle
+        store.convertKeycardAccountState = Onboarding.ProgressState.Idle
         store.syncState = Onboarding.ProgressState.Idle
         store.keycardRemainingPinAttempts = Constants.onboarding.defaultPinAttempts
         store.keycardRemainingPukAttempts = Constants.onboarding.defaultPukAttempts
@@ -78,6 +79,7 @@ SplitView {
             property int pinSettingState: Onboarding.ProgressState.Idle
             property int authorizationState: Onboarding.AuthorizationState.Idle
             property int restoreKeysExportState: Onboarding.ProgressState.Idle
+            property int convertKeycardAccountState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
@@ -170,7 +172,7 @@ SplitView {
             // (test) error handler
             onAccountLoginError: function (error, wrongPassword) {
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
-                onboarding.unwindToLoginScreen()
+                onboarding.restartFlow()
             }
         }
 
@@ -179,6 +181,11 @@ SplitView {
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
+
+            if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                stack.push(convertingKeycardAccountPage)
+                return
+            }
 
             console.warn("!!! SIMULATION: SHOWING SPLASH")
             stack.push(splashScreen, { runningProgressAnimation: true })
@@ -381,6 +388,22 @@ SplitView {
                     console.warn("!!! RESTARTING FLOW")
                     root.restart()
                 }
+            }
+        }
+    }
+
+    Component {
+        id: convertingKeycardAccountPage
+
+        ConvertKeycardAccountPage {
+            convertKeycardAccountState: store.convertKeycardAccountState
+            onRestartRequested: {
+                logs.logEvent("restartRequested")
+                onboarding.unwindToLoginScreen()
+            }
+            onBackToLoginRequested: {
+                logs.logEvent("backToLoginRequested")
+                onboarding.unwindToLoginScreen()
             }
         }
     }
@@ -651,6 +674,34 @@ SplitView {
                             ButtonGroup.group: restoreKeysExportStateButtonGroup
 
                             onClicked: store.restoreKeysExportState = modelData.value
+                        }
+                    }
+                }
+
+                ToolSeparator {}
+
+                Label {
+                    text: "Convert Keycard Account state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: convertKeycardAccountButtonGroup
+                    }
+
+                    Repeater {
+                        model: Onboarding.getModelFromEnum("ProgressState")
+
+                        RoundButton {
+                            text: modelData.name
+                            checkable: true
+                            checked: store.convertKeycardAccountState === modelData.value
+
+                            ButtonGroup.group: convertKeycardAccountButtonGroup
+
+                            onClicked: store.convertKeycardAccountState = modelData.value
                         }
                     }
                 }

@@ -16,10 +16,13 @@ import shared.stores 1.0
 import mainui 1.0
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
+import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0 as Onboarding2
 import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding2.pages 1.0
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 StatusWindow {
@@ -473,6 +476,12 @@ StatusWindow {
                 onAccountLoginError: function (error, wrongPassword) {
                     onboardingLayout.unwindToLoginScreen() // error handled internally
                 }
+                onSaveBiometricsRequested: (account, credential) => {
+                    appKeychain.saveCredential(account, credential)
+                }
+                onDeleteBiometricsRequested: (account) => {
+                    appKeychain.deleteCredential(account)
+                }
             }
 
             keychain: appKeychain
@@ -485,14 +494,16 @@ StatusWindow {
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
 
-                if (!data.enableBiometrics)
-                    return
-
-                onboardingStore.appLoaded.connect((keyUid) => {
-                    appKeychain.saveCredential(keyUid, data.password || data.keycardPin)
-                })
+                // We use a custom handler for LoginWithLostKeycardSeedphrase flow.
+                // At the moment of implementation, this was the simplest move to make it work in the given code.
+                // Ideally, ConvertKeycardAccountPage should be created inside the OnboardingLayout and not here,
+                // but this would require more changes and eventually give more inconsistencies.
+                if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                    stack.push(convertingKeycardAccountPage)
+                } else {
+                    stack.push(splashScreenV2, {runningProgressAnimation: true})
+                }
             }
 
             onLoginRequested: function (keyUid, method, data) {
@@ -507,6 +518,20 @@ StatusWindow {
                 }
             }
             onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
+
+            Component {
+                id: convertingKeycardAccountPage
+
+                ConvertKeycardAccountPage {
+                    convertKeycardAccountState: onboardingStore.convertKeycardAccountState
+                    onRestartRequested: {
+                        SystemUtils.restartApplication()
+                    }
+                    onBackToLoginRequested: {
+                        onboardingLayout.unwindToLoginScreen()
+                    }
+                }
+            }
         }
     }
 

@@ -39,7 +39,7 @@ import app_service/service/metrics/service as metrics_service
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/modules/startup/module as startup_module
 import app/modules/onboarding/module as onboarding_module
-import app/modules/onboarding/post_onboarding/[keycard_replacement_task]
+import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task]
 import app/modules/main/module as main_module
 import app/core/notifications/notifications_manager
 import app/global/[global_singleton, feature_flags]
@@ -455,6 +455,7 @@ proc mainDidLoad*(self: AppController) =
   if not self.onboardingModule.isNil:
     self.switchToOldOnboarding()
     self.runPostOnboardingTasks()
+
 proc start*(self: AppController) =
   if self.shouldUseTheNewOnboardingModule():
     self.keycardServiceV2.init()

@@ -532,4 +532,5 @@ OnboardingStackView {
             onLinkActivated: (link) => root.linkActivated(link)
         }
     }
+
 }

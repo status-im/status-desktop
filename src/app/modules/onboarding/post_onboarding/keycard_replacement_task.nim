@@ -24,7 +24,7 @@ proc run*(self: KeycardReplacementTask,
 
   # NOTE: This implementation was taken from `doKeycardReplacement` in `app_controller.nim`
 
-  debug "running post-onbaording KeycardReplacementTask"
+  debug "running post-onboarding KeycardReplacementTask"
 
   let keypair = walletAccountService.getKeypairByKeyUid(self.keyUid)
   if keypair.isNil:

@@ -17,6 +17,7 @@ type LoginMethod* {.pure} = enum
   Unknown = 0,
   Password,
   Keycard,
+  Mnemonic,
 
 type ProgressState* {.pure.} = enum
   Idle,
