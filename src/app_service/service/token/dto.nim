@@ -54,6 +54,7 @@ type TokenSourceDto* = ref object of RootObj
     tokens* {.serializedFieldName("tokens").}: seq[TokenDto]
     source* {.serializedFieldName("source").}: string
     version* {.serializedFieldName("version").}: string
+    lastUpdateTimestamp* {.serializedFieldName("lastUpdateTimestamp").}: int64
 
 type TokenListDto* = ref object of RootObj
     updatedAt* {.serializedFieldName("updatedAt").}: int64
@@ -65,6 +66,7 @@ proc `$`*(self: TokenSourceDto): string =
     tokens: {self.tokens},
     source: {self.source},
     version: {self.version}
+    lastUpdateTimestamp: {self.lastUpdateTimestamp}
     ]"""
 
 type

@@ -291,7 +291,13 @@ QtObject:
       var tokenSymbols: seq[string] = @[]
 
       for s in tokenList.data:
-        let newSource = SupportedSourcesItem(name: s.name, source: s.source, version: s.version, tokensCount: s.tokens.len)
+        let newSource = SupportedSourcesItem(
+          name: s.name,
+          updatedAt: s.lastUpdateTimestamp,
+          source: s.source,
+          version: s.version,
+          tokensCount: s.tokens.len
+        )
         self.sourcesOfTokensList.add(newSource)
 
         for token in s.tokens:

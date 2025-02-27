@@ -257,7 +257,7 @@ Item {
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: qsTr("Last updated %1 @%2").arg(LocaleUtils.formatDate(root.tokenListUpdatedAt * 1000)).arg(LocaleUtils.formatTime(root.tokenListUpdatedAt, Locale.ShortFormat))
+                        text: qsTr("Last fetched %1").arg(LocaleUtils.getTimeDifference(new Date(root.tokenListUpdatedAt * 1000), new Date()))
                         font.pixelSize: Theme.additionalTextSize
                         color: Theme.palette.darkGrey
                     }
