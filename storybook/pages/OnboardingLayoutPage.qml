@@ -183,7 +183,12 @@ SplitView {
             logs.logEvent("onFinished", ["flow", "data"], arguments)
 
             if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                store.convertKeycardAccountState = Onboarding.ProgressState.InProgress // SIMULATION
                 stack.push(convertingKeycardAccountPage)
+                Backpressure.debounce(root, 3000, () => {
+                    console.warn("!!! SIMULATION: CONVERTING KEYCARD")
+                    store.convertKeycardAccountState = Onboarding.ProgressState.Success // SIMULATION
+                })()
                 return
             }
 
@@ -399,11 +404,11 @@ SplitView {
             convertKeycardAccountState: store.convertKeycardAccountState
             onRestartRequested: {
                 logs.logEvent("restartRequested")
-                onboarding.unwindToLoginScreen()
+                root.restart()
             }
             onBackToLoginRequested: {
                 logs.logEvent("backToLoginRequested")
-                onboarding.unwindToLoginScreen()
+                root.restart()
             }
         }
     }
