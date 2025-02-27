@@ -296,11 +296,10 @@ proc syncAppAndKeycardState[T](self: Module[T]) =
 proc finishAppLoading2[T](self: Module[T]) =
   self.delegate.appReady()
 
-  var eventType = "user-logged-in"
-  if self.loginFlow == LoginMethod.Unknown:
-    eventType = "onboarding-completed"
-  singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType,
-    $(%*{"flowType": repr(self.onboardingFlow)}))
+  let isOnboarding = self.loginFlow == LoginMethod.Unknown
+  let eventType = if isOnboarding: "onboarding-completed" else: "user-logged-in"
+  let flowType = if isOnboarding: repr(self.onboardingFlow) else : repr(self.loginFlow)
+  singletonInstance.globalEvents.addCentralizedMetricIfEnabled(eventType, $(%*{"flowType": flowType}))
 
   self.syncAppAndKeycardState()
 
