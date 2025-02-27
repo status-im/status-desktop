@@ -25,7 +25,14 @@ Page {
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
 
     readonly property alias stack: onboardingFlow // TODO remove external stack access
-    readonly property string currentPageName: stack.topLevelItem ? Utils.objectTypeName(stack.topLevelItem) : ""
+    readonly property string currentPageName: {
+        if (!stack.topLevelItem)
+            return ""
+
+        const item = stack.topLevelItem instanceof Loader ? stack.topLevelItem.item
+                                                          : stack.topLevelItem
+        return Utils.objectTypeName(item)
+    }
 
     signal shareUsageDataRequested(bool enabled)
 
