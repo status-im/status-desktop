@@ -13,10 +13,10 @@ QtObject:
       delegate: io_interface.AccessInterface
       keycardEvent: KeycardEventDto
       syncState: LocalPairingState
-      addKeyPairState: int
-      pinSettingState: int
+      addKeyPairState: ProgressState
+      pinSettingState: ProgressState
       authorizationState: AuthorizationState
-      restoreKeysExportState: int
+      restoreKeysExportState: ProgressState
       loginAccountsModel: login_acc_model.Model
       loginAccountsModelVariant: QVariant
       convertKeycardAccountState: ProgressState
@@ -49,16 +49,20 @@ QtObject:
     read = getSyncState
     notify = syncStateChanged
   proc setSyncState*(self: View, syncState: LocalPairingState) =
+    if self.syncState == syncState:
+      return
     self.syncState = syncState
     self.syncStateChanged()
 
   proc pinSettingStateChanged*(self: View) {.signal.}
   proc getPinSettingState*(self: View): int {.slot.} =
-    return self.pinSettingState
+    return self.pinSettingState.int
   QtProperty[int] pinSettingState:
     read = getPinSettingState
     notify = pinSettingStateChanged
-  proc setPinSettingState*(self: View, pinSettingState: int) =
+  proc setPinSettingState*(self: View, pinSettingState: ProgressState) =
+    if self.pinSettingState == pinSettingState:
+      return
     self.pinSettingState = pinSettingState
     self.pinSettingStateChanged()
 
@@ -69,16 +73,20 @@ QtObject:
     read = getAuthorizationState
     notify = authorizationStateChanged
   proc setAuthorizationState*(self: View, authorizationState: AuthorizationState) =
+    if self.authorizationState == authorizationState:
+      return
     self.authorizationState = authorizationState
     self.authorizationStateChanged()
 
   proc restoreKeysExportStateChanged*(self: View) {.signal.}
   proc getRestoreKeysExportState*(self: View): int {.slot.} =
-    return self.restoreKeysExportState
+    return self.restoreKeysExportState.int
   QtProperty[int] restoreKeysExportState:
     read = getRestoreKeysExportState
     notify = restoreKeysExportStateChanged
-  proc setRestoreKeysExportState*(self: View, restoreKeysExportState: int) =
+  proc setRestoreKeysExportState*(self: View, restoreKeysExportState: ProgressState) =
+    if self.restoreKeysExportState == restoreKeysExportState:
+      return
     self.restoreKeysExportState = restoreKeysExportState
     self.restoreKeysExportStateChanged()
 
@@ -88,6 +96,13 @@ QtObject:
   QtProperty[int] keycardState:
     read = getKeycardState
     notify = keycardStateChanged
+
+  proc keycardUIDChanged*(self: View) {.signal.}
+  proc getKeycardUID(self: View): string {.slot.} =
+    return self.keycardEvent.keycardInfo.keyUID
+  QtProperty[string] keycardUID:
+    read = getKeycardUID
+    notify = keycardUIDChanged
 
   proc keycardRemainingPinAttemptsChanged*(self: View) {.signal.}
   proc getKeycardRemainingPinAttempts(self: View): int {.slot.} =
@@ -105,17 +120,20 @@ QtObject:
 
   proc addKeyPairStateChanged*(self: View) {.signal.}
   proc getAddKeyPairState(self: View): int {.slot.} =
-    return self.addKeyPairState
+    return self.addKeyPairState.int
   QtProperty[int] addKeyPairState:
     read = getAddKeyPairState
     notify = addKeyPairStateChanged
-  proc setAddKeyPairState*(self: View, addKeyPairState: int) =
+  proc setAddKeyPairState*(self: View, addKeyPairState: ProgressState) =
+    if self.addKeyPairState == addKeyPairState:
+      return
     self.addKeyPairState = addKeyPairState
     self.addKeyPairStateChanged()
 
   proc setKeycardEvent*(self: View, keycardEvent: KeycardEventDto) =
     self.keycardEvent = keycardEvent
     self.keycardStateChanged()
+    self.keycardUIDChanged()
     self.keycardRemainingPinAttemptsChanged()
     self.keycardRemainingPukAttemptsChanged()
 
@@ -177,9 +195,9 @@ QtObject:
     self.delegate.exportRecoverKeys()
 
   proc finishOnboardingFlow(self: View, flowInt: int, dataJson: string): string {.slot.} =
-    self.delegate.finishOnboardingFlow(flowInt, dataJson)
+    return self.delegate.finishOnboardingFlow(flowInt, dataJson)
 
-  proc loginRequested(self: View, keyUid: string, loginFlow: int, dataJson: string): string {.slot.} =
+  proc loginRequested(self: View, keyUid: string, loginFlow: int, dataJson: string) {.slot.} =
     self.delegate.loginRequested(keyUid, loginFlow, dataJson)
 
   proc startKeycardFactoryReset(self: View) {.slot.} =

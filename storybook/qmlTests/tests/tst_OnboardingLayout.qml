@@ -61,6 +61,7 @@ Item {
 
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
+                readonly property string keycardUID: "uid_4"
                 readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
                 readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.AuthorizationState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState

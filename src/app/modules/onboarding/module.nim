@@ -105,7 +105,7 @@ method load*[T](self: Module[T]) =
   self.delegate.onboardingDidLoad()
 
 method initialize*[T](self: Module[T], pin: string) =
-  self.view.setPinSettingState(ProgressState.InProgress.int)
+  self.view.setPinSettingState(ProgressState.InProgress)
   self.controller.initialize(pin)
 
 method authorize*[T](self: Module[T], pin: string) =
@@ -131,7 +131,7 @@ method inputConnectionStringForBootstrapping*[T](self: Module[T], connectionStri
   self.controller.inputConnectionStringForBootstrapping(connectionString)
 
 method loadMnemonic*[T](self: Module[T], mnemonic: string) =
-  self.view.setAddKeyPairState(ProgressState.InProgress.int)
+  self.view.setAddKeyPairState(ProgressState.InProgress)
   self.controller.loadMnemonic(mnemonic)
 
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
@@ -359,14 +359,14 @@ method onKeycardStateUpdated*[T](self: Module[T], keycardEvent: KeycardEventDto)
 
   if keycardEvent.state == KeycardState.NotEmpty and self.view.getPinSettingState() == ProgressState.InProgress.int:
     # We just finished setting the pin
-    self.view.setPinSettingState(ProgressState.Success.int)
+    self.view.setPinSettingState(ProgressState.Success)
 
-  if keycardEvent.state == KeycardState.Authorized and self.view.getAuthorizationState() == ProgressState.InProgress.int:
+  if keycardEvent.state == KeycardState.Authorized and self.view.getAuthorizationState() == AuthorizationState.InProgress.int:
     # We just finished authorizing
     self.view.setAuthorizationState(AuthorizationState.Authorized)
 
 method onKeycardSetPinFailure*[T](self: Module[T], error: string) =
-  self.view.setPinSettingState(ProgressState.Failed.int)
+  self.view.setPinSettingState(ProgressState.Failed)
 
 method onKeycardAuthorizeFinished*[T](self: Module[T], error: string, authorized: bool) =
   if error != "":
@@ -382,17 +382,17 @@ method onKeycardAuthorizeFinished*[T](self: Module[T], error: string, authorized
     self.view.accountLoginError(error, not authorized)
 
 method onKeycardLoadMnemonicFailure*[T](self: Module[T], error: string) =
-  self.view.setAddKeyPairState(ProgressState.Failed.int)
+  self.view.setAddKeyPairState(ProgressState.Failed)
 
 method onKeycardLoadMnemonicSuccess*[T](self: Module[T], keyUID: string) =
-  self.view.setAddKeyPairState(ProgressState.Success.int)
+  self.view.setAddKeyPairState(ProgressState.Success)
 
 method onKeycardExportRestoreKeysFailure*[T](self: Module[T], error: string) =
-  self.view.setRestoreKeysExportState(ProgressState.Failed.int)
+  self.view.setRestoreKeysExportState(ProgressState.Failed)
 
 method onKeycardExportRestoreKeysSuccess*[T](self: Module[T], exportedKeys: KeycardExportedKeysDto) =
   self.exportedKeys = exportedKeys
-  self.view.setRestoreKeysExportState(ProgressState.Success.int)
+  self.view.setRestoreKeysExportState(ProgressState.Success)
 
 method onKeycardExportLoginKeysFailure*[T](self: Module[T], error: string) =
   self.view.accountLoginError(error, wrongPassword = false)
@@ -415,7 +415,7 @@ method onKeycardAccountConverted*[T](self: Module[T], success: bool) =
   self.generalService.logout()
 
 method exportRecoverKeys*[T](self: Module[T]) =
-  self.view.setRestoreKeysExportState(ProgressState.InProgress.int)
+  self.view.setRestoreKeysExportState(ProgressState.InProgress)
   self.controller.exportRecoverKeysFromKeycard()
 
 method startKeycardFactoryReset*[T](self: Module[T]) =

@@ -23,6 +23,7 @@ SplitView {
 
         // keycard
         property int keycardState: Onboarding.KeycardState.NoPCSCService
+        readonly property string keycardUID: "uid_4"
         property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
         property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 
@@ -38,7 +39,7 @@ SplitView {
         loginAccountsModel: LoginAccountsModel {}
 
         keycardState: driver.keycardState
-
+        keycardUID: driver.keycardUID
         keycardRemainingPinAttempts: driver.keycardRemainingPinAttempts
         keycardRemainingPukAttempts: driver.keycardRemainingPukAttempts
 
