@@ -218,7 +218,7 @@ OnboardingPage {
                     }
 
                     Qt.callLater(() => {
-                        if (!isBiometricsLogin)
+                        if (!root || !root.isBiometricsLogin)
                             return
 
                         if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
