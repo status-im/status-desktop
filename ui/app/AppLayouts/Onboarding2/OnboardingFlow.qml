@@ -15,6 +15,7 @@ OnboardingStackView {
     required property var loginAccountsModel
 
     required property int keycardState
+    required property string keycardUID
     required property int pinSettingState
     required property int authorizationState
     required property int restoreKeysExportState
@@ -184,6 +185,7 @@ OnboardingStackView {
             id: loginScreen
 
             keycardState: root.keycardState
+            keycardUID: root.keycardUID
             keycardRemainingPinAttempts: root.remainingPinAttempts
             keycardRemainingPukAttempts: root.remainingPukAttempts
 

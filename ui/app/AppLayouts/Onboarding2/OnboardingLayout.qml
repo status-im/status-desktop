@@ -6,7 +6,6 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding2.stores 1.0
 import AppLayouts.Onboarding.enums 1.0
 
@@ -135,6 +134,7 @@ Page {
 
         loginAccountsModel: root.onboardingStore.loginAccountsModel
         keycardState: root.onboardingStore.keycardState
+        keycardUID: root.onboardingStore.keycardUID
         pinSettingState: root.onboardingStore.pinSettingState
         authorizationState: root.onboardingStore.authorizationState
         restoreKeysExportState: root.onboardingStore.restoreKeysExportState
