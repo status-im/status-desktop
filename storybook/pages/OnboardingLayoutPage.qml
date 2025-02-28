@@ -75,6 +75,7 @@ SplitView {
             id: store
 
             property int keycardState: Onboarding.KeycardState.NoPCSCService
+            readonly property string keycardUID: "uid_4"
             property int addKeyPairState: Onboarding.ProgressState.Idle
             property int pinSettingState: Onboarding.ProgressState.Idle
             property int authorizationState: Onboarding.AuthorizationState.Idle

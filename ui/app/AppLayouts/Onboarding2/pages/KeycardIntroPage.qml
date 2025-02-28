@@ -147,8 +147,7 @@ KeycardBasePage {
         // error states
         State {
             name: "notKeycard"
-            when: root.keycardState === Onboarding.KeycardState.WrongKeycard ||
-                  root.keycardState === Onboarding.KeycardState.NotKeycard
+            when: root.keycardState === Onboarding.KeycardState.NotKeycard
             PropertyChanges {
                 target: root
                 title: qsTr("Oops this isn’t a Keycard")
