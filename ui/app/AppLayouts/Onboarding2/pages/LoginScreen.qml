@@ -24,7 +24,7 @@ OnboardingPage {
     id: root
 
     required property int keycardState
-
+    required property string keycardUID
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
 
@@ -89,6 +89,7 @@ OnboardingPage {
         property bool biometricsFailed
 
         readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount
+        readonly property bool isWrongKeycard: !!root.keycardUID && loginUserSelector.selectedProfileKeyId !== root.keycardUID
 
         readonly property Settings settings: Settings {
             category: "Login"
@@ -259,6 +260,7 @@ OnboardingPage {
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.keycardState
+                isWrongKeycard: d.isWrongKeycard
                 keycardRemainingPinAttempts: root.keycardRemainingPinAttempts
                 keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()

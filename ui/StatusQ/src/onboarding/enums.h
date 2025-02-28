@@ -58,7 +58,6 @@ public:
         InsertKeycard,
         ReadingKeycard,
         // error states
-        WrongKeycard,
         NotKeycard,
         MaxPairingSlotsReached,
         BlockedPIN, // PIN remaining attempts == 0

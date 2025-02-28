@@ -14,6 +14,7 @@ Control {
     id: root
 
     required property int keycardState
+    required property bool isWrongKeycard
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
     property string loginError
@@ -48,7 +49,8 @@ Control {
         pinInputField.setPin(pin)
     }
 
-    padding: 12
+    horizontalPadding: Theme.padding
+    verticalPadding: 20
 
     QtObject {
         id: d
@@ -162,7 +164,7 @@ Control {
         },
         State {
             name: "wrongKeycard"
-            when: root.keycardState === Onboarding.KeycardState.WrongKeycard
+            when: root.isWrongKeycard
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1

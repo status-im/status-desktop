@@ -26,7 +26,6 @@ type KeycardState* = enum
   PluginReader,
   InsertKeycard,
   ReadingKeycard,
-  WrongKeycard,
   NotKeycard,
   MaxPairingSlotsReached,
   BlockedPIN,
