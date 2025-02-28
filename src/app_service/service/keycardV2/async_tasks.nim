@@ -1,11 +1,13 @@
 type
   AsyncRequestArg = ref object of QObjectTaskArg
+    requestId*: int
     action*: string
     params*: JsonNode
 
 proc asyncRequestTask(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestArg](argEncoded)
   var output = %*{
+    "requestId": arg.requestId,
     "response": "",
     "error": ""
   }

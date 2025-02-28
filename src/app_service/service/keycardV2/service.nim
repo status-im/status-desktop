@@ -1,4 +1,4 @@
-import NimQml, json, os, chronicles, strutils, random, json_serialization
+import NimQml, Tables, json, os, chronicles, strutils, random, json_serialization
 import keycard_go
 import app/global/global_singleton
 import app/core/eventemitter
@@ -71,14 +71,13 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    requestsQueue: seq[KeycardRequest]
     currentRequest: KeycardRequest
+    requestCounter: int
+    requestMap: Table[int, KeycardRequest]
 
   ## Forward declaration
   proc initializeRPC(self: Service)
   proc asyncStart*(self: Service, storageDir: string)
-  proc runTimer(self: Service)
-  proc onTimeout(self: Service, reason: string) {.slot.}
   proc onAsyncResponse(self: Service, response: string) {.slot.}
 
   proc delete*(self: Service) =
