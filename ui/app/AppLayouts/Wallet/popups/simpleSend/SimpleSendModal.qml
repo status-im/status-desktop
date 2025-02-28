@@ -315,7 +315,9 @@ StatusDialog {
             root.allValuesFilledCorrectly]
         onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
 
-        readonly property bool errNotEnoughGas: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+        readonly property bool errNotEnoughEth: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+
+        readonly property bool errNotEnoughToken: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughTokenBalance
 
         function setRawValue() {
             if (!selectedRawAmount) return
@@ -659,7 +661,7 @@ StatusDialog {
                         cryptoFees: root.estimatedCryptoFees
                         fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
-                        error: d.errNotEnoughGas
+                        error: d.errNotEnoughEth
                     }
                     visible: root.allValuesFilledCorrectly
                 }
@@ -684,11 +686,10 @@ StatusDialog {
         blurSource: scrollView.contentItem
         blurSourceRect: Qt.rect(0, scrollView.height, width, height)
 
-        error: d.errNotEnoughGas
-        errorTags: amountToSend.markAsInvalid ||
-                   !!root.routerErrorCode ||
-                   !!root.routerError?
-                       errorTagsModel: null
+        error: amountToSend.markAsInvalid ||
+               !!root.routerErrorCode ||
+               !!root.routerError
+        errorTags: !!error? errorTagsModel: null
 
         loading: root.routesLoading && root.allValuesFilledCorrectly
 
@@ -699,17 +700,16 @@ StatusDialog {
         id: errorTagsModel
         RouterErrorTag {
             errorTitle: qsTr("Insufficient funds for send transaction")
-            buttonText: qsTr("Add assets")
+            buttonText: d.selectedCryptoTokenSymbol !== Constants.ethToken? qsTr("Add assets") : qsTr("Add ETH")
             onButtonClicked: root.launchBuyFlow()
 
             visible: amountToSend.markAsInvalid
         }
         RouterErrorTag {
             errorTitle: root.routerError
-            errorDetails: !d.errNotEnoughGas ?
-                              root.routerErrorDetails: ""
-            buttonText: qsTr("Add ETH")
-            expandable: !d.errNotEnoughGas &&
+            errorDetails: !d.errNotEnoughEth && !d.errNotEnoughToken? root.routerErrorDetails: ""
+            buttonText: d.errNotEnoughToken? qsTr("Add assets") : d.errNotEnoughEth? qsTr("Add ETH") : ""
+            expandable: !!errorDetails &&
                         !(!root.routerErrorCode &&
                           !!root.routerError)
             onButtonClicked: root.launchBuyFlow()
