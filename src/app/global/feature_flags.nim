@@ -7,7 +7,7 @@ const DEFAULT_FLAG_CONNECTOR_ENABLED* = true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = true
-const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = false
+const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = true
 
 proc boolToEnv*(defaultValue: bool): string =
   return if defaultValue: "1" else: "0"
