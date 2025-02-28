@@ -11,7 +11,7 @@ import QtQuick.Controls 2.15
 */
 StackView {
     // this stack or nested one if currentItem is RecursiveStackView, recusively
-    readonly property RecursiveStackView topLevelStack: {
+    readonly property var topLevelStack: {
         if (currentItem instanceof RecursiveStackView)
             return currentItem.topLevelStack
 
