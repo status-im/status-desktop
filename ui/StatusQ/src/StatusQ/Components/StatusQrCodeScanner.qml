@@ -2,15 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import QtMultimedia 5.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
-
-import QZXing 3.3
 
 Item {
     id: root
@@ -30,16 +27,16 @@ Item {
     property bool highlightContentZone: false
     property bool highlightCaptureZone: false
 
-    readonly property alias camera: camera
-    readonly property size sourceSize: Qt.size(videoOutput.sourceRect.width, videoOutput.sourceRect.height)
-    readonly property size contentSize: Qt.size(videoOutput.contentRect.width, videoOutput.contentRect.height)
-    readonly property real sourceRatio: videoOutput.sourceRect.width / videoOutput.sourceRect.height
+    readonly property alias cameraAvailable: capture.cameraAvailable
+    readonly property size sourceSize: capture.sourceSize
+    readonly property size contentSize: capture.contentSize
+    readonly property real sourceRatio: capture.sourceRatio
 
-    readonly property int failsCount: d.failsCount
-    readonly property int tagsCount: d.tagsCount
-    readonly property int decodeTime: d.decodeTime
-    readonly property string lastTag: d.lastTag
-    readonly property string currentTag: d.currentTag
+    readonly property int failsCount: capture.failsCount
+    readonly property int tagsCount: capture.tagsCount
+    readonly property int decodeTime: capture.decodeTime
+    readonly property string lastTag: capture.lastTag
+    readonly property string currentTag: capture.currentTag
 
     signal tagFound(string tag)
 
@@ -50,42 +47,6 @@ Item {
         id: d
 
         readonly property int radius: 16
-
-        function setCameraDevice(deviceId) {
-            if (!camera)
-                return
-            camera.deviceId = "" // Workaround for Qt bug. Without this the device changes only first time.
-            camera.deviceId = deviceId
-        }
-
-        property QtObject camera: null
-
-        //  NOTE:   QtMultimedia.availableCameras also makes a request to OS, if not made previously.
-        //          So we postpone this call until the `Camera` component is loaded
-        property var availableCameras: []
-
-        function onCameraLoaded() {
-            d.availableCameras = QtMultimedia.availableCameras
-        }
-
-        property int failsCount: 0
-        property int tagsCount: 0
-        property int decodeTime: 0
-        property string lastTag
-        property string currentTag
-
-    }
-
-    Camera {
-        id: camera
-        focus {
-            focusMode: CameraFocus.FocusContinuous
-            focusPointMode: CameraFocus.FocusPointAuto
-        }
-
-        Component.onCompleted: {
-            d.onCameraLoaded()
-        }
     }
 
     Rectangle {
@@ -96,18 +57,17 @@ Item {
 
     Item {
         anchors.fill: parent
-        implicitWidth: videoOutput.contentRect.width
-        implicitHeight: videoOutput.contentRect.height
-        visible: camera && camera.availability === Camera.Available
+        visible: capture.cameraAvailable
         clip: true
 
-        VideoOutput {
-            id: videoOutput
+        StatusQrCodeCapture {
+            id: capture
+
             anchors.fill: parent
             visible: false
-            source: camera
-            filters: [ qzxingFilter ]
-            fillMode: VideoOutput.PreserveAspectCrop
+            clip: true
+
+            onTagFound: (tag) => root.tagFound(tag)
         }
 
         Rectangle {
@@ -120,7 +80,7 @@ Item {
 
         OpacityMask {
             anchors.fill: parent
-            source: videoOutput
+            source: capture
             maskSource: mask
         }
 
@@ -131,10 +91,10 @@ Item {
                 opacity: 0.2
                 border.width: 3
                 border.color: "blue"
-                x: videoOutput.contentRect.x
-                y: videoOutput.contentRect.y
-                width: videoOutput.contentRect.width
-                height: videoOutput.contentRect.height
+                x: capture.contentRect.x
+                y: capture.contentRect.y
+                width: capture.contentRect.width
+                height: capture.contentRect.height
             }
         }
 
@@ -145,40 +105,10 @@ Item {
                 opacity: 0.2
                 border.width: 3
                 border.color: "hotpink"
-                x: videoOutput.contentRect.x + root.captureRectangle.x * videoOutput.contentRect.width
-                y: videoOutput.contentRect.y + root.captureRectangle.y * videoOutput.contentRect.height
-                width: videoOutput.contentRect.width * root.captureRectangle.width
-                height: videoOutput.contentRect.height * root.captureRectangle.height
-            }
-        }
-
-        QZXingFilter {
-            id: qzxingFilter
-            orientation: videoOutput.orientation
-            captureRect: {
-                videoOutput.contentRect; videoOutput.sourceRect // bindings
-                const normalizedRectangle = root.captureRectangle
-                const rectangle = videoOutput.mapNormalizedRectToItem(normalizedRectangle)
-                return videoOutput.mapRectToSource(rectangle);
-            }
-
-            decoder {
-                enabledDecoders: QZXing.DecoderFormat_QR_CODE
-                onTagFound: {
-                    d.currentTag = tag
-                    d.lastTag = tag
-                    root.tagFound(tag)
-                }
-            }
-
-            onDecodingFinished: {
-                if (succeeded) {
-                    ++d.tagsCount
-                } else {
-                    ++d.failsCount
-                    d.currentTag = ""
-                }
-                d.decodeTime = decodeTime
+                x: capture.contentRect.x + root.captureRectangle.x * capture.contentRect.width
+                y: capture.contentRect.y + root.captureRectangle.y * capture.contentRect.height
+                width: capture.contentRect.width * root.captureRectangle.width
+                height: capture.contentRect.height * root.captureRectangle.height
             }
         }
     }
@@ -193,16 +123,16 @@ Item {
         }
 
         width: Math.min(implicitWidth, parent.width / 2)
-        visible: Array.isArray(d.availableCameras) && d.availableCameras.length > 0
+        visible: capture.availableCameras.length > 0
         opacity: 0.7
-        model: d.availableCameras
+        model: capture.availableCameras
         control.textRole: "displayName"
         control.valueRole: "deviceId"
         control.padding: 8
         control.spacing: 8
         onCurrentValueChanged: {
             // Debounce to close combobox first
-            Backpressure.debounce(this, 50, () => { d.setCameraDevice(currentValue) })()
+            Backpressure.debounce(this, 50, () => { capture.setCameraDevice(currentValue) })()
         }
     }
 
@@ -216,7 +146,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.dangerColor1
-            visible: camera && camera.availability !== Camera.Available
+            visible: !capture.cameraAvailable
             text: qsTr("Camera is not available")
         }
 
@@ -225,8 +155,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.directColor5
-            visible: camera && camera.errorCode !== Camera.NoError
-            text: camera ? camera.errorString : ""
+            text: capture.cameraError
         }
     }
 }
