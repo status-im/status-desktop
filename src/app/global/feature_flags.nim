@@ -27,6 +27,7 @@ const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = true
 # Compile time feature flags
 const DEFAULT_FLAG_KEYCARD_ENABLED = true
 const DEFAULT_FLAG_THREADPOOL_ENABLED = true
+const DEFAULT_FLAG_SINGLE_STATUS_INSTANCE_ENABLED = true
 
 # Public feature flags
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED)
@@ -38,6 +39,7 @@ featureFlag("SIMPLE_SEND_ENABLED",            DEFAULT_FLAG_SIMPLE_SEND_ENABLED)
 featureFlag("ONBOARDING_V2_ENABLED",          DEFAULT_FLAG_ONBOARDING_V2_ENABLED)
 featureFlag("KEYCARD_ENABLED",                DEFAULT_FLAG_KEYCARD_ENABLED, true)
 featureFlag("THREADPOOL_ENABLED",             DEFAULT_FLAG_THREADPOOL_ENABLED, true)
+featureFlag("SINGLE_STATUS_INSTANCE_ENABLED", DEFAULT_FLAG_SINGLE_STATUS_INSTANCE_ENABLED, true)
 
 # The `featureGuard` macro conditionally replaces the guarded code
 # There are two main usages:
