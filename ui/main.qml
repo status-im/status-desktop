@@ -40,6 +40,7 @@ StatusWindow {
         // TODO get rid of direct access when the new login is available
         // We need this to make sure the module is loaded before we can use it
         onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+        keycardEnabled: featureFlags ? featureFlags.keycardEnabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}
@@ -437,6 +438,7 @@ StatusWindow {
             anchors.fill: parent
 
             utilsStore: applicationWindow.utilsStore
+            isKeycardEnabled: featureFlagsStore.keycardEnabled
         }
     }
 
@@ -451,6 +453,7 @@ StatusWindow {
 
             // FIXME, https://github.com/status-im/status-desktop/issues/17240
             isBiometricsLogin: Qt.platform.os === Constants.mac
+            isKeycardEnabled: featureFlagsStore.keycardEnabled
 
             networkChecksEnabled: true
             biometricsAvailable: Qt.platform.os === Constants.mac

@@ -21,6 +21,8 @@ Column {
     property WalletStore walletStore
     property var emojiPopup
 
+    property bool isKeycardEnabled: true
+
     signal goToNetworksView()
     signal goToAccountOrderView()
     signal goToAccountView(var account)
@@ -101,6 +103,7 @@ Column {
         asynchronous: true
 
         sourceComponent: AddAccountPopup {
+            isKeycardEnabled: root.isKeycardEnabled
             store.emojiPopup: root.emojiPopup
             store.addAccountModule: walletSection.addAccountModule
         }

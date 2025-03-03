@@ -1973,7 +1973,7 @@ Item {
                             dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
                             dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-
+                            isKeycardEnabled: featureFlagsStore.keycardEnabled
                             onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
                             onDappConnectRequested: () => {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
@@ -2021,6 +2021,7 @@ Item {
                             pendingContactsModel: contactsModelAdaptor.pendingContacts
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
+                            isKeycardEnabled: featureFlagsStore.keycardEnabled
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection

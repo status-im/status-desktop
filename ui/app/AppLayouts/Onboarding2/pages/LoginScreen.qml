@@ -33,6 +33,7 @@ OnboardingPage {
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
     required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    property bool isKeycardEnabled: true
 
     readonly property string selectedProfileKeyId: loginUserSelector.selectedProfileKeyId
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
@@ -90,7 +91,7 @@ OnboardingPage {
         property bool biometricsSuccessful
         property bool biometricsFailed
 
-        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount
+        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount && root.isKeycardEnabled
 
         readonly property Settings settings: Settings {
             category: "Login"

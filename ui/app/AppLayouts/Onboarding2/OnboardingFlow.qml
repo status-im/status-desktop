@@ -25,6 +25,7 @@ OnboardingStackView {
     required property int remainingPukAttempts
 
     required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    property bool isKeycardEnabled: true
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -194,6 +195,7 @@ OnboardingStackView {
             loginAccountsModel: root.loginAccountsModel
             biometricsAvailable: root.biometricsAvailable
             isBiometricsLogin: root.isBiometricsLogin
+            isKeycardEnabled: root.isKeycardEnabled
 
             onBiometricsRequested: (profileId) => {
                 if (visible)
@@ -239,6 +241,8 @@ OnboardingStackView {
         id: createProfilePage
 
         CreateProfilePage {
+            isKeycardEnabled: root.isKeycardEnabled
+
             onCreateProfileWithPasswordRequested: root.push(createNewProfileFlow)
             onCreateProfileWithSeedphraseRequested: {
                 d.flow = Onboarding.OnboardingFlow.CreateProfileWithSeedphrase
@@ -254,6 +258,7 @@ OnboardingStackView {
 
         NewAccountLoginPage {
             networkChecksEnabled: root.networkChecksEnabled
+            isKeycardEnabled: root.isKeycardEnabled
 
             onLoginWithSyncingRequested: root.push(logInBySyncingFlow)
             onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
