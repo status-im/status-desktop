@@ -40,6 +40,7 @@ StatusWindow {
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
         simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
         onboardingV2Enabled: featureFlags ? featureFlags.onboardingV2Enabled : false
+        keycardEnabled: featureFlags ? featureFlags.keycardEnabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}
@@ -453,6 +454,7 @@ StatusWindow {
             anchors.fill: parent
 
             utilsStore: applicationWindow.utilsStore
+            isKeycardEnabled: featureFlagsStore.keycardEnabled
         }
     }
 
@@ -465,6 +467,7 @@ StatusWindow {
 
             anchors.fill: parent
 
+            isKeycardEnabled: featureFlagsStore.keycardEnabled
             networkChecksEnabled: true
 
             onboardingStore: OnboardingStore {
