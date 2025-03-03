@@ -273,7 +273,7 @@ StatusSectionLayout {
 
                 onMintOwnerTokenClicked: {
                     root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                    mintPanel.openNewTokenForm(false/*Collectible owner token*/)
+                    mintPanelLoader.item.openNewTokenForm(false/*Collectible owner token*/)
                 }
 
                 onShardIndexEdited: if (root.community.shardIndex !== shardIndex) {
