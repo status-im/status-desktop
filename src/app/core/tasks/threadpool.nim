@@ -1,11 +1,12 @@
-import # std libs
-  std/cpuinfo
+import # status-desktop libs
+  ./common, app/global/feature_flags
+
+featureGuard THREADPOOL_ENABLED:
+  import # std libs
+    std/cpuinfo
 
 import # vendor libs
   json_serialization, json, chronicles, taskpools
-
-import # status-desktop libs
-  ./common
 
 export common, json_serialization, taskpools.isolate, taskpools.extract
 
@@ -33,13 +34,15 @@ proc toString*(input: ThreadSafeTaskArg): string =
   deallocShared input.payload
 
 proc teardown*(self: ThreadPool) =
-  self.pool.syncAll()
-  self.pool.shutdown()
+  featureGuard THREADPOOL_ENABLED:
+    self.pool.syncAll()
+    self.pool.shutdown()
 
 proc newThreadPool*(): ThreadPool =
   new(result)
-  var nthreads = countProcessors()
-  result.pool = Taskpool.new(num_threads = nthreads)
+  featureGuard THREADPOOL_ENABLED:
+    var nthreads = countProcessors()
+    result.pool = Taskpool.new(num_threads = nthreads)
 
 proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall, raises: [].} =
   let taskArg = safeTaskArg.toString()
@@ -66,4 +69,7 @@ proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall, raises: [].} =
     error "[threadpool task thread] exception", error=e.msg
 
 proc start*[T: TaskArg](self: ThreadPool, arg: T) =
-  self.pool.spawn runTask(arg.safe())
+  featureGuard THREADPOOL_ENABLED:
+    self.pool.spawn runTask(arg.safe())
+  else:
+    runTask(arg.safe())
