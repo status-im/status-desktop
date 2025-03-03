@@ -1,11 +1,16 @@
-import NimQml, json, os, chronicles, random, strutils
-import keycard_go
-import app/global/global_singleton
-import app/core/eventemitter
-import app/core/tasks/[qt, threadpool]
-import ../../../constants as status_const
-
+import NimQml, chronicles, os
+import app/global/feature_flags
 import constants
+import app/core/tasks/[qt, threadpool]
+import app/core/eventemitter
+
+featureGuard KEYCARD_ENABLED:
+  import json, random, strutils
+  import app/global/global_singleton
+  import ../../../constants as status_const
+
+  import keycard_go
+  
 
 type KCSFlowType* {.pure.} = enum
   NoFlow = -1 # this type is added only for the desktop app purpose
@@ -76,14 +81,14 @@ QtObject:
   proc startFlow(self: Service, payload: JsonNode)
   proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string)
 
-  proc isBusy*(self: Service): bool =
+  proc isBusy*(self: Service): bool {.featureGuard(KEYCARD_ENABLED).}  =
     return self.busy
 
   proc delete*(self: Service) =
     self.closingApp = true
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool): Service {.featureGuard(KEYCARD_ENABLED).}  =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -94,7 +99,7 @@ QtObject:
     if not defined(production):
       result.doLogging = true
 
-  proc init*(self: Service) =
+  proc init*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     if self.doLogging:
       debug "init keycard using ", pairingsJson=status_const.KEYCARDPAIRINGDATAFILE
     # Do not remove the sleep 700
@@ -106,7 +111,7 @@ QtObject:
     if self.doLogging:
       debug "initialization response: ", initResp
 
-  proc processSignal(self: Service, signal: string) =
+  proc processSignal(self: Service, signal: string) {.featureGuard(KEYCARD_ENABLED).} =
     var jsonSignal: JsonNode
     try:
       jsonSignal = signal.parseJson
@@ -127,7 +132,7 @@ QtObject:
     self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
     self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent))
 
-  proc receiveKeycardSignal*(self: Service, signal: string) {.slot.} =
+  proc receiveKeycardSignal*(self: Service, signal: string) {.slot, featureGuard(KEYCARD_ENABLED).} =
     self.busy = false
     self.processSignal(signal)
     if self.waitingFlows.len > 0:
@@ -136,28 +141,28 @@ QtObject:
       self.currentFlow = flow
       self.startFlow(payload)
 
-  proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] =
+  proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] {.featureGuard(KEYCARD_ENABLED).}  =
     return self.lastReceivedKeycardData
 
-  proc cleanReceivedKeycardData*(self: Service) =
+  proc cleanReceivedKeycardData*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     self.lastReceivedKeycardData = ("", KeycardEvent())
 
-  proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] =
+  proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] {.featureGuard(KEYCARD_ENABLED).}  =
     var seedPhrase: seq[string]
     for ind in seedPhraseIndexes:
       seedPhrase.add(englishWords[ind])
     return seedPhrase
 
-  proc updateLocalPayloadForCurrentFlow(self: Service, obj: JsonNode, cleanBefore = false) =
+  proc updateLocalPayloadForCurrentFlow(self: Service, obj: JsonNode, cleanBefore = false) {.featureGuard(KEYCARD_ENABLED).}  =
     if cleanBefore:
       self.setPayloadForCurrentFlow = %* {}
     for k, v in obj:
       self.setPayloadForCurrentFlow[k] = v
 
-  proc getCurrentFlow*(self: Service): KCSFlowType =
+  proc getCurrentFlow*(self: Service): KCSFlowType {.featureGuard(KEYCARD_ENABLED).}  =
     return self.currentFlow
 
-  proc startFlow(self: Service, payload: JsonNode) =
+  proc startFlow(self: Service, payload: JsonNode) {.featureGuard(KEYCARD_ENABLED).} =
     if self.busy:
       self.waitingFlows.add((flow: self.currentFlow, payload: payload))
       return
@@ -167,14 +172,14 @@ QtObject:
     if self.doLogging:
       debug "keycardStartFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
-  proc resumeFlow(self: Service, payload: JsonNode) =
+  proc resumeFlow(self: Service, payload: JsonNode) {.featureGuard(KEYCARD_ENABLED).} =
     self.busy = true
     self.updateLocalPayloadForCurrentFlow(payload)
     let response = keycard_go.keycardResumeFlow($payload)
     if self.doLogging:
       debug "keycardResumeFlow", kcServiceCurrFlow=($self.currentFlow), payload=payload, response=response
 
-  proc cancelCurrentFlow*(self: Service) =
+  proc cancelCurrentFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     # Do not remove the sleep 700
     # This sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
@@ -191,7 +196,7 @@ QtObject:
   ##########################################################
   ## Used in test env only, for testing keycard flows
   proc registerMockedKeycard*(self: Service, cardIndex: int, readerState: int, keycardState: int,
-  mockedKeycard: string, mockedKeycardHelper: string) =
+  mockedKeycard: string, mockedKeycardHelper: string) {.featureGuard(KEYCARD_ENABLED).} =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "registerMockedKeycard can be used only in test env"
       return
@@ -199,7 +204,7 @@ QtObject:
     if self.doLogging:
       debug "mockedLibRegisterKeycard", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, readerState=readerState, keycardState=keycardState, mockedKeycard=mockedKeycard, mockedKeycardHelper=mockedKeycardHelper, response=response
 
-  proc pluginMockedReaderAction*(self: Service) =
+  proc pluginMockedReaderAction*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "pluginMockedReaderAction can be used only in test env"
       return
@@ -207,7 +212,7 @@ QtObject:
     if self.doLogging:
       debug "mockedLibReaderPluggedIn", kcServiceCurrFlow=($self.currentFlow), response=response
 
-  proc unplugMockedReaderAction*(self: Service) =
+  proc unplugMockedReaderAction*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "unplugMockedReaderAction can be used only in test env"
       return
@@ -215,7 +220,7 @@ QtObject:
     if self.doLogging:
       debug "mockedLibReaderUnplugged", kcServiceCurrFlow=($self.currentFlow), response=response
 
-  proc insertMockedKeycardAction*(self: Service, cardIndex: int) =
+  proc insertMockedKeycardAction*(self: Service, cardIndex: int) {.featureGuard(KEYCARD_ENABLED).} =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "insertMockedKeycardAction can be used only in test env"
       return
@@ -223,7 +228,7 @@ QtObject:
     if self.doLogging:
       debug "mockedLibKeycardInserted", kcServiceCurrFlow=($self.currentFlow), cardIndex=cardIndex, response=response
 
-  proc removeMockedKeycardAction*(self: Service) =
+  proc removeMockedKeycardAction*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     if not singletonInstance.localAppSettings.displayMockedKeycardWindow():
       error "removeMockedKeycardAction can be used only in test env"
       return
@@ -232,12 +237,12 @@ QtObject:
       debug "mockedLibKeycardRemoved", kcServiceCurrFlow=($self.currentFlow), response=response
   ##########################################################
 
-  proc generateRandomPUK*(self: Service): string =
+  proc generateRandomPUK*(self: Service): string {.featureGuard(KEYCARD_ENABLED).}  =
     randomize()
     for i in 0 ..< PUKLengthForStatusApp:
       result = result & $rand(0 .. 9)
 
-  proc onTimeout(self: Service, response: string) {.slot.} =
+  proc onTimeout(self: Service, response: string) {.slot, featureGuard(KEYCARD_ENABLED).} =
     if response == $TimerReason.ReRunCurrentFlowLater:
       if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
         return
@@ -254,7 +259,7 @@ QtObject:
     else:
       error "unknown timer reason", reason = response
 
-  proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string) =
+  proc runTimer(self: Service, timeoutInMilliseconds: int, reason: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
       return
 
@@ -268,7 +273,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, pin: string, puk: string,
-    factoryReset: bool) =
+    factoryReset: bool) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     if seedPhrase.len > 0 and seedPhraseLength > 0:
       payload[RequestParamMnemonic] = %* seedPhrase
@@ -285,19 +290,19 @@ QtObject:
     self.currentFlow = KCSFlowType.LoadAccount
     self.startFlow(payload)
 
-  proc startLoginFlow*(self: Service) =
+  proc startLoginFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     let payload = %* { }
     self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
-  proc startLoginFlowAutomatically*(self: Service, pin: string) =
+  proc startLoginFlowAutomatically*(self: Service, pin: string) {.featureGuard(KEYCARD_ENABLED).}  =
     let payload = %* {
       RequestParamPIN: pin
     }
     self.currentFlow = KCSFlowType.Login
     self.startFlow(payload)
 
-  proc startRecoverAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) =
+  proc startRecoverAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, puk: string, factoryReset: bool) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     if seedPhrase.len > 0 and seedPhraseLength > 0:
       payload[RequestParamMnemonic] = %* seedPhrase
@@ -310,14 +315,14 @@ QtObject:
     self.currentFlow = KCSFlowType.RecoverAccount
     self.startFlow(payload)
 
-  proc startGetAppInfoFlow*(self: Service, factoryReset: bool) =
+  proc startGetAppInfoFlow*(self: Service, factoryReset: bool) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
     self.currentFlow = KCSFlowType.GetAppInfo
     self.startFlow(payload)
 
-  proc startGetMetadataFlow*(self: Service, resolveAddress: bool, exportMasterAddr = false, pin = "") =
+  proc startGetMetadataFlow*(self: Service, resolveAddress: bool, exportMasterAddr = false, pin = "") {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     if resolveAddress:
       payload[RequestParamResolveAddr] = %* resolveAddress
@@ -328,22 +333,22 @@ QtObject:
     self.currentFlow = KCSFlowType.GetMetadata
     self.startFlow(payload)
 
-  proc startChangePinFlow*(self: Service) =
+  proc startChangePinFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     self.currentFlow = KCSFlowType.ChangePIN
     self.startFlow(payload)
 
-  proc startChangePukFlow*(self: Service) =
+  proc startChangePukFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     self.currentFlow = KCSFlowType.ChangePUK
     self.startFlow(payload)
 
-  proc startChangePairingFlow*(self: Service) =
+  proc startChangePairingFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     self.currentFlow = KCSFlowType.ChangePairing
     self.startFlow(payload)
 
-  proc startExportPublicFlow*(self: Service, path: string, exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+  proc startExportPublicFlow*(self: Service, path: string, exportMasterAddr = false, exportPrivateAddr = false, pin = "") {.featureGuard(KEYCARD_ENABLED).}  =
     ## Exports addresses for passed `path`. Result of this flow sets instance of `GeneratedWalletAccount` under
     ## `generatedWalletAccount` property in `KeycardEvent`.
     if exportPrivateAddr and not path.startsWith(DefaultEIP1581Path):
@@ -362,7 +367,7 @@ QtObject:
     self.currentFlow = KCSFlowType.ExportPublic
     self.startFlow(payload)
 
-  proc startExportPublicFlow*(self: Service, paths: seq[string], exportMasterAddr = false, exportPrivateAddr = false, pin = "") =
+  proc startExportPublicFlow*(self: Service, paths: seq[string], exportMasterAddr = false, exportPrivateAddr = false, pin = "") {.featureGuard(KEYCARD_ENABLED).}  =
     ## Exports addresses for passed `path`. Result of this flow sets array of `GeneratedWalletAccount` under
     ## `generatedWalletAccounts` property in `KeycardEvent`. The order of keys set in `generatedWalletAccounts` array
     ## mathch the order of `paths` sent to this flow.
@@ -384,7 +389,7 @@ QtObject:
     self.currentFlow = KCSFlowType.ExportPublic
     self.startFlow(payload)
 
-  proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) =
+  proc startStoreMetadataFlow*(self: Service, cardName: string, pin: string, walletPaths: seq[string]) {.featureGuard(KEYCARD_ENABLED).}  =
     var name = cardName
     if cardName.len > CardNameLength:
       name = cardName[0 .. CardNameLength - 1]
@@ -396,7 +401,7 @@ QtObject:
     self.currentFlow = KCSFlowType.StoreMetadata
     self.startFlow(payload)
 
-  proc startSignFlow*(self: Service, bip44Path: string, txHash: string, pin: string = "") =
+  proc startSignFlow*(self: Service, bip44Path: string, txHash: string, pin: string = "") {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* {
       RequestParamTXHash: EmptyTxHash,
       RequestParamBIP44Path: DefaultBIP44Path
@@ -410,7 +415,7 @@ QtObject:
     self.currentFlow = KCSFlowType.Sign
     self.startFlow(payload)
 
-  proc storePin*(self: Service, pin: string, puk: string) =
+  proc storePin*(self: Service, pin: string, puk: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if pin.len == 0:
       error "empty pin provided"
       return
@@ -424,7 +429,7 @@ QtObject:
       payload[RequestParamNewPUK] = %* puk
     self.resumeFlow(payload)
 
-  proc enterPin*(self: Service, pin: string) =
+  proc enterPin*(self: Service, pin: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if pin.len == 0:
       error "empty pin provided"
       return
@@ -433,7 +438,7 @@ QtObject:
     }
     self.resumeFlow(payload)
 
-  proc storePuk*(self: Service, puk: string) =
+  proc storePuk*(self: Service, puk: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if puk.len == 0:
       error "empty puk provided"
       return
@@ -444,7 +449,7 @@ QtObject:
     }
     self.resumeFlow(payload)
 
-  proc enterPuk*(self: Service, puk: string) =
+  proc enterPuk*(self: Service, puk: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if puk.len == 0:
       error "empty puk provided"
       return
@@ -453,7 +458,7 @@ QtObject:
     }
     self.resumeFlow(payload)
 
-  proc storePairingCode*(self: Service, pairingCode: string) =
+  proc storePairingCode*(self: Service, pairingCode: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if pairingCode.len == 0:
       error "empty pairing code provided"
       return
@@ -464,7 +469,7 @@ QtObject:
     }
     self.resumeFlow(payload)
 
-  proc storeSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string) =
+  proc storeSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string) {.featureGuard(KEYCARD_ENABLED).}  =
     if seedPhrase.len == 0:
       error "empty seed phrase provided"
       return
@@ -476,28 +481,28 @@ QtObject:
     }
     self.resumeFlow(payload)
 
-  proc resumeCurrentFlow*(self: Service) =
+  proc resumeCurrentFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     var payload = %* { }
     self.resumeFlow(payload)
 
-  proc reRunCurrentFlow*(self: Service) =
+  proc reRunCurrentFlow*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     let tmpFlow = self.currentFlow
     self.cancelCurrentFlow()
     self.currentFlow = tmpFlow
     self.startFlow(self.setPayloadForCurrentFlow)
 
-  proc reRunCurrentFlowLater*(self: Service) =
+  proc reRunCurrentFlowLater*(self: Service) {.featureGuard(KEYCARD_ENABLED).}  =
     let tmpFlow = self.currentFlow
     self.cancelCurrentFlow()
     self.currentFlow = tmpFlow
     self.runTimer(ReRunCurrentFlowInterval, $TimerReason.ReRunCurrentFlowLater)
 
-  proc registerForKeycardAvailability*(self: Service, p: proc()) =
+  proc registerForKeycardAvailability*(self: Service, p: proc()) {.featureGuard(KEYCARD_ENABLED).}  =
     if not self.busy:
-      error "registerForKeycardAvailability can be called only when keycard is busy"
+      echo "registerForKeycardAvailability can be called only when keycard is busy"
       return
     self.registeredCallback = p
     self.runTimer(CheckKeycardAvailabilityInterval, $TimerReason.WaitForKeycardAvailability)
 
-  proc resetAPI*(self: Service) =
+  proc resetAPI*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     keycard_go.ResetAPI()
