@@ -241,10 +241,11 @@ proc mainProc() =
     singleInstance.delete()
     app.delete()
 
-  # Checks below must be always after "defer", in case anything fails destructors will freed a memory.
-  if singleInstance.secondInstance():
-    info "Terminating the app as the second instance"
-    quit()
+  featureGuard SINGLE_STATUS_INSTANCE_ENABLED:
+    # Checks below must be always after "defer", in case anything fails destructors will freed a memory.
+    if singleInstance.secondInstance():
+      info "Terminating the app as the second instance"
+      quit()
 
   # We need these global variables in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
