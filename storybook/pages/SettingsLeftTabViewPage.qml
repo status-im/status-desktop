@@ -22,6 +22,7 @@ SplitView {
         SplitView.fillHeight: true
 
         model: SettingsEntriesModel {
+            isKeycardEnabled: ctrlIsKeycardEnabled.checked
             showWalletEntries: ctrlShowWalletEntries.checked
             showBackUpSeed: ctrlShowBackUpSeed.checked
             syncingBadgeCount: ctrlSyncingBadgeCount.value
@@ -70,6 +71,11 @@ SplitView {
                 id: ctrlShowWalletEntries
                 checked: true
                 text: "Show wallet entries"
+            }
+            Switch {
+                id: ctrlIsKeycardEnabled
+                checked: true
+                text: "Is keycard enabled"
             }
         }
     }

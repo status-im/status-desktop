@@ -176,6 +176,7 @@ SplitView {
 
         biometricsAvailable: ctrlBiometrics.checked
         isBiometricsLogin: ctrlTouchIdUser.checked
+        isKeycardEnabled: ctrlKeycard.checked
 
         onBiometricsRequested: (profileId) => biometricsPopup.open()
         onDismissBiometricsRequested: biometricsPopup.close()
@@ -444,6 +445,12 @@ SplitView {
                     checked: true
                 }
 
+                Switch {
+                    id: ctrlKeycard
+                    text: "Keycard enabled"
+                    checked: true
+                }
+
                 ToolSeparator {}
 
                 Switch {
@@ -663,6 +670,7 @@ SplitView {
         property alias useBiometrics: ctrlBiometrics.checked
         property alias showLoginScreen: ctrlLoginScreen.checked
         property alias useTouchId: ctrlTouchIdUser.checked
+        property alias keycardEnabled: ctrlKeycard.checked
     }
 }
 

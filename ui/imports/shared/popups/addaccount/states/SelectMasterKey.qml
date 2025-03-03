@@ -15,6 +15,9 @@ Item {
     id: root
 
     property AddAccountStore store
+
+    property bool isKeycardEnabled: true
+
     signal continueOnKeycard()
 
     Column {
@@ -96,6 +99,7 @@ Item {
 
         StatusListItem {
             title: qsTr("Use Keycard")
+            enabled: root.isKeycardEnabled
             sensor.enabled: false
             sensor.hoverEnabled: false
             statusListItemIcon.enabled: false

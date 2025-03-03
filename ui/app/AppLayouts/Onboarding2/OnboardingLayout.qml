@@ -19,6 +19,8 @@ Page {
 
     property bool biometricsAvailable: Qt.platform.os === Constants.mac
 
+    property bool isKeycardEnabled: true
+
     property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
     property bool networkChecksEnabled: true
@@ -149,6 +151,7 @@ Page {
 
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
         isBiometricsLogin: root.isBiometricsLogin
+        isKeycardEnabled: root.isKeycardEnabled
         biometricsAvailable: root.biometricsAvailable
         networkChecksEnabled: root.networkChecksEnabled
 
