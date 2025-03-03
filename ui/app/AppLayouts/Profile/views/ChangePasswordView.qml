@@ -136,7 +136,7 @@ SettingsContentBase {
                             default:
                                 Global.displayToastMessage(
                                             qsTr("Failed to disable biometric login and transaction authentication for this device"),
-                                            errorDescription, "warning", false, Constants.ephemeralNotificationType.danger, "")
+                                            "", "warning", false, Constants.ephemeralNotificationType.danger, "")
                             }
 
                             enableBiometricsPopup.close()
