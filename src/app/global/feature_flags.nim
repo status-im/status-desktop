@@ -26,6 +26,7 @@ const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = false
 
 # Compile time feature flags
 const DEFAULT_FLAG_KEYCARD_ENABLED = true
+const DEFAULT_FLAG_THREADPOOL_ENABLED = true
 
 # Public feature flags
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED)
@@ -36,26 +37,37 @@ featureFlag("PAYMENT_REQUEST_ENABLED",        DEFAULT_FLAG_PAYMENT_REQUEST_ENABL
 featureFlag("SIMPLE_SEND_ENABLED",            DEFAULT_FLAG_SIMPLE_SEND_ENABLED)
 featureFlag("ONBOARDING_V2_ENABLED",          DEFAULT_FLAG_ONBOARDING_V2_ENABLED)
 featureFlag("KEYCARD_ENABLED",                DEFAULT_FLAG_KEYCARD_ENABLED, true)
+featureFlag("THREADPOOL_ENABLED",             DEFAULT_FLAG_THREADPOOL_ENABLED, true)
 
 # The `featureGuard` macro conditionally replaces the guarded code
 # There are two main usages:
 # 1. With a statement list:
 #    featureGuard(FEATURE_FLAG):
 #      echo "Feature is enabled"
+#    else:
+#      echo "Feature is disabled"
 # 2. As a pragma:
 #    proc myProc(): void {.featureGuard(FEATURE_FLAG).} = echo "Feature is enabled"
-macro featureGuard*(flag: static bool, n: untyped): untyped =
-  if not flag:
-    result = n
-    if n.kind == nnkProcDef:
-      n[6] = newStmtList(
-        newCall(bindSym"echo", newLit("Warning! Calling a disabled feature")),
-        newTree(nnkDiscardStmt, newEmptyNode())
-      ) # Replace body with `discard`
+macro featureGuard*(flag: static bool, n: varargs[untyped]): untyped =
+  if n.len == 2 and n[1].kind == nnkElse:
+    if flag:
+      result = n[0]
     else:
-      result = newStmtList()
+      result = n[1][0]
   else:
-    result = n
+    if not flag:
+      if n[0].kind == nnkStmtList:
+        result = newStmtList()
+      elif n[0].kind == nnkProcDef:
+        result = n[0]
+        result[6] = newStmtList(
+          newCall(bindSym"echo", newLit("Warning! Calling a disabled feature")),
+          newTree(nnkDiscardStmt, newEmptyNode())
+        ) # Replace body with `discard`
+      else:
+        result = newStmtList()
+    else:
+      result = n[0]
 
 QtObject:
   type FeatureFlags* = ref object of QObject
