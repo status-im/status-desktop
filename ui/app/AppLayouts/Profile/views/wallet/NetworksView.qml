@@ -8,6 +8,7 @@ import shared.panels 1.0
 
 import AppLayouts.Profile.popups.networkSettings 1.0
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
