@@ -106,7 +106,7 @@ Keychain::Status authenticate(const QString &reason, LAContext **context)
     loop.exec();
 
     if (!success && callbackError) {
-        qWarning() << "authentication failed:"
+        qWarning() << "biometrics authentication failed"
                    << QString::fromNSString(callbackError.localizedDescription);
         return convertError(callbackError);
     }
@@ -166,6 +166,8 @@ Keychain::Status Keychain::saveCredential(const QString &account, const QString 
     CFRelease(accessControl);
     if (status == errSecSuccess) {
         emit credentialSaved(account);
+    } else {
+        qWarning() << "failed to save credential" << QString("status: %1").arg(status);
     }
 
     return convertStatus(status);
@@ -181,6 +183,8 @@ Keychain::Status Keychain::deleteCredential(const QString &account)
     const auto status = SecItemDelete((__bridge CFDictionaryRef) query);
     if (status == errSecSuccess) {
         emit credentialDeleted(account);
+    } else {
+        qWarning() << "failed to delete credential" << QString("status: %1").arg(status);
     }
 
     return convertStatus(status);
@@ -216,6 +220,10 @@ Keychain::Status Keychain::getCredential(const QString &reason, const QString &a
         auto dataString = [[NSString alloc] initWithData:(__bridge NSData *) data
                                                 encoding:NSUTF8StringEncoding];
         *out = QString::fromNSString(dataString);
+    }
+
+    if (status != errSecSuccess) {
+        qWarning() << "failed to get credential" << QString("status: %1").arg(status);
     }
 
     return convertStatus(status);
