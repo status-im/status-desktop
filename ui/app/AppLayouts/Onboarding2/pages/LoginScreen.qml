@@ -33,6 +33,7 @@ OnboardingPage {
 
     // allows to set if currently selected account can be logged in using biometrics
     property bool isBiometricsLogin
+    property bool isKeycardEnabled: true
 
     readonly property string selectedProfileKeyId: loginUserSelector.selectedProfileKeyId
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
@@ -88,7 +89,7 @@ OnboardingPage {
         property bool biometricsSuccessful
         property bool biometricsFailed
 
-        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount
+        readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount && root.isKeycardEnabled
         readonly property bool isWrongKeycard: !!root.keycardUID && loginUserSelector.selectedProfileKeyId !== root.keycardUID
 
         readonly property Settings settings: Settings {

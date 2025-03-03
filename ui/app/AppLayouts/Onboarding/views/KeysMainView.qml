@@ -22,6 +22,7 @@ Item {
     id: root
 
     property StartupStore startupStore
+    property bool isKeycardEnabled: true
 
     Component.onCompleted: {
         if (button1.visible) {
@@ -245,7 +246,7 @@ Item {
             objectName: "iDontHaveOtherDeviceButton"
             Layout.alignment: Qt.AlignHCenter
             visible: text !== ""
-            color: Theme.palette.primaryColor1
+            color: enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             font.pixelSize: Constants.onboarding.fontSize3
             MouseArea {
                 anchors.fill: parent
@@ -383,6 +384,7 @@ Item {
             PropertyChanges {
                 target: button2
                 text: qsTr("Login with Keycard")
+                enabled: root.isKeycardEnabled
             }
             PropertyChanges {
                 target: button3
@@ -418,6 +420,7 @@ Item {
             PropertyChanges {
                 target: button2
                 text: qsTr("Generate keys for a new Keycard")
+                enabled: root.isKeycardEnabled
             }
             PropertyChanges {
                 target: button3

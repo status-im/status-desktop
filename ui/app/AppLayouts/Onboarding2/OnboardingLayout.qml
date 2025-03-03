@@ -19,6 +19,8 @@ Page {
     required property OnboardingStore onboardingStore
     required property Keychain keychain
 
+    property bool isKeycardEnabled: true
+
     property bool networkChecksEnabled: true
 
     property alias keycardPinInfoPageDelay: onboardingFlow.keycardPinInfoPageDelay
@@ -141,6 +143,7 @@ Page {
         displayKeycardPromoBanner: !d.settings.keycardPromoShown
 
         biometricsAvailable: root.keychain.available
+        isKeycardEnabled: root.isKeycardEnabled
         networkChecksEnabled: root.networkChecksEnabled
 
         generateMnemonic: root.onboardingStore.generateMnemonic

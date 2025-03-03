@@ -20,6 +20,7 @@ OnboardingBasePage {
 
     property StartupStore startupStore: StartupStore {}
     property UtilsStore utilsStore
+    property bool isKeycardEnabled: false
 
     backButtonVisible: root.startupStore.currentStartupState ? root.startupStore.currentStartupState.displayBackButton
                                                              : false
@@ -234,6 +235,7 @@ following the \"Add existing Status user\" flow, using your recovery phrase.")
         id: keysMainViewComponent
         KeysMainView {
             startupStore: root.startupStore
+            isKeycardEnabled: root.isKeycardEnabled
         }
     }
 

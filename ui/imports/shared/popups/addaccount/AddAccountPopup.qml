@@ -20,6 +20,8 @@ StatusModal {
 
     property AddAccountStore store: AddAccountStore { }
 
+    property bool isKeycardEnabled: true
+
     width: Constants.addAccountPopup.popupWidth
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -219,6 +221,7 @@ StatusModal {
             Component {
                 id: selectMasterKeyComponent
                 SelectMasterKey {
+                    isKeycardEnabled: root.isKeycardEnabled
                     height: Constants.addAccountPopup.contentHeight1
                     store: root.store
                     onContinueOnKeycard: {

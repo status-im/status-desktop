@@ -28,6 +28,7 @@ OnboardingStackView {
     required property bool displayKeycardPromoBanner
     required property bool networkChecksEnabled
 
+    property bool isKeycardEnabled: true
     property int keycardPinInfoPageDelay: 2000
 
     // functions
@@ -190,6 +191,7 @@ OnboardingStackView {
             keycardRemainingPukAttempts: root.remainingPukAttempts
 
             loginAccountsModel: root.loginAccountsModel
+            isKeycardEnabled: root.isKeycardEnabled
             isBiometricsLogin: root.biometricsAvailable &&
                                root.isBiometricsLogin(loginScreen.selectedProfileKeyId)
 
@@ -237,6 +239,8 @@ OnboardingStackView {
         id: createProfilePage
 
         CreateProfilePage {
+            isKeycardEnabled: root.isKeycardEnabled
+
             onCreateProfileWithPasswordRequested: root.push(createNewProfileFlow)
             onCreateProfileWithSeedphraseRequested: {
                 d.flow = Onboarding.OnboardingFlow.CreateProfileWithSeedphrase
@@ -252,6 +256,7 @@ OnboardingStackView {
 
         NewAccountLoginPage {
             networkChecksEnabled: root.networkChecksEnabled
+            isKeycardEnabled: root.isKeycardEnabled
 
             onLoginWithSyncingRequested: root.push(logInBySyncingFlow)
             onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
