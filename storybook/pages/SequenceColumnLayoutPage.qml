@@ -23,13 +23,13 @@ Item {
             color: "red"
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {}
 
         Content {
             color: "green"
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {}
 
         Content {
             color: "blue"
@@ -56,3 +56,4 @@ Item {
 }
 
 // category: Panels
+// status: good

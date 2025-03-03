@@ -407,7 +407,7 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {}
 
         AirdropRecipientsSelector {
             id: airdropRecipientsSelector
@@ -561,7 +561,9 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {
+            Layout.bottomMargin: -showFees.topPadding
+        }
 
         StatusSwitch {
             id: showFees
@@ -577,7 +579,9 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {
+            Layout.topMargin: -showFees.bottomPadding
+        }
 
         FeesBox {
             id: feesBox

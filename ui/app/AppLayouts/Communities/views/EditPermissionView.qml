@@ -379,7 +379,7 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator {}
+        SequenceColumnLayoutSeparator {}
 
         StatusFlowSelector {
             id: permissionsSelector
@@ -466,7 +466,7 @@ StatusScrollView {
             }
         }
 
-        SequenceColumnLayout.Separator { visible: root.showChannelSelector }
+        SequenceColumnLayoutSeparator { visible: root.showChannelSelector }
 
         StatusItemSelector {
             id: inSelector
