@@ -15,10 +15,8 @@ import Storybook 1.0
 import Models 1.0
 
 import mainui 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Chat.popups 1.0
-import AppLayouts.stores 1.0 as AppLayoutStores
 import shared.stores 1.0 as SharedStores
 
 SplitView {
@@ -72,15 +70,13 @@ SplitView {
                 formatCurrencyAmount: currenciesStore.formatCurrencyAmount
                 flatNetworksModel: d.flatNetworks
                 accountsModel: d.accounts
-                assetsModel: tokenAdaptor.outputAssetsModel
+                assetsModel: paymentRequestAdaptor.outputModel
 
                 readonly property SharedStores.CurrenciesStore currenciesStore: SharedStores.CurrenciesStore {}
-                readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
-                    assetsModel: null
+                readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
                     flatNetworksModel: d.flatNetworks
-                    currentCurrency: paymentRequestModal.currentCurrency
                     plainTokensBySymbolModel: TokensBySymbolModel {}
-                    showAllTokens: true
+                    selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
                 }
 
                 Connections {
