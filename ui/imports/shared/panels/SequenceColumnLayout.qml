@@ -22,13 +22,6 @@ ColumnLayout {
 
     spacing: 0
 
-    component Separator: Rectangle {
-        Layout.leftMargin: parent.lineMargin
-        Layout.preferredWidth: parent.lineWidth
-        Layout.preferredHeight: parent.lineHeight
-        color: Theme.palette.baseColor4
-    }
-
     RowLayout {
         visible: !!root.title
 
@@ -50,7 +43,7 @@ ColumnLayout {
 
                 color: "transparent"
                 border.width: root.lineWidth
-                border.color: Theme.palette.baseColor4
+                border.color: Theme.palette.separator
             }
         }
 
