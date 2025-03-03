@@ -76,9 +76,25 @@ StatusDialog {
     QtObject {
         id: d
 
+        function resetSelectedToken() {
+            root.selectedTokenKey = Constants.ethToken
+        }
+
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"
+            onValueChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                } else {
+                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+                }
+            }
+            onAvailableChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                }
+            }
         }
 
         readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item && selectedHolding.available
