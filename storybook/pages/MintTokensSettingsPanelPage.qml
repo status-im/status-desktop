@@ -194,7 +194,7 @@ SplitView {
                 RadioButton {
                     text: "Set all to 'In progress'"
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(1)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.InProgress)
                 }
 
                 RadioButton {
@@ -203,7 +203,7 @@ SplitView {
                     text: "Set all to 'Error'"
                     checked: true
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(0)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.Failed)
                 }
 
                 RadioButton {
@@ -211,7 +211,7 @@ SplitView {
 
                     text: "Set all to 'Deployed'"
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(2)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.Completed)
                 }
             }
         }
