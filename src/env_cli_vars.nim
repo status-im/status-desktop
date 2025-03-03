@@ -276,12 +276,12 @@ type StatusDesktopConfig = object
     name: "USE_MOCKED_KEYCARD"
     abbr: "use-mocked-keycard" .}: bool
   httpApiEnabled* {.
-    defaultValue: getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    defaultValue: CONNECTOR_ENABLED
     desc: "Enable HTTP RPC API"
     name: "HTTP_API"
     abbr: "http-api" .}: bool
   wsApiEnabled* {.
-    defaultValue: getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    defaultValue: CONNECTOR_ENABLED
     desc: "Enable WebSocket RPC API"
     name: "WS_API"
     abbr: "ws-api" .}: bool

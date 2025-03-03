@@ -1,9 +1,12 @@
 import json
-import keycard_go
+import app/global/feature_flags
+
+featureGuard KEYCARD_ENABLED:
+  import keycard_go
 
 var rpcCounter: int = 0
 
-proc callRPC*(methodName: string, params: JsonNode = %*{}): string  =
+proc callRPC*(methodName: string, params: JsonNode = %*{}): string  {.featureGuard(KEYCARD_ENABLED).}=
     rpcCounter.inc
     let request = %*{
       "id": rpcCounter,
