@@ -93,7 +93,7 @@ StatusDialog {
             if (amountToSend.balanceExceeded && !isCollectiblesTransfer)
                 return Constants.SendAmountExceedsBalance
 
-            if (popup.bestRoutes && popup.bestRoutes.count === 0
+            if (!!popup.bestRoutes && popup.bestRoutes.count === 0
                     && !amountToSend.empty && recipientInputLoader.ready
                     && !popup.isLoading)
                 return Constants.NoRoute
@@ -181,6 +181,8 @@ StatusDialog {
                 popup.isLoading = true
             }
             d.uuid = Utils.uuid()
+            popup.bestRoutes = null
+            d.sendError = ""
             d.routerError = ""
             d.routerErrorDetails = ""
             debounceRecalculateRoutesAndFees()
@@ -594,7 +596,7 @@ StatusDialog {
 
                         Layout.preferredWidth: implicitWidth
                         Layout.alignment: Qt.AlignRight
-                        visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
+                        visible: !popup.isLoading && !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                  popup.bestRoutes.count > 0 && amountToSend.ready
                         isLoading: popup.isLoading
                         selectedHolding: d.selectedHolding
