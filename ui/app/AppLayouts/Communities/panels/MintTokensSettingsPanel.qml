@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
@@ -50,7 +51,17 @@ StackView {
 
     // Network related properties:
     property var flatNetworks
-    readonly property int ownerTokenChainId: SQUtils.ModelUtils.get(root.tokensModel, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner).chainId ?? 0
+    readonly property int ownerTokenChainId: {
+        root.tokensModel.ModelCount.count
+
+        const getChainId = (privilegesLevel) =>
+            SQUtils.ModelUtils.getByKey(root.tokensModel, "privilegesLevel",
+                                        privilegesLevel, "chainId")
+
+        return getChainId(Constants.TokenPrivilegesLevel.Owner) ||
+                getChainId(Constants.TokenPrivilegesLevel.TMaster)
+    }
+
     readonly property int chainIndex: NetworkModelHelpers.getChainIndexByChainId(root.flatNetworks, root.ownerTokenChainId)
     readonly property string chainName: NetworkModelHelpers.getChainName(root.flatNetworks, chainIndex)
     property string enabledChainIds
