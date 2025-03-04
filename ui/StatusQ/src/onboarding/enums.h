@@ -27,12 +27,6 @@ public:
         return result;
     }
 
-    enum class PrimaryFlow {
-        Unknown,
-        CreateProfile,
-        Login
-    };
-
     // NOTE: Keep in sync with OnboardingFlow in src/app/modules/onboarding/module.nim
     enum class OnboardingFlow {
         Unknown,
@@ -100,7 +94,6 @@ public:
     };
 
 private:
-    Q_ENUM(PrimaryFlow)
     Q_ENUM(OnboardingFlow)
     Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
