@@ -88,7 +88,12 @@ endif ()
 if (${STATUSQ_SHADOW_BUILD})
     qt_add_big_resources(STATUSQ_QRC_COMPILED
             src/statusq.qrc
-            src/assets.qrc)
+            src/assets/fonts/fonts.qrc
+            src/assets/img/img.qrc
+            src/assets/png/png.qrc
+            src/assets/twemoji/twemoji.qrc
+            src/assets/twemoji/twemoji-big.qrc
+            src/assets/twemoji/twemoji-svg.qrc)
 endif()
 
 add_library(StatusQ SHARED
