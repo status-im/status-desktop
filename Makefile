@@ -471,7 +471,7 @@ $(QRCODEGEN): | deps
 	+ cd vendor/QR-Code-generator/c && \
 	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
-export FLEETS_FILE := ./fleets.json
+FLEETS_FILE := ./fleets.json
 $(FLEETS_FILE):
 	echo -e $(BUILD_MSG) "Getting latest $(FLEETS_FILE)"
 	curl -s https://fleets.status.im/ > $(FLEETS_FILE)
@@ -559,7 +559,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS_FILE) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
@@ -692,7 +692,6 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
-	cp -R $(FLEETS_FILE) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 
@@ -758,7 +757,7 @@ $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_la
 	rm -rf pkg/*.exe tmp/windows/dist
 	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
-	cp status.ico status.png resources.rcc $(FLEETS_FILE) $(OUTPUT)/resources/
+	cp status.ico status.png resources.rcc $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
 	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
