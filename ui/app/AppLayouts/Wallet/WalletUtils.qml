@@ -79,7 +79,7 @@ QtObject {
 
     function formatEstimatedTime(estimatedTime) {
         if (estimatedTime === 0 ) {
-            return qsTr("Unkown")
+            return qsTr("Unknown")
         }
         if (estimatedTime >= 60) {
             return qsTr(">60s")

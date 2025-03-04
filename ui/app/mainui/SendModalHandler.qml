@@ -1035,7 +1035,7 @@ QtObject {
                             }
                             return WalletUtils.formatEstimatedTime(txPathUnderReviewEntry.item.txEstimatedTime)
                         }
-                        return ""
+                        return WalletUtils.formatEstimatedTime(0)
                     }
 
                     loginType: root.loginType
