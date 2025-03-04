@@ -68,7 +68,13 @@ Item {
     }
 
     onVisibleChanged: if(visible) d.draw()
-    onErrorModeChanged: if(errorMode) d.draw()
+    onIsLoadingChanged: {
+        if (isLoading) {
+            canvas.clear()
+            return
+        }
+        d.draw()
+    }
 
     height: visible ? networkCardsLayout.height : 0
 
