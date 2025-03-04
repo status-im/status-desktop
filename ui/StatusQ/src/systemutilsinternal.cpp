@@ -18,7 +18,9 @@ QString SystemUtilsInternal::qtRuntimeVersion() const {
 
 void SystemUtilsInternal::restartApplication() const
 {
+#if QT_CONFIG(process)
     QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+#endif
     QMetaObject::invokeMethod(QCoreApplication::instance(), "quit", Qt::QueuedConnection);
 }
 

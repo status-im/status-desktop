@@ -365,7 +365,9 @@ void dos_qguiapplication_quit()
 
 void dos_qguiapplication_restart()
 {
+#if QT_CONFIG(process)
     QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+#endif
     dos_qguiapplication_quit();
 }
 
