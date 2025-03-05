@@ -244,12 +244,14 @@ StatusDialog {
         // Holds if the collectible entry is valid
         readonly property bool selectedCollectibleEntryValid: selectedCollectibleEntry.available &&
                                                               !!selectedCollectibleEntry.item
-
-        /** Handling the case when an asset is selcted from dropdown
+        /** Handling the case when an asset is selected from dropdown
             to reset the harcoded "1" set for collectibles
         **/
         onSelectedCollectibleEntryValidChanged: {
-            if(!selectedCollectibleEntryValid && root.selectedRawAmount === "1") {
+            if(selectedCollectibleEntryValid) {
+                root.selectedRawAmount = "1"
+            }
+            else if(!selectedCollectibleEntryValid && root.selectedRawAmount === "1") {
                 amountToSend.clear()
             }
         }
@@ -328,7 +330,7 @@ StatusDialog {
         readonly property bool errNotEnoughToken: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughTokenBalance
 
         function setRawValue() {
-            if (!selectedRawAmount) return
+            if (selectedRawAmount === "") return
 
             const amountChanged = (amountToSend.amount !== root.selectedRawAmount) || amountToSend.empty
             const validSelection = (selectedAssetEntryValid && amountToSend.multiplierIndex !== 0) || selectedCollectibleEntryValid
@@ -345,7 +347,6 @@ StatusDialog {
             } else if(tokenType === Constants.TokenType.ERC721) {
                 root.sendType =  Constants.SendType.ERC721Transfer
             }
-            root.selectedRawAmount = "1"
             root.selectedTokenKey = key
             amountToSend.forceActiveFocus()
         }
