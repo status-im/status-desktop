@@ -760,10 +760,24 @@ QtObject {
                     }
                 }
 
-                Component.onCompleted: {
-                    root.ensNameResolved.connect(ensNameResolved)
-                    root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
-                    root.transactionStoreNew.transactionSent.connect(transactionSent)
+                readonly property Connections rootConnections: Connections {
+                    target: root
+                    function onEnsNameResolved(resolvedPubKey, resolvedAddress, uuid) {
+                        simpleSendModal.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
+                    }
+                }
+
+                readonly property Connections storeConnections: Connections {
+                    target: root.transactionStoreNew
+
+                    function onSuggestedRoutesReady(uuid, pathModel, errCode, errDescription) {
+                        handler.routesFetched(uuid, pathModel, errCode, errDescription)
+                    }
+
+                    function onTransactionSent(uuid, chainId, approvalTx, txHash, error) {
+                        handler.transactionSent(uuid, chainId, approvalTx, txHash, error)
+                    }
+
                 }
 
                 function resetRouterValues() {

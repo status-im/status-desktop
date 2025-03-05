@@ -166,6 +166,17 @@ QtObject {
         id: d
 
         readonly property var userProfileInst: userProfile
+        readonly property Connections mainModuleConnections: Connections {
+            target: root.mainModuleInst
+            
+            function onResolvedENS(resolvedPubKey, resolvedAddress, uuid) {
+                root.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
+            }
+
+            function onOpenUrl(url) {
+                root.openUrl(url)
+            }
+        }
     }
 
     function getEtherscanTxLink(chainID) {
@@ -259,7 +270,5 @@ QtObject {
     }
 
     signal ensNameResolved(string resolvedPubKey, string resolvedAddress, string uuid)
-    Component.onCompleted: {
-        mainModuleInst.resolvedENS.connect(ensNameResolved)
-    }
+    signal openUrl(string link)
 }
