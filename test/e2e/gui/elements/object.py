@@ -107,8 +107,8 @@ class QObject:
             self,
             x: int = None,
             y: int = None,
-            button=None,
-            timeout=1
+            button=None
+            # timeout=1
     ):
         driver.mouseClick(
             self.object,
@@ -119,11 +119,11 @@ class QObject:
         LOG.info('%s: is clicked with Qt.LeftButton', self)
         # LOG.info("Checking if application context is frozen")
 
-        if timeout is None:
-            pass
+        # if timeout is None:
+        #     pass
 
-        if timeout is not None:
-            pass
+        # if timeout is not None:
+        #     pass
             # TODO: enable after fixing https://github.com/status-im/status-desktop/issues/15345
             # if not isFrozen(timeout):
             #    pass

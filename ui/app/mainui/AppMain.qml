@@ -2658,6 +2658,7 @@ Item {
             colorHash: appMain.profileStore.colorHash
             onClosed: appMainLocalSettings.introduceYourselfPopupSeen = true
             onAccepted: Global.changeAppSectionBySectionType(Constants.appSection.profile)
+            onOpened: console.warn("!!! INTRODUCE YOURSELF")
         }
     }
 

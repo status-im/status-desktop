@@ -20,4 +20,4 @@ class SwitchWakuModePopup(BasePopup):
     @allure.step('Click i understand button')
     def confirm(self):
         # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._i_understand_button.click(timeout=None)
+        self._i_understand_button.click()

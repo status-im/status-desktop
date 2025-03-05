@@ -1,0 +1,10 @@
+[General]
+activeSection=0x02c257a3701e56bd4a5f5911c7c55cc3fdf9b52b2a165a6289a15a2fbe764fcded
+hiddenCommunityBackUpBanners=@Variant(\0\0\0\x8a\0\0\0\x7f\0\0\0\tQJSValue\0\0\0\0\0\0\0\0\t\0\0\0\0)
+hiddenCommunityWelcomeBanners=@Variant(\0\0\0\x8a\0\0\0\x7f\0\0\0\tQJSValue\0\0\0\0\0\0\0\0\t\0\0\0\0)
+hideSignPhraseModal=true
+recentEmojis=@Variant(\0\0\0\x8a\0\0\0\x7f\0\0\0\tQJSValue\0\0\0\0\0\0\0\0\t\0\0\0\0)
+
+[LastSectionChat]
+0x02c257a3701e56bd4a5f5911c7c55cc3fdf9b52b2a165a6289a15a2fbe764fcded=0x02c257a3701e56bd4a5f5911c7c55cc3fdf9b52b2a165a6289a15a2fbe764fcded97ed2261-adae-4917-9c4d-9845459b1b74
+0x04213229a3c4b420e7a95db207cbe341635799cb3b4810c8e401925f8810f5da24089e00b39b43efef6479cf9627b7de89a45aea11a62407fa02287ee0bbca8e61=0x04932b7353f3b5aeb05e9b3558084a917b3e88bd54c6a8f66911bbabfc4edbdfa0cee6cc9a11d5db358ee6ab03d81a10d8742c04f0bd667e08a982d7720eda49c2
