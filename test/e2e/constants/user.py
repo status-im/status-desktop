@@ -78,6 +78,8 @@ user_account_two = UserAccount('athletic', '0000000000', [
     'measure', 'cube', 'cousin', 'debris', 'slam', 'ignore', 'seven', 'hat', 'satisfy', 'frown', 'casino', 'inflict'
 ], '0x99C096bB5F12bDe37DE9dbee8257Ebe2a5667C46')
 
+community_member = UserAccount('member', '1111111111', [None], None)
+
 
 @dataclass
 class WalletAccount:

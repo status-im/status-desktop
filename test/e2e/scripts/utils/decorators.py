@@ -22,7 +22,6 @@ def handle_settings_opening(view_class, menu_item):
                 return func(self)
             except (LookupError, AssertionError) as ex:
                 if click_attempts:
-
                     return func(self, click_attempts - 1)
                 else:
                     raise ex
