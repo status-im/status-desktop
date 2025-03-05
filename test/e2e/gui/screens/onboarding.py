@@ -38,7 +38,7 @@ class AllowNotificationsView(QObject):
     @allure.step("Start using Status")
     def start_using_status(self):
         # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._start_using_status_button.click(timeout=30)
+        self._start_using_status_button.click()
         self.wait_until_hidden()
 
 
@@ -535,7 +535,7 @@ class YourEmojihashAndIdenticonRingView(OnboardingView):
     @allure.step('Click next in your emojihash and identicon ring view')
     def next(self):
         # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._next_button.click(timeout=30)
+        self._next_button.click()
         time.sleep(1)
         if configs.system.get_platform() == "Darwin":
             return AllowNotificationsView().wait_until_appears()
@@ -817,6 +817,7 @@ class ReturningLoginView(QObject):
         self.login_password_input.click()
         self.login_password_input.text = account.password
         self.login_button.click()
+        return SplashScreen()
 
     @allure.step('Add existing user')
     def add_existing_status_user(self):

@@ -1,3 +1,5 @@
+import time
+
 import allure
 import pytest
 import configs
@@ -17,9 +19,10 @@ from gui.main_window import MainWindow
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703274', 'Member role cannot remove category')
 @pytest.mark.case(703272, 703273, 703274)
 @pytest.mark.communities
-@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
-def test_member_role_cannot_add_edit_or_delete_category(main_screen: MainWindow):
+@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'member'])
+@pytest.mark.parametrize('user_account', [constants.user.community_member])
+def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, user_account):
+
     with step('Choose community user is not owner of'):
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
 
