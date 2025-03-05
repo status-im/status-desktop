@@ -4,7 +4,8 @@
 	branch = status-desktop
 [submodule "vendor/nimqml"]
 	path = vendor/nimqml
-	url = https://github.com/status-im/nimqml.git
+	url = https://github.com/arnetheduck/nimqml-miqt-poc.git
+	branch = status-desktop
 [submodule "vendor/uuids"]
 	path = vendor/uuids
 	url = https://github.com/pragmagic/uuids.git
@@ -119,3 +120,7 @@
 	url = https://github.com/nim-lang/checksums.git
 	ignore = untracked
 	branch = master
+[submodule "vendor/nim-miqt-poc"]
+	path = vendor/nim-miqt-poc
+	url = https://github.com/arnetheduck/nim-miqt-poc
+	branch = qt-5.15-status-desktop

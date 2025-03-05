@@ -31,6 +31,10 @@ elif defined(windows):
   --tlsEmulation:off
   switch("passL", "-Wl,-as-needed")
 else:
+  switch("passL", "-fPIC")
+  switch("passC", "-fPIC")
+  switch("passC", "-fvisibility=hidden")
+
   --dynlibOverrideAll # don't use dlopen()
   # dynamically link these libs, since we're opting out of dlopen()
   switch("passL", "-l:libcrypto.so.1.1")
@@ -56,7 +60,7 @@ switch("warning", "UnreachableElse:off")
 
 # Those are popular to miss in our app, and quickly make build log unreadable, so we want to prevent them
 switch("warningAsError", "UseBase:on")
-switch("warningAsError", "UnusedImport:on")
+#switch("warningAsError", "UnusedImport:on")
 switch("warningAsError", "Deprecated:on")
 switch("warningAsError", "HoleEnumConv:on")
 
