@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, sequtils, logging
+import NimQml, Tables, strutils, sequtils, chronicles
 
 type
   ModelRole {.pure.} = enum

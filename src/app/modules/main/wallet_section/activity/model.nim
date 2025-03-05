@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, stew/shims/strformat, sequtils, logging, options
+import NimQml, Tables, strutils, stew/shims/strformat, sequtils, chronicles, options
 
 import ./entry
 

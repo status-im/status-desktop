@@ -1,5 +1,5 @@
 import NimQml, Tables, strutils, stew/shims/strformat, sequtils, stint, json
-import logging
+import chronicles
 
 import ./collectibles_entry
 import backend/collectibles as backend_collectibles

@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, strutils
+import NimQml, chronicles, std/json, sequtils, strutils
 import stint
 
 import app/modules/shared_models/collectibles_entry
@@ -64,11 +64,11 @@ QtObject:
     let res = fromJson(response, backend_collectibles.GetCollectiblesByUniqueIDResponse)
 
     if res.errorCode != ErrorCodeSuccess:
-      error "error fetching collectible details: ", res.errorCode
+      error "error fetching collectible details: ", code = res.errorCode
       return
 
     if len(res.collectibles) != 1:
-      error "unexpected number of items fetching collectible details: ", len(res.collectibles)
+      error "unexpected number of items fetching collectible details: ", len = len(res.collectibles)
       return
 
     let collectible = res.collectibles[0]
@@ -109,7 +109,7 @@ QtObject:
     discard backend_collectibles.fetchCollectionSocialsAsync(id.contractID)
     if response.error != nil:
       self.setIsDetailedEntryLoading(false)
-      error "error fetching collectible details: ", response.error
+      error "error fetching collectible details: ", error = response.error
       return
 
   proc resetDetailedCollectible*(self: Controller) {.slot.} =
