@@ -94,7 +94,7 @@ SplitView {
             communityLogo: ModelsData.collectibles.doodles
             communityColor: "#FFC4E9"
             communityName: "Doodles" // It cannot be changed since owner token and tMaster token in tokenModel used are related to the `Doodles` community
-            communityId: ""
+            communityId: "ddls"
 
             // Profile type:
             isAdmin: adminChecked.checked
@@ -194,7 +194,7 @@ SplitView {
                 RadioButton {
                     text: "Set all to 'In progress'"
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(1)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.InProgress)
                 }
 
                 RadioButton {
@@ -203,7 +203,7 @@ SplitView {
                     text: "Set all to 'Error'"
                     checked: true
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(0)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.Failed)
                 }
 
                 RadioButton {
@@ -211,7 +211,7 @@ SplitView {
 
                     text: "Set all to 'Deployed'"
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(2)
+                    onClicked: mintedTokensModel.changeAllMintingStates(Constants.ContractTransactionStatus.Completed)
                 }
             }
         }

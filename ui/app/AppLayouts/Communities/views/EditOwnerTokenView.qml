@@ -280,13 +280,8 @@ StatusScrollView {
             selection: !!ownerToken.chainId ? [ownerToken.chainId] : [SQUtils.ModelUtils.getByKey(flatNetworks, "layer", 2).chainId/*first layer 2 network*/]
 
             multiSelection: false
-            control.topPadding: 10
-            control.background: Rectangle {
-                height: 44
-                radius: 8
-                color: "transparent"
-                border.color: Theme.palette.directColor7
-            }
+            control.topPadding: 14
+            control.background.height: 50
             
             onToggleNetwork: {
                 // Set Owner Token network properties:

@@ -257,7 +257,8 @@ StatusScrollView {
                     navigationIconVisible: false
                     privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
-                    communityId: ""
+                    communityId: root.communityId
+                    showCommunityBadge: false
                     onClicked: {
                         root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,
