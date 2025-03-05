@@ -68,7 +68,11 @@ Item {
 
     readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
     
-    readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
+    readonly property AppStores.RootStore rootStore: AppStores.RootStore {
+        onOpenUrl: {
+            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+        }
+    }
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
     readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
 
