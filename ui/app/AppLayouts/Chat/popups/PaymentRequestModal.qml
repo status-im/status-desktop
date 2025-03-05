@@ -76,12 +76,28 @@ StatusDialog {
     QtObject {
         id: d
 
+        function resetSelectedToken() {
+            root.selectedTokenKey = Constants.ethToken
+        }
+
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"
+            onValueChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                } else {
+                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+                }
+            }
+            onAvailableChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                }
+            }
         }
 
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item
+        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item && selectedHolding.available
     }
 
     footer: StatusDialogFooter {
@@ -116,10 +132,9 @@ StatusDialog {
 
         spacing: Theme.padding
 
-        RowLayout {
-            AmountToSend {
-                id: amountToSendInput
-                objectName: "amountInput"
+        AmountToSend {
+            id: amountToSendInput
+            objectName: "amountInput"
                 Layout.fillWidth: true
 
                 readonly property bool ready: valid && !empty
@@ -132,17 +147,23 @@ StatusDialog {
                 formatBalance: amount => root.formatCurrencyAmount(
                                    amount, root.selectedTokenKey)
 
-                dividerVisible: true
-                selectedSymbol: d.isSelectedHoldingValidAsset ? d.selectedHolding.item.symbol : ""
-            }
+            dividerVisible: true
+            selectedSymbol: d.isSelectedHoldingValidAsset ? d.selectedHolding.item.symbol : ""
+            amountInputRightPadding: holdingSelector.width + Theme.padding
+
             AssetSelector {
                 id: holdingSelector
 
                 objectName: "assetSelector"
-                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: (Theme.halfPadding / 2)
 
                 model: root.assetsModel
-                onSelected: root.selectedTokenKey = key
+                onSelected: {
+                    root.selectedTokenKey = key
+                }
             }
         }
 
