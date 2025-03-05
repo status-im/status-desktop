@@ -331,12 +331,12 @@ Item {
 
             if (!!txHash) {
                 toastLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(fromChainId)).arg(txHash)
+                toastSubtitle = qsTr("View on %1").arg(senderChainName)
             }
 
             const fromChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", fromChainId, "chainName")
             if (!!fromChainName) {
                 senderChainName = fromChainName
-                toastSubtitle = qsTr("View on %1").arg(senderChainName)
             }
             const toChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", toChainId, "chainName")
             if (!!toChainName) {
@@ -616,6 +616,10 @@ Item {
                 toastIcon = "warning"
                 toastType = Constants.ephemeralNotificationType.danger
 
+                if (!toastSubtitle && !!error) {
+                    toastSubtitle = error
+                }
+
                 switch(txType) {
                 case Constants.SendType.Transfer: {
                     toastTitle = toastTitle.arg(sentAmount).arg(sender).arg(recipient)
@@ -718,6 +722,11 @@ Item {
                     break
                 }
                 default:
+                    const err1 = "cannot_resolve_community" // move to Constants
+                    if (error === err1) {
+                        Global.displayToastMessage(qsTr("Unknown error resolving community"), "", "", false, Constants.ephemeralNotificationType.normal, "")
+                        return
+                    }
                     console.warn("status: failed - tx type not supproted")
                     return
                 }
