@@ -121,7 +121,7 @@ StatusListView {
                 }
             }
 
-            if (root.selection !== selection) {
+            if (root.selection.join(",") !== selection.join(",")) {
                 root.selection = selection
             }
         }

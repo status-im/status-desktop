@@ -251,12 +251,12 @@ StatusDialog {
 
                     onSelectedHoldingIdChanged: root.swapInputParamsForm.fromTokensKey = selectedHoldingId
 
-                    onRawValueChanged: {
+                    readonly property string fromTokenAmount: !tokenAmount && value === 0 ? "" :
+                                                                    SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(rawValue),
+                                                                                                SQUtils.AmountsArithmetic.fromNumber(1, rawValueMultiplierIndex)).toString()
+                    onFromTokenAmountChanged: {
                         if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
-                            const amount = !tokenAmount && value === 0 ? "" :
-                                                                         SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(rawValue),
-                                                                                                       SQUtils.AmountsArithmetic.fromNumber(1, rawValueMultiplierIndex)).toString()
-                            root.swapInputParamsForm.fromTokenAmount = amount
+                            root.swapInputParamsForm.fromTokenAmount = fromTokenAmount
                         }
                     }
                 }
