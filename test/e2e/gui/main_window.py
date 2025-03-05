@@ -42,6 +42,32 @@ class LeftPanel(QObject):
         self._wallet_button = Button(names.wallet_navbar_StatusNavBarTabButton)
         self._community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
 
+    def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
+        for _ in range(attempts):
+            button.click()
+            time.sleep(0.2)
+            try:
+                return screen_class().wait_until_appears()
+            except Exception:
+                pass  # Retry if attempts remain
+        raise Exception(f"Failed to open {screen_class.__name__} after {attempts} attempts")
+
+    @allure.step('Click Chat button and open Messages screen')
+    def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:
+        return self._open_screen_from_left_nav(self._messages_button, MessagesScreen, attempts)
+
+    @allure.step('Click Gear button and open Settings screen')
+    def open_settings(self, attempts: int = 2) -> SettingsScreen:
+        return self._open_screen_from_left_nav(self._settings_button, SettingsScreen, attempts)
+
+    @allure.step('Click Wallet button and open Wallet main screen')
+    def open_wallet(self, attempts: int = 2) -> WalletScreen:
+        return self._open_screen_from_left_nav(self._wallet_button, WalletScreen, attempts)
+
+    @allure.step('Click and open online identifier')
+    def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
+        return self._open_screen_from_left_nav(self.profile_button, OnlineIdentifier, attempts)
+
     @property
     @allure.step('Get communities names')
     def communities(self) -> typing.List[str]:
@@ -55,23 +81,6 @@ class LeftPanel(QObject):
     @allure.step('Get user badge color')
     def user_badge_color(self) -> str:
         return str(self.profile_button.object.badge.color.name)
-
-    @allure.step('Open messages screen')
-    def open_messages_screen(self) -> MessagesScreen:
-        self._messages_button.click()
-        return MessagesScreen()
-
-    @allure.step('Open online identifier')
-    def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
-        time.sleep(0.5)
-        self.profile_button.click()
-        try:
-            return OnlineIdentifier().wait_until_appears()
-        except Exception as ex:
-            if attempts:
-                self.open_online_identifier(attempts - 1)
-            else:
-                raise ex
 
     @allure.step('Set user to online')
     def set_user_to_online(self):
@@ -137,31 +146,6 @@ class LeftPanel(QObject):
         self._community_invite_people_context_item.click()
         InviteContactsPopup().wait_until_appears().invite(contacts, message)
 
-    @allure.step('Open settings')
-    def open_settings(self, attempts: int = 2) -> SettingsScreen:
-        self._settings_button.click()
-        time.sleep(0.5)
-        try:
-            SettingsScreen().left_panel.wait_until_appears()
-            return SettingsScreen()
-        except Exception as ex:
-            if attempts:
-                self.open_settings(attempts - 1)
-            else:
-                raise ex
-
-    @allure.step('Open Wallet section')
-    def open_wallet(self, attempts: int = 3) -> WalletScreen:
-        # TODO https://github.com/status-im/status-desktop/issues/15345
-        self._wallet_button.click(timeout=30)
-        try:
-            return WalletScreen()
-        except Exception as ex:
-            if attempts:
-                return self.open_wallet(attempts - 1)
-            else:
-                raise ex
-
 
 class MainWindow(Window):
 
@@ -169,14 +153,14 @@ class MainWindow(Window):
         super().__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
-    @allure.step('Create profile')
+    @allure.step('Create new profile')
     def create_profile(self, user_account: UserAccount):
         welcome_screen = OnboardingWelcomeToStatusView().wait_until_appears()
         profile_view = welcome_screen.open_create_your_profile_view()
         create_password_view = profile_view.open_password_view()
         splash_screen = create_password_view.create_password(user_account.password)
-        splash_screen.wait_until_hidden()
-        signing_phrase = SigningPhrasePopup().wait_until_appears()
+        splash_screen.wait_until_hidden(timeout_msec=60000)
+        signing_phrase = SigningPhrasePopup()
         signing_phrase.confirm_phrase()
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = LeftPanel()
@@ -186,14 +170,11 @@ class MainWindow(Window):
         left_panel.open_wallet()
         return self
 
-    @allure.step('Log in user')
+    @allure.step('Log in returning user')
     def returning_log_in(self, user_account: UserAccount):
-        share_updates_popup = ShareUsageDataPopup()
-        ReturningLoginView().log_in(user_account)
-        SplashScreen().wait_until_hidden()
-        if share_updates_popup.is_visible:
-            share_updates_popup.not_now_button.click()
-        if SigningPhrasePopup().is_visible:
+        splash_screen = ReturningLoginView().log_in(user_account)
+        splash_screen.wait_until_hidden(timeout_msec=60000)
+        if SigningPhrasePopup().ok_got_it_button.is_visible:
             SigningPhrasePopup().confirm_phrase()
         return self
 
