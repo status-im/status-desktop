@@ -80,17 +80,21 @@ QtObject:
       error "parsing slippage failed", slippage=slippagePercentageString
     self.delegate.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
 
-  proc suggestedRoutesReady*(self: View, uuid: string, pathModel: QVariant, errCode: string, errDescription: string) {.signal.}
+  proc suggestedRoutesReady(self: View, uuid: string, pathModel: QVariant, errCode: string, errDescription: string) {.signal.}
   proc sendSuggestedRoutesReadySignal*(self: View, uuid: string, errCode: string, errDescription: string) =
     self.suggestedRoutesReady(uuid, newQVariant(self.pathModel), errCode, errDescription)
 
-  proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
+  proc transactionSendingComplete(self: View, txHash: string, status: string) {.signal.}
   proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =
     self.transactionSendingComplete(txHash, status)
 
-  proc transactionSent*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
+  proc transactionSent(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) {.signal.}
   proc sendTransactionSentSignal*(self: View, uuid: string, chainId: int, approvalTx: bool, txHash: string, error: string) =
     self.transactionSent(uuid, chainId, approvalTx, txHash, error)
+
+  proc successfullyAuthenticated(self: View, uuid: string) {.signal.}
+  proc sendSuccessfullyAuthenticatedSignal*(self: View, uuid: string) =
+    self.successfullyAuthenticated(uuid)
 
   proc setFeeMode*(self: View, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
     isApprovalTx: bool, communityId: string) {.slot.} =

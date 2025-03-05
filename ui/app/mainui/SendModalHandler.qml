@@ -636,6 +636,13 @@ QtObject {
                     simpleSendModal.close()
                 }
 
+                function userSuccessfullyAuthenticated(uuid) {
+                    if(uuid !== handler.uuid) {
+                        return
+                    }
+                    simpleSendModal.close()
+                }
+
                 function sendMetricsEvent(eventName, data = "") {
                     Global.addCentralizedMetricIfEnabled("send", {subEvent: eventName, data: data})
                 }
@@ -764,6 +771,7 @@ QtObject {
                     root.ensNameResolved.connect(ensNameResolved)
                     root.transactionStoreNew.suggestedRoutesReady.connect(routesFetched)
                     root.transactionStoreNew.transactionSent.connect(transactionSent)
+                    root.transactionStoreNew.successfullyAuthenticated.connect(userSuccessfullyAuthenticated)
                 }
 
                 function resetRouterValues() {
