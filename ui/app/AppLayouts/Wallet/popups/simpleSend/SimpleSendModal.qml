@@ -667,7 +667,7 @@ StatusDialog {
                 Item {
                     id: bottomSpacer
                     Layout.fillWidth: true
-                    Layout.preferredHeight: (scrollView.contentHeight < scrollView.height + Theme.padding) ? 0 : Theme.bigPadding
+                    Layout.preferredHeight: Theme.bigPadding
                 }
             }
         }
