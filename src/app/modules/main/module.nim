@@ -1,4 +1,4 @@
-import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, browsers, strutils
+import NimQml, tables, json, sequtils, stew/shims/strformat, marshal, times, chronicles, stint, strutils
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
@@ -1924,7 +1924,7 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)
   if urlData.notASupportedStatusLink:
     # Just open it in the browser
-    openDefaultBrowser(statusDeepLink)
+    self.view.emitOpenUrlSignal(statusDeepLink)
     return
   if urlData.channel.uuid != "":
     self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, urlData.community.communityId, urlData.channel.uuid,
