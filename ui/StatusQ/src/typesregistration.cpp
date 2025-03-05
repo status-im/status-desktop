@@ -119,6 +119,10 @@ void registerStatusQTypes() {
     qmlRegisterModule("QtGraphicalEffects", 1, 15);
     qmlRegisterModuleImport("QtGraphicalEffects", QQmlModuleImportModuleAny,
                             "Qt5Compat.GraphicalEffects", QQmlModuleImportLatest);
+
+    qmlRegisterModule("Qt.labs.calendar", 1, 0);
+    qmlRegisterModuleImport("Qt.labs.calendar", QQmlModuleImportModuleAny,
+                            "QtQuick.Controls", QQmlModuleImportLatest);
 #endif
 
     QZXing::registerQMLTypes();
