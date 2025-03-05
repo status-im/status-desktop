@@ -7,6 +7,7 @@ QtObject {
 
     signal suggestedRoutesReady(string uuid, var pathModel, string errCode, string errDescription)
     signal transactionSent(string uuid, int chainId, bool approvalTx, string txHash, string error)
+    signal successfullyAuthenticated(string uuid)
 
     function authenticateAndTransfer(uuid, fromAddr, slippagePercentage = "") {
         _walletSectionSendInst.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
@@ -40,6 +41,7 @@ QtObject {
     Component.onCompleted: {
         _walletSectionSendInst.suggestedRoutesReady.connect(suggestedRoutesReady)
         _walletSectionSendInst.transactionSent.connect(transactionSent)
+        _walletSectionSendInst.successfullyAuthenticated.connect(successfullyAuthenticated)
     }
 }
 

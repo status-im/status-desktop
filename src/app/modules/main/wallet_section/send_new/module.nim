@@ -189,6 +189,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = authenticationCanceled)
     self.clearTmpData()
   else:
+    self.view.sendSuccessfullyAuthenticatedSignal(self.tmpSendTransactionDetails.uuid) # notify the UI that the user is authenticated
     self.tmpSendTransactionDetails.pin = pin
     self.tmpSendTransactionDetails.password = password
     self.buildTransactionsFromRoute()
