@@ -64,6 +64,9 @@ RowLayout {
     /** input property for programatic selection of network **/
     property int selectedChainId
 
+    /** property exposing the currently selected token selector tab **/
+    property alias tokenSelectorTab: tokenSelector.currentTab
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -157,7 +160,7 @@ RowLayout {
         multiSelection: false
         showSelectionIndicator: false
         showTitle: false
-        selectionAllowed: root.interactive
+        interactive: root.interactive
 
         Binding on selection {
             value: [root.selectedChainId]

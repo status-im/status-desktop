@@ -52,6 +52,8 @@ StatusSectionLayout {
     required property WalletAssetsStore walletAssetsStore
     required property CollectiblesStore collectiblesStore
     required property SharedStores.CurrenciesStore currencyStore
+    required property SharedStores.NetworksStore networksStore
+    required property Keychain keychain
 
     property var mutualContactsModel
     property var blockedContactsModel
@@ -182,6 +184,7 @@ StatusSectionLayout {
                 contactsStore: root.store.contactsStore
                 communitiesStore: root.communitiesStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
 
                 sendToAccountEnabled: root.networkConnectionStore.sendBuyBridgeEnabled
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.profile)
@@ -226,6 +229,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
                 privacyStore: root.store.privacyStore
+                keychain: root.keychain
                 passwordStrengthScoreFunction: root.sharedRootStore.getPasswordStrengthScore
                 contentWidth: d.contentWidth
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.password)
@@ -303,6 +307,7 @@ StatusSectionLayout {
                 networkConnectionStore: root.networkConnectionStore
                 assetsStore: root.walletAssetsStore
                 collectiblesStore: root.collectiblesStore
+                networksStore: root.networksStore
 
                 myPublicKey: root.store.contactsStore.myPublicKey
                 currencySymbol: root.sharedRootStore.currencyStore.currentCurrency
@@ -551,6 +556,19 @@ StatusSectionLayout {
             myKeyUid: store.profileStore.keyUid
             sharedKeycardModule: root.store.keycardStore.keycardModule.keycardSharedModule
             emojiPopup: root.emojiPopup
+
+            // This connection ensures that when a PIN is chagned on Keycard, biometrics are updated (if enabled).
+            // Should be removed/simplified when KeycardPopup is refactored to use KeycardServiceV2.
+            // We put it here, because ProfileLayout has access to Keychain and it is also the only place
+            // where KeycardPopup can be used to change PIN.
+            Connections {
+                target: root.store.keycardStore.keycardModule.keycardSharedModule
+
+                function onKeycardPinChanged(pin) {
+                    const keyUid = store.profileStore.keyUid
+                    root.keychain.updateCredential(keyUid, pin)
+                }
+            }
         }
 
         onLoaded: {

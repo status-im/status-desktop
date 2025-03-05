@@ -181,6 +181,9 @@ QtObject:
       statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
       statusProxyBlockchainUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyBlockchainPassword: STATUS_PROXY_PASSWORD_RESOLVED,
+      ethRpcProxyUser: ETH_RPC_PROXY_USER_RESOLVED,
+      ethRpcProxyPassword: ETH_RPC_PROXY_PASSWORD_RESOLVED,
+      ethRpcProxyUrl: ETH_RPC_PROXY_URL_RESOLVED,
     )
 
   proc defaultCreateAccountRequest*(): CreateAccountRequest =

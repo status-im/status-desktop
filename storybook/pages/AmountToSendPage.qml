@@ -40,7 +40,6 @@ SplitView {
 
             dividerVisible: ctrlDividerVisible.checked
             selectedSymbol: ctrlShowMainInputSymbol.checked ? amountToSend.fiatMode ? "USD": "ETH": ""
-            progressivePixelReduction: ctrlProgressivePixelReduction.checked
         }
     }
 
@@ -142,12 +141,6 @@ SplitView {
                 CheckBox {
                     id: ctrlDividerVisible
                     text: "Divider"
-                }
-
-                CheckBox {
-                    id: ctrlProgressivePixelReduction
-                    text: "Progressive Pixel Reduction"
-                    checked: true
                 }
 
                 CheckBox {

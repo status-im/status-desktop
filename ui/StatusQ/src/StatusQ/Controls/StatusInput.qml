@@ -1,5 +1,7 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +30,7 @@ import StatusQ.Core.Utils 0.1
 
    For a list of components available see StatusQ.
 */
-Item {
+Control {
     id: root
 
     /*!
@@ -73,7 +75,8 @@ Item {
         \qmlproperty alias StatusInput::font
         This property holds a reference to the TextEdit's font property.
     */
-    property alias font: statusBaseInput.font
+    font.pixelSize: Theme.primaryTextFontSize
+    font.family: Theme.baseFont.name
     /*!
         \qmlproperty alias StatusInput::multiline
         This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
@@ -97,6 +100,42 @@ Item {
     */
     property alias errorMessageCmp: errorMessage
     /*!
+       \qmlproperty bottomLabelMessageLeftCmp
+        This property represents the bottomLabelMessageLeft shown on statusInput on the left of the input component.
+        By default this component is hidden and doesn't have any text set, once the text is set it will become visible.
+        Regardless of the set text and visibility bottomLabelMessageLeftCmp will be visible only if there is no error
+        meaning no errorMessageCmp visible.
+
+        Examples of usage
+
+        \qml
+            StatusInput {
+                bottomLabelMessageLeftCmp.text: "some text"
+                bottomLabelMessageLeftCmp.font.pixelSize: 15
+                bottomLabelMessageLeftCmp.font.weight: Font.Medium
+            }
+        \endqml
+    */
+    property alias bottomLabelMessageLeftCmp: bottomLabelMessageLeft
+    /*!
+       \qmlproperty bottomLabelMessageCmp
+        This property represents the bottomLabelMessageRight shown on statusInput on the right of the input component.
+        By default this component is hidden and doesn't have any text set, once the text is set it will become visible.
+        Regardless of the set text and visibility bottomLabelMessageRightCmp will be visible only if there is no error
+        meaning no errorMessageCmp visible.
+
+        Examples of usage
+
+        \qml
+            StatusInput {
+                bottomLabelMessageRightCmp.text: "some text"
+                bottomLabelMessageRightCmp.font.pixelSize: 15
+                bottomLabelMessageRightCmp.font.weight: Font.Medium
+            }
+        \endqml
+    */
+    property alias bottomLabelMessageRightCmp: bottomLabelMessageRight
+    /*!
         \qmlproperty int StatusInput::labelPadding
         This property sets the padding of the label text.
     */
@@ -112,6 +151,21 @@ Item {
     */
     property string secondaryLabel: ""
     /*!
+        \qmlproperty string StatusInput::labelIcon
+        This property sets the icon displayd on the right of the label.
+    */
+    property string labelIcon: ""
+    /*!
+        \qmlproperty string StatusInput::labelIconColor
+        This property sets the color of the label icon.
+    */
+    property string labelIconColor: Theme.palette.baseColor1
+    /*!
+        \qmlproperty string StatusInput::labelIconClickable
+        This property sets if the label icon is clickable or not, if clickable labelIconClicked signal will be emitted.
+    */
+    property bool labelIconClickable: false
+    /*!
         \qmlproperty int StatusInput::charLimit
         This property sets the character limit of the text input.
     */
@@ -126,26 +180,6 @@ Item {
         This property sets the error message text.
     */
     property string errorMessage: ""
-    /*!
-        \qmlproperty alias StatusInput::leftPadding
-        This property sets the leftComponentLoader's left padding.
-    */
-    property alias leftPadding: statusBaseInput.leftPadding
-    /*!
-        \qmlproperty alias StatusInput::rightPadding
-        This property sets the right padding.
-    */
-    property alias rightPadding: statusBaseInput.rightPadding
-    /*!
-        \qmlproperty alias StatusInput::topPadding
-        This property sets the top padding.
-    */
-    property alias topPadding: statusBaseInput.topPadding
-    /*!
-        \qmlproperty alias StatusInput::bottomPadding
-        This property sets the bottom padding.
-    */
-    property alias bottomPadding: statusBaseInput.bottomPadding
     /*!
         \qmlproperty real StatusInput::minimumHeight
         This property sets the minimum height. Default value is 44px.
@@ -205,6 +239,11 @@ Item {
         This signal is emitted when the icon is clicked.
     */
     signal iconClicked()
+    /*!
+        \qmlsignal
+        This signal is emitted when the label icon is clicked.
+    */
+    signal labelIconClicked()
     /*!
         \qmlsignal
         This signal is emitted when a hard key is pressed passing as parameter the keyboard event.
@@ -376,10 +415,16 @@ Item {
         readonly property int inputHeight: statusBaseInput.multiline || (root.minimumHeight > 0) || (root.maximumHeight > 0)?
                                   Math.min(Math.max(statusBaseInput.topPadding + statusBaseInput.bottomPadding, 44,
                                                     root.minimumHeight), root.maximumHeight) : 44
+        readonly property real noPadding: -0.1
     }
 
     implicitWidth: 448
-    implicitHeight: inputLayout.implicitHeight
+
+    // to distinguish from the builtin 0; has no real effect otherwise
+    leftPadding: internal.noPadding
+    rightPadding: internal.noPadding
+    topPadding: internal.noPadding
+    bottomPadding: internal.noPadding
 
     Component.onCompleted: {
         validate()
@@ -398,9 +443,7 @@ Item {
             statusBaseInput.forceActiveFocus()
     }
 
-    ColumnLayout {
-        id: inputLayout
-        anchors.fill: parent
+    contentItem: ColumnLayout {
         spacing: 0
 
         RowLayout {
@@ -411,10 +454,8 @@ Item {
             StatusBaseText {
                 id: label
                 visible: !!text
-                height: visible ? contentHeight : 0
                 elide: Text.ElideRight
                 text: root.label
-                font.pixelSize: 15
                 color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
             }
 
@@ -423,9 +464,24 @@ Item {
                 visible: !!root.secondaryLabel
                 elide: Text.ElideRight
                 text: root.secondaryLabel
-                font.pixelSize: 15
-                height: visible ? contentHeight : 0
                 color: Theme.palette.baseColor1
+            }
+
+            StatusIcon {
+                id: labelIcon
+                visible: !!root.labelIcon
+                width: 16
+                height: 16
+                icon: root.labelIcon
+                color: root.labelIconColor
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: root.labelIconClickable
+                    hoverEnabled: root.labelIconClickable
+                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: root.labelIconClicked()
+                }
             }
 
             Item {
@@ -435,10 +491,9 @@ Item {
             StatusBaseText {
                 id: charLimitLabelItem
                 Layout.alignment: Qt.AlignVCenter
-                height: visible ? contentHeight : 0
                 visible: root.charLimit > 0 || !!root.charLimitLabel
                 text: root.charLimitLabel ? root.charLimitLabel : "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
-                font.pixelSize: 12
+                font.pixelSize: Theme.tertiaryTextFontSize
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
             }
         }
@@ -448,11 +503,14 @@ Item {
 
             objectName: "statusBaseInput"
 
-            implicitWidth: parent.width
-            implicitHeight: internal.inputHeight
+            Layout.fillWidth: true
+            Layout.preferredHeight: internal.inputHeight
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignTop
-            Layout.topMargin: (topRow.height > 0) ? labelPadding : 0
+            Layout.topMargin: topRow.height > 0 ? labelPadding : 0
+            Layout.bottomMargin: bottomRow.height > 0 ? labelPadding : 0
             maximumLength: root.charLimit
+            font: root.font
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
             onIconClicked: root.iconClicked()
@@ -465,26 +523,69 @@ Item {
             onEditingFinished: {
                 root.editingFinished()
             }
+
+            // use the default padding values from StatusBaseInput, but forward any explicitly set values from outside
+            Binding on topPadding {
+                value: root.topPadding
+                when: root.topPadding !== internal.noPadding && root.topPadding !== statusBaseInput.topPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on bottomPadding {
+                value: root.bottomPadding
+                when: root.bottomPadding !== internal.noPadding && root.bottomPadding !== statusBaseInput.bottomPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on leftPadding {
+                value: root.leftPadding
+                when: root.leftPadding !== internal.noPadding && root.leftPadding !== statusBaseInput.leftPadding
+                restoreMode: Binding.RestoreBinding
+            }
+            Binding on rightPadding {
+                value: root.rightPadding
+                when: root.rightPadding !== internal.noPadding && root.rightPadding !== statusBaseInput.rightPadding
+                restoreMode: Binding.RestoreBinding
+            }
         }
 
-        StatusBaseText {
-            id: errorMessage
-            visible: {
-                if (!text)
-                    return false;
-
-                if ((root.validationMode === StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
-                    root.validationMode === StatusInput.ValidationMode.Always)
-                    return !statusBaseInput.valid;
-
-                return false;
-            }
-            font.pixelSize: 12
-            color: Theme.palette.dangerColor1
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignRight
-            Layout.topMargin: 8
+        RowLayout {
+            id: bottomRow
             Layout.fillWidth: true
+
+            StatusBaseText {
+                id: bottomLabelMessageLeft
+                Layout.fillWidth: true
+                visible: !errorMessage.visible && !!text
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideMiddle
+            }
+
+            StatusBaseText {
+                id: errorMessage
+                Layout.fillWidth: true
+                visible: {
+                    if (!text)
+                        return false;
+
+                    if ((root.validationMode === StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
+                            root.validationMode === StatusInput.ValidationMode.Always)
+                        return !statusBaseInput.valid;
+
+                    return false;
+                }
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: Theme.palette.dangerColor1
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignRight
+            }            
+
+            StatusBaseText {
+                id: bottomLabelMessageRight
+                visible: !errorMessage.visible && !!text
+                horizontalAlignment: Text.AlignRight
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideMiddle
+            }
         }
     }
 }

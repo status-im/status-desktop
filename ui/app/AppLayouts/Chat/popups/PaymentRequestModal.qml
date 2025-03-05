@@ -116,31 +116,30 @@ StatusDialog {
 
         spacing: Theme.padding
 
-        AmountToSend {
-            id: amountToSendInput
-            objectName: "amountInput"
-            Layout.fillWidth: true
+        RowLayout {
+            AmountToSend {
+                id: amountToSendInput
+                objectName: "amountInput"
+                Layout.fillWidth: true
 
-            readonly property bool ready: valid && !empty
+                readonly property bool ready: valid && !empty
 
-            multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
-            price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
+                multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
+                price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
-            formatFiat: amount => root.formatCurrencyAmount(
-                            amount, root.currentCurrency)
-            formatBalance: amount => root.formatCurrencyAmount(
-                               amount, root.selectedTokenKey)
+                formatFiat: amount => root.formatCurrencyAmount(
+                                amount, root.currentCurrency)
+                formatBalance: amount => root.formatCurrencyAmount(
+                                   amount, root.selectedTokenKey)
 
-            dividerVisible: true
-            selectedSymbol: d.isSelectedHoldingValidAsset ? d.selectedHolding.item.symbol : ""
-
+                dividerVisible: true
+                selectedSymbol: d.isSelectedHoldingValidAsset ? d.selectedHolding.item.symbol : ""
+            }
             AssetSelector {
                 id: holdingSelector
-                objectName: "assetSelector"
 
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.topMargin: -(Theme.halfPadding / 2)
+                objectName: "assetSelector"
+                Layout.alignment: Qt.AlignRight | Qt.AlignTop
 
                 model: root.assetsModel
                 onSelected: root.selectedTokenKey = key

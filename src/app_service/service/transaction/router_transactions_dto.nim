@@ -153,7 +153,7 @@ proc toSendDetailsDto*(jsonObj: JsonNode): SendDetailsDto =
   if jsonObj.getProp("packId", tmpObj):
     let packId = stint.fromHex(UInt256, tmpObj.getStr)
     result.packId = $packId
-  if jsonObj.getProp("communityParams", tmpObj):
+  if jsonObj.getProp("communityParams", tmpObj) and tmpObj.kind == JObject:
     result.communityParams = toCommunityParamsDto(tmpObj)
 
 proc toSigningDetails*(jsonObj: JsonNode): SigningDetails =

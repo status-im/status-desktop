@@ -36,7 +36,7 @@ StackLayout {
     required property SendStores.TransactionStore transactionStore
     required property WalletStore.WalletAssetsStore walletAssetsStore
     required property SharedStores.CurrenciesStore currencyStore
-    property bool areTestNetworksEnabled
+    required property SharedStores.NetworksStore networksStore
     property bool paymentRequestFeatureEnabled
 
     property var mutualContactsModel
@@ -173,7 +173,7 @@ StackLayout {
             stickersPopup: root.stickersPopup
             sectionItemModel: root.sectionItemModel
             joinedMembersCount: membersModelAdaptor.joinedMembers.ModelCount.count
-            areTestNetworksEnabled: root.areTestNetworksEnabled
+            areTestNetworksEnabled: root.networksStore.areTestNetworksEnabled
             amIMember: sectionItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
                              root.sectionItemModel.memberRole === Constants.memberRole.admin ||
@@ -265,8 +265,9 @@ StackLayout {
             rootStore: root.rootStore
             utilsStore: root.utilsStore
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
-            enabledChainIds: WalletStore.RootStore.networkFilters
-            onEnableNetwork: WalletStore.RootStore.enableNetwork(chainId)
+            enabledChainIds: root.networksStore.networkFilters
+            onEnableNetwork: root.networksStore.enableNetwork(chainId)
+            activeNetworks: root.networksStore.activeNetworks
             tokensStore: root.tokensStore
             transactionStore: root.transactionStore
 

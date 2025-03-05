@@ -42,8 +42,8 @@ OnboardingPage {
             }
 
             StatusImage {
-                Layout.preferredWidth: 320
-                Layout.preferredHeight: 354
+                Layout.preferredWidth: 300
+                Layout.preferredHeight: 300
                 Layout.topMargin: Theme.bigPadding
                 Layout.bottomMargin: Theme.bigPadding
                 Layout.alignment: Qt.AlignHCenter

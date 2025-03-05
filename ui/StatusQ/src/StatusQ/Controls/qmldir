@@ -2,6 +2,7 @@ module StatusQ.Controls
 
 StatusActivityCenterButton 0.1 StatusActivityCenterButton.qml
 StatusAmountInput 0.1 StatusAmountInput.qml
+StatusAnimatedText 0.1 StatusAnimatedText.qml
 StatusBackButton 0.1 StatusBackButton.qml
 StatusBanner 0.1 StatusBanner.qml
 StatusBaseButton 0.1 StatusBaseButton.qml
@@ -14,12 +15,14 @@ StatusChatListCategoryItemButton 0.1 StatusChatListCategoryItemButton.qml
 StatusCheckBox 0.1 StatusCheckBox.qml
 StatusCircularProgressBar 0.1 StatusCircularProgressBar.qml
 StatusClearButton 0.1 StatusClearButton.qml
+StatusColorAnimation 0.1 StatusColorAnimation.qml
 StatusColorRadioButton 0.1 StatusColorRadioButton.qml
 StatusColorSelector 0.1 StatusColorSelector.qml
 StatusColorSelectorGrid 0.1 StatusColorSelectorGrid.qml
 StatusComboBox 0.1 StatusComboBox.qml
 StatusCommunityTag 0.1 StatusCommunityTag.qml
 StatusDropdown 0.1 StatusDropdown.qml
+StatusFeeOption 0.1 StatusFeeOption.qml
 StatusFlatButton 0.1 StatusFlatButton.qml
 StatusFlatRoundButton 0.1 StatusFlatRoundButton.qml
 StatusIconSwitch 0.1 StatusIconSwitch.qml

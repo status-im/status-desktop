@@ -52,7 +52,7 @@ StatusDialogFooter {
                     estimatedTimeAnimation.restart()
                 }
 
-                AnimatedText {
+                StatusColorAnimation {
                     id: estimatedTimeAnimation
                     target: estimatedTime
                 }
@@ -80,7 +80,7 @@ StatusDialogFooter {
                         feesAnimation.restart()
                     }
 
-                    AnimatedText {
+                    StatusColorAnimation {
                         id: feesAnimation
                         target: fees
                     }

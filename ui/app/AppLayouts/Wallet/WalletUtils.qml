@@ -41,7 +41,7 @@ QtObject {
 
       rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
       */
-    function calculateMaxSafeSendAmount(value, symbol) {
+    function calculateMaxSafeSendAmount(value, symbol, cryptoFeesToReserve = "") {
         if (!value) {
             return 0
         }
@@ -49,7 +49,13 @@ QtObject {
             return value
         }
 
-        const estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
+        let estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
+        if(!!cryptoFeesToReserve) {
+            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)
+            estFee = StatusQUtils.AmountsArithmetic.div(
+                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenWeiDecimals)
+        }
+
         const result = value - estFee
 
         // Ensure the result is not negative
@@ -69,6 +75,16 @@ QtObject {
         default:
             return qsTr("> 5 minutes")
         }
+    }
+
+    function formatEstimatedTime(estimatedTime) {
+        if (estimatedTime === 0 ) {
+            return qsTr("Unkown")
+        }
+        if (estimatedTime >= 60) {
+            return qsTr(">60s")
+        }
+        return qsTr("~%1").arg(estimatedTime)
     }
 
     function getRouterErrorBasedOnCode(code) {
@@ -317,6 +333,34 @@ QtObject {
             return qsTr("no positive balance for your account across chains")
         default:
             return ""
+        }
+    }
+
+    function getFeeTextForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return qsTr("Fast")
+        case Constants.FeePriorityModeType.Urgent:
+            return qsTr("Urgent")
+        case Constants.FeePriorityModeType.Custom:
+            return qsTr("Custom")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return qsTr("Normal")
+        }
+    }
+
+    function getIconForFeeMode(feeMode) {
+        switch(feeMode) {
+        case Constants.FeePriorityModeType.Fast:
+            return Theme.png("wallet/car")
+        case Constants.FeePriorityModeType.Urgent:
+            return Theme.png("wallet/rocket")
+        case Constants.FeePriorityModeType.Custom:
+            return Theme.png("wallet/handwrite")
+        case Constants.FeePriorityModeType.Normal:
+        default:
+            return Theme.png("wallet/clock")
         }
     }
 }

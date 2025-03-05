@@ -60,11 +60,6 @@ Control {
        area and bottom text */
     property bool dividerVisible
 
-    /* Boolean flag decides whether the main input text area's fontsize reduces
-       as more and more characters are added.
-       True by default */
-    property bool progressivePixelReduction: true
-
     /* This string holds the current main input area's currency symbol (fiat or crypto)
        Not set = not shown */
     property string selectedSymbol
@@ -110,6 +105,7 @@ Control {
                       : d.removeDecimalTrailingZeros(stringNumber)
 
         textField.text = d.localize(trimmed)
+        textField.cursorPosition = 0
     }
 
     function setRawValue(valueString) {
@@ -126,6 +122,7 @@ Control {
         const trimmed = d.removeDecimalTrailingZeros(stringNumber)
 
         textField.text = d.localize(trimmed)
+        textField.cursorPosition = 0
     }
 
     function clear() {
@@ -142,8 +139,8 @@ Control {
         property bool fiatMode: false
 
         readonly property string inputDelocalized:
-            root.valid && textField.length !== 0
-                ? textField.text.replace(root.decimalPoint, ".") : "0"
+            textField.length !== 0
+            ? textField.text.replace(root.decimalPoint, ".") : "0"
 
         function removeDecimalTrailingZeros(num) {
             if (!num.includes("."))
@@ -189,20 +186,6 @@ Control {
                             multiplier),
                         SQUtils.AmountsArithmetic.fromNumber(price)).toFixed()
         }
-
-        /* Incase we dont have progressing font size reduction we only
-           allow users to enter digits until there is place left */
-        function getMaxDigitsAllowed() {
-            if (root.progressivePixelReduction)  {
-                return validator.maxDecimalDigits + validator.maxIntegralDigits
-            } else {
-                let availableSpaceForAmount = root.availableWidth - currencyField.contentWidth - layout.spacing
-                // k is a coefficient based on the font style (typically 𝑘 ≈ 0.65)
-                let digitWidth = textField.font.pixelSize * 0.65
-                // remove one for decimal separator
-                return Math.floor(availableSpaceForAmount/digitWidth)
-            }
-        }
     }
 
     contentItem: ColumnLayout {
@@ -231,6 +214,7 @@ Control {
                 objectName: "amountToSend_textField"
 
                 Layout.preferredHeight: 44
+                Layout.maximumWidth: root.width - currencyField.width - 2*layout.spacing
                 padding: 0
                 leftPadding: 0
                 background: null
@@ -249,21 +233,33 @@ Control {
                             + "0".repeat(root.fiatDecimalPlaces)
                 }
 
-                font.pixelSize:{
-                    if (!root.progressivePixelReduction)
-                        return 34
-                    return Utils.getFontSizeBasedOnLetterCount(text)
-                }
+                font.pixelSize: 34
 
                 validator: AmountValidator {
                     id: validator
 
-                    maxDigits: d.getMaxDigitsAllowed()
+                    maxIntegralDigits: 100
                     maxDecimalDigits: d.fiatMode ? root.fiatDecimalPlaces
                                                  : root.multiplierIndex
                     locale: root.locale.name
                 }
                 visible: !root.mainInputLoading
+
+                // handle TextField scroll and click to change cursor position
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: textField.focus
+                    onClicked: {
+                        textField.cursorPosition = textField.positionAt(mouseX,mouseY)
+                        textField.forceActiveFocus()
+                    }
+                    onWheel: {
+                        if(wheel.angleDelta.y>0)
+                            textField.cursorPosition -= 1
+                        if(wheel.angleDelta.y<0)
+                            textField.cursorPosition += 1
+                    }
+                }
             }
             LoadingComponent {
                 objectName: "topAmountToSendInputLoadingComponent"
@@ -300,6 +296,7 @@ Control {
 
                 objectName: "bottomItemText"
 
+                Layout.fillWidth: true
                 Layout.preferredWidth: contentWidth
 
                 text: {
@@ -349,6 +346,7 @@ Control {
                                       : d.removeDecimalTrailingZeros(stringNumber)
 
                         textField.text = d.localize(trimmed)
+                        textField.cursorPosition = 0
                     }
                 }
 
@@ -362,7 +360,7 @@ Control {
                 icon: "swap"
                 rotation: 90
                 color: Theme.palette.directColor5
-                visible: hoverHandler.hovered
+                visible: hoverHandler.hovered && root.fiatInputInteractive
             }
             Item { Layout.fillWidth: true }
             Loader {

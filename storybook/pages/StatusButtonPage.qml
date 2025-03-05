@@ -11,7 +11,7 @@ SplitView {
 
     QtObject {
         id: d
-        readonly property var sizesModel: [StatusBaseButton.Size.Tiny, StatusBaseButton.Size.Small, StatusBaseButton.Size.Large]
+        readonly property var sizesModel: [StatusBaseButton.Size.XSmall, StatusBaseButton.Size.Tiny, StatusBaseButton.Size.Small, StatusBaseButton.Size.Large]
 
         readonly property string effectiveEmoji: ctrlEmojiEnabled.checked ? ctrlEmoji.text : ""
         readonly property int effectiveTextPosition: ctrlTextPosLeft.checked ? StatusBaseButton.TextPosition.Left
@@ -30,16 +30,17 @@ SplitView {
                 anchors.centerIn: parent
                 rowSpacing: 10
                 columnSpacing: 10
-                columns: 4
+                columns: 5
 
                 Label { text: "" }
+                Label { text: "XSmall" }
                 Label { text: "Tiny" }
                 Label { text: "Small" }
                 Label { text: "Large" }
 
                 Label {
                     text: "StatusButton"
-                    Layout.columnSpan: 4
+                    Layout.columnSpan: 5
                     font.bold: true
                 }
 
@@ -128,7 +129,7 @@ SplitView {
 
                 Label {
                     text: "StatusFlatButton"
-                    Layout.columnSpan: 4
+                    Layout.columnSpan: 5
                     font.bold: true
                 }
 

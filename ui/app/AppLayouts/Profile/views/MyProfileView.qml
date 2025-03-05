@@ -34,6 +34,7 @@ SettingsContentBase {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStores.CommunitiesStore communitiesStore
     property SharedStores.UtilsStore utilsStore
+    required property SharedStores.NetworksStore networksStore
 
     property bool sendToAccountEnabled: false
 
@@ -132,7 +133,7 @@ SettingsContentBase {
             colorHash: root.profileStore.colorHash
             onlineStatus: root.profileStore.currentUserStatus
             isCurrentUser: true
-            displayName: descriptionPanel.displayName.text
+            displayName: descriptionPanel.displayName.text || root.profileStore.name
             bio: descriptionPanel.bio.text
             largeImage: profileHeader.previewIcon
         }
@@ -301,9 +302,9 @@ SettingsContentBase {
 
                 displayName.focus: !isEnsName
                 displayName.input.edit.readOnly: isEnsName
-                displayName.text: profileStore.name
+                displayName.text: profileStore.displayName
                 displayName.validationMode: StatusInput.ValidationMode.Always
-                displayName.validators: isEnsName ? [] : displayNameValidators.validators
+                displayName.validators: isEnsName || (profileStore.displayName === displayName.text) ? [] : displayNameValidators.validators
                 bio.text: profileStore.bio
 
                 DisplayNameValidators {
@@ -415,6 +416,7 @@ SettingsContentBase {
                 contactsStore: root.contactsStore
                 walletStore: WalletStores.RootStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
                 sendToAccountEnabled: root.sendToAccountEnabled
                 onClosed: destroy()
 
@@ -438,6 +440,7 @@ SettingsContentBase {
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
                 utilsStore: root.utilsStore
+                networksStore: root.networksStore
                 sendToAccountEnabled: root.sendToAccountEnabled
 
                 showcaseCommunitiesModel: priv.showcaseModels.communitiesVisibleModel

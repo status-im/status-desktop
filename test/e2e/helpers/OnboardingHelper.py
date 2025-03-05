@@ -6,12 +6,12 @@ import configs.system
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
-from gui.screens.onboarding import WelcomeToStatusView, BiometricsView, YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import OnboardingWelcomeToStatusView, OnboardingBiometricsView, YourEmojihashAndIdenticonRingView
 
 with step('Open Generate new keys view'):
     def open_generate_new_keys_view():
         BeforeStartedPopUp().get_started()
-        keys_screen = WelcomeToStatusView().wait_until_appears().get_keys()
+        keys_screen = OnboardingWelcomeToStatusView().wait_until_appears().get_keys()
         return keys_screen
 
 
@@ -30,7 +30,7 @@ with step('Finalize onboarding and open main screen'):
         confirm_password_view = create_password_view.create_password(user_account.password)
         confirm_password_view.confirm_password(user_account.password)
         if configs.system.get_platform() == "Darwin":
-            BiometricsView().wait_until_appears().prefer_password()
+            OnboardingBiometricsView().wait_until_appears().prefer_password()
         SplashScreen().wait_until_appears().wait_until_hidden()
         next_view = YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
         if configs.system.get_platform() == "Darwin":

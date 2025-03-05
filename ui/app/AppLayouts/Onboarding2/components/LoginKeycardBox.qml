@@ -14,6 +14,7 @@ Control {
     id: root
 
     required property int keycardState
+    required property bool isWrongKeycard
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
     property string loginError
@@ -24,6 +25,8 @@ Control {
     signal biometricsRequested()
 
     signal pinEditedManually()
+
+    signal detailedErrorPopupRequested()
 
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
@@ -46,7 +49,8 @@ Control {
         pinInputField.setPin(pin)
     }
 
-    padding: 12
+    horizontalPadding: Theme.padding
+    verticalPadding: 20
 
     QtObject {
         id: d
@@ -77,6 +81,11 @@ Control {
             horizontalAlignment: Qt.AlignHCenter
             elide: Text.ElideRight
             color: Theme.palette.baseColor1
+            linkColor: hoveredLink ? Theme.palette.hoverColor(color) : color
+            HoverHandler {
+                cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : undefined
+            }
+            onLinkActivated: root.detailedErrorPopupRequested()
         }
         Column {
             id: lockedButtons
@@ -84,12 +93,14 @@ Control {
             spacing: 12
             visible: false
             MaybeOutlineButton {
+                objectName: "btnUnblockWithPUK"
                 width: parent.width
                 visible: root.keycardState === Onboarding.KeycardState.BlockedPIN && root.keycardRemainingPukAttempts > 0
                 text: qsTr("Unblock with PUK")
                 onClicked: root.unblockWithPukRequested()
             }
             MaybeOutlineButton {
+                objectName: "btnUnblockWithSeedphrase"
                 width: parent.width
                 visible: root.keycardState === Onboarding.KeycardState.BlockedPIN || root.keycardState === Onboarding.KeycardState.BlockedPUK
                 text: qsTr("Unblock with recovery phrase")
@@ -119,8 +130,7 @@ Control {
         // normal/intro states
         State {
             name: "plugin"
-            when: root.keycardState === Onboarding.KeycardState.PluginReader ||
-                  root.keycardState === -1
+            when: root.keycardState === Onboarding.KeycardState.PluginReader
             PropertyChanges {
                 target: infoText
                 text: qsTr("Plug in Keycard reader...")
@@ -154,21 +164,22 @@ Control {
         },
         State {
             name: "wrongKeycard"
-            when: root.keycardState === Onboarding.KeycardState.WrongKeycard ||
-                  root.keycardState === Onboarding.KeycardState.MaxPairingSlotsReached
+            when: root.isWrongKeycard
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Wrong Keycard for this profile inserted.<br>Remove card and insert the correct one.")
+                text: qsTr("Wrong Keycard for this profile inserted")
             }
         },
         State {
-            name: "noService"
-            when: root.keycardState === Onboarding.KeycardState.NoPCSCService
+            name: "genericError"
+            when: root.keycardState === -1 ||
+                  root.keycardState === Onboarding.KeycardState.NoPCSCService ||
+                  root.keycardState === Onboarding.KeycardState.MaxPairingSlotsReached // TODO add a generic/fallback keycard error here too
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Smartcard reader service unavailable")
+                text: qsTr("Issue detecting Keycard.<br>Remove and re-insert reader and Keycard.")
             }
         },
         State {
@@ -191,7 +202,7 @@ Control {
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("The inserted Keycard is empty.<br>Remove card and insert the correct one.")
+                text: qsTr("The inserted Keycard is empty.<br>Insert the correct Keycard for this profile.")
             }
         },
         State {
@@ -205,13 +216,12 @@ Control {
             }
         },
         State {
-            // TODO this is a deadend. We should never end up here, but I still don't know what it should look like
             name: "errorDuringLogin"
             when: !!root.loginError
             PropertyChanges {
                 target: infoText
                 color: Theme.palette.dangerColor1
-                text: qsTr("Error during login: %1").arg(root.loginError)
+                text: qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
             }
         },
         // exit states

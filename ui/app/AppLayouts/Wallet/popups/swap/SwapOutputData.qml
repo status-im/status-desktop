@@ -11,6 +11,7 @@ QtObject {
     property string toTokenAmount: ""
     // TODO: this should be string but backend gas_estimate_item.nim passes this as float
     property real totalFees: 0
+    property string maxFeesToReserveRaw: ""
     property bool hasError
     property string errCode
     property string errDescription
@@ -36,6 +37,7 @@ QtObject {
         root.txProviderName = ""
         root.estimatedTime = Constants.TransactionEstimatedTime.Unknown
         root.totalFees = 0
+        root.maxFeesToReserveRaw = 0
         root.approvalNeeded = false
         root.approvalGasFees = ""
         root.approvalAmountRequired = ""

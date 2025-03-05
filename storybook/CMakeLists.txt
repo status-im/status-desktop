@@ -18,10 +18,10 @@ if (APPLE)
     set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=11.0)
 endif()
 
-find_package(
-  Qt5
-  COMPONENTS Core Gui Quick QuickControls2 Test QuickTest Qml WebView
-  REQUIRED)
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
+
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Quick QuickControls2 Test
+    QuickTest Qml WebView REQUIRED)
 
 set(STATUSQ_BUILD_SANDBOX OFF)
 set(STATUSQ_BUILD_SANITY_CHECKER OFF)
@@ -76,7 +76,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     )
 
 target_link_libraries(
-    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView StatusQ)
+    ${PROJECT_LIB} PUBLIC Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2 Qt::WebView StatusQ)
 
 target_link_libraries(
     ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
@@ -89,7 +89,7 @@ add_executable(
 )
 
 target_link_libraries(
-    PagesValidator PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2 Qt5::WebView StatusQ)
+    PagesValidator PUBLIC Qt::Core Qt::Gui Qt::Quick Qt::QuickControls2 Qt::WebView StatusQ)
 
 target_compile_definitions(PagesValidator PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
@@ -99,11 +99,11 @@ target_compile_definitions(PagesValidator PRIVATE
 add_test(NAME PagesValidator COMMAND PagesValidator)
 
 add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
-target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt5::Test ${PROJECT_LIB})
+target_link_libraries(SectionsDecoratorModelTest PRIVATE Qt::Test ${PROJECT_LIB})
 add_test(NAME SectionsDecoratorModelTest COMMAND SectionsDecoratorModelTest)
 
 add_executable(DirectoryFilesWatcherTest tests/tst_DirectoryFilesWatcher.cpp)
-target_link_libraries(DirectoryFilesWatcherTest PRIVATE Qt5::Test ${PROJECT_LIB})
+target_link_libraries(DirectoryFilesWatcherTest PRIVATE Qt::Test ${PROJECT_LIB})
 add_test(NAME DirectoryFilesWatcherTest COMMAND DirectoryFilesWatcherTest)
 
 add_executable(QmlTests
@@ -114,7 +114,7 @@ target_compile_definitions(QmlTests PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
-target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB} SortFilterProxyModel)
+target_link_libraries(QmlTests PRIVATE Qt::QuickTest Qt::Qml ${PROJECT_LIB} SortFilterProxyModel)
 add_test(NAME QmlTests COMMAND QmlTests -platform offscreen)
 
 set(OVERRIDE_STORE_PATHS_WITH_STUBS_IN_QTCREATOR OFF CACHE BOOL

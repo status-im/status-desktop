@@ -3,12 +3,9 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
-import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
-import Models 1.0
 import Storybook 1.0
 
 import utils 1.0
@@ -27,11 +24,35 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        OnboardingStackView {
-            id: stackView
+        UnblockWithPukFlow {
+            id: flow
+
             anchors.fill: parent
-            Component.onCompleted: flow.init()
+
+            keycardState: mockDriver.keycardState
+            pinSettingState: pinSettingStateSelector.value
+            tryToSetPukFunction: mockDriver.setPuk
+            remainingAttempts: mockDriver.keycardRemainingPukAttempts
+            onSetPinRequested: (pin) => {
+                logs.logEvent("setPinRequested", ["pin"], arguments)
+                console.warn("!!! SET PIN REQUESTED:", pin)
+            }
+            onKeycardFactoryResetRequested: {
+                logs.logEvent("keycardFactoryResetRequested", ["pin"], arguments)
+                console.warn("!!! FACTORY RESET REQUESTED")
+            }
+
+            onFinished: (success) => {
+                console.warn("!!! UNLOCK WITH PUK FINISHED:", success)
+                logs.logEvent("finished", ["success"], arguments)
+                console.warn("!!! RESTARTING FLOW")
+
+                flow.clear()
+                mockDriver.reset()
+                flow.reset()
+            }
         }
+
 
         // needs to be on top of the stack
         // we're here only to provide the Back button feature
@@ -39,8 +60,8 @@ SplitView {
             anchors.fill: parent
             acceptedButtons: Qt.BackButton
             cursorShape: undefined // don't override the cursor coming from the stack
-            enabled: stackView.depth > 1 && !stackView.busy
-            onClicked: stackView.pop()
+            enabled: flow.depth > 1 && !flow.busy
+            onClicked: flow.pop()
         }
 
         StatusBackButton {
@@ -50,14 +71,14 @@ SplitView {
             anchors.bottom: parent.bottom
             anchors.margins: Theme.padding
 
-            opacity: stackView.depth > 1 && !stackView.busy && stackView.backAvailable ? 1 : 0
+            opacity: flow.depth > 1 && !flow.busy && flow.backAvailable ? 1 : 0
             visible: opacity > 0
 
             Behavior on opacity {
                 NumberAnimation { duration: 100 }
             }
 
-            onClicked: stackView.pop()
+            onClicked: flow.pop()
         }
 
         Button {
@@ -65,7 +86,7 @@ SplitView {
             anchors.right: parent.right
             anchors.margins: 10
 
-            visible: stackView.currentItem instanceof KeycardEnterPukPage
+            visible: flow.currentItem instanceof KeycardEnterPukPage
 
             text: "Copy valid PUK (\"%1\")".arg(mockDriver.puk)
             focusPolicy: Qt.NoFocus
@@ -75,42 +96,16 @@ SplitView {
         }
     }
 
-    UnblockWithPukFlow {
-        id: flow
-        stackView: stackView
-        keycardState: mockDriver.keycardState
-        tryToSetPukFunction: mockDriver.setPuk
-        remainingAttempts: mockDriver.keycardRemainingPukAttempts
-        keycardPinInfoPageDelay: 1000
-        onKeycardPinCreated: (pin) => {
-                                 logs.logEvent("keycardPinCreated", ["pin"], arguments)
-                                 console.warn("!!! PIN CREATED:", pin)
-                             }
-        onKeycardFactoryResetRequested: {
-            logs.logEvent("keycardFactoryResetRequested", ["pin"], arguments)
-            console.warn("!!! FACTORY RESET REQUESTED")
-        }
-        onFinished: {
-            console.warn("!!! UNLOCK WITH PUK FINISHED")
-            logs.logEvent("finished")
-            console.warn("!!! RESTARTING FLOW")
-
-            stackView.clear()
-            mockDriver.reset()
-            flow.init()
-        }
-    }
-
     QtObject {
         id: mockDriver
 
         function reset() {
             keycardState = Onboarding.KeycardState.NoPCSCService
-            keycardRemainingPukAttempts = 3
+            keycardRemainingPukAttempts = Constants.onboarding.defaultPukAttempts
         }
 
         property int keycardState: Onboarding.KeycardState.NoPCSCService
-        property int keycardRemainingPukAttempts: 3
+        property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 
         function setPuk(puk) { // -> bool
             logs.logEvent("setPuk", ["puk"], arguments)
@@ -145,12 +140,12 @@ SplitView {
                 Layout.fillWidth: true
 
                 text: {
-                    const stack = stackView
-                    let content = `Stack (${stack.depth}):`
+                    flow.currentItem
+                    let content = `Stack (${flow.depth}):`
 
-                    for (let i = 0; i < stack.depth; i++)
+                    for (let i = 0; i < flow.depth; i++)
                         content += " -> " + InspectionUtils.baseName(
-                                    stack.get(i, StackView.ForceLoad))
+                                    flow.get(i, StackView.ForceLoad))
 
                     return content
                 }
@@ -175,22 +170,10 @@ SplitView {
                     }
 
                     Repeater {
-                        model: [
-                            { value: Onboarding.KeycardState.NoPCSCService, text: "NoPCSCService" },
-                            { value: Onboarding.KeycardState.PluginReader, text: "PluginReader" },
-                            { value: Onboarding.KeycardState.InsertKeycard, text: "InsertKeycard" },
-                            { value: Onboarding.KeycardState.ReadingKeycard, text: "ReadingKeycard" },
-                            { value: Onboarding.KeycardState.WrongKeycard, text: "WrongKeycard" },
-                            { value: Onboarding.KeycardState.NotKeycard, text: "NotKeycard" },
-                            { value: Onboarding.KeycardState.MaxPairingSlotsReached, text: "MaxPairingSlotsReached" },
-                            { value: Onboarding.KeycardState.BlockedPIN, text: "BlockedPIN" },
-                            { value: Onboarding.KeycardState.BlockedPUK, text: "BlockedPUK" },
-                            { value: Onboarding.KeycardState.NotEmpty, text: "NotEmpty" },
-                            { value: Onboarding.KeycardState.Empty, text: "Empty" }
-                        ]
+                        model: Onboarding.getModelFromEnum("KeycardState")
 
                         RoundButton {
-                            text: modelData.text
+                            text: modelData.name
                             checkable: true
                             checked: flow.keycardState === modelData.value
 
@@ -200,6 +183,12 @@ SplitView {
                         }
                     }
                 }
+            }
+
+            ProgressSelector {
+                id: pinSettingStateSelector
+
+                label: "Pin setting progress"
             }
         }
     }

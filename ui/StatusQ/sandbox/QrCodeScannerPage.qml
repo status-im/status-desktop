@@ -136,22 +136,5 @@ Rectangle {
                 value: d.rectToString(qrScanner.captureRectangle)
             }
         }
-
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: 10
-
-            ValueIndicator {
-                Layout.fillWidth: true
-                title: "Camera state:"
-                value: qrScanner.camera ? d.cameraStateString(qrScanner.camera.cameraState) : ""
-            }
-
-            ValueIndicator {
-                Layout.fillWidth: true
-                title: "Camera status:"
-                value: qrScanner.camera ? d.cameraStatusString(qrScanner.camera.cameraStatus) : ""
-            }
-        }
     }
 }

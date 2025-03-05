@@ -1,15 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import StatusQ.Core.Utils 0.1 as SQUtils
-
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
 
-    required property StackView stackView
     required property var validateConnectionString
     required property int syncState
 
@@ -17,20 +14,12 @@ SQUtils.QObject {
     signal loginWithSeedphraseRequested
     signal finished
 
-    function init() {
-        root.stackView.push(loginBySyncPage)
-    }
+    initialItem: LoginBySyncingPage {
+        validateConnectionString: root.validateConnectionString
 
-    Component {
-        id: loginBySyncPage
-
-        LoginBySyncingPage {
-            validateConnectionString: root.validateConnectionString
-
-            onSyncProceedWithConnectionString: {
-                root.syncProceedWithConnectionString(connectionString)
-                root.stackView.push(syncProgressPage)
-            }
+        onSyncProceedWithConnectionString: {
+            root.syncProceedWithConnectionString(connectionString)
+            root.push(syncProgressPage)
         }
     }
 
@@ -44,7 +33,7 @@ SQUtils.QObject {
             syncState: root.syncState
 
             onLoginToAppRequested: root.finished()
-            onRestartSyncRequested: root.stackView.pop()
+            onRestartSyncRequested: root.pop()
 
             onLoginWithSeedphraseRequested: root.loginWithSeedphraseRequested()
         }

@@ -6,7 +6,6 @@
 
 #include <QtWebView>
 
-
 #include "cachecleaner.h"
 #include "directorieswatcher.h"
 #include "figmalinks.h"
@@ -56,6 +55,10 @@ int main(int argc, char *argv[])
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", chromiumFlags);
 
     QQmlApplicationEngine engine;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    engine.setExtraFileSelectors({"qt6"});
+#endif
 
     const QStringList additionalImportPaths {
         STATUSQ_MODULE_IMPORT_PATH,

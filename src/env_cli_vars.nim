@@ -36,6 +36,9 @@ const BASE_NAME_MIXPANEL_TOKEN = "MIXPANEL_TOKEN"
 const BASE_NAME_SENTRY_DSN_STATUS_GO = "SENTRY_DSN_STATUS_GO"
 const BASE_NAME_SENTRY_DSN_STATUS_DESKTOP = "SENTRY_DSN_STATUS_DESKTOP"
 const BASE_NAME_API_LOGGING = "API_LOGGING"
+const BASE_NAME_ETH_RPC_PROXY_USER = "ETH_RPC_PROXY_USER"
+const BASE_NAME_ETH_RPC_PROXY_PASSWORD = "ETH_RPC_PROXY_PASSWORD"
+const BASE_NAME_ETH_RPC_PROXY_URL = "ETH_RPC_PROXY_URL"
 
 
 ################################################################################
@@ -73,6 +76,9 @@ const
   BUILD_STATUS_PROXY_STAGE_NAME = getEnv(BUILD_TIME_PREFIX & BASE_NAME_STATUS_PROXY_STAGE_NAME, DEFAULT_STATUS_PROXY_STAGE_NAME)
 const BUILD_STATUS_PROXY_USER = getEnv(BUILD_TIME_PREFIX & BASE_NAME_STATUS_PROXY_USER)
 const BUILD_STATUS_PROXY_PASSWORD = getEnv(BUILD_TIME_PREFIX & BASE_NAME_STATUS_PROXY_PASSWORD)
+const BUILD_ETH_RPC_PROXY_USER = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ETH_RPC_PROXY_USER)
+const BUILD_ETH_RPC_PROXY_PASSWORD = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ETH_RPC_PROXY_PASSWORD)
+const BUILD_ETH_RPC_PROXY_URL = getEnv(BUILD_TIME_PREFIX & BASE_NAME_ETH_RPC_PROXY_URL)
 
 const
   DEFAULT_TENOR_API_KEY = "DU7DWZ27STB2"
@@ -213,6 +219,21 @@ type StatusDesktopConfig = object
     desc: "Sets status proxy password"
     name: $BASE_NAME_STATUS_PROXY_PASSWORD
     abbr: "status-proxy-password" .}: string
+  ethRpcProxyUser* {.
+    defaultValue: BUILD_ETH_RPC_PROXY_USER
+    desc: "Sets ETH RPC proxy username"
+    name: $BASE_NAME_ETH_RPC_PROXY_USER
+    abbr: "eth-rpc-proxy-user" .}: string
+  ethRpcProxyPassword* {.
+    defaultValue: BUILD_ETH_RPC_PROXY_PASSWORD
+    desc: "Sets ETH RPC proxy password"
+    name: $BASE_NAME_ETH_RPC_PROXY_PASSWORD
+    abbr: "eth-rpc-proxy-password" .}: string
+  ethRpcProxyUrl* {.
+    defaultValue: BUILD_ETH_RPC_PROXY_URL
+    desc: "Sets custom ETH RPC proxy URL"
+    name: $BASE_NAME_ETH_RPC_PROXY_URL
+    abbr: "eth-rpc-proxy-url" .}: string
 
   # runtime vars
   dataDir* {.

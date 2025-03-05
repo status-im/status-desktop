@@ -63,6 +63,9 @@ Control {
     /** input property to blur the background of the header **/
     property var blurSource: null
 
+    /** property exposing the currently selected token selector tab **/
+    property alias tokenSelectorTab: sendModalHeader.tokenSelectorTab
+
     /** signal to propagate that an asset was selected **/
     signal assetSelected(string key)
     /** signal to propagate that a collection was selected **/
@@ -101,6 +104,8 @@ Control {
 
         Rectangle {
             anchors.fill: parent
+            anchors.leftMargin: radius
+            anchors.rightMargin: radius
             color: foregroundRect.color
             visible: !!root.blurSource
             radius: 8
@@ -113,39 +118,45 @@ Control {
             ShaderEffectSource {
                 sourceItem: root.blurSource
                 anchors.fill: parent
-                anchors.leftMargin: Theme.xlPadding
-                anchors.rightMargin: -Theme.xlPadding
+                anchors.leftMargin: Theme.xlPadding - parent.radius
+                anchors.rightMargin: -Theme.xlPadding - parent.radius
                 sourceRect: Qt.rect(0, 0, width, height)
                 live: true
             }
         }
 
-        Rectangle {
-            id: foregroundRect
+        Item {
             anchors.fill: parent
-            color: root.implicitHeight > d.bottomMargin ? Theme.palette.baseColor3 : Theme.palette.transparent
-            radius: 8
-            opacity: 0.85
+            Rectangle {
+                id: foregroundRect
+                anchors.fill: parent
+                color: root.implicitHeight > d.bottomMargin ? Theme.palette.alphaColor(Theme.palette.baseColor3, 0.85) : Theme.palette.transparent
+                radius: 8
+
+                // cover for the bottom rounded corners
+                Rectangle {
+                    width: parent.radius
+                    height: parent.radius
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    color: parent.color
+                }
+                // cover for the bottom rounded corners
+                Rectangle {
+                    width: parent.radius
+                    height: parent.radius
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    color: parent.color
+                }
+            }
 
             layer.enabled: true
             layer.effect: DropShadow {
                 horizontalOffset: 0
-                verticalOffset: 2
-                samples: 37
-                color: Theme.palette.dropShadow
-            }
-
-            // cover for the bottom rounded corners
-            Rectangle {
-                width: parent.width
-                height: parent.radius
-                anchors.bottom: parent.bottom
-                color: parent.color
-            }
-
-            StatusDialogDivider {
-                anchors.bottom: parent.bottom
-                width: parent.width
+                verticalOffset: 5
+                samples: 24
+                color: Theme.palette.alphaColor(Theme.palette.dropShadow, 0.06)
             }
         }
     }

@@ -61,17 +61,17 @@ SplitView {
             fromTokenAmount: ctrlFromTokenAmount.text
             toTokenKey: ctrlToTokenKey.text
             toTokenAmount: ctrlToTokenAmount.text
-            defaultToTokenKey: "STT"
         }
 
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
-                readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: true
                 signal suggestedRoutesReady(var txRoutes, string errCode, string errDescription)
                 signal transactionSent(var chainId, var txHash, var uuid, var error)
                 signal transactionSendingComplete(var txHash, var status)
+            }
+            networksStore: NetworksStore {
+                readonly property var activeNetworks: NetworksModel.flatNetworks
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore

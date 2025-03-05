@@ -836,6 +836,9 @@ proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountI
 proc remainingAccountCapacity*(self: Controller): int =
   return self.walletAccountService.remainingAccountCapacity()
 
+proc keycardPinChanged*(self: Controller, pin: string) =
+  self.delegate.keycardPinChanged(pin)
+
 # Keep this function at the end of the file.
 # There's a bug in Nim: https://github.com/nim-lang/Nim/issues/23002
 # that blocks us from enabling back the warning pragma.

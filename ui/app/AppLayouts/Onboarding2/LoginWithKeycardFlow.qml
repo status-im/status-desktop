@@ -1,16 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
-
-    required property StackView stackView
 
     required property int keycardState
     required property int authorizationState
@@ -30,22 +27,14 @@ SQUtils.QObject {
     signal exportKeysRequested
     signal finished
 
-    function init() {
-        root.stackView.push(d.initialComponent())
-    }
+    initialItem: {
+        if (root.keycardState === Onboarding.KeycardState.Empty)
+            return keycardEmptyPage
 
-    QtObject {
-        id: d
+        if (root.keycardState === Onboarding.KeycardState.NotEmpty)
+            return keycardEnterPinPage
 
-        function initialComponent() {
-            if (root.keycardState === Onboarding.KeycardState.Empty)
-                return keycardEmptyPage
-
-            if (root.keycardState === Onboarding.KeycardState.NotEmpty)
-                return keycardEnterPinPage
-
-            return keycardIntroPage
-        }
+        return keycardIntroPage
     }
 
     Component {
@@ -60,8 +49,8 @@ SQUtils.QObject {
             onKeycardFactoryResetRequested: root.keycardFactoryResetRequested()
             onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
             onUnblockWithPukRequested: root.unblockWithPukRequested()
-            onEmptyKeycardDetected: root.stackView.replace(keycardEmptyPage)
-            onNotEmptyKeycardDetected: root.stackView.replace(keycardEnterPinPage)
+            onEmptyKeycardDetected: root.replace(keycardEmptyPage)
+            onNotEmptyKeycardDetected: root.replace(keycardEnterPinPage)
         }
     }
 
@@ -79,7 +68,19 @@ SQUtils.QObject {
         KeycardEnterPinPage {
             id: page
 
-            authorizationState: root.authorizationState
+            state: {
+                switch (root.authorizationState) {
+                case Onboarding.AuthorizationState.Authorized:
+                    return KeycardEnterPinPage.State.Success
+                case Onboarding.AuthorizationState.InProgress:
+                    return KeycardEnterPinPage.State.InProgress
+                case Onboarding.AuthorizationState.WrongPin:
+                    return KeycardEnterPinPage.State.WrongPin
+                }
+
+                return KeycardEnterPinPage.State.Idle
+            }
+
             remainingAttempts: root.remainingPinAttempts
             unblockWithPukAvailable: root.remainingPukAttempts > 0
 
@@ -92,12 +93,12 @@ SQUtils.QObject {
                 enabled: page.visible
 
                 function onAuthorizationStateChanged() {
-                    if (root.authorizationState !== Onboarding.ProgressState.Success)
+                    if (root.authorizationState !== Onboarding.AuthorizationState.Authorized)
                         return
 
                     const doNext = () => {
                         root.exportKeysRequested()
-                        root.stackView.replace(keycardExtractingKeysPage)
+                        root.replace(keycardExtractingKeysPage)
                     }
 
                     Backpressure.debounce(page, root.keycardPinInfoPageDelay,

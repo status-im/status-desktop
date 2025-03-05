@@ -14,6 +14,7 @@ Item {
     property alias profileStore: profilePreview.profileStore
     property alias contactsStore: profilePreview.contactsStore
     property alias utilsStore: profilePreview.utilsStore
+    property alias networksStore: profilePreview.networksStore
 
     property alias sendToAccountEnabled: profilePreview.sendToAccountEnabled
 

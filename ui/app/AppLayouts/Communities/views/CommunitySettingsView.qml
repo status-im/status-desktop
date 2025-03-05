@@ -46,6 +46,7 @@ StatusSectionLayout {
     required property var declinedMembers
     required property TransactionStore transactionStore
     property bool communitySettingsDisabled
+    required property var activeNetworks
 
     required property string enabledChainIds
 
@@ -398,7 +399,7 @@ StatusSectionLayout {
                 // Models
                 tokensModel: root.community.communityTokens
                 membersModel: root.joinedMembers
-                flatNetworks: communityTokensStore.filteredFlatModel
+                flatNetworks: root.activeNetworks
                 accounts: root.walletAccountsModel
                 referenceAssetsBySymbolModel: root.tokensStore.assetsBySymbolModel
 

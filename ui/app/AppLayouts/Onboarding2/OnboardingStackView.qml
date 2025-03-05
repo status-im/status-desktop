@@ -1,13 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
 
-StackView {
+RecursiveStackView {
     id: root
 
-    readonly property bool backAvailable: currentItem ? (currentItem.backAvailableHint ?? true)
-                                                      : false
+    readonly property bool backAvailable:
+        topLevelItem ? (topLevelItem.backAvailableHint ?? true) : false
 
     QtObject {
         id: d

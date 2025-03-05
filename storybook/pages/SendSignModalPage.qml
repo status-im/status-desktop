@@ -148,9 +148,43 @@ SplitView {
                     networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
 
+                    currentBaseFee: "8.2"
+                    currentSuggestedMinPriorityFee: "0.06"
+                    currentSuggestedMaxPriorityFee: "5.1"
+                    currentGasAmount: "31500"
+                    currentNonce: 21
+
+                    normalPrice: "1.45 EUR"
+                    normalBaseFee: "10000"
+                    normalPriorityFee: "1000"
+                    normalTime: 60
+                    fastPrice: "1.65 EUR"
+                    fastBaseFee: "100000"
+                    fastPriorityFee: "10000"
+                    fastTime: 40
+                    urgentPrice: "1.85 EUR"
+                    urgentBaseFee: "1000000"
+                    urgentPriorityFee: "100000"
+                    urgentTime: 15
+
+                    customBaseFee: "10000"
+                    customPriorityFee: "1000"
+                    customGasAmount: "35000"
+                    customNonce: 22
+
+                    selectedFeeMode: Constants.FeePriorityModeType.Normal
+
+                    fnGetPriceInCurrencyForFee: function(feeInWei) {
+                        return "0.25 USD"
+                    }
+
+                    fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                        return 0
+                    }
+
                     fiatFees: formatBigNumber(42.542567, "EUR")
                     cryptoFees: formatBigNumber(0.06, "ETH")
-                    estimatedTime: qsTr("> 5 minutes")
+                    estimatedTime: qsTr("~60s")
 
                     isCollectibleLoading: isCollectibleLoadingCheckbox.checked
                     isCollectible: isCollectibleCheckbox.checked

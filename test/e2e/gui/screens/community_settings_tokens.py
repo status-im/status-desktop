@@ -1,4 +1,3 @@
-import time
 import typing
 
 import allure

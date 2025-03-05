@@ -17,7 +17,7 @@ ColorImage {
             source = icon
             objectName = "custom-icon"
         } else if (icon !== "") {
-            source = "../../assets/img/icons/" + icon+ ".svg";
+            source = Qt.resolvedUrl("../../assets/img/icons/" + icon+ ".svg");
             objectName = icon + "-icon"
         }
     }

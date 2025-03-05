@@ -2,9 +2,6 @@
 
 #include <QDebug>
 
-Keychain::Keychain(QObject *parent) : QObject(parent)
-{}
-
 QString Keychain::service() const
 {
     return m_service;

@@ -8,15 +8,9 @@ QObject {
     id: root
 
     required property var networksModel
-    required property bool areTestNetworksEnabled
     required property var processedTokenSelectorAssetsModel
     required property var selectedProviderSupportedAssetsArray
     required property int selectedChainId
-
-    readonly property SortFilterProxyModel filteredFlatNetworksModel: SortFilterProxyModel {
-        sourceModel: root.networksModel
-        filters: ValueFilter { roleName: "isTest"; value: root.areTestNetworksEnabled }
-    }
 
     // this proxy removes tokens not supported by selected on-ramp provider
     readonly property SortFilterProxyModel filteredAssetsModel: SortFilterProxyModel {

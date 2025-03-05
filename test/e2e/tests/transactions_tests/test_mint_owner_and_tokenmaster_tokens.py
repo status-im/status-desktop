@@ -70,10 +70,7 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
 
     with step('Verify toast messages about started minting process appears'):
         toast_messages = main_window.wait_for_notification()
-        assert driver.waitFor(lambda: (MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_1.value + community.name + MintOwnerTokensElements.TOAST_AIRDROPPING_TOKEN_2.value) in toast_messages,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        assert driver.waitFor(lambda: (community.name + MintOwnerTokensElements.TOAST_TOKENS_BEING_MINTED.value) in toast_messages,
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        assert f'Minting Owner-{community.name} and TMaster-{community.name} tokens for {community.name} using Account 1' in toast_messages
 
     with step('Verify that status of both tokens'):
         minted_tokens_view.check_community_collectibles_statuses()

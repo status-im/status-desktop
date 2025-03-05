@@ -444,6 +444,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
 
 proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetailsDto, sentTransaction: RouterSentTransaction) =
     var
+      finalStatus = status
       addressFrom = sendDetails.fromAddress
       addressTo = sendDetails.toAddress
       txTo = "" # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
@@ -585,6 +586,8 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
         if communityNubmerOfInvolvedAddresses == 1: # set address only if all tokens are from the same address
           communityInvolvedAddress = sendDetails.communityParams.walletAddresses[0]
 
+    if finalStatus.len == 0 and error.len > 0:
+      finalStatus = TxStatusFailed
     self.view.showTransactionToast(
       sendDetails.uuid,
       sendDetails.sendType,
@@ -622,7 +625,7 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       communityOwnerTokenName,
       communityMasterTokenName,
       communityDeployedTokenName,
-      status,
+      finalStatus,
       error,
     )
 
@@ -795,6 +798,27 @@ method load*[T](
   self.view.model().addItem(profileSettingsSectionItem)
   if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
+
+  # Swap Section
+  let swapSectionItem = initItem(
+    conf.SWAP_SECTION_ID,
+    SectionType.Swap,
+    conf.SWAP_SECTION_NAME,
+    memberRole = MemberRole.Owner,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.SWAP_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = WALLET_ENABLED,
+  )
+  self.view.model().addItem(swapSectionItem)
+  if activeSectionId == swapSectionItem.id:
+    activeSection = swapSectionItem
 
   self.profileSectionModule.load()
   self.stickersModule.load()
@@ -1703,6 +1727,9 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
 
   elif details.notificationType == NotificationType.CommunityMemberUnbanned:
     self.displayEphemeralWithActionNotification(title, "Visit community" , "communities", "", false, EphemeralNotificationType.Success.int, EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId)
+
+  else:
+    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)

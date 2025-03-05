@@ -7,7 +7,9 @@ import AppLayouts.Onboarding.enums 1.0
 QtObject {
     id: root
 
-    signal appLoaded
+    signal appLoaded(string keyUid)
+    signal saveBiometricsRequested(string keyUid, string credential)
+    signal deleteBiometricsRequested(string keyUid)
 
     readonly property QtObject d: StatusQUtils.QObject {
         id: d
@@ -16,6 +18,8 @@ QtObject {
         Component.onCompleted: {
             d.onboardingModuleInst.appLoaded.connect(root.appLoaded)
             d.onboardingModuleInst.accountLoginError.connect(root.accountLoginError)
+            d.onboardingModuleInst.saveBiometricsRequested.connect(root.saveBiometricsRequested)
+            d.onboardingModuleInst.deleteBiometricsRequested.connect(root.deleteBiometricsRequested)
         }
     }
 
@@ -23,13 +27,15 @@ QtObject {
 
     // keycard
     readonly property int keycardState: d.onboardingModuleInst.keycardState // cf. enum Onboarding.KeycardState
+    readonly property string keycardUID: d.onboardingModuleInst.keycardUID
     readonly property int pinSettingState: d.onboardingModuleInst.pinSettingState // cf. enum Onboarding.ProgressState
-    readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.ProgressState
-    readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.ProgressState
+    readonly property int authorizationState: d.onboardingModuleInst.authorizationState // cf. enum Onboarding.AuthorizationState
+    readonly property int restoreKeysExportState: d.onboardingModuleInst.restoreKeysExportState // cf. enum Onboarding.AuthorizationState
+    readonly property int convertKeycardAccountState: d.onboardingModuleInst.convertKeycardAccountState // cf. enum Onboarding.ProgressState
     readonly property int keycardRemainingPinAttempts: d.onboardingModuleInst.keycardRemainingPinAttempts
     readonly property int keycardRemainingPukAttempts: d.onboardingModuleInst.keycardRemainingPukAttempts
 
-    function finishOnboardingFlow(flow: int, data: Object) { // -> bool
+    function finishOnboardingFlow(flow: int, data: Object) { // -> string
         return d.onboardingModuleInst.finishOnboardingFlow(flow, JSON.stringify(data))
     }
 
@@ -71,6 +77,9 @@ QtObject {
     // seedphrase/mnemonic
     function validMnemonic(mnemonic: string) { // -> bool
         return d.onboardingModuleInst.validMnemonic(mnemonic)
+    }
+    function isMnemonicDuplicate(mnemonic: string) { // -> bool
+        return d.onboardingModuleInst.isMnemonicDuplicate(mnemonic)
     }
     function generateMnemonic() { // -> string as per BIP-39 (space-separated list of words)
         return d.onboardingModuleInst.generateMnemonic()

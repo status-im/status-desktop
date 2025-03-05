@@ -405,7 +405,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+                visible: active
                 sourceComponent: Component {
                     WelcomeBannerPanel {
                         activeCommunity: communityData
@@ -421,7 +421,7 @@ Item {
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
-                height: item.height
+                visible: active
                 sourceComponent: Component {
                     ChannelsAndCategoriesBannerPanel {
                         id: channelsAndCategoriesBanner
@@ -445,7 +445,7 @@ Item {
                     adminPopupMenu.showInviteButton = true
                     adminPopupMenu.x = eventPoint.position.x + 4
                     adminPopupMenu.y = eventPoint.position.y + 4
-                    adminPopupMenu.open()
+                    adminPopupMenu.popup()
                 }
             }
         }

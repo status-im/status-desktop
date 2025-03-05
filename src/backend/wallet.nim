@@ -13,6 +13,7 @@ const
     GasFeeLow* = 0
     GasFeeMedium* = 1
     GasFeeHigh* = 2
+    GasFeeCustom* = 3
 
 const
   ExtraKeyUsername* = "username"
@@ -148,7 +149,7 @@ proc prepareDataForSuggestedRoutes(
     "toTokenID": toToken,
     "disabledFromChainIDs": disabledFromChainIDs,
     "disabledToChainIDs": disabledToChainIDs,
-    "gasFeeMode": GasFeeMedium,
+    "gasFeeMode": GasFeeLow,
     "fromLockedAmount": lockedInAmounts,
     "communityRouteInputParams": communityRouteInputParameters,
   }
@@ -202,5 +203,68 @@ proc suggestedRoutesAsyncForCommunities*(uuid: string, sendType: int, accountFro
 
 proc stopSuggestedRoutesAsyncCalculation*(): string {.raises: [RpcException].} =
   let rpcResponse = core.callPrivateRPC("wallet_stopSuggestedRoutesAsyncCalculation")
+  if isErrorResponse(rpcResponse):
+    return rpcResponse.error.message
+
+## Sets the fee mode for the provided path (should not be user for custom fee mode)
+## `feeMode` is the fee mode to set for the path, corresponds to the status go `fees.GasFeeMode` type (0: GasFeeLow, 1: GasFeeMedium, 2: GasFeeHigh and 3: GasFeeCustom)
+## `routerInputParamsUuid` is the uuid of the router input params
+## `pathName` is the name of the path
+## `chainId` is the chain id of the network
+## `isApprovalTx` is a flag that indicates if the tx is an approval tx - optional
+## `communityId` is the id of the community - optional
+## returns the error message if any, or an empty string
+proc setFeeMode*(feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool = false,
+  communityId: string = ""): string {.raises: [RpcException].} =
+    var pathTxIdentity = %* {
+      "routerInputParamsUuid": routerInputParamsUuid,
+      "pathName": pathName,
+      "chainID": chainId,
+    }
+    if isApprovalTx:
+      pathTxIdentity["isApprovalTx"] = %* true
+    if communityId != "":
+      pathTxIdentity["communityID"] = %* communityId
+
+    let payload = %* [pathTxIdentity, feeMode]
+    let rpcResponse = core.callPrivateRPC("wallet_setFeeMode", payload)
+    if isErrorResponse(rpcResponse):
+      return rpcResponse.error.message
+
+## Sets the fee mode for the provided path (should not be user for any but the custom fee mode)
+## `nonce` is the nonce of the tx
+## `gasAmount` is the gas amount of the tx
+## `maxFeesPerGas` is the max fees per gas of the tx
+## `priorityFee` is the priority fee of the tx
+## `routerInputParamsUuid` is the uuid of the router input params
+## `pathName` is the name of the path
+## `chainId` is the chain id of the network
+## `isApprovalTx` is a flag that indicates if the tx is an approval tx - optional
+## `communityId` is the id of the community - optional
+## returns the error message if any, or an empty string
+proc setCustomTxDetails*(nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool = false,
+  communityId: string = ""): string {.raises: [RpcException].} =
+
+  let pathTxCustomParams = %* {
+    "gasFeeMode": GasFeeCustom,
+    "nonce": nonce,
+    "gasAmount": gasAmount,
+    "maxFeesPerGas": maxFeesPerGas,
+    "priorityFee": priorityFee,
+  }
+
+  var pathTxIdentity = %* {
+      "routerInputParamsUuid": routerInputParamsUuid,
+      "pathName": pathName,
+      "chainID": chainId,
+    }
+  if isApprovalTx:
+    pathTxIdentity["isApprovalTx"] = %* true
+  if communityId != "":
+    pathTxIdentity["communityID"] = %* communityId
+
+  let payload = %* [pathTxIdentity, pathTxCustomParams]
+  let rpcResponse = core.callPrivateRPC("wallet_setCustomTxDetails", payload)
   if isErrorResponse(rpcResponse):
     return rpcResponse.error.message

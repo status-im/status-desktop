@@ -60,6 +60,7 @@ StatusDialog {
 
     required property TransactionStore store
     property WalletStores.CollectiblesStore collectiblesStore
+    required property NetworksStore networksStore
 
     property var bestRoutes
     property bool isLoading: false
@@ -92,7 +93,7 @@ StatusDialog {
             if (amountToSend.balanceExceeded && !isCollectiblesTransfer)
                 return Constants.SendAmountExceedsBalance
 
-            if (popup.bestRoutes && popup.bestRoutes.count === 0
+            if (!!popup.bestRoutes && popup.bestRoutes.count === 0
                     && !amountToSend.empty && recipientInputLoader.ready
                     && !popup.isLoading)
                 return Constants.NoRoute
@@ -180,6 +181,8 @@ StatusDialog {
                 popup.isLoading = true
             }
             d.uuid = Utils.uuid()
+            popup.bestRoutes = null
+            d.sendError = ""
             d.routerError = ""
             d.routerErrorDetails = ""
             debounceRecalculateRoutesAndFees()
@@ -203,13 +206,13 @@ StatusDialog {
     LeftJoinModel {
         id: fromNetworksRouteModel
         leftModel: popup.store.fromNetworksRouteModel
-        rightModel: popup.store.flatNetworksModel
+        rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
     LeftJoinModel {
         id: toNetworksRouteModel
         leftModel: popup.store.toNetworksRouteModel
-        rightModel: popup.store.flatNetworksModel
+        rightModel: popup.networksStore.allNetworks
         joinRole: "chainId"
     }
 
@@ -425,7 +428,7 @@ StatusDialog {
                                              popup.store.walletAssetStore.bridgeableGroupedAccountAssetsModel :
                                              popup.store.walletAssetStore.groupedAccountAssetsModel
 
-                            flatNetworksModel: popup.store.flatNetworksModel
+                            flatNetworksModel: popup.networksStore.activeNetworks
                             currentCurrency: popup.store.currencyStore.currentCurrency
                             accountAddress: popup.selectedAccount.address
                             showCommunityAssets: popup.store.tokensStore.showCommunityAssetsInSend
@@ -439,10 +442,7 @@ StatusDialog {
                             sourceComponent: CollectiblesSelectionAdaptor {
                                 accountKey: popup.selectedAccount.address
 
-                                networksModel: SortFilterProxyModel {
-                                    sourceModel: popup.store.flatNetworksModel
-                                    filters: ValueFilter { roleName: "isTest"; value: popup.store.areTestNetworksEnabled }
-                                }
+                                networksModel: popup.networksStore.activeNetworks
                                 collectiblesModel: SortFilterProxyModel {
                                     sourceModel: collectiblesStore ? collectiblesStore.jointCollectiblesBySymbolModel : null
                                     filters: ValueFilter {
@@ -524,6 +524,8 @@ StatusDialog {
                     AmountToSend {
                         id: amountToSend
 
+                        Layout.fillWidth: true
+
                         caption: d.isBridgeTx ? qsTr("Amount to bridge")
                                               : qsTr("Amount to send")
                         interactive: popup.interactive
@@ -591,9 +593,10 @@ StatusDialog {
 
                     AmountToReceive {
                         id: amountToReceive
+
+                        Layout.preferredWidth: implicitWidth
                         Layout.alignment: Qt.AlignRight
-                        Layout.fillWidth:true
-                        visible: !!popup.bestRoutes && popup.bestRoutes !== undefined &&
+                        visible: !popup.isLoading && !!popup.bestRoutes && popup.bestRoutes !== undefined &&
                                  popup.bestRoutes.count > 0 && amountToSend.ready
                         isLoading: popup.isLoading
                         selectedHolding: d.selectedHolding
@@ -708,6 +711,7 @@ StatusDialog {
                 width: scrollView.availableWidth
 
                 store: popup.store
+                networksStore: popup.networksStore
                 interactive: popup.interactive
                 selectedRecipient: popup.preSelectedRecipient
                 ensAddressOrEmpty: recipientInputLoader.ready ? recipientInputLoader.resolvedENSAddress : ""

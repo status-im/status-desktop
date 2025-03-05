@@ -7,6 +7,7 @@
         <file>StatusQ/Components/StatusAnimatedImage.qml</file>
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusBetaTag.qml</file>
+        <file>StatusQ/Components/StatusNewTag.qml</file>
         <file>StatusQ/Components/StatusCard.qml</file>
         <file>StatusQ/Components/StatusChartPanel.qml</file>
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>
@@ -50,6 +51,7 @@
         <file>StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
         <file>StatusQ/Components/StatusPageIndicator.qml</file>
+        <file>StatusQ/Components/StatusQrCodeCapture.qml</file>
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
         <file>StatusQ/Components/StatusRoundIcon.qml</file>
         <file>StatusQ/Components/StatusRoundedComponent.qml</file>
@@ -92,6 +94,7 @@
         <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Controls/StatusActivityCenterButton.qml</file>
         <file>StatusQ/Controls/StatusAmountInput.qml</file>
+        <file>StatusQ/Controls/StatusAnimatedText.qml</file>
         <file>StatusQ/Controls/StatusBackButton.qml</file>
         <file>StatusQ/Controls/StatusBanner.qml</file>
         <file>StatusQ/Controls/StatusBaseButton.qml</file>
@@ -104,12 +107,14 @@
         <file>StatusQ/Controls/StatusCheckBox.qml</file>
         <file>StatusQ/Controls/StatusCircularProgressBar.qml</file>
         <file>StatusQ/Controls/StatusClearButton.qml</file>
+        <file>StatusQ/Controls/StatusColorAnimation.qml</file>
         <file>StatusQ/Controls/StatusColorRadioButton.qml</file>
         <file>StatusQ/Controls/StatusColorSelector.qml</file>
         <file>StatusQ/Controls/StatusColorSelectorGrid.qml</file>
         <file>StatusQ/Controls/StatusComboBox.qml</file>
         <file>StatusQ/Controls/StatusCommunityTag.qml</file>
         <file>StatusQ/Controls/StatusDropdown.qml</file>
+        <file>StatusQ/Controls/StatusFeeOption.qml</file>
         <file>StatusQ/Controls/StatusFlatButton.qml</file>
         <file>StatusQ/Controls/StatusFlatRoundButton.qml</file>
         <file>StatusQ/Controls/StatusIconSwitch.qml</file>
@@ -205,6 +210,7 @@
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
         <file>StatusQ/Core/Utils/OperatorsUtils.qml</file>
         <file>StatusQ/Core/Utils/QObject.qml</file>
+        <file>StatusQ/Core/Utils/RecursiveStackView.qml</file>
         <file>StatusQ/Core/Utils/SearchFilter.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
         <file>StatusQ/Core/Utils/StatesStack.qml</file>
@@ -257,5 +263,6 @@
         <file>StatusQ/Popups/statusModal/StatusModalHeader.qml</file>
         <file>StatusQ/Validators/AmountValidator.qml</file>
         <file>StatusQ/Validators/qmldir</file>
+        <file>StatusQ/Components/private/StatusNewItemGradient.qml</file>
     </qresource>
 </RCC>

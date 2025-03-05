@@ -9,24 +9,20 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
-
-    required property StackView stackView
 
     required property var loginAccountsModel
 
     required property int keycardState
+    required property string keycardUID
     required property int pinSettingState
     required property int authorizationState
     required property int restoreKeysExportState
     required property int addKeyPairState
     required property int syncState
-    required property var generateMnemonic
     required property int remainingPinAttempts
     required property int remainingPukAttempts
-
-    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
 
     required property bool biometricsAvailable
     required property bool displayKeycardPromoBanner
@@ -35,46 +31,45 @@ SQUtils.QObject {
     property int keycardPinInfoPageDelay: 2000
 
     // functions
+    required property var generateMnemonic
+    required property var isBiometricsLogin // (string account) => bool
     required property var passwordStrengthScoreFunction
     required property var isSeedPhraseValid
+    required property var isSeedPhraseDuplicate
     required property var validateConnectionString
-    required property var tryToSetPinFunction
     required property var tryToSetPukFunction
+
+    readonly property LoginScreen loginScreen: d.loginScreen
 
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
     signal loginRequested(string keyUid, int method, var data)
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal enableBiometricsRequested(bool enable)
     signal shareUsageDataRequested(bool enabled)
     signal syncProceedWithConnectionString(string connectionString)
     signal seedphraseSubmitted(string seedphrase)
+    signal keyUidSubmitted(string keyUid)
     signal setPasswordRequested(string password)
     signal exportKeysRequested
     signal loadMnemonicRequested
     signal authorizationRequested(string pin)
-
     signal performKeycardFactoryResetRequested
 
     signal linkActivated(string link)
 
     signal finished(int flow)
 
-    function init() {
-        root.stackView.push(entryPage)
+    function restart() {
+        replace(null, initialComponent)
     }
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!loginScreen)
             return
 
-        loginScreen.setBiometricResponse(secret, error, detailedError,
-                                         wrongFingerprint)
+        loginScreen.setBiometricResponse(secret, error)
     }
-
-    readonly property LoginScreen loginScreen: d.loginScreen
 
     QtObject {
         id: d
@@ -86,27 +81,74 @@ SQUtils.QObject {
 
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
-                root.stackView.replace(null, enableBiometricsPage)
+                root.replace(null, enableBiometricsPage)
             } else {
                 root.finished(d.flow)
             }
         }
 
         function openPrivacyPolicyPopup() {
-            privacyPolicyPopup.createObject(root.stackView).open()
+            privacyPolicyPopup.createObject(root).open()
         }
 
         function openTermsOfUsePopup() {
-            termsOfUsePopup.createObject(root.stackView).open()
+            termsOfUsePopup.createObject(root).open()
+        }
+
+        function handleKeycardProgressFailedState(state) {
+            if (state === Onboarding.ProgressState.Failed)
+                handleKeycardFailedState()
+        }
+
+        function handleKeycardAuthorizationErrorState(state) {
+            if (state === Onboarding.AuthorizationState.Error)
+                handleKeycardFailedState()
+        }
+
+        function handleKeycardFailedState() {
+            root.replace(root.get(1), errorPage)
         }
     }
 
+    Connections {
+        enabled: root.depth > 1 && !(root.currentItem instanceof KeycardErrorPage)
+
+        function onPinSettingStateChanged() {
+            d.handleKeycardProgressFailedState(pinSettingState)
+        }
+
+        function onAuthorizationStateChanged() {
+            d.handleKeycardAuthorizationErrorState(authorizationState)
+        }
+
+        function onRestoreKeysExportStateChanged() {
+            d.handleKeycardProgressFailedState(restoreKeysExportState)
+        }
+
+        function onAddKeyPairStateChanged() {
+            d.handleKeycardProgressFailedState(addKeyPairState)
+        }
+    }
+
+    initialItem: initialComponent
+
     Component {
-        id: entryPage
+        id: initialComponent
 
         Loader {
             sourceComponent: loginAccountsModel.ModelCount.empty ? welcomePage
                                                                  : loginScreenComponent
+        }
+    }
+
+    Component {
+        id: errorPage
+
+        KeycardErrorPage {
+            readonly property bool backAvailableHint: false
+
+            onTryAgainRequested: root.pop()
+            onFactoryResetRequested: root.push(keycardFactoryResetFlow)
         }
     }
 
@@ -116,13 +158,13 @@ SQUtils.QObject {
         WelcomePage {
             function pushWithProxy(component) {
                 if (d.seenUsageDataPrompt) { // don't ask for "Share usage data" a second time (e.g. after a factory reset)
-                    root.stackView.push(component)
+                    root.push(component)
                 } else {
-                    const page = root.stackView.push(helpUsImproveStatusPage)
+                    const page = root.push(helpUsImproveStatusPage)
 
                     page.shareUsageDataRequested.connect(enabled => {
                         root.shareUsageDataRequested(enabled)
-                        root.stackView.push(component)
+                        root.push(component)
                         d.seenUsageDataPrompt = true
                     })
                 }
@@ -143,23 +185,29 @@ SQUtils.QObject {
             id: loginScreen
 
             keycardState: root.keycardState
-            tryToSetPinFunction: root.tryToSetPinFunction
-
+            keycardUID: root.keycardUID
             keycardRemainingPinAttempts: root.remainingPinAttempts
             keycardRemainingPukAttempts: root.remainingPukAttempts
 
             loginAccountsModel: root.loginAccountsModel
-            biometricsAvailable: root.biometricsAvailable
-            isBiometricsLogin: root.isBiometricsLogin
+            isBiometricsLogin: root.biometricsAvailable &&
+                               root.isBiometricsLogin(loginScreen.selectedProfileKeyId)
 
-            onBiometricsRequested: (profileId) => root.biometricsRequested(profileId)
+            onBiometricsRequested: (profileId) => {
+                if (visible)
+                    root.biometricsRequested(profileId)
+            }
             onDismissBiometricsRequested: root.dismissBiometricsRequested()
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
-            onOnboardingCreateProfileFlowRequested: root.stackView.push(createProfilePage)
-            onOnboardingLoginFlowRequested: root.stackView.push(loginPage)
-            onLostKeycard: root.stackView.push(keycardLostPage)
-            onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
-            onUnblockWithPukRequested: unblockWithPukFlow.init()
+            onOnboardingCreateProfileFlowRequested: root.push(createProfilePage)
+            onOnboardingLoginFlowRequested: root.push(loginPage)
+            onLostKeycardFlowRequested: {
+                root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
+                root.push(keycardLostPage)
+            }
+
+            onUnblockWithSeedphraseRequested: root.push(unblockWithSeedphraseFlow)
+            onUnblockWithPukRequested: root.push(unblockWithPukFlow)
 
             onVisibleChanged: {
                 if (!visible)
@@ -189,12 +237,13 @@ SQUtils.QObject {
         id: createProfilePage
 
         CreateProfilePage {
-            onCreateProfileWithPasswordRequested: createNewProfileFlow.init()
+            onCreateProfileWithPasswordRequested: root.push(createNewProfileFlow)
             onCreateProfileWithSeedphraseRequested: {
                 d.flow = Onboarding.OnboardingFlow.CreateProfileWithSeedphrase
-                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.NewProfile)
+                root.push(useRecoveryPhraseFlow,
+                          { type: UseRecoveryPhraseFlow.Type.NewProfile })
             }
-            onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
+            onCreateProfileWithEmptyKeycardRequested: root.push(keycardCreateProfileFlow)
         }
     }
 
@@ -204,12 +253,13 @@ SQUtils.QObject {
         NewAccountLoginPage {
             networkChecksEnabled: root.networkChecksEnabled
 
-            onLoginWithSyncingRequested: logInBySyncingFlow.init()
-            onLoginWithKeycardRequested: loginWithKeycardFlow.init()
+            onLoginWithSyncingRequested: root.push(logInBySyncingFlow)
+            onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
 
             onLoginWithSeedphraseRequested: {
                 d.flow = Onboarding.OnboardingFlow.LoginWithSeedphrase
-                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
+                root.push(useRecoveryPhraseFlow,
+                          { type: UseRecoveryPhraseFlow.Type.Login })
             }
         }
     }
@@ -220,212 +270,226 @@ SQUtils.QObject {
         KeycardLostPage {
             onCreateReplacementKeycardRequested: {
                 d.flow = Onboarding.OnboardingFlow.LoginWithRestoredKeycard
-                keycardCreateReplacementFlow.init()
+                root.push(keycardCreateReplacementFlow)
             }
 
             onUseProfileWithoutKeycardRequested: {
                 d.flow = Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase
-                useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.KeycardRecovery)
+                root.push(useRecoveryPhraseFlow,
+                          { type: UseRecoveryPhraseFlow.Type.KeycardRecovery })
             }
         }
     }
 
-    CreateNewProfileFlow {
+    Component {
         id: createNewProfileFlow
 
-        stackView: root.stackView
-        passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
+        CreateNewProfileFlow {
+            passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
-        onFinished: (password) => {
-            root.setPasswordRequested(password)
-            d.flow = Onboarding.OnboardingFlow.CreateProfileWithPassword
-            d.pushOrSkipBiometricsPage()
-        }
-    }
-
-    UseRecoveryPhraseFlow {
-        id: useRecoveryPhraseFlow
-
-        stackView: root.stackView
-        isSeedPhraseValid: root.isSeedPhraseValid
-        passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
-
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-        onSetPasswordRequested: (password) => root.setPasswordRequested(password)
-        onFinished: d.pushOrSkipBiometricsPage()
-    }
-
-    KeycardCreateProfileFlow {
-        id: keycardCreateProfileFlow
-
-        stackView: root.stackView
-        keycardState: root.keycardState
-        pinSettingState: root.pinSettingState
-        authorizationState: root.authorizationState
-        addKeyPairState: root.addKeyPairState
-        generateMnemonic: root.generateMnemonic
-        displayKeycardPromoBanner: root.displayKeycardPromoBanner
-        isSeedPhraseValid: root.isSeedPhraseValid
-
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-
-        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
-        onLoadMnemonicRequested: root.loadMnemonicRequested()
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
-        onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-
-        onFinished: (withNewSeedphrase) => {
-            d.flow = withNewSeedphrase
-                        ? Onboarding.OnboardingFlow.CreateProfileWithKeycardNewSeedphrase
-                        : Onboarding.OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase
-
-            d.pushOrSkipBiometricsPage()
-        }
-    }
-
-    LoginBySyncingFlow {
-        id: logInBySyncingFlow
-
-        stackView: root.stackView
-        validateConnectionString: root.validateConnectionString
-        syncState: root.syncState
-
-        onSyncProceedWithConnectionString: (connectionString) =>
-                                           root.syncProceedWithConnectionString(connectionString)
-
-        onLoginWithSeedphraseRequested: {
-            d.flow = Onboarding.OnboardingFlow.LoginWithSeedphrase
-            useRecoveryPhraseFlow.init(UseRecoveryPhraseFlow.Type.Login)
-        }
-
-        onFinished: {
-            d.flow = Onboarding.OnboardingFlow.LoginWithSyncing
-            d.pushOrSkipBiometricsPage()
-        }
-    }
-
-    LoginWithKeycardFlow {
-        id: loginWithKeycardFlow
-
-        stackView: root.stackView
-        keycardState: root.keycardState
-        authorizationState: root.authorizationState
-        restoreKeysExportState: root.restoreKeysExportState
-        remainingPinAttempts: root.remainingPinAttempts
-        remainingPukAttempts: root.remainingPukAttempts
-        displayKeycardPromoBanner: root.displayKeycardPromoBanner
-        onAuthorizationRequested: root.authorizationRequested(pin)
-
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-
-        onCreateProfileWithEmptyKeycardRequested: keycardCreateProfileFlow.init()
-        onExportKeysRequested: root.exportKeysRequested()
-        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
-        onUnblockWithSeedphraseRequested: unblockWithSeedphraseFlow.init()
-        onUnblockWithPukRequested: unblockWithPukFlow.init()
-
-        onFinished: {
-            d.flow = Onboarding.OnboardingFlow.LoginWithKeycard
-            d.pushOrSkipBiometricsPage()
-        }
-    }
-
-    UnblockWithSeedphraseFlow {
-        id: unblockWithSeedphraseFlow
-
-        stackView: root.stackView
-
-        isSeedPhraseValid: root.isSeedPhraseValid
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-        onKeycardPinCreated: (pin) => {
-            root.keycardPinCreated(pin)
-
-            if (root.loginScreen) {
-                root.loginRequested(root.loginScreen.selectedProfileKeyId,
-                                    Onboarding.LoginMethod.Keycard, { pin })
-            } else {
-                d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+            onFinished: (password) => {
+                root.setPasswordRequested(password)
+                d.flow = Onboarding.OnboardingFlow.CreateProfileWithPassword
                 d.pushOrSkipBiometricsPage()
             }
         }
     }
 
-    UnblockWithPukFlow {
-        id: unblockWithPukFlow
+    Component {
+        id: useRecoveryPhraseFlow
 
-        property string pin
+        UseRecoveryPhraseFlow {
+            isSeedPhraseValid: root.isSeedPhraseValid
+            isSeedPhraseDuplicate: root.isSeedPhraseDuplicate
+            passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
-        stackView: root.stackView
-        keycardState: root.keycardState
-        tryToSetPukFunction: root.tryToSetPukFunction
-        remainingAttempts: root.remainingPukAttempts
-
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
-
-        onKeycardPinCreated: (pin) => {
-            unblockWithPukFlow.pin = pin
-            root.keycardPinCreated(pin)
+            onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+            onSetPasswordRequested: (password) => root.setPasswordRequested(password)
+            onFinished: d.pushOrSkipBiometricsPage()
         }
-        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init()
+    }
 
-        onFinished: (success) => {
-            if (!success)
-               return
-            if (root.loginScreen) {
-                root.loginRequested(root.loginScreen.selectedProfileKeyId,
-                                    Onboarding.LoginMethod.Keycard, { pin })
-            } else {
+    Component {
+        id: keycardCreateProfileFlow
+
+        KeycardCreateProfileFlow {
+            keycardState: root.keycardState
+            pinSettingState: root.pinSettingState
+            authorizationState: root.authorizationState
+            addKeyPairState: root.addKeyPairState
+            generateMnemonic: root.generateMnemonic
+            displayKeycardPromoBanner: root.displayKeycardPromoBanner
+            isSeedPhraseValid: root.isSeedPhraseValid
+
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+            onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow)
+            onLoadMnemonicRequested: root.loadMnemonicRequested()
+            onSetPinRequested: (pin) => root.setPinRequested(pin)
+            onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
+            onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
+            onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+
+            onFinished: (withNewSeedphrase) => {
+                d.flow = withNewSeedphrase
+                            ? Onboarding.OnboardingFlow.CreateProfileWithKeycardNewSeedphrase
+                            : Onboarding.OnboardingFlow.CreateProfileWithKeycardExistingSeedphrase
+
+                d.pushOrSkipBiometricsPage()
+            }
+        }
+    }
+
+    Component {
+        id: logInBySyncingFlow
+
+        LoginBySyncingFlow {
+            validateConnectionString: root.validateConnectionString
+            syncState: root.syncState
+
+            onSyncProceedWithConnectionString:
+                (connectionString) => root.syncProceedWithConnectionString(connectionString)
+
+            onLoginWithSeedphraseRequested: {
+                d.flow = Onboarding.OnboardingFlow.LoginWithSeedphrase
+
+                root.push(useRecoveryPhraseFlow,
+                          { type: UseRecoveryPhraseFlow.Type.Login })
+            }
+
+            onFinished: {
+                d.flow = Onboarding.OnboardingFlow.LoginWithSyncing
+                d.pushOrSkipBiometricsPage()
+            }
+        }
+    }
+
+    Component {
+        id: loginWithKeycardFlow
+
+        LoginWithKeycardFlow {
+            keycardState: root.keycardState
+            authorizationState: root.authorizationState
+            restoreKeysExportState: root.restoreKeysExportState
+            remainingPinAttempts: root.remainingPinAttempts
+            remainingPukAttempts: root.remainingPukAttempts
+            displayKeycardPromoBanner: root.displayKeycardPromoBanner
+            onAuthorizationRequested: root.authorizationRequested(pin)
+
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+            onCreateProfileWithEmptyKeycardRequested: root.push(keycardCreateProfileFlow)
+            onExportKeysRequested: root.exportKeysRequested()
+            onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow)
+            onUnblockWithSeedphraseRequested: root.push(unblockWithSeedphraseFlow)
+            onUnblockWithPukRequested: root.push(unblockWithPukFlow)
+
+            onFinished: {
                 d.flow = Onboarding.OnboardingFlow.LoginWithKeycard
                 d.pushOrSkipBiometricsPage()
             }
         }
     }
 
-    KeycardCreateReplacementFlow {
-        id: keycardCreateReplacementFlow
+    Component {
+        id: unblockWithSeedphraseFlow
 
-        stackView: root.stackView
+        UnblockWithSeedphraseFlow {
+            property string pin
 
-        keycardState: root.keycardState
-        pinSettingState: root.pinSettingState
-        authorizationState: root.authorizationState
-        addKeyPairState: root.addKeyPairState
+            isSeedPhraseValid: root.isSeedPhraseValid
+            pinSettingState: root.pinSettingState
 
-        displayKeycardPromoBanner: root.displayKeycardPromoBanner
-        isSeedPhraseValid: root.isSeedPhraseValid
+            onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
-        keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+            onSetPinRequested: (pin) => {
+                unblockWithSeedphraseFlow.pin = pin
+                root.setPinRequested(pin)
+            }
 
-        onKeycardFactoryResetRequested: keycardFactoryResetFlow.init(true)
-        onKeycardPinCreated: (pin) => root.keycardPinCreated(pin)
-        onLoginWithKeycardRequested: loginWithKeycardFlow.init()
-        onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
-        onLoadMnemonicRequested: root.loadMnemonicRequested()
-
-        onCreateProfileWithoutKeycardRequested: {
-            const page = stackView.find(
-                           item => item instanceof HelpUsImproveStatusPage)
-
-            stackView.replace(page, createProfilePage, StackView.PopTransition)
+            onFinished: {
+                if (root.loginScreen) {
+                    root.loginRequested(root.loginScreen.selectedProfileKeyId,
+                                        Onboarding.LoginMethod.Keycard, { pin })
+                } else {
+                    d.flow = Onboarding.SecondaryFlow.LoginWithKeycard
+                    d.pushOrSkipBiometricsPage()
+                }
+            }
         }
-
-        onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
-
-        onFinished: d.pushOrSkipBiometricsPage()
     }
 
-    KeycardFactoryResetFlow {
+    Component {
+        id: unblockWithPukFlow
+
+        UnblockWithPukFlow {
+            property string pin
+
+            keycardState: root.keycardState
+            pinSettingState: root.pinSettingState
+            tryToSetPukFunction: root.tryToSetPukFunction
+            remainingAttempts: root.remainingPukAttempts
+
+            onSetPinRequested: (pin) => {
+                unblockWithPukFlow.pin = pin
+                root.setPinRequested(pin)
+            }
+            onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow)
+
+            onFinished: (success) => {
+                if (!success)
+                   return
+                if (root.loginScreen) {
+                    root.loginRequested(root.loginScreen.selectedProfileKeyId,
+                                        Onboarding.LoginMethod.Keycard, { pin })
+                } else {
+                    d.flow = Onboarding.OnboardingFlow.LoginWithKeycard
+                    d.pushOrSkipBiometricsPage()
+                }
+            }
+        }
+    }
+
+    Component {
+        id: keycardCreateReplacementFlow
+
+        KeycardCreateReplacementFlow {
+            keycardState: root.keycardState
+            pinSettingState: root.pinSettingState
+            authorizationState: root.authorizationState
+            addKeyPairState: root.addKeyPairState
+
+            displayKeycardPromoBanner: root.displayKeycardPromoBanner
+            isSeedPhraseValid: root.isSeedPhraseValid
+
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
+
+            onKeycardFactoryResetRequested: root.push(keycardFactoryResetFlow,
+                                                      { fromLoginScreen: true })
+            onSetPinRequested: (pin) => root.setPinRequested(pin)
+            onLoginWithKeycardRequested: root.push(loginWithKeycardFlow)
+            onAuthorizationRequested: root.authorizationRequested("") // Pin was saved locally already
+            onLoadMnemonicRequested: root.loadMnemonicRequested()
+
+            onCreateProfileWithoutKeycardRequested: {
+                const page = root.find(item => item instanceof HelpUsImproveStatusPage)
+                root.replace(page, createProfilePage, StackView.PopTransition)
+            }
+
+            onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
+
+            onFinished: d.pushOrSkipBiometricsPage()
+        }
+    }
+
+    Component {
         id: keycardFactoryResetFlow
-        stackView: root.stackView
-        keycardState: root.keycardState
-        onPerformKeycardFactoryResetRequested: root.performKeycardFactoryResetRequested()
-        onFinished: {
-            stackView.clear()
-            root.init()
+
+        KeycardFactoryResetFlow {
+            keycardState: root.keycardState
+
+            onPerformKeycardFactoryResetRequested: root.performKeycardFactoryResetRequested()
+            onFinished: root.pop(null)
         }
     }
 
@@ -470,4 +534,5 @@ SQUtils.QObject {
             onLinkActivated: (link) => root.linkActivated(link)
         }
     }
+
 }

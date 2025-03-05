@@ -18,12 +18,14 @@ OnboardingPage {
     property string subtitle: qsTr("Enter your 12, 18 or 24 word recovery phrase")
     property alias btnContinueText: btnContinue.text
 
-    required property int authorizationState
-
     property var isSeedPhraseValid: (mnemonic) => { console.error("isSeedPhraseValid IMPLEMENT ME"); return false }
 
     signal seedphraseSubmitted(string seedphrase)
-    signal keycardAuthorized()
+    signal seedphraseUpdated(bool valid, string seedphrase)
+
+    function setWrongSeedPhraseMessage(err: string) {
+        seedPanel.setWrongSeedPhraseMessage(err)
+    }
 
     contentItem: Item {
         ColumnLayout {
@@ -54,6 +56,7 @@ OnboardingPage {
                 Layout.alignment: Qt.AlignHCenter
                 isSeedPhraseValid: root.isSeedPhraseValid
                 onSubmitSeedPhrase: root.seedphraseSubmitted(getSeedPhraseAsString())
+                onSeedPhraseUpdated: (valid, seedphrase) => root.seedphraseUpdated(valid, seedphrase)
             }
 
             StatusButton {
@@ -67,30 +70,4 @@ OnboardingPage {
             }
         }
     }
-
-    state: "creating"
-
-    states: [
-        State {
-            name: "creating"
-        },
-        State {
-            name: "authorized"
-            when: root.authorizationState === Onboarding.ProgressState.Success
-            StateChangeScript {
-                script: {
-                    root.keycardAuthorized()
-                }
-            }
-        },
-        State {
-            name: "loadingMnemonic"
-            when: root.authorizationState === Onboarding.ProgressState.InProgress
-
-            PropertyChanges {
-                target: btnContinue
-                loading: true
-            }
-        }
-    ]
 }

@@ -18,6 +18,7 @@ SplitView {
         sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutsStores.RootStore {}
         communityTokensStore: SharedStores.CommunityTokensStore {}
+        networksStore: SharedStores.NetworksStore {}
     }
 
     EditSettingsPanel {

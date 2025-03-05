@@ -23,6 +23,18 @@ SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
+        QtObject {
+            id: d
+
+            property SortFilterProxyModel networksModel: SortFilterProxyModel {
+                sourceModel: NetworksModel.flatNetworks
+                filters: IndexFilter {
+                    minimumIndex: 0
+                    maximumIndex: singleActiveNetworkCheckBox.checked ? 0 : -1
+                }
+            }
+        }
+
         Item {
             id: container
 
@@ -34,13 +46,15 @@ SplitView {
 
                 anchors.centerIn: parent
 
-                flatNetworks: NetworksModel.flatNetworks
+                flatNetworks: d.networksModel
 
                 multiSelection: multiSelectionCheckBox.checked
-                showAllSelectedText: ctrlShowAllSelectedText.checked
                 showTitle: ctrlShowTitle.checked
+                showManageNetworksButton: ctrlShowManageNetworksButton.checked
                 selectionAllowed: selectionAllowedCheckBox.checked
                 showSelectionIndicator: (ctrlShowCheckBoxes.checked && multiSelection) || (ctrlShowRadioButtons.checked && !multiSelection)
+                showNewChainIcon: newChainsNotificationCheckbox.checked
+                showNotificationIcon: showNotificationIconCheckbox.checked
             }
         }
 
@@ -88,9 +102,8 @@ SplitView {
             }
 
             CheckBox {
-                id: ctrlShowAllSelectedText
-                text: "Show 'All networks' text"
-                visible: multiSelectionCheckBox.checked
+                id: ctrlShowManageNetworksButton
+                text: "Show 'Manage networks' button"
                 checked: true
             }
 
@@ -98,6 +111,24 @@ SplitView {
                 id: selectionAllowedCheckBox
                 text: "Selection allowed"
                 checked: true
+            }
+
+            CheckBox {
+                id: newChainsNotificationCheckbox
+                text: "Show new chain icon"
+                checked: true
+            }
+
+            CheckBox {
+                id: showNotificationIconCheckbox
+                text: "Show notification icon"
+                checked: true
+            }
+
+            CheckBox {
+                id: singleActiveNetworkCheckBox
+                text: "Single active network"
+                checked: false
             }
 
             ColumnLayout {

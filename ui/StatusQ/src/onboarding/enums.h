@@ -27,12 +27,6 @@ public:
         return result;
     }
 
-    enum class PrimaryFlow {
-        Unknown,
-        CreateProfile,
-        Login
-    };
-
     // NOTE: Keep in sync with OnboardingFlow in src/app/modules/onboarding/module.nim
     enum class OnboardingFlow {
         Unknown,
@@ -54,6 +48,7 @@ public:
         Unknown,
         Password,
         Keycard,
+        Mnemonic,
     };
 
     // NOTE: Keep in sync with KeycardState in src/app_service/service/keycardV2/dto.nim
@@ -63,7 +58,6 @@ public:
         InsertKeycard,
         ReadingKeycard,
         // error states
-        WrongKeycard,
         NotKeycard,
         MaxPairingSlotsReached,
         BlockedPIN, // PIN remaining attempts == 0
@@ -82,10 +76,27 @@ public:
         Failed
     };
 
+    enum class AuthorizationState {
+        Idle,
+        InProgress,
+        Authorized,
+        WrongPin,
+        Error,
+    };
+
+    // Keep in sync with LocalPairingState in src/app_service/service/devices/dto/local_pairing_status.nim
+    enum class LocalPairingState {
+        Idle,
+        Transferring,
+        Error,
+        Finished,
+    };
+
 private:
-    Q_ENUM(PrimaryFlow)
     Q_ENUM(OnboardingFlow)
     Q_ENUM(LoginMethod)
     Q_ENUM(KeycardState)
     Q_ENUM(ProgressState)
+    Q_ENUM(AuthorizationState)
+    Q_ENUM(LocalPairingState)
 };

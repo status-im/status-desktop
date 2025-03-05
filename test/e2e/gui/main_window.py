@@ -6,7 +6,7 @@ import allure
 
 import configs
 import driver
-from constants import UserAccount, RandomUser, RandomCommunity, CommunityData
+from constants import UserAccount, CommunityData
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.context_menu import ContextMenu
@@ -22,8 +22,7 @@ from gui.objects_map import names
 from gui.screens.community import CommunityScreen
 from gui.screens.community_portal import CommunitiesPortal
 from gui.screens.messages import MessagesScreen
-from gui.screens.onboarding import AllowNotificationsView, WelcomeToStatusView, BiometricsView, LoginView, \
-    YourEmojihashAndIdenticonRingView
+from gui.screens.onboarding import OnboardingWelcomeToStatusView, ReturningLoginView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
 from scripts.tools.image import Image
@@ -167,50 +166,44 @@ class LeftPanel(QObject):
 class MainWindow(Window):
 
     def __init__(self):
-        super(MainWindow, self).__init__(names.statusDesktop_mainWindow)
+        super().__init__(names.statusDesktop_mainWindow)
         self.left_panel = LeftPanel()
 
-    def prepare(self) -> 'Window':
-        return super().prepare()
-
-    @allure.step('Sign Up user')
-    def sign_up(self, user_account: UserAccount):
-        BeforeStartedPopUp().get_started()
-        welcome_screen = WelcomeToStatusView().wait_until_appears()
-        profile_view = welcome_screen.get_keys().generate_new_keys()
-        profile_view.set_display_name(user_account.name)
-        create_password_view = profile_view.next()
-        confirm_password_view = create_password_view.create_password(user_account.password)
-        confirm_password_view.confirm_password(user_account.password)
-        if configs.system.get_platform() == "Darwin":
-            BiometricsView().wait_until_appears().prefer_password()
-        SplashScreen().wait_until_appears().wait_until_hidden()
-        YourEmojihashAndIdenticonRingView().verify_emojihash_view_present().next()
-        if configs.system.get_platform() == "Darwin":
-            AllowNotificationsView().start_using_status()
-        SplashScreen().wait_until_appears().wait_until_hidden()
-        assert SigningPhrasePopup().ok_got_it_button.is_visible
-        SigningPhrasePopup().confirm_phrase()
+    @allure.step('Create profile')
+    def create_profile(self, user_account: UserAccount):
+        welcome_screen = OnboardingWelcomeToStatusView().wait_until_appears()
+        profile_view = welcome_screen.open_create_your_profile_view()
+        create_password_view = profile_view.open_password_view()
+        splash_screen = create_password_view.create_password(user_account.password)
+        splash_screen.wait_until_hidden()
+        signing_phrase = SigningPhrasePopup().wait_until_appears()
+        signing_phrase.confirm_phrase()
+        # since we now struggle with 3 words names, I need to change display name first
+        left_panel = LeftPanel()
+        profile = left_panel.open_settings().left_panel.open_profile_settings()
+        profile.set_name(user_account.name)
+        profile.save_changes_button.click()
+        left_panel.open_wallet()
         return self
 
     @allure.step('Log in user')
-    def log_in(self, user_account: UserAccount):
+    def returning_log_in(self, user_account: UserAccount):
         share_updates_popup = ShareUsageDataPopup()
-        LoginView().log_in(user_account)
-        SplashScreen().wait_until_appears().wait_until_hidden()
+        ReturningLoginView().log_in(user_account)
+        SplashScreen().wait_until_hidden()
+        if share_updates_popup.is_visible:
+            share_updates_popup.not_now_button.click()
         if SigningPhrasePopup().is_visible:
             SigningPhrasePopup().confirm_phrase()
-        if share_updates_popup.is_visible:
-            share_updates_popup.skip()
         return self
 
     @allure.step('Authorize user')
     def authorize_user(self, user_account) -> 'MainWindow':
         assert isinstance(user_account, UserAccount)
-        if LoginView().is_visible:
-            return self.log_in(user_account)
+        if ReturningLoginView().is_visible:
+            return self.returning_log_in(user_account)
         else:
-            return self.sign_up(user_account)
+            return self.create_profile(user_account)
 
     @allure.step('Create community')
     def create_community(self, community_data: CommunityData) -> CommunityScreen:
@@ -221,12 +214,14 @@ class MainWindow(Window):
         return app_screen
 
     @allure.step('Wait for notification and get text')
-    def wait_for_notification(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> list[str]:
-        started_at = time.monotonic()
-        while True:
+    def wait_for_notification(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:
+        start_time = time.monotonic()
+
+        while time.monotonic() - start_time < timeout_sec:
             try:
                 return ToastMessage().get_toast_messages()
             except LookupError as err:
-                LOG.info(err)
-                if time.monotonic() - started_at > timeout_msec:
-                    raise LookupError(f'Notifications are not found')
+                LOG.info(f"Notification not found: {err}")
+                time.sleep(0.1)  # Small delay to prevent CPU overuse
+
+        raise LookupError("Notifications were not found within the timeout period.")

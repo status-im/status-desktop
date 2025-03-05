@@ -95,7 +95,7 @@ ItemDelegate {
                     Layout.preferredWidth: 20
                     Layout.preferredHeight: 20
 
-                    image.source: Theme.svg("tiny/%1".arg(root.networkIcon))
+                    image.source: Theme.svg(root.networkIcon)
                     visible:(root.hovered || root.isAutoHovered) && !root.goDeeperIconVisible
                 }
 

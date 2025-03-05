@@ -7,19 +7,20 @@ import AppLayouts.Wallet.views 1.0
 
 import utils 1.0
 
-import Models 1.0
-
+import shared.stores 1.0
 
 Item {
     id: root
     width: 600
     height: 400
 
+    readonly property var networksStore: NetworksStore{}
+
     Component {
         id: componentUnderTest
         NetworkSelectorView {
             anchors.centerIn: parent
-            model: NetworksModel.flatNetworks
+            model: root.networksStore.allNetworks
         }
     }
 
@@ -54,6 +55,8 @@ Item {
         }
 
         function test_defaultConfiguration() {
+            verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
             // Default configuration:
             // - model is not empty
             // - showIndicator is true
@@ -83,7 +86,7 @@ Item {
 
                 verify(!!delegate)
                 compare(delegate.title, model.chainName)
-                compare(delegate.iconUrl, (model.isTest ? Theme.svg(model.iconUrl + "-test") : Theme.svg(model.iconUrl)))
+                compare(delegate.iconUrl, Theme.svg(model.iconUrl))
                 compare(delegate.showIndicator, controlUnderTest.showIndicator)
                 compare(delegate.multiSelection, controlUnderTest.multiSelection)
                 compare(delegate.checkState, controlUnderTest.selection.includes(model.chainId) ? Qt.Checked : Qt.Unchecked)
@@ -165,8 +168,8 @@ Item {
             compare(toggleNetworkSpy.count, 1)
             compare(selectionChangedSpy.count, 2)
             compare(controlUnderTest.selection.length, 2)
-            compare(controlUnderTest.selection[0], controlUnderTest.model.get(1).chainId)
-            compare(controlUnderTest.selection[1], controlUnderTest.model.get(2).chainId)
+            verify(controlUnderTest.selection.includes(controlUnderTest.model.get(1).chainId))
+            verify(controlUnderTest.selection.includes(controlUnderTest.model.get(2).chainId))
             compare(delegate.checkState, Qt.Checked)
             delegate = findChild(controlUnderTest, "networkSelectorDelegate_" + controlUnderTest.model.get(2).chainName)
             compare(delegate.checkState, Qt.Checked)

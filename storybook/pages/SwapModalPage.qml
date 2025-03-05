@@ -41,7 +41,6 @@ SplitView {
 
         function resetValues() {
             accountComboBox.currentIndex = 0
-            fromTokenComboBox.currentIndex = 0
             swapInput.text = ""
             fetchSuggestedRoutesSpy.clear()
             authenticateAndTransferSpy.clear()
@@ -53,6 +52,7 @@ SplitView {
         sharedRootStore: SharedStores.RootStore {}
         rootStore: AppLayoutStores.RootStore {}
         communityTokensStore: SharedStores.CommunityTokensStore {}
+        networksStore: SharedStores.NetworksStore {}
     }
 
     PopupBackground {
@@ -79,8 +79,6 @@ SplitView {
             signal transactionSendingComplete(var txHash, var status)
 
             readonly property var accounts: WalletAccountsModel {}
-            readonly property var flatNetworks: NetworksModel.flatNetworks
-            readonly property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
 
             function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
                                           disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
@@ -144,8 +142,10 @@ SplitView {
                     return formatCurrencyAmount(parseFloat(number), symbol, options)
                 }
             }
+            networksStore: SharedStores.NetworksStore {
+                readonly property var activeNetworks: NetworksModel.flatNetworks
+            }
             swapFormData: SwapInputParamsForm {
-                defaultToTokenKey: Constants.swap.testStatusTokenKey
                 onSelectedAccountAddressChanged: {
                     if (selectedAccountAddress !== accountComboBox.currentValue)
                         accountComboBox.currentIndex = accountComboBox.indexOfValue(selectedAccountAddress)
@@ -174,21 +174,6 @@ SplitView {
                     target: swapInputParamsForm
                     property: "toTokenKey"
                     value: toTokenComboBox.currentValue ?? ""
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "selectedNetworkChainId"
-                    value: networksComboBox.currentValue ?? -1
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "selectedAccountAddress"
-                    value: accountComboBox.currentValue ?? ""
-                }
-                Binding {
-                    target: swapInputParamsForm
-                    property: "fromTokenAmount"
-                    value: swapInput.text
                 }
                 Binding {
                     target: swapInputParamsForm
@@ -263,6 +248,7 @@ SplitView {
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
+                currentIndex: 4
             }
 
             StatusInput {
@@ -275,12 +261,12 @@ SplitView {
             StatusBaseText {
                 text: "To Token"
             }
-            ComboBox {
+                ComboBox {
                 id: toTokenComboBox
                 textRole: "name"
                 valueRole: "key"
                 model: d.tokenBySymbolModel
-                currentIndex: 1
+                currentIndex: 0
             }
 
             Button {

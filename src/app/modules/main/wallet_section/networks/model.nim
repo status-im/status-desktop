@@ -19,7 +19,8 @@ type
     IconUrl
     ChainColor
     ShortName
-    EnabledState
+    IsActive
+    IsDeactivatable
 
 QtObject:
   type
@@ -54,7 +55,8 @@ QtObject:
       ModelRole.IconUrl.int:"iconUrl",
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
-      ModelRole.EnabledState.int: "enabledState",
+      ModelRole.IsActive.int: "isActive",
+      ModelRole.IsDeactivatable.int: "isDeactivatable"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -92,8 +94,10 @@ QtObject:
       result = newQVariant(item.shortName)
     of ModelRole.ChainColor:
       result = newQVariant(item.chainColor)
-    of ModelRole.EnabledState:
-      result = newQVariant(item.enabledState.int)
+    of ModelRole.IsActive:
+      result = newQVariant(item.isActive)
+    of ModelRole.IsDeactivatable:
+      result = newQVariant(item.isDeactivatable)
 
   proc refreshModel*(self: Model) =
     self.beginResetModel()
@@ -105,44 +109,55 @@ QtObject:
         return item.blockExplorerURL & EXPLORER_TX_PATH
     return ""
 
-  proc getEnabledState*(self: Model, chainId: int): UxEnabledState =
-    for item in self.delegate.getFlatNetworksList():
-      if(item.chainId == chainId):
-        return item.enabledState
-    return UxEnabledState.Disabled
+  # Returns currently active networks (i.e. isActive is true and isTest matches the given testnet mode)
+  proc getFilteredNetworks(self: Model, areTestNetworksEnabled: bool): seq[NetworkItem] =
+    return self.delegate.getFlatNetworksList().filter(n => n.isTest == areTestNetworksEnabled and n.isActive)
+
+  proc getEnabledNetworks(self: Model, areTestNetworksEnabled: bool): seq[NetworkItem] =
+    return self.getFilteredNetworks(areTestNetworksEnabled).filter(n => n.isEnabled)
+
+  proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
+    return self.getEnabledNetworks(areTestNetworksEnabled).map(n => n.chainId).join(":")
+  
+  proc getNetworkByChainId*(self: Model, chainId: int): NetworkItem =
+    for network in self.delegate.getFlatNetworksList():
+      if chainId == network.chainId:
+        return network
+    return nil
 
   # Returns the chains that need to be enabled or disabled (the second return value)
   #   to satisty the transitions: all enabled to only chainId enabled and
   #   only chainId enabled to all enabled
   proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int, areTestNetworksEnabled: bool): (seq[int], bool) =
-    let filteredNetworks = self.delegate.getFlatNetworksList().filter(n => n.isTest == areTestNetworksEnabled)
+    let filteredNetworks = self.getFilteredNetworks(areTestNetworksEnabled)
+    let allEnabled = filteredNetworks.all(n => n.isEnabled)
     var chainIds: seq[int] = @[]
     var enable = false
-    case self.getEnabledState(chainId):
-      of UxEnabledState.Enabled:
-        # Iterate to check for the only chainId enabled case ...
-        for item in filteredNetworks:
-          if item.enabledState == UxEnabledState.Enabled and item.chainId != chainId:
-            # ... as soon as we find another enabled chain mark this by adding it to the list
-            chainIds.add(chainId)
-            break
 
-        # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
-        if chainIds.len == 0:
+    if allEnabled:
+      # disable all but chainId
+      for item in filteredNetworks:
+        if item.chainId != chainId:
+          chainIds.add(item.chainId)
+    else:
+      let network = self.getNetworkByChainId(chainId)
+      if network != nil:
+        if network.isEnabled:
+          # Iterate to check for the only chainId enabled case ...
           for item in filteredNetworks:
-            if item.chainId != chainId:
-              chainIds.add(item.chainId)
+            if item.isEnabled and item.chainId != chainId:
+              # ... as soon as we find another enabled chain mark this by adding it to the list
+              chainIds.add(chainId)
+              break
+
+          # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
+          if chainIds.len == 0:
+            for item in filteredNetworks:
+              if item.chainId != chainId:
+                chainIds.add(item.chainId)
+            enable = true
+        else:
+          # enable chainId
+          chainIds.add(chainId)
           enable = true
-      of UxEnabledState.Disabled:
-        chainIds.add(chainId)
-        enable = true
-      of UxEnabledState.AllEnabled:
-        # disable all but chainId
-        for item in filteredNetworks:
-          if item.chainId != chainId:
-            chainIds.add(item.chainId)
-
     return (chainIds, enable)
-
-  proc getEnabledChainIds*(self: Model, areTestNetworksEnabled: bool): string =
-    return self.delegate.getFlatNetworksList().filter(n => n.isEnabled and n.isTest == areTestNetworksEnabled).map(n => n.chainId).join(":")

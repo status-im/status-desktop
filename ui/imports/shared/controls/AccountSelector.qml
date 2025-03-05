@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
@@ -53,6 +54,20 @@ StatusComboBox {
     popupContentItemObjectName: "accountSelectorList"
 
     control.popup.width: 430
+    control.popup.background: Rectangle {
+        radius: Theme.radius
+        color: Theme.palette.background
+        border.color: Theme.palette.border
+        layer.enabled: true
+        layer.effect: DropShadow {
+            verticalOffset: 3
+            radius: 8
+            samples: 15
+            fast: true
+            cached: true
+            color: "#22000000"
+        }
+    }
 
     control.valueRole: "address"
     control.textRole: "name"

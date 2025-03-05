@@ -41,6 +41,8 @@ Control {
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
 
+    property real cryptoFeesToReserve: 0
+
     property int swapSide: SwapInputPanel.SwapSide.Pay
     property bool fiatInputInteractive
     property bool mainInputLoading
@@ -58,15 +60,13 @@ Control {
             holdingSelector.currentTokensKey = ""
             holdingSelector.reset()
         }
-
-        d.selectedHolding = entry
     }
 
     // output API
     readonly property string selectedHoldingId: holdingSelector.currentTokensKey
     readonly property double value: amountToSendInput.asNumber
     readonly property string rawValue: {
-        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.marketDetails || !d.selectedHolding.marketDetails.currencyPrice) {
+        if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
             return "0"
         }
         return amountToSendInput.amount
@@ -98,15 +98,18 @@ Control {
     QtObject {
         id: d
 
-        // FIXME use ModelEntry
-        property var selectedHolding: SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", holdingSelector.currentTokensKey)
+        readonly property var selectedHolding: ModelEntry {
+            sourceModel: holdingSelector.model
+            key: "tokensKey"
+            value: holdingSelector.currentTokensKey
+        }
 
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding
-        readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.currencyBalance ? selectedHolding.currencyBalance : 0
-        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.currentBalance ? selectedHolding.currentBalance : 0
+        readonly property bool isSelectedHoldingValidAsset: selectedHolding.available && !!selectedHolding.item
+        readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currencyBalance ? selectedHolding.item.currencyBalance : 0
+        readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currentBalance ? selectedHolding.item.currentBalance : 0
         readonly property double maxInputBalance: amountToSendInput.fiatMode ? maxFiatBalance : maxCryptoBalance
         readonly property string inputSymbol: amountToSendInput.fiatMode ? root.currencyStore.currentCurrency
-                                                                         : (!!selectedHolding ? selectedHolding.symbol : "")
+                                                                         : (!!isSelectedHoldingValidAsset ? selectedHolding.item.symbol : "")
 
         readonly property var adaptor: TokenSelectorViewAdaptor {
             assetsModel: root.processedAssetsModel
@@ -218,8 +221,8 @@ Control {
     contentItem: RowLayout {
         spacing: 20
         ColumnLayout {
-            Layout.preferredWidth: parent.width*.66
             Layout.fillHeight: true
+            Layout.fillWidth: true
 
             AmountToSend {
                 readonly property bool balanceExceeded:
@@ -239,8 +242,8 @@ Control {
                 interactive: root.interactive
                 markAsInvalid: (root.swapSide === SwapInputPanel.SwapSide.Pay && (balanceExceeded || d.maxInputBalance === 0)) || (!!text && !valid)
                 fiatInputInteractive: root.fiatInputInteractive
-                multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding && !!d.selectedHolding.decimals ? d.selectedHolding.decimals : 18
-                price: d.isSelectedHoldingValidAsset ? (!!d.selectedHolding && !!d.selectedHolding.marketDetails ? d.selectedHolding.marketDetails.currencyPrice.amount : 1)
+                multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 18
+                price: d.isSelectedHoldingValidAsset ? (!!d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1)
                                                      : 1
                 formatFiat: amount => root.currencyStore.formatCurrencyAmount(amount, root.currencyStore.currentCurrency)
                 formatBalance: amount => root.currencyStore.formatCurrencyAmount(amount, d.inputSymbol)
@@ -250,7 +253,6 @@ Control {
             }
         }
         ColumnLayout {
-            Layout.preferredWidth: parent.width*.33
 
             Item { Layout.fillHeight: true }
 
@@ -261,7 +263,6 @@ Control {
 
                 property string currentTokensKey
 
-                Layout.rightMargin: d.isSelectedHoldingValidAsset ? -root.padding : 0
                 Layout.alignment: Qt.AlignRight
 
                 model: d.adaptor.outputAssetsModel
@@ -276,11 +277,10 @@ Control {
                 id: maxSendButton
 
                 Layout.alignment: Qt.AlignRight
-                Layout.maximumWidth: parent.width
                 objectName: "maxTagButton"
 
-                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(d.maxInputBalance, d.inputSymbol)
-                readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(d.maxCryptoBalance, d.inputSymbol)
+                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(d.maxInputBalance, d.inputSymbol, root.cryptoFeesToReserve)
+                readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(d.maxCryptoBalance, d.inputSymbol, root.cryptoFeesToReserve)
 
                 markAsInvalid: amountToSendInput.markAsInvalid
 
@@ -291,8 +291,6 @@ Control {
                                                                 roundingMode: LocaleUtils.RoundingMode.Down })
 
                 visible: d.isSelectedHoldingValidAsset && root.swapSide === SwapInputPanel.SwapSide.Pay
-                // FIXME: This should be enabled after #15709 is resolved
-                enabled: false
 
                 onClicked: {
                     if (maxSafeValue)

@@ -33,16 +33,28 @@ Rectangle {
     /** Search pattern in recipient view input **/
     readonly property string searchPattern: recipientInputLoader.searchPattern
 
-    /** Currently viewed tab is empty **/
-    readonly property bool emptyListVisible: emptyListText.visible && !selectedRecipientAddress
-
     /** Currently selected recipient tab  **/
     readonly property alias selectedRecipientType: d.selectedRecipientType
     /** Selected recipient address. It is input and output property **/
     property alias selectedRecipientAddress: recipientInputLoader.selectedRecipientAddress
 
+    /** Maximum number of tab elements from all tabs in tab bar **/
+    property int highestTabElementCount: recipientsModel.ModelCount.count
+
     /** Can selector be interacted **/
     property bool interactive: true
+
+    /** Visual height of the component. It might differ from actual height.
+        The purpose is to be able to show non-interactive list with constant height for all tabs.
+        This will not affect Flickable parents. **/
+    readonly property int visualHeight: {
+        // Adjust to filtered results height
+        if (d.searchInProgress || !!selectedRecipientAddress)
+            return implicitHeight
+        const walletViewHeight = Math.max(walletView.contentHeight, emptyListText.height)
+        const count = Math.max(3, highestTabElementCount)
+        return implicitHeight + (count * walletView.delegateHeight - walletViewHeight)
+    }
 
     /** Request ens address to be resolved **/
     signal resolveENS(string ensName, string uuid)
@@ -51,7 +63,7 @@ Rectangle {
         recipientInputLoader.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
     }
 
-    implicitHeight: childrenRect.height + (emptyListText.visible ? Theme.bigPadding : Theme.halfPadding / 2)
+    implicitHeight: childrenRect.height + (!!selectedRecipientAddress ? 0 : Theme.halfPadding/2)
     color: Theme.palette.indirectColor1
     radius: 8
 
@@ -63,6 +75,7 @@ Rectangle {
     QtObject {
         id: d
 
+        readonly property bool allTabsAreEmpty: root.highestTabElementCount === 0
         readonly property bool searchInProgress: !!root.searchPattern && root.recipientsFilterModel.ModelCount.count > 0
         property int highlightedIndex: 0
         property int selectedRecipientType: Constants.RecipientAddressObjectType.RecentsAddress
@@ -178,8 +191,9 @@ Rectangle {
             id: emptyListText
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Theme.bigPadding
+            Layout.preferredHeight: walletView.delegateHeight
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
             color: Theme.palette.baseColor1
             text: {
                 switch(root.selectedRecipientType) {
@@ -197,21 +211,26 @@ Rectangle {
             visible: !root.selectedRecipientAddress && !d.searchInProgress && root.recipientsModel.ModelCount.count === 0 && !!text
         }
 
-        Repeater {
-            id: walletList
+        ListView {
+            id: walletView
             Layout.alignment: Qt.AlignTop
             Layout.topMargin: Theme.halfPadding / 2
             Layout.fillWidth: true
-
+            Layout.leftMargin: Theme.halfPadding / 2
+            Layout.rightMargin: Theme.halfPadding / 2
+            Layout.preferredHeight: childrenRect.height
+            spacing: 0
+            bottomMargin: Theme.smallPadding
+            interactive: false
             model: root.selectedRecipientAddress ? null : (d.searchInProgress ? root.recipientsFilterModel : root.recipientsModel)
+
+            readonly property int delegateHeight: 64
 
             delegate: RecipientViewDelegate {
                 required property var model
 
-                Layout.fillWidth: true
-                Layout.preferredHeight: 64
-                Layout.leftMargin: Theme.halfPadding / 2
-                Layout.rightMargin: Theme.halfPadding / 2
+                width: walletView.width
+                height: walletView.delegateHeight
 
                 name: model.name ?? ""
                 address: model.address

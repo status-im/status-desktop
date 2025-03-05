@@ -5,7 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
-import QtGraphicalEffects 1.14
+import QtGraphicalEffects 1.15
 
 import "private"
 
@@ -192,14 +192,6 @@ Rectangle {
 
         Item {
             id: statusListItemTitleArea
-
-            function getStatusListItemTitleAnchorsRight() {
-                let isIconsRowVisible = false
-                if(titleIconsRow.item) {
-                    isIconsRowVisible = true//titleIconsRow.item.visible
-                }
-                return !root.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
-            }
 
             anchors.left: iconOrImage.active ? iconOrImage.right : loadingIndicator.active ? loadingIndicator.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left

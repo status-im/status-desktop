@@ -748,7 +748,7 @@ Item {
             compare(connectDAppSpy.count, 1, "expected a call to service.connectDApp")
             let connectArgs = connectDAppSpy.signalArguments[0]
 
-            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (walletStore.filteredFlatModel) for the dappChains")
+            compare(connectArgs[connectDAppSpy.argPos.dappChains], networksArray, "expected all provided networks (networksStore.activeNetworks) for the dappChains")
             compare(connectArgs[connectDAppSpy.argPos.dappUrl], Testing.dappUrl, "expected dappUrl to be set")
             compare(connectArgs[connectDAppSpy.argPos.dappName], Testing.dappName, "expected dappName to be set")
             compare(connectArgs[connectDAppSpy.argPos.dappIcon], Testing.dappFirstIcon, "expected dappIcon to be set")

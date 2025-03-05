@@ -47,6 +47,7 @@ import AppLayouts.Wallet.popups.dapps 1.0 as DAppsPopups
 import AppLayouts.Wallet.popups.buy 1.0
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.stores 1.0 as AppStores
+import AppLayouts.Wallet.popups.swap 1.0
 
 import mainui.adaptors 1.0
 import mainui.activitycenter.stores 1.0
@@ -65,6 +66,8 @@ Item {
 
     property SharedStores.UtilsStore utilsStore
 
+    readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
+    
     readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
     readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
@@ -79,7 +82,9 @@ Item {
     }
     property ChatStores.CreateChatPropertiesStore createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
-    property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {}
+    property SharedStores.NetworkConnectionStore networkConnectionStore: SharedStores.NetworkConnectionStore {
+        networksStore: appMain.networksStore
+    }
     property SharedStores.CommunityTokensStore communityTokensStore: SharedStores.CommunityTokensStore {
         currencyStore: appMain.currencyStore
     }
@@ -92,12 +97,14 @@ Item {
         walletAssetStore: appMain.walletAssetsStore
         tokensStore: appMain.tokensStore
         currencyStore: appMain.currencyStore
+        networksStore: appMain.networksStore
     }
     readonly property WalletStores.BuyCryptoStore buyCryptoStore: WalletStores.BuyCryptoStore {}
 
     required property AppStores.FeatureFlagsStore featureFlagsStore
     // TODO: Only until the  old send modal transaction store can be replaced with this one
     readonly property WalletStores.TransactionStoreNew transactionStoreNew: WalletStores.TransactionStoreNew {}
+    required property Keychain keychain
 
     required property bool isCentralizedMetricsEnabled
 
@@ -324,14 +331,14 @@ Item {
 
             if (!!txHash) {
                 toastLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(fromChainId)).arg(txHash)
-            }
-
-            const fromChainName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", fromChainId, "chainName")
-            if (!!fromChainName) {
-                senderChainName = fromChainName
                 toastSubtitle = qsTr("View on %1").arg(senderChainName)
             }
-            const toChainName = SQUtils.ModelUtils.getByKey(WalletStores.RootStore.filteredFlatModel, "chainId", toChainId, "chainName")
+
+            const fromChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", fromChainId, "chainName")
+            if (!!fromChainName) {
+                senderChainName = fromChainName
+            }
+            const toChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", toChainId, "chainName")
             if (!!toChainName) {
                 recipientChainName = toChainName
             }
@@ -609,6 +616,10 @@ Item {
                 toastIcon = "warning"
                 toastType = Constants.ephemeralNotificationType.danger
 
+                if (!toastSubtitle && !!error) {
+                    toastSubtitle = error
+                }
+
                 switch(txType) {
                 case Constants.SendType.Transfer: {
                     toastTitle = toastTitle.arg(sentAmount).arg(sender).arg(recipient)
@@ -711,6 +722,11 @@ Item {
                     break
                 }
                 default:
+                    const err1 = "cannot_resolve_community" // move to Constants
+                    if (error === err1) {
+                        Global.displayToastMessage(qsTr("Unknown error resolving community"), "", "", false, Constants.ephemeralNotificationType.normal, "")
+                        return
+                    }
                     console.warn("status: failed - tx type not supproted")
                     return
                 }
@@ -801,6 +817,19 @@ Item {
 
         // TODO: Remove this and adapt new mechanism to launch BuyModal as done for SendModal
         property BuyCryptoParamsForm buyFormData: BuyCryptoParamsForm {}
+
+        property SwapInputParamsForm swapFormData: SwapInputParamsForm {}
+
+        function launchSwap() {
+            swapFormData.selectedAccountAddress =
+                    SQUtils.ModelUtils.get(WalletStores.RootStore.nonWatchAccounts, 0, "address")
+            swapFormData.selectedNetworkChainId =
+                    SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "layer", 1, "chainId")
+            Global.openSwapModalRequested(swapFormData, (popup) => {
+                                              popup.Component.destruction.connect(() => {
+                                                                                      d.swapFormData.resetFormData()
+                                                                                  })})
+        }
     }
 
     Settings {
@@ -825,6 +854,7 @@ Item {
         walletCollectiblesStore: appMain.walletCollectiblesStore
         buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
+        networksStore: appMain.networksStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -842,6 +872,16 @@ Item {
         onTransferOwnershipRequested: sendModalHandler.transferOwnership(tokenId, senderAddress)
     }
 
+    SwapModalHandler {
+        id: swapModalHandler
+
+        popupParent: appMain
+        walletAssetsStore: appMain.walletAssetsStore
+        currencyStore: appMain.currencyStore
+        networksStore: appMain.networksStore
+        rootStore: appMain.rootStore
+    }
+
     SendModalHandler {
         id: sendModalHandler
 
@@ -850,6 +890,7 @@ Item {
         transactionStore: appMain.transactionStore
         walletCollectiblesStore: appMain.walletCollectiblesStore
         transactionStoreNew: appMain.transactionStoreNew
+        networksStore: appMain.networksStore
 
         // for ens flows
         ensRegisteredAddress: appMain.rootStore.profileSectionStore.ensUsernamesStore.getEnsRegisteredAddress()
@@ -866,9 +907,9 @@ Item {
 
         // for simple send
         walletAccountsModel: WalletStores.RootStore.accounts
-        filteredFlatNetworksModel: WalletStores.RootStore.filteredFlatModel
-        flatNetworksModel: WalletStores.RootStore.flatNetworks
-        areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
+        filteredFlatNetworksModel: appMain.networksStore.activeNetworks
+        flatNetworksModel: appMain.networksStore.allNetworks
+        areTestNetworksEnabled: appMain.networksStore.areTestNetworksEnabled
         groupedAccountAssetsModel: appMain.walletAssetsStore.groupedAccountAssetsModel
         plainTokensBySymbolModel: appMain.tokensStore.plainTokensBySymbolModel
         showCommunityAssetsInSend: appMain.tokensStore.showCommunityAssetsInSend
@@ -1144,6 +1185,10 @@ Item {
                         }
                         ValueFilter {
                             roleName: "sectionType"
+                            value: Constants.appSection.swap
+                        }
+                        ValueFilter {
+                            roleName: "sectionType"
                             value: Constants.appSection.chat
                         }
                     },
@@ -1393,7 +1438,12 @@ Item {
                     badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
                     badge.border.width: 2
                     onClicked: {
-                        changeAppSectionBySectionId(model.id)
+                        if(model.sectionType === Constants.appSection.swap) {
+                            d.launchSwap()
+                        }
+                        else {
+                            changeAppSectionBySectionId(model.id)
+                        }
                     }
                 }
             }
@@ -1453,7 +1503,7 @@ Item {
                     buttonText: qsTr("Turn off")
                     type: ModuleWarning.Warning
                     iconName: "warning"
-                    active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
+                    active: appMain.networksStore.areTestNetworksEnabled
                     delay: false
                     onClicked: Global.openTestnetPopup()
                     closeBtnVisible: false
@@ -1879,10 +1929,10 @@ Item {
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
+                                networksStore: appMain.networksStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
-                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -1927,6 +1977,7 @@ Item {
                             transactionStore: appMain.transactionStore
                             emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
+                            networksStore: appMain.networksStore
                             appMainVisible: appMain.visible
                             swapEnabled: featureFlagsStore.swapEnabled
                             dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
@@ -1973,6 +2024,8 @@ Item {
                             currencyStore: appMain.currencyStore
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
                             settingsSubSubsection: profileLoader.settingsSubSubsection
+                            networksStore: appMain.networksStore
+                            keychain: appMain.keychain
 
                             mutualContactsModel: contactsModelAdaptor.mutualContacts
                             blockedContactsModel: contactsModelAdaptor.blockedContacts
@@ -2055,10 +2108,9 @@ Item {
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
                                 createChatPropertiesStore: appMain.createChatPropertiesStore
-                                areTestNetworksEnabled: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
                                 communitiesStore: appMain.communitiesStore
                                 communitySettingsDisabled: !chatLayoutComponent.isManageCommunityEnabledInAdvanced &&
-                                                           (production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled)
+                                                           (production && appMain.networksStore.areTestNetworksEnabled)
                                 sharedRootStore: appMain.sharedRootStore
                                 utilsStore: appMain.utilsStore
                                 rootStore: ChatStores.RootStore {
@@ -2076,6 +2128,7 @@ Item {
                                 transactionStore: appMain.transactionStore
                                 walletAssetsStore: appMain.walletAssetsStore
                                 currencyStore: appMain.currencyStore
+                                networksStore: appMain.networksStore
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts
@@ -2584,6 +2637,7 @@ Item {
         sourceComponent: WalletPopups.SavedAddressActivityPopup {
             networkConnectionStore: appMain.networkConnectionStore
             contactsStore: appMain.rootStore.contactStore
+            networksStore: appMain.networksStore
 
             onSendToAddressRequested: {
                 Global.sendToRecipientRequested(address)
@@ -2635,7 +2689,7 @@ Item {
                 selectedAccountAddress: WalletStores.RootStore.selectedAddress
                 dAppsModel: dAppsService.dappsModel
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
-                networksModel: WalletStores.RootStore.filteredFlatModel
+                networksModel: appMain.networksStore.activeNetworks
                 sessionRequestsModel: dAppsService.sessionRequestsModel
                 walletConnectEnabled: featureFlagsStore.dappsEnabled
                 connectorEnabled: featureFlagsStore.connectorEnabled
@@ -2679,7 +2733,7 @@ Item {
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
                 dappsMetrics: dappMetrics
                 networksModel: SortFilterProxyModel {
-                    sourceModel: WalletStores.RootStore.filteredFlatModel
+                    sourceModel: appMain.networksStore.activeNetworks
                     proxyRoles: [
                         FastExpressionRole {
                             name: "isOnline"
@@ -2698,7 +2752,7 @@ Item {
                     store: SharedStores.BrowserConnectStore {
                         controller: WalletStores.RootStore.dappsConnectorController
                     }
-                    networksModel: WalletStores.RootStore.filteredFlatModel
+                    networksModel: appMain.networksStore.activeNetworks
                     accountsModel: WalletStores.RootStore.nonWatchAccounts
                 }
                 store: SharedStores.DAppsStore {

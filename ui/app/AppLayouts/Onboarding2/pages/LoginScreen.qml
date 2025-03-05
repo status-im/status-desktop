@@ -2,11 +2,16 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.1
+import QtQml.Models 2.15
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2.stores 1.0
@@ -19,16 +24,15 @@ OnboardingPage {
     id: root
 
     required property int keycardState
-
-    required property var tryToSetPinFunction
+    required property string keycardUID
     required property int keycardRemainingPinAttempts
     required property int keycardRemainingPukAttempts
 
     // [{keyUid:string, username:string, thumbnailImage:string, colorId:int, colorHash:var, order:int, keycardCreatedAccount:bool}]
     required property var loginAccountsModel
 
-    property bool biometricsAvailable: Qt.platform.os === Constants.mac
-    required property bool isBiometricsLogin // FIXME should come from the loginAccountsModel for each profile separately?
+    // allows to set if currently selected account can be logged in using biometrics
+    property bool isBiometricsLogin
 
     readonly property string selectedProfileKeyId: loginUserSelector.selectedProfileKeyId
     readonly property bool selectedProfileIsKeycard: d.currentProfileIsKeycard
@@ -36,25 +40,21 @@ OnboardingPage {
     signal biometricsRequested(string profileId)
     signal dismissBiometricsRequested
 
-    function setBiometricResponse(secret: string, error = "",
-                                  detailedError = "",
-                                  wrongFingerprint = false) {
+    function setBiometricResponse(secret: string, error = "") {
         if (!root.isBiometricsLogin)
             return
 
-        passwordBox.validationError = error
-        passwordBox.detailedError = detailedError
+        const hasError = !!error
 
-        const hasError = error || detailedError
-
-        d.biometricsSuccessful = !hasError
-        d.biometricsFailed = wrongFingerprint
+        d.biometricsSuccessful = secret !== ""
+        d.biometricsFailed = hasError
 
         if (hasError) {
             if (d.currentProfileIsKeycard) {
                 keycardBox.clear()
             } else {
                 passwordBox.validationError = error
+                passwordBox.detailedError = ""
                 passwordBox.clear()
                 passwordBox.forceActiveFocus()
             }
@@ -80,7 +80,7 @@ OnboardingPage {
     signal onboardingLoginFlowRequested()
     signal unblockWithSeedphraseRequested()
     signal unblockWithPukRequested()
-    signal lostKeycard()
+    signal lostKeycardFlowRequested()
 
     QtObject {
         id: d
@@ -89,6 +89,7 @@ OnboardingPage {
         property bool biometricsFailed
 
         readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount
+        readonly property bool isWrongKeycard: !!root.keycardUID && loginUserSelector.selectedProfileKeyId !== root.keycardUID
 
         readonly property Settings settings: Settings {
             category: "Login"
@@ -116,11 +117,13 @@ OnboardingPage {
     }
 
     onKeycardStateChanged: {
-        if (!biometricsAvailable || !isBiometricsLogin || !d.currentProfileIsKeycard
+        Qt.callLater(() => {
+            if (!isBiometricsLogin || !d.currentProfileIsKeycard
                 || root.keycardState !== Onboarding.KeycardState.NotEmpty)
-            return
+                return
 
-        root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+            root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+        })
     }
 
     Component.onCompleted: {
@@ -129,33 +132,35 @@ OnboardingPage {
             passwordBox.forceActiveFocus()
     }
 
-    // (password) login
+    // login errors reporting
     function setAccountLoginError(error: string, wrongPassword: bool) {
-        if (!error) {
+        if (!error && !wrongPassword) {
             return
         }
 
-        if (d.currentProfileIsKeycard) {
-            // Login with keycard
+        // reset the biometrics status in case of error
+        d.biometricsFailed = false
+        d.biometricsSuccessful = false
+
+        if (d.currentProfileIsKeycard) { // Login with keycard
             if (wrongPassword) {
+                keycardBox.loginError = ""
                 keycardBox.markAsWrongPin()
             } else {
                 keycardBox.loginError = error
             }
-            return
-        }
+        } else { // Login with password
+            if (wrongPassword) {
+                passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
+                passwordBox.detailedError = ""
+            } else {
+                passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
+                passwordBox.detailedError = error
+            }
 
-        // Login with password
-        if (wrongPassword) {
-            passwordBox.validationError = qsTr("Password incorrect. %1").arg("<a href='#password'>" + qsTr("Forgot password?") + "</a>")
-            passwordBox.detailedError = ""
-        } else {
-            passwordBox.validationError = qsTr("Login failed. %1").arg("<a href='#details'>" + qsTr("Show details.") + "</a>")
-            passwordBox.detailedError = error
+            passwordBox.clear()
+            passwordBox.forceActiveFocus()
         }
-
-        passwordBox.clear()
-        passwordBox.forceActiveFocus()
     }
 
     padding: 40
@@ -205,20 +210,23 @@ OnboardingPage {
                     d.settings.lastKeyUid = selectedProfileKeyId
 
                     if (d.currentProfileIsKeycard) {
-                       keycardBox.clear()
+                        keycardBox.loginError = ""
+                        keycardBox.clear()
                     } else {
                        passwordBox.validationError = ""
                        passwordBox.clear()
                        passwordBox.forceActiveFocus()
                     }
 
-                    if (!biometricsAvailable || !isBiometricsLogin)
-                        return
+                    Qt.callLater(() => {
+                        if (!root || !root.isBiometricsLogin)
+                            return
 
-                    if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
-                        return
+                        if (d.currentProfileIsKeycard && root.keycardState !== Onboarding.KeycardState.NotEmpty)
+                            return
 
-                    root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+                        root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
+                    })
                 }
                 onOnboardingCreateProfileFlowRequested: root.onboardingCreateProfileFlowRequested()
                 onOnboardingLoginFlowRequested: root.onboardingLoginFlowRequested()
@@ -230,7 +238,7 @@ OnboardingPage {
                 objectName: "passwordBox"
                 visible: !d.currentProfileIsKeycard
                 enabled: !!loginUserSelector.selectedProfileKeyId
-                isBiometricsLogin: root.biometricsAvailable && root.isBiometricsLogin
+                isBiometricsLogin: root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 onPasswordEditedManually: {
@@ -238,6 +246,7 @@ OnboardingPage {
                     validationError = ""
                     d.resetBiometricsResult()
                 }
+                onDetailedErrorPopupRequested: detailedErrorPopupComp.createObject(root, {detailedError}).open()
                 onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (password) => d.doPasswordLogin(password)
             }
@@ -247,18 +256,21 @@ OnboardingPage {
                 id: keycardBox
                 objectName: "keycardBox"
                 visible: d.currentProfileIsKeycard
-                isBiometricsLogin: root.biometricsAvailable && root.isBiometricsLogin
+                isBiometricsLogin: root.isBiometricsLogin
                 biometricsSuccessful: d.biometricsSuccessful
                 biometricsFailed: d.biometricsFailed
                 keycardState: root.keycardState
+                isWrongKeycard: d.isWrongKeycard
                 keycardRemainingPinAttempts: root.keycardRemainingPinAttempts
                 keycardRemainingPukAttempts: root.keycardRemainingPukAttempts
                 onUnblockWithSeedphraseRequested: root.unblockWithSeedphraseRequested()
                 onUnblockWithPukRequested: root.unblockWithPukRequested()
                 onPinEditedManually: {
                     // reset state when typing the PIN manually; not to break the bindings inside the component
+                    loginError = ""
                     d.resetBiometricsResult()
                 }
+                onDetailedErrorPopupRequested: detailedErrorPopupComp.createObject(root, {detailedError: loginError}).open()
                 onBiometricsRequested: root.biometricsRequested(loginUserSelector.selectedProfileKeyId)
                 onLoginRequested: (pin) => d.doKeycardLogin(pin)
             }
@@ -275,7 +287,38 @@ OnboardingPage {
                 visible: d.currentProfileIsKeycard
                 text: qsTr("Lost this Keycard?")
 
-                onClicked: root.lostKeycard()
+                onClicked: root.lostKeycardFlowRequested()
+            }
+        }
+    }
+
+    Component {
+        id: detailedErrorPopupComp
+        StatusSimpleTextPopup {
+            property string detailedError
+
+            title: qsTr("Login failed")
+            width: 480
+            destroyOnClose: true
+            content.color: Theme.palette.dangerColor1
+            content.text: detailedError
+            footer: StatusDialogFooter {
+                spacing: Theme.padding
+                rightButtons: ObjectModel {
+                    StatusFlatButton {
+                        icon.name: "copy"
+                        text: qsTr("Copy error message")
+                        onClicked: {
+                            icon.name = "tiny/checkmark"
+                            ClipboardUtils.setText(detailedError)
+                            Backpressure.debounce(this, 1500, () => icon.name = "copy")()
+                        }
+                    }
+                    StatusButton {
+                        text: qsTr("Close")
+                        onClicked: close()
+                    }
+                }
             }
         }
     }

@@ -3,6 +3,8 @@ BackupSeedphraseIntro 1.0 BackupSeedphraseIntro.qml
 BackupSeedphraseOutro 1.0 BackupSeedphraseOutro.qml
 BackupSeedphraseReveal 1.0 BackupSeedphraseReveal.qml
 BackupSeedphraseVerify 1.0 BackupSeedphraseVerify.qml
+ConvertKeycardAccountPage 1.0 ConvertKeycardAccountPage.qml
+ConvertKeycardAccountAcksPage 1.0 ConvertKeycardAccountAcksPage.qml
 CreateKeycardProfilePage 1.0 CreateKeycardProfilePage.qml
 CreatePasswordPage 1.0 CreatePasswordPage.qml
 CreateProfilePage 1.0 CreateProfilePage.qml
@@ -11,10 +13,12 @@ HelpUsImproveStatusPage 1.0 HelpUsImproveStatusPage.qml
 KeycardAddKeyPairDelayedPage 1.0 KeycardAddKeyPairDelayedPage.qml
 KeycardAddKeyPairPage 1.0 KeycardAddKeyPairPage.qml
 KeycardBasePage 1.0 KeycardBasePage.qml
+KeycardCreatePinDelayedPage 1.0 KeycardCreatePinDelayedPage.qml
 KeycardCreatePinPage 1.0 KeycardCreatePinPage.qml
 KeycardEmptyPage 1.0 KeycardEmptyPage.qml
 KeycardEnterPinPage 1.0 KeycardEnterPinPage.qml
 KeycardEnterPukPage 1.0 KeycardEnterPukPage.qml
+KeycardErrorPage 1.0 KeycardErrorPage.qml
 KeycardExtractingKeysPage 1.0 KeycardExtractingKeysPage.qml
 KeycardIntroPage 1.0 KeycardIntroPage.qml
 KeycardLostPage 1.0 KeycardLostPage.qml

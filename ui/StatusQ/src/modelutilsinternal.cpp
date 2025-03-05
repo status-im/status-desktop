@@ -95,7 +95,7 @@ QVariantList ModelUtilsInternal::getAll(QAbstractItemModel* model,
  * compared to string "4" will give a positive result.
  */
 int ModelUtilsInternal::indexOf(QAbstractItemModel* model,
-                                const QString& roleName, const QVariant& value)
+                                const QString& roleName, const QVariant& value) const
 {
     auto role = roleByName(model, roleName);
 
@@ -118,7 +118,9 @@ int ModelUtilsInternal::indexOf(QAbstractItemModel* model,
 QPersistentModelIndex ModelUtilsInternal::persistentIndex(
         QAbstractItemModel* model, int row)
 {
-    return QPersistentModelIndex(model->index(row, 0));
+    if (!model)
+        return {};
+    return {model->index(row, 0)};
 }
 
 bool ModelUtilsInternal::contains(QAbstractItemModel* model,

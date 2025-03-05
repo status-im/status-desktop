@@ -1,5 +1,5 @@
 import QtQuick 2.14
-import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1

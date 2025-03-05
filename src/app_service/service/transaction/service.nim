@@ -282,7 +282,7 @@ QtObject:
           transactionType = parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr)
         except:
           discard
-        
+
         self.events.emit(transactionType.event, ev)
         transactions.checkRecentHistory(@[chainId], @[address])
 
@@ -484,6 +484,33 @@ QtObject:
     except CatchableError as e:
       error "stopSuggestedRoutesAsyncCalculation", exception=e.msg
 
+  proc setFeeMode*(self: Service, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
+    isApprovalTx: bool, communityId: string): string =
+    try:
+      let err = wallet.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+      if err.len > 0:
+        raise newException(CatchableError, err)
+    except CatchableError as e:
+      error "setFeeMode", exception=e.msg
+      return e.msg
+
+  proc setCustomTxDetails*(self: Service, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+    routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string): string =
+    try:
+      let
+        bigMaxFeesPerGas = common_utils.stringToUint256(maxFeesPerGas)
+        bigPriorityFee = common_utils.stringToUint256(priorityFee)
+        maxFeesPerGasHex = "0x" & eth_utils.stripLeadingZeros(bigMaxFeesPerGas.toHex)
+        priorityFeeHex = "0x" & eth_utils.stripLeadingZeros(bigPriorityFee.toHex)
+
+      let err = wallet.setCustomTxDetails(nonce, gasAmount, maxFeesPerGasHex, priorityFeeHex, routerInputParamsUuid, pathName,
+        chainId, isApprovalTx, communityId)
+      if err.len > 0:
+        raise newException(CatchableError, err)
+    except CatchableError as e:
+      error "setCustomTxDetails", exception=e.msg
+      return e.msg
+
   proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
       let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas).result.getInt
@@ -491,6 +518,18 @@ QtObject:
     except Exception as e:
       error "Error estimating transaction time", message = e.msg
       return EstimatedTime.Unknown
+
+  proc getEstimatedTimeV2*(self: Service, chainId: int, maxFeePerGas: string, priorityFee: string): int =
+    try:
+      let
+        bigMaxFeePerGas = common_utils.stringToUint256(maxFeePerGas)
+        bigPriorityFee = common_utils.stringToUint256(priorityFee)
+        maxFeePerGasHex = "0x" & eth_utils.stripLeadingZeros(bigMaxFeePerGas.toHex)
+        priorityFeeHex = "0x" & eth_utils.stripLeadingZeros(bigPriorityFee.toHex)
+      return backend.getTransactionEstimatedTimeV2(chainId, maxFeePerGasHex, priorityFeeHex).result.getInt
+    except Exception as e:
+      error "Error estimating transaction time", message = e.msg
+      return 0
 
   proc getLatestBlockNumber*(self: Service, chainId: int): string =
     try:

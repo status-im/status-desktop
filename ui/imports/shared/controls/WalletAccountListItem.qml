@@ -94,7 +94,7 @@ StatusListItem {
         titleText.font.pixelSize: 12
         titleText.color: root.accountBalance.balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1
         asset.isImage: true
-        asset.name: Theme.svg("tiny/%1".arg(root.accountBalance.iconUrl))
+        asset.name: Theme.svg(root.accountBalance.iconUrl)
         asset.color: root.accountBalance.chainColor
         closeButtonVisible: false
         hoverEnabled: true

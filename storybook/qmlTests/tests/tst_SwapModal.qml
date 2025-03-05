@@ -31,8 +31,6 @@ Item {
         signal transactionSendingComplete(var txHash,  var status)
 
         readonly property var accounts: WalletAccountsModel {}
-        readonly property var flatNetworks: NetworksModel.flatNetworks
-        readonly property bool areTestNetworksEnabled: true
         function getWei2Eth(wei, decimals) {
             return wei/(10**decimals)
         }
@@ -61,11 +59,12 @@ Item {
         swapStore: root.swapStore
         swapFormData: root.swapFormData
         swapOutputData: SwapOutputData{}
+        networksStore: NetworksStore {
+            areTestNetworksEnabled: true
+        }
     }
 
-    property SwapInputParamsForm swapFormData: SwapInputParamsForm {
-        defaultToTokenKey: Constants.swap.testStatusTokenKey
-    }
+    property SwapInputParamsForm swapFormData: SwapInputParamsForm {}
 
     Component {
         id: componentUnderTest
@@ -306,7 +305,7 @@ Item {
 
                 const balance = delegateUnderTest.model.accountBalance.balance
 
-                compare(inlineTagDelegate_0.asset.name, Theme.svg("tiny/%1".arg(delegateUnderTest.model.accountBalance.iconUrl)))
+                compare(inlineTagDelegate_0.asset.name, Theme.svg(delegateUnderTest.model.accountBalance.iconUrl))
                 compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), delegateUnderTest.model.accountBalance.chainColor.toString().toUpperCase())
                 compare(inlineTagDelegate_0.titleText.color, balance === "0" ? Theme.palette.baseColor1 : Theme.palette.directColor1)
 
@@ -462,7 +461,7 @@ Item {
                     const inlineTagDelegate_0 = findChild(accountDelegateUnderTest, "inlineTagDelegate_0")
                     verify(!!inlineTagDelegate_0)
 
-                    compare(inlineTagDelegate_0.asset.name, Theme.svg("tiny/%1".arg(networkModelItem.iconUrl)))
+                    compare(inlineTagDelegate_0.asset.name, Theme.svg(networkModelItem.iconUrl))
                     compare(inlineTagDelegate_0.asset.color.toString().toUpperCase(), networkModelItem.chainColor.toString().toUpperCase())
 
                     let balancesModel = SQUtils.ModelUtils.getByKey(root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel, "tokensKey", root.swapFormData.fromTokensKey).balances
@@ -901,10 +900,10 @@ Item {
             verify(amountToSendInput.cursorVisible)
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
-            compare(holdingSelector.currentTokensKey, "")
-            compare(tokenSelectorContentItemText.text, qsTr("Select asset"))
-            verify(!maxTagButton.visible)
-            compare(payPanel.selectedHoldingId, "")
+            compare(holdingSelector.currentTokensKey, Constants.swap.usdcTokenKey)
+            compare(tokenSelectorContentItemText.text, Constants.swap.usdcTokenKey)
+            verify(maxTagButton.visible)
+            compare(payPanel.selectedHoldingId, Constants.swap.usdcTokenKey)
             compare(payPanel.value, 0)
             compare(payPanel.rawValue, "0")
             verify(!payPanel.valueValid)
@@ -981,8 +980,8 @@ Item {
                 // try setting value before popup is launched and check values
                 root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
                 root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
-                root.swapFormData.fromTokensKey =
-                        root.swapFormData.fromTokenAmount = invalidValue
+                root.swapFormData.fromTokensKey = invalidValue
+                root.swapFormData.fromTokenAmount = invalidValue
 
                 // Launch popup
                 launchAndVerfyModal()
@@ -997,8 +996,6 @@ Item {
                 verify(!!holdingSelector)
                 const maxTagButton = findChild(payPanel, "maxTagButton")
                 verify(!!maxTagButton)
-                const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
-                verify(!!tokenSelectorContentItemText)
 
                 waitForRendering(payPanel)
 
@@ -1008,6 +1005,8 @@ Item {
                 verify(amountToSendInput.cursorVisible)
                 compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
                 compare(holdingSelector.currentTokensKey, "")
+                const tokenSelectorContentItemText = findChild(payPanel, "tokenSelectorContentItemText")
+                verify(!!tokenSelectorContentItemText)
                 compare(tokenSelectorContentItemText.text, "Select asset")
                 verify(!maxTagButton.visible)
                 compare(payPanel.selectedHoldingId, "")
@@ -1102,10 +1101,10 @@ Item {
             verify(!amountToSendInput.cursorVisible)
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
-            compare(holdingSelector.currentTokensKey, "STT")
-            compare(tokenSelectorContentItemText.text, "STT")
+            compare(holdingSelector.currentTokensKey, Constants.swap.ethTokenKey)
+            compare(tokenSelectorContentItemText.text, Constants.swap.ethTokenKey)
             verify(!maxTagButton.visible)
-            compare(receivePanel.selectedHoldingId, "STT")
+            compare(receivePanel.selectedHoldingId, Constants.swap.ethTokenKey)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
             verify(!receivePanel.valueValid)
@@ -1208,7 +1207,7 @@ Item {
             // check states for the pay input selector
             verify(maxTagButton.visible)
             // FIXME: maxTagButton should be enabled after #15709 is resolved
-            verify(!maxTagButton.enabled);
+                verify(maxTagButton.enabled);
             let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
             let truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
             compare(maxTagButton.text, qsTr("Max. %1").arg(truncmaxPossibleValue === 0 ? Qt.locale().zeroDigit
@@ -1230,6 +1229,29 @@ Item {
                 tryCompare(amountToSendInput, "text", maxPossibleValue === 0 ? "" : maxPossibleValue.toLocaleString(Qt.locale(), 'f', -128))
                 tryCompare(bottomItemText, "text", root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue * expectedToken.marketDetails.currencyPrice.amount, root.swapAdaptor.currencyStore.currentCurrency))
             }
+
+            // After a valid route is returned, the max value should be calculated based on the fees returned
+            // emit event with route that needs no approval
+            let txRoutes = root.dummySwapTransactionRoutes.txHasRoutesApprovalNeeded
+            txRoutes.uuid = root.swapAdaptor.uuid
+            root.swapStore.suggestedRoutesReady(txRoutes, "", "")
+
+            let bestPath = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+            const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
+            const totalMaxFeesInEth = SQUtils.AmountsArithmetic.div(
+                                        SQUtils.AmountsArithmetic.fromString(totalMaxFees),
+                                        SQUtils.AmountsArithmetic.fromNumber(1, 9))
+            const amountToReserve = SQUtils.AmountsArithmetic.times(totalMaxFeesInEth, SQUtils.AmountsArithmetic.fromExponent(18)).toString()
+
+            compare(root.swapAdaptor.swapOutputData.maxFeesToReserveRaw, amountToReserve)
+            maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol, amountToReserve)
+            truncmaxPossibleValue = Math.trunc(maxPossibleValue*100)/100
+            compare(maxTagButton.text,
+                    qsTr("Max. %1").arg(
+                        truncmaxPossibleValue === 0 ? Qt.locale().zeroDigit
+                                                    : root.swapAdaptor.currencyStore.formatCurrencyAmount(truncmaxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
+
+
             closeAndVerfyModal()
         }
 
@@ -1326,7 +1348,7 @@ Item {
                 for (let i=0; i< walletAccounts.count; i++) {
                     root.swapFormData.selectedAccountAddress = walletAccounts.get(i).address
 
-                    waitForItemPolished(controlUnderTest.contentItem)
+                    waitForRendering(payPanel)
 
                     const payTokenModel = findChild(payPanel, "TokenSelectorViewAdaptor_outputAssetsModel")
                     verify(!!payTokenModel)
@@ -1336,7 +1358,8 @@ Item {
                     // check states for the pay input selector
                     tryCompare(maxTagButton, "visible", true)
                     let maxPossibleValue = WalletUtils.calculateMaxSafeSendAmount(expectedToken.currentBalance, expectedToken.symbol)
-                    tryCompare(maxTagButton, "text", qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit : root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
+                    tryCompare(maxTagButton, "text", qsTr("Max. %1").arg(maxPossibleValue === 0 ? Qt.locale().zeroDigit :
+                    root.swapAdaptor.currencyStore.formatCurrencyAmount(maxPossibleValue, expectedToken.symbol, {noSymbol: true, roundingMode: LocaleUtils.RoundingMode.Down})))
                     compare(payPanel.selectedHoldingId, expectedToken.symbol)
                     tryCompare(payPanel, "valueValid", !!valueToExchangeString && valueToExchange <= maxPossibleValue)
 
@@ -1841,19 +1864,23 @@ Item {
         }
 
         function test_deleteing_input_characters(data) {
-            root.swapFormData.fromTokenAmount = data.input
             root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             root.swapFormData.selectedNetworkChainId = 11155111
             root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.fromTokenAmount = data.input
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
             verify(!!amountToSendInput)
+            const amountToSend_textField = findChild(controlUnderTest, "amountToSend_textField")
+            verify(!!amountToSend_textField)
+
             amountToSendInput.locale = data.locale
 
             // Launch popup
             launchAndVerfyModal()
             mouseClick(amountToSendInput)
             waitForRendering(amountToSendInput)
+            amountToSend_textField.cursorPosition = amountToSendInput.text.length
 
             let amountToTestInLocale = data.input.replace('.', amountToSendInput.locale.decimalPoint)
             for(let i =0; i< data.input.length; i++) {
@@ -1961,6 +1988,105 @@ Item {
             verify(!root.swapAdaptor.swapProposalLoading)
 
             closeAndVerfyModal()
+        }
+
+        function test_exchange_rate() {
+            // Asset chosen but no pay value set state -------------------------------------------------------------------------------
+            root.swapFormData.fromTokenAmount = "1"
+            root.swapFormData.selectedAccountAddress = "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            root.swapFormData.selectedNetworkChainId = 11155111
+            root.swapFormData.fromTokensKey = "ETH"
+            root.swapFormData.toTokenKey = ""
+
+            // Launch popup
+            launchAndVerfyModal()
+
+            const quoteItem = findChild(controlUnderTest, "quoteApproximationRight")
+            verify(!!quoteItem)
+
+            const sellItem = findChild(controlUnderTest, "quoteApproximationLeft")
+            verify(!!sellItem)
+
+            const priceItem = findChild(controlUnderTest, "quoteApproximationPrice")
+            verify(!!priceItem)
+
+            const invertQuoteApproximation = findChild(controlUnderTest, "invertQuoteApproximation")
+            verify(!!invertQuoteApproximation)
+
+            verify(!sellItem.visible)
+            verify(!quoteItem.visible)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.toTokenKey = "STT"
+
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(sellItem, "visible", true)
+            compare(sellItem.text, "1 ETH ≈ ")
+            verify(quoteItem.visible)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            // emit routes ready
+            let txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "1000000000000000000" // "1" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryVerify( () => quoteItem.visible)
+            verify(!quoteItem.loading)
+            verify(priceItem.visible)
+            verify(invertQuoteApproximation.visible)
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "1 STT ")
+            verify(priceItem.text.startsWith("(1 ")) //Hardcoded to crypto amount input - 1 in our case
+
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.fromTokenAmount = "2"
+
+            // Back to loading states
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(quoteItem, "visible", true)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+            verify(!invertQuoteApproximation.visible)
+
+            // emit routes ready
+            txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "4000000000000000000" // "4" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "2 STT ")
+            verify(priceItem.text.startsWith("(1 ")) //Hardcoded to crypto amount input - 1 in our case
+            verify(invertQuoteApproximation.visible)
+
+            mouseClick(invertQuoteApproximation)
+            tryCompare(sellItem, "text", "1 STT ≈ ")
+            tryCompare(quoteItem, "text", "0.5 ETH ")
+
+            // resetting to default
+            fetchSuggestedRoutesCalled.clear()
+            root.swapFormData.fromTokenAmount = "1"
+
+            // Back to loading states
+            tryCompare(fetchSuggestedRoutesCalled, "count", 1)
+            tryCompare(quoteItem, "visible", true)
+            verify(quoteItem.loading)
+            verify(!priceItem.visible)
+
+            // emit routes ready
+            txHasRouteNoApproval = root.dummySwapTransactionRoutes.txHasRouteNoApproval
+            txHasRouteNoApproval.uuid = root.swapAdaptor.uuid
+            txHasRouteNoApproval.amountToReceive = "1000000000000000000" // "1" in STT
+            root.swapStore.suggestedRoutesReady(txHasRouteNoApproval, "", "")
+
+            tryCompare(sellItem, "text", "1 ETH ≈ ")
+            tryCompare(quoteItem, "text", "1 STT ")
         }
     }
 }

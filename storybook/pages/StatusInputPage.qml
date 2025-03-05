@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
 import Models 1.0
@@ -32,6 +33,14 @@ SplitView {
                 enabled: enabledCheckBox.checked
                 input.edit.readOnly: readOnlyCheckBox.checked
                 input.clearable: clearableCheckBox.checked
+                label: "main label"
+                secondaryLabel: "secondary label"
+                labelIcon: "info"
+                labelIconColor: Theme.palette.baseColor1
+                labelIconClickable: true
+                leftPadding: 10
+                bottomLabelMessageRightCmp.text: "Current: 8.2 GWEI"
+                bottomLabelMessageLeftCmp.text: "0.0031 ETH"
             }
         }
 

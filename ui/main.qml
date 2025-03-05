@@ -16,12 +16,14 @@ import shared.stores 1.0
 import mainui 1.0
 import AppLayouts.stores 1.0 as AppStores
 import AppLayouts.Onboarding 1.0
+import AppLayouts.Onboarding.enums 1.0
 import AppLayouts.Onboarding2 1.0 as Onboarding2
 import AppLayouts.Onboarding2.stores 1.0
+import AppLayouts.Onboarding2.pages 1.0
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
 
 StatusWindow {
     id: applicationWindow
@@ -198,7 +200,7 @@ StatusWindow {
         Theme.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
         Theme.changeFontSize(localAccountSensitiveSettings.fontSize)
 
-        d.runMockedKeycardControllerWindow() // FIXME this is run twice with onboardingV1
+        d.runMockedKeycardControllerWindow()
     }
 
     //TODO remove direct backend access
@@ -225,8 +227,7 @@ StatusWindow {
                 appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
                 startupOnboardingLoader.item.visible = false
-            }
-            else if(state === Constants.appState.main) {
+            } else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
@@ -361,6 +362,8 @@ StatusWindow {
             sysPalette: systemPalette
             visible: !appLoadingAnimation.active
             isCentralizedMetricsEnabled: metricsStore.isCentralizedMetricsEnabled
+
+            keychain: appKeychain
         }
     }
 
@@ -395,6 +398,7 @@ StatusWindow {
     Component {
         id: splashScreenV2
         DidYouKnowSplashScreen {
+            readonly property bool backAvailableHint: false
             readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
             messagesEnabled: true
@@ -403,6 +407,11 @@ StatusWindow {
                 to: 1
                 duration: !!localAppSettings && localAppSettings.fakeLoadingScreenEnabled ? 30000 : 3000
                 running: runningProgressAnimation
+            }
+            onProgressChanged: {
+                if (progress === 1) {
+                    mainModule.fakeLoadingScreenFinished()
+                }
             }
         }
     }
@@ -421,7 +430,17 @@ StatusWindow {
     Keychain {
         service: "StatusDesktop"
 
-        id: keychain
+        id: appKeychain
+
+        // These signal handlers keep the compatibility with the old keychain approach,
+        // which is used by `keycard_popup` (any auth inside the app) and the old onboarding.
+        // NOTE: this hack won't work if changes are made with another Keychain instance.
+        onCredentialSaved: (account) => {
+                               localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store
+                           }
+        onCredentialDeleted: (account) => {
+                                 localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never
+                             }
     }
 
     Component {
@@ -444,43 +463,51 @@ StatusWindow {
 
             anchors.fill: parent
 
-            // FIXME, https://github.com/status-im/status-desktop/issues/17240
-            isBiometricsLogin: Qt.platform.os === Constants.mac
-
             networkChecksEnabled: true
-            biometricsAvailable: Qt.platform.os === Constants.mac
 
-            onboardingStore: onboardingStore
+            onboardingStore: OnboardingStore {
+                id: onboardingStore
 
-            onBiometricsRequested: (profileId) => {
-                const isKeycardProfile = SQUtils.ModelUtils.getByKey(
-                                           onboardingStore.loginAccountsModel, "keyUid",
-                                           profileId, "keycardCreatedAccount")
-
-                const reason = isKeycardProfile ? qsTr("fetch pin") : qsTr("fetch password")
-
-                keychain.requestGetCredential(reason, profileId)
+                onAppLoaded: {
+                    applicationWindow.appIsReady = true
+                    applicationWindow.storeAppState()
+                    moveToAppMain()
+                }
+                onAccountLoginError: function (error, wrongPassword) {
+                    onboardingLayout.unwindToLoginScreen() // error handled internally
+                }
+                onSaveBiometricsRequested: (account, credential) => {
+                    appKeychain.saveCredential(account, credential)
+                }
+                onDeleteBiometricsRequested: (account) => {
+                    appKeychain.deleteCredential(account)
+                }
             }
 
-            onDismissBiometricsRequested: {
-                if (keychain.loading)
-                    keychain.cancelActiveRequest()
-            }
+            keychain: appKeychain
 
             onFinished: (flow, data) => {
                 const error = onboardingStore.finishOnboardingFlow(flow, data)
 
-                if (error != "") {
+                if (error !== "") {
                     // We should never be here since everything should be validated already
                     console.error("!!! ONBOARDING FINISHED WITH ERROR:", error)
                     return
                 }
-                stack.clear()
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
+
+                // We use a custom handler for LoginWithLostKeycardSeedphrase flow.
+                // At the moment of implementation, this was the simplest move to make it work in the given code.
+                // Ideally, ConvertKeycardAccountPage should be created inside the OnboardingLayout and not here,
+                // but this would require more changes and eventually give more inconsistencies.
+                if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                    stack.push(convertingKeycardAccountPage)
+                } else {
+                    stack.push(splashScreenV2, {runningProgressAnimation: true})
+                }
             }
 
             onLoginRequested: function (keyUid, method, data) {
-                stack.push(splashScreenV2, { runningProgressAnimation: true })
+                stack.push(splashScreenV2, { runningProgressAnimation: true }, StackView.Immediate) // we unwind on error
                 onboardingStore.loginRequested(keyUid, method, data)
             }
 
@@ -490,30 +517,23 @@ StatusWindow {
                     Global.addCentralizedMetricIfEnabled("usage_data_shared", {placement: Constants.metricsEnablePlacement.onboarding})
                 }
             }
-            onCurrentPageNameChanged: Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
-
-            OnboardingStore {
-                id: onboardingStore
-                onAppLoaded: {
-                    applicationWindow.appIsReady = true
-                    applicationWindow.storeAppState()
-                    moveToAppMain()
-                }
-                onAccountLoginError: function (error, wrongPassword) {
-                    onboardingLayout.stack.pop()
+            onCurrentPageNameChanged: {
+                if (currentPageName !== "") {
+                    Global.addCentralizedMetricIfEnabled("navigation", {viewId: currentPageName})
                 }
             }
 
-            Connections {
-                target: keychain
+            Component {
+                id: convertingKeycardAccountPage
 
-                function onGetCredentialRequestCompleted(status, password) {
-                    if (status === Keychain.StatusSuccess)
-                        onboardingLayout.setBiometricResponse(password)
-                    else if (status !== Keychain.StatusCancelled)
-                        onboardingLayout.setBiometricResponse(
-                                    "", qsTr("Fetching credentials failed."))
-
+                ConvertKeycardAccountPage {
+                    convertKeycardAccountState: onboardingStore.convertKeycardAccountState
+                    onRestartRequested: {
+                        SystemUtils.restartApplication()
+                    }
+                    onBackToLoginRequested: {
+                        onboardingLayout.unwindToLoginScreen()
+                    }
                 }
             }
         }

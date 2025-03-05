@@ -30,6 +30,7 @@ def test_change_password_and_login(aut: AUT, main_screen: MainWindow, user_accou
 
     with step('Restart application'):
         aut.restart()
+        main_screen.prepare()
 
     with step('Login with new password'):
         main_screen.authorize_user(UserAccount(name=user_account.name,

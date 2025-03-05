@@ -24,6 +24,7 @@ from scripts.utils.parsers import remove_tags
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
 @pytest.mark.critical
 @pytest.mark.smoke
+@pytest.mark.skip(reason="temp skip until timeouts are fixed")
 def test_1x1_chat_add_contact_in_settings(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()
@@ -135,7 +136,7 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
 
         with step(f'User {user_one.name}, click address / ens link in message and verify send modal appears'):
             send_modal = chat.open_send_modal_from_link(chat_message1)
-            assert remove_tags(send_modal._ens_address_text_edit.text) == chat_message1
+            assert str(send_modal.send_modal_recipient_panel.object.selectedRecipientAddress) == chat_message1
             left_panel_chat.click()
 
         with step(f'User {user_one.name}, edit message and verify it was changed'):

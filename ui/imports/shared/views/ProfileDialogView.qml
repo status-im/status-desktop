@@ -40,6 +40,7 @@ Pane {
     property ProfileStores.ContactsStore contactsStore
     property SharedStores.UtilsStore utilsStore
     property WalletStores.RootStore walletStore
+    required property SharedStores.NetworksStore networksStore
     
     property alias sendToAccountEnabled: showcaseView.sendToAccountEnabled
 
@@ -525,6 +526,7 @@ Pane {
                     // assetsModel: root.showcaseAssetsModel
 
                     walletStore: root.walletStore
+                    networksStore: root.networksStore
 
                     onCloseRequested: root.closeRequested()
                     onCopyToClipboard: ClipboardUtils.setText(text)

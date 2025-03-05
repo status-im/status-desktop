@@ -40,11 +40,12 @@ SplitView {
         store.keycardState = Onboarding.KeycardState.NoPCSCService
         store.addKeyPairState = Onboarding.ProgressState.Idle
         store.pinSettingState = Onboarding.ProgressState.Idle
-        store.authorizationState = Onboarding.ProgressState.Idle
+        store.authorizationState = Onboarding.AuthorizationState.Idle
         store.restoreKeysExportState = Onboarding.ProgressState.Idle
+        store.convertKeycardAccountState = Onboarding.ProgressState.Idle
         store.syncState = Onboarding.ProgressState.Idle
-        store.keycardRemainingPinAttempts = 3
-        store.keycardRemainingPukAttempts = 5
+        store.keycardRemainingPinAttempts = Constants.onboarding.defaultPinAttempts
+        store.keycardRemainingPukAttempts = Constants.onboarding.defaultPukAttempts
 
         onboarding.restartFlow()
     }
@@ -64,27 +65,29 @@ SplitView {
         SplitView.fillHeight: true
 
         readonly property Item currentPage: {
-            if (stack.currentItem instanceof Loader)
-                return stack.currentItem.item
+            if (stack.topLevelItem instanceof Loader)
+                return stack.topLevelItem.item
 
-            return stack.currentItem
+            return stack.topLevelItem
         }
 
         onboardingStore: OnboardingStore {
             id: store
 
             property int keycardState: Onboarding.KeycardState.NoPCSCService
+            readonly property string keycardUID: "uid_4"
             property int addKeyPairState: Onboarding.ProgressState.Idle
             property int pinSettingState: Onboarding.ProgressState.Idle
-            property int authorizationState: Onboarding.ProgressState.Idle
+            property int authorizationState: Onboarding.AuthorizationState.Idle
             property int restoreKeysExportState: Onboarding.ProgressState.Idle
+            property int convertKeycardAccountState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
             property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
-            property int keycardRemainingPinAttempts: 3
-            property int keycardRemainingPukAttempts: 5
+            property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
+            property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
 
-            function setPin(pin: string) { // -> bool
+            function setPin(pin: string) {
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
                 ctrlLoginResult.result = "🯄"
                 const valid = pin === mockDriver.pin
@@ -94,7 +97,6 @@ SplitView {
                     keycardState = Onboarding.KeycardState.BlockedPIN
                     keycardRemainingPinAttempts = 0
                 }
-                return valid
             }
 
             function setPuk(puk: string) { // -> bool
@@ -111,6 +113,10 @@ SplitView {
 
             function authorize(pin: string) {
                 logs.logEvent("OnboardingStore.authorize", ["pin"], arguments)
+                if (pin === mockDriver.pin)
+                    authorizationState = Onboarding.AuthorizationState.Authorized
+                else
+                    authorizationState = Onboarding.AuthorizationState.WrongPin
             }
 
             function loadMnemonic(mnemonic: string) { // -> void
@@ -142,6 +148,11 @@ SplitView {
                 return mnemonic === mockDriver.mnemonic
             }
 
+            function isMnemonicDuplicate(mnemonic: string) { // -> bool
+                logs.logEvent("OnboardingStore.isMnemonicDuplicate", ["mnemonic"], arguments)
+                return false
+            }
+
             function generateMnemonic() { // -> string
                 logs.logEvent("OnboardingStore.generateMnemonic()")
                 return mockDriver.mnemonic
@@ -158,41 +169,53 @@ SplitView {
 
             // password signals
             signal accountLoginError(string error, bool wrongPassword)
+
+            // (test) error handler
+            onAccountLoginError: function (error, wrongPassword) {
+                ctrlLoginResult.result = "<font color='red'>⛔</font>"
+                onboarding.restartFlow()
+            }
         }
 
-        biometricsAvailable: ctrlBiometrics.checked
-        isBiometricsLogin: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
-
-        onBiometricsRequested: (profileId) => biometricsPopup.open()
-        onDismissBiometricsRequested: biometricsPopup.close()
+        keychain: keychain
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
 
-            console.warn("!!! SIMULATION: SHOWING SPLASH")
-            stack.clear()
-            stack.push(splashScreen, { runningProgressAnimation: true })
+            if (flow === Onboarding.OnboardingFlow.LoginWithLostKeycardSeedphrase) {
+                store.convertKeycardAccountState = Onboarding.ProgressState.InProgress // SIMULATION
+                stack.push(convertingKeycardAccountPage)
+                Backpressure.debounce(root, 3000, () => {
+                    console.warn("!!! SIMULATION: CONVERTING KEYCARD")
+                    store.convertKeycardAccountState = Onboarding.ProgressState.Success // SIMULATION
+                })()
+                return
+            }
 
-            store.keycardState = Onboarding.KeycardState.NoPCSCService
+            console.warn("!!! SIMULATION: SHOWING SPLASH")
+            stack.push(splashScreen, { runningProgressAnimation: true })
         }
 
         onLoginRequested: (keyUid, method, data) => {
             logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
-            // SIMULATION: emit an error in case of wrong password
+            // SIMULATION: emit an error in case of wrong password or PIN
             if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.password) {
-                onboardingStore.accountLoginError("The impossible has happened", Math.random() < 0.5)
+                onboardingStore.accountLoginError("", true)
+                ctrlLoginResult.result = "<font color='red'>⛔</font>"
+            } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.pin) {
+                onboardingStore.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
+                if (onboardingStore.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
+                    onboardingStore.keycardState = Onboarding.KeycardState.BlockedPIN
+                    onboardingStore.keycardRemainingPinAttempts = 0
+                }
+                onboardingStore.accountLoginError("", true)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else {
                 ctrlLoginResult.result = "<font color='green'>✔</font>"
+                stack.push(splashScreen, { runningProgressAnimation: true })
             }
-        }
-
-        // mocks
-        QtObject {
-            id: localAccountSettings
-            readonly property string storeToKeychainValue: ctrlTouchIdUser.checked ? Constants.keychain.storedValue.store : ""
         }
 
         Button {
@@ -334,16 +357,23 @@ SplitView {
         }
     }
 
-    BiometricsPopup {
-        id: biometricsPopup
+    KeychainMock {
+        id: keychain
 
-        x: root.Window.width - width
+        parent: root
+        available: ctrlBiometrics.checked
 
-        onObtainingPasswordSuccess: {
+        readonly property alias touchIdChecked: ctrlTouchIdUser.checked
+        onTouchIdCheckedChanged: onboarding.keychainChanged()
+
+        function hasCredential(account) {
             const isKeycard = onboarding.currentPage instanceof LoginScreen
                             && onboarding.currentPage.selectedProfileIsKeycard
 
-            onboarding.setBiometricResponse(isKeycard ? mockDriver.pin : mockDriver.password)
+            keychain.saveCredential(account, isKeycard ? mockDriver.pin : mockDriver.password)
+
+            return touchIdChecked ? Keychain.StatusSuccess
+                                  : Keychain.StatusNotFound
         }
     }
 
@@ -351,6 +381,7 @@ SplitView {
         id: splashScreen
 
         DidYouKnowSplashScreen {
+            readonly property bool backAvailableHint: false
             property bool runningProgressAnimation
 
             NumberAnimation on progress {
@@ -363,6 +394,22 @@ SplitView {
                     console.warn("!!! RESTARTING FLOW")
                     root.restart()
                 }
+            }
+        }
+    }
+
+    Component {
+        id: convertingKeycardAccountPage
+
+        ConvertKeycardAccountPage {
+            convertKeycardAccountState: store.convertKeycardAccountState
+            onRestartRequested: {
+                logs.logEvent("restartRequested")
+                root.restart()
+            }
+            onBackToLoginRequested: {
+                logs.logEvent("backToLoginRequested")
+                root.restart()
             }
         }
     }
@@ -383,21 +430,29 @@ SplitView {
             TextField {
                 Layout.fillWidth: true
 
+                function stackToText(stack) {
+                    let content = ""
+
+                    for (let i = 0; i < stack.depth; i++) {
+                        const stackEntry = stack.get(i, StackView.ForceLoad)
+
+                        if (stackEntry instanceof StackView)
+                            content += " [" + InspectionUtils.baseName(stackEntry) + ": " + stackToText(stackEntry) + "]"
+                        else
+                            content += " " + InspectionUtils.baseName(stackEntry instanceof Loader
+                                                                    ? stackEntry.item : stackEntry)
+                    }
+
+                    return content
+                }
+
                 text: {
                     const stack = onboarding.stack
 
                     // trigger change when only curret item changes on replace
-                    stack.currentItem
+                    stack.topLevelItem
 
-                    let content = `Stack (${stack.depth}):`
-
-                    for (let i = 0; i < stack.depth; i++) {
-                        const stackEntry = stack.get(i, StackView.ForceLoad)
-                        content += " " + InspectionUtils.baseName(stackEntry instanceof Loader
-                                                                  ? stackEntry.item : stackEntry)
-                    }
-
-                    return content
+                    return `Stack (${stack.totalDepth}): ${stackToText(stack)}`
                 }
 
                 background: null
@@ -443,6 +498,18 @@ SplitView {
                     property string result: "🯄"
                     visible: ctrlLoginScreen.checked
                     text: "Login result: %1".arg(result)
+                }
+
+                Button {
+                    text: "Unwind"
+                    visible: ctrlLoginScreen.checked && onboarding.stack.depth > 1 && !(onboarding.currentPage instanceof DidYouKnowSplashScreen)
+                    onClicked: onboarding.unwindToLoginScreen()
+                }
+
+                Button {
+                    text: "Simulate login error"
+                    visible: ctrlLoginScreen.checked && onboarding.currentPage instanceof DidYouKnowSplashScreen
+                    onClicked: onboarding.onboardingStore.accountLoginError("SIMULATION: Something bad happened", false)
                 }
             }
 
@@ -519,7 +586,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("ProgressState")
+                        model: Onboarding.getModelFromEnum("LocalPairingState")
 
                         RoundButton {
                             text: modelData.name
@@ -575,7 +642,7 @@ SplitView {
                     }
 
                     Repeater {
-                        model: Onboarding.getModelFromEnum("ProgressState")
+                        model: Onboarding.getModelFromEnum("AuthorizationState")
 
                         RoundButton {
                             text: modelData.name
@@ -613,6 +680,34 @@ SplitView {
                             ButtonGroup.group: restoreKeysExportStateButtonGroup
 
                             onClicked: store.restoreKeysExportState = modelData.value
+                        }
+                    }
+                }
+
+                ToolSeparator {}
+
+                Label {
+                    text: "Convert Keycard Account state:"
+                }
+
+                Flow {
+                    spacing: 2
+
+                    ButtonGroup {
+                        id: convertKeycardAccountButtonGroup
+                    }
+
+                    Repeater {
+                        model: Onboarding.getModelFromEnum("ProgressState")
+
+                        RoundButton {
+                            text: modelData.name
+                            checkable: true
+                            checked: store.convertKeycardAccountState === modelData.value
+
+                            ButtonGroup.group: convertKeycardAccountButtonGroup
+
+                            onClicked: store.convertKeycardAccountState = modelData.value
                         }
                     }
                 }

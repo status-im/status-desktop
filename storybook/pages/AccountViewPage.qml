@@ -8,6 +8,8 @@ import AppLayouts.Profile.stores 1.0 as ProfileStores
 
 import StatusQ.Core.Theme 0.1
 
+import shared.stores 1.0 as SharedStores
+
 import utils 1.0
 
 import Storybook 1.0
@@ -48,12 +50,12 @@ SplitView {
             property bool accountBalanceNotAvailable: false
         }
 
-        readonly property ProfileStores.WalletStore walletStore: ProfileStores.WalletStore {
-            property var networks: SortFilterProxyModel {
+        readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {
+            property var allNetworks: SortFilterProxyModel {
                 sourceModel: NetworksModel.flatNetworks
                 filters: ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked }
             }
-            property var filteredFlatModel: networks
+            property var activeNetworks: networks
             property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
             }
@@ -72,7 +74,7 @@ SplitView {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 560
             account: d.dummyOverview
-            walletStore: d.walletStore
+            activeNetworks: d.networksStore.activeNetworks
             keyPair: d.keyPairModel.data[0].keyPair
             onUpdateWatchAccountHiddenFromTotalBalance: {
                 console.warn("updateWatchAccountHiddenFromTotalBalance :: address ::", address, "hideFromTotalBalance :: ", hideFromTotalBalance)

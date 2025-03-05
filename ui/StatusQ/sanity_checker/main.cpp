@@ -30,6 +30,11 @@ int main(int argc, char *argv[]) {
         if (info.suffix() != QStringLiteral("qml"))
             continue;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        if (info.path().contains("+qt6"))
+            continue;
+#endif
+
         QFile file(it.filePath());
         file.open(QIODevice::ReadOnly);
 

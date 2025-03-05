@@ -5,8 +5,9 @@ import typing
 
 import configs.timeouts
 import driver
-from driver.objects_access import wait_for_template, walk_children
+from driver.objects_access import walk_children
 from gui.components.base_popup import BasePopup
+from gui.components.wallet.sign_send_popup import SignSendModalPopup
 from gui.components.wallet.token_selector_popup import TokenSelectorPopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -19,6 +20,16 @@ class SendPopup(BasePopup):
 
     def __init__(self):
         super().__init__()
+        # new single chain send modal
+        self.send_modal_header = QObject(names.sendModalHeader)
+        self.send_modal_recipient_panel = QObject(names.sendModalRecipientPanel)
+        self.send_modal_token_selector = Button(names.sendModalTokenSelector)
+        self.send_modal_amount_field = TextEdit(names.sendModalAmountField)
+        self.send_modal_recipient_field = TextEdit(names.sendModalRecipientField)
+        self.send_modal_sign_txn_fees = QObject(names.sendModalSendTransactionFees)
+        self.send_modal_review_send_button = Button(names.sendModalReviewSendButton)
+
+        # old send modal
         self._tokens_list = QObject(names.statusListView)
         self._tab_item_template = QObject(names.tab_Status_template)
         self._search_field = TextEdit(names.search_TextEdit)
@@ -38,7 +49,7 @@ class SendPopup(BasePopup):
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self._ens_address_text_edit.wait_until_appears(timeout_msec)
+        self.send_modal_header.wait_until_appears()
         return self
 
     @allure.step('Get current text in account selector')
@@ -86,22 +97,34 @@ class SendPopup(BasePopup):
         return assets_or_collectibles_list
 
     def open_token_selector(self):
-        self._holding_selector.click()
+        self.send_modal_token_selector.click()
         return TokenSelectorPopup().wait_until_appears()
 
+    def open_sign_send_modal(self):
+        self.send_modal_review_send_button.click()
+        return SignSendModalPopup().wait_until_appears()
+
     @allure.step('Send {2} {3} to {1}')
-    def send(self, address: str, amount: int, asset: str):
+    def sign_and_send(self, address: str, amount: str, asset: str):
         token_selector = self.open_token_selector()
+
         if asset:
             token_selector.select_asset_from_list(asset_name=asset)
-            self._amount_to_send_text_edit.text = str(amount)
-            self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            self._ens_address_text_edit.type_text(address)
+            self.send_modal_amount_field.text = amount
+            self.send_modal_recipient_field.type_text(address)
+
         else:
             search_view = token_selector.open_collectibles_search_view()
             search_view.select_random_collectible()
             self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             self._ens_address_text_edit.type_text(address)
 
-        assert driver.waitFor(lambda: self._send_button.is_visible, timeout_msec=8000)
-        self._send_button.click()
+        assert self.send_modal_sign_txn_fees.wait_until_appears(timeout_msec=10000), \
+            f'Fees panel is not displayed within 10s'
+        assert self.send_modal_review_send_button.wait_until_appears(timeout_msec=10000), \
+            f'Fees are not displayed within 10s'
+
+        self.open_sign_send_modal().sign_send_modal_reject_button.click()
+        sign_send_modal = self.open_sign_send_modal()
+        sign_send_modal.sign_send_modal_sign_button.click()
+

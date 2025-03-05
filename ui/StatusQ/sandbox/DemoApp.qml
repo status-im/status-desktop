@@ -78,7 +78,7 @@ Rectangle {
         leftPanel: StatusAppNavBar {
             id: navBar
 
-            chatItemsModel: SortFilterProxyModel {
+            topSectionModel: SortFilterProxyModel {
                 sourceModel: Models.demoAppSectionsModel
                 filters: ValueFilter {
                     roleName: "sectionType"
@@ -86,7 +86,7 @@ Rectangle {
                 }
             }
 
-            chatItemDelegate: navButtonComponent
+            topSectionDelegate: navButtonComponent
 
             communityItemsModel: SortFilterProxyModel {
                 sourceModel: Models.demoAppSectionsModel

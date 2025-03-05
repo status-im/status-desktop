@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
-
-library 'status-jenkins-lib@v1.9.17'
+library 'status-jenkins-lib@v1.9.18'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -8,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-5.15 && go-1.21 && xcode-15.1"
+    label "${getAgentLabels().join(' && ')} && qt-5.15 && go-1.22 && xcode-15.1"
   }
 
   parameters {
@@ -73,7 +72,7 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true)
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch(), version: env.VERSION)}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"

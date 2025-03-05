@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
-
-library 'status-jenkins-lib@v1.9.17'
+library 'status-jenkins-lib@v1.9.18'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -11,7 +10,7 @@ pipeline {
     /* Necessary image with Ubuntu 20.04 for older Glibc. */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.5.3-qt5.15.2'
+      image 'statusteam/nim-status-client-build:1.6.1-qt5.15.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
@@ -48,7 +47,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 25, unit: 'MINUTES')
+    timeout(time: 30, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -70,7 +69,7 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true)
+    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch(), version: env.VERSION)}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch(), version: env.VERSION)}"
     /* prevent sharing cache dir across different jobs */

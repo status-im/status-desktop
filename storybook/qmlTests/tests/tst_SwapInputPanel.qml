@@ -32,8 +32,6 @@ Item {
         readonly property SwapModalAdaptor adaptor: SwapModalAdaptor {
             swapStore: SwapStore {
                 readonly property var accounts: WalletAccountsModel {}
-                readonly property var flatNetworks: NetworksModel.flatNetworks
-                readonly property bool areTestNetworksEnabled: true
             }
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
@@ -44,6 +42,7 @@ Item {
                 assetsWithFilteredBalances: thisWalletAssetStore.groupedAccountsAssetsModel
             }
             currencyStore: CurrenciesStore {}
+            networksStore: NetworksStore {}
             swapFormData: SwapInputParamsForm {
                 selectedAccountAddress: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
             }
@@ -53,7 +52,7 @@ Item {
         readonly property var tokenSelectorAdaptor: TokenSelectorViewAdaptor {
             assetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
             plainTokensBySymbolModel: plainTokensModel
-            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            flatNetworksModel: d.adaptor.networksStore.activeNetworks
             currentCurrency: d.adaptor.currencyStore.currentCurrency
 
             accountAddress: d.adaptor.swapFormData.selectedAccountAddress
@@ -67,7 +66,7 @@ Item {
             anchors.centerIn: parent
 
             currencyStore: d.adaptor.currencyStore
-            flatNetworksModel: d.adaptor.swapStore.flatNetworks
+            flatNetworksModel: d.adaptor.networksStore.activeNetworks
             processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
             plainTokensBySymbolModel: plainTokensModel
             selectedAccountAddress: d.adaptor.swapFormData.selectedAccountAddress
@@ -277,9 +276,7 @@ Item {
             verify(!maxTagButton.text.endsWith("ETH"))
         }
 
-        // FIXME: This should be enabled after #15709 is resolved
         function test_clickingMaxButton() {
-            skip("maxTabButton is disabled")
             controlUnderTest = createTemporaryObject(componentUnderTest, root, {tokenKey: "ETH"})
             verify(!!controlUnderTest)
             waitForRendering(controlUnderTest)
@@ -329,6 +326,7 @@ Item {
         function test_max_button_when_different_tokens_clicked() {
             controlUnderTest = createTemporaryObject(componentUnderTest, root)
             verify(!!controlUnderTest)
+            waitForRendering(controlUnderTest)
 
             const maxTagButton = findChild(controlUnderTest, "maxTagButton")
             verify(!!maxTagButton)
@@ -357,8 +355,7 @@ Item {
 
                 waitForRendering(controlUnderTest)
                 verify(maxTagButton.visible)
-                // FIXME: maxTagButton should be enabled after #15709 is resolved
-                verify(!maxTagButton.enabled)
+                verify(maxTagButton.enabled)
                 verify(!maxTagButton.text.endsWith(modelItemToTest.symbol))
                 tryCompare(maxTagButton, "type", modelItemToTest.currentBalance === 0 ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal)
 
@@ -370,10 +367,8 @@ Item {
                     tryCompare(amountToSendInput, "text", modelItemToTest.currentBalance === 0 ? "" : maxTagButton.maxSafeValue.toString())
                     tryCompare(controlUnderTest, "value", maxTagButton.maxSafeValue)
                     verify(modelItemToTest.currentBalance === 0 ? !controlUnderTest.valueValid : controlUnderTest.valueValid)
-                    const marketPrice = amountToSendInput.price
-                    compare(bottomItemText.text, d.adaptor.formatCurrencyAmount(
-                                maxTagButton.maxSafeValue * marketPrice,
-                                d.adaptor.currencyStore.currentCurrency))
+                    compare(bottomItemText.text,  d.adaptor.currencyStore.formatCurrencyAmount(
+                                maxTagButton.maxSafeValue * amountToSendInput.price, d.adaptor.currencyStore.currentCurrency))
                 }
                 amountToSendInput.clear()
             }
@@ -387,10 +382,10 @@ Item {
             verify(!!maxTagButton)
             verify(!maxTagButton.visible)
 
-            const holdingSelector = findChild(controlUnderTest, "holdingSelector")
-            verify(!!holdingSelector)
+            const tokenSelectorButton = findChild(controlUnderTest, "tokenSelectorButton")
+            verify(!!tokenSelectorButton)
 
-            const assetSelectorList = findChild(holdingSelector, "assetsListView")
+            const assetSelectorList = findChild(controlUnderTest, "assetsListView")
             verify(!!assetSelectorList)
 
             const amountToSendInput = findChild(controlUnderTest, "amountToSendInput")
@@ -402,6 +397,9 @@ Item {
             const bottomItemText = findChild(amountToSendInput, "bottomItemText")
             verify(!!bottomItemText)
 
+            const dropdown = findChild(controlUnderTest, "dropdown")
+            verify(!!dropdown)
+
             mouseClick(amountToSend_textField)
             // enter 5.42 as entered amount
             keyClick(Qt.Key_5)
@@ -412,12 +410,18 @@ Item {
             const numberTested = 5.42
             tryCompare(amountToSendInput, "text", "5.42")
 
-            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
-                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
-                mouseClick(holdingSelector)
-                waitForRendering(holdingSelector)
+            waitForRendering(assetSelectorList)
 
-                const delToTest = assetSelectorList.itemAtIndex(i)
+            for (let i= 0; i < d.tokenSelectorAdaptor.outputAssetsModel.count; i++) {
+                mouseClick(tokenSelectorButton)
+                waitForRendering(dropdown.contentItem)
+                waitForRendering(assetSelectorList)
+                verify(dropdown.open)
+
+                const modelItemToTest = ModelUtils.get(d.tokenSelectorAdaptor.outputAssetsModel, i)
+                verify(!!modelItemToTest)
+
+                const delToTest = findChild(assetSelectorList, "tokenSelectorAssetDelegate_%1".arg(modelItemToTest.name))
                 verify(!!delToTest)
                 if(delToTest.interactive) {
                     mouseClick(delToTest)

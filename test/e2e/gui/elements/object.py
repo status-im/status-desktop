@@ -6,7 +6,6 @@ import allure
 
 import configs
 import driver
-from driver import isFrozen
 from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
@@ -22,10 +21,9 @@ class QObject:
     @allure.step('Get object {0}')
     def object(self):
         try:
-            obj = driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-        except LookupError:
-            raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC}")
-        return obj
+            return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        except LookupError as e:
+            raise LookupError(f"Object {self.real_name} was not found within {configs.timeouts.UI_LOAD_TIMEOUT_MSEC} ms") from e
 
     def set_text_property(self, text):
         self.object.forceActiveFocus()
@@ -94,8 +92,8 @@ class QObject:
     @allure.step('Get visible {0}')
     def is_visible(self) -> bool:
         try:
-            return driver.waitForObject(self.real_name, 0).visible
-        except (AttributeError, LookupError, RuntimeError):
+            return driver.waitForObject(self.real_name, 200).visible
+        except (LookupError, RuntimeError, AttributeError):
             return False
 
     @property
@@ -178,14 +176,19 @@ class QObject:
 
     @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        assert driver.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
+        condition = driver.waitFor(lambda: self.is_visible, timeout_msec)
+        if not condition:
+            raise TimeoutError(f'Object {self} is not visible within {timeout_msec} ms')
         LOG.info('%s: is visible', self)
         return self
 
     @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        assert driver.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
+        condition = driver.waitFor(lambda: not self.is_visible, timeout_msec)
+        if not condition:
+            raise TimeoutError(f'Timeout reached: Object {self} is not hidden within {timeout_msec} ms')
         LOG.info('%s: is hidden', self)
+        return self
 
     @classmethod
     def wait_for(cls, condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> bool:

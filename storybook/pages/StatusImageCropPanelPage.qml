@@ -3,7 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Dialogs 1.3
 import QtQml 2.14
-import QtGraphicalEffects 1.14
+import QtGraphicalEffects 1.15
 
 import Storybook 1.0
 import Models 1.0

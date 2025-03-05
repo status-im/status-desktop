@@ -35,6 +35,7 @@ Item {
     property ProfileStores.ContactsStore contactsStore
     property CommunitiesStore communitiesStore
     required property TransactionStore transactionStore
+    required property SharedStores.NetworksStore networksStore
 
     property var emojiPopup: null
     property SharedStores.NetworkConnectionStore networkConnectionStore
@@ -49,6 +50,8 @@ Item {
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
+    
+    signal manageNetworksRequested()
 
     // TODO: remove tokenType parameter from signals below
     signal sendTokenRequested(string senderAddress, string tokenId, int tokenType)
@@ -195,7 +198,7 @@ Item {
             const walletStore = RootStore
 
             d.buyFormData.selectedWalletAddress = d.getSelectedOrFirstNonWatchedAddress()
-            d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+            d.buyFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
             if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                 d.buyFormData.selectedTokenKey =  walletStore.currentViewedHoldingTokensKey
             }
@@ -207,7 +210,7 @@ Item {
         id: signPhrasePopup
         onRemindLaterClicked: hideSignPhraseModal = true
         onAcceptClicked: { RootStore.setHideSignPhraseModal(true); }
-        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal
+        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal && root.appMainVisible
     }
 
     SeedPhraseBackupWarning {
@@ -222,6 +225,7 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
 
             networkFilter.visible: false
             headerButton.text: qsTr("Add new address")
@@ -243,6 +247,7 @@ Item {
             contactsStore: root.contactsStore
             communitiesStore: root.communitiesStore
             networkConnectionStore: root.networkConnectionStore
+            networksStore: root.networksStore
 
             swapEnabled: root.swapEnabled
             dAppsEnabled: root.dAppsEnabled
@@ -258,9 +263,8 @@ Item {
                                                               })
             onLaunchSwapModal: {
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
-                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 d.swapFormData.fromTokensKey = tokensKey
-                d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData, (popup) => {
                     popup.Component.destruction.connect(() => {
                         d.swapFormData.resetFormData()
@@ -273,6 +277,8 @@ Item {
             onLaunchBuyCryptoModal: d.launchBuyCryptoModal()
 
             onSendTokenRequested: root.sendTokenRequested(senderAddress, tokenId, tokenType)
+
+            onManageNetworksRequested: root.manageNetworksRequested()
         }
     }
 
@@ -386,13 +392,11 @@ Item {
                                           walletStore.currentViewedHoldingType)
             }
             onLaunchSwapModal: {
-                d.swapFormData.fromTokensKey =  ""
                 d.swapFormData.selectedAccountAddress = d.getSelectedOrFirstNonWatchedAddress()
-                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(RootStore.filteredFlatModel, "layer", 1, "chainId")
+                d.swapFormData.selectedNetworkChainId = StatusQUtils.ModelUtils.getByKey(root.networksStore.activeNetworks, "layer", 1, "chainId")
                 if(!!walletStore.currentViewedHoldingTokensKey && walletStore.currentViewedHoldingType === Constants.TokenType.ERC20) {
                     d.swapFormData.fromTokensKey =  walletStore.currentViewedHoldingTokensKey
                 }
-                d.swapFormData.defaultToTokenKey = RootStore.areTestNetworksEnabled ? Constants.swap.testStatusTokenKey : Constants.swap.mainnetStatusTokenKey
                 Global.openSwapModalRequested(d.swapFormData, (popup) => {
                     popup.Component.destruction.connect(() => {
                         d.swapFormData.resetFormData()

@@ -126,18 +126,14 @@ ColumnLayout {
         }
     }
 
-    StatusFlatButton {
+    StatusButton {
         Layout.topMargin: Theme.xlPadding
         Layout.alignment: Qt.AlignHCenter
         visible: switchTabBar.currentIndex == 0 && !!root.firstInstructionButtonName ||
                  switchTabBar.currentIndex == 1 && !!root.secondInstructionButtonName
-        text: switchTabBar.currentIndex == 0?
-                  root.firstInstructionButtonName :
-                  root.secondInstructionButtonName
+        text: switchTabBar.currentIndex == 0 ? root.firstInstructionButtonName : root.secondInstructionButtonName
         font.pixelSize: Theme.additionalTextSize
-        normalColor: "transparent"
-        borderWidth: 1
-        borderColor: Theme.palette.baseColor2
+        isOutline: true
         onClicked: {
             root.displayInstructions()
         }

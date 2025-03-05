@@ -7,6 +7,7 @@ QtObject {
 
     signal suggestedRoutesReady(string uuid, var pathModel, string errCode, string errDescription)
     signal transactionSent(string uuid, int chainId, bool approvalTx, string txHash, string error)
+    signal successfullyAuthenticated(string uuid)
 
     function authenticateAndTransfer(uuid, fromAddr, slippagePercentage = "") {
         _walletSectionSendInst.authenticateAndTransfer(uuid, fromAddr, slippagePercentage)
@@ -25,9 +26,22 @@ QtObject {
         _walletSectionSendInst.stopUpdatesForSuggestedRoute()
     }
 
+    function setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
+        _walletSectionSendInst.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+    }
+
+    function setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId) {
+        _walletSectionSendInst.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+    }
+
+    function getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei) {
+        return _walletSectionSendInst.getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei)
+    }
+
     Component.onCompleted: {
         _walletSectionSendInst.suggestedRoutesReady.connect(suggestedRoutesReady)
         _walletSectionSendInst.transactionSent.connect(transactionSent)
+        _walletSectionSendInst.successfullyAuthenticated.connect(successfullyAuthenticated)
     }
 }
 

@@ -1,8 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import QtQuick.Window 2.15
+
+import Qt.labs.settings 1.0
 
 import StatusQ 0.1
 
@@ -15,11 +18,22 @@ Page {
 
     Logs { id: logs }
 
+    Settings {
+        property alias mockedKeychainAvailable: keychainAvailableCheckBox.checked
+    }
+
+    QtObject {
+        id: d
+
+        readonly property bool keychainAvailable: loader.item.available
+        readonly property bool useMockedKeychain: root.isMac && !forceMockedKeychainCheckBox.checked
+    }
+
     Loader {
         id: loader
 
-        sourceComponent: root.isMac && !forceMockedKeychainCheckBox.checked
-                         ? nativeKeychainComponent : mockedKeychainComponent
+        sourceComponent: d.useMockedKeychain ? nativeKeychainComponent
+                                             : mockedKeychainComponent
     }
 
     Component {
@@ -35,6 +49,7 @@ Page {
 
         KeychainMock {
             parent: root
+            available: keychainAvailableCheckBox.checked
         }
     }
 
@@ -61,7 +76,7 @@ Page {
         anchors.centerIn: parent
 
         Text {
-            text: `Is MacOS: ${root.isMac}`
+            text: `Is MacOS: ${root.isMac ? "🍏" : "🙅‍"}, Keychain available: ${d.keychainAvailable ? "✅" : "❌"}`
         }
 
         CheckBox {
@@ -69,6 +84,12 @@ Page {
 
             visible: root.isMac
             text: `Force using mocked Keychain`
+        }
+
+        CheckBox {
+            id: keychainAvailableCheckBox
+            text: `Mocked keychain available`
+            enabled: !d.useMockedKeychain
         }
 
         RowLayout {
@@ -94,48 +115,53 @@ Page {
         RowLayout {
             Button {
                 text: "Save"
+                enabled: d.keychainAvailable
                 onClicked: {
-                    loader.item.requestSaveCredential("Save reason",
-                                                      accountInput.text, passwordInput.text)
+                    const status = loader.item.saveCredential(accountInput.text, passwordInput.text)
+                    logs.logEvent("SaveCredentials", ["status"], [status])
                 }
             }
             Button {
                 text: "Delete"
+                enabled: d.keychainAvailable
                 onClicked: {
-                    loader.item.requestDeleteCredential("Delete reason",
-                                                        accountInput.text)
+                    const status = loader.item.deleteCredential(accountInput.text)
+                    logs.logEvent("DeleteCredential", ["status"], [status])
                 }
             }
             Button {
                 text: "Get"
+                enabled: d.keychainAvailable
                 onClicked: {
                     loader.item.requestGetCredential("Get reason",
                                                      accountInput.text)
                 }
             }
             Button {
+                text: "Has"
+                enabled: d.keychainAvailable
+                onClicked: {
+                    const status = loader.item.hasCredential(accountInput.text)
+                    logs.logEvent("HasCredential", ["status"], [status])
+
+                }
+            }
+            Button {
                 text: "Cancel"
+                enabled: d.keychainAvailable
                 onClicked: {
                     loader.item.cancelActiveRequest()
                 }
             }
             BusyIndicator {
                 Layout.preferredHeight: 40
-                running: loader.item.loading
+               running: loader.item.loading
             }
         }
     }
 
     Connections {
         target: loader.item
-
-        function onSaveCredentialRequestCompleted(status) {
-            logs.logEvent("SaveCredentials", ["status"], arguments)
-        }
-
-        function onDeleteCredentialRequestCompleted(status) {
-            logs.logEvent("DeleteCredential", ["status"], arguments)
-        }
 
         function onGetCredentialRequestCompleted(status, password) {
             logs.logEvent("GetCredential", ["status", "password"], arguments)

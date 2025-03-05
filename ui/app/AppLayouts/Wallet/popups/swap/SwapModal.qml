@@ -31,6 +31,8 @@ StatusDialog {
     required property SwapModalAdaptor swapAdaptor
     required property int loginType
 
+    signal addMetricsEvent(string subEvent)
+
     objectName: "swapModal"
 
     implicitWidth: 556
@@ -65,10 +67,7 @@ StatusDialog {
             accounts: root.swapAdaptor.swapStore.accounts
             assetsModel: root.swapAdaptor.walletAssetsStore.baseGroupedAccountAssetModel
             tokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
-            filteredFlatNetworksModel: SortFilterProxyModel {
-                sourceModel: root.swapAdaptor.swapStore.flatNetworks
-                filters: ValueFilter { roleName: "isTest"; value: root.swapAdaptor.swapStore.areTestNetworksEnabled }
-            }
+            filteredFlatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
 
             selectedTokenKey: root.swapInputParamsForm.fromTokensKey
             selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
@@ -79,10 +78,6 @@ StatusDialog {
         }
 
         readonly property var selectedAccount: selectedAccountEntry.item
-
-        function addMetricsEvent(subEventName) {
-            Global.addCentralizedMetricIfEnabled("swap", {subEvent: subEventName})
-        }
     }
 
     ModelEntry {
@@ -122,11 +117,11 @@ StatusDialog {
 
     onOpened: {
         payPanel.forceActiveFocus()
-        d.addMetricsEvent("popup opened")
+        root.addMetricsEvent("popup opened")
     }
     onClosed: {
         root.swapAdaptor.stopUpdatesForSuggestedRoute()
-        d.addMetricsEvent("popup closed")
+        root.addMetricsEvent("popup closed")
     }
 
     header: Item {
@@ -178,7 +173,7 @@ StatusDialog {
                         Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
                         text: qsTr("On:")
                         color: Theme.palette.baseColor1
-                        font.pixelSize: 13
+                        font.pixelSize: Theme.additionalTextSize
                         lineHeight: 38
                         lineHeightMode: Text.FixedHeight
                         verticalAlignment: Text.AlignVCenter
@@ -190,7 +185,7 @@ StatusDialog {
                         multiSelection: false
                         showSelectionIndicator: false
                         showTitle: false
-                        flatNetworks: root.swapAdaptor.filteredFlatNetworksModel
+                        flatNetworks: root.swapAdaptor.networksStore.activeNetworks
                         selection: [root.swapInputParamsForm.selectedNetworkChainId]
                         onSelectionChanged: {
                             if (root.swapInputParamsForm.selectedNetworkChainId !== selection[0]) {
@@ -201,7 +196,7 @@ StatusDialog {
                                             root.swapInputParamsForm.selectedNetworkChainId, "address")
                                     if(!fromTokenAddressOnSelectedChain) {
                                         // reset from token as it doesnt exist on selected network
-                                        root.swapInputParamsForm.resetFromTokenValues()
+                                        root.swapInputParamsForm.resetFromTokenValues(false)
                                     }
                                 }
                                 if(!!root.swapAdaptor.toToken && !!root.swapAdaptor.toToken.addressPerChain) {
@@ -236,12 +231,14 @@ StatusDialog {
                     }
 
                     currencyStore: root.swapAdaptor.currencyStore
-                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
+
+                    cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
@@ -275,7 +272,7 @@ StatusDialog {
                     }
 
                     currencyStore: root.swapAdaptor.currencyStore
-                    flatNetworksModel: root.swapAdaptor.swapStore.flatNetworks
+                    flatNetworksModel: root.swapAdaptor.networksStore.activeNetworks
                     processedAssetsModel: root.swapAdaptor.walletAssetsStore.groupedAccountAssetsModel
                     plainTokensBySymbolModel: root.swapAdaptor.walletAssetsStore.walletTokensStore.plainTokensBySymbolModel
 
@@ -314,6 +311,86 @@ StatusDialog {
                         root.swapInputParamsForm.toTokenAmount = tempPayAmount
                         payPanel.forceActiveFocus()
                     }
+                }
+            }
+
+            RowLayout {
+                id: approximationRow
+                property bool inversedOrder: false
+                readonly property SwapInputPanel leftPanel: inversedOrder ? receivePanel : payPanel
+                readonly property SwapInputPanel rightPanel: inversedOrder ? payPanel : receivePanel 
+
+                readonly property string lhsSymbol: leftPanel.tokenKey ?? ""
+                readonly property double lhsAmount: leftPanel.value
+                readonly property string rhsSymbol: rightPanel.tokenKey ?? ""
+                readonly property double rhsAmount: rightPanel.value
+                readonly property int rhsDecimals: rightPanel.rawValueMultiplierIndex
+                readonly property bool amountLoading: receivePanel.mainInputLoading || payPanel.mainInputLoading
+
+                readonly property string quote: !!lhsAmount && !!rhsAmount ? SQUtils.AmountsArithmetic.div(
+                                                    SQUtils.AmountsArithmetic.fromNumber(rhsAmount),
+                                                    SQUtils.AmountsArithmetic.fromNumber(lhsAmount)).toFixed(rhsDecimals) : 1
+                readonly property string price: root.swapAdaptor.currencyStore.getFiatValue(1, lhsSymbol)
+
+                function formatCurrency(amount, symbol) {
+                    return root.swapAdaptor.currencyStore.formatCurrencyAmount(amount, symbol,
+                                                                            { roundingMode: LocaleUtils.RoundingMode.Down, stripTrailingZeroes: true })
+                }
+
+                visible: root.swapAdaptor.validSwapProposalReceived || root.swapAdaptor.swapProposalLoading
+                spacing: 0
+
+                onVisibleChanged: inversedOrder = false // restore to default
+                onAmountLoadingChanged: inversedOrder = false // restore to default
+
+                StatusBaseText {
+                    objectName: "quoteApproximationLeft"
+                    text: "%1 ≈ ".arg(approximationRow.formatCurrency(1, approximationRow.lhsSymbol))
+
+                    color: Theme.palette.directColor4
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                }
+
+                StatusTextWithLoadingState {
+                    Layout.preferredWidth: loading ? 40 : implicitWidth
+                    objectName: "quoteApproximationRight"
+                    text: "%1 ".arg(approximationRow.formatCurrency(approximationRow.quote, approximationRow.rhsSymbol))
+
+                    customColor: Theme.palette.directColor4
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                    loading: approximationRow.amountLoading
+                }
+
+                StatusBaseText {
+                    id: quoteApproximation
+                    objectName: "quoteApproximationPrice"
+                    text: "(%1)".arg(approximationRow.formatCurrency(
+                                            approximationRow.price,
+                                            root.swapAdaptor.currencyStore.currentCurrency
+                                            ))
+
+                    color: Theme.palette.directColor5
+                    font {
+                        weight: Font.Medium
+                        pixelSize: Theme.additionalTextSize
+                    }
+                    visible: !approximationRow.amountLoading
+                }
+
+                StatusFlatButton {
+                    objectName: "invertQuoteApproximation"
+                    icon.name: "swap"
+                    size: StatusBaseButton.Size.XSmall
+                    onClicked: approximationRow.inversedOrder = !approximationRow.inversedOrder
+                    hoverColor: "transparent"
+                    textColor: hovered ? Theme.palette.directColor4 : Theme.palette.directColor5
+                    visible: !approximationRow.amountLoading
                 }
             }
 
@@ -403,7 +480,7 @@ StatusDialog {
                         id: fees
                         objectName: "maxFeesValue"
                         text: {
-                            if(root.swapAdaptor.swapProposalLoading) {
+                            if(fees.loading) {
                                 return Constants.dummyText
                             }
 
@@ -418,6 +495,7 @@ StatusDialog {
 
                         onTextChanged: {
                             if (text === "" || text === "--" || text === Constants.dummyText) {
+                                animation.stop()
                                 return
                             }
                             animation.restart()
@@ -427,7 +505,7 @@ StatusDialog {
                         font.weight: Font.Medium
                         loading: root.swapAdaptor.swapProposalLoading
 
-                        AnimatedText {
+                        StatusColorAnimation {
                             id: animation
                             target: fees
                         }
@@ -470,7 +548,7 @@ StatusDialog {
                                  !root.swapAdaptor.approvalPending
                     onClicked: {
                         if (root.swapAdaptor.validSwapProposalReceived) {
-                            d.addMetricsEvent("next button pressed")
+                            root.addMetricsEvent("next button pressed")
                             if (root.swapAdaptor.swapOutputData.approvalNeeded && !root.swapAdaptor.approvalSuccessful)
                                 Global.openPopup(swapApproveModalComponent)
                             else
@@ -523,9 +601,9 @@ StatusDialog {
             serviceProviderContractAddress: root.swapAdaptor.swapOutputData.approvalContractAddress
             serviceProviderHostname: Constants.swap.paraswapHostname
 
-            onRejected: d.addMetricsEvent("rejected approve")
+            onRejected: root.addMetricsEvent("rejected approve")
             onAccepted: {
-                d.addMetricsEvent("send approve tx")
+                root.addMetricsEvent("send approve tx")
                 root.swapAdaptor.sendApproveTx()
             }
         }
@@ -578,9 +656,9 @@ StatusDialog {
             serviceProviderURL: Constants.swap.paraswapUrl // TODO https://github.com/status-im/status-desktop/issues/15329
             serviceProviderTandCUrl: Constants.swap.paraswapTermsAndConditionUrl // TODO https://github.com/status-im/status-desktop/issues/15329
 
-            onRejected: d.addMetricsEvent("rejected sign")
+            onRejected: root.addMetricsEvent("rejected sign")
             onAccepted: {
-                d.addMetricsEvent("send swap tx")
+                root.addMetricsEvent("send swap tx")
                 root.swapAdaptor.sendSwapTx()
                 root.close()
             }

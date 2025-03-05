@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
+import Qt.labs.settings 1.0  // Import required for Settings
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -107,6 +108,9 @@ StatusDialog {
     required property var recipientsModel
     required property var recipientsFilterModel
 
+    /** Maximum number of tab elements from all tabs in tab bar **/
+    property alias highestTabElementCount: recipientsPanel.highestTabElementCount
+
     /** Input property holds currently selected Fiat currency **/
     required property string currentCurrency
     /** Input function to format currency amount to locale string **/
@@ -191,10 +195,10 @@ StatusDialog {
 
         readonly property real scrollViewContentY: scrollView.flickable.contentY
         onScrollViewContentYChanged: {
-            const buffer = sendModalHeader.height + scrollViewLayout.spacing
+            const buffer = sendModalHeader.height + scrollViewLayout.spacing * 2
             if (scrollViewContentY > buffer) {
                 d.stickyHeaderVisible = true
-            } else if (scrollViewContentY === 0) {
+            } else if (scrollViewContentY < buffer) {
                 d.stickyHeaderVisible = false
             }
         }
@@ -218,7 +222,7 @@ StatusDialog {
             if(selectedAssetEntry.available && !!selectedAssetEntry.item) {
                 d.setTokenOnBothHeaders(selectedAssetEntry.item.symbol,
                                         Constants.tokenIcon(selectedAssetEntry.item.symbol),
-                                        selectedAssetEntry.item.key)
+                                        selectedAssetEntry.item.tokensKey)
             }
         }
 
@@ -279,7 +283,8 @@ StatusDialog {
         })
 
         readonly property var debounceSetSelectedAmount: Backpressure.debounce(root, 1000, function() {
-            if(amountToSend.amount !== "0" && amountToSend.amount !== root.selectedRawAmount)
+            if(!(amountToSend.amount === "0" && amountToSend.empty)
+                    && amountToSend.amount !== root.selectedRawAmount)
                 root.selectedRawAmount = amountToSend.amount
         })
 
@@ -310,57 +315,84 @@ StatusDialog {
             root.allValuesFilledCorrectly]
         onCombinedPropertyChangedHandlerChanged: Qt.callLater(() => root.formChanged())
 
-        readonly property bool errNotEnoughGas: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+        readonly property bool errNotEnoughEth: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
+
+        readonly property bool errNotEnoughToken: root.routerErrorCode === Constants.routerErrorCodes.router.errNotEnoughTokenBalance
 
         function setRawValue() {
-            if(!!selectedRawAmount && (amountToSend.amount !== root.selectedRawAmount || amountToSend.empty)) {
+            if (!selectedRawAmount) return
+
+            const amountChanged = (amountToSend.amount !== root.selectedRawAmount) || amountToSend.empty
+            const validSelection = (selectedAssetEntryValid && amountToSend.multiplierIndex !== 0) || selectedCollectibleEntryValid
+
+            if (amountChanged && validSelection) {
                 amountToSend.setRawValue(root.selectedRawAmount)
             }
         }
 
         function setSelectedCollectible(key) {
-            let tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
-               if(tokenType === Constants.TokenType.ERC1155) {
-                   root.sendType =  Constants.SendType.ERC1155Transfer
-               } else if(tokenType === Constants.TokenType.ERC721) {
-                   root.sendType =  Constants.SendType.ERC721Transfer
-               }
-               root.selectedRawAmount = "1"
-               root.selectedTokenKey = key
+            const tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
+            if(tokenType === Constants.TokenType.ERC1155) {
+                root.sendType =  Constants.SendType.ERC1155Transfer
+            } else if(tokenType === Constants.TokenType.ERC721) {
+                root.sendType =  Constants.SendType.ERC721Transfer
+            }
+            root.selectedRawAmount = "1"
+            root.selectedTokenKey = key
+            amountToSend.forceActiveFocus()
         }
 
         function setSelectedAsset(key) {
-               root.sendType = Constants.SendType.Transfer
-               root.selectedTokenKey = key
+            root.sendType = Constants.SendType.Transfer
+            root.selectedTokenKey = key
+            amountToSend.forceActiveFocus()
+        }
+
+        readonly property var lastTabSettings: Settings {
+            property alias lastSelectedTab: sendModalHeader.tokenSelectorTab
+        }
+
+        readonly property Timer enableAnimationTimer: Timer {
+            interval: 100
+            onTriggered: modalHeightBehavior.enabled = true
+        }
+
+        readonly property int calculatedHeight: {
+            const maxHeight = root.contentItem.Window.height - root.topMargin - root.margins
+            const minHeight = 430
+
+            const feesHeight = (amountToSend.visible && !!root.selectedRecipientAddress) || feesLayout.visible ? feesLayout.height + Theme.xlPadding : 0
+            const recipientPanelHeight = recipientLabel.height +
+                                       recipientsPanelLayout.spacing +
+                                       recipientsPanel.visualHeight +
+                                       scrollViewLayout.spacing +
+                                       (!root.selectedRecipientAddress ? Theme.bigPadding : 0)
+            const amountToSendHeight = (amountToSend.visible ? amountToSend.height + scrollViewLayout.spacing : 0)
+
+            const calculateContentHeight = sendModalHeader.height +
+                                         amountToSendHeight +
+                                         recipientPanelHeight +
+                                         feesHeight +
+                                         bottomSpacer.height +
+                                         scrollViewLayout.spacing * 2
+            const contentHeight = Math.max(calculateContentHeight, minHeight) + root.footer.height
+            return Math.min(maxHeight, contentHeight)
         }
     }
 
     width: 556
-    height: {
-        if (!selectedRecipientAddress)
-            return root.contentItem.Window.height - topMargin - margins
-        let contentHeight = Math.max(sendModalHeader.height +
-                                     amountToSend.height +
-                                     recipientsPanelLayout.height +
-                                     feesLayout.height +
-                                     scrollViewLayout.spacing*3 +
-                                     28,
-                                     scrollView.implicitHeight) + footer.height
-
-        if (!!footer.errorTags && !feesLayout.visible) {
-            // Utilize empty space when fees are not visible and error is shown
-            contentHeight -= feesLayout.height
-        }
-        return contentHeight
-    }
+    height: d.calculatedHeight
     padding: 0
     horizontalPadding: Theme.xlPadding
     topMargin: margins + accountSelector.height + Theme.padding
 
     Behavior on height {
-        enabled: !!root.selectedRecipientAddress
-        NumberAnimation { duration: 100; easing: Easing.OutCurve }
+        id: modalHeightBehavior
+        enabled: false
+        NumberAnimation { duration: 1000; easing.type: Easing.OutExpo }
     }
+
+    onOpened: d.enableAnimationTimer.start()
 
     background: StatusDialogBackground {
         color: Theme.palette.baseColor3
@@ -423,6 +455,7 @@ StatusDialog {
 
                 interactive: root.interactive && !root.transferOwnership
                 displayOnlyAssets: root.displayOnlyAssets
+                tokenSelectorTab: d.lastTabSettings.lastSelectedTab
 
                 networksModel: root.networksModel
                 assetsModel: root.assetsModel
@@ -496,7 +529,6 @@ StatusDialog {
 
                     interactive: root.interactive
                     dividerVisible: true
-                    progressivePixelReduction: false
                     bottomTextLoading: root.routesLoading
 
                     /** TODO: connect to max safe value for eth.
@@ -512,6 +544,9 @@ StatusDialog {
                     multiplierIndex: !!d.selectedAssetEntryValid &&
                                      !!d.selectedAssetEntry.item.decimals ?
                                          d.selectedAssetEntry.item.decimals : 0
+                    /** this is needed because in some cases the multiplier index is set after
+                    rawAmount and this leads to incorrect parsing of amount **/
+                    onMultiplierIndexChanged: d.setRawValue()
                     formatFiat: amount => root.fnFormatCurrencyAmount(
                                     amount, root.currentCurrency)
                     formatBalance: amount => root.fnFormatCurrencyAmount(
@@ -521,6 +556,12 @@ StatusDialog {
                     onVisibleChanged: if(visible) forceActiveFocus()
 
                     onAmountChanged: d.debounceSetSelectedAmount()
+                    onTextChanged: {
+                        // Only needed to assign value when amount in entered first time
+                        if(!root.selectedRawAmount) {
+                            d.debounceSetSelectedAmount()
+                        }
+                    }
 
                     bottomRightComponent: MaxSendButton {
                         id: maxButton
@@ -555,6 +596,7 @@ StatusDialog {
                     spacing: Theme.halfPadding
 
                     StatusBaseText {
+                        id: recipientLabel
                         elide: Text.ElideRight
                         text: qsTr("To")
                         Layout.alignment: Qt.AlignTop
@@ -562,7 +604,6 @@ StatusDialog {
                     Item {
                         Layout.alignment: Qt.AlignTop
                         Layout.fillWidth: true
-                        Layout.bottomMargin: feesLayout.visible ? 0 : Theme.xlPadding
                         implicitHeight: recipientsPanel.height
 
                         Rectangle {
@@ -572,7 +613,7 @@ StatusDialog {
                                 right: recipientsPanel.right
                             }
                             // Imitate recipient background and overflow the rectangle under footer
-                            height: recipientsPanel.emptyListVisible ? sendModalcontentItem.height : 0
+                            height: recipientsPanel.visualHeight
                             color: recipientsPanel.color
                             radius: recipientsPanel.radius
                         }
@@ -605,7 +646,6 @@ StatusDialog {
                     objectName: "feesLayout"
 
                     Layout.fillWidth: true
-                    Layout.bottomMargin: Theme.xlPadding
 
                     spacing: Theme.halfPadding
 
@@ -621,15 +661,21 @@ StatusDialog {
                         cryptoFees: root.estimatedCryptoFees
                         fiatFees: root.estimatedFiatFees
                         loading: root.routesLoading && root.allValuesFilledCorrectly
-                        error: d.errNotEnoughGas
+                        error: d.errNotEnoughEth
                     }
                     visible: root.allValuesFilledCorrectly
+                }
+
+                Item {
+                    id: bottomSpacer
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: (scrollView.contentHeight < scrollView.height + Theme.padding) ? 0 : Theme.bigPadding
                 }
             }
         }
     }
 
-    footer: SendModalFooter {        
+    footer: SendModalFooter {
         objectName: "sendModalFooter"
 
         width: root.width
@@ -640,11 +686,10 @@ StatusDialog {
         blurSource: scrollView.contentItem
         blurSourceRect: Qt.rect(0, scrollView.height, width, height)
 
-        error: d.errNotEnoughGas
-        errorTags: amountToSend.markAsInvalid ||
-                   !!root.routerErrorCode ||
-                   !!root.routerError?
-                       errorTagsModel: null
+        error: amountToSend.markAsInvalid ||
+               !!root.routerErrorCode ||
+               !!root.routerError
+        errorTags: !!error? errorTagsModel: null
 
         loading: root.routesLoading && root.allValuesFilledCorrectly
 
@@ -655,17 +700,16 @@ StatusDialog {
         id: errorTagsModel
         RouterErrorTag {
             errorTitle: qsTr("Insufficient funds for send transaction")
-            buttonText: qsTr("Add assets")
+            buttonText: d.selectedCryptoTokenSymbol !== Constants.ethToken? qsTr("Add assets") : qsTr("Add ETH")
             onButtonClicked: root.launchBuyFlow()
 
             visible: amountToSend.markAsInvalid
         }
         RouterErrorTag {
             errorTitle: root.routerError
-            errorDetails: !d.errNotEnoughGas ?
-                              root.routerErrorDetails: ""
-            buttonText: qsTr("Add ETH")
-            expandable: !d.errNotEnoughGas ||
+            errorDetails: !d.errNotEnoughEth && !d.errNotEnoughToken? root.routerErrorDetails: ""
+            buttonText: d.errNotEnoughToken? qsTr("Add assets") : d.errNotEnoughEth? qsTr("Add ETH") : ""
+            expandable: !!errorDetails &&
                         !(!root.routerErrorCode &&
                           !!root.routerError)
             onButtonClicked: root.launchBuyFlow()

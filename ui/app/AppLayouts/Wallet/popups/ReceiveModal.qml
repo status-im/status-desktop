@@ -33,7 +33,7 @@ StatusModal {
 
     property bool switchingAccounsEnabled: true
 
-    property string qrImageSource: root.store.getQrCode(root.selectedAccount.address)
+    property string qrImageSource: root.store.getQrCode(root.selectedAccount.mixedcaseAddress)
 
     property WalletStores.RootStore store: WalletStores.RootStore
 
@@ -108,7 +108,7 @@ StatusModal {
                     verticalAlignment: Text.AlignVCenter
                     textFormat: TextEdit.RichText
                     wrapMode: Text.WrapAnywhere
-                    text: root.selectedAccount.address
+                    text: root.selectedAccount.mixedcaseAddress
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                 }
@@ -120,7 +120,7 @@ StatusModal {
                     Layout.preferredWidth: 32
                     Layout.preferredHeight: 32
                     Layout.fillWidth: true
-                    textToCopy: root.selectedAccount.address
+                    textToCopy: root.selectedAccount.mixedcaseAddress
                     successCircleVisible: true
                 }
             }

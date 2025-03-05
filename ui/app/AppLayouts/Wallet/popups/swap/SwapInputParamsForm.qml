@@ -2,6 +2,8 @@ import QtQml 2.15
 
 import StatusQ.Core.Utils 0.1 as SQUtils
 
+import utils 1.0
+
 /* This is used so that there is an easy way to fill in the data
 needed to launch the Swap Modal with pre-filled requisites. */
 QtObject {
@@ -11,14 +13,16 @@ QtObject {
 
     property string selectedAccountAddress: ""
     property int selectedNetworkChainId: -1
-    property string fromTokensKey: ""
+    property string fromTokensKey: root.defaultFromTokenKey
     property string fromTokenAmount: ""
     property string toTokenKey: root.defaultToTokenKey
     property string toTokenAmount: ""
     property double selectedSlippage: 0.5
 
-    // default token key
-    property string defaultToTokenKey: ""
+    // default to token key
+    property string defaultToTokenKey: Constants.swap.ethTokenKey
+    // default from token key
+    property string defaultFromTokenKey: Constants.swap.usdcTokenKey
     // 15 seconds
     property int autoRefreshTime: 15000
 
@@ -37,8 +41,12 @@ QtObject {
         root.resetToTokenValues()
     }
 
-    function resetFromTokenValues() {
-        fromTokensKey = ""
+    function resetFromTokenValues(keepDefault = true) {
+        if(keepDefault) {
+            fromTokensKey = root.defaultFromTokenKey
+        } else {
+            fromTokensKey = ""
+        }
         fromTokenAmount = ""
     }
 

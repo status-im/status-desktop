@@ -315,6 +315,7 @@ Item {
             compare(adaptor.selectedRecipientType, 0)
             compare(model.ModelCount.count, 11)
             compare(adaptor.recipientsFilterModel.ModelCount.count, 11)
+            compare(adaptor.highestTabElementCount, 4)
 
             adaptor.selectedRecipientType = Constants.RecipientAddressObjectType.RecentsAddress
             compare(model.ModelCount.count, 3)
@@ -322,6 +323,7 @@ Item {
             compare(ModelUtils.get(model, 0, "address"), "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240")
             compare(ModelUtils.get(model, 1, "address"), "0xebfbfe4072ebb77e53aa9117c7300531d1511111")
             compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")
+            compare(adaptor.highestTabElementCount, 4)
 
             adaptor.selectedRecipientType = Constants.RecipientAddressObjectType.SavedAddress
             compare(model.ModelCount.count, 4)
@@ -330,6 +332,7 @@ Item {
             compare(ModelUtils.get(model, 1, "address"), "0x28F00D9d64bc7B41003F8217A74c66f76199E21D")
             compare(ModelUtils.get(model, 2, "address"), "0xE6bf08d897C8f4140647b51eB20D4c764b2Fb168")
             compare(ModelUtils.get(model, 3, "address"), "0xc5250feE40ABb4f5E2A5DDE62065ca6A9A6010A9")
+            compare(adaptor.highestTabElementCount, 4)
 
             adaptor.selectedRecipientType = Constants.RecipientAddressObjectType.Account
             compare(model.ModelCount.count, 4)
@@ -338,6 +341,7 @@ Item {
             compare(ModelUtils.get(model, 1, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881")
             compare(ModelUtils.get(model, 2, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8882")
             compare(ModelUtils.get(model, 3, "address"), "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8884")
+            compare(adaptor.highestTabElementCount, 4)
         }
 
         function test_patternFiltering() {
@@ -449,7 +453,6 @@ Item {
             recipientItem = ModelUtils.getByKey(adaptor.recipientsModel, "address", address)
             verify(!!recipientItem)
             verify(recipientItem.cherrypicked, "Entry from recents model. Data is cherrypicked from account input model")
-
         }
     }
 }

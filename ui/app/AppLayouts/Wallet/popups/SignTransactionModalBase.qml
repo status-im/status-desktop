@@ -78,7 +78,7 @@ StatusDialog {
                 id: closeButton
                 visible: root.hasExpiryDate && countdownPill.isExpired
                 text: root.closeButtonText
-                onClicked: root.close()
+                onClicked: root.closeHandler()
             }
         }
     }
@@ -100,6 +100,12 @@ StatusDialog {
 
     default property alias contents: contentsLayout.data
 
+    property bool internalPopupActive: false
+    property color internalOverlayColor: Theme.palette.backdropColor
+    property Component internalPopupComponent
+
+    signal closeInternalPopup()
+
     width: 480
     padding: 0
 
@@ -114,9 +120,16 @@ StatusDialog {
         headline.title: root.title
         headline.subtitle: root.subtitle
         actions.closeButton.visible: root.headerActionsCloseButtonVisible
-        actions.closeButton.onClicked: root.close()
+        actions.closeButton.onClicked: root.closeHandler()
 
         leftComponent: root.headerIconComponent
+
+        internalPopupActive: root.internalPopupActive
+        internalOverlayColor: root.internalOverlayColor
+        popupFullHeight: root.height
+        internalPopupComponent: root.internalPopupComponent
+
+        onCloseInternalPopup: root.closeInternalPopup()
     }
 
     footer: StatusDialogFooter {

@@ -1,31 +1,28 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1 as SQUtils
-import StatusQ.Core.Backpressure 0.1
 
 import AppLayouts.Onboarding2.pages 1.0
 import AppLayouts.Onboarding.enums 1.0
 
-SQUtils.QObject {
+OnboardingStackView {
     id: root
 
-    required property StackView stackView
-
     required property int keycardState
+    required property int pinSettingState
     required property var tryToSetPukFunction
     required property int remainingAttempts
 
-    required property int keycardPinInfoPageDelay
-
-    signal keycardPinCreated(string pin)
+    signal setPinRequested(string pin)
     signal keycardFactoryResetRequested
     signal finished(bool success)
 
-    function init() {
-        root.stackView.push(d.initialComponent())
+    initialItem: d.initialComponent()
+
+    function reset() {
+        clear()
+        push(d.initialComponent())
     }
 
     QtObject {
@@ -34,7 +31,8 @@ SQUtils.QObject {
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.BlockedPIN)
                 return keycardEnterPukPage
-            if (root.keycardState === Onboarding.KeycardState.Empty || root.keycardState === Onboarding.KeycardState.NotEmpty)
+            if (root.keycardState === Onboarding.KeycardState.Empty ||
+                    root.keycardState === Onboarding.KeycardState.NotEmpty)
                 return keycardUnblockedPage
             return keycardIntroPage
         }
@@ -54,9 +52,9 @@ SQUtils.QObject {
             unblockUsingSeedphraseAvailable: true
             factoryResetAvailable: !unblockWithPukAvailable
             onKeycardFactoryResetRequested: d.finishWithFactoryReset()
-            onEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)
-            onNotEmptyKeycardDetected: root.stackView.replace(keycardUnblockedPage)
-            onUnblockWithPukRequested: root.stackView.push(keycardEnterPukPage)
+            onEmptyKeycardDetected: root.replace(keycardUnblockedPage)
+            onNotEmptyKeycardDetected: root.replace(keycardUnblockedPage)
+            onUnblockWithPukRequested: root.push(keycardEnterPukPage)
         }
     }
 
@@ -66,7 +64,7 @@ SQUtils.QObject {
         KeycardEnterPukPage {
             tryToSetPukFunction: root.tryToSetPukFunction
             remainingAttempts: root.remainingAttempts
-            onKeycardPukEntered: (puk) => root.stackView.replace(keycardCreatePinPage)
+            onKeycardPukEntered: (puk) => root.replace(keycardCreatePinPage)
             onKeycardFactoryResetRequested: d.finishWithFactoryReset()
         }
     }
@@ -74,13 +72,13 @@ SQUtils.QObject {
     Component {
         id: keycardCreatePinPage
 
-        KeycardCreatePinPage {
-            onKeycardPinCreated: (pin) => {
-                Backpressure.debounce(root, root.keycardPinInfoPageDelay, () => {
-                    root.keycardPinCreated(pin)
-                    root.stackView.replace(keycardUnblockedPage, {title: qsTr("Unblock successful")})
-                })()
-            }
+        KeycardCreatePinDelayedPage {
+            pinSettingState: root.pinSettingState
+            authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
+
+            onSetPinRequested: root.setPinRequested(pin)
+            onFinished: root.replace(keycardUnblockedPage,
+                                     { title: qsTr("Unblock successful") })
         }
     }
 

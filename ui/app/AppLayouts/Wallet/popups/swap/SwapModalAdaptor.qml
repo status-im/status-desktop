@@ -1,5 +1,4 @@
 import QtQml 2.15
-import SortFilterProxyModel 0.2
 
 import StatusQ 0.1
 import StatusQ.Core.Utils 0.1
@@ -18,6 +17,7 @@ QObject {
     required property WalletStore.SwapStore swapStore
     required property SwapInputParamsForm swapFormData
     required property SwapOutputData swapOutputData
+    required property NetworksStore networksStore
 
     // the below 2 properties holds the state of finding a swap proposal
     property bool validSwapProposalReceived: false
@@ -35,11 +35,7 @@ QObject {
     readonly property var toToken: toTokenEntry.item
 
     readonly property string uuid: d.uuid
-
-    readonly property SortFilterProxyModel filteredFlatNetworksModel: SortFilterProxyModel {
-        sourceModel: root.swapStore.flatNetworks
-        filters: ValueFilter { roleName: "isTest"; value: root.swapStore.areTestNetworksEnabled }
-    }
+    readonly property var filteredFlatNetworksModel: root.networksStore.activeNetworks
 
     readonly property string errorMessage: d.errorMessage
     readonly property bool isEthBalanceInsufficient: d.isEthBalanceInsufficient
@@ -142,12 +138,20 @@ QObject {
                     totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.fromToken.marketDetails.currencyPrice.amount
                 root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
                 let bestPath = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+
+                const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
+                const totalMaxFeesInEth = AmountsArithmetic.div(
+                                            AmountsArithmetic.fromString(totalMaxFees),
+                                            AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
+                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
+
                 root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
                 root.swapOutputData.approvalAmountRequired = !!bestPath ? bestPath.approvalAmountRequired: ""
                 root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
                 root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
+                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
             } else {
                 root.swapOutputData.hasError = true
             }
@@ -188,7 +192,7 @@ QObject {
 
     function getDisabledChainIds(enabledChainId) {
         let disabledChainIds = []
-        let chainIds = ModelUtils.modelToFlatArray(root.filteredFlatNetworksModel, "chainId")
+        let chainIds = ModelUtils.modelToFlatArray(root.networksStore.activeNetworks, "chainId")
         for (let i = 0; i < chainIds.length; i++) {
             if (chainIds[i] !== enabledChainId) {
                 disabledChainIds.push(chainIds[i])

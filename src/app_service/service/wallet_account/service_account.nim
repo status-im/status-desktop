@@ -55,6 +55,10 @@ proc getKeypairByKeyUid*(self: Service, keyUid: string): KeypairDto =
     return
   return self.keypairs[keyUid]
 
+# This one should be used in a very rare cases, when we need to get keypair from db before service is initialized
+proc getKeypairByKeyUidFromDb*(self: Service, keyUid: string): KeypairDto =
+  return getKeypairByKeyUidFromDb(keyUid)
+
 proc getKeypairByAccountAddress*(self: Service, address: string): KeypairDto =
   for _, kp in self.keypairs:
     for acc in kp.accounts:
@@ -535,6 +539,14 @@ proc updateCurrency*(self: Service, newCurrency: string) =
 
 proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
   self.networkService.setNetworksState(chainIds, enabled)
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
+
+proc setNetworkActive*(self: Service, chainId: int, active: bool) =
+  self.networkService.setNetworkActive(chainId, active)
+  # TODO: This should be some common response to network changes
+  let addresses = self.getWalletAddresses()
+  self.buildAllTokens(addresses, store = true)
+  self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
 proc toggleTestNetworksEnabled*(self: Service) =

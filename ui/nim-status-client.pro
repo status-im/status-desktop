@@ -51,4 +51,11 @@ QML_IMPORT_PATH = $$PWD/imports \
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH = $$PWD/imports
 
-RESOURCES += resources.qrc StatusQ/src/assets.qrc StatusQ/src/statusq.qrc
+RESOURCES += resources.qrc \
+            StatusQ/src/assets/fonts/fonts.qrc \
+            StatusQ/src/assets/img/img.qrc \
+            StatusQ/src/assets/png/png.qrc \
+            StatusQ/src/assets/twemoji/twemoji.qrc \
+            StatusQ/src/assets/twemoji/twemoji-big.qrc \
+            StatusQ/src/assets/twemoji/twemoji-svg.qrc \
+            StatusQ/src/statusq.qrc

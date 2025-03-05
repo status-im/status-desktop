@@ -25,7 +25,7 @@ Item {
         id: mockDriver
         property int keycardState // enum Onboarding.KeycardState
         property int pinSettingState // enum Onboarding.ProgressState
-        property int authorizationState // enum Onboarding.ProgressState
+        property int authorizationState // enum Onboarding.AuthorizationState
         property int restoreKeysExportState // enum Onboarding.ProgressState
         property bool biometricsAvailable
         property string existingPin
@@ -49,32 +49,37 @@ Item {
             anchors.fill: parent
 
             networkChecksEnabled: false
-            biometricsAvailable: mockDriver.biometricsAvailable
             keycardPinInfoPageDelay: 0
 
-            isBiometricsLogin: biometricsAvailable
+            keychain: Keychain {
+                readonly property bool available: mockDriver.biometricsAvailable
+                function hasCredential(account) {
+                    return mockDriver.biometricsAvailable ? Keychain.StatusSuccess
+                                                          : Keychain.StatusNotFound
+                }
+            }
 
             onboardingStore: OnboardingStore {
                 readonly property int keycardState: mockDriver.keycardState // enum Onboarding.KeycardState
+                readonly property string keycardUID: "uid_4"
                 readonly property int pinSettingState: mockDriver.pinSettingState // enum Onboarding.ProgressState
-                readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.ProgressState
+                readonly property int authorizationState: mockDriver.authorizationState // enum Onboarding.AuthorizationState
                 readonly property int restoreKeysExportState: mockDriver.restoreKeysExportState // enum Onboarding.ProgressState
-                property int keycardRemainingPinAttempts: 5
-                property int keycardRemainingPukAttempts: 5
+                property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
+                property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
                 property var loginAccountsModel: emptyModel
 
                 function setPin(pin: string) {
                     const valid = pin === mockDriver.existingPin
                     if (!valid)
                         keycardRemainingPinAttempts--
-                    return valid
                 }
 
                 function authorize(pin: string) {
                     authorizeCalled(pin)
                 }
                 function loadMnemonic(mnemonic: string) {
-                    loadMnemonicCalled()
+                    loadMnemonicCalled(mnemonic)
                 }
                 function exportRecoverKeys() {
                     exportRecoverKeysCalled()
@@ -92,10 +97,15 @@ Item {
                 }
 
                 // seedphrase/mnemonic
-                function validMnemonic(mnemonic: string) {
+                function validMnemonic(mnemonic: string) { // -> bool
                     return mnemonic === mockDriver.mnemonic
                 }
-                function generateMnemonic() {
+
+                function isMnemonicDuplicate(mnemonic: string) { // -> bool
+                    return false
+                }
+
+                function generateMnemonic() { // -> string
                     return mockDriver.mnemonic
                 }
 
@@ -109,14 +119,15 @@ Item {
                 signal accountLoginError(string error, bool wrongPassword)
 
                 signal authorizeCalled(string pin)
-                signal loadMnemonicCalled
+                signal loadMnemonicCalled(string mnemonic)
                 signal exportRecoverKeysCalled
             }
 
             onLoginRequested: (keyUid, method, data) => {
-                // SIMULATION: emit an error in case of wrong password
-                if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) {
-                    onboardingStore.accountLoginError("An error ocurred, wrong password?", Math.random() < 0.5)
+                // SIMULATION: emit an error in case of wrong password/PIN
+                if ((method === Onboarding.LoginMethod.Password && data.password !== mockDriver.dummyNewPassword) ||
+                    (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.existingPin) ){
+                    onboardingStore.accountLoginError("", true)
                 }
             }
         }
@@ -156,11 +167,7 @@ Item {
         name: "OnboardingLayout"
         when: windowShown
 
-        function init() {
-            controlUnderTest = createTemporaryObject(componentUnderTest, root)
-
-            // disable animated transitions to speed-up tests
-            const stack = findChild(controlUnderTest, "stack")
+        function disableTransitions(stack) {
             stack.pushEnter = null
             stack.pushExit = null
             stack.popEnter = null
@@ -169,10 +176,22 @@ Item {
             stack.replaceExit = null
         }
 
+        function init() {
+            controlUnderTest = createTemporaryObject(componentUnderTest, root)
+
+            // disable animated transitions to speed-up tests
+            const stack = controlUnderTest.stack
+
+            disableTransitions(stack)
+            stack.topLevelStackChanged.connect(() => {
+                disableTransitions(stack.topLevelStack)
+            })
+        }
+
         function cleanup() {
             mockDriver.keycardState = -1
             mockDriver.pinSettingState = Onboarding.ProgressState.Idle
-            mockDriver.authorizationState = Onboarding.ProgressState.Idle
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Idle
             mockDriver.restoreKeysExportState = Onboarding.ProgressState.Idle
             mockDriver.biometricsAvailable = false
             mockDriver.existingPin = ""
@@ -191,15 +210,15 @@ Item {
             if (!stack || !pageClass)
                 fail("getCurrentPage: expected param 'stack' or 'pageClass' empty")
             verify(!!stack)
-            tryCompare(stack, "busy", false) // wait for page transitions to stop
+            tryCompare(stack, "topLevelStackBusy", false) // wait for page transitions to stop
 
-            if (stack.currentItem instanceof Loader) {
-                verify(stack.currentItem.item instanceof pageClass)
-                return stack.currentItem.item
+            if (stack.topLevelItem instanceof Loader) {
+                verify(stack.topLevelItem.item instanceof pageClass)
+                return stack.topLevelItem.item
             }
 
-            verify(stack.currentItem instanceof pageClass)
-            return stack.currentItem
+            verify(stack.topLevelItem instanceof pageClass)
+            return stack.topLevelItem
         }
 
         // common variant data for all flow related TDD tests
@@ -224,9 +243,9 @@ Item {
         // FLOW: Create Profile -> Start fresh (create profile with new password)
         function test_flow_createProfile_withPassword(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -336,9 +355,9 @@ Item {
         // FLOW: Create Profile -> Use a recovery phrase (create profile with seedphrase)
         function test_flow_createProfile_withSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -433,9 +452,9 @@ Item {
         // FLOW: Create Profile -> Use an empty Keycard -> Use a new recovery phrase (create profile with keycard + new seedphrase)
         function test_flow_createProfile_withKeycardAndNewSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -474,18 +493,16 @@ Item {
             // PAGE 6: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardAuthorized")
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
+            mockDriver.pinSettingState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 7: Backup your recovery phrase (intro)
+            dynamicSpy.setup(stack, "topLevelItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, BackupSeedphraseIntro)
             const btnBackupSeedphrase = findChild(page, "btnBackupSeedphrase")
             verify(!!btnBackupSeedphrase)
@@ -555,7 +572,7 @@ Item {
 
             // PAGE 13: Enable Biometrics
             if (data.biometrics) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -581,9 +598,9 @@ Item {
         // FLOW: Create Profile -> Use an empty Keycard -> Use an existing recovery phrase (create profile with keycard + existing seedphrase)
         function test_flow_createProfile_withKeycardAndExistingSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -635,28 +652,22 @@ Item {
             // PAGE 7: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
-            tryCompare(dynamicSpy, "count", 1)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardPinSuccessfullySet")
             mockDriver.pinSettingState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
-            dynamicSpy.setup(page, "keycardAuthorized")
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 8: Adding key pair to Keycard
+            dynamicSpy.setup(stack, "topLevelItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
 
             // PAGE 9: Enable Biometrics
-            if (controlUnderTest.biometricsAvailable) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+            if (mockDriver.biometricsAvailable) {
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -682,9 +693,9 @@ Item {
         // FLOW: Log in -> Log in with recovery phrase
         function test_flow_login_withSeedphrase(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -775,9 +786,9 @@ Item {
         // FLOW: Log in -> Log in by syncing
         function test_flow_login_bySyncing(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -867,10 +878,10 @@ Item {
         // FLOW: Log in -> Log in with Keycard
         function test_flow_login_withKeycard(data) {
             verify(!!controlUnderTest)
-            controlUnderTest.biometricsAvailable = data.biometrics
+            mockDriver.biometricsAvailable = data.biometrics
             mockDriver.existingPin = "123456"
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Welcome
@@ -908,7 +919,7 @@ Item {
             compare(dynamicSpy.signalArguments[0][0], mockDriver.existingPin)
 
             dynamicSpy.setup(controlUnderTest.onboardingStore, "exportRecoverKeysCalled")
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
             tryCompare(dynamicSpy, "count", 1)
 
             // PAGE 6: Extracting keys from Keycard
@@ -917,7 +928,7 @@ Item {
 
             // PAGE 7: Enable Biometrics
             if (data.biometrics) {
-                dynamicSpy.setup(stack, "currentItemChanged")
+                dynamicSpy.setup(stack, "topLevelItemChanged")
                 tryCompare(dynamicSpy, "count", 1)
 
                 page = getCurrentPage(stack, EnableBiometricsPage)
@@ -958,9 +969,8 @@ Item {
         function test_loginScreen(data) {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
-            controlUnderTest.restartFlow()
 
+            mockDriver.biometricsAvailable = data.biometrics // both available _and_ enabled for this profile
             mockDriver.existingPin = "111111" // let this be the correct PIN
 
             const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
@@ -986,7 +996,8 @@ Item {
                 if (data.biometrics) { // biometrics + password
                     if (data.password === mockDriver.dummyNewPassword) { // expecting correct fingerprint
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse(data.password)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusSuccess, data.password)
 
                         tryCompare(passwordBox, "biometricsSuccessful", true)
                         tryCompare(passwordBox, "biometricsFailed", false)
@@ -996,11 +1007,12 @@ Item {
                         tryCompare(passwordInput, "text", data.password)
                     } else { // expecting failed fetching credentials via biometrics
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusGenericError, "")
 
                         tryCompare(passwordBox, "biometricsSuccessful", false)
                         tryCompare(passwordBox, "biometricsFailed", true)
-                        tryCompare(passwordBox, "validationError", "ERROR")
+                        tryCompare(passwordBox, "validationError", "Fetching credentials failed.")
 
                         // this fails and switches to the password method; so just verify we have an error and can enter the pass manually
                         tryCompare(passwordInput, "hasError", true)
@@ -1024,7 +1036,6 @@ Item {
                 compare(resultData.password, data.password)
 
                 // verify validation & pass error
-                console.log("---- passwords:", data.password, mockDriver.dummyNewPassword)
                 tryCompare(passwordInput, "hasError", data.password !== mockDriver.dummyNewPassword)
             } else if (!!data.pin) { // keycard profile
                 mockDriver.keycardState = Onboarding.KeycardState.NotEmpty // happy path; keycard ready
@@ -1039,7 +1050,8 @@ Item {
                 if (data.biometrics) { // biometrics + PIN
                     if (data.pin === mockDriver.existingPin) { // expecting correct fingerprint
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse(data.pin)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusSuccess, data.pin)
 
                         tryCompare(keycardBox, "biometricsSuccessful", true)
                         tryCompare(keycardBox, "biometricsFailed", false)
@@ -1048,7 +1060,8 @@ Item {
                         tryCompare(pinInput, "pinInput", data.pin)
                     } else { // expecting failed fetching credentials via biometrics
                         // simulate the external biometrics response
-                        controlUnderTest.setBiometricResponse("", "ERROR", "", true)
+                        controlUnderTest.keychain.getCredentialRequestCompleted(
+                                    Keychain.StatusGenericError, "")
 
                         tryCompare(keycardBox, "biometricsSuccessful", false)
                         tryCompare(keycardBox, "biometricsFailed", true)
@@ -1076,15 +1089,13 @@ Item {
 
         function test_loginScreen_launchesExternalFlow_data() {
             return [
-              { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPageTitle: "Create profile" },
-              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPageTitle: "Log in" },
-              // TODO cover also `signal unblockWithSeedphraseRequested()` and `signal lostKeycard()`
+              { tag: "onboarding: create profile", delegateName: "createProfileDelegate", signalName: "onboardingCreateProfileFlowRequested", landingPage: CreateProfilePage },
+              { tag: "onboarding: log in", delegateName: "logInDelegate", signalName: "onboardingLoginFlowRequested", landingPage: NewAccountLoginPage },
             ]
         }
         function test_loginScreen_launchesExternalFlow(data) {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.restartFlow()
 
             const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
 
@@ -1102,16 +1113,21 @@ Item {
             mouseClick(menuDelegate)
             tryCompare(dynamicSpy, "count", 1)
 
-            tryCompare(controlUnderTest.stack.currentItem, "title", data.landingPageTitle)
+            tryVerify(() => {
+                          const currentPage = controlUnderTest.stack.currentItem
+                          return !!currentPage && currentPage instanceof data.landingPage
+                      })
+        }
+
+        function test_loginScreenLostKeycardSeedphraseLoginFlow_data() {
+            return [{ tag: "lost keycard: start using without keycard" }] // dummy to skip global data, and run just once
         }
 
         function test_loginScreenLostKeycardSeedphraseLoginFlow() {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = false
-            controlUnderTest.restartFlow()
 
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             // PAGE 1: Login screen
@@ -1135,7 +1151,14 @@ Item {
             verify(!!startUsingWithoutKeycardButton)
             mouseClick(startUsingWithoutKeycardButton)
 
-            // PAGE 3: Seedphrase
+            // PAGE 3: Conversion acks page
+            page = getCurrentPage(stack, ConvertKeycardAccountAcksPage)
+
+            const continueButton = findChild(page, "continueButton")
+            verify(!!continueButton)
+            mouseClick(continueButton)
+
+            // PAGE 4: Seedphrase
             page = getCurrentPage(stack, SeedphrasePage)
 
             const btnContinue = findChild(page, "btnContinue")
@@ -1150,7 +1173,7 @@ Item {
             compare(btnContinue.enabled, true)
             mouseClick(btnContinue)
 
-            // PAGE 4: Create password
+            // PAGE 5: Create password
             page = getCurrentPage(stack, CreatePasswordPage)
 
             const btnConfirmPassword = findChild(page, "btnConfirmPassword")
@@ -1188,16 +1211,19 @@ Item {
             compare(resultData.enableBiometrics, false)
             compare(resultData.keycardPin, "")
             compare(resultData.seedphrase, mockDriver.mnemonic)
+            compare(resultData.keyUid, keyUid)
+        }
+
+        function test_loginScreenLostKeycardCreateReplacementFlow_data() {
+            return [{ tag: "lost keycard: create replacement keycard" }] // dummy to skip global data, and run just once
         }
 
         function test_loginScreenLostKeycardCreateReplacementFlow() {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
-            controlUnderTest.biometricsAvailable = false
-            controlUnderTest.restartFlow()
 
             // PAGE 1: Login screen
-            const stack = findChild(controlUnderTest, "stack")
+            const stack = controlUnderTest.stack
             verify(!!stack)
 
             let page = getCurrentPage(stack, LoginScreen)
@@ -1244,18 +1270,16 @@ Item {
             // PAGE 5: Create new Keycard PIN
             const newPin = "123321"
             page = getCurrentPage(stack, KeycardCreatePinPage)
-            tryCompare(page, "state", "creating")
-            dynamicSpy.setup(page, "keycardPinCreated")
-            keyClickSequence(newPin)
-            tryCompare(page, "state", "repeating")
-            keyClickSequence(newPin)
+            dynamicSpy.setup(page, "setPinRequested")
+            keyClickSequence(newPin + newPin) // set and repeat
             tryCompare(dynamicSpy, "count", 1)
             compare(dynamicSpy.signalArguments[0][0], newPin)
-            dynamicSpy.setup(page, "keycardAuthorized")
-            mockDriver.authorizationState = Onboarding.ProgressState.Success
-            tryCompare(dynamicSpy, "count", 1)
+            mockDriver.pinSettingState = Onboarding.ProgressState.Success
+            mockDriver.authorizationState = Onboarding.AuthorizationState.Authorized
 
             // PAGE 6: Adding key pair to Keycard
+            dynamicSpy.setup(stack, "topLevelItemChanged")
+            tryCompare(dynamicSpy, "count", 1)
             page = getCurrentPage(stack, KeycardAddKeyPairPage)
             tryCompare(page, "addKeyPairState", Onboarding.ProgressState.InProgress)
             page.addKeyPairState = Onboarding.ProgressState.Success // SIMULATION
@@ -1268,6 +1292,47 @@ Item {
             compare(resultData.enableBiometrics, false)
             compare(resultData.keycardPin, newPin)
             compare(resultData.seedphrase, mockDriver.mnemonic)
+        }
+
+        function test_loginScreen_unblockFlows_data() {
+            return [
+              { tag: "Unblock with PUK", keyUid: "uid_4", btnName: "btnUnblockWithPUK", landingPage: KeycardEnterPukPage },
+              { tag: "Unblock with recovery phrase", keyUid: "uid_4", btnName: "btnUnblockWithSeedphrase", landingPage: SeedphrasePage },
+            ]
+        }
+
+        function test_loginScreen_unblockFlows(data) {
+            verify(!!controlUnderTest)
+            controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
+            mockDriver.keycardState = Onboarding.KeycardState.BlockedPIN
+
+            const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
+
+            const loginUserSelector = findChild(page, "loginUserSelector")
+            verify(!!loginUserSelector)
+            loginUserSelector.setSelection(data.keyUid)
+
+            tryCompare(page, "selectedProfileKeyId", data.keyUid)
+            tryCompare(page, "selectedProfileIsKeycard", true)
+
+            const keycardBox = findChild(page, "keycardBox")
+            verify(!!keycardBox)
+            tryCompare(keycardBox, "visible", true)
+            tryCompare(keycardBox, "state", "blocked")
+
+            waitForRendering(page)
+
+            const button = findChild(keycardBox, data.btnName)
+            verify(!!button)
+            tryCompare(button, "visible", true)
+            mouseClick(button)
+
+            tryVerify(() => {
+                const currentPage = controlUnderTest.stack.topLevelItem
+                return !!currentPage && currentPage instanceof data.landingPage
+            })
+
+            // TODO extend the check with trying to complete the flows
         }
     }
 }

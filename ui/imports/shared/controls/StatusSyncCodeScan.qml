@@ -159,7 +159,7 @@ Column {
     }
 
     StatusBaseText {
-        visible: d.showCamera && cameraLoader.item.camera ? true : false
+        visible: d.showCamera && cameraLoader.item.cameraAvailable
         width: parent.width
         height: visible ? implicitHeight : 0
         wrapMode: Text.WordWrap

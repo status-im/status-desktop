@@ -5,6 +5,7 @@ import ../io_interface as delegate_interface
 
 import app/global/global_singleton
 import app/core/eventemitter
+import app/core/notifications/notifications_manager
 
 import app_service/common/utils
 import app_service/common/wallet_constants
@@ -116,12 +117,23 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     amountInLocked = txPath.amountInLocked,
     amountOut = $txPath.amountOut,
     suggestedMaxFeesPerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.low,
+    suggestedPriorityFeePerGasLowLevel = $txPath.suggestedLevelsForMaxFeesPerGas.lowPriority,
+    suggestedEstimatedTimeLowLevel = txPath.suggestedLevelsForMaxFeesPerGas.lowEstimatedTime,
     suggestedMaxFeesPerGasMediumLevel = $txPath.suggestedLevelsForMaxFeesPerGas.medium,
+    suggestedPriorityFeePerGasMediumLevel = $txPath.suggestedLevelsForMaxFeesPerGas.mediumPriority,
+    suggestedEstimatedTimeMediumLevel = txPath.suggestedLevelsForMaxFeesPerGas.mediumEstimatedTime,
     suggestedMaxFeesPerGasHighLevel = $txPath.suggestedLevelsForMaxFeesPerGas.high,
+    suggestedPriorityFeePerGasHighLevel = $txPath.suggestedLevelsForMaxFeesPerGas.highPriority,
+    suggestedEstimatedTimeHighLevel = txPath.suggestedLevelsForMaxFeesPerGas.highEstimatedTime,
     suggestedMinPriorityFee = $txPath.suggestedMinPriorityFee,
     suggestedMaxPriorityFee = $txPath.suggestedMaxPriorityFee,
     currentBaseFee = $txPath.currentBaseFee,
+    suggestedTxNonce = $txPath.suggestedTxNonce,
+    suggestedTxGasAmount = $txPath.suggestedTxGasAmount,
+    suggestedApprovalTxNonce = $txPath.suggestedApprovalTxNonce,
+    suggestedApprovalGasAmount = $txPath.suggestedApprovalGasAmount,
     txNonce = $txPath.txNonce,
+    txGasFeeMode = txPath.txGasFeeMode,
     txMaxFeesPerGas = $txPath.txMaxFeesPerGas,
     txBaseFee = $txPath.txBaseFee,
     txPriorityFee = $txPath.txPriorityFee,
@@ -135,6 +147,7 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
     approvalAmountRequired = $txPath.approvalAmountRequired,
     approvalContractAddress = txPath.approvalContractAddress,
     approvalTxNonce = $txPath.approvalTxNonce,
+    approvalGasFeeMode = txPath.approvalGasFeeMode,
     approvalMaxFeesPerGas = $txPath.approvalMaxFeesPerGas,
     approvalBaseFee = $txPath.approvalBaseFee,
     approvalPriorityFee = $txPath.approvalPriorityFee,
@@ -176,6 +189,7 @@ method onUserAuthenticated*(self: Module, password: string, pin: string) =
     self.transactionWasSent(uuid = self.tmpSendTransactionDetails.uuid, chainId = 0, approvalTx = false, txHash = "", error = authenticationCanceled)
     self.clearTmpData()
   else:
+    self.view.sendSuccessfullyAuthenticatedSignal(self.tmpSendTransactionDetails.uuid) # notify the UI that the user is authenticated
     self.tmpSendTransactionDetails.pin = pin
     self.tmpSendTransactionDetails.password = password
     self.buildTransactionsFromRoute()
@@ -315,3 +329,23 @@ method stopUpdatesForSuggestedRoute*(self: Module) =
 
 method transactionSendingComplete*(self: Module, txHash: string, status: string) =
   self.view.sendtransactionSendingCompleteSignal(txHash, status)
+
+method setFeeMode*(self: Module, feeMode: int, routerInputParamsUuid: string, pathName: string, chainId: int,
+  isApprovalTx: bool, communityId: string) =
+  let err = self.controller.setFeeMode(feeMode, routerInputParamsUuid, pathName, chainId, isApprovalTx, communityId)
+  if err.len > 0:
+    # TODO: translate this, or find a better way to display error at this step (maybe within the popup)
+    var data = NotificationArgs(title: "Setting fee mode", message: err)
+    self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
+
+method setCustomTxDetails*(self: Module, nonce: int, gasAmount: int, maxFeesPerGas: string, priorityFee: string,
+  routerInputParamsUuid: string, pathName: string, chainId: int, isApprovalTx: bool, communityId: string) =
+  let err = self.controller.setCustomTxDetails(nonce, gasAmount, maxFeesPerGas, priorityFee, routerInputParamsUuid, pathName,
+    chainId, isApprovalTx, communityId)
+  if err.len > 0:
+    # TODO: translate this, or find a better way to display error at this step (maybe within the popup)
+    var data = NotificationArgs(title: "Setting custom fee", message: err)
+    self.events.emit(SIGNAL_DISPLAY_APP_NOTIFICATION, data)
+
+method getEstimatedTime*(self: Module, chainId: int, maxFeesPerGas: string, priorityFee: string): int =
+  return self.controller.getEstimatedTime(chainId, maxFeesPerGas, priorityFee)

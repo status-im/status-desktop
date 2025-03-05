@@ -347,6 +347,8 @@ Item {
         MembersEditSelectorView {
             rootStore: root.rootStore
             usersStore: UsersStore {
+                chatDetails: chatContentModule.chatDetails
+                chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
                 usersModule: root.chatContentModule.usersModule
             }
             contactsModel: root.mutualContactsModel

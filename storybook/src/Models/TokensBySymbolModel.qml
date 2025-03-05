@@ -104,7 +104,7 @@ ListModel {
             marketDetailsLoading: false
         },
         {
-            key: "aave",
+            key: "AAVE",
             name: "Aave",
             symbol: "AAVE",
             image: "https://cryptologos.cc/logos/aave-aave-logo.png",
@@ -133,7 +133,7 @@ ListModel {
             marketDetailsLoading: false
         },
         {
-            key: "usdc",
+            key: "USDC",
             name: "USDC",
             symbol: "USDC",
             image: "",
@@ -162,7 +162,7 @@ ListModel {
 
         },
         {
-            key: "hst",
+            key: "HST",
             name: "Decision Token",
             symbol: "HST",
             image: "",
@@ -295,7 +295,71 @@ ListModel {
             },
             detailsLoading: false,
             marketDetailsLoading: false
-        }
+        },
+        {
+            key: "WETH",
+            name: "Wrapped Ether",
+            symbol: "WETH",
+            sources: ";" + nativeSource + ";",
+            addressPerChain: [
+                { chainId: 1, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 5, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 10, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 11155420, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 42161, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 421614, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+                { chainId: 11155111, address: "0x8f3470A7388c05eE4e7AF3d01D8C722b0FF52374"},
+            ],
+            decimals: 18,
+            type: 1,
+            communityId: "",
+            description: "Wrapped Ethereum is a decentralized, open-source blockchain platform",
+            websiteUrl: "https://www.wrapped-ethereum.org/",
+            marketDetails: {
+                marketCap: ({amount: 250980621528.3937, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                highDay: ({amount: 2090.658790484828, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                lowDay: ({amount: 2059.795033958552, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                changePctHour: 0.3655439934313061,
+                changePctDay: 1.19243897022671,
+                changePct24hour: 0.05209315257442912,
+                change24hour: 0.9121310349524345,
+                currencyPrice: ({amount: 2098.790000016801, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+            },
+            detailsLoading: false,
+            marketDetailsLoading: false,
+        },
+        {
+            key: "USDT",
+            name: "Tether USD",
+            symbol: "USDT",
+            sources: ";" + nativeSource + ";",
+            addressPerChain: [
+                { chainId: 1, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 5, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 10, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 11155420, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 42161, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 421614, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+                { chainId: 11155111, address: "0x265B25e22bcd7f10a5bD6E6410F10537Cc7567e8"},
+            ],
+            decimals: 6,
+            type: 1,
+            communityId: "",
+            description: "Tether USD is a decentralized, open-source blockchain platform",
+            websiteUrl: "https://www.tether-usdt.org/",
+            marketDetails: {
+                marketCap: ({amount: 250980621528.3937, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                highDay: ({amount: 2090.658790484828, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                lowDay: ({amount: 2059.795033958552, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                changePctHour: 0.3655439934313061,
+                changePctDay: 1.19243897022671,
+                changePct24hour: 0.05209315257442912,
+                change24hour: 0.9121310349524345,
+                currencyPrice: ({amount: 2098.790000016801, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+            },
+            detailsLoading: false,
+            marketDetailsLoading: false,
+        },
     ]
 
     Component.onCompleted: append(data)

@@ -19,6 +19,7 @@ Item {
 
     property SharedSendStores.TransactionStore store
     property CurrenciesStore currencyStore : store.currencyStore
+    required property NetworksStore networksStore
     property var selectedRecipient
     property string ensAddressOrEmpty: ""
     property var selectedAsset
@@ -114,6 +115,7 @@ Item {
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store
+                networksStore: root.networksStore
                 errorMode: root.errorMode
                 errorType: root.errorType
                 fromNetworksList: root.fromNetworksList
@@ -129,7 +131,7 @@ Item {
                     root.reCalculateSuggestedRoute()
                 }
 
-                showBetaTag: !!root.bestRoutes && root.bestRoutes.count > 1
+                showBetaTag: !root.isLoading && !!root.bestRoutes && root.bestRoutes.count > 1
             }
         }
 

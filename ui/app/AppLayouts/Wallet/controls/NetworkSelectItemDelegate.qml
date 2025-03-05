@@ -1,13 +1,9 @@
 import QtQuick 2.15
 import QtQml 2.15
-import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
-
-import utils 1.0
 
 StatusListItem {
     id: root
@@ -24,6 +20,7 @@ StatusListItem {
     property bool showIndicator: true
     property bool multiSelection: false
     property bool interactive: true
+    property bool showNewIcon: false
 
     // output signal
     // Emitted when the checkbox is clicked
@@ -44,6 +41,13 @@ StatusListItem {
     rightPadding: 16
     statusListItemTitleArea.anchors.leftMargin: 12
     highlighted: d.checkState !== Qt.Unchecked && !showIndicator
+
+    statusListItemTitleIcons.active: root.showNewIcon
+    statusListItemTitleIcons.anchors.leftMargin: Theme.smallPadding
+    statusListItemTitleIcons.sourceComponent: StatusNewTag {
+        objectName: "networkSelectionNewIcon_" + root.title
+        tooltipText: qsTr("%1 chain integrated. You can now view and swap <br>%1 assets, as well as interact with %1 dApps.").arg(root.title)
+    }
 
     Binding on bgColor {
         when: highlighted && !root.sensor.containsMouse
