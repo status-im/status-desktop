@@ -70,9 +70,7 @@ SplitView {
                 signal transactionSent(var chainId, var txHash, var uuid, var error)
                 signal transactionSendingComplete(var txHash, var status)
             }
-            networksStore: NetworksStore {
-                readonly property var activeNetworks: NetworksModel.flatNetworks
-            }
+            networksStore: NetworksStore {}
             walletAssetsStore: WalletAssetsStore {
                 id: thisWalletAssetStore
                 walletTokensStore: TokensStore {
@@ -106,7 +104,7 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.swapStore.flatNetworks
+                flatNetworksModel: d.adaptor.filteredFlatNetworksModel
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
                 plainTokensBySymbolModel: plainTokensModel
 
@@ -133,7 +131,7 @@ SplitView {
                 }
 
                 currencyStore: d.adaptor.currencyStore
-                flatNetworksModel: d.adaptor.swapStore.flatNetworks
+                flatNetworksModel: d.adaptor.filteredFlatNetworksModel
                 processedAssetsModel: d.adaptor.walletAssetsStore.groupedAccountAssetsModel
                 plainTokensBySymbolModel: plainTokensModel
 
@@ -177,7 +175,7 @@ SplitView {
                 ComboBox {
                     Layout.fillWidth: true
                     id: ctrlSelectedNetworkChainId
-                    model: d.adaptor.swapStore.flatNetworks
+                    model: d.adaptor.filteredFlatNetworksModel
                     textRole: "chainName"
                     valueRole: "chainId"
                     displayText: currentIndex === -1 ? "All chains" : currentText
