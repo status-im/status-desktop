@@ -208,13 +208,15 @@ StatusDialog {
         readonly property var selectedAssetEntry: ModelEntry {
             sourceModel: root.assetsModel
             key: "tokensKey"
+            cacheOnRemoval: true
             value: root.selectedTokenKey
             onItemChanged: d.setAssetInTokenSelector()
             onAvailableChanged: d.setAssetInTokenSelector()
         }
 
         // Holds if the asset entry is valid
-        readonly property bool selectedAssetEntryValid: selectedAssetEntry.available &&
+        readonly property bool selectedAssetEntryValid: (selectedAssetEntry.itemRemovedFromModel ||
+                                                         selectedAssetEntry.available) &&
                                                         !!selectedAssetEntry.item
 
         // Used to set selected asset in token selector
@@ -667,7 +669,7 @@ StatusDialog {
                 Item {
                     id: bottomSpacer
                     Layout.fillWidth: true
-                    Layout.preferredHeight: (scrollView.contentHeight < scrollView.height + Theme.padding) ? 0 : Theme.bigPadding
+                    Layout.preferredHeight: Theme.bigPadding
                 }
             }
         }
