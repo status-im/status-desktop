@@ -444,6 +444,7 @@ proc createCommunitySectionItem[T](self: Module[T], communityDetails: CommunityD
 
 proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetailsDto, sentTransaction: RouterSentTransaction) =
     var
+      finalStatus = status
       addressFrom = sendDetails.fromAddress
       addressTo = sendDetails.toAddress
       txTo = "" # txFrom is always the same as addressFrom, but txTo is different from addressTo when the app performs any sending flow via certain contract
@@ -585,6 +586,8 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
         if communityNubmerOfInvolvedAddresses == 1: # set address only if all tokens are from the same address
           communityInvolvedAddress = sendDetails.communityParams.walletAddresses[0]
 
+    if finalStatus.len == 0 and error.len > 0:
+      finalStatus = TxStatusFailed
     self.view.showTransactionToast(
       sendDetails.uuid,
       sendDetails.sendType,
@@ -622,7 +625,7 @@ proc sendNotification[T](self: Module[T], status: string, sendDetails: SendDetai
       communityOwnerTokenName,
       communityMasterTokenName,
       communityDeployedTokenName,
-      status,
+      finalStatus,
       error,
     )
 
