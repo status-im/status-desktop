@@ -19,15 +19,23 @@ closeCrossPopupButton = {"container": statusDesktop_mainWindow_overlay, "objectN
 # Main right panel
 mainWindow_RighPanel = {"container": statusDesktop_mainWindow, "type": "ColumnLayout", "objectName": "mainRightView", "visible": True}
 
-# Navigation Panel
+# Main left panel (Chat, wallet, swaps, communities portal and settings buttons container)
 mainWindow_scrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
-mainWindow_StatusAppNavBar = {"container": statusDesktop_mainWindow, "objectName": "statusAppNavBar", "type": "StatusAppNavBar", "visible": True}
-messages_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_StatusAppNavBar, "objectName": "Messages-navbar", "type": "StatusNavBarTabButton", "visible": True}
-mainWindow_statusMainNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusMainNavBarListView", "type": "ListView", "visible": True}
-communities_Portal_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_statusMainNavBarListView_ListView, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
-wallet_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_StatusAppNavBar, "objectName": "Wallet-navbar", "type": "StatusNavBarTabButton", "visible": True}
-settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_StatusAppNavBar, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
-mainWindow_ProfileNavBarButton = {"container": statusDesktop_mainWindow, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
+mainWindow_LeftPanelNavBar = {"container": statusDesktop_mainWindow, "objectName": "statusAppNavBar", "type": "StatusAppNavBar", "visible": True}
+
+# First half of left main panel: chat button, wallet button, swap button
+walletChatSwapNavBarList = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusChatNavBarListView", "type": "ListView", "visible": True}
+mainWalletButton = {"container": walletChatSwapNavBarList, "objectName": "Wallet-navbar", "type": "StatusNavBarTabButton", "visible": True}
+chatButton = {"container": walletChatSwapNavBarList, "objectName": "Messages-navbar", "type": "StatusNavBarTabButton", "visible": True}
+
+# Second half of left main panel: communities button, settings button
+communitiesSettingsNavBarList = {"container": statusDesktop_mainWindow, "objectName": "statusMainNavBarListView", "type": "ListView", "visible": True}
+communitiesPortalButton = {"container": communitiesSettingsNavBarList, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
+settingsGearButton = {"container": communitiesSettingsNavBarList, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
+
+# Online identifier
+onlineIdentifierButton = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
+
 mainWindow_statusCommunityMainNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusCommunityMainNavBarListView", "type": "ListView", "visible": True}
 statusCommunityMainNavBarListView_CommunityNavBarButton = {"checkable": True, "container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
 invite_People_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "invitePeople", "type": "StatusMenuItem", "visible": True}

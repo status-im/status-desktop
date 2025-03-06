@@ -33,13 +33,13 @@ LOG = logging.getLogger(__name__)
 class LeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__(names.mainWindow_StatusAppNavBar)
-        self.profile_button = Button(names.mainWindow_ProfileNavBarButton)
-        self._messages_button = Button(names.messages_navbar_StatusNavBarTabButton)
-        self._communities_portal_button = Button(names.communities_Portal_navbar_StatusNavBarTabButton)
+        super(LeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
+        self.profile_button = Button(names.onlineIdentifierButton)
+        self._messages_button = Button(names.chatButton)
+        self._communities_portal_button = Button(names.communitiesPortalButton)
         self._community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
-        self._settings_button = Button(names.settings_navbar_StatusNavBarTabButton)
-        self._wallet_button = Button(names.wallet_navbar_StatusNavBarTabButton)
+        self._settings_button = Button(names.settingsGearButton)
+        self._wallet_button = Button(names.mainWalletButton)
         self._community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
 
     def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
