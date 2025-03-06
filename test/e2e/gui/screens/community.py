@@ -34,11 +34,6 @@ class CommunityScreen(QObject):
         self.chat = Chat()
         self.right_panel = Members()
 
-    @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        self.left_panel.wait_until_appears(timeout_msec)
-        return self
-
     @allure.step('Create channel')
     def create_channel(self, name: str, description: str, emoji: str = None):
         self.left_panel.open_create_channel_popup().create(name, description, emoji).save_create_button.click()
