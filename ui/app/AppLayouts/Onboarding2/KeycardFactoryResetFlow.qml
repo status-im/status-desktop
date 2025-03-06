@@ -60,9 +60,10 @@ OnboardingStackView {
 
         KeycardBasePage {
             id: keycardResetPage
+            readonly property bool backAvailableHint: false
             readonly property bool resetting: root.keycardState === Onboarding.KeycardState.FactoryResetting
 
-            image.source: resetting ? Theme.png("onboarding/keycard/empty") // FIXME correct image
+            image.source: resetting ? Theme.png("onboarding/keycard/empty")
                                     : Theme.png("onboarding/keycard/success")
             title: resetting ? qsTr("Reseting Keycard") : qsTr("Keycard successfully factory reset")
             subtitle: resetting ? "" : qsTr("You can now use this Keycard like it's a brand-new, empty Keycard")
