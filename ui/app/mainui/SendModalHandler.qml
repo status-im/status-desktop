@@ -437,6 +437,7 @@ QtObject {
             currentCurrency: root.currentCurrency
             fnFormatCurrencyAmount: root.fnFormatCurrencyAmount
             fnResolveENS: root.fnResolveENS
+            selectedAssetAvailableInSelectedNetwork: handler.isAssetAvailableInSelectedNetwork(selectedTokenKey, selectedChainId)
 
             onOpened: {
                 if(isValidParameter(root.simpleSendParams.interactive)) {
@@ -677,6 +678,21 @@ QtObject {
                     }
                 }
 
+                function isAssetAvailableInSelectedNetwork(tokensKey, chainId) {
+                    if (!tokensKey || !chainId || !root.plainTokensBySymbolModel)
+                        return false
+
+                    const addressPerChain = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", tokensKey, "addressPerChain")
+                    if (!addressPerChain)
+                        return false
+
+                    return !!SQUtils.ModelUtils.getFirstModelEntryIf(
+                                addressPerChain,
+                                (addPerChain) => {
+                                    return chainId === addPerChain.chainId
+                                })
+                }
+
                 readonly property var recipientViewAdaptor: RecipientViewAdaptor {
                     savedAddressesModel: root.savedAddressesModel
                     accountsModel: root.walletAccountsModel
@@ -702,6 +718,7 @@ QtObject {
                 readonly property var assetsSelectorViewAdaptor: TokenSelectorViewAdaptor {
                     assetsModel: root.groupedAccountAssetsModel
                     flatNetworksModel: root.flatNetworksModel
+                    plainTokensBySymbolModel: root.plainTokensBySymbolModel
 
                     currentCurrency: root.currentCurrency
                     showCommunityAssets: root.showCommunityAssetsInSend

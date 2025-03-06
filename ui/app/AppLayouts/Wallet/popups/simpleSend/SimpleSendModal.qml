@@ -178,6 +178,9 @@ StatusDialog {
 
     /** Input function to resolve Ens Name **/
     required property var fnResolveENS
+
+    property bool selectedAssetAvailableInSelectedNetwork: true
+
     /** Output function to set resolved ens name values **/
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
@@ -217,6 +220,7 @@ StatusDialog {
         // Holds if the asset entry is valid
         readonly property bool selectedAssetEntryValid: (selectedAssetEntry.itemRemovedFromModel ||
                                                          selectedAssetEntry.available) &&
+                                                        root.selectedAssetAvailableInSelectedNetwork &&
                                                         !!selectedAssetEntry.item
 
         // Used to set selected asset in token selector
@@ -281,6 +285,8 @@ StatusDialog {
                 // reset token selector in case selected tokens doesnt exist in either models
                 d.setTokenOnBothHeaders("", "", "")
                 root.selectedTokenKey = ""
+                root.selectedRawAmount = ""
+                amountToSend.clear()
             }
         })
 
