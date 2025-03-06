@@ -168,16 +168,9 @@ class AccountPopup(BasePopup):
 
     @allure.step('Click confirmation (add account / save changes) button')
     def save_changes(self):
-        assert driver.waitFor(lambda: self.is_save_changes_button_enabled(),
-                              configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
         # TODO https://github.com/status-im/status-desktop/issues/15345
         self._add_save_account_confirmation_button.click()
         return self
-
-    @allure.step('Get enabled state of (add account / save changes) button')
-    def is_save_changes_button_enabled(self):
-        return driver.waitForObjectExists(self._add_save_account_confirmation_button.real_name,
-                                          configs.timeouts.UI_LOAD_TIMEOUT_MSEC).enabled
 
 
 class EditAccountFromSettingsPopup(BasePopup):
