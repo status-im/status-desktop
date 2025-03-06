@@ -1,3 +1,5 @@
+import time
+
 import allure
 
 from constants.syncing import SyncingSettings
@@ -30,15 +32,17 @@ class SyncingSettingsView(QObject):
     @allure.step('Checking instructions elements: subtitle presence')
     def is_instructions_subtitle_present(self):
         assert (self._sync_new_device_instructions_subtitle.text
-                == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value), f"Sync a new device subtitle is incorrect"
+                == SyncingSettings.SYNC_A_NEW_DEVICE_INSTRUCTIONS_SUBTITLE.value), \
+            f"Sync a new device subtitle is incorrect"
 
     @allure.step('Setup syncing')
     def open_sync_new_device_popup(self, password: str):
-        self.click_setup_syncing()
-        AuthenticatePopup().wait_until_appears().authenticate(password)
+        auth_popup = self.click_setup_syncing()
+        auth_popup.authenticate(password)
         return SyncNewDevicePopup().wait_until_appears()
 
     @allure.step('Click setup syncing')
     def click_setup_syncing(self):
+        time.sleep(0.5)
         self._setup_syncing_button.click()
         return AuthenticatePopup().wait_until_appears()
