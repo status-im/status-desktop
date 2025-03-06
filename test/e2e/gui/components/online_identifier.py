@@ -3,6 +3,7 @@ import pyperclip
 
 import configs
 import driver
+from gui.components.base_popup import BasePopup
 from gui.components.profile_popup import ProfilePopup
 from gui.elements.button import Button
 from gui.elements.object import QObject
@@ -10,10 +11,10 @@ from gui.elements.text_label import TextLabel
 from gui.objects_map import names
 
 
-class OnlineIdentifier(QObject):
+class OnlineIdentifier(BasePopup):
 
     def __init__(self):
-        super(OnlineIdentifier, self).__init__(names.onlineIdentifierProfileHeader)
+        super(OnlineIdentifier, self).__init__()
         self._always_active_button = Button(names.userContextmenu_AlwaysActiveButton)
         self._inactive_button = Button(names.userContextmenu_InActiveButton)
         self._automatic_button = Button(names.userContextmenu_AutomaticButton)
