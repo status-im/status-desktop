@@ -39,9 +39,7 @@ StatusWindow {
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
         simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
-        // TODO get rid of direct access when the new login is available
-        // We need this to make sure the module is loaded before we can use it
-        onboardingV2Enabled: featureFlags && featureFlags.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+        onboardingV2Enabled: featureFlags ? featureFlags.onboardingV2Enabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}
@@ -120,6 +118,10 @@ StatusWindow {
 
     QtObject {
         id: d
+        // TODO get rid of direct access when the new login is available
+        // We need this to make sure the module is loaded before we can use it
+        readonly property bool onboardingV2Enabled: featureFlagsStore.onboardingV2Enabled && typeof onboardingModule !== "undefined"
+
         property int previousApplicationState: -1
 
         property var mockedKeycardControllerWindow
@@ -205,8 +207,8 @@ StatusWindow {
 
     //TODO remove direct backend access
     Connections {
-        enabled: !featureFlagsStore.onboardingV2Enabled
-        target: !featureFlagsStore.onboardingV2Enabled && typeof startupModule !== "undefined" ? startupModule : null
+        enabled: !d.onboardingV2Enabled
+        target: !d.onboardingV2Enabled && typeof startupModule !== "undefined" ? startupModule : null
 
         function onStartUpUIRaised() {
             applicationWindow.appIsReady = true;
@@ -420,7 +422,7 @@ StatusWindow {
         id: startupOnboardingLoader
         anchors.fill: parent
         sourceComponent: {
-            if (featureFlagsStore.onboardingV2Enabled) {
+            if (d.onboardingV2Enabled) {
                 return onboardingV2
             }
             return onboardingV1
