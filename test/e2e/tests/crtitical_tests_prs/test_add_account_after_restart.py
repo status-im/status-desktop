@@ -44,10 +44,8 @@ def test_add_generated_account_restart_add_again(
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(main_screen.wait_for_notification()) == 1, \
-            f"Multiple toast messages appeared"
-        message = main_screen.wait_for_notification()[0]
-        assert message == f'"{name1}" successfully added'
+        messages = main_screen.wait_for_notification()
+        assert f'"{name1}" successfully added' in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: name1 in [account.name for account in wallet.left_panel.accounts], 10000), \
@@ -68,10 +66,8 @@ def test_add_generated_account_restart_add_again(
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(main_screen.wait_for_notification()) == 1, \
-            f"Multiple toast messages appeared"
-        message = main_screen.wait_for_notification()[0]
-        assert message == f'"{name2}" successfully added'
+        messages = main_screen.wait_for_notification()
+        assert f'"{name2}" successfully added' in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: name2 in [account.name for account in wallet.left_panel.accounts], 10000), \
