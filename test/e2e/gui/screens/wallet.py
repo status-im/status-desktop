@@ -50,39 +50,31 @@ class LeftPanel(QObject):
         return self._all_accounts_balance.is_visible
 
     @property
-    @allure.step('Get all accounts from list')
-    def accounts(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> typing.List[WalletAccount]:
-        start_time = time.monotonic()
-
-        while time.monotonic() - start_time < timeout_sec:
-            try:
-                return self.get_list_of_accounts()
-            except LookupError as err:
-                LOG.info(f'accounts are not found: {err}')
-                time.sleep(0.1)
-
-        raise LookupError("Notifications were not found within the timeout period.")
-
-    def get_list_of_accounts(self):
+    @allure.step('Build and return list of wallet accounts on wallet main screen')
+    def accounts(self, timeout_sec: int = 10) -> typing.List[WalletAccount]:
         if 'title' in self._wallet_account_item.real_name.keys():
             del self._wallet_account_item.real_name['title']
-        time.sleep(1)  # to give a chance for the left panel to refresh
-        raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
-        accounts = []
-        raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
 
-        for account_item in raw_data:
-            name = str(account_item.title)
-            color = str(account_item.asset.color.name).lower()
-            emoji = ''
-            for child in walk_children(account_item):
-                if hasattr(child, 'emojiId'):
-                    emoji = str(child.emojiId)
-                    break
-            accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
-            if not accounts:
-                raise LookupError('Toast message not found')
-        return accounts
+        start_time = time.monotonic()
+        accounts = []
+        while time.monotonic() - start_time < timeout_sec:
+            try:
+                raw_data = driver.findAllObjects(self._wallet_account_item.real_name)
+                for account_item in raw_data:
+                    name = str(account_item.title)
+                    color = str(account_item.asset.color.name).lower()
+                    emoji = ''
+                    for child in walk_children(account_item):
+                        if hasattr(child, 'emojiId'):
+                            emoji = str(child.emojiId)
+                            break
+                    accounts.append(constants.WalletAccount(name=name, color=color, emoji=emoji.split('-')[0]))
+                return accounts
+            except LookupError as e:
+                LOG.debug(f'accounts are not found: {e}')
+                time.sleep(0.1)
+
+        raise TimeoutError(f"Accounts list is not built within {timeout_sec}")
 
     @allure.step('Get total balance value from All accounts')
     def get_total_balance_value(self):
@@ -99,9 +91,14 @@ class LeftPanel(QObject):
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
             self._wallet_account_item.real_name['title'] = account_name
-            time.sleep(0.5)
-            self._wallet_account_item.click()
-        return WalletAccountView().wait_until_appears()
+            for _ in range(2):
+                self._wallet_account_item.click()
+                try:
+                    return WalletAccountView().wait_until_appears()
+                except Exception:
+                    pass  # Retry one more time
+                raise LookupError(f'Could not select {account_name}')
+        raise LookupError(f'{account_name} is not present in {account_items}')
 
     @allure.step('Open context menu from left wallet panel')
     def _open_context_menu(self) -> ContextMenu:
@@ -114,12 +111,14 @@ class LeftPanel(QObject):
         existing_accounts_names = [account.name for account in account_items]
         if account_name in existing_accounts_names:
             self._wallet_account_item.real_name['title'] = account_name
-            self._wallet_account_item.click()
-            time.sleep(0.5)
-            self._wallet_account_item.right_click()
-            return ContextMenu()
-        else:
-            raise LookupError(f'{account_name} is not present in {account_items}')
+            for _ in range(2):
+                self._wallet_account_item.right_click()
+                try:
+                    return ContextMenu().wait_until_appears()
+                except Exception:
+                    pass  # Retry one more time
+                raise LookupError(f'Could not open context menu for {account_name}')
+        raise LookupError(f'{account_name} is not present in {account_items}')
 
     @allure.step("Select Hide/Include in total balance from context menu for account")
     def hide_include_in_total_balance_from_context_menu(self, account_name: str):
