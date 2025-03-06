@@ -158,8 +158,9 @@ profileTabBar_Identity_StatusTabButton = {"checkable": True, "container": mainWi
 mainWindow_PasswordView = {"container": statusDesktop_mainWindow, "type": "ChangePasswordView", "unnamed": 1, "visible": True}
 
 # Syncing Settings View
-mainWindow_SyncingView = {"container": statusDesktop_mainWindow, "type": "SyncingView", "unnamed": 1, "visible": True}
-settings_Setup_Syncing_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}
+mainWindow_SyncingView = {"container": mainWindow_StatusSectionLayout_ContentItem, "type": "SyncingView", "unnamed": 1, "visible": True}
+syncingInstructionsLayout = {"container": settingsContentBase_ScrollView, "id": "instructionsLayout", "type": "ColumnLayout", "unnamed": 1, "visible": True}
+settings_Setup_Syncing_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncingStatusButton", "type": "StatusButton", "visible": True}
 settings_Backup_Data_StatusButton = {"container": settingsContentBase_ScrollView, "objectName": "setupSyncBackupDataButton", "type": "StatusButton", "visible": True}
 settings_Sync_New_Device_Header = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceTextLabel", "type": "StatusBaseText", "visible": True}
 settings_Sync_New_Device_SubTitle = {"container": settingsContentBase_ScrollView, "objectName": "syncNewDeviceSubTitleTextLabel", "type": "StatusBaseText", "visible": True}
