@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
 import SortFilterProxyModel 0.2
 
+import StatusQ 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls 0.1
@@ -10,7 +11,6 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
-import StatusQ 0.1
 
 import utils 1.0
 
@@ -87,7 +87,7 @@ StatusStackModal {
         readonly property ModelEntry selectedTokenEntry: ModelEntry {
             sourceModel: root.plainTokensBySymbolModel
             key: "key"
-            value: root.buyCryptoInputParamsForm.selectedTokenKey || Constants.ethToken
+            value: root.buyCryptoInputParamsForm.selectedTokenKey
         }
 
         readonly property ModelEntry selectedProviderEntry: ModelEntry {
