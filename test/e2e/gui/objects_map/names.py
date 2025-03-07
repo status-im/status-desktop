@@ -216,6 +216,10 @@ unpinButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overl
 headerActionsCloseButton_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 o_StatusPinMessageDetails = {"container": statusDesktop_mainWindow_overlay, "type": "StatusPinMessageDetails", "unnamed": 1, "visible": True}
 
+# Introduce Yourself popup
+introduceYourselfSkipButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "introduceSkipStatusFlatButton", "type": "StatusFlatButton", "visible": True}
+introduceYourselfEditProfileButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "introduceEditStatusFlatButton", "type": "StatusButton", "visible": True}
+
 """ Settings """
 
 # Send Contact Request
