@@ -35,6 +35,7 @@ Control {
 
     // Special Owner and TMaster token properties
     readonly property bool isCommunityCollectible: communityId !== ""
+    property bool showCommunityBadge: isCommunityCollectible
     property int privilegesLevel: Constants.TokenPrivilegesLevel.Community
     readonly property bool isPrivilegedToken: (privilegesLevel === Constants.TokenPrivilegesLevel.Owner) ||
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
@@ -186,7 +187,7 @@ Control {
             communityName: root.communityName
             communityId: root.communityId
             communityImage: root.communityImage
-            visible: root.isCommunityCollectible
+            visible: root.showCommunityBadge
             enabled: !root.isLoading
             
             TapHandler {

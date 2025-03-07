@@ -161,7 +161,6 @@ StatusComboBox {
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
             text: d.titleText
-            color: Theme.palette.baseColor1
             visible: !!text
         }
     }
