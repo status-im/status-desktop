@@ -192,6 +192,14 @@ StatusDialog {
     signal formChanged()
     /** Output signal to launch buy flow **/
     signal launchBuyFlow()
+    /** Input signal called after all data is filled **/
+    signal afterOpened()
+
+    onAfterOpened: {
+        if (!selectedRecipientAddress && !!ensName) {
+            recipientsPanel.setText(ensName)
+        }
+    }
 
     QtObject {
         id: d
