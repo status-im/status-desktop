@@ -52,14 +52,11 @@ Page {
         d.resetState()
     }
 
-    // clear the stack down to the LoginScreen, or recreate it
+    // clear the stack and load the LoginScreen
     // the purpose is to return from main/splash screen in case of a late stage error
     // and use the below error handler (onAccountLoginError)
     function unwindToLoginScreen() {
-        onboardingFlow.pop(null, StackView.Immediate)
-        if (!onboardingFlow.loginScreen) {
-            restartFlow()
-        }
+        restartFlow()
     }
 
     QtObject {
