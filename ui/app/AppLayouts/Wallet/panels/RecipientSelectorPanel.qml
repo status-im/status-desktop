@@ -59,6 +59,10 @@ Rectangle {
     /** Request ens address to be resolved **/
     signal resolveENS(string ensName, string uuid)
 
+    function setText(text) {
+        recipientInputLoader.setText(text)
+    }
+
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientInputLoader.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
     }

@@ -23,10 +23,22 @@ Loader {
     signal resolveENS(string ensName, string uuid)
     signal keyPressed(variant event)
 
+    function setText(text) {
+        if (!!selectedRecipientAddress || !item)
+            return
+
+        item.text = text
+    }
+
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         if(uuid !== d.uuid) {
             return
         }
+        if (!!selectedRecipientAddress) {
+            d.isBeingEvaluated = false
+            return
+        }
+
         d.searchPattern = !!resolvedAddress ? resolvedAddress : d.validatedEns
         d.isBeingEvaluated = false
 
