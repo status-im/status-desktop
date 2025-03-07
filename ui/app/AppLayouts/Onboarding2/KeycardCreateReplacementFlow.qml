@@ -81,6 +81,7 @@ OnboardingStackView {
 
             authorizationState: root.authorizationState
             pinSettingState: root.pinSettingState
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSetPinRequested: (pin) => root.setPinRequested(pin)
             onAuthorizationRequested: root.authorizationRequested()
