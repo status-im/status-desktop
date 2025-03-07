@@ -15,7 +15,6 @@ Item {
     IntroduceYourselfPopup {
         id: popup
         visible: true
-        closePolicy: Popup.NoAutoClose
 
         pubKey: "zQ3shW234234EA4545545rhf"
         colorId: 0

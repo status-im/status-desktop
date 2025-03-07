@@ -24,6 +24,8 @@ StatusDialog {
     padding: Theme.smallPadding*2
     topPadding: Theme.xlPadding
 
+    closePolicy: Popup.NoAutoClose
+
     title: qsTr("Introduce yourself")
 
     contentItem: ColumnLayout {
