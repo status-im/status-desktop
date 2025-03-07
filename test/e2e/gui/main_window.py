@@ -8,6 +8,7 @@ import configs
 import driver
 from constants import UserAccount, CommunityData
 from gui.components.community.invite_contacts import InviteContactsPopup
+from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
@@ -108,14 +109,19 @@ class LeftPanel(QObject):
 
     @allure.step('Open community portal')
     def open_communities_portal(self, attempts: int = 2) -> CommunitiesPortal:
-        self._communities_portal_button.click()
-        try:
-            return CommunitiesPortal().wait_until_appears()
-        except Exception as ex:
-            if attempts:
-                self.open_communities_portal(attempts - 1)
-            else:
-                raise ex
+        for _ in range(attempts):
+            self._communities_portal_button.click()
+            introduce_yourself_popup = IntroduceYourselfPopup()
+            if introduce_yourself_popup.is_visible:
+                introduce_yourself_popup.skip_button.click()
+                introduce_yourself_popup.wait_until_hidden()
+            time.sleep(0.2)
+            try:
+                return CommunitiesPortal().wait_until_appears()
+            except Exception:
+                pass  # Retry if attempts remain
+        raise Exception(f"Failed to open Communities Portal after {attempts} attempts")
+
 
     def _get_community(self, name: str):
         community_names = []
