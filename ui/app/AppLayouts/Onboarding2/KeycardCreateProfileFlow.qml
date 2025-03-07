@@ -34,6 +34,7 @@ OnboardingStackView {
 
         property bool withNewSeedphrase
         property string mnemonic
+        property bool pinAlreadySet
 
         function initialComponent() {
             if (root.keycardState === Onboarding.KeycardState.Empty)
@@ -43,6 +44,19 @@ OnboardingStackView {
                 return keycardNotEmptyPage
 
             return keycardIntroPage
+        }
+
+        function handleCreatePINPage() {
+            if (d.pinAlreadySet) { // skip the create PIN page and move forward
+                if (d.withNewSeedphrase) {
+                    root.push(backupSeedIntroPage)
+                } else {
+                    root.loadMnemonicRequested()
+                    root.push(addKeypairPage)
+                }
+            } else {
+                root.push(keycardCreatePinPage)
+            }
         }
     }
 
@@ -66,7 +80,7 @@ OnboardingStackView {
         CreateKeycardProfilePage {
             onCreateKeycardProfileWithNewSeedphrase: {
                 d.withNewSeedphrase = true
-                root.push(keycardCreatePinPage)
+                d.handleCreatePINPage()
             }
             onCreateKeycardProfileWithExistingSeedphrase: {
                 d.withNewSeedphrase = false
@@ -142,7 +156,7 @@ OnboardingStackView {
             isSeedPhraseValid: root.isSeedPhraseValid
             onSeedphraseSubmitted: (seedphrase) => {
                 root.seedphraseSubmitted(seedphrase)
-                root.push(keycardCreatePinPage)
+                d.handleCreatePINPage()
             }
         }
     }
@@ -155,11 +169,13 @@ OnboardingStackView {
 
             pinSettingState: root.pinSettingState
             authorizationState: root.authorizationState
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSetPinRequested: (pin) => root.setPinRequested(pin)
             onAuthorizationRequested: root.authorizationRequested()
 
             onFinished: {
+                d.pinAlreadySet = true
                 if (d.withNewSeedphrase) {
                     root.replace(backupSeedIntroPage)
                 } else {
