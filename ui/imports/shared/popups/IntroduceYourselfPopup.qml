@@ -120,10 +120,12 @@ StatusDialog {
         spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
+                objectName: "introduceSkipStatusFlatButton"
                 text: qsTr("Skip")
                 onClicked: root.close()
             }
             StatusButton {
+                objectName: "introduceEditStatusFlatButton"
                 icon.name: "settings"
                 text: qsTr("Edit Profile in Settings")
                 onClicked: root.accept()
