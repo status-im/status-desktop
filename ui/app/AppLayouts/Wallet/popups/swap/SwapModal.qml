@@ -253,8 +253,10 @@ StatusDialog {
 
                     onRawValueChanged: {
                         if(root.swapInputParamsForm.fromTokensKey === selectedHoldingId) {
-                            const amount = !tokenAmount && value === 0 ? "" :
-                                                                         SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(rawValue),
+                            const zero = SQUtils.AmountsArithmetic.fromString("0")
+                            const bigIntRawValue = SQUtils.AmountsArithmetic.fromString(rawValue)
+                            const amount = !tokenAmount && SQUtils.AmountsArithmetic.cmp(bigIntRawValue, zero) === 0 ? "" :
+                                                                         SQUtils.AmountsArithmetic.div(bigIntRawValue,
                                                                                                        SQUtils.AmountsArithmetic.fromNumber(1, rawValueMultiplierIndex)).toString()
                             root.swapInputParamsForm.fromTokenAmount = amount
                         }
