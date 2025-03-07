@@ -7,7 +7,6 @@ import allure
 import configs
 import driver
 from constants import CommunityData
-from gui.components.base_popup import BasePopup
 from gui.components.community.color_select_popup import ColorSelectPopup
 from gui.components.community.tags_select_popup import TagsSelectPopup
 from gui.components.picture_edit_popup import PictureEditPopup
@@ -22,21 +21,21 @@ from gui.screens.community import CommunityScreen
 LOG = logging.getLogger(__name__)
 
 
-class CreateCommunitiesBanner(BasePopup):
+class CreateCommunitiesBanner(QObject):
 
     def __init__(self):
-        super().__init__()
-        self._crete_community_button = Button(names.create_new_StatusButton)
+        super().__init__(names.create_new_StatusButton)
+        self.create_new_button = Button(names.create_new_StatusButton)
 
     def open_create_community_popup(self) -> 'CreateCommunityPopup':
-        self._crete_community_button.click()
+        self.create_new_button.click()
         return CreateCommunityPopup().wait_until_appears()
 
 
-class CreateCommunityPopup(BasePopup):
+class CreateCommunityPopup(QObject):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(names.createCommunityNameInput_TextEdit)
         self._scroll = Scroll(names.generalView_StatusScrollView)
         self._name_text_edit = TextEdit(names.createCommunityNameInput_TextEdit)
         self._description_text_edit = TextEdit(names.createCommunityDescriptionInput_TextEdit)

@@ -24,6 +24,8 @@ StatusDialog {
     padding: Theme.smallPadding*2
     topPadding: Theme.xlPadding
 
+    closePolicy: Popup.NoAutoClose
+
     title: qsTr("Introduce yourself")
 
     contentItem: ColumnLayout {
@@ -120,10 +122,12 @@ StatusDialog {
         spacing: Theme.padding
         rightButtons: ObjectModel {
             StatusFlatButton {
+                objectName: "introduceSkipStatusFlatButton"
                 text: qsTr("Skip")
                 onClicked: root.close()
             }
             StatusButton {
+                objectName: "introduceEditStatusFlatButton"
                 icon.name: "settings"
                 text: qsTr("Edit Profile in Settings")
                 onClicked: root.accept()
