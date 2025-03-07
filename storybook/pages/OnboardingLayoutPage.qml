@@ -89,6 +89,9 @@ SplitView {
 
             function setPin(pin: string) {
                 logs.logEvent("OnboardingStore.setPin", ["pin"], arguments)
+
+                pinSettingState = Onboarding.ProgressState.InProgress
+
                 ctrlLoginResult.result = "🯄"
                 const valid = pin === mockDriver.pin
                 if (!valid)

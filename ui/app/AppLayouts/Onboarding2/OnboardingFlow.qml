@@ -399,6 +399,7 @@ OnboardingStackView {
 
             isSeedPhraseValid: root.isSeedPhraseValid
             pinSettingState: root.pinSettingState
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSeedphraseSubmitted: (seedphrase) => root.seedphraseSubmitted(seedphrase)
 
@@ -429,6 +430,7 @@ OnboardingStackView {
             pinSettingState: root.pinSettingState
             tryToSetPukFunction: root.tryToSetPukFunction
             remainingAttempts: root.remainingPukAttempts
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSetPinRequested: (pin) => {
                 unblockWithPukFlow.pin = pin
