@@ -9,6 +9,7 @@ OnboardingStackView {
 
     required property var isSeedPhraseValid
     required property int pinSettingState
+    required property int keycardPinInfoPageDelay
 
     signal seedphraseSubmitted(string seedphrase)
     signal setPinRequested(string pin)
@@ -31,6 +32,7 @@ OnboardingStackView {
         KeycardCreatePinDelayedPage {
             pinSettingState: root.pinSettingState
             authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSetPinRequested: root.setPinRequested(pin)
             onFinished: root.finished()

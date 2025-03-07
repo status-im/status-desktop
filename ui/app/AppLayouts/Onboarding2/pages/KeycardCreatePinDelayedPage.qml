@@ -1,5 +1,4 @@
 import QtQuick 2.15
-import QtQuick.Layouts 1.15
 
 import AppLayouts.Onboarding.enums 1.0
 
@@ -15,6 +14,7 @@ KeycardCreatePinPage {
 
     required property int pinSettingState
     required property int authorizationState
+    required property int keycardPinInfoPageDelay
 
     success: root.authorizationState === Onboarding.ProgressState.Success &&
              root.pinSettingState === Onboarding.ProgressState.Success
@@ -23,7 +23,7 @@ KeycardCreatePinPage {
     signal authorizationRequested
 
     Timer {
-        interval: 2000
+        interval: root.keycardPinInfoPageDelay
         running: root.success
 
         onTriggered: root.finished()

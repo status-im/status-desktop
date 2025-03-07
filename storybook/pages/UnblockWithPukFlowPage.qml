@@ -33,6 +33,7 @@ SplitView {
             pinSettingState: pinSettingStateSelector.value
             tryToSetPukFunction: mockDriver.setPuk
             remainingAttempts: mockDriver.keycardRemainingPukAttempts
+            keycardPinInfoPageDelay: 2000
             onSetPinRequested: (pin) => {
                 logs.logEvent("setPinRequested", ["pin"], arguments)
                 console.warn("!!! SET PIN REQUESTED:", pin)

@@ -13,6 +13,7 @@ OnboardingStackView {
     required property int pinSettingState
     required property var tryToSetPukFunction
     required property int remainingAttempts
+    required property int keycardPinInfoPageDelay
 
     signal setPinRequested(string pin)
     signal keycardFactoryResetRequested
@@ -75,6 +76,7 @@ OnboardingStackView {
         KeycardCreatePinDelayedPage {
             pinSettingState: root.pinSettingState
             authorizationState: Onboarding.AuthorizationState.Authorized // authorization not needed
+            keycardPinInfoPageDelay: root.keycardPinInfoPageDelay
 
             onSetPinRequested: root.setPinRequested(pin)
             onFinished: root.replace(keycardUnblockedPage,
