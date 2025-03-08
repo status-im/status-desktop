@@ -8,6 +8,10 @@ export GST_PLUGIN_SYSTEM_PATH_1_0="${APPDIR}/usr/lib/gstreamer-1.0"
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib/:${LD_LIBRARY_PATH}"
 export QT_QPA_PLATFORM="xcb"
 
+# Set up pcsc-lite environment
+export PCSC_DRIVERS_DIR="${APPDIR}/usr/lib/pcsc/drivers"
+export PCSCLITE_CONFIG_DIR="${APPDIR}/etc/reader.conf.d"
+
 DEFAULT_LANG=en_US.UTF-8
 if [[ "$LANG" == "C.UTF-8" ]]
 then
