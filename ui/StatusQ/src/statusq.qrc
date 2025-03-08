@@ -264,5 +264,6 @@
         <file>StatusQ/Validators/AmountValidator.qml</file>
         <file>StatusQ/Validators/qmldir</file>
         <file>StatusQ/Components/private/StatusNewItemGradient.qml</file>
+        <file>StatusQ/Components/StatusAudio.qml</file>
     </qresource>
 </RCC>

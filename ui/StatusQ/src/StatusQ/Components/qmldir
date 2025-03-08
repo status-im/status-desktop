@@ -5,6 +5,7 @@ LoadingErrorComponent 0.1 LoadingErrorComponent.qml
 StatusAddress 0.1 StatusAddress.qml
 StatusAddressPanel 0.1 StatusAddressPanel.qml
 StatusAnimatedImage 0.1 StatusAnimatedImage.qml
+StatusAudio 0.1 StatusAudio.qml
 StatusBadge 0.1 StatusBadge.qml
 StatusBetaTag 0.1 StatusBetaTag.qml
 StatusCard 0.1 StatusCard.qml

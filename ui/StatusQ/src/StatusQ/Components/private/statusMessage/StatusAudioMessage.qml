@@ -1,8 +1,8 @@
 import QtQuick 2.3
-import QtMultimedia 5.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -20,8 +20,9 @@ Rectangle {
 
     color: hovered ? Theme.palette.directColor8 : Theme.palette.baseColor2
 
-    Audio {
+    StatusAudio {
         id: audioMessage
+
         source: audioSource
         notifyInterval: 150
     }
@@ -58,11 +59,11 @@ Rectangle {
 
         type: StatusFlatRoundButton.Type.Tertiary
         color: "transparent"
-        icon.name: audioMessage.playbackState == Audio.PlayingState ? "pause-filled" : "play-filled"
+        icon.name: audioMessage.playbackState == StatusAudio.PlayingState ? "pause-filled" : "play-filled"
         icon.color: Theme.palette.directColor1
 
         onClicked: {
-            if(audioMessage.playbackState === Audio.PlayingState){
+            if(audioMessage.playbackState === StatusAudio.PlayingState){
                 audioMessage.pause();
             } else {
                 audioMessage.play();
@@ -83,7 +84,7 @@ Rectangle {
             height: 2
             width: {
                 if(audioMessage.duration === 0) return 0;
-                if(audioMessage.playbackState === Audio.StoppedState) return 0;
+                if(audioMessage.playbackState === StatusAudio.StoppedState) return 0;
                 return parent.width * audioMessage.position / audioMessage.duration;
             }
             color: Theme.palette.directColor5
@@ -127,7 +128,7 @@ Rectangle {
                 drag.maximumX: parent.parent.width
                 onPressed: {
                     handle.state = "pressed"
-                    if(audioMessage.playbackState === Audio.PlayingState) {
+                    if(audioMessage.playbackState === StatusAudio.PlayingState) {
                         audioMessage.pause();
                     }
                 }
