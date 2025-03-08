@@ -42,52 +42,108 @@ Item {
             formatCurrencyAmount: currencyStore.formatCurrencyAmount
             flatNetworksModel: d.flatNetworks
             accountsModel: d.accounts
-            assetsModel: ListModel {
-                Component.onCompleted: append([{
-                                                   tokensKey: "ETH",
-                                                   name: "eth",
-                                                   symbol: "ETH",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc200",
-                                                   decimals: "18",
-                                                   iconSource: ModelsData.assets.eth,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               },
-                                               {
-                                                   tokensKey: "SNT",
-                                                   name: "snt",
-                                                   symbol: "SNT",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc2000000000000000000000000000000000123",
-                                                   decimals: "18",
-                                                   iconSource: ModelsData.assets.snt,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               },
-                                               {
-                                                   tokensKey: "DAI",
-                                                   name: "dai",
-                                                   symbol: "DAI",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc2000000000000000000000000000000550567",
-                                                   decimals: "2",
-                                                   iconSource: ModelsData.assets.dai,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               }])
+            assetsModel: adaptor.outputModel
+
+            PaymentRequestAdaptor {
+                id: adaptor
+                selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
+                flatNetworksModel: d.flatNetworks
+                plainTokensBySymbolModel:  ListModel {
+                    Component.onCompleted: append(data)
+                    readonly property var data: [
+                        {
+                            key: "ETH",
+                            name: "Ether",
+                            symbol: "ETH",
+                            addressPerChain: [
+                                { chainId: 1, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 5, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 10, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 11155420, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 42161, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 421614, address: "0x0000000000000000000000000000000000000000"},
+                                { chainId: 11155111, address: "0x0000000000000000000000000000000000000000"},
+                            ],
+                            decimals: 18,
+                            type: 1,
+                            communityId: "",
+                            description: "Ethereum is a decentralized, open-source blockchain platform that enables developers to build and deploy smart contracts and decentralized applications (dApps). It runs on a global network of nodes, making it highly secure and resistant to censorship. Ethereum introduced the concept of programmable money, allowing users to interact with the blockchain through self-executing contracts, also known as smart contracts. Ethereum's native currency, Ether (ETH), powers these contracts and facilitates transactions on the network.",
+                            websiteUrl: "https://www.ethereum.org/",
+                            marketDetails: {
+                                marketCap: ({amount: 250980621528.3937, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                highDay: ({amount: 2090.658790484828, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                lowDay: ({amount: 2059.795033958552, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                changePctHour: 0.3655439934313061,
+                                changePctDay: 1.19243897022671,
+                                changePct24hour: 0.05209315257442912,
+                                change24hour: 0.9121310349524345,
+                                currencyPrice: ({amount: 2098.790000016801, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+                            },
+                            detailsLoading: false,
+                            marketDetailsLoading: false,
+                        },
+                        {
+                            key: "STT",
+                            name: "Status Test Token",
+                            symbol: "STT",
+                            addressPerChain: [
+                                {chainId: 5, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                                { chainId: 11155420, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                                { chainId: 421614, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                                { chainId: 11155111, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                                { chainId: 10, address: "0x3d6afaa395c31fcd391fe3d562e75fe9e8ec7e6a"},
+                            ],
+                            decimals: 18,
+                            type: 1,
+                            communityId: "",
+                            description: "Status Network Token (SNT) is a utility token used within the Status.im platform, which is an open-source messaging and social media platform built on the Ethereum blockchain. SNT is designed to facilitate peer-to-peer communication and interactions within the decentralized Status network.",
+                            websiteUrl: "https://status.im/",
+                            marketDetails: {
+                                marketCap: ({amount: 289140007.5701632, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                highDay: ({amount: 0.04361387720794776, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                lowDay: ({amount: 0.0405415571067135, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                changePctHour: 0.7372177058415699,
+                                changePctDay: 4.094492504074038,
+                                changePct24hour: 5.038796965532456,
+                                change24hour: 0.002038287801810013,
+                                currencyPrice: ({amount: 0.04258000295521924, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+                            },
+                            detailsLoading: false,
+                            marketDetailsLoading: false,
+                        },
+                        {
+                            key: "DAI",
+                            name: "Dai Stablecoin",
+                            symbol: "DAI",
+                            addressPerChain: [
+                                { chainId: 1, address: "0x6b175474e89094c44da98b954eedeac495271d0f"},
+                                { chainId: 10, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                                { chainId: 42161, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                                { chainId: 5, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                                { chainId: 11155111, address: "0xda10009cbd5d07dd0cecc66161fc93d7c9000da1"},
+                                { chainId: 11155420, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84669"},
+                                { chainId: 421614, address: "0xf2edf1c091f683e3fb452497d9a98a49cba84666"},
+                            ],
+                            decimals: 18,
+                            type: 1,
+                            communityId: "",
+                            description: "Dai (DAI) is a decentralized, stablecoin cryptocurrency built on the Ethereum blockchain. It is designed to maintain a stable value relative to the US Dollar, and is backed by a reserve of collateral-backed tokens and other assets. Dai is an ERC-20 token, meaning it is fully compatible with other networks and wallets that support Ethereum-based tokens, making it an ideal medium of exchange and store of value.",
+                            websiteUrl: "https://makerdao.com/",
+                            marketDetails: {
+                                marketCap: ({amount: 3641953745.413845, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                highDay: ({amount: 1.000069852130498, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                lowDay: ({amount: 0.9989457077643417, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false}),
+                                changePctHour: 0.003162399421324529,
+                                changePctDay: 0.0008257482387743841,
+                                changePct24hour: 0.04426443627508443,
+                                change24hour: 0.0004424433543155981,
+                                currencyPrice: ({amount: 0.9999000202515163, symbol: "USD", displayDecimals: 2, stripTrailingZeroes: false})
+                            },
+                            detailsLoading: false,
+                            marketDetailsLoading: false
+                        }
+                    ]
+                }
             }
         }
     }
@@ -191,8 +247,9 @@ Item {
             compare(controlUnderTest.selectedTokenKey, "ETH")
             compare(assetSelector.contentItem.name, "ETH")
 
-            const asset = SQUtils.ModelUtils.get(assetSelector.model, 2)
+            const asset = SQUtils.ModelUtils.get(assetSelector.model, 0)
             verify(!!asset)
+            compare(asset.tokensKey, "DAI")
             mouseClick(assetSelector)
 
             waitForRendering(assetSelector)
@@ -200,12 +257,13 @@ Item {
             verify(!!searchablePanel)
             const assetsList = findChild(searchablePanel, "assetsListView")
             verify(!!assetsList)
-            const delegateUnderTest = assetsList.itemAtIndex(2)
+            const delegateUnderTest = assetsList.itemAtIndex(0)
             verify(!!delegateUnderTest)
+            compare(delegateUnderTest.symbol, "DAI")
             mouseClick(delegateUnderTest)
 
-            compare(controlUnderTest.selectedTokenKey, asset.tokensKey)
-            compare(assetSelector.contentItem.name, asset.symbol)
+            compare(controlUnderTest.selectedTokenKey, "DAI")
+            compare(assetSelector.contentItem.name, "DAI")
 
             closeAndVerfyModal()
         }
@@ -229,6 +287,39 @@ Item {
             compare(networkSelector.control.contentItem.title, network.chainName)
 
             closeAndVerfyModal()
+        }
+
+        function test_symbol_initial_selection_when_not_available_in_chain() {
+            const asset = "STT"
+            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedTokenKey: asset, selectedNetworkChainId: Constants.chains.mainnetChainId })
+            verify(!!controlUnderTest)
+
+            controlUnderTest.open()
+            verify(!!controlUnderTest.opened)
+
+            const assetSelector = findChild(controlUnderTest, "assetSelector")
+            verify(!!assetSelector)
+            tryCompare(assetSelector.contentItem, "name", "ETH")
+            compare(controlUnderTest.selectedTokenKey, "ETH")
+        }
+
+        function test_symbol_selection_after_network_change() {
+            const asset = "STT"
+            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedNetworkChainId: Constants.chains.arbitrumSepoliaChainId, selectedTokenKey: asset })
+            verify(!!controlUnderTest)
+
+            controlUnderTest.open()
+            verify(!!controlUnderTest.opened)
+
+            compare(controlUnderTest.selectedNetworkChainId, Constants.chains.arbitrumSepoliaChainId)
+            compare(controlUnderTest.selectedTokenKey, "STT")
+            const assetSelector = findChild(controlUnderTest, "assetSelector")
+            verify(!!assetSelector)
+            compare(assetSelector.contentItem.name, "STT")
+
+            controlUnderTest.selectedNetworkChainId = Constants.chains.mainnetChainId
+            tryCompare(assetSelector.contentItem, "name", "ETH")
+            compare(controlUnderTest.selectedTokenKey, "ETH")
         }
 
         function test_open_initial_account_address() {
