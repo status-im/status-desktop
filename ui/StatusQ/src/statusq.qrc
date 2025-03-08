@@ -81,7 +81,6 @@
         <file>StatusQ/Components/private/qmldir</file>
         <file>StatusQ/Components/private/qwebchannel/helpers.js</file>
         <file>StatusQ/Components/private/qwebchannel/qwebchannel.js</file>
-        <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusMessageEmojiReactions.qml</file>
@@ -264,5 +263,9 @@
         <file>StatusQ/Validators/AmountValidator.qml</file>
         <file>StatusQ/Validators/qmldir</file>
         <file>StatusQ/Components/private/StatusNewItemGradient.qml</file>
+        <file>StatusQ/Components/StatusSoundEffect.qml</file>
+        <file>StatusQ/Components/+qt6/StatusQrCodeCapture.qml</file>
+        <file>StatusQ/Components/+qt6/StatusSoundEffect.qml</file>
+        <file>StatusQ/Components/+qt6/StatusVideo.qml</file>
     </qresource>
 </RCC>

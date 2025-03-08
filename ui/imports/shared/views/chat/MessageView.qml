@@ -149,12 +149,11 @@ Loader {
 
     property bool isEmoji: messageContentType === Constants.messageContentType.emojiType
     property bool isImage: messageContentType === Constants.messageContentType.imageType || (isDiscordMessage && messageImage != "")
-    property bool isAudio: messageContentType === Constants.messageContentType.audioType
     property bool isSticker: messageContentType === Constants.messageContentType.stickerType
     property bool isDiscordMessage: messageContentType === Constants.messageContentType.discordMessageType
     property bool isBridgeMessage: messageContentType === Constants.messageContentType.bridgeMessageType
     property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage || isBridgeMessage
-    property bool isMessage: isEmoji || isImage || isSticker || isText || isAudio
+    property bool isMessage: isEmoji || isImage || isSticker || isText
                              || messageContentType === Constants.messageContentType.communityInviteType || messageContentType === Constants.messageContentType.transactionType
 
     function openProfileContextMenu(sender, isReply = false) {
