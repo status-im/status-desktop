@@ -5,6 +5,7 @@ project(StatusQ)
 option(STATUSQ_BUILD_SANDBOX "Enable to build StatusQ Sandbox application" ON)
 option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
+option(STATUSQ_STATIC_LIB "Enable to build StatusQ as a static library" OFF)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -85,18 +86,30 @@ if (NOT PROJECT_IS_TOP_LEVEL)
     set(STATUSQ_SHADOW_BUILD "${STATUSQ_SHADOW_BUILD}" PARENT_SCOPE)
 endif ()
 
+if (${STATUSQ_STATIC_LIB})
+    set(LIB_TYPE STATIC)
+else()
+    set(LIB_TYPE SHARED)
+endif ()
+
 if (${STATUSQ_SHADOW_BUILD})
-    qt_add_big_resources(STATUSQ_QRC_COMPILED
-            src/statusq.qrc
-            src/assets/fonts/fonts.qrc
-            src/assets/img/img.qrc
-            src/assets/png/png.qrc
-            src/assets/twemoji/twemoji.qrc
-            src/assets/twemoji/twemoji-big.qrc
-            src/assets/twemoji/twemoji-svg.qrc)
+    add_definitions(-DBUNDLE_QML_RESOURCES)
+    set(STATUSQ_QRC_FILES src/statusq.qrc
+        src/assets/fonts/fonts.qrc
+        src/assets/img/img.qrc
+        src/assets/png/png.qrc
+        src/assets/twemoji/twemoji.qrc
+        src/assets/twemoji/twemoji-big.qrc
+        src/assets/twemoji/twemoji-svg.qrc)
+    if (${STATUSQ_STATIC_LIB})
+        # randlib would complain about the generated .o files. Generate cpp files instead.
+        qt_add_resources(STATUSQ_QRC_COMPILED ${STATUSQ_QRC_FILES})
+    else()
+        qt_add_big_resources(STATUSQ_QRC_COMPILED ${STATUSQ_QRC_FILES})
+    endif()
 endif()
 
-add_library(StatusQ SHARED
+add_library(StatusQ ${LIB_TYPE}
         ${STATUSQ_QRC_COMPILED}
         include/StatusQ/aggregator.h
         include/StatusQ/clipboardutils.h
