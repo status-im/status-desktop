@@ -112,6 +112,7 @@ endif()
 add_library(StatusQ ${LIB_TYPE}
         ${STATUSQ_QRC_COMPILED}
         include/StatusQ/aggregator.h
+        include/StatusQ/audioutils.h
         include/StatusQ/clipboardutils.h
         include/StatusQ/concatmodel.h
         include/StatusQ/constantrole.h
@@ -148,6 +149,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/urlutils.h
         include/StatusQ/writableproxymodel.h
         src/aggregator.cpp
+        src/audioutils.cpp
         src/clipboardutils.cpp
         src/concatmodel.cpp
         src/constantrole.cpp

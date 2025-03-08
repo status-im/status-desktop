@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
-import QtMultimedia 5.15
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.1
 import QtQml.Models 2.15
@@ -1117,22 +1116,49 @@ Item {
         appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
 
-    Audio {
+    StatusSoundEffect {
         id: sendMessageSound
-        store: rootStore
+
+        volume: convertVolume(rootStore.volume)
+        muted: !rootStore.notificationSoundsEnabled
         source: "qrc:/imports/assets/audio/send_message.wav"
+
+        onIsErrorChanged: {
+            if(isError) {
+                console.warn("Sound error:",
+                             statusString)
+            }
+        }
     }
 
-    Audio {
+    StatusSoundEffect {
         id: notificationSound
-        store: rootStore
+
+        volume: convertVolume(rootStore.volume)
+        muted: !rootStore.notificationSoundsEnabled
         source: "qrc:/imports/assets/audio/notification.wav"
+
+        onIsErrorChanged: {
+            if(isError) {
+                console.warn("Sound error:",
+                             statusString)
+            }
+        }
     }
 
-    Audio {
+    StatusSoundEffect {
         id: errorSound
+
+        volume: convertVolume(rootStore.volume)
+        muted: !rootStore.notificationSoundsEnabled
         source: "qrc:/imports/assets/audio/error.mp3"
-        store: rootStore
+
+        onIsErrorChanged: {
+            if(isError) {
+                console.warn("Sound error:",
+                             statusString)
+            }
+        }
     }
 
     Loader {

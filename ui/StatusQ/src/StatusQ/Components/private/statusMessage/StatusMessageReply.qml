@@ -155,21 +155,6 @@ Item {
                             asset.name: replyDetails.messageContent
                             asset.isImage: true
                         }
-
-                        Loader {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 22
-                            asynchronous: true
-                            active: replyDetails.contentType === StatusMessage.ContentType.Audio
-                            visible: active
-                            sourceComponent: StatusAudioMessage {
-                                anchors.left: parent.left
-                                width: 125
-                                height: 22
-                                isPreview: true
-                                audioSource: replyDetails.messageContent
-                            }
-                        }
                     }
 
                     MouseArea {
