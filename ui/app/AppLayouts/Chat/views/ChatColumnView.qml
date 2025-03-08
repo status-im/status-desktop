@@ -58,9 +58,11 @@ Item {
     property bool amISectionAdmin: false
     property bool sendViaPersonalChatEnabled
     property bool paymentRequestFeatureEnabled
+    property bool selectingMembers
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal groupUpdated()
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -374,6 +376,11 @@ Item {
                             return
                         }
 
+                        // If the member selector is open, we update the group members and call for the menu to be closed
+                        if (selectingMembers) {
+                            d.activeUsersStore.updateGroupMembers()
+                            root.groupUpdated()
+                        }
                         if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
                                                     event,
                                                     chatInput.getTextWithPublicKeys(),
