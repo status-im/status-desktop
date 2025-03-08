@@ -723,34 +723,6 @@ QtObject {
         }
         ListElement {
             timestamp: "1660937930"
-            senderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            amIsender: true
-            senderDisplayName: "You"
-            senderOptionalName: "@ghd.statusofus.eth"
-            message: ""
-            isCurrentUser: true
-            contentType: StatusMessage.ContentType.Audio
-            messageContent: "/home/khushboo/Music/SymphonyNo6.mp3"
-            repeatMessageInfo: true
-            profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
-            isContact: true
-            trustIndicator: StatusContactVerificationIcons.TrustedType.None
-            hasMention: false
-            editMode: false
-            isReply: false
-            replySenderId: ""
-            replySenderName: ""
-            replyProfileImage: ""
-            replyMessageText: ""
-            replyAmISender: false
-            replyContentType: StatusMessage.ContentType.Text
-            replyMessageContent: ""
-            isPinned: false
-            pinnedBy: ""
-            hasExpired: false
-        }
-        ListElement {
-            timestamp: "1660937930"
             senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
             amIsender: true
             senderDisplayName: "You"
@@ -916,35 +888,6 @@ QtObject {
             replyAmISender: false
             replyContentType: StatusMessage.ContentType.Sticker
             replyMessageContent: "https://ipfs.infura.io/ipfs/QmW4rVW3BXYHiDHzD6cDwVZtuvEa6aPyb1bbEnitEA6Hhg"
-            isPinned: false
-            pinnedBy: ""
-            hasExpired: false
-        }
-        ListElement {
-            timestamp: "1660937930"
-            senderId: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            amIsender: false
-            senderDisplayName: "Pompie"
-            senderOptionalName: "@ghd.statusofus.eth"
-            message: "Replying to a Audio message"
-            isCurrentUser: true
-            contentType: StatusMessage.ContentType.Text
-            messageContent: ""
-            repeatMessageInfo: true
-            profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
-            isContact: false
-            trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
-            hasMention: false
-            editMode: false
-            isReply: true
-            replySenderId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486dsfkjghyu2cf04"
-            replySenderName: "You"
-            replySenderEnsName: ""
-            replyProfileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
-            replyMessageText: ""
-            replyAmISender: false
-            replyContentType: StatusMessage.ContentType.Audio
-            replyMessageContent: "/home/khushboo/Music/SymphonyNo6.mp3"
             isPinned: false
             pinnedBy: ""
             hasExpired: false
