@@ -292,7 +292,6 @@ QtObject {
                 sendType: Constants.SendType.ERC721Transfer,
                 selectedAccountAddress: senderAddress,
                 selectedTokenKey: tokenId,
-                selectedRawAmount: "1",
                 selectedChainId: selectedChainId,
                 transferOwnership: true
             }
@@ -335,16 +334,13 @@ QtObject {
     function sendToken(senderAddress, tokenId, tokenType) {
         let sendType = Constants.SendType.Transfer
         let selectedChainId = 0
-        let selectedRawAmount = ""
         if (tokenType === Constants.TokenType.ERC721)  {
             sendType = Constants.SendType.ERC721Transfer
-            selectedRawAmount = "1"
             selectedChainId =
                     SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
         }
         else if(tokenType === Constants.TokenType.ERC1155) {
             sendType = Constants.SendType.ERC1155Transfer
-            selectedRawAmount = "1"
             selectedChainId =
                     SQUtils.ModelUtils.getByKey(root.collectiblesBySymbolModel, "symbol", tokenId, "chainId")
         }
@@ -370,7 +366,6 @@ QtObject {
                 sendType: sendType,
                 selectedAccountAddress: senderAddress,
                 selectedTokenKey: tokenId,
-                selectedRawAmount: selectedRawAmount,
                 selectedChainId: selectedChainId,
             }
         } else {
@@ -1012,7 +1007,7 @@ QtObject {
                             }
                             return WalletUtils.formatEstimatedTime(txPathUnderReviewEntry.item.txEstimatedTime)
                         }
-                        return ""
+                        return WalletUtils.formatEstimatedTime(0)
                     }
 
                     loginType: root.loginType

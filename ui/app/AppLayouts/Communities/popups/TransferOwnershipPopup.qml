@@ -110,8 +110,8 @@ StatusDialog {
                 onClicked: {
                     // Pre-populated dialog with the relevant Owner token info:
                     const store = WalletStores.RootStore.currentActivityFiltersStore
-                    const uid = store.collectiblesList.getUidForData(token.key, token.tokenAddress, token.chainId);
-                    root.transferOwnershipRequested(uid, token.accountAddress)
+                    const uid = store.collectiblesList.getUidForData("0", token.tokenAddress.toLowerCase(), token.chainId);
+                    root.transferOwnershipRequested(uid, token.accountAddress.toLowerCase())
                     close()
                 }
             }
