@@ -1,4 +1,4 @@
-import unittest, json, options
+import unittest, json, options,chronicles
 
 import backend/activity
 

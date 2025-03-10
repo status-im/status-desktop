@@ -1,4 +1,4 @@
-import json, tables, json_serialization, logging
+import json, tables, json_serialization, chronicles
 import core, response_type
 from ./gen import rpc
 
@@ -54,7 +54,7 @@ proc signMessage*(resultOut: var JsonNode, message: string, address: string, has
     let response = signMessage(message, address, hashedPassword)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error signing message", err = e.msg
     return e.msg
 
 
@@ -68,7 +68,7 @@ proc buildTransaction*(resultOut: var JsonNode, chainId: int, sendTxArgsJson: st
     let response = buildTransaction(chainId, sendTxArgsJson)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error building transaction", err = e.msg
     return e.msg
 
 
@@ -83,7 +83,7 @@ proc buildRawTransaction*(resultOut: var JsonNode, chainId: int, sendTxArgsJson:
     let response = buildRawTransaction(chainId, sendTxArgsJson, signature)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error building raw transaction", err = e.msg
     return e.msg
 
 ## Sends the tx with signature on provided chain, setting tx type
@@ -99,7 +99,7 @@ proc sendTransactionWithSignature*(resultOut: var JsonNode, chainId: int, txType
     let response = sendTransactionWithSignature(chainId, txType, sendTxArgsJson, signature)
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error sending transaction", err =  e.msg
     return e.msg
 
 proc hashTypedData*(resultOut: var JsonNode, data: string): string =
@@ -108,7 +108,7 @@ proc hashTypedData*(resultOut: var JsonNode, data: string): string =
     var response = Json.decode(rawResponse, RpcResponse[JsonNode])
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error hashing data", err = e.msg
     return e.msg
 
 proc hashTypedDataV4*(resultOut: var JsonNode, data: string): string =
@@ -117,7 +117,7 @@ proc hashTypedDataV4*(resultOut: var JsonNode, data: string): string =
     var response = Json.decode(rawResponse, RpcResponse[JsonNode])
     return prepareResponse(resultOut, response)
   except Exception as e:
-    warn e.msg
+    warn "error hashing data v4", err = e.msg
     return e.msg
 
 proc prepareDataForSuggestedRoutes(

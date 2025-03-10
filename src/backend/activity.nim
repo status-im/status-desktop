@@ -1,4 +1,4 @@
-import times, stew/shims/strformat, options, logging
+import times, stew/shims/strformat, options, chronicles
 import json, json_serialization
 import core, response_type
 import stint
@@ -99,7 +99,7 @@ proc fromJson[T](jsonObj: JsonNode, TT: typedesc[Option[T]]): Option[T] =
 
 proc fromJson[T](jsonObj: JsonNode, TT: typedesc[seq[T]]): seq[T] =
   if jsonObj.kind != JArray:
-    error "Expected array, got: ", jsonObj.kind
+    error "Expected array, got: ", kind = jsonObj.kind
     return @[]
 
   result = newSeq[T](jsonObj.len)
@@ -572,7 +572,7 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
       for i in 0 ..< jsonEntries.len:
         backendEntities[i] = fromJson(jsonEntries[i], ActivityEntry)
     elif jsonEntries.kind != JNull:
-      error "Invalid activities field in FilterResponse; kind: ", jsonEntries.kind
+      error "Invalid activities field in FilterResponse; kind: ", kind=jsonEntries.kind
 
   result = T(
     activities: backendEntities,
@@ -635,7 +635,7 @@ proc newActivityFilterSession*(
   try:
     let res = startActivityFilterSessionV2(addresses, chainIds, filter, count)
     if res.error != nil:
-      error "error starting a new session of activity fitlering: ", res.error
+      error "error starting a new session of activity fitlering", err = res.error
       return (int32(-1), false)
     return (int32(res.result.getInt()), true)
   except:
@@ -645,7 +645,7 @@ proc updateFilterForSession*(sessionId: int32, filter: ActivityFilter, count: in
   try:
     let res = updateActivityFilterForSession(sessionId, filter, count)
     if res.error != nil:
-      error "error updating fitler for session: ", res.error
+      error "error updating fitler for session", err = res.error
       return false
   except:
     return false

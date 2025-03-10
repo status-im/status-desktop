@@ -1,5 +1,5 @@
 import NimQml, Tables, strutils, stew/shims/strformat, sequtils, stint
-import logging
+import chronicles
 
 import ./collectibles_item
 import web3/ethtypes as eth
