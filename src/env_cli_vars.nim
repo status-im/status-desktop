@@ -290,6 +290,16 @@ type StatusDesktopConfig = object
     desc: "Enables status-go API logging"
     name: $BASE_NAME_API_LOGGING
     abbr: "api-logging" .}: bool
+  metricsEnabled* {.
+    defaultValue: false
+    desc: "Enables metrics and starts prometheus"
+    name: "METRICS"
+    abbr: "metrics" .}: bool
+  metricsAddress* {.
+    defaultValue: "0.0.0.0:9305"
+    desc: "Sets address for prometheus metrics"
+    name: "METRICS_ADDRESS"
+    abbr: "metrics-address" .}: string
 
 # On macOS the first time when a user gets the "App downloaded from the
 # internet" warning, and clicks the Open button, the OS passes a unique process
