@@ -55,6 +55,8 @@ StatusSectionLayout {
     required property SharedStores.NetworksStore networksStore
     required property Keychain keychain
 
+    property bool isKeycardEnabled: true
+
     property var mutualContactsModel
     property var blockedContactsModel
     property var pendingContactsModel
@@ -116,6 +118,7 @@ StatusSectionLayout {
 
         showWalletEntries: root.store.walletMenuItemEnabled
         showBackUpSeed: !root.store.privacyStore.mnemonicBackedUp
+        isKeycardEnabled: root.isKeycardEnabled
 
         syncingBadgeCount: root.store.devicesStore.devicesModel.count -
                            root.store.devicesStore.devicesModel.pairedCount
@@ -301,6 +304,7 @@ StatusSectionLayout {
                 contentWidth: d.contentWidth
 
                 settingsSubSubsection: root.settingsSubSubsection
+                isKeycardEnabled: root.isKeycardEnabled
 
                 rootStore: root.store
                 tokensStore: root.tokensStore

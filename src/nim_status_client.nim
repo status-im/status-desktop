@@ -1,7 +1,6 @@
 import NimQml, chronicles, os, stew/shims/strformat, strutils, times, checksums/md5, json, re
 
 import status_go
-import keycard_go
 import app/core/main
 import constants as main_constants
 import statusq_bridge
@@ -9,6 +8,12 @@ import statusq_bridge
 import app/global/global_singleton
 import app/global/local_app_settings
 import app/boot/app_controller
+
+featureGuard KEYCARD_ENABLED:
+  import keycard_go
+
+  var keycardServiceQObjPointer: pointer
+  var keycardServiceV2QObjPointer: pointer
 
 when defined(macosx) and defined(arm64):
   import posix
@@ -19,18 +24,15 @@ when defined(windows):
 logScope:
   topics = "status-app"
 
+const fleetJson = staticRead("../fleets.json")
+
 var signalsManagerQObjPointer: pointer
-var keycardServiceQObjPointer: pointer
-var keycardServiceV2QObjPointer: pointer
 
 proc isExperimental(): string =
   result = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
 
 proc determineResourcePath(): string =
   result = if defined(windows) and defined(production): "/../resources/resources.rcc" else: "/../resources.rcc"
-
-proc determineFleetsPath(): string =
-  result = if defined(windows) and defined(production): "/../resources/fleets.json" else: "/../fleets.json"
 
 proc determineOpenUri(): string =
   if OPENURI.len > 0:
@@ -77,13 +79,14 @@ proc setupRemoteSignalsHandling() =
       signal_handler(signalsManagerQObjPointer, p0, "receiveSignal")
   status_go.setSignalEventCallback(callbackStatusGo)
 
-  var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(p0: cstring) {.cdecl.} =
-    if keycardServiceV2QObjPointer != nil:
-      signal_handler(keycardServiceV2QObjPointer, p0, "receiveKeycardSignalV2")
-    if keycardServiceQObjPointer != nil:
-      signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
+  featureGuard KEYCARD_ENABLED:
+    var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(p0: cstring) {.cdecl.} =
+      if keycardServiceV2QObjPointer != nil:
+        signal_handler(keycardServiceV2QObjPointer, p0, "receiveKeycardSignalV2")
+      if keycardServiceQObjPointer != nil:
+        signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
 
-  keycard_go.setSignalEventCallback(callbackKeycardGo)
+    keycard_go.setSignalEventCallback(callbackKeycardGo)
 
 proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(dataDir)
@@ -158,12 +161,10 @@ proc mainProc() =
 
   let isExperimental = isExperimental()
   let resourcesPath = determineResourcePath()
-  let fleetsPath = determineFleetsPath()
   let openUri = determineOpenUri()
   let statusAppIconPath = determineStatusAppIconPath()
 
-  let fleetConfig = readFile(joinPath(getAppDir(), fleetsPath))
-  let statusFoundation = newStatusFoundation(fleetConfig)
+  let statusFoundation = newStatusFoundation(fleetJson)
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
   # Required by the WalletConnectSDK view right after creating the QGuiApplication instance
   initializeWebView()
@@ -224,8 +225,9 @@ proc mainProc() =
   defer:
     info "shutting down..."
     signalsManagerQObjPointer = nil
-    keycardServiceQObjPointer = nil
-    keycardServiceV2QObjPointer = nil
+    featureGuard KEYCARD_ENABLED:
+      keycardServiceQObjPointer = nil
+      keycardServiceV2QObjPointer = nil
     isProductionQVariant.delete()
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
@@ -236,16 +238,18 @@ proc mainProc() =
     singleInstance.delete()
     app.delete()
 
-  # Checks below must be always after "defer", in case anything fails destructors will freed a memory.
-  if singleInstance.secondInstance():
-    info "Terminating the app as the second instance"
-    quit()
+  featureGuard SINGLE_STATUS_INSTANCE_ENABLED:
+    # Checks below must be always after "defer", in case anything fails destructors will freed a memory.
+    if singleInstance.secondInstance():
+      info "Terminating the app as the second instance"
+      quit()
 
   # We need these global variables in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
   signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
-  keycardServiceV2QObjPointer = cast[pointer](appController.keycardServiceV2.vptr)
-  keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
+  featureGuard KEYCARD_ENABLED:
+    keycardServiceV2QObjPointer = cast[pointer](appController.keycardServiceV2.vptr)
+    keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
 
   setupRemoteSignalsHandling()
 

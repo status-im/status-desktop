@@ -276,12 +276,12 @@ type StatusDesktopConfig = object
     name: "USE_MOCKED_KEYCARD"
     abbr: "use-mocked-keycard" .}: bool
   httpApiEnabled* {.
-    defaultValue: getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    defaultValue: CONNECTOR_ENABLED
     desc: "Enable HTTP RPC API"
     name: "HTTP_API"
     abbr: "http-api" .}: bool
   wsApiEnabled* {.
-    defaultValue: getEnv("FLAG_CONNECTOR_ENABLED", boolToEnv(DEFAULT_FLAG_CONNECTOR_ENABLED)) != "0"
+    defaultValue: CONNECTOR_ENABLED
     desc: "Enable WebSocket RPC API"
     name: "WS_API"
     abbr: "ws-api" .}: bool
@@ -306,8 +306,11 @@ type StatusDesktopConfig = object
 # serial number (PSN) as -psn_... command-line argument, which we remove before
 # processing the arguments with nim-confutils.
 # Credit: https://github.com/bitcoin/bitcoin/blame/b6e34afe9735faf97d6be7a90fafd33ec18c0cbb/src/util/system.cpp#L383-L389
+when appType == "lib" or appType == "staticlib":
+  var cliParams: seq[string] = @[]
+else:
+  var cliParams = commandLineParams()
 
-var cliParams = commandLineParams()
 if defined(macosx):
   cliParams.keepIf(proc(p: string): bool = not p.startsWith("-psn_"))
 

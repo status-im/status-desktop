@@ -47,6 +47,8 @@ Item {
 
     property var dAppsModel
 
+    property bool isKeycardEnabled: true
+
     signal dappListRequested()
     signal dappConnectRequested()
     signal dappDisconnectRequested(string dappUrl)
@@ -300,6 +302,7 @@ Item {
             anchors.fill: parent
             emojiPopup: root.emojiPopup
             networkConnectionStore: root.networkConnectionStore
+            isKeycardEnabled: root.isKeycardEnabled
 
             changeSelectedAccount: function(address) {
                 d.displayAddress(address)

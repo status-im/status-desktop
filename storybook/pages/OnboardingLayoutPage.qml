@@ -181,6 +181,7 @@ SplitView {
         }
 
         keychain: keychain
+        isKeycardEnabled: ctrlKeycard.checked
 
         onFinished: (flow, data) => {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
@@ -479,6 +480,12 @@ SplitView {
                     checked: true
                 }
 
+                Switch {
+                    id: ctrlKeycard
+                    text: "Keycard enabled"
+                    checked: true
+                }
+
                 ToolSeparator {}
 
                 Switch {
@@ -726,6 +733,7 @@ SplitView {
         property alias useBiometrics: ctrlBiometrics.checked
         property alias showLoginScreen: ctrlLoginScreen.checked
         property alias useTouchId: ctrlTouchIdUser.checked
+        property alias keycardEnabled: ctrlKeycard.checked
     }
 }
 

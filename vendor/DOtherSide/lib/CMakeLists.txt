@@ -16,7 +16,7 @@ macro(add_target name type)
     file(GLOB HEADERS include/DOtherSide/*.h include/DOtherSide/Status/*.h)
     file(GLOB SOURCES src/*.cpp src/Status/*.cpp)
 
-    if(APPLE)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         file(GLOB MM_FILES src/*.mm src/Status/*.mm)
         #prepend items because .mm files need build priority to override cpp impl
         list(PREPEND SOURCES ${MM_FILES})
@@ -47,7 +47,7 @@ macro(add_target name type)
         target_compile_definitions(${name} PRIVATE QML_DEBUG_PORT=${QML_DEBUG_PORT})
     endif()
 
-    if(APPLE)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         find_library(AppKit AppKit)
         find_library(Foundation Foundation)
         find_library(Security Security)

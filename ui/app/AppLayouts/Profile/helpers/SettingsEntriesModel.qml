@@ -30,6 +30,9 @@ SortFilterProxyModel {
     // Determines if back up seed phrase entry should be included
     property bool showBackUpSeed
 
+    // Determines if keycard-related entries should be included
+    property bool isKeycardEnabled: true
+
     // Badge count for the syncing entry
     property int syncingBadgeCount: 0
 
@@ -170,6 +173,8 @@ SortFilterProxyModel {
                         return root.showWalletEntries
                     case Constants.settingsSubsection.backUpSeed:
                         return root.showBackUpSeed
+                    case Constants.settingsSubsection.keycard:
+                        return root.isKeycardEnabled
 
                     default: return true
                 }

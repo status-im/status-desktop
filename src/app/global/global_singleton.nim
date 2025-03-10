@@ -16,6 +16,7 @@ export user_profile
 export utils
 export global_events
 export loader_deactivator
+export feature_flags
 
 type
   GlobalSingleton = object

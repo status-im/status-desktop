@@ -417,3 +417,7 @@ QtObject:
 
   proc stopTokenHoldersManagement*(self: View) {.slot.} =
     self.delegate.stopTokenHoldersManagement()
+
+  proc openUrl*(self: View, url: string) {.signal.}
+  proc emitOpenUrlSignal*(self: View, url: string) =
+    self.openUrl(url)

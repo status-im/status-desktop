@@ -20,6 +20,8 @@ OnboardingPage {
 
     required property bool networkChecksEnabled
 
+    property bool isKeycardEnabled: true
+
     title: qsTr("Log in")
 
     signal loginWithSeedphraseRequested()
@@ -114,6 +116,7 @@ OnboardingPage {
                         subTitle: qsTr("If your profile keys are stored on a Keycard")
                         icon.source: Theme.png("onboarding/create_profile_keycard")
                         onClicked: root.loginWithKeycardRequested()
+                        enabled: root.isKeycardEnabled
                     }
                 }
             }

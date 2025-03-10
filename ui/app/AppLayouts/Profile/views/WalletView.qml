@@ -56,6 +56,8 @@ SettingsContentBase {
     readonly property string walletSectionTitle: qsTr("Wallet")
     readonly property string networksSectionTitle: qsTr("Networks")
 
+    property bool isKeycardEnabled: true
+
     function resetStack() {
         if(stackContainer.currentIndex === root.editNetworksViewIndex) {
             networksView.overrideInitialTabIndex(editNetwork.network.isTest ? networksView.testnetTabIndex : networksView.mainnetTabIndex)
@@ -213,6 +215,7 @@ SettingsContentBase {
 
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
+            isKeycardEnabled: root.isKeycardEnabled
 
             onGoToNetworksView: {
                 stackContainer.currentIndex = networksViewIndex

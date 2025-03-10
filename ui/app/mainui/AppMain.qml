@@ -68,7 +68,11 @@ Item {
 
     readonly property SharedStores.NetworksStore networksStore: SharedStores.NetworksStore {}
     
-    readonly property AppStores.RootStore rootStore: AppStores.RootStore {}
+    readonly property AppStores.RootStore rootStore: AppStores.RootStore {
+        onOpenUrl: {
+            Global.openLinkWithConfirmation(link, SQUtils.StringUtils.extractDomainFromLink(link))
+        }
+    }
     readonly property ProfileStores.ProfileSectionStore profileSectionStore: rootStore.profileSectionStore
     readonly property ProfileStores.ProfileStore profileStore: profileSectionStore.profileStore
 
@@ -1983,7 +1987,7 @@ Item {
                             dAppsVisible: dAppsServiceLoader.item ? dAppsServiceLoader.item.serviceAvailableToCurrentAddress : false
                             dAppsEnabled: dAppsServiceLoader.item ? dAppsServiceLoader.item.isServiceOnline : false
                             dAppsModel: dAppsServiceLoader.item ? dAppsServiceLoader.item.dappsModel : null
-
+                            isKeycardEnabled: featureFlagsStore.keycardEnabled
                             onDappListRequested: () => dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppListOpened)
                             onDappConnectRequested: () => {
                                 dappMetrics.logNavigationEvent(DAppsMetrics.DAppsNavigationAction.DAppConnectInitiated)
@@ -2032,6 +2036,7 @@ Item {
                             pendingContactsModel: contactsModelAdaptor.pendingContacts
                             pendingReceivedContactsCount: contactsModelAdaptor.pendingReceivedRequestContacts.count
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
+                            isKeycardEnabled: featureFlagsStore.keycardEnabled
 
                             Binding on settingsSubsection {
                                 value: profileLoader.settingsSubsection

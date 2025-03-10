@@ -35,6 +35,8 @@ Rectangle {
     property var selectSavedAddresses: function(){}
     property var emojiPopup: null
 
+    property bool isKeycardEnabled: true
+
     color: Theme.palette.secondaryMenuBackground
 
     Component.onCompleted: {
@@ -52,6 +54,7 @@ Rectangle {
         asynchronous: true
 
         sourceComponent: AddAccountPopup {
+            isKeycardEnabled: root.isKeycardEnabled
             store.emojiPopup: root.emojiPopup
             store.addAccountModule: walletSection.addAccountModule
         }

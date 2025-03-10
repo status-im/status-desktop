@@ -15,6 +15,8 @@ import utils 1.0
 OnboardingPage {
     id: root
 
+    property bool isKeycardEnabled: true
+
     title: qsTr("Create profile")
 
     signal createProfileWithPasswordRequested()
@@ -109,6 +111,7 @@ OnboardingPage {
                         subTitle: qsTr("Store your new profile keys on Keycard")
                         icon.source: Theme.png("onboarding/create_profile_keycard")
                         onClicked: root.createProfileWithEmptyKeycardRequested()
+                        enabled: root.isKeycardEnabled
                     }
                 }
             }

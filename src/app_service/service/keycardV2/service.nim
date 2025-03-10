@@ -1,11 +1,14 @@
 import NimQml, Tables, json, os, chronicles, strutils, random, json_serialization
-import keycard_go
+import app/global/feature_flags
 import app/global/global_singleton
 import app/core/eventemitter
 import app/core/tasks/[qt, threadpool]
 import backend/response_type
-import constants as status_const
 import ./dto, rpc
+
+featureGuard KEYCARD_ENABLED:
+  import keycard_go
+  import constants as status_const
 
 export dto
 
@@ -91,7 +94,7 @@ QtObject:
 
   include queued_async_calls
 
-  proc init*(self: Service) =
+  proc init*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     debug "KeycardServiceV2 init"
     # Do not remove the sleep 700, this sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
@@ -102,10 +105,10 @@ QtObject:
     self.asyncStart(status_const.KEYCARDPAIRINGDATAFILE)
     discard
 
-  proc initializeRPC(self: Service) {.slot.} =
+  proc initializeRPC(self: Service) {.slot, featureGuard(KEYCARD_ENABLED).} =
     var response = keycard_go.keycardInitializeRPC()
 
-  proc receiveKeycardSignalV2(self: Service, signal: string) {.slot.} =
+  proc receiveKeycardSignalV2(self: Service, signal: string) {.slot, featureGuard(KEYCARD_ENABLED).} =
     try:
       # Since only one service can register to signals, we pass the signal to the old service too
       var jsonSignal = signal.parseJson
@@ -116,20 +119,20 @@ QtObject:
     except Exception as e:
       error "error receiving a keycard signal", err=e.msg, data = signal
 
-  proc asyncStart(self: Service, storageDir: string) =
+  proc asyncStart(self: Service, storageDir: string) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{
       "storageFilePath": storageDir,
       "logEnabled": KEYCARD_LOGS_ENABLED,
       "logFilePath": KEYCARD_LOG_FILE_PATH,
     }
-    self.asyncCallRPC(KeycardAction.Start, params, proc (responseObj: JsonNode, err: string) =
+    self.asyncCallRPC(KeycardAction.Start, params, proc (responseObj: JsonNode, err: string) {.featureGuard(KEYCARD_ENABLED).} =
       if err.len > 0:
         error "error starting keycard", err=err
         return
       debug "keycard started"
     )
 
-  proc asyncStop*(self: Service) =
+  proc asyncStop*(self: Service)  {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{}
     self.asyncCallRPC(KeycardAction.Stop, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -138,7 +141,7 @@ QtObject:
       debug "keycard stopped"
     )
 
-  proc stop*(self: Service) =
+  proc stop*(self: Service)  {.featureGuard(KEYCARD_ENABLED).} =
     try:
       let response = callRPC($KeycardAction.Stop)
       let rpcResponseObj = response.parseJson
@@ -148,7 +151,7 @@ QtObject:
     except Exception as e:
       error "error stop", err=e.msg
 
-  proc generateMnemonic*(self: Service, length: int): string =
+  proc generateMnemonic*(self: Service, length: int): string {.featureGuard(KEYCARD_ENABLED).} =
     try:
       let response = callRPC($KeycardAction.GenerateMnemonic, %*{"length": length})
       let rpcResponseObj = response.parseJson
@@ -163,7 +166,7 @@ QtObject:
     except Exception as e:
       error "error generating mnemonic", err=e.msg
 
-  proc getMetadata*(self: Service): CardMetadataDto =
+  proc getMetadata*(self: Service): CardMetadataDto {.featureGuard(KEYCARD_ENABLED).} =
     try:
       let response = callRPC($KeycardAction.GetMetadata)
       let rpcResponseObj = response.parseJson
@@ -174,7 +177,7 @@ QtObject:
     except Exception as e:
       error "error getting metadata", err=e.msg
 
-  proc asyncLoadMnemonic*(self: Service, mnemonic: string) =
+  proc asyncLoadMnemonic*(self: Service, mnemonic: string) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{"mnemonic": mnemonic}
     self.asyncCallRPC(KeycardAction.LoadMnemonic, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -185,7 +188,7 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_LOAD_MNEMONIC_SUCCESS, KeycardKeyUIDArg(keyUID: keyUID))
     )
 
-  proc asyncAuthorize*(self: Service, pin: string) =
+  proc asyncAuthorize*(self: Service, pin: string) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{"pin": pin}
     self.asyncCallRPC(KeycardAction.Authorize, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -201,7 +204,7 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_AUTHORIZE_FINISHED, event)
     )
 
-  proc asyncInitialize*(self: Service, pin: string, puk: string) =
+  proc asyncInitialize*(self: Service, pin: string, puk: string) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{"pin": pin, "puk": puk}
     self.asyncCallRPC(KeycardAction.Initialize, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -211,7 +214,7 @@ QtObject:
       debug "keycard initialized"
     )
 
-  proc asyncExportRecoverKeys*(self: Service) =
+  proc asyncExportRecoverKeys*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{}
     self.asyncCallRPC(KeycardAction.ExportRecoverKeys, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -222,7 +225,7 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_EXPORT_RESTORE_KEYS_SUCCESS, KeycardExportedKeysArg(exportedKeys: keys))
     )
 
-  proc asyncExportLoginKeys*(self: Service) =
+  proc asyncExportLoginKeys*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{}
     self.asyncCallRPC(KeycardAction.ExportLoginKeys, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -233,7 +236,7 @@ QtObject:
       self.events.emit(SIGNAL_KEYCARD_EXPORT_LOGIN_KEYS_SUCCESS, KeycardExportedKeysArg(exportedKeys: keys))
     )
 
-  proc asyncFactoryReset*(self: Service) =
+  proc asyncFactoryReset*(self: Service) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{}
     self.asyncCallRPC(KeycardAction.FactoryReset, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -242,7 +245,7 @@ QtObject:
       debug "factory reset"
     )
 
-  proc asyncStoreMetadata*(self: Service, name: string, paths: seq[string]) =
+  proc asyncStoreMetadata*(self: Service, name: string, paths: seq[string]) {.featureGuard(KEYCARD_ENABLED).} =
     let params = %*{"name": name, "paths": paths}
     self.asyncCallRPC(KeycardAction.StoreMetadata, params, proc (responseObj: JsonNode, err: string) =
       if err.len > 0:
@@ -251,7 +254,7 @@ QtObject:
       debug "metadata stored"
     )
 
-  proc storeMetadata*(self: Service, name: string, paths: seq[string]) =
+  proc storeMetadata*(self: Service, name: string, paths: seq[string]) {.featureGuard(KEYCARD_ENABLED).} =
     try:
       let response = callRPC($KeycardAction.StoreMetadata, %*{"name": name, "paths": paths})
       let rpcResponseObj = response.parseJson
