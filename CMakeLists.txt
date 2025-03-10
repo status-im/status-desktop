@@ -1,48 +1,90 @@
-# Provide general project configuration setup
-#
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.19)
+project(StatusDesktop)
 
-set(STATUS_QT_VERSION 6.3)
-set(STATUS_VERSION 0.6.0)
-
-project(status-desktop
-  VERSION ${STATUS_VERSION}
-  LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(PROJECT_ORGANIZATION_DOMAIN "status.im")
-set(PROJECT_ORGANIZATION_NAME "Status")
-set(PROJECT_APPLICATION_NAME "Status Desktop")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-include(CTest)
-enable_testing()
-
-if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64" AND APPLE)
-  set(STATUSGO_FORCE_ARCH ${CMAKE_HOST_SYSTEM_PROCESSOR})
+if (APPLE)
+    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=11.0)
 endif()
 
-# status-desktop application
-add_subdirectory(vendor)
+set(STATUSQ_SHADOW_BUILD ON)
+set(STATUSQ_BUILD_SANDBOX OFF)
+set(STATUSQ_BUILD_SANITY_CHECKER OFF)
+set(STATUSQ_BUILD_TESTS OFF)
 
-add_subdirectory(libs/ApplicationCore)
-add_subdirectory(libs/Assets)
-add_subdirectory(libs/ChatSection)
-add_subdirectory(libs/Helpers)
-add_subdirectory(libs/Onboarding)
-add_subdirectory(libs/Wallet)
-add_subdirectory(libs/StatusGoQt)
-add_subdirectory(libs/StatusQ)
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
+find_package(OpenSSL REQUIRED)
 
-add_subdirectory(app)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
+    Core Gui Quick QuickControls2 Widgets Test Multimedia WebChannel Svg
+    QuickTest Qml WebView REQUIRED)
 
-add_subdirectory(test/libs/StatusGoQt)
+add_subdirectory(ui/StatusQ)
 
-# TODO: temporary not to duplicate resources until we switch to c++ app then it can be refactored
-add_subdirectory(resources)
-add_subdirectory(ui/imports/assets)
-add_subdirectory(ui/fonts)
+add_executable(
+  ${PROJECT_NAME}
+  main.cpp
+)
+
+set(VENDOR_DIR "${CMAKE_SOURCE_DIR}/vendor")
+
+set(DOTHERSIDE_LOCATION
+    "${VENDOR_DIR}/DOtherSide/build/lib/${CMAKE_STATIC_LIBRARY_PREFIX}DOtherSideStatic${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set(QRCODEGEN_LOCATION
+    "${VENDOR_DIR}/QR-Code-generator/c/${CMAKE_STATIC_LIBRARY_PREFIX}qrcodegen${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set(STATUSGO_LOCATION
+    "${VENDOR_DIR}/status-go/build/bin/${CMAKE_SHARED_LIBRARY_PREFIX}status${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(STATUSKEYCARD_LOCATION
+    "${VENDOR_DIR}/status-keycard-go/build/libkeycard/${CMAKE_SHARED_LIBRARY_PREFIX}keycard${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+add_custom_target(BuildStatusDekstopLib ALL
+  BYPRODUCTS
+    ${CMAKE_SOURCE_DIR}/bin/libnim_status_client.a
+    ${DOTHERSIDE_LOCATION}
+    ${QRCODEGEN_LOCATION}
+    ${STATUSGO_LOCATION}
+    ${STATUSKEYCARD_LOCATION}
+  COMMAND make nim_status_lib
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMENT "Building nim_status_lib"
+)
+
+add_library(DOtherSideStatic STATIC IMPORTED)
+set_target_properties(DOtherSideStatic PROPERTIES IMPORTED_LOCATION ${DOTHERSIDE_LOCATION})
+
+add_library(qrcodegen STATIC IMPORTED)
+set_target_properties(qrcodegen PROPERTIES IMPORTED_LOCATION ${QRCODEGEN_LOCATION})
+
+add_library(StatusGo SHARED IMPORTED)
+set_target_properties(StatusGo PROPERTIES IMPORTED_LOCATION ${STATUSGO_LOCATION})
+
+add_library(StatusKeycard SHARED IMPORTED)
+set_target_properties(StatusKeycard PROPERTIES IMPORTED_LOCATION ${STATUSKEYCARD_LOCATION})
+
+add_library(StatusDesktopLib STATIC IMPORTED)
+
+set_target_properties(StatusDesktopLib PROPERTIES
+    IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/bin/libnim_status_client.a"
+    INTERFACE_LINK_LIBRARIES "rt;m;pthread;dl;pcre;StatusGo;StatusKeycard;qrcodegen;DOtherSideStatic;OpenSSL::SSL;OpenSSL::Crypto"
+)
+
+add_dependencies(StatusDesktopLib BuildStatusDekstopLib)
+
+target_link_libraries(
+    ${PROJECT_NAME} PUBLIC StatusDesktopLib
+        Qt::Core Qt::Qml Qt::Gui Qt::Quick Qt::QuickControls2 Qt::Widgets
+        Qt::Svg Qt::Multimedia Qt::WebView Qt::WebChannel
+    StatusQ
+)
+
+add_custom_command(
+        TARGET BuildStatusDekstopLib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_SOURCE_DIR}/resources.rcc"
+                "${CMAKE_SOURCE_DIR}/fleets.json"
+                "${CMAKE_CURRENT_BINARY_DIR}")
