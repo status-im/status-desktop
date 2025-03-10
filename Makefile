@@ -175,6 +175,8 @@ ifneq ($(detected_OS),Windows)
  else
   QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
  endif
+ export PKG_CONFIG_PATH := "$(QT5_PCFILEDIR)"
+
  # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
  ifeq ($(detected_OS),Darwin)
   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
@@ -561,7 +563,7 @@ endif
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
-	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
+	PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" $(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--mm:refc \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
 		--passL:"-lstatus" \
