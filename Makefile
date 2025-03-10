@@ -558,6 +558,12 @@ else
  NIM_STATUS_CLIENT := bin/nim_status_client
 endif
 
+ifeq ($(detected_OS),Windows)
+ NIM_STATUS_LIB := bin/nim_status_client.lib
+else
+ NIM_STATUS_LIB := bin/libnim_status_client.a
+endif
+
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS_FILE) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
@@ -583,7 +589,15 @@ ifeq ($(detected_OS),Darwin)
 		bin/nim_status_client
 endif
 
+$(NIM_STATUS_LIB): NIM_PARAMS += $(RESOURCES_LAYOUT) -d:useOpenssl3 --noMain --app:staticLib
+$(NIM_STATUS_LIB): $(NIM_SOURCES) | dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) compile-translations deps
+	echo -e $(BUILD_MSG) "$@"
+	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
+		--mm:refc \
+		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
+
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
+nim_status_lib: force-rebuild-status-go $(NIM_STATUS_LIB)
 
 ifdef IN_NIX_SHELL
 APPIMAGE_TOOL := appimagetool
