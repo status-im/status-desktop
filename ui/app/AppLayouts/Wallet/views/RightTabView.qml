@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 import utils 1.0
 import shared.controls 1.0
@@ -134,10 +135,11 @@ RightTabBaseView {
                 Layout.fillWidth: true
                 Layout.topMargin: Theme.bigPadding
                 Layout.preferredHeight: childrenRect.height
-                visible: root.store.walletSectionInst.hasPairedDevices && root.store.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
+                visible: WalletStores.RootStore.walletSectionInst.hasPairedDevices
+                         && WalletStores.RootStore.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
 
                 onRunImport: {
-                    root.store.walletSectionInst.runKeypairImportPopup()
+                    WalletStores.RootStore.walletSectionInst.runKeypairImportPopup()
                 }
             }
 
