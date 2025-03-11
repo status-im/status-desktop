@@ -11,13 +11,12 @@ export details
 logScope:
   topics = "notifications-manager"
 
-const NOTIFICATION_SOUND = "qrc:/imports/assets/audio/notification.wav"
-
 # Signals which may be emitted by this class:
 const SIGNAL_ADD_NOTIFICATION_TO_ACTIVITY_CENTER* = "addNotificationToActivityCenter"
 const SIGNAL_DISPLAY_APP_NOTIFICATION* = "displayAppNotification"
 const SIGNAL_DISPLAY_WINDOWS_OS_NOTIFICATION* = "displayWindowsOsNotification"
 const SIGNAL_OS_NOTIFICATION_CLICKED* = "osNotificationClicked"
+const SIGNAL_PLAY_NOTIFICATION_SOUND* = "playNotificationSound"
 
 # Anonymous preferences
 const PREVIEW_ANONYMOUS = 0
@@ -38,7 +37,6 @@ QtObject:
     events: EventEmitter
     settingsService: settings_service.Service
     osNotification: StatusOSNotification
-    soundManager: StatusSoundManager
     notificationSetUp: bool
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails)
@@ -51,7 +49,6 @@ QtObject:
   proc delete*(self: NotificationsManager) =
     if self.notificationSetUp:
       self.osNotification.delete
-      self.soundManager.delete
     self.QObject.delete
 
   proc newNotificationsManager*(events: EventEmitter, settingsService: settings_service.Service): NotificationsManager =
@@ -60,7 +57,6 @@ QtObject:
 
   proc onAppReady(self: NotificationsManager) =
     self.osNotification = newStatusOSNotification()
-    self.soundManager = newStatusSoundManager()
 
     signalConnect(self.osNotification, "notificationClicked(QString)", self, "onOSNotificationClicked(QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showTestNotification(QString, QString)",
@@ -268,8 +264,7 @@ QtObject:
       self.showOSNotification(data.title, data.message, identifier)
 
     if self.settingsService.getNotificationSoundsEnabled():
-      self.soundManager.setPlayerVolume(self.settingsService.getNotificationVolume())
-      self.soundManager.playSound(NOTIFICATION_SOUND)
+      self.events.emit(SIGNAL_PLAY_NOTIFICATION_SOUND, Args())
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails) =
     ## This is the main method which need to be called to process an event according to the preferences set in the

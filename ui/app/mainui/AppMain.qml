@@ -175,6 +175,11 @@ Item {
             keycardPopup.active = false
         }
 
+        function onPlayNotificationSound() {
+            notificationSound.stop()
+            notificationSound.play()
+        }
+
         function onMailserverWorking() {
             mailserverConnectionBanner.hide()
         }

@@ -1269,6 +1269,9 @@ method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasU
   self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
   self.checkIfWeHaveNotifications()
 
+method onPlayNotificationSound[T](self: Module[T]) =
+  self.view.playNotificationSound()
+
 method onNetworkConnected[T](self: Module[T]) =
   self.view.setConnected(true)
 
