@@ -73,7 +73,6 @@
 #include "DOtherSide/Status/UrlSchemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
-#include "DOtherSide/Status/SoundManager.h"
 #include "DOtherSide/Status/AppDelegate.h"
 
 #ifdef MONITORING
@@ -1808,27 +1807,6 @@ void dos_keychainmanager_delete(DosKeychainManager* vptr)
 
 }
 #pragma endregion
-
-#pragma region SoundManager
-
-void dos_soundmanager_play_sound(const char* soundUrl)
-{
-    auto sound = QUrl(QString::fromUtf8(soundUrl));
-    Status::SoundManager::instance().playSound(sound);
-}
-
-void dos_soundmanager_set_player_volume(int volume)
-{
-    Status::SoundManager::instance().setPlayerVolume(volume);
-}
-
-void dos_soundmanager_stop_player()
-{
-    Status::SoundManager::instance().stopPlayer();
-}
-
-#pragma endregion
-
 
 char* dos_to_local_file(const char* fileUrl)
 {
