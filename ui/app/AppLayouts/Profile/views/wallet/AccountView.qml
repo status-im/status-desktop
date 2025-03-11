@@ -84,7 +84,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: Theme.bigPadding
         Layout.preferredHeight: childrenRect.height
-        visible: !!root.keyPair && root.keyPair.operability === Constants.keypair.operability.nonOperable
+        visible: root.walletStore.walletModule.hasPairedDevices
+                 && !!root.keyPair
+                 && root.keyPair.operability === Constants.keypair.operability.nonOperable
 
         onRunImport: {
             root.runImportMissingKeypairFlow()
