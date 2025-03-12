@@ -14,5 +14,9 @@
 	<!-- Required by WalletConnect web SDK to run in WebView -->
 	<key>com.apple.security.cs.allow-jit</key>
 	<true/>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	</array>
 </dict>
 </plist>
