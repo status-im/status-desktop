@@ -296,7 +296,6 @@ Control {
 
                 objectName: "bottomItemText"
 
-                Layout.fillWidth: true
                 Layout.preferredWidth: contentWidth
 
                 text: {
