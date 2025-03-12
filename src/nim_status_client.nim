@@ -151,9 +151,9 @@ proc mainProc() =
         echo("sigaction error!")
         quit()
 
-  status_go.InitializeStatusGo()
+  status_go.initializeStatusGo()
   sleep(50)
-  keycard_go.InitializeStatusKeycardGo()
+  keycard_go.initializeStatusKeycardGo()
 
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())

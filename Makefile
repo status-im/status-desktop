@@ -837,7 +837,6 @@ run-linux-gdb: nim_status_client
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
-run-macos: export GODEBUG=gctrace=1
 run-macos: nim_status_client
 	mkdir -p bin/StatusDev.app/Contents/{MacOS,Resources}
 	cp Info.dev.plist bin/StatusDev.app/Contents/Info.plist
@@ -846,7 +845,7 @@ run-macos: nim_status_client
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
-	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
+	GODEBUG=gctrace=1 ./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
