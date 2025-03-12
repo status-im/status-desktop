@@ -312,6 +312,7 @@ Item {
             let toastLoading = false
             let toastType = Constants.ephemeralNotificationType.normal
             let toastLink = ""
+            let blockExplorerUrl = ""
 
             const sender = !!fromName? fromName : SQUtils.Utils.elideAndFormatWalletAddress(fromAddr)
             let senderChainName = qsTr("unknown")
@@ -329,14 +330,10 @@ Item {
             let sentCommunityAmount1 = ""
             let sentCommunityAmount2 = ""
 
-            if (!!txHash) {
-                toastLink = "%1/%2".arg(appMain.rootStore.getEtherscanTxLink(fromChainId)).arg(txHash)
-                toastSubtitle = qsTr("View on %1").arg(senderChainName)
-            }
-
-            const fromChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", fromChainId, "chainName")
-            if (!!fromChainName) {
-                senderChainName = fromChainName
+            const fromChain = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", fromChainId)
+            if (!!fromChain) {
+                senderChainName = fromChain.chainName
+                blockExplorerUrl = fromChain.blockExplorerURL
             }
             const toChainName = SQUtils.ModelUtils.getByKey(appMain.networksStore.activeNetworks, "chainId", toChainId, "chainName")
             if (!!toChainName) {
@@ -351,6 +348,11 @@ Item {
             const toToken = SQUtils.ModelUtils.getByKey(appMain.tokensStore.plainTokensBySymbolModel, "key", toAsset)
             if (!!toToken) {
                 receivedAmount = currencyStore.formatCurrencyAmountFromBigInt(toAmount, toToken.symbol, toToken.decimals)
+            }
+
+            if (!!txHash) {
+                toastLink = "%1/tx/%2".arg(blockExplorerUrl).arg(txHash)
+                toastSubtitle = qsTr("View on %1").arg(senderChainName)
             }
 
             if (txType === Constants.SendType.ERC721Transfer || txType === Constants.SendType.ERC1155Transfer) {
