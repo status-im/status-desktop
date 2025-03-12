@@ -2,6 +2,7 @@ import logging
 import os
 import signal
 import subprocess
+import time
 import typing
 
 import allure
@@ -31,14 +32,31 @@ def find_free_port(start: int, step: int):
     return start
 
 
-@allure.step('Kill process')
-def kill_process(pid):
-    LOG.debug(f'Terminating process {pid}')
+@allure.step('Check if process is running')
+def is_process_running(pid):
+    try:
+        os.kill(pid, 0)  # Does not send the signal but checks if the process is alive
+        return True
+    except OSError:
+        return False
 
+
+@allure.step('Kill process')
+def kill_process(pid, timeout: int = 5):
+    LOG.debug(f'Terminating process {pid}')
     try:
         if get_platform() == "Windows":
-            subprocess.call(f"taskkill /F /T /PID {str(pid)}")
+            subprocess.run(["taskkill", "/T", "/PID", str(pid)], shell=True, check=True)
         elif get_platform() in ["Linux", "Darwin"]:
+            os.kill(pid, signal.SIGTERM)
+            start_time = time.time()
+
+            while time.time() - start_time < timeout:
+                if not is_process_running(pid):  # Check if the process is still running
+                    return True
+                time.sleep(0.5)
+
+            # If process is still running after timeout, kill brutally
             os.kill(pid, signal.SIGKILL)
         else:
             raise NotImplementedError(f"Unsupported platform: {get_platform()}")
