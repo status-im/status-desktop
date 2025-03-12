@@ -93,7 +93,6 @@ QtObject:
 
   proc init*(self: Service) =
     debug "KeycardServiceV2 init"
-    keycard_go.initializeLibrary()
     # Do not remove the sleep 700, this sleep prevents a crash on intel MacOS
     # with errors like bad flushGen 12 in prepareForSweep; sweepgen 0
     # More details: https://github.com/status-im/status-desktop/pull/15194

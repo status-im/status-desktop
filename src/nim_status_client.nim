@@ -152,8 +152,9 @@ proc mainProc() =
         quit()
 
   status_go.initializeStatusGo()
-  sleep(50)
+  sleep(2000)
   keycard_go.initializeStatusKeycardGo()
+  sleep(2000)
 
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
