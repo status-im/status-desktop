@@ -255,58 +255,6 @@ QtObject:
     let allPendingTransactions = self.getPendingTransactions()
     return allPendingTransactions.filter(x => x.typeValue == $transactionType)
 
-  proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
-    let watchTxResult = parseJson(watchTxResult)
-    let success = watchTxResult["isSuccessfull"].getBool
-    if(success):
-      let hash = watchTxResult["hash"].getStr
-      let chainId = watchTxResult["chainId"].getInt
-      let address = watchTxResult["address"].getStr
-      let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
-      if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        let ev = TransactionMinedArgs(
-          data: watchTxResult["data"].getStr,
-          transactionHash: hash,
-          chainId: chainId,
-          success: transactionReceipt{"status"}.getStr == "0x1",
-          txType: SendType(watchTxResult["txType"].getInt),
-          fromAddress: address,
-          toAddress: watchTxResult["toAddress"].getStr,
-          fromTokenKey: watchTxResult["fromTokenKey"].getStr,
-          fromAmount: watchTxResult["fromAmount"].getStr,
-          toTokenKey: watchTxResult["toTokenKey"].getStr,
-          toAmount: watchTxResult["toAmount"].getStr,
-        )
-        var transactionType = PendingTransactionTypeDto.Unknown
-        try:
-          transactionType = parseEnum[PendingTransactionTypeDto](watchTxResult["trxType"].getStr)
-        except:
-          discard
-
-        self.events.emit(transactionType.event, ev)
-        transactions.checkRecentHistory(@[chainId], @[address])
-
-  proc watchTransaction*(
-    self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int,
-    fromTokenKey: string = "", fromAmount: string = "", toTokenKey: string = "", toAmount: string = "", txType: SendType = SendType.Transfer
-  ) =
-    let arg = WatchTransactionTaskArg(
-      chainId: chainId,
-      hash: hash,
-      address: fromAddress,
-      trxType: trxType,
-      txType: ord(txType),
-      fromTokenKey: fromTokenKey,
-      fromAmount: fromAmount,
-      toTokenKey: toTokenKey,
-      toAmount: toAmount,
-      data: data,
-      tptr: watchTransactionTask,
-      vptr: cast[uint](self.vptr),
-      slot: "watchTransactionResult",
-    )
-    self.threadpool.start(arg)
-
   proc onFetchDecodedTxData*(self: Service, response: string) {.slot.} =
     var args = TransactionDecodedArgs()
     try:
@@ -544,16 +492,6 @@ QtObject:
     except Exception as e:
       error "Error getting estimated latest block number", message = e.msg
       return ""
-
-proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =
-  try:
-    let response = transactions.getMultiTransactions(transactionIDs).result
-
-    return response.getElems().map(x => x.toMultiTransactionDto())
-  except Exception as e:
-    let errDescription = e.msg
-    error "error: ", errDescription
-    return
 
 proc signMessage*(self: Service, address: string, hashedPassword: string, hashedMessage: string): tuple[res: string, err: string] =
   var signMsgRes: JsonNode

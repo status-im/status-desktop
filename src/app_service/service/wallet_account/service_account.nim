@@ -153,7 +153,6 @@ proc init*(self: Service) =
     self.fetchENSNamesForAddressesAsync(addressesToGetENSName, chainId)
 
     let addresses = self.getWalletAddresses()
-    self.checkRecentHistory(addresses)
     self.startWallet()
   except Exception as e:
     let errDesription = e.msg
@@ -178,7 +177,6 @@ proc init*(self: Service) =
       of "wallet-tick-reload":
         let addresses = self.getWalletAddresses()
         self.buildAllTokens(addresses, store = true)
-        self.checkRecentHistory(addresses)
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), store = true)
@@ -546,14 +544,12 @@ proc setNetworkActive*(self: Service, chainId: int, active: bool) =
   # TODO: This should be some common response to network changes
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
-  self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
 proc toggleTestNetworksEnabled*(self: Service) =
   discard self.settingsService.toggleTestNetworksEnabled()
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
-  self.checkRecentHistory(addresses)
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
 proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =

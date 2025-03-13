@@ -21,8 +21,8 @@ import backend/accounts as status_go_accounts
 import backend/backend as backend
 import backend/network as status_go_network
 import backend/eth as status_go_eth
-import backend/transactions as status_go_transactions
 import constants as main_constants
+
 
 export keypair_dto, derived_address_dto
 
@@ -52,7 +52,6 @@ QtObject:
 
   # Forward declaration
   proc buildAllTokens*(self: Service, accounts: seq[string], store: bool)
-  proc checkRecentHistory*(self: Service, addresses: seq[string])
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
