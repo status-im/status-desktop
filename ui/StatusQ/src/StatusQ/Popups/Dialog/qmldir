@@ -7,3 +7,5 @@ StatusDialogHeader 0.1 StatusDialogHeader.qml
 StatusHeaderActions 0.1 StatusHeaderActions.qml
 StatusTitleSubtitle 0.1 StatusTitleSubtitle.qml
 StatusDialogBackground 0.1 StatusDialogBackground.qml
+
+StatusMessageDialog 0.1 StatusMessageDialog.qml

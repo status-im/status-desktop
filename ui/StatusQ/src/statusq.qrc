@@ -240,6 +240,7 @@
         <file>StatusQ/Popups/Dialog/StatusDialogHeader.qml</file>
         <file>StatusQ/Popups/Dialog/StatusHeaderActions.qml</file>
         <file>StatusQ/Popups/Dialog/StatusTitleSubtitle.qml</file>
+        <file>StatusQ/Popups/Dialog/StatusMessageDialog.qml</file>
         <file>StatusQ/Popups/Dialog/qmldir</file>
         <file>StatusQ/Popups/StatusAction.qml</file>
         <file>StatusQ/Popups/StatusColorDialog.qml</file>
