@@ -312,6 +312,7 @@ StatusDialog {
                                                                     selectedCollectibleEntry.item.symbol: ""
 
         readonly property double maxSafeCryptoValue: {
+            root.selectedChainId // reference for binding
             if (selectedCollectibleEntryValid) {
                 let collectibleBalance =  SQUtils.ModelUtils.getByKey(selectedCollectibleEntry.item.ownership, "accountAddress", root.selectedAccountAddress, "balance")
                 return !!collectibleBalance ? collectibleBalance: 0
