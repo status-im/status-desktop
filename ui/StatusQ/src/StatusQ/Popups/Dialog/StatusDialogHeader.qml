@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
@@ -22,7 +22,7 @@ Rectangle {
     signal closeInternalPopup()
 
     color: Theme.palette.statusModal.backgroundColor
-    radius: 8
+    radius: Theme.radius
 
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
@@ -42,10 +42,10 @@ Rectangle {
 
         anchors {
             fill: parent
-            margins: 16
+            margins: Theme.padding
         }
 
-        spacing: 8
+        spacing: Theme.halfPadding
 
         Loader {
             id: leftComponentLoader
