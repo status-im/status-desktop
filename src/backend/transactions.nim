@@ -1,4 +1,4 @@
-import Tables, json, stint, json_serialization, stew/shims/strformat, chronicles
+import Tables, json, json_serialization, stew/shims/strformat, chronicles
 
 import ./core as core
 
@@ -66,30 +66,6 @@ proc `%`*(self: MultiTransactionCommandDto): JsonNode {.inline.} =
   result["fromAmount"] = %(self.fromAmount)
   result["toAmount"] = %(self.toAmount)
   result["type"] = %int(self.multiTxType)
-
-proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] =
-  core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
-
-proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) =
-  let payload = %* [chainIds, addresses]
-  discard core.callPrivateRPC("wallet_checkRecentHistoryForChainIDs", payload)
-
-proc getTransfersByAddress*(chainId: int, address: string, toBlock: Uint256, limitAsHexWithoutLeadingZeros: string,
-  loadMore: bool = false): RpcResponse[JsonNode] =
-  let toBlockParsed = if not loadMore: newJNull() else: %("0x" & stint.toHex(toBlock))
-
-  core.callPrivateRPC("wallet_getTransfersByAddressAndChainID", %* [chainId, address, toBlockParsed, limitAsHexWithoutLeadingZeros, loadMore])
-
-proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] =
-  core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
-
-proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] =
-  let payload = %* [transactionIDs]
-  result = core.callPrivateRPC("wallet_getMultiTransactions", payload)
-
-proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] =
-  let payload = %* [chainId, hash]
-  core.callPrivateRPC("wallet_watchTransactionByChainID", payload)
 
 proc buildTransactionsFromRoute*(resultOut: var JsonNode, uuid: string, slippagePercentage: float): string =
   try:
