@@ -90,12 +90,6 @@ proc `$`*(self: TransactionIdentity): string =
     address:{self.address},
   )"""
 
-rpc(getPendingTransactionsForIdentities, "wallet"):
-  identities = seq[TransactionIdentity]
-
-rpc(getTransfersForIdentities, "wallet"):
-  identities = seq[TransactionIdentity]
-
 rpc(getWalletToken, "wallet"):
   accounts: seq[string]
 

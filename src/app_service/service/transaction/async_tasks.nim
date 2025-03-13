@@ -32,39 +32,6 @@ type
     toTokenKey: string
     toAmount: string
 
-proc watchTransactionTask*(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[WatchTransactionTaskArg](argEncoded)
-  try:
-    let output = %*{
-      "hash": arg.hash,
-      "data": arg.data,
-      "address": arg.address,
-      "chainId": arg.chainId,
-      "trxType": arg.trxType,
-      "txType": arg.txType,
-      "toAddress": arg.toAddress,
-      "fromTokenKey": arg.fromTokenKey,
-      "fromAmount": arg.fromAmount,
-      "toTokenKey": arg.toTokenKey,
-      "toAmount": arg.toAmount,
-      "isSuccessfull": transactions.watchTransaction(arg.chainId, arg.hash).error.isNil,
-    }
-    arg.finish(output)
-  except Exception as e:
-    let output = %* {
-      "hash": arg.hash,
-      "data": arg.data,
-      "address": arg.address,
-      "chainId": arg.chainId,
-      "trxType": arg.trxType,
-      "txType": arg.txType,
-      "toAddress": arg.toAddress,
-      "fromTokenKey": arg.fromTokenKey,
-      "fromAmount": arg.fromAmount,
-      "toTokenKey": arg.toTokenKey,
-      "toAmount": arg.toAmount,
-      "isSuccessfull": false
-    }
 
 type
   FetchDecodedTxDataTaskArg* = ref object of QObjectTaskArg

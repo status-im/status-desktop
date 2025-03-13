@@ -757,9 +757,3 @@ rpc(getActivityCollectiblesAsync, "wallet"):
   addresses: seq[string]
   offset: int
   limit: int
-
-rpc(getMultiTxDetails, "wallet"):
-  id: int
-
-rpc(getTxDetails, "wallet"):
-  id: string
