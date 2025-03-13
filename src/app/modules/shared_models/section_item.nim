@@ -17,7 +17,8 @@ type
     NodeManagement,
     CommunitiesPortal,
     LoadingSection,
-    Swap
+    Swap,
+    TradingCenter
 
 type
   SectionItem* = object

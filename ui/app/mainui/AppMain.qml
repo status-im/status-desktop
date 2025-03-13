@@ -13,6 +13,7 @@ import AppLayouts.Chat 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Communities 1.0
+import AppLayouts.TradingCenter 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 
 import utils 1.0
@@ -1223,6 +1224,12 @@ Item {
                         ValueFilter {
                             roleName: "sectionType"
                             value: Constants.appSection.swap
+                            enabled: !appMain.featureFlagsStore.tradingCenterEnabled
+                        }
+                        ValueFilter {
+                            roleName: "sectionType"
+                            value: Constants.appSection.tradingCenter
+                            enabled: appMain.featureFlagsStore.tradingCenterEnabled
                         }
                         ValueFilter {
                             roleName: "sectionType"
@@ -1878,6 +1885,8 @@ Item {
                             return Constants.appViewStackIndex.profile
                         if (activeSectionType === Constants.appSection.node)
                             return Constants.appViewStackIndex.node
+                        if (activeSectionType === Constants.appSection.tradingCenter)
+                            return Constants.appViewStackIndex.tradingCenter
 
                         // We should never end up here
                         console.error("AppMain: Unknown section type")
@@ -2087,6 +2096,19 @@ Item {
                         active: appView.currentIndex === Constants.appViewStackIndex.node
                         asynchronous: true
                         sourceComponent: NodeLayout {}
+                    }
+
+                    Loader {
+                        id: tradingCenterLoader
+                        active: appView.currentIndex === Constants.appViewStackIndex.tradingCenter
+                        asynchronous: true
+                        sourceComponent: TradingCenterLayout {
+                            objectName: "tradingCenterLayout"
+                            onLaunchSwap: d.launchSwap()
+                        }
+                        onLoaded: {
+                            item.resetView()
+                        }
                     }
 
                     Repeater {
