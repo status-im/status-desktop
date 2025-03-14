@@ -38,6 +38,7 @@ class MainLeftPanel(QObject):
         self.settings_button = Button(names.settingsGearButton)
         self.wallet_button = Button(names.mainWalletButton)
 
+
     def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
         for _ in range(attempts):
             button.click()
@@ -202,7 +203,7 @@ class MainWindow(Window):
             return self.create_profile(user_account)
 
     @allure.step('Create community')
-    def create_community(self, community_data: CommunityData) -> CommunityScreen:
+    def create_community(self, community_data: CommunityData) -> 'CommunityScreen':
         communities_portal = self.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()
         assert isinstance(community_data, CommunityData)

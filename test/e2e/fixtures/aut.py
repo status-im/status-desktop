@@ -40,12 +40,12 @@ def application_logs():
             if not log_path.exists():
                 continue
 
-            for log in log_path.glob('*.log'):
-                try:
-                    allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
-                    log.unlink()  # FIXME: it does not work on Windows, permission error
-                except Exception as e:
-                    LOG.info(f"Unexpected error processing {log}: {e}")
+            # for log in log_path.glob('*.log'):
+            #     try:
+            #         allure.attach.file(log, name=str(log.name), attachment_type=allure.attachment_type.TEXT)
+            #         log.unlink()  # FIXME: it does not work on Windows, permission error
+            #     except Exception as e:
+            #         LOG.info(f"Unexpected error processing {log}: {e}")
 
 
 @pytest.fixture
