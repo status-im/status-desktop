@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import QtQuick.Dialogs 1.3
 
 import SortFilterProxyModel 0.2
 
@@ -12,6 +11,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Layout 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import shared.panels 1.0
 import shared.popups 1.0
@@ -718,12 +718,11 @@ StatusSectionLayout {
         }
     }
 
-    MessageDialog {
+    StatusMessageDialog {
         id: errorDialog
 
         title: qsTr("Error editing the community")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
+        icon: StatusMessageDialog.StandardIcon.Critical
     }
 
     Component {
