@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.15
 import QtQuick.Layouts 1.15
 
@@ -9,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared 1.0
@@ -641,10 +641,9 @@ Item {
         }
     }
 
-    MessageDialog {
+    StatusMessageDialog {
         id: deleteError
         title: qsTr("Error deleting the category")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
+        icon: StatusMessageDialog.StandardIcon.Critical
     }
 }
