@@ -38,7 +38,7 @@ settingsGearButton = {"container": communitiesSettingsNavBarList, "objectName": 
 onlineIdentifierButton = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
 
 mainWindow_statusCommunityMainNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusCommunityMainNavBarListView", "type": "ListView", "visible": True}
-statusCommunityMainNavBarListView_CommunityNavBarButton = {"checkable": True, "container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
+statusCommunityMainNavBarListView_CommunityNavBarButton = {"container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
 
 
 invite_People_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "invitePeople", "type": "StatusMenuItem", "visible": True}
