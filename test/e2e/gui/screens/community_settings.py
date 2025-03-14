@@ -259,7 +259,7 @@ class EditCommunityView(QObject):
         self.intro = intro
         self.outro = outro
         self._save_changes_button.click()
-        self.wait_until_hidden()
+        return OverviewView().wait_until_appears()
 
 
 class MembersView(QObject):
