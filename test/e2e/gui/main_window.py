@@ -110,7 +110,9 @@ class MainLeftPanel(QObject):
         while time.monotonic() - start_time < timeout_sec:
             try:
                 raw_data = driver.findAllObjects(self.community_template_button.real_name)
+                LOG.info(f'raw data = , {raw_data}')
                 communities = [CommunityData(name=str(community.name)) for community in raw_data]
+                LOG.info(f'Communities = , {communities}')
 
                 for community in communities:
                     if community not in collected_communities:
@@ -120,6 +122,7 @@ class MainLeftPanel(QObject):
                 LOG.debug(f'Communities are not found: {e}')
                 time.sleep(0.1)
         if collected_communities:
+            LOG.info(f'Collected communities = {collected_communities}')
             return collected_communities
         
         raise TimeoutError(f"Communities list is not built within {timeout_sec} seconds")
