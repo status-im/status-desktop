@@ -282,7 +282,11 @@ QtObject:
       if tokensResult.isNil or tokensResult.kind == JNull:
         raise newException(Exception, "Error in response of getting supported tokens list")
 
-      let tokenList =  Json.decode($tokensResult, TokenListDto, allowUnknownFields = true)
+      # Create a copy of the tokenResultStr to avoid exceptions in `decode`
+      # Workaround for https://github.com/status-im/status-desktop/issues/17398
+      let tokenResultStr = $tokensResult
+      let tokenList =  Json.decode(tokenResultStr, TokenListDto, allowUnknownFields = true)
+
       self.tokenListUpdatedAt = tokenList.updatedAt
 
       let supportedNetworkChains = self.networkService.getFlatNetworks().map(n => n.chainId)
