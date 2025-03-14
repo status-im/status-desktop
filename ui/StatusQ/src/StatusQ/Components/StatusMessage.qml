@@ -19,7 +19,7 @@ Control {
         Emoji = 2,
         Image = 3,
         Sticker = 4,
-        Audio = 5,
+        Audio = 5, // Not used
         Transaction = 6,
         Invitation = 7,
         DiscordMessage = 8,
@@ -363,14 +363,6 @@ Control {
                         asset.name: root.messageDetails.messageContent
                         onStickerLoaded: root.stickerLoaded()
                         onClicked: root.stickerClicked()
-                    }
-                    Loader {
-                        active: root.messageDetails.contentType === StatusMessage.ContentType.Audio && !editMode
-                        visible: active
-                        sourceComponent: StatusAudioMessage {
-                            audioSource: root.messageDetails.messageContent
-                            hovered: root.hovered
-                        }
                     }
                     Loader {
                         id: linksLoader

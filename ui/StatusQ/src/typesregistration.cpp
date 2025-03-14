@@ -1,6 +1,7 @@
 #include <QZXing.h>
 #include <qqmlsortfilterproxymodeltypes.h>
 
+#include "StatusQ/audioutils.h"
 #include "StatusQ/clipboardutils.h"
 #include "StatusQ/concatmodel.h"
 #include "StatusQ/constantrole.h"
@@ -77,6 +78,7 @@ void registerStatusQTypes() {
     qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", [](QQmlEngine* engine, QJSEngine*) {
         return new UrlUtils(engine);
     });
+    qmlRegisterSingletonType<AudioUtils>("StatusQ", 1, 0, "AudioUtils", &AudioUtils::qmlInstance);
 
     qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
     qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
