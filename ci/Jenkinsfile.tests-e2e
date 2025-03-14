@@ -78,6 +78,9 @@ pipeline {
     VIRTUAL_ENV = "${WORKSPACE_TMP}/venv"
     PATH = "${VIRTUAL_ENV}/bin:${PATH}"
 
+    /* To store user configuratiin files in temp dir */
+    XDG_CONFIG_HOME = "${WORKSPACE_TMP}/config"
+
     TESTRAIL_URL = 'https://ethstatus.testrail.net'
     TESTRAIL_PROJECT_ID = 18
     /* Override QT xcb plugin with linux to avoid errors like:
@@ -91,7 +94,7 @@ pipeline {
     QT_LOGGING_RULES = '*.warning=true'
 
     /* Set to a non-zero value to make Qt print out diagnostic information about the each (C++) plugin it tries to load. */
-    QT_DEBUG_PLUGINS = 0
+    /* QT_DEBUG_PLUGINS = 0 */
   }
 
   stages {
