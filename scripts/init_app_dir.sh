@@ -9,7 +9,11 @@ mkdir -p \
   "${APP_DIR}/usr/lib" \
   "${APP_DIR}/usr/qml" \
   "${APP_DIR}/usr/i18n" \
-  "${APP_DIR}/usr/plugins/platforminputcontexts"
+  "${APP_DIR}/usr/plugins/platforminputcontexts" \
+  "${APP_DIR}/etc/reader.conf.d" \
+  "${APP_DIR}/usr/lib/pcsc/drivers" \
+  "${APP_DIR}/usr/sbin"
+
 
 cp bin/nim_status_client "${APP_DIR}/usr/bin"
 cp bin/StatusQ/* "${APP_DIR}/usr/lib"
@@ -22,6 +26,40 @@ cp vendor/status-go/build/bin/libstatus.so "${APP_DIR}/usr/lib/"
 cp vendor/status-go/build/bin/libstatus.so.0 "${APP_DIR}/usr/lib/"
 cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"
 cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
+
+echo "Bundling pcsc-lite 2.2.3..."
+cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite.so* "${APP_DIR}/usr/lib/"
+cp -L /usr/local/lib/x86_64-linux-gnu/libpcsclite_real.so* "${APP_DIR}/usr/lib/"
+cp -L /usr/local/lib/x86_64-linux-gnu/pkgconfig/libpcsclite.pc "${APP_DIR}/usr/lib/"
+
+chmod 755 "${APP_DIR}/usr/lib/libpcsclite.so"*
+chmod 755 "${APP_DIR}/usr/lib/libpcsclite_real.so"*
+chmod 755 "${APP_DIR}/usr/lib/libpcsclite.pc"
+
+if [ -d "/usr/lib/pcsc/drivers" ]; then
+  cp -r /usr/lib/pcsc/drivers/* "${APP_DIR}/usr/lib/pcsc/drivers/" || true
+fi
+
+mkdir -p "${APP_DIR}/etc/udev/rules.d"
+if [ -f "/usr/lib/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist" ]; then
+  cp /usr/lib/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist "${APP_DIR}/usr/lib/pcsc/drivers/" || true
+fi
+
+cat > "${APP_DIR}/etc/reader.conf.d/000-bundled-pcsc.conf" << EOF
+# Use bundled pcsc-lite drivers
+PCSC_DRIVERS_DIR=\$APPDIR/usr/lib/pcsc/drivers
+EOF
+
+echo "Bundling pscd..."
+cp -L "/usr/local/sbin/pcscd"* "${APP_DIR}/usr/sbin/"
+chmod 755 "${APP_DIR}/usr/sbin/pcscd"*
+
+if [ -f "/usr/lib/x86_64-linux-gnu/libusb-1.0.so.0" ]; then
+  cp -L /usr/lib/x86_64-linux-gnu/libusb-1.0.so.0* "${APP_DIR}/usr/lib/" || true
+fi
+if [ -f "/lib/x86_64-linux-gnu/libusb-1.0.so.0" ]; then
+  cp -L /lib/x86_64-linux-gnu/libusb-1.0.so.0* "${APP_DIR}/usr/lib/" || true
+fi
 
 # Copy dependencies, which linuxdeployqt can't manage from nix store or system (FHS)
 if [[ -z "${IN_NIX_SHELL}" ]]; then
