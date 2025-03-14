@@ -28,6 +28,7 @@ Item {
     property var chatContentModule: root.rootStore.currentChatContentModule() || null
     property var emojiPopup
     property int padding: Theme.halfPadding
+    readonly property bool selectingMembers: root.state == d.stateMembersSelectorContent
 
     signal searchButtonClicked()
     signal displayEditChannelPopup(string chatId,
@@ -44,13 +45,15 @@ Item {
         root.state = d.stateMembersSelectorContent
     }
 
+    function groupUpdated() {
+        root.state = d.stateInfoButtonContent
+    }
+
     QtObject {
         id: d
 
         readonly property string stateInfoButtonContent: ""
         readonly property string stateMembersSelectorContent: "selectingMembers"
-
-        readonly property bool selectingMembers: root.state == stateMembersSelectorContent
     }
 
     MessageStore {
@@ -65,9 +68,9 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: d.selectingMembers ? parent.right : actionButtons.left
+        anchors.right: root.selectingMembers ? parent.right : actionButtons.left
 
-        sourceComponent: d.selectingMembers ? membersSelector : statusChatInfoButton
+        sourceComponent: root.selectingMembers ? membersSelector : statusChatInfoButton
     }
 
     RowLayout {
@@ -78,7 +81,7 @@ Item {
         anchors.right: parent.right
 
         spacing: 8
-        visible: !d.selectingMembers
+        visible: !root.selectingMembers
 
         StatusFlatRoundButton {
             id: searchButton
@@ -353,8 +356,8 @@ Item {
             }
             contactsModel: root.mutualContactsModel
 
-            onConfirmed: root.state = d.stateInfoButtonContent
-            onRejected: root.state = d.stateInfoButtonContent
+            onConfirmed: root.groupUpdated()
+            onRejected: root.groupUpdated()
         }
     }
 }
