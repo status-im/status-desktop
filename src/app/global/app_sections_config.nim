@@ -24,3 +24,7 @@ const SETTINGS_SECTION_ICON* = "settings"
 const SWAP_SECTION_ID* = "swap"
 const SWAP_SECTION_NAME* = "Swap"
 const SWAP_SECTION_ICON* = "swap"
+
+const TRADING_CENTER_SECTION_ID* = "trading"
+const TRADING_CENTER_SECTION_NAME* = "Trading"
+const TRADING_CENTER_SECTION_ICON* = "trading"

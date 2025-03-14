@@ -7,7 +7,7 @@ import app/modules/shared_models/[color_hash_item, color_hash_model]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 import app/global/app_sections_config as conf
 import app/global/app_signals
-import app/global/global_singleton
+import app/global/[global_singleton, feature_flags]
 import app/global/utils as utils
 import constants
 
@@ -799,26 +799,48 @@ method load*[T](
   if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
 
-  # Swap Section
-  let swapSectionItem = initItem(
-    conf.SWAP_SECTION_ID,
-    SectionType.Swap,
-    conf.SWAP_SECTION_NAME,
-    memberRole = MemberRole.Owner,
-    description = "",
-    introMessage = "",
-    outroMessage = "",
-    image = "",
-    icon = conf.SWAP_SECTION_ICON,
-    color = "",
-    hasNotification = false,
-    notificationsCount = 0,
-    active = false,
-    enabled = WALLET_ENABLED,
-  )
-  self.view.model().addItem(swapSectionItem)
-  if activeSectionId == swapSectionItem.id:
-    activeSection = swapSectionItem
+  if singletonInstance.featureFlags().getTradingCenterEnabled():
+    # Trading center Section
+    let tradingCenterItem = initItem(
+      conf.TRADING_CENTER_SECTION_ID,
+      SectionType.TradingCenter,
+      conf.TRADING_CENTER_SECTION_NAME,
+      memberRole = MemberRole.Owner,
+      description = "",
+      introMessage = "",
+      outroMessage = "",
+      image = "",
+      icon = conf.TRADING_CENTER_SECTION_ICON,
+      color = "",
+      hasNotification = false,
+      notificationsCount = 0,
+      active = false,
+      enabled = WALLET_ENABLED,
+    )
+    self.view.model().addItem(tradingCenterItem)
+    if activeSectionId == tradingCenterItem.id:
+      activeSection = tradingCenterItem
+  else:
+    # Swap Section
+    let swapSectionItem = initItem(
+      conf.SWAP_SECTION_ID,
+      SectionType.Swap,
+      conf.SWAP_SECTION_NAME,
+      memberRole = MemberRole.Owner,
+      description = "",
+      introMessage = "",
+      outroMessage = "",
+      image = "",
+      icon = conf.SWAP_SECTION_ICON,
+      color = "",
+      hasNotification = false,
+      notificationsCount = 0,
+      active = false,
+      enabled = WALLET_ENABLED,
+    )
+    self.view.model().addItem(swapSectionItem)
+    if activeSectionId == swapSectionItem.id:
+      activeSection = swapSectionItem
 
   self.profileSectionModule.load()
   self.stickersModule.load()

@@ -333,6 +333,7 @@ QtObject {
         readonly property int communitiesPortal: 5
         readonly property int loadingSection: 6
         readonly property int swap: 7
+        readonly property int tradingCenter: 8
     }
 
     readonly property QtObject appViewStackIndex: QtObject {
@@ -342,6 +343,7 @@ QtObject {
         readonly property int wallet: 2
         readonly property int profile: 3
         readonly property int node: 4
+        readonly property int tradingCenter: 5
     }
 
     readonly property QtObject settingsSubsection: QtObject {
