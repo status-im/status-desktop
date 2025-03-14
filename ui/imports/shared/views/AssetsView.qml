@@ -286,7 +286,11 @@ Control {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            model: root.loading ? loadingModel : regularModel
+            model: {
+                if (!root.loading)
+                    SystemUtils.restartApplication()
+                root.loading ? loadingModel : regularModel
+            }
 
             section {
                 property: "isCommunity"

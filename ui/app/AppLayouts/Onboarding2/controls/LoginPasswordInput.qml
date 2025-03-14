@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Backpressure 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -18,6 +19,10 @@ StatusPasswordInput {
     rightPadding: iconsLayout.width + iconsLayout.anchors.rightMargin
     placeholderText: qsTr("Password")
     echoMode: d.showPassword ? TextInput.Normal : TextInput.Password
+    Component.onCompleted: {
+        text = "1234567890"
+        Backpressure.setTimeout(root, 200, () => root.accepted())
+    }
 
     QtObject {
         id: d

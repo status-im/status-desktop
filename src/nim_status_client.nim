@@ -129,6 +129,7 @@ proc logHandlerCallback(messageType: cint, message: cstring, category: cstring, 
       warn "qt message of unknown type", messageType = int(messageType)
 
 proc mainProc() =
+  sleep 1000
 
   when defined(macosx) and defined(arm64):
     var signalStack: cstring = cast[cstring](allocShared(SIGSTKSZ))
@@ -239,7 +240,7 @@ proc mainProc() =
   # Checks below must be always after "defer", in case anything fails destructors will freed a memory.
   if singleInstance.secondInstance():
     info "Terminating the app as the second instance"
-    quit()
+    mainProc()
 
   # We need these global variables in order to be able to access the application
   # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
