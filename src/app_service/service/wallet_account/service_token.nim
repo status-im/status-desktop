@@ -164,16 +164,6 @@ proc getTokenBalance*(self: Service, address: string, chainId: int, tokensKey: s
         totalTokenBalance = totalTokenBalance + self.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
   return totalTokenBalance
 
-proc checkRecentHistory*(self: Service, addresses: seq[string]) =
-  if(not main_constants.WALLET_ENABLED):
-    return
-  try:
-    let chainIds = self.networkService.getCurrentNetworksChainIds()
-    status_go_transactions.checkRecentHistory(chainIds, addresses)
-  except Exception as e:
-    let errDescription = e.msg
-    error "error: ", errDescription
-
 proc reloadAccountTokens*(self: Service) =
   try:
     discard backend.restartWalletReloadTimer()
@@ -183,7 +173,6 @@ proc reloadAccountTokens*(self: Service) =
 
   let addresses = self.getWalletAddresses()
   self.buildAllTokens(addresses, store = true)
-  self.checkRecentHistory(addresses)
 
 proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
   return self.currencyService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
