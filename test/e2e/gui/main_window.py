@@ -109,19 +109,17 @@ class MainLeftPanel(QObject):
         collected_communities = []
         while time.monotonic() - start_time < timeout_sec:
             try:
-                raw_data = driver.findAllObjects(self.community_template_button.real_name)
-                LOG.info(f'raw data = , {raw_data}')
-                communities = [CommunityData(name=str(community.name)) for community in raw_data]
-                LOG.info(f'Communities = , {communities}')
+                for item in driver.findAllObjects(self.community_template_button.real_name):
+                    _community = CommunityData(name=str(item.name))
+                    LOG.info(f'Community built = , {_community}')
 
-                for community in communities:
-                    if community not in collected_communities:
-                        collected_communities.append(community)
+                    if _community not in collected_communities:
+                        collected_communities.append(_community)
 
             except LookupError as e:
-                LOG.debug(f'Communities are not found: {e}')
-                time.sleep(0.1)
-        if collected_communities:
+                LOG.info(f'Communities are not found: {e}')
+
+        if len(collected_communities) > 0:
             LOG.info(f'Collected communities = {collected_communities}')
             return collected_communities
         
