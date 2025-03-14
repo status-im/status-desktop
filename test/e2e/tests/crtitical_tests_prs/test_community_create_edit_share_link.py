@@ -17,6 +17,7 @@ from gui.main_window import MainWindow
 @pytest.mark.case(703057, 738790, 738751)
 @pytest.mark.critical
 @pytest.mark.smoke
+@pytest.mark.test
 def test_create_edit_community(main_screen: MainWindow):
     enable_community_creation(main_screen)
 
