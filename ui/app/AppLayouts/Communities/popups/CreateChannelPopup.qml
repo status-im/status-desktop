@@ -1,13 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs 1.3
+import QtQuick.Dialogs 1.3 // TODO Remove with FileDialog
 import QtQml 2.15
 import QtQml.Models 2.15
 
 import utils 1.0
 import shared.panels 1.0
-
 
 import StatusQ 0.1
 import StatusQ.Core 0.1
@@ -17,6 +16,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.panels 1.0
@@ -966,10 +966,9 @@ StatusStackModal {
         }
     ]
 
-    MessageDialog {
+    StatusMessageDialog {
         id: creatingError
         title: qsTr("Error creating the channel")
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
+        icon: StatusMessageDialog.StandardIcon.Critical
     }
 }

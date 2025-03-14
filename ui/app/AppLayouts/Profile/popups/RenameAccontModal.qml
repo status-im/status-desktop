@@ -1,12 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
@@ -120,11 +120,10 @@ StatusModal {
                       accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.account.color ||
                       accountNameInput.input.asset.emoji !== popup.account.emoji)
 
-            MessageDialog {
+            StatusMessageDialog {
                 id: changeError
                 title: qsTr("Changing settings failed")
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
+                icon: StatusMessageDialog.StandardIcon.Critical
             }
 
             onClicked : {

@@ -37,7 +37,7 @@ Dialog {
 
     anchors.centerIn: Overlay.overlay
 
-    padding: 16
+    padding: Theme.padding
     // by design
     margins: root.contentItem.Window.height <= 780 ? 28 : 64
     modal: true

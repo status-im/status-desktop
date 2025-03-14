@@ -1,7 +1,7 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import StatusQ.Core.Theme 0.1
 
 Rectangle {
     color: Theme.palette.statusModal.backgroundColor
-    radius: 8
+    radius: Theme.radius
 }
