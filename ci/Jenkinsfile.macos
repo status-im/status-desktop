@@ -65,8 +65,9 @@ pipeline {
     PLATFORM = "macos/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
-    /* WARNING: Qt 5.15.8 installed via Brew. */
-    QTDIR = '/opt/homebrew/opt/qt@5'
+    QT_VERSION="5.15.16_1"
+    BREW_PREFIX = sh(script: "brew --prefix", returnStdout: true).trim()
+    QTDIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
     /* Enforce Go version installed infra-role-golang. */
     PATH = "${env.QTDIR}/bin:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
