@@ -7,7 +7,7 @@ def isPRBuild = utils.isPRBuild()
 pipeline {
   /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label "${getAgentLabels().join(' && ')} && qt-5.15 && go-1.22 && xcode-15.1"
+    label "${getAgentLabels().join(' && ')} && qt-5.15 && go-1.22 && xcode-16.2"
   }
 
   parameters {
@@ -65,8 +65,7 @@ pipeline {
     PLATFORM = "macos/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
-    /* WARNING: Qt 5.15.8 installed via Brew. */
-    QTDIR = '/opt/homebrew/opt/qt@5'
+    QTDIR="${getQTPath()}"
     /* Enforce Go version installed infra-role-golang. */
     PATH = "${env.QTDIR}/bin:${env.HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
     /* Avoid weird bugs caused by stale cache. */
@@ -158,5 +157,13 @@ def getArch() {
     def tokens = Thread.currentThread().getName().split('/')
     for (def arch in ['x86_64', 'aarch64']) {
       if (tokens.contains(arch)) { return arch }
+    }
+}
+
+def getQTPath() {
+    if(getArch()=='x86_64') {
+      return '/usr/local/qt/5.15.2/clang_64'
+    } else {
+      return '/opt/homebrew/opt/qt@5'
     }
 }
