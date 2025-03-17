@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -56,7 +56,7 @@ method load*(self: Module) =
   # Passing on the events for changes in model to abstract model
   self.events.on(SIGNAL_TOKENS_LIST_UPDATED) do(e: Args):
     self.view.modelsUpdated()
-    self.view.setTokenListUpdatedAt(self.controller.getTokenListUpdatedAt())
+    self.view.emitTokenListUpdatedAtSignal()
   self.events.on(SIGNAL_TOKENS_DETAILS_ABOUT_TO_BE_UPDATED) do(e: Args):
     self.view.tokensDetailsAboutToUpdate()
   self.events.on(SIGNAL_TOKENS_DETAILS_UPDATED) do(e: Args):
@@ -73,9 +73,10 @@ method load*(self: Module) =
     self.view.tokenPreferencesUpdated()
   self.events.on(SIGNAL_COMMUNITY_TOKENS_DETAILS_LOADED) do(e: Args):
     self.view.tokensDetailsUpdated()
-
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.view.currencyFormatsUpdated()
+  self.events.on(SIGNAL_AUTO_REFRESH_TOKENS_UPDATED) do(e:Args):
+    self.view.emitAutoRefreshTokensListsChanged()
 
   self.controller.init()
   self.view.load()
@@ -139,7 +140,7 @@ method getTokenMarketValuesDataSource*(self: Module): TokenMarketValuesDataSourc
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )
 
-method filterChanged*(self: Module, addresses: seq[string]) = 
+method filterChanged*(self: Module, addresses: seq[string]) =
   if addresses == self.addresses:
       return
   self.addresses = addresses
@@ -173,3 +174,15 @@ method getDisplayAssetsBelowBalanceThreshold*(self: Module): CurrencyAmount =
 
 method setDisplayAssetsBelowBalanceThreshold*(self: Module, threshold: int64): bool =
   return self.controller.setDisplayAssetsBelowBalanceThreshold(threshold)
+
+method getLastTokensUpdate*(self: Module): int64 =
+  return self.controller.getLastTokensUpdate()
+
+method getAutoRefreshTokensLists*(self: Module): bool =
+  return self.controller.getAutoRefreshTokensLists()
+
+method toggleAutoRefreshTokensLists*(self: Module) =
+  if not self.controller.toggleAutoRefreshTokensLists():
+    error "Failed to toggle autoRefreshTokensLists"
+    return
+  self.view.emitAutoRefreshTokensListsChanged()

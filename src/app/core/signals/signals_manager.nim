@@ -85,7 +85,8 @@ QtObject:
         SignalType.WalletRouterSignTransactions,
         SignalType.WalletRouterTransactionsSent,
         SignalType.WalletTransactionStatusChanged,
-        SignalType.WalletSuggestedRoutes:
+        SignalType.WalletSuggestedRoutes,
+        SignalType.WalletTokensListsUpdated:
           WalletSignal.fromEvent(signalType, jsonSignal)
       of SignalType.NodeReady,
         SignalType.NodeCrashed,

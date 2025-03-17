@@ -106,3 +106,12 @@ method getDisplayAssetsBelowBalanceThreshold*(self: AccessInterface): CurrencyAm
 
 method setDisplayAssetsBelowBalanceThreshold*(self: AccessInterface, threshold: int64): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getLastTokensUpdate*(self: AccessInterface): int64 {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAutoRefreshTokensLists*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleAutoRefreshTokensLists*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

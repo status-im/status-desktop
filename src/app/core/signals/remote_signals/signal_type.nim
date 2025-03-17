@@ -11,6 +11,7 @@ type SignalType* {.pure.} = enum
   WalletRouterTransactionsSent = "wallet.router.transactions-sent"
   WalletTransactionStatusChanged = "wallet.transaction.status-changed"
   WalletSuggestedRoutes = "wallet.suggested.routes"
+  WalletTokensListsUpdated = "wallet.token-lists.updated"
   NodeReady = "node.ready"
   NodeCrashed = "node.crashed"
   NodeStarted = "node.started"

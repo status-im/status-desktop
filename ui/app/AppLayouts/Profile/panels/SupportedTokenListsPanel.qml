@@ -95,15 +95,7 @@ StatusListView {
                 updatedAt: delegate.updatedAt
                 tokensCount: delegate.tokensCount
 
-                title: {
-                    // Similar to Constants.getSupportedTokenSourceImage
-                    if (delegate.name === Constants.supportedTokenSources.uniswap ||
-                            delegate.name === Constants.supportedTokenSources.aave ||
-                            delegate.name === Constants.supportedTokenSources.status)
-                        return delegate.name;
-
-                    return qsTr("%1 Token List").arg(delegate.name)
-                }
+                title: delegate.name
 
                 tokensListModel: SortFilterProxyModel {
                     sourceModel: root.tokensListModel
