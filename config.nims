@@ -15,7 +15,7 @@ if hostOS == "macosx":
   switch("passL", "-lstdc++")
   # DYLD_LIBRARY_PATH doesn't always work when running/packaging so set rpath
   # note: macdeployqt rewrites rpath appropriately when building the .app bundle
-  switch("passL", "-rpath" & " " & getEnv("QT5_LIBDIR"))
+  switch("passL", "-rpath" & " " & getEnv("QT_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSKEYCARDGO_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSQ_INSTALL_PATH") & "/StatusQ")
