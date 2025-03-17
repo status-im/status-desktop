@@ -803,11 +803,8 @@ class ReturningLoginView(QObject):
         self._add_new_user_item = QObject(onboarding_names.loginView_addNewUserItem_AccountMenuItemPanel)
         self._add_existing_user_item = QObject(onboarding_names.loginView_addExistingUserItem_AccountMenuItemPanel)
         self._use_password_instead = QObject(onboarding_names.mainWindowUsePasswordInsteadStatusBaseText)
+        self.password_box = QObject(onboarding_names.loginView_passwordBox)
 
-    @property
-    @allure.step('Get login error message')
-    def login_error_message(self) -> str:
-        return str(self._password_object.object.validationError)
 
     @allure.step('Log in user')
     def log_in(self, account):
