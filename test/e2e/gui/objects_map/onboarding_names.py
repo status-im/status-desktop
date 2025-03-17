@@ -139,7 +139,7 @@ createPasswordView = {"container": mainWindow_CreatePasswordPage, "id": "passVie
 choosePasswordField = {"container": createPasswordView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
 repeatPasswordField = {"container": createPasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 confirmPasswordButton = {"container": mainWindow_CreatePasswordPage, "objectName": "btnConfirmPassword", "type": "StatusButton", "visible": True}
-passwordStrengthIndicator = {"container": createPasswordView, "id": "strengthInditactor", "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
+passwordStrengthIndicator = {"container": createPasswordView, "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
 passwordComponentIndicator = {"container": createPasswordView, "type": "PasswordComponentIndicator", "unnamed": 1, "visible": True}
 
 mainWindow_CreatePasswordView = {"container": statusDesktop_mainWindow, "type": "CreatePasswordView", "unnamed": 1, "visible": True}
@@ -148,7 +148,7 @@ mainWindow_passwordViewNewPasswordConfirm = {"container": mainWindow_CreatePassw
 
 
 mainWindow_Create_password_StatusButton = {"checkable": False, "container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton", "visible": True}
-mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "view", "type": "PasswordView", "unnamed": 1, "visible": True}
+mainWindow_view_PasswordView = {"container": statusDesktop_mainWindow, "id": "passView", "type": "PasswordView", "unnamed": 1, "visible": True}
 mainWindow_RowLayout = {"container": statusDesktop_mainWindow, "type": "PassIncludesIndicator", "unnamed": 1, "visible": True}
 mainWindow_ComponentIndicator = {"container": statusDesktop_mainWindow, "type": "PasswordComponentIndicator", "unnamed": 1, "visible": True}
 mainWindow_strengthInditactor_StatusPasswordStrengthIndicator = {"container": mainWindow_CreatePasswordView, "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
@@ -168,10 +168,11 @@ loginView_passwordInput = {"container": mainWindow_LoginView, "objectName": "log
 loginView_currentUserNameLabel = {"container": mainWindow_LoginView, "objectName": "currentUserNameLabel", "type": "StatusBaseText"}
 loginView_changeAccountBtn = {"container": mainWindow_LoginView, "objectName": "loginChangeAccountButton", "type": "StatusFlatRoundButton"}
 accountsView_accountListPanel = {"container": statusDesktop_mainWindow, "objectName": "LoginView_AccountsRepeater", "type": "Repeater", "visible": True}
-mainWindow_txtPassword_Input = {"container": statusDesktop_mainWindow, "id": "txtPassword", "type": "Input", "unnamed": 1, "visible": True}
+mainWindow_txtPassword_Input = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 loginView_addNewUserItem_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "index": 0, "objectName": "LoginView_addNewUserItem", "type": "AccountMenuItemPanel", "visible": True}
 loginView_addExistingUserItem_AccountMenuItemPanel = {"container": statusDesktop_mainWindow_overlay, "objectName": "LoginView_addExistingUserItem", "type": "AccountMenuItemPanel", "visible": True}
 mainWindowUsePasswordInsteadStatusBaseText = {"container": statusDesktop_mainWindow, "text": "Use password instead", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+loginView_passwordBox = {"container": statusDesktop_mainWindow, "objectName": "passwordBox", "type": "LoginPasswordBox", "visible": True}
 
 # new Login view
 userSelectorButton = {"container": mainWindow_LoginView, "id": "userSelectorButton", "type": "LoginUserSelectorDelegate", "unnamed": 1, "visible": True}

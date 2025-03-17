@@ -35,10 +35,9 @@ def test_login_with_wrong_password(aut: AUT, main_screen: MainWindow, user_accou
             name=user_account.name,
             password=random_password_string()
         ))
-        time.sleep(2)
 
     with step('Verify that user cannot log in and the error appears'):
-        assert login_view.login_error_message == error
+        assert error in str(login_view.password_box.object.validationError)
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702993',
@@ -59,7 +58,7 @@ def test_sign_up_with_wrong_password_length(user_account, error: str, aut: AUT, 
 
     with step('Verify that Continue button is disabled and correct error appears'):
         assert not create_password_view.confirm_password_button.is_visible
-        assert str(create_password_view.get_error_message) == error
+        assert str(create_password_view.create_password_view.object.strengthenText) == error
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/702999',
