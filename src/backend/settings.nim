@@ -92,3 +92,6 @@ proc deleteExemptions*(id: string): RpcResponse[JsonNode] =
 
 proc mnemonicWasShown*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_mnemonicWasShown")
+
+proc lastTokensUpdate*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_lastTokensUpdate")

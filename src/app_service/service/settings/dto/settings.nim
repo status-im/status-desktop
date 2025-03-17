@@ -1,9 +1,11 @@
-import Tables, json, options, tables, strutils
+import Tables, json, options, tables, strutils, times, chronicles
 import ../../stickers/dto/stickers
 
 include ../../../common/json_utils
 from ../../../common/types import StatusType
 from ../../../common/conversion import intToEnum
+
+const DateTimeFormat* = "yyyy-MM-dd'T'HH:mm:sszzz"
 
 # Setting keys:
 const KEY_ADDRESS* = "address"
@@ -52,6 +54,8 @@ const KEY_COLLECTIBLE_GROUP_BY_COMMUNITY* = "collectible-group-by-community?"
 const KEY_COLLECTIBLE_GROUP_BY_COLLECTION* = "collectible-group-by-collection?"
 const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
+const KEY_AUTO_REFRESH_TOKENS* = "auto-refresh-tokens-enabled"
+const KEY_LAST_TOKENS_UPDATE* = "last-tokens-update"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -162,6 +166,8 @@ type
     collectibleGroupByCommunity*: bool
     collectibleGroupByCollection*: bool
     urlUnfurlingMode*: UrlUnfurlingMode
+    autoRefreshTokens*: bool
+    lastTokensUpdate*: int64
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -221,6 +227,15 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COMMUNITY, result.collectibleGroupByCommunity)
   discard jsonObj.getProp(KEY_COLLECTIBLE_GROUP_BY_COLLECTION, result.collectibleGroupByCollection)
   discard jsonObj.getProp(PROFILE_MIGRATION_NEEDED, result.profileMigrationNeeded)
+  discard jsonObj.getProp(KEY_AUTO_REFRESH_TOKENS, result.autoRefreshTokens)
+
+  var lastTokensUpdate: string
+  discard jsonObj.getProp(KEY_LAST_TOKENS_UPDATE, lastTokensUpdate)
+  try:
+    let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+    result.lastTokensUpdate = dateTime.toTime().toUnix()
+  except ValueError:
+    warn "Failed to parse lastTokensUpdate: ", lastTokensUpdate
 
   var urlUnfurlingMode: int
   discard jsonObj.getProp(KEY_URL_UNFURLING_MODE, urlUnfurlingMode)

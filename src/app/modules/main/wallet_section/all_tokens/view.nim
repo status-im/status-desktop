@@ -9,7 +9,6 @@ QtObject:
       marketHistoryIsLoading: bool
       balanceHistoryIsLoading: bool
 
-      tokenListUpdatedAt: int64
       # This contains the different sources for the tokens list
       # ex. uniswap list, status tokens list
       sourcesOfTokensModel: SourcesOfTokensModel
@@ -53,11 +52,10 @@ QtObject:
     read = getMarketHistoryIsLoading
     notify = marketHistoryIsLoadingChanged
 
-  proc tokenListUpdatedAtChanged*(self: View) {.signal.}
   proc getTokenListUpdatedAt(self: View): QVariant {.slot.} =
-    return newQVariant(self.tokenListUpdatedAt)
-  proc setTokenListUpdatedAt*(self: View, updatedAt: int64) =
-    self.tokenListUpdatedAt = updatedAt
+    return newQVariant(self.delegate.getLastTokensUpdate())
+  proc tokenListUpdatedAtChanged(self: View) {.signal.}
+  proc emitTokenListUpdatedAtSignal*(self: View) =
     self.tokenListUpdatedAtChanged()
   QtProperty[QVariant] tokenListUpdatedAt:
     read = getTokenListUpdatedAt
@@ -220,3 +218,16 @@ QtObject:
   QtProperty[QVariant] displayAssetsBelowBalanceThreshold:
     read = getDisplayAssetsBelowBalanceThreshold
     notify = displayAssetsBelowBalanceThresholdChanged
+
+
+  proc autoRefreshTokensListsChanged(self: View) {.signal.}
+  proc emitAutoRefreshTokensListsChanged*(self: View) =
+    self.autoRefreshTokensListsChanged()
+  proc getAutoRefreshTokensLists(self: View): bool {.slot.} =
+    return self.delegate.getAutoRefreshTokensLists()
+  proc toggleAutoRefreshTokensLists(self: View) {.slot.} =
+    self.delegate.toggleAutoRefreshTokensLists()
+    self.autoRefreshTokensListsChanged()
+  QtProperty[bool] autoRefreshTokensLists:
+    read = getAutoRefreshTokensLists
+    notify = autoRefreshTokensListsChanged

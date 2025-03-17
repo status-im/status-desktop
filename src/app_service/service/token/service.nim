@@ -384,6 +384,8 @@ QtObject:
         of "wallet-tick-reload":
           self.rebuildMarketData()
     # update and populate internal list and then emit signal when new custom token detected?
+    self.events.on(SignalType.WalletTokensListsUpdated.event) do(e:Args):
+      self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
 
   proc getCurrency*(self: Service): string =
     return self.settingsService.getCurrency()

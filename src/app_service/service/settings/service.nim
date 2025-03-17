@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils, sequtils, tables
+import NimQml, chronicles, json, strutils, sequtils, tables, times
 
 import app/core/eventemitter
 import app/core/fleets/fleet_configuration
@@ -28,6 +28,7 @@ const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_PROFILE_MIGRATION_NEEDED_UPDATED* = "profileMigrationNeededUpdated"
 const SIGNAL_URL_UNFURLING_MODE_UPDATED* = "urlUnfurlingModeUpdated"
 const SIGNAL_PINNED_MAILSERVER_CHANGED* = "pinnedMailserverChanged"
+const SIGNAL_AUTO_REFRESH_TOKENS_UPDATED* = "autoRefreshTokensUpdated"
 
 logScope:
   topics = "settings-service"
@@ -112,6 +113,9 @@ QtObject:
           if settingsField.name == KEY_URL_UNFURLING_MODE:
             self.settings.urlUnfurlingMode = toUrlUnfurlingMode(settingsField.value.getInt)
             self.events.emit(SIGNAL_URL_UNFURLING_MODE_UPDATED, UrlUnfurlingModeArgs(value: self.settings.urlUnfurlingMode))
+          if settingsField.name == KEY_AUTO_REFRESH_TOKENS:
+            self.settings.autoRefreshTokens = settingsField.value.getBool
+            self.events.emit(SIGNAL_AUTO_REFRESH_TOKENS_UPDATED, SettingsBoolValueArgs(value: self.settings.autoRefreshTokens))
 
     self.initialized = true
 
@@ -966,3 +970,27 @@ QtObject:
     if(not response.error.isNil):
       error "error saving mnemonic was shown setting: ", errDescription = response.error.message
       return
+
+  proc toggleAutoRefreshTokens*(self: Service): bool =
+    let newValue = not self.settings.autoRefreshTokens
+    if self.saveSetting(KEY_AUTO_REFRESH_TOKENS, newValue):
+      self.settings.autoRefreshTokens = newValue
+      return true
+
+  proc getAutoRefreshTokens*(self: Service): bool =
+    return self.settings.autoRefreshTokens
+
+  proc getLastTokensUpdate*(self: Service): int64 =
+    var lastTokensUpdate: string
+    try:
+      let response = status_settings.lastTokensUpdate()
+      if not response.error.isNil:
+        error "fetching lastTokensUpdate: ", errDescription = response.error.message
+        return
+
+      lastTokensUpdate = response.result.getStr
+      let dateTime = parse(lastTokensUpdate, DateTimeFormat)
+      self.settings.lastTokensUpdate = dateTime.toTime().toUnix()
+    except ValueError:
+      error "parse lastTokensUpdate: ", lastTokensUpdate
+    return self.settings.lastTokensUpdate

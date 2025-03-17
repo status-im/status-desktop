@@ -123,6 +123,7 @@ QtObject {
     // Temporarily disabled, refer to https://github.com/status-im/status-desktop/issues/15955 for details.
     readonly property bool showCommunityAssetsInSend: true //root._allTokensModule.showCommunityAssetWhenSendingTokens
     readonly property bool displayAssetsBelowBalance: root._allTokensModule.displayAssetsBelowBalance
+    readonly property bool autoRefreshTokensLists: root._allTokensModule.autoRefreshTokensLists
 
     signal displayAssetsBelowBalanceThresholdChanged()
 
@@ -154,6 +155,10 @@ QtObject {
 
     function toggleDisplayAssetsBelowBalance() {
         root._allTokensModule.toggleDisplayAssetsBelowBalance()
+    }
+
+    function toggleAutoRefreshTokensLists() {
+        root._allTokensModule.toggleAutoRefreshTokensLists()
     }
 
     readonly property Connections allTokensConnections: Connections {

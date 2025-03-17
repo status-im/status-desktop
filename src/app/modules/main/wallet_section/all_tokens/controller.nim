@@ -79,8 +79,8 @@ proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
 proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =
   return self.tokenService.getTokenDetails(symbol)
 
-proc getTokenListUpdatedAt*(self: Controller): int64 =
-  return self.tokenService.getTokenListUpdatedAt()
+proc getLastTokensUpdate*(self: Controller): int64 =
+  return self.settingsService.getLastTokensUpdate()
 
 proc getMarketValuesBySymbol*(self: Controller, symbol: string): TokenMarketValuesItem =
   return self.tokenService.getMarketValuesBySymbol(symbol)
@@ -140,3 +140,9 @@ proc getDisplayAssetsBelowBalanceThreshold*(self: Controller): CurrencyAmount =
 
 proc setDisplayAssetsBelowBalanceThreshold*(self: Controller, threshold: int64): bool =
   return self.settingsService.setDisplayAssetsBelowBalanceThreshold(threshold)
+
+proc getAutoRefreshTokensLists*(self: Controller): bool =
+  return self.settingsService.getAutoRefreshTokens()
+
+proc toggleAutoRefreshTokensLists*(self: Controller): bool =
+  return self.settingsService.toggleAutoRefreshTokens()

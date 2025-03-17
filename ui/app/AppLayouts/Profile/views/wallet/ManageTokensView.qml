@@ -161,12 +161,15 @@ Item {
                     if (rawAmount !== thresholdCurrency.amount) {
                         root.tokensStore.setDisplayAssetsBelowBalanceThreshold(rawAmount)
                     }
+                    if (autoRefreshTokensListsSwitch.checked !== root.tokensStore.autoRefreshTokensLists)
+                        root.tokensStore.toggleAutoRefreshTokensLists()
                     dirty = false
                 }
 
                 function resetChanges() {
                     showCommunityAssetsSwitch.checked = root.tokensStore.showCommunityAssetsInSend
                     displayThresholdSwitch.checked = root.tokensStore.displayAssetsBelowBalance
+                    autoRefreshTokensListsSwitch.checked = root.tokensStore.autoRefreshTokensLists
                     currencyAmount.value = getDisplayThresholdAmount()
                     dirty = false
                 }
@@ -245,6 +248,30 @@ Item {
                 StatusDialogDivider {
                     Layout.fillWidth: true
                 }
+                StatusListItem {
+                    Layout.fillWidth: true
+                    title: qsTr("Auto-refresh tokens lists")
+
+                    components: [
+                        StatusSwitch {
+                            id: autoRefreshTokensListsSwitch
+                            checked: root.tokensStore.autoRefreshTokensLists
+                            onCheckedChanged: {
+                                if (!advancedSettings.dirty && checked === root.tokensStore.autoRefreshTokensLists) {
+                                    // Skipping initial value
+                                    return
+                                }
+                                advancedSettings.dirty = true
+                            }
+                        }
+                    ]
+                    onClicked: {
+                        autoRefreshTokensListsSwitch.checked = !autoRefreshTokensListsSwitch.checked
+                    }
+                }
+                StatusDialogDivider {
+                    Layout.fillWidth: true
+                }
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 64
@@ -257,7 +284,7 @@ Item {
                     }
                     StatusBaseText {
                         Layout.alignment: Qt.AlignRight
-                        text: qsTr("Last fetched %1").arg(LocaleUtils.getTimeDifference(new Date(root.tokenListUpdatedAt * 1000), new Date()))
+                        text: qsTr("Last check %1").arg(LocaleUtils.getTimeDifference(new Date(root.tokenListUpdatedAt * 1000), new Date()))
                         font.pixelSize: Theme.additionalTextSize
                         color: Theme.palette.darkGrey
                     }
