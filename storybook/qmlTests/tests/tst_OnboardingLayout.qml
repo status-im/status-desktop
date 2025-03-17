@@ -959,6 +959,8 @@ Item {
               { tag: "correct password+biometrics", keyUid: "uid_1", password: mockDriver.dummyNewPassword, biometrics: true },
               { tag: "wrong password", keyUid: "uid_1", password: "foobar", biometrics: false },
               { tag: "wrong password+biometrics", keyUid: "uid_1", password: "foobar", biometrics: true },
+              { tag: "non existing user", keyUid: "uid_xxx", password: "foobar", biometrics: false },
+              { tag: "empty user", keyUid: "", password: "foobar", biometrics: false },
               // keycard based profile ("uid_4")
               { tag: "correct PIN", keyUid: "uid_4", pin: "111111", biometrics: false },
               { tag: "correct PIN+biometrics", keyUid: "uid_4", pin: "111111", biometrics: true },
@@ -978,6 +980,10 @@ Item {
             const userSelector = findChild(page, "loginUserSelector")
             verify(!!userSelector)
             userSelector.setSelection(data.keyUid) // select the right profile, keycard or regular one (password)
+
+            expectFail("non existing user")
+            expectFail("empty user")
+
             tryCompare(userSelector, "selectedProfileKeyId", data.keyUid)
             tryCompare(userSelector, "keycardCreatedAccount", !!data.pin && data.pin !== "")
 
