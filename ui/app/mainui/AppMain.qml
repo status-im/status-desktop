@@ -806,7 +806,7 @@ Item {
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
-            if (!appMainLocalSettings.introduceYourselfPopupSeen && featureFlagsStore.onboardingV2Enabled)
+            if (!appMainLocalSettings.introduceYourselfPopupSeen && featureFlagsStore.onboardingV2Enabled && allContacsAdaptor.selfDisplayName === "")
                 introduceYourselfPopupComponent.createObject(appMain).open()
         }
 
