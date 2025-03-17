@@ -270,5 +270,7 @@
         <file>StatusQ/Components/+qt6/StatusVideo.qml</file>
         <file>StatusQ/Popups/Dialog/+qt6/StatusFolderDialog.qml</file>
         <file>StatusQ/Popups/Dialog/StatusFolderDialog.qml</file>
+        <file>StatusQ/Popups/Dialog/+qt6/StatusFileDialog.qml</file>
+        <file>StatusQ/Popups/Dialog/StatusFileDialog.qml</file>
     </qresource>
 </RCC>
