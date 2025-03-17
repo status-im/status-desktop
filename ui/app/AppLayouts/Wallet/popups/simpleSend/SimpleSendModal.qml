@@ -315,9 +315,13 @@ StatusDialog {
             if (selectedCollectibleEntryValid) {
                 let collectibleBalance =  SQUtils.ModelUtils.getByKey(selectedCollectibleEntry.item.ownership, "accountAddress", root.selectedAccountAddress, "balance")
                 return !!collectibleBalance ? collectibleBalance: 0
-            } else if (selectedAssetEntryValid) {
-                const maxCryptoBalance = !!d.selectedAssetEntry.item.currentBalance ?
-                                           d.selectedAssetEntry.item.currentBalance : 0
+            } else if (!!d.selectedAssetEntry.item && d.selectedAssetEntryValid) {
+                let maxCryptoBalance = 0.0
+                let balanceOnChain = SQUtils.ModelUtils.getByKey(d.selectedAssetEntry.item.balances, "chainId", root.selectedChainId)
+                if (!!balanceOnChain) {
+                    let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balanceOnChain.balance)
+                    maxCryptoBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, d.selectedAssetEntry.item.decimals)
+                }
                 return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
             }
             return 0
