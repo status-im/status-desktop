@@ -133,6 +133,7 @@ Control {
             }
             StatusMenuSeparator {
                 Layout.fillWidth: true
+                visible: proxyModel.count > 0
             }
             LoginUserSelectorDelegate {
                 Layout.fillWidth: true

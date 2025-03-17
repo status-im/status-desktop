@@ -31,12 +31,16 @@ SplitView {
         property int loginResult: Onboarding.ProgressState.Idle // NB abusing the tristate enum here a bit :)
     }
 
+    LoginAccountsModel {
+        id: accModel
+    }
+
     LoginScreen {
         id: loginScreen
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        loginAccountsModel: LoginAccountsModel {}
+        loginAccountsModel: accModel
 
         keycardState: driver.keycardState
         keycardUID: driver.keycardUID

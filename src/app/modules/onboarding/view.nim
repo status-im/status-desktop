@@ -140,15 +140,12 @@ QtObject:
   proc getKeycardEvent*(self: View): KeycardEventDto =
     return self.keycardEvent
 
-  proc loginAccountsModelChanged*(self: View) {.signal.}
   proc getLoginAccountsModel(self: View): QVariant {.slot.} =
     return self.loginAccountsModelVariant
   proc setLoginAccountsModelItems*(self: View, accounts: seq[login_acc_item.Item]) =
     self.loginAccountsModel.setItems(accounts)
-    self.loginAccountsModelChanged()
   QtProperty[QVariant] loginAccountsModel:
     read = getLoginAccountsModel
-    notify = loginAccountsModelChanged
 
   proc convertKeycardAccountStateChanged*(self: View) {.signal.}
   proc getConvertKeycardAccountState(self: View): int {.slot.} =

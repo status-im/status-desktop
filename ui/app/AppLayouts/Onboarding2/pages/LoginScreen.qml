@@ -92,6 +92,17 @@ OnboardingPage {
         readonly property bool currentProfileIsKeycard: loginUserSelector.keycardCreatedAccount && root.isKeycardEnabled
         readonly property bool isWrongKeycard: !!root.keycardUID && loginUserSelector.selectedProfileKeyId !== root.keycardUID
 
+        readonly property int loginModelCount: root.loginAccountsModel.ModelCount.count
+        onLoginModelCountChanged: setSelectedLoginUser()
+
+        function setSelectedLoginUser() {
+            if (loginModelCount > 0) {
+                loginUserSelector.setSelection(d.settings.lastKeyUid)
+                if (!d.currentProfileIsKeycard)
+                    passwordBox.forceActiveFocus()
+            }
+        }
+
         readonly property Settings settings: Settings {
             category: "Login"
             property string lastKeyUid
@@ -106,14 +117,14 @@ OnboardingPage {
             if (password.length === 0)
                 return
 
-            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Password, { password })
+            root.loginRequested(root.selectedProfileKeyId, Onboarding.LoginMethod.Password, { password })
         }
 
         function doKeycardLogin(pin: string) {
             if (pin.length === 0)
                 return
 
-            root.loginRequested(d.settings.lastKeyUid, Onboarding.LoginMethod.Keycard, { pin })
+            root.loginRequested(root.selectedProfileKeyId, Onboarding.LoginMethod.Keycard, { pin })
         }
     }
 
@@ -128,9 +139,7 @@ OnboardingPage {
     }
 
     Component.onCompleted: {
-        loginUserSelector.setSelection(d.settings.lastKeyUid)
-        if (!d.currentProfileIsKeycard)
-            passwordBox.forceActiveFocus()
+        d.setSelectedLoginUser()
     }
 
     // login errors reporting

@@ -82,7 +82,7 @@ SplitView {
             property int restoreKeysExportState: Onboarding.ProgressState.Idle
             property int convertKeycardAccountState: Onboarding.ProgressState.Idle
             property int syncState: Onboarding.ProgressState.Idle
-            property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
+            readonly property var loginAccountsModel: ctrlLoginScreen.checked ? loginAccountsModel : emptyModel
 
             property int keycardRemainingPinAttempts: Constants.onboarding.defaultPinAttempts
             property int keycardRemainingPukAttempts: Constants.onboarding.defaultPukAttempts
@@ -175,6 +175,7 @@ SplitView {
 
             // (test) error handler
             onAccountLoginError: function (error, wrongPassword) {
+                logs.logEvent("OnboardingStore.accountLoginError", ["error", "wrongPassword"], arguments)
                 ctrlLoginResult.result = "<font color='red'>⛔</font>"
                 onboarding.restartFlow()
             }
