@@ -794,6 +794,7 @@ QtObject {
                 }
 
                 function resetRouterValues() {
+                    root.transactionStoreNew.stopUpdatesForSuggestedRoute()
                     handler.uuid = ""
                     handler.fetchedPathModel = null
                     handler.indexOfTxPathUnderReview = -1
