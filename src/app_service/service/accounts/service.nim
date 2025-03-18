@@ -201,7 +201,6 @@ QtObject:
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: buildWalletSecrets(),
         apiConfig: defaultApiConfig(),
-        statusProxyEnabled: true
       )
 
   proc buildCreateAccountRequest(password: string, displayName: string, imagePath: string, imageCropRectangle: ImageCropRectangle): CreateAccountRequest =
@@ -429,7 +428,6 @@ QtObject:
       walletSecretsConfig: buildWalletSecrets(),
       bandwidthStatsEnabled: true,
       apiConfig: defaultApiConfig(),
-      statusProxyEnabled: true # TODO: read from settings
     )
 
     if main_constants.runtimeLogLevelSet():
