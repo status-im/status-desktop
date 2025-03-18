@@ -6,6 +6,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
 import utils 1.0
 
@@ -39,20 +40,7 @@ StatusListItem {
         readonly property string textColor: {
             if (!root.marketDetailsAvailable)
                 return Theme.palette.successColor1
-
-            if (root.marketChangePct24hour === 0)
-                return Theme.palette.baseColor1
-
-            return root.marketChangePct24hour < 0
-                    ? Theme.palette.dangerColor1
-                    : Theme.palette.successColor1
-        }
-
-        readonly property string upDownTriangle: {
-            if (root.marketChangePct24hour === 0)
-                return ""
-
-            return root.marketChangePct24hour < 0 ? "▾" : "▴"
+            return WalletUtils.getChangePct24HourColor(root.marketChangePct24hour)
         }
     }
 
@@ -115,7 +103,8 @@ StatusListItem {
                     loading: root.marketDetailsLoading
 
                     text: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
-                        .arg(d.upDownTriangle).arg(LocaleUtils.numberToLocaleString(root.marketChangePct24hour, 2))
+                    .arg(WalletUtils.getUpDownTriangle(root.marketChangePct24hour))
+                    .arg(LocaleUtils.numberToLocaleString(root.marketChangePct24hour, 2))
                 }
                 Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
