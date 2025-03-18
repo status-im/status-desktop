@@ -33,6 +33,9 @@ elif hostOS == "windows":
   --tlsEmulation:off
   --debugger:native # passes "-g" to the C compiler
   switch("passL", "-Wl,-as-needed")
+  # Avoid some rare stack corruption while using exceptions with a SEH-enabled
+  # toolchain: https://github.com/nim-lang/Nim/pull/19197
+  switch("define", "nimRawSetjmp")
 elif hostOS == "linux":
   echo "Building for Linux"
   --dynlibOverrideAll # don't use dlopen()
