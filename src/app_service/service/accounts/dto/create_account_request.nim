@@ -45,7 +45,6 @@ type
     keycardInstanceUID*: string
     keycardPairingDataFile*: string
     apiConfig*: APIConfig
-    statusProxyEnabled*: bool
 
 proc toJson*(self: CreateAccountRequest): JsonNode =
   result = %*{
@@ -68,7 +67,6 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     "apiConfig": self.apiConfig,
     "wakuV2EnableStoreConfirmationForMessagesSent": self.wakuV2EnableStoreConfirmationForMessagesSent,
     "wakuV2EnableMissingMessageVerification": self.wakuV2EnableMissingMessageVerification,
-    "statusProxyEnabled": self.statusProxyEnabled,
   }
 
   if self.logLevel.isSome():
