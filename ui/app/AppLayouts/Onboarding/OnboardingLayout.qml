@@ -1,6 +1,5 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
 import StatusQ.Popups.Dialog 0.1
