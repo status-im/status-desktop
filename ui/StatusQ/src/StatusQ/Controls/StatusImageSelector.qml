@@ -1,10 +1,10 @@
 import QtQuick 2.3
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.14
-import QtQuick.Dialogs 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups.Dialog 0.1
 
 /*!
    \qmltype StatusImageSelector
@@ -225,11 +225,11 @@ Control {
         }
     }
 
-    FileDialog {
+    StatusFileDialog {
         id: fileDialog
 
-        folder: shortcuts.pictures
+        currentFolder: picturesShortcut
         nameFilters: [ qsTr("Supported image formats (%1)").arg(d.getExtensionsFilterText())]
-        onAccepted: d.loadFile(fileUrls)
+        onAccepted: d.loadFile(selectedFiles)
     }
 }
