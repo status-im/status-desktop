@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
 
 import utils 1.0
 
@@ -22,6 +21,7 @@ import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
@@ -993,15 +993,15 @@ Rectangle {
     Component {
         id: imageDialogComponent
 
-        FileDialog {
+        StatusFileDialog {
             title: qsTr("Please choose an image")
-            folder: shortcuts.pictures
+            currentFolder: picturesShortcut
             selectMultiple: true
             nameFilters: [
                 qsTr("Image files (%1)").arg(UrlUtils.validImageNameFilters)
             ]
             onAccepted: {
-                validateImagesAndShowImageArea(fileUrls)
+                validateImagesAndShowImageArea(selectedFiles)
                 messageInputField.forceActiveFocus()
                 destroy()
             }

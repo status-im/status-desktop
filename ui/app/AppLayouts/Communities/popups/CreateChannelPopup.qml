@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-import QtQuick.Dialogs 1.3 // TODO Remove with FileDialog
 import QtQml 2.15
 import QtQml.Models 2.15
 
@@ -517,16 +516,19 @@ StatusStackModal {
                     }
                 }
             }
-            FileDialog {
+            StatusFileDialog {
                 id: fileDialog
                 title: qsTr("Choose files to import")
                 selectMultiple: true
                 nameFilters: [qsTr("JSON files (%1)").arg("*.json *.JSON")]
                 onAccepted: {
-                    if (fileDialog.fileUrls.length > 0) {
+                    if(fileDialog.selectedFiles.length === 0) {
+                        return
+                    }
+                    else if (fileDialog.selectedFiles.length > 0) {
                         const files = []
-                        for (let i = 0; i < fileDialog.fileUrls.length; i++)
-                            files.push(decodeURI(fileDialog.fileUrls[i].toString()))
+                        for (let i = 0; i < fileDialog.selectedFiles.length; i++)
+                            files.push(decodeURI(fileDialog.selectedFiles[i].toString()))
                         root.communitiesStore.setFileListItems(files)
                     }
                 }

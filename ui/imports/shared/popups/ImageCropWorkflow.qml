@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
 
 import StatusQ 0.1
 import StatusQ.Components 0.1
@@ -37,15 +36,15 @@ Item {
         imageCropperModal.open()
     }
 
-    FileDialog {
+    StatusFileDialog {
         id: fileDialog
 
         title: root.imageFileDialogTitle
-        folder: root.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : shortcuts.pictures
+        currentFolder: root.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : fileDialog.picturesShortcut
         nameFilters: [qsTr("Supported image formats (%1)").arg(UrlUtils.validImageNameFilters)]
         onAccepted: {
-            if (fileDialog.fileUrls.length > 0) {
-                const url = fileDialog.fileUrls[0]
+            if (fileDialog.selectedFiles.length > 0) {
+                const url = fileDialog.selectedFiles[0]
                 if (Utils.isValidDragNDropImage(url))
                     cropImage(url)
                 else
