@@ -2104,7 +2104,12 @@ Item {
                         asynchronous: true
                         sourceComponent: TradingCenterLayout {
                             objectName: "tradingCenterLayout"
-                            onLaunchSwap: d.launchSwap()
+                            onRequestLaunchSwap: d.launchSwap()
+                            tokensModel: appMain.tokensStore.plainTokensBySymbolModel
+                            loading: false
+                            formatCurrencyAmount: function(amount) {
+                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency)
+                            }
                         }
                         onLoaded: {
                             item.resetView()

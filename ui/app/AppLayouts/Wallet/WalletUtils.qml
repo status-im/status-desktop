@@ -363,4 +363,18 @@ QtObject {
             return Theme.png("wallet/clock")
         }
     }
+
+    function getChangePct24HourColor(changePct24hour) {
+        if (changePct24hour === 0)
+            return Theme.palette.baseColor1
+        return changePct24hour < 0
+                ? Theme.palette.dangerColor1
+                : Theme.palette.successColor1
+    }
+
+    function getUpDownTriangle(changePct24hour) {
+        if (changePct24hour === 0)
+            return ""
+        return changePct24hour < 0 ? "▾" : "▴"
+    }
 }
