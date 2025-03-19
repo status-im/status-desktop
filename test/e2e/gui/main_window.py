@@ -122,7 +122,6 @@ class LeftPanel(QObject):
                 pass  # Retry if attempts remain
         raise Exception(f"Failed to open Communities Portal after {attempts} attempts")
 
-
     def _get_community(self, name: str):
         community_names = []
         for obj in driver.findAllObjects(self._community_template_button.real_name):
@@ -165,6 +164,7 @@ class MainWindow(Window):
         profile_view = welcome_screen.open_create_your_profile_view()
         create_password_view = profile_view.open_password_view()
         splash_screen = create_password_view.create_password(user_account.password)
+        splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(timeout_msec=60000)
         signing_phrase = SigningPhrasePopup()
         signing_phrase.confirm_phrase()
@@ -179,6 +179,7 @@ class MainWindow(Window):
     @allure.step('Log in returning user')
     def returning_log_in(self, user_account: UserAccount):
         splash_screen = ReturningLoginView().log_in(user_account)
+        splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(timeout_msec=60000)
         if SigningPhrasePopup().ok_got_it_button.is_visible:
             SigningPhrasePopup().confirm_phrase()

@@ -805,7 +805,6 @@ class ReturningLoginView(QObject):
         self._use_password_instead = QObject(onboarding_names.mainWindowUsePasswordInsteadStatusBaseText)
         self.password_box = QObject(onboarding_names.loginView_passwordBox)
 
-
     @allure.step('Log in user')
     def log_in(self, account):
         if str(self.user_selector_button.object.label) != account.name:

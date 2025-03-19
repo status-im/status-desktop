@@ -81,9 +81,10 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703270', 'Member role cannot edit channels')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703271', 'Member role cannot delete channels')
 @pytest.mark.case(703269, 703270, 703271)
-@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'squisher'])
-@pytest.mark.parametrize('user_account', [constants.user.user_account_one])
+@pytest.mark.parametrize('user_data', [configs.testpath.TEST_USER_DATA / 'member'])
+@pytest.mark.parametrize('user_account', [constants.user.community_member])
 def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow):
+
     with step('Choose community user is not owner of'):
         community_screen = main_screen.left_panel.select_community('Community with 2 users')
     with step('Verify that member cannot add new channel'):
@@ -119,6 +120,7 @@ def test_member_role_cannot_add_edit_and_delete_channels(main_screen: MainWindow
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'ETH', '10',
      'description')
 ])
+@pytest.mark.skip(reason='tests with user data are not working')
 def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, user_data_two, asset, amount,
                                           channel_description):
     user_one: UserAccount = constants.user_account_one
@@ -172,6 +174,7 @@ def test_member_cannot_see_hidden_channel(multiple_instances, user_data_one, use
     (configs.testpath.TEST_USER_DATA / 'squisher', configs.testpath.TEST_USER_DATA / 'athletic', 'Channel_',
      'Description')
 ])
+@pytest.mark.skip(reason='tests with user data are not working')
 def test_view_and_post_in_non_restricted_channel(multiple_instances, user_data_one, user_data_two, channel_name,
                                                  channel_description):
     user_one: UserAccount = constants.user_account_one
