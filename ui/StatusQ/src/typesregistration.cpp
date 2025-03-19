@@ -12,6 +12,7 @@
 #include "StatusQ/functionaggregator.h"
 #include "StatusQ/genericvalidator.h"
 #include "StatusQ/groupingmodel.h"
+#include "StatusQ/imageutils.h"
 #include "StatusQ/keychain.h"
 #include "StatusQ/leftjoinmodel.h"
 #include "StatusQ/modelcount.h"
@@ -46,7 +47,7 @@ void registerStatusQTypes() {
 
     qmlRegisterUncreatableType<QValidator>(
                 "StatusQ", 0, 1,
-                "Validator", "This is abstract type, cannot be created directly.");
+                "Validator", QStringLiteral("This is abstract type, cannot be created directly."));
     qmlRegisterType<GenericValidator>("StatusQ", 0, 1, "GenericValidator");
 
     qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
@@ -81,6 +82,9 @@ void registerStatusQTypes() {
     qmlRegisterSingletonType<AudioUtils>("StatusQ", 1, 0, "AudioUtils", [](QQmlEngine* engine, QJSEngine*) {
         return new AudioUtils(engine);
     });
+    qmlRegisterSingletonType<ImageUtils>("StatusQ", 0, 1, "ImageUtils", [](QQmlEngine*, QJSEngine*) {
+        return new ImageUtils;
+    });
 
     qmlRegisterType<ModelEntry>("StatusQ", 0, 1, "ModelEntry");
     qmlRegisterType<SnapshotObject>("StatusQ", 0, 1, "SnapshotObject");
@@ -88,7 +92,7 @@ void registerStatusQTypes() {
     qRegisterMetaType<Keychain::Status>();
 
     qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
-                                           "ModelCount", "This is attached type, cannot be created directly.");
+                                           "ModelCount", QStringLiteral("This is attached type, cannot be created directly."));
 
     // Workaround for https://bugreports.qt.io/browse/QTBUG-86428
     qmlRegisterAnonymousType<QAbstractItemModel>("StatusQ", 1);

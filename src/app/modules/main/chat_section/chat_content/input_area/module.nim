@@ -66,8 +66,8 @@ method getModuleAsVariant*(self: Module): QVariant =
 proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
-method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) =
-  self.controller.sendImages(imagePathsAndDataJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
+method sendImages*(self: Module, imagePathsJson: string, msg: string, replyTo: string, linkPreviews: seq[LinkPreview], paymentRequests: seq[PaymentRequest]) =
+  self.controller.sendImages(imagePathsJson, msg, replyTo, singletonInstance.userProfile.getPreferredName(), linkPreviews, paymentRequests)
 
 method sendChatMessage*(
     self: Module,

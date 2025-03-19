@@ -123,6 +123,7 @@ add_library(StatusQ ${LIB_TYPE}
         include/StatusQ/functionaggregator.h
         include/StatusQ/genericvalidator.h
         include/StatusQ/groupingmodel.h
+        include/StatusQ/imageutils.h
         include/StatusQ/keychain.h
         include/StatusQ/leftjoinmodel.h
         include/StatusQ/modelcount.h
@@ -161,6 +162,7 @@ add_library(StatusQ ${LIB_TYPE}
         src/functionaggregator.cpp
         src/genericvalidator.cpp
         src/groupingmodel.cpp
+        src/imageutils.cpp
         src/keychain.cpp
         src/leftjoinmodel.cpp
         src/modelcount.cpp
