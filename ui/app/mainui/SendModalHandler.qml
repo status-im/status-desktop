@@ -309,15 +309,10 @@ QtObject {
     function sendToRecipient(recipientAddress) {
         let params = {}
         if (root.simpleSendEnabled) {
-            const isENSName = Utils.isValidEns(recipientAddress)
             params = {
                 openReason: "send to recipient"
             }
-            if (isENSName) {
-                params.ensName = recipientAddress
-            } else {
-                params.selectedRecipientAddress = recipientAddress
-            }
+            params.selectedRecipientAddress = recipientAddress
         } else {
             params = {
                 preSelectedRecipient: recipientAddress
@@ -462,7 +457,7 @@ QtObject {
                     selectedRawAmount = root.simpleSendParams.selectedRawAmount
                 }
                 if(isValidParameter(root.simpleSendParams.selectedRecipientAddress)) {
-                    selectedRecipientAddress = root.simpleSendParams.selectedRecipientAddress
+                    selectedAddress = root.simpleSendParams.selectedRecipientAddress
                 }
                 if(isValidParameter(root.simpleSendParams.publicKey)) {
                     publicKey = root.simpleSendParams.publicKey
@@ -484,8 +479,6 @@ QtObject {
                 }
 
                 handler.sendMetricsEvent("popup opened", metricsData)
-
-                afterOpened()
             }
 
             function isValidParameter(param) {

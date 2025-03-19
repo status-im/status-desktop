@@ -546,7 +546,7 @@ Item {
             controlUnderTest.selectedChainId = 10
             controlUnderTest.selectedTokenKey = "DAI"
             controlUnderTest.selectedRawAmount = "10000000" // 10 DAI
-            controlUnderTest.selectedRecipientAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
+            controlUnderTest.selectedAddress = "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8881"
 
             const selectedAccount = SQUtils.ModelUtils.getByKey(controlUnderTest.accountsModel, "address", controlUnderTest.selectedAccountAddress)
             const selectedToken = SQUtils.ModelUtils.getByKey(controlUnderTest.assetsModel, "tokensKey", controlUnderTest.selectedTokenKey)
@@ -686,6 +686,23 @@ Item {
             verify(!sendModalFooter.loading)
             verify(sendModalFooter.error)
             compare(sendModalFooter.errorTags.count, 2)
+        }
+
+        function test_preset_ens() {
+            verify(!!controlUnderTest)
+            controlUnderTest.open()
+            verify(controlUnderTest.opened)
+
+            waitForRendering(controlUnderTest.contentItem)
+
+            let calledFunction = false
+            controlUnderTest.fnResolveENS = function(ensName, uuid) {
+                compare(ensName, "123.eth")
+                calledFunction = true
+            }
+
+            controlUnderTest.selectedAddress = "123.eth"
+            tryVerify(function() { return calledFunction })
         }
 
         function test_scrolling_state() {
