@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import QtQuick.Dialogs 1.3
 import QtQml.Models 2.15
 import QtQml 2.15
 
@@ -864,15 +863,15 @@ QtObject {
 
         Component {
             id: downloadImageDialogComponent
-            FileDialog {
+
+            StatusFolderDialog {
                 property string imageSource
+
                 title: qsTr("Please choose a directory")
-                selectFolder: true
-                selectExisting: true
-                selectMultiple: false
                 modality: Qt.NonModal
+
                 onAccepted: {
-                    SystemUtils.downloadImageByUrl(imageSource, fileUrl)
+                    SystemUtils.downloadImageByUrl(imageSource, selectedFolder)
                     destroy()
                 }
                 onRejected: {
