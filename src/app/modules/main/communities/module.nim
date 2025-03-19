@@ -20,7 +20,6 @@ import app/core/eventemitter
 import app_service/common/types
 import app_service/common/utils as common_utils
 import app_service/service/community/service as community_service
-import app_service/service/contacts/service as contacts_service
 import app_service/service/chat/service as chat_service
 import app_service/service/network/service as networks_service
 import app_service/service/transaction/service as transaction_service
@@ -103,7 +102,6 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
-    contactsService: contacts_service.Service,
     communityTokensService: community_tokens_service.Service,
     networksService: networks_service.Service,
     transactionService: transaction_service.Service,
@@ -120,7 +118,6 @@ proc newModule*(
     result,
     events,
     communityService,
-    contactsService,
     communityTokensService,
     networksService,
     tokensService,
@@ -182,45 +179,22 @@ method curatedCommunitiesLoadingFailed*(self: Module) =
   self.curatedCommunitiesLoaded = true
   self.view.setCuratedCommunitiesLoading(false)
 
-proc createMemberItem(self: Module, memberId, requestId: string, status: MembershipRequestState): MemberItem =
-  let contactDetails = self.controller.getContactDetails(memberId)
-  result = initMemberItem(
-    pubKey = memberId,
-    displayName = contactDetails.dto.displayName,
-    ensName = contactDetails.dto.name,
-    isEnsVerified = contactDetails.dto.ensVerified,
-    localNickname = contactDetails.dto.localNickname,
-    alias = contactDetails.dto.alias,
-    icon = contactDetails.icon,
-    colorId = contactDetails.colorId,
-    colorHash = contactDetails.colorHash,
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
-    isContact = contactDetails.dto.isContact,
-    isCurrentUser = contactDetails.isCurrentUser,
-    trustStatus = contactDetails.dto.trustStatus,
-    requestToJoinId = requestId,
-    membershipRequestState = status,
-  )
-
 method getCommunityItem(self: Module, community: CommunityDto): SectionItem =
+  # No need to set actual member items, since the community model only shows numbers
+  # Creating all the real items is very slow on app login
   var memberItems: seq[MemberItem] = @[]
   for member in community.members:
-    var communityMemberState = MembershipRequestState.Accepted
-    if community.pendingAndBannedMembers.hasKey(member.id):
-      let memberState = community.pendingAndBannedMembers[member.id].toMembershipRequestState()
-      if memberState == MembershipRequestState.BannedPending or memberState == MembershipRequestState.KickedPending:
-        communityMemberState = memberState
-    memberItems.add(self.createMemberItem(member.id, "", communityMemberState))
+    memberItems.add(MemberItem())
 
   var bannedMembers: seq[MemberItem] = @[]
   for memberId, communityMemberState in community.pendingAndBannedMembers:
-    bannedMembers.add(self.createMemberItem(memberId, "", toMembershipRequestState(communityMemberState)))
+    bannedMembers.add(MemberItem())
 
   let pendingMembers = community.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
+      result = MemberItem()
     )
   let declinedMemberItems = community.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-      result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))
+      result = MemberItem()
     )
 
   memberItems = concat(memberItems, pendingMembers, declinedMemberItems, bannedMembers)

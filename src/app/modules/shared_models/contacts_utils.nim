@@ -5,4 +5,8 @@ proc resolvePreferredDisplayName*(localNickName: string, ensName: string, displa
       return ensName
     if displayName != "":
       return displayName
-    return alias
+    if alias != "":
+      return alias
+    # This makes sure that people with no name are sorted last
+    # This fake name is never shown to the user
+    return "zzz"
