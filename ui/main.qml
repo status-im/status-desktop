@@ -400,6 +400,7 @@ StatusWindow {
     Component {
         id: splashScreenV2
         DidYouKnowSplashScreen {
+            objectName: "splashScreenV2"
             readonly property bool backAvailableHint: false
             readonly property string pageClassName: "Splash"
             property bool runningProgressAnimation
