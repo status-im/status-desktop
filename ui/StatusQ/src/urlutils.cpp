@@ -44,3 +44,21 @@ qint64 UrlUtils::getFileSize(const QUrl& url)
 
     return 0;
 }
+
+QString UrlUtils::convertUrlToLocalPath(const QString &url) const {
+    const auto localFileOrUrl = QUrl::fromUserInput(url); // accept both "file:/foo/bar" and "/foo/bar"
+    if (localFileOrUrl.isLocalFile()) {
+        return localFileOrUrl.toLocalFile();
+    }
+    return {};
+}
+
+QStringList UrlUtils::convertUrlsToLocalPaths(const QStringList &urls) const {
+    QStringList result;
+    for (const auto& url: urls) {
+        const auto localPath = convertUrlToLocalPath(url);
+        if (!localPath.isEmpty())
+            result << localPath;
+    }
+    return result;
+}

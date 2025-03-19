@@ -6,6 +6,7 @@ import utils 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 
+import StatusQ 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -241,10 +242,7 @@ StatusStackModal {
                 nameFilters: [qsTr("JSON files (%1)").arg("*.json")]
                 onAccepted: {
                     if (fileDialog.selectedFiles.length > 0) {
-                        let files = []
-                        for (let i = 0; i < fileDialog.selectedFiles.length; i++)
-                            files.push(decodeURI(fileDialog.selectedFiles[i].toString()))
-                        root.store.setFileListItems(files)
+                        root.store.setFileListItems(UrlUtils.convertUrlsToLocalPaths(fileDialog.selectedFiles))
                     }
                 }
             }

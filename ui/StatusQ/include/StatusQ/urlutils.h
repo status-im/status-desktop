@@ -16,6 +16,9 @@ public:
     Q_INVOKABLE bool isValidImageUrl(const QUrl &url) const;
     Q_INVOKABLE static qint64 getFileSize(const QUrl &url);
 
+    Q_INVOKABLE QString convertUrlToLocalPath(const QString& url) const;
+    Q_INVOKABLE QStringList convertUrlsToLocalPaths(const QStringList& urls) const;
+
 private:
     QMimeDatabase m_mimeDb;
 

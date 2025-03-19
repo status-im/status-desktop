@@ -52,7 +52,7 @@ void registerStatusQTypes() {
 
     qmlRegisterUncreatableType<QValidator>(
                 "StatusQ", 0, 1,
-                "Validator", "This is abstract type, cannot be created directly.");
+                "Validator", QStringLiteral("This is abstract type, cannot be created directly."));
     qmlRegisterType<GenericValidator>("StatusQ", 0, 1, "GenericValidator");
 
     qmlRegisterType<ManageTokensController>("StatusQ.Models", 0, 1, "ManageTokensController");
@@ -94,7 +94,7 @@ void registerStatusQTypes() {
     qRegisterMetaType<Keychain::Status>();
 
     qmlRegisterUncreatableType<ModelCount>("StatusQ", 0, 1,
-                                           "ModelCount", "This is attached type, cannot be created directly.");
+                                           "ModelCount", QStringLiteral("This is attached type, cannot be created directly."));
 
     // Workaround for https://bugreports.qt.io/browse/QTBUG-86428
     qmlRegisterAnonymousType<QAbstractItemModel>("StatusQ", 1);

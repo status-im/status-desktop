@@ -125,7 +125,7 @@ proc resetLinkPreviews(self: Controller) =
   self.delegate.setAskToEnableLinkPreview(false)
 
 proc sendImages*(self: Controller,
-                 imagePathsAndDataJson: string,
+                 imagePathsJson: string,
                  msg: string,
                  replyTo: string,
                  preferredUsername: string = "",
@@ -134,7 +134,7 @@ proc sendImages*(self: Controller,
   self.resetLinkPreviews()
   self.chatService.asyncSendImages(
     self.chatId,
-    imagePathsAndDataJson,
+    imagePathsJson,
     msg,
     replyTo,
     preferredUsername,

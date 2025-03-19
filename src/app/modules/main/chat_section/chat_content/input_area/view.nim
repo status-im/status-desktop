@@ -67,11 +67,11 @@ QtObject:
     self.delegate.setText(msg, false)
     self.delegate.sendChatMessage(msg, replyTo, contentType, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
 
-  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string) {.slot.} =
+  proc sendImages*(self: View, imagePathsJson: string, msg: string, replyTo: string) {.slot.} =
     # FIXME: Update this when `setText` is async.
     self.setSendingInProgress(true)
     self.delegate.setText(msg, false)
-    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
+    self.delegate.sendImages(imagePathsJson, msg, replyTo, self.linkPreviewModel.getUnfuledLinkPreviews(), self.payment_request_model.getPaymentRequests())
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
