@@ -252,9 +252,9 @@ QtObject {
         }
 
         if (fileUrlsAndSources.length > 0) {
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources), textMsg.trim(), replyMessageId)
+            const convertedImagePaths = UrlUtils.convertUrlsToLocalPaths(fileUrlsAndSources)
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(convertedImagePaths), textMsg.trim(), replyMessageId)
             result = true
-
         } else {
             if (textMsg.trim() !== "") {
                 chatContentModule.inputAreaModule.sendMessage(
@@ -272,7 +272,7 @@ QtObject {
 
     function openCloseCreateChatView() {
         if (root.openCreateChat) {
-             Global.closeCreateChatView()
+            Global.closeCreateChatView()
         } else {
             Global.openCreateChatView()
         }

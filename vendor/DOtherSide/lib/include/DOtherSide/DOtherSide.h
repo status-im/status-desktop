@@ -116,8 +116,6 @@ DOS_API char * DOS_CALL dos_escape_html(char* input);
 
 DOS_API void DOS_CALL dos_qncm_delete(DosQNetworkConfigurationManager *vptr);
 
-DOS_API char * DOS_CALL dos_image_resizer(const char* imagePathOrData, int maxSize, const char* tmpDirPath);
-
 DOS_API char * DOS_CALL dos_qurl_fromUserInput(char* input);
 
 DOS_API char * DOS_CALL dos_qurl_host(char* host);

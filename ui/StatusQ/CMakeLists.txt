@@ -55,7 +55,7 @@ if (NOT DEFINED STATUSQ_SHADOW_BUILD)
     #
     #   This is an option that defaults to OFF in Debug mode and ON otherwise.
     #   When ON:
-    #     - resources are compiled into a a shared library
+    #     - resources are compiled into a shared library
     #   When OFF:
     #     - no resources are compiled, it's expected to use QML/JS sources
     #

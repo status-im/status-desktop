@@ -16,7 +16,6 @@ import ../../../backend/chatCommands as status_chat_commands
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
-import ../../../constants
 
 import ../../common/message as message_common
 from ../../common/account_constants import ZERO_ADDRESS
@@ -419,7 +418,7 @@ QtObject:
 
   proc asyncSendImages*(self: Service,
                    chatId: string,
-                   imagePathsAndDataJson: string,
+                   imagePathsJson: string,
                    msg: string,
                    replyTo: string,
                    preferredUsername: string = "",
@@ -433,8 +432,7 @@ QtObject:
         vptr: cast[uint](self.vptr),
         slot: "onAsyncSendImagesDone",
         chatId: chatId,
-        imagePathsAndDataJson: imagePathsAndDataJson,
-        tempDir: TMPDIR,
+        imagePathsJson: imagePathsJson,
         msg: msg,
         replyTo: replyTo,
         preferredUsername: preferredUsername,
