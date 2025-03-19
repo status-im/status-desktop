@@ -83,8 +83,6 @@ Rectangle {
 
     property int imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this property?
 
-    property alias suggestions: suggestionsBox
-
     enum ImageErrorMessageLocation {
         Top,
         Bottom
@@ -374,8 +372,8 @@ Rectangle {
             replaceWithEmoji(extrapolateCursorPosition(), emojiSuggestions.shortname, emojiSuggestions.unicode);
             return true
         }
-        if (suggestionsBox.visible) {
-            suggestionsBox.selectCurrentItem();
+        if (suggestionsBoxLoader.active && suggestionsBoxLoader.item.visible) {
+            suggestionsBoxLoader.item.selectCurrentItem();
             return true
         }
         return false
@@ -716,12 +714,11 @@ Rectangle {
             messageInputField.cursorPosition = (d.copyTextStart + ClipboardUtils.text.length + d.nbEmojisInClipboard);
         }
 
-
-        if (suggestionsBox.visible) {
-            let aliasName = suggestionsBox.formattedPlainTextFilter;
-            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
-            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
-            let suggestionItem = suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex);
+        if (suggestionsBoxLoader.active && suggestionsBoxLoader.item.visible) {
+            let aliasName = suggestionsBoxLoader.item.formattedPlainTextFilter;
+            let lastCursorPosition = suggestionsBoxLoader.item.suggestionFilter.cursorPosition;
+            let lastAtPosition = suggestionsBoxLoader.item.suggestionFilter.lastAtPosition;
+            let suggestionItem = suggestionsBoxLoader.item.suggestionsModel.get(suggestionsBoxLoader.item.listView.currentIndex);
             if (aliasName !== "" && aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
                     && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
 
@@ -730,7 +727,7 @@ Rectangle {
                 var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
                 messageInputField.insert(lastAtPosition, plainTextToReplace);
-                suggestionsBox.hide();
+                suggestionsBoxLoader.item.hide();
             }
         }
     }
@@ -1056,29 +1053,35 @@ Rectangle {
         }
     }
 
-    SuggestionBoxPanel {
-        id: suggestionsBox
-        objectName: "suggestionsBox"
-        model: control.usersModel ?? []
-        x : messageInput.x
-        y: -height - Theme.smallPadding
-        width: messageInput.width
-        filter: messageInputField.text
-        cursorPosition: messageInputField.cursorPosition
-        property: ["nickname", "ensName", "name"]
-        inputField: messageInputField
-        onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
-            messageInputField.forceActiveFocus();
-            const name = item[suggestionsBox.property.find(p => !!item[p])].replace("@", "")
-            d.insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
-            suggestionsBox.suggestionsModel.clear()
-        }
-        onVisibleChanged: {
-            if (!visible) {
+    // FIXME this is a temporary solution to avoid long login times. It does make it so that the first mention is slow
+    Loader {
+        id: suggestionsBoxLoader
+        active: false
+        sourceComponent: SuggestionBoxPanel {
+            id: suggestionsBox
+            objectName: "suggestionsBox"
+            model: control.usersModel ?? []
+            x : messageInput.x
+            y: -height - Theme.smallPadding
+            width: messageInput.width
+            filter: messageInputField.text
+            cursorPosition: messageInputField.cursorPosition
+            property: ["nickname", "ensName", "name"]
+            inputField: messageInputField
+            onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
                 messageInputField.forceActiveFocus();
+                const name = item[suggestionsBox.property.find(p => !!item[p])].replace("@", "")
+                d.insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
+                suggestionsBox.suggestionsModel.clear()
+            }
+            onVisibleChanged: {
+                if (!visible) {
+                    messageInputField.forceActiveFocus();
+                }
             }
         }
     }
+        
 
     Component {
         id: gifPopupComponent
@@ -1398,6 +1401,10 @@ Rectangle {
                                     const removeFrom = (cursorPosition < messageLimitHard) ? cursorWhenPressed : messageLimitHard;
                                     remove(removeFrom, cursorPosition);
                                     messageLengthLimitTooltip.open();
+                                }
+
+                                if (!suggestionsBoxLoader.active && text.includes("@")) {
+                                    suggestionsBoxLoader.active = true
                                 }
 
                                 d.updateMentionsPositions()

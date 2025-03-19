@@ -195,10 +195,6 @@ QtObject {
         communitiesModuleInst.cancelRequestToJoinCommunity(id)
     }
 
-    function generateAlias(pk) {
-        return globalUtils.generateAlias(pk);
-    }
-
     property string currentCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {

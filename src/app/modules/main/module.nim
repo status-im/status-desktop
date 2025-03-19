@@ -234,7 +234,7 @@ proc newModule*[T](
   result.gifsModule = gifs_module.newModule(result, events, gifService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService, devicesService, generalService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService,
+  result.communitiesModule = communities_module.newModule(result, events, communityService, communityTokensService,
     networkService, transactionService, tokenService, chatService, walletAccountService, keycardService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
@@ -1224,7 +1224,7 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
     var sectionId = self.view.model().getItemBySectionType(SectionType.Chat).id()
     var sectionName = self.view.model().getItemBySectionType(SectionType.Chat).name()
     if chat.chatType == ChatType.OneToOne:
-      let contactDetails = self.controller.getContactDetails(chat.id)
+      let contactDetails = self.controller.getContactDetails(chat.id, skipBackendCalls = false)
       chatName = contactDetails.defaultDisplayName
       chatImage = contactDetails.icon
       if not contactDetails.dto.ensVerified:
@@ -1394,7 +1394,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   ## If includeDetails is true, additional details are calculated, like color hash and that results in higher CPU usage,
   ## that's why by default it is false and we should set it to true only when we really need it.
   if includeDetails:
-    contactDetails = self.controller.getContactDetails(publicKey)
+    contactDetails = self.controller.getContactDetails(publicKey, skipBackendCalls = false)
   else:
     contactDetails.dto = self.controller.getContact(publicKey)
 
@@ -2016,7 +2016,7 @@ proc createMemberItem[T](
     role: MemberRole,
     airdropAddress: string = "",
     ): MemberItem =
-  let contactDetails = self.controller.getContactDetails(memberId)
+  let contactDetails = self.controller.getContactDetails(memberId, skipBackendCalls = true)
   let status = self.controller.getStatusForContactWithId(memberId)
   return initMemberItem(
     pubKey = memberId,
@@ -2041,7 +2041,7 @@ proc createMemberItem[T](
   )
 
 method contactUpdated*[T](self: Module[T], contactId: string) =
-  let contactDetails = self.controller.getContactDetails(contactId)
+  let contactDetails = self.controller.getContactDetails(contactId, skipBackendCalls = false)
   self.view.model().updateMemberItemInSections(
     pubKey = contactId,
     displayName = contactDetails.dto.displayName,
