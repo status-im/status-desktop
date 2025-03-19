@@ -4,6 +4,7 @@ StatusDialog 0.1 StatusDialog.qml
 StatusDialogDivider 0.1 StatusDialogDivider.qml
 StatusDialogFooter 0.1 StatusDialogFooter.qml
 StatusDialogHeader 0.1 StatusDialogHeader.qml
+StatusFolderDialog 0.1 StatusFolderDialog.qml
 StatusHeaderActions 0.1 StatusHeaderActions.qml
 StatusTitleSubtitle 0.1 StatusTitleSubtitle.qml
 StatusDialogBackground 0.1 StatusDialogBackground.qml
