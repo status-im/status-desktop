@@ -1,5 +1,7 @@
+import json
 import ../../../backend/accounts as status_account
 import ../../common/conversion
+import ../../../backend/response_type
 
 proc compressPk*(publicKey: string): string =
   try:
@@ -54,3 +56,8 @@ proc changeCommunityKeyCompression*(publicKey: string): string =
       # is 33-bytes
       let uncompressedKey = decompressCommunityKey(publicKey)
       return compressPk(uncompressedKey)
+
+proc generateAlias*(publicKey: string): string =
+  if publicKey.len == 0:
+    return
+  return status_account.generateAlias(publicKey).result.getStr

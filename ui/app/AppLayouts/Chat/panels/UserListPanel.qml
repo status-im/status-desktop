@@ -122,19 +122,22 @@ Item {
             section.property: "onlineStatus"
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
+                readonly property color userColor: Utils.colorForPubkey(model.pubKey)
+                readonly property var userColorHash: Utils.getColorHashAsJson(model.pubKey)
+
                 width: ListView.view.width
 
                 nickName: model.localNickname
-                userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
+                userName: ProfileUtils.displayName("", model.ensName, model.displayName, Utils.generateAlias(model.pubKey))
                 pubKey: model.isEnsVerified ? "" : model.compressedPubKey
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
                 isAdmin: model.memberRole === Constants.memberRole.owner
                 icon.name: model.icon
-                icon.color: Utils.colorForColorId(model.colorId)
+                icon.color: userColor
                 status: model.onlineStatus
-                ringSettings.ringSpecModel: model.colorHash
+                ringSettings.ringSpecModel: userColorHash
 
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
@@ -146,8 +149,8 @@ Item {
                             pubKey: model.pubKey,
                             compressedPubKey: model.compressedPubKey,
                             emojiHash: model.emojiHash,
-                            colorHash: model.colorHash,
-                            colorId: model.colorId,
+                            colorHash: userColorHash,
+                            colorId: userColor,
                             displayName: model.preferredDisplayName,
                             userIcon: model.icon,
                             trustStatus: model.trustStatus,

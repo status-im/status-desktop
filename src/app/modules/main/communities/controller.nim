@@ -5,7 +5,6 @@ import app/core/signals/types
 import app/core/eventemitter
 import app_service/service/chat/dto/chat
 import app_service/service/community/service as community_service
-import app_service/service/contacts/service as contacts_service
 import app_service/service/chat/service as chat_service
 import app_service/service/network/service as networks_service
 import app_service/service/community_tokens/service as community_tokens_service
@@ -25,7 +24,6 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     communityService: community_service.Service
-    contactsService: contacts_service.Service
     communityTokensService: community_tokens_service.Service
     networksService: networks_service.Service
     tokenService: token_service.Service
@@ -42,7 +40,6 @@ proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
-    contactsService: contacts_service.Service,
     communityTokensService: community_tokens_service.Service,
     networksService: networks_service.Service,
     tokenService: token_service.Service,
@@ -54,7 +51,6 @@ proc newController*(
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
-  result.contactsService = contactsService
   result.communityTokensService = communityTokensService
   result.networksService = networksService
   result.tokenService = tokenService
@@ -331,13 +327,6 @@ proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard, 
 proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityId, mutedType)
 
-proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, largeImage: string] =
-  return self.contactsService.getContactNameAndImage(contactId)
-
-proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
-  return self.contactsService.getContactDetails(contactId)
-
 proc isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
   return self.communityService.isUserMemberOfCommunity(communityId)
 
@@ -349,9 +338,6 @@ proc isMyCommunityRequestPending*(self: Controller, communityId: string): bool =
 
 proc asyncLoadCuratedCommunities*(self: Controller) =
   self.communityService.asyncLoadCuratedCommunities()
-
-proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
-  return self.contactsService.getStatusForContactWithId(publicKey)
 
 proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport: seq[string]) =
   self.communityService.requestExtractDiscordChannelsAndCategories(filesToImport)
