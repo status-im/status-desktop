@@ -1,9 +1,9 @@
 import NimQml, Tables, stew/shims/strformat, sequtils, sugar
 # TODO: use generics to remove duplication between user_model and member_model
 
+import app/global/global_singleton
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contacts
-import ../../../app_service/service/accounts/utils
 import member_item
 import contacts_utils
 import model_utils
@@ -137,12 +137,18 @@ QtObject:
     of ModelRole.LocalNickname:
       result = newQVariant(item.localNickname)
     of ModelRole.Alias:
+      if item.alias == "":
+        item.alias = singletonInstance.utils.generateAlias(item.pubKey)
       result = newQVariant(item.alias)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.ColorId:
+      if item.colorId == 0:
+        item.colorId = singletonInstance.utils.getColorId(item.pubKey)
       result = newQVariant(item.colorId)
     of ModelRole.ColorHash:
+      if item.colorHash == "":
+        item.colorHash = singletonInstance.utils.getColorHashAsJson(item.pubKey)
       result = newQVariant(item.colorHash)
     of ModelRole.OnlineStatus:
       result = newQVariant(item.onlineStatus.int)

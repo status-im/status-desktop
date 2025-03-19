@@ -424,10 +424,6 @@ QtObject {
         chatCommunitySectionModule.declineRequestToJoinCommunity(requestId, communityId)
     }
 
-    function generateAlias(pk) {
-        return globalUtilsInst.generateAlias(pk);
-    }
-
     function removeCommunityChat(chatId) {
         chatCommunitySectionModule.removeCommunityChat(chatId)
     }

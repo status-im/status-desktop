@@ -59,10 +59,6 @@ QtObject {
         d.mainModuleInst.resolveENS(value, "")
     }
 
-    function generateAlias(pubKey) {
-        return d.globalUtilsInst.generateAlias(pubKey)
-    }
-
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
         d.contactsModuleInst.switchToOrCreateOneToOneChat(pubKey)

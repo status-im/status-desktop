@@ -5,6 +5,7 @@ import ./utils/qrcodegen
 # Services as instances shouldn't be used in this class, just some general/global procs
 import ../../app_service/common/conversion
 import ../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+import ../../backend/accounts as status_accounts
 
 include ../../app_service/service/accounts/utils
 
@@ -34,6 +35,9 @@ QtObject:
 
   proc isAlias*(self: Utils, value: string): bool {.slot.} =
     result = isAlias(value)
+
+  proc generateAlias*(self: Utils, publicKey: string): string {.slot.} =
+    return generateAlias(publicKey)
 
   proc urlFromUserInput*(self: Utils, input: string): string {.slot.} =
     result = url_fromUserInput(input)
