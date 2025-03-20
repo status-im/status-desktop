@@ -14,9 +14,6 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
-    self.gifColumnAModel.delete
-    self.gifColumnBModel.delete
-    self.gifColumnCModel.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)

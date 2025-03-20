@@ -22,7 +22,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenCriteriaModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenCriteriaModel*(): TokenCriteriaModel =

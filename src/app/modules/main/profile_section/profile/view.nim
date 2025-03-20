@@ -22,16 +22,6 @@ QtObject:
       showcasePreferencesSocialLinksModelVariant: QVariant
 
   proc delete*(self: View) =
-    self.showcasePreferencesCommunitiesModel.delete
-    self.showcasePreferencesCommunitiesModelVariant.delete
-    self.showcasePreferencesAccountsModel.delete
-    self.showcasePreferencesAccountsModelVariant.delete
-    self.showcasePreferencesCollectiblesModel.delete
-    self.showcasePreferencesCollectiblesModelVariant.delete
-    self.showcasePreferencesAssetsModel.delete
-    self.showcasePreferencesAssetsModelVariant.delete
-    self.showcasePreferencesSocialLinksModel.delete
-    self.showcasePreferencesSocialLinksModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

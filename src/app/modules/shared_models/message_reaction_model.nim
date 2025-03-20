@@ -15,7 +15,6 @@ QtObject:
       items: seq[MessageReactionItem]
 
   proc delete(self: MessageReactionModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: MessageReactionModel) =

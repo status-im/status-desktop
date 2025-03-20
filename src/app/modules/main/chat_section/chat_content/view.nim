@@ -19,10 +19,6 @@ QtObject:
   proc chatDetailsChanged*(self:View) {.signal.}
 
   proc delete*(self: View) =
-    self.pinnedMessagesModel.delete
-    self.pinnedMessagesModelVariant.delete
-    self.chatDetails.delete
-    self.chatDetailsVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

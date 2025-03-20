@@ -30,7 +30,6 @@ QtObject:
   proc setup(self: Model) = self.QAbstractListModel.setup
 
   proc delete(self: Model) =
-    self.activityCenterNotifications = @[]
     self.QAbstractListModel.delete
 
   proc newModel*(): Model =
