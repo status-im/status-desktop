@@ -153,13 +153,15 @@ StatusDialog {
     e.g. 1000000000000000000 for 1 ETH **/
     property string selectedRawAmount
 
-    /** Input / Output property to set and expose currently selected recipient address **/
-    property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
+    /** Output property to set and expose currently selected recipient address **/
+    readonly property alias selectedRecipientAddress: recipientsPanel.selectedRecipientAddress
     /** Output property to indicate currently selected recipient view tab **/
     readonly property alias selectedRecipientType: recipientsPanel.selectedRecipientType
     /** Output property to filter recipient model **/
     readonly property alias recipientSearchPattern: recipientsPanel.searchPattern
 
+    /** input property holds the selected recipient address or ens name **/
+    property string selectedAddress
     /** input property holds the publicKey of the user for registering an ENS name **/
     property string publicKey
     /** input property holds the selected ens name to be registered **/
@@ -189,14 +191,6 @@ StatusDialog {
     signal formChanged()
     /** Output signal to launch buy flow **/
     signal launchBuyFlow()
-    /** Input signal called after all data is filled **/
-    signal afterOpened()
-
-    onAfterOpened: {
-        if (!selectedRecipientAddress && !!ensName) {
-            recipientsPanel.setText(ensName)
-        }
-    }
 
     QtObject {
         id: d
@@ -344,6 +338,17 @@ StatusDialog {
             }
         }
 
+        function setSelectedAddress() {
+            if (!!root.selectedRecipientAddress || !root.selectedAddress)
+                return
+
+            if (Utils.isValidEns(root.selectedAddress)) {
+                recipientsPanel.setText(root.selectedAddress)
+            } else {
+                recipientsPanel.selectedRecipientAddress = root.selectedAddress
+            }
+        }
+
         function setSelectedCollectible(key) {
             const tokenType = SQUtils.ModelUtils.getByKey(root.flatCollectiblesModel, "symbol", key, "tokenType")
             if(tokenType === Constants.TokenType.ERC1155) {
@@ -413,6 +418,7 @@ StatusDialog {
 
     // Bindings needed for exposing and setting raw values from AmountToSend
     onSelectedRawAmountChanged: d.setRawValue()
+    onSelectedAddressChanged: d.setSelectedAddress()
 
     Item {
         id: sendModalcontentItem
