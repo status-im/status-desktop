@@ -20,14 +20,6 @@ QtObject:
       connectionStringError: string
 
   proc delete*(self: View) =
-    self.currentStateVariant.delete
-    self.currentState.delete
-    self.selectedKeypair.delete
-    self.selectedKeypairVariant.delete
-    if not self.keypairModel.isNil:
-      self.keypairModel.delete
-    if not self.keypairModelVariant.isNil:
-      self.keypairModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

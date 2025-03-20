@@ -22,7 +22,6 @@ QtObject:
       hasMore: bool
 
   proc delete(self: CollectiblesModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: CollectiblesModel) =

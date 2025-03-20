@@ -18,7 +18,6 @@ QtObject:
       items: seq[ShowcaseContactSocialLinkItem]
 
   proc delete(self: ShowcaseContactSocialLinkModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: ShowcaseContactSocialLinkModel) =

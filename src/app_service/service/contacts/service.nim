@@ -113,9 +113,6 @@ QtObject:
   proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails
 
   proc delete*(self: Service) =
-    self.closingApp = true
-    self.contacts.clear
-    self.contactsStatus.clear
     self.QObject.delete
 
   proc newService*(
@@ -547,8 +544,6 @@ QtObject:
       error "error resolving ENS ", msg=e.msg
 
   proc resolveENS*(self: Service, value: string, uuid: string = "", reason = "") =
-    if(self.closingApp):
-      return
     let arg = LookupContactTaskArg(
       tptr: lookupContactTask,
       vptr: cast[uint](self.vptr),

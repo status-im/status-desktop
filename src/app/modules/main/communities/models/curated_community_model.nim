@@ -29,7 +29,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: CuratedCommunityModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newCuratedCommunityModel*(): CuratedCommunityModel =

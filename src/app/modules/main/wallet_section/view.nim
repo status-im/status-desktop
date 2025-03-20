@@ -36,9 +36,6 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: View) =
-    self.wcController.delete
-    self.dappsConnectorController.delete
-
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface,

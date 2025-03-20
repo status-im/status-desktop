@@ -44,7 +44,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenModel*(): TokenModel =

@@ -88,9 +88,6 @@ QtObject:
     self.settingsFileDir = os.joinPath(DATADIR, "qt")
 
   proc delete*(self: LocalAccountSensitiveSettings) =
-    if(not self.settings.isNil):
-      self.settings.delete
-
     self.QObject.delete
 
   proc newLocalAccountSensitiveSettings*():

@@ -26,7 +26,6 @@ QtObject:
     self.pairedCount = 0
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newModel*(): Model =

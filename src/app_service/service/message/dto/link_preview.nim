@@ -22,16 +22,6 @@ type
     statusCommunityPreview*: StatusCommunityLinkPreview
     statusCommunityChannelPreview*: StatusCommunityChannelLinkPreview
 
-proc delete*(self: LinkPreview) =
-  if self.standardPreview != nil:
-    self.standardPreview.delete
-  if self.statusContactPreview != nil:
-    self.statusContactPreview.delete
-  if self.statusCommunityPreview != nil:
-    self.statusCommunityPreview.delete
-  if self.statusCommunityChannelPreview != nil:
-    self.statusCommunityChannelPreview.delete
-
 proc initLinkPreview*(url: string): LinkPreview =
   result = LinkPreview()
   result.url = url

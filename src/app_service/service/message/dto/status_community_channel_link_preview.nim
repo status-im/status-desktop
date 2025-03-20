@@ -19,7 +19,6 @@ QtObject:
 
   proc delete*(self: StatusCommunityChannelLinkPreview) =
     self.QObject.delete()
-    self.community.delete()
 
   proc channelUuidChanged*(self: StatusCommunityChannelLinkPreview) {.signal.}
   proc getChannelUuid*(self: StatusCommunityChannelLinkPreview): string {.slot.} =

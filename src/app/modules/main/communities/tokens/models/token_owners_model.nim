@@ -19,7 +19,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenOwnersModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenOwnersModel*(): TokenOwnersModel =

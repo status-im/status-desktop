@@ -63,8 +63,6 @@ QtObject:
 
   proc delete*(self: Service) =
     self.QObject.delete
-    if not self.localPairingStatus.isNil:
-      self.localPairingStatus.delete
 
   proc newService*(events: EventEmitter,
     threadpool: ThreadPool,

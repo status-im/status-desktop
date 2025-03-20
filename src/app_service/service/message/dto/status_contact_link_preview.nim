@@ -17,7 +17,6 @@ QtObject:
 
   proc delete*(self: StatusContactLinkPreview) =
     self.QObject.delete()
-    self.icon.delete()
 
   proc newStatusContactLinkPreview*(publicKey: var string, displayName: string, description: string, icon: LinkPreviewThumbnail): StatusContactLinkPreview =
     new(result, delete)

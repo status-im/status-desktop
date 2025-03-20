@@ -12,7 +12,6 @@ QtObject:
       items*: seq[SuggestedRouteItem]
 
   proc delete(self: SuggestedRouteModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: SuggestedRouteModel) =

@@ -22,7 +22,6 @@ QtObject:
     items*: seq[NetworkRouteItem]
 
   proc delete(self: NetworkRouteModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: NetworkRouteModel) =

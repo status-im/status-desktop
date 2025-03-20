@@ -10,8 +10,6 @@ QtObject:
       locationMenuModel: location_menu_model.Model
 
   proc delete*(self: View) =
-    self.searchResultModel.delete
-    self.locationMenuModel.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

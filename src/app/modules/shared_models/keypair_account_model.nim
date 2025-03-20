@@ -16,7 +16,6 @@ QtObject:
       items: seq[KeyPairAccountItem]
 
   proc delete(self: KeyPairAccountModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: KeyPairAccountModel) =

@@ -24,9 +24,6 @@ QtObject:
 
   proc delete*(self: StatusCommunityLinkPreview) =
     self.QObject.delete()
-    self.icon.delete()
-    self.banner.delete()
-
 
   proc communityIdChanged*(self: StatusCommunityLinkPreview) {.signal.}
   proc getCommunityId*(self: StatusCommunityLinkPreview): string {.slot.} =

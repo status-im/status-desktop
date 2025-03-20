@@ -36,20 +36,6 @@ QtObject:
       disablePopup: bool # unables user to interact with the popup (action buttons are disabled as well as close popup button)
 
   proc delete*(self: View) =
-    self.currentStateVariant.delete
-    self.currentState.delete
-    self.originModel.delete
-    self.originModelVariant.delete
-    self.selectedOrigin.delete
-    self.selectedOriginVariant.delete
-    self.derivedAddressModel.delete
-    self.derivedAddressModelVariant.delete
-    self.selectedDerivedAddress.delete
-    self.selectedDerivedAddressVariant.delete
-    self.watchOnlyAccAddress.delete
-    self.watchOnlyAccAddressVariant.delete
-    self.privateKeyAccAddress.delete
-    self.privateKeyAccAddressVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
