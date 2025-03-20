@@ -15,8 +15,6 @@ QtObject:
       accountsVariant: QVariant
 
   proc delete*(self: View) =
-    self.accounts.delete
-    self.accountsVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

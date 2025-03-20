@@ -23,7 +23,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenPermissionsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenPermissionsModel*(): TokenPermissionsModel =

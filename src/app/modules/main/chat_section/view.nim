@@ -39,19 +39,6 @@ QtObject:
 
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
-    self.activeItem.delete
-    self.activeItemVariant.delete
-    self.contactRequestsModel.delete
-    self.contactRequestsModelVariant.delete
-    self.editCategoryChannelsModel.delete
-    self.editCategoryChannelsVariant.delete
-    self.tokenPermissionsModel.delete
-    self.tokenPermissionsVariant.delete
-    self.memberMessagesModel.delete
-    self.memberMessagesModelVariant.delete
-
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

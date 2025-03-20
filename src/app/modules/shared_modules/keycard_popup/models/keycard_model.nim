@@ -13,7 +13,6 @@ QtObject:
       items: seq[KeycardItem]
 
   proc delete(self: KeycardModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: KeycardModel) =

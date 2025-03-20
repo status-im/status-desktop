@@ -14,7 +14,6 @@ QtObject:
       items: seq[PaymentRequest]
 
   proc delete*(self: Model) = 
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =

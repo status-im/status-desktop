@@ -11,10 +11,6 @@ proc initItem*(value, text, image, icon, iconColor: string = ""): Item =
   result.setup(value, text, image, icon, iconColor)
   result.subItems = newSubModel()
 
-proc delete*(self: Item) =
-  self.subItems.delete
-  self.BaseItem.delete
-
 proc subItems*(self: Item): SubModel {.inline.} =
   self.subItems
 

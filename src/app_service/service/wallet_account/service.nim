@@ -36,7 +36,6 @@ include  ../../common/json_utils
 
 QtObject:
   type Service* = ref object of QObject
-    closingApp: bool
     events: EventEmitter
     threadpool: ThreadPool
     settingsService: settings_service.Service
@@ -71,7 +70,6 @@ QtObject:
   proc onENSNamesFetched*(self: Service, response: string) {.slot.}
 
   proc delete*(self: Service) =
-    self.closingApp = true
     self.QObject.delete
 
   proc newService*(
@@ -85,7 +83,6 @@ QtObject:
   ): Service =
     new(result, delete)
     result.QObject.setup
-    result.closingApp = false
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService

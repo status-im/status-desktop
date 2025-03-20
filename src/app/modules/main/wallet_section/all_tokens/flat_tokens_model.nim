@@ -44,7 +44,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: FlatTokensModel) =
-    self.tokenMarketDetails = @[]
     self.QAbstractListModel.delete
 
   proc newFlatTokensModel*(

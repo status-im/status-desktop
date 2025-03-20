@@ -10,8 +10,6 @@ QtObject:
       exemptionsModelVariant: QVariant
       
   proc delete*(self: View) =
-    self.exemptionsModel.delete
-    self.exemptionsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

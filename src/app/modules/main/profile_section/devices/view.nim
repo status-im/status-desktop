@@ -14,10 +14,7 @@ QtObject:
       localPairingStatus: LocalPairingStatus
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
     self.QObject.delete
-    self.localPairingStatus.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
