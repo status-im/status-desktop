@@ -17,7 +17,6 @@ QtObject:
       hasMore: bool
 
   proc delete(self: Model) =
-    self.entries = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =

@@ -36,17 +36,6 @@ QtObject:
       localPairingStatus: LocalPairingStatus
 
   proc delete*(self: View) =
-    self.currentStartupStateVariant.delete
-    self.currentStartupState.delete
-    self.selectedLoginAccount.delete
-    self.selectedLoginAccountVariant.delete
-    self.loginAccountsModel.delete
-    self.loginAccountsModelVariant.delete
-    if not self.fetchingDataModel.isNil:
-      self.fetchingDataModel.delete
-    if not self.fetchingDataModelVariant.isNil:
-      self.fetchingDataModelVariant.delete
-    self.localPairingStatus.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

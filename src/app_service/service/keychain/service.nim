@@ -27,7 +27,6 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: Service) =
-    self.keychainManager.delete
     self.QObject.delete
 
   proc newService*(events: EventEmitter): Service =

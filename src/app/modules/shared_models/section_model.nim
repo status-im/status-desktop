@@ -53,7 +53,6 @@ QtObject:
       items: seq[SectionItem]
 
   proc delete(self: SectionModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: SectionModel) =

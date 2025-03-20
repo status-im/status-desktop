@@ -15,7 +15,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordImportErrorsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordDiscordImportErrorsModel*(): DiscordImportErrorsModel =

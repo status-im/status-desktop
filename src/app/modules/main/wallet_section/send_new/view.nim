@@ -15,7 +15,6 @@ QtObject:
       pathModel: PathModel
 
   proc delete*(self: View) =
-    self.pathModel.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
