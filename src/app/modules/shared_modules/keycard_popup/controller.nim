@@ -7,7 +7,6 @@ import app/global/app_signals
 import app/global/global_singleton
 import app/core/signals/types
 import app/core/eventemitter
-import app/modules/startup/io_interface as startup_io
 import app_service/common/utils
 import app_service/common/account_constants
 import app_service/service/keycard/service as keycard_service
@@ -642,12 +641,10 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool, nex
       self.tmpFlowData.keyUid = singletonInstance.userProfile.getKeyUid()
 
   ## we're trying to sync a keycard state on popup close if:
-  ## - shared module is not run from the onboarding flow
   ## - the keycard syncing is not already in progress
   ## - the flow which is terminating is one of the flows which we need to perform a sync process for
   ## - the pin is known
-  if self.uniqueIdentifier != startup_io.UNIQUE_STARTUP_MODULE_IDENTIFIER and
-    not self.keycardSyncingInProgress() and
+  if not self.keycardSyncingInProgress() and
     not utils.arrayContains(FlowsWeShouldNotTryAKeycardSyncFor, flowType) and
     self.getPin().len == PINLengthForStatusApp and
     flowEvent.keyUid.len > 0:

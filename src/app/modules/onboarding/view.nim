@@ -3,9 +3,8 @@ import io_interface, states
 from app_service/service/keycardV2/dto import KeycardEventDto
 from app_service/service/devices/dto/local_pairing_status import LocalPairingState
 
-# TODO move these files to this module when we remove the old onboarding
-import ../startup/models/login_account_model as login_acc_model
-import ../startup/models/login_account_item as login_acc_item
+import models/login_account_model as login_acc_model
+import models/login_account_item as login_acc_item
 
 QtObject:
   type
