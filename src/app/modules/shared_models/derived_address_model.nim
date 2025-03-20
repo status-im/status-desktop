@@ -14,7 +14,6 @@ QtObject:
       items: seq[DerivedAddressItem]
 
   proc delete(self: DerivedAddressModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: DerivedAddressModel) =

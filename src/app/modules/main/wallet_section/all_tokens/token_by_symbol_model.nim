@@ -46,8 +46,6 @@ QtObject:
     self.tokenMarketDetails = @[]
 
   proc delete(self: TokensBySymbolModel) =
-    self.addressPerChainModel = @[]
-    self.tokenMarketDetails = @[]
     self.QAbstractListModel.delete
 
   proc newTokensBySymbolModel*(

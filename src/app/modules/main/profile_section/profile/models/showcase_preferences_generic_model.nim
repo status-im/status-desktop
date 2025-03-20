@@ -20,7 +20,6 @@ QtObject:
       items: seq[ShowcasePreferencesGenericItem]
 
   proc delete(self: ShowcasePreferencesGenericModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: ShowcasePreferencesGenericModel) =

@@ -15,7 +15,6 @@ QtObject:
       items: seq[backend.CollectibleTrait]
 
   proc delete(self: TraitModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: TraitModel) =

@@ -29,14 +29,6 @@ QtObject:
   proc activeSectionSet*(self: View, item: SectionItem)
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
-    self.activeSection.delete
-    self.activeSectionVariant.delete
-    self.chatSearchModel.delete
-    self.chatSearchModelVariant.delete
-    self.ephemeralNotificationModel.delete
-    self.ephemeralNotificationModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

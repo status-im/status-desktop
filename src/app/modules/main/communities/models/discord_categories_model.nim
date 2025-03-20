@@ -15,7 +15,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordCategoriesModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordCategoriesModel*(): DiscordCategoriesModel =

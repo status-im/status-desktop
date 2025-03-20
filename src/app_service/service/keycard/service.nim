@@ -244,6 +244,7 @@ QtObject:
 
   proc onTimeout(self: Service, response: string) {.slot, featureGuard(KEYCARD_ENABLED).} =
     if response == $TimerReason.ReRunCurrentFlowLater:
+      #TODO: Find another way to handle this. The vptr should be invalid by now..
       if(self.closingApp or self.currentFlow == KCSFlowType.NoFlow):
         return
       if self.doLogging:
