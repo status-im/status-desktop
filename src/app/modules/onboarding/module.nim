@@ -17,7 +17,7 @@ from app_service/service/accounts/dto/accounts import AccountDto
 from app_service/service/keycardV2/dto import KeycardEventDto, KeycardExportedKeysDto, KeycardState
 import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task]
 
-import ../startup/models/login_account_item as login_acc_item
+import models/login_account_item as login_acc_item
 
 export io_interface, states
 
