@@ -7,10 +7,8 @@ from allure_commons._allure import step
 import driver
 from constants import RandomWalletAccount
 from constants.wallet import DerivationPathName
-from tests.wallet_main_screen import marks
 from gui.main_window import MainWindow
 
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')

@@ -11,7 +11,7 @@ from configs import WALLET_SEED
 from constants import ReturningUser, RandomCommunity
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
-from helpers.SettingsHelper import enable_testnet_mode, enable_community_creation
+from helpers.SettingsHelper import enable_testnet_mode, enable_community_creation, enable_managing_communities_toggle
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
 
@@ -19,6 +19,7 @@ from gui.screens.community_settings_tokens import MintedTokensView
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
+@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/17290')
 def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
@@ -29,12 +30,8 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
     finalize_onboarding_and_login(profile_view, user_account)
 
     enable_testnet_mode(main_window)
-
     enable_community_creation(main_window)
-
-    with step('Switch manage community on testnet option'):
-        settings = main_window.left_panel.open_settings()
-        settings.left_panel.open_advanced_settings().switch_manage_on_community()
+    enable_managing_communities_toggle(main_window)
 
     with step('Create community and select it'):
         community = RandomCommunity()

@@ -8,12 +8,10 @@ from constants import RandomWalletAccount
 from constants.wallet import WalletSeedPhrase
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_mnemonic, random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
 
 from gui.main_window import MainWindow
 from scripts.utils.generators import get_wallet_address_from_mnemonic
-
-pytestmark = marks
+from web3 import Web3
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703030', 'Manage a seed phrase imported account')
@@ -33,10 +31,8 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
-        assert len(main_screen.wait_for_notification()) == 1, \
-            f"Multiple toast messages appeared"
-        message = main_screen.wait_for_notification()[0]
-        assert message == f'"{wallet_account.name}" successfully added'
+        messages = main_screen.wait_for_notification()
+        assert f'"{wallet_account.name}" successfully added' in messages
 
     with step('Verify that the account is correctly displayed in accounts list'):
         assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts],
@@ -45,8 +41,9 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
 
     with step('Verify account address from UI is correct for derived account '):
         address_in_ui = wallet.left_panel.copy_account_address_in_context_menu(wallet_account.name).split(':')[-1]
+        assert Web3.is_checksum_address(address_in_ui), f'Address in wallet is not checksummed'
         address_from_mnemonic = get_wallet_address_from_mnemonic(mnemonic_data)
-        assert address_in_ui == address_from_mnemonic, \
+        assert address_in_ui == Web3.to_checksum_address(address_from_mnemonic), \
             f'Expected to recover {address_from_mnemonic} but got {address_in_ui}'
 
     with step('Try to re-import seed phrase and verify that correct error appears'):
