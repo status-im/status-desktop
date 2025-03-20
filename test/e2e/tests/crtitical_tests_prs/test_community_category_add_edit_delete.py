@@ -18,11 +18,12 @@ from helpers.SettingsHelper import enable_community_creation
     'second_channel_description, second_channel_emoji',
     [pytest.param('Category in general', True, 'Channel', 'Description', 'sunglasses', 'Second-channel',
                   'Description', 'sunglasses')])
-#@pytest.mark.critical
-@pytest.mark.skip # temp
+@pytest.mark.critical
+# @pytest.mark.skip  # temp
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
-                                 channel_description, channel_emoji, second_channel_name, second_channel_description,
-                                 second_channel_emoji):
+                                               channel_description, channel_emoji, second_channel_name,
+                                               second_channel_description,
+                                               second_channel_emoji):
     enable_community_creation(main_screen)
 
     with step('Create community and select it'):
