@@ -5,20 +5,16 @@ from allure_commons._allure import step
 from constants import RandomWalletAccount
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
 
 import constants
 import driver
 from gui.main_window import MainWindow
-
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703029', 'Manage a private key imported account')
 @pytest.mark.case(703029)
 @pytest.mark.parametrize('address_pair', [constants.user.private_key_address_pair_1])
 def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, user_account, address_pair):
-
     wallet_account = RandomWalletAccount()
     new_name = random_wallet_acc_keypair_name()
 
@@ -44,8 +40,9 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
     with step('Verify that importing private key reveals correct wallet address'):
         account_index = 0
         settings_acc_view = (
-            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(wallet_account.name,
-                                                                                                              account_index))
+            main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_in_settings(
+                wallet_account.name,
+                account_index))
         address = settings_acc_view.get_account_address_value()
         assert address == address_pair.wallet_address, \
             f"Recovered account should have address {address_pair.wallet_address}, but has {address}"
