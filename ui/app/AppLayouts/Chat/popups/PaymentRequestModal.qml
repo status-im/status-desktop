@@ -76,12 +76,28 @@ StatusDialog {
     QtObject {
         id: d
 
+        function resetSelectedToken() {
+            root.selectedTokenKey = Constants.ethToken
+        }
+
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"
+            onValueChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                } else {
+                    holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
+                }
+            }
+            onAvailableChanged: {
+                if (value !== undefined && !available) {
+                    Qt.callLater(d.resetSelectedToken)
+                }
+            }
         }
 
-        readonly property bool isSelectedHoldingValidAsset: !!selectedHolding.item
+        readonly property bool isSelectedHoldingValidAsset: selectedHolding.available
     }
 
     footer: StatusDialogFooter {
@@ -116,36 +132,41 @@ StatusDialog {
 
         spacing: Theme.padding
 
-        RowLayout {
-            AmountToSend {
-                id: amountToSendInput
-                objectName: "amountInput"
-                Layout.fillWidth: true
+        AmountToSend {
+            id: amountToSendInput
+            objectName: "amountInput"
+            Layout.fillWidth: true
 
-                readonly property bool ready: valid && !empty
+            readonly property bool ready: valid && !empty
 
-                multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
-                price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
+            multiplierIndex: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.decimals ? d.selectedHolding.item.decimals : 0
+            price: d.isSelectedHoldingValidAsset && !!d.selectedHolding.item.marketDetails ? d.selectedHolding.item.marketDetails.currencyPrice.amount : 1
 
-                formatFiat: amount => root.formatCurrencyAmount(
-                                amount, root.currentCurrency)
-                formatBalance: amount => root.formatCurrencyAmount(
-                                   amount, root.selectedTokenKey)
+            formatFiat: amount => root.formatCurrencyAmount(
+                            amount, root.currentCurrency)
+            formatBalance: amount => root.formatCurrencyAmount(
+                               amount, root.selectedTokenKey)
 
-                dividerVisible: true
-                selectedSymbol: amountToSendInput.fiatMode ?
-                                 root.currentCurrency:
-                                 d.isSelectedHoldingValidAsset ?
-                                     d.selectedHolding.item.symbol : ""
-            }
+            dividerVisible: true
+            selectedSymbol: amountToSendInput.fiatMode ?
+                             root.currentCurrency:
+                             d.isSelectedHoldingValidAsset ?
+                                 d.selectedHolding.item.symbol : ""
+            amountInputRightPadding: holdingSelector.width + Theme.padding
+
             AssetSelector {
                 id: holdingSelector
 
                 objectName: "assetSelector"
-                Layout.alignment: Qt.AlignRight | Qt.AlignTop
+
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.topMargin: (Theme.halfPadding / 2)
 
                 model: root.assetsModel
-                onSelected: root.selectedTokenKey = key
+                onSelected: {
+                    root.selectedTokenKey = key
+                }
             }
         }
 

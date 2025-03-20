@@ -1309,20 +1309,17 @@ QtObject {
             id: paymentRequestModalComponent
             PaymentRequestModal {
                 id: paymentRequestModal
-                readonly property var tokenAdaptor: TokenSelectorViewAdaptor {
-                    assetsModel: null
-                    flatNetworksModel: root.networksStore.activeNetworks
-                    currentCurrency: root.currencyStore.currentCurrency
+                readonly property var paymentRequestAdaptor: PaymentRequestAdaptor {
                     plainTokensBySymbolModel: WalletStores.RootStore.tokensStore.plainTokensBySymbolModel
-                    enabledChainIds: [paymentRequestModal.selectedNetworkChainId]
-                    showAllTokens: true
+                    selectedNetworkChainId: paymentRequestModal.selectedNetworkChainId
+                    flatNetworksModel: root.networksStore.allNetworks
                 }
                 property var callback: null
                 currentCurrency: root.currencyStore.currentCurrency
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 flatNetworksModel: root.networksStore.activeNetworks
                 accountsModel: WalletStores.RootStore.nonWatchAccounts
-                assetsModel: tokenAdaptor.outputAssetsModel
+                assetsModel: paymentRequestAdaptor.outputModel
 
                 onAccepted: {
                     if (!callback) {

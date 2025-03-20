@@ -43,52 +43,84 @@ Item {
             flatNetworksModel: d.flatNetworks
             accountsModel: d.accounts
             assetsModel: ListModel {
-                Component.onCompleted: append([{
-                                                   tokensKey: "ETH",
-                                                   name: "eth",
-                                                   symbol: "ETH",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc200",
-                                                   decimals: "18",
-                                                   iconSource: ModelsData.assets.eth,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               },
-                                               {
-                                                   tokensKey: "SNT",
-                                                   name: "snt",
-                                                   symbol: "SNT",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc2000000000000000000000000000000000123",
-                                                   decimals: "18",
-                                                   iconSource: ModelsData.assets.snt,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               },
-                                               {
-                                                   tokensKey: "DAI",
-                                                   name: "dai",
-                                                   symbol: "DAI",
-                                                   chainId: NetworksModel.ethNet,
-                                                   address: "0xbbc2000000000000000000000000000000550567",
-                                                   decimals: "2",
-                                                   iconSource: ModelsData.assets.dai,
-                                                   marketDetails: {
-                                                       currencyPrice: {
-                                                           amount: 1,
-                                                           displayDecimals: true
-                                                       }
-                                                   }
-                                               }])
+                Component.onCompleted: populateModel()
+
+                readonly property var data: [
+                    {
+                        tokensKey: "ETH",
+                        name: "eth",
+                        symbol: "ETH",
+                        chainId: NetworksModel.ethNet,
+                        address: "0xbbc200",
+                        decimals: "18",
+                        iconSource: ModelsData.assets.eth,
+                        marketDetails: {
+                           currencyPrice: {
+                               amount: 1,
+                               displayDecimals: true
+                           }
+                        }
+                    },
+                    {
+                        tokensKey: "SNT",
+                        name: "snt",
+                        symbol: "SNT",
+                        chainId: NetworksModel.ethNet,
+                        address: "0xbbc2000000000000000000000000000000000123",
+                        decimals: "18",
+                        iconSource: ModelsData.assets.snt,
+                        marketDetails: {
+                           currencyPrice: {
+                               amount: 1,
+                               displayDecimals: true
+                           }
+                        }
+                    },
+                    {
+                        tokensKey: "DAI",
+                        name: "dai",
+                        symbol: "DAI",
+                        chainId: NetworksModel.ethNet,
+                        address: "0xbbc2000000000000000000000000000000550567",
+                        decimals: "2",
+                        iconSource: ModelsData.assets.dai,
+                        marketDetails: {
+                           currencyPrice: {
+                               amount: 1,
+                               displayDecimals: true
+                           }
+                        }
+                    },
+                ]
+                readonly property var sepArbData: [
+                    {
+                        tokensKey: "STT",
+                        name: "stt",
+                        symbol: "STT",
+                        chainId: NetworksModel.sepArbChainId,
+                        address: "0xbbc2000000000000000000000000000000550567",
+                        decimals: "2",
+                        iconSource: ModelsData.assets.snt,
+                        marketDetails: {
+                            currencyPrice: {
+                                amount: 1,
+                                displayDecimals: true
+                            }
+                        }
+                    }
+                ]
+
+                function populateModel() {
+                    // Simulate model refresh when network is changed
+                    clear()
+                    append(data)
+                    if (paymentRequestModal.selectedNetworkChainId === NetworksModel.sepArbChainId) {
+                        append(sepArbData)
+                    }
+                }
             }
+
+            onSelectedNetworkChainIdChanged: assetsModel.populateModel()
         }
     }
 
@@ -193,6 +225,7 @@ Item {
 
             const asset = SQUtils.ModelUtils.get(assetSelector.model, 2)
             verify(!!asset)
+            compare(asset.tokensKey, "DAI")
             mouseClick(assetSelector)
 
             waitForRendering(assetSelector)
@@ -202,10 +235,11 @@ Item {
             verify(!!assetsList)
             const delegateUnderTest = assetsList.itemAtIndex(2)
             verify(!!delegateUnderTest)
+            compare(delegateUnderTest.symbol, "DAI")
             mouseClick(delegateUnderTest)
 
-            compare(controlUnderTest.selectedTokenKey, asset.tokensKey)
-            compare(assetSelector.contentItem.name, asset.symbol)
+            compare(controlUnderTest.selectedTokenKey, "DAI")
+            compare(assetSelector.contentItem.name, "DAI")
 
             closeAndVerfyModal()
         }
@@ -229,6 +263,39 @@ Item {
             compare(networkSelector.control.contentItem.title, network.chainName)
 
             closeAndVerfyModal()
+        }
+
+        function test_symbol_initial_selection_when_not_available_in_chain() {
+            const asset = "STT"
+            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedTokenKey: asset, selectedNetworkChainId: Constants.chains.mainnetChainId })
+            verify(!!controlUnderTest)
+
+            controlUnderTest.open()
+            verify(!!controlUnderTest.opened)
+
+            const assetSelector = findChild(controlUnderTest, "assetSelector")
+            verify(!!assetSelector)
+            tryCompare(assetSelector.contentItem, "name", "ETH")
+            compare(controlUnderTest.selectedTokenKey, "ETH")
+        }
+
+        function test_symbol_selection_after_network_change() {
+            const asset = "STT"
+            controlUnderTest = createTemporaryObject(paymentRequestModalComponent, root, { selectedNetworkChainId: Constants.chains.arbitrumSepoliaChainId, selectedTokenKey: asset })
+            verify(!!controlUnderTest)
+
+            controlUnderTest.open()
+            verify(!!controlUnderTest.opened)
+
+            compare(controlUnderTest.selectedNetworkChainId, Constants.chains.arbitrumSepoliaChainId)
+            compare(controlUnderTest.selectedTokenKey, "STT")
+            const assetSelector = findChild(controlUnderTest, "assetSelector")
+            verify(!!assetSelector)
+            compare(assetSelector.contentItem.name, "STT")
+
+            controlUnderTest.selectedNetworkChainId = Constants.chains.mainnetChainId
+            tryCompare(assetSelector.contentItem, "name", "ETH")
+            compare(controlUnderTest.selectedTokenKey, "ETH")
         }
 
         function test_open_initial_account_address() {

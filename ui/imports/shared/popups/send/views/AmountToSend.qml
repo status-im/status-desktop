@@ -79,6 +79,8 @@ Control {
      * arbitrary external criteria, e.g. is higher than maximum expected value. */
     property bool markAsInvalid: false
 
+    /* Right padding for amount input */
+    property int amountInputRightPadding: 0
     /* Methods for formatting crypto and fiat value expecting double values,
        e.g. 1.0 for 1 ETH or 1.0 for 1 USD. */
     property var formatFiat: balance =>
@@ -214,7 +216,7 @@ Control {
                 objectName: "amountToSend_textField"
 
                 Layout.preferredHeight: 44
-                Layout.maximumWidth: root.width - currencyField.width - 2*layout.spacing
+                Layout.maximumWidth: root.width - currencyField.width - 2*layout.spacing - root.amountInputRightPadding
                 padding: 0
                 leftPadding: 0
                 background: null
