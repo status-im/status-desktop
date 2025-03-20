@@ -6,11 +6,9 @@ import driver
 from constants import RandomWalletAccount
 from helpers.WalletHelper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
 
 from gui.main_window import MainWindow
 
-pytestmark = marks
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703036',
