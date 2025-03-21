@@ -422,6 +422,7 @@ QtObject {
 
             accountsModel: handler.accountsSelectorAdaptor.processedWalletAccounts
             assetsModel: handler.assetsSelectorViewAdaptor.outputAssetsModel
+            flatAssetsModel: root.plainTokensBySymbolModel
             flatCollectiblesModel: handler.collectiblesSelectionAdaptor.filteredFlatModel
             collectiblesModel: handler.collectiblesSelectionAdaptor.model
             networksModel: root.filteredFlatNetworksModel

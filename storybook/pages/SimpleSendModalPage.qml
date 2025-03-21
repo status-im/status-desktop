@@ -133,6 +133,7 @@ SplitView {
 
         accountsModel: accountsSelectorAdaptor.processedWalletAccounts
         assetsModel: assetsSelectorViewAdaptor.outputAssetsModel
+        flatAssetsModel: d.walletAssetStore.walletTokensStore.plainTokensBySymbolModel
         flatCollectiblesModel: collectiblesSelectionAdaptor.filteredFlatModel
         collectiblesModel: collectiblesSelectionAdaptor.model
         networksModel: d.filteredNetworksModel

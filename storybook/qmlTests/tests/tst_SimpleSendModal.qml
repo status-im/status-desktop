@@ -168,6 +168,31 @@ Item {
                 ]
                 Component.onCompleted: append(data)
             }
+
+            flatAssetsModel: ListModel {
+                readonly property var data: [
+                    {
+                        "addressPerChain":[
+                            {address:"0x0000000000000000000000000000000000000000","chainId":1},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":5},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":10},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":11155420},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":42161},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":421614},
+                            {address:"0x0000000000000000000000000000000000000000","chainId":11155111}],
+                        "key":"ETH",
+                    },
+                    {
+                        "addressPerChain":[
+                            {address:"0x6b175474e89094c44da98b954eedeac495271d0f","chainId":1},
+                            {address:"0xda10009cbd5d07dd0cecc66161fc93d7c9000da1","chainId":10},
+                        ],
+                        "key":"DAI",
+                    }
+                ]
+                Component.onCompleted: append(data)
+            }
+
             flatCollectiblesModel: ListModel {
                 readonly property var data: [
                     // collection 2
