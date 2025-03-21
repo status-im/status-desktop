@@ -22,9 +22,9 @@ from scripts.utils.parsers import remove_tags
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703087', '1-1 Chat')
 @pytest.mark.case(703087, 738732, 738734, 738742, 738744, 738745)
-@pytest.mark.critical
-@pytest.mark.smoke
-@pytest.mark.skip(reason="temp skip until timeouts are fixed")
+# @pytest.mark.critical
+# @pytest.mark.smoke
+@pytest.mark.skip(reason="tests are running very long because of long login time")
 def test_1x1_chat_add_contact_in_settings(multiple_instances):
     user_one: UserAccount = RandomUser()
     user_two: UserAccount = RandomUser()

@@ -2,16 +2,15 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-import configs
-from constants.onboarding import KeysExistText
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
+from web3 import Web3
 
 from gui.main_window import LeftPanel
-from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatusView, OnboardingBiometricsView
+from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatusView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
@@ -28,8 +27,8 @@ def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
     seed_view.fill_in_seed_phrase_grid(seed_phrase.split(), autocomplete=False)
     create_password_view = seed_view.continue_import()
     create_password_view.create_password(user_account.password)
-    splash_screen = SplashScreen()
-    splash_screen.wait_until_hidden()
+    splash_screen = SplashScreen().wait_until_appears()
+    splash_screen.wait_until_hidden(timeout_msec=60000)
     signing_phrase = SigningPhrasePopup().wait_until_appears()
     signing_phrase.confirm_phrase()
 
@@ -45,7 +44,9 @@ def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
                 WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
                 status_account_index))
         address = status_acc_view.get_account_address_value()
+
         address_from_seed = get_wallet_address_from_mnemonic(seed_phrase)
+        # assert Web3.is_checksum_address(address) todo: https://github.com/status-im/status-desktop/issues/17648
         assert address == address_from_seed, \
             f"Recovered account should have address {address_from_seed}, but has {address}"
 
