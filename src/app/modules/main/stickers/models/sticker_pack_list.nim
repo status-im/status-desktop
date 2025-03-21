@@ -117,7 +117,6 @@ QtObject:
     if idx == -1:
       return
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.packs.apply(proc(it: var StickerPackView) =
       if it.pack.id == packId:
         it.installed = installed

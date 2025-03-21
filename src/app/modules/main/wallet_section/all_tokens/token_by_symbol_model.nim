@@ -154,32 +154,24 @@ QtObject:
       if self.delegate.getTokenBySymbolList().len > 0:
         let index = self.createIndex(0, 0, nil)
         let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-        defer: index.delete
-        defer: lastindex.delete
         self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
   proc tokensMarketValuesAboutToUpdate*(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
   proc tokensDetailsAboutToUpdate*(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc tokensDetailsUpdated*(self: TokensBySymbolModel) =
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc currencyFormatsUpdated*(self: TokensBySymbolModel) =
@@ -190,6 +182,4 @@ QtObject:
     if self.delegate.getTokenBySymbolList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getTokenBySymbolList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])

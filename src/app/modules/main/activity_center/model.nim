@@ -49,8 +49,6 @@ QtObject:
 
     let topLeft = self.createIndex(0, 0, nil)
     let bottomRight = self.createIndex(self.activityCenterNotifications.len - 1, 0, nil)
-    defer: topLeft.delete
-    defer: bottomRight.delete
     self.dataChanged(topLeft, bottomRight, @[NotifRoles.Read.int])
 
   method rowCount*(self: Model, index: QModelIndex = nil): int = self.activityCenterNotifications.len
@@ -126,7 +124,6 @@ QtObject:
 
     self.activityCenterNotifications[i].read = false
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[NotifRoles.Read.int])
 
   proc markActivityCenterNotificationRead*(self: Model, notificationId: string) =
@@ -136,7 +133,6 @@ QtObject:
 
     self.activityCenterNotifications[i].read = true
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[NotifRoles.Read.int])
 
   proc activityCenterNotificationAccepted*(self: Model, notificationId: string) =
@@ -147,7 +143,6 @@ QtObject:
     self.activityCenterNotifications[i].read = true
     self.activityCenterNotifications[i].accepted = true
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[NotifRoles.Accepted.int, NotifRoles.Read.int])
 
   proc activityCenterNotificationDismissed*(self: Model, notificationId: string) =
@@ -158,7 +153,6 @@ QtObject:
     self.activityCenterNotifications[i].read = true
     self.activityCenterNotifications[i].dismissed = true
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[NotifRoles.Dismissed.int, NotifRoles.Read.int])
 
   proc removeNotifications*(self: Model, ids: seq[string]) =
@@ -188,7 +182,6 @@ QtObject:
   proc updateActivityCenterNotification*(self: Model, ind: int, newNotification: Item) =
     self.activityCenterNotifications[ind] = newNotification
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index)
 
   proc upsertActivityCenterNotification*(self: Model, newNotification: Item) =
@@ -212,7 +205,6 @@ QtObject:
     let indexToUpdate = indexToInsert - 2
     if indexToUpdate >= 0 and indexToUpdate < self.activityCenterNotifications.len:
       let index = self.createIndex(indexToUpdate, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index, @[NotifRoles.PreviousTimestamp.int])
 
   proc upsertActivityCenterNotifications*(self: Model, activityCenterNotifications: seq[Item]) =

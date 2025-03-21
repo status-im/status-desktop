@@ -135,7 +135,6 @@ QtObject:
       if cmpIgnoreCase(self.entries[i].getSender(), address) == 0 or
         cmpIgnoreCase(self.entries[i].getRecipient(), address) == 0:
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
           self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
 
   proc refreshAmountCurrency*(self: Model, currencyService: Service) =

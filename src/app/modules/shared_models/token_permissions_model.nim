@@ -149,7 +149,6 @@ QtObject:
     self.items[idx].state = item.state
 
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.Type.int,
       ModelRole.TokenCriteria.int,

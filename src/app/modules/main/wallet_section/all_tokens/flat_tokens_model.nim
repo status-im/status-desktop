@@ -150,8 +150,6 @@ QtObject:
     if self.delegate.getFlatTokensList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
 
   proc tokensMarketValuesUpdated*(self: FlatTokensModel) =
@@ -164,8 +162,6 @@ QtObject:
     if self.delegate.getFlatTokensList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
 
   proc tokensDetailsAboutToUpdate*(self: FlatTokensModel) =
@@ -182,6 +178,4 @@ QtObject:
     if self.delegate.getFlatTokensList().len > 0:
       let index = self.createIndex(0, 0, nil)
       let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
-      defer: index.delete
-      defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])

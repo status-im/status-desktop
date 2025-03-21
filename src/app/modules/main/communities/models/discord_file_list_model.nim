@@ -153,7 +153,6 @@ QtObject:
   proc setAllValidated*(self: DiscordFileListModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].validated = true
       self.dataChanged(index, index, @[ModelRole.Validated.int])
     self.selectedFilesValidChanged()
@@ -162,7 +161,6 @@ QtObject:
     let idx = self.findIndexByFilePath(filePath)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].errorMessage = errorMessage
       self.items[idx].errorCode = errorCode
       self.items[idx].selected = false
