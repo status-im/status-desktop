@@ -40,6 +40,12 @@
 #include "onboarding/enums.h"
 
 void registerStatusQTypes() {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QByteArrayList selectors = qgetenv("QT_FILE_SELECTORS").split(',');
+    selectors << QByteArrayLiteral("qt6");
+    qputenv("QT_FILE_SELECTORS", selectors.join(","));
+#endif
+
     qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
