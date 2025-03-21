@@ -110,7 +110,7 @@ QtObject:
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
   proc requestContactInfo*(self: Service, pubkey: string)
-  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails
+  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false, skipBackendCalls: bool = false): ContactDetails
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -152,7 +152,10 @@ QtObject:
       let rpcResponseObj = response.parseJson
       for elem in rpcResponseObj["response"]["result"].getElems():
         let contactDto = elem.toContactsDto()
-        self.addContact(self.constructContactDetails(contactDto))
+        self.addContact(self.constructContactDetails(
+          contactDto,
+          isCurrentUser = contactDto.id == singletonInstance.userProfile.getPubKey()
+        ))
       self.events.emit(SIGNAL_CONTACTS_LOADED, Args())
     except Exception as e:
       error "error fetching contacts", msg = e.msg
@@ -290,26 +293,33 @@ QtObject:
     if(contactDto.image.large.len > 0):
       result.largeImage = contactDto.image.large
 
-  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails =
+  proc constructContactDetails(self: Service, contactDto: ContactsDto, isCurrentUser: bool = false, skipBackendCalls: bool = false): ContactDetails =
     result = ContactDetails()
     let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
     result.defaultDisplayName = name
     result.optionalName = optionalName
     result.icon = icon
-    result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
-    result.isCurrentUser = contactDto.id == singletonInstance.userProfile.getPubKey()
+    if not skipBackendCalls:
+      result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
+    result.isCurrentUser = isCurrentUser
     result.dto = contactDto
-    if not contactDto.ensVerified:
+
+    if not contactDto.ensVerified and not skipBackendCalls:
       result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
 
-  proc getContactDetails*(self: Service, id: string): ContactDetails =
+  proc getContactDetails*(self: Service, id: string, skipBackendCalls: bool = false): ContactDetails =
     var pubkey = id
 
     if service_conversion.isCompressedPubKey(id):
-        pubkey = status_accounts.decompressPk(id).result
+      pubkey = status_accounts.decompressPk(id).result
 
     if len(pubkey) == 0:
         return
+
+    ## Returns contact details based on passed id (public key)
+    ## If we don't have stored contact localy or in the db then we create it based on public key.
+    if self.contacts.hasKey(pubkey):
+      return self.contacts[pubkey]
 
     if pubkey == singletonInstance.userProfile.getPubKey():
       # If we try to get the contact details of ourselves, just return our own info
@@ -327,13 +337,10 @@ QtObject:
           ),
           trustStatus: TrustStatus.Trusted,
           bio: self.settingsService.getBio(),
-        )
+        ),
+        isCurrentUser = true,
+        skipBackendCalls,
       )
-
-    ## Returns contact details based on passed id (public key)
-    ## If we don't have stored contact localy or in the db then we create it based on public key.
-    if self.contacts.hasKey(pubkey):
-      return self.contacts[pubkey]
 
     if not pubkey.startsWith("0x"):
       debug "id is not in a hex format"
@@ -348,13 +355,15 @@ QtObject:
     let contact = self.constructContactDetails(
       ContactsDto(
         id: pubkey,
-        alias: self.generateAlias(pubkey),
+        alias: if skipBackendCalls: "" else: self.generateAlias(pubkey),
         ensVerified: false,
         added: false,
         blocked: false,
         hasAddedUs: false,
         trustStatus: TrustStatus.Unknown,
-      )
+      ),
+      isCurrentUser = false,
+      skipBackendCalls,
     )
     self.addContact(contact)
     return contact
@@ -384,7 +393,10 @@ QtObject:
 
   proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
-    self.contacts[contact.id] = self.constructContactDetails(contact)
+    self.contacts[contact.id] = self.constructContactDetails(
+      contact,
+      isCurrentUser = contact.id == singletonInstance.userProfile.getPubKey()
+    )
 
   proc updateContact(self: Service, contact: ContactsDto) =
     var signal = SIGNAL_CONTACT_ADDED
@@ -396,7 +408,10 @@ QtObject:
         singletonInstance.globalEvents.showContactRemoved("Contact removed", fmt "You removed {contact.displayName} as a contact", contact.id)
         signal = SIGNAL_CONTACT_REMOVED
 
-    self.contacts[publicKey] = self.constructContactDetails(contact)
+    self.contacts[publicKey] = self.constructContactDetails(
+      contact,
+      isCurrentUser = contact.id == singletonInstance.userProfile.getPubKey()
+    )
     self.events.emit(signal, ContactArgs(contactId: publicKey))
 
   proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode]) =

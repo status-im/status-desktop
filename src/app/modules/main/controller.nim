@@ -569,8 +569,8 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
-  return self.contactsService.getContactDetails(contactId)
+proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool): ContactDetails =
+  return self.contactsService.getContactDetails(contactId, skipBackendCalls)
 
 proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
   self.contactsService.resolveENS(ensName, uuid, reason)

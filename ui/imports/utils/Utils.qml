@@ -1004,4 +1004,8 @@ QtObject {
         return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
                                        StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
     }
+
+    function generateAlias(pk) {
+        return globalUtilsInst.generateAlias(pk);
+    }
 }

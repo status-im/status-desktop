@@ -129,7 +129,7 @@ proc processChatMember(self: Module,  member: ChatMember, reset: bool = false): 
     return
 
   let isMe = member.id == singletonInstance.userProfile.getPubKey()
-  let contactDetails = self.controller.getContactDetails(member.id)
+  let contactDetails = self.controller.getContactDetails(member.id, skipBackendCalls = true)
   var status = OnlineStatus.Online
   if isMe:
     let currentUserStatus = intToEnum(singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown)

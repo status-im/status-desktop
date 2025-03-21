@@ -125,8 +125,8 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =
   return self.contactService.getContactNameAndImage(contactId)
 
-proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
-  return self.contactService.getContactDetails(contactId)
+proc getContactDetails*(self: Controller, contactId: string, skipBackendCalls: bool = false): ContactDetails =
+  return self.contactService.getContactDetails(contactId, skipBackendCalls)
 
 proc getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(contactId)
