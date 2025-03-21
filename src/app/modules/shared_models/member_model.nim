@@ -257,7 +257,6 @@ QtObject:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -271,7 +270,6 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -335,7 +333,6 @@ QtObject:
 
     if callDataChanged:
       let index = self.createIndex(ind, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index, roles)
 
     return roles
@@ -377,8 +374,6 @@ QtObject:
 
     let startModelIndex = self.createIndex(startIndex, 0, nil)
     let endModelIndex = self.createIndex(endIndex, 0, nil)
-    defer: startModelIndex.delete
-    defer: endModelIndex.delete
     self.dataChanged(startModelIndex, endModelIndex, allRoles)
 
 
@@ -464,7 +459,6 @@ QtObject:
 
     self.items[idx].onlineStatus = onlineStatus
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.OnlineStatus.int
     ])
@@ -479,7 +473,6 @@ QtObject:
 
     self.items[idx].airdropAddress = airdropAddress
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.AirdropAddress.int
     ])
@@ -505,7 +498,6 @@ QtObject:
 
     self.items[idx].requestToJoinLoading = requestToJoinLoading
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.RequestToJoinLoading.int
     ])
@@ -520,7 +512,6 @@ QtObject:
 
     self.items[idx].membershipRequestState = membershipRequestState
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.MembershipRequestState.int
     ])

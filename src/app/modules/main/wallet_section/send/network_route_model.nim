@@ -105,7 +105,6 @@ QtObject:
   proc reset*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].amountIn = ""
       self.items[i].amountOut = ""
       self.items[i].resetToNetworks()
@@ -122,7 +121,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].tokenBalance = tokenBalance
         self.dataChanged(index, index, @[ModelRole.TokenBalance.int])
 
@@ -130,7 +128,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if path.getfromNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].amountIn = path.getAmountIn()
         self.items[i].toNetworks = path.getToNetwork()
         self.items[i].hasGas = hasGas
@@ -141,7 +138,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if path.getToNetwork() == self.items[i].getChainId():
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         if self.items[i].getAmountOut().len != 0:
           self.items[i].amountOut = $(stint.u256(self.items[i].getAmountOut()) + stint.u256(path.getAmountOut()))
         else:
@@ -151,7 +147,6 @@ QtObject:
   proc resetPathData*(self: NetworkRouteModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].amountIn = ""
       self.items[i].resetToNetworks()
       self.items[i].hasGas = true
@@ -177,7 +172,6 @@ QtObject:
     try:
       for i in 0 ..< self.items.len:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].isRoutePreferred = false
         self.items[i].isRouteEnabled = false
         if chainIds.len == 0:
@@ -197,7 +191,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsRoutePreferred():
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].isRouteEnabled = false
         self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
@@ -205,14 +198,12 @@ QtObject:
     for i in 0 ..< self.items.len:
       if not self.items[i].getIsRoutePreferred():
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].isRouteEnabled = true
         self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
   proc setAllNetworksAsRoutePreferredChains*(self: NetworkRouteModel) {.slot.} =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].isRoutePreferred = true
       self.dataChanged(index, index, @[ModelRole.IsRoutePreferred.int])
 
@@ -220,7 +211,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].isRouteEnabled = not self.items[i].getIsRouteEnabled()
         self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
@@ -228,7 +218,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].isRouteEnabled = not disabled
         self.dataChanged(index, index, @[ModelRole.IsRouteEnabled.int])
 
@@ -244,7 +233,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getChainId() == chainId):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].locked = lock
         self.dataChanged(index, index, @[ModelRole.Locked.int])
         if self.items[i].getLocked():

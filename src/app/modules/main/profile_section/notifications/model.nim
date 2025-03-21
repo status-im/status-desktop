@@ -161,7 +161,6 @@ QtObject:
     roles.add(ModelRole.Customized.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc updateName*(self: Model, id: string, name: string) =
@@ -172,7 +171,6 @@ QtObject:
     self.items[ind].name = name
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Name.int])
 
   proc updateItem*(self: Model, id, name, image, color: string) =
@@ -190,5 +188,4 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
