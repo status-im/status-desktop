@@ -42,7 +42,6 @@ QtObject:
       items: seq[UserItem]
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -180,7 +179,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -204,7 +202,6 @@ QtObject:
     let position = self.items.len
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
@@ -223,7 +220,6 @@ QtObject:
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     let pubKey = self.items[index].pubKey
@@ -257,7 +253,6 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -268,7 +263,6 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -336,7 +330,6 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc updateItem*(
@@ -388,7 +381,6 @@ QtObject:
     self.items[ind].trustStatus = trustStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TrustStatus.int, ModelRole.IsUntrustworthy.int, ModelRole.IsVerified.int])
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
@@ -402,7 +394,6 @@ QtObject:
     self.items[ind].onlineStatus = onlineStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
 
 

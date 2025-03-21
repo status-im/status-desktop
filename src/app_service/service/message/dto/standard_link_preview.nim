@@ -29,7 +29,6 @@ QtObject:
 
   proc delete*(self: StandardLinkPreview) =
     self.QObject.delete
-    self.thumbnail.delete
 
   proc newStandardLinkPreview*(hostname: string, title: string, description: string, thumbnail: LinkPreviewThumbnail, linkType: LinkType): StandardLinkPreview =
     new(result, delete)

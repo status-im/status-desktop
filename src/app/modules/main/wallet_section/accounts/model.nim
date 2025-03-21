@@ -28,7 +28,6 @@ QtObject:
       items: seq[Item]
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -79,7 +78,6 @@ QtObject:
     if (index < 0 or index >= self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
@@ -88,7 +86,6 @@ QtObject:
     if (index < 0 or index > self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, index, index)
     self.items.insert(item, index)
     self.endInsertRows()
@@ -120,7 +117,6 @@ QtObject:
       let index = self.findAccountIndex(account)
       if index >= 0:
         let qIndex = self.createIndex(i, 0, nil)
-        defer: qIndex.delete
 
         self.items[index] = account
         self.dataChanged(qIndex, qIndex)
@@ -138,7 +134,6 @@ QtObject:
       if i >= 0:
         self.items[i] = account
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index)
       else:
         self.insertItem(account, self.getCount())
@@ -199,7 +194,6 @@ QtObject:
     self.items[i].setBalance(balance)
     self.items[i].setAssetsLoading(assetsLoading)
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.CurrencyBalance.int, ModelRole.AssetsLoading.int])
 
   proc updateAccountHiddenFromTotalBalance*(self: Model, address: string, hideFromTotalBalance: bool) =
@@ -208,7 +202,6 @@ QtObject:
       return
     self.items[i].setHideFromTotalBalance(hideFromTotalBalance)
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.HideFromTotalBalance.int])
 
   proc updateAccountsPositions*(self: Model, values: Table[string, int]) =
@@ -219,9 +212,6 @@ QtObject:
       self.items[i].setPosition(position)
     let firstIndex = self.createIndex(0, 0, nil)
     let lastIndex = self.createIndex(self.rowCount() - 1, 0, nil)
-    defer: 
-      firstIndex.delete
-      lastIndex.delete
     self.dataChanged(firstIndex, lastIndex, @[ModelRole.Position.int])
 
   proc deleteAccount*(self: Model, address: string) =

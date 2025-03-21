@@ -23,7 +23,6 @@ QtObject:
       items: seq[Item]
 
   proc delete*(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -101,7 +100,6 @@ QtObject:
       position = self.items.len
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
@@ -113,7 +111,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, 0, items.len - 1)
     self.items = items
@@ -134,7 +131,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -165,7 +161,6 @@ QtObject:
     roles.add(ModelRole.Customized.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc updateName*(self: Model, id: string, name: string) =
@@ -176,7 +171,6 @@ QtObject:
     self.items[ind].name = name
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Name.int])
 
   proc updateItem*(self: Model, id, name, image, color: string) =
@@ -194,5 +188,4 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)

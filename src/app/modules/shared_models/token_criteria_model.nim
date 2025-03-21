@@ -22,7 +22,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenCriteriaModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenCriteriaModel*(): TokenCriteriaModel =
@@ -89,7 +88,6 @@ QtObject:
 
   proc addItem*(self: TokenCriteriaModel, item: TokenCriteriaItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

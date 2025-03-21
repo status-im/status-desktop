@@ -13,7 +13,6 @@ QtObject:
       items: seq[KeycardItem]
 
   proc delete(self: KeycardModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: KeycardModel) =
@@ -48,7 +47,6 @@ QtObject:
 
   proc addItem*(self: KeycardModel, item: KeycardItem) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginInsertRows(modelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -64,7 +62,6 @@ QtObject:
     if (index < 0 or index >= self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()

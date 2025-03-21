@@ -20,7 +20,6 @@ QtObject:
       items: seq[WalletAccountItem]
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -74,7 +73,6 @@ QtObject:
         item.colorId = account.colorId
         item.emoji = account.emoji
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int])
         break
       i.inc
@@ -114,9 +112,7 @@ QtObject:
       return false
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
 
     var destRow = toRow
     if toRow > fromRow:

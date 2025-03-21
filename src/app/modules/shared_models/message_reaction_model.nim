@@ -15,7 +15,6 @@ QtObject:
       items: seq[MessageReactionItem]
 
   proc delete(self: MessageReactionModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: MessageReactionModel) =
@@ -114,11 +113,9 @@ QtObject:
         return
       self.items[ind].addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
       let index = self.createIndex(ind, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       var item = initMessageReactionItem(emojiId)
       item.addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
@@ -139,7 +136,6 @@ QtObject:
     if(self.items[ind].numberOfReactions() == 0):
       # remove item if there are no reactions for this emoji id
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       self.beginRemoveRows(parentModelIndex, ind, ind)
       self.items.delete(ind)
@@ -147,5 +143,4 @@ QtObject:
       self.countChanged()
     else:
       let index = self.createIndex(ind, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index)

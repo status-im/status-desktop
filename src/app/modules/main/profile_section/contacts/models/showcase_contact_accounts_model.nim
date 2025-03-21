@@ -22,7 +22,6 @@ QtObject:
       items: seq[ShowcaseContactAccountItem]
 
   proc delete(self: ShowcaseContactAccountModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: ShowcaseContactAccountModel) =

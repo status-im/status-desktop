@@ -42,9 +42,6 @@ QtObject:
       items: seq[Item]
 
   proc delete*(self: Model) = 
-    for i in 0 ..< self.items.len:
-      self.items[i].delete
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -173,7 +170,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -199,9 +195,7 @@ QtObject:
       return
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
 
     let currentItem = self.items[fromRow]
     self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, to)
@@ -216,7 +210,6 @@ QtObject:
       item.unfurled = true
       item.linkPreview = linkPreviews[item.linkPreview.url]
       let modelIndex = self.createIndex(row, 0, nil)
-      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)
 
   proc setUrls*(self: Model, urls: seq[string]) =
@@ -249,7 +242,6 @@ QtObject:
       item.linkPreview = linkPreview
 
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, i, i)
       self.items.insert(item, i)
       self.endInsertRows()
@@ -269,7 +261,6 @@ QtObject:
     self.items[index].markAsImmutable()
 
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
@@ -278,8 +269,6 @@ QtObject:
   
     let indexStart = self.createIndex(0, 0, nil)
     let indexEnd = self.createIndex(self.items.len, 0, nil)
-    defer: indexStart.delete
-    defer: indexEnd.delete
     self.dataChanged(indexStart, indexEnd)
       
   proc getLinkPreviewType*(self: Model, url: string): int {.slot.} =
@@ -318,7 +307,6 @@ QtObject:
       return
     item.loadingLocalData = value
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LoadingLocalData.int])
 
   proc setItemIsLocalData(self: Model, row: int, item: Item) = 
@@ -330,7 +318,6 @@ QtObject:
       item.loadingLocalData = false
       roles.add(ModelRole.LoadingLocalData.int)
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, roles)
 
   proc setContactInfo*(self: Model, contactDetails: ContactDetails) =

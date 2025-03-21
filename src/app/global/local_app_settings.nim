@@ -38,8 +38,6 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: LocalAppSettings) =
-    self.settings.delete
-
     self.QObject.delete
 
   proc newLocalAppSettings*(fileName: string): LocalAppSettings =

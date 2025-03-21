@@ -15,7 +15,6 @@ QtObject:
       items: seq[KeyPairItem]
 
   proc delete(self: KeyPairModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: KeyPairModel) =
@@ -65,7 +64,6 @@ QtObject:
 
   proc addItem*(self: KeyPairModel, item: KeyPairItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

@@ -14,7 +14,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenPermissionChatListModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenPermissionChatListModel*(): TokenPermissionChatListModel =
@@ -52,7 +51,6 @@ QtObject:
 
   proc addItem*(self: TokenPermissionChatListModel, item: TokenPermissionChatListItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -72,6 +70,5 @@ QtObject:
       if self.items[i].getKey() == chatId:
         self.items[i] = initTokenPermissionChatListItem(chatId, newName)
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.ChannelName.int])
         return

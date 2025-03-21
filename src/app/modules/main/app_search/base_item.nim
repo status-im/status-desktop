@@ -17,9 +17,6 @@ proc initBaseItem*(value, text, image, icon, iconColor: string): BaseItem =
   result = BaseItem()
   result.setup(value, text, image, icon, iconColor)
 
-proc delete*(self: BaseItem) =
-  discard
-
 method value*(self: BaseItem): string {.inline base.} =
   self.value
 

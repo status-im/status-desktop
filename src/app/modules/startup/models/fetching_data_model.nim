@@ -19,7 +19,6 @@ QtObject:
   proc reevaluateAllTotals(self: Model)
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -96,7 +95,6 @@ QtObject:
     self.items[ind].receivedMessageAtPosition(position)
     self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
 
   proc evaluateWhetherToProcessReceivedData*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]): bool =
@@ -123,7 +121,6 @@ QtObject:
     self.items[ind].totalMessages = totalMessages
     self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
 
   proc removeSection*(self: Model, entity: string) =
@@ -133,7 +130,6 @@ QtObject:
     if(ind == -1):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()

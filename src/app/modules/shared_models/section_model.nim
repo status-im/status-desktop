@@ -53,7 +53,6 @@ QtObject:
       items: seq[SectionItem]
 
   proc delete(self: SectionModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: SectionModel) =
@@ -216,7 +215,6 @@ QtObject:
 
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -227,7 +225,6 @@ QtObject:
 
   proc addItem*(self: SectionModel, item: SectionItem, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, index, index)
@@ -241,7 +238,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -264,7 +260,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -282,7 +277,6 @@ QtObject:
 
     self.items[index].muted = muted 
     let dataIndex = self.createIndex(index, 0, nil)
-    defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
   proc editItem*(self: SectionModel, item: SectionItem) =
@@ -331,7 +325,6 @@ QtObject:
       return
 
     let dataIndex = self.createIndex(ind, 0, nil)
-    defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, roles)
 
   proc updateMemberItemInSections*(
@@ -392,13 +385,11 @@ QtObject:
     for i in 0 ..< self.items.len:
       if self.items[i].active:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
       if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].active = true
 
         self.dataChanged(index, index, @[ModelRole.Active.int])
@@ -414,7 +405,6 @@ QtObject:
           if self.items[i].enabled == value:
             continue
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
           self.items[i].enabled = value
           self.dataChanged(index, index, @[ModelRole.Enabled.int])
     else:
@@ -430,8 +420,6 @@ QtObject:
 
       let topIndex = self.createIndex(topInd, 0, nil)
       let bottomIndex = self.createIndex(bottomInd, 0, nil)
-      defer: topIndex.delete
-      defer: bottomIndex.delete
       self.dataChanged(topIndex, bottomIndex, @[ModelRole.Enabled.int])
 
     # This signal is emitted to update buttons visibility in the left navigation bar,
@@ -457,7 +445,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if self.items[i].id == id:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
 
         if self.items[i].isPendingOwnershipRequest == isPending:
           return
@@ -478,7 +465,6 @@ QtObject:
           return
 
         let index = self.createIndex(ind, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index, roles)
         self.notificationsCountChanged()
         return
@@ -493,7 +479,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].appendCommunityToken(item)
         return
 

@@ -37,7 +37,6 @@ QtObject:
       isError: bool
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -213,7 +212,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     # Start after the current last real item
     let startIdx = self.items.len
@@ -230,7 +228,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -313,7 +310,6 @@ QtObject:
         let update = updates[j]
         if entry.updateDataIfSameID(update):
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
           self.dataChanged(index, index)
           anyUpdated = true
           break

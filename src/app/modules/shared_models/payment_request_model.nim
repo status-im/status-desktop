@@ -14,7 +14,6 @@ QtObject:
       items: seq[PaymentRequest]
 
   proc delete*(self: Model) = 
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -76,7 +75,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -84,7 +82,6 @@ QtObject:
 
   proc insertItem(self: Model, paymentRequest: PaymentRequest) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(paymentRequest)

@@ -50,7 +50,6 @@ proc newConnectionStatus(): ConnectionStatus =
 
 QtObject:
   type Service* = ref object of QObject
-    closingApp: bool
     events: EventEmitter
     walletService: wallet_service.Service
     networkService: network_service.Service
@@ -66,7 +65,6 @@ QtObject:
   proc getChainStatusTable(message: string): ConnectionStatusNotification
 
   proc delete*(self: Service) =
-    self.closingApp = true
     self.QObject.delete
 
   proc newService*(
@@ -78,7 +76,6 @@ QtObject:
   ): Service =
     new(result, delete)
     result.QObject.setup
-    result.closingApp = false
     result.events = events
     result.walletService = walletService
     result.networkService = networkService

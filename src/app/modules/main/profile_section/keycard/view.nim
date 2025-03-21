@@ -15,14 +15,6 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
-    if not self.keycardModel.isNil:
-      self.keycardModel.delete
-    if not self.keycardModelVariant.isNil:
-      self.keycardModelVariant.delete
-    if not self.keycardDetailsModel.isNil:
-      self.keycardDetailsModel.delete
-    if not self.keycardDetailsModelVariant.isNil:
-      self.keycardDetailsModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)

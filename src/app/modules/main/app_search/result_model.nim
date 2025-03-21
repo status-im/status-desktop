@@ -118,7 +118,6 @@ QtObject:
 
   proc add*(self: Model, item: Item) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginInsertRows(modelIndex, self.resultList.len, self.resultList.len)
     self.resultList.add(item)
     self.endInsertRows()

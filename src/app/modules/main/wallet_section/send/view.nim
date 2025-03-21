@@ -34,9 +34,6 @@ QtObject:
   proc updateNetworksTokenBalance(self: View)
 
   proc delete*(self: View) =
-    self.fromNetworksRouteModel.delete
-    self.toNetworksRouteModel.delete
-    self.transactionRoutes.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

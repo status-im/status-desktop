@@ -21,7 +21,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordImportTasksModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordDiscordImportTasksModel*(): DiscordImportTasksmodel =
@@ -78,7 +77,6 @@ QtObject:
 
   proc addItem*(self: DiscordImportTasksModel, item: DiscordImportTaskItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -93,7 +91,6 @@ QtObject:
     let idx = self.findIndexByType(item.`type`)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       let errorsAndWarningsCount = self.items[idx].warningsCount + self.items[idx].errorsCount
       self.items[idx].progress = item.progress
       self.items[idx].state = item.state
