@@ -74,7 +74,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         placeholderText: qsTr("Confirm your password (again)")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        validator: RegExpValidator { regExp: /^[!-~]+$/ } // That includes NOT extended ASCII printable characters less space
+        validator: RegularExpressionValidator { regularExpression: /^[!-~]+$/ } // That includes NOT extended ASCII printable characters less space
         maximumLength: Constants.maxPasswordLength // a maximum of 100 characters allowed
         rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Theme.padding / 2
         onTextChanged: {
