@@ -135,7 +135,6 @@ method loadMnemonic*[T](self: Module[T], mnemonic: string) =
   self.controller.loadMnemonic(mnemonic)
 
 method finishOnboardingFlow*[T](self: Module[T], flowInt: int, dataJson: string): string =
-  debug "finishOnboardingFlow", flowInt, dataJson
   self.postOnboardingTasks = newSeq[PostOnboardingTask]()
   self.postLoginTasks = newSeq[PostOnboardingTask]()
 
