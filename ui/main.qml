@@ -40,7 +40,6 @@ StatusWindow {
         sendViaPersonalChatEnabled: featureFlags ? featureFlags.sendViaPersonalChatEnabled : false
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
         simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
-        onboardingV2Enabled: featureFlags ? featureFlags.onboardingV2Enabled : false
         keycardEnabled: featureFlags ? featureFlags.keycardEnabled : false
         tradingCenterEnabled: featureFlags ? featureFlags.tradingCenterEnabled : false
     }

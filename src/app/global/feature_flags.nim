@@ -20,7 +20,6 @@ const DEFAULT_FLAG_SWAP_ENABLED  = true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED  = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = true
-const DEFAULT_FLAG_ONBOARDING_V2_ENABLED = true
 const DEFAULT_FLAG_TRADING_CENTER_ENABLED = false
 
 # Compile time feature flags
@@ -35,7 +34,6 @@ featureFlag("SWAP_ENABLED",                   DEFAULT_FLAG_SWAP_ENABLED)
 featureFlag("SEND_VIA_PERSONAL_CHAT_ENABLED", DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)
 featureFlag("PAYMENT_REQUEST_ENABLED",        DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)
 featureFlag("SIMPLE_SEND_ENABLED",            DEFAULT_FLAG_SIMPLE_SEND_ENABLED)
-featureFlag("ONBOARDING_V2_ENABLED",          DEFAULT_FLAG_ONBOARDING_V2_ENABLED)
 featureFlag("TRADING_CENTER_ENABLED",         DEFAULT_FLAG_TRADING_CENTER_ENABLED)
 
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED, true)
@@ -81,7 +79,6 @@ QtObject:
     sendViaPersonalChatEnabled: bool
     paymentRequestEnabled: bool
     simpleSendEnabled: bool
-    onboardingV2Enabled: bool
     keycardEnabled: bool
     tradingCenterEnabled: bool
 
@@ -93,7 +90,6 @@ QtObject:
     self.sendViaPersonalChatEnabled = SEND_VIA_PERSONAL_CHAT_ENABLED
     self.paymentRequestEnabled = PAYMENT_REQUEST_ENABLED
     self.simpleSendEnabled = SIMPLE_SEND_ENABLED
-    self.onboardingV2Enabled = ONBOARDING_V2_ENABLED
     self.keycardEnabled = KEYCARD_ENABLED
     self.tradingCenterEnabled = TRADING_CENTER_ENABLED
 
@@ -139,12 +135,6 @@ QtObject:
 
   QtProperty[bool] simpleSendEnabled:
     read = getSimpleSendEnabled
-
-  proc getOnboardingV2Enabled*(self: FeatureFlags): bool {.slot.} =
-    return self.onboardingV2Enabled
-
-  QtProperty[bool] onboardingV2Enabled:
-    read = getOnboardingV2Enabled
 
   QtProperty[bool] keycardEnabled:
     read = getKeycardEnabled
