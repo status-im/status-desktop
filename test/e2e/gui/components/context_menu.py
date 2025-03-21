@@ -27,6 +27,7 @@ class ContextMenu(QObject):
         self.leave_community_option = QObject(communities_names.leave_Community_StatusMenuItem)
         self.edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
         self.delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
+        self.community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
 
     @allure.step('Select in context menu')
     def select(self, value: str):
@@ -36,7 +37,7 @@ class ContextMenu(QObject):
     @allure.step('Select invite people to community in context menu')
     def select_invite_people(self):
         self.invite_from_context.click()
-        return InviteContactsPopup()
+        return InviteContactsPopup().wait_until_appears()
 
     @allure.step('Select leave community in context menu')
     def leave_community(self):
