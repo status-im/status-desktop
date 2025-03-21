@@ -63,29 +63,6 @@ QtObject:
       keypairsSigningModelVariant: QVariant
 
   proc delete*(self: View) =
-    self.model.delete
-    self.modelVariant.delete
-    self.spectatedCommunityPermissionModel.delete
-    self.spectatedCommunityPermissionModelVariant.delete
-    self.curatedCommunitiesModel.delete
-    self.curatedCommunitiesModelVariant.delete
-    self.discordFileListModel.delete
-    self.discordFileListModelVariant.delete
-    self.discordCategoriesModel.delete
-    self.discordCategoriesModelVariant.delete
-    self.discordChannelsModel.delete
-    self.discordChannelsModelVariant.delete
-    self.discordImportTasksModel.delete
-    self.discordImportTasksModelVariant.delete
-    self.tokenListModel.delete
-    self.tokenListModelVariant.delete
-    self.collectiblesListModel.delete
-    self.collectiblesListModelVariant.delete
-    if not self.keypairsSigningModel.isNil:
-      self.keypairsSigningModel.delete
-    if not self.keypairsSigningModelVariant.isNil:
-      self.keypairsSigningModelVariant.delete
-
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

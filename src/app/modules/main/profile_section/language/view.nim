@@ -12,8 +12,6 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
-    self.model.delete
-    self.modelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)

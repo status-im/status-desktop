@@ -23,7 +23,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenPermissionsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenPermissionsModel*(): TokenPermissionsModel =
@@ -102,7 +101,6 @@ QtObject:
 
   proc addItem*(self: TokenPermissionsModel, item: TokenPermissionItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -123,7 +121,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -152,7 +149,6 @@ QtObject:
     self.items[idx].state = item.state
 
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.Type.int,
       ModelRole.TokenCriteria.int,

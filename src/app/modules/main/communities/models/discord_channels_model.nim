@@ -18,7 +18,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordChannelsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordChannelsModel*(): DiscordChannelsModel =
@@ -157,7 +156,6 @@ QtObject:
     for i in 0 ..< indices.len:
 
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       self.beginRemoveRows(parentModelIndex, indices[i], indices[i])
       self.items.delete(indices[i])
@@ -166,7 +164,6 @@ QtObject:
 
   proc addItem*(self: DiscordChannelsModel, item: DiscordChannelItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -176,7 +173,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getCategoryId() == id):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].selected = false
         self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
@@ -185,7 +181,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].getCategoryId() == id):
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].selected = true
         self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()
@@ -205,7 +200,6 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = false
       self.dataChanged(index, index, @[ModelRole.Selected.int])
       self.hasSelectedItemsChanged()
@@ -214,7 +208,6 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = true
       self.dataChanged(index, index, @[ModelRole.Selected.int])
       self.hasSelectedItemsChanged()
@@ -222,7 +215,6 @@ QtObject:
   proc selectOneItem*(self: DiscordChannelsModel, id: string) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].selected = self.items[i].getId() == id
       self.dataChanged(index, index, @[ModelRole.Selected.int])
     self.hasSelectedItemsChanged()

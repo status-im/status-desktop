@@ -15,7 +15,6 @@ QtObject:
       items: seq[backend.AccountBalance]
 
   proc delete(self: OwnershipModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: OwnershipModel) =

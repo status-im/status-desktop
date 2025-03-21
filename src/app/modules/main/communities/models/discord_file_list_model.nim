@@ -17,7 +17,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordFileListModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordFileListModel*(): DiscordFileListModel =
@@ -138,7 +137,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -147,7 +145,6 @@ QtObject:
 
   proc addItem*(self: DiscordFileListModel, item: DiscordFileItem) =
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
       self.items.add(item)
       self.endInsertRows()
@@ -156,7 +153,6 @@ QtObject:
   proc setAllValidated*(self: DiscordFileListModel) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].validated = true
       self.dataChanged(index, index, @[ModelRole.Validated.int])
     self.selectedFilesValidChanged()
@@ -165,7 +161,6 @@ QtObject:
     let idx = self.findIndexByFilePath(filePath)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].errorMessage = errorMessage
       self.items[idx].errorCode = errorCode
       self.items[idx].selected = false

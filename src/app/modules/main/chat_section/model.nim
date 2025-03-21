@@ -49,10 +49,6 @@ QtObject:
       items: seq[Item]
 
   proc delete*(self: Model) =
-    for i in 0 ..< self.items.len:
-      self.items[i].delete
-
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -248,7 +244,6 @@ QtObject:
   # IMPORTANT: if you call this function for a chat with a category, make sure the category is appended first
   proc appendItem*(self: Model, item: Item, ignoreCategory: bool = false) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     var indexToInsertTo = item.position
     if item.isCategory:
@@ -278,7 +273,6 @@ QtObject:
       if self.items[i].categoryId == categoryId:
         self.items[i].categoryOpened = opened
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.CategoryOpened.int])
 
   # This function only refreshes ShouldBeHiddenBecausePermissionsAreNotMet.
@@ -292,7 +286,6 @@ QtObject:
     if not self.items[index].isCategory:
       return
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int])
 
   proc removeItemByIndex(self: Model, idx: int) =
@@ -300,7 +293,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -338,7 +330,6 @@ QtObject:
       return
     self.items[index].hasUnreadMessages = unread
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int])
 
   proc setActiveItem*(self: Model, id: string) =
@@ -346,7 +337,6 @@ QtObject:
       let isChannelToSetActive = (self.items[i].id == id)
       if self.items[i].active != isChannelToSetActive:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         # Set active channel to true and others to false
         self.items[i].active = isChannelToSetActive
         if (isChannelToSetActive):
@@ -370,7 +360,6 @@ QtObject:
 
     self.items[index].locked = locked
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Locked.int])
 
   proc setItemPermissionsRequired*(self: Model, id: string, value: bool) =
@@ -383,7 +372,6 @@ QtObject:
 
     self.items[index].requiresPermissions = value
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.RequiresPermissions.int])
 
   proc getItemPermissionsRequired*(self: Model, id: string): bool =
@@ -401,7 +389,6 @@ QtObject:
       return
     self.items[index].muted = muted
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Muted.int])
 
   proc changeCanPostValues*(self: Model, id: string, canPost, canView, canPostReactions, viewersCanPostReactions: bool) =
@@ -430,7 +417,6 @@ QtObject:
       return
     
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     changedRoles.add(ModelRole.HideIfPermissionsNotMet.int) # depends on canPost, canView
     changedRoles.add(ModelRole.ShouldBeHiddenBecausePermissionsAreNotMet.int) # depends on hideIfPermissionsNotMet
     self.dataChanged(modelIndex, modelIndex, changedRoles)
@@ -439,7 +425,6 @@ QtObject:
     for i in 0 ..< self.items.len:
       if self.items[i].categoryId == categoryId and self.items[i].muted != muted:
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.items[i].muted = muted
         self.dataChanged(index, index, @[ModelRole.Muted.int])
 
@@ -457,7 +442,6 @@ QtObject:
       return
     self.items[index].blocked = blocked
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Blocked.int])
 
   proc updateItemDetailsById*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
@@ -469,7 +453,6 @@ QtObject:
     self.items[index].icon = icon
     self.items[index].trustStatus = trustStatus
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.Icon.int,
@@ -486,7 +469,6 @@ QtObject:
     self.items[index].color = color
     self.items[index].hideIfPermissionsNotMet = hideIfPermissionsNotMet
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.Description.int,
@@ -506,7 +488,6 @@ QtObject:
     self.items[index].color = color
     self.items[index].icon = icon
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.Color.int,
@@ -525,7 +506,6 @@ QtObject:
     self.items[categoryIndex].name = newCategoryName
     self.items[categoryIndex].categoryPosition = newCategoryPosition
     let modelIndex = self.createIndex(categoryIndex, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[
       ModelRole.Name.int,
       ModelRole.CategoryPosition.int,
@@ -552,7 +532,6 @@ QtObject:
         item.categoryId = chat.categoryId
         item.categoryPosition = if nowHasCategory: newCategoryPosition else: -1
         let modelIndex = self.createIndex(i, 0, nil)
-        defer: modelIndex.delete
         var roleChanges = @[
           ModelRole.Position.int,
           ModelRole.CategoryId.int,
@@ -585,7 +564,6 @@ QtObject:
         item.categoryPosition = -1
         item.categoryOpened = true
         let modelIndex = self.createIndex(i, 0, nil)
-        defer: modelIndex.delete
         self.dataChanged(modelIndex, modelIndex, @[
           ModelRole.Position.int,
           ModelRole.CategoryId.int,
@@ -602,7 +580,6 @@ QtObject:
       return
     self.items[index].name = newName
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
 
   proc renameItemById*(self: Model, id, name: string) =
@@ -613,7 +590,6 @@ QtObject:
       return
     self.items[index].name = name
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Name.int])
 
   proc updateItemOnlineStatusById*(self: Model, id: string, onlineStatus: OnlineStatus) =
@@ -624,7 +600,6 @@ QtObject:
       return
     self.items[index].onlineStatus = onlineStatus
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.OnlineStatus.int])
 
   proc updateNotificationsForItemById*(self: Model, id: string, hasUnreadMessages: bool,
@@ -635,7 +610,6 @@ QtObject:
     self.items[index].hasUnreadMessages = hasUnreadMessages
     self.items[index].notificationsCount = notificationsCount
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
 
   proc updateLastMessageTimestampOnItemById*(self: Model, id: string, lastMessageTimestamp: int) =
@@ -646,7 +620,6 @@ QtObject:
       return
     self.items[index].lastMessageTimestamp = lastMessageTimestamp
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
 
   proc reorderChats*(
@@ -677,7 +650,6 @@ QtObject:
 
       self.items[index].position = updatedChat.position
       let modelIndex = self.createIndex(index, 0, nil)
-      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, roles)
 
   proc reorderCategoryById*(
@@ -693,7 +665,6 @@ QtObject:
         continue
       item.categoryPosition = position
       let modelIndex = self.createIndex(i, 0, nil)
-      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryPosition.int])
 
   proc clearItems*(self: Model) =
@@ -716,7 +687,6 @@ QtObject:
     self.items[index].loaderActive = false
     self.items[index].active = false
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.Active.int, ModelRole.LoaderActive.int])
 
   proc updateMissingEncryptionKey*(self: Model, id: string, missingEncryptionKey: bool) =
@@ -727,5 +697,4 @@ QtObject:
     if self.items[index].missingEncryptionKey != missingEncryptionKey:
       self.items[index].missingEncryptionKey = missingEncryptionKey
       let modelIndex = self.createIndex(index, 0, nil)
-      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex, @[ModelRole.MissingEncryptionKey.int])

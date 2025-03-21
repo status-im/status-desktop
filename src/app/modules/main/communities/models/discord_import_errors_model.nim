@@ -15,7 +15,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordImportErrorsModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordDiscordImportErrorsModel*(): DiscordImportErrorsModel =
@@ -54,7 +53,6 @@ QtObject:
 
   proc addItem*(self: DiscordImportErrorsModel, item: DiscordImportErrorItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

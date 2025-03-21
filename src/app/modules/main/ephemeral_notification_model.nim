@@ -25,7 +25,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newModel*(): Model =
@@ -102,7 +101,6 @@ QtObject:
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -114,7 +112,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)

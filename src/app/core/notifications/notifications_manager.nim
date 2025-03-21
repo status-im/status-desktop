@@ -49,9 +49,6 @@ QtObject:
     self.settingsService = settingsService
 
   proc delete*(self: NotificationsManager) =
-    if self.notificationSetUp:
-      self.osNotification.delete
-      self.soundManager.delete
     self.QObject.delete
 
   proc newNotificationsManager*(events: EventEmitter, settingsService: settings_service.Service): NotificationsManager =

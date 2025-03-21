@@ -44,7 +44,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenModel*(): TokenModel =
@@ -64,7 +63,6 @@ QtObject:
 
     self.items[itemIdx].tokenDto.deployState = deployState
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.DeployState.int])
 
   proc updateAddress*(self: TokenModel, chainId: int, oldContractAddress: string, newContractAddress: string) =
@@ -74,7 +72,6 @@ QtObject:
 
     self.items[itemIdx].tokenDto.address = newContractAddress
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TokenAddress.int])
 
   proc updateBurnState*(self: TokenModel, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
@@ -84,7 +81,6 @@ QtObject:
   
     self.items[itemIdx].burnState = burnState
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.BurnState.int])
 
   proc updateRemoteDestructedAddresses*(self: TokenModel, chainId: int, contractAddress: string, remoteDestructedAddresses: seq[string]) =
@@ -94,7 +90,6 @@ QtObject:
 
     self.items[itemIdx].remoteDestructedAddresses = remoteDestructedAddresses
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.RemotelyDestructState.int])
     self.items[itemIdx].tokenOwnersModel.updateRemoteDestructState(remoteDestructedAddresses)
     self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
@@ -108,7 +103,6 @@ QtObject:
       self.items[itemIdx].tokenDto.supply = supply
       self.items[itemIdx].destructedAmount = destructedAmount
       let index = self.createIndex(itemIdx, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index, @[ModelRole.Supply.int])
 
   proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: Uint256) =
@@ -118,7 +112,6 @@ QtObject:
 
     self.items[itemIdx].remainingSupply = remainingSupply
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.RemainingSupply.int])
 
   proc hasTokenHolders*(self: TokenModel, chainId: int, contractAddress: string): bool =
@@ -138,7 +131,6 @@ QtObject:
       result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, self.items[itemIdx].remoteDestructedAddresses)
     ))
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int, ModelRole.TokenHoldersLoading.int])
 
   proc setCommunityTokenHoldersLoading*(self: TokenModel, chainId: int, contractAddress: string, value: bool) =
@@ -148,7 +140,6 @@ QtObject:
 
     self.items[itemIdx].tokenHoldersLoading = value
     let index = self.createIndex(itemIdx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TokenHoldersLoading.int])
 
   proc countChanged(self: TokenModel) {.signal.}
@@ -166,7 +157,6 @@ QtObject:
 
   proc appendItem*(self: TokenModel, item: TokenItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -179,7 +169,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, itemIdx, itemIdx)
     self.items.delete(itemIdx)

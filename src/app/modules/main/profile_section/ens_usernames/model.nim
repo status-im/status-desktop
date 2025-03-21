@@ -17,7 +17,6 @@ QtObject:
       items: seq[Item]
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -78,7 +77,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -91,7 +89,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -106,5 +103,4 @@ QtObject:
     self.items[ind].isPending = pendingStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.IsPending.int])

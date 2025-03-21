@@ -17,9 +17,6 @@ QtObject:
 
   proc delete*(self: View) =
     self.QObject.delete
-    self.blockchainNetworkConnection.delete
-    self.collectiblesNetworkConnection.delete
-    self.marketValuesNetworkConnection.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)

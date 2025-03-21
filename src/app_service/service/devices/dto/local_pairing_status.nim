@@ -33,11 +33,8 @@ type
     transferredKeypairs*: seq[string] ## seq[keypair_key_uid]
     error*: string
 
-proc delete*(self: LocalPairingStatus) =
-  discard
-
 proc newLocalPairingStatus*(pairingType: PairingType, mode: LocalPairingMode): LocalPairingStatus =
-  new(result, delete)
+  new(result)
   result.pairingType = pairingType
   result.mode = mode
   result.state = LocalPairingState.Idle

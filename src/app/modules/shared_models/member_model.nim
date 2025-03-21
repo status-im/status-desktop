@@ -42,7 +42,6 @@ QtObject:
       items: seq[MemberItem]
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -173,7 +172,6 @@ QtObject:
 
   proc addItem*(self: Model, item: MemberItem) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginInsertRows(modelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -197,7 +195,6 @@ QtObject:
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -226,7 +223,6 @@ QtObject:
       return
 
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -261,7 +257,6 @@ QtObject:
       roles.add(ModelRole.PreferredDisplayName.int)
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -275,7 +270,6 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -339,7 +333,6 @@ QtObject:
 
     if callDataChanged:
       let index = self.createIndex(ind, 0, nil)
-      defer: index.delete
       self.dataChanged(index, index, roles)
 
     return roles
@@ -381,8 +374,6 @@ QtObject:
 
     let startModelIndex = self.createIndex(startIndex, 0, nil)
     let endModelIndex = self.createIndex(endIndex, 0, nil)
-    defer: startModelIndex.delete
-    defer: endModelIndex.delete
     self.dataChanged(startModelIndex, endModelIndex, allRoles)
 
 
@@ -468,7 +459,6 @@ QtObject:
 
     self.items[idx].onlineStatus = onlineStatus
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.OnlineStatus.int
     ])
@@ -483,7 +473,6 @@ QtObject:
 
     self.items[idx].airdropAddress = airdropAddress
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.AirdropAddress.int
     ])
@@ -509,7 +498,6 @@ QtObject:
 
     self.items[idx].requestToJoinLoading = requestToJoinLoading
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.RequestToJoinLoading.int
     ])
@@ -524,7 +512,6 @@ QtObject:
 
     self.items[idx].membershipRequestState = membershipRequestState
     let index = self.createIndex(idx, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[
       ModelRole.MembershipRequestState.int
     ])

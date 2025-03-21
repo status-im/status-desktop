@@ -12,7 +12,6 @@ QtObject:
         items: seq[EmojiReactionItem]
 
     proc delete(self: Model) =
-        self.items = @[]
         self.QAbstractListModel.delete
 
     # TODO : To make this code scale, we can consider a loop similar to

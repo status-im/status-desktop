@@ -29,7 +29,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: CuratedCommunityModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newCuratedCommunityModel*(): CuratedCommunityModel =
@@ -137,7 +136,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -148,12 +146,10 @@ QtObject:
     let idx = self.findIndexById(item.getId())
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx] = item
       self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
       self.items.add(item)
       self.endInsertRows()

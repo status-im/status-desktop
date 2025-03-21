@@ -17,7 +17,6 @@ QtObject:
       hasMore: bool
 
   proc delete(self: Model) =
-    self.entries = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -88,7 +87,6 @@ QtObject:
       self.resetModel(newEntries)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       if offset != self.entries.len:
         error "offset != self.entries.len"
@@ -103,7 +101,6 @@ QtObject:
 
   proc addNewEntries*(self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     for j in countdown(newEntries.high, 0):
       let ae = newEntries[j]
@@ -138,7 +135,6 @@ QtObject:
       if cmpIgnoreCase(self.entries[i].getSender(), address) == 0 or
         cmpIgnoreCase(self.entries[i].getRecipient(), address) == 0:
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
           self.dataChanged(index, index, @[ModelRole.ActivityEntryRole.int])
 
   proc refreshAmountCurrency*(self: Model, currencyService: Service) =

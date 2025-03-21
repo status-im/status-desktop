@@ -14,7 +14,6 @@ QtObject:
       balancesPerChain: seq[BalancesModel]
 
   proc delete(self: Model) =
-    self.balancesPerChain = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =

@@ -63,7 +63,6 @@ QtObject:
       items*: seq[PathItem]
 
   proc delete(self: PathModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: PathModel) =

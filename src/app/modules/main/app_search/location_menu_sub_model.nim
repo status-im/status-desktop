@@ -22,9 +22,6 @@ QtObject:
       items: seq[SubItem]
 
   proc delete*(self: SubModel) =
-    for i in 0 ..< self.items.len:
-      self.items[i].delete
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: SubModel) =

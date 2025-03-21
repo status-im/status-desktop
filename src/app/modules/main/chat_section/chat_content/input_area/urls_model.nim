@@ -10,7 +10,6 @@ QtObject:
       items: seq[string]
 
   proc delete*(self: Model) = 
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -58,7 +57,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -86,7 +84,6 @@ QtObject:
 
     if itemsToInsert.len > 0:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + itemsToInsert.len - 1)
       self.items = self.items & itemsToInsert
       self.endInsertRows()

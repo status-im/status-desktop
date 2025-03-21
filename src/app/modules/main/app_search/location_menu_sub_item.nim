@@ -36,9 +36,6 @@ proc initSubItem*(
   result.colorHash = color_hash_model.newModel()
   result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
 
-proc delete*(self: SubItem) =
-  self.BaseItem.delete
-
 proc `$`*(self: SubItem): string =
   result = fmt"""SearchMenuSubItem(
     value: {self.value},

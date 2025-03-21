@@ -19,7 +19,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: TokenOwnersModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newTokenOwnersModel*(): TokenOwnersModel =
@@ -58,8 +57,6 @@ QtObject:
   proc updateRemoteDestructState*(self: TokenOwnersModel, remoteDestructedAddresses: seq[string]) =
     let indexBegin = self.createIndex(0, 0, nil)
     let indexEnd = self.createIndex(self.items.len - 1, 0, nil)
-    defer: indexBegin.delete
-    defer: indexEnd.delete
     for i in 0 ..< self.items.len:
       self.items[0].remotelyDestructState = remoteDestructTransactionStatus(remoteDestructedAddresses, self.items[0].ownerDetails.address)
     self.dataChanged(indexBegin, indexEnd, @[ModelRole.RemotelyDestructState.int])

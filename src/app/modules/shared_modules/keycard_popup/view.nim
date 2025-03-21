@@ -23,20 +23,6 @@ QtObject:
       remainingAttempts: int
 
   proc delete*(self: View) =
-    self.currentStateVariant.delete
-    self.currentState.delete
-    if not self.keyPairModel.isNil:
-      self.keyPairModel.delete
-    if not self.keyPairModelVariant.isNil:
-      self.keyPairModelVariant.delete
-    if not self.keyPairHelper.isNil:
-      self.keyPairHelper.delete
-    if not self.keyPairHelperVariant.isNil:
-      self.keyPairHelperVariant.delete
-    if not self.keyPairForProcessing.isNil:
-      self.keyPairForProcessing.delete
-    if not self.keyPairForProcessingVariant.isNil:
-      self.keyPairForProcessingVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =

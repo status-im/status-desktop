@@ -26,7 +26,6 @@ QtObject:
     self.pairedCount = 0
 
   proc delete(self: Model) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newModel*(): Model =
@@ -100,7 +99,6 @@ QtObject:
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -123,7 +121,6 @@ QtObject:
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
 
     self.items[i].installation = installation
     self.dataChanged(index, index, @[
@@ -143,7 +140,6 @@ QtObject:
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
 
     self.items[i].installation.metadata.name = name
     self.dataChanged(index, index, @[ModelRole.Name.int])

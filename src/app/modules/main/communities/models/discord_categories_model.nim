@@ -15,7 +15,6 @@ QtObject:
     self.QAbstractListModel.setup
 
   proc delete(self: DiscordCategoriesModel) =
-    self.items = @[]
     self.QAbstractListModel.delete
 
   proc newDiscordCategoriesModel*(): DiscordCategoriesModel =
@@ -79,7 +78,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -88,7 +86,6 @@ QtObject:
 
   proc addItem*(self: DiscordCategoriesModel, item: DiscordCategoryItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -98,7 +95,6 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = false
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 
@@ -106,13 +102,11 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = true
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 
   proc selectOneItem*(self: DiscordCategoriesModel, id: string) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].selected = self.items[i].getId() == id
       self.dataChanged(index, index, @[ModelRole.Selected.int])

@@ -9,9 +9,6 @@ type
     loadingLocalData*: bool
     linkPreview*: LinkPreview
 
-proc delete*(self: Item) =
-  self.linkPreview.delete
-
 proc linkPreview*(self: Item): LinkPreview {.inline.} =
   return self.linkPreview
 
