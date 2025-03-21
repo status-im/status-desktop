@@ -121,7 +121,6 @@ QtObject:
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
 
     self.items[i].installation = installation
     self.dataChanged(index, index, @[
@@ -141,7 +140,6 @@ QtObject:
       return
 
     let index = self.createIndex(i, 0, nil)
-    defer: index.delete
 
     self.items[i].installation.metadata.name = name
     self.dataChanged(index, index, @[ModelRole.Name.int])

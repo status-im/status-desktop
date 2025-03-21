@@ -310,7 +310,6 @@ QtObject:
         let update = updates[j]
         if entry.updateDataIfSameID(update):
           let index = self.createIndex(i, 0, nil)
-          defer: index.delete
           self.dataChanged(index, index)
           anyUpdated = true
           break

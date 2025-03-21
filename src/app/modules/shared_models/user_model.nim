@@ -253,7 +253,6 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
@@ -264,7 +263,6 @@ QtObject:
     self.items[ind].icon = icon
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
   proc updateItem*(
@@ -332,7 +330,6 @@ QtObject:
       return
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, roles)
 
   proc updateItem*(
@@ -384,7 +381,6 @@ QtObject:
     self.items[ind].trustStatus = trustStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.TrustStatus.int, ModelRole.IsUntrustworthy.int, ModelRole.IsVerified.int])
 
   proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
@@ -398,7 +394,6 @@ QtObject:
     self.items[ind].onlineStatus = onlineStatus
 
     let index = self.createIndex(ind, 0, nil)
-    defer: index.delete
     self.dataChanged(index, index, @[ModelRole.OnlineStatus.int])
 
 

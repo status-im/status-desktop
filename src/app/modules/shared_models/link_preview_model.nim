@@ -210,7 +210,6 @@ QtObject:
       item.unfurled = true
       item.linkPreview = linkPreviews[item.linkPreview.url]
       let modelIndex = self.createIndex(row, 0, nil)
-      defer: modelIndex.delete
       self.dataChanged(modelIndex, modelIndex)
 
   proc setUrls*(self: Model, urls: seq[string]) =
@@ -262,7 +261,6 @@ QtObject:
     self.items[index].markAsImmutable()
 
     let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex)
 
   proc removeAllPreviewData*(self: Model) {.slot.} =
@@ -271,8 +269,6 @@ QtObject:
   
     let indexStart = self.createIndex(0, 0, nil)
     let indexEnd = self.createIndex(self.items.len, 0, nil)
-    defer: indexStart.delete
-    defer: indexEnd.delete
     self.dataChanged(indexStart, indexEnd)
       
   proc getLinkPreviewType*(self: Model, url: string): int {.slot.} =
@@ -311,7 +307,6 @@ QtObject:
       return
     item.loadingLocalData = value
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LoadingLocalData.int])
 
   proc setItemIsLocalData(self: Model, row: int, item: Item) = 
@@ -323,7 +318,6 @@ QtObject:
       item.loadingLocalData = false
       roles.add(ModelRole.LoadingLocalData.int)
     let modelIndex = self.createIndex(row, 0, nil)
-    defer: modelIndex.delete
     self.dataChanged(modelIndex, modelIndex, roles)
 
   proc setContactInfo*(self: Model, contactDetails: ContactDetails) =

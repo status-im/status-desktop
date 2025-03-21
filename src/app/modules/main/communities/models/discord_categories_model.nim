@@ -95,7 +95,6 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = false
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 
@@ -103,13 +102,11 @@ QtObject:
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
-      defer: index.delete
       self.items[idx].selected = true
       self.dataChanged(index, index, @[ModelRole.Selected.int])
 
   proc selectOneItem*(self: DiscordCategoriesModel, id: string) =
     for i in 0 ..< self.items.len:
       let index = self.createIndex(i, 0, nil)
-      defer: index.delete
       self.items[i].selected = self.items[i].getId() == id
       self.dataChanged(index, index, @[ModelRole.Selected.int])

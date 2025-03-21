@@ -73,7 +73,6 @@ QtObject:
         item.colorId = account.colorId
         item.emoji = account.emoji
         let index = self.createIndex(i, 0, nil)
-        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.ColorId.int, ModelRole.Emoji.int])
         break
       i.inc
