@@ -106,7 +106,7 @@ endif
 
 check-qt-dir:
 ifeq ($(shell qmake -v 2>/dev/null),)
-	$(error Cannot find your Qt5 installation. Please make sure to export correct Qt installation binaries path to PATH env)
+	$(error Cannot find your Qt installation. Please make sure to export correct Qt installation binaries path to PATH env)
 endif
 
 check-pkg-target-linux:
@@ -164,30 +164,31 @@ ifneq ($(MONITORING), false)
 endif
 
 
-# Qt5 dirs (we can't indent with tabs here)
+# Qt dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
- export QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
- QT5_QMLDIR := $(shell qmake -query QT_INSTALL_QML 2>/dev/null)
- QT5_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
- QT5_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt5Core 2>/dev/null)
- ifeq ($(QT5_INSTALL_PREFIX),$(QT5_PKGCONFIG_INSTALL_PREFIX))
-  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
+ export QT_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
+ QT_QMLDIR := $(shell qmake -query QT_INSTALL_QML 2>/dev/null)
+ QT_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
+ QT_MAJOR_VERSION := $(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
+ QT_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt"$(QT_MAJOR_VERSION)"Core 2>/dev/null)
+ ifeq ($(QT_INSTALL_PREFIX),$(QT_PKGCONFIG_INSTALL_PREFIX))
+  QT_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt6Core 2>/dev/null)
  else
-  QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
+  QT_PCFILEDIR := $(QT_LIBDIR)/pkgconfig
  endif
- # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
+ # some manually installed Qt instances have wrong paths in their *.pc files, so we pass the right one to the linker here
  ifeq ($(detected_OS),Darwin)
   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
   # Fix for failures due to 'can't allocate code signature data for'
   NIM_PARAMS += --passL:"-headerpad_max_install_names"
-  NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
+  NIM_PARAMS += --passL:"-F$(QT_LIBDIR)"
 
  else
-  NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
+  NIM_PARAMS += --passL:"-L$(QT_LIBDIR)"
  endif
  DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia Qt5WebView Qt5WebChannel)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT_PCFILEDIR)" pkg-config --libs Qt"$(QT_MAJOR_VERSION)"Core Qt"$(QT_MAJOR_VERSION)"Qml Qt"$(QT_MAJOR_VERSION)"Gui Qt"$(QT_MAJOR_VERSION)"Quick Qt"$(QT_MAJOR_VERSION)"QuickControls2 Qt"$(QT_MAJOR_VERSION)"Widgets Qt"$(QT_MAJOR_VERSION)"Svg Qt"$(QT_MAJOR_VERSION)"Multimedia Qt"$(QT_MAJOR_VERSION)"WebView Qt"$(QT_MAJOR_VERSION)"WebChannel)"
 else
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
@@ -607,8 +608,15 @@ STATUS_CLIENT_TARBALL ?= pkg/Status.tar.gz
 STATUS_CLIENT_TARBALL_FULL ?= $(shell realpath $(STATUS_CLIENT_TARBALL))
 
 ifeq ($(detected_OS),Linux)
- export FCITX5_QT := vendor/fcitx5-qt/build/qt5/platforminputcontext/libfcitx5platforminputcontextplugin.so
- FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF -DENABLE_QT5=ON
+ export FCITX5_QT := vendor/fcitx5-qt/build/qt$(QT_MAJOR_VERSION)/platforminputcontext/libfcitx5platforminputcontextplugin.so
+ FCITX5_QT_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY_PLUGIN=ON -DENABLE_QT4=OFF
+
+ ifeq ($(QT_MAJOR_VERSION),6)
+  FCITX5_QT_CMAKE_PARAMS += -DENABLE_QT5=OFF -DENABLE_QT6=ON
+ else
+  FCITX5_QT_CMAKE_PARAMS += -DENABLE_QT5=ON -DENABLE_QT6=OFF
+ endif
+
  FCITX5_QT_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
 endif
 
@@ -637,7 +645,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	linuxdeployqt $(APP_DIR)/nim-status.desktop \
 		-no-copy-copyright-files \
-		-qmldir=ui -qmlimport=$(QT5_QMLDIR) \
+		-qmldir=ui -qmlimport=$(QT_QMLDIR) \
 		-bundle-non-qt-libs \
 		-exclude-libs=libgmodule-2.0.so.0,libgthread-2.0.so.0 \
 		-verbose=1 \
@@ -828,12 +836,12 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -856,7 +864,7 @@ NIM_TEST_FILES := $(wildcard test/nim/*.nim)
 NIM_TESTS := $(foreach test_file,$(NIM_TEST_FILES),nim-test-run/$(test_file))
 
 nim-test-run/%: | dotherside $(STATUSGO)
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(LD_LIBRARY_PATH)" $(ENV_SCRIPT) \
 	nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) --mm:refc --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" -r $(subst nim-test-run/,,$@)
 
 tests-nim-linux: $(NIM_TESTS)
