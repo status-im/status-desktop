@@ -31,8 +31,6 @@ QtObject:
     result.setup
 
   proc setFileName*(self: LocalAccountSettings, fileName: string) =
-    if(not self.settings.isNil):
-      self.settings.delete
     let
       currentFilePath = os.joinPath(self.settingsFileDir, self.currentFileName)
       newFilePath = os.joinPath(self.settingsFileDir, fileName)
