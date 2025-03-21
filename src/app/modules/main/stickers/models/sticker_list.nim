@@ -54,7 +54,6 @@ QtObject:
     if(self.stickers.any(proc(existingSticker: Item): bool = return existingSticker.getHash == sticker.getHash)):
       return
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginInsertRows(modelIndex, 0, 0)
     self.stickers.insert(sticker, 0)
     self.endInsertRows()
@@ -70,7 +69,6 @@ QtObject:
     if idx == -1:
       return
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginRemoveRows(modelIndex, idx, idx)
     self.stickers.delete(idx)
     self.endRemoveRows()

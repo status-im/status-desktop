@@ -118,7 +118,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     # Start after the current last real item
     let startIdx = self.items.len
@@ -135,7 +134,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
   
     # Start from the beginning
     let startIdx = 0

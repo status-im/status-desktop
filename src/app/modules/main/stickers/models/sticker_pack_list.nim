@@ -101,7 +101,6 @@ QtObject:
 
   proc addStickerPackToList*(self: StickerPackList, pack: PackItem, stickers: StickerList, installed, bought, pending: bool) =
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginInsertRows(modelIndex, 0, 0)
     self.packs.insert((pack: pack, stickers: stickers, installed: installed, bought: bought, pending: pending), 0)
     self.endInsertRows()
@@ -109,7 +108,6 @@ QtObject:
   proc removeStickerPackFromList*(self: StickerPackList, packId: string) =
     let idx = self.findIndexById(packId)
     let modelIndex = newQModelIndex()
-    defer: modelIndex.delete
     self.beginRemoveRows(modelIndex, idx, idx)
     self.packs.delete(idx)
     self.endRemoveRows()

@@ -113,9 +113,7 @@ QtObject:
       return false
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
 
     var destRow = toRow
     if toRow > fromRow:

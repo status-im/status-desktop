@@ -68,7 +68,6 @@ QtObject:
 
   proc addItem*(self: KeyPairAccountModel, item: KeyPairAccountItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
@@ -107,7 +106,6 @@ QtObject:
     if (index < 0 or index >= self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()

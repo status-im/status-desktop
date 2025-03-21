@@ -87,7 +87,6 @@ QtObject:
       self.resetModel(newEntries)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       if offset != self.entries.len:
         error "offset != self.entries.len"
@@ -102,7 +101,6 @@ QtObject:
 
   proc addNewEntries*(self: Model, newEntries: seq[entry.ActivityEntry], insertPositions: seq[int]) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     for j in countdown(newEntries.high, 0):
       let ae = newEntries[j]

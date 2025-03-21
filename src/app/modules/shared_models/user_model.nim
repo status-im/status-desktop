@@ -179,7 +179,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -203,7 +202,6 @@ QtObject:
     let position = self.items.len
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
@@ -222,7 +220,6 @@ QtObject:
 
   proc removeItemWithIndex(self: Model, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     let pubKey = self.items[index].pubKey

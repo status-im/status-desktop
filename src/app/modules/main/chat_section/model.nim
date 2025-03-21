@@ -244,7 +244,6 @@ QtObject:
   # IMPORTANT: if you call this function for a chat with a category, make sure the category is appended first
   proc appendItem*(self: Model, item: Item, ignoreCategory: bool = false) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     var indexToInsertTo = item.position
     if item.isCategory:
@@ -296,7 +295,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)

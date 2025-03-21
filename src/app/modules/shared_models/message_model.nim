@@ -394,7 +394,6 @@ QtObject:
 
   proc insertItems(self: Model, position: int, items: seq[Item]) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     # Update replied to messages if there are
     # We update replies before adding, since we do not need to update the new items, they should already be up to date
@@ -489,7 +488,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -762,7 +760,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
@@ -782,7 +779,6 @@ QtObject:
     let position = index + 1
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(initNewMessagesMarkerItem(self.items[index].clock, self.items[index].timestamp), position)

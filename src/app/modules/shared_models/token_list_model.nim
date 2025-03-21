@@ -72,7 +72,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     let first = self.items.len
     let last = first + items.len - 1
     self.beginInsertRows(parentModelIndex, first, last)

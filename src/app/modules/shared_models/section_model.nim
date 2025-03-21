@@ -215,7 +215,6 @@ QtObject:
 
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
@@ -226,7 +225,6 @@ QtObject:
 
   proc addItem*(self: SectionModel, item: SectionItem, index: int) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, index, index)
@@ -240,7 +238,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     let first = self.items.len
     let last = first + items.len - 1
@@ -263,7 +260,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)

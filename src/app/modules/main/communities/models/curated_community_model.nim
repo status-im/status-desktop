@@ -136,7 +136,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -152,7 +151,6 @@ QtObject:
       self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
       self.items.add(item)
       self.endInsertRows()
