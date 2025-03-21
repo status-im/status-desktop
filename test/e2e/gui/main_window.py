@@ -9,11 +9,8 @@ import driver
 from constants import UserAccount, CommunityData
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
-from gui.components.onboarding.share_usage_data_popup import ShareUsageDataPopup
 from gui.components.context_menu import ContextMenu
-from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
 from gui.components.signing_phrase_popup import SigningPhrasePopup
-from gui.components.splash_screen import SplashScreen
 from gui.components.toast_message import ToastMessage
 from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
@@ -166,7 +163,7 @@ class MainWindow(Window):
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(timeout_msec=60000)
-        signing_phrase = SigningPhrasePopup()
+        signing_phrase = SigningPhrasePopup().wait_until_appears(timeout_msec=30000)
         signing_phrase.confirm_phrase()
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = LeftPanel()

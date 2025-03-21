@@ -5,14 +5,12 @@ from allure_commons._allure import step
 import driver
 from constants.wallet import WalletNetworkSettings
 from scripts.utils.generators import random_wallet_acc_keypair_name
-from tests.wallet_main_screen import marks
 from gui.main_window import MainWindow
 
-pytestmark = marks
+
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703022', 'Edit default wallet account')
 @pytest.mark.case(703022)
 def test_context_menu_edit_default_account(main_screen: MainWindow, user_account):
-
     name = WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value
     new_name = random_wallet_acc_keypair_name()
 
