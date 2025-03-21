@@ -815,7 +815,7 @@ Item {
         }
 
         function maybeDisplayIntroduceYourselfPopup() {
-            if (!appMainLocalSettings.introduceYourselfPopupSeen && featureFlagsStore.onboardingV2Enabled && allContacsAdaptor.selfDisplayName === "")
+            if (!appMainLocalSettings.introduceYourselfPopupSeen && allContacsAdaptor.selfDisplayName === "")
                 introduceYourselfPopupComponent.createObject(appMain).open()
         }
 
