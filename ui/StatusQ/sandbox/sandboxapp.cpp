@@ -53,10 +53,6 @@ void SandboxApp::restartEngine()
     m_engine = std::make_unique<QQmlApplicationEngine>();
     m_engine->addImportPath(STATUSQ_MODULE_IMPORT_PATH);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    m_engine->setExtraFileSelectors({"qt6"});
-#endif
-
     if (firstRun)
         qDebug() << "QQmlEngine import paths: " << m_engine->importPathList();
 

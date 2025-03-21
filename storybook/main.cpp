@@ -56,10 +56,6 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    engine.setExtraFileSelectors({"qt6"});
-#endif
-
     const QStringList additionalImportPaths {
         STATUSQ_MODULE_IMPORT_PATH,
         QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
