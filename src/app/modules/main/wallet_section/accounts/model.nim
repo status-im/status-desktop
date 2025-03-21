@@ -78,7 +78,6 @@ QtObject:
     if (index < 0 or index >= self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginRemoveRows(parentModelIndex, index, index)
     self.items.delete(index)
     self.endRemoveRows()
@@ -87,7 +86,6 @@ QtObject:
     if (index < 0 or index > self.items.len):
       return
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, index, index)
     self.items.insert(item, index)
     self.endInsertRows()

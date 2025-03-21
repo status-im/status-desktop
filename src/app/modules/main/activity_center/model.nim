@@ -175,7 +175,6 @@ QtObject:
     for index in indexesToDelete:
       let indexUpdated = index - i
       let modelIndex = newQModelIndex()
-      defer: modelIndex.delete
       self.beginRemoveRows(modelIndex, indexUpdated, indexUpdated)
       self.activityCenterNotifications.delete(indexUpdated)
       self.endRemoveRows()
@@ -199,7 +198,6 @@ QtObject:
         return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     var indexToInsert = self.activityCenterNotifications.len
     for i, notification in self.activityCenterNotifications:

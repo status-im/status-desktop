@@ -74,7 +74,6 @@ QtObject:
       self.endResetModel()
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       if offset != self.addresses.len:
         error "offset != self.addresses.len"

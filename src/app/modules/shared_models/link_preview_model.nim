@@ -170,7 +170,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
@@ -196,9 +195,7 @@ QtObject:
       return
 
     let sourceIndex = newQModelIndex()
-    defer: sourceIndex.delete
     let destIndex = newQModelIndex()
-    defer: destIndex.delete
 
     let currentItem = self.items[fromRow]
     self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, to)
@@ -246,7 +243,6 @@ QtObject:
       item.linkPreview = linkPreview
 
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, i, i)
       self.items.insert(item, i)
       self.endInsertRows()

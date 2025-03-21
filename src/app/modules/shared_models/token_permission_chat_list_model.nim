@@ -51,7 +51,6 @@ QtObject:
 
   proc addItem*(self: TokenPermissionChatListModel, item: TokenPermissionChatListItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
