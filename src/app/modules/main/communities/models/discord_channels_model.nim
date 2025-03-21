@@ -156,7 +156,6 @@ QtObject:
     for i in 0 ..< indices.len:
 
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       self.beginRemoveRows(parentModelIndex, indices[i], indices[i])
       self.items.delete(indices[i])
@@ -165,7 +164,6 @@ QtObject:
 
   proc addItem*(self: DiscordChannelsModel, item: DiscordChannelItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()

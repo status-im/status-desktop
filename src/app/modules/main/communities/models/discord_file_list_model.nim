@@ -137,7 +137,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
@@ -146,7 +145,6 @@ QtObject:
 
   proc addItem*(self: DiscordFileListModel, item: DiscordFileItem) =
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
       self.items.add(item)
       self.endInsertRows()

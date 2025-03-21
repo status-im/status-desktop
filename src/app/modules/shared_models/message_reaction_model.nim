@@ -117,7 +117,6 @@ QtObject:
       self.dataChanged(index, index)
     else:
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       var item = initMessageReactionItem(emojiId)
       item.addReaction(didIReactWithThisEmoji, userPublicKey, userDisplayName, reactionId)
@@ -138,7 +137,6 @@ QtObject:
     if(self.items[ind].numberOfReactions() == 0):
       # remove item if there are no reactions for this emoji id
       let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
 
       self.beginRemoveRows(parentModelIndex, ind, ind)
       self.items.delete(ind)

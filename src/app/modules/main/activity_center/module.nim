@@ -56,7 +56,7 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
-  self.view.delete
+  discard
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("activityCenterModule", self.viewVariant)

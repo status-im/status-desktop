@@ -90,7 +90,6 @@ QtObject:
         item = self.items[i]
        
         let parentModelIndex = newQModelIndex()
-        defer: parentModelIndex.delete
         self.beginRemoveRows(parentModelIndex, i, i)
         self.items.delete(i)
         self.endRemoveRows()
@@ -106,7 +105,6 @@ QtObject:
       indexToInsertTo.inc
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
     self.items.insert(
       newDerivedAddressItem(item.getOrder(), item.getAddress(), item.getPublicKey(), item.getPath(), item.getAlreadyCreated(), 

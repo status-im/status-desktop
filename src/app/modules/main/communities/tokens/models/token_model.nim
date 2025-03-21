@@ -165,7 +165,6 @@ QtObject:
 
   proc appendItem*(self: TokenModel, item: TokenItem) =
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
@@ -178,7 +177,6 @@ QtObject:
       return
 
     let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
 
     self.beginRemoveRows(parentModelIndex, itemIdx, itemIdx)
     self.items.delete(itemIdx)
