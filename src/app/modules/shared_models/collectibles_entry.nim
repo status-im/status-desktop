@@ -47,7 +47,6 @@ QtObject:
     if isSome(data.ownership):
       let ownership = data.ownership.get()
       self.ownership.setItems(ownership)
-    self.setup()
 
   proc `$`*(self: CollectiblesEntry): string =
     return fmt"""CollectiblesEntry(
