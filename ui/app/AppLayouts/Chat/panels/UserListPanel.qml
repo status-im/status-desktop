@@ -122,8 +122,6 @@ Item {
             section.property: "onlineStatus"
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
-                readonly property color userColor: Utils.colorForColorId(model.colorId)
-
                 width: ListView.view.width
 
                 nickName: model.localNickname
@@ -134,7 +132,7 @@ Item {
                 isUntrustworthy: model.isUntrustworthy
                 isAdmin: model.memberRole === Constants.memberRole.owner
                 icon.name: model.icon
-                icon.color: userColor
+                icon.color: Utils.colorForColorId(model.colorId)
                 status: model.onlineStatus
                 ringSettings.ringSpecModel: model.colorHash
 
@@ -144,12 +142,12 @@ Item {
                         const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
                         const params = {
-                            profileType, contactType, chatType, isAdmin,
+                            profileType, contactType,
                             pubKey: model.pubKey,
                             compressedPubKey: model.compressedPubKey,
                             emojiHash: model.emojiHash,
                             colorHash: model.colorHash,
-                            colorId: userColor,
+                            colorId: model.colorId,
                             displayName: model.preferredDisplayName,
                             userIcon: model.icon,
                             trustStatus: model.trustStatus,
