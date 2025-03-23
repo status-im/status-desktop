@@ -372,8 +372,8 @@ Rectangle {
             replaceWithEmoji(extrapolateCursorPosition(), emojiSuggestions.shortname, emojiSuggestions.unicode);
             return true
         }
-        if (suggestionsBoxLoader.active && suggestionsBoxLoader.item.visible) {
-            suggestionsBoxLoader.item.selectCurrentItem();
+        if (suggestionsBox.visible) {
+            suggestionsBox.selectCurrentItem();
             return true
         }
         return false
@@ -714,20 +714,21 @@ Rectangle {
             messageInputField.cursorPosition = (d.copyTextStart + ClipboardUtils.text.length + d.nbEmojisInClipboard);
         }
 
-        if (suggestionsBoxLoader.active && suggestionsBoxLoader.item.visible) {
-            let aliasName = suggestionsBoxLoader.item.formattedPlainTextFilter;
-            let lastCursorPosition = suggestionsBoxLoader.item.suggestionFilter.cursorPosition;
-            let lastAtPosition = suggestionsBoxLoader.item.suggestionFilter.lastAtPosition;
-            let suggestionItem = suggestionsBoxLoader.item.suggestionsModel.get(suggestionsBoxLoader.item.listView.currentIndex);
-            if (aliasName !== "" && aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
-                    && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
 
-                d.insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
+        if (suggestionsBox.visible) {
+            let aliasName = suggestionsBox.formattedPlainTextFilter;
+            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
+            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
+            let suggestionItem = suggestionsBox.listView.itemAtIndex(suggestionsBox.listView.currentIndex);
+
+            if (aliasName !== "" && aliasName.toLowerCase() === suggestionItem.preferredDisplayName.toLowerCase()
+                    && event.key !== Qt.Key_Backspace && event.key !== Qt.Key_Delete && event.key !== Qt.Key_Left) {
+                d.insertMention(aliasName, suggestionItem.pubKey, lastAtPosition, lastCursorPosition);
             } else if (event.key === Qt.Key_Space) {
                 var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
                 messageInputField.insert(lastAtPosition, plainTextToReplace);
-                suggestionsBoxLoader.item.hide();
+                suggestionsBox.hide();
             }
         }
     }
@@ -1053,35 +1054,26 @@ Rectangle {
         }
     }
 
-    // FIXME this is a temporary solution to avoid long login times. It does make it so that the first mention is slow
-    Loader {
-        id: suggestionsBoxLoader
-        active: false
-        sourceComponent: SuggestionBoxPanel {
-            id: suggestionsBox
-            objectName: "suggestionsBox"
-            model: control.usersModel ?? []
-            x : messageInput.x
-            y: -height - Theme.smallPadding
-            width: messageInput.width
-            filter: messageInputField.text
-            cursorPosition: messageInputField.cursorPosition
-            property: ["nickname", "ensName", "name"]
-            inputField: messageInputField
-            onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
+    SuggestionBoxPanel {
+        id: suggestionsBox
+        objectName: "suggestionsBox"
+        model: control.usersModel
+        x: messageInput.x
+        y: -height - Theme.smallPadding
+        width: messageInput.width
+        filter: messageInputField.text
+        cursorPosition: messageInputField.cursorPosition
+        inputField: messageInputField
+        onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
+            messageInputField.forceActiveFocus()
+            d.insertMention(item.preferredDisplayName, item.pubKey, lastAtPosition, lastCursorPosition)
+        }
+        onVisibleChanged: {
+            if (!visible) {
                 messageInputField.forceActiveFocus();
-                const name = item[suggestionsBox.property.find(p => !!item[p])].replace("@", "")
-                d.insertMention(name, item.publicKey, lastAtPosition, lastCursorPosition)
-                suggestionsBox.suggestionsModel.clear()
-            }
-            onVisibleChanged: {
-                if (!visible) {
-                    messageInputField.forceActiveFocus();
-                }
             }
         }
     }
-        
 
     Component {
         id: gifPopupComponent
@@ -1401,10 +1393,6 @@ Rectangle {
                                     const removeFrom = (cursorPosition < messageLimitHard) ? cursorWhenPressed : messageLimitHard;
                                     remove(removeFrom, cursorPosition);
                                     messageLengthLimitTooltip.open();
-                                }
-
-                                if (!suggestionsBoxLoader.active && text.includes("@")) {
-                                    suggestionsBoxLoader.active = true
                                 }
 
                                 d.updateMentionsPositions()

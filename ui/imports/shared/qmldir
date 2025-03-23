@@ -1,6 +1,5 @@
 module shared
 
-DelegateModelGeneralized 1.0 DelegateModelGeneralized.qml
 LoadingAnimation 1.0 LoadingAnimation.qml
 MacTrafficLights 1.0 MacTrafficLights.qml
 UserSearchFilter 1.0 UserSearchFilter.qml

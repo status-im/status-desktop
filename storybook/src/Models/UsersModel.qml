@@ -99,6 +99,10 @@ ListModel {
             icon: "",
             colorId: 5,
             isEnsVerified: false,
+            colorHash: [
+                { colorId: 7, segmentLength: 3 },
+                { colorId: 12, segmentLength: 1 }
+            ],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.untrustworthy
@@ -121,6 +125,7 @@ ListModel {
             icon: "",
             colorId: 3,
             isEnsVerified: true,
+            colorHash: [],
             isAwaitingAddress: false,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.untrustworthy
@@ -142,6 +147,7 @@ ListModel {
             icon: "",
             colorId: 7,
             isEnsVerified: true,
+            colorHash: [],
             isAwaitingAddress: true,
             memberRole: Constants.memberRole.none,
             trustStatus: Constants.trustStatus.trusted
