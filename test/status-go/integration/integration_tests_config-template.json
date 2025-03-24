@@ -1,5 +1,0 @@
-{
-    "hashedPassword": "0x<hashed password as expected by the login call>",
-    "nodeConfigFile": "<node config JSON as expected by the login call>",
-    "dataDir": "<optional user's status data dir (usually status-desktop/Status/data>"
-}
