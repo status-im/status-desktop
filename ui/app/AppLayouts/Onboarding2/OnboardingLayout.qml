@@ -86,7 +86,7 @@ Page {
             d.selectedProfileKeyId = ""
         }
 
-        readonly property Settings settings: Settings {
+        readonly property var settings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
             property bool keycardPromoShown // whether we've seen the keycard promo banner on KeycardIntroPage
 
             function reset() {
