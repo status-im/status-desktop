@@ -1,10 +1,10 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
 
 import StatusQ 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import AppLayouts.Communities.popups 1.0
 import shared.controls.chat.menuItems 1.0
@@ -224,16 +224,15 @@ StatusMenu {
         }
     }
 
-    FileDialog {
+    StatusSaveFileDialog {
         id: downloadDialog
         acceptLabel: qsTr("Save")
-        fileMode: FileDialog.SaveFile
         title: qsTr("Download messages")
-        currentFile: StandardPaths.writableLocation(StandardPaths.DocumentsLocation) + "/messages.json"
+        selectedFile: documentsLocation + "/messages.json"
         defaultSuffix: "json"
 
         onAccepted: {
-            root.downloadMessages(downloadDialog.currentFile)
+            root.downloadMessages(downloadDialog.selectedFile)
         }
     }
 

@@ -11,3 +11,4 @@ StatusTitleSubtitle 0.1 StatusTitleSubtitle.qml
 StatusDialogBackground 0.1 StatusDialogBackground.qml
 
 StatusMessageDialog 0.1 StatusMessageDialog.qml
+StatusSaveFileDialog 0.1 StatusSaveFileDialog.qml
