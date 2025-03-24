@@ -201,10 +201,8 @@ StatusWindow {
 
         d.runMockedKeycardControllerWindow()
 
-        Backpressure.debounce(applicationWindow, 3000, function() {
-            startupOnboardingLoader.item.unload()
-            startupOnboardingLoader.active = false
-        })()
+        startupOnboardingLoader.item.unload()
+        startupOnboardingLoader.active = false
     }
 
     //! Workaround for custom QQuickWindow

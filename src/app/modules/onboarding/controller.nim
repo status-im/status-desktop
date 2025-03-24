@@ -4,6 +4,7 @@ import uuids
 
 import app/core/eventemitter
 import app/core/signals/types
+import app/global/app_signals
 import app_service/service/general/service as general_service
 import app_service/service/accounts/service as accounts_service
 import app_service/service/accounts/dto/image_crop_rectangle
@@ -127,6 +128,10 @@ proc init*(self: Controller) =
   handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
     let args = ResultArgs(e)
     self.delegate.onKeycardAccountConverted(args.success)
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_MAIN_LOADED) do(e: Args):
+    self.delegate.onMainLoaded()
   self.connectionIds.add(handlerId)
 
 proc initialize*(self: Controller, pin: string) =
