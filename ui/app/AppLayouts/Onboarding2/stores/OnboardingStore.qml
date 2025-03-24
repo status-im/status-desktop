@@ -7,7 +7,7 @@ import AppLayouts.Onboarding.enums 1.0
 QtObject {
     id: root
 
-    signal appLoaded(string keyUid)
+    signal appLoaded()
     signal saveBiometricsRequested(string keyUid, string credential)
     signal deleteBiometricsRequested(string keyUid)
 
