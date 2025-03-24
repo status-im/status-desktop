@@ -13,6 +13,9 @@ method delete*(self: AccessInterface) {.base.} =
 method onAppLoaded*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onMainLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onNodeLogin*(self: AccessInterface, error: string, account: AccountDto, settings: SettingsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

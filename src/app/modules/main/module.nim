@@ -5,7 +5,7 @@ import ephemeral_notification_item, ephemeral_notification_model
 import app/modules/shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
 import app/modules/shared_models/[color_hash_item, color_hash_model]
 import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
-import app/global/app_sections_config as conf
+import app/global/app_sections_config
 import app/global/app_signals
 import app/global/[global_singleton, feature_flags]
 import app/global/utils as utils
@@ -698,34 +698,18 @@ method load*[T](
 
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-  if activeSectionId == "" or activeSectionId == conf.SETTINGS_SECTION_ID:
-    activeSectionId = conf.WALLET_SECTION_ID
-
-  let loadingItem = initItem(
-    LOADING_SECTION_ID,
-    SectionType.LoadingSection,
-    conf.LOADING_SECTION_NAME,
-    memberRole = MemberRole.Owner,
-    description = "",
-    image = "",
-    icon = conf.LOADING_SECTION_ICON,
-    color = "",
-    hasNotification = false,
-    notificationsCount = 0,
-    active = false,
-    enabled = true,
-  )
-  self.view.model().addItem(loadingItem)
+  if activeSectionId == "" or activeSectionId == SETTINGS_SECTION_ID:
+    activeSectionId = WALLET_SECTION_ID
 
   # Communities Portal Section
   let communitiesPortalSectionItem = initItem(
-    conf.COMMUNITIESPORTAL_SECTION_ID,
+    COMMUNITIESPORTAL_SECTION_ID,
     SectionType.CommunitiesPortal,
-    conf.COMMUNITIESPORTAL_SECTION_NAME,
+    COMMUNITIESPORTAL_SECTION_NAME,
     memberRole = MemberRole.Owner,
     description = "",
     image = "",
-    icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
+    icon = COMMUNITIESPORTAL_SECTION_ICON,
     color = "",
     hasNotification = false,
     notificationsCount = 0,
@@ -738,15 +722,15 @@ method load*[T](
 
   # Wallet Section
   let walletSectionItem = initItem(
-    conf.WALLET_SECTION_ID,
+    WALLET_SECTION_ID,
     SectionType.Wallet,
-    conf.WALLET_SECTION_NAME,
+    WALLET_SECTION_NAME,
     memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
     image = "",
-    icon = conf.WALLET_SECTION_ICON,
+    icon = WALLET_SECTION_ICON,
     color = "",
     hasNotification = false,
     notificationsCount = 0,
@@ -759,15 +743,15 @@ method load*[T](
 
   # Node Management Section
   let nodeManagementSectionItem = initItem(
-    conf.NODEMANAGEMENT_SECTION_ID,
+    NODEMANAGEMENT_SECTION_ID,
     SectionType.NodeManagement,
-    conf.NODEMANAGEMENT_SECTION_NAME,
+    NODEMANAGEMENT_SECTION_NAME,
     memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
     image = "",
-    icon = conf.NODEMANAGEMENT_SECTION_ICON,
+    icon = NODEMANAGEMENT_SECTION_ICON,
     color = "",
     hasNotification = false,
     notificationsCount = 0,
@@ -780,15 +764,15 @@ method load*[T](
 
   # Profile Section
   let profileSettingsSectionItem = initItem(
-    conf.SETTINGS_SECTION_ID,
+    SETTINGS_SECTION_ID,
     SectionType.ProfileSettings,
-    conf.SETTINGS_SECTION_NAME,
+    SETTINGS_SECTION_NAME,
     memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
     image = "",
-    icon = conf.SETTINGS_SECTION_ICON,
+    icon = SETTINGS_SECTION_ICON,
     color = "",
     hasNotification = self.calculateProfileSectionHasNotification(),
     notificationsCount = 0,
@@ -802,15 +786,15 @@ method load*[T](
   if singletonInstance.featureFlags().getTradingCenterEnabled():
     # Trading center Section
     let tradingCenterItem = initItem(
-      conf.TRADING_CENTER_SECTION_ID,
+      TRADING_CENTER_SECTION_ID,
       SectionType.TradingCenter,
-      conf.TRADING_CENTER_SECTION_NAME,
+      TRADING_CENTER_SECTION_NAME,
       memberRole = MemberRole.Owner,
       description = "",
       introMessage = "",
       outroMessage = "",
       image = "",
-      icon = conf.TRADING_CENTER_SECTION_ICON,
+      icon = TRADING_CENTER_SECTION_ICON,
       color = "",
       hasNotification = false,
       notificationsCount = 0,
@@ -823,15 +807,15 @@ method load*[T](
   else:
     # Swap Section
     let swapSectionItem = initItem(
-      conf.SWAP_SECTION_ID,
+      SWAP_SECTION_ID,
       SectionType.Swap,
-      conf.SWAP_SECTION_NAME,
+      SWAP_SECTION_NAME,
       memberRole = MemberRole.Owner,
       description = "",
       introMessage = "",
       outroMessage = "",
       image = "",
-      icon = conf.SWAP_SECTION_ICON,
+      icon = SWAP_SECTION_ICON,
       color = "",
       hasNotification = false,
       notificationsCount = 0,
@@ -855,11 +839,8 @@ method load*[T](
   self.sharedUrlsModule.load()
 
   # Set active section on app start
-  # If section is empty or profile then open the loading section until chats are loaded
-  if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
-    # Set bogus Item as active until the chat is loaded
-    self.setActiveSection(loadingItem, skipSavingInSettings = true)
-  else:
+  # If section is empty or profile wait until chats are loaded
+  if not activeSection.isEmpty() and activeSection.sectionType != SectionType.ProfileSettings:
     self.setActiveSection(activeSection)
 
 proc isEverythingLoaded[T](self: Module[T]): bool =
@@ -916,8 +897,8 @@ method onChatsLoaded*[T](
   let personalChatSectionItem = initItem(
     myPubKey,
     sectionType = SectionType.Chat,
-    name = conf.CHAT_SECTION_NAME,
-    icon = conf.CHAT_SECTION_ICON,
+    name = CHAT_SECTION_NAME,
+    icon = CHAT_SECTION_ICON,
     hasNotification = unviewedMessagesCount > 0 or unviewedMentionsCount > 0,
     notificationsCount = unviewedMentionsCount,
     active = self.getActiveSectionId() == myPubKey,
@@ -964,18 +945,17 @@ method onChatsLoaded*[T](
 
   self.view.model().addItems(items)
 
+  self.checkIfWeHaveNotifications()
+
+  self.events.emit(SIGNAL_MAIN_LOADED, Args())
+
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
 
-  # Remove old loading section
-  self.view.model().removeItem(LOADING_SECTION_ID)
-
   self.view.sectionsLoaded()
   if self.statusDeepLinkToActivate != "":
     self.activateStatusDeepLink(self.statusDeepLinkToActivate)
-
-  self.checkIfWeHaveNotifications()
 
 method onCommunityDataLoaded*[T](
   self: Module[T],
@@ -1176,13 +1156,13 @@ method activeSectionSet*[T](self: Module[T], sectionId: string, skipSavingInSett
     return
 
   case sectionId:
-    of conf.COMMUNITIESPORTAL_SECTION_ID:
+    of COMMUNITIESPORTAL_SECTION_ID:
       self.communitiesModule.onActivated()
 
   # If metrics are enabled, send a navigation event
   var sectionIdToSend = sectionId
   if sectionId == singletonInstance.userProfile.getPubKey():
-    sectionIdToSend = conf.CHAT_SECTION_NAME
+    sectionIdToSend = CHAT_SECTION_NAME
   elif sectionId.startsWith("0x"):
     # This is a community
     sectionIdToSend = "community"
@@ -1638,7 +1618,7 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
 
 method mnemonicBackedUp*[T](self: Module[T]) =
   self.view.model().updateNotifications(
-    conf.SETTINGS_SECTION_ID,
+    SETTINGS_SECTION_ID,
     self.calculateProfileSectionHasNotification(),
     notificationsCount = 0)
 
