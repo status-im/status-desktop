@@ -11,7 +11,7 @@ StatusMenu {
     property alias compressedPubKey: header.compressedPubKey
     property alias emojiHash: header.emojiHash
     property alias name: header.displayName
-    property alias icon: header.icon
+    property alias headerIcon: header.icon
     property alias colorHash: header.colorHash
     property alias colorId: header.colorId
 
