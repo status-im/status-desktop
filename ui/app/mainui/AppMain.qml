@@ -1452,7 +1452,7 @@ Item {
                     colorHash: appMain.profileStore.colorHash
                     colorId: appMain.profileStore.colorId
                     name: appMain.profileStore.name
-                    icon: appMain.profileStore.icon
+                    headerIcon: appMain.profileStore.icon
                     isEnsVerified: !!appMain.profileStore.preferredName
 
                     currentUserStatus: appMain.profileStore.currentUserStatus
