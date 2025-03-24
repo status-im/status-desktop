@@ -13,6 +13,12 @@ public:
     Q_INVOKABLE void toggleMinimize();
     Q_INVOKABLE void restoreWindowState();
 
+signals:
+    void urlActivated(const QString& url);
+
+protected:
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
 private:
     void removeTitleBar();
     void showTitleBar();

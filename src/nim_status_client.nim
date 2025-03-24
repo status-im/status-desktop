@@ -194,8 +194,6 @@ proc mainProc() =
   let signalsManagerQVariant = newQVariant(statusFoundation.signalsManager)
 
   QResource.registerResource(app.applicationDirPath & resourcesPath)
-  # Register events objects
-  let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
 
   if not main_constants.IS_MACOS:
     app.icon(app.applicationDirPath & statusAppIconPath)
@@ -219,7 +217,6 @@ proc mainProc() =
 
   statusq_registerQmlTypes()
 
-  app.installEventFilter(osThemeEvent)
   app.installEventFilter(urlSchemeEvent)
 
   defer:
@@ -232,7 +229,6 @@ proc mainProc() =
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
     networkAccessFactory.delete()
-    osThemeEvent.delete()
     appController.delete()
     statusFoundation.delete()
     singleInstance.delete()

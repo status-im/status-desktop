@@ -69,8 +69,6 @@
 #include "DOtherSide/DosQQuickImageProvider.h"
 #include "DOtherSide/DOtherSideSingleInstance.h"
 
-#include "DOtherSide/Status/OSThemeEvent.h"
-#include "DOtherSide/Status/UrlSchemeEvent.h"
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/Status/AppDelegate.h"
@@ -373,12 +371,6 @@ void dos_qguiapplication_restart()
 void dos_qguiapplication_icon(const char *filename)
 {
     qGuiApp->setWindowIcon(QIcon(filename));
-}
-
-void dos_qguiapplication_installEventFilter(::DosEvent* vptr)
-{
-    auto qobject = static_cast<QObject*>(vptr);
-    qGuiApp->installEventFilter(qobject);
 }
 
 ::DosQQmlApplicationEngine *dos_qqmlapplicationengine_create()
@@ -1558,26 +1550,6 @@ bool dos_singleinstance_isfirst(DosSingleInstance *vptr)
     }
     return false;
 }
-
-#pragma region Events
-
-::DosEvent* dos_event_create_osThemeEvent(::DosQQmlApplicationEngine* vptr)
-{
-    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
-    return new Status::OSThemeEvent(engine);
-}
-
-::DosEvent* dos_event_create_urlSchemeEvent()
-{
-    return new Status::UrlSchemeEvent();
-}
-
-void dos_event_delete(DosEvent* vptr)
-{
-    auto qobject = static_cast<QObject*>(vptr);
-    qobject->deleteLater();
-}
-#pragma endregion
 
 #pragma region OSNotification
 

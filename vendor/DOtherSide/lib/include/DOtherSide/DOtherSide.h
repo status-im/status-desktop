@@ -86,8 +86,6 @@ DOS_API void DOS_CALL dos_qguiapplication_delete(void);
 
 DOS_API void DOS_CALL dos_qguiapplication_icon(const char *filename);
 
-DOS_API void dos_qguiapplication_installEventFilter(DosEvent *vptr);
-
 DOS_API void dos_qguiapplication_clipboard_setText(const char* text);
 
 DOS_API char* dos_qguiapplication_clipboard_getText();
@@ -1004,14 +1002,6 @@ DOS_API bool DOS_CALL dos_singleinstance_isfirst(DosSingleInstance *vptr);
 DOS_API void DOS_CALL dos_singleinstance_delete(DosSingleInstance *vptr);
 
 /// @}
-
-#pragma region Events exposed methods
-
-DOS_API DosEvent* dos_event_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
-DOS_API DosEvent* dos_event_create_urlSchemeEvent();
-DOS_API void dos_event_delete(DosEvent* vptr);
-
-#pragma endregion
 
 #pragma region OS notification exposed methods
 
