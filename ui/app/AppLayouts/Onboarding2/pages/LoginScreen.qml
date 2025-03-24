@@ -103,7 +103,7 @@ OnboardingPage {
             }
         }
 
-        readonly property Settings settings: Settings {
+        readonly property var settings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
             category: "Login"
             property string lastKeyUid
         }

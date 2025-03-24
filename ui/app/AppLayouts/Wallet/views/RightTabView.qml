@@ -275,13 +275,13 @@ RightTabBaseView {
                         Component.onCompleted: refreshSortSettings()
                         Component.onDestruction: saveSortSettings()
 
-                        readonly property Settings walletSettings: Settings {
+                        readonly property var walletSettings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
                             id: walletSettings
                             category: "walletSettings-" + root.contactsStore.myPublicKey
                             property var assetsViewCustomOrderApplyTimestamp
                         }
 
-                        readonly property Settings settings: Settings {
+                        readonly property var settings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
                             id: settings
                             property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
                             property var sortOrderUpdateTimestamp
@@ -390,7 +390,7 @@ RightTabBaseView {
                         Component.onCompleted: refreshSortSettings()
                         Component.onDestruction: saveSortSettings()
 
-                        readonly property Settings settings: Settings {
+                        readonly property var settings: Settings { /* https://bugreports.qt.io/browse/QTBUG-135039 */
                             id: settings
                             property int currentSortValue: SortOrderComboBox.TokenOrderDateAdded
                             property real sortOrderUpdateTimestamp: 0
