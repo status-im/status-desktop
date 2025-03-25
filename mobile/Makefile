@@ -76,14 +76,14 @@ iosdevice: IPHONE_SDK=iphoneos
 iosdevice: default
 
 # dependencies
-status-go: $(STATUS_GO_LIB)
-statusq: $(STATUS_Q_LIB)
-dotherside: $(DOTHERSIDE_LIB)
-openssl: $(OPENSSL_LIB)
-qrcodegen: $(QRCODEGEN_LIB)
-pcre: $(PCRE_LIB)
-nim-status-client: $(NIM_STATUS_CLIENT_LIB)
-status-desktop-rcc: $(STATUS_DESKTOP_RCC)
+status-go: clean-status-go $(STATUS_GO_LIB)
+statusq: clean-statusq $(STATUS_Q_LIB)
+dotherside: clean-dotherside $(DOTHERSIDE_LIB)
+openssl: clean-openssl $(OPENSSL_LIB)
+qrcodegen: clean-qrcodegen $(QRCODEGEN_LIB)
+pcre: clean-pcre $(PCRE_LIB)
+nim-status-client: clean-nim-status-client $(NIM_STATUS_CLIENT_LIB)
+status-desktop-rcc: clean-status-desktop-rcc $(STATUS_DESKTOP_RCC)
 
 $(STATUS_GO_LIB): $(STATUS_GO_FILES)
 	@echo "Building Status Go"
@@ -158,3 +158,34 @@ run: makedir $(TARGET)
 	@echo "Running"
 	@APP=$(TARGET) $(RUN_SCRIPT)
 
+.PHONY: clean-status-go
+clean-status-go:
+	@rm -f $(STATUS_GO_LIB)
+
+.PHONY: clean-statusq
+clean-statusq:
+	@rm -f $(STATUS_Q_LIB)
+
+.PHONY: clean-dotherside
+clean-dotherside:
+	@rm -f $(DOTHERSIDE_LIB)
+
+.PHONY: clean-openssl
+clean-openssl:
+	@rm -f $(OPENSSL_LIB)
+
+.PHONY: clean-qrcodegen
+clean-qrcodegen:
+	@rm -f $(QRCODEGEN_LIB)
+
+.PHONY: clean-pcre
+clean-pcre:
+	@rm -f $(PCRE_LIB)
+
+.PHONY: clean-nim-status-client
+clean-nim-status-client:
+	@rm -f $(NIM_STATUS_CLIENT_LIB)
+
+.PHONY: clean-status-desktop-rcc
+clean-status-desktop-rcc:
+	@rm -f $(STATUS_DESKTOP_RCC)

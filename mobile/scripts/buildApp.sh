@@ -38,7 +38,7 @@ else
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk $SDK -arch $ARCH
     # Compile the app
-    xcodebuild -configuration Release -target IOS-build install -sdk $SDK -arch $ARCH DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR"
+    xcodebuild -configuration Release -target IOS-build install -sdk $SDK -arch $ARCH DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
     if [ -e $BIN_DIR/IOS-build.app/Info.plist ]; then
         echo "Build succeeded"
