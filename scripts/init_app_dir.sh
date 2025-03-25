@@ -23,6 +23,7 @@ cp -R resources.rcc "${APP_DIR}/usr/"
 cp bin/i18n/* "${APP_DIR}/usr/i18n"
 cp vendor/status-go/build/bin/libstatus.so "${APP_DIR}/usr/lib/"
 cp vendor/status-go/build/bin/libstatus.so.0 "${APP_DIR}/usr/lib/"
+cp "${LIBWAKU}" "${APP_DIR}/usr/lib/"
 cp "${STATUSKEYCARDGO}" "${APP_DIR}/usr/lib/"
 cp "${FCITX5_QT}" "${APP_DIR}/usr/plugins/platforminputcontexts/"
 

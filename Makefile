@@ -87,7 +87,7 @@ ifeq ($(detected_OS),Darwin)
  export CFLAGS
  CGO_CFLAGS := -mmacosx-version-min=12.0
  export CGO_CFLAGS
- LIBSTATUS_EXT := dylib
+ LIB_EXT := dylib
   # keep in sync with BOTTLE_MACOS_VERSION
  MACOSX_DEPLOYMENT_TARGET := 12.0
  export MACOSX_DEPLOYMENT_TARGET
@@ -95,14 +95,14 @@ ifeq ($(detected_OS),Darwin)
  RUN_TARGET := run-macos
  QT_ARCH ?= $(shell uname -m)
 else ifeq ($(detected_OS),Windows)
- LIBSTATUS_EXT := dll
+ LIB_EXT := dll
  PKG_TARGET := pkg-windows
  QRCODEGEN_MAKE_PARAMS := CC=gcc
  RUN_TARGET := run-windows
  VCINSTALLDIR ?= C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\
  export VCINSTALLDIR
 else
- LIBSTATUS_EXT := so
+ LIB_EXT := so
  PKG_TARGET := pkg-linux
  RUN_TARGET := run-linux
 endif
@@ -223,6 +223,14 @@ ifeq ($(detected_OS),Darwin)
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
  endif
+endif
+
+ifeq ($(USE_NWAKU), true)
+	STATUSGO_MAKE_PARAMS += USE_NWAKU=true
+	LIBWAKU := vendor/status-go/vendor/github.com/waku-org/waku-go-bindings/third_party/nwaku/build/libwaku.$(LIB_EXT)
+	LIBWAKU_LIBDIR := $(shell pwd)/$(shell dirname "$(LIBWAKU)")
+	export LIBWAKU
+	NIM_EXTRA_PARAMS +=	--passL:"-L$(LIBWAKU_LIBDIR)" --passL:"-lwaku"
 endif
 
 INCLUDE_DEBUG_SYMBOLS ?= false
@@ -449,6 +457,7 @@ dotherside: | dotherside-build
 ##	status-go
 ##
 
+STATUSGO := vendor/status-go/build/bin/libstatus.$(LIB_EXT)
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
@@ -472,7 +481,7 @@ status-go-clean:
 	echo -e "\033[92mCleaning:\033[39m status-go"
 	rm -f $(STATUSGO)
 
-export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
+export STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIB_EXT)
 export STATUSKEYCARDGO_LIBDIR := "$(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")"
 
 status-keycard-go: $(STATUSKEYCARDGO)
@@ -876,12 +885,12 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	./bin/nim_status_client $(ARGS)
 
 run-linux-gdb: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
+	LD_LIBRARY_PATH="$(QT_LIBDIR)":"$(LIBWAKU_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(STATUSQ_INSTALL_PATH)/StatusQ":"$(LD_LIBRARY_PATH)" \
 	gdb -ex=r ./bin/nim_status_client $(ARGS)
 
 run-macos: nim_status_client
@@ -892,7 +901,7 @@ run-macos: nim_status_client
 		ln -fs ../../../nim_status_client ./
 	./node_modules/.bin/fileicon set bin/nim_status_client status-dev.icns
 	echo -e "\033[92mRunning:\033[39m bin/StatusDev.app/Contents/MacOS/nim_status_client"
-	./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
+	DYLD_LIBRARY_PATH="$(STATUSGO_LIBDIR)" ./bin/StatusDev.app/Contents/MacOS/nim_status_client $(ARGS)
 
 run-windows: STATUS_RC_FILE = status-dev.rc
 run-windows: compile_windows_resources nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)

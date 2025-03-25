@@ -5,9 +5,10 @@ FROM ubuntu:20.04 AS qt-install
 
 ARG QT_VERSION
 
-RUN apt update && apt full-upgrade -y \
- && apt install -y --no-install-recommends sudo python3 python3-pip python3-dev build-essential \
- && apt-get -qq clean
+RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends \
+    sudo python3 python3-pip python3-dev \
+    build-essential gcc g++ \
+    && apt-get -qq clean
 
 RUN chmod -R 777 /opt
 
@@ -143,9 +144,14 @@ ENV HOME="/home/jenkins"
 ENV PATH="${HOME}/go/bin:${PATH}"
 
 # Nix for jenkins user to build status-go.
+RUN curl -s https://nixos.org/releases/nix/nix-2.19.3/install | sh -s -- --no-daemon# Nix for jenkins user to build status-go.
 RUN curl -s https://nixos.org/releases/nix/nix-2.24.11/install | sh -s -- --no-daemon
 # for nix-shell to work
 ENV PATH="/home/jenkins/.nix-profile/bin:${PATH}"
+
+# Installing rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.78 -y
+ENV PATH="~/.cargo/bin:${PATH}"
 
 LABEL maintainer="jakub@status.im"
 LABEL source="https://github.com/status-im/status-desktop"
