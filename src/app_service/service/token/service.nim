@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, chronicles, strutils, algorithm, sugar
+import NimQml, Tables, sets, json, sequtils, chronicles, strutils, algorithm, sugar
 
 import web3/ethtypes
 import backend/backend as backend
@@ -13,12 +13,16 @@ import app_service/common/cache
 import app_service/common/wallet_constants
 import ./dto, ./service_items, ./utils
 
-export dto, service_items
+export dto, service_items, utils
 
 logScope:
   topics = "token-service"
 
 include async_tasks
+
+const
+  NativeTokensListName = "native"
+  CustomTokensListName = "custom"
 
 const ETHEREUM_SYMBOL = "ETH"
 const CRYPTO_SUB_UNITS_TO_FACTOR = {
@@ -224,17 +228,16 @@ QtObject:
       error "error: ", errDesription
 
   proc addNewCommunityToken*(self: Service, token: TokenDto) =
-    let sourceName = "custom"
     let tokenType = TokenType.ERC20
 
     var updated = false
-    let unique_key = token.flatModelKey()
+    let unique_key = token.tokenKey()
     if not any(self.flatTokenList, proc (x: TokenItem): bool = x.key == unique_key):
       self.flatTokenList.add(TokenItem(
         key: unique_key,
         name: token.name,
         symbol: token.symbol,
-        sources: @[sourceName],
+        sources: @[CustomTokensListName],
         chainID: token.chainID,
         address: token.address,
         decimals: token.decimals,
@@ -244,13 +247,13 @@ QtObject:
       self.flatTokenList.sort(cmpTokenItem)
       updated = true
 
-    let token_by_symbol_key = token.bySymbolModelKey()
+    let token_by_symbol_key = token.byNameModelKey()
     if not any(self.tokenBySymbolList, proc (x: TokenBySymbolItem): bool = x.key == token_by_symbol_key):
       self.tokenBySymbolList.add(TokenBySymbolItem(
           key: token_by_symbol_key,
           name: token.name,
           symbol: token.symbol,
-          sources: @[sourceName],
+          sources: @[CustomTokensListName],
           addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
           decimals: token.decimals,
           image: token.image,
@@ -290,80 +293,78 @@ QtObject:
       self.tokenListUpdatedAt = tokenList.updatedAt
 
       let supportedNetworkChains = self.networkService.getFlatNetworks().map(n => n.chainId)
-      var flatTokensList: Table[string, TokenItem] = initTable[string, TokenItem]()
-      var tokenBySymbolList: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
-      var tokenSymbols: seq[string] = @[]
+      var allTokens: Table[string, TokenItem] = initTable[string, TokenItem]()
+      var tokensByName: Table[string, TokenBySymbolItem] = initTable[string, TokenBySymbolItem]()
+      var uniqueNonCustomTokenSymbols: HashSet[string] = initHashSet[string]()
 
+      self.sourcesOfTokensList = @[]
       for s in tokenList.data:
+        var
+          uniqueTokensPerList: HashSet[string] = initHashSet[string]()
+          uniqueNamesPerList: HashSet[string] = initHashSet[string]()
+        # token type determined by the source
+        let tokenType = if s.name == NativeTokensListName: TokenType.Native else: TokenType.ERC20
+        for token in s.tokens:
+          if not supportedNetworkChains.contains(token.chainID):
+            continue
+
+          let tokenKey = token.tokenKey()
+          uniqueTokensPerList.incl(tokenKey)
+          uniqueNamesPerList.incl(token.byNameModelKey())
+          if allTokens.hasKey(tokenKey):
+            allTokens[tokenKey].sources.add(s.name)
+          else:
+            allTokens[tokenKey] = TokenItem(
+              key: tokenKey,
+              name: token.name,
+              symbol: token.symbol,
+              sources: @[s.name],
+              chainID: token.chainID,
+              address: token.address,
+              decimals: token.decimals,
+              image: token.image,
+              `type`: tokenType,
+              communityId: token.communityData.id
+            )
+
+          let tokenByNameKey = token.byNameModelKey()
+          if tokensByName.hasKey(tokenByNameKey):
+            if not tokensByName[tokenByNameKey].sources.contains(s.name):
+              tokensByName[tokenByNameKey].sources.add(s.name)
+            let tokenChainId = token.chainID
+            if tokensByName[tokenByNameKey].addressPerChainId.filter(apc => apc.chainId == tokenChainId).len == 0:
+              tokensByName[tokenByNameKey].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
+          else:
+            tokensByName[tokenByNameKey] = TokenBySymbolItem(
+              key: tokenByNameKey,
+              name: token.name,
+              symbol: token.symbol,
+              sources: @[s.name],
+              addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
+              decimals: token.decimals,
+              image: token.image,
+              `type`: tokenType,
+              communityId: token.communityData.id
+            )
+
+        if s.name != CustomTokensListName:
+          uniqueNonCustomTokenSymbols = uniqueNonCustomTokenSymbols + uniqueTokensPerList
+
         let newSource = SupportedSourcesItem(
           name: s.name,
           updatedAt: s.lastUpdateTimestamp,
           source: s.source,
           version: s.version,
-          tokensCount: s.tokens.len
+          tokensCount: uniqueNamesPerList.len
         )
         self.sourcesOfTokensList.add(newSource)
 
-        for token in s.tokens:
-          # Remove tokens that are not on list of supported status networks
-          if supportedNetworkChains.contains(token.chainID):
-            # logic for building flat tokens list
-            let unique_key = token.flatModelKey()
-            if flatTokensList.hasKey(unique_key):
-              flatTokensList[unique_key].sources.add(s.name)
-            else:
-              let tokenType = if s.name == "native" : TokenType.Native
-                              else: TokenType.ERC20
-              flatTokensList[unique_key] = TokenItem(
-                key: unique_key,
-                name: token.name,
-                symbol: token.symbol,
-                sources: @[s.name],
-                chainID: token.chainID,
-                address: token.address,
-                decimals: token.decimals,
-                image: token.image,
-                `type`: tokenType,
-                communityId: token.communityData.id)
-
-            # logic for building tokens by symbol list
-            # In case the token is not a community token the unique key is symbol
-            # In case this is a community token the only param reliably unique is its address
-            # as there is always a rare case that a user can create two or more community token
-            # with same symbol and cannot be avoided
-            let token_by_symbol_key = token.bySymbolModelKey()
-            if tokenBySymbolList.hasKey(token_by_symbol_key):
-              if not tokenBySymbolList[token_by_symbol_key].sources.contains(s.name):
-                tokenBySymbolList[token_by_symbol_key].sources.add(s.name)
-              # this logic is to check if an entry for same chainId as been made already,
-              # in that case we simply add it to address per chain
-              var addedChains: seq[int] = @[]
-              for addressPerChain in tokenBySymbolList[token_by_symbol_key].addressPerChainId:
-                addedChains.add(addressPerChain.chainId)
-              if not addedChains.contains(token.chainID):
-                tokenBySymbolList[token_by_symbol_key].addressPerChainId.add(AddressPerChain(chainId: token.chainID, address: token.address))
-            else:
-              let tokenType = if s.name == "native": TokenType.Native
-                              else: TokenType.ERC20
-              tokenBySymbolList[token_by_symbol_key] = TokenBySymbolItem(
-                key: token_by_symbol_key,
-                name: token.name,
-                symbol: token.symbol,
-                sources: @[s.name],
-                addressPerChainId: @[AddressPerChain(chainId: token.chainID, address: token.address)],
-                decimals: token.decimals,
-                image: token.image,
-                `type`: tokenType,
-                communityId: token.communityData.id)
-              if token.communityData.id.isEmptyOrWhitespace:
-                tokenSymbols.add(token.symbol)
-
-      self.fetchTokensMarketValues(tokenSymbols)
-      self.fetchTokensDetails(tokenSymbols)
-      self.fetchTokensPrices(tokenSymbols)
-      self.flatTokenList = toSeq(flatTokensList.values)
+      self.fetchTokensMarketValues(uniqueNonCustomTokenSymbols.items.toSeq())
+      self.fetchTokensDetails(uniqueNonCustomTokenSymbols.items.toSeq())
+      self.fetchTokensPrices(uniqueNonCustomTokenSymbols.items.toSeq())
+      self.flatTokenList = toSeq(allTokens.values)
       self.flatTokenList.sort(cmpTokenItem)
-      self.tokenBySymbolList = toSeq(tokenBySymbolList.values)
+      self.tokenBySymbolList = toSeq(tokensByName.values)
       self.tokenBySymbolList.sort(cmpTokenBySymbolItem)
     except Exception as e:
       let errDesription = e.msg
@@ -385,18 +386,18 @@ QtObject:
           self.rebuildMarketData()
     # update and populate internal list and then emit signal when new custom token detected?
     self.events.on(SignalType.WalletTokensListsUpdated.event) do(e:Args):
-      self.events.emit(SIGNAL_TOKENS_LIST_UPDATED, Args())
+      self.getSupportedTokensList()
 
   proc getCurrency*(self: Service): string =
     return self.settingsService.getCurrency()
 
-  proc getSourcesOfTokensList*(self: Service): var seq[SupportedSourcesItem] =
+  proc getSourcesOfTokensList*(self: Service): seq[SupportedSourcesItem] =
     return self.sourcesOfTokensList
 
-  proc getFlatTokensList*(self: Service): var seq[TokenItem] =
+  proc getFlatTokensList*(self: Service): seq[TokenItem] =
     return self.flatTokenList
 
-  proc getTokenBySymbolList*(self: Service): var seq[TokenBySymbolItem] =
+  proc getTokenBySymbolList*(self: Service): seq[TokenBySymbolItem] =
     return self.tokenBySymbolList
 
   proc getTokenDetails*(self: Service, symbol: string): TokenDetailsItem =

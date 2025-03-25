@@ -103,9 +103,9 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
   if not txPath.toChain.isNil:
     toChainId = txPath.toChain.chainId
   if not txPath.fromToken.isNil:
-    fromTokenSymbol = txPath.fromToken.bySymbolModelKey()
+    fromTokenSymbol = txPath.fromToken.byNameModelKey()
   if not txPath.toToken.isNil:
-    toTokenSymbol = txPath.toToken.bySymbolModelKey()
+    toTokenSymbol = txPath.toToken.byNameModelKey()
 
   result = newPathItem(
     processorName = txPath.processorName,

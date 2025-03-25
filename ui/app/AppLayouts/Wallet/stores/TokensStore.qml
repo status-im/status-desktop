@@ -33,20 +33,18 @@ QtObject {
             expression: sourceImage(model.name)
             expectedRoles: ["name"]
         }
-        filters: AnyOf {
+        filters: [
             ValueFilter {
                 roleName: "name"
-                value: Constants.supportedTokenSources.uniswap
-            }
+                value: Constants.supportedTokenSources.nativeListName
+                inverted: true
+            },
             ValueFilter {
                 roleName: "name"
-                value: Constants.supportedTokenSources.aave
+                value: Constants.supportedTokenSources.customListName
+                inverted: true
             }
-            ValueFilter {
-                roleName: "name"
-                value: Constants.supportedTokenSources.status
-            }
-        }
+        ]
     }
 
     /* This list contains the complete list of tokens with separate

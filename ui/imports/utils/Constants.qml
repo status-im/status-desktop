@@ -785,10 +785,11 @@ QtObject {
     }
 
     readonly property QtObject supportedTokenSources: QtObject {
-        readonly property string uniswap: "Uniswap Labs Default"
-        readonly property string aave: "Aave token list"
-        readonly property string status: "Status Token List"
-        readonly property string custom: "custom"
+        readonly property string nativeListName: "native"
+        readonly property string customListName: "custom"
+        readonly property string uniswapListName: "Uniswap Labs Default"
+        readonly property string aaveListName: "Aave token list"
+        readonly property string statusListName: "Status Token List"
     }
 
     enum LocalPairingState {
@@ -1304,15 +1305,17 @@ QtObject {
     }
 
     function getSupportedTokenSourceImage(name, useDefault=true) {
-        if (name === supportedTokenSources.uniswap)
-            return Theme.png("tokens/UNI")
-
-        if (name === supportedTokenSources.aave)
-            return Theme.png("tokens/AAVE")
-
-        if (name === supportedTokenSources.status)
-            return Theme.png("tokens/SNT")
-
+        if (name !== "") {
+            if (name.toUpperCase().includes(supportedTokenSources.uniswapListName.toUpperCase())) {
+                return Theme.png("tokens/UNI")
+            }
+            if (name.toUpperCase().includes(supportedTokenSources.aaveListName.toUpperCase())) {
+                return Theme.png("tokens/AAVE")
+            }
+            if (name.toUpperCase().includes(supportedTokenSources.statusListName.toUpperCase())) {
+                return Theme.png("tokens/SNT")
+            }
+        }
         if (useDefault)
             return Theme.png("tokens/DEFAULT-TOKEN")
         return ""

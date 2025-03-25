@@ -4,9 +4,11 @@ const noGasErrorCode = "WR-002"
 proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
   var accountAddresses: seq[string] = @[]
   var accountTokens: seq[GroupedTokenItem] = @[]
+
   defer:
     let timestamp = getTime().toUnix()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, TokensPerAccountArgs(accountAddresses:accountAddresses, accountTokens: accountTokens, timestamp: timestamp))
+
   try:
     let responseObj = response.parseJson
     var storeResult: bool
@@ -33,18 +35,16 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
 
         if tokensDetailsObj.kind == JArray:
           for token in tokensDetailsObj.getElems():
-
-            let symbol = token{"symbol"}.getStr
-            let communityId = token{"community_data"}{"id"}.getStr
+            var tokenDto = Json.decode($token, TokenDto, allowUnknownFields = true)
             if not token{"hasError"}.getBool:
               allTokensHaveError = false
 
             var balancesPerChainObj: JsonNode
             if(token.getProp("balancesPerChain", balancesPerChainObj)):
-              for chainId, balanceObj in balancesPerChainObj:
-                let chainId = balanceObj{"chainId"}.getInt
-                let address = balanceObj{"address"}.getStr
-                let flatTokensKey = $chainId & address
+              for _, balanceObj in balancesPerChainObj:
+                # update tokenDto with the chainId and address
+                tokenDto.chainID = balanceObj{"chainId"}.getInt
+                tokenDto.address = balanceObj{"address"}.getStr
 
                 # Expecting "<nil>" values comming from status-go when the entry is nil
                 var rawBalance: Uint256 = u256(0)
@@ -57,18 +57,17 @@ proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
                 if not balance1DayAgoStr.contains("nil"):
                   balance1DayAgo = stint.parse(balance1DayAgoStr, UInt256)
 
-                let token_by_symbol_key = if communityId.isEmptyOrWhitespace: symbol
-                                          else: address
-                if groupedAccountsTokensBalances.hasKey(token_by_symbol_key):
-                  groupedAccountsTokensBalances[token_by_symbol_key].balancesPerAccount.add(BalanceItem(account: accountAddress,
-                    chainId: chainId,
+                let tokenByNameKey = tokenDto.byNameModelKey()
+                if groupedAccountsTokensBalances.hasKey(tokenByNameKey):
+                  groupedAccountsTokensBalances[tokenByNameKey].balancesPerAccount.add(BalanceItem(account: accountAddress,
+                    chainId: tokenDto.chainID,
                     balance: rawBalance,
                     balance1DayAgo: balance1DayAgo))
                 else:
-                  groupedAccountsTokensBalances[token_by_symbol_key] = GroupedTokenItem(
-                    tokensKey: token_by_symbol_key,
-                    symbol: symbol,
-                    balancesPerAccount: @[BalanceItem(account: accountAddress, chainId: chainId, balance: rawBalance, balance1DayAgo: balance1DayAgo)]
+                  groupedAccountsTokensBalances[tokenByNameKey] = GroupedTokenItem(
+                    tokensKey: tokenByNameKey,
+                    symbol: tokenDto.symbol,
+                    balancesPerAccount: @[BalanceItem(account: accountAddress, chainId: tokenDto.chainID, balance: rawBalance, balance1DayAgo: balance1DayAgo)]
                     )
 
         # set assetsLoading to false once the tokens are loaded
