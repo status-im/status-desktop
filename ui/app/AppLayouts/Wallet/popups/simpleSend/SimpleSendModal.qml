@@ -53,6 +53,12 @@ StatusDialog {
     required property var assetsModel
     /**
     Expected model structure:
+    - key: unique string ID of the token (asset); e.g. "ETH" or contract address
+    - addressPerChain: submodel[ chainId: int, address: string ]
+    **/
+    required property var flatAssetsModel
+    /**
+    Expected model structure:
     - groupName: group name (from collection or community name)
     - icon: from imageUrl or mediaUrl
     - type: can be "community" or "other"
@@ -180,6 +186,7 @@ StatusDialog {
 
     /** Input function to resolve Ens Name **/
     required property var fnResolveENS
+
     /** Output function to set resolved ens name values **/
     function ensNameResolved(resolvedPubKey, resolvedAddress, uuid) {
         recipientsPanel.ensNameResolved(resolvedPubKey, resolvedAddress, uuid)
@@ -211,12 +218,15 @@ StatusDialog {
             sourceModel: root.assetsModel
             key: "tokensKey"
             value: root.selectedTokenKey
+            cacheOnRemoval: true
             onItemChanged: d.setAssetInTokenSelector()
             onAvailableChanged: d.setAssetInTokenSelector()
         }
 
         // Holds if the asset entry is valid
-        readonly property bool selectedAssetEntryValid: selectedAssetEntry.available &&
+        readonly property bool selectedAssetEntryValid: (selectedAssetEntry.itemRemovedFromModel ||
+                                                         selectedAssetEntry.available) &&
+                                                        isSelectedAssetAvailableInSelectedNetwork &&
                                                         !!selectedAssetEntry.item
 
         // Used to set selected asset in token selector
@@ -226,6 +236,23 @@ StatusDialog {
                                         Constants.tokenIcon(selectedAssetEntry.item.symbol),
                                         selectedAssetEntry.item.tokensKey)
             }
+        }
+
+        readonly property bool isSelectedAssetAvailableInSelectedNetwork: {
+            const chainId = root.selectedChainId
+            const tokensKey = root.selectedTokenKey
+            if (!tokensKey || !chainId || !root.flatAssetsModel)
+                return false
+
+            const addressPerChain = SQUtils.ModelUtils.getByKey(root.flatAssetsModel, "key", tokensKey, "addressPerChain")
+            if (!addressPerChain)
+                return false
+
+            return !!SQUtils.ModelUtils.getFirstModelEntryIf(
+                        addressPerChain,
+                        (addPerChain) => {
+                            return chainId === addPerChain.chainId
+                        })
         }
 
         // Used to get collectible entry if selected token is a collectible
@@ -283,6 +310,8 @@ StatusDialog {
                 // reset token selector in case selected tokens doesnt exist in either models
                 d.setTokenOnBothHeaders("", "", "")
                 root.selectedTokenKey = ""
+                root.selectedRawAmount = ""
+                amountToSend.clear()
             }
         })
 
