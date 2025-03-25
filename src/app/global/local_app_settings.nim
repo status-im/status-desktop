@@ -168,19 +168,6 @@ QtObject:
     write = setRefreshTokenEnabled
     notify = refreshTokenEnabledChanged
 
-  proc createCommunityEnabledChanged*(self: LocalAppSettings) {.signal.}
-  proc getCreateCommunityEnabled*(self: LocalAppSettings): bool {.slot.} =
-    self.settings.value(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_CREATE_COMMUNITIES_ENABLED)).boolVal
-
-  proc setCreateCommunityEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
-    self.settings.setValue(LAS_KEY_CREATE_COMMUNITIES_ENABLED, newQVariant(enabled))
-    self.createCommunityEnabledChanged()
-
-  QtProperty[bool] createCommunityEnabled:
-    read = getCreateCommunityEnabled
-    write = setCreateCommunityEnabled
-    notify = createCommunityEnabledChanged
-
   proc wakuV2ShardedCommunitiesEnabledChanged*(self: LocalAppSettings) {.signal.}
   proc getWakuV2ShardedCommunitiesEnabled*(self: LocalAppSettings): bool {.slot.} =
     self.settings.value(LAS_KEY_SHARDED_COMMUNITIES_ENABLED, newQVariant(DEFAULT_LAS_KEY_SHARDED_COMMUNITIES_ENABLED)).boolVal

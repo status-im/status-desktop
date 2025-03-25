@@ -7,7 +7,6 @@ import driver
 from constants import permission_data_member, RandomCommunity
 from constants.community import LimitWarnings
 from gui.main_window import MainWindow
-from helpers.SettingsHelper import enable_community_creation
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/739309',
@@ -15,7 +14,6 @@ from helpers.SettingsHelper import enable_community_creation
 @pytest.mark.case(739309)
 @pytest.mark.communities
 def test_add_5_member_role_permissions(main_screen: MainWindow):
-    enable_community_creation(main_screen)
 
     with step('Create community and select it'):
         community = RandomCommunity()

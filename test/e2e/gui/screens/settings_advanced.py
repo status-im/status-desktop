@@ -14,7 +14,6 @@ class AdvancedSettingsView(QObject):
         self._scroll = Scroll(settings_names.settingsContentBase_ScrollView)
         self._manage_community_on_testnet_button = Button(
             settings_names.manageCommunitiesOnTestnetButton_StatusSettingsLineButton)
-        self._enable_creation_community_button = Button(settings_names.enableCreateCommunityButton_StatusSettingsLineButton)
         self._light_mode_button = Button(settings_names.settingsContentBaseScrollViewLightWakuModeBloomSelectorButton)
         self._relay_mode_button = Button(settings_names.settingsContentBaseScrollViewRelayWakuModeBloomSelectorButton)
 
@@ -22,11 +21,6 @@ class AdvancedSettingsView(QObject):
     def switch_manage_on_community(self):
         self._scroll.vertical_scroll_down(self._manage_community_on_testnet_button)
         self._manage_community_on_testnet_button.click()
-
-    @allure.step('Enable creation of communities')
-    def enable_creation_of_communities(self):
-        self._scroll.vertical_scroll_down(self._enable_creation_community_button)
-        self._enable_creation_community_button.click()
 
     @allure.step('Switch waku mode')
     def switch_waku_mode(self, mode):

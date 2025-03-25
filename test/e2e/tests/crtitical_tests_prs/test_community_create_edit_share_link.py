@@ -4,7 +4,6 @@ from allure_commons._allure import step
 
 from constants import RandomCommunity
 from constants.community import Channel
-from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.browser import get_response, get_page_content
 from scripts.utils.generators import random_community_name, random_community_description, random_community_introduction, \
     random_community_leave_message
@@ -18,8 +17,6 @@ from gui.main_window import MainWindow
 @pytest.mark.critical
 @pytest.mark.smoke
 def test_create_edit_community(main_screen: MainWindow):
-    enable_community_creation(main_screen)
-
     with step('Open create community popup'):
         communities_portal = main_screen.left_panel.open_communities_portal()
         create_community_form = communities_portal.open_create_community_popup()

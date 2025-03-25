@@ -7,7 +7,6 @@ from allure_commons._allure import step
 import driver
 from gui.components.community.pinned_messages_popup import PinnedMessagesPopup
 from gui.main_window import MainWindow
-from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
 import configs
 from constants import ColorCodes, UserAccount, RandomUser, RandomCommunity
@@ -63,8 +62,6 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             contacts_settings.accept_contact_request(user_one.name)
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
-            enable_community_creation(main_screen)
-
             with step('Create community and select it'):
                 community = RandomCommunity()
                 main_screen.create_community(community_data=community)
