@@ -12,7 +12,6 @@ import driver
 from constants import UserAccount, RandomCommunity
 from gui.main_window import MainWindow
 from gui.screens.messages import MessagesScreen
-from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.parsers import remove_tags
 
 
@@ -29,8 +28,6 @@ def test_create_edit_remove_community_channel(main_screen, channel_name, channel
                                               channel_emoji_image,
                                               channel_color, new_channel_name, new_channel_description,
                                               new_channel_emoji):
-    enable_community_creation(main_screen)
-
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.create_community(community_data=community)

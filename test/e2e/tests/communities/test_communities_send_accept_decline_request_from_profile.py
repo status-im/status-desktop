@@ -6,7 +6,6 @@ import driver
 from gui.components.profile_popup import ProfilePopupFromMembers
 from gui.components.remove_contact_popup import RemoveContactPopup
 from gui.main_window import MainWindow
-from helpers.SettingsHelper import enable_community_creation
 from scripts.utils.generators import random_text_message
 import configs
 from constants import UserAccount, RandomUser, RandomCommunity
@@ -91,7 +90,6 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
         with step(f'User {user_two.name}, creates community and invites {user_one.name} and {user_three.name}'):
             aut_two.attach()
             main_screen.prepare()
-            enable_community_creation(main_screen)
 
             with step('Create community and select it'):
                 community = RandomCommunity()

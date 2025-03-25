@@ -129,25 +129,19 @@ StatusSectionLayout {
                 Item { Layout.fillWidth: true }
 
                 StatusButton {
-                    id: importBtn
                     Layout.preferredHeight: 38
                     text: qsTr("Import community")
                     verticalPadding: 0
                     onClicked: Global.importCommunityPopupRequested()
                 }
 
-                Loader {
-                    Layout.preferredHeight: active ? 38 : 0
-                    active: communitiesStore.createCommunityEnabled || communitiesStore.testEnvironment
-                    sourceComponent: StatusButton {
-                        id: createBtn
-                        objectName: "createCommunityButton"
-                        height: parent.height
-                        verticalPadding: 0
-                        text: qsTr("Create community")
-                        onClicked: {
-                            Global.openPopup(chooseCommunityCreationTypePopupComponent)
-                        }
+                StatusButton {
+                    objectName: "createCommunityButton"
+                    Layout.preferredHeight: 38
+                    verticalPadding: 0
+                    text: qsTr("Create community")
+                    onClicked: {
+                        Global.openPopup(chooseCommunityCreationTypePopupComponent)
                     }
                 }
             }

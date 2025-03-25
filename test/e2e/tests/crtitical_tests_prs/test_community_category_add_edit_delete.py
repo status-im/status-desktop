@@ -4,7 +4,6 @@ from allure_commons._allure import step
 
 from constants import RandomCommunity
 from gui.main_window import MainWindow
-from helpers.SettingsHelper import enable_community_creation
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703226', 'Add category')
@@ -22,8 +21,6 @@ from helpers.SettingsHelper import enable_community_creation
 def test_create_edit_remove_community_category(main_screen: MainWindow, category_name, general_checkbox, channel_name,
                                  channel_description, channel_emoji, second_channel_name, second_channel_description,
                                  second_channel_emoji):
-    enable_community_creation(main_screen)
-
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.create_community(community_data=community)
