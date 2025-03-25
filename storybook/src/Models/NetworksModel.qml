@@ -21,6 +21,7 @@ QtObject {
     readonly property int sepArbChainId: 421614
     readonly property int baseChainId: 8453
     readonly property int sepBaseChainId: 84532
+    readonly property int sepStatusChainId: 1660990954
 
 
     function getShortChainName(chainId) {

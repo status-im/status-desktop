@@ -85,37 +85,20 @@ ColumnLayout {
         readonly property int maxSecondsBetweenRefresh: 3
     }
 
-    InformationTag {
+    HistoryBetaTag {
         id: betaTag
+        flatNetworks: root.networksStore.activeNetworks
+
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: root.firstItemOffset
         Layout.preferredHeight: 56
         visible: root.firstItemOffset === 0 // visible only in the main wallet view
-        spacing: Theme.halfPadding
-        backgroundColor: Theme.palette.primaryColor3
-        bgRadius: Theme.radius
-        bgBorderColor: Theme.palette.primaryColor2
-        tagPrimaryLabel.textFormat: Text.RichText
-        tagPrimaryLabel.font.pixelSize: Theme.additionalTextSize
-        tagPrimaryLabel.text: qsTr("Activity is in beta. If transactions are missing, check %1, %2, %3 or %4.")
-            .arg(Utils.getStyledLink("Etherscan", "https://etherscan.io/", tagPrimaryLabel.hoveredLink))
-            .arg(Utils.getStyledLink("OP Explorer", "https://optimistic.etherscan.io/", tagPrimaryLabel.hoveredLink))
-            .arg(Utils.getStyledLink("BaseScan", "https://basescan.org/", tagPrimaryLabel.hoveredLink))
-            .arg(Utils.getStyledLink("Arbiscan", "https://arbiscan.io/", tagPrimaryLabel.hoveredLink))
-        tagPrimaryLabel.onLinkActivated: (link) => {
+
+        onLinkActivated: {
             const explorerUrl = root.walletRootStore.showAllAccounts ? link
-                                                                       : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.walletRootStore.selectedAddress)
+                                                                        : "%1/%2/%3".arg(link).arg(Constants.networkExplorerLinks.addressPath).arg(root.walletRootStore.selectedAddress)
             Global.openLinkWithConfirmation(explorerUrl, SQUtils.StringUtils.extractDomainFromLink(explorerUrl))
-        }
-        asset {
-            name: "warning"
-            width: 20
-            height: 20
-            color: Theme.palette.primaryColor1
-        }
-        HoverHandler {
-            cursorShape: hovered && !!parent.tagPrimaryLabel.hoveredLink ? Qt.PointingHandCursor : undefined
         }
     }
 

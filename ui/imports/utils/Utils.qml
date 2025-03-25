@@ -630,6 +630,11 @@ QtObject {
             if (testnetMode) {
                 link = Constants.networkExplorerLinks.sepoliaBase
             }
+        } else if (networkShortName === Constants.networkShortChainNames.status) {
+            link = Constants.networkExplorerLinks.status
+            if (testnetMode) {
+                link = Constants.networkExplorerLinks.sepoliaStatus
+            }
         }
         return link
     }
@@ -664,6 +669,9 @@ QtObject {
         if (networkShortName === Constants.networkShortChainNames.base) {
             return qsTr("BaseScan")
         }
+        if (networkShortName === Constants.networkShortChainNames.status) {
+            return qsTr("Status Explorer")
+        }
         return qsTr("Etherscan")
     }
 
@@ -682,6 +690,8 @@ QtObject {
             case Constants.chains.baseChainId:
             case Constants.chains.baseSepoliaChainId:
                 return Constants.networkShortChainNames.base
+            case Constants.chains.statusSepoliaChainId:
+                return Constants.networkShortChainNames.status
         }
         return ""
     }
