@@ -37,7 +37,7 @@ QMap<QString, QStringList> FigmaIO::read(const QString &file)
             QStringList linksList;
             linksList.reserve(links.size());
 
-            for (const QJsonValue &link : qAsConst(links))
+            for (const QJsonValue &link : std::as_const(links))
                 if (link.isString())
                     linksList << link.toString();
 

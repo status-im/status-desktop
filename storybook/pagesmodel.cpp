@@ -16,7 +16,7 @@ PagesModel::PagesModel(const QString &path, QObject *parent)
 {
     m_items = readMetadata(m_pagesWatcher->files());
 
-    for (const auto& item : qAsConst(m_items))
+    for (const auto& item : std::as_const(m_items))
         setFigmaLinks(item.title, item.figmaLinks);
 
     connect(m_pagesWatcher, &DirectoryFilesWatcher::filesChanged,
@@ -120,7 +120,7 @@ void PagesModel::onPagesChanged(const QStringList& added,
 
         auto metadata = readMetadata(added);
 
-        for (const auto& item : qAsConst(metadata))
+        for (const auto& item : std::as_const(metadata))
             setFigmaLinks(item.title, item.figmaLinks);
 
         m_items << metadata;

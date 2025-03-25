@@ -268,7 +268,7 @@ void ObjectProxyModel::updateRoleNames()
 
     auto maxRoleKey = *maxElementIt;
 
-    for (auto& exposedRole : qAsConst(m_exposedRoles)) {
+    for (auto& exposedRole : std::as_const(m_exposedRoles)) {
 
         auto exposedRoleByteArray = exposedRole.toUtf8();
         auto keys = roles.keys(exposedRoleByteArray);

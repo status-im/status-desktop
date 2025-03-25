@@ -35,7 +35,7 @@ void LeftJoinModel::initialize(bool reset)
         if (rolesToJoin.indexOf(m_joinRole) == -1)
             rolesToJoin << m_joinRole;
 
-        for (auto& roleName : qAsConst(rolesToJoin)) {
+        for (auto& roleName : std::as_const(rolesToJoin)) {
             auto name = roleName.toUtf8();
             auto roles = rightRoleNames.keys(name);
 
