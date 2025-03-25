@@ -1,5 +1,7 @@
 #include "modelsignalsspy.h"
 
+#include <QDebug>
+
 namespace {
 
 using QAIM = QAbstractItemModel;
@@ -56,4 +58,46 @@ int ModelSignalsSpy::count() const
             + rowsInsertedSpy.count()
             + rowsMovedSpy.count()
             + rowsRemovedSpy.count();
+}
+
+void ModelSignalsSpy::printDebugSummary() const
+{
+    qDebug() << "TOTAL:" << count();
+
+    if (auto c = columnsAboutToBeInsertedSpy.count())
+        qDebug() << "columnsAboutToBeInserted:" << c;
+    if (auto c = columnsAboutToBeMovedSpy.count())
+        qDebug() << "columnsAboutToBeMoved:" << c;
+    if (auto c = columnsAboutToBeRemovedSpy.count())
+        qDebug() << "columnsAboutToBeRemoved:" << c;
+    if (auto c = columnsInsertedSpy.count())
+        qDebug() << "columnsInserted:" << c;
+    if (auto c = columnsMovedSpy.count())
+        qDebug() << "columnsMoved:" << c;
+    if (auto c = columnsRemovedSpy.count())
+        qDebug() << "columnsRemoved:" << c;
+    if (auto c = dataChangedSpy.count())
+        qDebug() << "dataChanged:" << c;
+    if (auto c = headerDataChangedSpy.count())
+        qDebug() << "headerDataChanged:" << c;
+    if (auto c = layoutAboutToBeChangedSpy.count())
+        qDebug() << "layoutAboutToBeChanged:" << c;
+    if (auto c = layoutChangedSpy.count())
+        qDebug() << "layoutChanged:" << c;
+    if (auto c = modelAboutToBeResetSpy.count())
+        qDebug() << "modelAboutToBeReset:" << c;
+    if (auto c = modelResetSpy.count())
+        qDebug() << "modelReset:" << c;
+    if (auto c = rowsAboutToBeInsertedSpy.count())
+        qDebug() << "rowsAboutToBeInserted:" << c;
+    if (auto c = rowsAboutToBeMovedSpy.count())
+        qDebug() << "rowsAboutToBeMoved:" << c;
+    if (auto c = rowsAboutToBeRemovedSpy.count())
+        qDebug() << "rowsAboutToBeRemoved:" << c;
+    if (auto c = rowsInsertedSpy.count())
+        qDebug() << "rowsInserted:" << c;
+    if (auto c = rowsMovedSpy.count())
+        qDebug() << "rowsMoved:" << c;
+    if (auto c = rowsRemovedSpy.count())
+        qDebug() << "rowsRemoved:" << c;
 }
