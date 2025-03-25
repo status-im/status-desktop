@@ -342,7 +342,7 @@ void ModelEntry::cacheItem()
 {
     if(!m_cacheOnRemoval) return;
 
-    for(const auto& role : qAsConst(m_roles))
+    for(const auto& role : std::as_const(m_roles))
     {
         auto roleNames = m_sourceModel->roleNames().keys(role.toUtf8());
         if (roleNames.isEmpty()) continue;

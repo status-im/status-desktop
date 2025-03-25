@@ -487,10 +487,10 @@ void ConcatModel::initRoles()
 
     m_nameRoles.reserve(m_expectedRoles.size() + 1);
 
-    for (const auto& expectedRoleName : qAsConst(m_expectedRoles))
+    for (const auto& expectedRoleName : std::as_const(m_expectedRoles))
         m_nameRoles.try_emplace(expectedRoleName.toUtf8(), m_nameRoles.size());
 
-    for (auto sourceModel : qAsConst(m_sources)) {
+    for (auto sourceModel : std::as_const(m_sources)) {
         auto model = sourceModel->model();
 
         if (model == nullptr)

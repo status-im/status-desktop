@@ -140,7 +140,7 @@ void StatusSyntaxHighlighter::buildRules()
 
 void StatusSyntaxHighlighter::highlightBlock(const QString& text)
 {
-    for(const HighlightingRule& rule : qAsConst(highlightingRules))
+    for(const HighlightingRule& rule : std::as_const(highlightingRules))
     {
         if(rule.pattern.pattern() == QStringLiteral("")) continue;
 
@@ -249,7 +249,7 @@ QRegularExpression StatusSyntaxHighlighter::highlightedHyperlinkRegularExpressio
 QRegularExpression StatusSyntaxHighlighter::hyperlinksRegularExpression() const
 {
     QStringList hyperlinks;
-    for(const QString& hyperlink : qAsConst(m_hyperlinks))
+    for(const QString& hyperlink : std::as_const(m_hyperlinks))
     {
         const auto possibleUrlFormats = getPossibleUrlFormats(QUrl(hyperlink));
         hyperlinks.append(possibleUrlFormats);

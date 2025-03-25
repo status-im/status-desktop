@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
                 errorCount++;
                 failedPages << objUrl.toLocalFile();
 
-                for (const auto &warning: qAsConst(warnings))
+                for (const auto &warning: std::as_const(warnings))
                     qWarning() << "    " << warning;
             }
         });
