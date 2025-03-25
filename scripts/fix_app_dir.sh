@@ -12,6 +12,11 @@ if [[ ! -z "${IN_NIX_SHELL}" ]]; then
 		"${APP_DIR}/usr/lib/libcom_err.so.3" \
 		"${APP_DIR}/usr/lib/libstatus.so"
 
+	if [ -f "${APP_DIR}/usr/lib/libwaku.so" ]; then
+		patchelf --set-rpath '$ORIGIN' \
+			"${APP_DIR}/usr/lib/libwaku.so"
+	fi
+
 	patchelf --set-rpath '$ORIGIN/../' \
 		"${APP_DIR}"/usr/lib/gstreamer-1.0/* \
 		"${APP_DIR}"/usr/lib/nss/*.so
