@@ -74,7 +74,7 @@ void LeftJoinModel::initialize(bool reset)
     if (!namesIntersection.isEmpty()) {
         qWarning().nospace() << "Source models contain conflicting model names: "
                              << QList(namesIntersection.cbegin(),
-                                      namesIntersection.cend())
+                                      namesIntersection.cend()).join()
                              << "!";
         return;
     }

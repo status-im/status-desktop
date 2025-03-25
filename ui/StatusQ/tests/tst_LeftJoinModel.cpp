@@ -83,7 +83,7 @@ private slots:
 
         QTest::ignoreMessage(QtWarningMsg,
                              "Source models contain conflicting model names: "
-                             "(\"name\")!");
+                             "\"name\"!");
 
         model.setJoinRole("communityId");
 
