@@ -458,7 +458,6 @@ dotherside: | dotherside-build
 ##
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIB_EXT)
-STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
