@@ -7,6 +7,7 @@
 class LeftJoinModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(QAbstractItemModel* leftModel READ leftModel
                WRITE setLeftModel NOTIFY leftModelChanged)
