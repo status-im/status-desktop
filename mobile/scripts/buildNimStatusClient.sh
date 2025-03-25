@@ -19,7 +19,7 @@ else
 fi
 
 if [ "$OS" = "ios" ]; then
-    PLATFORM_SPECIFIC="--app:staticlib -d:ios --os:macosx"
+    PLATFORM_SPECIFIC="--app:staticlib -d:ios --os:ios"
     LIB_EXT=".a"
 else
     PLATFORM_SPECIFIC="--app:lib --os:android -d:android -d:androidNDK -d:danger"
@@ -35,10 +35,13 @@ cd $STATUS_DESKTOP
 
 # run make deps-common with sytem environment variables found in $HOST_ENV, not with the one from shell configured for android
 # build nim compiler with host env
-env -i HOME="$HOME" bash -l -c 'make deps-common -j$(nproc)'
+env -i HOME="$HOME" bash -l -c 'make deps-common'
 
-# build status-client
-./vendor/nimbus-build-system/scripts/env.sh nim c $PLATFORM_SPECIFIC -d:release --outdir:./bin -d:DESKTOP_VERSION=$DESKTOP_VERSION -d:STATUSGO_VERSION=$STATUSGO_VERSION -d:GIT_COMMIT="`git log --pretty=format:'%h' -n 1`" -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
+# setting compile time feature flags
+FEATURE_FLAGS="FLAG_DAPPS_ENABLED=0 FLAG_CONNECTOR_ENABLED=0 FLAG_KEYCARD_ENABLED=0 FLAG_THREADPOOL_ENABLED=0 FLAG_SINGLE_STATUS_INSTANCE_ENABLED=0"
+
+# build status-client with feature flags
+env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c $PLATFORM_SPECIFIC -d:release --outdir:./bin -d:DESKTOP_VERSION=$DESKTOP_VERSION -d:STATUSGO_VERSION=$STATUSGO_VERSION -d:GIT_COMMIT="`git log --pretty=format:'%h' -n 1`" -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
     --mm:refc \
     --opt:speed \
     --cc:clang \
