@@ -386,8 +386,13 @@ private slots:
         QCOMPARE(signalsSpy.rowsAboutToBeRemovedSpy.count(), 1);
         QCOMPARE(signalsSpy.rowsRemovedSpy.count(), 1);
 
-        QTest::qWait(100);
+        QEventLoop().processEvents();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QCOMPARE(signalsSpy.count(), 2);
+#else
+        QCOMPARE(signalsSpy.count(), 3);
+        QCOMPARE(signalsSpy.headerDataChangedSpy.count(), 1);
+#endif
     }
 
     void modelResetWhenRoleChangedTest() {
@@ -724,7 +729,7 @@ private slots:
             QCOMPARE(signalsSpy.dataChangedSpy.count(), 2);
         }
 
-        QTest::qWait(100);
+        QEventLoop().processEvents();
         QCOMPARE(signalsSpy.count(), 2);
         QCOMPARE(signalsSpy.dataChangedSpy.count(), 2);
 
@@ -742,7 +747,7 @@ private slots:
             QCOMPARE(signalsSpy.dataChangedSpy.count(), 4);
         }
 
-        QTest::qWait(100);
+        QEventLoop().processEvents();
         QCOMPARE(signalsSpy.count(), 5);
         QCOMPARE(signalsSpy.dataChangedSpy.count(), 5);
     }
