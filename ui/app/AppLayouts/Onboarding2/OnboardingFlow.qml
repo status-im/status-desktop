@@ -78,8 +78,6 @@ OnboardingStackView {
         property int flow
         property LoginScreen loginScreen: null
 
-        property bool seenUsageDataPrompt
-
         function pushOrSkipBiometricsPage() {
             if (root.biometricsAvailable) {
                 root.replace(null, enableBiometricsPage)
@@ -153,26 +151,20 @@ OnboardingStackView {
         }
     }
 
+    function startWithProxy(component) {
+        const page = root.push(helpUsImproveStatusPage)
+
+        page.shareUsageDataRequested.connect(enabled => {
+            root.push(component)
+        })
+    }
+
     Component {
         id: welcomePage
 
         WelcomePage {
-            function pushWithProxy(component) {
-                if (d.seenUsageDataPrompt) { // don't ask for "Share usage data" a second time (e.g. after a factory reset)
-                    root.push(component)
-                } else {
-                    const page = root.push(helpUsImproveStatusPage)
-
-                    page.shareUsageDataRequested.connect(enabled => {
-                        root.shareUsageDataRequested(enabled)
-                        root.push(component)
-                        d.seenUsageDataPrompt = true
-                    })
-                }
-            }
-
-            onCreateProfileRequested: pushWithProxy(createProfilePage)
-            onLoginRequested: pushWithProxy(loginPage)
+            onCreateProfileRequested: startWithProxy(createProfilePage)
+            onLoginRequested: startWithProxy(loginPage)
 
             onPrivacyPolicyRequested: d.openPrivacyPolicyPopup()
             onTermsOfUseRequested: d.openTermsOfUsePopup()
@@ -201,8 +193,8 @@ OnboardingStackView {
             }
             onDismissBiometricsRequested: root.dismissBiometricsRequested()
             onLoginRequested: (keyUid, method, data) => root.loginRequested(keyUid, method, data)
-            onOnboardingCreateProfileFlowRequested: root.push(createProfilePage)
-            onOnboardingLoginFlowRequested: root.push(loginPage)
+            onOnboardingCreateProfileFlowRequested: startWithProxy(createProfilePage)
+            onOnboardingLoginFlowRequested: startWithProxy(loginPage)
             onLostKeycardFlowRequested: {
                 root.keyUidSubmitted(loginScreen.selectedProfileKeyId)
                 root.push(keycardLostPage)
@@ -232,6 +224,7 @@ OnboardingStackView {
 
         HelpUsImproveStatusPage {
             onPrivacyPolicyRequested: d.openPrivacyPolicyPopup()
+            onShareUsageDataRequested: (enabled) => root.shareUsageDataRequested(enabled)
         }
     }
 
