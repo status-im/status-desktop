@@ -28,4 +28,5 @@ public:
     const QSignalSpy rowsRemovedSpy;
 
     int count() const;
+    void printDebugSummary() const;
 };
