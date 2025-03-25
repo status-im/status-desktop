@@ -911,6 +911,7 @@ QtObject {
         readonly property string arbitrum: "arb1"
         readonly property string optimism: "oeth"
         readonly property string base: "base"
+        readonly property string status: "status"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
@@ -923,6 +924,7 @@ QtObject {
         readonly property string sepoliaArbiscan: "https://sepolia.arbiscan.io/"
         readonly property string sepoliaOptimism: "https://sepolia-optimism.etherscan.io/"
         readonly property string sepoliaBase: "https://sepolia.basescan.org/"
+        readonly property string sepoliaStatus: "https://sepoliascan.status.network/"
 
         readonly property string addressPath: "address"
         readonly property string txPath: "tx"
@@ -941,6 +943,7 @@ QtObject {
         readonly property string sepoliaArbitrum: "arbitrum-sepolia"
         readonly property string sepoliaOptimism: "optimism-sepolia"
         readonly property string sepoliaBase: "base-sepolia"
+        readonly property string sepoliaStatus: "status-sepolia"
     }
 
     readonly property string api_request: "api-request"

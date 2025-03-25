@@ -318,6 +318,9 @@ QtObject {
                     case Constants.chains.baseSepoliaChainId:
                     chain = Constants.openseaExplorerLinks.base
                     break
+                case Constants.chains.statusSepoliaChainId:
+                    chain = Constants.openseaExplorerLinks.status
+                    break
                 }
 
                 return qsTr("not enough balance for %1 on %2 chain").arg(jsonObj.token).arg(chain)
