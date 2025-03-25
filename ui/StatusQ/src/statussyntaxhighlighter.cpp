@@ -91,7 +91,7 @@ void StatusSyntaxHighlighter::buildRules()
     if (m_features & StatusSyntaxHighlighter::Code)
     {
         //CODE (`foo`)
-        codeFormat.setFontFamily(QStringLiteral("Roboto Mono"));
+        codeFormat.setFontFamilies({ QStringLiteral("Roboto Mono") });
         codeFormat.setBackground(m_codeBackgroundColor);
         codeFormat.setForeground(m_codeForegroundColor);
         rule.id = StatusSyntaxHighlighter::Code;
