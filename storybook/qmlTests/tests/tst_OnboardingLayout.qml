@@ -1103,7 +1103,7 @@ Item {
             verify(!!controlUnderTest)
             controlUnderTest.onboardingStore.loginAccountsModel = loginAccountsModel
 
-            const page = getCurrentPage(controlUnderTest.stack, LoginScreen)
+            let page = getCurrentPage(controlUnderTest.stack, LoginScreen)
 
             const loginUserSelector = findChild(page, "loginUserSelector")
             verify(!!loginUserSelector)
@@ -1119,10 +1119,20 @@ Item {
             mouseClick(menuDelegate)
             tryCompare(dynamicSpy, "count", 1)
 
+            // PAGE 2: Help us improve
+            page = getCurrentPage(controlUnderTest.stack, HelpUsImproveStatusPage)
+
+            const shareButton = findChild(controlUnderTest, "btnShare")
+            dynamicSpy.setup(page, "shareUsageDataRequested")
+            mouseClick(shareButton)
+            tryCompare(dynamicSpy, "count", 1)
+            compare(dynamicSpy.signalArguments[0][0], true)
+
+            // PAGE 3: CreateProfilePage or NewAccountLoginPage
             tryVerify(() => {
-                          const currentPage = controlUnderTest.stack.currentItem
-                          return !!currentPage && currentPage instanceof data.landingPage
-                      })
+                const currentPage = controlUnderTest.stack.currentItem
+                return !!currentPage && currentPage instanceof data.landingPage
+            })
         }
 
         function test_loginScreenLostKeycardSeedphraseLoginFlow_data() {
