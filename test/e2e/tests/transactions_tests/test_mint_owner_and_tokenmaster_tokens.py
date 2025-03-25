@@ -11,7 +11,7 @@ from configs import WALLET_SEED
 from constants import ReturningUser, RandomCommunity
 from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
-from helpers.SettingsHelper import enable_testnet_mode, enable_community_creation, enable_managing_communities_toggle
+from helpers.SettingsHelper import enable_testnet_mode, enable_managing_communities_toggle
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
 
@@ -30,7 +30,6 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
     finalize_onboarding_and_login(profile_view, user_account)
 
     enable_testnet_mode(main_window)
-    enable_community_creation(main_window)
     enable_managing_communities_toggle(main_window)
 
     with step('Create community and select it'):

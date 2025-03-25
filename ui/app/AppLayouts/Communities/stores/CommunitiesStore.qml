@@ -35,7 +35,6 @@ QtObject {
     property bool downloadingCommunityHistoryArchives: root.communitiesModuleInst.downloadingCommunityHistoryArchives
     property var advancedModule: profileSectionModule.advancedModule
 
-    readonly property bool createCommunityEnabled: localAppSettings.createCommunityEnabled ?? false
     readonly property bool testEnvironment: localAppSettings.testEnvironment ?? false
 
     property string communityTags: communitiesModuleInst.tags

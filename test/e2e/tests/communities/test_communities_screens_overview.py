@@ -3,7 +3,6 @@ import pytest
 from allure_commons._allure import step
 
 from constants import RandomCommunity
-from helpers.SettingsHelper import enable_community_creation
 
 from constants.community import AirdropsElements, TokensElements, PermissionsElements
 from constants.images_paths import AIRDROPS_WELCOME_IMAGE_PATH, TOKENS_WELCOME_IMAGE_PATH, PERMISSION_WELCOME_IMAGE_PATH
@@ -18,8 +17,6 @@ from gui.main_window import MainWindow
                  'Manage community: Manage Airdrops screen overview')
 @pytest.mark.case(703198, 703199, 703200)
 def test_manage_community_screens_overview(main_screen: MainWindow):
-    enable_community_creation(main_screen)
-
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.create_community(community_data=community)
