@@ -28,7 +28,7 @@ private slots:
 
         QTest::ignoreMessage(QtWarningMsg,
                              "RolesRenamingModel: specified source roles not "
-                             "found: (\"someIdFrom\")!");
+                             "found: \"someIdFrom\"!");
 
         QHash<int, QByteArray> expectedRoles = {
             {0, "id"}, {1, "name"}, {2, "color"}

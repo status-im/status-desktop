@@ -111,7 +111,7 @@ QHash<int, QByteArray> RolesRenamingModel::roleNames() const
     if (!renameMap.isEmpty()) {
         qWarning().nospace()
                 << "RolesRenamingModel: specified source roles not found: "
-                << renameMap.keys() << "!";
+                << renameMap.keys().join(" ") << "!";
     }
 
     m_rolesFetched = true;
