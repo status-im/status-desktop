@@ -328,7 +328,6 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                appearanceStore: root.store.appearanceStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
                 systemPalette: root.systemPalette
