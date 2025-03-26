@@ -81,3 +81,6 @@ when defined(gcc):
   # GCC 14+ introduces new strictness for pointer types that not all nim libraries are compatible with
   switch("passc", "-Wno-error=incompatible-pointer-types")
 
+# https://github.com/rui314/mold
+when findExe("mold").len > 0 and defined(linux):
+  switch("passL", "-fuse-ld=mold")
