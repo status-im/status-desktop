@@ -1,27 +1,9 @@
 #include "StatusQ/stringutilsinternal.h"
 
+#include <QDebug>
 #include <QFile>
-#include <QFileSelector>
-#include <QQmlEngine>
-#include <QQmlFileSelector>
 #include <QUrl>
 #include <QTextDocumentFragment>
-
-namespace {
-
-QString resolveFileUsingQmlImportPaths(QQmlEngine *engine, const QString &relativeFilePath) {
-    const auto importPaths = engine->importPathList();
-    for (const auto &path : importPaths) {
-        const auto fullPath = path + QStringLiteral("/") + relativeFilePath;
-        QFile file(fullPath);
-        if (file.exists()) {
-            return fullPath;
-        }
-    }
-    return {};
-}
-
-} // unnamed namespace
 
 StringUtilsInternal::StringUtilsInternal(QObject* parent) : QObject(parent)
 {
@@ -34,37 +16,16 @@ QString StringUtilsInternal::escapeHtml(const QString& unsafe) const
 
 QString StringUtilsInternal::readTextFile(const QString& filePath) const
 {
-    auto engine = qmlEngine(this);
-
-    auto selector = QQmlFileSelector::get(engine);
-    if (!selector) {
-        qWarning() << Q_FUNC_INFO << "No QQmlFileSelector available to load text file:" << filePath;
+    auto maybeFileUrl = QUrl::fromUserInput(filePath);
+    if (!maybeFileUrl.isLocalFile()) {
+        qWarning() << Q_FUNC_INFO << "Error, opening remote files is not supported" << maybeFileUrl;
         return {};
     }
 
-    QString selectedFilePath;
-    const auto maybeFileUrl = QUrl(filePath).toLocalFile(); // support local file URLs (e.g. "file:///foo/bar/baz.txt")
-
-    if (QFile::exists(maybeFileUrl))
-        selectedFilePath = maybeFileUrl;
-    else
-        selectedFilePath = selector->selector()->select(filePath);
-
-    if (selectedFilePath.startsWith(QLatin1String("qrc:/"))) // for some reason doesn't work with the "qrc:/" prefix, drop it
-        selectedFilePath.remove(0, 3);
-
-    QFile file(selectedFilePath);
+    QFile file(maybeFileUrl.toLocalFile()); // support local file URLs (e.g. "file:///foo/bar/baz.txt")
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        const auto resolvedFilePath = resolveFileUsingQmlImportPaths(engine, filePath);
-        if (resolvedFilePath.isEmpty()) {
-            qWarning() << Q_FUNC_INFO << "Can't find file in QML import paths" << filePath;
-            return {};
-        }
-        file.setFileName(resolvedFilePath);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning() << Q_FUNC_INFO << "Error opening existing file" << resolvedFilePath << "for reading";
-            return {};
-        }
+        qWarning() << Q_FUNC_INFO << "Error opening existing file" << maybeFileUrl << "for reading";
+        return {};
     }
 
     return file.readAll();
