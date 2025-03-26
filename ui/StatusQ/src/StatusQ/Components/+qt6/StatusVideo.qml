@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick
 import QtMultimedia
 
 /*!
@@ -28,7 +28,7 @@ Item {
     id: root
 
     readonly property bool isLoading: video.playbackState !== MediaPlayer.PlayingState
-    readonly property bool isError: video.status === MediaPlayer.InvalidMedia
+    readonly property bool isError: video.status !== MediaPlayer.NoError
 
     property alias source: video.source
     property alias fillMode: video.fillMode

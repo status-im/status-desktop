@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtMultimedia 6.5
+import QtQuick
+import QtMultimedia
 
-import StatusQ 1.0
+import StatusQ
 
 Item {
     id: root
@@ -9,9 +9,9 @@ Item {
     property alias muted: soundEffect.muted
     property alias volume: soundEffect.volume
     property alias source: soundEffect.source
-    property alias playing: soundEffect.playing
 
-    readonly property bool isError: soundEffect.status === soundEffect.Error
+    readonly property alias playing: soundEffect.playing
+    readonly property bool isError: soundEffect.status === SoundEffect.Error
     readonly property string statusString: soundEffect.status
 
     function play() {
@@ -23,7 +23,7 @@ Item {
     }
 
     function convertVolume(volume) {
-        return AudioUtils.convertLogarithmicToLinearVolumeScale(volume);
+        return AudioUtils.convertLogarithmicToLinearVolumeScale(volume)
     }
 
     SoundEffect {
