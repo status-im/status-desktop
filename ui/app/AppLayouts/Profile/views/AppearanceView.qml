@@ -20,8 +20,6 @@ import "../stores"
 SettingsContentBase {
     id: appearanceView
 
-    property AppearanceStore appearanceStore
-
     property var systemPalette
 
     function updateTheme(theme) {

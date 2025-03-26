@@ -69,19 +69,6 @@ QtObject:
   proc gwei2Hex*(self: Utils, gwei: float): string {.slot.} =
     return "0x" & conversion.gwei2Wei(gwei).toHex()
 
-  proc readTextFile*(self: Utils, filepath: string): string {.slot.} =
-    try:
-      return readFile(filepath)
-    except:
-      return ""
-
-  proc writeTextFile*(self: Utils, filepath: string, text: string): bool {.slot.} =
-    try:
-      writeFile(filepath, text)
-      return true
-    except:
-      return false
-
   proc generateQRCodeSVG*(self: Utils, text: string, border: int = 0): string =
     var qr0: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
     var tempBuffer: array[0..qrcodegen_BUFFER_LEN_MAX, uint8]
