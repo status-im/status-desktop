@@ -9,14 +9,21 @@ import AppLayouts.TradingCenter 1.0
 SplitView {
     orientation: Qt.Vertical
 
+    TradingCenterTokensModel {
+        id: tradingTokensModel
+    }
+
     TradingCenterLayout {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        tokensModel: TokensBySymbolModel{}
+        tokensModel: tradingTokensModel
         formatCurrencyAmount: function(cryptoValue) {
             return "%L1 %2".arg(cryptoValue).arg("USD")
         }
         loading: loadingCheckbox.checked
+        totalTokensCount: 5679
+        onRequestLaunchSwap: console.warn("Request Launch Swap")
+        onFetchTradingCenterTokens: console.warn("Fetch Trading Center Tokens with PageSize: %1 and PageNumber:%2".arg(pageSize).arg(pageNumber))
     }
 
     ColumnLayout {
