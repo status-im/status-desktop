@@ -7,8 +7,8 @@ Item {
     property alias muted: audio.muted
     property alias volume: audio.volume
     property alias source: audio.source
-    property bool playing: audio.playbackState === Audio.PlayingState
 
+    readonly property bool playing: audio.playbackState === Audio.PlayingState
     readonly property bool isError: audio.error !== Audio.NoError
     readonly property string statusString: audio.errorString
 

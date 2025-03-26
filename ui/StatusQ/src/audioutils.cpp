@@ -1,8 +1,12 @@
 #include "StatusQ/audioutils.h"
 
-AudioUtils::AudioUtils(QObject *parent) : QObject(parent) {}
+#include <QAudio>
 
-qreal AudioUtils::convertLogarithmicToLinearVolumeScale(qreal volume) {
-    return QAudio::convertVolume(volume, QAudio::LogarithmicVolumeScale,
-                                 QAudio::LinearVolumeScale);
+AudioUtils::AudioUtils(QObject *parent)
+    : QObject(parent)
+{}
+
+qreal AudioUtils::convertLogarithmicToLinearVolumeScale(qreal volume) const
+{
+    return QAudio::convertVolume(volume, QAudio::LogarithmicVolumeScale, QAudio::LinearVolumeScale);
 }
