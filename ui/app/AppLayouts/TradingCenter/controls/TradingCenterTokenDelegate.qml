@@ -30,6 +30,8 @@ StatusItemDelegate {
     property string marketCap
     /* Input property if token is loading */
     property bool loading
+    /** Input property representing index of token list **/
+    property string indexString
 
     QtObject {
         id: d
@@ -69,7 +71,7 @@ StatusItemDelegate {
                 objectName: "indexText"
                 Layout.preferredWidth: 52
 
-                text: index + 1
+                text: root.indexString
                 font.pixelSize: Theme.additionalTextSize
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
@@ -181,7 +183,6 @@ StatusItemDelegate {
                 objectName: "marketCapText"
 
                 Layout.preferredWidth: d.columnWidth
-                Layout.rightMargin: Theme.padding
 
                 text: root.marketCap
                 font.weight: Font.Medium
@@ -189,6 +190,7 @@ StatusItemDelegate {
                 lineHeightMode: Text.FixedHeight
                 horizontalAlignment: Qt.AlignRight
                 leftPadding: d.columnWidth - maximumLoadingStateWidth
+                rightPadding: Theme.padding
                 loading: root.loading
             }
         }

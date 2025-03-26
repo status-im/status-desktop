@@ -2110,12 +2110,22 @@ Item {
                         asynchronous: true
                         sourceComponent: TradingCenterLayout {
                             objectName: "tradingCenterLayout"
-                            onRequestLaunchSwap: d.launchSwap()
-                            tokensModel: appMain.tokensStore.plainTokensBySymbolModel
+                            /** TODO: This is only temporary till the backend code for tokens list is ready
+                            Infact all the below values are only temporarily filled until the backend code is prepared **/
+                            tokensModel: SortFilterProxyModel {
+                                sourceModel: appMain.tokensStore.plainTokensBySymbolModel
+                                filters: IndexFilter {
+                                    minimumIndex: startIndex
+                                    maximumIndex: endIndex
+                                }
+                            }
+                            totalTokensCount: appMain.tokensStore.plainTokensBySymbolModel.ModelCount.count
                             loading: false
                             formatCurrencyAmount: function(amount) {
                                 return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency)
                             }
+                            onRequestLaunchSwap: d.launchSwap()
+                            /**onFetchTradingCenterTokens: tradingCenterStore.fetchTradingCenterTokens(pageSize, pageNumber)**/
                         }
                         onLoaded: {
                             item.resetView()
