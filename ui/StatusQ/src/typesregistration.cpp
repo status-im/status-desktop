@@ -84,7 +84,7 @@ void registerStatusQTypes() {
     qmlRegisterSingletonType<UrlUtils>("StatusQ", 0, 1, "UrlUtils", [](QQmlEngine* engine, QJSEngine*) {
         return new UrlUtils(engine);
     });
-    qmlRegisterSingletonType<AudioUtils>("StatusQ", 1, 0, "AudioUtils", [](QQmlEngine* engine, QJSEngine*) {
+    qmlRegisterSingletonType<AudioUtils>("StatusQ", 0, 1, "AudioUtils", [](QQmlEngine* engine, QJSEngine*) {
         return new AudioUtils(engine);
     });
 
