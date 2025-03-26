@@ -1,11 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
-StatusItemDelegate {
+Control {
     id: root
 
     QtObject {
@@ -15,7 +17,6 @@ StatusItemDelegate {
             (root.width - indexText.width - tokenNameText.width - Theme.padding) / 4
     }
 
-    implicitHeight: 40
     padding: 0
     /* by default header has same z order as list (z:1).
        Making it 2 so that the list scrolls behind it */
@@ -111,17 +112,24 @@ StatusItemDelegate {
             }
 
             // Market Cap
-            StatusBaseText {
+            Item {
                 Layout.preferredWidth: d.columnWidth
-                Layout.rightMargin: Theme.padding
+                Layout.preferredHeight: childrenRect.height
 
-                text: qsTr("Market Cap")
-                color: Theme.palette.baseColor1
-                font.pixelSize: Theme.additionalTextSize
-                font.weight: Font.Medium
-                lineHeight: 22
-                lineHeightMode: Text.FixedHeight
-                horizontalAlignment: Qt.AlignRight
+                StatusSortableColumnHeader {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+
+                    rightPadding: Theme.padding
+
+                    sorting: StatusSortableColumnHeader.Sorting.Descending
+                    traversalOrder: [
+                        StatusSortableColumnHeader.Sorting.Descending
+                    ]
+
+                    text: qsTr("Market Cap")
+                    enabled: false
+                }
             }
         }
         // Bottom Divider

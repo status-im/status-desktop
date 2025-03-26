@@ -24,12 +24,6 @@ ItemDelegate {
         sorting = traversalOrder[0]
     }
 
-    component TickIcon: StatusIcon {
-        color: Theme.palette.baseColor1
-        width: 8
-        height: 5
-    }
-
     states: [
         State {
             when: root.sorting === StatusSortableColumnHeader.Sorting.NoSorting
@@ -98,14 +92,24 @@ ItemDelegate {
         Column {
             spacing: 2
 
-            TickIcon {
+            StatusIcon {
                 id: tickUp
+
+                color: Theme.palette.baseColor1
+                width: 8
+                height: 5
+                opacity: root.enabled ? 1 : 0.3
 
                 icon: "tiny/tick-up"
             }
 
-            TickIcon {
+            StatusIcon {
                 id: tickDown
+
+                color: Theme.palette.baseColor1
+                width: 8
+                height: 5
+                opacity: root.enabled ? 1 : 0.3
 
                 icon: "tiny/tick-down"
             }
