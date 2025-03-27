@@ -410,8 +410,6 @@ QtObject {
             collectiblesStore: root.walletCollectiblesStore
             networksStore: root.networksStore
 
-            showCustomRoutingMode: !production
-
             onClosed: destroy()
         }
     }
