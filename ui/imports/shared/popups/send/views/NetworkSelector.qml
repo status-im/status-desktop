@@ -27,7 +27,7 @@ Item {
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
-    property bool advancedOrCustomMode: (tabBar.currentIndex === 1) || (tabBar.currentIndex === 2)
+    property bool advancedMode: tabBar.currentIndex === 1
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
@@ -38,7 +38,6 @@ Item {
     property int errorType: Constants.NoError
     property var bestRoutes
     property double totalFeesInFiat
-    property bool showCustomRoutingMode
 
     readonly property int currentIndex: tabBar.currentIndex
 
@@ -51,8 +50,6 @@ Item {
 
     QtObject {
         id: d
-
-        property var customButton
 
         readonly property int backgroundRectRadius: 13
         readonly property color backgroundRectColor: Theme.palette.indirectColor1
@@ -69,25 +66,6 @@ Item {
         StatusSwitchTabButton {
             text: qsTr("Advanced")
             showBetaTag: true
-        }
-    }
-
-    // not visible in `production` for now, see https://github.com/status-im/status-desktop/issues/16052
-    Component {
-        id: customButtonComponent
-        StatusSwitchTabButton {
-            text: qsTr("Custom")
-        }
-    }
-
-    onShowCustomRoutingModeChanged: {
-        if (root.showCustomRoutingMode) {
-            if (!!d.customButton)
-                d.customButton.destroy()
-            d.customButton = customButtonComponent.createObject(tabBar)
-            tabBar.addItem(d.customButton)
-        } else if (!!d.customButton) {
-            d.customButton.destroy()
         }
     }
 
@@ -146,7 +124,6 @@ Item {
                 anchors.right: parent.right
                 anchors.margins: Theme.padding
                 store: root.store
-                customMode: tabBar.currentIndex === 2
                 selectedRecipient: root.selectedRecipient
                 ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
@@ -174,7 +151,7 @@ Item {
         width: parent.width
         anchors.top: stackLayout.bottom
         anchors.topMargin: Theme.bigPadding
-        visible: root.advancedOrCustomMode
+        visible: root.advancedMode
 
         selectedAsset: root.selectedAsset
         isLoading: root.isLoading

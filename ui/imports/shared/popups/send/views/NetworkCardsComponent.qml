@@ -22,11 +22,9 @@ Item {
     readonly property SharedStores.CurrenciesStore currencyStore: store.currencyStore
     property string receiverIdentityText
     property var selectedAsset
-    property bool customMode: false
     property double amountToSend
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
-    property bool errorMode: d.customAmountToSend > root.amountToSend
     property bool interactive: true
     property var weiToEth: function(wei) {}
     property var reCalculateSuggestedRoute: function() {}
@@ -37,7 +35,6 @@ Item {
 
     QtObject {
         id: d
-        property double customAmountToSend: 0
         // Collectibles don't have a symbol
         readonly property string selectedSymbol: !!selectedAsset && !!selectedAsset.symbol ? selectedAsset.symbol : ""
 
@@ -48,16 +45,6 @@ Item {
             for(var i = 0; i<toNetworksRepeater.count; i++) {
                 toNetworksRepeater.itemAt(i).routeOnNetwork = 0
                 toNetworksRepeater.itemAt(i).bentLine = 0
-            }
-        }
-
-        function calculateCustomAmounts() {
-            d.customAmountToSend = 0
-            for(var i = 0; i<fromNetworksRepeater.count; i++) {
-                if(fromNetworksRepeater.itemAt(i).locked) {
-                    let amountEntered = fromNetworksRepeater.itemAt(i).advancedInputCurrencyAmount
-                    d.customAmountToSend += isNaN(amountEntered) ? 0 : amountEntered
-                }
             }
         }
 
@@ -111,34 +98,20 @@ Item {
                     primaryText: model.chainName
                     secondaryText: (model.tokenBalance.amount === 0 && root.amountToSend > 0) ?
                                     qsTr("No Balance") : !model.hasGas ? qsTr("No Gas") : root.currencyStore.formatCurrencyAmount(advancedInputCurrencyAmount, d.selectedSymbol, {"minDecimals": root.minSendCryptoDecimals})
-                    tertiaryText: root.errorMode && advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: %1").arg(root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol))
-                    locked: model.locked
-                    preCalculatedAdvancedText: {
-                        if(locked && model.lockedAmount) {
-                            let amount = root.weiToEth(parseInt(model.lockedAmount, 16))
-                            return LocaleUtils.numberToLocaleString(amount, -1, LocaleUtils.userInputLocale)
-                        }
-                        else return LocaleUtils.numberToLocaleString(root.weiToEth(model.amountIn), -1, LocaleUtils.userInputLocale)
-                    }
+                    tertiaryText: advancedInputCurrencyAmount > 0 ? qsTr("EXCEEDS SEND AMOUNT"): qsTr("BALANCE: %1").arg(root.currencyStore.formatCurrencyAmount(model.tokenBalance.amount, d.selectedSymbol))
+                    preCalculatedAdvancedText: LocaleUtils.numberToLocaleString(root.weiToEth(model.amountIn), -1, LocaleUtils.userInputLocale)
                     maxAdvancedValue: tokenBalance.amount
                     state: (model.tokenBalance.amount === 0 && root.amountToSend > 0) || !model.hasGas ? "unavailable" :
-                           (root.errorMode || !advancedInput.valid) && advancedInputCurrencyAmount > 0 ? "error" : "default"
+                           !advancedInput.valid && advancedInputCurrencyAmount > 0 ? "error" : "default"
                     cardIcon.source: Theme.svg(model.iconUrl)
                     disabledText: qsTr("Disabled")
                     disableText: qsTr("Disable")
                     enableText: qsTr("Enable")
-                    advancedMode: root.customMode
+                    advancedMode: false
                     disabled: !model.isRouteEnabled
                     clickable: root.interactive
                     onClicked: {
                         store.toggleFromDisabledChains(model.chainId)
-                        store.lockCard(model.chainId, 0, false)
-                        root.reCalculateSuggestedRoute()
-                    }
-                    onLockCard: {
-                        let amount = lock ? (advancedInputCurrencyAmount * Math.pow(10, root.selectedAsset.decimals)).toString(16) : ""
-                        store.lockCard(model.chainId, amount, lock)
-                        d.calculateCustomAmounts()
                         root.reCalculateSuggestedRoute()
                     }
                 }
@@ -247,7 +220,7 @@ Item {
                             fromN.routeOnNetwork += 1
                             toN.routeOnNetwork += 1
                             toN.bentLine = toN.objectName !== fromN.objectName
-                            let routeColor = root.errorMode || !fromN.hasGas ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
+                            let routeColor = !fromN.hasGas ? Theme.palette.dangerColor1 : toN.preferred ? '#627EEA' : Theme.palette.pinColor1
                             StatusQUtils.Utils.drawArrow(ctx, fromN.x + fromN.width,
                                                          fromN.y + fromN.cardIconPosition + yOffsetFrom,
                                                          toNetworksLayout.x + toN.x,
@@ -258,7 +231,6 @@ Item {
                     }
                 }
             }
-            d.calculateCustomAmounts()
         }
     }
 }
