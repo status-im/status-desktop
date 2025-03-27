@@ -23,7 +23,6 @@ ColumnLayout {
     property double amountToSend
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
-    property bool customMode: false
     property var selectedAsset
     property bool isLoading: false
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
@@ -99,7 +98,6 @@ ColumnLayout {
                     amountToSend: root.amountToSend
                     minSendCryptoDecimals: root.minSendCryptoDecimals
                     minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
-                    customMode: root.customMode
                     selectedAsset: root.selectedAsset
                     reCalculateSuggestedRoute: function() {
                         root.reCalculateSuggestedRoute()
