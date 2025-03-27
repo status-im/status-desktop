@@ -16,7 +16,6 @@ type
     disabledToChainIDs: seq[int]
     preferredChainIDs: seq[int]
     sendType: SendType
-    lockedInAmounts: string
 
 type
   WatchTransactionTaskArg* = ref object of QObjectTaskArg

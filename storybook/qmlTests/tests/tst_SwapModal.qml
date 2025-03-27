@@ -35,7 +35,7 @@ Item {
             return wei/(10**decimals)
         }
         function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
-                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts) {
+                                      disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType) {
                     swapStore.fetchSuggestedRoutesCalled()
         }
         function authenticateAndTransfer(uuid, accountFrom, accountTo, tokenFrom,
@@ -1265,7 +1265,7 @@ Item {
             // The default is the first account. Setting the second account to test switching accounts
             root.swapFormData.selectedAccountAddress = walletAccounts.get(1).address
             formValuesChanged.clear()
-            
+
             // try setting value before popup is launched and check values
             root.swapFormData.selectedNetworkChainId = root.swapAdaptor.filteredFlatNetworksModel.get(0).chainId
             root.swapFormData.selectedAccountAddress = walletAccounts.get(0).address
