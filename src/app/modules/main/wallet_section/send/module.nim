@@ -91,8 +91,6 @@ proc convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): Ne
       true,
       true,
       newCurrencyAmount(),
-      false,
-      lockedAmount = "",
       amountIn = "",
       $network.amountOut)
 
@@ -337,7 +335,6 @@ method suggestedRoutes*(self: Module,
   amountOut: string = "",
   disabledFromChainIDs: seq[int] = @[],
   disabledToChainIDs: seq[int] = @[],
-  lockedInAmounts: Table[string, string] = initTable[string, string](),
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   self.tmpSendTransactionDetails.sendType = sendType
   self.controller.suggestedRoutes(
@@ -352,7 +349,6 @@ method suggestedRoutes*(self: Module,
     amountOut,
     disabledFromChainIDs,
     disabledToChainIDs,
-    lockedInAmounts,
     extraParamsTable
   )
 

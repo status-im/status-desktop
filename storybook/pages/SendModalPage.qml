@@ -141,7 +141,6 @@ SplitView {
                 tokenFees:-0.004508663259772343,
                 cost:-6.39534887667951,
                 estimatedTime:1,
-                amountInLocked:false,
                 isFirstSimpleTx:true,
                 isFirstBridgeTx:true,
                 approvalRequired:false,
@@ -170,7 +169,6 @@ SplitView {
                 bonderFees:"0x0",
                 cost:0.003510716,
                 estimatedTime:1,
-                amountInLocked:false,
                 isFirstSimpleTx:false,
                 isFirstBridgeTx:false,
                 approvalRequired:false,
@@ -216,7 +214,6 @@ SplitView {
                 preSelectedSendType: loader.preSelectedSendType
                 preSelectedHoldingID: loader.preSelectedHoldingID
                 preSelectedHoldingType: loader.preSelectedHoldingType
-                showCustomRoutingMode: ctrlShowCustomMode.checked
                 sendTransaction: () => {
                                     if (!showSendErrorCheckBox.checked)
                                          return

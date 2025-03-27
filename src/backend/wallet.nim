@@ -132,7 +132,6 @@ proc prepareDataForSuggestedRoutes(
   toToken: string,
   disabledFromChainIDs,
   disabledToChainIDs: seq[int],
-  lockedInAmounts: Table[string, string],
   extraParamsTable: Table[string, string],
   communityRouteInputParameters: JsonNode = JsonNode(),
   ): JsonNode =
@@ -150,7 +149,6 @@ proc prepareDataForSuggestedRoutes(
     "disabledFromChainIDs": disabledFromChainIDs,
     "disabledToChainIDs": disabledToChainIDs,
     "gasFeeMode": GasFeeLow,
-    "fromLockedAmount": lockedInAmounts,
     "communityRouteInputParams": communityRouteInputParameters,
   }
 
@@ -166,10 +164,10 @@ proc prepareDataForSuggestedRoutes(
   return %* [data]
 
 proc suggestedRoutesAsync*(uuid: string, sendType: int, accountFrom: string, accountTo: string, amountIn: string, amountOut: string, token: string,
-  tokenIsOwnerToken: bool, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], lockedInAmounts: Table[string, string],
-  extraParamsTable: Table[string, string]): string {.raises: [RpcException].} =
+  tokenIsOwnerToken: bool, toToken: string, disabledFromChainIDs, disabledToChainIDs: seq[int], extraParamsTable: Table[string, string]):
+  string {.raises: [RpcException].} =
   let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo, amountIn, amountOut, token, tokenIsOwnerToken,  toToken,
-    disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+    disabledFromChainIDs, disabledToChainIDs, extraParamsTable)
   if payload.isNil:
     raise newException(RpcException, "Invalid key in extraParamsTable")
   let rpcResponse = core.callPrivateRPC("wallet_getSuggestedRoutesAsync", payload)
@@ -195,8 +193,8 @@ proc suggestedRoutesAsyncForCommunities*(uuid: string, sendType: int, accountFro
   }
 
   let payload = prepareDataForSuggestedRoutes(uuid, sendType, accountFrom, accountTo=ZERO_ADDRESS, amountIn="0x0", amountOut="0x0", token="ETH",
-  tokenIsOwnerToken=false, toToken="", disabledFromChainIDs, disabledToChainIDs, lockedInAmounts=initTable[string, string](),
-  extraParamsTable=initTable[string, string](), communityRouteInputParameters=data)
+    tokenIsOwnerToken=false, toToken="", disabledFromChainIDs, disabledToChainIDs, extraParamsTable=initTable[string, string](),
+    communityRouteInputParameters=data)
   let rpcResponse = core.callPrivateRPC("wallet_getSuggestedRoutesAsync", payload)
   if isErrorResponse(rpcResponse):
     return rpcResponse.error.message

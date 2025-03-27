@@ -222,7 +222,7 @@ QObject {
 
             root.swapStore.fetchSuggestedRoutes(d.uuid, accountAddress, accountAddress,
                                                 cryptoValueInRaw, "0", root.swapFormData.fromTokensKey, root.swapFormData.toTokenKey,
-                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap, "")
+                                                disabledChainIds, disabledChainIds, Constants.SendType.Swap)
         } else {
             root.swapProposalLoading = false
             root.swapOutputData.reset()

@@ -215,7 +215,6 @@ QtObject:
       amountOut,
       self.fromNetworksRouteModel.getRouteDisabledNetworkChainIds(),
       self.toNetworksRouteModel.getRouteDisabledNetworkChainIds(),
-      self.fromNetworksRouteModel.getRouteLockedChainIds(),
       extraParamsTable
     )
 
@@ -263,16 +262,7 @@ QtObject:
     toToken: string,
     disabledFromChainIDs: string,
     disabledToChainIDs: string,
-    sendType: int,
-    lockedInAmounts: string) {.slot.} =
-      # Prepare lockedInAmountsTable
-      var lockedInAmountsTable = Table[string, string] : initTable[string, string]()
-      try:
-        for chainId, lockedAmount in parseJson(lockedInAmounts):
-          lockedInAmountsTable[chainId] = lockedAmount.getStr
-      except:
-        discard
-      # Resolve the best route
+    sendType: int) {.slot.} =
       self.delegate.suggestedRoutes(
         uuid,
         SendType(sendType),
@@ -284,8 +274,8 @@ QtObject:
         toToken,
         amountOut,
         parseChainIds(disabledFromChainIDs),
-        parseChainIds(disabledToChainIDs),
-        lockedInAmountsTable)
+        parseChainIds(disabledToChainIDs)
+      )
 
   proc transactionSendingComplete*(self: View, txHash: string, status: string) {.signal.}
   proc sendtransactionSendingCompleteSignal*(self: View, txHash: string, status: string) =
