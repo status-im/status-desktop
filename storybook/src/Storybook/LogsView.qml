@@ -15,6 +15,8 @@ Flickable {
 
     TextEdit {
         id: logTextEdit
+        width: root.width
+        wrapMode: TextEdit.Wrap
         font.family: "courier"
         font.letterSpacing: 1.2
         readOnly: true
