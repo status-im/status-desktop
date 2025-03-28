@@ -54,6 +54,7 @@ SplitView {
                     }
                 }
                 TextField {
+                    Layout.preferredWidth: 200
                     placeholderText: "Custom \"today\" text"
                     onEditingFinished: {
                         picker.customTodayText = text
@@ -61,6 +62,7 @@ SplitView {
                     }
                 }
                 TextField {
+                    Layout.preferredWidth: 200
                     placeholderText: "Locale code ('fr'); empty = default"
                     onEditingFinished: picker.control.locale = Qt.locale(text)
                 }
@@ -70,3 +72,4 @@ SplitView {
 }
 
 // category: Components
+// status: good

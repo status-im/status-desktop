@@ -392,7 +392,7 @@ StatusStackModal {
 
         ColumnLayout {
             id: introOutroMessageView
-            spacing: 16
+            spacing: Theme.padding
 
             readonly property var nextAction: () => {
                 if (!introMessageInput.validate(true))
@@ -414,9 +414,6 @@ StatusStackModal {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                minimumHeight: height
-                maximumHeight: (height - Theme.xlPadding)
 
                 label: qsTr("Community introduction and rules")
             }

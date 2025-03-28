@@ -286,7 +286,7 @@ QtObject {
         }
     }
 
-    readonly property Settings settings: Settings {
+    readonly property var settings: Settings {
         category: "Locale"
         property bool timeFormatUsesDefaults: true
         property bool timeFormatUses24Hours: is24hTimeFormatDefault()
