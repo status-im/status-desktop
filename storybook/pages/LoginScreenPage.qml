@@ -51,7 +51,7 @@ SplitView {
         onBiometricsRequested: biometricsPopup.open()
         onDismissBiometricsRequested: biometricsPopup.close()
 
-        onLoginRequested: (keyUid, method, data) => {
+        onLoginRequested: function(keyUid, method, data) {
                               driver.loginResult = Onboarding.ProgressState.InProgress
                               logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 

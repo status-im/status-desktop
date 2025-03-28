@@ -317,7 +317,7 @@ Item {
                 selected: root.proxy.selected(model)
                 radioGroup: radioBtnGroup
 
-                onCheckedChanged: {
+                onCheckedChanged: (checked) => {
                     if (checked !== root.proxy.selected(model)) {
                         itemsSelectorHelper.selectItem(root.proxy.key(model), checked)
                     }

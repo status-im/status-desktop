@@ -30,7 +30,7 @@ SplitView {
             buttonVisible: buttonVisible.checked
             asset.name: ctrlAssetName.text
             loading: ctrlLoading.checked
-            onButtonClicked: logs.logEvent("ErrorTag::onButtonClicked", [], arguments)
+            onButtonClicked: logs.logEvent("ErrorTag::onButtonClicked")
         }
     }
 

@@ -32,8 +32,8 @@ SplitView {
                 loading: ctrlLoading.checked
                 Component.onCompleted: forceActiveFocus()
 
-                onClearClicked: logs.logEvent("SendRecipientInput::clearClicked", [], arguments)
-                onValidateInputRequested: logs.logEvent("SendRecipientInput::validateInputRequested", [], arguments)
+                onClearClicked: logs.logEvent("SendRecipientInput::clearClicked")
+                onValidateInputRequested: logs.logEvent("SendRecipientInput::validateInputRequested")
             }
         }
 

@@ -183,7 +183,7 @@ StatusSectionLayout {
                     assetsModel: root.assetsModel
                     collectiblesModel: root.collectiblesModel
 
-                    onCardClicked: root.communitiesStore.navigateToCommunity(communityId)
+                    onCardClicked: (communityId) => root.communitiesStore.navigateToCommunity(communityId)
                 }
 
                 StatusBaseText {

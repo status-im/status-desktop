@@ -293,8 +293,8 @@ ItemDelegate {
                 return Qt.PointingHandCursor
             }
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: {
-                root.clicked(mouse);
+            onClicked: (mouse) => {
+                root.clicked(mouse)
             }
         }
     }

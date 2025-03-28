@@ -27,7 +27,7 @@ SplitView {
             anchors.centerIn: parent
             destroyOnClose: false
             fromTimestamp: new Date().setDate(new Date().getDate() - 7) // 7 days ago
-            onNewRangeSet: {
+            onNewRangeSet: (fromTimestamp, toTimestamp) => {
                 console.warn(" from timeStamp = ", new Date(fromTimestamp).toISOString())
                 console.warn(" to timeStamp = ", new Date(toTimestamp).toISOString())
             }
@@ -37,4 +37,5 @@ SplitView {
     }
 }
 
+// status: good
 // category: Components

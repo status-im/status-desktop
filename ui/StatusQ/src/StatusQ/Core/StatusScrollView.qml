@@ -184,7 +184,7 @@ T.ScrollView {
         applyFlickableFix()
     }
 
-    Keys.onPressed: {
+    Keys.onPressed: (event) => {
         switch (event.key) {
         case Qt.Key_Home:
             scrollHome()
