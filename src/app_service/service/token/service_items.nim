@@ -71,6 +71,8 @@ proc `$`*(self: TokenBySymbolItem): string =
     name: {self.name},
     symbol: {self.symbol},
     sources: {self.sources},
+    chainID: {self.chainID},
+    address: {self.address},
     addressPerChainId: {self.addressPerChainId},
     decimals: {self.decimals},
     image: {self.image},
