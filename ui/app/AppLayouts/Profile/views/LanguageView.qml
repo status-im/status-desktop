@@ -92,7 +92,7 @@ SettingsContentBase {
                 placeholderSearchText: qsTr("Search Currencies")
                 maxPickerHeight: 350
 
-                onItemPickerChanged: {
+                onItemPickerChanged: (key, selected) => {
                     if(selected) {
                         currencyPicker.newKey = key
                         currencyPause.start()
@@ -168,7 +168,7 @@ SettingsContentBase {
                 placeholderSearchText: qsTr("Search Languages")
                 maxPickerHeight: 350
 
-                onItemPickerChanged: {
+                onItemPickerChanged: (key, selected) => {
                     if(selected && root.languageStore.currentLanguage !== key) {
                         root.changeLanguage(key)
                         Global.openPopup(languageConfirmationDialog)

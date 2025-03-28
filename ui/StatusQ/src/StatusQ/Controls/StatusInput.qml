@@ -514,9 +514,7 @@ Control {
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
             onIconClicked: root.iconClicked()
-            onKeyPressed: {
-                root.keyPressed(event);
-            }
+            onKeyPressed: (event) => root.keyPressed(event)
             onEditClicked: {
                 root.editClicked();
             }

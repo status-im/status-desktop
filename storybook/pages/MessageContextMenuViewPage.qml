@@ -83,11 +83,11 @@ SplitView {
                 onUnpinMessage: logs.logEvent(`onUnpinMessage: ${messageContextMenuView.messageId}`)
                 onPinnedMessagesLimitReached: logs.logEvent(`onPinnedMessagesLimitReached: ${messageContextMenuView.messageId}`)
                 onMarkMessageAsUnread: logs.logEvent(`onMarkMessageAsUnread: ${messageContextMenuView.messageId}`)
-                onToggleReaction: (emojiId) => logs.logEvent("onToggleReaction", ["emojiId"], arguments)
+                onToggleReaction: (emojiId) => logs.logEvent("onToggleReaction", ["emojiId"], [emojiId])
                 onDeleteMessage: logs.logEvent(`onDeleteMessage: ${messageContextMenuView.messageId}`)
                 onEditClicked: logs.logEvent(`onEditClicked: ${messageContextMenuView.messageId}`)
-                onShowReplyArea: (senderId) => logs.logEvent("onShowReplyArea", ["senderId"], arguments)
-                onCopyToClipboard: (text) => logs.logEvent("onCopyToClipboard", ["text"], arguments)
+                onShowReplyArea: (senderId) => logs.logEvent("onShowReplyArea", ["senderId"], [senderId])
+                onCopyToClipboard: (text) => logs.logEvent("onCopyToClipboard", ["text"], [text])
             }
         }
     }

@@ -106,7 +106,7 @@ StatusScrollView {
                 }
             }
 
-            onClicked: root.cardClicked(communityId)
+            onClicked: (communityId) => root.cardClicked(communityId)
         }
     }
 

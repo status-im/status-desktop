@@ -398,7 +398,7 @@ Item {
                         Keys.forwardTo: [root]
                         KeyNavigation.priority: !!root.tabNavItem ? KeyNavigation.BeforeItem : KeyNavigation.AfterItem
                         KeyNavigation.tab: root.tabNavItem
-                        Keys.onPressed: {
+                        Keys.onPressed: (event) => {
                             edit.keyEvent = event.key
                             root.keyPressed(event)
                         }

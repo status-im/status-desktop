@@ -12,6 +12,6 @@ OnboardingStackView {
     initialItem: CreatePasswordPage {
         passwordStrengthScoreFunction: root.passwordStrengthScoreFunction
 
-        onSetPasswordRequested: root.finished(password)
+        onSetPasswordRequested: (password) => root.finished(password)
     }
 }
