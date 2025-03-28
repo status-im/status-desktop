@@ -819,6 +819,7 @@ class ReturningLoginView(QObject):
     def add_existing_status_user(self):
         self.user_selector_button.click()
         OnboardingLoginUsersPopup().create_profile_button.click()
+        HelpUsImproveStatusView().not_now_button.click()
         return CreateYourProfileViewOnboarding().wait_until_appears()
 
     @allure.step('Select user by name')
