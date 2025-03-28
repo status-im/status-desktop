@@ -286,7 +286,8 @@ QtObject {
         }
     }
 
-    readonly property Settings settings: Settings {
+    /* https://bugreports.qt.io/browse/QTBUG-135039 */
+    readonly property var settings: Settings {
         category: "Locale"
         property bool timeFormatUsesDefaults: true
         property bool timeFormatUses24Hours: is24hTimeFormatDefault()

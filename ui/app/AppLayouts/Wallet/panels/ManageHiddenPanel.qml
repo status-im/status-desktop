@@ -127,6 +127,7 @@ Control {
             StatusFlatButton {
                 size: StatusBaseButton.Size.Small
                 icon.name: checked ? "chevron-down" : "next"
+                checkable: true
                 checked: sectionDelegate.isCollectible ? d.collectiblesExpanded : d.assetsExpanded
                 textColor: Theme.palette.baseColor1
                 textHoverColor: Theme.palette.directColor1

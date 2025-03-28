@@ -97,7 +97,7 @@ StatusScrollView {
                 filterString: tagsFilter.text
                 model: d.tagsModel
                 enabled: d.countSelectedTags < maxSelectedTags
-                onClicked: {
+                onClicked: (item) => {
                     d.countSelectedTags++;
                     item.selected = true;
                 }

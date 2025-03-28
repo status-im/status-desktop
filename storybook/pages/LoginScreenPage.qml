@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-import QtQuick.Extras 1.4
 
 import Models 1.0
 import Storybook 1.0
@@ -111,9 +110,11 @@ SplitView {
                 Label {
                     text: "Selected profile ID: %1".arg(loginScreen.selectedProfileKeyId || "N/A")
                 }
-                StatusIndicator {
+                Rectangle {
+                    Layout.preferredWidth: 16
+                    Layout.preferredHeight: 16
+                    radius: height
                     color: driver.loginResult === Onboarding.ProgressState.Success ? "green" : "red"
-                    active: driver.loginResult === Onboarding.ProgressState.Success || driver.loginResult === Onboarding.ProgressState.Failed
                 }
                 ToolSeparator {}
                 Button {
