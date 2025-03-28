@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Extras 1.4
 
 import shared.views 1.0
 
@@ -41,9 +40,11 @@ SplitView {
         logsView.logText: logs.logText
 
         RowLayout {
-            StatusIndicator {
-                color: "green"
-                active: passwordView.ready
+            Rectangle {
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+                radius: height
+                color: passwordView.ready ? "green" : "red"
             }
 
             Label {
