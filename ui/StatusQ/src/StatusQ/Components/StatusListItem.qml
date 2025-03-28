@@ -146,7 +146,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
+        onClicked: (mouse) => {
             root.clicked(root.itemId, mouse)
         }
     }
@@ -250,7 +250,7 @@ Rectangle {
                     cursorShape: !root.forceDefaultCursor && sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
                     propagateComposedEvents: root.propagateTitleClicks
-                    onClicked: {
+                    onClicked: (mouse) => {
                         root.titleClicked(root.titleId)
                         mouse.accepted = false
                     }

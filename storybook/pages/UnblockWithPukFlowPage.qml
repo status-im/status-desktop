@@ -34,7 +34,7 @@ SplitView {
             tryToSetPukFunction: mockDriver.setPuk
             remainingAttempts: mockDriver.keycardRemainingPukAttempts
             keycardPinInfoPageDelay: 2000
-            onSetPinRequested: (pin) => {
+            onSetPinRequested: function(pin) {
                 logs.logEvent("setPinRequested", ["pin"], arguments)
                 console.warn("!!! SET PIN REQUESTED:", pin)
             }
@@ -43,7 +43,7 @@ SplitView {
                 console.warn("!!! FACTORY RESET REQUESTED")
             }
 
-            onFinished: (success) => {
+            onFinished: function(success) {
                 console.warn("!!! UNLOCK WITH PUK FINISHED:", success)
                 logs.logEvent("finished", ["success"], arguments)
                 console.warn("!!! RESTARTING FLOW")

@@ -127,10 +127,10 @@ OnboardingPage {
                     wrapMode: Text.WordWrap
                     color: Theme.palette.baseColor1
                     horizontalAlignment: Text.AlignHCenter
-                    onLinkActivated: {
-                        if (link == "#terms")
+                    onLinkActivated: (link) => {
+                        if (link === "#terms")
                             root.termsOfUseRequested()
-                        else if (link == "#privacy")
+                        else if (link === "#privacy")
                             root.privacyPolicyRequested()
                     }
 

@@ -28,7 +28,7 @@ SplitView {
             syncingBadgeCount: ctrlSyncingBadgeCount.value
             messagingBadgeCount: ctrlMessagingBadgeCount.value
         }
-        onMenuItemClicked: (event) => logs.logEvent("onMenuItemClicked", ["event"], arguments)
+        onMenuItemClicked: (event) => logs.logEvent("onMenuItemClicked", ["event"], [event])
     }
 
     LogsAndControlsPanel {

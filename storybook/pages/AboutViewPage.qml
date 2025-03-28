@@ -56,7 +56,7 @@ SplitView {
                 }
 
                 function openLink(url) {
-                    logs.logEvent("store::openLink", ["url"], arguments)
+                    logs.logEvent("store::openLink", ["url"], url)
                     Qt.openUrlExternally(url)
                 }
             }
