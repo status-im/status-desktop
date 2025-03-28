@@ -76,7 +76,11 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
 
 method onAppLoaded*[T](self: Module[T], keyUid: string) =
-  self.view.appLoaded(keyUid)
+  # Doesn't do anything since we wait for the Main section to be loaded
+  discard
+
+method onMainLoaded*[T](self: Module[T]) =
+  self.view.appLoaded()
   singletonInstance.engine.setRootContextProperty("onboardingModule", newQVariant())
   self.view.delete
   self.view = nil

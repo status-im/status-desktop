@@ -42,6 +42,7 @@ type
 const SIGNAL_STATUS_URL_ACTIVATED* = "statusUrlActivated"
 const FAKE_LOADING_SCREEN_FINISHED* = "fakeLoadingScreenFinished"
 
+const SIGNAL_MAIN_LOADED* = "signalMainLoaded"
 
 type
   WalletAddressesArgs* = ref object of Args
