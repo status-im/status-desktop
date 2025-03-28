@@ -45,9 +45,6 @@ QtObject {
         languageModule: profileSectionModuleInst.languageModule
     }
 
-    property AppearanceStore appearanceStore: AppearanceStore {
-    }
-
     property ProfileStore profileStore: ProfileStore {
         profileModule: profileSectionModuleInst.profileModule
     }
