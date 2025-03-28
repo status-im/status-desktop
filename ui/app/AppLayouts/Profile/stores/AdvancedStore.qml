@@ -24,7 +24,6 @@ QtObject {
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
     readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
-    readonly property bool createCommunityEnabled: localAppSettings.createCommunityEnabled ?? false
     property bool isManageCommunityOnTestModeEnabled: false
     readonly property QtObject experimentalFeatures: QtObject {
         readonly property string communities: "communities"
@@ -139,13 +138,6 @@ QtObject {
             return
 
         localAppSettings.fakeLoadingScreenEnabled = !localAppSettings.fakeLoadingScreenEnabled
-    }
-
-    function toggleCreateCommunityEnabled() {
-        if(!localAppSettings)
-            return
-
-        localAppSettings.createCommunityEnabled = !localAppSettings.createCommunityEnabled
     }
 
     function toggleArchiveProtocolEnabled() {
