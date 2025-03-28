@@ -65,7 +65,6 @@ StatusDialog {
     property var bestRoutes
     property bool isLoading: false
     property int loginType
-    property bool showCustomRoutingMode
 
     // In case selected address is incorrect take first account from the list
     readonly property alias selectedAccount: selectedSenderAccountEntry.item
@@ -731,7 +730,6 @@ StatusDialog {
                 totalFeesInFiat: d.totalFeesInFiat
                 fromNetworksList: fromNetworksRouteModel
                 toNetworksList: toNetworksRouteModel
-                showCustomRoutingMode: popup.showCustomRoutingMode
 
                 routerError: d.routerError
                 routerErrorDetails: d.routerErrorDetails

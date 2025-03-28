@@ -374,7 +374,6 @@ QtObject:
     amountOut: string = "",
     disabledFromChainIDs: seq[int] = @[],
     disabledToChainIDs: seq[int] = @[],
-    lockedInAmounts: Table[string, string] = initTable[string, string](),
     extraParamsTable: Table[string, string] = initTable[string, string]()) =
 
     self.lastRequestForSuggestedRoutes = (uuid, sendType)
@@ -387,7 +386,7 @@ QtObject:
 
     try:
       let err = wallet.suggestedRoutesAsync(uuid, ord(sendType), accountFrom, accountTo, amountInHex, amountOutHex, token,
-        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, lockedInAmounts, extraParamsTable)
+        tokenIsOwnerToken, toToken, disabledFromChainIDs, disabledToChainIDs, extraParamsTable)
       if err.len > 0:
         raise newException(CatchableError, "err fetching the best route: " & err)
     except CatchableError as e:

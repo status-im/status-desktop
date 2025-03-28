@@ -10,8 +10,6 @@ type
     isRoutePreferred: bool
     hasGas: bool
     tokenBalance: CurrencyAmount
-    locked: bool
-    lockedAmount: string
     amountIn: string
     amountOut: string
     toNetworks: seq[int]
@@ -23,8 +21,6 @@ proc initNetworkRouteItem*(
     isRoutePreferred: bool,
     hasGas: bool,
     tokenBalance: CurrencyAmount,
-    locked: bool = false,
-    lockedAmount: string = "",
     amountIn: string = "",
     amountOut: string = "",
     toNetworks: seq[int] = @[]
@@ -36,8 +32,6 @@ proc initNetworkRouteItem*(
   result.isRoutePreferred = isRoutePreferred
   result.hasGas = hasGas
   result.tokenBalance = tokenBalance
-  result.locked = locked
-  result.lockedAmount = lockedAmount
   result.amountIn = amountIn
   result.amountOut = amountOut
   result.toNetworks = toNetworks
@@ -50,8 +44,6 @@ proc `$`*(self: NetworkRouteItem): string =
     isRoutePreferred:{self.isRoutePreferred},
     hasGas:{self.hasGas},
     tokenBalance:{self.tokenBalance},
-    locked:{self.locked},
-    lockedAmount:{self.lockedAmount},
     amountIn:{self.amountIn},
     amountOut:{self.amountOut},
     toNetworks:{self.toNetworks},
@@ -82,16 +74,6 @@ proc getTokenBalance*(self: NetworkRouteItem): CurrencyAmount =
   return self.tokenBalance
 proc `tokenBalance=`*(self: NetworkRouteItem, value: CurrencyAmount) {.inline.} =
   self.tokenBalance = value
-
-proc getLocked*(self: NetworkRouteItem): bool =
-  return self.locked
-proc `locked=`*(self: NetworkRouteItem, value: bool) {.inline.} =
-  self.locked = value
-
-proc getLockedAmount*(self: NetworkRouteItem): string =
-  return self.lockedAmount
-proc `lockedAmount=`*(self: NetworkRouteItem, value: string) {.inline.} =
-  self.lockedAmount = value
 
 proc getAmountIn*(self: NetworkRouteItem): string =
   return self.amountIn

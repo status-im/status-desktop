@@ -305,7 +305,6 @@ method suggestedRoutes*(self: Module,
   extraParamsTable: Table[string, string] = initTable[string, string]()) =
   # maybe not needed
   # self.tmpSendTransactionDetails.sendType = sendType
-  var lockedInAmountsTable = Table[string, string] : initTable[string, string]()
   let networks = self.controller.getCurrentNetworks()
   let disabledNetworks = networks.filter(x => x.chainId != chainId).map(x => x.chainId)
   self.controller.suggestedRoutes(
@@ -320,7 +319,6 @@ method suggestedRoutes*(self: Module,
     amountOut,
     disabledNetworks,
     disabledNetworks,
-    lockedInAmountsTable,
     extraParamsTable
   )
 
