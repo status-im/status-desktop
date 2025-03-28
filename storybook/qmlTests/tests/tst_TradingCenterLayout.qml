@@ -20,7 +20,9 @@ Item {
     Component {
         id: componentUnderTest
         TradingCenterLayout {
+            anchors.fill: parent
             loading: false
+            totalTokensCount: 1300
             tokensModel: TokensBySymbolModel {}
             formatCurrencyAmount: function(cryptoValue) {
                 return "%L1 %2".arg(cryptoValue).arg("USD")
@@ -84,73 +86,84 @@ Item {
             compare(tokensList.count, controlUnderTest.tokensModel.count)
             verify(!controlUnderTest.loading)
 
+            // footer
+            const footer = findChild(tokensList, "tradingCenterFooter")
+            verify(!!footer)
+            verify(footer.visible)
+
+            verify(!tokensList.verticalScrollBar.visible)
+            tokensList.positionViewAtIndex(60, ListView.Center)
+            waitForRendering(tokensList)
+            verify(tokensList.verticalScrollBar.visible)
+
             waitForItemPolished(tokensList)
 
             // Test Delegate contents
             for(let i = 0; i<tokensList.count - 1; i++) {
                 const delegateUnderTest = tokensList.itemAtIndex(i)
-                verify(!!delegateUnderTest)
-                const modelItemUnderTest = regularModel.model.get(i)
-                verify(!!modelItemUnderTest)
+                if(!!delegateUnderTest) {
+                    const modelItemUnderTest = regularModel.model.get(i)
+                    verify(!!modelItemUnderTest)
 
-                const indexText = findChild(delegateUnderTest.contentItem, "indexText")
-                verify(!!indexText)
-                const icon = findChild(delegateUnderTest.contentItem, "icon")
-                verify(!!icon)
-                const tokenNameText = findChild(delegateUnderTest.contentItem, "tokenNameText")
-                verify(!!tokenNameText)
-                const tokenSymbolText = findChild(delegateUnderTest.contentItem, "tokenSymbolText")
-                verify(!!tokenSymbolText)
-                const priceText = findChild(delegateUnderTest.contentItem, "priceText")
-                verify(!!priceText)
-                const changePct24HrText = findChild(delegateUnderTest.contentItem, "changePct24HrText")
-                verify(!!changePct24HrText)
-                const volume24HrText = findChild(delegateUnderTest.contentItem, "volume24HrText")
-                verify(!!volume24HrText)
-                const marketCapText = findChild(delegateUnderTest.contentItem, "marketCapText")
-                verify(!!marketCapText)
+                    const indexText = findChild(delegateUnderTest.contentItem, "indexText")
+                    verify(!!indexText)
+                    const icon = findChild(delegateUnderTest.contentItem, "icon")
+                    verify(!!icon)
+                    const tokenNameText = findChild(delegateUnderTest.contentItem, "tokenNameText")
+                    verify(!!tokenNameText)
+                    const tokenSymbolText = findChild(delegateUnderTest.contentItem, "tokenSymbolText")
+                    verify(!!tokenSymbolText)
+                    const priceText = findChild(delegateUnderTest.contentItem, "priceText")
+                    verify(!!priceText)
+                    const changePct24HrText = findChild(delegateUnderTest.contentItem, "changePct24HrText")
+                    verify(!!changePct24HrText)
+                    const volume24HrText = findChild(delegateUnderTest.contentItem, "volume24HrText")
+                    verify(!!volume24HrText)
+                    const marketCapText = findChild(delegateUnderTest.contentItem, "marketCapText")
+                    verify(!!marketCapText)
 
-                compare(indexText.text, "%1".arg(i+1))
-                compare(indexText.font.pixelSize, Theme.additionalTextSize)
-                compare(indexText.color, Theme.palette.directColor1)
+                    compare(indexText.text, "%1".arg(i+1))
+                    compare(indexText.font.pixelSize, Theme.additionalTextSize)
+                    compare(indexText.color, Theme.palette.directColor1)
 
-                compare(icon.image.source, Constants.tokenIcon(modelItemUnderTest.symbol))
-                compare(icon.width, 32)
-                compare(icon.height, 32)
+                    compare(icon.image.source, Constants.tokenIcon(modelItemUnderTest.symbol))
+                    compare(icon.width, 32)
+                    compare(icon.height, 32)
 
-                compare(tokenNameText.text, modelItemUnderTest.name)
-                compare(tokenNameText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(tokenNameText.font.weight, Font.Medium)
-                compare(tokenNameText.color, Theme.palette.directColor1)
+                    compare(tokenNameText.text, modelItemUnderTest.name)
+                    compare(tokenNameText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(tokenNameText.font.weight, Font.Medium)
+                    compare(tokenNameText.color, Theme.palette.directColor1)
 
-                compare(tokenSymbolText.text, modelItemUnderTest.symbol)
-                compare(tokenSymbolText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(tokenSymbolText.font.weight, Font.Normal)
-                compare(tokenSymbolText.color, Theme.palette.baseColor1)
+                    compare(tokenSymbolText.text, modelItemUnderTest.symbol)
+                    compare(tokenSymbolText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(tokenSymbolText.font.weight, Font.Normal)
+                    compare(tokenSymbolText.color, Theme.palette.baseColor1)
 
-                compare(priceText.text,
-                        controlUnderTest.formatCurrencyAmount(modelItemUnderTest.marketDetails.currencyPrice.amount))
-                compare(priceText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(priceText.font.weight, Font.Medium)
-                compare(priceText.color, Theme.palette.directColor1)
+                    compare(priceText.text,
+                            controlUnderTest.formatCurrencyAmount(modelItemUnderTest.marketDetails.currencyPrice.amount))
+                    compare(priceText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(priceText.font.weight, Font.Medium)
+                    compare(priceText.color, Theme.palette.directColor1)
 
-                compare(changePct24HrText.text,
-                        qsTr("%1 %2%").arg(WalletUtils.getUpDownTriangle(modelItemUnderTest.marketDetails.changePct24hour))
-                                    .arg(LocaleUtils.numberToLocaleString(modelItemUnderTest.marketDetails.changePct24hour, 2)))
-                compare(changePct24HrText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(changePct24HrText.font.weight, Font.Medium)
-                compare(changePct24HrText.color,
-                        WalletUtils.getChangePct24HourColor(modelItemUnderTest.marketDetails.changePct24hour))
+                    compare(changePct24HrText.text,
+                            qsTr("%1 %2%").arg(WalletUtils.getUpDownTriangle(modelItemUnderTest.marketDetails.changePct24hour))
+                            .arg(LocaleUtils.numberToLocaleString(modelItemUnderTest.marketDetails.changePct24hour, 2)))
+                    compare(changePct24HrText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(changePct24HrText.font.weight, Font.Medium)
+                    compare(changePct24HrText.color,
+                            WalletUtils.getChangePct24HourColor(modelItemUnderTest.marketDetails.changePct24hour))
 
-                compare(volume24HrText.text, "--")
-                compare(volume24HrText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(volume24HrText.font.weight, Font.Medium)
-                compare(volume24HrText.color, Theme.palette.directColor1)
+                    compare(volume24HrText.text, "--")
+                    compare(volume24HrText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(volume24HrText.font.weight, Font.Medium)
+                    compare(volume24HrText.color, Theme.palette.directColor1)
 
-                compare(marketCapText.text, LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.marketCap))
-                compare(marketCapText.font.pixelSize, Theme.primaryTextFontSize)
-                compare(marketCapText.font.weight, Font.Medium)
-                compare(marketCapText.color, Theme.palette.directColor1)
+                    compare(marketCapText.text, LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.marketCap))
+                    compare(marketCapText.font.pixelSize, Theme.primaryTextFontSize)
+                    compare(marketCapText.font.weight, Font.Medium)
+                    compare(marketCapText.color, Theme.palette.directColor1)
+                }
             }
         }
 
