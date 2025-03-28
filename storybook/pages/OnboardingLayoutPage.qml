@@ -184,7 +184,7 @@ SplitView {
         keychain: keychain
         isKeycardEnabled: ctrlKeycard.checked
 
-        onFinished: (flow, data) => {
+        onFinished: function(flow, data) {
             console.warn("!!! ONBOARDING FINISHED; flow:", flow, "; data:", JSON.stringify(data))
             logs.logEvent("onFinished", ["flow", "data"], arguments)
 
@@ -202,13 +202,12 @@ SplitView {
             stack.push(splashScreen, { runningProgressAnimation: true })
         }
 
-        onLoginRequested: (keyUid, method, data) => {
+        onLoginRequested: function(keyUid, method, data) {
             logs.logEvent("onLoginRequested", ["keyUid", "method", "data"], arguments)
 
             // SIMULATION: emit an error in case of wrong password or PIN
             if (method === Onboarding.LoginMethod.Password && data.password !== mockDriver.password) {
                 onboardingStore.accountLoginError("", true)
-                ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else if (method === Onboarding.LoginMethod.Keycard && data.pin !== mockDriver.pin) {
                 onboardingStore.keycardRemainingPinAttempts-- // SIMULATION: decrease the remaining PIN attempts
                 if (onboardingStore.keycardRemainingPinAttempts <= 0) { // SIMULATION: "block" the keycard
@@ -216,7 +215,6 @@ SplitView {
                     onboardingStore.keycardRemainingPinAttempts = 0
                 }
                 onboardingStore.accountLoginError("", true)
-                ctrlLoginResult.result = "<font color='red'>⛔</font>"
             } else {
                 ctrlLoginResult.result = "<font color='green'>✔</font>"
                 stack.push(splashScreen, { runningProgressAnimation: true })

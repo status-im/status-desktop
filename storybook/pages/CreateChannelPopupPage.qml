@@ -175,7 +175,7 @@ SplitView {
                                    "viewOnlyCanAddReaction", "hideIfPermissionsNotMet"], arguments)
                 }
 
-                onDeleteCommunityChannel: () => { logs.logEvent("onDeleteCommunityChannel") }
+                onDeleteCommunityChannel: logs.logEvent("onDeleteCommunityChannel")
             }
         }
     }

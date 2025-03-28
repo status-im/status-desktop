@@ -51,8 +51,8 @@ SplitView {
                     }
                 }
 
-                function navigateToCommunity() {
-                    logs.logEvent("CommunitiesStore::navigateToCommunity", ["communityId"], arguments)
+                function navigateToCommunity(communityId) {
+                    logs.logEvent("CommunitiesStore::navigateToCommunity", ["communityId"], communityId)
                 }
             }
 

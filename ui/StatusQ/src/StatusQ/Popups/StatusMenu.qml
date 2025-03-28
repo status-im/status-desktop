@@ -100,7 +100,7 @@ Menu {
             Repeater {
                 model: root.contentModel
 
-                onItemAdded: {
+                onItemAdded: (index, item) => {
                     item.Layout.fillWidth = true
                     item.Layout.minimumWidth = scrollView.width
                     item.Layout.maximumWidth = root.maxImplicitWidth

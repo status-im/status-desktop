@@ -234,9 +234,11 @@ Item {
         onFocusChanged: { if(!focus) { d.deactivateBlink () } }
         onTextEdited: root.pinEditedManually()
 
-        Keys.onShortcutOverride: event.accepted = event.matches(StandardKey.Paste)
-        Keys.onPressed: if (event.matches(StandardKey.Paste)) {
-                            root.setPin(ClipboardUtils.text)
+        Keys.onShortcutOverride: (event) => event.accepted = event.matches(StandardKey.Paste)
+        Keys.onPressed: (event) => {
+                            if (event.matches(StandardKey.Paste)) {
+                                root.setPin(ClipboardUtils.text)
+                            }
                         }
     }
 

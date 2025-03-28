@@ -95,7 +95,7 @@ ColumnLayout {
 
         model: sectionsModel
 
-        onPageSelected: root.pageSelected(page)
+        onPageSelected: (page) => root.pageSelected(page)
         onSectionClicked: sectionsModel.flipFolding(index)
         onStatusClicked: root.statusClicked()
     }

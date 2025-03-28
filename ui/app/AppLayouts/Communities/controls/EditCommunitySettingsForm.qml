@@ -132,7 +132,7 @@ Control {
                             tags = tagsPicker.tags
                             selectedTags = tagsPicker.selectedTags
                         }
-                        onAccepted: {
+                        onAccepted: (selectedTags) => {
                             tagsPicker.selectedTags = selectedTags
                             tagsPicker.validate()
                             close()

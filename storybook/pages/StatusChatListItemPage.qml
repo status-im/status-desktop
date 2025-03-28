@@ -31,7 +31,7 @@ SplitView {
             requiresPermissions: ctrlRequiresPermission.checked
             locked: ctrlLocked.checked
             onClicked: logs.logEvent("StatusChatListItem::clicked", ["mouse"], arguments)
-            onUnmute: logs.logEvent("StatusChatListItem::unmute", [], arguments)
+            onUnmute: logs.logEvent("StatusChatListItem::unmute")
         }
     }
 
