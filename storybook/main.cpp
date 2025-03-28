@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQmlComponent>
+#include <QQuickStyle>
 #include <QDirIterator>
 
 #include <QtWebView>
@@ -39,6 +40,9 @@ int main(int argc, char *argv[])
     QGuiApplication::setOrganizationName(QStringLiteral("Status"));
     QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));
     QGuiApplication::setApplicationName(QStringLiteral("Status Desktop Storybook"));
+    QGuiApplication::setApplicationDisplayName(QStringLiteral("%1 [Qt %2]").arg(QGuiApplication::applicationName(), qVersion()));
+
+    QQuickStyle::setStyle(QStringLiteral("Universal")); // StatusQ uses this as the default
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
@@ -129,6 +133,15 @@ int main(int argc, char *argv[])
         engine.setInitialProperties({{QStringLiteral("currentPage"), args.constFirst()}});
 
     engine.load(url);
+
+    qInfo() << "Storybook started, Qt runtime version:" << qVersion() << "; built against version:" << QLibraryInfo::version().toString() <<
+        "installed in:"
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            << QLibraryInfo::path(QLibraryInfo::PrefixPath)
+#else
+            << QLibraryInfo::location(QLibraryInfo::PrefixPath)
+#endif
+            << "; QQC style:" << QQuickStyle::name();
 
     return QGuiApplication::exec();
 }

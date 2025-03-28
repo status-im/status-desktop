@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Controls.Universal 2.15
 import QtQuick.Layouts 1.15
 
-import Qt.labs.settings 1.0
+import Qt.labs.settings 1.1
 
 import StatusQ.Core.Theme 0.1
 import Storybook 1.0
@@ -16,22 +16,18 @@ ApplicationWindow {
     height: 840
     visible: true
 
-    property string currentPage
+    property string currentPage: settings.value("currentPage") ?? "Playground"
 
     title: "%1 – %2".arg(currentPage).arg(Qt.application.displayName)
 
-    palette.window: Theme.palette.statusAppLayout.backgroundColor
-    palette.text: Theme.palette.directColor1
-    palette.windowText: Theme.palette.directColor1
-    palette.base: Theme.palette.indirectColor1
     font.pixelSize: 13
+
+    Universal.theme: darkModeCheckBox.checked ? Universal.Dark : Universal.Light
 
     onCurrentPageChanged: {
         testsReRunTimer.restart()
         settings.setValue("currentPage", currentPage)
     }
-
-    Component.onCompleted: currentPage = settings.value("currentPage")
 
     QtObject {
         id: d
@@ -184,7 +180,7 @@ ApplicationWindow {
                         currentPage: root.currentPage
                         model: pagesModel
 
-                        onPageSelected: root.currentPage = page
+                        onPageSelected: (page) => root.currentPage = page
                         onStatusClicked: statusStatsDialog.open()
                     }
                 }
@@ -346,6 +342,11 @@ ApplicationWindow {
         property alias hotReloading: hotReloaderControls.enabled
         property alias figmaToken: settingsLayout.figmaToken
         property alias windowAlwaysOnTop: windowAlwaysOnTopCheckBox.checked
+
+        property alias x: root.x
+        property alias y: root.y
+        property alias width: root.width
+        property alias height: root.height
     }
 
     Shortcut {
