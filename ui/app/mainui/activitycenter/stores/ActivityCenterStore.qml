@@ -14,7 +14,8 @@ QtObject {
         ContactRequests = 5,
         IdentityVerification = 6,
         Transactions = 7,
-        System = 8
+        System = 8,
+        NewsMessage = 9
     }
 
     enum ActivityCenterNotificationType {
@@ -46,7 +47,8 @@ QtObject {
         BackupSyncingFetching = 25,
         BackupSyncingSuccess = 26,
         BackupSyncingPartialFailure = 27,
-        BackupSyncingFailure = 28
+        BackupSyncingFailure = 28,
+        ActivityCenterNotificationTypeNews = 29
     }
 
     enum ActivityCenterReadType {
