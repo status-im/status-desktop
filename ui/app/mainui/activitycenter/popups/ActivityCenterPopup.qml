@@ -157,6 +157,8 @@ Popup {
                 case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingPartialFailure:
                 case ActivityCenterStore.ActivityCenterNotificationType.BackupSyncingFailure:
                     return backupSyncingComponent
+                case ActivityCenterStore.ActivityCenterNotificationType.ActivityCenterNotificationTypeNews:
+                    return newsMessageComponent
                 default:
                     return null
                 }
@@ -357,6 +359,17 @@ Popup {
 
                 root.activityCenterStore.tryFetchingAgain()
             }
+        }
+    }
+
+    Component {
+        id: newsMessageComponent
+        ActivityNotificationNewsMessage {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
         }
     }
 
