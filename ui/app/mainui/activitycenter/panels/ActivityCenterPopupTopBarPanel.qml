@@ -50,6 +50,7 @@ Item {
                 Repeater {
                     // NOTE: some entries are hidden until implimentation
                     model: [ { text: qsTr("All"), group: ActivityCenterStore.ActivityCenterGroup.All, visible: true, enabled: true },
+                             { text: qsTr("News"), group: ActivityCenterStore.ActivityCenterGroup.NewsMessage, visible: true, enabled: true },
                              { text: qsTr("Admin"), group: ActivityCenterStore.ActivityCenterGroup.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
                              { text: qsTr("Mentions"), group: ActivityCenterStore.ActivityCenterGroup.Mentions, visible: true, enabled: root.hasMentions },
                              { text: qsTr("Replies"), group: ActivityCenterStore.ActivityCenterGroup.Replies, visible: true, enabled: root.hasReplies },
