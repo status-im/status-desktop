@@ -898,12 +898,12 @@ QtObject {
                             if (handler.reviewApprovalForTxPathUnderReview) {
                                 const feeInWei = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
                                 return fnGetPriceInCurrencyForFee(feeInWei)
                             }
                             const feeInWei = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
                             return fnGetPriceInCurrencyForFee(feeInWei)
                         }
                         return ""
@@ -920,12 +920,12 @@ QtObject {
                             if (handler.reviewApprovalForTxPathUnderReview) {
                                 const feeInWei = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
                                 return fnGetPriceInCurrencyForFee(feeInWei)
                             }
                             const feeInWei = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
                             return fnGetPriceInCurrencyForFee(feeInWei)
                         }
                         return ""
@@ -942,12 +942,12 @@ QtObject {
                             if (handler.reviewApprovalForTxPathUnderReview) {
                                 const feeInWei = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
-                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalGasAmount)).toFixed()
+                                                   SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
                                 return fnGetPriceInCurrencyForFee(feeInWei)
                             }
                             const feeInWei = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
-                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txGasAmount)).toFixed()
+                                               SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
                             return fnGetPriceInCurrencyForFee(feeInWei)
                         }
                         return ""
