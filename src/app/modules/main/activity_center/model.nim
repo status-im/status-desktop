@@ -9,6 +9,11 @@ type
     MembershipStatus
     SectionId
     Name
+    Title
+    Description
+    Content
+    ImageUrl
+    Link
     NotificationType
     Message
     Timestamp
@@ -70,6 +75,11 @@ QtObject:
       of NotifRoles.MembershipStatus: result = newQVariant(activityNotificationItem.membershipStatus.int)
       of NotifRoles.SectionId: result = newQVariant(activityNotificationItem.sectionId)
       of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
+      of NotifRoles.Title: result = newQVariant(activityNotificationItem.title)
+      of NotifRoles.Description: result = newQVariant(activityNotificationItem.description)
+      of NotifRoles.Content: result = newQVariant(activityNotificationItem.content)
+      of NotifRoles.ImageUrl: result = newQVariant(activityNotificationItem.imageUrl)
+      of NotifRoles.Link: result = newQVariant(activityNotificationItem.link)
       of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
       of NotifRoles.Message: result = if not activityNotificationItem.messageItem.isNil:
@@ -97,6 +107,11 @@ QtObject:
       NotifRoles.MembershipStatus.int: "membershipStatus",
       NotifRoles.SectionId.int: "sectionId",
       NotifRoles.Name.int: "name",
+      NotifRoles.Title.int: "title",
+      NotifRoles.Description.int: "description",
+      NotifRoles.Content.int: "content",
+      NotifRoles.ImageUrl.int: "imageUrl",
+      NotifRoles.Link.int: "link",
       NotifRoles.Author.int: "author",
       NotifRoles.NotificationType.int: "notificationType",
       NotifRoles.Message.int: "message",
