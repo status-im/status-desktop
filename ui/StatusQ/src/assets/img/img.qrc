@@ -424,6 +424,6 @@
         <file>icons/transaction/failed.svg</file>
         <file>icons/transaction/finished.svg</file>
         <file>icons/transaction/pending.svg</file>
-        <file>icons/trading.svg</file>
+        <file>icons/market.svg</file>
     </qresource>
 </RCC>

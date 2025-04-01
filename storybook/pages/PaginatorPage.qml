@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.14
 
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 SplitView {
     orientation: Qt.Vertical

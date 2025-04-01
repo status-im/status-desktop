@@ -41,7 +41,7 @@ StatusWindow {
         paymentRequestEnabled: featureFlags ? featureFlags.paymentRequestEnabled : false
         simpleSendEnabled: featureFlags ? featureFlags.simpleSendEnabled : false
         keycardEnabled: featureFlags ? featureFlags.keycardEnabled : false
-        tradingCenterEnabled: featureFlags ? featureFlags.tradingCenterEnabled : false
+        marketEnabled: featureFlags ? featureFlags.marketEnabled : false
     }
 
     property MetricsStore metricsStore: MetricsStore {}

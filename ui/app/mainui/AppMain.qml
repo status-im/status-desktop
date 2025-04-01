@@ -13,7 +13,7 @@ import AppLayouts.Chat 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Communities 1.0
-import AppLayouts.TradingCenter 1.0
+import AppLayouts.Market 1.0
 import AppLayouts.Wallet.services.dapps 1.0
 
 import utils 1.0
@@ -1224,12 +1224,12 @@ Item {
                         ValueFilter {
                             roleName: "sectionType"
                             value: Constants.appSection.swap
-                            enabled: !appMain.featureFlagsStore.tradingCenterEnabled
+                            enabled: !appMain.featureFlagsStore.marketEnabled
                         }
                         ValueFilter {
                             roleName: "sectionType"
-                            value: Constants.appSection.tradingCenter
-                            enabled: appMain.featureFlagsStore.tradingCenterEnabled
+                            value: Constants.appSection.market
+                            enabled: appMain.featureFlagsStore.marketEnabled
                         }
                         ValueFilter {
                             roleName: "sectionType"
@@ -1885,8 +1885,8 @@ Item {
                             return Constants.appViewStackIndex.profile
                         if (activeSectionType === Constants.appSection.node)
                             return Constants.appViewStackIndex.node
-                        if (activeSectionType === Constants.appSection.tradingCenter)
-                            return Constants.appViewStackIndex.tradingCenter
+                        if (activeSectionType === Constants.appSection.market)
+                            return Constants.appViewStackIndex.market
 
                         // We should never end up here
                         console.error("AppMain: Unknown section type")
@@ -2099,11 +2099,11 @@ Item {
                     }
 
                     Loader {
-                        id: tradingCenterLoader
-                        active: appView.currentIndex === Constants.appViewStackIndex.tradingCenter
+                        id: marketLoader
+                        active: appView.currentIndex === Constants.appViewStackIndex.market
                         asynchronous: true
-                        sourceComponent: TradingCenterLayout {
-                            objectName: "tradingCenterLayout"
+                        sourceComponent: MarketLayout {
+                            objectName: "marketLayout"
                             /** TODO: This is only temporary till the backend code for tokens list is ready
                             Infact all the below values are only temporarily filled until the backend code is prepared **/
                             tokensModel: SortFilterProxyModel {
@@ -2119,7 +2119,7 @@ Item {
                                 return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency)
                             }
                             onRequestLaunchSwap: d.launchSwap()
-                            /**onFetchTradingCenterTokens: tradingCenterStore.fetchTradingCenterTokens(pageSize, pageNumber)**/
+                            /**onFetchMarketTokens: marketStore.fetchMarketTokens(pageSize, pageNumber)**/
                         }
                         onLoaded: {
                             item.resetView()

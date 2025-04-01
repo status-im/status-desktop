@@ -5,7 +5,7 @@ import QtTest 1.15
 
 import StatusQ.Core 0.1
 
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 Item {
     id: root
@@ -14,15 +14,15 @@ Item {
     height: 600
 
     Component {
-        id: tradingCenterFooterCmp
-        TradingCenterFooter {
+        id: marketFooterCmp
+        MarketFooter {
             width: parent.width
             pageSize: 20
             totalCount: 1230
         }
     }
 
-    property TradingCenterFooter controlUnderTest: null
+    property MarketFooter controlUnderTest: null
 
     SignalSpy {
         id: switchPageSpy
@@ -31,11 +31,11 @@ Item {
     }
 
     TestCase {
-        name: "TradingCenterFooter"
+        name: "MarketFooter"
         when: windowShown
 
         function init() {
-            controlUnderTest = createTemporaryObject(tradingCenterFooterCmp, root)
+            controlUnderTest = createTemporaryObject(marketFooterCmp, root)
         }
 
         function cleanup() {
