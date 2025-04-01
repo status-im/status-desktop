@@ -402,6 +402,8 @@
         <file>icons/network/Network=Optimism-test.svg</file>
         <file>icons/network/Network=Status.svg</file>
         <file>icons/network/Network=Status-test.svg</file>
+        <file>icons/network/Network=bsc.svg</file>
+        <file>icons/network/Network=bsc-test.svg</file>
         <file>icons/network/Network=Testnet.svg</file>
         <file>icons/onboarding/chains.svg</file>
         <file>icons/profile/about.svg</file>
