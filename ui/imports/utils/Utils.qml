@@ -635,6 +635,11 @@ QtObject {
             if (testnetMode) {
                 link = Constants.networkExplorerLinks.sepoliaStatus
             }
+        } else if (networkShortName === Constants.networkShortChainNames.binanceSmartChain) {
+            link = Constants.networkExplorerLinks.binanceSmartChain
+            if (testnetMode) {
+                link = Constants.networkExplorerLinks.testnetBinanceSmartChain
+            }
         }
         return link
     }
@@ -672,6 +677,9 @@ QtObject {
         if (networkShortName === Constants.networkShortChainNames.status) {
             return qsTr("Status Explorer")
         }
+        if (networkShortName === Constants.networkShortChainNames.binanceSmartChain) {
+            return qsTr("BscScan")
+        }
         return qsTr("Etherscan")
     }
 
@@ -692,8 +700,41 @@ QtObject {
                 return Constants.networkShortChainNames.base
             case Constants.chains.statusSepoliaChainId:
                 return Constants.networkShortChainNames.status
+            case Constants.chains.binanceSmartChainMainnetChainId:
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return Constants.networkShortChainNames.binanceSmartChain
         }
         return ""
+    }
+
+    // Get Network name for ChainID
+    function getNetworkName(chainID) {
+        switch (chainID) {
+            case Constants.chains.mainnetChainId:
+                return Constants.networkNames.mainnet
+            case Constants.chains.sepoliaChainId:
+                return Constants.networkNames.sepolia
+            case Constants.chains.arbitrumChainId:
+                return Constants.networkNames.arbitrum
+            case Constants.chains.arbitrumSepoliaChainId:
+                return Constants.networkNames.arbitrumSepolia
+            case Constants.chains.optimismChainId:
+                return Constants.networkNames.optimism
+            case Constants.chains.optimismSepoliaChainId:
+                return Constants.networkNames.optimismSepolia
+            case Constants.chains.baseChainId:
+                return Constants.networkNames.base
+            case Constants.chains.baseSepoliaChainId:
+                return Constants.networkNames.baseSepolia
+            case Constants.chains.statusChainId:
+                return Constants.networkNames.status
+            case Constants.chains.statusSepoliaChainId:
+                return Constants.networkNames.statusSepolia
+            case Constants.chains.binanceSmartChainMainnetChainId:
+                return Constants.networkNames.binanceSmartChain
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return Constants.networkNames.testnetBinanceSmartChain
+        }
     }
 
     // Is given ChainID a testnet
