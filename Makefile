@@ -230,7 +230,7 @@ NIM_PARAMS += --outdir:./bin
 
 # App version
 DESKTOP_VERSION = $(shell ./scripts/version.sh)
-STATUSGO_VERSION = $(shell cd vendor/status-go; make version)
+STATUSGO_VERSION = $(shell make -C vendor/status-go version -s)
 NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 NIM_PARAMS += -d:STATUSGO_VERSION="$(STATUSGO_VERSION)"
 
