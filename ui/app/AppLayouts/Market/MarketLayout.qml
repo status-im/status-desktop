@@ -10,7 +10,7 @@ import StatusQ.Controls 0.1
 import utils 1.0
 
 import AppLayouts.Wallet 1.0
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 StatusSectionLayout {
     id: root
@@ -32,7 +32,7 @@ StatusSectionLayout {
     /** signal to request the launch of Swap Modal **/
     signal requestLaunchSwap()
     /** signal to request fetching tokens as per selected page and page size **/
-    signal fetchTradingCenterTokens(int pageSize, int pageNumber)
+    signal fetchMarketTokens(int pageSize, int pageNumber)
 
     // TODO:: Implement resetting token list view
     function resetView() {}
@@ -53,7 +53,7 @@ StatusSectionLayout {
             Layout.alignment: Qt.AlignTop
             StatusBaseText {
                 objectName: "heading"
-                text: qsTr("Trading")
+                text: qsTr("Market")
                 font.weight: Font.Bold
                 font.pixelSize: 28
             }
@@ -75,16 +75,16 @@ StatusSectionLayout {
             Layout.fillHeight: true
 
             headerPositioning: ListView.OverlayHeader
-            header: TradingCenterTokenHeader {
+            header: MarketTokenHeader {
                 width: listView.width
             }
 
-            footer: TradingCenterFooter {
-                objectName: "tradingCenterFooter"
+            footer: MarketFooter {
+                objectName: "marketFooter"
                 width: listView.width
                 pageSize: d.pageSize
                 totalCount: root.totalTokensCount
-                onSwitchPage: root.fetchTradingCenterTokens(d.pageSize, pageNumber)
+                onSwitchPage: root.fetchMarketTokens(d.pageSize, pageNumber)
             }
 
             model: root.loading ? loadingModel: regularModel
@@ -98,7 +98,7 @@ StatusSectionLayout {
 
             model: d.pageSize
 
-            delegate: TradingCenterLoadingTokenDelegate {
+            delegate: MarketLoadingTokenDelegate {
                 width: listView.width
             }
         }
@@ -111,7 +111,7 @@ StatusSectionLayout {
 
             model: root.tokensModel
 
-            delegate: TradingCenterTokenDelegate {
+            delegate: MarketTokenDelegate {
                 width: listView.width
 
                 indexString: root.startIndex + index

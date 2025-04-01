@@ -1,0 +1,5 @@
+MarketTokenDelegate 1.0 MarketTokenDelegate.qml
+MarketLoadingTokenDelegate 1.0 MarketLoadingTokenDelegate.qml
+MarketTokenHeader 1.0 MarketTokenHeader.qml
+Paginator 1.0 Paginator.qml
+MarketFooter 1.0 MarketFooter.qml

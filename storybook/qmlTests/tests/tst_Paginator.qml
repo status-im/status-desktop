@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 
 import QtTest 1.15
 
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 Item {
     id: root
