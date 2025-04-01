@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import shared.stores 1.0 as SharedStores
 
 QtObject {
 
@@ -304,25 +305,7 @@ QtObject {
             try {
                 const jsonObj = JSON.parse(details)
 
-                let chain = Constants.openseaExplorerLinks.ethereum
-                switch(jsonObj.chainId) {
-                case Constants.chains.optimismChainId:
-                    case Constants.chains.optimismSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.optimism
-                    break
-                case Constants.chains.arbitrumChainId:
-                    case Constants.chains.arbitrumSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.arbitrum
-                    break
-                case Constants.chains.baseChainId:
-                    case Constants.chains.baseSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.base
-                    break
-                case Constants.chains.statusSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.status
-                    break
-                }
-
+                let chain = Utils.getNetworkName(jsonObj.chainId)
                 return qsTr("not enough balance for %1 on %2 chain").arg(jsonObj.token).arg(chain)
             }
             catch (e) {
