@@ -78,6 +78,8 @@ else
  detected_OS := $(strip $(shell uname))
 endif
 
+QMAKE ?= $(shell which qmake)
+
 ifeq ($(detected_OS),Darwin)
  CFLAGS := -mmacosx-version-min=12.0
  export CFLAGS
@@ -104,7 +106,7 @@ else
 endif
 
 check-qt-dir:
-ifeq ($(shell qmake -v 2>/dev/null),)
+ifeq ($(shell $(QMAKE) -v 2>/dev/null),)
 	$(error Cannot find your Qt installation. Please make sure to export correct Qt installation binaries path to PATH env)
 endif
 
@@ -165,10 +167,10 @@ endif
 
 # Qt dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
- export QT_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
- QT_QMLDIR := $(shell qmake -query QT_INSTALL_QML 2>/dev/null)
- QT_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
- QT_MAJOR_VERSION := $(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
+ export QT_LIBDIR := $(shell $(QMAKE) -query QT_INSTALL_LIBS 2>/dev/null)
+ QT_QMLDIR := $(shell $(QMAKE) -query QT_INSTALL_QML 2>/dev/null)
+ QT_INSTALL_PREFIX := $(shell $(QMAKE) -query QT_INSTALL_PREFIX 2>/dev/null)
+ QT_MAJOR_VERSION := $(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
  QT_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt"$(QT_MAJOR_VERSION)"Core 2>/dev/null)
  ifeq ($(QT_INSTALL_PREFIX),$(QT_PKGCONFIG_INSTALL_PREFIX))
   QT_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt6Core 2>/dev/null)
