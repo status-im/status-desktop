@@ -102,6 +102,7 @@ SplitView {
                     id: selectedEntry
                     sourceModel: d.activeNetworks
                     key: "chainId"
+                    value: ""
                 }
             }
 
