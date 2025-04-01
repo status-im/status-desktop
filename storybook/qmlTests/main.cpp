@@ -1,4 +1,5 @@
 #include <QQmlEngine>
+#include <QQmlFileSelector>
 #include <QtQuickTest>
 
 #include <StatusQ/typesregistration.h>
@@ -10,6 +11,11 @@ class Setup : public QObject
 public slots:
     void qmlEngineAvailable(QQmlEngine *engine) {
         // custom code that needs QQmlEngine, register QML types, add import paths,...
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        auto selector = new QQmlFileSelector(engine, this);
+        selector->setExtraSelectors({"+qt6"});
+#endif
 
         QGuiApplication::setOrganizationName(QStringLiteral("Status"));
         QGuiApplication::setOrganizationDomain(QStringLiteral("status.im"));

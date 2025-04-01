@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QGuiApplication>
+#include <QLibraryInfo>
 #include <QQmlApplicationEngine>
 
 #include <StatusQ/typesregistration.h>
@@ -25,6 +26,11 @@ int main(int argc, char *argv[])
     int errorCount = 0;
     QStringList warnings;
     QStringList failedPages;
+
+    qInfo() << ">>> StoryBook page verification started; Qt runtime version:" << qVersion() <<
+        "; built against version:" << QLibraryInfo::version().toString();
+
+    registerStatusQTypes();
     
     for (const auto &fileInfo : files) {
         warnings.clear();
@@ -41,7 +47,7 @@ int main(int argc, char *argv[])
         });
 
         QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                        &app, [&errorCount, &warnings, &failedPages](QObject *obj, const QUrl &objUrl) {
+                         &app, [&errorCount, &warnings, &failedPages](QObject *obj, const QUrl &objUrl) {
             if (!obj) {
                 errorCount++;
                 failedPages << objUrl.toLocalFile();
@@ -54,7 +60,6 @@ int main(int argc, char *argv[])
         auto fileName = fileInfo.filePath();
         qInfo() << ">>> Checking StoryBook page:" << fileName;
 
-        registerStatusQTypes();
         engine.load(fileName);
     }
 
