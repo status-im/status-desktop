@@ -89,8 +89,7 @@ ifeq ($(detected_OS),Darwin)
  export MACOSX_DEPLOYMENT_TARGET
  PKG_TARGET := pkg-macos
  RUN_TARGET := run-macos
- QMAKE_PATH := $(shell which qmake);
- QT_ARCH := $(shell lipo -archs $(QMAKE_PATH))
+ QT_ARCH ?= $(shell uname -m)
 else ifeq ($(detected_OS),Windows)
  LIBSTATUS_EXT := dll
  PKG_TARGET := pkg-windows
