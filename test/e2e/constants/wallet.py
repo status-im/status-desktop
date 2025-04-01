@@ -57,6 +57,8 @@ class WalletNetworkNaming(Enum):
     BASE_MAINNET_NETWORK_ID = 8453
     BASE_SEPOLIA_NETWORK_ID = 84532
     STATUS_SEPOLIA_NETWORK_ID = 1660990954
+    BINANCE_SMART_CHAIN_MAINNET_NETWORK_ID = 56
+    BINANCE_SMART_CHAIN_TESTNET_NETWORK_ID = 97
 
 class WalletNetworkDefaultValues(Enum):
     ETHEREUM_LIVE_MAIN = 'https://eth-archival.rpc.grove.city'
