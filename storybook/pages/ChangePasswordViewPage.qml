@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Extras 1.4
 
 import shared.views 1.0
 import AppLayouts.Profile.stores 1.0

@@ -1,7 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
-import QtQuick.Dialogs 1.3
 import QtQml 2.14
 import QtGraphicalEffects 1.15
 
@@ -11,6 +10,7 @@ import Models 1.0
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 SplitView {
     id: root
@@ -151,20 +151,20 @@ SplitView {
                     fileDialog.open()
                 }
 
-                FileDialog {
+                StatusFileDialog {
                     id: fileDialog
 
                     title: workflowItem.imageFileDialogTitle
-                    folder: workflowItem.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : shortcuts.pictures
+                    currentFolder: workflowItem.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : picturesShortcut
                     nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg *.jpeg *.jfif *.webp *.png *.heif")]
                     onAccepted: {
-                        if (fileDialog.fileUrls.length > 0) {
-                            imageCropper.source = fileDialog.fileUrls[0]
+                        if (fileDialog.selectedFiles.length > 0) {
+                            imageCropper.source = fileDialog.selectedFiles[0]
                             imageCropperModal.open()
                         }
                     }
                     onRejected: workflowItem.canceled()
-                } // FileDialog
+                } // StatusFileDialog
 
                 StatusModal {
                     id: imageCropperModal

@@ -20,7 +20,7 @@ ListModel {
                     members: [ { pubKey: "0xdeadbeef" } ],
                     membersCount: 1,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: [],
                     allTokenRequirementsMet: false
                 },
                 {
@@ -39,7 +39,7 @@ ListModel {
                     members: [ { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" } ],
                     membersCount: 3,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: [],
                     allTokenRequirementsMet: false
                 },
                 {
@@ -77,7 +77,7 @@ ListModel {
                     members: [],
                     membersCount: 0,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: [],
                     allTokenRequirementsMet: false
                 },
                 {
@@ -96,7 +96,7 @@ ListModel {
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 4,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: [],
                     allTokenRequirementsMet: false
                 },
                 {
@@ -133,7 +133,7 @@ ListModel {
                     members: [{ pubKey: "0xdeadbeef" }, { pubKey: "0xdeadbeef" }],
                     membersCount: 2,
                     loading: false,
-                    permissionsModel: null,
+                    permissionsModel: [],
                     allTokenRequirementsMet: false
                 }
                ])

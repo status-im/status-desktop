@@ -28,7 +28,6 @@ SplitView {
         StatusFolderDialog {
             id: dlg
 
-            visible: true
             title: titleText.text
             onAccepted: logs.logEvent("StatusFolderDialog::onAccepted --> Selected File: " + dlg.selectedFolder)
             onRejected: logs.logEvent("StatusFolderDialog::onRejected")
@@ -36,6 +35,8 @@ SplitView {
             onCurrentFolderChanged: logs.logEvent("StatusFolderDialog::onCurrentFolderChanged --> " + dlg.currentFolder)
         }
     }
+
+    Component.onCompleted: dlg.open()
 
     LogsAndControlsPanel {
         id: logsAndControlsPanel

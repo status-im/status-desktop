@@ -238,9 +238,9 @@ SplitView {
                             function isAlias(name)  {
                                 return false
                             }
-
-
                         }
+
+                        networksStore: SharedStores.NetworksStore {}
                     }
                 }
             }
