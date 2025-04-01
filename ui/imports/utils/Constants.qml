@@ -23,9 +23,11 @@ QtObject {
         readonly property int arbitrumSepoliaChainId: 421614
         readonly property int baseChainId: 8453
         readonly property int baseSepoliaChainId: 84532
+        readonly property int binanceSmartChainMainnetChainId: 56
+        readonly property int binanceSmartChainTestnetChainId: 97
 
         // Used for new chain advertisment
-        readonly property var newChains: [baseChainId]
+        readonly property var newChains: [binanceSmartChainMainnetChainId, binanceSmartChainTestnetChainId]
     }
 
     readonly property QtObject startupFlow: QtObject {
@@ -914,6 +916,22 @@ QtObject {
         readonly property string optimism: "oeth"
         readonly property string base: "base"
         readonly property string status: "status"
+        readonly property string binanceSmartChain: "bsc"
+    }
+
+    readonly property QtObject networkNames: QtObject {
+        readonly property string mainnet: "Mainnet"
+        readonly property string sepolia: "Sepolia"
+        readonly property string arbitrum: "Arbitrum"
+        readonly property string sepoliaArbitrum: "Arbitrum Sepolia"
+        readonly property string optimism: "Optimism"
+        readonly property string sepoliaOptimism: "Optimism Sepolia"
+        readonly property string base: "Base"
+        readonly property string sepoliaBase: "Base Sepolia"
+        readonly property string status: "Status Network"
+        readonly property string sepoliaStatus: "Status Network Sepolia"
+        readonly property string binanceSmartChain: "BNB Smart Chain"
+        readonly property string testnetBinanceSmartChain: "BNB Smart Chain Testnet"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
@@ -921,13 +939,13 @@ QtObject {
         readonly property string arbiscan: "https://arbiscan.io"
         readonly property string optimism: "https://optimistic.etherscan.io"
         readonly property string base: "https://basescan.org"
-
+        readonly property string binanceSmartChain: "https://bscscan.com"
         readonly property string sepoliaEtherscan: "https://sepolia.etherscan.io/"
         readonly property string sepoliaArbiscan: "https://sepolia.arbiscan.io/"
         readonly property string sepoliaOptimism: "https://sepolia-optimism.etherscan.io/"
         readonly property string sepoliaBase: "https://sepolia.basescan.org/"
         readonly property string sepoliaStatus: "https://sepoliascan.status.network/"
-
+        readonly property string testnetBinanceSmartChain: "https://testnet.bscscan.com/"
         readonly property string addressPath: "address"
         readonly property string txPath: "tx"
     }
@@ -940,7 +958,7 @@ QtObject {
         readonly property string arbitrum: "arbitrum"
         readonly property string optimism: "optimism"
         readonly property string base: "base"
-
+        readonly property string binanceSmartChain: "binance-smart-chain"
         readonly property string sepoliaEthereum: "sepolia"
         readonly property string sepoliaArbitrum: "arbitrum-sepolia"
         readonly property string sepoliaOptimism: "optimism-sepolia"
