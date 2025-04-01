@@ -7,7 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import AppLayouts.TradingCenter 1.0
+import AppLayouts.Market 1.0
 import AppLayouts.Wallet 1.0
 
 import utils 1.0
@@ -19,7 +19,7 @@ Item {
 
     Component {
         id: componentUnderTest
-        TradingCenterLayout {
+        MarketLayout {
             anchors.fill: parent
             loading: false
             totalTokensCount: 1300
@@ -36,10 +36,10 @@ Item {
         signalName: "requestLaunchSwap"
     }
 
-    property TradingCenterLayout controlUnderTest: null
+    property MarketLayout controlUnderTest: null
 
     TestCase {
-        name: "TradingCenterLayout"
+        name: "MarketLayout"
         when: windowShown
 
         function init() {
@@ -59,7 +59,7 @@ Item {
             // header
             const heading = findChild(controlUnderTest.centerPanel, "heading")
             verify(!!heading)
-            compare(heading.text, qsTr("Trading"))
+            compare(heading.text, qsTr("Market"))
             compare(heading.font.pixelSize, 28)
             compare(heading.font.weight, Font.Bold)
 
@@ -87,7 +87,7 @@ Item {
             verify(!controlUnderTest.loading)
 
             // footer
-            const footer = findChild(tokensList, "tradingCenterFooter")
+            const footer = findChild(tokensList, "marketFooter")
             verify(!!footer)
             verify(footer.visible)
 

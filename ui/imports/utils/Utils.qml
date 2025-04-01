@@ -425,8 +425,8 @@ QtObject {
             return qsTr("Chat section loading...")
         case Constants.appSection.swap:
             return qsTr("Swap")
-        case Constants.appSection.tradingCenter:
-            return qsTr("Trading")
+        case Constants.appSection.market:
+            return qsTr("Market")
         default:
             return fallback
         }
