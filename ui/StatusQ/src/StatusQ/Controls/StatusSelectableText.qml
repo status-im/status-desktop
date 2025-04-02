@@ -34,7 +34,7 @@ Item {
 
     clip:true
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         enabled: !edit.activeFocus
         hoverEnabled: true

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -127,7 +128,7 @@ Item {
                                     text: "↕️"
                                 }
 
-                                MouseArea {
+                                StatusMouseArea {
                                     id: sourceDragArea
 
                                     property bool held: false
@@ -308,7 +309,7 @@ Item {
                                     text: "↕️"
                                 }
 
-                                MouseArea {
+                                StatusMouseArea {
                                     id: dragArea
 
                                     property bool held: false

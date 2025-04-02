@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import Storybook 1.0
@@ -57,7 +58,7 @@ SplitView {
 
         // needs to be on top of the stack
         // we're here only to provide the Back button feature
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.BackButton
             cursorShape: undefined // don't override the cursor coming from the stack

@@ -73,7 +73,7 @@ StatusDialog {
                         colorHash: JSON.stringify([{colorId: 4, segmentLength: 32}])
                     }
 
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
                         cursorShape: Qt.PointingHandCursor

@@ -89,7 +89,7 @@ Item {
             }
         }
 
-        MouseArea {
+        StatusMouseArea {
             id: hueArea
 
             property bool hoverOnGauge: false
@@ -151,7 +151,7 @@ Item {
                 }
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: satValArea
                 anchors.fill: parent
                 hoverEnabled: true

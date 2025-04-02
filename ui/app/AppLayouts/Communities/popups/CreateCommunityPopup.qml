@@ -163,7 +163,7 @@ StatusStackModal {
                         HoverHandler {
                             id: handler1
                         }
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             acceptedButtons: Qt.NoButton
                             cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -177,7 +177,7 @@ StatusStackModal {
                         HoverHandler {
                             id: handler2
                         }
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             acceptedButtons: Qt.NoButton
                             cursorShape: handler2.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor

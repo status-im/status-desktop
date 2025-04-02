@@ -110,7 +110,7 @@ Rectangle {
         NumberAnimation {}
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         visible: root.active // This is required not to change cursorShape
         enabled: root.active

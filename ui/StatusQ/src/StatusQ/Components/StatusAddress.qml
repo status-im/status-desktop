@@ -22,7 +22,7 @@ StatusBaseText {
         expanded = actualWidth <= maxWidth
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: root.expandable ? Qt.PointingHandCursor : Qt.arrowCursor
         enabled: root.expandable

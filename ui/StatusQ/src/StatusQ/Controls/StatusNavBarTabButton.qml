@@ -49,7 +49,7 @@ StatusIconTabButton {
         anchors.topMargin: 4
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton

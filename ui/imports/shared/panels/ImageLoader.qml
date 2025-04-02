@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtGraphicalEffects 1.15
 
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -101,7 +102,7 @@ Rectangle {
                 color: Theme.palette.textColor
                 antialiasing: true
             }
-            MouseArea {
+            StatusMouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
@@ -128,7 +129,7 @@ Rectangle {
                 loaded()
             }
         }
-        MouseArea {
+        StatusMouseArea {
             enabled: !noMouseArea
             cursorShape: noHover ? Qt.ArrowCursor : Qt.PointingHandCursor
             anchors.fill: parent

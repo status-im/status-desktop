@@ -117,7 +117,7 @@ StatusMenu {
                     return "transparent"
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: sensor
                     anchors.fill: parent
                     hoverEnabled: true

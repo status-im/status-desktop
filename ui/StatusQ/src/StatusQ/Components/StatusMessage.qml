@@ -190,7 +190,7 @@ Control {
         implicitWidth: messageLayout.implicitWidth
         implicitHeight: messageLayout.implicitHeight
 
-        MouseArea {
+        StatusMouseArea {
             id: mouseArea
             anchors.fill: parent
         }
@@ -235,7 +235,7 @@ Control {
                     bridgeBadge.visible: root.messageDetails.contentType === StatusMessage.ContentType.BridgeMessage
                     bridgeBadge.image.source: root.messageDetails.sender.badgeImage
 
-                    MouseArea {
+                    StatusMouseArea {
                         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         anchors.fill: parent

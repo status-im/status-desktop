@@ -139,7 +139,7 @@ Button {
                     color: mutedIconSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
                     visible: root.muted
 
-                    MouseArea {
+                    StatusMouseArea {
                         id: mutedIconSensor
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor

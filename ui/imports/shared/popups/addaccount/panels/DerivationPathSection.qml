@@ -79,7 +79,7 @@ Column {
             visible: root.store.addAccountModule.actionAuthenticated
             color: Theme.palette.baseColor1
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

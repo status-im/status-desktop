@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import QtMultimedia 5.15
 
+import StatusQ.Core 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 
@@ -36,7 +37,7 @@ StatusDialog {
     contentItem: StatusVideo {
        id: videoItem
 
-        MouseArea {
+        StatusMouseArea {
            anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {

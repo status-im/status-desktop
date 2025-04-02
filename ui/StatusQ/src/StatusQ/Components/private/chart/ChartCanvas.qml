@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import StatusQ.Core 0.1
+
 import "./Library/Library.js" as Lib
 
 Canvas {
@@ -97,7 +99,7 @@ Canvas {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouse
         anchors.fill: parent
         hoverEnabled: enabled

@@ -89,7 +89,7 @@ Rectangle {
         radius: root.radius
         color: root.internalOverlayColor
 
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             anchors.bottomMargin: popupLoader.height
             onClicked: {

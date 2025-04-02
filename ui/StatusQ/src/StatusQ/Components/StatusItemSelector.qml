@@ -129,7 +129,7 @@ StatusFlowSelector {
                 text: OperatorsUtils.setOperatorTextFormat(model.operator)
                 color: Theme.palette.primaryColor1
                 font.pixelSize: 17
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
@@ -159,7 +159,7 @@ StatusFlowSelector {
                 titleText.font.pixelSize: Theme.primaryTextFontSize
                 leftPadding: root.tagLeftPadding
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     enabled: root.itemsClickable
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor

@@ -26,7 +26,7 @@ Item {
         initialItem: backupSeedIntroPage
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         enabled: backButton.visible

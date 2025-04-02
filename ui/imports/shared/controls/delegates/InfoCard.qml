@@ -53,7 +53,7 @@ Control {
     }
 
     contentItem: Item {
-        MouseArea {
+        StatusMouseArea {
             id: mouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton|Qt.RightButton
@@ -122,7 +122,7 @@ Control {
                 communityImage: root.tagIcon
                 asset.width: 20
                 asset.height: 20
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     onClicked: {
                         root.communityTagClicked(mouse);

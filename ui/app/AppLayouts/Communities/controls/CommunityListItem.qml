@@ -2,6 +2,7 @@ import QtQuick 2.14
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 
 StatusListItem {
     property alias checked: checkBox.checked
@@ -32,9 +33,9 @@ StatusListItem {
         }
     ]
 
-    // using MouseArea instead of build-in 'clicked' signal to avoid
+    // using StatusMouseArea instead of build-in 'clicked' signal to avoid
     // intercepting event by the StatusCheckBox
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         onClicked: {
             checkBox.toggle()

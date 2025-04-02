@@ -133,10 +133,10 @@ Item {
 
     /*
         \qmlmethod StatusListPicker::close()
-        It can be used to force to close the drop-down picker list whenever the consumer needs it. For example by adding an outside MouseArea to close the picker when user clicks outsite the component:
+        It can be used to force to close the drop-down picker list whenever the consumer needs it. For example by adding an outside StatusMouseArea to close the picker when user clicks outsite the component:
        \qml
             // Outsite area
-            MouseArea {
+            StatusMouseArea {
                 height: root.height
                 width: root.width
                 onClicked: { currencyPicker.close() }
@@ -326,7 +326,7 @@ Item {
                     itemPickerChanged(root.proxy.key(model), checked)
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     enabled: root.enableSelectableItem
                     anchors.fill: parent

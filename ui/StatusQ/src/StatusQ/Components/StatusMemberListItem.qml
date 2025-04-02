@@ -177,7 +177,7 @@ ItemDelegate {
         color: root.color
         radius: Theme.radius
 
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
             acceptedButtons: Qt.LeftButton | Qt.RightButton

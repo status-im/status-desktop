@@ -29,7 +29,7 @@ InformationTag {
         width: 20
         height: 20
         icon: "close"
-        MouseArea {
+        StatusMouseArea {
             id: mouseArea
             anchors.fill: parent
             hoverEnabled: true

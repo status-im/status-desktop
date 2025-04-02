@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.15
 
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -48,7 +49,7 @@ StatusDialog {
         active: true
         sourceComponent: root.plain ? plainImage : animatedImage
 
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {

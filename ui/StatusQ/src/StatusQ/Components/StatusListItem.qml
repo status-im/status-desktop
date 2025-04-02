@@ -121,7 +121,7 @@ Rectangle {
     color: bgColor
 
     property color bgColor: {
-        if (sensor.containsMouse || root.highlighted) {
+        if (sensor.containsMouse || statusListItemTitleMouseArea.containsMouse || root.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
                     return Theme.palette.baseColor2
@@ -143,7 +143,7 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: (mouse) => {
@@ -151,7 +151,7 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
 
         objectName: root.objectName + "_sensor"
@@ -243,7 +243,7 @@ Rectangle {
                     visible: statusListItemTitle.truncated && statusListItemTitleMouseArea.containsMouse
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: statusListItemTitleMouseArea
                     anchors.fill: parent
                     enabled: root.enabled

@@ -75,7 +75,7 @@ Item {
                         name: replyDetails.sender.displayName
                         asset: replyDetails.sender.profileImage.assetSettings
                         ringSettings: replyDetails.sender.profileImage.ringSettings
-                        MouseArea {
+                        StatusMouseArea {
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                             acceptedButtons: Qt.LeftButton | Qt.RightButton
                             anchors.fill: parent
@@ -91,7 +91,7 @@ Item {
                         text: replyDetails.amISender ? qsTr("You") : replyDetails.sender.displayName
                         font.underline: mouseArea.containsMouse
 
-                        MouseArea {
+                        StatusMouseArea {
                             id: mouseArea
                             anchors.fill: parent
                             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -157,7 +157,7 @@ Item {
                         }
                     }
 
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         enabled: !root.replyDetails.messageDeleted && root.replyDetails.sender.id
                         hoverEnabled: true

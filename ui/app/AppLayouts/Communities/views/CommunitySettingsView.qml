@@ -166,7 +166,7 @@ StatusSectionLayout {
             font.pixelSize: 15
             font.underline: true
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.backToCommunityClicked()

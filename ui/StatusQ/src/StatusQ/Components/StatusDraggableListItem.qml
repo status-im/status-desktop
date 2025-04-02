@@ -279,7 +279,7 @@ ItemDelegate {
         border.color: Theme.palette.baseColor2
         radius: root.customizable ? 0 : 8
 
-        MouseArea {
+        StatusMouseArea {
             id: dragHandler
             anchors.fill: parent
             drag.target: root.dragEnabled ? root : null

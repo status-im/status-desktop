@@ -169,7 +169,7 @@ Control {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: root.hovered? Qt.PointingHandCursor : undefined
         onClicked: root.clicked()

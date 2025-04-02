@@ -161,7 +161,7 @@ Rectangle {
                 anchors.leftMargin: Theme.smallPadding
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: mouseArea
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent

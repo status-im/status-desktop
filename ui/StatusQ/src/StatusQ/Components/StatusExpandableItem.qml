@@ -159,7 +159,7 @@ Rectangle {
                       Theme.palette.directColor1
         }
 
-        MouseArea {
+        StatusMouseArea {
             id: sensor
             objectName: "ExpandableItem"
             anchors.fill: parent

@@ -70,7 +70,7 @@ Rectangle {
 
     opacity: dragged ? 0.7 : 1
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
 
         HoverHandler {
@@ -178,7 +178,7 @@ Rectangle {
             icon: Theme.palette.name === "light" ? "tiny/muted" : "tiny/muted-white"
             visible: root.muted
 
-            MouseArea {
+            StatusMouseArea {
                 id: mutedIconSensor
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

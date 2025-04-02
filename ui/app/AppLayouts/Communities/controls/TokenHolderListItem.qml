@@ -190,7 +190,7 @@ ItemDelegate {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
 
         acceptedButtons: Qt.AllButtons

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -52,7 +53,7 @@ Rectangle {
         color: Theme.palette.primaryColor1
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         hoverEnabled: true
         onEntered: {
