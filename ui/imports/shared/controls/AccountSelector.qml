@@ -144,7 +144,7 @@ StatusComboBox {
 
     QtObject {
         id: d
-        property string currentAccountSelection: root.selectedAddress || root.currentValue
+        property string currentAccountSelection
 
         Binding on currentAccountSelection {
             value: root.selectedAddress || root.currentValue

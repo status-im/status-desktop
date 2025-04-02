@@ -125,12 +125,8 @@ StatusDialog {
     }
 
     header: Item {
-        implicitHeight: selector.implicitHeight
-        implicitWidth: selector.implicitWidth
-        anchors.top: parent.top
-        anchors.topMargin: -height - 18
         AccountSelectorHeader {
-            id: selector
+            y: -height - Theme.padding
             control.popup.width: 512
             model: d.accountsSelectorAdaptor.processedWalletAccounts
             selectedAddress: root.swapInputParamsForm.selectedAccountAddress
