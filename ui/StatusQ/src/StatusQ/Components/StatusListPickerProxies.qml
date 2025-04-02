@@ -23,7 +23,7 @@ QtObject {
     property var name: (model) => model.name
     property var shortName: (model) => model.shortName
     property var symbol: (model) => model.symbol
-    property var imageSource: (model) => model.imageSource
+    property var imageSource: (model) => Qt.resolvedUrl(model.imageSource)
     property var category: (model) => model.category
     property var selected: (model) => model.selected
     property var setSelected: (model, val) => model.selected = val
