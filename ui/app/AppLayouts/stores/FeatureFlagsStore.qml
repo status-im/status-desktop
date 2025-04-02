@@ -8,5 +8,5 @@ QtObject {
     property bool paymentRequestEnabled
     property bool simpleSendEnabled
     property bool keycardEnabled
-    property bool tradingCenterEnabled
+    property bool marketEnabled
 }

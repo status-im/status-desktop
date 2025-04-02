@@ -18,7 +18,7 @@ type
     CommunitiesPortal,
     LoadingSection,
     Swap,
-    TradingCenter
+    Market
 
 type
   SectionItem* = object

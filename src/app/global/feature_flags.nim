@@ -20,7 +20,7 @@ const DEFAULT_FLAG_SWAP_ENABLED  = true
 const DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED  = true
 const DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED = true
 const DEFAULT_FLAG_SIMPLE_SEND_ENABLED = true
-const DEFAULT_FLAG_TRADING_CENTER_ENABLED = false
+const DEFAULT_FLAG_MARKET_ENABLED = false
 
 # Compile time feature flags
 const DEFAULT_FLAG_DAPPS_ENABLED  = true
@@ -34,7 +34,7 @@ featureFlag("SWAP_ENABLED",                   DEFAULT_FLAG_SWAP_ENABLED)
 featureFlag("SEND_VIA_PERSONAL_CHAT_ENABLED", DEFAULT_FLAG_SEND_VIA_PERSONAL_CHAT_ENABLED)
 featureFlag("PAYMENT_REQUEST_ENABLED",        DEFAULT_FLAG_PAYMENT_REQUEST_ENABLED)
 featureFlag("SIMPLE_SEND_ENABLED",            DEFAULT_FLAG_SIMPLE_SEND_ENABLED)
-featureFlag("TRADING_CENTER_ENABLED",         DEFAULT_FLAG_TRADING_CENTER_ENABLED)
+featureFlag("MARKET_ENABLED",                 DEFAULT_FLAG_MARKET_ENABLED)
 
 featureFlag("DAPPS_ENABLED",                  DEFAULT_FLAG_DAPPS_ENABLED, true)
 featureFlag("CONNECTOR_ENABLED",              DEFAULT_FLAG_CONNECTOR_ENABLED, true)
@@ -80,7 +80,7 @@ QtObject:
     paymentRequestEnabled: bool
     simpleSendEnabled: bool
     keycardEnabled: bool
-    tradingCenterEnabled: bool
+    marketEnabled: bool
 
   proc setup(self: FeatureFlags) =
     self.QObject.setup()
@@ -91,7 +91,7 @@ QtObject:
     self.paymentRequestEnabled = PAYMENT_REQUEST_ENABLED
     self.simpleSendEnabled = SIMPLE_SEND_ENABLED
     self.keycardEnabled = KEYCARD_ENABLED
-    self.tradingCenterEnabled = TRADING_CENTER_ENABLED
+    self.marketEnabled = MARKET_ENABLED
 
   proc delete*(self: FeatureFlags) =
     self.QObject.delete()
@@ -142,8 +142,8 @@ QtObject:
   proc getKeycardEnabled*(self: FeatureFlags): bool {.slot.} =
     return self.keycardEnabled
 
-  QtProperty[bool] tradingCenterEnabled:
-    read = getTradingCenterEnabled
+  QtProperty[bool] marketEnabled:
+    read = getMarketEnabled
 
-  proc getTradingCenterEnabled*(self: FeatureFlags): bool {.slot.} =
-    return self.tradingCenterEnabled
+  proc getMarketEnabled*(self: FeatureFlags): bool {.slot.} =
+    return self.marketEnabled

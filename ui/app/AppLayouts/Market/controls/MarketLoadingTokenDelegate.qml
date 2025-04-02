@@ -2,7 +2,7 @@ import QtQuick 2.15
 
 import utils 1.0
 
-TradingCenterTokenDelegate {
+MarketTokenDelegate {
     tokenName: Constants.dummyText
     tokenSymbol: Constants.dummyText
     price: Constants.dummyText

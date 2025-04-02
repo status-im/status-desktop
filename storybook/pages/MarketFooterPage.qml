@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 SplitView {
     orientation: Qt.Vertical
@@ -10,7 +10,7 @@ SplitView {
     Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        TradingCenterFooter {
+        MarketFooter {
             width: parent.width
             anchors.centerIn: parent
             pageSize: Number(pageSizeInput.text)

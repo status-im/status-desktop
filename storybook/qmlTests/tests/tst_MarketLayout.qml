@@ -7,7 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-import AppLayouts.TradingCenter 1.0
+import AppLayouts.Market 1.0
 import AppLayouts.Wallet 1.0
 
 import utils 1.0
@@ -19,14 +19,12 @@ Item {
 
     Component {
         id: componentUnderTest
-        TradingCenterLayout {
+        MarketLayout {
             anchors.fill: parent
             loading: false
             totalTokensCount: 1300
+            currencySymbol: "$"
             tokensModel: TokensBySymbolModel {}
-            formatCurrencyAmount: function(cryptoValue) {
-                return "%L1 %2".arg(cryptoValue).arg("USD")
-            }
         }
     }
 
@@ -36,10 +34,10 @@ Item {
         signalName: "requestLaunchSwap"
     }
 
-    property TradingCenterLayout controlUnderTest: null
+    property MarketLayout controlUnderTest: null
 
     TestCase {
-        name: "TradingCenterLayout"
+        name: "MarketLayout"
         when: windowShown
 
         function init() {
@@ -59,7 +57,7 @@ Item {
             // header
             const heading = findChild(controlUnderTest.centerPanel, "heading")
             verify(!!heading)
-            compare(heading.text, qsTr("Trading"))
+            compare(heading.text, qsTr("Market"))
             compare(heading.font.pixelSize, 28)
             compare(heading.font.weight, Font.Bold)
 
@@ -87,7 +85,7 @@ Item {
             verify(!controlUnderTest.loading)
 
             // footer
-            const footer = findChild(tokensList, "tradingCenterFooter")
+            const footer = findChild(tokensList, "marketFooter")
             verify(!!footer)
             verify(footer.visible)
 
@@ -140,8 +138,10 @@ Item {
                     compare(tokenSymbolText.font.weight, Font.Normal)
                     compare(tokenSymbolText.color, Theme.palette.baseColor1)
 
-                    compare(priceText.text,
-                            controlUnderTest.formatCurrencyAmount(modelItemUnderTest.marketDetails.currencyPrice.amount))
+                    const expectedPriceString = "%1%2"
+                    .arg(controlUnderTest.currencySymbol)
+                    .arg(LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.currencyPrice, {noSymbol: true}))
+                    compare(priceText.text, expectedPriceString)
                     compare(priceText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(priceText.font.weight, Font.Medium)
                     compare(priceText.color, Theme.palette.directColor1)
@@ -159,7 +159,10 @@ Item {
                     compare(volume24HrText.font.weight, Font.Medium)
                     compare(volume24HrText.color, Theme.palette.directColor1)
 
-                    compare(marketCapText.text, LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.marketCap))
+                    const expectedMarketCapString = "%1%2"
+                    .arg(controlUnderTest.currencySymbol)
+                    .arg(LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.marketCap, {noSymbol: true}))
+                    compare(marketCapText.text, expectedMarketCapString)
                     compare(marketCapText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(marketCapText.font.weight, Font.Medium)
                     compare(marketCapText.color, Theme.palette.directColor1)

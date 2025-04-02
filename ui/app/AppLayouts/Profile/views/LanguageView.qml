@@ -66,27 +66,15 @@ SettingsContentBase {
                     id: currencyPause
                     interval: 100
                     onTriggered: {
-                        const idx = StatusQUtils.ModelUtils.indexOf(currenciesModel, "key", currencyPicker.newKey)
-                        const shortName = currenciesModel.get(idx === -1 ? 0 : idx).shortName
+                        const idx = StatusQUtils.ModelUtils.indexOf(root.currencyStore.currenciesModel, "key", currencyPicker.newKey)
+                        const shortName = root.currencyStore.currenciesModel.get(idx === -1 ? 0 : idx).shortName
                         root.currencyStore.updateCurrency(shortName)
                     }
                 }
 
                 z: root.z + 2
 
-                inputList: CurrenciesModel {
-                    id: currenciesModel
-
-                    readonly property Connections connections: Connections {
-                        target: root.currencyStore
-
-                        function onCurrentCurrencyChanged() {
-                            currenciesModel.setSelected(root.currencyStore.currentCurrency)
-                        }
-                    }
-
-                    Component.onCompleted: setSelected(root.currencyStore.currentCurrency)
-                }
+                inputList: root.currencyStore.currenciesModel
 
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")

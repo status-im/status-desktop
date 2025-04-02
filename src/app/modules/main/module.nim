@@ -799,27 +799,27 @@ method load*[T](
   if activeSectionId == profileSettingsSectionItem.id:
     activeSection = profileSettingsSectionItem
 
-  if singletonInstance.featureFlags().getTradingCenterEnabled():
-    # Trading center Section
-    let tradingCenterItem = initItem(
-      conf.TRADING_CENTER_SECTION_ID,
-      SectionType.TradingCenter,
-      conf.TRADING_CENTER_SECTION_NAME,
+  if singletonInstance.featureFlags().getMarketEnabled():
+    # Market Section
+    let marketItem = initItem(
+      conf.MARKET_SECTION_ID,
+      SectionType.Market,
+      conf.MARKET_SECTION_NAME,
       memberRole = MemberRole.Owner,
       description = "",
       introMessage = "",
       outroMessage = "",
       image = "",
-      icon = conf.TRADING_CENTER_SECTION_ICON,
+      icon = conf.MARKET_SECTION_ICON,
       color = "",
       hasNotification = false,
       notificationsCount = 0,
       active = false,
       enabled = WALLET_ENABLED,
     )
-    self.view.model().addItem(tradingCenterItem)
-    if activeSectionId == tradingCenterItem.id:
-      activeSection = tradingCenterItem
+    self.view.model().addItem(marketItem)
+    if activeSectionId == marketItem.id:
+      activeSection = marketItem
   else:
     # Swap Section
     let swapSectionItem = initItem(

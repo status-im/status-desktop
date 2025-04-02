@@ -10,19 +10,19 @@ import StatusQ.Controls 0.1
 import utils 1.0
 
 import AppLayouts.Wallet 1.0
-import AppLayouts.TradingCenter.controls 1.0
+import AppLayouts.Market.controls 1.0
 
 StatusSectionLayout {
     id: root
 
     /** required property representing token model **/
     required property var tokensModel
-    /** required function to get formatted currency amount **/
-    required property var formatCurrencyAmount
     /** required property representing loading state **/
     required property bool loading
     /** required property representing total number of tokens **/
     required property int totalTokensCount
+    /** required property representing currency symbol $/£/€ etc... **/
+    required property string currencySymbol
 
     // TODO: remove this code its only to show a dummy list in the app till the backend is ready
     property int startIndex: listView.footerItem.startIndex
@@ -32,7 +32,7 @@ StatusSectionLayout {
     /** signal to request the launch of Swap Modal **/
     signal requestLaunchSwap()
     /** signal to request fetching tokens as per selected page and page size **/
-    signal fetchTradingCenterTokens(int pageSize, int pageNumber)
+    signal fetchMarketTokens(int pageSize, int pageNumber)
 
     // TODO:: Implement resetting token list view
     function resetView() {}
@@ -53,7 +53,7 @@ StatusSectionLayout {
             Layout.alignment: Qt.AlignTop
             StatusBaseText {
                 objectName: "heading"
-                text: qsTr("Trading")
+                text: qsTr("Market")
                 font.weight: Font.Bold
                 font.pixelSize: 28
             }
@@ -75,16 +75,16 @@ StatusSectionLayout {
             Layout.fillHeight: true
 
             headerPositioning: ListView.OverlayHeader
-            header: TradingCenterTokenHeader {
+            header: MarketTokenHeader {
                 width: listView.width
             }
 
-            footer: TradingCenterFooter {
-                objectName: "tradingCenterFooter"
+            footer: MarketFooter {
+                objectName: "marketFooter"
                 width: listView.width
                 pageSize: d.pageSize
                 totalCount: root.totalTokensCount
-                onSwitchPage: root.fetchTradingCenterTokens(d.pageSize, pageNumber)
+                onSwitchPage: root.fetchMarketTokens(d.pageSize, pageNumber)
             }
 
             model: root.loading ? loadingModel: regularModel
@@ -98,7 +98,7 @@ StatusSectionLayout {
 
             model: d.pageSize
 
-            delegate: TradingCenterLoadingTokenDelegate {
+            delegate: MarketLoadingTokenDelegate {
                 width: listView.width
             }
         }
@@ -111,20 +111,24 @@ StatusSectionLayout {
 
             model: root.tokensModel
 
-            delegate: TradingCenterTokenDelegate {
+            delegate: MarketTokenDelegate {
                 width: listView.width
 
                 indexString: root.startIndex + index
                 tokenName: model.name
                 tokenSymbol: model.symbol
                 iconSource: Constants.tokenIcon(model.symbol)
-                price: root.formatCurrencyAmount(model.marketDetails.currencyPrice.amount)
+                price: "%1%2"
+                .arg(root.currencySymbol)
+                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.currencyPrice, {noSymbol: true}))
                 changePct24Hour: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
                 .arg(WalletUtils.getUpDownTriangle(model.marketDetails.changePct24hour))
                 .arg(LocaleUtils.numberToLocaleString(model.marketDetails.changePct24hour, 2))
                 changePct24HourColor: WalletUtils.getChangePct24HourColor(model.marketDetails.changePct24hour)
                 volume24Hour: "--"
-                marketCap: LocaleUtils.currencyAmountToLocaleString(model.marketDetails.marketCap)
+                marketCap: "%1%2"
+                .arg(root.currencySymbol)
+                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.marketCap, {noSymbol: true}))
             }
         }
     }
