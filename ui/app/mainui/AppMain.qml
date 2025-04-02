@@ -2115,8 +2115,13 @@ Item {
                             }
                             totalTokensCount: appMain.tokensStore.plainTokensBySymbolModel.ModelCount.count
                             loading: false
-                            formatCurrencyAmount: function(amount) {
-                                return appMain.currencyStore.formatCurrencyAmount(amount, appMain.currencyStore.currentCurrency)
+                            currencySymbol: {
+                                const symbol = SQUtils.ModelUtils.getByKey(
+                                                appMain.currencyStore.currenciesModel,
+                                                "shortName",
+                                                appMain.currencyStore.currentCurrency,
+                                                "symbol")
+                                return !!symbol ? symbol: ""
                             }
                             onRequestLaunchSwap: d.launchSwap()
                             /**onFetchMarketTokens: marketStore.fetchMarketTokens(pageSize, pageNumber)**/

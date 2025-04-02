@@ -17,12 +17,12 @@ StatusSectionLayout {
 
     /** required property representing token model **/
     required property var tokensModel
-    /** required function to get formatted currency amount **/
-    required property var formatCurrencyAmount
     /** required property representing loading state **/
     required property bool loading
     /** required property representing total number of tokens **/
     required property int totalTokensCount
+    /** required property representing currency symbol $/£/€ etc... **/
+    required property string currencySymbol
 
     // TODO: remove this code its only to show a dummy list in the app till the backend is ready
     property int startIndex: listView.footerItem.startIndex
@@ -118,13 +118,17 @@ StatusSectionLayout {
                 tokenName: model.name
                 tokenSymbol: model.symbol
                 iconSource: Constants.tokenIcon(model.symbol)
-                price: root.formatCurrencyAmount(model.marketDetails.currencyPrice.amount)
+                price: "%1%2"
+                .arg(root.currencySymbol)
+                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.currencyPrice, {noSymbol: true}))
                 changePct24Hour: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
                 .arg(WalletUtils.getUpDownTriangle(model.marketDetails.changePct24hour))
                 .arg(LocaleUtils.numberToLocaleString(model.marketDetails.changePct24hour, 2))
                 changePct24HourColor: WalletUtils.getChangePct24HourColor(model.marketDetails.changePct24hour)
                 volume24Hour: "--"
-                marketCap: LocaleUtils.currencyAmountToLocaleString(model.marketDetails.marketCap)
+                marketCap: "%1%2"
+                .arg(root.currencySymbol)
+                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.marketCap, {noSymbol: true}))
             }
         }
     }
