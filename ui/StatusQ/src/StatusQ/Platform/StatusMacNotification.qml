@@ -52,7 +52,7 @@ Rectangle {
     Component {
         id: statusIdenticon
         Image {
-            source: "../../assets/png/status-logo-icon.png"
+            source: Qt.resolvedUrl("../../assets/png/status-logo-icon.png")
             width: 40
             height: 40
             sourceSize.width: width * 2
