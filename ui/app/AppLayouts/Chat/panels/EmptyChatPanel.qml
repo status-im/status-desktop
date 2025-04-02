@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import shared 1.0
@@ -38,7 +39,7 @@ Item {
             font.pixelSize: 15
             color: Theme.palette.primaryColor1
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
@@ -71,7 +72,7 @@ Item {
             anchors.leftMargin: 2
             anchors.bottom: shareKeyLink.bottom
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true

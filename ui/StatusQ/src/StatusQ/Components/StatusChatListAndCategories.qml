@@ -31,7 +31,7 @@ Item {
     signal categoryAddButtonClicked(string id)
     signal toggleCollapsedCommunityCategory(string categoryId, bool collapsed)
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton

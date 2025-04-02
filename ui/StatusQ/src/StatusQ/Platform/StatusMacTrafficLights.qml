@@ -3,7 +3,7 @@ import QtQuick 2.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-MouseArea {
+StatusMouseArea {
     id: statusMacTrafficLights
 
     signal close()
@@ -47,7 +47,7 @@ MouseArea {
             }
 
 
-            MouseArea {
+            StatusMouseArea {
                 id: closeSensor
                 anchors.fill: parent
 
@@ -76,7 +76,7 @@ MouseArea {
                 scale: 0.27
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: miniSensor
                 anchors.fill: parent
 
@@ -104,7 +104,7 @@ MouseArea {
                 scale: 0.25
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: maxiSensor
                 anchors.fill: parent
 

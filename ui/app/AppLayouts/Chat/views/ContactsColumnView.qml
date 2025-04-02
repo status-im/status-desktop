@@ -99,7 +99,7 @@ Item {
             Layout.preferredHeight: 40
             input.topPadding: 4
             input.bottomPadding: 4
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor

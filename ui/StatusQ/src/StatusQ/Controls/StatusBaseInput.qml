@@ -309,7 +309,7 @@ Item {
             return sensor.containsMouse ? Theme.palette.primaryColor2 : "transparent"
         }
 
-        MouseArea {
+        StatusMouseArea {
             id: sensor
             anchors.fill: parent
             enabled: edit.enabled
@@ -495,7 +495,7 @@ Item {
             asset.isLetterIdenticon: root.asset.isLetterIdenticon
             name: root.letterIconName
 
-            MouseArea {
+            StatusMouseArea {
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 anchors.fill: parent

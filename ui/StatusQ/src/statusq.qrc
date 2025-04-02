@@ -184,6 +184,7 @@
         <file>StatusQ/Core/StatusIdenticonRingSettings.qml</file>
         <file>StatusQ/Core/StatusListView.qml</file>
         <file>StatusQ/Core/StatusModalHeaderSettings.qml</file>
+        <file>StatusQ/Core/StatusMouseArea.qml</file>
         <file>StatusQ/Core/StatusProfileImageSettings.qml</file>
         <file>StatusQ/Core/StatusRollArea.qml</file>
         <file>StatusQ/Core/StatusScrollView.qml</file>

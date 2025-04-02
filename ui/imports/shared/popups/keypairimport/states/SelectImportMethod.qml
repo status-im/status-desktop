@@ -45,7 +45,7 @@ Item {
                 StatusIcon {
                     icon: "next"
                     color: Theme.palette.baseColor1
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
@@ -77,7 +77,7 @@ Item {
                 StatusIcon {
                     icon: "next"
                     color: Theme.palette.baseColor1
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {

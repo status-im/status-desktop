@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 
 import Storybook 1.0
 
+import StatusQ.Core 0.1
+
 ListView {
     id: root
 
@@ -52,14 +54,14 @@ ListView {
                 return "gray"
             }
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
 
                 onClicked: root.statusClicked()
             }
         }
 
-        MouseArea {
+        StatusMouseArea {
             id: dragArea
             anchors.fill: parent
 

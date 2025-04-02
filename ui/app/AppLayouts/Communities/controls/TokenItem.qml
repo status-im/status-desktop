@@ -26,7 +26,7 @@ Control {
         color: mouseArea.containsMouse ? Theme.palette.statusListItem.highlightColor : "transparent"
         radius: 8
 
-        MouseArea {
+        StatusMouseArea {
             id: mouseArea
             anchors.fill: parent
             cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor

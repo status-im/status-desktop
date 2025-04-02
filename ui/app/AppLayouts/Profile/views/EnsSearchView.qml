@@ -215,7 +215,7 @@ Item {
                     anchors.right: parent.right
                     anchors.rightMargin: Theme.padding
 
-                    MouseArea {
+                    StatusMouseArea {
                         cursorShape: Qt.PointingHandCursor
                         anchors.fill: parent
                         onClicked : {

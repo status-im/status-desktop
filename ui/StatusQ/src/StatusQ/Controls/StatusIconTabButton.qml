@@ -46,7 +46,7 @@ TabButton {
         radius: statusIconTabButton.width / 2
     }
 
-    MouseArea {
+    StatusMouseArea {
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
         acceptedButtons: Qt.NoButton

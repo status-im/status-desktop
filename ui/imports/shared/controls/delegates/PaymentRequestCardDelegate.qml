@@ -140,7 +140,7 @@ CalloutCard {
         y: -height
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: ma
         anchors.fill: root
         hoverEnabled: true

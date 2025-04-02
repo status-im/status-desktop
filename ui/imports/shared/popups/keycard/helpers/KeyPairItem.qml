@@ -140,7 +140,7 @@ StatusListItem {
                 visible: root.usedAsSelectOption && !root.displayRadioButtonForSelection
                 icon: "next"
                 color: Theme.palette.baseColor1
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {

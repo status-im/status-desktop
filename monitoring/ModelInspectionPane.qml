@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import Monitoring 1.0
+
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 
 Item {
@@ -164,7 +166,7 @@ Item {
                                 color: "gray"
                             }
 
-                            MouseArea {
+                            StatusMouseArea {
                                 id: labelMouseArea
 
                                 anchors.fill: parent
@@ -237,7 +239,7 @@ Item {
                             elide: Text.ElideRight
                             maximumLineCount: 1
 
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
 
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton

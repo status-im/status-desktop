@@ -155,7 +155,7 @@ Item {
                     anchors.right: parent.right
                     onLinkActivated: Global.openLink(link)
                     color: Theme.palette.directColor1
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                         cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -179,7 +179,7 @@ Item {
                     anchors.right: parent.right
                     onLinkActivated: Global.openLink(link)
                     color: Theme.palette.directColor1
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                         cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -292,7 +292,7 @@ Item {
                     enabled: !parent.hoveredLink
                     onSingleTapped: termsAndConditionsCheckbox.toggle()
                 }
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
                     cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor

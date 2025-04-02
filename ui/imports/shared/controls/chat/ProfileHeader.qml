@@ -9,6 +9,7 @@ import StatusQ 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Core.Theme 0.1
 
@@ -230,7 +231,7 @@ Item {
                     height: compact ? 10 : 16
                     width: compact ? 10 : 16
                     source: Theme.svg("edit-message")
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -105,7 +106,7 @@ Column {
                 }
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: mouseArea
                 objectName: "gifMouseArea_" + index
                 cursorShape: Qt.PointingHandCursor

@@ -207,7 +207,7 @@ SplitView {
                         Qt.openUrlExternally(link)
                     }
 
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         visible: !!slidesLabel.hoveredLink

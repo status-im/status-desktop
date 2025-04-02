@@ -101,7 +101,7 @@ SettingsContentBase {
                 color: Theme.palette.primaryColor1
                 topPadding: 23
 
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -391,7 +391,7 @@ SettingsContentBase {
                     Global.openPopup(enableDebugComponent)
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: overlayMouseArea
                     anchors.fill: parent
                     enabled: true

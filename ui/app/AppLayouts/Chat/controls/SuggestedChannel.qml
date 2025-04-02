@@ -1,5 +1,6 @@
 import QtQuick 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -30,7 +31,7 @@ Rectangle {
         font.pixelSize: 15
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         onClicked: {
             root.clicked(channel);

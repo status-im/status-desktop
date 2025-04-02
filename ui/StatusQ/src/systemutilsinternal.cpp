@@ -6,6 +6,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QProcess>
+#include <QQuickItem>
 #include <QSaveFile>
 
 SystemUtilsInternal::SystemUtilsInternal(QObject *parent)
@@ -79,4 +80,19 @@ void SystemUtilsInternal::downloadImageByUrl(
                           "Downloading image failed while saving to file:"
                        << targetFile;
     });
+}
+
+void SystemUtilsInternal::synthetizeRightClick(QQuickItem* item, qreal x, qreal y, Qt::KeyboardModifiers modifiers) const
+{
+    if (!item)
+        return;
+
+    // Synthesize a right click event on the given item
+    auto leftClickRelease = new QMouseEvent(QEvent::MouseButtonRelease, {x, y}, Qt::LeftButton, Qt::NoButton, modifiers);
+    auto rightClickPress = new QMouseEvent(QEvent::MouseButtonPress, {x, y}, Qt::RightButton, Qt::NoButton, modifiers);
+    auto rightClickRelease = new QMouseEvent(QEvent::MouseButtonRelease, {x, y}, Qt::RightButton, Qt::NoButton, modifiers);
+    
+    QCoreApplication::postEvent(item, leftClickRelease);
+    QCoreApplication::postEvent(item, rightClickPress);
+    QCoreApplication::postEvent(item, rightClickRelease);
 }

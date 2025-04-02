@@ -1,5 +1,6 @@
 import QtQuick 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 
 /*!
@@ -74,7 +75,7 @@ StatusMenuItem {
         type: root.success ? StatusAction.Type.Success : StatusAction.Type.Normal
         icon.name: root.success ? root.successIconName : root.icon.name
     }
-    MouseArea {
+    StatusMouseArea {
         // NOTE Using mouse area to block menu auto closing
         anchors.fill: parent
         hoverEnabled: true

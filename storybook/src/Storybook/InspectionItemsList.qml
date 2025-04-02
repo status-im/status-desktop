@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import StatusQ.Core 0.1
 
 ListView {
     ScrollBar.vertical: ScrollBar {}
@@ -28,7 +29,7 @@ ListView {
             value: mouseArea.containsMouse
         }
 
-        MouseArea {
+        StatusMouseArea {
             id: mouseArea
             anchors.fill: parent
             hoverEnabled: true

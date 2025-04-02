@@ -108,7 +108,7 @@ Control {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         cursorShape: root.enabled ? Qt.PointingHandCursor : undefined
         anchors.fill: parent
 

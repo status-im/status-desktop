@@ -88,7 +88,7 @@ StatusScrollView {
                                 }
                             }
                         }
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true

@@ -86,7 +86,7 @@ GridLayout {
                 color: Theme.palette.baseColor1
                 visible: !root.store.selectedOrigin.migratedToKeycard
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor

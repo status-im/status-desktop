@@ -4,6 +4,7 @@ import Qt.labs.settings 1.1
 
 import StatusQ 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Onboarding2.stores 1.0
@@ -195,7 +196,7 @@ Page {
 
     // needs to be on top of the stack
     // we're here only to provide the Back button feature
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         cursorShape: undefined // don't override the cursor coming from the stack

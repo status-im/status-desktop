@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ.Core 0.1
 
 Item {
     id: root
@@ -120,7 +121,7 @@ Item {
 
         Drag.active: dragArea.drag.active
 
-        MouseArea {
+        StatusMouseArea {
             id: dragArea
 
             anchors.fill: parent

@@ -212,7 +212,7 @@ Item {
             }
 
             // Drag and zoom
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
 
                 enabled: root.interactive

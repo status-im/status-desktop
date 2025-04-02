@@ -178,7 +178,7 @@ MenuItem {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.NoButton

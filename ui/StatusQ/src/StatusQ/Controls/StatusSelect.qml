@@ -152,7 +152,7 @@ Item {
         wrapMode: Text.WordWrap
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: inputRectangle
         cursorShape: Qt.PointingHandCursor

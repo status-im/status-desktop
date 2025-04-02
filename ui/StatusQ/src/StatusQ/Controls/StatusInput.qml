@@ -475,7 +475,7 @@ Control {
                 icon: root.labelIcon
                 color: root.labelIconColor
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     enabled: root.labelIconClickable
                     hoverEnabled: root.labelIconClickable

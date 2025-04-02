@@ -133,7 +133,7 @@ Item {
                     text: d.showReactionAuthors(model.jsonArrayOfUsersReactedWithThisEmoji, model.emojiId)
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     hoverEnabled: true
@@ -171,7 +171,7 @@ Item {
                 color: addEmojiButton.isHovered ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: addEmojiButtonMouseArea
                 anchors.fill: addEmojiButton
                 cursorShape: Qt.PointingHandCursor

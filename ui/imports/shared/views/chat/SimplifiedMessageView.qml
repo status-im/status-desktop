@@ -38,7 +38,7 @@ RowLayout {
             asset: root.messageDetails.sender.profileImage.assetSettings
             ringSettings: root.messageDetails.sender.profileImage.ringSettings
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 acceptedButtons: Qt.LeftButton | Qt.RightButton

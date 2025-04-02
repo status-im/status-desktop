@@ -69,7 +69,7 @@ GridLayout {
     }
 
     // Outsite area
-    MouseArea {
+    StatusMouseArea {
         height: root.height
         width: root.width
         onClicked: {

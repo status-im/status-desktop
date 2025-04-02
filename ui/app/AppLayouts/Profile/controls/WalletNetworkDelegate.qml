@@ -56,7 +56,7 @@ StatusListItem {
                     }
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: inactiveSwitchMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

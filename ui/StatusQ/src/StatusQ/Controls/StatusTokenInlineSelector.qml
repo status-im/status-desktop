@@ -136,7 +136,7 @@ RowLayout {
                 }
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: mouseArea
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor

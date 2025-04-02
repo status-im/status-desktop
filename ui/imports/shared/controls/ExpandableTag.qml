@@ -50,7 +50,7 @@ Control {
             anchors.topMargin: 4
             radius: parent.width/2
             color: root.backgroundColor
-            MouseArea {
+            StatusMouseArea {
                 id: mouseArea
                 anchors.fill: parent
                 hoverEnabled: true

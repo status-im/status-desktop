@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
 
 import utils 1.0
@@ -124,7 +125,7 @@ ListView {
                 text: "↕️"
                 visible: root.movable
 
-                MouseArea {
+                StatusMouseArea {
                     id: dragArea
 
                     property bool held: pressed
@@ -167,7 +168,7 @@ ListView {
 
                         text: `<u>${roleName}</u>: ${mayBeImage ? `<img src="${value}" width="15" height="15">`
                                                          : valueSanitized}${separator}`
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
 
                             onClicked: root.rowClicked(
