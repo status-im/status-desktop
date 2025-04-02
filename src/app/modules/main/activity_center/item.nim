@@ -14,6 +14,11 @@ type Item* = ref object
   membershipStatus: ActivityCenterMembershipStatus
   sectionId: string
   name: string
+  title: string
+  description: string
+  content: string
+  imageUrl: string
+  link: string
   author: string
   notificationType: ActivityCenterNotificationType
   timestamp: int64
@@ -33,6 +38,11 @@ proc initItem*(
   membershipStatus: ActivityCenterMembershipStatus,
   sectionId: string,
   name: string,
+  title: string,
+  description: string,
+  content: string,
+  imageUrl: string,
+  link: string,
   author: string,
   notificationType: ActivityCenterNotificationType,
   timestamp: int64,
@@ -52,6 +62,11 @@ proc initItem*(
   result.membershipStatus = membershipStatus
   result.sectionId = sectionId
   result.name = name
+  result.title = title
+  result.description = description
+  result.content = content
+  result.imageUrl = imageUrl
+  result.link = link
   result.author = author
   result.notificationType = notificationType
   result.timestamp = timestamp
@@ -68,6 +83,11 @@ proc `$`*(self: Item): string =
   result = fmt"""activity_center/Item(
     id: {self.id},
     name: {$self.name},
+    title: {$self.title},
+    description: {$self.description},
+    content: {$self.content},
+    imageUrl: {$self.imageUrl},
+    link: {$self.link},
     chatId: {$self.chatId},
     communityId: {$self.communityId},
     membershipStatus: {$self.membershipStatus.int},
@@ -89,6 +109,21 @@ proc id*(self: Item): string =
 
 proc name*(self: Item): string =
   return self.name
+
+proc title*(self: Item): string =
+  return self.title
+
+proc description*(self: Item): string =
+  return self.description
+
+proc content*(self: Item): string =
+  return self.content
+
+proc imageUrl*(self: Item): string =
+  return self.imageUrl
+
+proc link*(self: Item): string =
+  return self.link
 
 proc author*(self: Item): string =
   return self.author
