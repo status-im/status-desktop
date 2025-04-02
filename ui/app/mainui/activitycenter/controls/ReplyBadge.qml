@@ -50,7 +50,7 @@ Badge {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: hoverArea
         hoverEnabled: true
         anchors.fill: layout

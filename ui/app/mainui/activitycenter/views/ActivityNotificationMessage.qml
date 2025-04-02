@@ -69,7 +69,7 @@ ActivityNotificationBase {
         onItemChanged: root.updateContactDetails()
     }
 
-    bodyComponent: MouseArea {
+    bodyComponent: StatusMouseArea {
         implicitWidth: parent.width
         implicitHeight: messageView.implicitHeight
         hoverEnabled: root.messageBadgeComponent

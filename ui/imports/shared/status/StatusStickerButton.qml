@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQml 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -157,7 +158,7 @@ StatusButton {
         maxWidth: 300
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: !root.isPending ? Qt.PointingHandCursor : undefined
         onClicked: {

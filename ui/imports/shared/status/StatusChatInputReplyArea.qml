@@ -134,7 +134,7 @@ Rectangle {
             root.contentType = -1
             root.closeButtonClicked()
         }
-        MouseArea {
+        StatusMouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onPressed: mouse.accepted = false

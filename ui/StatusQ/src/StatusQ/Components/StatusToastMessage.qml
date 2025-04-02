@@ -139,7 +139,7 @@ Control {
         StatusToastMessage {
             id: toastMessage
         }
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             onClicked: {
                 toastMessage.open(qsTr("Verification Request Sent"), "", "checkmark-circle", 1, false,"");
@@ -274,7 +274,7 @@ Control {
     contentItem: Item {
         implicitWidth: layout.implicitWidth
         implicitHeight: layout.implicitHeight
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             onMouseXChanged: {
                 root.open = (mouseX < (root.width/3));

@@ -86,7 +86,7 @@ Rectangle {
 
                 // disable interactions w/o looking disabled
                 control.hoverEnabled: false
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     onPressed: mouse.accepted = true
                 }

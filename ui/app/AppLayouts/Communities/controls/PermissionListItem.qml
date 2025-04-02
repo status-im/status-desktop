@@ -47,9 +47,9 @@ StatusListItem {
         }
     ]
 
-    // using MouseArea instead of build-in 'clicked' signal to avoid
+    // using StatusMouseArea instead of build-in 'clicked' signal to avoid
     // intercepting event by the StatusRadioButton
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         onClicked: {
             if (!radioButton.checked)

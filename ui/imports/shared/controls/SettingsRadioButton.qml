@@ -31,7 +31,7 @@ Item {
         anchors.verticalCenter: radioButton.verticalCenter
     }
 
-    MouseArea {
+    StatusMouseArea {
         enabled: !radioButton.checked
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor

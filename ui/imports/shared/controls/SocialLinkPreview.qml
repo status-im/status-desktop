@@ -52,7 +52,7 @@ Rectangle {
         visible: mouseArea.containsMouse
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true

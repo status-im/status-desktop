@@ -96,7 +96,7 @@ Loader {
 
             readonly property alias hovered: mouseArea.containsMouse
 
-            MouseArea {
+            StatusMouseArea {
                 id: mouseArea
 
                 anchors.fill: parent

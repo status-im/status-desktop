@@ -132,7 +132,7 @@ StatusDialog {
                     shouldRepeatHeader: true
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     anchors.fill: parent
                     hoverEnabled: true
@@ -183,7 +183,7 @@ StatusDialog {
                     anchors.rightMargin: Theme.bigPadding
                     anchors.verticalCenter: parent.verticalCenter
                     ButtonGroup.group: pinButtonGroup
-                    onCheckedChanged: { // NB this should be `onToggled` but MouseArea above handles the whole delegate
+                    onCheckedChanged: { // NB this should be `onToggled` but StatusMouseArea above handles the whole delegate
                         root.messageToUnpin = checked ? model.id : ""
                     }
                 }

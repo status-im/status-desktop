@@ -21,7 +21,7 @@ Rectangle {
     border.width: 1
     color: root.highlighted || mouseArea.containsMouse ? Theme.palette.primaryColor2 : "transparent"
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true

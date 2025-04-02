@@ -1,11 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-MouseArea {
+StatusMouseArea {
     id: root
 
     signal close()
@@ -50,7 +51,7 @@ MouseArea {
             }
 
 
-            MouseArea {
+            StatusMouseArea {
                 id: closeSensor
                 anchors.fill: parent
 
@@ -76,7 +77,7 @@ MouseArea {
                 scale: 0.27
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: miniSensor
                 anchors.fill: parent
 
@@ -101,7 +102,7 @@ MouseArea {
                 scale: 0.25
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: maxiSensor
                 anchors.fill: parent
 

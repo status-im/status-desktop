@@ -219,7 +219,7 @@ Rectangle {
         z: root.z - 1
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor

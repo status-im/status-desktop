@@ -161,7 +161,7 @@ StatusDropdown {
                 size: StatusCheckBox.Size.Small
                 indicator.anchors.rightMargin: 12
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 
@@ -210,7 +210,7 @@ StatusDropdown {
                         size: StatusCheckBox.Size.Small
                         checked: root.selectedKeys.has(model.airdropAddress)
 
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
 

@@ -132,7 +132,7 @@ Item {
 
                 color: Theme.palette.baseColor1
 
-                MouseArea {
+                StatusMouseArea {
                     id: copyMouseArea
 
                     anchors.fill: parent
@@ -174,7 +174,7 @@ Item {
         radius: 36
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mainMouseArea
 
         anchors.fill: parent

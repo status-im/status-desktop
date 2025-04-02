@@ -23,7 +23,7 @@ StatusIcon {
         root.color = Qt.binding(function(){ return mouseArea.containsMouse? Theme.palette.primaryColor1 : Theme.palette.baseColor1 })
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true

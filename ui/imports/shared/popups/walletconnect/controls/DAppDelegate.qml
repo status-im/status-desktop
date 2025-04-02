@@ -10,7 +10,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import shared.popups.walletconnect 1.0
 
-MouseArea {
+StatusMouseArea {
     id: root
     implicitHeight: 50
 

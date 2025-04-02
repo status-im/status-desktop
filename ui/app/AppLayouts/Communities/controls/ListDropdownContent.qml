@@ -189,7 +189,7 @@ StatusListView {
                     height: 16
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 

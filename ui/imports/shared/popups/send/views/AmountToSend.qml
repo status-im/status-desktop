@@ -248,7 +248,7 @@ Control {
                 visible: !root.mainInputLoading
 
                 // handle TextField scroll and click to change cursor position
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     enabled: textField.focus
                     onClicked: {
@@ -318,7 +318,7 @@ Control {
                 customColor: Theme.palette.directColor5
                 loading: root.bottomTextLoading
 
-                MouseArea {
+                StatusMouseArea {
                     objectName: "amountToSend_mouseArea"
 
                     anchors.fill: parent

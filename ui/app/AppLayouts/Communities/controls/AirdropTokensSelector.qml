@@ -60,7 +60,7 @@ StatusFlowSelector {
                                    : Theme.palette.dangerColor3
                 radius: root.placeholderItemHeight / 2
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.itemClicked(model.index, mouse, delegateRoot)

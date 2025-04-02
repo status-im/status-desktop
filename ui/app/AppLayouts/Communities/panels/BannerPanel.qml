@@ -25,7 +25,7 @@ Rectangle {
 
     signal buttonClicked()
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
         propagateComposedEvents: true

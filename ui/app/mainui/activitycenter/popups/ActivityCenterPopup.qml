@@ -51,7 +51,7 @@ Popup {
         })
     }
 
-    Overlay.modal: MouseArea { // eat every event behind the popup
+    Overlay.modal: StatusMouseArea { // eat every event behind the popup
         hoverEnabled: true
         onPressed: (event) => {
                        event.accept()

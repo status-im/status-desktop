@@ -482,7 +482,7 @@ Item {
                                     radius: 36
                                 }
                             }
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: Global.openLink(token.websiteUrl)
@@ -506,7 +506,7 @@ Item {
                                     radius: 36
                                 }
                             }
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: Global.switchToCommunity(token.communityId)

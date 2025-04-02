@@ -6,6 +6,7 @@ import shared.panels 1.0
 import utils 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 Loader {
@@ -64,7 +65,7 @@ Loader {
 
             active: root.interactive
 
-            sourceComponent: MouseArea {
+            sourceComponent: StatusMouseArea {
                 cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 hoverEnabled: !root.disabled
                 onClicked: {

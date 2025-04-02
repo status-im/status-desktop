@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -108,7 +109,7 @@ Popup {
                 color: Theme.palette.textColor
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: closeModalMouseArea
                 objectName: "closeSensor"
                 cursorShape: Qt.PointingHandCursor

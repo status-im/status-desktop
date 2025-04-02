@@ -163,7 +163,7 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
 
@@ -186,7 +186,7 @@ Rectangle {
             Layout.rightMargin: Theme.padding
             Layout.topMargin: Theme.padding
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.RightButton
                 onClicked: mouse.accepted = true
@@ -321,7 +321,7 @@ Rectangle {
                     bottomPadding: Theme.bigPadding
 
                     background: Rectangle {
-                        MouseArea {
+                        StatusMouseArea {
                             id: mouseArea
                             anchors.fill: parent
                             acceptedButtons: Qt.LeftButton
@@ -444,7 +444,7 @@ Rectangle {
                     spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
                     onClicked: root.selectSavedAddresses()
 
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
                         cursorShape: Qt.PointingHandCursor

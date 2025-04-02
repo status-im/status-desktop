@@ -9,6 +9,8 @@ import SortFilterProxyModel 0.2
 
 import Storybook 1.0
 
+import StatusQ.Core 0.1
+
 SplitView {
     id: root
 
@@ -75,7 +77,7 @@ SplitView {
 
             Drag.active: dragArea.drag.active
 
-            MouseArea {
+            StatusMouseArea {
                 id: dragArea
 
                 anchors.fill: parent

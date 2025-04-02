@@ -216,7 +216,7 @@ Button {
 
     // stop the mouse clicks in the "loading" or non-interactive state w/o disabling the whole button
     // as this would make it impossible to have hover events or a tooltip
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         acceptedButtons: Qt.AllButtons

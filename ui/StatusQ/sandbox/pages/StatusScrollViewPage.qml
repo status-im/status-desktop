@@ -35,7 +35,7 @@ Rectangle {
             Qt.openUrlExternally(link)
         }
 
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             visible: !!docs.hoveredLink
             cursorShape: Qt.PointingHandCursor

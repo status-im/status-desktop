@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -53,7 +54,7 @@ Rectangle {
                 border.color: Theme.palette.white
                 color: "#19FFFFFF"
             }
-            MouseArea {
+            StatusMouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: Global.openBackUpSeedPopup()
@@ -76,7 +77,7 @@ Rectangle {
         color: Theme.palette.white
         opacity: 0.7
     }
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: closeImg
         cursorShape: Qt.PointingHandCursor
         onClicked: ParallelAnimation {

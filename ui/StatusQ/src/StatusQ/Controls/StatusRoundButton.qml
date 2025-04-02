@@ -149,7 +149,7 @@ Rectangle {
         return backgroundSettings.disabledColor
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
 
         anchors.fill: parent

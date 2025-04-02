@@ -213,7 +213,7 @@ StatusDialog {
         property string explorerUrl
         property bool isTest
 
-        MouseArea {
+        StatusMouseArea {
             id: sensor
 
             anchors.fill: parent

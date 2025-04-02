@@ -157,7 +157,7 @@ StatusModal {
                     contentItem: Item {
                         anchors.fill: parent
 
-                        MouseArea {
+                        StatusMouseArea {
                             id: sensor
                             anchors.fill: parent
                             hoverEnabled: true
@@ -297,7 +297,7 @@ StatusModal {
                         }
 
                         propagateTitleClicks: !root.acceptsTitleClick(titleId)
-                        onTitleClicked: {
+                        onTitleClicked: (titleId, mouse) => {
                             if (root.acceptsTitleClick(titleId)) {
                                 root.resultItemTitleClicked(titleId)
                             }

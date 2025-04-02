@@ -64,7 +64,7 @@ Rectangle {
         onEditButtonClicked: statusModalHeader.editButtonClicked()
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: imageWithTitle
         visible: !!statusModalHeader.popupMenu
         cursorShape: Qt.PointingHandCursor

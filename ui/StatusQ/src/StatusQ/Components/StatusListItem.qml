@@ -102,7 +102,7 @@ Rectangle {
     property int subTitleBadgeLoaderAlignment: Qt.AlignVCenter
 
     signal clicked(string itemId, var mouse)
-    signal titleClicked(string titleId)
+    signal titleClicked(string titleId, var mouse)
     signal iconClicked(var mouse)
 
     enum Type {
@@ -121,7 +121,7 @@ Rectangle {
     color: bgColor
 
     property color bgColor: {
-        if (sensor.containsMouse || root.highlighted) {
+        if (sensor.containsMouse || statusListItemTitleMouseArea.containsMouse || root.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
                     return Theme.palette.baseColor2
@@ -143,7 +143,7 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: (mouse) => {
@@ -151,7 +151,7 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
 
         objectName: root.objectName + "_sensor"
@@ -243,15 +243,16 @@ Rectangle {
                     visible: statusListItemTitle.truncated && statusListItemTitleMouseArea.containsMouse
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: statusListItemTitleMouseArea
                     anchors.fill: parent
                     enabled: root.enabled
                     cursorShape: !root.forceDefaultCursor && sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     propagateComposedEvents: root.propagateTitleClicks
                     onClicked: (mouse) => {
-                        root.titleClicked(root.titleId)
+                        root.titleClicked(root.titleId, mouse)
                         mouse.accepted = false
                     }
                 }

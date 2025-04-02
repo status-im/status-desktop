@@ -100,7 +100,7 @@ SplitView {
                                   + " Community"
                         }
 
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
 
                             onClicked: doubleFlickable.flip1Folding()
@@ -175,7 +175,7 @@ SplitView {
                                   + " Others"
                         }
 
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
 
                             onClicked: doubleFlickable.flip2Folding()

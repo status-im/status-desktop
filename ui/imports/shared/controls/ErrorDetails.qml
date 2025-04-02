@@ -62,7 +62,7 @@ Rectangle {
             color: Theme.palette.primaryColor1
             font.pixelSize: Theme.tertiaryTextFontSize
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 onClicked: {
                     d.detailsVisible = true

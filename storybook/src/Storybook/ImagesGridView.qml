@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQml.Models 2.15
 
+import StatusQ.Core 0.1
+
 GridView {
     id: root
 
@@ -33,7 +35,7 @@ GridView {
                 running: image.status !== Image.Ready
             }
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
 
                 onClicked: root.clicked(model.index)

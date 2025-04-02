@@ -252,7 +252,7 @@ Item {
                     font.pixelSize: 13
                     elide: Text.ElideRight
                 }
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     width: seedSuggestionsList.width
                     height: parent.height

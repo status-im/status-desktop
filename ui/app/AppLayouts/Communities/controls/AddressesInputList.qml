@@ -155,7 +155,7 @@ Control {
                 icon: "delete"
                 color: Theme.palette.directColor1
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 

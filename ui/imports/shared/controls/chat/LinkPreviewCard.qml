@@ -142,7 +142,7 @@ CalloutCard {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: root
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor

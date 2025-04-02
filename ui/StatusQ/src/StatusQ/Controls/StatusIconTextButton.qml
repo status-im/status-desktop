@@ -76,7 +76,7 @@ AbstractButton {
      }
 
     // TODO: To remove when switch to Qt 5.15
-    MouseArea {
+    StatusMouseArea {
       anchors.fill: parent
       cursorShape: Qt.PointingHandCursor
       acceptedButtons: Qt.NoButton

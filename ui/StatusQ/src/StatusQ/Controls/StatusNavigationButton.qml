@@ -34,7 +34,7 @@ Button {
 
 
         // otherwise there is no pointing hand cursor when button is hovered
-        MouseArea {
+        StatusMouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.NoButton
             cursorShape: Qt.PointingHandCursor

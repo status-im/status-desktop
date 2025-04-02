@@ -63,7 +63,7 @@ StatusModal {
                 text: qsTr("Add a new node")
                 color: Theme.palette.primaryColor1
                 width: parent.width
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: Global.openPopup(wakuNodeModalComponent)
