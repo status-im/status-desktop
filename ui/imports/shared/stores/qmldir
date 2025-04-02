@@ -10,3 +10,4 @@ NetworksStore 1.0 NetworksStore.qml
 PermissionsStore 1.0 PermissionsStore.qml
 RootStore 1.0 RootStore.qml
 UtilsStore 1.0 UtilsStore.qml
+CurrenciesModel 1.0 CurrenciesModel.qml

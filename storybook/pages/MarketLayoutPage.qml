@@ -17,11 +17,9 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         tokensModel: marketTokensModel
-        formatCurrencyAmount: function(cryptoValue) {
-            return "%L1 %2".arg(cryptoValue).arg("USD")
-        }
         loading: loadingCheckbox.checked
         totalTokensCount: 5679
+        currencySymbol: "$"
         onRequestLaunchSwap: console.warn("Request Launch Swap")
         onFetchMarketTokens: console.warn("Fetch Market Tokens with PageSize: %1 and PageNumber:%2".arg(pageSize).arg(pageNumber))
     }
