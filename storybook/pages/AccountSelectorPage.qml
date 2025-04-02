@@ -132,8 +132,8 @@ SplitView {
         tokensBySymbolModel: d.assetsStore.walletTokensStore.plainTokensBySymbolModel
         filteredFlatNetworksModel: d.filteredFlatNetworksModel
 
-        selectedTokenKey: selectedTokenComboBox.currentValue
-        selectedNetworkChainId: networksComboBox.currentValue
+        selectedTokenKey: selectedTokenComboBox.currentValue ?? ""
+        selectedNetworkChainId: networksComboBox.currentValue ?? -1
 
         fnFormatCurrencyAmountFromBigInt: function(balance, symbol, decimals, options = null) {
             return d.currencyStore.formatCurrencyAmountFromBigInt(balance, symbol, decimals, options)

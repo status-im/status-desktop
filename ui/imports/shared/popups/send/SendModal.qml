@@ -330,13 +330,9 @@ StatusDialog {
     }
 
     header: Item {
-        implicitHeight: accountSelector.implicitHeight
-        implicitWidth: accountSelector.implicitWidth
-        anchors.top: parent.top
-        anchors.topMargin: -height - 18
-
         AccountSelectorHeader {
             id: accountSelector
+            y: -height - 18
             model: SortFilterProxyModel {
                 sourceModel: popup.store.accounts
 

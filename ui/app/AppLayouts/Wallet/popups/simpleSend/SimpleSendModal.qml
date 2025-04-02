@@ -453,9 +453,6 @@ StatusDialog {
         id: sendModalcontentItem
 
         anchors.fill: parent
-        anchors.top: parent.top
-
-        implicitWidth: parent.width
 
         // Floating account Selector
         AccountSelectorHeader {
@@ -463,8 +460,7 @@ StatusDialog {
 
             objectName: "accountSelector"
 
-            anchors.top: parent.top
-            anchors.topMargin: -accountSelector.height - Theme.padding
+            y: -height - Theme.bigPadding
             anchors.left: parent.left
             anchors.leftMargin: -Theme.xlPadding
 

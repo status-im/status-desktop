@@ -135,7 +135,7 @@ SplitView {
                     if (!number)
                         return "N/A"
                     if (!symbol)
-                        symbol = root.currentCurrency
+                        symbol = "USD"
                     let options = {}
                     if (!!noSymbolOption)
                         options = {noSymbol: true}
@@ -143,7 +143,13 @@ SplitView {
                 }
             }
             networksStore: SharedStores.NetworksStore {
-                readonly property var activeNetworks: NetworksModel.flatNetworks
+                readonly property SortFilterProxyModel activeNetworks: SortFilterProxyModel {
+                    sourceModel: NetworksModel.flatNetworks
+                    filters: [
+                        ValueFilter { roleName: "isTest"; value: areTestNetworksEnabledCheckbox.checked },
+                        ValueFilter { roleName: "isActive"; value: true }
+                    ]
+                }
             }
             swapFormData: SwapInputParamsForm {
                 onSelectedAccountAddressChanged: {
@@ -224,7 +230,13 @@ SplitView {
                 id: accountComboBox
                 textRole: "name"
                 valueRole: "address"
-                model: adaptor.nonWatchAccounts
+                model: SortFilterProxyModel {
+                    sourceModel: dSwapStore.accounts
+                    filters: ValueFilter {
+                        roleName: "canSend"
+                        value: true
+                    }
+                }
                 currentIndex: 0
             }
 
