@@ -82,6 +82,11 @@ pipeline {
   }
 
   stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
     stage('Deps') {
       steps {
         sh 'make update'

@@ -32,6 +32,11 @@ pipeline {
   }
 
   stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
     stage('Build') {
       parallel {
         stage('Linux/x86_64 and E2E') {
