@@ -71,6 +71,11 @@ pipeline {
   }
 
   stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
     stage('Deps') {
       steps { script {
         nix.shell('make update', pure: true)

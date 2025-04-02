@@ -98,6 +98,11 @@ pipeline {
   }
 
   stages {
+    stage('Cleanup Workspace') {
+      steps {
+        sh './scripts/clean-git.sh'
+      }
+    }
     stage('Prep') {
       steps { script {
         setNewBuildName()
