@@ -11,5 +11,5 @@ Image {
     fillMode: Image.PreserveAspectFit
     mipmap: true
     antialiasing: true
-    source: emojiId ? `../../assets/twemoji/svg/${emojiId}.svg` : ""
+    source: emojiId ? Qt.resolvedUrl(`../../assets/twemoji/svg/${emojiId}.svg`) : ""
 }
