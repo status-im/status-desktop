@@ -19,8 +19,8 @@ SplitView {
         property string id: "1"
         property string title: "Swaps around the corner!"
         property string description: "Status Desktop’s next release brings the app up-to-speed with Status Mobile. That means: SWAPS!"
-        property int timestamp: Date.now()
-        property int previousTimestamp: 0
+        property double timestamp: Date.now()
+        property double previousTimestamp: 0
         property bool read: false
         property bool dismissed: false
         property bool accepted: false
@@ -39,7 +39,7 @@ SplitView {
 
             notification: notificationMock
 
-            onLearnMoreClicked: logs.logEvent("ActivityNotificationNewsMessages::onLearnMoreClicked")
+            onReadMoreClicked: logs.logEvent("ActivityNotificationNewsMessage::onReadMoreClicked")
         }
 
     }

@@ -11,7 +11,7 @@ import shared.panels 1.0
 ActivityNotificationBase {
     id: root
 
-    signal learnMoreClicked
+    signal readMoreClicked
 
     bodyComponent: RowLayout {
         spacing: 8
@@ -49,9 +49,9 @@ ActivityNotificationBase {
 
     ctaComponent: StatusFlatButton {
         size: StatusBaseButton.Size.Small
-        text: qsTr("Learn more")
+        text: qsTr("Read more")
         onClicked: {
-            root.learnMoreClicked()
+            root.readMoreClicked()
         }
     }
 }
