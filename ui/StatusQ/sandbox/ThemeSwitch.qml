@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 Item {
@@ -12,7 +13,7 @@ Item {
     width: themeSwitch.width
     height: themeSwitch.height
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         hoverEnabled: true
         anchors.fill: parent

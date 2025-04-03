@@ -162,7 +162,7 @@ Item {
                 HoverHandler {
                     id: handler1
                 }
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton
                     cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -192,7 +192,7 @@ Item {
                     border.color: Theme.palette.indirectColor3
                     color: Theme.palette.getColor("white", button.hovered ? 0.4 : 0.1)
                 }
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton
                     cursorShape: Qt.PointingHandCursor
@@ -247,7 +247,7 @@ Item {
             color: Theme.palette.indirectColor1
             opacity: closeButtonMouseArea.containsMouse ? 1 : 0.7
 
-            MouseArea {
+            StatusMouseArea {
                 id: closeButtonMouseArea
                 anchors.fill: parent
                 hoverEnabled: true

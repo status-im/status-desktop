@@ -197,7 +197,7 @@ Item {
                 }
             }
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: true
                 onPressed: {

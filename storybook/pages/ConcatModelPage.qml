@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 
 import Qt.labs.qmlmodels 1.0
 
@@ -99,7 +100,7 @@ Item {
                         font.bold: true
                         text: model.name
 
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
 
                             onClicked: {
@@ -152,7 +153,7 @@ Item {
                         font.bold: true
                         text: model.name
 
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
 
                             onClicked: secondModel.setProperty(

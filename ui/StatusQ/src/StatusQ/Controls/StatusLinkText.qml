@@ -52,7 +52,7 @@ StatusBaseText {
     font.weight: Font.Medium
     font.underline: root.containsMouse
 
-    MouseArea {
+    StatusMouseArea {
         id: textMouseArea
         anchors.fill: parent
         hoverEnabled: true

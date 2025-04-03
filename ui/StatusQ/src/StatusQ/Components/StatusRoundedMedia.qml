@@ -169,7 +169,7 @@ StatusRoundedComponent {
         else return root.manualMaxDimension
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         enabled: root.enabled && root.interactive && mediaLoader.visible && mediaLoader.item
         cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor

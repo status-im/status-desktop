@@ -338,7 +338,7 @@ Item {
                     radioButtonSize: StatusRadioButton.Size.Small
                     selected: model.selected
 
-                    MouseArea {
+                    StatusMouseArea {
                         id: sensor1
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -380,7 +380,7 @@ Item {
                     radioButtonSize: StatusRadioButton.Size.Small
                     selected: model.selected
 
-                    MouseArea {
+                    StatusMouseArea {
                         id: sensor2
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor

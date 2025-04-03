@@ -65,7 +65,7 @@ Badge {
             font.weight: Font.Medium
             font.pixelSize: 13
 
-            MouseArea {
+            StatusMouseArea {
                 id: replyArea
                 hoverEnabled: true
                 anchors.fill: parent

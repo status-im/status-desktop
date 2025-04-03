@@ -140,7 +140,7 @@ SettingsContentBase {
                         visible: model.customized
                         icon: "next"
                         color: Theme.palette.baseColor1
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
@@ -152,7 +152,7 @@ SettingsContentBase {
                         visible: !model.customized
                         icon: "add"
                         color: Theme.palette.primaryColor1
-                        MouseArea {
+                        StatusMouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {

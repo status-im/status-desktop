@@ -48,7 +48,7 @@ Control {
         border.color: root.bgBorderColor
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
@@ -82,7 +82,7 @@ Control {
             color: Theme.palette.primaryColor1
             icon: "close-circle"
             visible: root.closeButtonVisible
-            MouseArea {
+            StatusMouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: (mouse) => {

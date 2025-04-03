@@ -61,7 +61,7 @@ Rectangle {
                 color: Theme.palette.directColor1
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: minimizeSensor
                 anchors.fill: parent
                 hoverEnabled: true
@@ -84,7 +84,7 @@ Rectangle {
                 color: Theme.palette.directColor1
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: maximizeSensor
                 anchors.fill: parent
                 hoverEnabled: true
@@ -107,7 +107,7 @@ Rectangle {
                 color: closeSensor.containsMouse ? Theme.palette.white : Theme.palette.directColor1
             }
 
-            MouseArea {
+            StatusMouseArea {
                 id: closeSensor
                 anchors.fill: parent
                 hoverEnabled: true

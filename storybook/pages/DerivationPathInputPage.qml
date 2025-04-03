@@ -57,7 +57,7 @@ SplitView {
                     icon: "chevron-down"
                     color: Theme.palette.baseColor1
 
-                    MouseArea {
+                    StatusMouseArea {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor

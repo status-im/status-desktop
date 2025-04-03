@@ -6,6 +6,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -53,7 +54,7 @@ Rectangle {
         anchors.topMargin: 6
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true

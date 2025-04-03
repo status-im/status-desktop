@@ -1019,7 +1019,7 @@ Rectangle {
                 onTriggered: control.openImageDialog()
             }
 
-            MouseArea {
+            StatusMouseArea {
                 implicitWidth: paymentRequestMenuItem.width
                 implicitHeight: paymentRequestMenuItem.height
                 hoverEnabled: true
@@ -1445,7 +1445,7 @@ Rectangle {
                                 highlightedHyperlink: linkPreviewArea.hoveredUrl
                                 hyperlinkHoverColor: Theme.palette.primaryColor3
                             }
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.NoButton
                                 enabled: parent.hoveredLink
@@ -1508,7 +1508,7 @@ Rectangle {
                             }
                             text: visible ? remainingChars.toString() : ""
 
-                            MouseArea {
+                            StatusMouseArea {
                                 id: mouseArea
                                 anchors.fill: parent
                                 hoverEnabled: true

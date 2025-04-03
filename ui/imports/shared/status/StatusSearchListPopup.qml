@@ -141,7 +141,7 @@ Popup {
                 asset.letterSize: asset._twoLettersSize
                 ringSettings.ringSpecModel: model ? model.colorHash : undefined
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
 
                     hoverEnabled: true
@@ -159,7 +159,7 @@ Popup {
                 anchors.fill: parent
                 active: !listView.selectByHover
 
-                sourceComponent: MouseArea {
+                sourceComponent: StatusMouseArea {
                     hoverEnabled: true
                     onPositionChanged: listView.selectByHover = true
                 }

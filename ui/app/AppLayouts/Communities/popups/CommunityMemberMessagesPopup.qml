@@ -109,7 +109,7 @@ StatusDialog {
                     shouldRepeatHeader: true
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     id: mouseArea
                     acceptedButtons: Qt.LeftButton
                     cursorShape: Qt.PointingHandCursor

@@ -57,8 +57,9 @@ FocusScope {
         readonly property int bottomDirtyToastMargin: 36
     }
 
-    MouseArea {
+    StatusMouseArea {
         anchors.fill: parent
+        propagateComposedEvents: true
         onClicked: { root.baseAreaClicked() }
     }
 
@@ -120,11 +121,12 @@ FocusScope {
             id: contentLayout
             width: scrollView.availableWidth
 
-            MouseArea {
+            StatusMouseArea {
                 onClicked: root.baseAreaClicked()
                 width: contentWrapper.implicitWidth
                 height: contentWrapper.implicitHeight
                 hoverEnabled: true
+                propagateComposedEvents: true
 
                 Column {
                     id: contentWrapper

@@ -24,7 +24,7 @@ Rectangle {
 
     color: Theme.palette.statusListItem.backgroundColor
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         anchors.fill: parent
         hoverEnabled: true

@@ -31,7 +31,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: sep1.bottom
         anchors.topMargin: Theme.smallPadding
-        MouseArea {
+        StatusMouseArea {
             cursorShape: Qt.PointingHandCursor
             anchors.fill: parent
             onClicked: {

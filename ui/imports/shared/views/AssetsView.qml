@@ -259,7 +259,7 @@ Control {
                     if (mouse.button === Qt.LeftButton)
                         root.assetClicked(model.key)
                     else if (mouse.button === Qt.RightButton)
-                        tokenContextMenu.createObject(this, { model }).popup(mouse)
+                        tokenContextMenu.createObject(this, { model }).popup(mouse.x, mouse.y)
                 }
 
                 onCommunityClicked: root.communityClicked(model.communityId)

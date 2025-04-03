@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtGraphicalEffects 1.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import shared.panels 1.0
@@ -106,7 +107,7 @@ Item {
             }
         }
 
-        MouseArea {
+        StatusMouseArea {
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent

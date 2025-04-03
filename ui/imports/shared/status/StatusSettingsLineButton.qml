@@ -111,7 +111,7 @@ Rectangle {
         color: Theme.palette.secondaryText
     }
 
-    MouseArea {
+    StatusQCore.StatusMouseArea {
         anchors.fill: parent
         enabled: root.isEnabled
         hoverEnabled: true

@@ -1,6 +1,7 @@
 #include "StatusQ/systemutilsinternal.h"
 
 #include <QCoreApplication>
+#include <QQuickWindow>
 #include <QDir>
 #include <QMimeDatabase>
 #include <QNetworkAccessManager>
@@ -79,4 +80,20 @@ void SystemUtilsInternal::downloadImageByUrl(
                           "Downloading image failed while saving to file:"
                        << targetFile;
     });
+}
+
+void SystemUtilsInternal::synthetizeRightClick(QQuickItem* item, qreal x, qreal y, Qt::KeyboardModifiers modifiers) const
+{
+    if (!item)
+        return;
+
+    // Release left button first to avoid any unwanted side effects
+    auto leftClickRelease = new QMouseEvent(QEvent::MouseButtonRelease, {x, y}, Qt::LeftButton, Qt::NoButton, modifiers);
+    auto rightClickPress = new QMouseEvent(QEvent::MouseButtonPress, {x, y}, Qt::RightButton, Qt::NoButton, modifiers);
+    auto rightClickRelease = new QMouseEvent(QEvent::MouseButtonRelease, {x, y}, Qt::RightButton, Qt::NoButton, modifiers);
+    
+    // Post the events to the item and pass the ptr ownership to it
+    QCoreApplication::postEvent(item, leftClickRelease);
+    QCoreApplication::postEvent(item, rightClickPress);
+    QCoreApplication::postEvent(item, rightClickRelease);
 }

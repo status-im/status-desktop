@@ -19,7 +19,7 @@ Item {
     implicitWidth: 40
     implicitHeight: 40
 
-    MouseArea {
+    StatusMouseArea {
         id: sensor
         enabled: root.enabled
         cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor

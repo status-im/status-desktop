@@ -1,6 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
+import StatusQ.Core 0.1
+
 Popup {
     id: root
 
@@ -46,7 +48,7 @@ Popup {
                         anchors.centerIn: parent
                         asynchronous: true
 
-                        MouseArea {
+                        StatusMouseArea {
                             id: ma
                             anchors.fill: parent
                             onClicked: root.selected(model.image)

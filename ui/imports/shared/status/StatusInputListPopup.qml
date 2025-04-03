@@ -199,7 +199,7 @@ Popup {
                 font.pixelSize: 15
             }
 
-            MouseArea {
+            StatusMouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 hoverEnabled: true

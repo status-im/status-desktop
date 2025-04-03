@@ -96,7 +96,7 @@ Row {
                 }
             }
 
-            MouseArea {
+            StatusMouseArea {
                 anchors.fill: parent
 
                 cursorShape: enabled ? Qt.PointingHandCursor

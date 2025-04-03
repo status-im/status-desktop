@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 import StatusQ 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
@@ -13,7 +14,7 @@ import StatusQ.Controls.Validators 0.1
 
    The \c StatusPinInput displays N visual circles corresponging with the pin length to introduce.
 
-   It runs a blinking animation when the control is focused and ready to introduce the pin, as well as, an hovering feedback when user is in the MouseArea where is able to click into the control.
+   It runs a blinking animation when the control is focused and ready to introduce the pin, as well as, an hovering feedback when user is in the StatusMouseArea where is able to click into the control.
 
    This pin input control allows introducing validators.
 
@@ -314,12 +315,12 @@ Item {
         }
     }
 
-    MouseArea {
+    StatusMouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
 
-        // MouseArea behavior:
+        // StatusMouseArea behavior:
         onClicked: forceFocus()
         onContainsMouseChanged: { if(containsMouse) { cursorShape = Qt.PointingHandCursor } }
     }

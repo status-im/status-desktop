@@ -90,7 +90,7 @@ StatusDialog {
                     topPadding: Theme.halfPadding
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     onClicked: {
                         parent.checked = true

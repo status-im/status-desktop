@@ -4,8 +4,9 @@ import QtQuick.Layouts 1.15
 
 import Monitoring 1.0
 import Qt.labs.settings 1.0
-
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+
+import StatusQ.Core 0.1
 
 Component {
     ColumnLayout {
@@ -91,7 +92,7 @@ Component {
                                 }
                             }
 
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
 
                                 onClicked: {
@@ -229,7 +230,7 @@ Component {
                                 }
                             }
 
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
 
                                 onClicked: {

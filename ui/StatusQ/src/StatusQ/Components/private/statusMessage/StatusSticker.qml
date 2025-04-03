@@ -56,7 +56,7 @@ Loader {
                     statusSticker.stickerLoaded()
                 }
             }
-            MouseArea {
+            StatusMouseArea {
                 enabled: !noMouseArea && (sticker.status === Image.Ready)
                 cursorShape: noHover ? Qt.ArrowCursor : Qt.PointingHandCursor
                 anchors.fill: parent
@@ -78,7 +78,7 @@ Loader {
             StatusIcon {
                 icon: "refresh"
                 color: Theme.palette.directColor1
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.reload()

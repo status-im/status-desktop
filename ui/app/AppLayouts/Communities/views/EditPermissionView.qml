@@ -424,7 +424,7 @@ StatusScrollView {
                     value: Theme.palette.dangerColor1
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
 

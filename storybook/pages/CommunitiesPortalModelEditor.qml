@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.14
 import Storybook 1.0
 import Models 1.0
 
+import StatusQ.Core 0.1
+
 ListView {
     id: root
 
@@ -115,7 +117,7 @@ ListView {
                     source: model.icon
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     onClicked: iconSelector.open()
 
@@ -149,7 +151,7 @@ ListView {
                     source: model.banner
                 }
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     onClicked: bannerSelector.open()
 

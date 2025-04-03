@@ -39,7 +39,7 @@ Control {
         border.width: 1
         border.color: Theme.palette.baseColor2
         color: mouse.containsMouse ? Theme.palette.baseColor2 : Theme.palette.transparent
-        MouseArea {
+        StatusMouseArea {
             id: mouse
             anchors.fill: parent
             hoverEnabled: true

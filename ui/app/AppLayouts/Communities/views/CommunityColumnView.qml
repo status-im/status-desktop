@@ -465,7 +465,7 @@ Item {
                 text: qsTr("Create channel or category")
                 font.underline: true
 
-                MouseArea {
+                StatusMouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {

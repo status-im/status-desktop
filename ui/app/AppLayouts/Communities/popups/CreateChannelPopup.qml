@@ -434,7 +434,7 @@ StatusStackModal {
                             horizontalAlignment: Qt.AlignHCenter
                             text: qsTr("Export the Discord channel’s chat history data using %1").arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter/releases/tag/2.40.4'>DiscordChatExporter</a>")
                             onLinkActivated: Global.openLink(link)
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.NoButton
                                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
@@ -446,7 +446,7 @@ StatusStackModal {
                             horizontalAlignment: Qt.AlignHCenter
                             text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Readme.md'>documentation</a> if you have any queries")
                             onLinkActivated: Global.openLink(link)
-                            MouseArea {
+                            StatusMouseArea {
                                 anchors.fill: parent
                                 acceptedButtons: Qt.NoButton
                                 cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor

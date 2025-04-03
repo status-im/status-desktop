@@ -162,7 +162,7 @@ StatusDropdown {
                         width: 22
                         height: 22
                         emojiId: modelData
-                        MouseArea {
+                        StatusMouseArea {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
                             onClicked: {
@@ -182,7 +182,7 @@ StatusDropdown {
                 anchors.rightMargin: d.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
                 emojiId: "1f590" + ((settings.skinColor !== "" && visible) ? ("-" + settings.skinColor) : "")
-                MouseArea {
+                StatusMouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
                     onClicked: {
@@ -239,7 +239,7 @@ StatusDropdown {
                     height: d.imageWidth
                     emojiId: model.unicode
 
-                    MouseArea {
+                    StatusMouseArea {
                         cursorShape: Qt.PointingHandCursor
                         anchors.fill: parent
                         onClicked: root.addEmoji(model.unicode)

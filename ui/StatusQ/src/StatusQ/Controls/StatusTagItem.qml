@@ -97,7 +97,7 @@ Control {
             width: d.tagIconsSize
             height: d.tagIconsSize
             icon: "close"
-            MouseArea {
+            StatusMouseArea {
                 enabled: !root.isReadonly
                 anchors.fill: parent
                 hoverEnabled: true
