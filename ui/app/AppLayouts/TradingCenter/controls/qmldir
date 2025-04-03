@@ -1,3 +1,5 @@
 TradingCenterTokenDelegate 1.0 TradingCenterTokenDelegate.qml
 TradingCenterLoadingTokenDelegate 1.0 TradingCenterLoadingTokenDelegate.qml
 TradingCenterTokenHeader 1.0 TradingCenterTokenHeader.qml
+Paginator 1.0 Paginator.qml
+TradingCenterFooter 1.0 TradingCenterFooter.qml
