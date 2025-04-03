@@ -61,6 +61,7 @@ Item {
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
+    signal messageAboutToBeSent()
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
@@ -373,6 +374,8 @@ Item {
                             console.debug("error on sending message - chat content module is not set")
                             return
                         }
+
+                        root.messageAboutToBeSent()
 
                         if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
                                                     event,
