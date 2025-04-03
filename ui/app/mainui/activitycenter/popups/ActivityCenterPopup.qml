@@ -369,6 +369,7 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
+            onReadMoreClicked: console.log("ActivityNotificationNewsMessage::onReadMoreClicked")
             onCloseActivityCenter: root.close()
         }
     }
