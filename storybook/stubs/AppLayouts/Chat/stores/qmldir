@@ -1,3 +1,4 @@
+CreateChatPropertiesStore 1.0 CreateChatPropertiesStore.qml
 RootStore 1.0 RootStore.qml
 StickersStore 1.0 StickersStore.qml
 MessageStore 1.0 MessageStore.qml
