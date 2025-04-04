@@ -24,18 +24,13 @@ Popup {
     property bool selectionAllowed: true
     property bool multiSelection: false
     property bool showManageNetworksButton: false
-    property var selection: []
+    property alias selection: scrollView.selection
 
     property bool showNewChainIcon: false
 
     signal toggleNetwork(int chainId, int index)
     signal manageNetworksClicked()
 
-    onSelectionChanged: {
-        if (root.selection !== scrollView.selection) {
-            scrollView.selection = root.selection
-        }
-    }
 
     modal: false
 
@@ -72,12 +67,6 @@ Popup {
             showIndicator: root.showSelectionIndicator
             selection: root.selection
             showNewChainIcon: root.showNewChainIcon
-
-            onSelectionChanged: {
-                if (root.selection !== scrollView.selection) {
-                    root.selection = scrollView.selection
-                }
-            }
 
             onToggleNetwork: {
                 if (!root.multiSelection && root.closePolicy !== Popup.NoAutoClose)
