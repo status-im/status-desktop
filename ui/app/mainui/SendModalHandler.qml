@@ -739,12 +739,12 @@ QtObject {
                                            SQUtils.AmountsArithmetic.fromString(value)).toString()
 
                     onValueChanged: {
-                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
-                        let decimals = !!ethToken ? ethToken.decimals: 18
-                        let ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
-                        let totalFees = SQUtils.AmountsArithmetic.div(SQUtils.AmountsArithmetic.fromString(value), SQUtils.AmountsArithmetic.fromNumber(1, decimals))
-                        let totalFeesInFiat = root.fnFormatCurrencyAmount(ethFiatValue*totalFees, root.currentCurrency).toString()
-                        simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), Constants.ethToken)
+                        const nativeTokenSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        const nativeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", nativeTokenSymbol)
+                        let nativeTokenFiatValue = !!nativeToken ? nativeToken.marketDetails.currencyPrice.amount: 1
+                        let totalFees = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, value)
+                        let totalFeesInFiat = root.fnFormatCurrencyAmount(nativeTokenFiatValue*totalFees, root.currentCurrency).toString()
+                        simpleSendModal.estimatedCryptoFees = root.fnFormatCurrencyAmount(totalFees.toString(), nativeTokenSymbol)
                         simpleSendModal.estimatedFiatFees = totalFeesInFiat
                     }
                 }
@@ -841,6 +841,7 @@ QtObject {
                     networkName: signSendAdaptor.selectedNetwork.chainName
                     networkIconPath: Theme.svg(signSendAdaptor.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: signSendAdaptor.selectedNetwork.blockExplorerURL
+                    networkChainId: signSendAdaptor.selectedNetwork.chainId
 
                     selectedFeeMode: {
                         if (!!txPathUnderReviewEntry.item) {
@@ -874,36 +875,37 @@ QtObject {
                         return 0
                     }
 
-                    fnGetPriceInCurrencyForFee: function(feeInWei) {
-                        if (!feeInWei) {
+                    fnGetPriceInCurrencyForFee: function(rawFee) {
+                        if (!rawFee) {
                             return ""
                         }
-                        const feesEth = Utils.weiToEth(feeInWei)
-                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
-                        const ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
-                        return root.fnFormatCurrencyAmount(ethFiatValue*feesEth, root.currentCurrency).toString()
+                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        const decimalFee = Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawFee)
+                        const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
+                        const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
+                        return root.fnFormatCurrencyAmount(feeTokenPrice*decimalFee, root.currentCurrency).toString()
                     }
 
-                    fnGetEstimatedTime: function(baseFeeInWei, priorityFeeInWei) {
+                    fnGetEstimatedTime: function(rawBaseFee, rawPriorityFee) {
                         if (!txPathUnderReviewEntry.item) {
                             return ""
                         }
                         const chainId = txPathUnderReviewEntry.item.fromChain
-                        return root.transactionStoreNew.getEstimatedTime(chainId, baseFeeInWei, priorityFeeInWei)
+                        return root.transactionStoreNew.getEstimatedTime(chainId, rawBaseFee, rawPriorityFee)
                     }
 
                     normalPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                const rawFee = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(feeInWei)
+                                return fnGetPriceInCurrencyForFee(rawFee)
                             }
-                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                            const rawFee = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasLowLevel),
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(feeInWei)
+                            return fnGetPriceInCurrencyForFee(rawFee)
                         }
                         return ""
                     }
@@ -917,15 +919,15 @@ QtObject {
                     fastPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                const rawFee = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(feeInWei)
+                                return fnGetPriceInCurrencyForFee(rawFee)
                             }
-                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                            const rawFee = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasMediumLevel),
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(feeInWei)
+                            return fnGetPriceInCurrencyForFee(rawFee)
                         }
                         return ""
                     }
@@ -939,15 +941,15 @@ QtObject {
                     urgentPrice: {
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                const feeInWei = SQUtils.AmountsArithmetic.times(
+                                const rawFee = SQUtils.AmountsArithmetic.times(
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
                                                    SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedApprovalGasAmount)).toFixed()
-                                return fnGetPriceInCurrencyForFee(feeInWei)
+                                return fnGetPriceInCurrencyForFee(rawFee)
                             }
-                            const feeInWei = SQUtils.AmountsArithmetic.times(
+                            const rawFee = SQUtils.AmountsArithmetic.times(
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedMaxFeesPerGasHighLevel),
                                                SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.suggestedTxGasAmount)).toFixed()
-                            return fnGetPriceInCurrencyForFee(feeInWei)
+                            return fnGetPriceInCurrencyForFee(rawFee)
                         }
                         return ""
                     }
@@ -995,27 +997,31 @@ QtObject {
                         return ""
                     }
 
-                    readonly property var totalFeesEth: {
-                        let totalFeeInWei = "0"
+                    readonly property var decimalTotalFees: {
+                        let rawTotalFee = "0"
                         if (!!txPathUnderReviewEntry.item) {
                             if (handler.reviewApprovalForTxPathUnderReview) {
-                                totalFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
+                                rawTotalFee = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalFee),
                                                                              SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.approvalL1Fee)).toFixed()
                             } else {
-                                totalFeeInWei = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
+                                rawTotalFee = SQUtils.AmountsArithmetic.sum(SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txFee),
                                                                              SQUtils.AmountsArithmetic.fromString(txPathUnderReviewEntry.item.txL1Fee)).toFixed()
                             }
                         }
-                        return Utils.weiToEth(totalFeeInWei)
+                        return Utils.nativeTokenRawToDecimal(simpleSendModal.selectedChainId, rawTotalFee)
                     }
 
                     fiatFees: {
-                        const ethToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", Constants.ethToken)
-                        const ethFiatValue = !!ethToken ? ethToken.marketDetails.currencyPrice.amount: 1
-                        return root.fnFormatCurrencyAmount(ethFiatValue*totalFeesEth, root.currentCurrency).toString()
+                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        const feeToken = SQUtils.ModelUtils.getByKey(root.plainTokensBySymbolModel, "key", feeSymbol)
+                        const feeTokenPrice = !!feeToken ? feeToken.marketDetails.currencyPrice.amount: 1
+                        return root.fnFormatCurrencyAmount(feeTokenPrice*decimalTotalFees, root.currentCurrency).toString()
                     }
 
-                    cryptoFees: root.fnFormatCurrencyAmount(totalFeesEth.toString(), Constants.ethToken)
+                    cryptoFees: {
+                        const feeSymbol = Utils.getNativeTokenSymbol(simpleSendModal.selectedChainId)
+                        return root.fnFormatCurrencyAmount(decimalTotalFees.toString(), feeSymbol)
+                    }
 
                     estimatedTime: {
                         if (!!txPathUnderReviewEntry.item) {

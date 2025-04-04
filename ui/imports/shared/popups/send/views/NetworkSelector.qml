@@ -100,9 +100,9 @@ Item {
                 suggestedToNetworksList: root.suggestedToNetworksList
                 // Collectibles don't have a symbol
                 selectedSymbol: !!root.selectedAsset && !!root.selectedAsset.symbol ? root.selectedAsset.symbol: ""
-                weiToEth: function(wei) {
+                fnRawToDecimal: function(rawValue) {
                     if(!!selectedAsset && root.selectedAsset !== undefined)
-                        return parseFloat(store.getWei2Eth(wei, root.selectedAsset.decimals))
+                        return parseFloat(store.getWei2Eth(rawValue, root.selectedAsset.decimals))
                 }
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 reCalculateSuggestedRoute: function() {
@@ -137,9 +137,9 @@ Item {
                 interactive: root.interactive
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
-                weiToEth: function(wei) {
+                fnRawToDecimal: function(rawValue) {
                     if(!!selectedAsset && (selectedAsset.type === Constants.TokenType.Native || selectedAsset.type === Constants.TokenType.ERC20))
-                        return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                        return parseFloat(store.getWei2Eth(rawValue, selectedAsset.decimals))
                     return 0
                 }
             }

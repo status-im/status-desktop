@@ -79,7 +79,7 @@ method onOwnerTokenOwnerAddress*(self: AccessInterface, chainId: int, contractAd
 method asyncGetOwnerTokenDetails*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutesReady*(self: AccessInterface, uuid: string, sendType: SendType, ethCurrency: CurrencyAmount,
+method suggestedRoutesReady*(self: AccessInterface, uuid: string, sendType: SendType, nativeCryptoCurrency: CurrencyAmount,
   fiatCurrency: CurrencyAmount, costPerPath: seq[CostPerPath], errCode: string, errDescription: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

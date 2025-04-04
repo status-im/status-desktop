@@ -126,7 +126,7 @@ proc `%`*(tt: TokenType): JsonNode {.inline.} =
 proc `$`*(tt: TokenType): string {.inline.} =
   case tt:
     of TokenType.Native:
-      return "ETH"
+      return "Native"
     of TokenType.ERC20:
       return "ERC-20"
     of TokenType.ERC721:

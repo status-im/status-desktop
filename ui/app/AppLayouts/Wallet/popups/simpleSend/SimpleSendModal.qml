@@ -337,7 +337,7 @@ StatusDialog {
                     let bigIntBalance = SQUtils.AmountsArithmetic.fromString(balanceOnChain.balance)
                     maxCryptoBalance = SQUtils.AmountsArithmetic.toNumber(bigIntBalance, d.selectedAssetEntry.item.decimals)
                 }
-                return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol)
+                return WalletUtils.calculateMaxSafeSendAmount(maxCryptoBalance, d.selectedCryptoTokenSymbol, root.selectedChainId)
             }
             return 0
         }
@@ -425,6 +425,8 @@ StatusDialog {
             const contentHeight = Math.max(calculateContentHeight, minHeight) + root.footer.height
             return Math.min(maxHeight, contentHeight)
         }
+
+        readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.selectedChainId)
     }
 
     width: 556
@@ -744,7 +746,17 @@ StatusDialog {
         id: errorTagsModel
         RouterErrorTag {
             errorTitle: qsTr("Insufficient funds for send transaction")
-            buttonText: d.selectedCryptoTokenSymbol !== Constants.ethToken? qsTr("Add assets") : qsTr("Add ETH")
+            buttonText: {
+                if (d.selectedCryptoTokenSymbol === d.nativeTokenSymbol) {
+                    switch (d.selectedCryptoTokenSymbol) {
+                        case Constants.ethToken:
+                            return qsTr("Add ETH")
+                        case Constants.bnbToken:
+                            return qsTr("Add BNB")
+                    }
+                }
+                return qsTr("Add assets")
+            }
             onButtonClicked: root.launchBuyFlow()
 
             visible: amountToSend.markAsInvalid
@@ -752,7 +764,7 @@ StatusDialog {
         RouterErrorTag {
             errorTitle: root.routerError
             errorDetails: !d.errNotEnoughEth && !d.errNotEnoughToken? root.routerErrorDetails: ""
-            buttonText: d.errNotEnoughToken? qsTr("Add assets") : d.errNotEnoughEth? qsTr("Add ETH") : ""
+            buttonText: d.errNotEnoughToken? qsTr("Add assets") : d.errNotEnoughEth? qsTr("Add %1").arg(d.nativeTokenSymbol) : ""
             expandable: !!errorDetails &&
                         !(!root.routerErrorCode &&
                           !!root.routerError)
