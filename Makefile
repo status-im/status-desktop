@@ -166,11 +166,12 @@ endif
 
 
 # Qt dirs (we can't indent with tabs here)
+ QT_MAJOR_VERSION := $(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
+
 ifneq ($(detected_OS),Windows)
  export QT_LIBDIR := $(shell $(QMAKE) -query QT_INSTALL_LIBS 2>/dev/null)
  QT_QMLDIR := $(shell $(QMAKE) -query QT_INSTALL_QML 2>/dev/null)
  QT_INSTALL_PREFIX := $(shell $(QMAKE) -query QT_INSTALL_PREFIX 2>/dev/null)
- QT_MAJOR_VERSION := $(shell $(QMAKE) -query QT_VERSION | head -c 1 2>/dev/null)
  QT_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt"$(QT_MAJOR_VERSION)"Core 2>/dev/null)
  ifeq ($(QT_INSTALL_PREFIX),$(QT_PKGCONFIG_INSTALL_PREFIX))
   QT_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt6Core 2>/dev/null)
@@ -195,7 +196,11 @@ else
 endif
 
 ifeq ($(detected_OS),Windows)
- COMMON_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+ ifeq ($(QT_MAJOR_VERSION),5)
+ 	COMMON_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+ else
+    COMMON_CMAKE_CONFIG_PARAMS := -A x64
+ endif
 endif
 
 ifeq ($(detected_OS),Darwin)
@@ -365,7 +370,7 @@ storybook-build: | storybook-configure
 		--config $(COMMON_CMAKE_BUILD_TYPE) \
 		$(HANDLE_OUTPUT)
 
-run-storybook: storybook-build
+run-storybook: storybook-build 
 	echo -e "\033[92mRunning:\033[39m Storybook"
 	$(STORYBOOK_BUILD_PATH)/bin/Storybook ${ARGS}
 
