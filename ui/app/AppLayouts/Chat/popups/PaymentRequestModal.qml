@@ -42,8 +42,9 @@ StatusDialog {
     // input / output
     property int selectedNetworkChainId: Constants.chains.mainnetChainId
     property string selectedAccountAddress
-    property string selectedTokenKey: Constants.ethToken
+    property string selectedTokenKey: defaultTokenKey
 
+    readonly property string defaultTokenKey: Utils.getNativeTokenSymbol(selectedNetworkChainId)
     // output
     readonly property string amount: {
         if (!d.isSelectedHoldingValidAsset || !d.selectedHolding.item.marketDetails || !d.selectedHolding.item.marketDetails.currencyPrice) {
@@ -72,7 +73,7 @@ StatusDialog {
         id: d
 
         function resetSelectedToken() {
-            root.selectedTokenKey = Constants.ethToken
+            root.selectedTokenKey = root.defaultTokenKey
         }
 
         readonly property ModelEntry selectedHolding: ModelEntry {

@@ -18,7 +18,7 @@ Item {
     property string currentCurrency
 
     property var bestRoutes
-    property var getGasEthValue: function () {}
+    property var getGasNativeCryptoValue: function () {}
     property var getFiatValue: function () {}
     property var formatCurrencyAmount: function () {}
     property var getNetworkName: function () {}
@@ -49,28 +49,29 @@ Item {
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("%1 transaction fee").arg(root.getNetworkName(modelData.fromNetwork))
+                property string gasSymbol: Utils.getNativeTokenSymbol(modelData.fromNetwork)
                 subTitle: {
-                    let primaryFee = root.formatCurrencyAmount(totalGasAmountEth, Constants.ethToken)
+                    let primaryFee = root.formatCurrencyAmount(decimalTotalGasAmount, gasSymbol)
                     if (modelData.gasFees.eip1559Enabled && modelData.gasFees.l1GasFee > 0) {
                         return qsTr("L1 fee: %1\nL2 fee: %2")
-                        .arg(root.formatCurrencyAmount(totalGasAmountL1Eth, Constants.ethToken))
+                        .arg(root.formatCurrencyAmount(decimalTotalGasAmountL1, gasSymbol))
                         .arg(primaryFee)
                     }
                     return primaryFee
                 }
-                property double totalGasAmountL1Eth: {
+                property double decimalTotalGasAmountL1: {
                     const l1FeeInGWei = modelData.gasFees.l1GasFee
-                    const l1FeeInEth = globalUtils.wei2Eth(l1FeeInGWei, 9)
+                    const l1FeeInEth = Utils.getGasDecimalValue(modelData.fromNetwork, l1FeeInGWei, modelData.gasAmount)
                     return l1FeeInEth
                 }
 
-                property double totalGasAmountEth: {
+                property double decimalTotalGasAmount: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
                     let gasPrice = modelData.gasFees.eip1559Enabled ? maxFees : modelData.gasFees.gasPrice
-                    return root.getGasEthValue(gasPrice , modelData.gasAmount)
+                    return root.getGasNativeCryptoValue(gasPrice , modelData.gasAmount)
                 }
 
-                property double totalGasAmountFiat: root.getFiatValue(totalGasAmountEth, Constants.ethToken) + root.getFiatValue(totalGasAmountL1Eth, Constants.ethToken)
+                property double totalGasAmountFiat: root.getFiatValue(decimalTotalGasAmount, gasSymbol) + root.getFiatValue(decimalTotalGasAmountL1, gasSymbol)
 
                 statusListItemSubTitle.width: listItem.width/2 - Theme.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
@@ -99,7 +100,7 @@ Item {
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
                 title: qsTr("Approve %1 %2 Bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.selectedAsset.symbol)
                 property double approvalGasFees: modelData.approvalGasFees
-                property string approvalGasFeesSymbol: Constants.ethToken
+                property string approvalGasFeesSymbol: Utils.getNativeTokenSymbol(modelData.fromNetwork)
                 property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol)
                 subTitle: root.formatCurrencyAmount(approvalGasFees, approvalGasFeesSymbol)
                 statusListItemSubTitle.width: listItem1.width/2 - Theme.smallPadding

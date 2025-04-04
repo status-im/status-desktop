@@ -26,11 +26,11 @@ import utils 1.0
             return "-"
         }
 
-        if (!root.feesResponse || !Object.values(root.feesResponse.ethCurrency).length || !Object.values(root.feesResponse.fiatCurrency).length) {
+        if (!root.feesResponse || !Object.values(root.feesResponse.nativeCryptoCurrency).length || !Object.values(root.feesResponse.fiatCurrency).length) {
             return ""
         }
 
-        return LocaleUtils.currencyAmountToLocaleString(root.feesResponse.ethCurrency)
+        return LocaleUtils.currencyAmountToLocaleString(root.feesResponse.nativeCryptoCurrency)
                 + " (" + LocaleUtils.currencyAmountToLocaleString(root.feesResponse.fiatCurrency) + ")"
     }
     readonly property string feeErrorText: {

@@ -901,9 +901,16 @@ QtObject {
     readonly property string networkRopsten: "Ropsten"
 
     readonly property string ethToken: "ETH"
-
-    readonly property int ethTokenWeiDecimals: 18
-    readonly property int ethTokenGWeiDecimals: 9
+    readonly property string bnbToken: "BNB"
+    readonly property string usdcToken: "USDC"
+    readonly property var rawDecimals: {
+        "ETH": 18,
+        "BNB": 18,
+    }
+    readonly property var gasTokenDecimals: {
+        "ETH": 9,
+        "BNB": 9,
+    }
 
     readonly property string minGasForTx: "21000"
     readonly property string maxGasForTx: "30000000"
@@ -1468,10 +1475,6 @@ QtObject {
     }
 
     readonly property QtObject swap: QtObject {
-        /* We should be very careful here, this is the token key for USDT and WETH respectively,
-        but in case the logic for keys changes in the backend, it should be updated here as well */
-        readonly property string usdcTokenKey: "USDC"
-        readonly property string ethTokenKey: "ETH"
         /* TODO: https://github.com/status-im/status-desktop/issues/15329
         This is only added temporarily until we have an api from the backend in order to get
         this list dynamically */

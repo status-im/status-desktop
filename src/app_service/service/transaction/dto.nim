@@ -321,20 +321,20 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
 
 type
   FeesDto* = ref object
-    totalFeesInEth*: float
+    totalFeesInNativeCrypto*: float
     totalTokenFees*: float
     totalTime*: int
 
 proc `$`*(self: FeesDto): string =
   return fmt"""FeesDto(
-    totalFeesInEth:{self.totalFeesInEth},
+    totalFeesInNativeCrypto:{self.totalFeesInNativeCrypto},
     totalTokenFees:{self.totalTokenFees},
     totalTime:{self.totalTime},
   )"""
 
 proc convertToFeesDto*(jsonObj: JsonNode): FeesDto =
   result = FeesDto()
-  discard jsonObj.getProp("totalFeesInEth", result.totalFeesInEth)
+  discard jsonObj.getProp("totalFeesInEth", result.totalFeesInNativeCrypto)
   discard jsonObj.getProp("totalTokenFees", result.totalTokenFees)
   discard jsonObj.getProp("totalTime", result.totalTime)
 
@@ -371,20 +371,23 @@ type
 type
   CostPerPath* = object
     contractUniqueKey*: string
-    costEthCurrency*: CurrencyAmount
+    costNativeCryptoCurrency*: CurrencyAmount
     costFiatCurrency*: CurrencyAmount
 
 proc `%`*(self: CostPerPath): JsonNode =
   result = %* {
-    "ethFee": if self.costEthCurrency == nil: newCurrencyAmount().toJsonNode() else: self.costEthCurrency.toJsonNode(),
+    "nativeCryptoFee": if self.costNativeCryptoCurrency == nil: newCurrencyAmount().toJsonNode() else: self.costNativeCryptoCurrency.toJsonNode(),
     "fiatFee": if self.costFiatCurrency == nil: newCurrencyAmount().toJsonNode() else: self.costFiatCurrency.toJsonNode(),
     "contractUniqueKey": self.contractUniqueKey,
   }
 
-proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
+# TODO: Generalize for non-ETH gas fees
+# Not needed for now since the only other option is BNB which has
+# the same decimals as ETH
+proc getGasNativeCryptoValue*(gweiValue: float, gasLimit: uint64): float =
   let weiValue = service_conversion.gwei2Wei(gweiValue) * u256(gasLimit)
-  let ethValue = parseFloat(service_conversion.wei2Eth(weiValue))
-  return ethValue
+  let nativeCryptoValue = parseFloat(service_conversion.wei2Eth(weiValue))
+  return nativeCryptoValue
 
 proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
   var fees: FeesDto = FeesDto()
@@ -396,9 +399,9 @@ proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
     if path.gasFees.eip1559Enabled:
       optimalPrice = path.gasFees.maxFeePerGasM
 
-    fees.totalFeesInEth += getGasEthValue(optimalPrice, path.gasAmount)
-    fees.totalFeesInEth += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
-    fees.totalFeesInEth += path.approvalGasFees
+    fees.totalFeesInNativeCrypto += getGasNativeCryptoValue(optimalPrice, path.gasAmount)
+    fees.totalFeesInNativeCrypto += parseFloat(service_conversion.wei2Eth(service_conversion.gwei2Wei(path.gasFees.l1GasFee)))
+    fees.totalFeesInNativeCrypto += path.approvalGasFees
     fees.totalTokenFees += path.tokenFees
     fees.totalTime += path.estimatedTime
   return fees

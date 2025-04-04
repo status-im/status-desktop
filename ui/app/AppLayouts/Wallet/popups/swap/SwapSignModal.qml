@@ -36,6 +36,7 @@ SignTransactionModalBase {
     required property string networkName // e.g. "Optimism"
     required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
+    required property int networkChainId
 
     required property string fiatFees
     required property string cryptoFees
@@ -117,12 +118,12 @@ SignTransactionModalBase {
         objectName: "payBox"
         caption: qsTr("Pay")
         primaryText: formatBigNumber(root.fromTokenAmount, root.fromTokenSymbol)
-        secondaryText: root.fromTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
+        secondaryText: root.fromTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId) ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
-                visible: root.fromTokenSymbol !== Constants.ethToken
+                visible: root.fromTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId)
                 symbol: root.fromTokenSymbol
                 contractAddress: root.fromTokenContractAddress
                 networkName: root.networkName
@@ -140,12 +141,12 @@ SignTransactionModalBase {
         objectName: "receiveBox"
         caption: qsTr("Receive")
         primaryText: formatBigNumber(root.toTokenAmount, root.toTokenSymbol)
-        secondaryText: root.toTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress) : ""
+        secondaryText: root.toTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId) ? SQUtils.Utils.elideAndFormatWalletAddress(root.toTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.toTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
-                visible: root.toTokenSymbol !== Constants.ethToken
+                visible: root.toTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId)
                 symbol: root.toTokenSymbol
                 contractAddress: root.toTokenContractAddress
                 networkName: root.networkName

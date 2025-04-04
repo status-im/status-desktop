@@ -48,6 +48,8 @@ QObject {
         // storing txHash to verify against tx completed event
         property string txHash
 
+        readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.swapFormData.selectedNetworkChainId)
+
         // Properties to handle error states
         readonly property bool isRouteEthBalanceInsufficient: root.validSwapProposalReceived && root.swapOutputData.errCode === Constants.routerErrorCodes.router.errNotEnoughNativeBalance
 
@@ -56,14 +58,14 @@ QObject {
         readonly property bool isTokenBalanceInsufficient: {
             if (!!root.fromToken && !!root.fromToken.symbol) {
                 return (root.amountEnteredGreaterThanBalance || isRouteTokenBalanceInsufficient) &&
-                        root.fromToken.symbol !== Constants.ethToken
+                        root.fromToken.symbol !== nativeTokenSymbol
             }
             return false
         }
 
         readonly property bool isEthBalanceInsufficient: {
             if (!!root.fromToken && !!root.fromToken.symbol) {
-                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
+                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === nativeTokenSymbol) ||
                         isRouteEthBalanceInsufficient
             }
             return false
@@ -71,8 +73,8 @@ QObject {
 
         readonly property bool isBalanceInsufficientForSwap: {
             if (!!root.fromToken && !!root.fromToken.symbol) {
-                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === Constants.ethToken) ||
-                        (isTokenBalanceInsufficient && root.fromToken.symbol !== Constants.ethToken)
+                return (root.amountEnteredGreaterThanBalance && root.fromToken.symbol === nativeTokenSymbol) ||
+                        (isTokenBalanceInsufficient && root.fromToken.symbol !== nativeTokenSymbol)
             }
             return false
         }
@@ -136,14 +138,11 @@ QObject {
                 let totalTokenFeesInFiat = 0
                 if (!!root.fromToken && !!root.fromToken.marketDetails && !!root.fromToken.marketDetails.currencyPrice)
                     totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.fromToken.marketDetails.currencyPrice.amount
-                root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+                root.swapOutputData.totalFees = root.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, d.nativeTokenSymbol) + totalTokenFeesInFiat
                 let bestPath = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
 
-                const totalMaxFees = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
-                const totalMaxFeesInEth = AmountsArithmetic.div(
-                                            AmountsArithmetic.fromString(totalMaxFees),
-                                            AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
-                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
+                const totalMaxFeesInGasUnit = Math.ceil(bestPath.gasFees.maxFeePerGasM) * bestPath.gasAmount
+                root.swapOutputData.maxFeesToReserveRaw = Utils.nativeTokenGasToRaw(root.swapFormData.selectedNetworkChainId, totalMaxFeesInGasUnit).toString()
 
                 root.swapOutputData.approvalNeeded = !!bestPath ? bestPath.approvalRequired: false
                 root.swapOutputData.approvalGasFees = !!bestPath ? bestPath.approvalGasFees.toString() : ""
@@ -151,7 +150,7 @@ QObject {
                 root.swapOutputData.approvalContractAddress = !!bestPath ? bestPath.approvalContractAddress: ""
                 root.swapOutputData.estimatedTime = !!bestPath ? bestPath.estimatedTime: Constants.TransactionEstimatedTime.Unknown
                 root.swapOutputData.txProviderName = !!bestPath ? bestPath.bridgeName: ""
-                root.swapOutputData.maxFeesToReserveRaw = AmountsArithmetic.times(totalMaxFeesInEth, AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)).toString()
+                // TODO: should approval fees be included in maxFeesToReserveRaw?
             } else {
                 root.swapOutputData.hasError = true
             }

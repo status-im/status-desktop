@@ -56,6 +56,8 @@ SignTransactionModalBase {
     /** Input property holding selected network blockchain
     explorer name **/
     required property string networkBlockExplorerUrl
+    /** Input property holding selected networks chainId **/
+    required property int networkChainId
 
     /** Input property holding localised path fees in fiat **/
     required property string fiatFees
@@ -128,6 +130,8 @@ SignTransactionModalBase {
 
     QtObject {
         id: d
+
+        readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.networkChainId)
 
         signal refreshTxSettings()
     }
@@ -253,6 +257,12 @@ SignTransactionModalBase {
 
         fnGetPriceInCurrencyForFee: root.fnGetPriceInCurrencyForFee
         fnGetEstimatedTime: root.fnGetEstimatedTime
+        fnRawToGas: function(rawValue) {
+            return Utils.nativeTokenRawToGas(root.networkChainId, rawValue)
+        }
+        fnGasToRaw: function(gasValue) {
+            return Utils.nativeTokenGasToRaw(root.networkChainId, gasValue)
+        }
 
         selectedFeeMode: root.selectedFeeMode
 
@@ -281,18 +291,18 @@ SignTransactionModalBase {
 
             if (!customBaseFeeDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customBaseFee = !!root.customBaseFee? Utils.weiToGWei(root.customBaseFee).toFixed() : "0"
+                    customBaseFee = !!root.customBaseFee? root.fnRawToGas(root.networkChainId, root.customBaseFee).toFixed() : "0"
                 } else {
-                    customBaseFee = Utils.weiToGWei(root.normalBaseFee).toFixed()
+                    customBaseFee = root.fnRawToGas(root.networkChainId, root.normalBaseFee).toFixed()
                 }
                 customBaseFeeDirty = false
             }
 
             if (!customPriorityFeeDirty) {
                 if (selectedFeeMode === root.selectedFeeMode) {
-                    customPriorityFee = !!root.customPriorityFee? Utils.weiToGWei(root.customPriorityFee).toFixed() : "0"
+                    customPriorityFee = !!root.customPriorityFee? root.fnRawToGas(root.networkChainId, root.customPriorityFee).toFixed() : "0"
                 } else {
-                    customPriorityFee = Utils.weiToGWei(root.normalPriorityFee).toFixed()
+                    customPriorityFee = root.fnRawToGas(root.networkChainId, root.normalPriorityFee).toFixed()
                 }
                 customPriorityFeeDirty = false
             }
@@ -337,11 +347,11 @@ SignTransactionModalBase {
             let maxFeesPerGas = ""
             if (selectedFeeMode === Constants.FeePriorityModeType.Custom) {
                 if (!!customPriorityFee && !!customBaseFee) {
-                    const baseFeeWei = Utils.gweiToWei(customBaseFee)
-                    const priorityFeeWei = Utils.gweiToWei(customPriorityFee)
+                    const rawBaseFee = Utils.nativeTokenGasToRaw(root.networkChainId, customBaseFee)
+                    const rawPriorityFee = Utils.nativeTokenGasToRaw(root.networkChainId, customPriorityFee)
 
-                    priorityFee = priorityFeeWei.toFixed()
-                    maxFeesPerGas = SQUtils.AmountsArithmetic.sum(baseFeeWei, priorityFeeWei).toFixed()
+                    priorityFee = rawPriorityFee.toFixed()
+                    maxFeesPerGas = SQUtils.AmountsArithmetic.sum(rawBaseFee, rawPriorityFee).toFixed()
                 }
             }
 
@@ -364,7 +374,7 @@ SignTransactionModalBase {
         Layout.bottomMargin: Theme.bigPadding
         caption: qsTr("Send")
         primaryText: "%1 %2".arg(root.tokenAmount).arg(root.tokenSymbol)
-        secondaryText: root.tokenSymbol !== Constants.ethToken ?
+        secondaryText: root.tokenSymbol !== d.nativeTokenSymbol ?
                            SQUtils.Utils.elideAndFormatWalletAddress(root.tokenContractAddress) : ""
         icon: Constants.tokenIcon(root.tokenSymbol)
         badge: root.networkIconPath
@@ -374,7 +384,7 @@ SignTransactionModalBase {
                 id: contractInfoButtonWithMenu
 
                 objectName: "contractInfoButtonWithMenu"
-                visible: root.tokenSymbol !== Constants.ethToken
+                visible: root.tokenSymbol !== d.nativeTokenSymbol
                 symbol: root.tokenSymbol
                 contractAddress: root.tokenContractAddress
                 networkName: root.networkName

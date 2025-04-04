@@ -117,7 +117,7 @@ proc convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDt
 
 proc convertFeesDtoToGasEstimateItem(self: Module, fees: FeesDto): GasEstimateItem =
   result = newGasEstimateItem(
-    totalFeesInEth = fees.totalFeesInEth,
+    totalFeesInNativeCrypto = fees.totalFeesInNativeCrypto,
     totalTokenFees = fees.totalTokenFees,
     totalTime = fees.totalTime
     )
