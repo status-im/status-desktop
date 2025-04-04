@@ -111,18 +111,28 @@ void ModelEntry::setSourceModel(QAbstractItemModel* sourceModel)
     connect(m_sourceModel,
             &QAbstractItemModel::dataChanged,
             this,
-            [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QList<int>& roles = QList<int>()) {
+            [this](const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles) {
+
+                auto keysForRole = m_sourceModel->roleNames().keys(m_key.toUtf8());
+
+                if (keysForRole.isEmpty())
+                    return;
+
+                auto keyRole = keysForRole.first();
+
                 if(!m_index.isValid())
                 {
+                    if(!roles.empty() && !roles.contains(keyRole))
+                        return;
+
                     auto index = findIndexInRange(topLeft.row(), bottomRight.row() + 1);
                     setIndex(index);
                     return;
                 }
 
-                // Check if the index is still valid
-                auto index = findIndexInRange(m_index.row(), m_index.row() + 1, roles);
-                if(index != m_index)
+                if(m_index.data(keyRole) != m_value)
                 {
+                    auto index = findIndexInRange(m_index.row(), m_index.row() + 1);
                     setIndex(index);
                     return;
                 }
@@ -216,14 +226,14 @@ void ModelEntry::setItemRemovedFromModel(bool itemRemovedFromModel)
     emit itemRemovedFromModelChanged();
 }
 
-QModelIndex ModelEntry::findIndexInRange(int start, int end, const QList<int>& roles) const
+QModelIndex ModelEntry::findIndexInRange(int start, int end) const
 {
     if(!m_sourceModel || m_key.isEmpty()) return {};
 
     auto keysForRole = m_sourceModel->roleNames().keys(m_key.toUtf8());
 
     // no matching roles found
-    if(keysForRole.isEmpty() || (!roles.isEmpty() && !roles.contains(keysForRole.first()))) return {};
+    if(keysForRole.isEmpty()) return {};
 
     for(int i = start; i < end; i++)
     {
@@ -281,7 +291,7 @@ void ModelEntry::resetItem()
     }
 }
 
-void ModelEntry::updateItem(const QList<int>& roles /*{}*/)
+void ModelEntry::updateItem(const QVector<int>& roles)
 {
     const auto updatedRoles = fillItem(roles);
     notifyItemChanges(updatedRoles);
@@ -289,12 +299,12 @@ void ModelEntry::updateItem(const QList<int>& roles /*{}*/)
     setItemRemovedFromModel(false);
 }
 
-QStringList ModelEntry::fillItem(const QList<int>& roles /*{}*/)
+QStringList ModelEntry::fillItem(const QVector<int>& roles)
 {
     if(!m_index.isValid() || !m_sourceModel) return {};
 
     QStringList filledRoles;
-    const auto& rolesRef = roles.isEmpty() ? m_sourceModel->roleNames().keys() : roles;
+    const auto& rolesRef = roles.isEmpty() ? m_sourceModel->roleNames().keys().toVector() : roles;
 
     for(auto role : rolesRef)
     {
