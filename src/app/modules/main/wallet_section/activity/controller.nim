@@ -24,6 +24,7 @@ import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/saved_address/service as saved_address_service
+import app_service/service/network/service as network_service
 
 import app/modules/shared_models/currency_amount
 
@@ -46,6 +47,7 @@ QtObject:
       currencyService: currency_service.Service
       tokenService: token_service.Service
       savedAddressService: saved_address_service.Service
+      networkService: network_service.Service
 
       eventsHandler: EventsHandler
       status: Status
@@ -305,6 +307,7 @@ QtObject:
   proc newController*(currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       savedAddressService: saved_address_service.Service,
+                      networkService: network_service.Service,
                       events: EventEmitter): Controller =
     new(result, delete)
 
@@ -313,6 +316,7 @@ QtObject:
     result.collectiblesModel = newCollectiblesModel()
     result.tokenService = tokenService
     result.savedAddressService = savedAddressService
+    result.networkService = networkService
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
     result.eventsHandler = newEventsHandler(events)
@@ -376,11 +380,15 @@ QtObject:
     var assets = newSeq[backend_activity.Token]()
     for tokenCode in self.filterTokenCodes:
       for chainId in self.chainIds:
+        let network = self.networkService.getNetworkByChainId(chainId)
+        if network == nil:
+          error "network not found for chainId: ", chainId
+          continue
         # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
         # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
         let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
         if token != nil:
-          let tokenType = if token.symbol == "ETH": TokenType.Native else: TokenType.ERC20
+          let tokenType = if token.symbol == network.nativeCurrencySymbol: TokenType.Native else: TokenType.ERC20
           for addrPerChain in token.addressPerChainId:
             assets.add(backend_activity.Token(
               tokenType: tokenType,

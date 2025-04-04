@@ -2,17 +2,17 @@ import NimQml
 
 QtObject:
   type GasEstimateItem* = ref object of QObject
-    totalFeesInEth: float
+    totalFeesInNativeCrypto: float
     totalTokenFees: float
     totalTime: int
 
   proc setup*(self: GasEstimateItem,
-    totalFeesInEth: float,
+    totalFeesInNativeCrypto: float,
     totalTokenFees: float,
     totalTime: int
   ) =
     self.QObject.setup
-    self.totalFeesInEth = totalFeesInEth
+    self.totalFeesInNativeCrypto = totalFeesInNativeCrypto
     self.totalTokenFees = totalTokenFees
     self.totalTime = totalTime
 
@@ -20,26 +20,26 @@ QtObject:
       self.QObject.delete
 
   proc newGasEstimateItem*(
-    totalFeesInEth: float = 0,
+    totalFeesInNativeCrypto: float = 0,
     totalTokenFees: float = 0,
     totalTime: int = 0
     ): GasEstimateItem =
       new(result, delete)
-      result.setup(totalFeesInEth, totalTokenFees, totalTime)
+      result.setup(totalFeesInNativeCrypto, totalTokenFees, totalTime)
 
   proc `$`*(self: GasEstimateItem): string =
     result = "GasEstimateItem("
-    result = result & "\ntotalFeesInEth: " & $self.totalFeesInEth
+    result = result & "\totalFeesInNativeCrypto: " & $self.totalFeesInNativeCrypto
     result = result & "\ntotalTokenFees: " & $self.totalTokenFees
     result = result & "\ntotalTime: " & $self.totalTime
     result = result & ")"
 
-  proc totalFeesInEthChanged*(self: GasEstimateItem) {.signal.}
-  proc getTotalFeesInEth*(self: GasEstimateItem): float {.slot.} =
-    return self.totalFeesInEth
-  QtProperty[float] totalFeesInEth:
-    read = getTotalFeesInEth
-    notify = totalFeesInEthChanged
+  proc totalFeesInNativeCryptoChanged*(self: GasEstimateItem) {.signal.}
+  proc getTotalFeesInNativeCrypto*(self: GasEstimateItem): float {.slot.} =
+    return self.totalFeesInNativeCrypto
+  QtProperty[float] totalFeesInNativeCrypto:
+    read = getTotalFeesInNativeCrypto
+    notify = totalFeesInNativeCryptoChanged
 
   proc totalTokenFeesChanged*(self: GasEstimateItem) {.signal.}
   proc getTotalTokenFees*(self: GasEstimateItem): float {.slot.} =

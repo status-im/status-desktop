@@ -12,7 +12,6 @@ import app/core/tasks/[qt, threadpool]
 import app/global/global_singleton
 import app/global/app_signals
 
-import app_service/common/wallet_constants as common_wallet_constants
 import app_service/common/utils as common_utils
 import app_service/common/types as common_types
 import app_service/service/currency/service as currency_service
@@ -123,7 +122,7 @@ type
     errDescription*: string
     # Below fields used for community related tx
     costPerPath*: seq[CostPerPath]
-    totalCostEthCurrency*: CurrencyAmount
+    totalCostNativeCryptoCurrency*: CurrencyAmount
     totalCostFiatCurrency*: CurrencyAmount
 
 type
@@ -302,24 +301,29 @@ QtObject:
       error "Error getting suggested fees", msg = e.msg
 
   proc updateCommunityRoute(self: Service, data: var SuggestedRoutesArgs, route: seq[TransactionPathDtoV2]) =
-    let ethFormat = self.currencyService.getCurrencyFormat(common_wallet_constants.ETH_SYMBOL)
+    var chainId = 1
+    if route.len > 0:
+      chainId = route[0].fromChain.chainId
+    let network = self.networkService.getNetworkByChainId(chainId)
+    var nativeTokenSymbol = network.nativeCurrencySymbol
+    let nativeTokenFormat = self.currencyService.getCurrencyFormat(nativeTokenSymbol)
     let currencyFormat = self.currencyService.getCurrencyFormat(self.settingsService.getCurrency())
-    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(ethFormat.symbol)
+    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(nativeTokenSymbol)
     var totalFee: UInt256
     for p in route:
-      let feeInEth = wei2Eth(p.txTotalFee)
-      let ethFeeAsFloat = parseFloat(feeInEth)
-      let fiatFeeAsFloat = ethFeeAsFloat * fiatPriceForSymbol
+      let decimalFee = wei2Eth(p.txTotalFee)
+      let decimalFeeAsFloat = parseFloat(decimalFee)
+      let fiatFeeAsFloat = decimalFeeAsFloat * fiatPriceForSymbol
       data.costPerPath.add(CostPerPath(
         contractUniqueKey: common_utils.contractUniqueKey(p.fromChain.chainId, p.usedContractAddress),
-        costEthCurrency: newCurrencyAmount(ethFeeAsFloat, ethFormat.symbol, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes),
+        costNativeCryptoCurrency: newCurrencyAmount(decimalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes),
         costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
       ))
       totalFee += p.txTotalFee
-    let totalFeeInEth = wei2Eth(totalFee)
-    let totalEthFeeAsFloat = parseFloat(totalFeeInEth)
-    data.totalCostEthCurrency = newCurrencyAmount(totalEthFeeAsFloat, ethFormat.symbol, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes)
-    let totalFiatFeeAsFloat = totalEthFeeAsFloat * fiatPriceForSymbol
+    let decimalTotalFee = wei2Eth(totalFee)
+    let decimalTotalFeeAsFloat = parseFloat(decimalTotalFee)
+    data.totalCostNativeCryptoCurrency = newCurrencyAmount(decimalTotalFeeAsFloat, nativeTokenFormat.symbol, int(nativeTokenFormat.displayDecimals), nativeTokenFormat.stripTrailingZeroes)
+    let totalFiatFeeAsFloat = decimalTotalFeeAsFloat * fiatPriceForSymbol
     data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
 
   proc emitSuggestedRoutesReadySignal*(self: Service, data: SuggestedRoutesArgs) =

@@ -11,7 +11,7 @@ QtObject {
     property var txNoRoutes: ({
                                   suggestedRoutes: root.noRoutes,
                                   gasTimeEstimate: {
-                                      totalFeesInEth:0.0,
+                                      totalFeesInNativeCrypto:0.0,
                                       totalTokenFees:0.0,
                                       totalTime:0
                                   },
@@ -34,7 +34,7 @@ QtObject {
     property var txHasRouteNoApproval: ({
                                             suggestedRoutes: root.goodRouteNoApprovalNeeded,
                                             gasTimeEstimate:{
-                                                totalFeesInEth:0.0005032000000000001,
+                                                totalFeesInNativeCrypto:0.0005032000000000001,
                                                 totalTokenFees:-0.004508663259772343,
                                                 totalTime:2
                                             },
@@ -55,7 +55,7 @@ QtObject {
     property var txHasRoutesApprovalNeeded: ({
                                                  suggestedRoutes: root.goodRouteApprovalNeeded,
                                                  gasTimeEstimate:{
-                                                     totalFeesInEth:0.0005032000000000001,
+                                                     totalFeesInNativeCrypto:0.0005032000000000001,
                                                      totalTokenFees:-0.004508663259772343,
                                                      totalTime:2
                                                  },

@@ -96,6 +96,7 @@ SplitView {
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
+                    networkChainId: priv.selectedNetwork.chainId
 
                     serviceProviderName: Constants.swap.paraswapName
                     serviceProviderURL: Constants.swap.paraswapUrl
