@@ -11,7 +11,6 @@ from constants.community import ToastMessages, PermissionsElements
 from gui.components.changes_detected_popup import PermissionsChangesDetectedToastMessage
 from gui.main_window import MainWindow
 from gui.screens.community_settings import PermissionsIntroView
-from helpers.SettingsHelper import enable_community_creation
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703632',
@@ -20,8 +19,6 @@ from helpers.SettingsHelper import enable_community_creation
 # @pytest.mark.critical
 @pytest.mark.skip(reason='The test is broken itself, need to fix it')
 def test_add_edit_remove_duplicate_permissions(main_screen: MainWindow):
-    enable_community_creation(main_screen)
-
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.create_community(community_data=community)

@@ -8,7 +8,6 @@ import constants
 from allure_commons._allure import step
 
 from constants import RandomCommunity
-from helpers.SettingsHelper import enable_community_creation
 from tests import test_data
 from gui.components.context_menu import ContextMenu
 from gui.main_window import MainWindow
@@ -56,8 +55,6 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, 
                          [pytest.param('Category in general', True)])
 @pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/17395')
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
-    enable_community_creation(main_screen)
-
     with step('Create community and select it'):
         community = RandomCommunity()
         main_screen.create_community(community_data=community)
