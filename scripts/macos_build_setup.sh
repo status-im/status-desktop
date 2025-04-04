@@ -28,8 +28,9 @@ function install_qt {
   echo "Detected Homebrew prefix: ${BREW_PREFIX}"
   echo "Qt will be installed to: ${QT_INSTALL_DIR}"
 
-  curl -o qt@5.rb "${QT_FORMULA_URL}"
-  brew install ./qt@5.rb
+  curl -o /tmp/qt@5.rb "${QT_FORMULA_URL}"
+  brew install /tmp/qt@5.rb
+  rm /tmp/qt@5.rb
 }
 
 function get_go_arch {
