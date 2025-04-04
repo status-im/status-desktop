@@ -350,14 +350,21 @@ void ModelEntry::cacheItem()
         auto roleName = roleNames.first();
         auto roleValue = m_index.data(roleName);
 
-        if(roleValue.canConvert<QAbstractItemModel*>())
+        // Note: relying on QVariant::canConvert is not possible in this case
+        // because of https://bugreports.qt.io/browse/QTBUG-135619 (different
+        // behavior for Qt 5 and 6
+        const QObject* obj = roleValue.value<QObject*>();
+
+        if(!obj)
+            continue;
+
+        if(auto model = qobject_cast<const QAbstractItemModel*>(obj))
         {
-            m_item->insert(role,
-                           QVariant::fromValue(new SnapshotModel(*roleValue.value<QAbstractItemModel*>(), true, m_item.data())));
+            m_item->insert(role, QVariant::fromValue(new SnapshotModel(
+                                     *model, true, m_item.data())));
         }
-        else if(roleValue.canConvert<QObject*>())
+        else
         {
-            const auto obj = roleValue.value<QObject*>();
             const auto snapshot = new SnapshotObject(obj, m_item.data());
             m_item->insert(role, QVariant::fromValue(snapshot->snapshot()));
         }
