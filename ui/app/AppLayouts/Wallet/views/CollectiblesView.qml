@@ -543,7 +543,7 @@ ColumnLayout {
             onRightClicked: {
                 const userOwnedAddress = d.getFirstUserOwnedAddress(model.ownership)
                 Global.openMenu(tokenContextMenu, this,
-                                {symbol: model.symbol, tokenName: model.name, tokenImage: model.imageUrl,
+                                {symbol: model.symbol, chainId: model.chainId, tokenName: model.name, tokenImage: model.imageUrl,
                                     communityId: model.communityId, communityName: model.communityName,
                                     communityImage: model.communityImage, tokenType: model.tokenType,
                                     soulbound: model.soulbound, userOwnedAddress: userOwnedAddress})
@@ -559,6 +559,7 @@ ColumnLayout {
             onClosed: destroy()
 
             property string symbol
+            property int chainId
             property string tokenName
             property string tokenImage
             property string communityId
@@ -596,7 +597,7 @@ ColumnLayout {
                 onTriggered: root.manageTokensRequested()
             }
             StatusAction {
-                enabled: symbol !== Constants.ethToken
+                enabled: symbol !== Utils.getNativeTokenSymbol(chainId)
                 type: StatusAction.Type.Danger
                 icon.name: "hide"
                 text: qsTr("Hide collectible")

@@ -48,7 +48,7 @@ SplitView {
             id: panel
 
             readonly property var singleTransactionFee: {
-                "ethCurrency": {
+                "nativeCryptoCurrency": {
                     "objectName":"",
                     "amount":0.000007900500349933282,
                     "symbol":"ETH",

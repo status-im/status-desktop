@@ -371,6 +371,7 @@ SQUtils.QObject {
 
             fiatFees: request.fiatMaxFees ? request.fiatMaxFees.toFixed() : ""
             cryptoFees: request.ethMaxFees ? request.ethMaxFees.toFixed() : ""
+            nativeTokenSymbol: Utils.getNativeTokenSymbol(network.chainId)
             estimatedTime: WalletUtils.getLabelForEstimatedTxTime(request.estimatedTimeCategory)
             feesLoading: hasFees && (!fiatFees || !cryptoFees)
             estimatedTimeLoading: request.estimatedTimeCategory === Constants.TransactionEstimatedTime.Unknown
