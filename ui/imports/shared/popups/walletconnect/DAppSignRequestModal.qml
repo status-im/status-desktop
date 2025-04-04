@@ -36,6 +36,7 @@ SignTransactionModalBase {
     // Fees
     required property string fiatFees
     required property string cryptoFees
+    required property string nativeTokenSymbol
     required property string estimatedTime
     required property bool hasFees
     required property bool estimatedTimeLoading
@@ -235,7 +236,7 @@ SignTransactionModalBase {
                     id: cryptoFees
                     objectName: "cryptoFeesText"
                     Layout.alignment: Qt.AlignRight
-                    text: formatBigNumber(root.cryptoFees, Constants.ethToken)
+                    text: formatBigNumber(root.cryptoFees, root.nativeTokenSymbol)
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: Theme.additionalTextSize
                     loading: root.feesLoading

@@ -796,7 +796,7 @@ Item {
             // calculation needed for total fees
             let gasTimeEstimate = txHasRouteNoApproval.gasTimeEstimate
             let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
@@ -848,7 +848,7 @@ Item {
             // calculation needed for total fees
             gasTimeEstimate = txRoutes2.gasTimeEstimate
             totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, true)
@@ -1583,7 +1583,7 @@ Item {
             // calculation needed for total fees
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
             let bestPath = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
 
             // verify loading state removed and data is displayed as expected on the Modal

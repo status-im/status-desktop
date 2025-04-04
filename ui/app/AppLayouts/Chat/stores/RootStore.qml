@@ -581,10 +581,6 @@ QtObject {
         currentChatContentModule().inputAreaModule.declineRequest(messageId)
     }
 
-    function getGasEthValue(gweiValue, gasLimit) {
-        return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }

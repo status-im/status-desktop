@@ -24,12 +24,12 @@ QtObject {
     // The expected structure is as follows:
     // {
     //    fees: [{
-    //      ethFee: {CurrencyAmount JSON},
+    //      nativeCryptoFee: {CurrencyAmount JSON},
     //      fiatFee: {CurrencyAmount JSON},
     //      contractUniqueKey: string,
     //      errorCode: ComputeFeeErrorCode (int)
     //    }],
-    //    totalEthFee: {CurrencyAmount JSON},
+    //    totalNativeCryptoFee: {CurrencyAmount JSON},
     //    totalFiatFee: {CurrencyAmount JSON},
     //    errorCode: ComputeFeeErrorCode (int)
     // }
@@ -50,11 +50,11 @@ QtObject {
             return "-"
         }
 
-        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.ethCurrency).length || !Object.values(root.airdropFeesResponse.fiatCurrency).length) {
+        if (!root.airdropFeesResponse || !Object.values(root.airdropFeesResponse.nativeCryptoCurrencyCurrency).length || !Object.values(root.airdropFeesResponse.fiatCurrency).length) {
             return ""
         }
 
-        return LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.ethCurrency)
+        return LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.nativeCryptoCurrencyCurrency)
                 + " (" + LocaleUtils.currencyAmountToLocaleString(root.airdropFeesResponse.fiatCurrency) + ")"
     }
 
@@ -65,7 +65,7 @@ QtObject {
         return root.airdropFeesResponse.fees.map(fee => {
             return {
                 contractUniqueKey: fee.contractUniqueKey,
-                feeText: `${LocaleUtils.currencyAmountToLocaleString(fee.ethFee)} (${LocaleUtils.currencyAmountToLocaleString(fee.fiatFee)})`
+                feeText: `${LocaleUtils.currencyAmountToLocaleString(fee.nativeCryptoFee)} (${LocaleUtils.currencyAmountToLocaleString(fee.fiatFee)})`
             }
         })
     }

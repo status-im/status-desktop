@@ -396,6 +396,9 @@ QtObject {
         if (networkShortName === Constants.networkShortChainNames.status) {
             return qsTr("Status Explorer")
         }
+        if (networkShortName === Constants.networkShortChainNames.binanceSmartChain) {
+            return qsTr("BNB Smart Chain Explorer")
+        }
         return qsTr("Etherscan Explorer")
     }
 
@@ -420,11 +423,6 @@ QtObject {
             networkName = Constants.openseaExplorerLinks.base
             if (root.areTestNetworksEnabled) {
                 networkName = Constants.openseaExplorerLinks.sepoliaBase
-            }
-        } else if (networkShortName === Constants.networkShortChainNames.status) {
-            networkName = Constants.openseaExplorerLinks.status
-            if (root.areTestNetworksEnabled) {
-                networkName = Constants.openseaExplorerLinks.sepoliaStatus
             }
         }
         return networkName

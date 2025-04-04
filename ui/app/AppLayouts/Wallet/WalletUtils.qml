@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import shared.stores 1.0 as SharedStores
 
 QtObject {
 
@@ -41,19 +42,19 @@ QtObject {
 
       rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
       */
-    function calculateMaxSafeSendAmount(value, symbol, cryptoFeesToReserve = "") {
+    function calculateMaxSafeSendAmount(value, symbol, chainId, cryptoFeesToReserve = "") {
         if (!value) {
             return 0
         }
-        if (symbol !== Constants.ethToken || value === 0) {
+        if (symbol !== Utils.getNativeTokenSymbol(chainId) || value === 0) {
             return value
         }
 
         let estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
         if(!!cryptoFeesToReserve) {
-            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)
+            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenSmallestDecimals)
             estFee = StatusQUtils.AmountsArithmetic.div(
-                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenWeiDecimals)
+                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenSmallestDecimals)
         }
 
         const result = value - estFee
@@ -304,25 +305,7 @@ QtObject {
             try {
                 const jsonObj = JSON.parse(details)
 
-                let chain = Constants.openseaExplorerLinks.ethereum
-                switch(jsonObj.chainId) {
-                case Constants.chains.optimismChainId:
-                    case Constants.chains.optimismSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.optimism
-                    break
-                case Constants.chains.arbitrumChainId:
-                    case Constants.chains.arbitrumSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.arbitrum
-                    break
-                case Constants.chains.baseChainId:
-                    case Constants.chains.baseSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.base
-                    break
-                case Constants.chains.statusSepoliaChainId:
-                    chain = Constants.openseaExplorerLinks.status
-                    break
-                }
-
+                let chain = Utils.getNetworkName(jsonObj.chainId)
                 return qsTr("not enough balance for %1 on %2 chain").arg(jsonObj.token).arg(chain)
             }
             catch (e) {

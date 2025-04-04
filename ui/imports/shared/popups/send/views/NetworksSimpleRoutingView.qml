@@ -26,7 +26,7 @@ RowLayout {
     property bool isCollectiblesTransfer: false
     property var fromNetworksList
     property var suggestedToNetworksList
-    property var weiToEth: function(wei) {}
+    property var fnRawToDecimal: function(rawValue) {}
     property var formatCurrencyAmount: function () {}
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
@@ -120,7 +120,7 @@ RowLayout {
             subTitle: {
                 if(root.isCollectiblesTransfer)
                     return ""
-                let amountOut = root.weiToEth(model.amountOut)
+                let amountOut = root.fnRawToDecimal(model.amountOut)
                 return root.formatCurrencyAmount(amountOut, root.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
