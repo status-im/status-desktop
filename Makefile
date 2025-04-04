@@ -78,6 +78,8 @@ else
  detected_OS := $(strip $(shell uname))
 endif
 
+# `qmake` path, either passed explicitely, or as found in PATH
+# (makes it possible to override with a custom Qt5/Qt6 install dir)
 QMAKE ?= $(shell which qmake)
 
 ifeq ($(detected_OS),Darwin)
@@ -164,6 +166,14 @@ ifneq ($(MONITORING), false)
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
 endif
 
+# where Qt is installed, depends on the `QMAKE` path
+QT_INSTALL_PREFIX := $(shell $(QMAKE) -query QT_INSTALL_PREFIX 2>/dev/null)
+# what Qt version are we building against
+QT_VERSION := $(shell $(QMAKE) -query QT_VERSION 2>/dev/null)
+# separate DOS build dir, per Qt version
+DOTHERSIDE_BUILD_PATH := vendor/DOtherSide/build/Qt$(QT_VERSION)
+# separate StatusQ/storybook/... build dirs, per Qt version
+COMMON_CMAKE_CONFIG_PARAMS := -DCMAKE_PREFIX_PATH=$(QT_INSTALL_PREFIX)
 
 # Qt dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
@@ -187,7 +197,7 @@ ifneq ($(detected_OS),Windows)
  else
   NIM_PARAMS += --passL:"-L$(QT_LIBDIR)"
  endif
- DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
+ DOTHERSIDE_LIBFILE := $(DOTHERSIDE_BUILD_PATH)/lib/libDOtherSideStatic.a
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT_PCFILEDIR)" pkg-config --libs Qt"$(QT_MAJOR_VERSION)"Core Qt"$(QT_MAJOR_VERSION)"Qml Qt"$(QT_MAJOR_VERSION)"Gui Qt"$(QT_MAJOR_VERSION)"Quick Qt"$(QT_MAJOR_VERSION)"QuickControls2 Qt"$(QT_MAJOR_VERSION)"Widgets Qt"$(QT_MAJOR_VERSION)"Svg Qt"$(QT_MAJOR_VERSION)"Multimedia Qt"$(QT_MAJOR_VERSION)"WebView Qt"$(QT_MAJOR_VERSION)"WebChannel)"
 else
@@ -195,7 +205,7 @@ else
 endif
 
 ifeq ($(detected_OS),Windows)
- COMMON_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+ COMMON_CMAKE_CONFIG_PARAMS += -T"v141" -A x64
 endif
 
 ifeq ($(detected_OS),Darwin)
@@ -259,7 +269,7 @@ status-go-version:
 ##
 
 STATUSQ_SOURCE_PATH := ui/StatusQ
-STATUSQ_BUILD_PATH := ui/StatusQ/build
+STATUSQ_BUILD_PATH := ui/StatusQ/build/Qt$(QT_VERSION)
 export STATUSQ_INSTALL_PATH := $(shell pwd)/bin
 STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 
@@ -304,6 +314,7 @@ statusq-sanity-checker:
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
 		-DSTATUSQ_BUILD_TESTS=OFF \
+		$(COMMON_CMAKE_CONFIG_PARAMS) \
 		-B $(STATUSQ_BUILD_PATH) \
 		-S $(STATUSQ_SOURCE_PATH) \
 		$(HANDLE_OUTPUT)
@@ -324,6 +335,7 @@ statusq-tests:
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=ON \
 		-DSTATUSQ_SHADOW_BUILD=OFF \
+		$(COMMON_CMAKE_CONFIG_PARAMS) \
 		-B $(STATUSQ_BUILD_PATH) \
 		-S $(STATUSQ_SOURCE_PATH) \
 		$(HANDLE_OUTPUT)
@@ -342,7 +354,7 @@ run-statusq-tests: statusq-tests
 ##
 
 STORYBOOK_SOURCE_PATH := storybook
-STORYBOOK_BUILD_PATH := $(STORYBOOK_SOURCE_PATH)/build
+STORYBOOK_BUILD_PATH := $(STORYBOOK_SOURCE_PATH)/build/Qt$(QT_VERSION)
 STORYBOOK_CMAKE_CACHE := $(STORYBOOK_BUILD_PATH)/CMakeCache.txt
 
 $(STORYBOOK_CMAKE_CACHE): | check-qt-dir
@@ -390,13 +402,12 @@ ifneq ($(detected_OS),Windows)
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
 #  NIM_PARAMS +=
 else
- DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/$(COMMON_CMAKE_BUILD_TYPE)/DOtherSide.dll
+ DOTHERSIDE_LIBFILE := $(DOTHERSIDE_BUILD_PATH)/lib/$(COMMON_CMAKE_BUILD_TYPE)/DOtherSide.dll
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE_LIBFILE)
 endif
 
 DOTHERSIDE_SOURCE_PATH := vendor/DOtherSide
-DOTHERSIDE_BUILD_PATH := vendor/DOtherSide/build
 DOTHERSIDE_CMAKE_CACHE := $(DOTHERSIDE_BUILD_PATH)/CMakeCache.txt
 DOTHERSIDE_LIBDIR := $(shell pwd)/$(shell dirname "$(DOTHERSIDE_LIBFILE)")
 export DOTHERSIDE_LIBDIR
@@ -585,7 +596,7 @@ ifeq ($(detected_OS),Darwin)
 		bin/nim_status_client
 endif
 
-nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
+nim_status_client: force-rebuild-status-go statusq dotherside $(NIM_STATUS_CLIENT)
 
 ifdef IN_NIX_SHELL
 APPIMAGE_TOOL := appimagetool
@@ -818,8 +829,11 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-clean: | clean-common statusq-clean status-go-clean dotherside-clean storybook-clean
-	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
+clean-destdir:
+	rm -rf bin/*
+
+clean: | clean-common clean-destdir statusq-clean status-go-clean dotherside-clean storybook-clean
+	rm -rf node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
 clean-git:

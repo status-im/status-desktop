@@ -266,6 +266,8 @@ StatusWindow {
     }
 
     Component.onCompleted: {
+        console.info(">>> %1 %2 started, using Qt version %3".arg(Qt.application.name).arg(Qt.application.version).arg(SystemUtils.qtRuntimeVersion()))
+
         Theme.changeTheme(Universal.System, systemPalette.isCurrentSystemThemeDark());
 
         restoreAppState();
