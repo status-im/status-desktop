@@ -1,5 +1,6 @@
 const
   ETH_SYMBOL* = "ETH"
+  BNB_SYMBOL* = "BNB"
 
   ETH_TRANSACTION_TYPE* = "eth"
   ERC20_TRANSACTION_TYPE* = "erc20"

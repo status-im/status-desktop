@@ -26,7 +26,7 @@ ColumnLayout {
     property var selectedAsset
     property bool isLoading: false
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
-    property var weiToEth: function(wei) {}
+    property var fnRawToDecimal: function(rawValue) {}
     property bool interactive: true
     property bool isBridgeTx: false
     property var toNetworksList
@@ -104,7 +104,7 @@ ColumnLayout {
                     }
                     toNetworksList: root.toNetworksList
                     fromNetworksList: root.fromNetworksList
-                    weiToEth: root.weiToEth
+                    fnRawToDecimal: root.fnRawToDecimal
                     interactive: root.interactive
                     errorType: root.errorType
                     isLoading: root.isLoading

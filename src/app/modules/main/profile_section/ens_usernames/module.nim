@@ -1,11 +1,10 @@
-import NimQml, json, stint, strutils, stew/shims/strformat, parseutils, chronicles
+import NimQml, json, stint, strutils, stew/shims/strformat, chronicles
 
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model
 
 import app/core/eventemitter
-import app_service/common/conversion as service_conversion
 import app_service/service/settings/service as settings_service
 import app_service/service/ens/service as ens_service
 import app_service/service/network/service as network_service
@@ -199,27 +198,6 @@ method getCryptoValue*(self: Module, fiatAmount: string, cryptoSymbol: string): 
   let price = self.controller.getPriceBySymbol(cryptoSymbol)
   let value = fiatAmountBalance / price
   return fmt"{value}"
-
-method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
-  var gasLimitInt:int
-
-  if(gasLimit.parseInt(gasLimitInt) == 0):
-    info "an error occurred parsing gas limit", methodName="getGasEthValue"
-    return ""
-
-  # The following check prevents app crash, cause we're trying to promote
-  # gasLimitInt to unsigned 256 int, and this number must be a positive number,
-  # because of overflow.
-  var gwei = gweiValue.parseFloat()
-  if (gwei < 0):
-    gwei = 0
-
-  if (gasLimitInt < 0):
-    gasLimitInt = 0
-
-  let weiValue = service_conversion.gwei2Wei(gwei) * gasLimitInt.u256
-  let ethValue = service_conversion.wei2Eth(weiValue)
-  return fmt"{ethValue}"
 
 method getStatusTokenKey*(self: Module): string =
   return self.controller.getStatusTokenKey()

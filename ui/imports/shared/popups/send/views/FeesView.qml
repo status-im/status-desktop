@@ -71,7 +71,9 @@ Rectangle {
             GasSelector {
                 id: gasSelector
                 width: parent.width
-                getGasEthValue: root.currencyStore.getGasEthValue
+                getGasNativeCryptoValue: function(gasPrice, gasAmount) {
+                    return Utils.getGasDecimalValue(root.selectedAsset.chainId, gasPrice, gasAmount)
+                }
                 getFiatValue: root.currencyStore.getFiatValue
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 currentCurrency: root.currencyStore.currentCurrency

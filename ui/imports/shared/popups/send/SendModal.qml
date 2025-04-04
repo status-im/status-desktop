@@ -486,10 +486,10 @@ StatusDialog {
                         id: maxButton
 
                         readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(
-                                                                   d.maxInputBalance, d.inputSymbol)
+                                                                   d.maxInputBalance, d.inputSymbol, Constants.networkChainId.mainnet) // Hardcoding mainnet to consider ETH as native token
 
                         readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(
-                                                                         d.maxCryptoBalance, d.tokenSymbol)
+                                                                         d.maxCryptoBalance, d.tokenSymbol, Constants.networkChainId.mainnet)
 
                         formattedValue: d.currencyStore.formatCurrencyAmount(
                                             maxSafeValue, d.inputSymbol,
@@ -795,6 +795,11 @@ StatusDialog {
 
             popup.bestRoutes =  txRoutes.suggestedRoutes
 
+            // We take the chain from the first route, assuming the native token is the same for all routes
+            let firstRoute = ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
+            let firstRouteFromNetwork = ModelUtils.get(firstRoute, "fromNetwork")
+            let gasSymbol = Utils.getNativeTokenSymbol(firstRouteFromNetwork)
+
             d.routerError = WalletUtils.getRouterErrorBasedOnCode(errCode)
             d.routerErrorDetails = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
 
@@ -803,7 +808,7 @@ StatusDialog {
             let totalTokenFeesInFiat = 0
             if (!!d.selectedHolding && !!d.selectedHolding.marketDetails && !!d.selectedHolding.marketDetails.currencyPrice)
                 totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * d.selectedHolding.marketDetails.currencyPrice.amount
-            d.totalFeesInFiat = d.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            d.totalFeesInFiat = d.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, gasSymbol) + totalTokenFeesInFiat
 
             if (d.selectedHolding.type === Constants.TokenType.ERC20 || d.selectedHolding.type === Constants.TokenType.Native) {
                 // If assets

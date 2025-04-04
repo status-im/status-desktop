@@ -147,6 +147,7 @@ SplitView {
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
+                    networkChainId: priv.selectedNetwork.chainId
 
                     currentBaseFee: "8.2"
                     currentSuggestedMinPriorityFee: "0.06"

@@ -73,7 +73,7 @@ proc init*(self: Controller) =
     self.communityTokensService.getAllCommunityTokensAsync()
   self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
     let args = SuggestedRoutesArgs(e)
-    self.delegate.suggestedRoutesReady(args.uuid, args.sendType, args.totalCostEthCurrency, args.totalCostFiatCurrency,
+    self.delegate.suggestedRoutesReady(args.uuid, args.sendType, args.totalCostNativeCryptoCurrency, args.totalCostFiatCurrency,
       args.costPerPath, args.errCode, args.errDescription)
   self.events.on(SIGNAL_SIGN_ROUTER_TRANSACTIONS) do(e:Args):
     let args = RouterTransactionsForSigningArgs(e)

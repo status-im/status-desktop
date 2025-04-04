@@ -38,6 +38,7 @@ Item {
             networkName: "Mainnet"
             networkIconPath: Theme.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
+            networkChainId: 1
 
             fiatFees: "1.54 USD"
             cryptoFees: "0.001 ETH"
