@@ -91,12 +91,6 @@ QtObject {
         return ensUsernamesModule.getCurrentCurrency()
     }
 
-    function getGasEthValue(gweiValue, gasLimit) {
-        if(!root.ensUsernamesModule)
-            return ""
-        return ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
-    }
-
     function getStatusTokenKey() {
         if(!root.ensUsernamesModule)
             return ""

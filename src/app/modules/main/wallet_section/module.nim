@@ -156,17 +156,20 @@ proc newModule*(
     currencyService,
     tokenService,
     savedAddressService,
+    networkService,
     events)
   result.tmpActivityControllers = [
     activityc.newController(
       currencyService,
       tokenService,
       savedAddressService,
+      networkService,
       events),
     activityc.newController(
       currencyService,
       tokenService,
       savedAddressService,
+      networkService,
       events)
   ]
 

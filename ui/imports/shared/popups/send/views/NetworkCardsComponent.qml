@@ -26,7 +26,7 @@ Item {
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
     property bool interactive: true
-    property var weiToEth: function(wei) {}
+    property var fnRawToDecimal: function(rawValue) {}
     property var reCalculateSuggestedRoute: function() {}
     property var fromNetworksList
     property var toNetworksList
@@ -161,7 +161,7 @@ Item {
                     property int bentLine: 0
                     property int routeOnNetwork: 0
                     primaryText: model.chainName
-                    secondaryText: root.currencyStore.formatCurrencyAmount(root.weiToEth(model.amountOut), d.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
+                    secondaryText: root.currencyStore.formatCurrencyAmount(root.fnRawToDecimal(model.amountOut), d.selectedSymbol, {"minDecimals": root.minReceiveCryptoDecimals})
                     tertiaryText: state === "unpreferred"  ? qsTr("UNPREFERRED") : ""
                     state: !preferred ? "unpreferred" : "default"
                     opacity: preferred || store.showUnPreferredChains ? 1 : 0

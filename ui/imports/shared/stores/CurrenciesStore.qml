@@ -67,17 +67,6 @@ QtObject {
         return parseFloat(amount)
     }
 
-    function getGasEthValue(gweiValue, gasLimit) {
-        var amount = _profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
-        return parseFloat(amount)
-    }
-
-    function getFeeEthValue(feeCurrency) {
-        if (!feeCurrency || feeCurrency.symbol !== "Gwei")
-            return 0
-        return getGasEthValue(feeCurrency.amount / Math.pow(10, feeCurrency.displayDecimals), 1)
-    }
-
     function getCurrentCurrencyAmount(amount) {
         return getCurrencyAmount(amount, currentCurrency)
     }

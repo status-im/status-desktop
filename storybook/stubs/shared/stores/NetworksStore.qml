@@ -11,7 +11,7 @@ QtObject {
         sourceModel: NetworksModel.flatNetworks
         sorters: [
             RoleSorter {
-                roleName: "layer"
+                roleName: "isDeactivatable"
                 sortOrder: Qt.AscendingOrder
             },
             RoleSorter {
