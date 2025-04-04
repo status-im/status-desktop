@@ -60,11 +60,11 @@ protected:
     void resetIndex();
     void tryItemResetOrUpdate();
     void resetItem();
-    void updateItem(const QList<int>& roles = {});
-    QStringList fillItem(const QList<int>& roles = {});
+    void updateItem(const QVector<int>& roles = {});
+    QStringList fillItem(const QVector<int>& roles = {});
     void notifyItemChanges(const QStringList& roles);
 
-    QModelIndex findIndexInRange(int start, int end, const QList<int>& roles = {}) const;
+    QModelIndex findIndexInRange(int start, int end) const;
     bool itemHasCorrectRoles() const;
     void cacheItem();
     void resetCachedItem();

@@ -31,19 +31,20 @@ private slots:
     void init()
     {
         testObject = new ModelEntry();
-        sourceModelProperty =
-            testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("sourceModel"));
-        keyProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("key"));
-        valueProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("value"));
 
-        modelItemProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("item"));
-        rolesProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("roles"));
-        availableProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("available"));
-        rowProperty = testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("row"));
-        cacheOnRemovalProperty =
-            testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("cacheOnRemoval"));
-        itemRemovedFromCacheProperty =
-            testObject->metaObject()->property(testObject->metaObject()->indexOfProperty("itemRemovedFromModel"));
+        auto getProperty = [obj = this->testObject](const char *name) {
+            return obj->metaObject()->property(obj->metaObject()->indexOfProperty(name));
+        };
+
+        sourceModelProperty = getProperty("sourceModel");
+        keyProperty = getProperty("key");
+        valueProperty = getProperty("value");
+        modelItemProperty = getProperty("item");
+        rolesProperty = getProperty("roles");
+        availableProperty = getProperty("available");
+        rowProperty = getProperty("row");
+        cacheOnRemovalProperty = getProperty("cacheOnRemoval");
+        itemRemovedFromCacheProperty = getProperty("itemRemovedFromModel");
     }
 
     void cleanup()
@@ -1107,28 +1108,32 @@ private slots:
 
     void cacheOnSourceRemovalTest()
     {
-        QScopedPointer<QObject> qObject1 {new QObject()};
+        QScopedPointer qObject1 {new QObject()};
         qObject1->setProperty("key", 1);
         qObject1->setProperty("color", "red");
 
-        QScopedPointer<QObject> qObject2 {new QObject()};
+        QScopedPointer qObject2 {new QObject()};
         qObject2->setProperty("key", 2);
         qObject2->setProperty("color", "blue");
 
-        QScopedPointer<QObject> qObject3 {new QObject()};
+        QScopedPointer qObject3 {new QObject()};
         qObject3->setProperty("key", 3);
         qObject3->setProperty("color", "green");
 
-        QScopedPointer<TestModel> subModel1 {new TestModel({{"key", {1}}, {"color", {"red"}}})};
-        QScopedPointer<TestModel> subModel2 {new TestModel({{"key", {2}}, {"color", {"blue"}}})};
-        QScopedPointer<TestModel> subModel3 {new TestModel({{"key", {3}}, {"color", {"green"}}})};
+        QScopedPointer subModel1 {new TestModel({{"key", {1}}, {"color", {"red"}}})};
+        QScopedPointer subModel2 {new TestModel({{"key", {2}}, {"color", {"blue"}}})};
+        QScopedPointer subModel3 {new TestModel({{"key", {3}}, {"color", {"green"}}})};
 
         TestModel sourceModel(
             {{"key", {1, 2, 3}},
              {"color", {"red", "blue", "green"}},
-             {"item", {QVariant::fromValue(qObject1.data()), QVariant::fromValue(qObject2.data()), QVariant::fromValue(qObject3.data())}},
+             {"item", {QVariant::fromValue(qObject1.data()),
+                       QVariant::fromValue(qObject2.data()),
+                       QVariant::fromValue(qObject3.data())}},
              {"subModel",
-              {QVariant::fromValue(subModel1.data()), QVariant::fromValue(subModel2.data()), QVariant::fromValue(subModel3.data())}}});
+              {QVariant::fromValue(subModel1.data()),
+               QVariant::fromValue(subModel2.data()),
+               QVariant::fromValue(subModel3.data())}}});
 
         QSignalSpy sourceModelChangedSpy(testObject, &ModelEntry::sourceModelChanged);
         QSignalSpy keyChangedSpy(testObject, &ModelEntry::keyChanged);
