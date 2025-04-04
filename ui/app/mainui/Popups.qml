@@ -114,7 +114,7 @@ QtObject {
 
     property var currentPopup
     function openPopup(popupComponent, params = {}, cb = null) {
-        if (activePopupComponents.includes(popupComponent)) {
+        if (root.activePopupComponents.includes(popupComponent)) {
             return
         }
 
@@ -123,12 +123,12 @@ QtObject {
         if (cb)
             cb(root.currentPopup)
 
-        activePopupComponents.push(popupComponent)
+        root.activePopupComponents.push(popupComponent)
 
         root.currentPopup.closed.connect(() => {
-            const removeIndex = activePopupComponents.indexOf(popupComponent)
+            const removeIndex = root.activePopupComponents.indexOf(popupComponent)
             if (removeIndex !== -1) {
-                activePopupComponents.splice(removeIndex, 1)
+                root.activePopupComponents.splice(removeIndex, 1)
             }
         })
     }

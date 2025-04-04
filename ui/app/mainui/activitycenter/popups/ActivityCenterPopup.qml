@@ -9,6 +9,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared 1.0
 import shared.popups 1.0
@@ -369,7 +370,14 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
-            onReadMoreClicked: console.log("ActivityNotificationNewsMessage::onReadMoreClicked")
+            onReadMoreClicked: {
+                root.close()
+                Global.openPopup(newsMessagePopup, {
+                    notification: parent.notification
+                })
+                Global.addCentralizedMetricIfEnabled("news-info-opened", {"news-link": parent.notification.link})
+
+            }
             onCloseActivityCenter: root.close()
         }
     }
@@ -515,6 +523,14 @@ Popup {
                 }
             }
             footer: null
+        }
+    }
+
+    Component {
+        id: newsMessagePopup
+
+        NewsMessagePopup {
+            onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
         }
     }
 }

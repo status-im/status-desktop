@@ -17,7 +17,7 @@ StatusDialog {
     id: root
 
     required property var notification
-    signal linkClicked()
+    signal linkClicked(string link)
 
     anchors.centerIn: parent
     width: 480
@@ -41,21 +41,27 @@ StatusDialog {
     }
 
     ColumnLayout {
-        spacing: 16
         width: parent.width
 
-        StatusRoundedImage {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 300
+        Loader {
+            active: !!notification.imageUrl
 
-            image.source: notification.imageUrl
-            color: "transparent"
-            border.color: root.backgroundColor
-            border.width: 1
+            Layout.bottomMargin: active ? Theme.bigPadding : 0
+            Layout.fillWidth: true
+            Layout.preferredHeight: active ? 300 : 0
+
+            sourceComponent: StatusRoundedImage {
+
+                image.source: notification.imageUrl
+                color: "transparent"
+                border.color: root.backgroundColor
+                border.width: 1
+                radius: 10
+            }
         }
 
         StatusBaseText {
-            text: notification.content
+            text: notification.content || notification.description
             Layout.fillWidth: true
             Layout.fillHeight: true
             wrapMode: Text.WordWrap
@@ -64,9 +70,9 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
-                text: notification.linkLabel
+                text: !!notification.linkLabel ? notification.linkLabel : qsTr("Visit the website")
                 icon.name: "external"
-                onClicked: root.linkClicked()
+                onClicked: root.linkClicked(root.notification.link)
             }
         }
     }
