@@ -131,7 +131,14 @@ QObject {
 
             readonly property url communityIcon: model.communityImage ?? ""
 
-            readonly property bool canBeHidden: model.symbol !== Constants.ethToken
+            readonly property bool canBeHidden: {
+                for (const chain of root.chains) {
+                    if (model.symbol === Utils.getNativeTokenSymbol(chain)) {
+                        return false
+                    }
+                }
+                return true
+            }
 
             SortFilterProxyModel {
                 id: filteredBalances

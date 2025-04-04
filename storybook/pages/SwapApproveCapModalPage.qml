@@ -93,6 +93,7 @@ SplitView {
                     networkName: priv.selectedNetwork.chainName
                     networkIconPath: Theme.svg(priv.selectedNetwork.iconUrl)
                     networkBlockExplorerUrl: priv.selectedNetwork.blockExplorerURL
+                    networkChainId: priv.selectedNetwork.chainId
 
                     fiatFees: formatBigNumber("1.542567673454567457567678678678989234")
                     cryptoFees: formatBigNumber("0.001", "ETH")

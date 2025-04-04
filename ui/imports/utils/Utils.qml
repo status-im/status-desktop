@@ -749,6 +749,85 @@ QtObject {
         return true
     }
 
+    // Get NativeTokenSymbol for ChainID
+    function getNativeTokenSymbol(chainID) {
+        switch (chainID) {
+            case Constants.chains.binanceSmartChainMainnetChainId:
+            case Constants.chains.binanceSmartChainTestnetChainId:
+                return Constants.bnbToken
+            default:
+                return Constants.ethToken
+        }
+    }
+
+    function getNativeTokenDecimals(chainID) {
+        let decimals = Constants.rawDecimals[getNativeTokenSymbol(chainID)]
+        if (!decimals) {
+            // Default to eth
+            decimals = Constants.rawDecimals[Constants.ethToken]
+        }
+        return decimals
+    }
+
+    function getNativeTokenGasDecimals(chainID) {
+        let decimals = Constants.gasTokenDecimals[getNativeTokenSymbol(chainID)]
+        if (!decimals) {
+            // Default to eth
+            decimals = Constants.gasTokenDecimals[Constants.ethToken]
+        }
+        return decimals
+    }
+
+    // Convert decimal value to raw (e.g. ETH to Wei)
+    function nativeTokenDecimalToRaw(chainID, value) {
+        const decimals = getNativeTokenDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, decimals))
+    }
+
+    // Convert raw value to decimal (e.g. Wei to ETH)
+    function nativeTokenRawToDecimal(chainID, value) {
+        const decimals = getNativeTokenDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
+                                      StatusQUtils.AmountsArithmetic.fromNumber(1, decimals))
+    }
+
+    // Convert gas value to decimal (e.g. GWei to ETH)
+    function nativeTokenGasToDecimal(chainID, value) {
+        const decimals = getNativeTokenGasDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
+                                      StatusQUtils.AmountsArithmetic.fromNumber(1, decimals))
+    }
+
+    // Convert decimal value to gas (e.g. ETH to GWei)
+    function nativeTokenDecimalToGas(chainID, value) {
+        const decimals = getNativeTokenGasDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, decimals))
+    }
+
+    // Convert raw value to gas (e.g. Wei to GWei)
+    function nativeTokenRawToGas(chainID, value) {
+        const rawDecimals = getNativeTokenDecimals(chainID)
+        const gasDecimals = getNativeTokenGasDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, rawDecimals - gasDecimals))
+    }
+
+    // Convert gas value to raw (e.g. GWei to Wei)
+    function nativeTokenGasToRaw(chainID, value) {
+        const rawDecimals = getNativeTokenDecimals(chainID)
+        const gasDecimals = getNativeTokenGasDecimals(chainID)
+        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
+                                       StatusQUtils.AmountsArithmetic.fromNumber(1, rawDecimals - gasDecimals))
+    }
+
+    function getGasDecimalValue(chainID, gasValue, gasLimit) {
+        let rawValue = nativeTokenGasToRaw(chainID, gasValue)
+        rawValue = StatusQUtils.AmountsArithmetic.times(rawValue, StatusQUtils.AmountsArithmetic.fromNumber(1, gasLimit))
+        return nativeTokenRawToDecimal(chainID, rawValue).toFixed()
+    }
+    
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
@@ -1034,25 +1113,5 @@ QtObject {
             return typeName.substring(0, bracketIndex)
 
         return typeName
-    }
-
-    function weiToEth(value) {
-        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
-                                      StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
-    }
-
-    function ethToWei(value) {
-        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
-                                       StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenWeiDecimals))
-    }
-
-    function weiToGWei(value) {
-        return StatusQUtils.AmountsArithmetic.div(StatusQUtils.AmountsArithmetic.fromString(value),
-                                      StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
-    }
-
-    function gweiToWei(value) {
-        return StatusQUtils.AmountsArithmetic.times(StatusQUtils.AmountsArithmetic.fromString(value),
-                                       StatusQUtils.AmountsArithmetic.fromNumber(1, Constants.ethTokenGWeiDecimals))
     }
 }
