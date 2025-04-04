@@ -901,9 +901,15 @@ QtObject {
     readonly property string networkRopsten: "Ropsten"
 
     readonly property string ethToken: "ETH"
-
-    readonly property int ethTokenWeiDecimals: 18
-    readonly property int ethTokenGWeiDecimals: 9
+    readonly property string bnbToken: "BNB"
+    readonly property var rawDecimals: {
+        "ETH": 18,
+        "BNB": 18,
+    }
+    readonly property var gasTokenDecimals: {
+        "ETH": 9,
+        "BNB": 9,
+    }
 
     readonly property string minGasForTx: "21000"
     readonly property string maxGasForTx: "30000000"

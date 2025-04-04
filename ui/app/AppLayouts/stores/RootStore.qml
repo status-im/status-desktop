@@ -211,9 +211,6 @@ QtObject {
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
         return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }
-    function getGasEthValue(gweiValue, gasLimit) {
-        return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
-    }
 
     function setCurrentUserStatus(newStatus) {
         if (d.userProfileInst && d.userProfileInst.currentUserStatus !== newStatus) {

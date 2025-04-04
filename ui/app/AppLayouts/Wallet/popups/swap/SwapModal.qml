@@ -78,6 +78,8 @@ StatusDialog {
         }
 
         readonly property var selectedAccount: selectedAccountEntry.item
+
+        readonly property string nativeTokenSymbol: Utils.getNativeTokenSymbol(root.swapInputParamsForm.selectedNetworkChainId)
     }
 
     ModelEntry {
@@ -421,7 +423,7 @@ StatusDialog {
                     d.buyFormData.selectedNetworkChainId = root.swapInputParamsForm.selectedNetworkChainId
                     d.buyFormData.selectedTokenKey = root.swapAdaptor.isTokenBalanceInsufficient ?
                                 root.swapInputParamsForm.fromTokensKey :
-                                Constants.ethToken
+                                d.nativeTokenSymbol
                     Global.openBuyCryptoModalRequested(d.buyFormData)
                 }
             }
@@ -586,10 +588,10 @@ StatusDialog {
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
 
             fiatFees: {
-                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, Constants.ethToken)
+                const feesInFloat = root.swapAdaptor.currencyStore.getFiatValue(root.swapAdaptor.swapOutputData.approvalGasFees, d.nativeTokenSymbol)
                 return root.swapAdaptor.currencyStore.formatCurrencyAmount(feesInFloat, root.swapAdaptor.currencyStore.currentCurrency)
             }
-            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), Constants.ethToken)
+            cryptoFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(parseFloat(root.swapAdaptor.swapOutputData.approvalGasFees), d.nativeTokenSymbol)
             estimatedTime: root.swapAdaptor.swapOutputData.estimatedTime
 
             serviceProviderName: root.swapAdaptor.swapOutputData.txProviderName
@@ -641,12 +643,13 @@ StatusDialog {
             networkName: networkFilter.singleSelectionItemData.chainName
             networkIconPath: Theme.svg(networkFilter.singleSelectionItemData.iconUrl)
             networkBlockExplorerUrl: networkFilter.singleSelectionItemData.blockExplorerURL
+            networkChainId: root.swapInputParamsForm.selectedNetworkChainId
 
             fiatFees: root.swapAdaptor.currencyStore.formatCurrencyAmount(root.swapAdaptor.swapOutputData.totalFees,
                                                                           root.swapAdaptor.currencyStore.currentCurrency)
             cryptoFees: {
-                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, Constants.ethToken)
-                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, Constants.ethToken)
+                const cryptoValue = root.swapAdaptor.currencyStore.getCryptoValue(root.swapAdaptor.swapOutputData.totalFees, d.nativeTokenSymbol)
+                return root.swapAdaptor.currencyStore.formatCurrencyAmount(cryptoValue, d.nativeTokenSymbol)
             }
             slippage: root.swapInputParamsForm.selectedSlippage
 

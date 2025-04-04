@@ -42,19 +42,19 @@ QtObject {
 
       rationale: https://github.com/status-im/status-desktop/pull/14959#discussion_r1627110880
       */
-    function calculateMaxSafeSendAmount(value, symbol, cryptoFeesToReserve = "") {
+    function calculateMaxSafeSendAmount(value, symbol, chainId, cryptoFeesToReserve = "") {
         if (!value) {
             return 0
         }
-        if (symbol !== Constants.ethToken || value === 0) {
+        if (symbol !== Utils.getNativeTokenSymbol(chainId) || value === 0) {
             return value
         }
 
         let estFee = Math.max(0.0001, Math.min(0.01, value * 0.1))
         if(!!cryptoFeesToReserve) {
-            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenWeiDecimals)
+            const divisor = StatusQUtils.AmountsArithmetic.fromExponent(Constants.ethTokenSmallestDecimals)
             estFee = StatusQUtils.AmountsArithmetic.div(
-                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenWeiDecimals)
+                        StatusQUtils.AmountsArithmetic.fromString(cryptoFeesToReserve), divisor).toFixed(Constants.ethTokenSmallestDecimals)
         }
 
         const result = value - estFee
