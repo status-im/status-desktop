@@ -33,19 +33,13 @@ StatusComboBox {
     property bool showTitle: true
     property bool selectionAllowed: true
     property bool showManageNetworksButton: false
-    property var selection: []
+    property alias selection: networkSelectorView.selection
 
     property bool showNewChainIcon: false
     property bool showNotificationIcon: false
 
     signal toggleNetwork(int chainId, int index)
     signal manageNetworksClicked()
-
-    onSelectionChanged: {
-        if (root.selection !== networkSelectorView.selection) {
-            networkSelectorView.selection = root.selection
-        }
-    }
 
     control.padding: 12
     control.spacing: 0
@@ -177,12 +171,6 @@ StatusComboBox {
         showManageNetworksButton: root.showManageNetworksButton
         selection: root.selection
         showNewChainIcon: root.showNewChainIcon
-
-        onSelectionChanged: {
-            if (root.selection !== networkSelectorView.selection) {
-                root.selection = networkSelectorView.selection
-            }
-        }
 
         onToggleNetwork: root.toggleNetwork(chainId, index)
 
