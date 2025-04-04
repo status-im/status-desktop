@@ -418,6 +418,7 @@ Item {
             }
             recipientsFilterModel: recipientsModel
             currentCurrency: "USD"
+            selectedChainId: SQUtils.ModelUtils.get(networksModel, 0, "chainId")
             fnFormatCurrencyAmount: function (amount, symbol, options = null, locale = null) {
                 if (isNaN(amount)) {
                     return "N/A"
