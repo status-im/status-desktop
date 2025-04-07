@@ -21,7 +21,6 @@ from scripts.utils.generators import random_text_message
 @pytest.mark.timeout(timeout=315)
 @pytest.mark.critical
 @pytest.mark.smoke
-@pytest.mark.skip(reason="temp skip until timeouts are fixed")
 @pytest.mark.parametrize('community_name, domain_link, domain_link_2',
                          [pytest.param('Status', 'status.app', 'github.com')
                           ])
