@@ -571,6 +571,24 @@ else
  NIM_STATUS_CLIENT := bin/nim_status_client
 endif
 
+# Writing the QMAKE variable to a file to compare its value from the previous
+# make call and forcing linking of NIM_STATUS_CLIENT if the value has changed.
+
+# Define the file to store the previous QMAKE value
+QMAKE_PREVIOUS := .qmake_previous
+
+# Check if the QMAKE value has changed
+QMAKE_CHANGED := $(shell [ -f $(QMAKE_PREVIOUS) ] && [ "$$(cat $(QMAKE_PREVIOUS))" = "$(QMAKE)" ] && echo "no" || echo "yes")
+
+# Target to store the current QMAKE value
+update-qmake-previous:
+	@echo $(QMAKE) > $(QMAKE_PREVIOUS)
+
+# Add a dependency on update-qmake-previous if QMAKE has changed
+ifeq ($(QMAKE_CHANGED),yes)
+$(NIM_STATUS_CLIENT): update-qmake-previous
+endif
+
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS_FILE) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
