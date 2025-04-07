@@ -214,11 +214,11 @@ StatusWindow {
             } else {
                 if (loader.sourceComponent != app) {
                     Qt.quit();
-                }
-                else if (loader.sourceComponent == app) {
+                } else if (loader.sourceComponent == app) {
                     if (localAccountSensitiveSettings.quitOnClose) {
                         Qt.quit();
                     } else {
+                        close.accepted = false
                         applicationWindow.visible = false;
                     }
                 }
