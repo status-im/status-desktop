@@ -233,17 +233,17 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                     lambda: domain_link_2 == message_object.get_link_domain(),
                     configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
-            # with step(f'Paste link to status community'):
-            #     message_community = link_to_status_community
-            #     messages_screen.group_chat.type_message(message_community)
-            #
-            # with step('Verify title and subtitle of preview are correct and close button exists'):
-            #     assert driver.waitFor(
-            #         lambda: community_name == messages_screen.group_chat.get_link_preview_bubble_title(),
-            #         configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
-            #     assert driver.waitFor(
-            #         lambda: domain_link == messages_screen.group_chat.get_link_preview_bubble_description(),
-            #         configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+            with step(f'Paste link to status community'):
+                message_community = link_to_status_community
+                messages_screen.group_chat.type_message(message_community)
+
+            with step('Verify title and subtitle of preview are correct and close button exists'):
+                assert driver.waitFor(
+                    lambda: community_name == messages_screen.group_chat.get_link_preview_bubble_title(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                assert driver.waitFor(
+                    lambda: domain_link == messages_screen.group_chat.get_link_preview_bubble_description(),
+                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
             with step('Close link preview options popup and send a message'):
                 messages_screen.group_chat.confirm_sending_message()
