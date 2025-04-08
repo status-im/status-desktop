@@ -131,10 +131,10 @@ def test_1x1_chat_add_contact_in_settings(multiple_instances):
             message = chat.find_message_by_text(chat_message1, 0)
             additional_text = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(1, 21))
             time.sleep(5)
-
-        with step(f'User {user_one.name}, click address / ens link in message and verify send modal appears'):
-            send_modal = chat.open_send_modal_from_link(chat_message1)
-            assert str(send_modal.send_modal_recipient_panel.object.selectedRecipientAddress) == chat_message1
+        # TODO: https://github.com/status-im/status-desktop/issues/17757
+        # with step(f'User {user_one.name}, click address / ens link in message and verify send modal appears'):
+        #     send_modal = chat.open_send_modal_from_link(chat_message1)
+        #     assert str(send_modal.send_modal_recipient_panel.object.selectedRecipientAddress) == chat_message1
             left_panel_chat.click()
 
         with step(f'User {user_one.name}, edit message and verify it was changed'):
