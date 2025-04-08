@@ -6,6 +6,7 @@ CreateCategoryPopup 1.0 CreateCategoryPopup.qml
 CreateChannelPopup 1.0 CreateChannelPopup.qml
 CreateCommunityPopup 1.0 CreateCommunityPopup.qml
 DiscordImportProgressDialog 1.0 DiscordImportProgressDialog.qml
+EnableFullMessageHistoryPopup 1.0 EnableFullMessageHistoryPopup.qml
 EnableShardingPopup 1.0 EnableShardingPopup.qml
 ExportControlNodePopup 1.0 ExportControlNodePopup.qml
 FinaliseOwnershipDeclinePopup 1.0 FinaliseOwnershipDeclinePopup.qml
