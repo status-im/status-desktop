@@ -20,6 +20,7 @@ MarkAsIDVerifiedDialog 1.0 MarkAsIDVerifiedDialog.qml
 MarkAsUntrustedPopup 1.0 MarkAsUntrustedPopup.qml
 MetricsEnablePopup 1.0 MetricsEnablePopup.qml
 ModalPopup 1.0 ModalPopup.qml
+NewsMessagePopup 1.0 NewsMessagePopup.qml
 NicknamePopup 1.0 NicknamePopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml
 OutgoingContactVerificationRequestPopup 1.0 OutgoingContactVerificationRequestPopup.qml
