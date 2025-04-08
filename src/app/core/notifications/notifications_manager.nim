@@ -85,6 +85,7 @@ QtObject:
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberKickedNotification(QString, QString, QString)", self, "onShowCommunityMemberKickedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberBannedNotification(QString, QString, QString)", self, "onShowCommunityMemberBannedNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "showCommunityMemberUnbannedNotification(QString, QString, QString)", self, "onShowCommunityMemberUnbannedNotification(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "showNewsMessageNotification(QString, QString)", self, "onShowNewsMessageNotification(QString, QString)", 2)
 
     self.notificationSetUp = true
 
@@ -143,6 +144,10 @@ QtObject:
       isGroupChat: isGroupChat,
       messageId: messageId)
     self.processNotification(title, message, details)
+
+  proc onShowNewsMessageNotification(self: NotificationsManager, title: string, description: string) {.slot.} =
+    let details = NotificationDetails(notificationType: NotificationType.NewsFeedMessage)
+    self.processNotification(title, description, details)
 
   proc onShowCommunityTokenPermissionCreatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
     let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreated, sectionId: sectionId, isCommunitySection: true)
