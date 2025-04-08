@@ -11,6 +11,7 @@ import ../../../../app_service/service/about/service as about_service
 import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
+import ../../../../app_service/service/kvstore/service as kvstore_service
 import ../../../../app_service/service/devices/service as devices_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -76,6 +77,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   languageService: language_service.Service,
   privacyService: privacy_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
+  kvstoreService: kvstore_service.Service,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
   chatService: chat_service.Service,
@@ -101,7 +103,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService, generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
-  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
+  result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService, kvstoreService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
   result.syncModule = sync_module.newModule(result, events, settingsService, nodeConfigurationService, mailserversService)
   result.wakuModule = waku_module.newModule(result, events, settingsService, nodeConfigurationService)

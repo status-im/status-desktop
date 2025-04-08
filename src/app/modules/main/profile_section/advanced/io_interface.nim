@@ -81,7 +81,10 @@ method disableCommunityHistoryArchiveSupport*(self: AccessInterface) {.base.} =
 method toggleDebug*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleRateLimit*(self: AccessInterface) {.base.} =
+method isRlnRateLimitEnabled*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleRlnRateLimit*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isNimbusProxyEnabled*(self: AccessInterface): bool {.base.} =

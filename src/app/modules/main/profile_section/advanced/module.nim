@@ -104,8 +104,11 @@ method isDebugEnabled*(self: Module): bool =
 method toggleDebug*(self: Module) =
   self.controller.toggleDebug()
 
-method toggleRateLimit*(self: Module) =
-  self.controller.toggleRateLimit()
+method isRlnRateLimitEnabled*(self: Module): bool =
+  self.controller.isRlnRateLimitEnabled()
+
+method toggleRlnRateLimit*(self: Module) =
+  self.controller.toggleRlnRateLimit()
 
 method onDebugToggled*(self: Module) =
   self.view.isDebugEnabledChanged()

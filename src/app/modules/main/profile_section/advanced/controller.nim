@@ -120,14 +120,15 @@ proc toggleDebug*(self: Controller) =
 
   self.delegate.onDebugToggled()
 
-proc toggleRateLimit*(self: Controller) =
-  let enabled = self.kvstoreService.isRateLimitEnabled()
+proc isRlnRateLimitEnabled*(self: Controller): bool =
+  return self.kvstoreService.isRlnRateLimitEnabled()
 
-  if not self.kvstoreService.setRateLimitEnabled(not enabled):
+proc toggleRlnRateLimit*(self: Controller) =
+  let enabled = self.kvstoreService.isRlnRateLimitEnabled()
+
+  if not self.kvstoreService.setRlnRateLimitEnabled(not enabled):
     error "an error occurred, we couldn't toggle rate limit"
     return
-  
-  # self.delegate.onRateLimitEnabled()
 
 proc isNimbusProxyEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isNimbusProxyEnabled()

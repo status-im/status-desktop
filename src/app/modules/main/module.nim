@@ -55,6 +55,7 @@ import app_service/service/activity_center/service as activity_center_service
 import app_service/service/saved_address/service as saved_address_service
 import app_service/service/node/service as node_service
 import app_service/service/node_configuration/service as node_configuration_service
+import app_service/service/kvstore/service as kvstore_service
 import app_service/service/devices/service as devices_service
 import app_service/service/mailservers/service as mailservers_service
 import app_service/service/gif/service as gif_service
@@ -158,10 +159,10 @@ proc newModule*[T](
   privacyService: privacy_service.Service,
   providerService: provider_service.Service,
   stickersService: stickers_service.Service,
-  kvstoreService: kvstore_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
+  kvstoreService: kvstore_service.Service,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
@@ -229,7 +230,7 @@ proc newModule*[T](
   )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
-    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
+    profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService, kvstoreService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
     networkService, keycardService, keychainService, tokenService, nodeService
   )

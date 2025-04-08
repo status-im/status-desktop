@@ -487,9 +487,9 @@ SettingsContentBase {
                 anchors.rightMargin: 0
                 text: qsTr("Enable RLN Rate Limit")
                 isSwitch: true
-                switchChecked: root.advancedStore.isRateLimitEnabled
+                switchChecked: root.advancedStore.isRlnRateLimitEnabled
                 onClicked: {
-                    root.advancedStore.toggleRateLimit()
+                    root.advancedStore.toggleRlnRateLimit()
                 }
             }
         }

@@ -88,8 +88,14 @@ QtObject:
   proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
   
-  proc toggleRateLimit*(self: View) {.slot.} =
-    self.delegate.toggleRateLimit()
+  proc getIsRateLimitEnabled*(self: View): bool {.slot.} =
+    return self.delegate.isRlnRateLimitEnabled()
+  QtProperty[bool] isRlnRateLimitEnabled:
+    read = getIsRateLimitEnabled
+  
+  proc toggleRlnRateLimit*(self: View) {.slot.} =
+    self.delegate.toggleRlnRateLimit()
+  
   proc isNimbusProxyEnabledChanged*(self: View) {.signal.}
   proc getIsNimbusProxyEnabled*(self: View): bool {.slot.} =
     return self.delegate.isNimbusProxyEnabled()
