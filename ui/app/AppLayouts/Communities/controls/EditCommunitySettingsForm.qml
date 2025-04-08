@@ -146,13 +146,13 @@ Control {
         StatusModalDivider {
             Layout.fillWidth: true
             Layout.topMargin: 2
-            Layout.bottomMargin: -root.spacing
+            Layout.bottomMargin: 2
         }
 
         Options {
             id: options
             Layout.fillWidth: true
-            Layout.topMargin: 4
+            Layout.topMargin: -parent.spacing
             Layout.bottomMargin: 4
         }
     }
