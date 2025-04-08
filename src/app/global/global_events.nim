@@ -57,4 +57,6 @@ QtObject:
 
   proc showCommunityMemberUnbannedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
 
+  proc showNewsMessageNotification*(self: GlobalEvents, title: string, description: string) {.signal.}
+
   proc addCentralizedMetricIfEnabled*(self: GlobalEvents, eventName: string, eventValueJson: string) {.signal.}
