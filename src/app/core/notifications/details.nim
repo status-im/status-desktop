@@ -26,7 +26,8 @@ type
     CommunityTokenPermissionDeletionFailed,
     CommunityMemberKicked,
     CommunityMemberBanned,
-    CommunityMemberUnbanned
+    CommunityMemberUnbanned,
+    NewsFeedMessage,
 
   NotificationDetails* = object
     notificationType*: NotificationType # the default value is `UnknownNotification`
