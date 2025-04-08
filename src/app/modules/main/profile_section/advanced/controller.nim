@@ -5,6 +5,7 @@ import ../../../../global/app_signals
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
+import ../../../../../app_service/service/kvstore/service as kvstore_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 
 logScope:
@@ -17,16 +18,19 @@ type
     settingsService: settings_service.Service
     stickersService: stickers_service.Service
     nodeConfigurationService: node_configuration_service.Service
+    kvstoreService: kvstore_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service,
   stickersService: stickers_service.Service,
-  nodeConfigurationService: node_configuration_service.Service): Controller =
+  nodeConfigurationService: node_configuration_service.Service,
+  kvstoreService: kvstore_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
+  result.kvstoreService = kvstoreService
 
 proc delete*(self: Controller) =
   discard
@@ -115,6 +119,15 @@ proc toggleDebug*(self: Controller) =
     return
 
   self.delegate.onDebugToggled()
+
+proc toggleRateLimit*(self: Controller) =
+  let enabled = self.kvstoreService.isRateLimitEnabled()
+
+  if not self.kvstoreService.setRateLimitEnabled(not enabled):
+    error "an error occurred, we couldn't toggle rate limit"
+    return
+  
+  # self.delegate.onRateLimitEnabled()
 
 proc isNimbusProxyEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isNimbusProxyEnabled()

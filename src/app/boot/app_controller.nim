@@ -22,6 +22,7 @@ import app_service/service/node/service as node_service
 import app_service/service/profile/service as profile_service
 import app_service/service/settings/service as settings_service
 import app_service/service/stickers/service as stickers_service
+import app_service/service/kvstore/service as kvstore_service
 import app_service/service/about/service as about_service
 import app_service/service/node_configuration/service as node_configuration_service
 import app_service/service/network/service as network_service
@@ -83,6 +84,7 @@ type
     profileService: profile_service.Service
     settingsService: settings_service.Service
     stickersService: stickers_service.Service
+    kvstoreService: kvstore_service.Service
     aboutService: about_service.Service
     networkService: network_service.Service
     activityCenterService: activity_center_service.Service
@@ -207,6 +209,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.chatService,
     result.tokenService
   )
+  result.kvstoreService = kvstore_service.newService(statusFoundation.events)
   result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.languageService = language_service.newService(statusFoundation.events)
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
@@ -262,6 +265,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.privacyService,
     result.providerService,
     result.stickersService,
+    result.kvstoreService,
     result.activityCenterService,
     result.savedAddressService,
     result.nodeConfigurationService,
@@ -322,6 +326,7 @@ proc delete*(self: AppController) =
   self.nodeService.delete
   self.settingsService.delete
   self.stickersService.delete
+  self.kvstoreService.delete
   self.savedAddressService.delete
   self.devicesService.delete
   self.mailserversService.delete
@@ -385,6 +390,7 @@ proc load(self: AppController) =
   self.rampService.init()
   self.transactionService.init()
   self.stickersService.init()
+  self.kvstoreService.init()
   self.activityCenterService.init()
   self.savedAddressService.init()
   self.aboutService.init()

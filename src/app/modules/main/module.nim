@@ -50,6 +50,7 @@ import app_service/service/about/service as about_service
 import app_service/service/language/service as language_service
 import app_service/service/privacy/service as privacy_service
 import app_service/service/stickers/service as stickers_service
+import app_service/service/kvstore/service as kvstore_service
 import app_service/service/activity_center/service as activity_center_service
 import app_service/service/saved_address/service as saved_address_service
 import app_service/service/node/service as node_service
@@ -103,6 +104,7 @@ type
     keychainService: keychain_service.Service
     networkConnectionService: network_connection_service.Service
     stickersService: stickers_service.Service
+    kvstoreService: kvstore_service.Service
     communityTokensService: community_tokens_service.Service
     walletSectionModule: wallet_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
@@ -156,6 +158,7 @@ proc newModule*[T](
   privacyService: privacy_service.Service,
   providerService: provider_service.Service,
   stickersService: stickers_service.Service,
+  kvstoreService: kvstore_service.Service,
   activityCenterService: activity_center_service.Service,
   savedAddressService: saved_address_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
@@ -212,6 +215,7 @@ proc newModule*[T](
   result.savedAddressService = savedAddressService
   result.keychainService = keychainService
   result.stickersService = stickersService
+  result.kvstoreService = kvstoreService
   result.communityTokensService = communityTokensService
 
   # Submodules

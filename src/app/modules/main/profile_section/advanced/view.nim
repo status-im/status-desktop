@@ -87,7 +87,9 @@ QtObject:
 
   proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
-
+  
+  proc toggleRateLimit*(self: View) {.slot.} =
+    self.delegate.toggleRateLimit()
   proc isNimbusProxyEnabledChanged*(self: View) {.signal.}
   proc getIsNimbusProxyEnabled*(self: View): bool {.slot.} =
     return self.delegate.isNimbusProxyEnabled()

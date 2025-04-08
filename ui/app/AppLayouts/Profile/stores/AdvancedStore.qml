@@ -15,6 +15,7 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isNimbusProxyEnabled: advancedModule? advancedModule.isNimbusProxyEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
+    property bool isRateLimitEnabled: advancedModule? advancedModule.isRateLimitEnabled : false
     readonly property bool isWakuV2ShardedCommunitiesEnabled: localAppSettings.wakuV2ShardedCommunitiesEnabled ?? false
     property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
     property bool isRuntimeLogLevelSet: advancedModule ? advancedModule.isRuntimeLogLevelSet: false
@@ -90,6 +91,13 @@ QtObject {
             return
 
         root.advancedModule.toggleDebug()
+    }
+
+    function toggleRateLimit() {
+       if(!root.advancedModule)
+            return
+
+        root.advancedModule.toggleRateLimit()
     }
 
     function toggleNimbusProxy() {
