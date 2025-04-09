@@ -33,6 +33,9 @@ method onDebugToggled*(self: AccessInterface) {.base.} =
 method onNimbusProxyToggled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onRlnRateLimitToggled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -129,6 +129,7 @@ proc toggleRlnRateLimit*(self: Controller) =
   if not self.kvstoreService.setRlnRateLimitEnabled(not enabled):
     error "an error occurred, we couldn't toggle rate limit"
     return
+  self.delegate.onRlnRateLimitToggled()
 
 proc isNimbusProxyEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isNimbusProxyEnabled()

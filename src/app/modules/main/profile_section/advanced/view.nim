@@ -88,10 +88,12 @@ QtObject:
   proc toggleDebug*(self: View) {.slot.} =
     self.delegate.toggleDebug()
   
+  proc isRlnRateLimitEnabledChanged*(self: View) {.signal.}
   proc getIsRateLimitEnabled*(self: View): bool {.slot.} =
     return self.delegate.isRlnRateLimitEnabled()
   QtProperty[bool] isRlnRateLimitEnabled:
     read = getIsRateLimitEnabled
+    notify = isRlnRateLimitEnabledChanged
   
   proc toggleRlnRateLimit*(self: View) {.slot.} =
     self.delegate.toggleRlnRateLimit()

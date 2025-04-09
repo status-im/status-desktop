@@ -122,6 +122,9 @@ method toggleNimbusProxy*(self: Module) =
 method onNimbusProxyToggled*(self: Module) =
   self.view.isNimbusProxyEnabledChanged()
 
+method onRlnRateLimitToggled*(self: Module) =
+  self.view.isRlnRateLimitEnabledChanged()
+
 method isRuntimeLogLevelSet*(self: Module): bool =
   return constants.runtimeLogLevelSet()
 
