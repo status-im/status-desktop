@@ -1,5 +1,5 @@
 import times, stew/shims/strformat, options, chronicles
-import json, json_serialization
+import json, app_service/common/safe_json_serialization
 import core, response_type
 import stint
 

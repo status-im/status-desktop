@@ -1,4 +1,4 @@
-import json, strutils, stint, json_serialization, stew/shims/strformat
+import json, strutils, stint, app_service/common/safe_json_serialization, stew/shims/strformat
 import Tables, sequtils
 
 import
@@ -297,8 +297,8 @@ proc `$`*(self: TransactionPathDto): string =
 proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result = TransactionPathDto()
   discard jsonObj.getProp("bridgeName", result.bridgeName)
-  result.fromNetwork = Json.decode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
-  result.toNetwork = Json.decode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
+  result.fromNetwork = Json.safeDecode($jsonObj["fromNetwork"], NetworkDto, allowUnknownFields = true)
+  result.toNetwork = Json.safeDecode($jsonObj["toNetwork"], NetworkDto, allowUnknownFields = true)
   result.gasFees = decodeSuggestedFeesDto(jsonObj["gasFees"])
   discard jsonObj.getProp("cost", result.cost)
   discard jsonObj.getProp("tokenFees", result.tokenFees)

@@ -1,5 +1,5 @@
 
-import json, json_serialization, stew/shims/strformat
+import json, app_service/common/safe_json_serialization, stew/shims/strformat
 import options
 
 include app_service/common/json_utils
@@ -54,7 +54,7 @@ proc toCryptoRampDto*(jsonObj: JsonNode): CryptoRampDto =
   for chainID in jsonObj["supportedChainIds"].getElems():
     result.supportedChainIds.add(chainID.getInt())
   for token in jsonObj["supportedTokens"].getElems():
-    let tokenDto = Json.decode($token, TokenDto, allowUnknownFields = true)
+    let tokenDto = Json.safeDecode($token, TokenDto, allowUnknownFields = true)
     result.supportedTokens.add(tokenDto)
   discard jsonObj.getProp("urlsNeedParameters", result.urlsNeedParameters)
 

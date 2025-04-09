@@ -1,4 +1,4 @@
-import NimQml, json, strutils, chronicles, json_serialization
+import NimQml, json, strutils, chronicles
 import ../eventemitter
 
 include types

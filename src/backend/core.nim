@@ -1,6 +1,7 @@
-import json, json_serialization, stew/shims/strformat, chronicles
+import json, stew/shims/strformat, chronicles
 import status_go
 import response_type
+import app_service/common/safe_json_serialization
 
 export response_type
 
@@ -26,7 +27,7 @@ proc makePrivateRpcCall*(
   try:
     debug "NewBE_callPrivateRPC", rpc_method=methodName
     let rpcResponseRaw = status_go.callPrivateRPC($inputJSON)
-    result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
+    result = Json.safeDecode(rpcResponseRaw, RpcResponse[JsonNode])
     if(not result.error.isNil):
       var err = "\nstatus-go error ["
       err &= fmt"methodName:{methodName}, "

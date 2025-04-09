@@ -455,7 +455,7 @@ QtObject:
       if errorString != "":
         raise newException(CatchableError, errorString)
 
-      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
 
       discard self.processMessengerResponse(rpcResponse)
     except Exception as e:
@@ -505,7 +505,7 @@ QtObject:
       if errorString != "":
         raise newException(CatchableError, errorString)
 
-      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      let rpcResponse = Json.safeDecode($rpcResponseObj["response"], RpcResponse[JsonNode])
       
       let (chats, messages) = self.processMessengerResponse(rpcResponse)
       if chats.len == 0 or messages.len == 0:
@@ -738,7 +738,7 @@ QtObject:
     try:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        let error = Json.safeDecode($rpcResponseObj["error"], RpcError)
         error "Error checking community channel permissions", msg = error.message
         return
 

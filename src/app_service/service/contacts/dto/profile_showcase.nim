@@ -1,4 +1,4 @@
-import json, json_serialization, stew/shims/strformat
+import json, app_service/common/safe_json_serialization, stew/shims/strformat
 
 include ../../../common/json_utils
 

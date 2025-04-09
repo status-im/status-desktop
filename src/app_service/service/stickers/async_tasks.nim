@@ -63,7 +63,7 @@ proc installStickerPackTask(argEncoded: string) {.gcsafe, nimcall.} =
     if installResponse.error == nil:
       installed = true
     else:
-      let err = Json.decode($installResponse.error, RpcError)
+      let err = Json.safeDecode($installResponse.error, RpcError)
       error "Error installing stickers", message = err.message
   except RpcException:
     error "Error installing stickers", message = getCurrentExceptionMsg()
