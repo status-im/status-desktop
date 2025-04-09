@@ -146,17 +146,52 @@ QtObject {
         target: Global
 
         function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
-            root.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
+            (title, subTitle, icon, loading, ephNotifType, url)
+            root.rootStore.mainModuleInst.displayEphemeralNotification(
+                title,
+                subTitle,
+                "", // image
+                icon,
+                "", // iconColor
+                loading,
+                ephNotifType,
+                0, // actionType
+                "", // actionData
+                url
+            )
         }
 
         // TO UNIFY with the one above.
         // Further refactor will be done in a next step
         function onDisplayToastWithActionMessage(title: string, subTitle: string, icon: string, iconColor: string, loading: bool, ephNotifType: int, actionType: int, actionData: string) {
-            root.rootStore.mainModuleInst.displayEphemeralWithActionNotification(title, subTitle, icon, iconColor, loading, ephNotifType, actionType, actionData)
+            root.rootStore.mainModuleInst.displayEphemeralNotification(
+                title,
+                subTitle,
+                "", // image
+                icon,
+                iconColor,
+                loading,
+                ephNotifType,
+                actionType,
+                actionData,
+                "" // url
+            )
         }
 
         function onDisplayImageToastWithActionMessage(title: string, subTitle: string, image: string, ephNotifType: int, actionType: int, actionData: string) {
-            root.rootStore.mainModuleInst.displayEphemeralImageWithActionNotification(title, subTitle, image, ephNotifType, actionType, actionData)
+            (title, subTitle, image, ephNotifType, actionType, actionData)
+            root.rootStore.mainModuleInst.displayEphemeralNotification(
+                title,
+                subTitle,
+                image,
+                "", // icon
+                "", // iconColor
+                false, // loading
+                ephNotifType,
+                actionType,
+                actionData,
+                "" // url
+            )
         }
     }
 
