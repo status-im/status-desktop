@@ -1467,11 +1467,22 @@ method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: st
   self.controller.resolveENS(ensName, uuid, reason)
 
 method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string, reason: string) =
-  if(reason.len > 0 and publicKey.len == 0):
-    self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
+  if reason.len > 0 and publicKey.len == 0:
+    self.displayEphemeralNotification(
+      title = "Unexisting contact",
+      subTitle = "Wrong public key or ens name",
+      image = "",
+      icon = "",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Default.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+    )
     return
 
-  if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
+  if reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile:
     self.switchToContactOrDisplayUserProfile(publicKey)
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
@@ -1657,84 +1668,160 @@ method communityMembershipRequestCanceled*[T](self: Module[T], communityId: stri
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
 
-method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, loading: bool,
-  ephNotifType: int, url: string, details = NotificationDetails()) =
+method displayEphemeralNotification*[T](
+    self: Module[T],
+    title: string,
+    subTitle: string,
+    image: string,
+    icon: string,
+    iconColor: string,
+    loading: bool,
+    ephNotifType: int,
+    actionType: int,
+    actionData: string,
+    url: string,
+    details = NotificationDetails()
+  ) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
   var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
+  if ephNotifType == EphemeralNotificationType.Success.int:
     finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
+  elif ephNotifType == EphemeralNotificationType.Danger.int:
     finalEphNotifType = EphemeralNotificationType.Danger
 
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, "",
-  loading, finalEphNotifType, url, EphemeralActionType.None, "", details)
-  self.view.ephemeralNotificationModel().addItem(item)
-
-# TO UNIFY with the one above.
-# Further refactor will be done in a next step
-method displayEphemeralWithActionNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, iconColor: string, loading: bool,
-  ephNotifType: int, actionType: int, actionData: string, details = NotificationDetails()) =
-  let now = getTime()
-  let id = now.toUnix * 1000000000 + now.nanosecond
-  var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
-    finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
-    finalEphNotifType = EphemeralNotificationType.Danger
-
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, "", icon, iconColor,
-  loading, finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
-  self.view.ephemeralNotificationModel().addItem(item)
-
-# TO UNIFY with the one above.
-# Further refactor will be done in a next step
-method displayEphemeralImageWithActionNotification*[T](self: Module[T], title: string, subTitle: string, image: string, ephNotifType: int,
-    actionType: int, actionData: string, details = NotificationDetails()) =
-  let now = getTime()
-  let id = now.toUnix * 1000000000 + now.nanosecond
-  var finalEphNotifType = EphemeralNotificationType.Default
-  if(ephNotifType == EphemeralNotificationType.Success.int):
-    finalEphNotifType = EphemeralNotificationType.Success
-  elif(ephNotifType == EphemeralNotificationType.Danger.int):
-    finalEphNotifType = EphemeralNotificationType.Danger
-
-
-  let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, image, "", "", false,
-  finalEphNotifType, "", EphemeralActionType(actionType), actionData, details)
+  let item = ephemeral_notification_item.initItem(
+    id,
+    title,
+    TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS,
+    subTitle,
+    image,
+    icon,
+    iconColor,
+    loading,
+    finalEphNotifType,
+    url,
+    EphemeralActionType(actionType),
+    actionData,
+    details
+  )
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
   if details.notificationType == NotificationType.NewMessage or
-    details.notificationType == NotificationType.NewMessageWithPersonalMention or
-    details.notificationType == NotificationType.CommunityTokenPermissionCreated or
-    details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
-    details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
-    details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
-    details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
-    details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
-    details.notificationType == NotificationType.NewMessageWithGlobalMention:
-    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
+      details.notificationType == NotificationType.NewMessageWithPersonalMention or
+      details.notificationType == NotificationType.CommunityTokenPermissionCreated or
+      details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
+      details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
+      details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
+      details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
+      details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
+      details.notificationType == NotificationType.NewMessageWithGlobalMention:
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Default.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
   elif details.notificationType == NotificationType.NewContactRequest or
-    details.notificationType == NotificationType.IdentityVerificationRequest or
-    details.notificationType == NotificationType.ContactRemoved:
-    self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
+      details.notificationType == NotificationType.IdentityVerificationRequest or
+      details.notificationType == NotificationType.ContactRemoved:
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "contact",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Default.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
   elif details.notificationType == NotificationType.AcceptedContactRequest:
-    self.displayEphemeralNotification(title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int, "", details)
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "checkmark-circle",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Success.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
   elif details.notificationType == NotificationType.CommunityMemberKicked:
-    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "communities",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Danger.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
   elif details.notificationType == NotificationType.CommunityMemberBanned:
-    self.displayEphemeralNotification(title, subTitle, "communities", false, EphemeralNotificationType.Danger.int, "", details)
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "communities",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Danger.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
   elif details.notificationType == NotificationType.CommunityMemberUnbanned:
-    self.displayEphemeralWithActionNotification(title, "Visit community" , "communities", "", false, EphemeralNotificationType.Success.int, EphemeralActionType.NavigateToCommunityAdmin.int, details.sectionId)
+    self.displayEphemeralNotification(
+      title,
+      subTitle = "Visit community",
+      image = "",
+      icon = "communities",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Success.int,
+      actionType = EphemeralActionType.NavigateToCommunityAdmin.int,
+      actionData = details.sectionId,
+      url = "",
+      details,
+    )
 
   else:
-    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
+    self.displayEphemeralNotification(
+      title,
+      subTitle,
+      image = "",
+      icon = "",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Default.int,
+      actionType = EphemeralActionType.None.int,
+      actionData = "",
+      url = "",
+      details,
+    )
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
@@ -1751,7 +1838,18 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
     self.osNotificationClicked(item.details)
 
 method onMyRequestAdded*[T](self: Module[T]) =
-  self.displayEphemeralNotification("Your Request has been submitted", "" , "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
+  self.displayEphemeralNotification(
+    title = "Your Request has been submitted",
+    subTitle = "",
+    image = "",
+    icon = "checkmark-circle",
+    iconColor = "",
+    loading = false,
+    ephNotifType = EphemeralNotificationType.Success.int,
+    actionType = EphemeralActionType.None.int,
+    actionData = "",
+    url = "",
+  )
 
 proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) =
   let contact = self.controller.getContact(publicKey)
