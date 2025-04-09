@@ -67,14 +67,14 @@ proc getHistoricalDataForToken*(self: Controller, symbol: string, currency: stri
 proc fetchHistoricalBalanceForTokenAsJson*(self: Controller, addresses: seq[string], tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
   self.walletAccountService.fetchHistoricalBalanceForTokenAsJson(addresses, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
 
-proc getSourcesOfTokensList*(self: Controller): var seq[SupportedSourcesItem] =
-  return self.tokenService.getSourcesOfTokensList()
+proc getTokenLists*(self: Controller): seq[TokenListItem] =
+  return self.tokenService.getTokenLists()
 
-proc getFlatTokensList*(self: Controller): var seq[TokenItem] =
-  return self.tokenService.getFlatTokensList()
+proc getFlatTokens*(self: Controller): seq[TokenItem] =
+  return self.tokenService.getFlatTokens()
 
-proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
-  return self.tokenService.getTokenBySymbolList()
+proc getGroupedTokens*(self: Controller): seq[TokenGroupItem] =
+  return self.tokenService.getGroupedTokens()
 
 proc getTokenDetails*(self: Controller, symbol: string): TokenDetailsItem =
   return self.tokenService.getTokenDetails(symbol)
@@ -100,11 +100,11 @@ proc getTokensDetailsLoading*(self: Controller): bool =
 proc getTokensMarketValuesLoading*(self: Controller): bool =
   self.tokenService.getTokensMarketValuesLoading()
 
-proc getCommunityTokenDescription*(self: Controller, addressPerChain: seq[AddressPerChain]): string =
-  self.communityTokensService.getCommunityTokenDescription(addressPerChain)
+proc getCommunityTokenDescription*(self: Controller, tokenKeys: seq[string]): string =
+  self.communityTokensService.getCommunityTokenDescription(tokenKeys)
 
-proc getCommunityTokenDescription*(self: Controller, chainId: int, address: string): string =
-  self.communityTokensService.getCommunityTokenDescription(chainId, address)
+proc getCommunityTokenDescription*(self: Controller, tokenKey: string): string =
+  self.communityTokensService.getCommunityTokenDescription(tokenKey)
 
 proc updateTokenPreferences*(self: Controller, tokenPreferencesJson: string) =
   self.tokenService.updateTokenPreferences(tokenPreferencesJson)

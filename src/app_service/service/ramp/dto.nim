@@ -3,7 +3,7 @@ import json, json_serialization, stew/shims/strformat
 import options
 
 include app_service/common/json_utils
-import app_service/service/token/dto
+import app_service/service/token/types/imports
 
 type
   CryptoRampDto* = ref object of RootObj
@@ -19,7 +19,7 @@ type
     supportedTokens*: seq[TokenDto]
     urlsNeedParameters*: bool
 
-type 
+type
   CryptoRampParametersDto* = ref object of RootObj
     isRecurrent*: bool
     destinationAddress*: Option[string]

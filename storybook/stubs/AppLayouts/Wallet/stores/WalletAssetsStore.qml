@@ -59,7 +59,7 @@ QtObject {
     readonly property var assetsController: QtObject {
         property int revision
 
-        function filterAcceptsSymbol(symbol) {
+        function filterAcceptsTokenKey(symbol) {
             return true
         }
     }

@@ -213,7 +213,7 @@ StatusSectionLayout {
                         FastExpressionFilter {
                             expression: {
                                 root.collectiblesStore.collectiblesController.revision
-                                return root.collectiblesStore.collectiblesController.filterAcceptsSymbol(model.uid)
+                                return root.collectiblesStore.collectiblesController.filterAcceptsTokenKey(model.uid)
                             }
                             expectedRoles: ["uid"]
                         }

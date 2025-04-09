@@ -304,7 +304,7 @@ QtObject:
   proc updateCommunityRoute(self: Service, data: var SuggestedRoutesArgs, route: seq[TransactionPathDtoV2]) =
     let ethFormat = self.currencyService.getCurrencyFormat(common_wallet_constants.ETH_SYMBOL)
     let currencyFormat = self.currencyService.getCurrencyFormat(self.settingsService.getCurrency())
-    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(ethFormat.symbol)
+    let fiatPriceForSymbol = self.tokenService.getPriceBySymbol(ethFormat.id)
     var totalFee: UInt256
     for p in route:
       let feeInEth = wei2Eth(p.txTotalFee)
@@ -312,15 +312,15 @@ QtObject:
       let fiatFeeAsFloat = ethFeeAsFloat * fiatPriceForSymbol
       data.costPerPath.add(CostPerPath(
         contractUniqueKey: common_utils.contractUniqueKey(p.fromChain.chainId, p.usedContractAddress),
-        costEthCurrency: newCurrencyAmount(ethFeeAsFloat, ethFormat.symbol, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes),
-        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+        costEthCurrency: newCurrencyAmount(ethFeeAsFloat, ethFormat.id, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes),
+        costFiatCurrency: newCurrencyAmount(fiatFeeAsFloat, currencyFormat.id, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
       ))
       totalFee += p.txTotalFee
     let totalFeeInEth = wei2Eth(totalFee)
     let totalEthFeeAsFloat = parseFloat(totalFeeInEth)
-    data.totalCostEthCurrency = newCurrencyAmount(totalEthFeeAsFloat, ethFormat.symbol, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes)
+    data.totalCostEthCurrency = newCurrencyAmount(totalEthFeeAsFloat, ethFormat.id, int(ethFormat.displayDecimals), ethFormat.stripTrailingZeroes)
     let totalFiatFeeAsFloat = totalEthFeeAsFloat * fiatPriceForSymbol
-    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.symbol, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
+    data.totalCostFiatCurrency = newCurrencyAmount(totalFiatFeeAsFloat, currencyFormat.id, int(currencyFormat.displayDecimals), currencyFormat.stripTrailingZeroes)
 
   proc emitSuggestedRoutesReadySignal*(self: Service, data: SuggestedRoutesArgs) =
     if self.lastRequestForSuggestedRoutes.uuid != data.uuid:

@@ -44,18 +44,6 @@ QtObject {
                                         false, Constants.ephemeralNotificationType.success, "")
     }
 
-    /* This model renames the role "key" to "tokensKey" in TokensBySymbolModel so that
-    it can be easily joined with the Account Assets model */
-    readonly property var renamedTokensBySymbolModel: RolesRenamingModel {
-        objectName: "renamedTokensBySymbolModel"
-        sourceModel: walletTokensStore.plainTokensBySymbolModel
-        mapping: [
-            RoleRename {
-                from: "key"
-                to: "tokensKey"
-            }
-        ]
-    }
 
     /* PRIVATE: This model renames the roles
         1. "id" to "communityId"
@@ -88,24 +76,35 @@ QtObject {
 
     /* PRIVATE: This model joins the "Tokens By Symbol Model" and "Communities Model" by communityId */
     property LeftJoinModel _jointTokensBySymbolModel: LeftJoinModel {
-        leftModel: renamedTokensBySymbolModel
+        leftModel: walletTokensStore.plainTokensBySymbolModel
         rightModel: _renamedCommunitiesModel
         joinRole: "communityId"
     }
 
     /* This model joins the "Tokens by symbol model combined with Community details"
-    and "Grouped Account Assets Model" by tokenskey */
+    and "Grouped Account Assets Model" by groupedTokensKey */
     property LeftJoinModel groupedAccountAssetsModel: LeftJoinModel {
         objectName: "groupedAccountAssetsModel"
 
         leftModel: root.baseGroupedAccountAssetModel
         rightModel: _jointTokensBySymbolModel
-        joinRole: "tokensKey"
+        joinRole: "groupedTokensKey"
     }
 
     // This is hard coded for now, and should be updated whenever Hop add new tokens for support
     // This should be dynamically fetched somehow in the future
-    readonly property var tokensSupportedByHopBridge: ["USDC", "USDC.e", "USDT", "DAI", "HOP", "SNX", "sUSD", "rETH", "MAGIC", "ETH"]
+    readonly property var tokenGroupKeysOfTokensSupportedByHopBridge: [
+        "usd-coin",
+        "bridged-usd-coin-optimism",
+        "tether",
+        "dai",
+        "hop-protocol",
+        "havven",
+        "nusd",
+        "rocket-pool-eth",
+        "magic",
+        "ethereum"
+    ]
 
     readonly property SortFilterProxyModel bridgeableGroupedAccountAssetsModel: SortFilterProxyModel {
         objectName: "bridgeableGroupedAccountAssetsModel"
@@ -113,8 +112,8 @@ QtObject {
 
         filters: [
             FastExpressionFilter {
-                expression: root.tokensSupportedByHopBridge.includes(model.symbol)
-                expectedRoles: ["symbol"]
+                expression: root.tokenGroupKeysOfTokensSupportedByHopBridge.includes(model.groupedTokensKey)
+                expectedRoles: ["groupedTokensKey"]
             }
         ]
     }

@@ -16,7 +16,7 @@ import app_service/service/keycard/service as keycard_service
 import app_service/service/keycard/constants as keycard_constants
 import app_service/service/transaction/dto
 import app_service/service/transaction/dtoV2
-import app_service/service/token/utils
+import app_service/service/token/types/imports
 
 export io_interface
 
@@ -103,9 +103,9 @@ proc convertTransactionPathDtoV2ToPathItem(self: Module, txPath: TransactionPath
   if not txPath.toChain.isNil:
     toChainId = txPath.toChain.chainId
   if not txPath.fromToken.isNil:
-    fromTokenSymbol = txPath.fromToken.bySymbolModelKey()
+    fromTokenSymbol = txPath.fromToken.tokenKey()
   if not txPath.toToken.isNil:
-    toTokenSymbol = txPath.toToken.bySymbolModelKey()
+    toTokenSymbol = txPath.toToken.tokenKey()
 
   result = newPathItem(
     processorName = txPath.processorName,

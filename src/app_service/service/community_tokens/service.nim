@@ -32,6 +32,7 @@ import app_service/common/activity_center
 import app_service/common/types
 import app_service/common/account_constants
 import app_service/common/utils as common_utils
+import app_service/common/wallet_constants
 
 import ./community_collectible_owner
 import ./dto/deployment_parameters
@@ -43,8 +44,6 @@ export deployment_parameters
 export community_token_owner
 
 include async_tasks
-
-const ethSymbol = "ETH"
 
 logScope:
   topics = "community-tokens-service"
@@ -709,16 +708,16 @@ QtObject:
       if token.chainId == chainId and token.address == address:
         return token
 
-  proc getCommunityTokenDescription*(self: Service, chainId: int, address: string): string =
+  proc getCommunityTokenDescription*(self: Service, tokenKey: string): string =
     let communityTokens = self.getAllCommunityTokens()
     for token in communityTokens:
-      if token.chainId == chainId and cmpIgnoreCase(token.address, address) == 0:
+      if cmpIgnoreCase(token.tokenKey(), tokenKey) == 0:
         return token.description
     return ""
 
-  proc getCommunityTokenDescription*(self: Service, addressPerChain: seq[AddressPerChain]): string =
-    for apC in addressPerChain:
-      let description = self.getCommunityTokenDescription(apC.chainId, apC.address)
+  proc getCommunityTokenDescription*(self: Service, tokenKeys: seq[string]): string =
+    for tokenKey in tokenKeys:
+      let description = self.getCommunityTokenDescription(tokenKey)
       if not description.isEmptyOrWhitespace:
         return description
     return ""
@@ -992,12 +991,12 @@ QtObject:
       )
 
   proc create0CurrencyAmounts(self: Service): (CurrencyAmount, CurrencyAmount) =
-    let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
+    let ethCurrency = newCurrencyAmount(0.0, ETH_TOKEN_GROUP, 1, false)
     let fiatCurrency = newCurrencyAmount(0.0, self.settingsService.getCurrency(), 1, false)
     return (ethCurrency, fiatCurrency)
 
   proc createCurrencyAmounts(self: Service, ethValue: float64, fiatValue: float64): (CurrencyAmount, CurrencyAmount) =
-    let ethCurrency = newCurrencyAmount(ethValue, ethSymbol, 4, false)
+    let ethCurrency = newCurrencyAmount(ethValue, ETH_TOKEN_GROUP, 4, false)
     let fiatCurrency = newCurrencyAmount(fiatValue, self.settingsService.getCurrency(), 2, false)
     return (ethCurrency, fiatCurrency)
 
@@ -1048,14 +1047,14 @@ QtObject:
 
   proc getWalletBalanceForChain(self:Service, walletAddress: string, chainId: int): float =
     var balance = 0.0
-    let tokens = self.walletAccountService.getGroupedAccountsAssetsList()
-    for token in tokens:
-      if token.symbol == ethSymbol:
-        let balances = token.balancesPerAccount.filter(
+    let groupedTokensItems = self.walletAccountService.getGroupedAccountsAssetsList()
+    for gtItem in groupedTokensItems:
+      if gtItem.key == ETH_TOKEN_GROUP:
+        let balances = gtItem.balancesPerAccount.filter(
           balanceItem => balanceItem.account == walletAddress.toLower() and
           balanceItem.chainId == chainId).map(b => b.balance)
         for b in balances:
-          balance += self.currencyService.parseCurrencyValueByTokensKey(token.tokensKey, b)
+          balance += self.currencyService.parseCurrencyValue(gtItem.key, b)
     return balance
 
   # convert json returned from async task into gas table

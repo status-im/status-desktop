@@ -1,9 +1,3 @@
-# import json, json_serialization, stint
-
-# import ../network/dto, ../token/dto
-
-# include  app_service/common/json_utils
-
 import json, strutils, stint, json_serialization
 import sequtils, sugar
 
@@ -11,7 +5,7 @@ import
   web3/ethtypes
 
 include  ../../common/json_utils
-import backend/network_types, ../token/dto
+import backend/network_types, ../token/types/imports
 
 type
   SuggestedLevelsForMaxFeesPerGasDto* = ref object

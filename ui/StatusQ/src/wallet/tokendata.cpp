@@ -5,9 +5,6 @@
 #include <QJsonObject>
 #include <QList>
 
-// This is used by he collectibles to deconflict types saved. However, the UX ignores them on restore/load
-// and relies on the fact that all identities ("key" in backend and "symbol" in frontend) are unique between all
-// types
 CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(bool isCommunity, bool itemsAreGroups)
 {
     if (itemsAreGroups) {
@@ -49,7 +46,7 @@ GroupingInfo collectiblePreferencesItemTypeToGroupsInfo(CollectiblePreferencesIt
 
 TokenOrder::TokenOrder() : sortOrder(undefinedTokenOrder) {}
 
-TokenOrder::TokenOrder(const QString& symbol,
+TokenOrder::TokenOrder(const QString& tokenKey,
                        int sortOrder,
                        bool visible,
                        bool isCommunityGroup,
@@ -57,7 +54,7 @@ TokenOrder::TokenOrder(const QString& symbol,
                        bool isCollectionGroup,
                        const QString& collectionUid,
                        CollectiblePreferencesItemType type)
-    : symbol(symbol)
+    : tokenKey(tokenKey)
     , sortOrder(sortOrder)
     , visible(visible)
     , isCommunityGroup(isCommunityGroup)
@@ -79,7 +76,7 @@ QString tokenOrdersToJson(const SerializedTokenData& dataList, bool areCollectib
     for (const TokenOrder& data : dataList) {
         QJsonObject obj;
         // The  collectibles group ordering is handled in the backend.
-        obj["key"] = data.symbol;
+        obj["key"] = data.tokenKey;
         obj["position"] = data.sortOrder;
         obj["visible"] = data.visible;
 
@@ -124,7 +121,7 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
         QJsonObject obj = value.toObject();
         TokenOrder data;
 
-        data.symbol = obj["key"].toString();
+        data.tokenKey = obj["key"].toString();
         data.sortOrder = obj["position"].toInt();
         data.visible = obj["visible"].toBool();
         if (areCollectibles) {
@@ -132,12 +129,13 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
             data.type = static_cast<CollectiblePreferencesItemType>(obj["type"].toInt());
             auto groupingInfo = collectiblePreferencesItemTypeToGroupsInfo(data.type);
             data.isCommunityGroup = groupingInfo.isCommunity;
+            // TODO: check the code below
             if (data.isCommunityGroup) {
-                data.communityId = data.symbol;
+                data.communityId = data.tokenKey;
             }
             data.isCollectionGroup = groupingInfo.itemsAreGroups;
             if (data.isCollectionGroup) {
-                data.collectionUid = data.symbol;
+                data.collectionUid = data.tokenKey;
             }
         } else { // is asset
             // see TokenPreferences in src/backend/backend.nim
@@ -147,7 +145,7 @@ SerializedTokenData tokenOrdersFromJson(const QString& json_string, bool areColl
             }
         }
 
-        dataList.insert(data.symbol, data);
+        dataList.insert(data.tokenKey, data);
     }
 
     return dataList;

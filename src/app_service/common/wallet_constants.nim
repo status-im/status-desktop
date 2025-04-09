@@ -1,5 +1,8 @@
+import Tables
+
 const
   ETH_SYMBOL* = "ETH"
+  ETH_TOKEN_GROUP* = "ethereum"
 
   ETH_TRANSACTION_TYPE* = "eth"
   ERC20_TRANSACTION_TYPE* = "erc20"
@@ -24,3 +27,19 @@ const
   PROCESSOR_NAME_ENS_RELEASE* = "ENSRelease"
   PROCESSOR_NAME_ENS_PUBLIC_KEY* = "ENSPublicKey"
   PROCESSOR_NAME_STICKERS_BUY* = "StickersBuy"
+
+  MainnetChainID*              = 1
+  SepoliaChainID*              = 11155111
+  OptimismChainID*             = 10
+  OptimismSepoliaChainID*      = 11155420
+  ArbitrumChainID*             = 42161
+  ArbitrumSepoliaChainID*      = 421614
+  BaseChainID*                 = 8453
+  BaseSepoliaChainID*          = 84532
+  StatusNetworkSepoliaChainID* = 1660990954
+
+var
+  StatusContractAddressPerChainID* = {
+    MainnetChainID: "0x744d70fdbe2ba4cf95131626614a1763df805b9e",
+    SepoliaChainID: "0xE452027cdEF746c7Cd3DB31CB700428b16cD8E51"
+  }.toTable

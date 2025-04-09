@@ -8,7 +8,7 @@ static const auto undefinedTokenOrder = INT_MAX;
 
 // Generic structure representing an asset, collectible, collection or community token
 struct TokenData {
-    QString symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, image;
+    QString groupedTokensKey, tokenKey, symbol, name, communityId, communityName, communityImage, collectionUid, collectionName, image;
     QColor backgroundColor{Qt::transparent};
     QVariant balance, currencyBalance;
     QVariant balances, marketDetails, decimals;
@@ -22,7 +22,7 @@ enum class CollectiblePreferencesItemType { NonCommunityCollectible = 1, Communi
 CollectiblePreferencesItemType tokenDataToCollectiblePreferencesItemType(bool isCommunity, bool itemsAreGroups);
 
 struct TokenOrder {
-    QString symbol;
+    QString tokenKey;
     int sortOrder;
     bool visible;
     bool isCommunityGroup;
@@ -34,7 +34,7 @@ struct TokenOrder {
 
     // Defines a default TokenOrder, order is not set (undefinedTokenOrder) and visible is false
     TokenOrder();
-    TokenOrder(const QString& symbol,
+    TokenOrder(const QString& tokenKey,
                int sortOrder,
                bool visible,
                bool isCommunityGroup,
@@ -45,7 +45,7 @@ struct TokenOrder {
 
     bool operator==(const TokenOrder& rhs) const
     {
-        return symbol == rhs.symbol && sortOrder == rhs.sortOrder && visible == rhs.visible &&
+        return tokenKey == rhs.tokenKey && sortOrder == rhs.sortOrder && visible == rhs.visible &&
                isCommunityGroup == rhs.isCommunityGroup && (!isCommunityGroup || communityId == rhs.communityId) &&
                isCollectionGroup == rhs.isCollectionGroup &&
                (!isCollectionGroup || collectionUid == rhs.collectionUid) && type == rhs.type;

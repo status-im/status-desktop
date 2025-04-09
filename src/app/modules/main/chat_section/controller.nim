@@ -270,7 +270,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
-  
+
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
@@ -722,8 +722,8 @@ proc deleteCommunityTokenPermission*(self: Controller, communityId: string, perm
 proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
   return self.walletAccountService.allAccountsTokenBalance(symbol)
 
-proc getTokenDecimals*(self: Controller, symbol: string): int =
-  let asset = self.tokenService.findTokenBySymbol(symbol)
+proc getTokenDecimals*(self: Controller, tokenKey: string): int =
+  let asset = self.tokenService.getTokenByTokenKey(tokenKey)
   if asset != nil:
     return asset.decimals
   return 0
@@ -732,15 +732,15 @@ proc getTokenDecimals*(self: Controller, symbol: string): int =
 # tokenKey can be: symbol for ERC20, or chain+address[+tokenId] for ERC721
 proc getContractAddressesForToken*(self: Controller, tokenKey: string): Table[int, string] =
   var contractAddresses = initTable[int, string]()
-  let token = self.tokenService.findTokenBySymbol(tokenKey)
-  if token != nil:
-    for addrPerChain in token.addressPerChainId:
+  let tokenGroupItem = self.tokenService.getTokenGroupByTokenKey(tokenKey)
+  if tokenGroupItem != nil:
+    for token in tokenGroupItem.tokens:
       # depending on areTestNetworksEnabled (in getNetworkByChainId), contractAddresses will
       # contain mainnets or testnets only
-      let network = self.networkService.getNetworkByChainId(addrPerChain.chainId)
-      if network == nil:
+      let network = self.networkService.getNetworkByChainId(token.chainID)
+      if network.isNil:
         continue
-      contractAddresses[addrPerChain.chainId] = addrPerChain.address
+      contractAddresses[token.chainID] = token.address
   let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), tokenKey)
   if communityToken.address != "":
     contractAddresses[communityToken.chainId] = communityToken.address

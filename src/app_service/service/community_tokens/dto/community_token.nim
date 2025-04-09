@@ -1,11 +1,13 @@
 import json, sequtils, stint, strutils, chronicles
-import ../../../../backend/response_type
-import ../../../../backend/community_tokens_types
-include ../../../common/json_utils
-import ../../../common/conversion
-import ../../community/dto/community
+import backend/response_type
+import backend/community_tokens_types
+
+import app_service/common/[conversion, utils]
+import app_service/service/community/dto/community
 
 export community_tokens_types
+
+include app_service/common/json_utils
 
 type
   DeployState* {.pure.} = enum
@@ -51,6 +53,9 @@ proc toJsonNode*(self: CommunityTokenDto): JsonNode =
     "deployer": self.deployer,
     "privilegesLevel": self.privilegesLevel.int,
   }
+
+proc tokenKey*(self: CommunityTokenDto): string =
+  return makeTokenKey(self.chainID, self.address)
 
 proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
   result = CommunityTokenDto()

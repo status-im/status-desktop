@@ -9,6 +9,7 @@ type
     # The key is built as a concatenation of chainId and address
     # to create a unique key for each element in the flat tokens list
     Key = UserRole + 1
+    GroupedTokensKey
     Name
     Symbol
     # uniswap/status/custom seq[string]
@@ -57,7 +58,7 @@ QtObject:
     result.tokenMarketDetails = @[]
 
   method rowCount(self: FlatTokensModel, index: QModelIndex = nil): int =
-    return self.delegate.getFlatTokensList().len
+    return self.delegate.getFlatTokens().len
 
   proc countChanged(self: FlatTokensModel) {.signal.}
   proc getCount(self: FlatTokensModel): int {.slot.} =
@@ -69,6 +70,7 @@ QtObject:
   method roleNames(self: FlatTokensModel): Table[int, string] =
     {
       ModelRole.Key.int:"key",
+      ModelRole.GroupedTokensKey.int:"groupedTokensKey",
       ModelRole.Name.int:"name",
       ModelRole.Symbol.int:"symbol",
       ModelRole.Sources.int:"sources",
@@ -92,12 +94,13 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.rowCount() or index.row >= self.tokenMarketDetails.len:
       return
-    # the only way to read items from service is by this single method getFlatTokensList
-    let item = self.delegate.getFlatTokensList()[index.row]
+    let item = self.delegate.getFlatTokens()[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.Key:
         result = newQVariant(item.key)
+      of ModelRole.GroupedTokensKey:
+        result = newQVariant(item.groupKey)
       of ModelRole.Name:
         result = newQVariant(item.name)
       of ModelRole.Symbol:
@@ -118,7 +121,7 @@ QtObject:
         result = newQVariant(item.communityId)
       of ModelRole.Description:
         result = if not item.communityId.isEmptyOrWhitespace:
-                  newQVariant(self.delegate.getCommunityTokenDescription(item.chainId, item.address))
+                  newQVariant(self.delegate.getCommunityTokenDescription(item.key))
                 else:
                   if self.delegate.getTokensDetailsLoading(): newQVariant("")
                   else: newQVariant(self.delegate.getTokenDetails(item.symbol).description)
@@ -140,16 +143,16 @@ QtObject:
   proc modelsUpdated*(self: FlatTokensModel) =
     self.beginResetModel()
     self.tokenMarketDetails = @[]
-    for token in self.delegate.getFlatTokensList():
+    for token in self.delegate.getFlatTokens():
       let symbol = if token.communityId.isEmptyOrWhitespace: token.symbol
                    else: ""
       self.tokenMarketDetails.add(newMarketDetailsItem(self.marketValuesDelegate, symbol))
     self.endResetModel()
 
   proc marketDetailsDataChanged(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.delegate.getFlatTokens().len > 0:
       let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getFlatTokens().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.MarketDetails.int, ModelRole.MarketDetailsLoading.int])
@@ -161,9 +164,9 @@ QtObject:
     self.marketDetailsDataChanged()
 
   proc detailsDataChanged(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.delegate.getFlatTokens().len > 0:
       let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getFlatTokens().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Description.int, ModelRole.WebsiteUrl.int, ModelRole.DetailsLoading.int])
@@ -179,9 +182,9 @@ QtObject:
       marketDetails.updateCurrencyFormat()
 
   proc tokenPreferencesUpdated*(self: FlatTokensModel) =
-    if self.delegate.getFlatTokensList().len > 0:
+    if self.delegate.getFlatTokens().len > 0:
       let index = self.createIndex(0, 0, nil)
-      let lastindex = self.createIndex(self.delegate.getFlatTokensList().len-1, 0, nil)
+      let lastindex = self.createIndex(self.delegate.getFlatTokens().len-1, 0, nil)
       defer: index.delete
       defer: lastindex.delete
       self.dataChanged(index, lastindex, @[ModelRole.Visible.int, ModelRole.Position.int])

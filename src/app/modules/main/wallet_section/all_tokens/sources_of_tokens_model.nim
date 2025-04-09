@@ -29,7 +29,7 @@ QtObject:
     result.delegate = delegate
 
   method rowCount(self: SourcesOfTokensModel, index: QModelIndex = nil): int =
-    return self.delegate.getSourcesOfTokensList().len
+    return self.delegate.getTokenLists().len
 
   proc countChanged(self: SourcesOfTokensModel) {.signal.}
   proc getCount(self: SourcesOfTokensModel): int {.slot.} =
@@ -53,7 +53,7 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.rowCount():
       return
-    let item = self.delegate.getSourcesOfTokensList()[index.row]
+    let item = self.delegate.getTokenLists()[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.Key:

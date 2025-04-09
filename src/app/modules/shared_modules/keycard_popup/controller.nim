@@ -827,8 +827,8 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
     return
   return self.walletAccountService.getCurrencyFormat(symbol)
 
-proc parseCurrencyValueByTokensKey*(self: Controller, tokensKey: string, amountInt: UInt256): float64 =
-  return self.walletAccountService.parseCurrencyValueByTokensKey(tokensKey, amountInt)
+proc parseCurrencyValue*(self: Controller, id: string, amountInt: UInt256): float64 =
+  return self.walletAccountService.parseCurrencyValue(id, amountInt)
 
 proc remainingAccountCapacity*(self: Controller): int =
   return self.walletAccountService.remainingAccountCapacity()

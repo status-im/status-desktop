@@ -1,12 +1,15 @@
 import json, times, stint, strutils, sugar, os, re, chronicles
 
-import nimcrypto
+import nimcrypto, std/strformat
 import account_constants
 
 import ../../constants as main_constants
 
 const STATUS_DOMAIN* = ".stateofus.eth"
 const ETH_DOMAIN* = ".eth"
+
+proc makeTokenKey*(chainId: int, address: string): string =
+  return fmt"{chainID}-{address}"
 
 proc arrayContains*[T](arr: seq[T], value: T): bool =
   return arr.any(x => x == value)
