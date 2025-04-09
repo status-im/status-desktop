@@ -26,7 +26,7 @@ StatusDialog {
     signal joinCommunityRequested(string communityId, var communityDetails)
 
     width: 640
-    title: qsTr("Import Community")
+    title: qsTr("Join Community")
 
     QtObject {
         id: d
@@ -118,7 +118,7 @@ StatusDialog {
             StatusButton {
                 enabled: d.isInputValid && d.communityFound
                 loading: d.isInputValid && !d.communityFound && d.communityInfoRequested
-                text: qsTr("Import")
+                text: qsTr("Join")
                 onClicked: {
                     root.joinCommunityRequested(d.publicKey, d.communityDetails)
                 }

@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import AppLayouts.stores 1.0 as AppLayoutStores
 import AppLayouts.Communities 1.0
@@ -34,6 +34,8 @@ SplitView {
         CommunitiesPortalLayout {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
+
+            createCommunityBadgeVisible: ctrlCreateCommunityBadgeVisible.checked
 
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
@@ -70,17 +72,24 @@ SplitView {
 
             logsView.logText: logs.logText
 
-            Row {
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: "number of communities:"
-                }
+            Column {
+                Row {
+                    Label {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "number of communities:"
+                    }
 
-                Slider {
-                    id: slider
-                    value: 9
-                    from: 0
-                    to: 9
+                    Slider {
+                        id: slider
+                        value: 9
+                        from: 0
+                        to: 9
+                    }
+                }
+                CheckBox {
+                    id: ctrlCreateCommunityBadgeVisible
+                    checked: true
+                    text: "'Create New Community' badge"
                 }
             }
         }
@@ -98,6 +107,7 @@ SplitView {
 }
 
 // category: Views
-
+// status: good
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415655
 // https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415935
+// https://www.figma.com/design/qHfFm7C9LwtXpfdbxssCK3/Kuba%E2%8E%9CDesktop---Communities?node-id=55276-394164&m=dev

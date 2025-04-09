@@ -7,7 +7,6 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Layout 0.1
 
@@ -31,6 +30,8 @@ StatusSectionLayout {
 
     property var assetsModel
     property var collectiblesModel
+
+    property bool createCommunityBadgeVisible
 
     objectName: "communitiesPortalLayout"
     onNotificationButtonClicked: Global.openActivityCenterPopup()
@@ -117,12 +118,11 @@ StatusSectionLayout {
 
                 SearchBox {
                     id: searcher
-                    implicitWidth: 327
+                    Layout.preferredWidth: 327
+                    Layout.preferredHeight: 38
                     Layout.alignment: Qt.AlignVCenter
                     topPadding: 0
                     bottomPadding: 0
-                    minimumHeight: 36
-                    maximumHeight: 36
                 }
 
                 // Just a row filler to fit design
@@ -130,7 +130,7 @@ StatusSectionLayout {
 
                 StatusButton {
                     Layout.preferredHeight: 38
-                    text: qsTr("Import community")
+                    text: qsTr("Join Community")
                     verticalPadding: 0
                     onClicked: Global.importCommunityPopupRequested()
                 }
@@ -139,9 +139,13 @@ StatusSectionLayout {
                     objectName: "createCommunityButton"
                     Layout.preferredHeight: 38
                     verticalPadding: 0
-                    text: qsTr("Create community")
+                    text: qsTr("Create New Community")
+                    type: StatusBaseButton.Type.Primary
                     onClicked: {
                         Global.openPopup(chooseCommunityCreationTypePopupComponent)
+
+                    StatusNewBadge {
+                        visible: root.createCommunityBadgeVisible
                     }
                 }
             }
