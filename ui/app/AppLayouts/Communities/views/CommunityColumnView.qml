@@ -123,15 +123,16 @@ Item {
             onTriggered: Global.openPopup(createChannelPopup)
         }
 
-        StatusAction {
-            objectName: "importCommunityChannelBtn"
-            text: qsTr("Create channel via Discord import")
-            icon.name: "download"
-            enabled: !d.discordImportInProgress
-            onTriggered: {
-                Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: communityData.id})
-            }
-        }
+        // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+        // StatusAction {
+        //     objectName: "importCommunityChannelBtn"
+        //     text: qsTr("Create channel via Discord import")
+        //     icon.name: "download"
+        //     enabled: !d.discordImportInProgress
+        //     onTriggered: {
+        //         Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: communityData.id})
+        //     }
+        // }
 
         StatusAction {
             objectName: "createCommunityCategoryBtn"
@@ -213,13 +214,14 @@ Item {
                     onTriggered: Global.openPopup(createChannelPopup)
                 }
 
-                StatusAction {
-                    objectName: "importCommunityChannelBtn"
-                    text: qsTr("Create channel via Discord import")
-                    icon.name: "download"
-                    enabled: !d.discordImportInProgress
-                    onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: root.communityData.id})
-                }
+                // hidden as part of https://github.com/status-im/status-desktop/issues/17726
+                // StatusAction {
+                //     objectName: "importCommunityChannelBtn"
+                //     text: qsTr("Create channel via Discord import")
+                //     icon.name: "download"
+                //     enabled: !d.discordImportInProgress
+                //     onTriggered: Global.openPopup(createChannelPopup, {isDiscordImport: true, communityId: root.communityData.id})
+                // }
 
                 StatusAction {
                     text: qsTr("Create category")
