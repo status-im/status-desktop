@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQml 2.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,10 +16,7 @@ Rectangle {
     implicitHeight: 20
     radius: height / 2
 
-    StatusNewItemGradient {
-        anchors.fill: parent
-        source: root
-    }
+    gradient: StatusNewItemGradient {}
 
     StatusBaseText {
         id: contentText

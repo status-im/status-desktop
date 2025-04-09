@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -44,7 +44,7 @@ StatusRollArea {
         model: d.tagsModel
         mode: StatusCommunityTags.Highlight
 
-        onClicked: {
+        onClicked: (item) => {
             item.selected = !item.selected
             d.evaluateSelectedTags()
         }

@@ -8,6 +8,7 @@
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusBetaTag.qml</file>
         <file>StatusQ/Components/StatusNewTag.qml</file>
+        <file>StatusQ/Components/StatusNewBadge.qml</file>
         <file>StatusQ/Components/StatusCard.qml</file>
         <file>StatusQ/Components/StatusChartPanel.qml</file>
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>
