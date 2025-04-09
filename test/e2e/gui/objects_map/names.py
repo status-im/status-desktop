@@ -33,12 +33,15 @@ communitiesSettingsNavBarList = {"container": statusDesktop_mainWindow, "objectN
 communitiesPortalButton = {"container": communitiesSettingsNavBarList, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settingsGearButton = {"container": communitiesSettingsNavBarList, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 
+
 # Online identifier
 onlineIdentifierButton = {"container": mainWindow_LeftPanelNavBar, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
 
 mainWindow_statusCommunityMainNavBarListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "statusCommunityMainNavBarListView", "type": "ListView", "visible": True}
-statusCommunityMainNavBarListView_CommunityNavBarButton = {"checkable": True, "container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
-invite_People_StatusMenuItem = {"container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "invitePeople", "type": "StatusMenuItem", "visible": True}
+statusCommunityMainNavBarListView_CommunityNavBarButton = {"container": mainWindow_statusCommunityMainNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton", "visible": True}
+
+
+invite_People_StatusMenuItem = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "invitePeople", "type": "StatusMenuItem", "visible": True}
 scrollView_Add_members_StatusButton = {"checkable": False, "container": mainWindow_scrollView_StatusScrollView, "objectName": "CommunityWelcomeBannerPanel_AddMembersButton", "type": "StatusButton", "visible": True}
 
 # Banners

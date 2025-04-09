@@ -5,9 +5,9 @@ import typing
 import allure
 
 import configs
+import constants
 import driver
 from constants import UserAccount, CommunityData
-from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.signing_phrase_popup import SigningPhrasePopup
@@ -23,22 +23,20 @@ from gui.screens.messages import MessagesScreen
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, ReturningLoginView
 from gui.screens.settings import SettingsScreen
 from gui.screens.wallet import WalletScreen
-from scripts.tools.image import Image
 
 LOG = logging.getLogger(__name__)
 
 
-class LeftPanel(QObject):
+class MainLeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
+        super().__init__(names.mainWindow_LeftPanelNavBar)
         self.profile_button = Button(names.onlineIdentifierButton)
-        self._messages_button = Button(names.chatButton)
-        self._communities_portal_button = Button(names.communitiesPortalButton)
-        self._community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
-        self._settings_button = Button(names.settingsGearButton)
-        self._wallet_button = Button(names.mainWalletButton)
-        self._community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
+        self.messages_button = Button(names.chatButton)
+        self.communities_portal_button = Button(names.communitiesPortalButton)
+        self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
+        self.settings_button = Button(names.settingsGearButton)
+        self.wallet_button = Button(names.mainWalletButton)
 
     def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
         for _ in range(attempts):
@@ -52,15 +50,15 @@ class LeftPanel(QObject):
 
     @allure.step('Click Chat button and open Messages screen')
     def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:
-        return self._open_screen_from_left_nav(self._messages_button, MessagesScreen, attempts)
+        return self._open_screen_from_left_nav(self.messages_button, MessagesScreen, attempts)
 
     @allure.step('Click Gear button and open Settings screen')
     def open_settings(self, attempts: int = 2) -> SettingsScreen:
-        return self._open_screen_from_left_nav(self._settings_button, SettingsScreen, attempts)
+        return self._open_screen_from_left_nav(self.settings_button, SettingsScreen, attempts)
 
     @allure.step('Click Wallet button and open Wallet main screen')
     def open_wallet(self, attempts: int = 2) -> WalletScreen:
-        return self._open_screen_from_left_nav(self._wallet_button, WalletScreen, attempts)
+        return self._open_screen_from_left_nav(self.wallet_button, WalletScreen, attempts)
 
     @allure.step('Click and open online identifier')
     def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
@@ -68,11 +66,9 @@ class LeftPanel(QObject):
 
     @property
     @allure.step('Get communities names')
-    def communities(self) -> typing.List[str]:
-        community_names = []
-        for obj in driver.findAllObjects(self._community_template_button.real_name):
-            community_names.append(obj.name)
-
+    def communities_names(self) -> typing.List[str]:
+        community_items = self._get_communities_list()
+        community_names = [item.name for item in community_items]
         return community_names
 
     @property
@@ -84,10 +80,6 @@ class LeftPanel(QObject):
     def set_user_to_online(self):
         self.open_online_identifier().set_user_state_online()
 
-    @allure.step('Verify: User is online')
-    def user_is_online(self) -> bool:
-        return self.user_badge_color == '#4ebc60'
-
     @allure.step('Set user to offline')
     def set_user_to_offline(self):
         self.open_online_identifier().set_user_state_offline()
@@ -96,18 +88,10 @@ class LeftPanel(QObject):
     def user_is_offline(self):
         return self.user_badge_color == '#7f8990'
 
-    @allure.step('Set user to automatic')
-    def set_user_to_automatic(self):
-        self.open_online_identifier().set_user_automatic_state()
-
-    @allure.step('Verify: User is set to automatic')
-    def user_is_set_to_automatic(self):
-        return self.user_badge_color == '#4ebc60'
-
     @allure.step('Open community portal')
     def open_communities_portal(self, attempts: int = 2) -> CommunitiesPortal:
         for _ in range(attempts):
-            self._communities_portal_button.click()
+            self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()
             if introduce_yourself_popup.is_visible:
                 introduce_yourself_popup.skip_button.click()
@@ -119,41 +103,70 @@ class LeftPanel(QObject):
                 pass  # Retry if attempts remain
         raise Exception(f"Failed to open Communities Portal after {attempts} attempts")
 
-    def _get_community(self, name: str):
-        community_names = []
-        for obj in driver.findAllObjects(self._community_template_button.real_name):
-            community_names.append(str(obj.name))
-            if str(obj.name) == str(name):
-                return obj
-        raise LookupError(f'Community: {name} not found in {community_names}')
+    @allure.step('Build and return list of communities')
+    def _get_communities_list(self, timeout_sec: int = 10) -> typing.List[CommunityData]:
+        start_time = time.monotonic()
+        collected_communities = []
+        while time.monotonic() - start_time < timeout_sec:
+            try:
+                for item in driver.findAllObjects(self.community_template_button.real_name):
+                    _community = CommunityData(name=str(item.name))
+                    LOG.info(f'Community built = , {_community}')
 
-    @allure.step('Open community')
-    def select_community(self, name: str) -> CommunityScreen:
-        driver.mouseClick(self._get_community(name))
-        return CommunityScreen().wait_until_appears()
+                    if _community not in collected_communities:
+                        collected_communities.append(_community)
 
-    @allure.step('Get community logo')
-    def get_community_logo(self, name: str) -> Image:
-        return Image(driver.objectMap.realName(self._get_community(name)))
+            except LookupError as e:
+                LOG.info(f'Communities are not found: {e}')
+
+        if len(collected_communities) > 0:
+            LOG.info(f'Collected communities = {collected_communities}')
+            return collected_communities
+        
+        raise TimeoutError(f"Communities list is not built within {timeout_sec} seconds")
+
+    @allure.step('Click community by its name')
+    def select_community_by_name(self, community_name: str) -> CommunityScreen:
+        community_items = self._get_communities_list()
+        existing_communities_names = [community.name for community in community_items]
+        if community_name in existing_communities_names:
+            self.community_template_button.real_name['name'] = community_name
+            for _ in range(2):
+                self.community_template_button.click()
+                try:
+                    return CommunityScreen().wait_until_appears()
+                except Exception:
+                    pass
+                raise LookupError(f'Could not open community screen for {community_name}')
+        raise LookupError(f'{community_name} is not present in {community_items}')
 
     @allure.step('Open context menu for community')
-    def open_community_context_menu(self, name: str) -> ContextMenu:
-        community = QObject(driver.objectMap.realName(self._get_community(name)))
-        community.right_click()
-        return ContextMenu().wait_until_appears()
+    def open_community_context_menu(self, community_name: str) -> ContextMenu:
+        community_items = self._get_communities_list()
+        existing_communities_names = [community.name for community in community_items]
+        if community_name in existing_communities_names:
+            self.community_template_button.real_name['name'] = community_name
+            for _ in range(2):
+                self.community_template_button.right_click()
+                try:
+                    return ContextMenu()
+                except Exception:
+                    pass
+                raise LookupError(f'Could not open community screen for {community_name}')
+        raise LookupError(f'context menu was not opened for {community_name}')
 
     @allure.step('Invite people in community')
     def invite_people_in_community(self, contacts: typing.List[str], message: str, community_name: str):
-        driver.mouseClick(self._get_community(community_name), driver.Qt.RightButton)
-        self._community_invite_people_context_item.click()
-        InviteContactsPopup().wait_until_appears().invite(contacts, message)
+        context_menu = self.open_community_context_menu(community_name)
+        invite_popup = context_menu.select_invite_people()
+        invite_popup.invite(contacts, message)
 
 
 class MainWindow(Window):
 
     def __init__(self):
         super().__init__(names.statusDesktop_mainWindow)
-        self.left_panel = LeftPanel()
+        self.left_panel = MainLeftPanel()
 
     @allure.step('Create new profile')
     def create_profile(self, user_account: UserAccount):
@@ -166,7 +179,7 @@ class MainWindow(Window):
         signing_phrase = SigningPhrasePopup().wait_until_appears(timeout_msec=30000)
         signing_phrase.confirm_phrase()
         # since we now struggle with 3 words names, I need to change display name first
-        left_panel = LeftPanel()
+        left_panel = MainLeftPanel()
         profile = left_panel.open_settings().left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()

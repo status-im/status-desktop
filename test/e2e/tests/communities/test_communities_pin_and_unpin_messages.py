@@ -20,7 +20,7 @@ from gui.screens.messages import MessagesScreen
                  'Edit chat - Remove pinned message (when any member can pin is disabled)')
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703510', 'Join community via owner invite')
 @pytest.mark.case(703255, 703256, 703510, 738743, 738754, 738798, 738799)
-@pytest.mark.communities
+@pytest.mark.communities_names
 @pytest.mark.smoke
 def test_join_community_and_pin_unpin_message(multiple_instances):
     user_one: UserAccount = RandomUser()
@@ -65,7 +65,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             with step('Create community and select it'):
                 community = RandomCommunity()
                 main_screen.create_community(community_data=community)
-                community_screen = main_screen.left_panel.select_community(community.name)
+                community_screen = main_screen.left_panel.select_community_by_name(community.name)
                 add_members = community_screen.left_panel.open_add_members_popup()
                 add_members.invite([user_one.name], message=random_text_message())
             main_screen.hide()
@@ -97,7 +97,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             assert '2' in community_screen.left_panel.members
 
         with step(f'Go to edit community for {user_two.name} and check that pin message checkbox is not checked'):
-            community_screen = main_screen.left_panel.select_community(community.name)
+            community_screen = main_screen.left_panel.select_community_by_name(community.name)
             community_setting = community_screen.left_panel.open_community_settings()
             edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
             assert not edit_community_form.pin_message_checkbox_state

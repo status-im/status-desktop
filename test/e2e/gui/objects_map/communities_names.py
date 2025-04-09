@@ -65,7 +65,8 @@ statusToolBar_StatusChatInfo_pinText_TruncatedTextWithTooltip = {"container": ma
 # Chat
 mainWindow_ChatMessagesView = {"container": mainWindow_StatusWindow, "type": "ChatMessagesView", "unnamed": 1, "visible": True}
 mainWindow_ChatColumnView = {"container": mainWindow_communityLoader_Loader, "type": "ChatColumnView", "unnamed": 1, "visible": True}
-chatMessageViewDelegate_channelIdentifierNameText_StyledText = {"container": mainWindow_ChatColumnView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
+chatLogView = {"container": statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
+chatMessageViewDelegate_channelIdentifierNameText_StyledText = {"container": chatLogView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
 chatMessageViewDelegate_Welcome = {"container": mainWindow_ChatColumnView, "type": "StatusBaseText", "unnamed": 1, "visible": True}
 chatMessageViewDelegate_channelIdentifierSmartIdenticon_StatusSmartIdenticon = {"container": mainWindow_ChatMessagesView, "objectName": "channelIdentifierSmartIdenticon", "type": "StatusSmartIdenticon", "visible": True}
 mainWindow_chatLogView_StatusListView = {"container": mainWindow_StatusWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
