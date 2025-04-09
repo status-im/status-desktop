@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -46,10 +46,7 @@ TabButton {
         radius: statusIconTabButton.width / 2
     }
 
-    StatusMouseArea {
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: parent
-        acceptedButtons: Qt.NoButton
+    HoverHandler {
+        cursorShape: hovered ? Qt.PointingHandCursor : undefined
     }
 }
-

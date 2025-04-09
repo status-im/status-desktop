@@ -1,4 +1,5 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -6,7 +7,8 @@ import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
     
 StatusIconTabButton {
-    id: statusNavBarTabButton 
+    id: statusNavBarTabButton
+
     property alias badge: statusBadge
     property alias tooltip: statusTooltip
     property Component popupMenu
@@ -47,6 +49,8 @@ StatusIconTabButton {
             return -18
         }
         anchors.topMargin: 4
+        border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
+        border.width: 2
     }
 
     StatusMouseArea {
@@ -61,10 +65,11 @@ StatusIconTabButton {
                     statusNavBarTabButton.highlighted = true
                     let btnWidth = statusNavBarTabButton.width
                     popupMenuSlot.item.popup(parent.x + btnWidth + 4, -2)
-                    return
                 }
+            } else if (mouse.button === Qt.LeftButton) {
+                statusNavBarTabButton.toggle()
+                statusNavBarTabButton.clicked()
             }
-            statusNavBarTabButton.clicked()
         }
     }
 
