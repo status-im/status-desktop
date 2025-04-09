@@ -1,6 +1,6 @@
 {.used.}
 
-import json, sequtils, sugar, tables, strutils, json_serialization, strformat
+import json, sequtils, sugar, tables, strutils, app_service/common/safe_json_serialization, strformat
 
 import ../../../../backend/communities
 include ../../../common/json_utils

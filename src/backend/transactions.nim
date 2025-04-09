@@ -1,4 +1,4 @@
-import Tables, json, json_serialization, stew/shims/strformat, chronicles
+import Tables, json, app_service/common/safe_json_serialization, stew/shims/strformat, chronicles
 
 import ./core as core
 

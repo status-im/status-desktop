@@ -12,6 +12,7 @@ import app/core/signals/types
 import app_service/common/cache
 import app_service/common/wallet_constants
 import ./dto, ./service_items, ./utils
+import app_service/common/safe_json_serialization
 
 export dto, service_items
 
@@ -132,7 +133,7 @@ QtObject:
         return
 
       for (symbol, marketValuesObj) in tokensResult.pairs:
-        let marketValuesDto = Json.decode($marketValuesObj, dto.TokenMarketValuesDto, allowUnknownFields = true)
+        let marketValuesDto = Json.safeDecode($marketValuesObj, dto.TokenMarketValuesDto, allowUnknownFields = true)
         self.tokenMarketValuesTable[symbol] = TokenMarketValuesItem(
           marketCap: marketValuesDto.marketCap,
           highDay: marketValuesDto.highDay,
@@ -174,7 +175,7 @@ QtObject:
         return
 
       for (symbol, tokenDetailsObj) in tokensResult.pairs:
-        let tokenDetailsDto = Json.decode($tokenDetailsObj, dto.TokenDetailsDto, allowUnknownFields = true)
+        let tokenDetailsDto = Json.safeDecode($tokenDetailsObj, dto.TokenDetailsDto, allowUnknownFields = true)
         self.tokenDetailsTable[symbol] = TokenDetailsItem(
           description: tokenDetailsDto.description,
           assetWebsiteUrl: tokenDetailsDto.assetWebsiteUrl)
@@ -285,7 +286,7 @@ QtObject:
       # Create a copy of the tokenResultStr to avoid exceptions in `decode`
       # Workaround for https://github.com/status-im/status-desktop/issues/17398
       let tokenResultStr = $tokensResult
-      let tokenList =  Json.decode(tokenResultStr, TokenListDto, allowUnknownFields = true)
+      let tokenList =  Json.safeDecode(tokenResultStr, TokenListDto, allowUnknownFields = true)
 
       self.tokenListUpdatedAt = tokenList.updatedAt
 
@@ -535,7 +536,7 @@ QtObject:
 
       self.tokenPreferencesJson = $response.result
       for preferences in response.result:
-        let dto = Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = true)
+        let dto = Json.safeDecode($preferences, TokenPreferencesDto, allowUnknownFields = true)
         self.tokenPreferencesTable[dto.key] = TokenPreferencesItem(
           key: dto.key,
           position: dto.position,
@@ -567,7 +568,7 @@ QtObject:
       var tokenPreferences: seq[TokenPreferencesDto]
       if preferencesJson.kind == JArray:
         for preferences in preferencesJson:
-          add(tokenPreferences, Json.decode($preferences, TokenPreferencesDto, allowUnknownFields = false))
+          add(tokenPreferences, Json.safeDecode($preferences, TokenPreferencesDto, allowUnknownFields = false))
       let response = backend.updateTokenPreferences(tokenPreferences)
       if not response.error.isNil:
         raise newException(CatchableError, response.error.message)

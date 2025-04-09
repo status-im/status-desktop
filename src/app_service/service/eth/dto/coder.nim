@@ -1,7 +1,7 @@
 import tables, strutils, stint, macros
 import
   web3/[encoding, ethtypes], stew/byteutils, nimcrypto, json_serialization, chronicles
-import json, tables, json_serialization
+import json, tables, app_service/common/safe_json_serialization
 
 include  ../../../common/json_utils
 

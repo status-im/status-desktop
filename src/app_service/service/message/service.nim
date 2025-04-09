@@ -685,7 +685,7 @@ QtObject:
       result = GetMessageResult()
       let msgResponse = status_go.getMessageByMessageId(messageId)
       if not msgResponse.error.isNil:
-        let error = Json.decode($msgResponse.error, RpcError)
+        let error = Json.safeDecode($msgResponse.error, RpcError)
         raise newException(RpcException, "Error resending chat message: " & error.message)
 
       result.message = msgResponse.result.toMessageDto()
@@ -1193,7 +1193,7 @@ proc resendChatMessage*(self: Service, messageId: string): string =
     let response = status_go.resendChatMessage(messageId)
 
     if response.error != nil:
-        let error = Json.decode($response.error, RpcError)
+        let error = Json.safeDecode($response.error, RpcError)
         raise newException(RpcException, "Error resending chat message: " & error.message)
 
     return

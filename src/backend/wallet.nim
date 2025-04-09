@@ -1,4 +1,4 @@
-import json, tables, json_serialization, chronicles
+import json, tables, app_service/common/safe_json_serialization, chronicles
 import core, response_type
 from ./gen import rpc
 
@@ -105,7 +105,7 @@ proc sendTransactionWithSignature*(resultOut: var JsonNode, chainId: int, txType
 proc hashTypedData*(resultOut: var JsonNode, data: string): string =
   try:
     let rawResponse = status_go.hashTypedData(data)
-    var response = Json.decode(rawResponse, RpcResponse[JsonNode])
+    var response = Json.safeDecode(rawResponse, RpcResponse[JsonNode])
     return prepareResponse(resultOut, response)
   except Exception as e:
     warn "error hashing data", err = e.msg
@@ -114,7 +114,7 @@ proc hashTypedData*(resultOut: var JsonNode, data: string): string =
 proc hashTypedDataV4*(resultOut: var JsonNode, data: string): string =
   try:
     let rawResponse = status_go.hashTypedDataV4(data)
-    var response = Json.decode(rawResponse, RpcResponse[JsonNode])
+    var response = Json.safeDecode(rawResponse, RpcResponse[JsonNode])
     return prepareResponse(resultOut, response)
   except Exception as e:
     warn "error hashing data v4", err = e.msg

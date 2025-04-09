@@ -1,4 +1,4 @@
-import NimQml, Tables, json, os, chronicles, strutils, random, json_serialization
+import NimQml, Tables, json, os, chronicles, strutils, random, app_service/common/safe_json_serialization
 import app/global/feature_flags
 import app/global/global_singleton
 import app/core/eventemitter
@@ -146,7 +146,7 @@ QtObject:
       let response = callRPC($KeycardAction.Stop)
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-          let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+          let error = Json.safeDecode(rpcResponseObj["error"].getStr, RpcError)
           raise newException(RpcException, error.message)
     except Exception as e:
       error "error stop", err=e.msg
@@ -156,7 +156,7 @@ QtObject:
       let response = callRPC($KeycardAction.GenerateMnemonic, %*{"length": length})
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-          let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+          let error = Json.safeDecode(rpcResponseObj["error"].getStr, RpcError)
           raise newException(RpcException, error.message)
 
       let indexes = rpcResponseObj["result"]["indexes"]
@@ -171,7 +171,7 @@ QtObject:
       let response = callRPC($KeycardAction.GetMetadata)
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+        let error = Json.safeDecode(rpcResponseObj["error"].getStr, RpcError)
         raise newException(RpcException, error.message)
       return rpcResponseObj["result"].toCardMetadataDto()
     except Exception as e:
@@ -259,7 +259,7 @@ QtObject:
       let response = callRPC($KeycardAction.StoreMetadata, %*{"name": name, "paths": paths})
       let rpcResponseObj = response.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-          let error = Json.decode(rpcResponseObj["error"].getStr, RpcError)
+          let error = Json.safeDecode(rpcResponseObj["error"].getStr, RpcError)
           raise newException(RpcException, error.message)
     except Exception as e:
       error "error storing metadata", err=e.msg

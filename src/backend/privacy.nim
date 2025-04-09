@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles
+import json, app_service/common/safe_json_serialization, chronicles
 import response_type
 
 import status_go
@@ -12,7 +12,7 @@ proc changeDatabasePassword*(keyUID: string, oldHashedPassword: string, newHashe
   =
   try:
     let response = status_go.changeDatabasePassword(keyUID, oldHashedPassword, newHashedPassword)
-    result.result = Json.decode(response, JsonNode)
+    result.result = Json.safeDecode(response, JsonNode)
   except RpcException as e:
     error "error", methodName = "changeDatabasePassword", exception=e.msg
     raise newException(RpcException, e.msg)

@@ -142,7 +142,7 @@ QtObject:
     try:
       let response = status_installations.setInstallationName(installationId, name)
       if response.error != nil:
-        let e = Json.decode($response.error, RpcError)
+        let e = Json.safeDecode($response.error, RpcError)
         error "error: ", errorDescription = e.message
         return
       let data = UpdateInstallationNameArgs(installationId: installationId, name: name)
@@ -375,7 +375,7 @@ QtObject:
     try:
       let response = status_installations.finishPairingThroughSeedPhraseProcess(installationId)
       if response.error != nil:
-        let e = Json.decode($response.error, RpcError)
+        let e = Json.safeDecode($response.error, RpcError)
         raise newException(CatchableError, e.message)
     except Exception as e:
       error "error: ", desription = e.msg
@@ -384,7 +384,7 @@ QtObject:
     try:
       let response = status_installations.enableInstallationAndSync(installationId)
       if response.error != nil:
-        let e = Json.decode($response.error, RpcError)
+        let e = Json.safeDecode($response.error, RpcError)
         raise newException(CatchableError, e.message)
       # Parse AC notif
       checkAndEmitACNotificationsFromResponse(self.events, response.result{"activityCenterNotifications"})
