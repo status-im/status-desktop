@@ -35,16 +35,20 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            createCommunityBadgeVisible: ctrlCreateCommunityBadgeVisible.checked
+            createCommunityBadgeVisible: !communitiesStore.createCommunityPopupSeen
 
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
             communitiesStore: CommunitiesStore {
-                readonly property int unreadNotificationsCount: 42
-                readonly property bool createCommunityEnabled: true
                 readonly property string communityTags: ModelsData.communityTags
-                readonly property var curatedCommunitiesModel: SortFilterProxyModel {
 
+                property bool createCommunityPopupSeen
+                function setCreateCommunityPopupSeen() {
+                    createCommunityPopupSeen = true
+                    logs.logEvent("CommunitiesStore::setCreateCommunityPopupSeen")
+                }
+
+                readonly property var curatedCommunitiesModel: SortFilterProxyModel {
                     sourceModel: CommunitiesPortalDummyModel { id: mockedModel }
 
                     filters: IndexFilter {
@@ -72,24 +76,17 @@ SplitView {
 
             logsView.logText: logs.logText
 
-            Column {
-                Row {
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "number of communities:"
-                    }
-
-                    Slider {
-                        id: slider
-                        value: 9
-                        from: 0
-                        to: 9
-                    }
+            Row {
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "number of communities:"
                 }
-                CheckBox {
-                    id: ctrlCreateCommunityBadgeVisible
-                    checked: true
-                    text: "'Create New Community' badge"
+
+                Slider {
+                    id: slider
+                    value: 9
+                    from: 0
+                    to: 9
                 }
             }
         }
