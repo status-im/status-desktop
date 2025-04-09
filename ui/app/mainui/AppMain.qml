@@ -34,6 +34,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Components 0.1
+import StatusQ.Components.private 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
@@ -1269,8 +1270,6 @@ Item {
                 checked: model.active
                 badge.value: model.notificationsCount
                 badge.visible: model.hasNotification
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
 
                 stateIcon.color: Theme.palette.dangerColor1
                 stateIcon.border.color: Theme.palette.baseColor2
@@ -1426,8 +1425,6 @@ Item {
                 }
                 badge.implicitHeight: 12
                 badge.implicitWidth: 12
-                badge.border.width: 2
-                badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 badge.color: {
                     switch(appMain.profileStore.currentUserStatus){
                         case Constants.currentUserStatus.automatic:
@@ -1475,13 +1472,20 @@ Item {
                     icon.source: model.image
                     tooltip.text: Utils.translatedSectionName(model.sectionType, model.name)
                     checked: model.active
+
+                    readonly property bool displayCreateCommunityBadge: model.sectionType === Constants.appSection.communitiesPortal && !appMain.communitiesStore.createCommunityPopupSeen
                     badge.value: model.notificationsCount
-                    badge.visible: (model.sectionType === Constants.appSection.profile &&
-                                   contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) ? // pending contact request
-                                        true :
-                                        model.hasNotification // Otherwise, use the value coming from the model
-                    badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                    badge.border.width: 2
+                    badge.visible: {
+                        if (model.sectionType === Constants.appSection.profile && contactsModelAdaptor.pendingReceivedRequestContacts.ModelCount.count > 0) // pending contact request
+                            return true
+                        if (displayCreateCommunityBadge) // create new community badge
+                            return true
+                        return model.hasNotification // Otherwise, use the value coming from the model
+                    }
+
+                    StatusNewItemGradient { id: newGradient }
+                    badge.gradient: displayCreateCommunityBadge ? newGradient : undefined // gradient has precedence over a simple color
+
                     onClicked: {
                         if(model.sectionType === Constants.appSection.swap) {
                             d.launchSwap()
@@ -2008,6 +2012,7 @@ Item {
                             collectiblesModel: appMain.rootStore.globalCollectiblesModel
                             notificationCount: appMain.activityCenterStore.unreadNotificationsCount
                             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+                            createCommunityBadgeVisible: !appMain.communitiesStore.createCommunityPopupSeen
                         }
                     }
 

@@ -74,6 +74,8 @@ const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
 const DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED = false
 const LSS_KEY_GIF_UNFURLING_ENABLED* = "gifUnfurlingEnabled"
 const DEFAULT_GIF_UNFURLING_ENABLED* = false
+const LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN = "createCommunityPopupSeen"
+const DEFAULT_LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN = false
 
 logScope:
   topics = "la-sensitive-settings"
@@ -586,6 +588,20 @@ QtObject:
     write = setGifUnfurlingEnabled
     notify = gifUnfurlingEnabledChanged
 
+  proc createCommunityPopupSeenChanged(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getCreateCommunityPopupSeen(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    self.settings.value(LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN, newQVariant(DEFAULT_LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN)).boolVal
+  proc setCreateCommunityPopupSeen(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    if value == self.getCreateCommunityPopupSeen:
+      return
+    self.settings.setValue(LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN, newQVariant(value))
+    self.createCommunityPopupSeenChanged()
+
+  QtProperty[bool] createCommunityPopupSeen:
+    read = getCreateCommunityPopupSeen
+    write = setCreateCommunityPopupSeen
+    notify = createCommunityPopupSeenChanged
+
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):
       return
@@ -626,3 +642,4 @@ QtObject:
       of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
       of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()
       of LSS_KEY_GIF_UNFURLING_ENABLED: self.gifUnfurlingEnabledChanged()
+      of LSS_KEY_CREATE_COMMUNITY_POPUP_SEEN: self.createCommunityPopupSeenChanged()

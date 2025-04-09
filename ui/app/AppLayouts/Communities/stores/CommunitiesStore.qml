@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQml.Models 2.2
+import QtQuick 2.15
+import QtQml.Models 2.15
 
 import utils 1.0
 
@@ -36,6 +36,11 @@ QtObject {
     property var advancedModule: profileSectionModule.advancedModule
 
     readonly property bool testEnvironment: localAppSettings.testEnvironment ?? false
+
+    readonly property bool createCommunityPopupSeen: localAccountSensitiveSettings.createCommunityPopupSeen ?? false
+    function setCreateCommunityPopupSeen() {
+        localAccountSensitiveSettings.createCommunityPopupSeen = true
+    }
 
     property string communityTags: communitiesModuleInst.tags
 
