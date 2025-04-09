@@ -26,7 +26,7 @@ QtObject:
     result.index = index
 
   method rowCount(self: AddressPerChainModel, index: QModelIndex = nil): int =
-    return self.delegate.getTokenBySymbolList()[self.index].addressPerChainId.len
+    return self.delegate.getGroupedTokens()[self.index].tokens.len
 
   proc countChanged(self: AddressPerChainModel) {.signal.}
   proc getCount(self: AddressPerChainModel): int {.slot.} =
@@ -46,7 +46,7 @@ QtObject:
       return
     if index.row < 0 or index.row >= self.rowCount():
       return
-    let item = self.delegate.getTokenBySymbolList()[self.index].addressPerChainId[index.row]
+    let item = self.delegate.getGroupedTokens()[self.index].tokens[index.row]
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.ChainId:

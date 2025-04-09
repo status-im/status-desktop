@@ -683,7 +683,7 @@ method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
     paths, keycardDto)
   self.setKeyPairForProcessing(item)
 
-method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accountTokens: seq[GroupedTokenItem]) =
+method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], groupedTokens: seq[GroupedTokenItem]) =
   if self.getKeyPairForProcessing().isNil and self.getKeyPairHelper().isNil:
     return
   var totalTokenBalance = 0.0
@@ -691,10 +691,10 @@ method onTokensRebuilt*[T](self: Module[T], accountAddresses: seq[string], accou
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   for address in accountAddresses:
     let accAdd = address
-    for token in accountTokens:
-      let filteredBalances = token.balancesPerAccount.filter(b =>  b.account == accAdd)
+    for gToken in groupedTokens:
+      let filteredBalances = gToken.balancesPerAccount.filter(b =>  b.account == accAdd)
       for balance in filteredBalances:
-          totalTokenBalance += self.controller.parseCurrencyValueByTokensKey(token.tokensKey, balance.balance)
+          totalTokenBalance += self.controller.parseCurrencyValue(gToken.key, balance.balance)
       let balance =  currencyAmountToItem(totalTokenBalance, currencyFormat)
       if not self.getKeyPairForProcessing().isNil:
         self.getKeyPairForProcessing().setBalanceForAddress(address, balance)

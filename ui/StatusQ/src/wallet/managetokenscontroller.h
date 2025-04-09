@@ -47,8 +47,8 @@ class ManageTokensController : public QObject, public QQmlParserStatus
 public:
     explicit ManageTokensController(QObject* parent = nullptr);
 
-    Q_INVOKABLE void showHideRegularToken(const QString& symbol, bool flag);
-    Q_INVOKABLE void showHideCommunityToken(const QString& symbol, bool flag);
+    Q_INVOKABLE void showHideRegularToken(const QString& tokenKey, bool flag);
+    Q_INVOKABLE void showHideCommunityToken(const QString& tokenKey, bool flag);
     Q_INVOKABLE void showHideGroup(const QString& groupId, bool flag);
     Q_INVOKABLE void showHideCollectionGroup(const QString& groupId, bool flag);
 
@@ -64,9 +64,9 @@ public:
 
     Q_INVOKABLE QString serializeSettingsAsJson();
 
-    Q_INVOKABLE int order(const QString& symbol) const;
-    Q_INVOKABLE int compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const;
-    Q_INVOKABLE bool filterAcceptsSymbol(const QString& symbol) const;
+    Q_INVOKABLE int order(const QString& tokenKey) const;
+    Q_INVOKABLE int compareTokens(const QString& lhsTokenKey, const QString& rhsTokenKey) const;
+    Q_INVOKABLE bool filterAcceptsTokenKey(const QString& tokenKey) const;
 
 protected:
     void classBegin() override;
@@ -81,8 +81,8 @@ signals:
     void settingsDirtyChanged(bool dirty);
     void serializeAsCollectiblesChanged();
 
-    void tokenHidden(const QString& symbol, const QString& name);
-    void tokenShown(const QString& symbol, const QString& name);
+    void tokenHidden(const QString& tokenKey, const QString& name);
+    void tokenShown(const QString& tokenKey, const QString& name);
     void communityTokenGroupHidden(const QString& communityName);
     void communityTokenGroupShown(const QString& communityName);
     void collectionTokenGroupHidden(const QString& communityName);

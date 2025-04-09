@@ -15,13 +15,13 @@ proc `$`*(self: BalanceItem): string =
 
 type
   GroupedTokenItem* = ref object of RootObj
-    tokensKey*: string
+    key*: string
     symbol*: string
     balancesPerAccount*: seq[BalanceItem]
 
 proc `$`*(self: GroupedTokenItem): string =
   result = fmt"""GroupedTokenItem[
-    tokensKey: {self.tokensKey},
+    key: {self.key},
     symbol: {self.symbol},
     balancesPerAccount: {self.balancesPerAccount}]"""
 

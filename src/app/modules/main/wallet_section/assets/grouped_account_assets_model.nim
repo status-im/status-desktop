@@ -4,7 +4,7 @@ import ./io_interface, ./balances_model
 
 type
   ModelRole {.pure.} = enum
-    TokensKey = UserRole + 1,
+    GroupedTokensKey = UserRole + 1,
     Balances
 
 QtObject:
@@ -37,7 +37,7 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.TokensKey.int:"tokensKey",
+      ModelRole.GroupedTokensKey.int:"groupedTokensKey",
       ModelRole.Balances.int:"balances",
     }.toTable
 
@@ -52,8 +52,8 @@ QtObject:
     let enumRole = role.ModelRole
     let item = self.delegate.getGroupedAccountsAssetsList()[index.row]
     case enumRole:
-    of ModelRole.TokensKey:
-      result = newQVariant(item.tokensKey)
+    of ModelRole.GroupedTokensKey:
+      result = newQVariant(item.key)
     of ModelRole.Balances:
       result = newQVariant(self.balancesPerChain[index.row])
 

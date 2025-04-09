@@ -65,8 +65,8 @@ QtObject:
   proc jsonToFormatsTable(node: JsonNode) : Table[string, CurrencyFormatDto] =
     result = initTable[string, CurrencyFormatDto]()
 
-    for (symbol, formatObj) in node.pairs:
-      result[symbol] = formatObj.toCurrencyFormatDto()
+    for (groupedTokensKey, formatObj) in node.pairs:
+      result[groupedTokensKey] = formatObj.toCurrencyFormatDto()
 
   proc getCachedCurrencyFormats(self: Service): Table[string, CurrencyFormatDto] =
     try:
@@ -86,9 +86,9 @@ QtObject:
         if formatsJson.isNil or formatsJson.kind == JNull:
           return
 
-        let formatsPerSymbol = jsonToFormatsTable(formatsJson)
-        for symbol, format in formatsPerSymbol:
-          self.currencyFormatCache[symbol] = format
+        let formatsPerGroupedTokensKey = jsonToFormatsTable(formatsJson)
+        for groupedTokensKey, format in formatsPerGroupedTokensKey:
+          self.currencyFormatCache[groupedTokensKey] = format
         self.events.emit(SIGNAL_CURRENCY_FORMATS_UPDATED, CurrencyFormatsUpdatedArgs())
     except Exception as e:
       let errDescription = e.msg
@@ -102,10 +102,10 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
-    if not self.currencyFormatCache.hasKey(symbol):
-      return newCurrencyFormatDto(symbol)
-    return self.currencyFormatCache[symbol]
+  proc getCurrencyFormat*(self: Service, groupedTokensKey: string): CurrencyFormatDto =
+    if not self.currencyFormatCache.hasKey(groupedTokensKey):
+      return newCurrencyFormatDto(groupedTokensKey)
+    return self.currencyFormatCache[groupedTokensKey]
 
   proc toFloat(amountInt: UInt256): float64 =
     return float64(amountInt.truncate(uint64))
@@ -122,20 +122,9 @@ QtObject:
 
     return i.toFloat() + r.toFloat() / p.toFloat()
 
-  # TODO: left this for activity controller as it uses token symbol
-  # which may not be unique needs to be refactored. Also needed for
-  # hasGas api which also needs to be rethought
-  # https://github.com/status-im/status-desktop/issues/13505
-  proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.findTokenBySymbol(symbol)
+  proc parseCurrencyValue*(self: Service, groupedTokenKey: string, amountInt: UInt256): float64 =
+    let groupedTokenItem = self.tokenService.getTokenGroupByGroupedTokensKey(groupedTokenKey)
     var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
-    return u256ToFloat(decimals, amountInt)
-
-  proc parseCurrencyValueByTokensKey*(self: Service, tokensKey: string, amountInt: UInt256): float64 =
-    let token = self.tokenService.getTokenBySymbolByTokensKey(tokensKey)
-    var decimals: int = 0
-    if token != nil:
-      decimals = token.decimals
+    if groupedTokenItem != nil:
+      decimals = groupedTokenItem.decimals
     return u256ToFloat(decimals, amountInt)

@@ -37,10 +37,10 @@ void ManageTokensModel::addItem(const TokenData& item, bool append)
     endInsertRows();
 }
 
-std::optional<TokenData> ManageTokensModel::takeItem(const QString& symbol)
+std::optional<TokenData> ManageTokensModel::takeItem(const QString& tokenKey)
 {
     const auto token =
-        std::find_if(m_data.cbegin(), m_data.cend(), [symbol](const auto& item) { return symbol == item.symbol; });
+        std::find_if(m_data.cbegin(), m_data.cend(), [tokenKey](const auto& item) { return tokenKey == item.tokenKey; });
     const auto row = std::distance(m_data.cbegin(), token);
 
     if (row < 0 || row >= rowCount())
@@ -94,8 +94,8 @@ SerializedTokenData ManageTokensModel::save(bool isVisible, bool itemsAreGroups)
         const auto& token = itemAt(i);
         const auto isCommunityGroup = !token.communityId.isEmpty();
         const auto isCollectionGroup = !token.collectionUid.isEmpty();
-        result.insert(token.symbol,
-                      TokenOrder{token.symbol,
+        result.insert(token.tokenKey,
+                      TokenOrder{token.tokenKey,
                                  i,
                                  isVisible,
                                  isCommunityGroup,
@@ -113,6 +113,8 @@ int ManageTokensModel::rowCount(const QModelIndex& parent) const { return m_data
 QHash<int, QByteArray> ManageTokensModel::roleNames() const
 {
     static const QHash<int, QByteArray> roles{
+        {GroupedTokensKey, kGroupedTokensKeyRoleName},
+        {TokenKey, kTokenKeyRoleName},
         {SymbolRole, kSymbolRoleName},
         {NameRole, kNameRoleName},
         {CommunityIdRole, kCommunityIdRoleName},
@@ -144,6 +146,10 @@ QVariant ManageTokensModel::data(const QModelIndex& index, int role) const
     const auto& token = m_data.at(index.row());
 
     switch (static_cast<TokenDataRoles>(role)) {
+    case GroupedTokensKey:
+        return token.groupedTokensKey;
+    case TokenKey:
+        return token.tokenKey;
     case SymbolRole:
         return token.symbol;
     case NameRole:

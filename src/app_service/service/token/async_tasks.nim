@@ -24,7 +24,7 @@ proc getSupportedTokenList*(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   FetchTokensMarketValuesTaskArg = ref object of QObjectTaskArg
-    symbols: seq[string]
+    groupedTokensKeys: seq[string]
     currency: string
 
 proc fetchTokensMarketValuesTask*(argEncoded: string) {.gcsafe, nimcall.} =
@@ -34,7 +34,7 @@ proc fetchTokensMarketValuesTask*(argEncoded: string) {.gcsafe, nimcall.} =
     "error": ""
   }
   try:
-    let response = backend.fetchMarketValues(arg.symbols, arg.currency)
+    let response = backend.fetchMarketValues(arg.groupedTokensKeys, arg.currency)
     output["tokenMarketValues"] = %*response
   except Exception as e:
     output["error"] = %* fmt"Error fetching market values: {e.msg}"
@@ -42,7 +42,7 @@ proc fetchTokensMarketValuesTask*(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   FetchTokensDetailsTaskArg = ref object of QObjectTaskArg
-    symbols: seq[string]
+    groupedTokensKeys: seq[string]
 
 proc fetchTokensDetailsTask*(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchTokensDetailsTaskArg](argEncoded)
@@ -51,7 +51,7 @@ proc fetchTokensDetailsTask*(argEncoded: string) {.gcsafe, nimcall.} =
     "error": ""
   }
   try:
-    let response = backend.fetchTokenDetails(arg.symbols)
+    let response = backend.fetchTokenDetails(arg.groupedTokensKeys)
     output["tokensDetails"] = %*response
   except Exception as e:
     output["error"] = %* fmt"Error fetching token details: {e.msg}"
@@ -59,7 +59,7 @@ proc fetchTokensDetailsTask*(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   FetchTokensPricesTaskArg = ref object of QObjectTaskArg
-    symbols: seq[string]
+    groupedTokensKeys: seq[string]
     currencies: seq[string]
 
 proc fetchTokensPricesTask*(argEncoded: string) {.gcsafe, nimcall.} =
@@ -69,7 +69,7 @@ proc fetchTokensPricesTask*(argEncoded: string) {.gcsafe, nimcall.} =
     "error": ""
   }
   try:
-    let response = backend.fetchPrices(arg.symbols, arg.currencies)
+    let response = backend.fetchPrices(arg.groupedTokensKeys, arg.currencies)
     output["tokensPrices"] = %*response
   except Exception as e:
     output["error"] = %* fmt"Error fetching prices: {e.msg}"
@@ -77,7 +77,7 @@ proc fetchTokensPricesTask*(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   GetTokenHistoricalDataTaskArg = ref object of QObjectTaskArg
-    symbol: string
+    groupedTokenKey: string
     currency: string
     range: int
 
@@ -88,24 +88,24 @@ proc getTokenHistoricalDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
     let td = now()
     case arg.range:
       of WEEKLY_TIME_RANGE:
-        response = backend.getHourlyMarketValues(arg.symbol, arg.currency, DAYS_IN_WEEK*HOURS_IN_DAY, 1).result
+        response = backend.getHourlyMarketValues(arg.groupedTokenKey, arg.currency, DAYS_IN_WEEK*HOURS_IN_DAY, 1).result
       of MONTHLY_TIME_RANGE:
-        response = backend.getHourlyMarketValues(arg.symbol, arg.currency, getDaysInMonth(td.month, td.year)*HOURS_IN_DAY, 2).result
+        response = backend.getHourlyMarketValues(arg.groupedTokenKey, arg.currency, getDaysInMonth(td.month, td.year)*HOURS_IN_DAY, 2).result
       of HALF_YEARLY_TIME_RANGE:
-        response = backend.getDailyMarketValues(arg.symbol, arg.currency, int(getDaysInYear(td.year)/2), false, 1).result
+        response = backend.getDailyMarketValues(arg.groupedTokenKey, arg.currency, int(getDaysInYear(td.year)/2), false, 1).result
       of YEARLY_TIME_RANGE:
-        response = backend.getDailyMarketValues(arg.symbol, arg.currency, getDaysInYear(td.year), false, 1).result
+        response = backend.getDailyMarketValues(arg.groupedTokenKey, arg.currency, getDaysInYear(td.year), false, 1).result
       of ALL_TIME_RANGE:
-        response = backend.getDailyMarketValues(arg.symbol, arg.currency, 1, true, 12).result
+        response = backend.getDailyMarketValues(arg.groupedTokenKey, arg.currency, 1, true, 12).result
       else:
         let output = %* {
-          "symbol": arg.symbol,
+          "groupedTokenKey": arg.groupedTokenKey,
           "range": arg.range,
           "error": "Range not defined",
         }
 
     let output = %* {
-        "symbol": arg.symbol,
+        "groupedTokenKey": arg.groupedTokenKey,
         "range": arg.range,
         "historicalData": response
     }
@@ -114,7 +114,7 @@ proc getTokenHistoricalDataTask*(argEncoded: string) {.gcsafe, nimcall.} =
     return
   except Exception as e:
     let output = %* {
-      "symbol": arg.symbol,
+      "groupedTokenKey": arg.groupedTokenKey,
       "range": arg.range,
       "error": "Historical market value not found",
     }

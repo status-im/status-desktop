@@ -53,37 +53,37 @@ ManageTokensController::ManageTokensController(QObject* parent)
     });
 }
 
-void ManageTokensController::showHideRegularToken(const QString& symbol, bool flag)
+void ManageTokensController::showHideRegularToken(const QString& tokenKey, bool flag)
 {
     if (flag) { // show
-        auto hiddenItem = m_hiddenTokensModel->takeItem(symbol);
+        auto hiddenItem = m_hiddenTokensModel->takeItem(tokenKey);
         if (hiddenItem) {
             m_regularTokensModel->addItem(*hiddenItem);
-            emit tokenShown(hiddenItem->symbol, hiddenItem->name);
+            emit tokenShown(hiddenItem->tokenKey, hiddenItem->name);
         }
     } else { // hide
-        auto shownItem = m_regularTokensModel->takeItem(symbol);
+        auto shownItem = m_regularTokensModel->takeItem(tokenKey);
         if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
-            emit tokenHidden(shownItem->symbol, shownItem->name);
+            emit tokenHidden(shownItem->tokenKey, shownItem->name);
         }
     }
     emit requestSaveSettings(serializeSettingsAsJson());
 }
 
-void ManageTokensController::showHideCommunityToken(const QString& symbol, bool flag)
+void ManageTokensController::showHideCommunityToken(const QString& tokenKey, bool flag)
 {
     if (flag) { // show
-        auto hiddenItem = m_hiddenTokensModel->takeItem(symbol);
+        auto hiddenItem = m_hiddenTokensModel->takeItem(tokenKey);
         if (hiddenItem) {
             m_communityTokensModel->addItem(*hiddenItem);
-            emit tokenShown(hiddenItem->symbol, hiddenItem->name);
+            emit tokenShown(hiddenItem->tokenKey, hiddenItem->name);
         }
     } else { // hide
-        auto shownItem = m_communityTokensModel->takeItem(symbol);
+        auto shownItem = m_communityTokensModel->takeItem(tokenKey);
         if (shownItem) {
             m_hiddenTokensModel->addItem(*shownItem, false /*prepend*/);
-            emit tokenHidden(shownItem->symbol, shownItem->name);
+            emit tokenHidden(shownItem->tokenKey, shownItem->name);
         }
     }
     m_communityTokensModel->saveCustomSortOrder();
@@ -274,16 +274,16 @@ bool ManageTokensController::hasSettings() const
     return !m_settingsData.isEmpty();
 }
 
-int ManageTokensController::order(const QString& symbol) const
+int ManageTokensController::order(const QString& tokenKey) const
 {
-    const auto entry = m_settingsData.value(symbol, TokenOrder());
+    const auto entry = m_settingsData.value(tokenKey, TokenOrder());
     return entry.visible ? entry.sortOrder : undefinedTokenOrder;
 }
 
-int ManageTokensController::compareTokens(const QString& lhsSymbol, const QString& rhsSymbol) const
+int ManageTokensController::compareTokens(const QString& lhsTokenKey, const QString& rhsTokenKey) const
 {
-    const auto left = m_settingsData.value(lhsSymbol, TokenOrder());
-    const auto right = m_settingsData.value(rhsSymbol, TokenOrder());
+    const auto left = m_settingsData.value(lhsTokenKey, TokenOrder());
+    const auto right = m_settingsData.value(rhsTokenKey, TokenOrder());
 
     // check if visible
     auto leftPos = left.visible ? left.sortOrder : undefinedTokenOrder;
@@ -296,15 +296,15 @@ int ManageTokensController::compareTokens(const QString& lhsSymbol, const QStrin
     return 0;
 }
 
-bool ManageTokensController::filterAcceptsSymbol(const QString& symbol) const
+bool ManageTokensController::filterAcceptsTokenKey(const QString& tokenKey) const
 {
-    if (symbol.isEmpty())
+    if (tokenKey.isEmpty())
         return true;
 
-    if (!m_settingsData.contains(symbol)) {
+    if (!m_settingsData.contains(tokenKey)) {
         return true;
     }
-    return m_settingsData.value(symbol).visible;
+    return m_settingsData.value(tokenKey).visible;
 }
 
 void ManageTokensController::classBegin()
@@ -411,14 +411,18 @@ void ManageTokensController::addItem(int index)
     };
 
     const auto srcIndex = m_sourceModel->index(index, 0);
+    const auto groupedTokensKey = dataForIndex(srcIndex, kGroupedTokensKeyRoleName).toString();
+    const auto tokenKey = dataForIndex(srcIndex, kTokenKeyRoleName).toString();
     const auto symbol = dataForIndex(srcIndex, kSymbolRoleName).toString();
     const auto communityId = dataForIndex(srcIndex, kCommunityIdRoleName).toString();
     const auto communityName = dataForIndex(srcIndex, kCommunityNameRoleName).toString();
-    const auto visible = m_settingsData.contains(symbol) ? m_settingsData.value(symbol).visible : true;
+    const auto visible = m_settingsData.contains(tokenKey) ? m_settingsData.value(tokenKey).visible : true;
     const auto bgColor = dataForIndex(srcIndex, kBackgroundColorRoleName).value<QColor>();
     const auto collectionUid = dataForIndex(srcIndex, kCollectionUidRoleName).toString();
 
     TokenData token;
+    token.groupedTokensKey = groupedTokensKey;
+    token.tokenKey = tokenKey;
     token.symbol = symbol;
     token.name = dataForIndex(srcIndex, kNameRoleName).toString();
     token.image = dataForIndex(srcIndex, kTokenImageUrlRoleName).toString();
@@ -433,7 +437,7 @@ void ManageTokensController::addItem(int index)
     token.communityId = communityId;
     token.communityName = !communityName.isEmpty() ? communityName : communityId;
     token.communityImage = dataForIndex(srcIndex, kCommunityImageRoleName).toString();
-    token.collectionUid = !collectionUid.isEmpty() ? collectionUid : symbol;
+    token.collectionUid = !collectionUid.isEmpty() ? collectionUid : tokenKey; // TODO: check, maybe token key only can be used
     token.isSelfCollection = collectionUid.isEmpty();
     token.collectionName = dataForIndex(srcIndex, kCollectionNameRoleName).toString();
     token.balance = dataForIndex(srcIndex, kEnabledNetworkBalanceRoleName);
@@ -442,7 +446,7 @@ void ManageTokensController::addItem(int index)
     token.decimals = dataForIndex(srcIndex, kDecimalsRoleName);
     token.marketDetails = dataForIndex(srcIndex, kMarketDetailsRoleName);
 
-    token.customSortOrderNo = m_settingsData.contains(symbol) ? m_settingsData.value(symbol).sortOrder
+    token.customSortOrderNo = m_settingsData.contains(tokenKey) ? m_settingsData.value(tokenKey).sortOrder
                                                               : (visible ? undefinedTokenOrder : 0); // append/prepend
 
     if (!visible)
@@ -504,6 +508,8 @@ void ManageTokensController::rebuildCommunityTokenGroupsModel()
                 !communityToken.collectionName.isEmpty() ? communityToken.collectionName : communityToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.groupedTokensKey = communityId; // TODO: check
+            tokenGroup.tokenKey = communityId; // TODO: check
             tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
             tokenGroup.collectionName = collectionName;
@@ -565,6 +571,8 @@ void ManageTokensController::rebuildHiddenCommunityTokenGroupsModel()
                 !communityToken.collectionName.isEmpty() ? communityToken.collectionName : communityToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.groupedTokensKey = communityId; // TODO: check
+            tokenGroup.tokenKey = communityId; // TODO: check
             tokenGroup.symbol = communityId;
             tokenGroup.communityId = communityId;
             tokenGroup.collectionName = collectionName;
@@ -609,6 +617,8 @@ void ManageTokensController::rebuildCollectionGroupsModel()
                 !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.groupedTokensKey = collectionId; // TODO: check
+            tokenGroup.tokenKey = collectionId; // TODO: check
             tokenGroup.symbol = collectionId;
             tokenGroup.collectionUid = collectionId;
             tokenGroup.isSelfCollection = isSelfCollection;
@@ -670,6 +680,8 @@ void ManageTokensController::rebuildHiddenCollectionGroupsModel()
                 !collectionToken.collectionName.isEmpty() ? collectionToken.collectionName : collectionToken.name;
 
             TokenData tokenGroup;
+            tokenGroup.groupedTokensKey = collectionId; // TODO: check
+            tokenGroup.tokenKey = collectionId; // TODO: check
             tokenGroup.symbol = collectionId;
             tokenGroup.collectionUid = collectionId;
             tokenGroup.isSelfCollection = isSelfCollection;

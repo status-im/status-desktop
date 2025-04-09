@@ -176,7 +176,7 @@ QtObject:
       self.status.setLoadingCollectibles(false)
       error "error fetching collectibles: ", error = res.error
       return
-      
+
   proc resetFilter*(self: Controller) {.slot.} =
     self.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
@@ -375,19 +375,18 @@ QtObject:
   proc updateAssetsIdentities(self: Controller) =
     var assets = newSeq[backend_activity.Token]()
     for tokenCode in self.filterTokenCodes:
-      for chainId in self.chainIds:
-        # TODO: remove this call once the activity filter mechanism uses tokenKeys instead of the token
-        # symbol as we may have two tokens with the same symbol in the future. Only tokensKey will be unqiue
-        let token = self.tokenService.findTokenBySymbolAndChainId(tokenCode, chainId)
-        if token != nil:
-          let tokenType = if token.symbol == "ETH": TokenType.Native else: TokenType.ERC20
-          for addrPerChain in token.addressPerChainId:
-            assets.add(backend_activity.Token(
-              tokenType: tokenType,
-              chainId: backend_activity.ChainId(addrPerChain.chainId),
-              address: some(parseAddress(addrPerChain.address))
-            ))
-
+      let groupedTokenItem = self.tokenService.getTokenGroupByGroupedTokensKey(tokenCode)
+      if groupedTokenItem.isNil:
+        continue
+      for token in groupedTokenItem.tokens:
+        for chainId in self.chainIds:
+          if token.chainID != chainId:
+            continue
+          assets.add(backend_activity.Token(
+            tokenType: token.`type`,
+            chainId: backend_activity.ChainId(token.chainID),
+            address: some(parseAddress(token.address))
+          ))
     self.currentActivityFilter.assets = assets
 
   proc setFilterAssets*(self: Controller, assetsArrayJsonString: string, excludeAssets: bool) {.slot.} =

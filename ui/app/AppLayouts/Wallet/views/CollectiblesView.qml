@@ -286,7 +286,7 @@ ColumnLayout {
             FastExpressionFilter {
                 expression: {
                     root.controller.revision
-                    return root.controller.filterAcceptsSymbol(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
+                    return root.controller.filterAcceptsTokenKey(model.symbol) && (customFilter.isCommunity ? !!model.communityId : !model.communityId)
                 }
                 expectedRoles: ["symbol", "communityId"]
             },

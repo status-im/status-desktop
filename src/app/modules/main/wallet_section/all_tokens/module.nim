@@ -8,7 +8,6 @@ import app/core/eventemitter
 import app/modules/shared_models/currency_amount
 import app_service/service/token/service as token_service
 import app_service/service/wallet_account/service as wallet_account_service
-import app_service/service/token/dto
 import app_service/service/currency/service
 import app_service/service/settings/service as settings_service
 import app_service/service/community_tokens/service as community_tokens_service
@@ -109,25 +108,25 @@ method tokenBalanceHistoryDataResolved*(self: Module, balanceHistoryJson: string
 
 method getSourcesOfTokensModelDataSource*(self: Module): SourcesOfTokensModelDataSource =
   return (
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem] = self.controller.getSourcesOfTokensList()
+    getTokenLists: proc(): seq[TokenListItem] = self.controller.getTokenLists()
   )
 
 method getFlatTokenModelDataSource*(self: Module): FlatTokenModelDataSource =
   return (
-    getFlatTokensList: proc(): var seq[TokenItem] = self.controller.getFlatTokensList(),
+    getFlatTokens: proc(): seq[TokenItem] = self.controller.getFlatTokens(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
-    getCommunityTokenDescription: proc(chainId: int, address: string): string = self.controller.getCommunityTokenDescription(chainId, address),
+    getCommunityTokenDescription: proc(tokenKey: string): string = self.controller.getCommunityTokenDescription(tokenKey),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )
 
 method getTokenBySymbolModelDataSource*(self: Module): TokenBySymbolModelDataSource =
   return (
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem] = self.controller.getTokenBySymbolList(),
+    getGroupedTokens: proc(): seq[TokenGroupItem] = self.controller.getGroupedTokens(),
     getTokenDetails: proc(symbol: string): TokenDetailsItem = self.controller.getTokenDetails(symbol),
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem = self.controller.getTokenPreferences(symbol),
-    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string = self.controller.getCommunityTokenDescription(addressPerChain),
+    getCommunityTokenDescription: proc(tokenKeys: seq[string]): string = self.controller.getCommunityTokenDescription(tokenKeys),
     getTokensDetailsLoading: proc(): bool = self.controller.getTokensDetailsLoading(),
     getTokensMarketValuesLoading: proc(): bool = self.controller.getTokensMarketValuesLoading()
   )

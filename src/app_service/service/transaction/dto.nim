@@ -7,7 +7,7 @@ import
 import backend/network_types
 import backend/transactions
 import app_service/common/conversion as service_conversion
-import app_service/service/token/dto
+import app_service/service/token/types/imports
 import app/modules/shared_models/currency_amount
 
 include  app_service/common/json_utils

@@ -1,26 +1,26 @@
-import app_service/service/token/service_items
+import app_service/service/token/types/imports
 import app_service/service/currency/dto
 import app/modules/shared_models/currency_amount
 
 type
   SourcesOfTokensModelDataSource* = tuple[
-    getSourcesOfTokensList: proc(): var seq[SupportedSourcesItem]
+    getTokenLists: proc(): seq[TokenListItem]
   ]
 type
   FlatTokenModelDataSource* = tuple[
-    getFlatTokensList: proc(): var seq[TokenItem],
+    getFlatTokens: proc(): seq[TokenItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
-    getCommunityTokenDescription: proc(chainId: int, address: string): string,
+    getCommunityTokenDescription: proc(tokenKey: string): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
   ]
 type
   TokenBySymbolModelDataSource* = tuple[
-    getTokenBySymbolList: proc(): var seq[TokenBySymbolItem],
+    getGroupedTokens: proc(): seq[TokenGroupItem],
     getTokenDetails: proc(symbol: string): TokenDetailsItem,
     getTokenPreferences: proc(symbol: string): TokenPreferencesItem,
-    getCommunityTokenDescription: proc(addressPerChain: seq[AddressPerChain]): string,
+    getCommunityTokenDescription: proc(tokenKeys: seq[string]): string,
     getTokensDetailsLoading: proc(): bool,
     getTokensMarketValuesLoading: proc(): bool,
   ]

@@ -357,8 +357,8 @@ proc getAllCommunityTokens*(self: Controller): seq[CommunityTokenDto] =
 proc getNetworkByChainId*(self:Controller, chainId: int): NetworkItem =
   self.networksService.getNetworkByChainId(chainId)
 
-proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
-  return self.tokenService.getTokenBySymbolList()
+proc getGroupedTokens*(self: Controller): seq[TokenGroupItem] =
+  return self.tokenService.getGroupedTokens()
 
 proc shareCommunityUrlWithChatKey*(self: Controller, communityId: string): string =
   return self.communityService.shareCommunityUrlWithChatKey(communityId)
@@ -453,7 +453,7 @@ proc runSigningOnKeycard*(self: Controller, keyUid: string, path: string, dataTo
   var finalDataToSign = status_general.hashMessageForSigning(dataToSign)
   if finalDataToSign.startsWith("0x"):
     finalDataToSign = finalDataToSign[2..^1]
-  
+
   if pin.len == 0:
     let data = SharedKeycarModuleSigningArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_SIGNING_IDENTIFIER,
       keyUid: keyUid,

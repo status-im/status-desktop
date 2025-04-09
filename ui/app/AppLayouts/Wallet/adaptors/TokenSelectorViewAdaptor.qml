@@ -16,7 +16,7 @@ QObject {
       joined with `flatNetworksModel` for the `balances` submodel
 
       Expected assets model structure:
-      - tokensKey: string -> unique string ID of the token (asset); e.g. "ETH" or contract address
+      - groupedTokensKey: string -> unique string ID under which all tokens belonging to the same group are listed; e.g. "ETH" is listed under "ethereum", "SNT"/"STT" under "status" or "chainId-contractAddress" for community tokens
       - name: string -> user visible token name (e.g. "Ethereum")
       - symbol: string -> user visible token symbol (e.g. "ETH")
       - decimals: int -> number of decimal places
@@ -141,7 +141,7 @@ QObject {
                 id: delegateRoot
 
                 // properties exposed as roles to the top-level model
-                readonly property string tokensKey: model.tokensKey
+                readonly property string groupedTokensKey: model.groupedTokensKey
                 readonly property int decimals: model.decimals
                 readonly property double currentBalance: aggregator.value
                 readonly property double currencyBalance: {
@@ -223,8 +223,8 @@ QObject {
                 }
             }
 
-            exposedRoles: ["tokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
-            expectedRoles: [ "tokensKey", "communityId", "balances", "decimals", "marketDetails"]
+            exposedRoles: ["groupedTokensKey", "balances", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balancesModelCount"]
+            expectedRoles: [ "groupedTokensKey", "communityId", "balances", "decimals", "marketDetails"]
         }
     }
 
@@ -247,41 +247,32 @@ QObject {
         LeftJoinModel {
             id: allTokens
             rightModel: tokensWithBalance
-            leftModel: RolesRenamingModel {
-                id: renamedTokensBySymbolModel
-                sourceModel: SortFilterProxyModel {
-                    sourceModel: root.plainTokensBySymbolModel
-                    filters: [
-                        // remove tokens not available on selected network(s)
-                        FastExpressionFilter {
-                            function isPresentOnEnabledNetworks(addressPerChain) {
-                                if(!addressPerChain)
-                                    return true
-                                if (root.enabledChainIds.length === 0)
-                                    return true
-                                return !!ModelUtils.getFirstModelEntryIf(
-                                            addressPerChain,
-                                            (addPerChain) => {
-                                                return root.enabledChainIds.includes(addPerChain.chainId)
-                                            })
-                            }
-                            expression: {
-                                root.enabledChainIds
-                                return isPresentOnEnabledNetworks(model.addressPerChain)
-                            }
-                            expectedRoles: ["addressPerChain"]
+            leftModel: SortFilterProxyModel {
+                sourceModel: root.plainTokensBySymbolModel
+                filters: [
+                    // remove tokens not available on selected network(s)
+                    FastExpressionFilter {
+                        function isPresentOnEnabledNetworks(addressPerChain) {
+                            if(!addressPerChain)
+                                return true
+                            if (root.enabledChainIds.length === 0)
+                                return true
+                            return !!ModelUtils.getFirstModelEntryIf(
+                                        addressPerChain,
+                                        (addPerChain) => {
+                                            return root.enabledChainIds.includes(addPerChain.chainId)
+                                        })
                         }
-                    ]
-                }
-                mapping: [
-                    RoleRename {
-                        from: "key"
-                        to: "tokensKey"
+                        expression: {
+                            root.enabledChainIds
+                            return isPresentOnEnabledNetworks(model.addressPerChain)
+                        }
+                        expectedRoles: ["addressPerChain"]
                     }
                 ]
             }
-            joinRole: "tokensKey"
-            rolesToJoin: ["tokensKey", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
+            joinRole: "groupedTokensKey"
+            rolesToJoin: ["groupedTokensKey", "currentBalance", "currencyBalance", "currencyBalanceAsString", "balanceAsString", "balances"]
         }
     }
 }
