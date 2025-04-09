@@ -415,7 +415,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                label: qsTr("Community introduction and rules")
+                label: qsTr("Community introduction and rules (you can edit this later)")
             }
 
             OutroMessageInput {
