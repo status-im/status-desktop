@@ -32,6 +32,7 @@ SplitView {
                 selection: [11155420]
                 showIndicator: true
                 multiSelection: false
+                showNewChainIcon: ctrlNewChainIcon.checked
             }
 
             Label {
@@ -48,6 +49,7 @@ SplitView {
                 model: NetworksModel.flatNetworks
                 showIndicator: true
                 multiSelection: true
+                showNewChainIcon: ctrlNewChainIcon.checked
 
                 selection: [1, 11155420]
             }
@@ -101,8 +103,16 @@ SplitView {
                     }
                 }
             }
+
+            CheckBox {
+                id: ctrlNewChainIcon
+                text: "Show new chain icon"
+                checked: true
+                topPadding: 24
+            }
         }
     }
 }
 
 // category: Views
+// status: good

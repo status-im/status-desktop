@@ -80,7 +80,7 @@ Control {
 
             Repeater {
                 model: root.leftButtons
-                onItemAdded: {
+                onItemAdded: (index, item) => {
                     item.Layout.fillHeight = true
                     item.Layout.fillWidth = Qt.binding(() => root.width < root.implicitWidth)
                 }
