@@ -3,12 +3,18 @@ OS:=$(shell qmake -query QMAKE_XSPEC | rev | cut -d '-' -f 2 | rev)
 HOST_OS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 #Architectures: arm64, arm, x86_64. x86_64 is default for simulator
 ARCH?=$(shell uname -m)
+# Detect Qt version from qmake
+QT_VERSION?=$(shell qmake -query QT_VERSION | head -c 1 2>/dev/null)
 
 ifeq ($(OS), ios)
 # iOS
 #SDKs: iphonesimulator, iphoneos
 IPHONE_SDK?=iphonesimulator
+ifeq ($(QT_VERSION),5)
 IOS_TARGET?=12
+else
+IOS_TARGET?=16
+endif
 
 ifeq ($(IPHONE_SDK), iphoneos)
 	ARCH=arm64
@@ -42,6 +48,7 @@ export CXX
 export ARCH
 export OS
 export HOST_OS
+export QT_VERSION
 
 ifeq ($(OS), ios)
 	export SDK=$(IPHONE_SDK)
@@ -49,7 +56,7 @@ ifeq ($(OS), ios)
 	export CPATH=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)/usr/include/
 	export SDKROOT=$(shell xcrun --sdk ${IPHONE_SDK} --show-sdk-path)
 	export LIBRARY_PATH:=${SDKROOT}/usr/lib:${LIBRARY_PATH}
-	LIBEXT := .a
+	export LIB_EXT := .a
 else
 	export SDK_PATH
 	export ANDROID_NDK_HOME
@@ -70,6 +77,53 @@ else
 	else
 		export ANDROID_ABI=x86_64
 	endif
-	LIBEXT := .so
-	LIBSUFFIX := _$(ANDROID_ABI)
+	ifeq ($(QT_VERSION),5)
+		export LIB_SUFFIX= _$(ANDROID_ABI)
+	endif
+	export LIB_EXT := .so
 endif
+
+
+# Verify tools are installed
+QMAKE := $(shell which qmake)
+ifeq ($(QMAKE),)
+  $(error qmake not found)
+endif
+$(info QMAKE: $(QMAKE))
+
+RCC := $(shell which rcc)
+ifeq ($(RCC),)
+  $(error rcc not found)
+endif
+$(info RCC: $(RCC))
+
+ifeq ($(OS),android)
+  ANDROIDDEPLOYQT := $(shell which androiddeployqt)
+  ifeq ($(ANDROIDDEPLOYQT),)
+    $(error androiddeployqt not found)
+  endif
+  $(info ANDROIDDEPLOYQT: $(ANDROIDDEPLOYQT))
+  
+  ifeq ($(ANDROID_NDK_HOME),)
+    $(error ANDROID_NDK_HOME not set)
+  endif
+  $(info NDK: $(ANDROID_NDK_HOME))
+  
+  ifeq ($(ANDROID_API),)
+    $(error ANDROID_API not set)
+  endif
+  $(info ANDROID_API: $(ANDROID_API))
+endif
+
+ifeq ($(OS),ios)
+  ifeq ($(IPHONE_SDK),)
+    $(error IPHONE_SDK not set)
+  endif
+  $(info IPHONE_SDK: $(IPHONE_SDK))
+  
+  ifeq ($(IOS_TARGET),)
+    $(error IOS_TARGET not set)
+  endif
+  $(info IOS_TARGET: $(IOS_TARGET))
+endif
+# end of tool verification

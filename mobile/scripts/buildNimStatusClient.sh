@@ -6,6 +6,7 @@ STATUS_DESKTOP=${STATUS_DESKTOP:="../vendors/status-desktop"}
 ARCH=${ARCH:="amd64"}
 ANDROID_ABI=${ANDROID_ABI:="arm64-v8a"}
 LIB_DIR=${LIB_DIR}
+LIB_SUFFIX=${LIB_SUFFIX:=""}
 OS=${OS:="android"}
 HOST_ENV=${HOST_ENV}
 
@@ -19,13 +20,10 @@ else
 fi
 
 if [ "$OS" = "ios" ]; then
-    PLATFORM_SPECIFIC="--app:staticlib -d:ios --os:ios"
-    LIB_EXT=".a"
+    PLATFORM_SPECIFIC="--app:staticlib -d:ios --os:ios -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors]"
 else
-    PLATFORM_SPECIFIC="--app:lib --os:android -d:android -d:androidNDK -d:danger"
-    PLATFORM_SPECIFIC="$PLATFORM_SPECIFIC --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ_$ANDROID_ABI" --passL="-lDOtherSide_$ANDROID_ABI" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lpcre" --passL="-lssl_1_1" --passL="-lcrypto_1_1" -d:taskpool"
-
-    LIB_EXT=".so"
+    PLATFORM_SPECIFIC="--app:lib --os:android -d:android -d:androidNDK -d:chronicles_sinks=textlines[syslog],textlines[nocolors,dynamic],textlines[file,nocolors]"
+    PLATFORM_SPECIFIC="$PLATFORM_SPECIFIC --passL="-L$LIB_DIR" --passL="-lstatus" --passL="-lStatusQ$LIB_SUFFIX" --passL="-lDOtherSide$LIB_SUFFIX" --passL="-lqrcodegen" --passL="-lqzxing" --passL="-lpcre" --passL="-lssl_1_1" --passL="-lcrypto_1_1" -d:taskpool"
 fi
 
 echo "Building status-client for $ARCH using compiler: $CC"
@@ -41,7 +39,7 @@ env -i HOME="$HOME" bash -l -c 'make deps-common'
 FEATURE_FLAGS="FLAG_DAPPS_ENABLED=0 FLAG_CONNECTOR_ENABLED=0 FLAG_KEYCARD_ENABLED=0 FLAG_THREADPOOL_ENABLED=0 FLAG_SINGLE_STATUS_INSTANCE_ENABLED=0"
 
 # build status-client with feature flags
-env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c $PLATFORM_SPECIFIC -d:release --outdir:./bin -d:DESKTOP_VERSION=$DESKTOP_VERSION -d:STATUSGO_VERSION=$STATUSGO_VERSION -d:GIT_COMMIT="`git log --pretty=format:'%h' -n 1`" -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
+env $FEATURE_FLAGS ./vendor/nimbus-build-system/scripts/env.sh nim c $PLATFORM_SPECIFIC --outdir:./bin -d:DESKTOP_VERSION=$DESKTOP_VERSION -d:STATUSGO_VERSION=$STATUSGO_VERSION -d:GIT_COMMIT="`git log --pretty=format:'%h' -n 1`" -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=file -d:chronicles_log_level=trace \
     --mm:refc \
     --opt:speed \
     --cc:clang \

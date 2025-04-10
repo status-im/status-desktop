@@ -3,29 +3,26 @@ set -ef pipefail
 
 DOTHERSIDE=${DOTHERSIDE:="../vendors/status-desktop/vendor/DOtherSide"}
 LIB_DIR=${LIB_DIR}
+LIB_SUFFIX=${LIB_SUFFIX:=""}
+LIB_EXT=${LIB_EXT:=".a"}
 
 BASEDIR=$(dirname "$0")
 
 # Load common config variables
 . $BASEDIR/commonCmakeConfig.sh
+
 BUILD_DIR=$DOTHERSIDE/build/$OS
 
-if [ "$STATIC_LIB" = "ON" ]; then
-    ENABLE_DYNAMIC_LIBS=OFF
-    ENABLE_STATIC_LIBS=ON
-    LIB_EXT=.a
-    DOTHERSIDE_LIB_NAME=libDOtherSideStatic$LIB_EXT
-
-else
-    LIB_SUFFIX=""
-    if [ "$OS" = "android" ]; then
-        LIB_SUFFIX=_$ANDROID_ABI
-        LIB_EXT=".so"
-    fi
+if [ "$LIB_EXT" = ".so" ]; then
     ENABLE_DYNAMIC_LIBS=ON
     ENABLE_STATIC_LIBS=OFF
-    LIB_EXT=.so
     DOTHERSIDE_LIB_NAME=libDOtherSide$LIB_SUFFIX$LIB_EXT
+fi
+
+if [ "$LIB_EXT" = ".a" ]; then
+    ENABLE_DYNAMIC_LIBS=OFF
+    ENABLE_STATIC_LIBS=ON
+    DOTHERSIDE_LIB_NAME=libDOtherSideStatic$LIB_SUFFIX$LIB_EXT
 fi
 
 echo "Building DOtherSide for $ARCH using compiler: $CC"
@@ -42,4 +39,4 @@ make -C $BUILD_DIR -j $(nproc)
 DOTHERSIDE_LIB=$(find $BUILD_DIR -name $DOTHERSIDE_LIB_NAME)
 
 mkdir -p $LIB_DIR
-cp $DOTHERSIDE_LIB $LIB_DIR/libDOtherSide$LIB_SUFFIX$LIB_EXT
+cp $DOTHERSIDE_LIB $LIB_DIR/$DOTHERSIDE_LIB_NAME

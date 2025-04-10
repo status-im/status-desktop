@@ -9,6 +9,7 @@ JAVA_HOME=${JAVA_HOME}
 BIN_DIR=${BIN_DIR:="$CWD/../bin/ios"}
 BUILD_DIR=${BUILD_DIR:="$CWD/../build"}
 ANDROID_ABI=${ANDROID_ABI:="arm64-v8a"}
+QT_VERSION=${QT_VERSION:="5"}
 
 echo "Building wrapperApp for $OS, $ANDROID_ABI"
 
@@ -17,6 +18,10 @@ cd $BUILD_DIR
 
 echo "Building wrapperApp"
 
+if [ "$QT_VERSION" = "6" ]; then
+    COMPAT_RESOURCES=compat_resources.qrc
+fi
+
 if [ "$OS" = "android" ]; then
 
     if [ -z "$JAVA_HOME" ]; then
@@ -24,17 +29,31 @@ if [ "$OS" = "android" ]; then
         exit 1
     fi
 
-    qmake $CWD/../wrapperApp/IOS-build.pro CONFIG+=device CONFIG+=release -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
+    if [ "$QT_VERSION" = "5" ]; then
+        echo "Building for Android 33"
+        ANDROID_PLATFORM=android-33
+    elif [ "$QT_VERSION" = "6" ]; then
+        echo "Building for Android 35"
+        ANDROID_PLATFORM=android-35
+    else
+        echo "Invalid QT_VERSION. Please set QT_VERSION to 5 or 6."
+        exit 1
+    fi
+
+    qmake $CWD/../wrapperApp/IOS-build.pro CONFIG+=device CONFIG+=release RESOURCES+=$COMPAT_RESOURCES -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
 
     # Build the app
-    make -j$(nproc) apk
+    make -j$(nproc) apk_install_target
+
+    # call androiddeployqt
+    androiddeployqt --input $BUILD_DIR/android-IOS-build-deployment-settings.json --output $BUILD_DIR/android-build --apk $BUILD_DIR/android-build/IOS-build.apk --android-platform $ANDROID_PLATFORM
 
     mkdir -p $BIN_DIR
     cp ./android-build/IOS-build.apk $BIN_DIR/IOS-build.apk
 
     echo "Build succeeded. APK is available at $BIN_DIR/IOS-build.apk"
 else
-    qmake $CWD/../wrapperApp/IOS-build.pro -spec macx-ios-clang CONFIG+=release CONFIG+=$SDK CONFIG+=device -after
+    qmake $CWD/../wrapperApp/IOS-build.pro RESOURCES+=$COMPAT_RESOURCES -spec macx-ios-clang CONFIG+=release CONFIG+=$SDK CONFIG+=device -after
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk $SDK -arch $ARCH
     # Compile the app

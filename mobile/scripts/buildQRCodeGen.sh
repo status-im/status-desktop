@@ -2,7 +2,7 @@
 set -ef pipefail
 set -o xtrace
 
-QRCODEGEN=${QRCODEGEN:="../vendors/status-desktop/vendor/QRCodeGen/c"}
+QRCODEGEN=${QRCODEGEN:="../vendors/status-desktop/vendor/QR-Code-generator/c"}
 LIB_DIR=${LIB_DIR}
 
 echo "Building QRCodeGen for $ARCH using compiler: $CC"
