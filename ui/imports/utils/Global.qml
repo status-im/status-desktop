@@ -90,6 +90,8 @@ QtObject {
 
     signal openPaymentRequestModalRequested(var callback)
 
+    signal openNewsMessagePopupRequested(var notification, string notificationId)
+
     // Swap
     signal openSwapModalRequested(var formDataParams, var callback)
 

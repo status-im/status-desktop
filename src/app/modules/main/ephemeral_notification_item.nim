@@ -13,6 +13,7 @@ type EphemeralActionType* {.pure} = enum
   OpenSendModalPopup
   ViewTransactionDetails
   OpenFirstCommunityTokenPopup
+  OpenNewsMessagePopup
 
 type
   Item* = object

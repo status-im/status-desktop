@@ -9,14 +9,25 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
+import mainui.activitycenter.helpers 1.0
+
 import shared 1.0
 import utils 1.0
 
 StatusDialog {
     id: root
 
-    required property var notification
+    property var notification
+    property string notificationId
+    property var activityCenterNotifications
     signal linkClicked(string link)
+
+    Component.onCompleted: {
+        if (!root.notification && root.notificationId) {
+            notificationModelEntryLoader.active = true
+            root.notification = notificationModelEntryLoader.item.notification
+        }
+    }
 
     width: 480
     padding: Theme.bigPadding
@@ -29,7 +40,7 @@ StatusDialog {
             visible: false
         }
 
-        headline.title: notification.title
+        headline.title: notification.newsTitle
         headline.subtitle: dateGroupLabel.text
         actions.closeButton.onClicked: root.close()
         leftComponent: StatusSmartIdenticon {
@@ -42,15 +53,24 @@ StatusDialog {
         width: parent.width
 
         Loader {
-            active: !!notification.imageUrl
+            id: notificationModelEntryLoader
+            active: false // Only enabled if we do not have a notification and need to get it from the model
+
+            sourceComponent: NotificationModelEntry {
+                notificationId: root.notificationId
+                activityCenterNotifications: root.activityCenterNotifications
+            }
+        }
+
+        Loader {
+            active: !!notification.newsImageUrl
 
             Layout.bottomMargin: active ? Theme.bigPadding : 0
             Layout.fillWidth: true
             Layout.preferredHeight: active ? 300 : 0
 
             sourceComponent: StatusRoundedImage {
-
-                image.source: notification.imageUrl
+                image.source: notification.newsImageUrl
                 color: "transparent"
                 border.color: root.backgroundColor
                 border.width: 1
@@ -59,7 +79,7 @@ StatusDialog {
         }
 
         StatusBaseText {
-            text: notification.content || notification.description
+            text: notification.newsContent || notification.newsDescription
             Layout.fillWidth: true
             Layout.fillHeight: true
             wrapMode: Text.WordWrap
@@ -68,9 +88,9 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
-                text: !!notification.linkLabel ? notification.linkLabel : qsTr("Visit the website")
+                text: !!notification.newsLinkLabel ? notification.newsLinkLabel : qsTr("Visit the website")
                 icon.name: "external"
-                onClicked: root.linkClicked(root.notification.link)
+                onClicked: root.linkClicked(root.notification.newsLink)
             }
         }
     }

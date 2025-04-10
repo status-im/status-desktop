@@ -23,6 +23,7 @@ import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.adaptors 1.0
 import AppLayouts.Communities.stores 1.0
 import AppLayouts.Profile.helpers 1.0
+import mainui.activitycenter.stores 1.0
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Chat.stores 1.0 as ChatStores
@@ -54,6 +55,7 @@ QtObject {
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
     property ProfileStores.AdvancedStore advancedStore
+    property ActivityCenterStore activityCenterStore
 
     property var allContactsModel
     property var mutualContactsModel
@@ -111,6 +113,7 @@ QtObject {
         Global.privacyPolicyRequested.connect(() => openPopup(privacyPolicyPopupComponent))
         Global.openPaymentRequestModalRequested.connect(openPaymentRequestModal)
         Global.termsOfUseRequested.connect(() => openPopup(termsOfUsePopupComponent))
+        Global.openNewsMessagePopupRequested.connect(openNewsMessagePopup)
     }
 
     property var currentPopup
@@ -413,6 +416,10 @@ QtObject {
 
     function openPaymentRequestModal(callback) {
         openPopup(paymentRequestModalComponent, {callback: callback})
+    }
+
+    function openNewsMessagePopup(notification, notificationId) {
+        openPopup(newsMessageComponent, {notification: notification, notificationId: notificationId})
     }
 
     readonly property list<Component> _components: [
@@ -1330,6 +1337,14 @@ QtObject {
                     callback(selectedAccountAddress, amount, selectedTokenKey, selectedNetworkChainId)
                 }
                 destroyOnClose: true
+            }
+        },
+        Component {
+            id: newsMessageComponent
+
+            NewsMessagePopup {
+                activityCenterNotifications: root.activityCenterStore.activityCenterNotifications
+                onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
             }
         }
     ]

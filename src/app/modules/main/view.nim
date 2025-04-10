@@ -410,6 +410,8 @@ QtObject:
   proc addressWasShown*(self: View, address: string) {.slot.} =
     self.delegate.addressWasShown(address)
 
+  proc newsFeedEphemeralNotification*(self:View, newsTitle: string, notificationId: string) {.signal.}
+  
   proc communityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string, membershipState: int) {.signal.}
 
   proc emitCommunityMemberStatusEphemeralNotification*(self:View, communityName: string, memberName: string,

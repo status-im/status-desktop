@@ -31,13 +31,13 @@ ActivityNotificationBase {
 
             StatusMessageHeader {
                 Layout.fillWidth: true
-                displayNameLabel.text: root.notification ? root.notification.title : ""
+                displayNameLabel.text: root.notification ? root.notification.newsTitle : ""
                 timestamp: root.notification ? root.notification.timestamp : 0
             }
 
             StatusBaseText {
                 Layout.fillWidth: true
-                text: root.notification ? root.notification.description : ""
+                text: root.notification ? root.notification.newsDescription : ""
                 font.italic: true
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1

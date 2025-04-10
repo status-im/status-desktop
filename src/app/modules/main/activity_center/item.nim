@@ -5,8 +5,6 @@ import ../../../../app_service/service/chat/dto/chat
 import ../../../../app_service/service/contacts/dto/contacts
 import ./token_data_item
 
-const CONTACT_REQUEST_PENDING_STATE = 1
-
 type Item* = ref object
   id: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat
   chatId: string
@@ -14,11 +12,12 @@ type Item* = ref object
   membershipStatus: ActivityCenterMembershipStatus
   sectionId: string
   name: string
-  title: string
-  description: string
-  content: string
-  imageUrl: string
-  link: string
+  newsTitle: string
+  newsDescription: string
+  newsContent: string
+  newsImageUrl: string
+  newsLink: string
+  newsLinkLabel: string
   author: string
   notificationType: ActivityCenterNotificationType
   timestamp: int64
@@ -38,11 +37,12 @@ proc initItem*(
   membershipStatus: ActivityCenterMembershipStatus,
   sectionId: string,
   name: string,
-  title: string,
-  description: string,
-  content: string,
-  imageUrl: string,
-  link: string,
+  newsTitle: string,
+  newsDescription: string,
+  newsContent: string,
+  newsImageUrl: string,
+  newsLink: string,
+  newsLinkLabel: string,
   author: string,
   notificationType: ActivityCenterNotificationType,
   timestamp: int64,
@@ -62,11 +62,12 @@ proc initItem*(
   result.membershipStatus = membershipStatus
   result.sectionId = sectionId
   result.name = name
-  result.title = title
-  result.description = description
-  result.content = content
-  result.imageUrl = imageUrl
-  result.link = link
+  result.newsTitle = newsTitle
+  result.newsDescription = newsDescription
+  result.newsContent = newsContent
+  result.newsImageUrl = newsImageUrl
+  result.newsLink = newsLink
+  result.newsLinkLabel = newsLinkLabel
   result.author = author
   result.notificationType = notificationType
   result.timestamp = timestamp
@@ -83,11 +84,12 @@ proc `$`*(self: Item): string =
   result = fmt"""activity_center/Item(
     id: {self.id},
     name: {$self.name},
-    title: {$self.title},
-    description: {$self.description},
-    content: {$self.content},
-    imageUrl: {$self.imageUrl},
-    link: {$self.link},
+    newsTitle: {$self.newsTitle},
+    newsDescription: {$self.newsDescription},
+    newsContent: {$self.newsContent},
+    newsImageUrl: {$self.newsImageUrl},
+    newsLink: {$self.newsLink},
+    newsLinkLabel: {$self.newsLinkLabel},
     chatId: {$self.chatId},
     communityId: {$self.communityId},
     membershipStatus: {$self.membershipStatus.int},
@@ -110,20 +112,23 @@ proc id*(self: Item): string =
 proc name*(self: Item): string =
   return self.name
 
-proc title*(self: Item): string =
-  return self.title
+proc newsTitle*(self: Item): string =
+  return self.newsTitle
 
-proc description*(self: Item): string =
-  return self.description
+proc newsDescription*(self: Item): string =
+  return self.newsDescription
 
-proc content*(self: Item): string =
-  return self.content
+proc newsContent*(self: Item): string =
+  return self.newsContent
 
-proc imageUrl*(self: Item): string =
-  return self.imageUrl
+proc newsImageUrl*(self: Item): string =
+  return self.newsImageUrl
 
-proc link*(self: Item): string =
-  return self.link
+proc newsLink*(self: Item): string =
+  return self.newsLink
+
+proc newsLinkLabel*(self: Item): string =
+  return self.newsLinkLabel
 
 proc author*(self: Item): string =
   return self.author

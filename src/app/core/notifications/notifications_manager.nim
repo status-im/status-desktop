@@ -145,9 +145,12 @@ QtObject:
       messageId: messageId)
     self.processNotification(title, message, details)
 
-  proc onShowNewsMessageNotification(self: NotificationsManager, title: string, description: string) {.slot.} =
-    let details = NotificationDetails(notificationType: NotificationType.NewsFeedMessage)
-    self.processNotification(title, description, details)
+  proc onShowNewsMessageNotification(self: NotificationsManager, id: string, title: string) {.slot.} =
+    let details = NotificationDetails(
+      notificationType: NotificationType.NewsFeedMessage,
+      notificationId: id,
+    )
+    self.processNotification(title, message = "", details)
 
   proc onShowCommunityTokenPermissionCreatedNotification*(self: NotificationsManager, sectionId: string, title: string, message: string) {.slot.} =
     let details = NotificationDetails(notificationType: NotificationType.CommunityTokenPermissionCreated, sectionId: sectionId, isCommunitySection: true)
