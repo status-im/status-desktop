@@ -41,6 +41,7 @@ Item {
             networkName: "Mainnet"
             networkIconPath: Theme.svg("network/Network=Ethereum")
             networkBlockExplorerUrl: "https://etherscan.io/"
+            networkChainId: 1
 
             serviceProviderName: Constants.swap.paraswapName
             serviceProviderURL: Constants.swap.paraswapUrl

@@ -90,11 +90,11 @@ QtObject:
     read = getOwnerTokenDetails
     notify = ownerTokenDetailsChanged
 
-  proc suggestedRoutesReady(self: View, uuid: string, ethCurrency: QVariant, fiatCurrency: QVariant,
+  proc suggestedRoutesReady(self: View, uuid: string, nativeCryptoCurrency: QVariant, fiatCurrency: QVariant,
     costPerPath: string, errCode: string, errDescription: string) {.signal.}
-  proc emitSuggestedRoutesReadySignal*(self: View, uuid: string, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount,
+  proc emitSuggestedRoutesReadySignal*(self: View, uuid: string, nativeCryptoCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount,
     costPerPath: JsonNode, errCode: string, errDescription: string) =
-    self.suggestedRoutesReady(uuid, newQVariant(ethCurrency), newQVariant(fiatCurrency),
+    self.suggestedRoutesReady(uuid, newQVariant(nativeCryptoCurrency), newQVariant(fiatCurrency),
       $costPerPath, errCode, errDescription)
 
   proc stopUpdatesForSuggestedRoute*(self: View) {.slot.} =

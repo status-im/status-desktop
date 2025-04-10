@@ -87,13 +87,14 @@ SQUtils.QObject {
 
         SessionRequestWithAuth {
             id: request
+            property string nativeTokenSymbol: Utils.getNativeTokenSymbol(request.chainId)
             store: root.store
             estimatedTimeCategory: feesSubscriber.estimatedTimeResponse
             feesInfo: feesSubscriber.feesInfo
-            haveEnoughFunds: d.hasEnoughEth(request.chainId, request.accountAddress, request.value)
-            haveEnoughFees: haveEnoughFunds && d.hasEnoughEth(request.chainId, request.accountAddress, request.ethMaxFees)
+            haveEnoughFunds: d.hasEnoughBalance(request.chainId, request.accountAddress, request.value, request.nativeTokenSymbol)
+            haveEnoughFees: haveEnoughFunds && d.hasEnoughBalance(request.chainId, request.accountAddress, request.ethMaxFees, request.nativeTokenSymbol)
             ethMaxFees: feesSubscriber.maxEthFee ? SQUtils.AmountsArithmetic.div(feesSubscriber.maxEthFee, SQUtils.AmountsArithmetic.fromNumber(1, 9)) : null
-            fiatMaxFees: ethMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(ethMaxFees.toString(), Constants.ethToken)) : null
+            fiatMaxFees: ethMaxFees ? SQUtils.AmountsArithmetic.fromString(root.getFiatValue(ethMaxFees.toString(), request.nativeTokenSymbol)) : null
             function signedHandler(topic, id, data) {
                 if (topic != request.topic || id != request.requestId) {
                     return
@@ -283,8 +284,8 @@ SQUtils.QObject {
             }
         }
 
-        function hasEnoughEth(chainId, accountAddress, requiredEth) {
-            if (!requiredEth) {
+        function hasEnoughBalance(chainId, accountAddress, requiredBalance, tokenSymbol) {
+            if (!requiredBalance) {
                 return true
             }
             if (!accountAddress || !chainId) {
@@ -292,7 +293,7 @@ SQUtils.QObject {
                 return true
             }
 
-            const token = SQUtils.ModelUtils.getByKey(root.groupedAccountAssetsModel, "tokensKey", Constants.ethToken)
+            const token = SQUtils.ModelUtils.getByKey(root.groupedAccountAssetsModel, "tokensKey", tokenSymbol)
             const balance = getBalance(chainId, accountAddress, token)
             
             if (!balance) {
@@ -301,7 +302,7 @@ SQUtils.QObject {
             }
 
             const BigOps = SQUtils.AmountsArithmetic
-            const haveEnoughFunds = BigOps.cmp(balance, requiredEth) >= 0
+            const haveEnoughFunds = BigOps.cmp(balance, requiredBalance) >= 0
             return haveEnoughFunds
         }
 

@@ -151,7 +151,7 @@ Item {
             compare(payPanel.selectedHoldingId, root.swapFormData.fromTokensKey)
             compare(payPanel.value, Number(root.swapFormData.fromTokenAmount))
             compare(payPanel.rawValue, SQUtils.AmountsArithmetic.fromNumber(root.swapFormData.fromTokenAmount, root.swapAdaptor.fromToken.decimals).toString())
-            verify(payPanel.valueValid)
+            verify(payPanel.valueValid, "payPanel.valueValid is false with value: " + payPanel.value)
             verify(receivePanel.mainInputLoading)
             verify(receivePanel.bottomTextLoading)
             verify(!receivePanel.interactive)
@@ -796,12 +796,12 @@ Item {
             // calculation needed for total fees
             let gasTimeEstimate = txHasRouteNoApproval.gasTimeEstimate
             let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, false)
             compare(root.swapAdaptor.swapOutputData.hasError, false)
-            verify(!errorTag.visible)
+            verify(!errorTag.visible, "error tag visible with text: " + errorTag.text)
             verify(signButton.enabled)
             compare(signButton.text, qsTr("Swap"))
 
@@ -848,7 +848,7 @@ Item {
             // calculation needed for total fees
             gasTimeEstimate = txRoutes2.gasTimeEstimate
             totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
 
             compare(root.swapAdaptor.swapOutputData.totalFees, totalFees)
             compare(root.swapAdaptor.swapOutputData.approvalNeeded, true)
@@ -900,10 +900,10 @@ Item {
             verify(amountToSendInput.cursorVisible)
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
-            compare(holdingSelector.currentTokensKey, Constants.swap.usdcTokenKey)
-            compare(tokenSelectorContentItemText.text, Constants.swap.usdcTokenKey)
+            compare(holdingSelector.currentTokensKey, Constants.usdcToken)
+            compare(tokenSelectorContentItemText.text, Constants.usdcToken)
             verify(maxTagButton.visible)
-            compare(payPanel.selectedHoldingId, Constants.swap.usdcTokenKey)
+            compare(payPanel.selectedHoldingId, Constants.usdcToken)
             compare(payPanel.value, 0)
             compare(payPanel.rawValue, "0")
             verify(!payPanel.valueValid)
@@ -1101,10 +1101,10 @@ Item {
             verify(!amountToSendInput.cursorVisible)
             compare(amountToSendInput.placeholderText, LocaleUtils.numberToLocaleString(0))
             compare(bottomItemText.text, root.swapAdaptor.currencyStore.formatCurrencyAmount(0, root.swapAdaptor.currencyStore.currentCurrency))
-            compare(holdingSelector.currentTokensKey, Constants.swap.ethTokenKey)
-            compare(tokenSelectorContentItemText.text, Constants.swap.ethTokenKey)
+            compare(holdingSelector.currentTokensKey, Constants.ethToken)
+            compare(tokenSelectorContentItemText.text, Constants.ethToken)
             verify(!maxTagButton.visible)
-            compare(receivePanel.selectedHoldingId, Constants.swap.ethTokenKey)
+            compare(receivePanel.selectedHoldingId, Constants.ethToken)
             compare(receivePanel.value, 0)
             compare(receivePanel.rawValue, "0")
             verify(!receivePanel.valueValid)
@@ -1583,7 +1583,7 @@ Item {
             // calculation needed for total fees
             let gasTimeEstimate = txRoutes.gasTimeEstimate
             let totalTokenFeesInFiat = gasTimeEstimate.totalTokenFees * root.swapAdaptor.fromToken.marketDetails.currencyPrice.amount
-            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInEth, Constants.ethToken) + totalTokenFeesInFiat
+            let totalFees = root.swapAdaptor.currencyStore.getFiatValue(gasTimeEstimate.totalFeesInNativeCrypto, Constants.ethToken) + totalTokenFeesInFiat
             let bestPath = SQUtils.ModelUtils.get(txRoutes.suggestedRoutes, 0, "route")
 
             // verify loading state removed and data is displayed as expected on the Modal
@@ -1602,7 +1602,7 @@ Item {
             compare(root.swapAdaptor.swapOutputData.approvalAmountRequired, bestPath.approvalAmountRequired)
             compare(root.swapAdaptor.swapOutputData.approvalContractAddress, bestPath.approvalContractAddress)
 
-            verify(!errorTag.visible)
+            verify(!errorTag.visible, "error tag visible with text: " + errorTag.text)
             verify(signButton.enabled)
             verify(!signButton.loadingWithText)
             compare(signButton.text, qsTr("Approve %1").arg(root.swapAdaptor.fromToken.symbol))

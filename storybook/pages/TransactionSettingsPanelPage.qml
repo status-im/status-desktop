@@ -56,6 +56,14 @@ SplitView {
                     return 0
                 }
 
+                fnRawToGas: function(rawValue) {
+                    return Utils.nativeTokenRawToGas(Constants.chains.mainnetChainId, rawValue)
+                }
+
+                fnGasToRaw: function(gasValue) {
+                    return Utils.nativeTokenGasToRaw(Constants.chains.mainnetChainId, gasValue)
+                }
+
                 onConfirmClicked: {
                     logs.logEvent("confirm clicked...")
                     logs.logEvent(`selected fee mode: ${txSettings.selectedFeeMode}`)
