@@ -38,6 +38,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   BackupSyncingSuccess = 26
   BackupSyncingPartialFailure = 27
   BackupSyncingFailure = 28
+  ActivityCenterNotificationTypeNews = 29
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -49,6 +50,7 @@ type ActivityCenterGroup* {.pure.}= enum
   IdentityVerification = 6,
   Transactions = 7,
   System = 8
+  News = 9
 
 type ActivityCenterReadType* {.pure.}= enum
   Read = 1,
@@ -69,6 +71,11 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   communityId*: string
   membershipStatus*: ActivityCenterMembershipStatus
   name*: string
+  title*: string
+  description*: string
+  content*: string
+  imageUrl*: string
+  link*: string
   author*: string
   installationId*: string
   notificationType*: ActivityCenterNotificationType
@@ -87,6 +94,12 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     id: {$self.id},
     chatId: {self.chatId},
     communityId: {self.communityId},
+    name: {self.name},
+    title: {self.title},
+    description: {self.description},
+    content: {self.content},
+    imageUrl: {self.imageUrl},
+    link: {self.link},
     membershipStatus: {self.membershipStatus},
     author: {self.author},
     installationId: {self.installationId},
@@ -107,6 +120,11 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("chatId", result.chatId)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("title", result.title)
+  discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("content", result.content)
+  discard jsonObj.getProp("imageUrl", result.imageUrl)
+  discard jsonObj.getProp("link", result.link)
 
   result.membershipStatus = ActivityCenterMembershipStatus.Idle
   var membershipStatusInt: int
@@ -186,6 +204,7 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.BackupSyncingSuccess.int,
         ActivityCenterNotificationType.BackupSyncingPartialFailure.int,
         ActivityCenterNotificationType.BackupSyncingFailure.int,
+        ActivityCenterNotificationType.ActivityCenterNotificationTypeNews.int,
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]
@@ -210,5 +229,7 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
       ]
     of ActivityCenterGroup.IdentityVerification:
       return @[ActivityCenterNotificationType.ContactVerification.int]
+    of ActivityCenterGroup.News:
+      return @[ActivityCenterNotificationType.ActivityCenterNotificationTypeNews.int]
     else:
       return @[]

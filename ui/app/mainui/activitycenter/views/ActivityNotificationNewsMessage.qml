@@ -31,20 +31,18 @@ ActivityNotificationBase {
 
             StatusMessageHeader {
                 Layout.fillWidth: true
-                displayNameLabel.text: root.notification.title
-                timestamp: root.notification.timestamp
+                displayNameLabel.text: root.notification ? root.notification.title : ""
+                timestamp: root.notification ? root.notification.timestamp : 0
             }
 
-            RowLayout {
-                spacing: Theme.padding
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: root.notification.description
-                    font.italic: true
-                    wrapMode: Text.WordWrap
-                    color: Theme.palette.baseColor1
-                }
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: root.notification ? root.notification.description : ""
+                font.italic: true
+                wrapMode: Text.WordWrap
+                color: Theme.palette.baseColor1
+                Layout.maximumHeight: 44
+                elide: Text.ElideRight
             }
         }
     }
