@@ -233,6 +233,9 @@ QtObject {
         case ToastsManager.ActionType.NavigateToCommunityAdmin:
             root.rootChatStore.setActiveCommunity(actionData)
             return
+        case ToastsManager.ActionType.OpenNewsMessagePopup:
+            Global.openNewsMessagePopupRequested(null, actionData)
+            return
         case ToastsManager.ActionType.OpenFinaliseOwnershipPopup:
             Global.openFinaliseOwnershipPopup(actionData)
             return

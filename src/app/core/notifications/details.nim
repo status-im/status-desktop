@@ -39,6 +39,7 @@ type
     isOneToOne*: bool
     isGroupChat*: bool
     messageId*: string
+    notificationId*: string
 
 proc isEmpty*(self: NotificationDetails): bool =
   return self.notificationType == NotificationType.UnknownNotification

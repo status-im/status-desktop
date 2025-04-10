@@ -16,8 +16,28 @@ import utils 1.0
 StatusDialog {
     id: root
 
-    required property var notification
+    property var notification
+    property string notificationId
+    property var activityCenterNotifications
     signal linkClicked(string link)
+
+    Loader {
+        id: notificationModelEntryLoader
+        active: false // Only enabled if we do not have a notification and need to get it from the model
+
+        sourceComponent: NotificationModelEntry {
+            notificationId: root.notificationId
+            activityCenterNotifications: root.activityCenterNotifications
+        }
+    }
+   
+
+    Component.onCompleted: {
+        if (!notification && notificationId) {
+            notificationModelEntryLoader.active = true
+            root.notification = notificationModelEntryLoader.item.notification
+        }
+    }
 
     anchors.centerIn: parent
     width: 480

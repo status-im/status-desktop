@@ -1808,6 +1808,21 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
       details,
     )
 
+  elif details.notificationType == NotificationType.NewsFeedMessage:
+    self.displayEphemeralNotification(
+      title,
+      subTitle = "",
+      image = "",
+      icon = "status-logo",
+      iconColor = "",
+      loading = false,
+      ephNotifType = EphemeralNotificationType.Default.int,
+      actionType = EphemeralActionType.OpenNewsMessagePopup.int,
+      actionData = details.notificationId,
+      url = "",
+      details,
+    )
+
   else:
     self.displayEphemeralNotification(
       title,

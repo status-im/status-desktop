@@ -71,11 +71,12 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   communityId*: string
   membershipStatus*: ActivityCenterMembershipStatus
   name*: string
-  title*: string
-  description*: string
-  content*: string
-  imageUrl*: string
-  link*: string
+  newsTitle*: string
+  newsDescription*: string
+  newsContent*: string
+  newsImageUrl*: string
+  newsLink*: string
+  newsLinkLabel*: string
   author*: string
   installationId*: string
   notificationType*: ActivityCenterNotificationType
@@ -95,11 +96,12 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     chatId: {self.chatId},
     communityId: {self.communityId},
     name: {self.name},
-    title: {self.title},
-    description: {self.description},
-    content: {self.content},
-    imageUrl: {self.imageUrl},
-    link: {self.link},
+    newsTitle: {self.newsTitle},
+    newsDescription: {self.newsDescription},
+    newsContent: {self.newsContent},
+    newsImageUrl: {self.newsImageUrl},
+    newsLink: {self.newsLink},
+    newsLinkLabel: {self.newsLinkLabel},
     membershipStatus: {self.membershipStatus},
     author: {self.author},
     installationId: {self.installationId},
@@ -120,11 +122,12 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("chatId", result.chatId)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("title", result.title)
-  discard jsonObj.getProp("description", result.description)
-  discard jsonObj.getProp("content", result.content)
-  discard jsonObj.getProp("imageUrl", result.imageUrl)
-  discard jsonObj.getProp("link", result.link)
+  discard jsonObj.getProp("newsTitle", result.newsTitle)
+  discard jsonObj.getProp("newsDescription", result.newsDescription)
+  discard jsonObj.getProp("newsContent", result.newsContent)
+  discard jsonObj.getProp("newsImageUrl", result.newsImageUrl)
+  discard jsonObj.getProp("newsLink", result.newsLink)
+  discard jsonObj.getProp("newsLinkLabel", result.newsLinkLabel)
 
   result.membershipStatus = ActivityCenterMembershipStatus.Idle
   var membershipStatusInt: int

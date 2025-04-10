@@ -372,9 +372,8 @@ Popup {
             activityCenterStore: root.activityCenterStore
             onReadMoreClicked: {
                 root.close()
-                Global.openPopup(newsMessagePopup, {
-                    notification: parent.notification
-                })
+                Global.openNewsMessagePopupRequested(parent.notification, parent.notification.id)
+                // TODO figure out if we want the link
                 Global.addCentralizedMetricIfEnabled("news-info-opened", {"news-link": parent.notification.link})
 
             }
@@ -523,14 +522,6 @@ Popup {
                 }
             }
             footer: null
-        }
-    }
-
-    Component {
-        id: newsMessagePopup
-
-        NewsMessagePopup {
-            onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
         }
     }
 }
