@@ -151,6 +151,15 @@ QtObject {
         }
     }
 
+    function enableArchiveProtocolProperty() {
+        if(!advancedModule)
+            return
+
+        if (!root.archiveProtocolEnabled) {
+            advancedModule.enableCommunityHistoryArchiveSupport()
+        }
+    }
+
     function toggleEnsCommunityPermissionsEnabled() {
         localAccountSensitiveSettings.ensCommunityPermissionsEnabled = !root.ensCommunityPermissionsEnabled
     }

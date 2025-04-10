@@ -53,6 +53,7 @@ QtObject {
     property WalletStores.CollectiblesStore walletCollectiblesStore
     property NetworkConnectionStore networkConnectionStore
     property WalletStores.BuyCryptoStore buyCryptoStore
+    property ProfileStores.AdvancedStore advancedStore
 
     property var allContactsModel
     property var mutualContactsModel
@@ -840,6 +841,7 @@ QtObject {
             id: createCommunitiesPopupComponent
             CreateCommunityPopup {
                 store: root.communitiesStore
+                advancedStore: root.advancedStore
                 isDevBuild: root.isDevBuild
                 onClosed: {
                     destroy()

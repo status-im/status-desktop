@@ -19,11 +19,13 @@ import StatusQ.Popups.Dialog 0.1
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.stores 1.0
+import AppLayouts.Profile.stores 1.0
 
 StatusStackModal {
     id: root
 
     property CommunitiesStore store
+    property AdvancedStore advancedStore
     property bool isDiscordImport // creating new or importing from discord?
     property bool isDevBuild
 
@@ -457,11 +459,19 @@ StatusStackModal {
         }
 
         function createCommunity() {
+            // Step 1: Proceed with community creation
             const error = root.store.createCommunity(_getCommunityConfig())
             if (error) {
                 errorDialog.text = error.error
                 errorDialog.open()
+                return
             }
+            // Step 2: Automatically set the archive protocol global property if it's been checked as
+            // an option during community creation process. It's a more user friendly process
+            else if(generalViewLayout.options.archiveSupportEnabled) {
+                root.advancedStore.enableArchiveProtocolProperty()
+            }
+
             root.close()
         }
 
