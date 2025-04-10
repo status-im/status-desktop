@@ -866,6 +866,7 @@ Item {
         buyCryptoStore: appMain.buyCryptoStore
         networkConnectionStore: appMain.networkConnectionStore
         networksStore: appMain.networksStore
+        advancedStore: appMain.profileSectionStore.advancedStore
 
         allContactsModel: allContacsAdaptor.allContactsModel
         mutualContactsModel: contactsModelAdaptor.mutualContacts
