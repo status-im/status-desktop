@@ -68,7 +68,14 @@ echo "Installing app"
 $ADB -s $ANDROID_SERIAL install -r $APP
 
 echo "App installed. Starting app"
-$ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n org.qtproject.example.IOS_build/org.qtproject.qt5.android.bindings.QtActivity
+if [ "$QT_VERSION" = "6" ]; then
+    # For Qt6, use the new package name
+    DEFAULT_ACTIVITY_NAME="org.qtproject.example.IOS_build/org.qtproject.qt.android.bindings.QtActivity"
+else
+    # For Qt5, use the old package name
+    DEFAULT_ACTIVITY_NAME="org.qtproject.example.IOS_build/org.qtproject.qt5.android.bindings.QtActivity"
+fi
+$ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"
 while true; do

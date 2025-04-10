@@ -1,8 +1,13 @@
 TEMPLATE = app
 
-QT += quick qml webview svg widgets
+QT += quick gui qml webview svg widgets
 
-QMAKE_IOS_DEPLOYMENT_TARGET=12.0
+equals(QT_MAJOR_VERSION, 6) {
+    message("qt 6 config!!")
+    QT += core5compat core
+}
+
+QMAKE_IOS_DEPLOYMENT_TARGET=16.0
 
 SOURCES += \
         sources/main.cpp
@@ -16,27 +21,27 @@ QML_IMPORT_PATH += $$PWD/../vendors/status-desktop/ui/imports \
                    $$PWD/../vendors/status-desktop/ui/StatusQ/src
 
 QMLPATHS += $$QML_IMPORT_PATH
+LIB_PREFIX = qt$$QT_MAJOR_VERSION
 
 android {
     message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
 
-    LIBS += -L$$PWD/../lib/android -lnim_status_client
+    LIBS += -L$$PWD/../lib/android/$$LIB_PREFIX -lnim_status_client
     ANDROID_EXTRA_LIBS += \
-                        $$PWD/../lib/android/libnim_status_client.so \
-                        $$PWD/../lib/android/libssl_1_1.so \
-                        $$PWD/../lib/android/libcrypto_1_1.so \
-                        $$PWD/../lib/android/libDOtherSide_$$(ANDROID_ABI).so \
-                        $$PWD/../lib/android/libpcre.so \
-                        $$PWD/../lib/android/libstatus.so \
-                        $$PWD/../lib/android/libStatusQ_$$(ANDROID_ABI).so
-                                    
+                        $$PWD/../lib/android/$$LIB_PREFIX/libssl_1_1.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libcrypto_1_1.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libnim_status_client.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libDOtherSide$$(LIB_SUFFIX)$$(LIB_EXT) \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libpcre.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libstatus.so \
+                        $$PWD/../lib/android/$$LIB_PREFIX/libStatusQ$$(LIB_SUFFIX)$$(LIB_EXT)
 }
 
 ios {
-    LIBS += -L$$PWD/../lib/ios -lnim_status_client -lDOtherSide -lstatusq -lstatus -lssl_1_1 -lcrypto_1_1 -lqzxing -lresolv -lqrcodegen -lpcre
+    LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_1_1 -lcrypto_1_1 -lqzxing -lresolv -lqrcodegen -lpcre
 }
 
-DESTDIR=$$PWD/../bin
+DESTDIR=$$PWD/../bin/$$LIB_PREFIX
 
-target.path = $$PWD/../lib
+target.path = $$PWD/../lib/$$LIB_PREFIX
 INSTALLS += target

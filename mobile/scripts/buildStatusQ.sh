@@ -8,17 +8,15 @@ BASEDIR=$(dirname "$0")
 
 STATUSQ=${STATUSQ:="../vendors/status-desktop/ui/StatusQ"}
 LIB_DIR=${LIB_DIR}
-
-LIB_SUFFIX=""
-LIB_EXT=".a"
-
-if [ "$OS" = "android" ]; then
-    LIB_SUFFIX=_$ANDROID_ABI
-    LIB_EXT=".so"
-fi
+LIB_SUFFIX=${LIB_SUFFIX:=""}
+LIB_EXT=${LIB_EXT:=".a"}
 
 BUILD_DIR=$STATUSQ/build/$OS/StatusQ
+STATIC_LIB=ON
 
+if [ "$LIB_EXT" = ".so" ]; then
+    STATIC_LIB=OFF
+fi
 
 echo "Building StatusQ for $ARCH using compiler: $CC with CMAKE_TOOLCHAIN_FILE $CMAKE_TOOLCHAIN_FILE"
 

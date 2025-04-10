@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include <unistd.h>
+
+#if QT_VERSION >= 0x060000
+#include <QtResource>
+#else
 #include <QDir>
+#endif
 
 extern "C" {
     void NimMain();
