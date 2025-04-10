@@ -26,12 +26,12 @@ SplitView {
             id: notificationMock
 
             property string id: "1"
-            property string title: "Swaps around the corner!"
-            property string description: "Status Desktop's next release brings the app up-to-speed with Status Mobile. That means: SWAPS!"
-            property string content: "Status Desktop's next release brings the app up-to-speed with Status Mobile. That means: SWAPS! Now you can trade Ethereum, Arbitrum and Optimism tokens directly in-app. Status leverages Paraswap so you always benefit from the best prices and fastest settlements!"
-            property string link: "https://status.app/"
-            property string linkLabel: linkLabelInput.text
-            property string imageUrl: hasImage.checked ? "https://picsum.photos/438/300" : ""
+            property string newsTitle: "Swaps around the corner!"
+            property string newsDescription: "Status Desktop's next release brings the app up-to-speed with Status Mobile. That means: SWAPS!"
+            property string newsContent: "Status Desktop's next release brings the app up-to-speed with Status Mobile. That means: SWAPS! Now you can trade Ethereum, Arbitrum and Optimism tokens directly in-app. Status leverages Paraswap so you always benefit from the best prices and fastest settlements!"
+            property string newsLink: "https://status.app/"
+            property string newsLinkLabel: linkLabelInput.text
+            property string newsImageUrl: hasImage.checked ? "https://picsum.photos/438/300" : ""
             property double timestamp: Date.now()
             property double previousTimestamp: 0
             property bool read: false

@@ -171,11 +171,12 @@ method convertToItems*(
         notification.membershipStatus,
         sectionId,
         notification.name,
-        notification.title,
-        notification.description,
-        notification.content,
-        notification.imageUrl,
-        notification.link,
+        notification.newsTitle,
+        notification.newsDescription,
+        notification.newsContent,
+        notification.newsImageUrl,
+        notification.newsLink,
+        notification.newsLinkLabel,
         notification.author,
         notification.notificationType,
         notification.timestamp,
@@ -214,8 +215,8 @@ method addActivityCenterNotifications*(self: Module, activityCenterNotifications
     if notif.notificationType == ActivityCenterNotificationTypeNews:
       # Show an AC or OS notification for News Feed notifications
       singletonInstance.globalEvents.showNewsMessageNotification(
-        notif.title,
-        notif.description,
+        notif.id,
+        notif.newsTitle,
       )
   self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
   self.view.hasUnseenActivityCenterNotificationsChanged()

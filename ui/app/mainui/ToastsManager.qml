@@ -9,6 +9,7 @@ import AppLayouts.Wallet 1.0
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 import AppLayouts.Profile.stores 1.0
+import StatusQ.Core.Theme 0.1
 
 import shared.stores 1.0 as SharedStores
 
@@ -27,7 +28,8 @@ QtObject {
         OpenFinaliseOwnershipPopup = 2,
         OpenSendModalPopup = 3,
         ViewTransactionDetails = 4,
-        OpenFirstCommunityTokenPopup = 5
+        OpenFirstCommunityTokenPopup = 5,
+        OpenNewsMessagePopup = 6
     }
 
     // Stores:
@@ -146,7 +148,6 @@ QtObject {
         target: Global
 
         function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
-            (title, subTitle, icon, loading, ephNotifType, url)
             root.rootStore.mainModuleInst.displayEphemeralNotification(
                 title,
                 subTitle,
@@ -179,7 +180,6 @@ QtObject {
         }
 
         function onDisplayImageToastWithActionMessage(title: string, subTitle: string, image: string, ephNotifType: int, actionType: int, actionData: string) {
-            (title, subTitle, image, ephNotifType, actionType, actionData)
             root.rootStore.mainModuleInst.displayEphemeralNotification(
                 title,
                 subTitle,
@@ -194,6 +194,22 @@ QtObject {
             )
         }
     }
+
+    readonly property Connections _mainConnections: Connections {
+        target: root.rootStore.mainModuleInst
+
+        function onNewsFeedEphemeralNotification(newsTitle: string, notificationId: string) {
+            Global.displayImageToastWithActionMessage(
+                newsTitle,
+                qsTr("Read more"),
+                Theme.png("status-logo"),
+                Constants.ephemeralNotificationType.normal,
+                ToastsManager.ActionType.OpenNewsMessagePopup,
+                notificationId
+            )
+        }
+    }
+
 
     // Profile settings related toasts:
     readonly property Connections _profileStoreConnections: Connections {
@@ -232,6 +248,9 @@ QtObject {
         switch(actionType) {
         case ToastsManager.ActionType.NavigateToCommunityAdmin:
             root.rootChatStore.setActiveCommunity(actionData)
+            return
+        case ToastsManager.ActionType.OpenNewsMessagePopup:
+            Global.openNewsMessagePopupRequested(null, actionData)
             return
         case ToastsManager.ActionType.OpenFinaliseOwnershipPopup:
             Global.openFinaliseOwnershipPopup(actionData)

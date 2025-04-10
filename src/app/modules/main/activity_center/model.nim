@@ -9,11 +9,12 @@ type
     MembershipStatus
     SectionId
     Name
-    Title
-    Description
-    Content
-    ImageUrl
-    Link
+    NewsTitle
+    NewsDescription
+    NewsContent
+    NewsImageUrl
+    NewsLink
+    NewsLinkLabel
     NotificationType
     Message
     Timestamp
@@ -75,11 +76,12 @@ QtObject:
       of NotifRoles.MembershipStatus: result = newQVariant(activityNotificationItem.membershipStatus.int)
       of NotifRoles.SectionId: result = newQVariant(activityNotificationItem.sectionId)
       of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
-      of NotifRoles.Title: result = newQVariant(activityNotificationItem.title)
-      of NotifRoles.Description: result = newQVariant(activityNotificationItem.description)
-      of NotifRoles.Content: result = newQVariant(activityNotificationItem.content)
-      of NotifRoles.ImageUrl: result = newQVariant(activityNotificationItem.imageUrl)
-      of NotifRoles.Link: result = newQVariant(activityNotificationItem.link)
+      of NotifRoles.NewsTitle: result = newQVariant(activityNotificationItem.newsTitle)
+      of NotifRoles.NewsDescription: result = newQVariant(activityNotificationItem.newsDescription)
+      of NotifRoles.NewsContent: result = newQVariant(activityNotificationItem.newsContent)
+      of NotifRoles.NewsImageUrl: result = newQVariant(activityNotificationItem.newsImageUrl)
+      of NotifRoles.NewsLink: result = newQVariant(activityNotificationItem.newsLink)
+      of NotifRoles.NewsLinkLabel: result = newQVariant(activityNotificationItem.newsLinkLabel)
       of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
       of NotifRoles.Message: result = if not activityNotificationItem.messageItem.isNil:
@@ -94,7 +96,10 @@ QtObject:
       of NotifRoles.Read: result = newQVariant(activityNotificationItem.read.bool)
       of NotifRoles.Dismissed: result = newQVariant(activityNotificationItem.dismissed.bool)
       of NotifRoles.Accepted: result = newQVariant(activityNotificationItem.accepted.bool)
-      of NotifRoles.RepliedMessage: result = newQVariant(activityNotificationItem.repliedMessageItem)
+      of NotifRoles.RepliedMessage: result = if not activityNotificationItem.repliedMessageItem.isNil:
+                                        newQVariant(activityNotificationItem.repliedMessageItem)
+                                      else:
+                                        newQVariant()
       of NotifRoles.ChatType: result = newQVariant(activityNotificationItem.chatType.int)
       of NotifRoles.TokenData: result = newQVariant(activityNotificationItem.tokenDataItem)
       of NotifRoles.InstallationId: result = newQVariant(activityNotificationItem.installationId)
@@ -107,11 +112,12 @@ QtObject:
       NotifRoles.MembershipStatus.int: "membershipStatus",
       NotifRoles.SectionId.int: "sectionId",
       NotifRoles.Name.int: "name",
-      NotifRoles.Title.int: "title",
-      NotifRoles.Description.int: "description",
-      NotifRoles.Content.int: "content",
-      NotifRoles.ImageUrl.int: "imageUrl",
-      NotifRoles.Link.int: "link",
+      NotifRoles.NewsTitle.int: "newsTitle",
+      NotifRoles.NewsDescription.int: "newsDescription",
+      NotifRoles.NewsContent.int: "newsContent",
+      NotifRoles.NewsImageUrl.int: "newsImageUrl",
+      NotifRoles.NewsLink.int: "newsLink",
+      NotifRoles.NewsLinkLabel.int: "newsLinkLabel",
       NotifRoles.Author.int: "author",
       NotifRoles.NotificationType.int: "notificationType",
       NotifRoles.Message.int: "message",
@@ -126,7 +132,7 @@ QtObject:
       NotifRoles.InstallationId.int: "installationId",
     }.toTable
 
-  proc findNotificationIndex(self: Model, notificationId: string): int =
+  proc findNotificationIndex(self: Model, notificationId: string): int {.slot.} =
     if notificationId.len == 0:
       return -1
     for i in 0 ..< self.activityCenterNotifications.len:
