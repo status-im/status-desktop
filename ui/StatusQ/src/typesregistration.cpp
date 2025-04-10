@@ -134,7 +134,15 @@ void registerStatusQTypes() {
     qmlRegisterModuleImport("Qt.labs.calendar", QQmlModuleImportModuleAny,
                             "QtQuick.Controls", QQmlModuleImportLatest);
 #endif
-        
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    qmlRegisterModule("Qt.labs.settings", 1, 1);
+    qmlRegisterModule("Qt.labs.settings", 1, 0);
+
+    qmlRegisterModuleImport("Qt.labs.settings", QQmlModuleImportModuleAny,
+                      "QtCore", QQmlModuleImportLatest);
+#endif
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     qmlRegisterModuleImport("Qt.labs.qmlmodels", QQmlModuleImportModuleAny,
                             "QtQml.Models", QQmlModuleImportLatest);
