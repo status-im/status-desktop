@@ -27,12 +27,12 @@ class CreateCommunitiesBanner(QObject):
         super().__init__(names.create_new_StatusButton)
         self.create_new_button = Button(names.create_new_StatusButton)
 
-    def open_create_community_popup(self) -> 'CreateCommunityPopup':
+    def open_create_community_popup(self) -> 'CreateNewCommunityPopup':
         self.create_new_button.click()
-        return CreateCommunityPopup().wait_until_appears()
+        return CreateNewCommunityPopup().wait_until_appears()
 
 
-class CreateCommunityPopup(QObject):
+class CreateNewCommunityPopup(QObject):
 
     def __init__(self):
         super().__init__(names.createCommunityNameInput_TextEdit)
