@@ -554,10 +554,6 @@ proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestI
 proc blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)
 
-proc addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
-  let communityId = if self.isCommunitySection: self.sectionId else: ""
-  self.chatService.addGroupMembers(communityId, chatId, pubKeys)
-
 proc removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
    self.chatService.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
