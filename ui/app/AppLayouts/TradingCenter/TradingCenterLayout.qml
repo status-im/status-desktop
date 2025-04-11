@@ -21,9 +21,18 @@ StatusSectionLayout {
     required property var formatCurrencyAmount
     /** required property representing loading state **/
     required property bool loading
+    /** required property representing total number of tokens **/
+    required property int totalTokensCount
+
+    // TODO: remove this code its only to show a dummy list in the app till the backend is ready
+    property int startIndex: listView.footerItem.startIndex
+    // TODO: remove this code its only to show a dummy list in the app till the backend is ready
+    property int endIndex: listView.footerItem.endIndex
 
     /** signal to request the launch of Swap Modal **/
     signal requestLaunchSwap()
+    /** signal to request fetching tokens as per selected page and page size **/
+    signal fetchTradingCenterTokens(int pageSize, int pageNumber)
 
     // TODO:: Implement resetting token list view
     function resetView() {}
@@ -58,18 +67,24 @@ StatusSectionLayout {
             }
         }
 
-        ListView {
+        StatusListView {
             id: listView
             objectName: "tokensList"
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            clip: true
-
             headerPositioning: ListView.OverlayHeader
             header: TradingCenterTokenHeader {
                 width: listView.width
+            }
+
+            footer: TradingCenterFooter {
+                objectName: "tradingCenterFooter"
+                width: listView.width
+                pageSize: d.pageSize
+                totalCount: root.totalTokensCount
+                onSwitchPage: root.fetchTradingCenterTokens(d.pageSize, pageNumber)
             }
 
             model: root.loading ? loadingModel: regularModel
@@ -99,6 +114,7 @@ StatusSectionLayout {
             delegate: TradingCenterTokenDelegate {
                 width: listView.width
 
+                indexString: root.startIndex + index
                 tokenName: model.name
                 tokenSymbol: model.symbol
                 iconSource: Constants.tokenIcon(model.symbol)
