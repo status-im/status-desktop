@@ -35,6 +35,7 @@ import app_service/service/community_tokens/service as tokens_service
 import app_service/service/network_connection/service as network_connection_service
 import app_service/service/shared_urls/service as shared_urls_service
 import app_service/service/metrics/service as metrics_service
+import app_service/service/market/service as market_service
 
 import app/modules/onboarding/module as onboarding_module
 import app/modules/onboarding/post_onboarding/[keycard_replacement_task, keycard_convert_account, save_biometrics_task]
@@ -99,6 +100,7 @@ type
     networkConnectionService: network_connection_service.Service
     sharedUrlsService: shared_urls_service.Service
     metricsService: metrics_service.MetricsService
+    marketService: market_service.Service
 
     # Modules
     onboardingModule: onboarding_module.AccessInterface
@@ -229,6 +231,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.networkConnectionService = network_connection_service.newService(statusFoundation.events,
     result.walletAccountService, result.networkService, result.nodeService, result.tokenService)
   result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
+  result.marketService = market_service.newService(statusFoundation.events, result.settingsService)
+
   # Modules
   result.onboardingModule = onboarding_module.newModule[AppController](
     result,
@@ -276,6 +280,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.keycardService,
     result.networkConnectionService,
     result.sharedUrlsService,
+    result.marketService,
     statusFoundation.threadpool
   )
 
@@ -335,6 +340,7 @@ proc delete*(self: AppController) =
   self.keycardServiceV2.delete
   self.networkConnectionService.delete
   self.metricsService.delete
+  self.marketService.delete
 
 proc initializeQmlContext(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -392,6 +398,7 @@ proc load(self: AppController) =
   self.tokensService.init()
   self.gifService.init()
   self.networkConnectionService.init()
+  self.marketService.init()
 
   # Accessible after user login
   singletonInstance.engine.setRootContextProperty("appSettings", self.appSettingsVariant)

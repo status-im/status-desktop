@@ -15,6 +15,7 @@ SplitView {
             anchors.centerIn: parent
             pageSize: Number(pageSizeInput.text)
             totalCount: Number(tokenCountInput.text)
+            currentPage: 1
             onSwitchPage: console.warn("switch page to ", pageNumber)
         }
     }
