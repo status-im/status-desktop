@@ -25,6 +25,7 @@ ColumnLayout {
         id: d
         readonly property int optionHeight: 64
         readonly property string aboutHistoryServiceLink: Constants.statusHelpLinkPrefix + "communities/about-the-community-history-service"
+        readonly property string aboutPermissionsLink: Constants.statusHelpLinkPrefix + "communities/set-up-your-community-permissions"
     }
 
     ColumnLayout {
@@ -108,6 +109,46 @@ ColumnLayout {
             text: qsTr("Any member can pin a message")
         }
     }
+
+    StatusWarningBox {
+        Layout.fillWidth: true
+        Layout.bottomMargin: Theme.padding
+        borderColor: Theme.palette.baseColor2
+        textColor: Theme.palette.directColor1
+        icon: Theme.svg("token")
+        iconColor: Theme.palette.directColor1
+        iconAlignment: Qt.AlignVCenter
+        isRowLayout: false
+        text: qsTr("You can token-gate your community and channels anytime after creation using existing tokens or by minting new ones in the community admin area.")
+        extraContentComponent: RowLayout {
+            spacing: 0
+            StatusSelectableText {
+                Layout.fillWidth: true
+                defaultLinkColor: Theme.palette.primaryColor1
+                hoveredLinkColor: Theme.palette.primaryColor1
+                text: "<p><a style='text-decoration:none' href=' '>%1</a></p>".arg(qsTr("Learn more about token-gating"))
+
+                onLinkActivated: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
+                                                                 StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
+            }
+
+            StatusIcon {
+                icon: "external-link"
+                color: Theme.palette.primaryColor1
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: Global.openLinkWithConfirmation(d.aboutPermissionsLink,
+                                                               StatusQUtils.StringUtils.extractDomainFromLink(d.aboutPermissionsLink))
+                }
+            }
+        }
+    }
+
 
     Component {
         id: messageHistoryInfoPopupComponent
