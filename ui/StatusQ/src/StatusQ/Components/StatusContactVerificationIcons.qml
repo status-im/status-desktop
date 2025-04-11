@@ -23,7 +23,7 @@ Row {
         bgColor: Theme.palette.primaryColor1
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {
-            source: mutualConnectionIcon.name ? "../../assets/img/icons/" + mutualConnectionIcon.name + ".svg": ""
+            source: mutualConnectionIcon.name ? Qt.resolvedUrl("../../assets/img/icons/" + mutualConnectionIcon.name + ".svg"): ""
             visible: false
             cache: false
         }
@@ -42,7 +42,7 @@ Row {
         bgColor: root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified ? Theme.palette.successColor1 : Theme.palette.dangerColor1
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {
-            source: trustContactIcon.name ? "../../assets/img/icons/" + trustContactIcon.name + ".svg": ""
+            source: trustContactIcon.name ? Qt.resolvedUrl("../../assets/img/icons/" + trustContactIcon.name + ".svg"): ""
             visible: false
             cache: false
         }
@@ -58,7 +58,7 @@ Row {
         bgRadius: bgWidth / 2
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {
-            source: blockedContactIcon.name ? "../../assets/img/icons/" + blockedContactIcon.name + ".svg": ""
+            source: blockedContactIcon.name ? Qt.resolvedUrl("../../assets/img/icons/" + blockedContactIcon.name + ".svg"): ""
             visible: false
             cache: false
         }

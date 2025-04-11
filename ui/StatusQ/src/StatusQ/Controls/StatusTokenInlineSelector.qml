@@ -36,7 +36,7 @@ RowLayout {
        This is a property function used to acquire image source for given token.
     */
     property var tokenImageSourceGetter: function (token) {
-        return "../../assets/img/icons/%1.png".arg(token)
+        return Qt.resolvedUrl("../../assets/img/icons/%1.png".arg(token))
     }
 
     signal triggered(real amount, string token)

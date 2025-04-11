@@ -41,8 +41,8 @@ StatusMouseArea {
             Image {
                 anchors.centerIn: parent
                 visible: statusMacTrafficLights.containsMouse
-                source: closeSensor.pressed ? "../../assets/img/icons/traffic_lights/close_pressed.png"
-                                            : "../../assets/img/icons/traffic_lights/close.png"
+                source: Qt.resolvedUrl(closeSensor.pressed ? "../../assets/img/icons/traffic_lights/close_pressed.png"
+                                            : "../../assets/img/icons/traffic_lights/close.png")
                 scale: 0.25
             }
 
@@ -71,8 +71,8 @@ StatusMouseArea {
                 anchors.centerIn: parent
                 anchors.verticalCenterOffset: -0.25
                 visible: statusMacTrafficLights.containsMouse
-                source: miniSensor.pressed ? "../../assets/img/icons/traffic_lights/minimise_pressed.png"
-                                           : "../../assets/img/icons/traffic_lights/minimise.png"
+                source: Qt.resolvedUrl(miniSensor.pressed ? "../../assets/img/icons/traffic_lights/minimise_pressed.png"
+                                           : "../../assets/img/icons/traffic_lights/minimise.png")
                 scale: 0.27
             }
 
@@ -99,8 +99,8 @@ StatusMouseArea {
             Image {
                 anchors.centerIn: parent
                 visible: statusMacTrafficLights.containsMouse
-                source:   maxiSensor.pressed ?"../../assets/img/icons/traffic_lights/maximize_pressed.png"
-                                             :"../../assets/img/icons/traffic_lights/maximize.png"
+                source: Qt.resolvedUrl(maxiSensor.pressed ?"../../assets/img/icons/traffic_lights/maximize_pressed.png"
+                                             :"../../assets/img/icons/traffic_lights/maximize.png")
                 scale: 0.25
             }
 
