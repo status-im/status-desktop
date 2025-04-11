@@ -9,7 +9,7 @@ from gui.components.splash_screen import SplashScreen
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 from web3 import Web3
 
-from gui.main_window import LeftPanel
+from gui.main_window import MainLeftPanel
 from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatusView
 
 
@@ -33,14 +33,14 @@ def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
     signing_phrase.confirm_phrase()
 
     with step('Verify that restored account reveals correct status wallet address'):
-        left_panel = LeftPanel()
+        left_panel = MainLeftPanel()
         profile = left_panel.open_settings().left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 
         status_account_index = 0
         status_acc_view = (
-            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(
+            MainLeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(
                 WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
                 status_account_index))
         address = status_acc_view.get_account_address_value()

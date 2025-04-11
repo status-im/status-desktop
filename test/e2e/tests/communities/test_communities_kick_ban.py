@@ -60,7 +60,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
 
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             main_screen.create_community(community_data=community)
-            community_screen = main_screen.left_panel.select_community(community.name)
+            community_screen = main_screen.left_panel.select_community_by_name(community.name)
             add_members = community_screen.left_panel.open_add_members_popup()
             add_members.invite([user_one.name], message=random_text_message())
             main_screen.hide()
@@ -115,7 +115,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert banned_community_screen.community_banned_member_panel.is_visible
             assert banned_community_screen.banned_title() == f"You've been banned from {community.name}"
             main_screen.left_panel.open_community_context_menu(community.name).leave_community()
-            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
+            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities_names, timeout)
             main_screen.hide()
 
         with step(f'User {user_two.name}, unban {user_one.name} in banned members list'):
@@ -174,7 +174,7 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
         with step(f'User {user_one.name} rejoins community after being kicked'):
             aut_one.attach()
             main_screen.prepare()
-            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
+            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities_names, timeout)
 
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)

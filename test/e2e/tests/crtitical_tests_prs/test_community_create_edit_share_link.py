@@ -29,7 +29,7 @@ def test_create_edit_community(main_screen: MainWindow):
         assert community_screen.left_panel.name == community.name
         assert '1' in community_screen.left_panel.members
 
-    with step('Verify General channel is present for recently created community'):
+    with step('Verify general channel is present for recently created community'):
         community_screen.verify_channel(
             Channel.DEFAULT_CHANNEL_NAME.value,
             Channel.DEFAULT_CHANNEL_DESC.value,
@@ -39,19 +39,20 @@ def test_create_edit_community(main_screen: MainWindow):
     with step('Edit community'):
         community_setting = community_screen.left_panel.open_community_settings()
         edit_community_form = community_setting.left_panel.open_overview().open_edit_community_view()
-        new_name = random_community_name()
-        new_description = random_community_description()
+        new_name = "New name"
+        new_description = "New desc"
         new_logo = {'fp': configs.testpath.TEST_FILES / 'banner.png', 'zoom': None, 'shift': None}['fp']
         new_banner = {'fp': configs.testpath.TEST_FILES / 'tv_signal.png', 'zoom': None, 'shift': None}['fp']
-        new_introduction = random_community_introduction()
-        new_leaving_message = random_community_leave_message()
+        new_introduction = "New intro"
+        new_leaving_message = "New leave message"
         edit_community_form.edit(new_name, new_description,
                                  new_introduction, new_leaving_message,
                                  new_logo, new_banner)
 
     with step('Copy community link and verify that it does not give 404 error'):
-        invite_modal =  main_screen.left_panel.open_community_context_menu(
-            name=new_name).select_invite_people()
+        main_screen.left_panel.select_community_by_name(community_name=new_name)
+        invite_modal = main_screen.left_panel.open_community_context_menu(
+            community_name=new_name).select_invite_people()
         community_link = invite_modal.copy_community_link()
         assert get_response(community_link).status_code == 200
 
@@ -85,7 +86,7 @@ def test_create_edit_community(main_screen: MainWindow):
         assert community_info.description == new_description
         assert '1' in community_info.members
 
-    assert new_name in main_screen.left_panel.communities, \
+    assert new_name in main_screen.left_panel.communities_names, \
         f'Community {new_name} should be present in the list of communities but it is not'
     context_menu = main_screen.left_panel.open_community_context_menu(new_name)
     assert not context_menu.leave_community_option.is_visible, f'Leave option should not be present'
