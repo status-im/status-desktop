@@ -14,6 +14,7 @@ Item {
     property bool multiline: false
     property string text: ""
     property string hoveredLinkColor: Theme.palette.directColor1
+    property color defaultLinkColor: Theme.palette.baseColor1
 
     property alias selectedText: edit.selectedText
     property alias selectedTextColor: edit.selectedTextColor
@@ -87,7 +88,7 @@ Item {
 
                 onLinkActivated: statusSelectableText.linkActivated(link)
 
-                text: "<style>a:link { color: " + (!!hoveredLink ? statusSelectableText.hoveredLinkColor : Theme.palette.baseColor1) + "; }</style>" + statusSelectableText.text
+                text: "<style>a:link { color: " + (!!hoveredLink ? statusSelectableText.hoveredLinkColor : statusSelectableText.defaultLinkColor) + "; }</style>" + statusSelectableText.text
             }
 
         }
