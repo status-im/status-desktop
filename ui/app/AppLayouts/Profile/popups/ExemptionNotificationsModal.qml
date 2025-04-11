@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -18,45 +18,45 @@ StatusModal {
     id: root
 
     property NotificationsStore notificationsStore
-    property var item: ({
-        name: "",
-        image: "",
-        color: "",
-        customized: false,
-        type: Constants.settingsSection.exemptions.community,
-        muteAllMessages: false,
-        personalMentions: Constants.settingsSection.notifications.sendAlertsValue,
-        globalMentions: Constants.settingsSection.notifications.sendAlertsValue,
-        otherMessages: Constants.settingsSection.notifications.turnOffValue
-    })
-    headerSettings.title: qsTr("%1 exemption").arg(root.item.name)
+
+    property string name
+    property int type: Constants.settingsSection.exemptions.community
+    property string itemId
+    property color color
+    property string image
+    property bool muteAllMessages
+    property string personalMentions: Constants.settingsSection.notifications.sendAlertsValue
+    property string globalMentions: Constants.settingsSection.notifications.sendAlertsValue
+    property string otherMessages: Constants.settingsSection.notifications.turnOffValue
+
+    headerSettings.title: qsTr("%1 exemption").arg(root.name)
     headerSettings.asset: StatusAssetSettings {
         // Once we introduce StatusSmartIdenticon in popup header, we should use the folowing
-//        color: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
-//                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.item.itemId)] :
-//                   root.item.color
+//        color: root.type === Constants.settingsSection.exemptions.oneToOneChat?
+//                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.itemId)] :
+//                   root.color
         // until then the following is used
-        bgColor: d.isOneToOneChat ? Utils.colorForPubkey(root.item.itemId) : root.item.color
-        name: root.item.image
-        isImage: !!root.item.image
+        bgColor: d.isOneToOneChat ? Utils.colorForPubkey(root.itemId) : root.color
+        name: root.image
+        isImage: !!root.image
         charactersLen: d.isOneToOneChat ? 2 : 1
-        isLetterIdenticon: root.item.image === ""
+        isLetterIdenticon: root.image === ""
         height: 40
         width: 40
     }
 
     QtObject {
         id: d
-        readonly property bool isOneToOneChat: root.item.type === Constants.settingsSection.exemptions.oneToOneChat
+        readonly property bool isOneToOneChat: root.type === Constants.settingsSection.exemptions.oneToOneChat
         readonly property int contentSpacing: 0
-        property bool muteAllMessages: root.item.muteAllMessages
-        property string personalMentions: root.item.personalMentions
-        property string globalMentions: root.item.globalMentions
-        property string otherMessages: root.item.otherMessages
-        property bool customized: d.muteAllMessages ||
-                                  d.personalMentions !== Constants.settingsSection.notifications.sendAlertsValue ||
-                                  d.globalMentions !== Constants.settingsSection.notifications.sendAlertsValue ||
-                                  d.otherMessages !== Constants.settingsSection.notifications.turnOffValue
+        property bool muteAllMessages: root.muteAllMessages
+        property string personalMentions: root.personalMentions
+        property string globalMentions: root.globalMentions
+        property string otherMessages: root.otherMessages
+        readonly property bool customized: d.muteAllMessages ||
+                                           d.personalMentions !== Constants.settingsSection.notifications.sendAlertsValue ||
+                                           d.globalMentions !== Constants.settingsSection.notifications.sendAlertsValue ||
+                                           d.otherMessages !== Constants.settingsSection.notifications.turnOffValue
     }
 
     contentItem: Column {
@@ -142,7 +142,7 @@ StatusModal {
             id: btnCreateEdit
             text: qsTr("Done")
             onClicked: {
-                root.notificationsStore.saveExemptions(root.item.itemId,
+                root.notificationsStore.saveExemptions(root.itemId,
                                                        d.muteAllMessages,
                                                        d.personalMentions,
                                                        d.globalMentions,

@@ -24,6 +24,14 @@ SettingsContentBase {
 
     Component.onCompleted: root.notificationsStore.loadExemptions()
 
+    Component {
+        id: exemptionNotificationsModal
+        ExemptionNotificationsModal {
+            notificationsStore: root.notificationsStore
+            destroyOnClose: true
+        }
+    }
+
     content: ColumnLayout {
         id: contentColumn
 
@@ -31,29 +39,6 @@ SettingsContentBase {
 
         ButtonGroup {
             id: messageSetting
-        }
-
-        Loader {
-            id: exemptionNotificationsModal
-            active: false
-
-            function open(item) {
-                active = true
-                exemptionNotificationsModal.item.item = item
-                exemptionNotificationsModal.item.open()
-            }
-            function close() {
-                active = false
-            }
-
-            sourceComponent: ExemptionNotificationsModal {
-                anchors.centerIn: parent
-                notificationsStore: root.notificationsStore
-
-                onClosed: {
-                    exemptionNotificationsModal.close();
-                }
-            }
         }
 
         Component {
@@ -137,36 +122,35 @@ SettingsContentBase {
 
                 components: [
                     StatusIcon {
-                        visible: model.customized
-                        icon: "next"
-                        color: Theme.palette.baseColor1
+                        icon: model.customized ? "next" : "add"
+                        color: model.customized ? Theme.palette.baseColor1 : Theme.palette.primaryColor1
                         StatusMouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                exemptionNotificationsModal.open(model)
+                                const props = {
+                                    name: model.name,
+                                    type: model.type,
+                                    itemId: model.itemId,
+                                    color: model.color,
+                                    image: model.image,
+                                    muteAllMessages: model.muteAllMessages,
+                                    personalMentions: model.personalMentions,
+                                    globalMentions: model.globalMentions,
+                                    otherMessages: model.otherMessages
+                                }
+                                exemptionNotificationsModal.createObject(root, props).open()
                             }
                         }
-                    },
-                    StatusIcon {
-                        visible: !model.customized
-                        icon: "add"
-                        color: Theme.palette.primaryColor1
-                        StatusMouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                exemptionNotificationsModal.open(model)
-                            }
-                        }
-                    }]
+                    }
+                ]
             }
         }
 
         Rectangle {
             Layout.preferredWidth: root.contentWidth
             implicitHeight: col1.height + 2 * Theme.padding
-            visible: Qt.platform.os == Constants.mac
+            visible: Qt.platform.os === Constants.mac
             radius: Constants.settingsSection.radius
             color: Theme.palette.primaryColor3
 
