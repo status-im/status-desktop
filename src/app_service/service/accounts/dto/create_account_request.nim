@@ -1,9 +1,11 @@
 import json, std/options
 import wallet_secretes_config
+import wallet_config
 import image_crop_rectangle
 import api_config
 
 export wallet_secretes_config
+export wallet_config
 export image_crop_rectangle
 export api_config
 
@@ -38,6 +40,7 @@ type
     networkID*: Option[uint64]
 
     walletSecretsConfig*: WalletSecretsConfig
+    walletConfig*: WalletConfig
 
     torrentConfigEnabled*: Option[bool]
     torrentConfigPort*: Option[int]
@@ -97,4 +100,7 @@ proc toJson*(self: CreateAccountRequest): JsonNode =
     result["torrentConfigPort"] = %self.torrentConfigPort.get()
 
   for key, value in self.walletSecretsConfig.toJson().pairs():
+    result[key] = value
+
+  for key, value in self.walletConfig.toJson().pairs():
     result[key] = value

@@ -160,6 +160,12 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
+  proc toInt(value: string, defaultValue: int): int =
+    try:
+      return parseInt(value)
+    except ValueError:
+      return defaultValue
+
   proc buildWalletSecrets(): WalletSecretsConfig =
     return WalletSecretsConfig(
       poktToken: POKT_TOKEN_RESOLVED,
@@ -179,11 +185,22 @@ QtObject:
       statusProxyStageName: STATUS_PROXY_STAGE_NAME_RESOLVED,
       statusProxyMarketUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyMarketPassword: STATUS_PROXY_PASSWORD_RESOLVED,
+      marketDataProxyUrl: MARKET_DATA_PROXY_URL_RESOLVED,
+      marketDataProxyUser: MARKET_DATA_PROXY_USER_RESOLVED,
+      marketDataProxyPassword: MARKET_DATA_PROXY_PASSWORD_RESOLVED,
       statusProxyBlockchainUser: STATUS_PROXY_USER_RESOLVED,
       statusProxyBlockchainPassword: STATUS_PROXY_PASSWORD_RESOLVED,
       ethRpcProxyUser: ETH_RPC_PROXY_USER_RESOLVED,
       ethRpcProxyPassword: ETH_RPC_PROXY_PASSWORD_RESOLVED,
       ethRpcProxyUrl: ETH_RPC_PROXY_URL_RESOLVED,
+    )
+
+  proc buildWalletConfig(): WalletConfig =
+    return WalletConfig(
+      tokensListsAutoRefreshInterval: 0,
+      tokensListsAutoRefreshCheckInterval: 0,
+      marketDataFullDataRefreshInterval: toInt(MARKET_DATA_FULL_REFRESH_INTERVAL, 0),
+      marketDataPriceRefreshInterval: toInt(MARKET_DATA_PRICE_REFRESH_INTERVAL, 0),
     )
 
   proc defaultCreateAccountRequest*(): CreateAccountRequest =
@@ -200,6 +217,7 @@ QtObject:
         torrentConfigPort: some(TORRENT_CONFIG_PORT),
         keycardPairingDataFile: main_constants.KEYCARDPAIRINGDATAFILE,
         walletSecretsConfig: buildWalletSecrets(),
+        walletConfig: buildWalletConfig(),
         apiConfig: defaultApiConfig(),
       )
 
@@ -426,6 +444,7 @@ QtObject:
       keycardWhisperPrivateKey: chatPrivateKey,
       mnemonic: mnemonic,
       walletSecretsConfig: buildWalletSecrets(),
+      walletConfig: buildWalletConfig(),
       bandwidthStatsEnabled: true,
       apiConfig: defaultApiConfig(),
     )
