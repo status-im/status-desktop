@@ -5,10 +5,12 @@ import signal_type
 
 import app_service/service/transaction/dtoV2
 import app_service/service/transaction/router_transactions_dto
+import app_service/service/market/dto
 
 const
   EventPendingTransactionUpdate* = "pending-transaction-update"
   EventPendingTransactionStatusChanged* = "pending-transaction-status-changed"
+  EventGetLeaderboardPageDone = "wallet-leaderboard-fetch-page-done"
 
 type WalletSignal* = ref object of Signal
   content*: string
@@ -32,6 +34,7 @@ type WalletSignal* = ref object of Signal
   routerTransactionsForSigning*: RouterTransactionsForSigningDto
   routerSentTransactions*: RouterSentTransactionsDto
   transactionStatusChange*: TransactionStatusChange
+  leaderboardData*: LeaderboardPageDto
 
 proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
@@ -66,6 +69,12 @@ proc fromEvent*(T: type WalletSignal, signalType: SignalType, jsonSignal: JsonNo
       except CatchableError:
         return
       result.transactionStatusChange = toTransactionStatusChange(statusChangedPayload)
+    if result.eventType == EventGetLeaderboardPageDone:
+      try:
+        result.signalType = SignalType.GetLeaderboardPageDone
+        result.leaderboardData = Json.decode($result.message, LeaderboardPageDto, allowUnknownFields = true)
+      except:
+        error "Error parsing leaderboard data"
     return
   if signalType == SignalType.WalletSignTransactions:
     if event.kind != JArray:

@@ -269,3 +269,9 @@ rpc(restartWalletReloadTimer, "wallet"):
 
 rpc(isChecksumValidForAddress, "wallet"):
   address: string
+
+rpc(fetchMarketTokenPageAsync, "wallet"):
+  page: int
+  pageSize: int
+  sortOrder: int
+  currency: string

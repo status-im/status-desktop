@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.15
 
 import Models 1.0
 
+import StatusQ.Core 0.1
+
 import AppLayouts.Market 1.0
 
 SplitView {
@@ -18,8 +20,17 @@ SplitView {
         SplitView.fillHeight: true
         tokensModel: marketTokensModel
         loading: loadingCheckbox.checked
-        totalTokensCount: 5679
+        totalTokensCount: marketTokensModel.count
         currencySymbol: "$"
+        fnFormatCurrencyAmount: function(amount, options) {
+            let abc = ({
+                           amount: amount,
+                           symbol: "usd".toUpperCase(),
+                           displayDecimals: 2,
+                           stripTrailingZeroes: false
+                       })
+            return LocaleUtils.currencyAmountToLocaleString(abc, options)
+        }
         onRequestLaunchSwap: console.warn("Request Launch Swap")
         onFetchMarketTokens: console.warn("Fetch Market Tokens with PageSize: %1 and PageNumber:%2".arg(pageSize).arg(pageNumber))
     }

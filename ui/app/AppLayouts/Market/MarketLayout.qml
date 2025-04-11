@@ -23,6 +23,7 @@ StatusSectionLayout {
     required property int totalTokensCount
     /** required property representing currency symbol $/£/€ etc... **/
     required property string currencySymbol
+    required property var fnFormatCurrencyAmount
 
     // TODO: remove this code its only to show a dummy list in the app till the backend is ready
     property int startIndex: listView.footerItem.startIndex
@@ -32,7 +33,7 @@ StatusSectionLayout {
     /** signal to request the launch of Swap Modal **/
     signal requestLaunchSwap()
     /** signal to request fetching tokens as per selected page and page size **/
-    signal fetchMarketTokens(int pageSize, int pageNumber)
+    signal fetchMarketTokens(int pageNumber, int pageSize)
 
     // TODO:: Implement resetting token list view
     function resetView() {}
@@ -40,6 +41,10 @@ StatusSectionLayout {
     QtObject {
         id: d
         readonly property int pageSize: 100
+    }
+
+    Component.onCompleted: {
+        root.fetchMarketTokens(0, d.pageSize)
     }
 
     centerPanel: ColumnLayout {
@@ -84,7 +89,7 @@ StatusSectionLayout {
                 width: listView.width
                 pageSize: d.pageSize
                 totalCount: root.totalTokensCount
-                onSwitchPage: root.fetchMarketTokens(d.pageSize, pageNumber)
+                onSwitchPage: root.fetchMarketTokens(pageNumber, d.pageSize)
             }
 
             model: root.loading ? loadingModel: regularModel
@@ -117,18 +122,20 @@ StatusSectionLayout {
                 indexString: root.startIndex + index
                 tokenName: model.name
                 tokenSymbol: model.symbol
-                iconSource: Constants.tokenIcon(model.symbol)
+                iconSource: model.image
                 price: "%1%2"
                 .arg(root.currencySymbol)
-                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.currencyPrice, {noSymbol: true}))
+                .arg(root.fnFormatCurrencyAmount(model.currentPrice, {noSymbol: true}))
                 changePct24Hour: qsTr("%1 %2%", "[up/down/none character depending on value sign] [localized percentage value]%")
-                .arg(WalletUtils.getUpDownTriangle(model.marketDetails.changePct24hour))
-                .arg(LocaleUtils.numberToLocaleString(model.marketDetails.changePct24hour, 2))
-                changePct24HourColor: WalletUtils.getChangePct24HourColor(model.marketDetails.changePct24hour)
-                volume24Hour: "--"
+                .arg(WalletUtils.getUpDownTriangle(model.priceChangePercentage24h))
+                .arg(LocaleUtils.numberToLocaleString(model.priceChangePercentage24h, 2))
+                changePct24HourColor: WalletUtils.getChangePct24HourColor(model.priceChangePercentage24h)
+                volume24Hour: "%1%2"
+                .arg(root.currencySymbol)
+                .arg(root.fnFormatCurrencyAmount(model.totalVolume, {noSymbol: true}))
                 marketCap: "%1%2"
                 .arg(root.currencySymbol)
-                .arg(LocaleUtils.currencyAmountToLocaleString(model.marketDetails.marketCap, {noSymbol: true}))
+                .arg(root.fnFormatCurrencyAmount(model.marketCap, {noSymbol: true}))
             }
         }
     }

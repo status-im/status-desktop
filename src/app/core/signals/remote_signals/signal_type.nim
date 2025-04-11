@@ -76,6 +76,8 @@ type SignalType* {.pure.} = enum
   ConnectorGrantDAppPermission = "connector.dAppPermissionGranted"
   ConnectorRevokeDAppPermission = "connector.dAppPermissionRevoked"
   ConnectorSign = "connector.Sign"
+  GetLeaderboardPageDone = "wallet-leaderboard-fetch-page-done"
+  LeaderboardPagePricesUpdated = "wallet-leaderboard-page-prices-updated"
   Unknown
 
 proc event*(self:SignalType):string =
