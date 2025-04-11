@@ -19,6 +19,9 @@ type
     statusProxyStageName*: string
     statusProxyMarketUser*: string
     statusProxyMarketPassword*: string
+    marketDataProxyUrl*: string
+    marketDataProxyUser*: string
+    marketDataProxyPassword*: string
     statusProxyBlockchainUser*: string
     statusProxyBlockchainPassword*: string
     ethRpcProxyUser*: string
@@ -44,6 +47,9 @@ proc toJson*(self: WalletSecretsConfig): JsonNode =
     "statusProxyStageName": self.statusProxyStageName,
     "statusProxyMarketUser": self.statusProxyMarketUser,
     "statusProxyMarketPassword": self.statusProxyMarketPassword,
+    "marketDataProxyUrl": self.marketDataProxyUrl,
+    "marketDataProxyUser": self.marketDataProxyUser,
+    "marketDataProxyPassword": self.marketDataProxyPassword,
     "statusProxyBlockchainUser": self.statusProxyBlockchainUser,
     "statusProxyBlockchainPassword": self.statusProxyBlockchainPassword,
     "ethRpcProxyUser": self.ethRpcProxyUser,

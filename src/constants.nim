@@ -62,6 +62,11 @@ let
   STATUS_PROXY_STAGE_NAME_RESOLVED* = desktopConfig.statusProxyStageName
   STATUS_PROXY_USER_RESOLVED* = desktopConfig.statusProxyUser
   STATUS_PROXY_PASSWORD_RESOLVED* = desktopConfig.statusProxyPassword
+  MARKET_DATA_PROXY_URL_RESOLVED* = desktopConfig.marketDataProxyUrl
+  MARKET_DATA_PROXY_USER_RESOLVED* = desktopConfig.marketDataProxyUser
+  MARKET_DATA_PROXY_PASSWORD_RESOLVED* = desktopConfig.marketDataProxyPassword
+  MARKET_DATA_FULL_REFRESH_INTERVAL* = desktopConfig.marketDataFullRefreshInterval
+  MARKET_DATA_PRICE_REFRESH_INTERVAL* = desktopConfig.marketDataPricesRefreshInterval
   ETH_RPC_PROXY_USER_RESOLVED* = desktopConfig.ethRpcProxyUser
   ETH_RPC_PROXY_PASSWORD_RESOLVED* = desktopConfig.ethRpcProxyPassword
   ETH_RPC_PROXY_URL_RESOLVED* = desktopConfig.ethRpcProxyUrl
