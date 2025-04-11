@@ -15,6 +15,11 @@ SplitView {
             anchors.centerIn: parent
             pageSize: Number(pageSizeInput.text)
             totalCount: Number(tokenCountInput.text)
+            currentPage: 1
+            onRequestPage: {
+                console.warn("onRequestPage:: pageNumber ", pageNumber)
+                paginator.currentPage = pageNumber
+            }
         }
     }
 
