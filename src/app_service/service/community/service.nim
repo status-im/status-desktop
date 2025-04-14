@@ -1,5 +1,5 @@
 import NimQml, Tables, json, sequtils, std/sets, std/algorithm, stew/shims/strformat, strutils, chronicles, sugar, times
-import std/tables as ser_tables
+import json_serialization/std/tables as ser_tables # Needed to serialize tables inside objects
 
 import app_service/common/safe_json_serialization
 import ./dto/community as community_dto
