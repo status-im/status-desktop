@@ -218,9 +218,6 @@ method prepareKeyPairForProcessing*(self: AccessInterface, keyUid: string, keyca
 method migratingProfileKeyPair*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSigningPhrase*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onUserAuthenticated*(self: AccessInterface, password: string, pin: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

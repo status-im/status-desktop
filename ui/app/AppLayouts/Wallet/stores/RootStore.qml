@@ -35,7 +35,6 @@ QtObject {
     /* This property holds address of currently selected account in Wallet Main layout  */
     readonly property var addressFilters: walletSectionInst.addressFilters
     readonly property var keypairImportModule: walletSectionInst.keypairImportModule
-    readonly property string signingPhrase: walletSectionInst.signingPhrase
     readonly property string mnemonicBackedUp: walletSectionInst.isMnemonicBackedUp
 
     readonly property var transactionActivityStatus: walletSectionInst.activityController.status
@@ -50,7 +49,6 @@ QtObject {
     readonly property var accounts: walletSectionAccounts.accounts
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
-    property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
     property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
@@ -186,10 +184,6 @@ QtObject {
 
     function canProfileProveOwnershipOfProvidedAddresses(addresses) {
         return walletSection.canProfileProveOwnershipOfProvidedAddresses(JSON.stringify(addresses))
-    }
-
-    function setHideSignPhraseModal(value) {
-        localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
 
     function getLatestBlockNumber(chainId) {

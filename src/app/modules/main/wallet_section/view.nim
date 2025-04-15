@@ -15,7 +15,6 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       totalCurrencyBalance: CurrencyAmount
-      signingPhrase: string
       isMnemonicBackedUp: bool
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
@@ -80,12 +79,6 @@ QtObject:
     read = getTotalCurrencyBalance
     notify = totalCurrencyBalanceChanged
 
-  proc getSigningPhrase(self: View): QVariant {.slot.} =
-    return newQVariant(self.signingPhrase)
-
-  QtProperty[QVariant] signingPhrase:
-    read = getSigningPhrase
-
   proc getIsMnemonicBackedUp(self: View): QVariant {.slot.} =
     return newQVariant(self.isMnemonicBackedUp)
 
@@ -129,8 +122,7 @@ QtObject:
     self.tmpSymbol = "ERROR"
     return newQVariant(currencyAmount)
 
-  proc setData*(self: View, signingPhrase: string, mnemonicBackedUp: bool) =
-    self.signingPhrase = signingPhrase
+  proc setData*(self: View, mnemonicBackedUp: bool) =
     self.isMnemonicBackedUp = mnemonicBackedUp
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =

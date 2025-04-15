@@ -396,9 +396,8 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.networksModule.isLoaded()):
     return
 
-  let signingPhrase = self.controller.getSigningPhrase()
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
-  self.view.setData(signingPhrase, mnemonicBackedUp)
+  self.view.setData(mnemonicBackedUp)
   self.setTotalCurrencyBalance()
   self.filter.setAddresses(self.getWalletAddressesNotHidden())
   self.filter.load()

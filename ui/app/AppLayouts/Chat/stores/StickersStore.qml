@@ -6,12 +6,6 @@ QtObject {
 
     property var stickersModule
 
-    function getSigningPhrase() {
-        if(!root.stickersModule)
-            return ""
-        return stickersModule.getSigningPhrase()
-    }
-
     function getStickersMarketAddress() {
         if(!root.stickersModule)
             return ""

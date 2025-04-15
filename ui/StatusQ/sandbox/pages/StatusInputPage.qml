@@ -59,7 +59,6 @@ Column {
     }
 
     StatusPasswordInput {
-        signingPhrase: "orange hello cygnet"
         placeholderText: "Password"
     }
 

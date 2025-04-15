@@ -84,7 +84,6 @@ Item {
             objectName: "keycardPasswordInput"
             Layout.alignment: Qt.AlignHCenter
             Layout.maximumWidth: parent.width
-            signingPhrase: root.sharedKeycardModule.getSigningPhrase()
             placeholderText: qsTr("Password")
             selectByMouse: true
             focus: true

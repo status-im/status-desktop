@@ -207,7 +207,7 @@ QtObject {
     }
 
     property string currentCurrency: walletSection.currentCurrency
-    property string signingPhrase: walletSection.signingPhrase
+
     function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
         return profileSectionStore.ensUsernamesStore.getFiatValue(balance, cryptoSymbol, fiatSymbol)
     }

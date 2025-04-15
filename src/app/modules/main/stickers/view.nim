@@ -12,7 +12,6 @@ QtObject:
       packsLoadFailed*: bool
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
-      signingPhrase: string
       stickersMarketAddress: string
 
   proc delete*(self: View) =
@@ -26,8 +25,7 @@ QtObject:
     result.recentStickers = newStickerList(result.delegate)
     result.installedStickerPacksLoaded = false
 
-  proc load*(self: View, signingPhrase: string, stickersMarketAddress: string) =
-    self.signingPhrase = signingPhrase
+  proc load*(self: View, stickersMarketAddress: string) =
     self.stickersMarketAddress = stickersMarketAddress
     self.delegate.viewDidLoad()
 
@@ -158,9 +156,6 @@ QtObject:
     let sticker = initItem(hash, pack, url)
     self.addRecentStickerToList(sticker)
     self.delegate.sendSticker(channelId, replyTo, sticker)
-
-  proc getSigningPhrase(self: View): QVariant {.slot.} =
-    return newQVariant(self.signingPhrase)
 
   proc getStickersMarketAddress(self: View): string {.slot.} =
     return self.stickersMarketAddress

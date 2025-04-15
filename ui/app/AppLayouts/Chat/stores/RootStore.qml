@@ -291,8 +291,6 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
 
-    property string signingPhrase: walletSection.signingPhrase
-
     property string channelEmoji: chatCommunitySectionModule && chatCommunitySectionModule.emoji ? chatCommunitySectionModule.emoji : ""
 
     property ListModel addToGroupContacts: ListModel {}

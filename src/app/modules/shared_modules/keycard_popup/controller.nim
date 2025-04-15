@@ -750,11 +750,6 @@ proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName,
 proc migrateNonProfileKeycardKeypairToApp*(self: Controller, keyUid, seedPhrase, password: string, doPasswordHashing: bool) =
   self.walletAccountService.migrateNonProfileKeycardKeypairToAppAsync(keyUid, seedPhrase, password, doPasswordHashing)
 
-proc getSigningPhrase*(self: Controller): string =
-  if not serviceApplicable(self.settingsService):
-    return
-  return self.settingsService.getSigningPhrase()
-
 proc getCurrency*(self: Controller): string =
   if not serviceApplicable(self.settingsService):
     return
