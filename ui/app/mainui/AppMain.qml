@@ -2057,7 +2057,14 @@ Item {
                         id: profileLoader
 
                         property int settingsSubsection: Constants.settingsSubsection.profile
+                        onSettingsSubsectionChanged: {
+                            item.settingsSubsection = settingsSubsection
+                        }
                         property int settingsSubSubsection: -1
+                        onSettingsSubSubsectionChanged: {
+                            item.settingsSubsection = settingsSubsection
+                            item.settingsSubSubsection = settingsSubSubsection
+                        }
 
                         active: appView.currentIndex === Constants.appViewStackIndex.profile
                         asynchronous: true
@@ -2075,7 +2082,6 @@ Item {
                             collectiblesStore: appMain.walletCollectiblesStore
                             currencyStore: appMain.currencyStore
                             isCentralizedMetricsEnabled: appMain.isCentralizedMetricsEnabled
-                            settingsSubSubsection: profileLoader.settingsSubSubsection
                             networksStore: appMain.networksStore
                             keychain: appMain.keychain
 
@@ -2086,15 +2092,15 @@ Item {
                             dismissedReceivedRequestContactsModel: contactsModelAdaptor.dimissedReceivedRequestContacts
                             isKeycardEnabled: featureFlagsStore.keycardEnabled
 
-                            Binding on settingsSubsection {
-                                value: profileLoader.settingsSubsection
-                            }
-
                             onSettingsSubsectionChanged: profileLoader.settingsSubsection = settingsSubsection
 
                             onConnectUsernameRequested: sendModalHandler.connectUsername(ensName)
                             onRegisterUsernameRequested: sendModalHandler.registerUsername(ensName)
                             onReleaseUsernameRequested: sendModalHandler.releaseUsername(ensName, senderAddress, chainId)
+                        }
+                        onLoaded: {
+                            item.settingsSubsection = profileLoader.settingsSubsection
+                            item.settingsSubSubsection = profileLoader.settingsSubSubsection
                         }
                     }
 

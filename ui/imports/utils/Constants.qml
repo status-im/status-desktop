@@ -349,7 +349,7 @@ QtObject {
     readonly property QtObject settingsSubsection: QtObject {
         readonly property int profile: 0
         readonly property int password: 1
-        readonly property int contacts: 2
+        readonly property int contacts: 2 // a subpage under "Messaging"
         readonly property int ensUsernames: 3
         readonly property int messaging: 4
         readonly property int wallet:5
