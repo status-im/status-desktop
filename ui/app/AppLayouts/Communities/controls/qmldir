@@ -27,6 +27,7 @@ OutroMessageInput 1.0 OutroMessageInput.qml
 PermissionItem 1.0 PermissionItem.qml
 PermissionListItem 1.0 PermissionListItem.qml
 PermissionsRow 1.0 PermissionsRow.qml
+PromotionalCommunityCard 1.0 PromotionalCommunityCard.qml
 SettingsPageHeader 1.0 SettingsPageHeader.qml
 TagsPicker 1.0 TagsPicker.qml
 TagsRow 1.0 TagsRow.qml
