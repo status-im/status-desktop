@@ -234,8 +234,5 @@ QtObject:
   proc migratingProfileKeyPair*(self: View): bool {.slot.} =
     return self.delegate.migratingProfileKeyPair()
 
-  proc getSigningPhrase*(self: View): string {.slot.} =
-    return self.delegate.getSigningPhrase()
-
   proc remainingAccountCapacity*(self: View): int {.slot.} =
     return self.delegate.remainingAccountCapacity()

@@ -123,9 +123,6 @@ proc sendSticker*(
     preferredUsername: string) =
   self.stickerService.asyncSendSticker(channelId, replyTo, sticker, preferredUsername)
 
-proc getSigningPhrase*(self: Controller): string =
-  return self.settingsService.getSigningPhrase()
-
 proc getStickerMarketAddress*(self: Controller): string =
   return self.stickerService.getStickerMarketAddress()
 

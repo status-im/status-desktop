@@ -33,7 +33,6 @@ const LSS_KEY_HIDE_CHANNEL_SUGGESTIONS* = "hideChannelSuggestions"
 const DEFAULT_HIDE_CHANNEL_SUGGESTIONS = false
 const LSS_KEY_FONT_SIZE* = "fontSize"
 const DEFAULT_FONT_SIZE = 2 #fontSizeM from qml
-const LSS_KEY_HIDE_SIGN_PHRASE_MODAL* = "hideSignPhraseModal"
 const DEFAULT_HIDE_SIGN_PHRASE_MODAL = false
 const LSS_KEY_QUITE_ON_CLOSE* = "quitOnClose"
 const DEFAULT_QUITE_ON_CLOSE = false
@@ -344,19 +343,6 @@ QtObject:
     notify = fontSizeChanged
 
 
-  proc hideSignPhraseModalChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getHideSignPhraseModal*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_HIDE_SIGN_PHRASE_MODAL, newQVariant(DEFAULT_HIDE_SIGN_PHRASE_MODAL))
-  proc setHideSignPhraseModal*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_HIDE_SIGN_PHRASE_MODAL, newQVariant(value)):
-      self.hideSignPhraseModalChanged()
-
-  QtProperty[bool] hideSignPhraseModal:
-    read = getHideSignPhraseModal
-    write = setHideSignPhraseModal
-    notify = hideSignPhraseModalChanged
-
-
   proc quitOnCloseChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getQuitOnClose*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(DEFAULT_QUITE_ON_CLOSE))
@@ -623,7 +609,6 @@ QtObject:
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
       of LSS_KEY_FONT_SIZE: self.fontSizeChanged()
-      of LSS_KEY_HIDE_SIGN_PHRASE_MODAL: self.hideSignPhraseModalChanged()
       of LSS_KEY_QUITE_ON_CLOSE: self.quitOnCloseChanged()
       of LSS_KEY_SKIN_COLOR: self.skinColorChanged()
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()

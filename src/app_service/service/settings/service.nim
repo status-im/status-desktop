@@ -296,15 +296,6 @@ QtObject:
   proc getPublicKey*(self: Service): string =
     return self.settings.publicKey
 
-  proc saveSigningPhrase*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_SIGNING_PHRASE, value)):
-      self.settings.signingPhrase = value
-      return true
-    return false
-
-  proc getSigningPhrase*(self: Service): string =
-    return self.settings.signingPhrase
-
   proc saveDefaultSyncPeriod*(self: Service, value: int): bool =
     if(self.saveSetting(KEY_DEFAULT_SYNC_PERIOD, value)):
       self.settings.defaultSyncPeriod = value

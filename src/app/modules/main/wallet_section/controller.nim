@@ -39,9 +39,6 @@ proc init*(self: Controller) =
 proc getCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-proc getSigningPhrase*(self: Controller): string =
-  return self.settingsService.getSigningPhrase()
-
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.settingsService.getMnemonic().len > 0
 

@@ -198,9 +198,6 @@ method migratingProfileKeyPair*[T](self: Module[T]): bool =
     return self.controller.getSelectedKeyPairIsProfile()
   return self.controller.getKeyPairForProcessing().getKeyUid() == singletonInstance.userProfile.getKeyUid()
 
-method getSigningPhrase*[T](self: Module[T]): string =
-  return self.controller.getSigningPhrase()
-
 proc preActionActivities[T](self: Module[T], currFlowType: FlowType, currStateType: StateType) =
   if currStateType == StateType.ManageKeycardAccounts or
     currStateType == StateType.CreatePin or

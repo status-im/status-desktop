@@ -28,8 +28,6 @@ import "popups/buy"
 Item {
     id: root
 
-    property bool hideSignPhraseModal: false
-
     property SharedStores.RootStore sharedRootStore
     property AppLayoutsStores.RootStore store
     property ProfileStores.ContactsStore contactsStore
@@ -206,13 +204,6 @@ Item {
             }
             Global.openBuyCryptoModalRequested(d.buyFormData)
         }
-    }
-
-    SignPhraseModal {
-        id: signPhrasePopup
-        onRemindLaterClicked: hideSignPhraseModal = true
-        onAcceptClicked: { RootStore.setHideSignPhraseModal(true); }
-        visible: !root.hideSignPhraseModal && !RootStore.hideSignPhraseModal && root.appMainVisible
     }
 
     SeedPhraseBackupWarning {

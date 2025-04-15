@@ -45,9 +45,8 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   self.controller.init()
-  let signingPhrase = self.controller.getSigningPhrase()
   let stickerMarketAddress = self.controller.getStickerMarketAddress()
-  self.view.load(signingphrase, stickerMarketAddress)
+  self.view.load(stickerMarketAddress)
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded

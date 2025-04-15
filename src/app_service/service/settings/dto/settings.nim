@@ -24,7 +24,6 @@ const KEY_NAME* = "name"
 const KEY_PHOTO_PATH* = "photo-path"
 const KEY_PREVIEW_PRIVACY* = "preview-privacy?"
 const KEY_PUBLIC_KEY* = "public-key"
-const KEY_SIGNING_PHRASE* = "signing-phrase"
 const KEY_DEFAULT_SYNC_PERIOD* = "default-sync-period"
 const KEY_SEND_PUSH_NOTIFICATIONS* = "send-push-notifications?"
 const KEY_APPEARANCE* = "appearance"
@@ -131,7 +130,6 @@ type
     pinnedMailserver*: PinnedMailserver
     previewPrivacy*: bool
     publicKey*: string
-    signingPhrase*: string
     defaultSyncPeriod*: int
     sendPushNotifications*: bool
     appearance*: int
@@ -207,7 +205,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_PHOTO_PATH, result.photoPath)
   discard jsonObj.getProp(KEY_PREVIEW_PRIVACY, result.previewPrivacy)
   discard jsonObj.getProp(KEY_PUBLIC_KEY, result.publicKey)
-  discard jsonObj.getProp(KEY_SIGNING_PHRASE, result.signingPhrase)
   discard jsonObj.getProp(KEY_DEFAULT_SYNC_PERIOD, result.defaultSyncPeriod)
   discard jsonObj.getProp(KEY_SEND_PUSH_NOTIFICATIONS, result.sendPushNotifications)
   discard jsonObj.getProp(KEY_APPEARANCE, result.appearance)
