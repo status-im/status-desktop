@@ -99,6 +99,7 @@ SplitView {
                         }
                     }
                     walletRootStore: WalletStores.RootStore
+                    networksStore: SharedStores.NetworksStore {}
 
                     communitiesStore: CommunitiesStores.CommunitiesStore {
                         function getCommunityDetailsAsJson(communityId) {

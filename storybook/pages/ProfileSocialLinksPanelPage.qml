@@ -80,7 +80,7 @@ SplitView {
 
     StatusScrollView { // wrapped in a ScrollView on purpose; to simulate SettingsContentBase.qml
         SplitView.fillWidth: true
-        SplitView.preferredHeight: 300
+        SplitView.preferredHeight: 500
         ProfileSocialLinksPanel {
             id: socialLinksPanel
             property var linksModel: emptyModelCheck.checked ? emptyModel : linksModel

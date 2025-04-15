@@ -72,7 +72,7 @@ QtObject {
         if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
             let chainIdsDown = []
             for (var i =0; i<balances.count; i++) {
-                let chainId = ModelUtils.get(i, "chainId")
+                let chainId = ModelUtils.get(balances, i, "chainId")
                 if(blockchainNetworksDown.includes(chainId))
                     chainIdsDown.push(chainId)
             }

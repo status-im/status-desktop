@@ -56,8 +56,8 @@ Shape {
             visible: root.icon
             color: root.textColor
             icon: root.icon
-            width: 16
-            height: width
+            Layout.preferredWidth: 16
+            Layout.preferredHeight: width
         }
 
         StatusBaseText {

@@ -37,7 +37,7 @@ ColumnLayout {
     SearchBox {
         id: searchBox
         Layout.fillWidth: true
-        Layout.bottomMargin: 16
+        Layout.bottomMargin: Theme.padding
         visible: RootStore.savedAddresses.count > 0
         placeholderText: qsTr("Search for name, ENS or address")
 
@@ -68,6 +68,7 @@ ColumnLayout {
     ShapeRectangle {
         id: noSavedAddresses
         Layout.fillWidth: true
+        Layout.preferredHeight: 44
         visible: RootStore.savedAddresses.count === 0
         text: qsTr("Your saved addresses will appear here")
     }
@@ -75,6 +76,7 @@ ColumnLayout {
     ShapeRectangle {
         id: emptySearchResult
         Layout.fillWidth: true
+        Layout.preferredHeight: 44
         visible: RootStore.savedAddresses.count > 0 && listView.count === 0
         text: qsTr("No saved addresses found. Check spelling or address is correct.")
     }
