@@ -146,9 +146,15 @@ Control {
         }
     }
 
-    component Placeholder: ShapeRectangle {
+    component Placeholder: Item {
         property bool isCollectible
-        text: isCollectible ? qsTr("Your hidden collectibles will appear here") : qsTr("Your hidden assets will appear here")
+
+        height: ProfileUtils.defaultDelegateHeight
+        ShapeRectangle {
+            anchors.fill: parent
+            anchors.margins: 1
+            text: parent.isCollectible ? qsTr("Your hidden collectibles will appear here") : qsTr("Your hidden assets will appear here")
+        }
     }
 
     Component {
@@ -219,7 +225,7 @@ Control {
                 required property int index
 
                 width: ListView.view.width
-                height: visible ? 76 : 0
+                height: visible ? ProfileUtils.defaultDelegateHeight : 0
                 sourceComponent: model.isGroup ? tokenGroupDelegate : tokenDelegate
                 visible: (!model.isCollectible && d.assetsExpanded) || (model.isCollectible && d.collectiblesExpanded)
             }

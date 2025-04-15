@@ -37,7 +37,7 @@ StatusDropdown {
             text: qsTr("Connected dApps will appear here")
 
             Layout.fillWidth: true
-            Layout.preferredHeight: implicitHeight
+            Layout.preferredHeight: 44
             Layout.leftMargin: Theme.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.topMargin: Layout.leftMargin

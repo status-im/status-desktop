@@ -444,6 +444,7 @@ ColumnLayout {
 
     ShapeRectangle {
         Layout.fillWidth: true
+        Layout.preferredHeight: 44
         Layout.topMargin: Theme.padding
         visible: !d.hasRegularCollectibles && !d.hasCommunityCollectibles
         text: qsTr("Collectibles will appear here")

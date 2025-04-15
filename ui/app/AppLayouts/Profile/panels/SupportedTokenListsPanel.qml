@@ -23,9 +23,9 @@ StatusListView {
 
     implicitHeight: contentHeight
     model: root.sourcesOfTokensModel
-    spacing: 8
+    spacing: Theme.halfPadding
     delegate: StatusListItem {
-        height: 76
+        height: ProfileUtils.defaultDelegateHeight
         width: ListView.view.width
         title: model.name
         sensor.enabled: false
@@ -51,13 +51,15 @@ StatusListView {
 
     footer: Item {
         width: parent.width
-        height: root.count > 0 ? shapeRect.implicitHeight + 20 : shapeRect.implicitHeight
+        height: root.count > 0 ? shapeRect.implicitHeight + root.spacing : shapeRect.implicitHeight
 
         ShapeRectangle {
             id: shapeRect
 
             anchors.bottom: parent.bottom
-            width: parent.width - 4 // The rectangular path is rendered outside
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width - 2 // The rectangular path is rendered outside
+            height: ProfileUtils.defaultDelegateHeight
 
             icon: "add"
             text: qsTr("Add a Token List (coming soon)")
@@ -107,7 +109,7 @@ StatusListView {
                     }
                 }
 
-                onLinkClicked: Global.openLink(link)
+                onLinkClicked: (link) => Global.openLink(link)
                 onClosed: keyFilter.value = ""
                 Component.onCompleted: open()
             }
