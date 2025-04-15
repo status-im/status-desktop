@@ -5,7 +5,7 @@ import allure
 import pytest
 from allure_commons._allure import step
 
-from helpers.WalletHelper import authenticate_with_password
+from helpers.wallet_helper import authenticate_with_password
 
 import driver
 from constants.wallet import WalletAccountSettings, DerivationPathValue

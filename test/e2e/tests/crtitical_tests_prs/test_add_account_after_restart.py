@@ -5,7 +5,7 @@ from allure import step
 
 import driver
 from constants.wallet import WalletNetworkSettings
-from helpers.WalletHelper import authenticate_with_password
+from helpers.wallet_helper import authenticate_with_password
 
 from driver.aut import AUT
 from gui.components.signing_phrase_popup import SigningPhrasePopup
