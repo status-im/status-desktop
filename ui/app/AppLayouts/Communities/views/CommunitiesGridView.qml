@@ -22,7 +22,8 @@ StatusScrollView {
     property var assetsModel
     property var collectiblesModel
 
-    readonly property bool isEmpty: !featuredRepeater.count && !popularRepeater.count
+    readonly property bool isEmpty: !featuredRepeater.count && !root.popularCommunitiesCount
+    readonly property int popularCommunitiesCount: firstPopularElementsRepeater.count + restOfPopularElementsRepeater.count
 
     signal cardClicked(string communityId)
 
@@ -34,6 +35,11 @@ StatusScrollView {
         // values from the design
         readonly property int scrollViewTopMargin: 20
         readonly property int subtitlePixelSize: 17
+        readonly property int promotionalCardPosition: gridLayout.columns - 1
+
+        // URLs:
+        readonly property string learnAboutCommunitiesVoteLink: Constants.statusHelpLinkPrefix + "communities/vote-to-feature-a-status-community#step-2-initiate-a-round-of-vote"
+        readonly property string voteCommunityLink: "https://curate.status.app/votes"
     }
 
     SortFilterProxyModel {
@@ -48,14 +54,37 @@ StatusScrollView {
     }
 
     SortFilterProxyModel {
-        id: popularModel
+        id: sfpmFirstPopularElementsModel
 
         sourceModel: root.model
 
-        filters: ValueFilter {
-            roleName: "featured"
-            value: false
-        }
+        filters: [
+            ValueFilter {
+                roleName: "featured"
+                value: false
+            },
+            IndexFilter {
+                maximumIndex: d.promotionalCardPosition - 1
+            }
+        ]
+
+    }
+
+    SortFilterProxyModel {
+        id: sfpmRestOfPopularElementsModel//popularModel
+
+        sourceModel: root.model
+
+        filters: [
+            ValueFilter {
+                roleName: "featured"
+                value: false
+            },
+            IndexFilter {
+                maximumIndex: d.promotionalCardPosition - 1
+                inverted: true
+            }
+        ]
     }
 
     Component {
@@ -141,7 +170,7 @@ StatusScrollView {
         }
 
         StatusBaseText {
-            visible: !root.searchLayout && popularRepeater.count
+            visible: !root.searchLayout && root.popularCommunitiesCount
             Layout.topMargin: 20
             //: All communities
             text: qsTr("All")
@@ -151,14 +180,29 @@ StatusScrollView {
         }
 
         GridLayout {
+            id: gridLayout
+
             visible: !root.searchLayout
             columns: 3
             columnSpacing: Theme.padding
             rowSpacing: Theme.padding
 
             Repeater {
-                id: popularRepeater
-                model: popularModel
+                id: firstPopularElementsRepeater
+                model: sfpmFirstPopularElementsModel
+                delegate: communityCardDelegate
+            }
+
+            PromotionalCommunityCard {
+                onLearnMore: Global.openLinkWithConfirmation(d.learnAboutCommunitiesVoteLink,
+                                                             StringUtils.extractDomainFromLink(d.learnAboutCommunitiesVoteLink))
+                onInitiateVote: Global.openLinkWithConfirmation(d.voteCommunityLink,
+                                                                StringUtils.extractDomainFromLink(d.voteCommunityLink))
+            }
+
+            Repeater {
+                id: restOfPopularElementsRepeater
+                model: sfpmRestOfPopularElementsModel
                 delegate: communityCardDelegate
             }
         }
