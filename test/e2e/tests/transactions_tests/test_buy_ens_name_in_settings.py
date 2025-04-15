@@ -7,10 +7,10 @@ import driver
 from configs import WALLET_SEED
 from configs.timeouts import UI_LOAD_TIMEOUT_SEC
 from constants import ReturningUser
-from helpers.OnboardingHelper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
+from helpers.onboarding_helper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
     finalize_onboarding_and_login
-from helpers.SettingsHelper import enable_testnet_mode
-from helpers.WalletHelper import authenticate_with_password
+from helpers.settings_helper import enable_testnet_mode
+from helpers.wallet_helper import authenticate_with_password
 from scripts.utils.generators import random_ens_string
 from constants.wallet import WalletTransactions
 from gui.components.wallet.send_popup import SendPopup

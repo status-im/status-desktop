@@ -4,7 +4,7 @@ from allure import step
 
 import driver
 from constants import RandomWalletAccount
-from helpers.WalletHelper import authenticate_with_password
+from helpers.wallet_helper import authenticate_with_password
 from scripts.utils.generators import random_wallet_acc_keypair_name
 
 from gui.main_window import MainWindow

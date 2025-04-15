@@ -13,7 +13,6 @@ from gui.main_window import MainWindow
                  'Can create up to 5 member role permissions')
 @pytest.mark.case(739309)
 @pytest.mark.communities
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/17786')
 def test_add_5_member_role_permissions(main_screen: MainWindow):
 
     with step('Create community and select it'):

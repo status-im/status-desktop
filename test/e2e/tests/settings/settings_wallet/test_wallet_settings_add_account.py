@@ -7,7 +7,7 @@ from allure_commons._allure import step
 
 import driver
 from constants import RandomWalletAccount
-from helpers.WalletHelper import authenticate_with_password
+from helpers.wallet_helper import authenticate_with_password
 from constants.wallet import WalletAccountPopup
 
 from gui.main_window import MainWindow

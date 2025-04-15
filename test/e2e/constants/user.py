@@ -116,45 +116,45 @@ community_tags = ['Activism', 'Art', 'Blockchain', 'Books & blogs', 'Career', 'C
 permission_data = [
     {
         'checkbox_state': True,
-        'first_asset': 'Dai Stablecoin',
+        'first_asset': 'Berlin Coin',
         'second_asset': False,
         'amount': '10',
         'allowed_to': 'becomeMember',
         'in_channel': False,
-        'asset_title': '10 DAI',
+        'asset_title': '10 BRLN',
         'second_asset_title': False,
         'allowed_to_title': 'Become member'
     },
     {
         'checkbox_state': True,
-        'first_asset': 'Ether',
+        'first_asset': 'Berlin Coin',
         'second_asset': False,
         'amount': '1',
         'allowed_to': 'becomeAdmin',
         'in_channel': False,
-        'asset_title': '1 ETH',
+        'asset_title': '1 BRLN',
         'second_asset_title': False,
         'allowed_to_title': 'Become an admin'
     },
     {
         'checkbox_state': True,
-        'first_asset': 'Ether',
+        'first_asset': 'Berlin Coin',
         'second_asset': 'Dai Stablecoin',
         'amount': '10',
         'allowed_to': 'viewAndPost',
         'in_channel': '#general',
-        'asset_title': '10 ETH',
+        'asset_title': '10 BRLN',
         'second_asset_title': '10 DAI',
         'allowed_to_title': 'View and post'
     },
     {
         'checkbox_state': True,
-        'first_asset': 'Ether',
+        'first_asset': 'Berlin Coin',
         'second_asset': 'Dai Stablecoin',
         'amount': '10',
         'allowed_to': 'viewOnly',
         'in_channel': '#general',
-        'asset_title': '10 ETH',
+        'asset_title': '10 BRLN',
         'second_asset_title': '10 DAI',
         'allowed_to_title': 'View only'
     },
