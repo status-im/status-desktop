@@ -35,7 +35,7 @@ import SortFilterProxyModel 0.2
 StatusSectionLayout {
     id: root
 
-    property alias settingsSubsection: profileContainer.currentIndex
+    property alias settingsSubsection: leftPanel.settingsSubsection
     property int settingsSubSubsection
 
     objectName: "profileStatusSectionLayout"
@@ -132,6 +132,7 @@ StatusSectionLayout {
     }
 
     leftPanel: SettingsLeftTabView {
+        id: leftPanel
         anchors.fill: parent
 
         model: settingsEntriesModel
@@ -141,12 +142,6 @@ StatusSectionLayout {
                 event.accepted = true;
                 profileContainer.currentItem.notifyDirty();
             }
-        }
-
-        onSettingsSubsectionChanged: root.settingsSubsection = settingsSubsection
-
-        Binding on settingsSubsection {
-            value: root.settingsSubsection
         }
     }
 
@@ -158,6 +153,7 @@ StatusSectionLayout {
         anchors.fill: parent
         anchors.leftMargin: Constants.settingsSection.leftMargin
 
+        currentIndex: leftPanel.settingsSubsection
         onCurrentIndexChanged: {
             if (!!children[currentIndex] && !children[currentIndex].active)
                 children[currentIndex].active = true
