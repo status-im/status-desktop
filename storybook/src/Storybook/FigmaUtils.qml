@@ -4,7 +4,7 @@ import QtQml 2.14
 
 QtObject {
     function decomposeLink(link) {
-        const fileRegex = /www\.figma\.com\/design\/([a-zA-Z0-9]+)/
+        const fileRegex = /www\.figma\.com\/(?:file|design)\/([a-zA-Z0-9]+)/
         const fileMatch = link.match(fileRegex)
 
         const nodeIdRegex = /node-id=([0-9A-Za-z%-]+)/
