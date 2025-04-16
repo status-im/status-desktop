@@ -10,6 +10,7 @@ import StatusQ.Controls 0.1
 SettingsContentBase {
     id: root
 
+    property alias isStatusNewsViaRSSEnabled: statusNewsSwitch.checked
     required property bool isCentralizedMetricsEnabled
 
     function refreshSwitch() {
@@ -22,6 +23,17 @@ SettingsContentBase {
     }
 
     ColumnLayout {
+        StatusListItem {
+            Layout.preferredWidth: root.contentWidth
+            title: qsTr("Receive Status News via RSS")
+            subTitle: qsTr("Fetches news from external sites which may expose your IP")
+            components: [
+                StatusSwitch {
+                    id: statusNewsSwitch
+                }
+            ]
+            onClicked: statusNewsSwitch.checked = !statusNewsSwitch.checked
+        }
         StatusListItem {
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Share usage data with Status")

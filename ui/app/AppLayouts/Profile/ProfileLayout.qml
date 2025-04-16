@@ -352,6 +352,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                privacyStore: root.store.privacyStore
                 notificationsStore: root.store.notificationsStore
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
@@ -518,12 +519,15 @@ StatusSectionLayout {
             active: false
             asynchronous: true
             sourceComponent: PrivacyAndSecurityView {
+                isStatusNewsViaRSSEnabled: root.store.privacyStore.isStatusNewsViaRSSEnabled
                 isCentralizedMetricsEnabled: root.isCentralizedMetricsEnabled
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
                 contentWidth: d.contentWidth
+
+                onIsStatusNewsViaRSSEnabledChanged: root.store.privacyStore.isStatusNewsViaRSSEnabled = isStatusNewsViaRSSEnabled
             }
         }
     }

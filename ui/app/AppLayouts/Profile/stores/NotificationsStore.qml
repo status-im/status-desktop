@@ -5,6 +5,7 @@ QtObject {
     id: root
 
     property var notificationsModule
+    property var notificationsSettings: appSettings /*TODO: Add appSettings.notifSettingStatusNews notifiable property in the backend*/
 
     property var exemptionsModel: notificationsModule.exemptionsModel
 
