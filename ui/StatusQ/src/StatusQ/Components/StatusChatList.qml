@@ -108,7 +108,7 @@ Item {
                 bottomInset: 0
                 customizable: true
                 Drag.keys: chatListDelegate.keys
-                onClicked: {
+                onClicked: (mouse) => {
                     if (draggableItem.isCategory) {
                         statusChatListCategoryItem.clicked(mouse);
                     } else {

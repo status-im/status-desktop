@@ -321,18 +321,15 @@ Rectangle {
                     bottomPadding: Theme.bigPadding
 
                     background: Rectangle {
-                        StatusMouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            acceptedButtons: Qt.LeftButton
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.selectAllAccounts()
-                            hoverEnabled: true
-                        }
                         radius: Theme.radius
-                        color: header.highlighted || mouseArea.containsMouse ? Theme.palette.backgroundHover : root.color
+                        color: header.highlighted || header.hovered ? Theme.palette.backgroundHover : root.color
                         implicitWidth: parent.ListView.view.width - Theme.padding * 2
                     }
+
+                    HoverHandler {
+                        cursorShape: Qt.PointingHandCursor
+                    }
+                    onClicked: root.selectAllAccounts()
 
                     contentItem: ColumnLayout {
                         spacing: 0
@@ -443,14 +440,14 @@ Rectangle {
                     textFillWidth: true
                     spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
                     onClicked: root.selectSavedAddresses()
+                }
 
-                    StatusMouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.RightButton
-                        cursorShape: Qt.PointingHandCursor
-                        propagateComposedEvents: true
-                        onClicked: mouse.accepted = true
-                    }
+                StatusMouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton
+                    cursorShape: Qt.PointingHandCursor
+                    propagateComposedEvents: true
+                    onClicked: (mouse) => mouse.accepted = true
                 }
             }
         }

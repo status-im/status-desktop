@@ -48,7 +48,7 @@ StatusBaseText {
     maximumLineCount: 1
     elide: Text.ElideRight
     color: root.containsMouse ? root.linkColor : root.normalColor
-    font.pixelSize: 13
+    font.pixelSize: Theme.additionalTextSize
     font.weight: Font.Medium
     font.underline: root.containsMouse
 

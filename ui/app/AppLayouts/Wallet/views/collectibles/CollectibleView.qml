@@ -41,7 +41,7 @@ Control {
                                               (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
     property color ornamentColor // Relevant color for these special tokens (community color)
 
-   QtObject {
+    QtObject {
         id: d
 
         readonly property bool unknownCommunityName: root.communityName.startsWith("0x") && root.communityId === root.communityName
@@ -55,17 +55,17 @@ Control {
         radius: Theme.radius
         color: Theme.palette.baseColor2
         visible: !root.isLoading && root.hovered
+    }
 
-        TapHandler {
-            acceptedButtons: Qt.LeftButton
-            enabled: !root.isLoading
-            onTapped: root.clicked()
-        }
-        TapHandler {
-            acceptedButtons: Qt.RightButton
-            enabled: !root.isLoading
-            onTapped: root.rightClicked()
-        }
+    TapHandler {
+        acceptedButtons: Qt.LeftButton
+        enabled: !root.isLoading
+        onTapped: root.clicked()
+    }
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        enabled: !root.isLoading
+        onTapped: root.rightClicked()
     }
 
     HoverHandler {
