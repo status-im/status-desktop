@@ -555,12 +555,12 @@ QtObject {
             ProfileDialog {
                 id: profilePopup
 
-                property alias publicKey: contactModelEntry.publicKey
+                property string publicKey
                 readonly property bool isCurrentUser: contactDetails.isCurrentUser
 
                 ContactModelEntry {
                     id: contactModelEntry
-
+                    publicKey: profilePopup.publicKey
                     contactsModel: root.allContactsModel
                 }
 
