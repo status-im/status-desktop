@@ -130,6 +130,7 @@ Item {
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
+                isBlocked: model.isBlocked
                 isAdmin: model.memberRole === Constants.memberRole.owner
                 icon.name: model.icon
                 icon.color: Utils.colorForColorId(model.colorId)
