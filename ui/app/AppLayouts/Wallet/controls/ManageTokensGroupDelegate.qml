@@ -29,7 +29,7 @@ DropArea {
     readonly property string groupId: isCollection ? model.collectionUid : model.communityId
     readonly property string groupImage: !!model ? model.communityImage || model.imageUrl : ""
     readonly property int childCount: model.enabledNetworkBalance // NB using "balance" as "count" in the grouped model
-    readonly property alias title: groupedCommunityTokenDelegate.title
+    readonly property alias title: titleText.text
 
     readonly property bool unknownCommunityName: model.communityName.startsWith("0x") && model.communityName === model.communityId
     
@@ -64,21 +64,6 @@ DropArea {
         draggable: true
         spacing: 12
         bgColor: Theme.palette.baseColor4
-        
-        title: {
-            if (root.isCollection) {
-                return model.collectionName
-            }
-
-            if (root.unknownCommunityName) {
-                if (communityNameArea.hovered) {
-                    return qsTr("Community %1").arg(model.communityName)
-                }
-                return qsTr("Unknown community")
-            }
-                    
-            return model.communityName
-        }
 
         visualIndex: index
         dragParent: root.dragParent
@@ -123,9 +108,23 @@ DropArea {
                 Layout.fillWidth: true
 
                 StatusBaseText {
+                    id: titleText
                     anchors.verticalCenter: parent.verticalCenter
                     width: Math.min(implicitWidth, parent.width - copyButton.width)
-                    text: groupedCommunityTokenDelegate.title
+                    text: {
+                        if (root.isCollection) {
+                            return model.collectionName
+                        }
+
+                        if (root.unknownCommunityName) {
+                            if (communityNameArea.hovered) {
+                                return qsTr("Community %1").arg(model.communityName)
+                            }
+                            return qsTr("Unknown community")
+                        }
+
+                        return model.communityName
+                    }
                     elide: Text.ElideRight
                     maximumLineCount: 1
                     font.weight: Font.Medium

@@ -102,7 +102,7 @@ import StatusQ.Core.Theme 0.1
 
    For a list of components available see StatusQ.
 */
-ItemDelegate {
+AbstractButton {
     id: root
 
     /*!
@@ -126,13 +126,7 @@ ItemDelegate {
        This property holds the optional list of actions, displayed on the right side.
        The actions are reparented into a RowLayout.
     */
-    property list<Item> actions
-    onActionsChanged: {
-        for (let idx in actions) {
-            let action = actions[idx]
-            action.parent = actionsRow
-        }
-    }
+    property alias actions: actionsRow.children
 
     /*!
        \qmlproperty Item StatusDraggableListItem::dragParent
@@ -159,6 +153,9 @@ ItemDelegate {
        This property holds whether this item can be customized
     */
     property bool customizable: false
+
+    property bool highlighted // NB: compat with ItemDelegate
+
     /*!
         \qmlsignal
         This signal is emitted when the StatusDraggableListItem is clicked.
@@ -213,10 +210,10 @@ ItemDelegate {
     property color assetBgColor: "transparent"
 
     /*!
-       \qmlproperty alias StatusDraggableListItem::containsMouse
-       Used to read if the component cotains mouse
+       \qmlproperty bool StatusDraggableListItem::containsMouse
+       Used to read if the component contains mouse
     */
-    readonly property alias containsMouse: hoverHandler.hovered
+    readonly property bool containsMouse: root.hovered
 
     /*!
        \qmlproperty bool StatusDraggableListItem::changeColorOnDragActive
@@ -274,29 +271,11 @@ ItemDelegate {
     ]
 
     background: Rectangle {
+        implicitHeight: 76 // ProfileUtils.defaultDelegateHeight
         color: root.changeColorOnDragActive && !root.customizable? Theme.palette.alphaColor(Theme.palette.baseColor2, 0.7) : root.bgColor
         border.width: root.customizable ? 0 : 1
         border.color: Theme.palette.baseColor2
-        radius: root.customizable ? 0 : 8
-
-        StatusMouseArea {
-            id: dragHandler
-            anchors.fill: parent
-            drag.target: root.dragEnabled ? root : null
-            drag.axis: root.dragAxis
-            preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
-            cursorShape: {
-                if (!root.enabled)
-                    return undefined
-                if (root.dragEnabled)
-                    return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
-                return Qt.PointingHandCursor
-            }
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: (mouse) => {
-                root.clicked(mouse)
-            }
-        }
+        radius: root.customizable ? 0 : Theme.radius
     }
 
     // inset to simulate spacing
@@ -310,7 +289,31 @@ ItemDelegate {
     icon.width: 20
     icon.height: 20
 
-    contentItem: RowLayout {
+    // Qt6: use a TapHandler with a regular contentItem, and derive again from ItemDelegate
+    StatusMouseArea {
+        id: dragHandler
+        anchors.fill: parent
+        drag.target: root.dragEnabled ? root : null
+        drag.axis: root.dragAxis
+        preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
+        cursorShape: {
+            if (!root.enabled)
+                return undefined
+            if (root.dragEnabled)
+                return root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+        }
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: (mouse) => {
+            root.clicked(mouse)
+        }
+    }
+
+    RowLayout {
+        anchors.fill: parent
+        anchors.leftMargin: root.leftPadding
+        anchors.rightMargin: root.rightPadding
+        anchors.topMargin: root.topPadding
+        anchors.bottomMargin: root.bottomPadding
         spacing: root.spacing
 
         StatusIcon {
@@ -430,8 +433,5 @@ ItemDelegate {
             asset.bgHeight: 40
             asset.bgWidth: 40
         }
-    }
-    HoverHandler {
-        id: hoverHandler
     }
 }
