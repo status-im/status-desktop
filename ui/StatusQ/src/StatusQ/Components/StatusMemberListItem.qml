@@ -111,12 +111,7 @@ ItemDelegate {
        This property holds the optional list of actions, displayed on the right side.
        The actions are reparented into a Row.
     */
-    property list<Item> components
-    onComponentsChanged: {
-        for (let idx in components) {
-            components[idx].parent = componentsRow
-        }
-    }
+    property alias components: componentsRow.children
 
     /*!
        \qmlproperty StatusIdenticonRingSettings StatusMemberListItem::ringSettings
@@ -176,13 +171,13 @@ ItemDelegate {
     background: Rectangle {
         color: root.color
         radius: Theme.radius
+    }
 
-        StatusMouseArea {
-            anchors.fill: parent
-            cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: root.clicked(mouse)
-        }
+    StatusMouseArea {
+        anchors.fill: parent
+        cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: (mouse) => root.clicked(mouse)
     }
 
     contentItem: RowLayout {

@@ -12,7 +12,7 @@ Control {
     implicitWidth: visible ? 288 : 0
     implicitHeight: visible ? 28 : 0
 
-    horizontalPadding: 8
+    horizontalPadding: Theme.halfPadding
 
     property string text
     property bool opened: true
@@ -33,20 +33,22 @@ Control {
 
     background: Rectangle {
         color: (hoverHandler.hovered || root.highlighted) ? Theme.palette.baseColor2 : "transparent"
-        radius: 8
+        radius: Theme.radius
     }
 
     contentItem: Item {
-        HoverHandler {
+        MouseArea {
             id: hoverHandler
+            anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: (mouse) => root.clicked(mouse)
         }
 
         StatusBaseText {
             width: Math.min(implicitWidth, parent.width)
             anchors.verticalCenter: parent.verticalCenter
             font.weight: root.hasUnreadMessages ? Font.Bold : Font.Medium
-            font.pixelSize: 15
             elide: Text.ElideRight
             color: {
                 if (root.muted && !hoverHandler.hovered && !root.highlighted) {

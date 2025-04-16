@@ -580,8 +580,8 @@ ColumnLayout {
                     text: qsTr("Send")
                     onTriggered: root.sendRequested(tokenMenu.symbol, tokenMenu.tokenType, tokenMenu.userOwnedAddress)
                 }
-                onObjectAdded: tokenMenu.insertAction(0, object)
-                onObjectRemoved: tokenMenu.removeAction(0)
+                onObjectAdded: (index, object) => tokenMenu.insertAction(0, object)
+                onObjectRemoved: (index, object) => tokenMenu.removeAction(0)
             }
 
             StatusAction {
