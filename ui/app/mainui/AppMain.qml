@@ -2298,6 +2298,8 @@ Item {
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                 }
                 activityCenterStore: appMain.activityCenterStore
+                privacyStore: appMain.profileSectionStore.privacyStore
+                notificationsStore: appMain.profileSectionStore.notificationsStore
             }
         }
 
