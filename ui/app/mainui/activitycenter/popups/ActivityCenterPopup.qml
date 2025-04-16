@@ -18,6 +18,7 @@ import shared.views.chat 1.0
 import utils 1.0
 
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.Profile.stores 1.0
 
 import "../views"
 import "../panels"
@@ -28,6 +29,8 @@ Popup {
 
     property ActivityCenterStore activityCenterStore
     property ChatStores.RootStore store
+    property PrivacyStore privacyStore
+    property NotificationsStore notificationsStore
 
     onOpened: {
         Global.activityPopupOpened = true
@@ -50,6 +53,9 @@ Popup {
                 root.activityCenterStore.fetchActivityCenterNotifications()
             }
         })
+
+        readonly property bool isStatusNewsViaRSSEnabled: root.privacyStore.isStatusNewsViaRSSEnabled
+        readonly property var notificationsSettings: root.notificationsStore.notificationsSettings
     }
 
     Overlay.modal: StatusMouseArea { // eat every event behind the popup
@@ -96,6 +102,7 @@ Popup {
     StatusListView {
         id: listView
 
+        visible: !statusNewsNotificationPlaceholder.visible
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: activityCenterTopBar.bottom
@@ -165,6 +172,15 @@ Popup {
                 }
             }
         }
+    }
+
+    // Placeholders for the status news when their settings are disbled
+    Loader {
+        id: statusNewsNotificationPlaceholder
+        visible: activityCenterTopBar.activeGroup === ActivityCenterStore.ActivityCenterGroup.NewsMessage &&
+                 (!d.isStatusNewsViaRSSEnabled || d.notificationsSettings.notifSettingStatusNews === Constants.settingsSection.notifications.turnOffValue)
+        anchors.centerIn: parent
+        sourceComponent: newsPlaceholderPanel
     }
 
     Component {
@@ -522,6 +538,72 @@ Popup {
                 }
             }
             footer: null
+        }
+    }
+
+    Component {
+        id: newsMessagePopup
+
+        NewsMessagePopup {
+            onLinkClicked: Global.openLinkWithConfirmation(link, StatusQUtils.StringUtils.extractDomainFromLink(link));
+        }
+    }
+
+    Component {
+        id: newsPlaceholderPanel
+        
+        ColumnLayout {
+            id: newsPanelLayout
+
+            // Property used to setup the panel layout:
+            // If true it means the panel is for enabling RSS notification
+            // If false, it means it is for enabling status news notifications
+            readonly property bool isEnableRSSNotificationPanelType: !d.isStatusNewsViaRSSEnabled
+
+            anchors.centerIn: parent
+            width: 320
+            spacing: 12
+
+            StatusBaseText {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.maximumWidth: parent.width
+
+                text: newsPanelLayout.isEnableRSSNotificationPanelType ? qsTr("Enable RSS to receive Status News notifications") :
+                                                                         qsTr("Enable Status News notifications")
+                font.weight: Font.Bold
+                lineHeight: 1.2
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+
+            StatusBaseText {
+                Layout.alignment: Qt.AlignHCenter
+                Layout.maximumWidth: parent.width
+
+                font.pixelSize: Theme.additionalTextSize
+                color: Theme.palette.baseColor1
+                text: newsPanelLayout.isEnableRSSNotificationPanelType ? qsTr("RSS is currently disabled via your Privacy & Security settings. Enable RSS to receive Status News notifications about upcoming features and important announcements.") :
+                                                                         qsTr("This feature is currently turned off. Enable Status News notifications to receive notifications about upcoming features and important announcements")
+                lineHeight: 1.2
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+            }
+
+            StatusButton {
+                Layout.alignment: Qt.AlignHCenter
+
+                text: newsPanelLayout.isEnableRSSNotificationPanelType ? qsTr("Enable RSS"):
+                                                                         qsTr("Enable Status News notifications")
+                font.pixelSize: Theme.additionalTextSize
+
+                onClicked: {
+                    if(isEnableRSSNotificationPanelType) {
+                        root.privacyStore.isStatusNewsViaRSSEnabled = true
+                    } else {
+                        d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.sendAlertsValue
+                    }
+                }
+            }
         }
     }
 }
