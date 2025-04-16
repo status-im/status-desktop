@@ -220,6 +220,7 @@ Control {
             //    NumberAnimation { properties: "x,y" }
             //}
 
+            spacing: Theme.halfPadding
             delegate: Loader {
                 required property var model
                 required property int index
