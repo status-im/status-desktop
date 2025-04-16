@@ -7,8 +7,13 @@ QT_VERSION="5.15.16_1"
 # https://github.com/Homebrew/homebrew-core/commit/2c1970eb750f254ecac6640e7e816fd77a5e065e
 QT_BREW_FORMULA_COMMIT_SHA="2c1970eb750f254ecac6640e7e816fd77a5e065e"
 QT_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${QT_BREW_FORMULA_COMMIT_SHA}/Formula/q/qt%405.rb"
+# https://github.com/Homebrew/homebrew-core/commit/b4e46db74e74a8c1650b38b1da222284ce1ec5ce
+CMAKE_VERSION="3.31.6"
+CMAKE_BREW_FORMULA_COMMIT_SHA="b4e46db74e74a8c1650b38b1da222284ce1ec5ce"
+CMAKE_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${CMAKE_BREW_FORMULA_COMMIT_SHA}/Formula/c/cmake.rb"
 BREW_PREFIX=$(brew --prefix)
 QT_INSTALL_DIR="${BREW_PREFIX}/Cellar/qt@5/${QT_VERSION}"
+CMAKE_INSTALL_DIR="${BREW_PREFIX}/Cellar/cmake/${CMAKE_VERSION}"
 
 function check_version {
   if [[ "$(uname -s)" != "Darwin" ]]; then
@@ -19,7 +24,7 @@ function check_version {
 
 function install_build_dependencies {
   echo "Install build dependencies"
-  brew install cmake pkg-config libtool jq node@18 yarn protoc-gen-go
+  brew install pkg-config libtool jq node@18 yarn protoc-gen-go
 }
 
 function install_qt {
@@ -31,6 +36,17 @@ function install_qt {
   curl -o /tmp/qt@5.rb "${QT_FORMULA_URL}"
   brew install /tmp/qt@5.rb
   rm /tmp/qt@5.rb
+}
+
+function install_cmake {
+  echo "Installing CMake ${CMAKE_VERSION}"
+
+  echo "Detected Homebrew prefix: ${BREW_PREFIX}"
+  echo "CMake will be installed to: ${CMAKE_INSTALL_DIR}"
+
+  curl -o /tmp/cmake.rb "${CMAKE_FORMULA_URL}"
+  brew install /tmp/cmake.rb
+  rm /tmp/cmake.rb
 }
 
 function get_go_arch {
@@ -68,10 +84,11 @@ function success_message {
   msg="
 SUCCESS!
 
-Before you attempt to build status-dektop you'll need a few environment variables set:
+Before you attempt to build status-desktop you'll need a few environment variables set:
 
 export QTDIR=${QT_INSTALL_DIR}
 export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
+export CMAKE_PREFIX_PATH=${CMAKE_INSTALL_DIR}
 "
   echo $msg
 }
@@ -79,6 +96,7 @@ export PATH=\$QTDIR:\$QTDIR/bin:\$PATH
 if [ "$0" = "$BASH_SOURCE" ]; then
     check_version
     install_build_dependencies
+    install_cmake
     install_qt
     install_golang
     success_message
