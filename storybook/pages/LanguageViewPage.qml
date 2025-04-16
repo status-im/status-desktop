@@ -9,7 +9,6 @@ import AppLayouts.Profile.stores 1.0
 import Storybook 1.0
 
 import utils 1.0
-import mainui 1.0
 
 import shared.stores 1.0 as SharedStores
 
@@ -17,14 +16,6 @@ SplitView {
     id: root
 
     Logs { id: logs }
-
-    Popups {
-        popupParent: root
-        sharedRootStore: SharedStores.RootStore {}
-        rootStore: AppLayoutStores.RootStore {}
-        communityTokensStore: SharedStores.CommunityTokensStore {}
-        networksStore: SharedStores.NetworksStore {}
-    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -73,10 +64,46 @@ SplitView {
             }
 
             currencyStore: SharedStores.CurrenciesStore {
-                property string currentCurrency: "USD"
+                property string currentCurrency: "EUR"
 
-                function updateCurrency(currencyKey) {
+                function updateCurrency(shortName) {
                     logs.logEvent("currencyStore::updateCurrency", ["currencyKey"], arguments)
+                    currentCurrency = shortName
+                }
+
+                readonly property var currenciesModel: ListModel {
+                    ListElement {
+                        key: "usd"
+                        shortName: "USD"
+                        name: qsTr("US Dollars")
+                        symbol: "$"
+                        category: ""
+                        imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
+                        selected: false
+                        isToken: false
+                    }
+
+                    ListElement {
+                        key: "gbp"
+                        shortName: "GBP"
+                        name: qsTr("British Pound")
+                        symbol: "£"
+                        category: ""
+                        imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
+                        selected: false
+                        isToken: false
+                    }
+
+                    ListElement {
+                        key: "eur"
+                        shortName: "EUR"
+                        name: qsTr("Euros")
+                        symbol: "€"
+                        category: ""
+                        imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
+                        selected: true
+                        isToken: false
+                    }
                 }
             }
         }
@@ -98,7 +125,7 @@ SplitView {
 }
 
 // category: Components
-
+// status: good
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=701%3A74776
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=1592%3A112840
 // https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=701%3A75345

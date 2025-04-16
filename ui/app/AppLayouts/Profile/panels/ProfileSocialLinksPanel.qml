@@ -93,7 +93,6 @@ Control {
                 visible: !parent.maxReached
                 text: qsTr("＋ Add a link")
                 color: Theme.palette.primaryColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
                 font.weight: Font.Normal
                 onClicked: Global.openPopup(addSocialLinkModalComponent)
             }
