@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
 
@@ -129,3 +129,6 @@ SplitView {
 }
 
 // category: Components
+// status: good
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Chat%E2%8E%9CDesktop?node-id=10500-370277&m=dev
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Chat%E2%8E%9CDesktop?node-id=6215-1591&m=dev

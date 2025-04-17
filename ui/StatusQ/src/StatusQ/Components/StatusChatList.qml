@@ -1,6 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15 as QC
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -95,7 +94,7 @@ Item {
 
                 id: draggableItem
                 width: parent.width
-                height: visible ? implicitHeight : 0
+                height: visible ? (isCategory ? statusChatListCategoryItem.implicitHeight : statusChatListItem.implicitHeight) : 0
                 dragParent: root.draggableItems ? statusChatListItems : null
                 visualIndex: chatListDelegate.visualIndex
                 draggable: (root.draggableItems && (statusChatListItems.count > 1))
@@ -108,7 +107,7 @@ Item {
                 bottomInset: 0
                 customizable: true
                 Drag.keys: chatListDelegate.keys
-                onClicked: (mouse) => {
+                onClicked: function(mouse) {
                     if (draggableItem.isCategory) {
                         statusChatListCategoryItem.clicked(mouse);
                     } else {
@@ -141,7 +140,7 @@ Item {
                         showMenuButton: !!root.popupMenu
                         hasUnreadMessages: model.hasUnreadMessages
                         muted: model.muted
-                        onClicked: {
+                        onClicked: function(mouse) {
                             if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
                                 statusChatListCategoryItem.setupPopup()
                                 highlighted = true;
@@ -169,7 +168,7 @@ Item {
                         id: statusChatListItem
                         objectName: model.name
                         Layout.fillWidth: true
-                        height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
+                        height: visible ? implicitHeight : 0
                         visible: !draggableItem.isCategory &&
                             (
                                 model.active ||
@@ -177,7 +176,6 @@ Item {
                                 model.notificationsCount > 0 || // unless it's a notification (mentions, replies)
                                 model.categoryOpened
                             )
-                        originalOrder: model.position
                         chatId: model.itemId
                         categoryId: model.categoryId
                         name: model.name
@@ -196,7 +194,7 @@ Item {
                         dragged: draggableItem.dragActive
                         requiresPermissions: model.requiresPermissions
                         locked: model.locked
-                        onClicked: {
+                        onClicked: function(mouse) {
                             highlightWhenCreated = false
 
                             if (mouse.button === Qt.RightButton && !!root.popupMenu) {

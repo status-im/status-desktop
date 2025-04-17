@@ -11,7 +11,6 @@ Rectangle {
     id: root
 
     objectName: "chatItem"
-    property int originalOrder: -1
     property string chatId: ""
     property string categoryId: ""
     property string name: ""

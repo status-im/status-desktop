@@ -10,7 +10,7 @@ Control {
     id: root
 
     implicitWidth: visible ? 288 : 0
-    implicitHeight: visible ? 28 : 0
+    implicitHeight: visible ? 34 : 0
 
     horizontalPadding: Theme.halfPadding
 
@@ -37,12 +37,9 @@ Control {
     }
 
     contentItem: Item {
-        MouseArea {
+        HoverHandler {
             id: hoverHandler
-            anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
-            onClicked: (mouse) => root.clicked(mouse)
         }
 
         StatusBaseText {
