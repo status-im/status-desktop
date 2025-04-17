@@ -985,3 +985,119 @@ QtObject:
     except ValueError:
       error "parse lastTokensUpdate: ", lastTokensUpdate
     return self.settings.lastTokensUpdate
+
+  ### News Feed Settings ###
+  proc notifSettingStatusNewsChanged*(self: Service) {.signal.}
+
+  proc toggleNewsFeedEnabled*(self: Service, value: bool): bool =
+    try:
+      let response = status_settings.toggleNewsFeedEnabled(value)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+
+      self.settings.newsFeedEnabled = value
+      self.notifSettingStatusNewsChanged()
+      return true
+    except Exception as e:
+      error "error: ", procName="toggleNewsFeedEnabled", errName = e.name, errDesription = e.msg
+      return false
+
+  proc getNotifSettingStatusNews*(self: Service): string {.slot.} =
+    result = VALUE_NOTIF_SEND_ALERTS # Default value
+
+    var newsFeedEnabled = false
+    var newsOSNotificationsEnabled = false 
+
+    if self.initialized:
+      newsFeedEnabled = self.settings.newsFeedEnabled
+      newsOSNotificationsEnabled = self.settings.newsNotificationsEnabled
+    else:
+      try:
+        var response = status_settings.newsFeedEnabled()
+        if not response.error.isNil:
+          error "error reading news feed enabled setting: ", errDescription = response.error.message
+          return
+        newsFeedEnabled = response.result.getBool
+
+        response = status_settings.newsNotificationsEnabled()
+        if not response.error.isNil:
+          error "error reading news notifications enabled setting: ", errDescription = response.error.message
+          return
+        newsOSNotificationsEnabled = response.result.getBool
+      except Exception as e:
+        let errDesription = e.msg
+        error "reading news settings error: ", errDesription
+        return
+
+    # We convert the bools to the right setting
+    # Send alerts means the News Feed is enabled + OS notifications are enabled
+    # Deliver quietly means the News Feed is enabled + OS notifications are disabled (so only AC notifications)
+    # Turn OFF means the News Feed is disabled (so no notifications at all and no polling)
+    if not newsFeedEnabled: 
+      return VALUE_NOTIF_TURN_OFF
+    if not newsOSNotificationsEnabled:
+      return VALUE_NOTIF_DELIVER_QUIETLY
+    return VALUE_NOTIF_SEND_ALERTS
+
+  proc setNotifSettingStatusNews*(self: Service, value: string) {.slot.} =
+    var newsFeedEnabled = false
+    var newsOSNotificationsEnabled = false
+    # We need to convert the string value to the right setting values
+    case value
+    of VALUE_NOTIF_SEND_ALERTS:
+      # Send alerts means the News Feed is enabled + OS notifications are enabled
+      newsFeedEnabled = true
+      newsOSNotificationsEnabled = true
+    of VALUE_NOTIF_TURN_OFF:
+      # Turn OFF means the News Feed is disabled + OS notifications are disabled
+      newsFeedEnabled = false
+      newsOSNotificationsEnabled = false
+    of VALUE_NOTIF_DELIVER_QUIETLY:
+      # Deliver quietly means the News Feed is enabled + OS notifications are disabled
+      newsFeedEnabled = true
+      newsOSNotificationsEnabled = false
+    else:
+      error "error: ", procName="setNotifSettingStatusNews", errDescription = "Unknown value: ", value
+      return
+
+    if not self.saveSetting(KEY_NEWS_NOTIFICATIONS_ENABLED, newsOSNotificationsEnabled):
+      return
+    self.settings.newsNotificationsEnabled = newsOSNotificationsEnabled
+
+    # toggleNewsFeedEnabled changes the value and calls the signals
+    discard self.toggleNewsFeedEnabled(newsFeedEnabled)
+  QtProperty[string] notifSettingStatusNews:
+    read = getNotifSettingStatusNews
+    write = setNotifSettingStatusNews
+    notify = notifSettingStatusNewsChanged
+  
+  proc newsRSSEnabledChanged*(self: Service) {.signal.}
+  proc getNewsRSSEnabled*(self: Service): bool {.slot.} =
+    if self.initialized:
+      return self.settings.newsRSSEnabled
+
+    result = true #default value
+    try:
+      let response = status_settings.newsRSSEnabled()
+      if(not response.error.isNil):
+        raise newException(RpcException, response.error.message)
+      result = response.result.getBool
+    except Exception as e:
+      let errDesription = e.msg
+      error "reading news RSS setting error: ", errDesription
+
+  proc setNewsRSSEnabled*(self: Service, value: bool) {.slot.} =
+    try:
+      let response = status_settings.toggleNewsRSSEnabled(value)
+      if not response.error.isNil:
+        raise newException(RpcException, response.error.message)
+
+      self.settings.newsRSSEnabled = value
+      self.newsRSSEnabledChanged()
+    except Exception as e:
+      error "error: ", procName="toggleNewsRSSEnabled", errName = e.name, errDesription = e.msg
+
+  QtProperty[bool] newsRSSEnabled:
+    read = getNewsRSSEnabled
+    write = setNewsRSSEnabled
+    notify = newsRSSEnabledChanged

@@ -1,5 +1,5 @@
 import json
-import ./core, ./response_type
+import ./core, ./response_type, ../app_service/common/utils
 
 export response_type
 
@@ -95,3 +95,18 @@ proc mnemonicWasShown*(): RpcResponse[JsonNode] =
 
 proc lastTokensUpdate*(): RpcResponse[JsonNode] =
   return core.callPrivateRPC("settings_lastTokensUpdate")
+
+proc newsFeedEnabled*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_newsFeedEnabled")
+
+proc newsNotificationsEnabled*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_newsNotificationsEnabled")
+
+proc newsRSSEnabled*(): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("settings_newsRSSEnabled")
+
+proc toggleNewsFeedEnabled*(value: bool): RpcResponse[JsonNode] =
+  return core.callPrivateRPC("toggleNewsFeedEnabled".prefix, %*[value])
+
+proc toggleNewsRSSEnabled*(value: bool): RpcResponse[JsonNode] =
+  result = core.callPrivateRPC("toggleNewsRSSEnabled".prefix, %*[ value ])

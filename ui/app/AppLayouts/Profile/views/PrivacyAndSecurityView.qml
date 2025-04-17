@@ -10,8 +10,10 @@ import StatusQ.Controls 0.1
 SettingsContentBase {
     id: root
 
-    property alias isStatusNewsViaRSSEnabled: statusNewsSwitch.checked
+    property bool isStatusNewsViaRSSEnabled
     required property bool isCentralizedMetricsEnabled
+
+    signal setNewsRSSEnabledRequested(bool isStatusNewsViaRSSEnabled)
 
     function refreshSwitch() {
         enableMetricsSwitch.checked = Qt.binding(function() { return root.isCentralizedMetricsEnabled })
@@ -30,9 +32,11 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: statusNewsSwitch
+                    checked: root.isStatusNewsViaRSSEnabled
+                    onToggled: root.setNewsRSSEnabledRequested(statusNewsSwitch.checked)
                 }
             ]
-            onClicked: statusNewsSwitch.checked = !statusNewsSwitch.checked
+            onClicked: root.setNewsRSSEnabledRequested(!statusNewsSwitch.checked)
         }
         StatusListItem {
             Layout.preferredWidth: root.contentWidth

@@ -527,7 +527,9 @@ StatusSectionLayout {
                 sectionTitle: settingsEntriesModel.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
                 contentWidth: d.contentWidth
 
-                onIsStatusNewsViaRSSEnabledChanged: root.store.privacyStore.isStatusNewsViaRSSEnabled = isStatusNewsViaRSSEnabled
+                onSetNewsRSSEnabledRequested: function (isStatusNewsViaRSSEnabled) {
+                    root.store.privacyStore.setNewsRSSEnabled(isStatusNewsViaRSSEnabled)
+                }
             }
         }
     }

@@ -51,6 +51,7 @@ StatusDialog {
 
     ColumnLayout {
         width: parent.width
+        spacing: 0
 
         Loader {
             id: notificationModelEntryLoader
@@ -74,12 +75,12 @@ StatusDialog {
                 color: "transparent"
                 border.color: root.backgroundColor
                 border.width: 1
-                radius: 10
+                radius: 16
             }
         }
 
         StatusBaseText {
-            text: notification.newsContent || notification.newsDescription
+            text: notification.newsDescription || notification.newsContent
             Layout.fillWidth: true
             Layout.fillHeight: true
             wrapMode: Text.WordWrap
