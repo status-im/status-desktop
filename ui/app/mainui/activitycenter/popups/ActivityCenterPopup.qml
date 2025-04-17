@@ -597,8 +597,8 @@ Popup {
                 font.pixelSize: Theme.additionalTextSize
 
                 onClicked: {
-                    if(isEnableRSSNotificationPanelType) {
-                        root.privacyStore.isStatusNewsViaRSSEnabled = true
+                    if (isEnableRSSNotificationPanelType) {
+                        root.privacyStore.setNewsRSSEnabled(true)
                     } else {
                         d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.sendAlertsValue
                     }

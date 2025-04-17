@@ -11,9 +11,11 @@ QtObject {
     readonly property string keyUid: userProfile.keyUid
 
     // The following properties wrap Privacy and Security View related properties:
-    property bool isStatusNewsViaRSSEnabled: true /*TODO: Connect it to the backend corresponding property*/
+    readonly property bool isStatusNewsViaRSSEnabled: appSettings.newsRSSEnabled
 
-    onIsStatusNewsViaRSSEnabledChanged: console.warn("TODO: Connect it to the backend corresponding setting: " + isStatusNewsViaRSSEnabled)
+    function setNewsRSSEnabled(isStatusNewsViaRSSEnabled) {
+        appSettings.newsRSSEnabled = isStatusNewsViaRSSEnabled
+    }
 
     function changePassword(password, newPassword) {
         root.privacyModule.changePassword(password, newPassword)

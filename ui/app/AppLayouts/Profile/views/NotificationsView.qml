@@ -311,7 +311,7 @@ SettingsContentBase {
                     visible: !root.privacyStore.isStatusNewsViaRSSEnabled
                     text: qsTr("Enable RSS")
 
-                    onClicked: root.privacyStore.isStatusNewsViaRSSEnabled = true
+                    onClicked: root.privacyStore.setNewsRSSEnabled(true)
                 },
                 NotificationSelect {
                     visible: root.privacyStore.isStatusNewsViaRSSEnabled
