@@ -6,6 +6,8 @@ import StatusQ.Components 0.1
 
 import Storybook 1.0
 
+import utils 1.0
+
 SplitView {
     id: root
 
@@ -21,97 +23,138 @@ SplitView {
             anchors.centerIn: parent
             width: ctrlWidth.value
 
+            draggableItems: ctrlDraggable.checked
+            draggableCategories: ctrlDraggable.checked
+            showCategoryActionButtons: true
+
+            Tracer {}
+
             model: ListModel {
                 ListElement {
+                    itemId: "id0"
+                    categoryId: "id0"
+                    active: false
+                    notificationsCount: 0
+                    hasUnreadMessages: false
+                    name: "Category X"
+                    icon: ""
+                    isCategory: true
+                    categoryOpened: true
+                    muted: false
+                }
+                ListElement {
                     itemId: "id1"
-                    position: 0
-                    name: "X"
-                    subItems: []
-                    isCategory: false
-                    categoryId: ""
-                    active: true
-                    notificationsCount: 12
+                    name: "Channel X"
+                    categoryId: "id0"
+                    active: false
+                    notificationsCount: 0
                     hasUnreadMessages: false
                     color: ""
                     colorId: 1
                     icon: ""
                     muted: false
-                    type: StatusChatListItem.Type.CommunityChat
+                    isCategory: false
+                    categoryOpened: true
                 }
                 ListElement {
                     itemId: "id2"
-                    position: 0
-                    categoryPosition: 0
                     categoryId: "id2"
-                    name: "Y"
+                    name: "Category Y"
+                    active: false
+                    notificationsCount: 12
+                    hasUnreadMessages: false
+                    color: ""
+                    colorId: 2
                     icon: ""
                     isCategory: true
+                    categoryOpened: false
                     muted: false
-                    subItems: [
-                        ListElement {
-                            itemId: "id3"
-                            position: 0
-                            name: "Y_1"
-                            subItems: []
-                            active: true
-                            notificationsCount: 0
-                            hasUnreadMessages: false
-                            color: ""
-                            colorId: 1
-                            icon: ""
-                            muted: false
-                        },
-                        ListElement {
-                            itemId: "id4"
-                            position: 1
-                            name: "Y_2"
-                            active: true
-                            notificationsCount: 1
-                            hasUnreadMessages: true
-                            color: ""
-                            colorId: 2
-                            icon: ""
-                            muted: false
-                        },
-                        ListElement {
-                            itemId: "id5"
-                            position: 1
-                            name: "Y_3"
-                            active: true
-                            notificationsCount: 1
-                            hasUnreadMessages: false
-                            color: ""
-                            colorId: 2
-                            icon: ""
-                            muted: true
-                        }
-                    ]
+                }
+                ListElement {
+                    itemId: "id3"
+                    categoryId: "id2"
+                    name: "Channel Y_1"
+                    active: false
+                    notificationsCount: 0
+                    hasUnreadMessages: true
+                    color: ""
+                    colorId: 2
+                    icon: ""
+                    muted: false
+                    isCategory: false
+                    categoryOpened: true
+                }
+                ListElement {
+                    itemId: "id4"
+                    categoryId: "id2"
+                    name: "Channel Y_2"
+                    active: false
+                    notificationsCount: 0
+                    hasUnreadMessages: false
+                    color: ""
+                    colorId: 3
+                    icon: ""
+                    muted: false
+                    isCategory: false
+                    categoryOpened: true
+                }
+                ListElement {
+                    itemId: "id5"
+                    categoryId: "id2"
+                    name: "Channel Y_3"
+                    active: false
+                    notificationsCount: 1
+                    hasUnreadMessages: false
+                    color: ""
+                    colorId: 4
+                    icon: ""
+                    muted: false
+                    isCategory: false
+                    categoryOpened: true
                 }
             }
+
+            onChatItemSelected: (categoryId, id) => logs.logEvent("onChatItemSelected", ["categoryId", "id"], arguments)
+            onChatItemUnmuted: (id) => logs.logEvent("onChatItemUnmuted", ["id"], arguments)
+            onChatItemReordered: (categoryId, chatId, to) => logs.logEvent("onChatItemReordered", ["categoryId", "chatId", "to"], arguments)
+            onChatListCategoryReordered: (categoryId, to) => logs.logEvent("onChatListCategoryReordered", ["categoryId", "to"], arguments)
+            onCategoryAddButtonClicked: (id) => logs.logEvent("onCategoryAddButtonClicked", ["id"], arguments)
+            onToggleCollapsedCommunityCategory: (categoryId, collapsed) => logs.logEvent("onToggleCollapsedCommunityCategory", ["categoryId", "collapsed"], arguments)
         }
     }
 
     LogsAndControlsPanel {
         id: logsAndControlsPanel
 
-        SplitView.minimumHeight: 100
+        SplitView.minimumHeight: 200
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
 
-        RowLayout {
-            Label { text: "Width:" }
-            Slider {
-                id: ctrlWidth
-                from: 30
-                to: 600
-                stepSize: 10
-                value: 200 // smaller than the default 288
-                ToolTip.text: ctrlWidth.value
-                ToolTip.visible: ctrlWidth.pressed
+        ColumnLayout {
+            RowLayout {
+                Label { text: "Width:" }
+                Slider {
+                    id: ctrlWidth
+                    from: 30
+                    to: 600
+                    stepSize: 10
+                    value: 200 // smaller than the default 288
+                    ToolTip.text: ctrlWidth.value
+                    ToolTip.visible: ctrlWidth.pressed
+                }
+            }
+            Switch {
+                id: ctrlDraggable
+                text: "Draggable items"
+                checked: true
             }
         }
     }
 }
 
 // category: Components
+// status: good
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Chat%E2%8E%9CDesktop?node-id=10500-370167&m=dev
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Chat%E2%8E%9CDesktop?node-id=5203-44148&m=dev
+// https://www.figma.com/design/Mr3rqxxgKJ2zMQ06UAKiWL/Chat%E2%8E%9CDesktop?node-id=5204-38831&m=dev
