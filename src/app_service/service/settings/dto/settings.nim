@@ -55,6 +55,9 @@ const PROFILE_MIGRATION_NEEDED* = "profile-migration-needed"
 const KEY_URL_UNFURLING_MODE* = "url-unfurling-mode"
 const KEY_AUTO_REFRESH_TOKENS* = "auto-refresh-tokens-enabled"
 const KEY_LAST_TOKENS_UPDATE* = "last-tokens-update"
+const KEY_NEWS_FEED_ENABLED* = "news-feed-enabled?"
+const KEY_NEWS_NOTIFICATIONS_ENABLED* = "news-notifications-enabled?"
+const KEY_NEWS_RSS_ENABLED* = "news-rss-enabled?"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -145,6 +148,9 @@ type
     gifRecents*: JsonNode
     gifFavorites*: JsonNode
     testNetworksEnabled*: bool
+    newsFeedEnabled*: bool
+    newsNotificationsEnabled*: bool
+    newsRSSEnabled*: bool
     notificationsAllowNotifications*: bool
     notificationsOneToOneChats*: string
     notificationsGroupChats*: string
@@ -248,6 +254,10 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)
+
+  discard jsonObj.getProp(KEY_NEWS_FEED_ENABLED, result.newsFeedEnabled)
+  discard jsonObj.getProp(KEY_NEWS_NOTIFICATIONS_ENABLED, result.newsNotificationsEnabled)
+  discard jsonObj.getProp(KEY_NEWS_RSS_ENABLED, result.newsRSSEnabled)
 
   var usernamesArr: JsonNode
   if (jsonObj.getProp(KEY_ENS_USERNAMES, usernamesArr)):
