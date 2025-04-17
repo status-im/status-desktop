@@ -531,6 +531,7 @@ Item {
                                     }
                                 }
                                 delegate: InformationTag {
+                                    hoverEnabled: true
                                     asset.name: Theme.svg(model.iconUrl)
                                     asset.isImage: true
                                     tagPrimaryLabel.text: model.chainName
@@ -540,6 +541,16 @@ Item {
                                             color: Theme.palette.baseColor2
                                             radius: 36
                                         }
+                                    }
+                                    rightComponent: CopyButton {
+                                        width: 20
+                                        height: 20
+                                        textToCopy: model.address
+                                    }
+
+                                    StatusToolTip {
+                                        text: qsTr("Copy contract address")
+                                        visible: parent.hovered
                                     }
                                 }
                             }
