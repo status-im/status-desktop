@@ -19,9 +19,15 @@ Item {
         contentWidth: 560
 
         contactsStore: ContactsStore {
-            function joinPrivateChat(pubKey) {}
-            function acceptContactRequest(pubKey, contactRequestId) {}
-            function dismissContactRequest(pubKey, contactRequestId) {}
+            function joinPrivateChat(pubKey) {
+                console.info("ContactsStore::joinPrivateChat", pubKey)
+            }
+            function acceptContactRequest(pubKey, contactRequestId) {
+                console.info("ContactsStore::acceptContactRequest", pubKey, contactRequestId)
+            }
+            function dismissContactRequest(pubKey, contactRequestId) {
+                console.info("ContactsStore::dismissContactRequest", pubKey, contactRequestId)
+            }
 
             function resolveENS(value) {}
 
