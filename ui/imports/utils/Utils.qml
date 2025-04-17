@@ -281,11 +281,11 @@ QtObject {
     }
 
     function isValidDragNDropImage(url) {
-        return url.startsWith(Constants.dataImagePrefix) || UrlUtils.isValidImageUrl(url)
+        return String(url).startsWith(Constants.dataImagePrefix) || UrlUtils.isValidImageUrl(url)
     }
 
     function isFilesizeValid(img) {
-        if (img.startsWith(Constants.dataImagePrefix)) {
+        if (String(img).startsWith(Constants.dataImagePrefix)) {
             return img.length < Constants.maxImgSizeBytes
         }
         const size = UrlUtils.getFileSize(img)
