@@ -126,10 +126,10 @@ ItemDelegate {
     property alias badge: identicon.badge
 
     /*!
-        \qmlsignal clicked
-        This signal is emitted when the StatusMemberListItem is clicked.
+        \qmlsignal rightClicked
+        This signal is emitted when the StatusMemberListItem is right clicked.
     */
-    signal clicked(var mouse)
+    signal rightClicked
 
     QtObject {
         id: d
@@ -173,11 +173,13 @@ ItemDelegate {
         radius: Theme.radius
     }
 
-    StatusMouseArea {
-        anchors.fill: parent
-        cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: (mouse) => root.clicked(mouse)
+    HoverHandler {
+       cursorShape: root.enabled && root.hoverEnabled && root.hovered ? Qt.PointingHandCursor : undefined
+    }
+
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        onTapped: root.rightClicked()
     }
 
     contentItem: RowLayout {

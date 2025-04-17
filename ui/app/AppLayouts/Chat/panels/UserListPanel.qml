@@ -137,32 +137,29 @@ Item {
                 status: model.onlineStatus
                 ringSettings.ringSpecModel: model.colorHash
 
-                onClicked: {
-                    if (mouse.button === Qt.RightButton) {
-                        const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
-                        const contactType = Utils.getContactType(model.contactRequest, model.isContact)
+                onClicked: Global.openProfilePopup(model.pubKey)
+                onRightClicked: {
+                    const profileType = Utils.getProfileType(model.isCurrentUser, false, model.isBlocked)
+                    const contactType = Utils.getContactType(model.contactRequest, model.isContact)
 
-                        const params = {
-                            profileType, contactType,
-                            pubKey: model.pubKey,
-                            compressedPubKey: model.compressedPubKey,
-                            emojiHash: model.emojiHash,
-                            colorHash: model.colorHash,
-                            colorId: model.colorId,
-                            displayName: model.preferredDisplayName,
-                            userIcon: model.icon,
-                            trustStatus: model.trustStatus,
-                            onlineStatus: model.onlineStatus,
-                            ensVerified: model.isEnsVerified,
-                            hasLocalNickname: !!model.localNickname,
-                            chatType: root.chatType,
-                            isAdmin: root.isAdmin
-                        }
-
-                        Global.openMenu(profileContextMenuComponent, this, params)
-                    } else if (mouse.button === Qt.LeftButton) {
-                        Global.openProfilePopup(model.pubKey)
+                    const params = {
+                        profileType, contactType,
+                        pubKey: model.pubKey,
+                        compressedPubKey: model.compressedPubKey,
+                        emojiHash: model.emojiHash,
+                        colorHash: model.colorHash,
+                        colorId: model.colorId,
+                        displayName: model.preferredDisplayName,
+                        userIcon: model.icon,
+                        trustStatus: model.trustStatus,
+                        onlineStatus: model.onlineStatus,
+                        ensVerified: model.isEnsVerified,
+                        hasLocalNickname: !!model.localNickname,
+                        chatType: root.chatType,
+                        isAdmin: root.isAdmin
                     }
+
+                    Global.openMenu(profileContextMenuComponent, this, params)
                 }
             }
         }
