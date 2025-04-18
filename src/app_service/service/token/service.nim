@@ -21,14 +21,6 @@ logScope:
 
 include async_tasks
 
-const ETHEREUM_SYMBOL = "ETH"
-const CRYPTO_SUB_UNITS_TO_FACTOR = {
-  "WEI": (ETHEREUM_SYMBOL, 1e-18),
-  "KWEI": (ETHEREUM_SYMBOL, 1e-15),
-  "MWEI": (ETHEREUM_SYMBOL, 1e-12),
-  "GWEI": (ETHEREUM_SYMBOL, 1e-9),
-}.toTable()
-
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_HISTORICAL_DATA_LOADED* = "tokenHistoricalDataLoaded"
 const SIGNAL_TOKENS_LIST_UPDATED* = "tokensListUpdated"

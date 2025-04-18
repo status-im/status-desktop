@@ -40,8 +40,10 @@ SplitView {
             networkName: "Ethereum"
             networkIconPath: "https://picsum.photos/200/200"
 
+
             fiatFees: fiatFees.text
             cryptoFees: "0.001"
+            nativeTokenSymbol: "ETH"
             estimatedTime: "3-5 minutes"
             feesLoading: feesLoading.checked
             estimatedTimeLoading: feesLoading.checked

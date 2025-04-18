@@ -138,14 +138,14 @@ QtObject {
         property Connections communityTokensStoreConnections: Connections {
             target: root.communityTokensStore.communityTokensModuleInst
 
-            function onSuggestedRoutesReady(uuid, ethCurrency, fiatCurrency, costPerPath, errCode, errDescription) {
+            function onSuggestedRoutesReady(uuid, nativeCryptoCurrency, fiatCurrency, costPerPath, errCode, errDescription) {
                 let err = ""
                 if(!!errCode || !!errDescription) {
                     err = "%1 - %2".arg(errCode).arg(WalletUtils.getRouterErrorDetailsOnCode(errCode, errDescription))
                 }
 
                 let jsonFees = [{
-                                    ethFee: {},
+                                    nativeCryptoFee: {},
                                     fiatFee: {},
                                     contractUniqueKey: ""
                                 }]
@@ -159,7 +159,7 @@ QtObject {
                     }
                 }
 
-                d.feesBroker.response(uuid, { ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, fees: jsonFees, error: err })
+                d.feesBroker.response(uuid, { nativeCryptoCurrency: nativeCryptoCurrency, fiatCurrency: fiatCurrency, fees: jsonFees, error: err })
             }
 
 

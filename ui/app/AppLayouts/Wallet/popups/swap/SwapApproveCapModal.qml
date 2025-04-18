@@ -35,6 +35,7 @@ SignTransactionModalBase {
     required property string networkName // e.g. "Optimism"
     required property string networkIconPath // e.g. `Theme.svg("network/Network=Optimism")`
     required property string networkBlockExplorerUrl
+    required property int networkChainId
 
     required property string fiatFees
     required property string cryptoFees
@@ -173,12 +174,12 @@ SignTransactionModalBase {
         objectName: "tokenBox"
         caption: qsTr("Token")
         primaryText: root.fromTokenSymbol
-        secondaryText: root.fromTokenSymbol !== Constants.ethToken ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
+        secondaryText: root.fromTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId) ? SQUtils.Utils.elideAndFormatWalletAddress(root.fromTokenContractAddress) : ""
         icon: Constants.tokenIcon(root.fromTokenSymbol)
         badge: root.networkIconPath
         components: [
             ContractInfoButtonWithMenu {
-                visible: root.fromTokenSymbol !== Constants.ethToken
+                visible: root.fromTokenSymbol !== Utils.getNativeTokenSymbol(root.networkChainId)
                 symbol: root.fromTokenSymbol
                 contractAddress: root.fromTokenContractAddress
                 networkName: root.networkName

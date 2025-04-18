@@ -279,8 +279,8 @@ Control {
                 Layout.alignment: Qt.AlignRight
                 objectName: "maxTagButton"
 
-                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(d.maxInputBalance, d.inputSymbol, root.cryptoFeesToReserve)
-                readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(d.maxCryptoBalance, d.inputSymbol, root.cryptoFeesToReserve)
+                readonly property double maxSafeValue: WalletUtils.calculateMaxSafeSendAmount(d.maxInputBalance, d.inputSymbol, root.selectedNetworkChainId, root.cryptoFeesToReserve)
+                readonly property double maxSafeCryptoValue: WalletUtils.calculateMaxSafeSendAmount(d.maxCryptoBalance, d.inputSymbol, root.selectedNetworkChainId, root.cryptoFeesToReserve)
 
                 markAsInvalid: amountToSendInput.markAsInvalid
 
