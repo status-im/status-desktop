@@ -28,7 +28,7 @@ class CommunitiesSettingsView(QObject):
         self._community_template_button = Button(settings_names.settings_StatusFlatButton)
 
     @property
-    @allure.step('Get communities')
+    @allure.step('Get list of communities from settings')
     def communities(self) -> typing.List[CommunityData]:
         time.sleep(0.5)
         _communities = []
@@ -50,26 +50,5 @@ class CommunitiesSettingsView(QObject):
             _communities.append(CommunityData(name, description, members, image))
         return _communities
 
-    def _get_community_item(self, name: str):
-        for obj in driver.findAllObjects(self._community_item.real_name):
-            for item in objects_access.walk_children(obj):
-                if getattr(item, 'text', '') == name:
-                    return obj
-        raise LookupError(f'Community item: {name} not found')
 
-    @allure.step('Open community info')
-    def get_community_info(
-            self, name: str, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> CommunityData:
-        started_at = time.monotonic()
-        while True:
-            communities = self.communities
-            for community in communities:
-                if community.name == name:
-                    return community
-            if time.monotonic() - started_at > timeout_msec:
-                raise LookupError(f'Community item: {name} not found in {communities}')
 
-    @allure.step('Open community overview settings')
-    def open_community_overview_settings(self, name: str):
-        driver.mouseClick(self._get_community_item(name))
-        return CommunitySettingsScreen().wait_until_appears()
