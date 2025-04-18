@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtTest 1.15
 
 import Models 1.0
+import SortFilterProxyModel 0.2
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -22,10 +23,39 @@ Item {
         MarketLayout {
             anchors.fill: parent
             loading: false
-            totalTokensCount: 1300
+            totalTokensCount: marketTokensModel.count
             currencySymbol: "$"
-            tokensModel: TokensBySymbolModel {}
+            tokensModel: SortFilterProxyModel {
+                sourceModel: MarketTokensModel {
+                    id: marketTokensModel
+                }
+                filters: IndexFilter {
+                    minimumIndex: d.startIndex
+                    maximumIndex: d.endIndex
+                }
+            }
+            fnFormatCurrencyAmount: function(amount, options) {
+                let abc = ({
+                               amount: amount,
+                               symbol: "usd".toUpperCase(),
+                               displayDecimals: 2,
+                               stripTrailingZeroes: false
+                           })
+                return LocaleUtils.currencyAmountToLocaleString(abc, options)
+            }
+            currentPage: -1
+            onFetchMarketTokens: {
+                d.startIndex = ((pageNumber - 1) * pageSize) + 1
+                d.endIndex = Math.min(pageNumber * pageSize, totalTokensCount)
+                currentPage = pageNumber
+            }
         }
+    }
+
+    QtObject {
+        id: d
+        property int startIndex: 0
+        property int endIndex: 0
     }
 
     SignalSpy {
@@ -89,12 +119,7 @@ Item {
             verify(!!footer)
             verify(footer.visible)
 
-            verify(!tokensList.verticalScrollBar.visible)
-            tokensList.positionViewAtIndex(60, ListView.Center)
-            waitForRendering(tokensList)
-            verify(tokensList.verticalScrollBar.visible)
-
-            waitForItemPolished(tokensList)
+            waitForRendering(controlUnderTest)
 
             // Test Delegate contents
             for(let i = 0; i<tokensList.count - 1; i++) {
@@ -124,7 +149,7 @@ Item {
                     compare(indexText.font.pixelSize, Theme.additionalTextSize)
                     compare(indexText.color, Theme.palette.directColor1)
 
-                    compare(icon.image.source, Constants.tokenIcon(modelItemUnderTest.symbol))
+                    compare(icon.image.source, modelItemUnderTest.image)
                     compare(icon.width, 32)
                     compare(icon.height, 32)
 
@@ -133,35 +158,38 @@ Item {
                     compare(tokenNameText.font.weight, Font.Medium)
                     compare(tokenNameText.color, Theme.palette.directColor1)
 
-                    compare(tokenSymbolText.text, modelItemUnderTest.symbol)
+                    compare(tokenSymbolText.text, modelItemUnderTest.symbol.toUpperCase())
                     compare(tokenSymbolText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(tokenSymbolText.font.weight, Font.Normal)
                     compare(tokenSymbolText.color, Theme.palette.baseColor1)
 
                     const expectedPriceString = "%1%2"
                     .arg(controlUnderTest.currencySymbol)
-                    .arg(LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.currencyPrice, {noSymbol: true}))
+                    .arg(controlUnderTest.fnFormatCurrencyAmount(modelItemUnderTest.currentPrice, {noSymbol: true}))
                     compare(priceText.text, expectedPriceString)
                     compare(priceText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(priceText.font.weight, Font.Medium)
                     compare(priceText.color, Theme.palette.directColor1)
 
                     compare(changePct24HrText.text,
-                            qsTr("%1 %2%").arg(WalletUtils.getUpDownTriangle(modelItemUnderTest.marketDetails.changePct24hour))
-                            .arg(LocaleUtils.numberToLocaleString(modelItemUnderTest.marketDetails.changePct24hour, 2)))
+                            qsTr("%1 %2%").arg(WalletUtils.getUpDownTriangle(modelItemUnderTest.priceChangePercentage24h))
+                            .arg(LocaleUtils.numberToLocaleString(modelItemUnderTest.priceChangePercentage24h, 2)))
                     compare(changePct24HrText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(changePct24HrText.font.weight, Font.Medium)
                     compare(changePct24HrText.color,
-                            WalletUtils.getChangePct24HourColor(modelItemUnderTest.marketDetails.changePct24hour))
+                            WalletUtils.getChangePct24HourColor(modelItemUnderTest.priceChangePercentage24h))
 
-                    compare(volume24HrText.text, "--")
+                    const expectedTotalVolumeString = "%1%2"
+                    .arg(controlUnderTest.currencySymbol)
+                    .arg(controlUnderTest.fnFormatCurrencyAmount(modelItemUnderTest.totalVolume, {noSymbol: true}))
+                    compare(volume24HrText.text, expectedTotalVolumeString)
                     compare(volume24HrText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(volume24HrText.font.weight, Font.Medium)
                     compare(volume24HrText.color, Theme.palette.directColor1)
 
                     const expectedMarketCapString = "%1%2"
                     .arg(controlUnderTest.currencySymbol)
-                    .arg(LocaleUtils.currencyAmountToLocaleString(modelItemUnderTest.marketDetails.marketCap, {noSymbol: true}))
+                    .arg(controlUnderTest.fnFormatCurrencyAmount(modelItemUnderTest.marketCap, {noSymbol: true}))
                     compare(marketCapText.text, expectedMarketCapString)
                     compare(marketCapText.font.pixelSize, Theme.primaryTextFontSize)
                     compare(marketCapText.font.weight, Font.Medium)

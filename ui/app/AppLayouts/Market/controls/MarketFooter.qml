@@ -11,10 +11,8 @@ Control {
     required property int pageSize
     /** required input property representing total count of items **/
     required property int totalCount
-
-    // TODO: remove once backend is ready
-    readonly property int startIndex: d.startIndex
-    readonly property int endIndex: d.endIndex
+    /** required property representing current page set from outside **/
+    required property int currentPage
 
     /** signla to update next page **/
     signal switchPage(int pageNumber)
@@ -65,7 +63,8 @@ Control {
 
             pageSize: root.pageSize
             totalCount: root.totalCount
-            onCurrentPageChanged: root.switchPage(currentPage)
+            currentPage: root.currentPage
+            onRequestPage: root.switchPage(pageNumber)
         }
     }
 }
