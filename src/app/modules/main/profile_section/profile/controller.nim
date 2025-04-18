@@ -96,5 +96,5 @@ proc getProfileShowcaseEntriesLimit*(self: Controller): int =
 proc requestCommunityInfo*(self: Controller, communityId: string, shard: Shard) =
   self.communityService.requestCommunityInfo(communityId, shard)
 
-proc getTokenBySymbolList*(self: Controller): var seq[TokenBySymbolItem] =
+proc getTokenBySymbolList*(self: Controller): seq[TokenBySymbolItem] =
   self.tokenService.getTokenBySymbolList()
