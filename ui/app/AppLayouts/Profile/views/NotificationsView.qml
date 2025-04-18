@@ -21,6 +21,13 @@ SettingsContentBase {
     id: root
 
     property NotificationsStore notificationsStore
+    property PrivacyStore privacyStore
+
+    QtObject {
+        id: d
+
+        readonly property var notificationsSettings: root.notificationsStore.notificationsSettings
+    }
 
     Component.onCompleted: root.notificationsStore.loadExemptions()
 
@@ -189,9 +196,9 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: allowNotifSwitch
-                    checked: appSettings.notifSettingAllowNotifications
+                    checked: d.notificationsSettings.notifSettingAllowNotifications
                     onClicked: {
-                        appSettings.notifSettingAllowNotifications = !appSettings.notifSettingAllowNotifications
+                        d.notificationsSettings.notifSettingAllowNotifications = !d.notificationsSettings.notifSettingAllowNotifications
                     }
                 }
             ]
@@ -213,10 +220,10 @@ SettingsContentBase {
             title: qsTr("1:1 Chats")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingOneToOneChats
-                    onSendAlertsClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingOneToOneChats
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -226,10 +233,10 @@ SettingsContentBase {
             title: qsTr("Group Chats")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingGroupChats
-                    onSendAlertsClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingGroupChats
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -240,10 +247,10 @@ SettingsContentBase {
             tertiaryTitle: qsTr("Messages containing @%1").arg(userProfile.name)
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingPersonalMentions
-                    onSendAlertsClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingPersonalMentions
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -254,10 +261,10 @@ SettingsContentBase {
             tertiaryTitle: qsTr("Messages containing @everyone")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingGlobalMentions
-                    onSendAlertsClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingGlobalMentions
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -267,10 +274,10 @@ SettingsContentBase {
             title: qsTr("All Messages")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingAllMessages
-                    onSendAlertsClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingAllMessages
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -288,10 +295,30 @@ SettingsContentBase {
             title: qsTr("Contact Requests")
             components: [
                 NotificationSelect {
-                    selected: appSettings.notifSettingContactRequests
-                    onSendAlertsClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
-                    onDeliverQuietlyClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                    onTurnOffClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
+                    selected: d.notificationsSettings.notifSettingContactRequests
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
+                }
+            ]
+        }
+
+        StatusListItem {
+            Layout.preferredWidth: root.contentWidth
+            title: qsTr("Status News")
+            components: [
+                StatusButton {
+                    visible: !root.privacyStore.isStatusNewsViaRSSEnabled
+                    text: qsTr("Enable RSS")
+
+                    onClicked: root.privacyStore.isStatusNewsViaRSSEnabled = true
+                },
+                NotificationSelect {
+                    visible: root.privacyStore.isStatusNewsViaRSSEnabled
+                    selected: d.notificationsSettings.notifSettingStatusNews
+                    onSendAlertsClicked: d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.sendAlertsValue
+                    onDeliverQuietlyClicked: d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.deliverQuietlyValue
+                    onTurnOffClicked: d.notificationsSettings.notifSettingStatusNews = Constants.settingsSection.notifications.turnOffValue
                 }
             ]
         }
@@ -317,10 +344,10 @@ SettingsContentBase {
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameAndMessage
+            checked: d.notificationsSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameAndMessage
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                    d.notificationsSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameAndMessage
                 }
             }
         }
@@ -332,10 +359,10 @@ SettingsContentBase {
             notificationTitle: "Vitalik Buterin"
             notificationMessage: qsTr("You have a new message")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameOnly
+            checked: d.notificationsSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameOnly
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameOnly
+                    d.notificationsSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameOnly
                 }
             }
         }
@@ -347,10 +374,10 @@ SettingsContentBase {
             notificationTitle: "Status"
             notificationMessage: qsTr("You have a new message")
             buttonGroup: messageSetting
-            checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewAnonymous
+            checked: d.notificationsSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewAnonymous
             onRadioCheckedChanged: {
                 if (checked) {
-                    appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewAnonymous
+                    d.notificationsSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewAnonymous
                 }
             }
         }
@@ -361,9 +388,9 @@ SettingsContentBase {
             components: [
                 StatusSwitch {
                     id: soundSwitch
-                    checked: appSettings.notificationSoundsEnabled
+                    checked: d.notificationsSettings.notificationSoundsEnabled
                     onClicked: {
-                        appSettings.notificationSoundsEnabled = !appSettings.notificationSoundsEnabled
+                        d.notificationsSettings.notificationSoundsEnabled = !d.notificationsSettings.notificationSoundsEnabled
                     }
                 }
             ]
@@ -397,11 +424,11 @@ SettingsContentBase {
                 stepSize: 1
 
                 onValueChanged: {
-                    appSettings.volume = value
+                    d.notificationsSettings.volume = value
                 }
 
                 Component.onCompleted: {
-                    value = appSettings.volume
+                    value = d.notificationsSettings.volume
                     volumeSlider.valueChanged.connect(() => {
                                                           // play a sound preview, but not on startup
                                                           Global.playNotificationSound()
