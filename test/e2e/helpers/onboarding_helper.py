@@ -4,7 +4,6 @@ import configs._local
 import configs.system
 
 from gui.components.onboarding.before_started_popup import BeforeStartedPopUp
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from gui.screens.onboarding import OnboardingWelcomeToStatusView, OnboardingBiometricsView, YourEmojihashAndIdenticonRingView
 
@@ -36,6 +35,4 @@ with step('Finalize onboarding and open main screen'):
         if configs.system.get_platform() == "Darwin":
             next_view.start_using_status()
         SplashScreen().wait_until_appears().wait_until_hidden()
-        assert SigningPhrasePopup().ok_got_it_button.is_visible
-        SigningPhrasePopup().confirm_phrase()
 

@@ -8,7 +8,6 @@ from constants.wallet import WalletNetworkSettings
 from helpers.wallet_helper import authenticate_with_password
 
 from driver.aut import AUT
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.main_window import MainWindow
 from scripts.utils.generators import random_wallet_acc_keypair_name
 
@@ -58,8 +57,6 @@ def test_add_generated_account_restart_add_again(
 
     with step('Add second generated wallet account'):
         wallet = main_screen.left_panel.open_wallet()
-        assert not SigningPhrasePopup().ok_got_it_button.is_visible, \
-            f"Signing phrase should not be present because it has been hidden in the first step"
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).save_changes()
         authenticate_with_password(user_account)
