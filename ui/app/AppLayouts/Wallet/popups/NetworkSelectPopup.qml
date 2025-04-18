@@ -65,7 +65,6 @@ Popup {
             interactive: root.selectionAllowed
             multiSelection: root.multiSelection
             showIndicator: root.showSelectionIndicator
-            selection: root.selection
             showNewChainIcon: root.showNewChainIcon
 
             onToggleNetwork: {
