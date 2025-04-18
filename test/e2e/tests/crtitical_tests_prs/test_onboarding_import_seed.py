@@ -4,7 +4,6 @@ from allure_commons._allure import step
 
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.splash_screen import SplashScreen
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
 from web3 import Web3
@@ -29,8 +28,6 @@ def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
     create_password_view.create_password(user_account.password)
     splash_screen = SplashScreen().wait_until_appears()
     splash_screen.wait_until_hidden(timeout_msec=60000)
-    signing_phrase = SigningPhrasePopup().wait_until_appears()
-    signing_phrase.confirm_phrase()
 
     with step('Verify that restored account reveals correct status wallet address'):
         left_panel = LeftPanel()

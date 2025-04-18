@@ -10,7 +10,6 @@ from constants import UserAccount, CommunityData
 from gui.components.community.invite_contacts import InviteContactsPopup
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
-from gui.components.signing_phrase_popup import SigningPhrasePopup
 from gui.components.toast_message import ToastMessage
 from gui.components.online_identifier import OnlineIdentifier
 from gui.elements.button import Button
@@ -163,8 +162,6 @@ class MainWindow(Window):
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(timeout_msec=60000)
-        signing_phrase = SigningPhrasePopup().wait_until_appears(timeout_msec=30000)
-        signing_phrase.confirm_phrase()
         # since we now struggle with 3 words names, I need to change display name first
         left_panel = LeftPanel()
         profile = left_panel.open_settings().left_panel.open_profile_settings()
@@ -178,8 +175,6 @@ class MainWindow(Window):
         splash_screen = ReturningLoginView().log_in(user_account)
         splash_screen.wait_until_appears()
         splash_screen.wait_until_hidden(timeout_msec=60000)
-        if SigningPhrasePopup().ok_got_it_button.is_visible:
-            SigningPhrasePopup().confirm_phrase()
         return self
 
     @allure.step('Authorize user')
