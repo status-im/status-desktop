@@ -169,7 +169,6 @@ StatusComboBox {
         multiSelection: root.multiSelection
         showSelectionIndicator: root.showSelectionIndicator
         showManageNetworksButton: root.showManageNetworksButton
-        selection: root.selection
         showNewChainIcon: root.showNewChainIcon
 
         onToggleNetwork: root.toggleNetwork(chainId, index)
