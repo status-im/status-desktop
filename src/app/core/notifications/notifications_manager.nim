@@ -241,7 +241,8 @@ QtObject:
         details.notificationType == NotificationType.NewMessageWithGlobalMention or
         details.notificationType == NotificationType.NewContactRequest or
         details.notificationType == NotificationType.ContactRemoved or
-        details.notificationType == NotificationType.IdentityVerificationRequest:
+        details.notificationType == NotificationType.IdentityVerificationRequest or
+        details.notificationType == NotificationType.NewsFeedMessage:
 
       if notificationWay == VALUE_NOTIF_DELIVER_QUIETLY:
         return
@@ -291,6 +292,13 @@ QtObject:
     if(details.notificationType == NotificationType.NewContactRequest):
       if(self.settingsService.getNotifSettingContactRequests() != VALUE_NOTIF_TURN_OFF):
         self.notificationCheck(title, message, details, self.settingsService.getNotifSettingContactRequests())
+        return
+
+    # In case of News message
+    elif details.notificationType == NotificationType.NewsFeedMessage:
+      let newsSetting = self.settingsService.getNotifSettingStatusNews()
+      if newsSetting != VALUE_NOTIF_TURN_OFF:
+        self.notificationCheck(title, message, details, newsSetting)
         return
 
     # In case of new message (regardless it's message with mention or not)
