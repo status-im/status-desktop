@@ -222,7 +222,7 @@ StatusDialog {
         value: popup.store.selectedSenderAccountAddress
     }
 
-    padding: 0
+    padding: Theme.xlPadding
     background: StatusDialogBackground {
         implicitHeight: 846
         implicitWidth: 556
@@ -384,8 +384,6 @@ StatusDialog {
                 id: assetAndAmountSelector
 
                 anchors.fill: parent
-                anchors.leftMargin: Theme.xlPadding
-                anchors.rightMargin: Theme.xlPadding
 
                 z: 1
                 spacing: 16
@@ -643,8 +641,6 @@ StatusDialog {
             Layout.fillHeight: true
             Layout.fillWidth:  true
             Layout.topMargin: Theme.padding
-            Layout.leftMargin: Theme.xlPadding
-            Layout.rightMargin: Theme.xlPadding
             Layout.bottomMargin: Theme.padding
 
             visible: !recipientInputLoader.ready && !d.isBridgeTx
@@ -676,13 +672,10 @@ StatusDialog {
             id: scrollView
 
             padding: 0
-            bottomPadding: Theme.padding
 
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: Theme.bigPadding
-            Layout.leftMargin: Theme.xlPadding
-            Layout.rightMargin: Theme.xlPadding
 
             contentWidth: availableWidth
 
@@ -735,8 +728,6 @@ StatusDialog {
         Rectangle {
             Layout.fillWidth: true
             Layout.topMargin: Theme.bigPadding
-            Layout.leftMargin: Theme.xlPadding
-            Layout.rightMargin: Theme.xlPadding
             Layout.bottomMargin: Theme.xlPadding
             implicitHeight: sendErrorColumn.height + Theme.padding
             color: Theme.palette.dangerColor3
@@ -751,8 +742,6 @@ StatusDialog {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.leftMargin: Theme.padding
-                anchors.rightMargin: Theme.padding
                 spacing: Theme.padding
 
                 StatusBaseText {
