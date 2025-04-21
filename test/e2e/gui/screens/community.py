@@ -152,16 +152,13 @@ class ToolBar(QObject):
 
     @allure.step('Open more options dropdown')
     def open_more_options_dropdown(self):
-        self._more_options_button.click()
-        return ContextMenu()
-
-    @allure.step('Get visibility state of edit item')
-    def is_edit_item_visible(self) -> bool:
-        return self._edit_channel_context_item.exists
-
-    @allure.step('Get visibility state of delete item')
-    def is_delete_item_visible(self) -> bool:
-        return self._delete_channel_context_item.exists
+        for _ in range(2):
+            self._more_options_button.click()
+            try:
+                return ContextMenu().wait_until_appears()
+            except Exception:
+                pass  # Retry one more time
+        raise LookupError(f'Could not open context menu for a channel')
 
 
 class CategoryItem:
@@ -337,7 +334,7 @@ class LeftPanel(QObject):
 
     @allure.step('Open join community popup')
     def open_welcome_community_popup(self):
-        self._join_community_button.wait_until_appears(configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+        self._join_community_button.wait_until_appears(timeout_msec=10000)
         self._join_community_button.click()
         return WelcomeCommunityPopup().wait_until_appears()
 

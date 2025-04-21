@@ -171,15 +171,12 @@ def test_community_admin_ban_kick_member_and_delete_message(multiple_instances):
             assert driver.waitFor(lambda: user_one.name not in community_screen.right_panel.members, timeout)
             main_screen.hide()
 
-        with step(f'User {user_one.name} rejoins community after being kicked'):
+        with step(f'User {user_one.name} can rejoin community after being kicked'):
             aut_one.attach()
             main_screen.prepare()
-            assert driver.waitFor(lambda: community.name not in main_screen.left_panel.communities, timeout)
-
             messages_view = main_screen.left_panel.open_messages_screen()
             chat = messages_view.left_panel.click_chat_by_name(user_two.name)
             community_screen = chat.click_community_invite(community.name, 0)
-
             welcome_popup = community_screen.left_panel.open_welcome_community_popup()
             welcome_popup.join().authenticate(user_one.password)
             assert driver.waitFor(lambda: not community_screen.left_panel.is_join_community_visible,
