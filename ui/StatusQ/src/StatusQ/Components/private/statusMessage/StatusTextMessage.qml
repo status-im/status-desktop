@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.15
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
@@ -14,6 +15,7 @@ Item {
 
     property string highlightedLink: ""
     property bool linkAddressAndEnsName
+    property string disabledTooltipText
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property bool isEdited: false
@@ -68,7 +70,11 @@ Item {
                 // short return not to add styling when no html
                 return formattedMessage
 
-            return Utils.getMessageWithStyle(formattedMessage)
+            return Utils.getMessageWithStyle(formattedMessage, chatText.hoveredLink, !!root.disabledTooltipText)
+        }
+
+        function showDisabledTooltipForAddressEnsName(link) {
+            return link.startsWith('//send-via-personal-chat//') && !!root.disabledTooltipText
         }
     }
 
@@ -104,7 +110,23 @@ Item {
         readOnly: true
         selectByMouse: true
         onLinkActivated: {
-            root.linkActivated(link);
+            if(d.showDisabledTooltipForAddressEnsName(link)) {
+                return
+            }
+            root.linkActivated(link)
+        }
+        onLinkHovered: {
+            disabledLinkTooltip.visible = d.showDisabledTooltipForAddressEnsName(link)
+        }
+        HoverHandler {
+            id: hoverHandler
+        }
+        StatusToolTip {
+            id: disabledLinkTooltip
+            text: root.disabledTooltipText
+            delay: 100
+            x: hoverHandler.point.position.x - 60
+            y: -disabledLinkTooltip.height + hoverHandler.point.position.y - 10
         }
     }
 

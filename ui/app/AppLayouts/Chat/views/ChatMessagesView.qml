@@ -53,6 +53,7 @@ Item {
     property bool isOneToOne: false
 
     property bool sendViaPersonalChatEnabled
+    property string disabledTooltipText
 
     signal openStickerPackPopup(string stickerPackId)
     signal tokenPaymentRequested(string recipientAddress, string symbol, string rawAmount, int chainId)
@@ -300,6 +301,7 @@ Item {
             isChatBlocked: root.isChatBlocked
 
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
 
             chatId: root.chatId

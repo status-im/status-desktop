@@ -169,12 +169,12 @@ QtObject {
         if (linkAddressAndEnsName) {
             // Wallet address
             var replacePatternWalletAddress = /(^|[^\/])(0x[a-fA-F0-9]{40})/gim;
-            replacedText = replacedText.replace(replacePatternWalletAddress, "$1<a href='//send-via-personal-chat//$2'>$2</a>");
+            replacedText = replacedText.replace(replacePatternWalletAddress, "$1<a class='eth-link' href='//send-via-personal-chat//$2'>$2</a>");
 
             // Ens Name
             var replacePatternENS = /\b[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.eth\b(?!\.\w)/g;
             replacedText = replacedText.replace(replacePatternENS, function(match) {
-                return "<a href='//send-via-personal-chat//" + match + "'>" + match + "</a>";
+                return "<a class='eth-link' href='//send-via-personal-chat//" + match + "'>" + match + "</a>";
             });
         }
 
@@ -185,7 +185,10 @@ QtObject {
         return XSS.filterXSS(inputText)
     }
 
-    function getMessageWithStyle(msg, hoveredLink = "") {
+    function getMessageWithStyle(msg, hoveredLink = "", ethLinkDisabled = false) {
+        const ethLinkColor = ethLinkDisabled ? Theme.palette.directColor1 : Theme.palette.primaryColor1
+        const ethLinkHoverColor = ethLinkDisabled ? Theme.palette.baseColor1 : Theme.palette.primaryColor1
+        const ethLinkHoverBackgroundColor = ethLinkDisabled ? Theme.palette.directColor8 : Theme.palette.primaryColor3
         return `<style type="text/css">` +
                     `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
@@ -204,6 +207,15 @@ QtObject {
                     `a {` +
                         `color: ${Theme.palette.primaryColor1};` +
                     `}` +
+                    `a.eth-link {` +
+                        `color: ${ethLinkColor};` +
+                    `}` +
+                    // Simulated hover effect for eth-link via hoveredLink
+                    (hoveredLink !== "" ?
+                        `a[href="${hoveredLink}"].eth-link {` +
+                            `color: ${ethLinkHoverColor};` +
+                            `background-color: ${ethLinkHoverBackgroundColor};` +
+                        `}` : ``) +
                     `a.mention {` +
                         `color: ${Theme.palette.mentionColor1};` +
                         `background-color: ${Theme.palette.mentionColor4};` +

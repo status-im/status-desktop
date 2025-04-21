@@ -139,6 +139,7 @@ Loader {
     property bool hasMention: false
 
     property bool sendViaPersonalChatEnabled
+    property string disabledTooltipText
 
     property bool areTestNetworksEnabled
 
@@ -747,6 +748,7 @@ Loader {
                 disableEmojis: !d.addReactionAllowed
                 hideMessage: d.hideMessage
                 linkAddressAndEnsName: root.sendViaPersonalChatEnabled
+                disabledTooltipText: root.disabledTooltipText
 
                 overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
