@@ -92,19 +92,6 @@ class ToolBar(QObject):
         self.contact_tag = QObject(messaging_names.statusToolBar_StatusTagItem)
         self.notifications_button = Button(messaging_names.statusToolBar_notificationButton_StatusActivityCenterButton)
 
-    @property
-    @allure.step('Get visibility of pin message tooltip')
-    def is_pin_message_tooltip_visible(self) -> bool:
-        return self.pinned_message_tooltip.is_visible
-
-    @allure.step('Click on pin message tooltip')
-    def click_pin_message_tooltip(self):
-        return self.pinned_message_tooltip.click()
-
-    @allure.step('Confirm action in toolbar')
-    def confirm_action_in_toolbar(self):
-        self.confirm_button.click()
-
     @allure.step('Remove member by clicking close icon on member tag')
     def click_contact_close_icon(self, member):
         for item in driver.findAllObjects(self.contact_tag.real_name):
@@ -481,7 +468,7 @@ class ChatMessagesView(QObject):
         tool_bar = ToolBar().wait_until_appears()
         tool_bar.click_contact_close_icon(member)
         time.sleep(1)
-        tool_bar.confirm_action_in_toolbar()
+        tool_bar.confirm_button.click()
         time.sleep(1)
 
     @allure.step('Clear chat history option')

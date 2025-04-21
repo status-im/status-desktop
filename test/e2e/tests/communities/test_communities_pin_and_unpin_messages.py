@@ -131,7 +131,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
         with step(f'User {user_two.name} unpin message from pinned messages popup'):
             aut_two.attach()
             main_screen.prepare()
-            messages_screen.tool_bar.click_pin_message_tooltip()
+            messages_screen.tool_bar.pinned_message_tooltip.click()
             PinnedMessagesPopup().wait_until_appears().unpin_message().close()
 
         with step(f'User {user_one.name} see the {second_message_text} as unpinned'):
@@ -139,6 +139,6 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
             main_screen.prepare()
             time.sleep(2)
             message = messages_screen.chat.find_message_by_text(second_message_text, 1)
-            assert driver.waitFor(lambda: message.message_is_pinned) is False
+            assert not message.message_is_pinned
             assert message.user_name_in_pinned_message == ''
-            assert driver.waitFor(lambda: messages_screen.tool_bar.is_pin_message_tooltip_visible) is False
+            assert not messages_screen.tool_bar.pinned_message_tooltip.is_visible
