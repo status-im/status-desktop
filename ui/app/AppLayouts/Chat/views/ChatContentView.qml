@@ -62,6 +62,7 @@ ColumnLayout {
     }
 
     property bool sendViaPersonalChatEnabled
+    property string disabledTooltipText
 
     signal showReplyArea(messageId: string)
     signal forceInputFocus()
@@ -108,6 +109,7 @@ ColumnLayout {
             isContactBlocked: root.isBlocked
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            disabledTooltipText: root.disabledTooltipText
             areTestNetworksEnabled: root.areTestNetworksEnabled
             onShowReplyArea: (messageId, senderId) => {
                 root.showReplyArea(messageId)

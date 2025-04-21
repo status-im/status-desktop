@@ -80,6 +80,7 @@ StatusSectionLayout {
     property var collectiblesModel
 
     property bool sendViaPersonalChatEnabled
+    property string disabledTooltipText
     property bool paymentRequestFeatureEnabled
 
     readonly property bool contentLocked: {
@@ -290,6 +291,7 @@ StatusSectionLayout {
             canPost: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.canPost
             amISectionAdmin: root.amISectionAdmin
             sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+            disabledTooltipText: root.disabledTooltipText
             paymentRequestFeatureEnabled: root.paymentRequestFeatureEnabled
             onOpenStickerPackPopup: {
                 Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )

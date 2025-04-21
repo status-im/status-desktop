@@ -211,6 +211,7 @@ SplitView {
                     outgoingStatus: model.outgoingStatus
                     resendError: model.outgoingStatus === StatusMessage.OutgoingStatus.Expired ? model.resendError : ""
                     linkAddressAndEnsName: true
+                    disabledTooltipText: disableLinkCheckbox.checked ? "Send not available": ""
 
                     messageDetails {
                         readonly property bool isEnsVerified: model.senderDisplayName.endsWith(".eth")
@@ -261,6 +262,11 @@ SplitView {
             SplitView.preferredHeight: 200
 
             logsView.logText: logs.logText
+
+            CheckBox {
+                id: disableLinkCheckbox
+                text: "Disable Address/Ens link"
+            }
         }
     }
 }

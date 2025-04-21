@@ -1984,7 +1984,9 @@ Item {
                                 networksStore: appMain.networksStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
-                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled && appMain.networkConnectionStore.sendBuyBridgeEnabled
+                                sendViaPersonalChatEnabled: featureFlagsStore.sendViaPersonalChatEnabled
+                                disabledTooltipText: !appMain.networkConnectionStore.sendBuyBridgeEnabled ?
+                                                         appMain.networkConnectionStore.sendBuyBridgeToolTipText : ""
                                 paymentRequestFeatureEnabled: featureFlagsStore.paymentRequestEnabled
 
                                 mutualContactsModel: contactsModelAdaptor.mutualContacts

@@ -78,6 +78,7 @@ Control {
     property string highlightedLink: ""
     property string hoveredLink: ""
     property bool linkAddressAndEnsName
+    property string disabledTooltipText
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
@@ -291,6 +292,7 @@ Control {
                             textField.anchors.rightMargin: root.isInPinnedPopup ? Theme.xlPadding : 0 // margin for the "Unpin" floating button
                             highlightedLink: root.highlightedLink
                             linkAddressAndEnsName: root.linkAddressAndEnsName
+                            disabledTooltipText: root.disabledTooltipText
                             onLinkActivated: {
                                 root.linkActivated(link);
                             }

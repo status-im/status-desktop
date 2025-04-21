@@ -57,6 +57,7 @@ Item {
     property var viewAndPostHoldingsModel
     property bool amISectionAdmin: false
     property bool sendViaPersonalChatEnabled
+    property string disabledTooltipText
     property bool paymentRequestFeatureEnabled
 
     signal openStickerPackPopup(string stickerPackId)
@@ -256,6 +257,7 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         sendViaPersonalChatEnabled: root.sendViaPersonalChatEnabled
+                        disabledTooltipText: root.disabledTooltipText
                         areTestNetworksEnabled: root.areTestNetworksEnabled
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
