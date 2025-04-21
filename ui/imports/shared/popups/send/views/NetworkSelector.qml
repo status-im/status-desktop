@@ -149,6 +149,7 @@ Item {
     FeesView {
         id: fees
         width: parent.width
+        height: visible ? implicitHeight : 0
         anchors.top: stackLayout.bottom
         anchors.topMargin: Theme.bigPadding
         visible: root.advancedMode
@@ -169,6 +170,7 @@ Item {
         anchors.top: fees.visible? fees.bottom : stackLayout.bottom
         anchors.topMargin: Theme.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
+        height: visible ? implicitHeight : 0
         visible: root.routerError !== ""
         text: root.routerError
         buttonText: showDetails? qsTr("hide details") : qsTr("show details")
@@ -180,7 +182,7 @@ Item {
 
     Rectangle {
         width: parent.width
-        implicitHeight: childrenRect.height + 2*Theme.padding
+        implicitHeight: visible ? childrenRect.height + 2*Theme.padding: 0
         anchors.top: errorTag.bottom
         anchors.topMargin: Theme.padding
         visible: errorTag.visible && errorTag.showDetails

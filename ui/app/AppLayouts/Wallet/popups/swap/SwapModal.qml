@@ -36,7 +36,7 @@ StatusDialog {
     objectName: "swapModal"
 
     implicitWidth: 556
-    padding: 0
+    topPadding: Theme.xlPadding
     backgroundColor: Theme.palette.baseColor3
 
     QtObject {
@@ -147,9 +147,7 @@ StatusDialog {
 
         ColumnLayout {
             anchors.left: parent.left
-            anchors.leftMargin: Theme.halfPadding
             anchors.right: parent.right
-            anchors.rightMargin: Theme.halfPadding
             spacing: Theme.padding
             clip: true
 
