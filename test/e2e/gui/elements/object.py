@@ -175,20 +175,38 @@ class QObject:
         LOG.info('%s: right clicked with Qt.RightButton', self)
 
     @allure.step('Wait until appears {0}')
-    def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        condition = driver.waitFor(lambda: self.is_visible, timeout_msec)
-        if not condition:
-            raise TimeoutError(f'Object {self} is not visible within {timeout_msec} ms')
-        LOG.info('%s: is visible', self)
-        return self
+    def wait_until_appears(self, timeout_msec: int = 10000, check_interval=0.5):
+        timeout_sec = timeout_msec / 1000
+        start_time = time.time()
+
+        while time.time() - start_time < timeout_sec:
+            try:
+                if self.is_visible:
+                    LOG.info('%s: is visible', self)
+                    return self
+            except Exception as e:
+                LOG.warning("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+
+        LOG.error(f'Object {self} is not visible within {timeout_msec} ms')
+        raise TimeoutError(f'Object {self} is not visible within {timeout_msec} ms')
 
     @allure.step('Wait until hidden {0}')
-    def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
-        condition = driver.waitFor(lambda: not self.is_visible, timeout_msec)
-        if not condition:
-            raise TimeoutError(f'Timeout reached: Object {self} is not hidden within {timeout_msec} ms')
-        LOG.info('%s: is hidden', self)
-        return self
+    def wait_until_hidden(self, timeout_msec: int = 10000, check_interval=0.5):
+        timeout_sec = timeout_msec / 1000
+        start_time = time.time()
+
+        while time.time() - start_time < timeout_sec:
+            try:
+                if not self.is_visible:
+                    LOG.info('%s: is hidden', self)
+                    return self
+            except Exception as e:
+                LOG.warning("Exception during visibility check: %s", e)
+            time.sleep(check_interval)
+
+        LOG.error(f'Timeout reached: Object {self} is not hidden within {timeout_msec} ms')
+        raise TimeoutError(f'Timeout reached: Object {self} is not hidden within {timeout_msec} ms')
 
     @classmethod
     def wait_for(cls, condition, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC) -> bool:
