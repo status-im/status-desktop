@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -30,7 +29,7 @@ ComboBox {
     displayText: root.currentValue === SortOrderComboBox.TokenOrderCustom ? currentText
                                                                           : "%1 %2".arg(currentText).arg(currentSortOrder === Qt.DescendingOrder ? "↓" : "↑")
 
-    onActivated: {
+    onActivated: function(index) {
         if (index === indexOfValue(SortOrderComboBox.TokenOrderCreateCustom)) { // restore the previous sort role and signal we want create/edit
             currentIndex = d.currentIndex
             root.createOrEditRequested()
@@ -97,8 +96,7 @@ ComboBox {
         y: root.topPadding + (root.availableHeight - height) / 2
     }
 
-    popup: Popup {
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+    popup: StatusDropdown {
         y: root.height + 4
 
         implicitWidth: 290
@@ -106,20 +104,6 @@ ComboBox {
 
         padding: 1
         verticalPadding: Theme.halfPadding
-
-        background: Rectangle {
-            color: Theme.palette.statusSelect.menuItemBackgroundColor
-            radius: Theme.radius
-            layer.enabled: true
-            layer.effect: DropShadow {
-                horizontalOffset: 0
-                verticalOffset: 4
-                radius: 12
-                samples: 25
-                spread: 0.2
-                color: Theme.palette.dropShadow
-            }
-        }
 
         contentItem: ColumnLayout {
             spacing: 0
@@ -209,7 +193,10 @@ ComboBox {
 
     Component {
         id: separatorMenuComponent
-        StatusMenuSeparator {}
+        StatusMenuSeparator {
+            topPadding: 0
+            bottomPadding: 0
+        }
     }
 
     delegate: ItemDelegate {
@@ -241,8 +228,7 @@ ComboBox {
         verticalPadding: isSeparator ? 2 : 5
         spacing: root.spacing
         font: root.font
-        text: root.textRole ? (Array.isArray(root.model) ? modelData[root.textRole] : model[root.textRole])
-                            : modelData
+        text: root.textRole ? modelData[root.textRole] : modelData
         icon.name: !!modelData["icon"] ? modelData["icon"] : ""
         icon.color: Theme.palette.primaryColor1
         background: Rectangle {

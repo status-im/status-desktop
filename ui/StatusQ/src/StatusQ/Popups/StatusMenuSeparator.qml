@@ -5,6 +5,7 @@ import StatusQ.Core.Theme 0.1
 
 MenuSeparator {
     height: visible && enabled ? implicitHeight : 0
+    background: null
     contentItem: Rectangle {
         implicitWidth: 176
         implicitHeight: 1
