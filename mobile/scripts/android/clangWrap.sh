@@ -11,14 +11,14 @@ SYSROOT=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/$HOST_OS-x86_64/sysroot
 
 TARGET_SUFFIX=""
 
-if [ "$ARCH" == "amd64" ]; then
+if [ "$ARCH" = "amd64" ]; then
     CARCH="x86_64"
-elif [ "$ARCH" == "arm64" ]; then
+elif [ "$ARCH" = "arm64" ]; then
     CARCH="aarch64"
-elif [ "$ARCH" == "arm" ]; then
+elif [ "$ARCH" = "arm" ]; then
     CARCH="armv7a"
     TARGET_SUFFIX="eabi"
-elif [ "$ARCH" == "386" ]; then
+elif [ "$ARCH" = "386" ]; then
     CARCH="i686"
 else
     CARCH="$ARCH"
