@@ -95,14 +95,8 @@ StatusDialog {
             d.fetchSuggestedRoutes()
         }
 
-        // FIXME drop after SwapInputPanel uses ModelEntry to track the currently selected token
-        // refresh the selected asset in payPanel when account/network changes
-        function onSelectedAccountAddressChanged() {
-            payPanel.reevaluateSelectedId()
-        }
         function onSelectedNetworkChainIdChanged() {
             networkFilter.selection = [root.swapInputParamsForm.selectedNetworkChainId]
-            payPanel.reevaluateSelectedId()
         }
     }
 
@@ -233,11 +227,15 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.fromTokensKey
                     tokenAmount: root.swapInputParamsForm.fromTokenAmount
+                    defaultTokenKey: root.swapInputParamsForm.defaultFromTokenKey
 
                     cryptoFeesToReserve: root.swapAdaptor.swapOutputData.maxFeesToReserveRaw
 
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
+
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: receivePanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Pay
@@ -276,9 +274,13 @@ StatusDialog {
 
                     tokenKey: root.swapInputParamsForm.toTokenKey
                     tokenAmount: root.swapAdaptor.validSwapProposalReceived && root.swapAdaptor.toToken ? root.swapAdaptor.swapOutputData.toTokenAmount: root.swapInputParamsForm.toTokenAmount
-
+                    defaultTokenKey: root.swapInputParamsForm.defaultToTokenKey
+                    
                     selectedNetworkChainId: root.swapInputParamsForm.selectedNetworkChainId
+                    onSelectedNetworkChainIdChanged: reevaluateSelectedId()
+                    
                     selectedAccountAddress: root.swapInputParamsForm.selectedAccountAddress
+                    onSelectedAccountAddressChanged: reevaluateSelectedId()
                     nonInteractiveTokensKey: payPanel.selectedHoldingId
 
                     swapSide: SwapInputPanel.SwapSide.Receive

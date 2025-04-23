@@ -22,7 +22,7 @@ QtObject {
     // default to token key
     property string defaultToTokenKey: Utils.getNativeTokenSymbol(root.selectedNetworkChainId)
     // default from token key
-    property string defaultFromTokenKey: Constants.usdcToken
+    property string defaultFromTokenKey: Constants.tokenSymbolToUniqueSymbol(Constants.usdcToken, root.selectedNetworkChainId)
     // 15 seconds
     property int autoRefreshTime: 15000
 
@@ -35,29 +35,29 @@ QtObject {
     onSelectedSlippageChanged: root.formValuesChanged()
 
     function resetFormData() {
-        selectedAccountAddress = ""
-        selectedNetworkChainId = -1
-        selectedSlippage = 0.5
+        root.selectedAccountAddress = ""
+        root.selectedNetworkChainId = -1
+        root.selectedSlippage = 0.5
         root.resetFromTokenValues()
         root.resetToTokenValues()
     }
 
     function resetFromTokenValues(keepDefault = true) {
         if(keepDefault) {
-            fromTokensKey = root.defaultFromTokenKey
+            root.fromTokensKey = root.defaultFromTokenKey
         } else {
-            fromTokensKey = ""
+            root.fromTokensKey = ""
         }
-        fromTokenAmount = ""
+        root.fromTokenAmount = ""
     }
 
     function resetToTokenValues(keepDefault = true) {
         if(keepDefault) {
-            toTokenKey = root.defaultToTokenKey
+            root.toTokenKey = root.defaultToTokenKey
         } else {
-            toTokenKey = ""
+            root.toTokenKey = ""
         }
-        toTokenAmount = ""
+        root.toTokenAmount = ""
     }
 
     function isFormFilledCorrectly() {
