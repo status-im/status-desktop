@@ -1319,8 +1319,10 @@ QtObject {
     ]
 
     function tokenIcon(symbol, useDefault=true) {
-        if (!!symbol && knownTokenPNGs.indexOf(symbol) !== -1)
-            return Theme.png("tokens/" + symbol)
+        const tmpSymbol = uniqueSymbolToTokenSymbol(symbol)
+
+        if (!!tmpSymbol && knownTokenPNGs.indexOf(tmpSymbol) !== -1)
+            return Theme.png("tokens/" + tmpSymbol)
 
         if (useDefault)
             return Theme.png("tokens/DEFAULT-TOKEN")
@@ -1530,4 +1532,40 @@ QtObject {
     }
 
     readonly property int maxActiveNetworks: 5
+
+    /*  
+        Hacky workaround functions to deal with token collision workaround https://github.com/status-im/status-go/pull/6538 
+        We use unique symbols with the form "symbol(decimals)" to avoid bundling tokens with different decimals.
+        Remove these functions when the status-go PR is reverted.
+    */
+    function tokenSymbolToUniqueSymbol(symbol, chainId) {
+        if (symbol === "USDT" || symbol === "USDC") {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+                return symbol + "(18)"
+            }
+            return symbol + "(6)"
+        } else if (symbol === "SWFTC") {
+            if (chainId === Constants.chains.binanceSmartChainMainnetChainId) {
+                return symbol + "(18)"
+            }
+            return symbol + "(8)"
+        } else if (symbol === "FLUX") {
+            return symbol + "(18)"
+        }
+
+        return symbol
+    }
+
+    function uniqueSymbolToTokenSymbol(uniqueSymbol) {
+        if (uniqueSymbol === "USDT(6)" || uniqueSymbol === "USDT(18)") {
+            return "USDT"
+        } else if (uniqueSymbol === "USDC(6)" || uniqueSymbol === "USDC(18)") {
+            return "USDC"
+        } else if (uniqueSymbol === "SWFTC(8)" || uniqueSymbol === "SWFTC(18)") {
+            return "SWFTC"
+        } else if (uniqueSymbol === "FLUX(18)") {
+            return "FLUX"
+        }
+        return uniqueSymbol
+    }
 }
