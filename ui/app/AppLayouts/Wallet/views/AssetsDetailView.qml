@@ -97,9 +97,7 @@ Item {
                 return ""
             if (token.image)
                 return token.image
-            if (token.symbol)
-                return Theme.png("tokens/%1".arg(token.symbol))
-            return ""
+            return Constants.tokenIcon(token.symbol)
         }
         asset.isImage: true
         primaryText: token && token.name ? token.name : Constants.dummyText

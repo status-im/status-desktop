@@ -37,6 +37,8 @@ Control {
 
     property string tokenKey
     onTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
+    property string defaultTokenKey
+    onDefaultTokenKeyChanged: Qt.callLater(reevaluateSelectedId)
 
     property string tokenAmount
     onTokenAmountChanged: Qt.callLater(d.updateInputText) // FIXME remove the callLater(), shouldn't be needed now
@@ -51,11 +53,13 @@ Control {
 
     // FIXME drop after using ModelEntry, shouldn't be needed
     function reevaluateSelectedId() {
-        const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", root.tokenKey)
+        const symbol = root.tokenKey !== "" ? Constants.uniqueSymbolToTokenSymbol(root.tokenKey) : Constants.uniqueSymbolToTokenSymbol(root.defaultTokenKey)
+        const uniqueSymbol = Constants.tokenSymbolToUniqueSymbol(symbol, root.selectedNetworkChainId)
+        const entry = SQUtils.ModelUtils.getByKey(holdingSelector.model, "tokensKey", uniqueSymbol)
 
         if (entry) {
-            holdingSelector.currentTokensKey = root.tokenKey
-            holdingSelector.setSelection(entry.symbol, entry.iconSource, entry.tokensKey)
+            holdingSelector.currentTokensKey = uniqueSymbol
+            holdingSelector.setSelection(entry.symbol, entry.iconSource, uniqueSymbol)
         } else {
             holdingSelector.currentTokensKey = ""
             holdingSelector.reset()
@@ -103,7 +107,6 @@ Control {
             key: "tokensKey"
             value: holdingSelector.currentTokensKey
         }
-
         readonly property bool isSelectedHoldingValidAsset: selectedHolding.available && !!selectedHolding.item
         readonly property double maxFiatBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currencyBalance ? selectedHolding.item.currencyBalance : 0
         readonly property double maxCryptoBalance: isSelectedHoldingValidAsset && !!selectedHolding.item.currentBalance ? selectedHolding.item.currentBalance : 0
