@@ -251,6 +251,7 @@ Control {
                 StatusMouseArea {
                     anchors.fill: parent
                     enabled: textField.focus
+                    cursorShape: Qt.IBeamCursor
                     onClicked: {
                         textField.cursorPosition = textField.positionAt(mouseX,mouseY)
                         textField.forceActiveFocus()
@@ -314,7 +315,7 @@ Control {
                 }
 
                 elide: Text.ElideMiddle
-                font.pixelSize: 13
+                font.pixelSize: Theme.additionalTextSize
                 customColor: Theme.palette.directColor5
                 loading: root.bottomTextLoading
 
