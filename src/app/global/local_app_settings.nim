@@ -15,7 +15,6 @@ const DEFAULT_SCROLL_VELOCITY = 0 # unset
 const DEFAULT_SCROLL_DECELERATION = 0 # unset
 const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabled"
 const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
-const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
 let DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and not TEST_MODE_ENABLED #enabled in production, disabled in development and e2e tests
 const LAS_KEY_SHARDED_COMMUNITIES_ENABLED = "global/sharded_communities"
@@ -27,6 +26,10 @@ const LAS_KEY_METRICS_POPUP_SEEN = "global/metrics_popup_seen"
 const DEFAULT_LAS_KEY_METRICS_POPUP_SEEN = false
 const LS_KEY_SEEN_NETWORK_CHAINS = "global/seenNetworkChains"
 const DEFAULT_SEEN_NETWORK_CHAINS = "[]"
+when defined(android) or defined(ios):
+  const DEFAULT_VISIBILITY = 5 #full screen visibility, from qml
+else:
+  const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
