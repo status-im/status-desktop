@@ -9,8 +9,7 @@ import configs
 import driver
 from configs import WALLET_SEED
 from constants import ReturningUser, RandomCommunity
-from helpers.onboarding_helper import open_generate_new_keys_view, open_import_seed_view_and_do_import, \
-    finalize_onboarding_and_login
+from helpers.onboarding_helper import open_create_profile_view, import_seed_and_log_in
 from helpers.settings_helper import enable_testnet_mode, enable_managing_communities_toggle
 from constants.community import MintOwnerTokensElements
 from gui.screens.community_settings_tokens import MintedTokensView
@@ -19,22 +18,27 @@ from gui.screens.community_settings_tokens import MintedTokensView
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/727245', 'Mint owner token')
 @pytest.mark.case(727245)
 @pytest.mark.transaction
-@pytest.mark.skip(reason='https://github.com/status-im/status-desktop/issues/17290')
 def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
+
     user_account = ReturningUser(
         seed_phrase=WALLET_SEED,
         status_address='0x44ddd47a0c7681a5b0fa080a56cbb7701db4bb43')
 
-    keys_screen = open_generate_new_keys_view()
-    profile_view = open_import_seed_view_and_do_import(keys_screen, user_account.seed_phrase, user_account)
-    finalize_onboarding_and_login(profile_view, user_account)
+    with step('Import seed and log in'):
+        with step('Open Create your profile view'):
+            create_your_profile_view = open_create_profile_view()
+        with step('Import seed and log in'):
+            import_seed_and_log_in(create_your_profile_view, user_account.seed_phrase, user_account)
 
-    enable_testnet_mode(main_window)
-    enable_managing_communities_toggle(main_window)
+    with step('Set testnet mode'):
+        enable_testnet_mode(main_window)
+
+    with step('Switch manage community on testnet option'):
+        enable_managing_communities_toggle(main_window)
 
     with step('Create community and select it'):
         community = RandomCommunity()
-        main_window.create_community(community_data=community)
+        main_window.left_panel.create_community(community_data=community)
         community_screen = main_window.left_panel.select_community(community.name)
 
     with step('Open mint owner token view'):
@@ -45,7 +49,10 @@ def test_mint_owner_and_tokenmaster_tokens(main_window, user_account):
         edit_owner_token_view = tokens_screen.click_next()
 
     with step('Select network'):
-        network_name = random.choice(['Arbitrum', 'Optimism'])  # no mainnet because of prices
+        # no Sepolia because of prices
+        # no Base Sepolia because of no funds (temp)
+        # no Status network because no contract
+        network_name = random.choice(['Arbitrum Sepolia', 'Optimism Sepolia'])
         edit_owner_token_view.select_network(network_name)
 
     with step('Verify fees title and gas fees exist'):

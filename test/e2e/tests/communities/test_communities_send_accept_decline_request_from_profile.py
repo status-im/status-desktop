@@ -93,7 +93,7 @@ def test_communities_send_accept_decline_request_remove_contact_from_profile(mul
 
             with step('Create community and select it'):
                 community = RandomCommunity()
-                main_screen.create_community(community_data=community)
+                main_screen.left_panel.create_community(community_data=community)
                 community_screen = main_screen.left_panel.select_community(community.name)
 
             add_popup = community_screen.left_panel.open_add_members_popup()

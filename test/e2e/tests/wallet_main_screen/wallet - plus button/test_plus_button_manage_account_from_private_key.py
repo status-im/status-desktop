@@ -23,8 +23,9 @@ def test_plus_button_manage_account_from_private_key(main_screen: MainWindow, us
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(wallet_account.name).set_origin_private_key(
             address_pair.private_key, address_pair.private_key[:5]).save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         assert len(main_screen.wait_for_notification()) == 1, \

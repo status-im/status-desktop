@@ -13,6 +13,7 @@ class ContextMenu(QObject):
     def __init__(self):
         super(ContextMenu, self).__init__(names.contextMenu_PopupItem)
         self.menu_item = QObject(names.contextMenuItem)
+        # wallet account context items
         self.add_watched_address_from_context = QObject(names.contextMenuItem_AddWatchOnly)
         self.delete_from_context = QObject(names.contextMenuItem_Delete)
         self.edit_from_context = QObject(names.contextMenuItem_Edit)
@@ -20,6 +21,7 @@ class ContextMenu(QObject):
         self.hide_include_in_total_balance = QObject(names.contextMenuItem_HideInclude)
         self.edit_saved_address_from_context = QObject(names.contextSavedAddressEdit)
         self.delete_saved_address_from_context = QObject(names.contextSavedAddressDelete)
+        # community context items
         self.edit_channel_from_context = QObject(communities_names.edit_Channel_StatusMenuItem)
         self.delete_channel_from_context = QObject(communities_names.delete_Channel_StatusMenuItem)
         self.invite_from_context = QObject(communities_names.invite_People_StatusMenuItem)
@@ -27,6 +29,7 @@ class ContextMenu(QObject):
         self.leave_community_option = QObject(communities_names.leave_Community_StatusMenuItem)
         self.edit_category_item = QObject(communities_names.edit_Category_StatusMenuItem)
         self.delete_category_item = QObject(communities_names.delete_Category_StatusMenuItem)
+        self.community_invite_people_context_item = QObject(communities_names.invite_People_StatusMenuItem)
 
     @allure.step('Select in context menu')
     def select(self, value: str):
@@ -52,5 +55,4 @@ class ContextMenu(QObject):
     def open_delete_category_popup(self) -> DeleteCategoryPopup:
         self.delete_category_item.click()
         return DeleteCategoryPopup().wait_until_appears()
-
 

@@ -119,9 +119,9 @@ class SendPopup(BasePopup):
             self._ens_address_text_edit.wait_until_appears(timeout_msec=configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
             self._ens_address_text_edit.type_text(address)
 
-        assert self.send_modal_sign_txn_fees.wait_until_appears(timeout_msec=10000), \
+        assert self.send_modal_sign_txn_fees.wait_until_appears(timeout_msec=configs.timeouts.FEES_TIMEOUT_MSEC), \
             f'Fees panel is not displayed within 10s'
-        assert self.send_modal_review_send_button.wait_until_appears(timeout_msec=10000), \
+        assert self.send_modal_review_send_button.wait_until_appears(timeout_msec=configs.timeouts.FEES_TIMEOUT_MSEC), \
             f'Fees are not displayed within 10s'
 
         self.open_sign_send_modal().sign_send_modal_reject_button.click()

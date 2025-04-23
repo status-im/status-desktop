@@ -77,7 +77,7 @@ def test_switch_state_to_offline_online_automatic(multiple_instances):
             activity_center.click()
 
         with step(f'User {user_two.name}, switch state to offline'):
-            main_screen.left_panel.set_user_to_offline()
+            main_screen.left_panel.open_online_identifier().set_user_state_offline()
             main_screen.hide()
 
         with step(f'User {user_one.name}, sees {user_two.name} as offline'):
@@ -89,6 +89,6 @@ def test_switch_state_to_offline_online_automatic(multiple_instances):
         with step(f'User {user_two.name}, switch state to online'):
             aut_two.attach()
             main_screen.prepare()
-            main_screen.left_panel.set_user_to_online()
+            main_screen.left_panel.open_online_identifier().set_user_state_online()
             main_screen.hide()
 

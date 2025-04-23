@@ -19,7 +19,7 @@ from gui.main_window import MainWindow
 def test_manage_community_screens_overview(main_screen: MainWindow):
     with step('Create community and select it'):
         community = RandomCommunity()
-        main_screen.create_community(community_data=community)
+        main_screen.left_panel.create_community(community_data=community)
         community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Open airdrops view from community settings'):

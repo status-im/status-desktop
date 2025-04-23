@@ -53,8 +53,9 @@ def test_change_account_order_by_drag_and_drop(main_screen: MainWindow, user_acc
             account_popup.set_name(account[0]).set_emoji(account[1])
             colors.append(account_popup.set_random_color())
             account_popup.save_changes()
-            authenticate_with_password(user_account)
-            account_popup.wait_until_hidden()
+            with step('Authenticate with password'):
+                authenticate_with_password(user_account)
+                account_popup.wait_until_hidden()
 
     with step('Verify accounts in wallet settings'):
         account_order = main_screen.left_panel.open_settings().left_panel.open_wallet_settings().open_account_order()

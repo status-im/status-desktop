@@ -39,8 +39,10 @@ def test_add_generated_account_restart_add_again(
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name1).save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
+
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         messages = main_screen.wait_for_notification()
@@ -59,8 +61,10 @@ def test_add_generated_account_restart_add_again(
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name2).save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
+
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         messages = main_screen.wait_for_notification()

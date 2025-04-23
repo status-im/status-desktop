@@ -12,7 +12,6 @@ from gui.main_window import MainWindow
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703033', 'Manage a generated account')
 @pytest.mark.case(703033)
 @pytest.mark.critical
-# @pytest.mark.skip(reason='temp skip, need to fix it')
 def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account,):
     with step('Create generated wallet account'):
         name = random_wallet_acc_keypair_name()
@@ -20,8 +19,10 @@ def test_add_edit_delete_generated_account(main_screen: MainWindow, user_account
         wallet = main_screen.left_panel.open_wallet()
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(name).save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
+
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         messages = main_screen.wait_for_notification()

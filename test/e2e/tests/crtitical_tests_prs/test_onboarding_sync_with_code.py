@@ -5,6 +5,7 @@ from allure_commons._allure import step
 
 import configs.testpath
 import driver
+from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
 from constants import UserAccount, RandomUser
 from gui.components.splash_screen import SplashScreen
 from gui.main_window import MainWindow
@@ -65,7 +66,7 @@ def test_sync_device_during_onboarding(multiple_instances):
             if configs.system.get_platform() == "Darwin":
                 OnboardingBiometricsView().maybe_later()
             splash_screen = SplashScreen().wait_until_appears()
-            splash_screen.wait_until_hidden(timeout_msec=60000)
+            splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
 
         with step('Verify user details are the same with user in first instance'):
             online_identifier = main_window.left_panel.open_online_identifier()

@@ -8,7 +8,6 @@ from scripts.utils.generators import random_wallet_acc_keypair_name
 from gui.main_window import MainWindow
 
 
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703100',
                  'Manage a watch-only account from context menu option')
 @pytest.mark.case(703100)

@@ -5,9 +5,10 @@ import typing
 import allure
 
 import configs
+import constants.colors
 import driver
-from constants import UserAccount, CommunityData
-from gui.components.community.invite_contacts import InviteContactsPopup
+from configs.timeouts import APP_LOAD_TIMEOUT_MSEC
+from constants import UserAccount, CommunityData, Color
 from gui.components.introduce_yourself_popup import IntroduceYourselfPopup
 from gui.components.context_menu import ContextMenu
 from gui.components.toast_message import ToastMessage
@@ -27,17 +28,16 @@ from scripts.tools.image import Image
 LOG = logging.getLogger(__name__)
 
 
-class LeftPanel(QObject):
+class MainLeftPanel(QObject):
 
     def __init__(self):
-        super(LeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
+        super(MainLeftPanel, self).__init__(names.mainWindow_LeftPanelNavBar)
         self.profile_button = Button(names.onlineIdentifierButton)
-        self._messages_button = Button(names.chatButton)
-        self._communities_portal_button = Button(names.communitiesPortalButton)
-        self._community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
-        self._settings_button = Button(names.settingsGearButton)
-        self._wallet_button = Button(names.mainWalletButton)
-        self._community_invite_people_context_item = QObject(names.invite_People_StatusMenuItem)
+        self.messages_button = Button(names.chatButton)
+        self.communities_portal_button = Button(names.communitiesPortalButton)
+        self.community_template_button = Button(names.statusCommunityMainNavBarListView_CommunityNavBarButton)
+        self.settings_button = Button(names.settingsGearButton)
+        self.wallet_button = Button(names.mainWalletButton)
 
     def _open_screen_from_left_nav(self, button, screen_class, attempts: int = 2):
         for _ in range(attempts):
@@ -51,15 +51,15 @@ class LeftPanel(QObject):
 
     @allure.step('Click Chat button and open Messages screen')
     def open_messages_screen(self, attempts: int = 2) -> MessagesScreen:
-        return self._open_screen_from_left_nav(self._messages_button, MessagesScreen, attempts)
+        return self._open_screen_from_left_nav(self.messages_button, MessagesScreen, attempts)
 
     @allure.step('Click Gear button and open Settings screen')
     def open_settings(self, attempts: int = 2) -> SettingsScreen:
-        return self._open_screen_from_left_nav(self._settings_button, SettingsScreen, attempts)
+        return self._open_screen_from_left_nav(self.settings_button, SettingsScreen, attempts)
 
     @allure.step('Click Wallet button and open Wallet main screen')
     def open_wallet(self, attempts: int = 2) -> WalletScreen:
-        return self._open_screen_from_left_nav(self._wallet_button, WalletScreen, attempts)
+        return self._open_screen_from_left_nav(self.wallet_button, WalletScreen, attempts)
 
     @allure.step('Click and open online identifier')
     def open_online_identifier(self, attempts: int = 2) -> OnlineIdentifier:
@@ -69,44 +69,40 @@ class LeftPanel(QObject):
     @allure.step('Get communities names')
     def communities(self) -> typing.List[str]:
         community_names = []
-        for obj in driver.findAllObjects(self._community_template_button.real_name):
+        for obj in driver.findAllObjects(self.community_template_button.real_name):
             community_names.append(obj.name)
 
         return community_names
+
+    @allure.step('Create community')
+    def create_community(self, community_data: CommunityData) -> CommunityScreen:
+        communities_portal = self.open_communities_portal()
+        create_community_form = communities_portal.open_create_community_popup()
+        assert isinstance(community_data, CommunityData)
+        app_screen = create_community_form.create_community(community_data)
+        return app_screen
 
     @property
     @allure.step('Get user badge color')
     def user_badge_color(self) -> str:
         return str(self.profile_button.object.badge.color.name)
 
-    @allure.step('Set user to online')
-    def set_user_to_online(self):
-        self.open_online_identifier().set_user_state_online()
-
     @allure.step('Verify: User is online')
     def user_is_online(self) -> bool:
-        return self.user_badge_color == '#4ebc60'
-
-    @allure.step('Set user to offline')
-    def set_user_to_offline(self):
-        self.open_online_identifier().set_user_state_offline()
+        return self.user_badge_color == constants.ColorCodes.GREEN.value
 
     @allure.step('Verify: User is offline')
     def user_is_offline(self):
-        return self.user_badge_color == '#7f8990'
-
-    @allure.step('Set user to automatic')
-    def set_user_to_automatic(self):
-        self.open_online_identifier().set_user_automatic_state()
+        return self.user_badge_color == constants.ColorCodes.INACTIVE_GRAY.value
 
     @allure.step('Verify: User is set to automatic')
     def user_is_set_to_automatic(self):
-        return self.user_badge_color == '#4ebc60'
+        return self.user_badge_color == constants.ColorCodes.GREEN.value
 
     @allure.step('Open community portal')
     def open_communities_portal(self, attempts: int = 2) -> CommunitiesPortal:
         for _ in range(attempts):
-            self._communities_portal_button.click()
+            self.communities_portal_button.click()
             introduce_yourself_popup = IntroduceYourselfPopup()
             if introduce_yourself_popup.is_visible:
                 introduce_yourself_popup.skip_button.click()
@@ -120,7 +116,7 @@ class LeftPanel(QObject):
 
     def _get_community(self, name: str):
         community_names = []
-        for obj in driver.findAllObjects(self._community_template_button.real_name):
+        for obj in driver.findAllObjects(self.community_template_button.real_name):
             community_names.append(str(obj.name))
             if str(obj.name) == str(name):
                 return obj
@@ -141,18 +137,12 @@ class LeftPanel(QObject):
         community.right_click()
         return ContextMenu().wait_until_appears()
 
-    @allure.step('Invite people in community')
-    def invite_people_in_community(self, contacts: typing.List[str], message: str, community_name: str):
-        driver.mouseClick(self._get_community(community_name), driver.Qt.RightButton)
-        self._community_invite_people_context_item.click()
-        InviteContactsPopup().wait_until_appears().invite(contacts, message)
-
 
 class MainWindow(Window):
 
     def __init__(self):
         super().__init__(names.statusDesktop_mainWindow)
-        self.left_panel = LeftPanel()
+        self.left_panel = MainLeftPanel()
 
     @allure.step('Create new profile')
     def create_profile(self, user_account: UserAccount):
@@ -161,9 +151,9 @@ class MainWindow(Window):
         create_password_view = profile_view.open_password_view()
         splash_screen = create_password_view.create_password(user_account.password)
         splash_screen.wait_until_appears()
-        splash_screen.wait_until_hidden(timeout_msec=60000)
+        splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
         # since we now struggle with 3 words names, I need to change display name first
-        left_panel = LeftPanel()
+        left_panel = MainLeftPanel()
         profile = left_panel.open_settings().left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
@@ -174,7 +164,7 @@ class MainWindow(Window):
     def returning_log_in(self, user_account: UserAccount):
         splash_screen = ReturningLoginView().log_in(user_account)
         splash_screen.wait_until_appears()
-        splash_screen.wait_until_hidden(timeout_msec=60000)
+        splash_screen.wait_until_hidden(APP_LOAD_TIMEOUT_MSEC)
         return self
 
     @allure.step('Authorize user')
@@ -184,14 +174,6 @@ class MainWindow(Window):
             return self.returning_log_in(user_account)
         else:
             return self.create_profile(user_account)
-
-    @allure.step('Create community')
-    def create_community(self, community_data: CommunityData) -> CommunityScreen:
-        communities_portal = self.left_panel.open_communities_portal()
-        create_community_form = communities_portal.open_create_community_popup()
-        assert isinstance(community_data, CommunityData)
-        app_screen = create_community_form.create_community(community_data)
-        return app_screen
 
     @allure.step('Wait for notification and get text')
     def wait_for_notification(self, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC) -> list[str]:

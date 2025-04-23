@@ -41,7 +41,9 @@ def test_rename_keypair_test(main_screen: MainWindow, user_account, emoji: str, 
         pk_name = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
         new_account_popup.enter_private_key_name(pk_name).click_continue()
         account_popup.save_changes()
-        authenticate_with_password(user_account)
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Open wallet settings and verify Status keypair title'):
         settings = main_screen.left_panel.open_settings().left_panel.open_wallet_settings()
