@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CWD=$(realpath `dirname $0`)
-APP=${APP:="$CWD/../bin/$OS/IOS-build.apk"}
+APP=${APP:="$CWD/../bin/$OS/Status-tablet.apk"}
 ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:=""}
 EMULATOR=${EMULATOR:="$ANDROID_SDK_ROOT/emulator/emulator"}
 ADB=${ADB:="$ANDROID_SDK_ROOT/platform-tools/adb"}
@@ -70,16 +70,16 @@ $ADB -s $ANDROID_SERIAL install -r $APP
 echo "App installed. Starting app"
 if [ "$QT_VERSION" = "6" ]; then
     # For Qt6, use the new package name
-    DEFAULT_ACTIVITY_NAME="org.qtproject.example.IOS_build/org.qtproject.qt.android.bindings.QtActivity"
+    DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt.android.bindings.QtActivity"
 else
     # For Qt5, use the old package name
-    DEFAULT_ACTIVITY_NAME="org.qtproject.example.IOS_build/org.qtproject.qt5.android.bindings.QtActivity"
+    DEFAULT_ACTIVITY_NAME="im.status.tablet/org.qtproject.qt5.android.bindings.QtActivity"
 fi
 $ADB -s $ANDROID_SERIAL shell am start -a android.intent.action.MAIN -n $DEFAULT_ACTIVITY_NAME
 # wait for the app to start and then start logcat
 echo "Waiting for the app to start"
 while true; do
-    PID=$($ADB -s $ANDROID_SERIAL shell pidof org.qtproject.example.IOS_build | tr -d '\r')
+    PID=$($ADB -s $ANDROID_SERIAL shell pidof im.status.tablet | tr -d '\r')
     if [ -n "$PID" ]; then
         echo "App started with PID: $PID"
         break
