@@ -2,14 +2,14 @@ import allure
 import pytest
 from allure_commons._allure import step
 
+from constants import UserAccount
 from constants.wallet import WalletNetworkSettings
 from driver.aut import AUT
-from gui.components.splash_screen import SplashScreen
+from helpers.onboarding_helper import open_create_profile_view, import_seed_and_log_in
 from scripts.utils.generators import random_mnemonic, get_wallet_address_from_mnemonic
-from web3 import Web3
 
-from gui.main_window import LeftPanel
-from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatusView
+from gui.main_window import MainLeftPanel, MainWindow
+from gui.screens.onboarding import ReturningLoginView
 
 
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703040', 'Import: 12 word seed phrase')
@@ -17,27 +17,28 @@ from gui.screens.onboarding import ReturningLoginView, OnboardingWelcomeToStatus
 @pytest.mark.case(703040, 736372, 738726)
 @pytest.mark.critical
 @pytest.mark.smoke
-def test_import_and_reimport_random_seed(main_window, aut: AUT, user_account):
+def test_import_and_reimport_random_seed(
+        main_window: MainWindow,
+        aut: AUT,
+        user_account: UserAccount,
+        seed_phrase=random_mnemonic()
+):
+    with step('Import seed and log in'):
 
-    create_your_profile_view = \
-        OnboardingWelcomeToStatusView().wait_until_appears().open_create_your_profile_view()
-    seed_view = create_your_profile_view.open_seed_phrase_view()
-    seed_phrase = random_mnemonic()
-    seed_view.fill_in_seed_phrase_grid(seed_phrase.split(), autocomplete=False)
-    create_password_view = seed_view.continue_import()
-    create_password_view.create_password(user_account.password)
-    splash_screen = SplashScreen().wait_until_appears()
-    splash_screen.wait_until_hidden(timeout_msec=60000)
+        with step('Open Create your profile view'):
+            create_your_profile_view = open_create_profile_view()
+        with step('Import seed and log in'):
+            import_seed_and_log_in(create_your_profile_view, seed_phrase, user_account)
 
     with step('Verify that restored account reveals correct status wallet address'):
-        left_panel = LeftPanel()
+        left_panel = MainLeftPanel()
         profile = left_panel.open_settings().left_panel.open_profile_settings()
         profile.set_name(user_account.name)
         profile.save_changes_button.click()
 
         status_account_index = 0
         status_acc_view = (
-            LeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(
+            MainLeftPanel().open_settings().left_panel.open_wallet_settings().open_account_in_settings(
                 WalletNetworkSettings.STATUS_ACCOUNT_DEFAULT_NAME.value,
                 status_account_index))
         address = status_acc_view.get_account_address_value()

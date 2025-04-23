@@ -27,8 +27,9 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         account_popup = wallet.left_panel.open_add_account_popup()
         account_popup.set_name(wallet_account.name).open_add_new_account_popup().import_new_seed_phrase(mnemonic_data.split())
         account_popup.save_changes()
-        authenticate_with_password(user_account)
-        account_popup.wait_until_hidden()
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            account_popup.wait_until_hidden()
 
     with step('Verify toast message notification when adding account'):
         messages = main_screen.wait_for_notification()
@@ -61,8 +62,10 @@ def test_plus_button_manage_account_from_seed_phrase(main_screen: MainWindow, us
         add_same_account = add_new_account_popup.set_name(wallet_account.name).open_add_new_account_popup()
         add_same_account.import_new_seed_phrase(mnemonic_data.split())
         add_new_account_popup.save_changes()
-        authenticate_with_password(user_account)
-        add_new_account_popup.wait_until_hidden()
+
+        with step('Authenticate with password'):
+            authenticate_with_password(user_account)
+            add_new_account_popup.wait_until_hidden()
 
     with step('Verify derivation path'):
         wallet.left_panel.click()

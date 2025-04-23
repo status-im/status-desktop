@@ -1,3 +1,4 @@
+import time
 import typing
 
 import allure
@@ -267,6 +268,7 @@ class EditOwnerTokenView(QObject):
         for item in network_options:
             if str(getattr(item, 'objectName', '')).endswith(network_name):
                 QObject(item).click()
+                time.sleep(0.5)  # allow network selector component to hide
                 break
         return self
 

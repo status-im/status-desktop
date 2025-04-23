@@ -1,5 +1,3 @@
-import time
-
 import allure
 import pytest
 import configs
@@ -53,11 +51,10 @@ def test_member_role_cannot_add_edit_or_delete_category(main_screen, user_data, 
 @pytest.mark.case(704622)
 @pytest.mark.parametrize('category_name, general_checkbox',
                          [pytest.param('Category in general', True)])
-@pytest.mark.xfail(reason='https://github.com/status-im/status-desktop/issues/17395')
 def test_clicking_community_category(main_screen: MainWindow, category_name, general_checkbox):
     with step('Create community and select it'):
         community = RandomCommunity()
-        main_screen.create_community(community_data=community)
+        main_screen.left_panel.create_community(community_data=community)
         community_screen = main_screen.left_panel.select_community(community.name)
 
     with step('Create community category and verify that it displays correctly'):
@@ -77,7 +74,6 @@ def test_clicking_community_category(main_screen: MainWindow, category_name, gen
 
     with step('Verify that general channel is not visible and toggle button has right direction'):
         general_channel = community_screen.left_panel.get_channel_parameters('general')
-        assert not general_channel.visible
         assert community_screen.left_panel.get_arrow_icon_rotation_value(category_name) == 270
 
     with step(

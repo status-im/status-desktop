@@ -64,7 +64,7 @@ def test_join_community_and_pin_unpin_message(multiple_instances):
         with step(f'User {user_two.name}, create community and invite {user_one.name}'):
             with step('Create community and select it'):
                 community = RandomCommunity()
-                main_screen.create_community(community_data=community)
+                main_screen.left_panel.create_community(community_data=community)
                 community_screen = main_screen.left_panel.select_community(community.name)
                 add_members = community_screen.left_panel.open_add_members_popup()
                 add_members.invite([user_one.name], message=random_text_message())

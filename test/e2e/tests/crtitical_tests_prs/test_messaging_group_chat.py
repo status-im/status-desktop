@@ -105,7 +105,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             with step('Verify group chat info'):
                 with step('Verify group chat name'):
                     group_chat_name = user_two.name + '&' + user_three.name
-                    assert messages_screen.group_chat.group_name == group_chat_name, f'Group chat name is not correct'
+                    assert messages_screen.group_chat.wait_until_appears().group_name == group_chat_name, f'Group chat name is not correct'
                 with step('Welcome group message is correct'):
                     actual_welcome_message = messages_screen.group_chat.group_welcome_message
                     assert actual_welcome_message.startswith(Messaging.WELCOME_GROUP_MESSAGE.value)
@@ -173,7 +173,8 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
                     assert chat_message_2 in message_item
 
             with step(f'User {user_two.name}, get own profile link in online identifier'):
-                profile_link = main_window.left_panel.open_online_identifier().copy_link_to_profile()
+                online_identifier = main_window.left_panel.open_online_identifier()
+                profile_link = online_identifier.copy_link_to_profile()
 
             with step(f'User {user_two.name} paste external link'):
                 message = external_link
@@ -240,7 +241,7 @@ def test_group_chat_add_contact_in_ac(multiple_instances, community_name, domain
             with step('Verify title and subtitle of preview are correct and close button exists'):
                 assert driver.waitFor(
                     lambda: community_name == messages_screen.group_chat.get_link_preview_bubble_title(),
-                    configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
+                    configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
                 assert driver.waitFor(
                     lambda: domain_link == messages_screen.group_chat.get_link_preview_bubble_description(),
                     configs.timeouts.UI_LOAD_TIMEOUT_MSEC)

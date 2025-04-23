@@ -54,6 +54,7 @@ class ColorCodes(Enum):
     BLUE = '#2a4af5'
     ORANGE = '#ff9f0f'
     GRAY = '#939ba1'
+    INACTIVE_GRAY = '#7f8990'
 
 
 class UserPictureColors:

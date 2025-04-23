@@ -10,7 +10,6 @@ from constants.wallet import DerivationPathName
 from gui.main_window import MainWindow
 
 
-
 @allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703028', 'Manage a custom generated account')
 @pytest.mark.case(703028)
 def test_plus_button_manage_generated_account_custom_derivation_path(main_screen: MainWindow, user_account):
@@ -34,6 +33,3 @@ def test_plus_button_manage_generated_account_custom_derivation_path(main_screen
         assert driver.waitFor(lambda: wallet_account.name in [account.name for account in wallet.left_panel.accounts],
                               10000), \
             f'Account with {wallet_account.name} is not displayed even it should be'
-
-
-
