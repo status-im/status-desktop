@@ -30,8 +30,8 @@ if [ "$OS" = "android" ]; then
     fi
 
     if [ "$QT_VERSION" = "5" ]; then
-        echo "Building for Android 33"
-        ANDROID_PLATFORM=android-33
+        echo "Building for Android 31"
+        ANDROID_PLATFORM=android-31
     elif [ "$QT_VERSION" = "6" ]; then
         echo "Building for Android 35"
         ANDROID_PLATFORM=android-35
@@ -40,26 +40,26 @@ if [ "$OS" = "android" ]; then
         exit 1
     fi
 
-    qmake $CWD/../wrapperApp/IOS-build.pro CONFIG+=device CONFIG+=release RESOURCES+=$COMPAT_RESOURCES -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
+    qmake $CWD/../wrapperApp/Status-tablet.pro CONFIG+=device CONFIG+=release RESOURCES+=$COMPAT_RESOURCES -spec android-clang ANDROID_ABIS="$ANDROID_ABI" -after
 
     # Build the app
     make -j$(nproc) apk_install_target
 
     # call androiddeployqt
-    androiddeployqt --input $BUILD_DIR/android-IOS-build-deployment-settings.json --output $BUILD_DIR/android-build --apk $BUILD_DIR/android-build/IOS-build.apk --android-platform $ANDROID_PLATFORM
+    androiddeployqt --input $BUILD_DIR/android-Status-tablet-deployment-settings.json --output $BUILD_DIR/android-build --apk $BUILD_DIR/android-build/Status-tablet.apk --android-platform $ANDROID_PLATFORM
 
     mkdir -p $BIN_DIR
-    cp ./android-build/IOS-build.apk $BIN_DIR/IOS-build.apk
+    cp ./android-build/Status-tablet.apk $BIN_DIR/Status-tablet.apk
 
-    echo "Build succeeded. APK is available at $BIN_DIR/IOS-build.apk"
+    echo "Build succeeded. APK is available at $BIN_DIR/Status-tablet.apk"
 else
-    qmake $CWD/../wrapperApp/IOS-build.pro RESOURCES+=$COMPAT_RESOURCES -spec macx-ios-clang CONFIG+=release CONFIG+=$SDK CONFIG+=device -after
+    qmake $CWD/../wrapperApp/Status-tablet.pro RESOURCES+=$COMPAT_RESOURCES -spec macx-ios-clang CONFIG+=release CONFIG+=$SDK CONFIG+=device -after
     # Compile resources
     xcodebuild -configuration Release -target "Qt Preprocess" -sdk $SDK -arch $ARCH
     # Compile the app
-    xcodebuild -configuration Release -target IOS-build install -sdk $SDK -arch $ARCH DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+    xcodebuild -configuration Release -target Status-tablet install -sdk $SDK -arch $ARCH DSTROOT="$BIN_DIR" INSTALL_PATH="/" TARGET_BUILD_DIR="$BIN_DIR" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
-    if [ -e $BIN_DIR/IOS-build.app/Info.plist ]; then
+    if [ -e $BIN_DIR/Status-tablet.app/Info.plist ]; then
         echo "Build succeeded"
     else
         echo "Build failed"

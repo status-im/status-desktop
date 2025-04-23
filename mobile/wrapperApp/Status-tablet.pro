@@ -25,6 +25,8 @@ LIB_PREFIX = qt$$QT_MAJOR_VERSION
 
 android {
     message("cofiguring for android $${QT_ARCH}, $$(ANDROID_ABI)")
+    
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/../android/$$LIB_PREFIX
 
     LIBS += -L$$PWD/../lib/android/$$LIB_PREFIX -lnim_status_client
     ANDROID_EXTRA_LIBS += \
@@ -38,6 +40,10 @@ android {
 }
 
 ios {
+    QMAKE_TARGET_BUNDLE_PREFIX = im.status
+    QMAKE_APPLICATION_BUNDLE_NAME = tablet
+    QMAKE_ASSET_CATALOGS += $$PWD/../ios/Images.xcassets
+
     LIBS += -L$$PWD/../lib/ios/$$LIB_PREFIX -lnim_status_client -lDOtherSideStatic -lstatusq -lstatus -lssl_1_1 -lcrypto_1_1 -lqzxing -lresolv -lqrcodegen -lpcre
 }
 

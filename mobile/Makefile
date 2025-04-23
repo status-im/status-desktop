@@ -27,10 +27,10 @@ OPENSSL?=$(PWD)/vendors/OpenSSL-for-iPhone
 QRCODEGEN?=$(STATUS_DESKTOP)/vendor/QR-Code-generator/c
 PCRE?=$(PWD)/vendors/pcre-8.45
 
-project_name := IOS-build
+project_name := Status-tablet
 
 # compile macros
-TARGET_NAME := IOS-build.$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
+TARGET_NAME := Status-tablet.$(shell if [ $(OS) = "ios" ]; then echo "app"; else echo "apk"; fi )
 
 TARGET := $(BIN_PATH)/$(TARGET_NAME)
 
@@ -63,13 +63,17 @@ RUN_SCRIPT := $(SCRIPTS_PATH)/$(OS)/run.sh
 # lib files
 STATUS_GO_LIB := $(LIB_PATH)/libstatus$(LIB_EXT)
 STATUS_Q_LIB := $(LIB_PATH)/libStatusQ$(LIB_SUFFIX)$(LIB_EXT)
-DOTHERSIDE_LIB := $(LIB_PATH)/libDOtherSide$(LIB_SUFFIX)$(LIB_EXT)
 OPENSSL_LIB := $(LIB_PATH)/libssl_1_1$(LIB_EXT)
 QRCODEGEN_LIB := $(LIB_PATH)/libqrcodegen.a
 PCRE_LIB := $(LIB_PATH)/libpcre$(LIB_EXT)
 QZXING_LIB := $(LIB_PATH)/libqzxing.a
 NIM_STATUS_CLIENT_LIB := $(LIB_PATH)/libnim_status_client$(LIB_EXT)
 STATUS_DESKTOP_RCC := $(STATUS_DESKTOP)/ui/resources.qrc
+ifeq ($(OS), ios)
+DOTHERSIDE_LIB := $(LIB_PATH)/libDOtherSideStatic$(LIB_SUFFIX)$(LIB_EXT)
+else
+DOTHERSIDE_LIB := $(LIB_PATH)/libDOtherSide$(LIB_SUFFIX)$(LIB_EXT)
+endif
 
 # default rule
 default: makedir all
@@ -129,7 +133,7 @@ $(STATUS_DESKTOP_RCC): $(STATUS_DESKTOP_UI_FILES)
 	@make -C $(STATUS_DESKTOP) rcc $(HANDLE_OUTPUT)
 	@echo "Status Desktop rcc built"
 
-$(NIM_STATUS_CLIENT_LIB): $(STATUS_DESKTOP_NIM_FILES) $(NIM_STATUS_CLIENT_SCRIPT)
+$(NIM_STATUS_CLIENT_LIB): $(STATUS_DESKTOP_NIM_FILES) $(NIM_STATUS_CLIENT_SCRIPT) $(STATUS_DESKTOP_RCC) $(DOTHERSIDE_LIB) $(OPENSSL_LIB) $(STATUS_Q_LIB) $(STATUS_GO_LIB) $(PCRE_LIB) $(QRCODEGEN_LIB)
 	@echo "Building Status Desktop Lib"
 	@STATUS_DESKTOP=$(STATUS_DESKTOP) HOST_ENV="$(HOST_ENV)" LIB_SUFFIX=$(LIB_SUFFIX) LIB_EXT=$(LIB_EXT) $(NIM_STATUS_CLIENT_SCRIPT) $(HANDLE_OUTPUT)
 	@echo "Status Desktop Lib built $(NIM_STATUS_CLIENT_LIB)"
@@ -190,6 +194,7 @@ clean-pcre:
 .PHONY: clean-nim-status-client
 clean-nim-status-client:
 	@rm -f $(NIM_STATUS_CLIENT_LIB)
+	@rm -rf $(STATUS_DESKTOP)/nimcache
 
 .PHONY: clean-status-desktop-rcc
 clean-status-desktop-rcc:
