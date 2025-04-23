@@ -54,19 +54,14 @@ StatusDialog {
 
     objectName: "paymentRequestModal"
 
-    implicitWidth: 480
-    implicitHeight: 480
-
+    width: 480
+    topPadding: Theme.bigPadding
     modal: true
-    padding: 0
     backgroundColor: Theme.palette.statusModal.backgroundColor
 
     title: qsTr("Payment request")
 
-    onOpened: {
-        // Setting value here because to prevent not updating when selected token key is filled
-        d.selectedHolding.value = Qt.binding(() => root.selectedTokenKey)
-
+    onAboutToShow: {
         if (!!root.selectedTokenKey && d.selectedHolding.available) {
             holdingSelector.setSelection(d.selectedHolding.item.symbol, d.selectedHolding.item.iconSource, d.selectedHolding.item.tokensKey)
         }
@@ -83,6 +78,7 @@ StatusDialog {
         readonly property ModelEntry selectedHolding: ModelEntry {
             sourceModel: holdingSelector.model
             key: "tokensKey"
+            value: root.selectedTokenKey
             onValueChanged: {
                 if (value !== undefined && !available) {
                     Qt.callLater(d.resetSelectedToken)
@@ -122,14 +118,7 @@ StatusDialog {
         }
     }
 
-    ColumnLayout {
-        anchors.top: parent.top
-        anchors.topMargin: Theme.bigPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Theme.padding
-        anchors.right: parent.right
-        anchors.rightMargin: Theme.padding
-
+    contentItem: ColumnLayout {
         spacing: Theme.padding
 
         AmountToSend {
