@@ -323,7 +323,7 @@ StatusScrollView {
                         status: model.onlineStatus
                         icon.name: model.icon
                         icon.color: Utils.colorForPubkey(model.pubKey)
-                        ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+                        colorHash: Utils.getColorHashAsJson(model.pubKey)
                     }
                 }
             }

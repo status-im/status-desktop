@@ -24,6 +24,7 @@ type
   UserItem* = ref object of RootObj
     pubKey: string
     displayName: string
+    usesDefaultName: bool
     ensName: string
     isEnsVerified: bool
     localNickname: string
@@ -50,6 +51,7 @@ type
 proc setup*(self: UserItem,
   pubKey: string,
   displayName: string,
+  usesDefaultName: bool,
   ensName: string,
   isEnsVerified: bool,
   localNickname: string,
@@ -75,6 +77,7 @@ proc setup*(self: UserItem,
   ) =
   self.pubKey = pubKey
   self.displayName = displayName
+  self.usesDefaultName = usesDefaultName
   self.ensName = ensName
   self.isEnsVerified = isEnsVerified
   self.localNickname = localNickname
@@ -102,6 +105,7 @@ proc setup*(self: UserItem,
 proc initUserItem*(
     pubKey: string,
     displayName: string,
+    usesDefaultName: bool,
     ensName: string,
     isEnsVerified: bool,
     localNickname: string,
@@ -128,6 +132,7 @@ proc initUserItem*(
   result.setup(
     pubKey = pubKey,
     displayName = displayName,
+    usesDefaultName = usesDefaultName,
     ensName = ensName,
     isEnsVerified = isEnsVerified,
     localNickname = localNickname,
@@ -155,6 +160,7 @@ proc `$`*(self: UserItem): string =
   result = fmt"""User Item(
     pubKey: {self.pubkey},
     displayName: {self.displayName},
+    usesDefaultName: {self.usesDefaultName},
     ensName: {self.ensName},
     isEnsVerified: {self.isEnsVerified},
     localNickname: {self.localNickname},
@@ -186,6 +192,12 @@ proc displayName*(self: UserItem): string {.inline.} =
 
 proc `displayName=`*(self: UserItem, value: string) {.inline.} =
   self.displayName = value
+
+proc usesDefaultName*(self: UserItem): bool {.inline.} =
+  self.usesDefaultName
+
+proc `usesDefaultName=`*(self: UserItem, value: bool) {.inline.} =
+  self.usesDefaultName = value
 
 proc ensName*(self: UserItem): string {.inline.} =
   if self.isEnsVerified: self.ensName else: ""

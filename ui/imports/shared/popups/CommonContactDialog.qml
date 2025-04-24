@@ -45,10 +45,11 @@ StatusDialog {
             Layout.rightMargin: Theme.padding
             spacing: Theme.padding
 
-            UserImage {
+            StatusUserImage {
                 name: root.mainDisplayName
+                usesDefaultName: contactDetails.usesDefaultName
                 colorHash: contactDetails.colorHash
-                colorId: contactDetails.colorId
+                userColor: Utils.colorForColorId(contactDetails.colorId)
                 image: contactDetails.largeImage
                 interactive: false
                 imageWidth: 60

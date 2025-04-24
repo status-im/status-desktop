@@ -51,8 +51,8 @@ suite "updating member items":
         contactRequest = ContactRequest.None,
         callDataChanged = false,
       )
-    # Two updated roles, because preferredDisplayName gets updated too
-    check(updatedRoles.len() == 2)
+    # Three updated roles, because preferredDisplayName and UsesDefaultName get updated too
+    check(updatedRoles.len() == 3)
     let item = model.getMemberItem("0xa")
     check(item.displayName == "newName")
 
